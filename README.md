@@ -54,6 +54,13 @@ Enable the colors and boldfaces in the shell with the `-DENABLE_COOL_BASH` flag:
 CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -DENABLE_COOL_BASH
 ```
 
+#### Enabling `polar_bounds` code
+
+Enable to use the external `polar_bounds` program with the `-DENABLE_POLAR_BOUNDS` flag (required to determine the frozen bits location on polar codes):
+```bash
+CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -DENABLE_COOL_BASH -DENABLE_POLAR_BOUNDS
+```
+
 ## Compiling with make
 ```bash
 > make
