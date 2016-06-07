@@ -3,6 +3,8 @@
 
 #include <map>
 #include <vector>
+#include <vector>
+#include "../MIPP/mipp.h"
 
 #include "../Tree/Binary_tree.hpp"
 #include "../../Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
@@ -13,7 +15,7 @@ protected:
 	const int N; // n bits input
 	const int m; // graph depth
 
-	const std::vector<int>& frozen_bits;
+	const mipp::vector<int>& frozen_bits;
 
 	const std::vector<Pattern_SC_interface*> &patterns;
 	const Pattern_SC_interface &pattern_rate0;
@@ -26,7 +28,7 @@ private:
 
 public:
 	Pattern_parser_polar(const int& N,
-	                     const std::vector<int>& frozen_bits,
+	                     const mipp::vector<int>& frozen_bits,
 	                     const std::vector<Pattern_SC_interface*> &patterns,
 	                     const Pattern_SC_interface &pattern_rate0,
 	                     const Pattern_SC_interface &pattern_rate1);
