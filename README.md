@@ -47,18 +47,11 @@ Notice that the hard coded SIMD set of instructions needs also some specific com
 - `-mfpu=neon`: enable the NEON set of instructions on ARMv7 and ARMv8 CPUs (128-bit vector size, required for 8-bit, 16-bit data and 32-bit data),
 - `-march=native`: let the compiler choose the best set of instructions available on the current x86 architecture (it does not work for ARMv7 architectures since the NEON instructions are not IEEE 754 compatible).
 
-#### Enabling the multi-threading
-
-The code now supports Monte Carlo multi-threaded execution. To enable it you have to add the `-pthread` flag in the `CMAKE_CXX_FLAGS:STRING` variable:
-```bash
-CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -pthread
-```
-
 #### Enabling the cool bash mode
 
 Enable the colors and boldfaces in the shell with the `-DENABLE_COOL_BASH` flag:
 ```bash
-CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -pthread -DENABLE_COOL_BASH
+CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -DENABLE_COOL_BASH
 ```
 
 ## Compiling with make
