@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "Galois.hpp"
 
 Galois

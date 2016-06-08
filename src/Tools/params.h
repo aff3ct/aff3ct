@@ -44,6 +44,8 @@ struct t_code_param
 	std::string puncturer;
 	std::string interleaver;
 	std::string fb_gen_method;
+	int         t;
+	int         mGF;
 };
 
 struct t_encoder_param

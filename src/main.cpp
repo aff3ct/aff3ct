@@ -11,6 +11,7 @@
 #include "Launcher/BFER/Launcher_BFER_turbo.hpp"
 #include "Launcher/BFER/Launcher_BFER_RSC.hpp"
 #include "Launcher/BFER/Launcher_BFER_RA.hpp"
+#include "Launcher/BFER/Launcher_BFER_BCH.hpp"
 #include "Launcher/BFER/Launcher_BFER_repetition.hpp"
 
 #include "Launcher/EXIT/Launcher_EXIT_polar.hpp"
@@ -177,6 +178,12 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	{
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
+	}
+	
+	if (code_type == "BCH")
+	{
+		if (simu_type == "BFER")
+			launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
 	}
 
 	if (launcher == nullptr)

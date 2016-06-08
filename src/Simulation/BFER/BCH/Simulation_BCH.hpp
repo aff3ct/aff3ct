@@ -2,7 +2,7 @@
 #define SIMULATION_BCH_HPP_
 
 #include <vector>
-#include "../../../Tools/mipp.h"
+#include "../../../Tools/MIPP/mipp.h"
 
 #include <chrono>
 
@@ -85,7 +85,5 @@ protected:
 protected:
 	virtual void simulation_loop();
 };
-
-#include "Simulation_BCH.hxx"
 
 #endif /* SIMULATION_BCH_HPP_ */

@@ -2,13 +2,11 @@
 #define GALOIS
 
 #include <vector>
-#include "../../Tools/mipp.h"
+#include "../MIPP/mipp.h"
 
 class Galois
 {
-	
-protected:
-	
+protected:	
     const int m;					// order of the Galois Field
     const int K;					
 	const int N;					// number of non-nul elements in the field : N = 2^m - 1
@@ -28,7 +26,5 @@ public:
 	mipp::vector<int> p;			// coefficients of a primitive polynomial used to generate GF(2**m)
 	mipp::vector<int> g;			// coefficients of the generator polynomial, g(x)
 };
-
-#include "Galois.hxx"
 
 #endif /* GALOIS */

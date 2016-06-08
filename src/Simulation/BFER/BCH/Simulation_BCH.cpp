@@ -17,6 +17,7 @@
 
 #include "../../../Tools/params.h"
 #include "../../../Tools/bash_tools.h"
+#include "../../../Tools/simu_tools.h"
 
 #include "Simulation_BCH.hpp"
 
@@ -101,7 +102,7 @@ void Simulation_BCH<B,R,Q>
 	check_errors(modulator, "Modulator<B>");
 	
 	// build the channel
-	channel = Factory_channel<B,R>::build(chan_params, deco_params, sigma, 0);
+	channel = Factory_channel<B,R>::build(chan_params, sigma);
 	check_errors(channel, "Channel<B,R>");
 	
 	// build the quantizer
@@ -142,7 +143,7 @@ void Simulation_BCH<B,R,Q>
 
 		this->build_communication_chain(snr);
 
-		if (code_params.gen_type == "AZCW")
+		if (code_params.generation_method == "AZCW")
 		{
 			for (unsigned i = 0; i < U_K.size(); i++) U_K[i] = (B)0;
 			for (unsigned i = 0; i < X_N.size(); i++) X_N[i] = (B)0;
@@ -185,7 +186,7 @@ void Simulation_BCH<B,R,Q>
 		auto d_encod = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (code_params.gen_type != "AZCW")
+		if (code_params.generation_method != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			auto t_sourc = steady_clock::now();
@@ -257,3 +258,14 @@ void Simulation_BCH<B,R,Q>
 	}
 }
 
+// ==================================================================================== explicit template instantiation 
+#include "../../../Tools/types.h"
+#ifdef MULTI_PREC
+template class Simulation_BCH<B_8,R_8,Q_8>;
+template class Simulation_BCH<B_16,R_16,Q_16>;
+template class Simulation_BCH<B_32,R_32,Q_32>;
+template class Simulation_BCH<B_64,R_64,Q_64>;
+#else
+template class Simulation_BCH<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

@@ -26,6 +26,4 @@ private:
 	void display_quantized_vector(mipp::vector<Q> vec);
 };
 
-#include "Simulation_BCH_debug.hxx"
-
 #endif /* SIMULATION_BCH_DEBUG_HPP_ */

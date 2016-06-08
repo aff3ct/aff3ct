@@ -42,7 +42,7 @@ void Simulation_BCH_debug<B,R,Q>
 		auto d_encod = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (this->code_params.gen_type != "AZCW")
+		if (this->code_params.generation_method != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			std::clog << "Generate random bits U_K..." << std::endl;
@@ -164,11 +164,11 @@ void Simulation_BCH_debug<B,R,Q>
 {
 	for(unsigned i = 0; i < vec.size(); i++)
 		std::clog << std::setw(5) << i << "|";
-	std::clog << endl;
+	std::clog << std::endl;
 
 	for(unsigned i = 0; i < vec.size(); i++)
 		std::clog << std::setw(5) << ((vec[i] == 0) ? (int) 0 : (int) 1) << "|";
-	std::clog << endl;
+	std::clog << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -177,14 +177,14 @@ void Simulation_BCH_debug<B,R,Q>
 {
 	for(unsigned i = 0; i < vec.size(); i++)
 		std::clog << std::setw(5) << i << "|";
-	std::clog << endl;
+	std::clog << std::endl;
 
 	for(unsigned i = 0; i < vec.size(); i++)
 		if(vec[i] >= 0)
-			std::clog << setprecision(2) << std::setw(5) << vec[i] << "|";
+			std::clog << std::setprecision(2) << std::setw(5) << vec[i] << "|";
 		else
-			std::clog << setprecision(1) << std::setw(5) << vec[i] << "|";
-	std::clog << endl;
+			std::clog << std::setprecision(1) << std::setw(5) << vec[i] << "|";
+	std::clog << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -193,12 +193,24 @@ void Simulation_BCH_debug<B,R,Q>
 {
 	for(unsigned i = 0; i < vec.size(); i++)
 		std::clog << std::setw(5) << i << "|";
-	std::clog << endl;
+	std::clog << std::endl;
 
 	for(unsigned i = 0; i < vec.size(); i++)
 		if(vec[i] >= 0)
-			std::clog << setprecision(2) << std::setw(5) << (int)vec[i] << "|";
+			std::clog << std::setprecision(2) << std::setw(5) << (int)vec[i] << "|";
 		else
-			std::clog << setprecision(1) << std::setw(5) << (int)vec[i] << "|";
-	std::clog << endl;
+			std::clog << std::setprecision(1) << std::setw(5) << (int)vec[i] << "|";
+	std::clog << std::endl;
 }
+
+// ==================================================================================== explicit template instantiation 
+#include "../../../Tools/types.h"
+#ifdef MULTI_PREC
+template class Simulation_BCH_debug<B_8,R_8,Q_8>;
+template class Simulation_BCH_debug<B_16,R_16,Q_16>;
+template class Simulation_BCH_debug<B_32,R_32,Q_32>;
+template class Simulation_BCH_debug<B_64,R_64,Q_64>;
+#else
+template class Simulation_BCH_debug<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation
