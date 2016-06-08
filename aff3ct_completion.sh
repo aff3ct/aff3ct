@@ -9,13 +9,13 @@ _aff3ct() {
 	# determine code type
 	for ((i = 0 ; i < ${#COMP_WORDS[*]}; ++ i))
 	do
-		if [[ ${COMP_WORDS[$i]} == "--code-type"]]; then
+		if [[ ${COMP_WORDS[$i]} == "--code-type" ]]; then
 			codetype=${COMP_WORDS[$i+1]}
 		fi
 	done
 
 	# determine simu type
-	if [[ $COMP_LINE == *"--simu-type EXIT"*]]; then
+	if [[ $COMP_LINE == *"--simu-type EXIT"* ]]; then
 		simutype="EXIT"
 	else 
 		simutype="BFER"
