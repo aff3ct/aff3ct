@@ -139,7 +139,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 
 // ---------------------------------------------------------------------------------------------------------- UNDEFINED
 #else
-	#define REQUIRED_ALIGNMENT 0
+	#define UNKNOWN_INSTRUCTION_TYPE
+	#define REQUIRED_ALIGNMENT 1
 	constexpr int RequiredAlignment = REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 0;
 
@@ -152,7 +153,14 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 typedef struct regx2 { reg val[2]; } regx2;
 
 template <typename T>
-constexpr int nElmtsPerRegister() { return RegisterSizeBit / (8 * sizeof(T)); }
+constexpr int nElmtsPerRegister()
+{
+#ifdef UNKNOWN_INSTRUCTION_TYPE
+	return 1;
+#else
+	return RegisterSizeBit / (8 * sizeof(T));
+#endif
+}
 
 template <typename T>
 constexpr int nElReg() { return mipp::nElmtsPerRegister<T>(); }
