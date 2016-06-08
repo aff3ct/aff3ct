@@ -36,9 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MY_INTRINSICS_PLUS_PLUS_H_
 
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
-#include "arm_neon.h"
+#include <arm_neon.h>
 #elif defined(__SSE__) || defined(__AVX__) || defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-
 // header for special functions: log, exp, sin, cos
 #if !defined(__INTEL_COMPILER) && !defined(__ICL) && !defined(__ICC)
 #if defined(__AVX__)
@@ -47,22 +46,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "math/sse_mathfun.h"
 #endif
 #endif
-
-#include "immintrin.h"
+#include <immintrin.h>
 #ifdef __SSE__
-#include "xmmintrin.h"
+#include <xmmintrin.h>
 #endif
 #ifdef __SSE2__
-#include "emmintrin.h"
+#include <emmintrin.h>
 #endif
 #ifdef __SSE3__
-#include "pmmintrin.h"
+#include <pmmintrin.h>
 #endif
 #ifdef __SSSE3__
-#include "tmmintrin.h"
+#include <tmmintrin.h>
 #endif
 #ifdef __SSE4_1__
-#include "smmintrin.h"
+#include <smmintrin.h>
 #endif
 #endif
 
