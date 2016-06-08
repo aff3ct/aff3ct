@@ -83,7 +83,7 @@ Generation_polar
 	graph_file      .open((directory + "/" + fileName + ".dot"      ).c_str(), std::ios_base::out);
 	short_graph_file.open((directory + "/" + fileName + ".short.dot").c_str(), std::ios_base::out);
 
-	generator = new Generator_polar_SC_sys(code_params.K, code_params.N, snr, (const std::vector<int>&)frozen_bits,
+	generator = new Generator_polar_SC_sys(code_params.K, code_params.N, snr, frozen_bits,
 	                                       patterns_SC, *pattern_SC_rate0, *pattern_SC_rate1,
 	                                       dec_file, short_dec_file, graph_file, short_graph_file);
 }

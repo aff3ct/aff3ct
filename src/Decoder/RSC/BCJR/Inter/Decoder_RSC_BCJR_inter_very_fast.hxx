@@ -139,7 +139,7 @@ void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 	auto r_b7_prev = mipp::load<R>(&this->alpha[7][0]);
 
 	// compute beta values [trellis backward traversal <-]
-	for (auto i = (this->K +2) * stride; i >= (this->K +0) * stride; i -= stride)
+	for (unsigned i = (unsigned)((this->K +2) * stride); i >= (unsigned)((this->K +0) * stride); i -= stride)
 	{
 		const auto r_g0 = mipp::load<R>(&this->gamma[0][i]);
 		const auto r_g1 = mipp::load<R>(&this->gamma[1][i]);

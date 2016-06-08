@@ -10,7 +10,7 @@
 
 Pattern_parser_polar
 ::Pattern_parser_polar(const int& N,
-                       const std::vector<int>& frozen_bits,
+                       const mipp::vector<int>& frozen_bits,
                        const std::vector<Pattern_SC_interface*> &patterns,
                        const Pattern_SC_interface &pattern_rate0,
                        const Pattern_SC_interface &pattern_rate1)

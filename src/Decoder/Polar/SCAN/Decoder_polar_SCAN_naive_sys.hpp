@@ -15,7 +15,15 @@ public:
 	Decoder_polar_SCAN_naive_sys(const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits);
 	virtual ~Decoder_polar_SCAN_naive_sys();
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
 	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 	void store (mipp::vector<B>& V_N) const;
 };
 

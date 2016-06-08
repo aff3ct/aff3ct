@@ -136,7 +136,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::REP        >());
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::SPC        >());
 
-	std::vector<int> fb_int32(N);
+	mipp::vector<int> fb_int32(N);
 	for (unsigned i = 0; i < frozen_bits.size(); i++)
 		fb_int32[i] = (int)frozen_bits[i];
 
