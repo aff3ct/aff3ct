@@ -47,10 +47,12 @@ typedef __m128i v4si; // vector of 8 int   (avx)
 #define _PI32AVX_CONST(Name, Val)                                            \
   static const ALIGN32_BEG int _pi32avx_##Name[4] ALIGN32_END = { Val, Val, Val, Val }
 
+#ifndef __AVX2__
 _PI32AVX_CONST(1,     1);
 _PI32AVX_CONST(inv1, ~1);
 _PI32AVX_CONST(2,     2);
 _PI32AVX_CONST(4,     4);
+#endif
 
 /* declare some AVX constants -- why can't I figure a better way to do that? */
 #define _PS256_CONST(Name, Val)                                            \
@@ -64,17 +66,19 @@ _PS256_CONST(1  , 1.0f);
 _PS256_CONST(0p5, 0.5f);
 /* the smallest non denormalized float number */
 _PS256_CONST_TYPE(min_norm_pos, int, 0x00800000);
-_PS256_CONST_TYPE(mant_mask, int, 0x7f800000);
+//_PS256_CONST_TYPE(mant_mask, int, 0x7f800000);
 _PS256_CONST_TYPE(inv_mant_mask, int, ~0x7f800000);
 
 _PS256_CONST_TYPE(sign_mask, int, (int)0x80000000);
 _PS256_CONST_TYPE(inv_sign_mask, int, ~0x80000000);
 
+#ifdef __AVX2__ 
 _PI32_CONST256(0, 0);
 _PI32_CONST256(1, 1);
 _PI32_CONST256(inv1, ~1);
 _PI32_CONST256(2, 2);
 _PI32_CONST256(4, 4);
+#endif
 _PI32_CONST256(0x7f, 0x7f);
 
 _PS256_CONST(cephes_SQRTHF, 0.707106781186547524);
@@ -123,7 +127,7 @@ static inline v8si _mm256_##fn(v8si x, int a) \
   return(ret); \
 }
 
-#warning "Using SSE2 to perform AVX2 bitshift ops"
+//#warning "Using SSE2 to perform AVX2 bitshift ops"
 AVX2_BITOP_USING_SSE2(slli_epi32)
 AVX2_BITOP_USING_SSE2(srli_epi32)
 
@@ -142,10 +146,10 @@ static inline v8si _mm256_##fn(v8si x, v8si y) \
   return(ret); \
 }
 
-#warning "Using SSE2 to perform AVX2 integer ops"
-AVX2_INTOP_USING_SSE2(and_si128)
-AVX2_INTOP_USING_SSE2(andnot_si128)
-AVX2_INTOP_USING_SSE2(cmpeq_epi32)
+//#warning "Using SSE2 to perform AVX2 integer ops"
+//AVX2_INTOP_USING_SSE2(and_si128)
+//AVX2_INTOP_USING_SSE2(andnot_si128)
+//AVX2_INTOP_USING_SSE2(cmpeq_epi32)
 AVX2_INTOP_USING_SSE2(sub_epi32)
 AVX2_INTOP_USING_SSE2(add_epi32)
 
