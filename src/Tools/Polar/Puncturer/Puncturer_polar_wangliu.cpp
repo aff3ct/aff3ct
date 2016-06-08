@@ -11,11 +11,11 @@ Puncturer_polar_wangliu<B,R>
   N_2(std::exp2(std::ceil(std::log2(N)))), 
   Np(N_2 - N), 
   K(K), 
-  puncturing_pattern(N_2, 0),
+  puncturing_pattern(N_2),
   fb_generator(fb_generator)
 {
-	for (auto i = N_2 - Np ; i < N_2 ; i++)
-		puncturing_pattern[i] = 1;
+	std::fill(puncturing_pattern.begin()           , puncturing_pattern.begin() + N_2 - Np, 0);
+	std::fill(puncturing_pattern.begin() + N_2 - Np, puncturing_pattern.end()             , 1);
 }
 
 template <typename B, typename R>
