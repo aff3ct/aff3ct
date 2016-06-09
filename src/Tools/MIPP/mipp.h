@@ -374,6 +374,9 @@ inline reg pack(const reg, const reg) {
 template <typename T>
 using red_op = reg (*)(const reg, const reg);
 
+template <typename T>
+using ld_op = reg (*)(const T*);
+
 template <typename T, red_op<T> OP>
 struct _Reduction
 {
@@ -386,36 +389,32 @@ struct _Reduction
 template <typename T, red_op<T> OP>
 struct Reduction
 {
-	static reg apply(const reg r) {
+	static reg apply(const reg r) 
+	{
 		_Reduction<T,OP>::apply(r);
 	}
 
+	template <ld_op<T> LD = mipp::load<T>>
 	static T apply(const mipp::vector<T> &data) 
 	{
-		auto dataSize = data.size();
-		assert(dataSize > 0);
-		assert(dataSize % mipp::nElReg<T>() == 0);
-
-		auto rRed = mipp::load<T>(&data[0]);
-		for (auto i = mipp::nElReg<T>(); i < dataSize; i += mipp::nElReg<T>())
-			rRed = OP(rRed, mipp::load<T>(&data[i]));
-		rRed = Reduction<T,OP>::apply(rRed);
-
-		T tRed[mipp::nElReg<T>()];
-		mipp::store<T>(tRed, rRed);
-
-		return tRed[0];
+		return Reduction<T,OP>::template apply<LD>(data.data(), data.size());
 	}
 
+	template <ld_op<T> LD = mipp::loadu<T>>
 	static T apply(const std::vector<T> &data) 
 	{
-		auto dataSize = data.size();
+		return Reduction<T,OP>::template apply<LD>(data.data(), data.size());
+	}
+
+	template <ld_op<T> LD = mipp::loadu<T>>
+	static T apply(const T *data, const int dataSize) 
+	{
 		assert(dataSize > 0);
 		assert(dataSize % mipp::nElReg<T>() == 0);
 
-		auto rRed = mipp::loadu<T>(&data[0]);
+		auto rRed = LD(&data[0]);
 		for (auto i = mipp::nElReg<T>(); i < dataSize; i += mipp::nElReg<T>())
-			rRed = OP(rRed, mipp::loadu<T>(&data[i]));
+			rRed = OP(rRed, LD(&data[i]));
 		rRed = Reduction<T,OP>::apply(rRed);
 
 		T tRed[mipp::nElReg<T>()];
