@@ -37,7 +37,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
-						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>,hmax_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
 				}
 				else if (deco_params.simd_strategy.empty())
 					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
@@ -125,7 +125,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
-						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>,hmax_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
 				}
 				else
 					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);

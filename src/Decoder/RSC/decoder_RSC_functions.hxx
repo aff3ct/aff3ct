@@ -10,7 +10,7 @@ inline R max_log_MAP(const R& lambda_a, const R& lambda_b)
 }
 
 template <typename R>
-inline mipp::reg max_log_MAP_i(const mipp::reg& lambda_a, const mipp::reg& lambda_b)
+inline mipp::reg max_log_MAP_i(const mipp::reg lambda_a, const mipp::reg lambda_b)
 {
 	return mipp::max<R>(lambda_a, lambda_b);
 }
@@ -23,7 +23,7 @@ inline R linear_log_MAP(const R& lambda_a, const R& lambda_b)
 }
 
 template <typename R>
-inline mipp::reg linear_log_MAP_i(const mipp::reg& lambda_a, const mipp::reg& lambda_b)
+inline mipp::reg linear_log_MAP_i(const mipp::reg lambda_a, const mipp::reg lambda_b)
 {
 	const auto magic_num       = mipp::set1<R>(0.301);
 	const auto max             = mipp::max <R>(lambda_a, lambda_b);
@@ -40,10 +40,4 @@ inline R log_MAP(const R& lambda_a, const R& lambda_b)
 	// the two next statements are equivalent !
 	// return std::max(lambda_a, lambda_b) + std::log((R)1 + std::exp(-std::abs(lambda_a - lambda_b)));
 	return std::max(lambda_a, lambda_b) + std::log1p(std::exp(-std::abs(lambda_a - lambda_b)));
-}
-
-template <typename R>
-inline mipp::reg hmax_log_MAP_i(const mipp::reg& lambda_a)
-{
-	return mipp::hmax<R>(lambda_a);
 }

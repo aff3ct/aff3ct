@@ -2,8 +2,8 @@
 
 #include "Decoder_RSC_BCJR_intra_std.hpp"
 
-template <typename B, typename R, proto_map_i<R> MAP, proto_hmap_i<R> HMAP>
-Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
+template <typename B, typename R, proto_map_i<R> MAP>
+Decoder_RSC_BCJR_intra_std<B,R,MAP>
 ::Decoder_RSC_BCJR_intra_std(const int &K, const bool buffered_encoding)
 : Decoder_RSC_BCJR_intra<B,R>(K, buffered_encoding)
 {
@@ -11,14 +11,14 @@ Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
 	assert(K % 8 == 0);
 }
 
-template <typename B, typename R, proto_map_i<R> MAP, proto_hmap_i<R> HMAP>
-Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
+template <typename B, typename R, proto_map_i<R> MAP>
+Decoder_RSC_BCJR_intra_std<B,R,MAP>
 ::~Decoder_RSC_BCJR_intra_std()
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP, proto_hmap_i<R> HMAP>
-void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
+template <typename B, typename R, proto_map_i<R> MAP>
+void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	// compute gamma values
@@ -29,8 +29,8 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
 
 		// there is a big loss of precision here in fixed point
 		// compute the two required gamma values
-		const auto r_g0 = mipp::div2<R>(mipp::add<R>(r_sys, r_par));
-		const auto r_g1 = mipp::div2<R>(mipp::sub<R>(r_sys, r_par));
+		const auto r_g0 = RSC_BCJR_intra_div_or_not<R>::apply(mipp::add<R>(r_sys, r_par));
+		const auto r_g1 = RSC_BCJR_intra_div_or_not<R>::apply(mipp::sub<R>(r_sys, r_par));
 
 		const auto r_g0g1 = mipp::interleave<R>(r_g0, r_g1);
 
@@ -39,8 +39,8 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP, proto_hmap_i<R> HMAP>
-void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
+template <typename B, typename R, proto_map_i<R> MAP>
+void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 ::compute_alpha()
 {
 	constexpr int cmask_a0  [8] = {0, 3, 4, 7, 1, 2, 5, 6}; // alpha trellis transitions 0.
@@ -82,26 +82,8 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
 	}
 }
 
-template <typename R>
-struct RSC_BCJR_intra_std_post
-{
-	static mipp::reg compute(const mipp::reg &r_post)
-	{
-		return r_post;
-	}
-};
-
-template <>
-struct RSC_BCJR_intra_std_post <signed char>
-{
-	static mipp::reg compute(const mipp::reg &r_post)
-	{
-		return mipp::sat<signed char>(r_post, -63, 63);
-	}
-};
-
-template <typename B, typename R, proto_map_i<R> MAP, proto_hmap_i<R> HMAP>
-void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
+template <typename B, typename R, proto_map_i<R> MAP>
+void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	constexpr int cmask_b0  [8] = {0, 4, 5, 1, 2, 6, 7, 3}; // beta trellis transitions 0.
@@ -159,15 +141,15 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP,HMAP>
 			r_b = RSC_BCJR_intra_normalize<R>::apply(r_b, r_cmask_norm, i+j);
 
 			const auto r_a    = mipp::load<R>(&this->alpha[(i+j+0)*8]);
-			const auto r_max0 = HMAP(mipp::add<R>(mipp::add <R>(r_a, r_b0), r_g));
-			const auto r_max1 = HMAP(mipp::sub<R>(mipp::add <R>(r_a, r_b1), r_g));
+			const auto r_max0 = mipp::Reduction<R,MAP>::apply(mipp::add<R>(mipp::add <R>(r_a, r_b0), r_g));
+			const auto r_max1 = mipp::Reduction<R,MAP>::apply(mipp::sub<R>(mipp::add <R>(r_a, r_b1), r_g));
 			const auto r_post = mipp::andb<R>(r_m1e, mipp::sub<R>(r_max0, r_max1));
 
 			r_buffer_post = mipp::xorb<R>(mipp::rot<R>(r_buffer_post), r_post);
 		}
 
 		// saturate r_buffer_post if the computation are made in 8-bit, do nothing else.
-		r_buffer_post = RSC_BCJR_intra_std_post<R>::compute(r_buffer_post);
+		r_buffer_post = RSC_BCJR_intra_post<R>::compute(r_buffer_post);
 
 		// compute extrinsic values
 		mipp::store<R>(&ext[i], mipp::sub<R>(r_buffer_post, mipp::load<R>(&sys[i])));

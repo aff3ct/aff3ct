@@ -8,7 +8,7 @@
 
 #include "Decoder_RSC_BCJR_intra.hpp"
 
-template <typename B, typename R, proto_map_i<R> MAP, proto_hmap_i<R> HMAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 class Decoder_RSC_BCJR_intra_std : public Decoder_RSC_BCJR_intra<B,R>
 {
 public:
