@@ -1087,6 +1087,11 @@
 
 #ifdef __AVX2__
 	template <>
+	inline reg add<int>(const reg v1, const reg v2) {
+		return (__m256) _mm256_add_epi32((__m256i) v1, (__m256i) v2);
+	}
+
+	template <>
 	inline reg add<short>(const reg v1, const reg v2) {
 		return (__m256) _mm256_adds_epi16((__m256i) v1, (__m256i) v2);
 	}
@@ -1222,6 +1227,11 @@
 
 #ifdef __AVX2__
 	template <>
+	inline reg min<int>(const reg v1, const reg v2) {
+		return (__m256) _mm256_min_epi32((__m256i) v1, (__m256i) v2);
+	}
+
+	template <>
 	inline reg min<short>(const reg v1, const reg v2) {
 		return (__m256) _mm256_min_epi16((__m256i) v1, (__m256i) v2);
 	}
@@ -1266,6 +1276,11 @@
 	}
 
 #ifdef __AVX2__
+	template <>
+	inline reg max<int>(const reg v1, const reg v2) {
+		return (__m256) _mm256_max_epi32((__m256i) v1, (__m256i) v2);
+	}
+
 	template <>
 	inline reg max<short>(const reg v1, const reg v2) {
 		return (__m256) _mm256_max_epi16((__m256i) v1, (__m256i) v2);
@@ -1735,5 +1750,80 @@
 	inline reg pack<short,signed char>(const reg v1, const reg v2) {
 		return (reg) _mm256_permute4x64_epi64(_mm256_packs_epi16((__m256i) v1, (__m256i) v2), _MM_SHUFFLE(3, 1, 2, 0));
 	}
+#endif
+
+	// ----------------------------------------------------------------------------------------------- Reduction::apply
+	template <red_op<double> OP>
+	struct _Reduction<double,OP>
+	{
+		static reg apply(const reg v1) {
+			reg val = v1;
+			val = OP(val, (reg)_mm256_permute2f128_ps(val, val, _MM_SHUFFLE(0,0,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_ps     (val, val, _MM_SHUFFLE(1,0,3,2)));
+			return val;
+		}
+	};
+
+	template <red_op<float> OP>
+	struct _Reduction<float,OP>
+	{
+		static reg apply(const reg v1) {
+			reg val = v1;
+			val = OP(val, (reg)_mm256_permute2f128_ps(val, val, _MM_SHUFFLE(0,0,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_ps     (val, val, _MM_SHUFFLE(1,0,3,2)));
+			val = OP(val, (reg)_mm256_shuffle_ps     (val, val, _MM_SHUFFLE(2,3,0,1)));
+			return val;
+		}
+	};
+
+	template <red_op<int> OP>
+	struct _Reduction<int,OP>
+	{
+		static reg apply(const reg v1) {
+			reg val = v1;
+			val = OP(val, (reg)_mm256_permute2f128_ps(val, val, _MM_SHUFFLE(0,0,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_ps     (val, val, _MM_SHUFFLE(1,0,3,2)));
+			val = OP(val, (reg)_mm256_shuffle_ps     (val, val, _MM_SHUFFLE(2,3,0,1)));
+			return val;
+		}
+	};
+
+#ifdef __AVX2__
+	template <red_op<short> OP>
+	struct _Reduction<short,OP>
+	{
+		static reg apply(const reg v1) {
+			__m256i mask_16 = _mm256_set_epi8(29, 28, 31, 30, 25, 24, 27, 26, 21, 20, 23, 22, 17, 16, 19, 18, 13, 12, 15,
+			                                  14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+
+			reg val = v1;
+			val = OP(val, (reg)_mm256_permute2f128_si256((__m256i)val, (__m256i)val, _MM_SHUFFLE(0,0,0,1)));
+			val = OP(val, (reg)_mm256_permute4x64_epi64 ((__m256i)val,               _MM_SHUFFLE(2,3,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_epi32     ((__m256i)val,               _MM_SHUFFLE(2,3,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_epi8      ((__m256i)val,               mask_16));
+			return val;
+		}
+	};
+#endif
+
+#ifdef __AVX2__
+	template <red_op<signed char> OP>
+	struct _Reduction<signed char,OP>
+	{
+		static reg apply(const reg v1) {
+			__m256i mask_16 = _mm256_set_epi8(29, 28, 31, 30, 25, 24, 27, 26, 21, 20, 23, 22, 17, 16, 19, 18, 13, 12, 15,
+			                                  14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+			__m256i mask_8  = _mm256_set_epi8(30, 31, 28, 29, 26, 27, 24, 25, 22, 23, 20, 21, 18, 19, 16, 17, 14, 15, 12,
+			                                  13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
+
+			reg val = v1;
+			val = OP(val, (reg)_mm256_permute2f128_si256((__m256i)val, (__m256i)val, _MM_SHUFFLE(0,0,0,1)));
+			val = OP(val, (reg)_mm256_permute4x64_epi64 ((__m256i)val,               _MM_SHUFFLE(2,3,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_epi32     ((__m256i)val,               _MM_SHUFFLE(2,3,0,1)));
+			val = OP(val, (reg)_mm256_shuffle_epi8      ((__m256i)val,               mask_16));
+			val = OP(val, (reg)_mm256_shuffle_epi8      ((__m256i)val,               mask_8));
+			return val;
+		}
+	};
 #endif
 #endif

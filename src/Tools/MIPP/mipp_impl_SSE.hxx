@@ -1795,4 +1795,71 @@
 		return (reg) _mm_packs_epi16((__m128i) v1, (__m128i) v2);
 	}
 #endif
+
+	// ----------------------------------------------------------------------------------------------- Reduction::apply
+	template <red_op<double> OP>
+	struct _Reduction<double,OP>
+	{
+		static reg apply(const reg v1) {
+			reg val = v1; 
+			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			return val;
+		}
+	};
+
+	template <red_op<float> OP>
+	struct _Reduction<float,OP>
+	{
+		static reg apply(const reg v1) {
+			reg val = v1; 
+			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
+			return val;
+		}
+	};
+
+	template <red_op<int> OP>
+	struct _Reduction<int,OP>
+	{
+		static reg apply(const reg v1) {
+			reg val = v1; 
+			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
+			return val;
+		}
+	};
+
+#ifdef __SSSE3__
+	template <red_op<short> OP>
+	struct _Reduction<short,OP>
+	{
+		static reg apply(const reg v1) {
+			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+
+			reg val = v1; 
+			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(2, 3, 0, 1)));
+			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_16));
+			return val;
+		}
+	};
+#endif
+
+#ifdef __SSSE3__
+	template <red_op<signed char> OP>
+	struct _Reduction<signed char,OP>
+	{
+		static reg apply(const reg v1) {
+			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+			__m128i mask_8  = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
+
+			reg val = v1; 
+			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(2, 3, 0, 1)));
+			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_16));
+			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_8));
+			return val;
+		}
+	};
+#endif
 #endif
