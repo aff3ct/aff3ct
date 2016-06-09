@@ -391,7 +391,7 @@ struct Reduction
 {
 	static reg apply(const reg r) 
 	{
-		_Reduction<T,OP>::apply(r);
+		return _Reduction<T,OP>::apply(r);
 	}
 
 	template <ld_op<T> LD = mipp::load<T>>
