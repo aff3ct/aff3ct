@@ -896,27 +896,6 @@
 	}
 #endif
 
-	// ---------------------------------------------------------------------------------------------------------- hxorb
-	template <>
-	inline reg hxorb<float>(const reg v1) {
-		// make an horizontal xor, in:[a, b , c, d, e, f, g, h] =>
-		// out:[a^b^c^d^e^f^g^h, a^b^c^d^e^f^g^h, a^b^c^d^e^f^g^h, a^b^c^d^e^f^g^h, ..., ..., ..., ...]
-		reg v2;
-		v2 = xorb<float>(v1, _mm256_permute2f128_ps(v1, v1, _MM_SHUFFLE(0, 0, 0, 1)));
-		v2 = xorb<float>(v2, _mm256_permute_ps     (v2,     _MM_SHUFFLE(1, 0, 3, 2)));
-		v2 = xorb<float>(v2, _mm256_permute_ps     (v2,     _MM_SHUFFLE(2, 3, 0, 1)));
-		return v2;
-	}
-
-	template <>
-	inline reg hxorb<double>(const reg v1) {
-		// make an horizontal xor, in:[a, b , c, d] => out:[a^b^c^d, a^b^c^d, a^b^c^d, a^b^c^d]
-		reg v2;
-		v2 = xorb<double>(v1, (reg)_mm256_permute2f128_pd((__m256d) v1, (__m256d) v1, _MM_SHUFFLE(0, 0, 0, 1)));
-		v2 = xorb<double>(v2, (reg)_mm256_permute_pd     ((__m256d) v2,               _MM_SHUFFLE(0, 1, 0, 1)));
-		return v2;
-	}
-
 	// --------------------------------------------------------------------------------------------------------- lshift
 #ifdef __AVX2__
 	template <>
@@ -1102,73 +1081,6 @@
 	}
 #endif
 
-	// ------------------------------------------------------------------------------------------------------------ sum
-	template <>
-	inline reg sum<float>(const reg v1) {
-		reg v1_switch_lanes = _mm256_permute2f128_ps(v1, v1, _MM_SHUFFLE(0, 0, 0, 1));
-		reg sum = _mm256_hadd_ps(v1, v1_switch_lanes);
-		    sum = _mm256_hadd_ps(sum, sum);
-		return _mm256_hadd_ps(sum, sum);
-	}
-
-	template <>
-	inline reg sum<double>(const reg v1) {
-		// make a summation in:[a, b , c, d] => out:[a+b+c+d, a+b+c+d, a+b+c+d, a+b+c+d]
-		//
-		//   -> _mm256_permute2f128_pd(v1, v1, _MM_SHUFFLE(0, 0, 0, 1)) # switch lanes
-		//           l0      l1
-		//       in[a, b, | c, d] =>
-		//      out[c, d, | a, b]
-		//
-		//   -> _mm256_hadd_pd(v1, v1_s) # horizontal addition
-		//                  l0                      l1
-		//      in1[a11      , b11      , | c11      , d11      ] # info: a11 = a21, b11 = b21, c11 = c21, d11 = d21
-		//      in2[c21      , d21      , | a21      , b21      ] =>
-		//      out[a11 + b11, c21 + d21, | c11 + d11, a21 + b21]
-		//
-		//   -> _mm256_hadd_pd(sum, sum) # horizontal addition
-		//                              l0                                              l1
-		//      in1[a11 + b11            , c21 + d21            , | c11 + d11            , a21 + b21            ]
-		//      in1[a12 + b12            , c22 + d22            , | c12 + d12            , a22 + b22            ] =>
-		//      out[a11 + b11 + c21 + d21, a12 + b12 + c22 + d22, | c11 + d11 + a21 + b21, c12 + d12 + a22 + b22]
-		reg v1_switch_lanes = (reg) _mm256_permute2f128_pd((__m256d) v1, (__m256d) v1, _MM_SHUFFLE(0, 0, 0, 1));
-		reg sum = (reg) _mm256_hadd_pd((__m256d) v1, (__m256d) v1_switch_lanes);
-		return (reg) _mm256_hadd_pd((__m256d) sum, (__m256d) sum);
-	}
-
-#ifdef __AVX2__
-	template <>
-	inline reg sum<short>(const reg v1) {
-		__m256i mask_16 = _mm256_set_epi8(29, 28, 31, 30, 25, 24, 27, 26, 21, 20, 23, 22, 17, 16, 19, 18, 13, 12, 15,
-		                                  14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
-
-		reg sum = v1;
-		sum = add<short>(sum, (reg)_mm256_permute2f128_si256((__m256i)sum, (__m256i)sum, _MM_SHUFFLE(0,0,0,1)));
-		sum = add<short>(sum, (reg)_mm256_permute4x64_epi64 ((__m256i)sum,               _MM_SHUFFLE(2,3,0,1)));
-		sum = add<short>(sum, (reg)_mm256_shuffle_epi32     ((__m256i)sum,               _MM_SHUFFLE(2,3,0,1)));
-		sum = add<short>(sum, (reg)_mm256_shuffle_epi8      ((__m256i)sum,               mask_16));
-		return sum;
-	}
-#endif
-
-#ifdef __AVX2__
-	template <>
-	inline reg sum<signed char>(const reg v1) {
-		__m256i mask_16 = _mm256_set_epi8(29, 28, 31, 30, 25, 24, 27, 26, 21, 20, 23, 22, 17, 16, 19, 18, 13, 12, 15,
-		                                  14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
-		__m256i mask_8  = _mm256_set_epi8(30, 31, 28, 29, 26, 27, 24, 25, 22, 23, 20, 21, 18, 19, 16, 17, 14, 15, 12,
-		                                  13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
-
-		reg sum = v1;
-		sum = add<signed char>(sum, (reg)_mm256_permute2f128_si256((__m256i)sum, (__m256i)sum, _MM_SHUFFLE(0,0,0,1)));
-		sum = add<signed char>(sum, (reg)_mm256_permute4x64_epi64 ((__m256i)sum,               _MM_SHUFFLE(2,3,0,1)));
-		sum = add<signed char>(sum, (reg)_mm256_shuffle_epi32     ((__m256i)sum,               _MM_SHUFFLE(2,3,0,1)));
-		sum = add<signed char>(sum, (reg)_mm256_shuffle_epi8      ((__m256i)sum,               mask_16));
-		sum = add<signed char>(sum, (reg)_mm256_shuffle_epi8      ((__m256i)sum,               mask_8));
-		return sum;
-	}
-#endif
-
 	// ------------------------------------------------------------------------------------------------------------ sub
 	template <>
 	inline reg sub<float>(const reg v1, const reg v2) {
@@ -1242,28 +1154,6 @@
 	}
 #endif
 
-	// ----------------------------------------------------------------------------------------------------------- hmin
-	template <>
-	inline reg hmin<float>(const reg v1) {
-		// make an horizontal reduction min, if "a" is the smallest value in the vector
-		// => in:[a, b , c, d, e, f, g, h] => out:[a, a, a, a, a, a, a, a]
-		reg v2;
-		v2 = min<float>(v1, _mm256_permute2f128_ps(v1, v1, _MM_SHUFFLE(0, 0, 0, 1)));
-		v2 = min<float>(v2, _mm256_permute_ps     (v2,     _MM_SHUFFLE(1, 0, 3, 2)));
-		v2 = min<float>(v2, _mm256_permute_ps     (v2,     _MM_SHUFFLE(2, 3, 0, 1)));
-		return v2;
-	}
-
-	template <>
-	inline reg hmin<double>(const reg v1) {
-		// make an horizontal reduction min, if "a" is the smallest value in the regtor
-		// => in:[a, b , c, d] => out:[a, a, a, a]
-		reg v2;
-		v2 = min<double>(v1, (reg)_mm256_permute2f128_pd((__m256d) v1, (__m256d) v1, _MM_SHUFFLE(0, 0, 0, 1)));
-		v2 = min<double>(v2, (reg)_mm256_permute_pd     ((__m256d) v2,               _MM_SHUFFLE(0, 1, 0, 1)));
-		return v2;
-	}
-
 	// ------------------------------------------------------------------------------------------------------------ max
 	template <>
 	inline reg max<float>(const reg v1, const reg v2) {
@@ -1291,28 +1181,6 @@
 		return (__m256) _mm256_max_epi8((__m256i) v1, (__m256i) v2);
 	}
 #endif
-
-	// ----------------------------------------------------------------------------------------------------------- hmax
-	template <>
-	inline reg hmax<float>(const reg v1) {
-		// make an horizontal reduction max, if "a" is the bigest value in the vector
-		// => in:[a, b , c, d, e, f, g, h] => out:[a, a, a, a, a, a, a, a]
-		reg v2;
-		v2 = max<float>(v1, _mm256_permute2f128_ps(v1, v1, _MM_SHUFFLE(0, 0, 0, 1)));
-		v2 = max<float>(v2, _mm256_permute_ps     (v2,     _MM_SHUFFLE(1, 0, 3, 2)));
-		v2 = max<float>(v2, _mm256_permute_ps     (v2,     _MM_SHUFFLE(2, 3, 0, 1)));
-		return v2;
-	}
-
-	template <>
-	inline reg hmax<double>(const reg v1) {
-		// make an horizontal reduction max, if "a" is the bigest value in the vector
-		// => in:[a, b , c, d] => out:[a, a, a, a]
-		reg v2;
-		v2 = max<double>(v1, (reg)_mm256_permute2f128_pd((__m256d) v1, (__m256d) v1, _MM_SHUFFLE(0, 0, 0, 1)));
-		v2 = max<double>(v2, (reg)_mm256_permute_pd     ((__m256d) v2,               _MM_SHUFFLE(0, 1, 0, 1)));
-		return v2;
-	}
 
 	// ----------------------------------------------------------------------------------------------------------- sign
 	template <>

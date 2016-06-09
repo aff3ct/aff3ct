@@ -678,59 +678,6 @@
 		return (reg) vqaddq_s8((int8x16_t) v1, (int8x16_t)v2);
 	}
 
-	// ------------------------------------------------------------------------------------------------------------ sum
-	template <>
-	inline reg sum<float>(const reg v1) {
-		reg v2, v3;
-		v2 = add<float>(v1, vextq_f32(v1, v1, 2));
-		float32x2_t low  = vrev64_f32(vget_low_f32(v2));
-		float32x2_t high = vrev64_f32(vget_high_f32(v2));
-		v3 = vcombine_f32(low, high);
-		v2 = add<float>(v2, v3);
-		return v2;
-	}
-
-	template <>
-	inline reg sum<short>(const reg v1) {
-		reg sum, v2;
-		sum = add<short>(v1, (reg) vextq_s32((int32x4_t) v1, (int32x4_t) v1, 2));
-
-		int32x2_t low1  = vrev64_s32((int32x2_t) vget_low_s32((int32x4_t) sum));
-		int32x2_t high1 = vrev64_s32((int32x2_t) vget_high_s32((int32x4_t) sum));
-		v2 = (reg) vcombine_s32((int32x2_t) low1, (int32x2_t) high1);
-		sum = add<short>(sum, v2);
-
-		int16x4_t low2  = vrev32_s16((int16x4_t) vget_low_s32((int32x4_t) sum));
-		int16x4_t high2 = vrev32_s16((int16x4_t) vget_high_s32((int32x4_t) sum));
-		v2 = (reg) vcombine_s32((int32x2_t) low2, (int32x2_t) high2);
-		sum = add<short>(sum, v2);
-
-		return sum;
-	}
-
-	template <>
-	inline reg sum<signed char>(const reg v1) {
-		reg sum, v2;
-		sum = add<signed char>(v1, (reg) vextq_s32((int32x4_t) v1, (int32x4_t) v1, 2));
-
-		int32x2_t low1  = vrev64_s32((int32x2_t) vget_low_s32((int32x4_t) sum));
-		int32x2_t high1 = vrev64_s32((int32x2_t) vget_high_s32((int32x4_t) sum));
-		v2 = (reg) vcombine_s32((int32x2_t) low1, (int32x2_t) high1);
-		sum = add<signed char>(sum, v2);
-
-		int16x4_t low2  = vrev32_s16((int16x4_t) vget_low_s32((int32x4_t) sum));
-		int16x4_t high2 = vrev32_s16((int16x4_t) vget_high_s32((int32x4_t) sum));
-		v2 = (reg) vcombine_s32((int32x2_t) low2, (int32x2_t) high2);
-		sum = add<signed char>(sum, v2);
-
-		int8x8_t low3  = vrev16_s8((int8x8_t) vget_low_s32((int32x4_t) sum));
-		int8x8_t high3 = vrev16_s8((int8x8_t) vget_high_s32((int32x4_t) sum));
-		v2 = (reg) vcombine_s32((int32x2_t) low3, (int32x2_t) high3);
-		sum = add<signed char>(sum, v2);
-
-		return sum;
-	}
-
 	// ------------------------------------------------------------------------------------------------------------ sub
 	template <>
 	inline reg sub<float>(const reg v1, const reg v2) {
@@ -804,59 +751,6 @@
 	template <>
 	inline reg max<signed char>(const reg v1, const reg v2) {
 		return (reg) vmaxq_s8((int8x16_t) v1, (int8x16_t) v2);
-	}
-
-	// ----------------------------------------------------------------------------------------------------------- hmax
-	template <>
-	inline reg hmax<float>(const reg v1) {
-		reg v2, v3;
-		v2 = max<float>(v1, vextq_f32(v1, v1, 2));
-		float32x2_t low  = vrev64_f32(vget_low_f32(v2));
-		float32x2_t high = vrev64_f32(vget_high_f32(v2));
-		v3 = vcombine_f32(low, high);
-		v2 = max<float>(v2, v3);
-		return v2;
-	}
-
-	template <>
-	inline reg hmax<short>(const reg v1) {
-		reg max, v2;
-		max = mipp::max<short>(v1, (reg) vextq_s32((int32x4_t) v1, (int32x4_t) v1, 2));
-
-		int32x2_t low1  = vrev64_s32((int32x2_t) vget_low_s32((int32x4_t) max));
-		int32x2_t high1 = vrev64_s32((int32x2_t) vget_high_s32((int32x4_t) max));
-		v2 = (reg) vcombine_s32((int32x2_t) low1, (int32x2_t) high1);
-		max = mipp::max<short>(max, v2);
-
-		int16x4_t low2  = vrev32_s16((int16x4_t) vget_low_s32((int32x4_t) max));
-		int16x4_t high2 = vrev32_s16((int16x4_t) vget_high_s32((int32x4_t) max));
-		v2 = (reg) vcombine_s32((int32x2_t) low2, (int32x2_t) high2);
-		max = mipp::max<short>(max, v2);
-
-		return max;
-	}
-
-	template <>
-	inline reg hmax<signed char>(const reg v1) {
-		reg max, v2;
-		max = mipp::max<signed char>(v1, (reg) vextq_s32((int32x4_t) v1, (int32x4_t) v1, 2));
-
-		int32x2_t low1  = vrev64_s32((int32x2_t) vget_low_s32((int32x4_t) max));
-		int32x2_t high1 = vrev64_s32((int32x2_t) vget_high_s32((int32x4_t) max));
-		v2 = (reg) vcombine_s32((int32x2_t) low1, (int32x2_t) high1);
-		max = mipp::max<signed char>(max, v2);
-
-		int16x4_t low2  = vrev32_s16((int16x4_t) vget_low_s32((int32x4_t) max));
-		int16x4_t high2 = vrev32_s16((int16x4_t) vget_high_s32((int32x4_t) max));
-		v2 = (reg) vcombine_s32((int32x2_t) low2, (int32x2_t) high2);
-		max = mipp::max<signed char>(max, v2);
-
-		int8x8_t low3  = vrev16_s8((int8x8_t) vget_low_s32((int32x4_t) max));
-		int8x8_t high3 = vrev16_s8((int8x8_t) vget_high_s32((int32x4_t) max));
-		v2 = (reg) vcombine_s32((int32x2_t) low3, (int32x2_t) high3);
-		max = mipp::max<signed char>(max, v2);
-
-		return max;
 	}
 
 	// ----------------------------------------------------------------------------------------------------------- sign

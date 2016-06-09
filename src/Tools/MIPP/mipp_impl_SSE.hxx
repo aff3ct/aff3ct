@@ -1177,81 +1177,6 @@
 	}
 #endif
 
-	// ------------------------------------------------------------------------------------------------------------ sum
-#ifdef __SSE3__
-	template <>
-	inline reg sum<float>(const reg v1) {
-		// make a summation in:[a, b , c, d] => out:[a+b+c+d, a+b+c+d, a+b+c+d, a+b+c+d]
-		//
-		//   -> _mm_hadd_ps(v1, v1) # horizontal addition
-		//                  l0                      l1
-		//      in1[a11      , b11      , | c11      , d11      ] # info: a11 = a21, b11 = b21, c11 = c21, d11 = d21
-		//      in2[a21      , b21      , | c21      , d21      ] =>
-		//      out[a11 + b11, c11 + d11, | a21 + b21, c21 + d21]
-		//
-		//   -> _mm_hadd_ps(out, out) # horizontal addition
-		//                              l0                                              l1
-		//      in1[a11 + b11            , c11 + d11            , | a21 + b21            , c21 + d21            ]
-		//      in2[a12 + b12            , c12 + d12            , | a22 + b22            , c22 + d22            ] =>
-		//      out[a11 + b11 + c11 + d11, a21 + b21 + c21 + d21, | a12 + b12 + c12 + d12, a22 + b22 + c22 + d22]
-		reg sum = _mm_hadd_ps(v1, v1);
-		return _mm_hadd_ps(sum, sum);
-	}
-
-	template <>
-	inline reg sum<double>(const reg v1) {
-		// make a summation in:[a, b] => out:[a+b, a+b]
-		//
-		//   -> _mm_hadd_pd(v1, v1) # horizontal addition
-		//             l0         l1
-		//      in1[a1     , | b1     ] # info: a1 = a2, b1 = b2
-		//      in2[a2     , | b2     ] =>
-		//      out[a1 + b1, | a2 + b2]
-		return (__m128) _mm_hadd_pd((__m128d) v1, (__m128d) v1);
-	}
-#endif
-
-#ifdef __SSSE3__
-	template <>
-	inline reg sum<int>(const reg v1) {
-		reg sum = (reg) _mm_hadd_epi32((__m128i) v1, (__m128i) v1);
-		return (reg) _mm_hadd_epi32((__m128i) sum, (__m128i) sum);
-	}
-#endif
-
-#ifdef __SSSE3__
-	template <>
-	inline reg sum<short>(const reg v1) {
-		reg v2, sum;
-		v2  = (reg) _mm_shuffle_epi32((__m128i)  v1, _MM_SHUFFLE(1, 0, 3, 2));
-		sum = add<short>(v1, v2);
-		v2  = (reg) _mm_shuffle_epi32((__m128i) sum, _MM_SHUFFLE(2, 3, 0, 1));
-		sum = add<short>(sum, v2);
-		v2  = (reg) _mm_shuffle_epi8 ((__m128i) sum, 
-		                              _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2));
-		sum = add<short>(sum, v2);
-		return sum;
-	}
-#endif
-
-#ifdef __SSSE3__
-	template <>
-	inline reg sum<signed char>(const reg v1) {
-		reg v2, sum;
-		v2  = (reg) _mm_shuffle_epi32((__m128i)  v1, _MM_SHUFFLE(1, 0, 3, 2));
-		sum = add<signed char>(v1, v2);
-		v2  = (reg) _mm_shuffle_epi32((__m128i) sum, _MM_SHUFFLE(2, 3, 0, 1));
-		sum = add<signed char>(sum, v2);
-		v2  = (reg) _mm_shuffle_epi8 ((__m128i) sum, 
-		                              _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2));
-		sum = add<signed char>(sum, v2);
-		v2  = (reg) _mm_shuffle_epi8 ((__m128i) sum, 
-		                              _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1));
-		sum = add<signed char>(sum, v2);
-		return sum;
-	}
-#endif
-
 	// ------------------------------------------------------------------------------------------------------------ sub
 	template <>
 	inline reg sub<float>(const reg v1, const reg v2) {
@@ -1370,24 +1295,6 @@
 	template <>
 	inline reg max<signed char>(const reg v1, const reg v2) {
 		return (__m128) _mm_max_epi8((__m128i) v1, (__m128i) v2);
-	}
-#endif
-
-	// ----------------------------------------------------------------------------------------------------------- hmax
-#ifdef __SSE4_1__
-	template <>
-	inline reg hmax<short>(const reg v) {
-
-		auto v1 = (reg)_mm_shuffle_epi32((__m128i)v,  _MM_SHUFFLE(1, 0, 3, 2));
-		v1 = mipp::max<short>(v,v1);
-
-		auto v2 = (reg)_mm_shuffle_epi32((__m128i)v1, _MM_SHUFFLE(2, 3, 0, 1));
-		v2 = mipp::max<short>(v1,v2);
-
-		v1 = (reg)_mm_shuffle_epi8((__m128i)v2, _mm_set_epi8(13,12,15,14,9,8,11,10,5,4,7,6,1,0,3,2));
-		v1 = mipp::max<short>(v1,v2);
-
-		return v1;
 	}
 #endif
 
