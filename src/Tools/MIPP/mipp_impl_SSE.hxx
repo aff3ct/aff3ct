@@ -988,6 +988,32 @@
 	}
 #endif
 
+	// ----------------------------------------------------------------------------------------------------------- notb
+	template <>
+	inline reg notb<float>(const reg v) {
+		return andnb<float>(v, set1<int>(0xFFFFFFFF));
+	}
+
+	template <>
+	inline reg notb<double>(const reg v) {
+		return andnb<double>(v, set1<long long>(0xFFFFFFFFFFFFFFFF));
+	}
+
+	template <>
+	inline reg notb<int>(const reg v) {
+		return andnb<int>(v, set1<int>(0xFFFFFFFF));
+	}
+
+	template <>
+	inline reg notb<short>(const reg v) {
+		return andnb<short>(v, set1<short>(0xFFFF));
+	}
+
+	template <>
+	inline reg notb<signed char>(const reg v) {
+		return andnb<signed char>(v, set1<signed char>(0xFF));
+	}
+
 	// ------------------------------------------------------------------------------------------------------------ orb
 	template <>
 	inline reg orb<float>(const reg v1, const reg v2) {
@@ -1136,6 +1162,34 @@
 	}
 #endif
 
+	// ---------------------------------------------------------------------------------------------------------- cmplt
+	template <>
+	inline reg cmplt<float>(const reg v1, const reg v2) {
+		return _mm_cmplt_ps(v1, v2);
+	}
+
+#ifdef __SSE2__
+	template <>
+	inline reg cmplt<double>(const reg v1, const reg v2) {
+		return (reg) _mm_cmplt_pd((__m128d) v1, (__m128d) v2);
+	}
+
+	template <>
+	inline reg cmplt<int>(const reg v1, const reg v2) {
+		return (reg) _mm_cmplt_epi32((__m128i) v1, (__m128i) v2);
+	}
+
+	template <>
+	inline reg cmplt<short>(const reg v1, const reg v2) {
+		return (reg) _mm_cmplt_epi16((__m128i) v1, (__m128i) v2);
+	}
+
+	template <>
+	inline reg cmplt<signed char>(const reg v1, const reg v2) {
+		return (reg) _mm_cmplt_epi8((__m128i) v1, (__m128i) v2);
+	}
+#endif
+
 	// ---------------------------------------------------------------------------------------------------------- cmple
 	template <>
 	inline reg cmple<float>(const reg v1, const reg v2) {
@@ -1146,6 +1200,47 @@
 	template <>
 	inline reg cmple<double>(const reg v1, const reg v2) {
 		return (reg) _mm_cmple_pd((__m128d) v1, (__m128d) v2);
+	}
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- cmpgt
+	template <>
+	inline reg cmpgt<float>(const reg v1, const reg v2) {
+		return _mm_cmpgt_ps(v1, v2);
+	}
+
+#ifdef __SSE2__
+	template <>
+	inline reg cmpgt<double>(const reg v1, const reg v2) {
+		return (reg) _mm_cmpgt_pd((__m128d) v1, (__m128d) v2);
+	}
+
+	template <>
+	inline reg cmpgt<int>(const reg v1, const reg v2) {
+		return (reg) _mm_cmpgt_epi32((__m128i) v1, (__m128i) v2);
+	}
+
+	template <>
+	inline reg cmpgt<short>(const reg v1, const reg v2) {
+		return (reg) _mm_cmpgt_epi16((__m128i) v1, (__m128i) v2);
+	}
+
+	template <>
+	inline reg cmpgt<signed char>(const reg v1, const reg v2) {
+		return (reg) _mm_cmpgt_epi8((__m128i) v1, (__m128i) v2);
+	}
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- cmpge
+	template <>
+	inline reg cmpge<float>(const reg v1, const reg v2) {
+		return _mm_cmpge_ps(v1, v2);
+	}
+
+#ifdef __SSE2__
+	template <>
+	inline reg cmpge<double>(const reg v1, const reg v2) {
+		return (reg) _mm_cmpge_pd((__m128d) v1, (__m128d) v2);
 	}
 #endif
 

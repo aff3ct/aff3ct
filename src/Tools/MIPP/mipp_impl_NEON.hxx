@@ -482,9 +482,36 @@
 		return (reg) vandq_u8((uint8x16_t) v1, (uint8x16_t) v2);
 	}
 
+	// ----------------------------------------------------------------------------------------------------------- notb
+
+	template <>
+	inline reg notb<float>(const reg v) {
+		return (reg) vmvnq_u32((uint32x4_t) v);
+	}
+
+	template <>
+	inline reg notb<int>(const reg v) {
+		return (reg) vmvnq_u32((uint32x4_t) v);
+	}
+
+	template <>
+	inline reg notb<short>(const reg v) {
+		return (reg) vmvnq_u16((uint16x8_t) v);
+	}
+
+	template <>
+	inline reg notb<signed char>(const reg v) {
+		return (reg) vmvnq_u8((uint8x16_t) v);
+	}
+
 	// ---------------------------------------------------------------------------------------------------------- andnb
 	template <>
 	inline reg andnb<float>(const reg v1, const reg v2) {
+		return (reg) vandq_u32(vmvnq_u32((uint32x4_t) v1), (uint32x4_t) v2);
+	}
+
+	template <>
+	inline reg andnb<int>(const reg v1, const reg v2) {
 		return (reg) vandq_u32(vmvnq_u32((uint32x4_t) v1), (uint32x4_t) v2);
 	}
 
@@ -497,7 +524,6 @@
 	inline reg andnb<signed char>(const reg v1, const reg v2) {
 		return (reg) vandq_u8(vmvnq_u8((uint8x16_t) v1), (uint8x16_t) v2);
 	}
-
 
 	// ------------------------------------------------------------------------------------------------------------ orb
 	template <>
@@ -615,6 +641,27 @@
 		return (reg) vmvnq_u8((uint8x16_t) vceqq_s8((int8x16_t) v1, (int8x16_t) v2));
 	}
 
+	// ---------------------------------------------------------------------------------------------------------- cmplt
+	template <>
+	inline reg cmplt<float>(const reg v1, const reg v2) {
+		return (reg) vcltq_f32(v1, v2);
+	}
+
+	template <>
+	inline reg cmplt<int>(const reg v1, const reg v2) {
+		return (reg) vcltq_s32((int32x4_t) v1, (int32x4_t) v2);
+	}
+
+	template <>
+	inline reg cmplt<short>(const reg v1, const reg v2) {
+		return (reg) vcltq_s16((int16x8_t) v1, (int16x8_t) v2);
+	}
+
+	template <>
+	inline reg cmplt<signed char>(const reg v1, const reg v2) {
+		return (reg) vcltq_s8((int8x16_t) v1, (int8x16_t) v2);
+	}
+
 	// ---------------------------------------------------------------------------------------------------------- cmple
 	template <>
 	inline reg cmple<float>(const reg v1, const reg v2) {
@@ -636,25 +683,46 @@
 		return (reg) vcleq_s8((int8x16_t) v1, (int8x16_t) v2);
 	}
 
-	// ---------------------------------------------------------------------------------------------------------- cmplt
+	// ---------------------------------------------------------------------------------------------------------- cmpgt
 	template <>
-	inline reg cmplt<float>(const reg v1, const reg v2) {
-		return (reg) vcltq_f32(v1, v2);
+	inline reg cmpgt<float>(const reg v1, const reg v2) {
+		return (reg) vcgtq_f32(v1, v2);
 	}
 
 	template <>
-	inline reg cmplt<int>(const reg v1, const reg v2) {
-		return (reg) vcltq_s32((int32x4_t) v1, (int32x4_t) v2);
+	inline reg cmpgt<int>(const reg v1, const reg v2) {
+		return (reg) vcgtq_s32((int32x4_t) v1, (int32x4_t) v2);
 	}
 
 	template <>
-	inline reg cmplt<short>(const reg v1, const reg v2) {
-		return (reg) vcltq_s16((int16x8_t) v1, (int16x8_t) v2);
+	inline reg cmpgt<short>(const reg v1, const reg v2) {
+		return (reg) vcgtq_s16((int16x8_t) v1, (int16x8_t) v2);
 	}
 
 	template <>
-	inline reg cmplt<signed char>(const reg v1, const reg v2) {
-		return (reg) vcltq_s8((int8x16_t) v1, (int8x16_t) v2);
+	inline reg cmpgt<signed char>(const reg v1, const reg v2) {
+		return (reg) vcgtq_s8((int8x16_t) v1, (int8x16_t) v2);
+	}
+	
+	// ---------------------------------------------------------------------------------------------------------- cmpge
+	template <>
+	inline reg cmpge<float>(const reg v1, const reg v2) {
+		return (reg) vcgeq_f32(v1, v2);
+	}
+
+	template <>
+	inline reg cmpge<int>(const reg v1, const reg v2) {
+		return (reg) vcgeq_s32((int32x4_t) v1, (int32x4_t) v2);
+	}
+
+	template <>
+	inline reg cmpge<short>(const reg v1, const reg v2) {
+		return (reg) vcgeq_s16((int16x8_t) v1, (int16x8_t) v2);
+	}
+
+	template <>
+	inline reg cmpge<signed char>(const reg v1, const reg v2) {
+		return (reg) vcgeq_s8((int8x16_t) v1, (int8x16_t) v2);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ add

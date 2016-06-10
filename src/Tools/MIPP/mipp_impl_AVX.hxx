@@ -840,6 +840,32 @@
 	}
 #endif
 
+	// ----------------------------------------------------------------------------------------------------------- notb
+	template <>
+	inline reg notb<float>(const reg v) {
+		return andnb<float>(v, set1<int>(0xFFFFFFFF));
+	}
+
+	template <>
+	inline reg notb<double>(const reg v) {
+		return andnb<double>(v, set1<long long>(0xFFFFFFFFFFFFFFFF));
+	}
+
+	template <>
+	inline reg notb<int>(const reg v) {
+		return andnb<int>(v, set1<int>(0xFFFFFFFF));
+	}
+
+	template <>
+	inline reg notb<short>(const reg v) {
+		return andnb<short>(v, set1<short>(0xFFFF));
+	}
+
+	template <>
+	inline reg notb<signed char>(const reg v) {
+		return andnb<signed char>(v, set1<signed char>(0xFF));
+	}
+
 	// ------------------------------------------------------------------------------------------------------------ orb
 	template <>
 	inline reg orb<float>(const reg v1, const reg v2) {
@@ -1042,6 +1068,17 @@
 		return _mm256_cmp_ps(v1, v2, _CMP_NEQ_OQ);
 	}
 
+	// ---------------------------------------------------------------------------------------------------------- cmplt
+	template <>
+	inline reg cmplt<float>(const reg v1, const reg v2) {
+		return _mm256_cmp_ps(v1, v2, _CMP_LT_OS);
+	}
+
+	template <>
+	inline reg cmplt<double>(const reg v1, const reg v2) {
+		return (reg) _mm256_cmp_pd((__m256d) v1, (__m256d) v2, _CMP_LT_OS);
+	}
+
 	// ---------------------------------------------------------------------------------------------------------- cmple
 	template <>
 	inline reg cmple<float>(const reg v1, const reg v2) {
@@ -1051,6 +1088,45 @@
 	template <>
 	inline reg cmple<double>(const reg v1, const reg v2) {
 		return (reg) _mm256_cmp_pd((__m256d) v1, (__m256d) v2, _CMP_LE_OS);
+	}
+
+	// ---------------------------------------------------------------------------------------------------------- cmpgt
+	template <>
+	inline reg cmpgt<float>(const reg v1, const reg v2) {
+		return _mm256_cmp_ps(v1, v2, _CMP_GT_OS);
+	}
+
+	template <>
+	inline reg cmpgt<double>(const reg v1, const reg v2) {
+		return (reg) _mm256_cmp_pd((__m256d) v1, (__m256d) v2, _CMP_GT_OS);
+	}
+
+#ifdef __AVX2__
+	template <>
+	inline reg cmpgt<int>(const reg v1, const reg v2) {
+		return (reg) _mm256_cmpgt_epi32((__m256i) v1, (__m256i) v2);
+	}
+
+	template <>
+	inline reg cmpgt<short>(const reg v1, const reg v2) {
+		return (reg) _mm256_cmpgt_epi16((__m256i) v1, (__m256i) v2);
+	}
+
+	template <>
+	inline reg cmpgt<signed char>(const reg v1, const reg v2) {
+		return (reg) _mm256_cmpgt_epi8((__m256i) v1, (__m256i) v2);
+	}
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- cmpge
+	template <>
+	inline reg cmpge<float>(const reg v1, const reg v2) {
+		return _mm256_cmp_ps(v1, v2, _CMP_GE_OS);
+	}
+
+	template <>
+	inline reg cmpge<double>(const reg v1, const reg v2) {
+		return (reg) _mm256_cmp_pd((__m256d) v1, (__m256d) v2, _CMP_GE_OS);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ add
