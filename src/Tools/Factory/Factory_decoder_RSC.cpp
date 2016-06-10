@@ -33,7 +33,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 			if (deco_params.implem == "STD")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_in<R>>(code_params.K, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
@@ -45,7 +45,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 			else if (deco_params.implem == "FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_in<R>>(code_params.K, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 #ifdef __AVX__
@@ -83,7 +83,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 			else if (deco_params.implem == "VERY_FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_in<R>>(code_params.K, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 					siso = nullptr;
 				else if (deco_params.simd_strategy.empty())
@@ -121,7 +121,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 			if (deco_params.implem == "STD")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_in<R>>(code_params.K, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
@@ -133,7 +133,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 			else if (deco_params.implem == "FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_in<R>>(code_params.K, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 #ifdef __AVX__
@@ -171,7 +171,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 			else if (deco_params.implem == "VERY_FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_in<R>>(code_params.K, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 					siso = nullptr;
 				else

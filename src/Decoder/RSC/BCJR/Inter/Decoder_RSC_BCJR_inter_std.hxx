@@ -2,38 +2,36 @@
 
 #include "../../../../Tools/MIPP/mipp.h"
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::Decoder_RSC_BCJR_inter_std(const int &K, const bool buffered_encoding)
 : Decoder_RSC_BCJR_inter<B,R>(K, buffered_encoding)
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::~Decoder_RSC_BCJR_inter_std()
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
 
-	// compute gamma values (auto-vectorized loop)
 	for (auto i = 0; i < (this->K +3) * stride; i += stride)
 	{
-		const auto r_sys = mipp::load<R>(&sys[i]);
-		const auto r_par = mipp::load<R>(&par[i]);
+		const auto r_sys = mipp::Reg<R>(&sys[i]);
+		const auto r_par = mipp::Reg<R>(&par[i]);
 
 		// there is a big loss of precision here in fixed point
-		const auto r_g0 = RSC_BCJR_inter_div_or_not<R>::apply(mipp::add<R>(r_sys, r_par));
-		// there is a big loss of precision here in fixed point
-		const auto r_g1 = RSC_BCJR_inter_div_or_not<R>::apply(mipp::sub<R>(r_sys, r_par));
+		const auto r_g0 = RSC_BCJR_inter_div_or_not<R>::apply(r_sys + r_par);
+		const auto r_g1 = RSC_BCJR_inter_div_or_not<R>::apply(r_sys - r_par);
 
-		mipp::store<R>(&this->gamma[0][i], r_g0);
-		mipp::store<R>(&this->gamma[1][i], r_g1);
+		r_g0.store(&this->gamma[0][i]);
+		r_g1.store(&this->gamma[1][i]);
 	}
 }
 
@@ -55,11 +53,12 @@ struct RSC_BCJR_inter_std_normalize <short>
 		// normalization
 		if ((i / stride) % 8 == 0)
 		{
-			const auto r_norm_val = mipp::load<short>(&metrics[0][i]);
+			const auto r_norm_val = mipp::Reg<short>(&metrics[0][i]);
 			for (auto j = 0; j < 8; j++)
 			{
-				const auto r_a = mipp::load<short>(&metrics[j][i]);
-				mipp::store<short>(&metrics[j][i], mipp::sub<short>(r_a, r_norm_val));
+				auto r_a = mipp::Reg<short>(&metrics[j][i]);
+				r_a -= r_norm_val;
+				r_a.store(&metrics[j][i]);
 			}
 		}
 	}
@@ -71,16 +70,17 @@ struct RSC_BCJR_inter_std_normalize <signed char>
 	static void apply(mipp::vector<signed char> metrics[8], const int &i)
 	{
 		// normalization
-		const auto r_norm_val = mipp::load<signed char>(&metrics[0][i]);
+		const auto r_norm_val = mipp::Reg<signed char>(&metrics[0][i]);
 		for (auto j = 0; j < 8; j++)
 		{
-			const auto r_a = mipp::load<signed char>(&metrics[j][i]);
-			mipp::store<signed char>(&metrics[j][i], mipp::sub<signed char>(r_a, r_norm_val));
+			auto r_a = mipp::Reg<signed char>(&metrics[j][i]);
+			r_a -= r_norm_val;
+			r_a.store(&metrics[j][i]);
 		}
 	}
 };
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_alpha()
 {
@@ -94,20 +94,20 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	{
 		for (auto j = 0; j < 8; j++)
 		{
-			const auto r_g1 = mipp::load<R>(&this->gamma[idx_g1[j]][i -stride]);
-			const auto r_a1 = mipp::load<R>(&this->alpha[idx_a1[j]][i -stride]);
-			const auto r_a2 = mipp::load<R>(&this->alpha[idx_a2[j]][i -stride]);
+			const auto r_g1 = mipp::Reg<R>(&this->gamma[idx_g1[j]][i -stride]);
+			const auto r_a1 = mipp::Reg<R>(&this->alpha[idx_a1[j]][i -stride]);
+			const auto r_a2 = mipp::Reg<R>(&this->alpha[idx_a2[j]][i -stride]);
 
-			const auto r_a3 = MAP(mipp::add<R>(r_a1, r_g1), mipp::sub<R>(r_a2, r_g1));
+			const auto r_a3 = MAP(r_a1 + r_g1, r_a2 - r_g1);
 
-			mipp::store<R>(&this->alpha[j][i], r_a3);
+			r_a3.store(&this->alpha[j][i]);
 		}
 
 		RSC_BCJR_inter_std_normalize<R>::apply(this->alpha, i);
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_beta()
 {
@@ -121,20 +121,20 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	{
 		for (auto j = 0; j < 8; j++)
 		{
-			const auto r_g2 = mipp::load<R>(&this->gamma[idx_g2[j]][i        ]);
-			const auto r_b1 = mipp::load<R>(&this->beta [idx_b1[j]][i +stride]);
-			const auto r_b2 = mipp::load<R>(&this->beta [idx_b2[j]][i +stride]);
+			const auto r_g2 = mipp::Reg<R>(&this->gamma[idx_g2[j]][i        ]);
+			const auto r_b1 = mipp::Reg<R>(&this->beta [idx_b1[j]][i +stride]);
+			const auto r_b2 = mipp::Reg<R>(&this->beta [idx_b2[j]][i +stride]);
 
-			const auto r_b3 = MAP(mipp::add<R>(r_b1, r_g2), mipp::sub<R>(r_b2, r_g2));
+			const auto r_b3 = MAP(r_b1 + r_g2, r_b2 - r_g2);
 
-			mipp::store<R>(&this->beta[j][i], r_b3);
+			r_b3.store(&this->beta[j][i]);
 		}
 
 		RSC_BCJR_inter_std_normalize<R>::apply(this->beta, i);
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
@@ -146,47 +146,41 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	constexpr int idx_g2[8] = {0, 0, 1, 1, 1, 1, 0, 0};
 	for (auto i = 0; i < this->K * stride; i += stride)
 	{
-		auto r_a    = mipp::load<R>(&this->alpha[       0 ][i        ]);
-		auto r_b    = mipp::load<R>(&this->beta [idx_b1[0]][i +stride]);
-		auto r_g    = mipp::load<R>(&this->gamma[idx_g2[0]][i        ]);
-		auto r_sum  = mipp::add <R>(r_a,   r_b);
-		auto r_max0 = mipp::add <R>(r_sum, r_g);
+		auto r_a    = mipp::Reg<R>(&this->alpha[       0 ][i        ]);
+		auto r_b    = mipp::Reg<R>(&this->beta [idx_b1[0]][i +stride]);
+		auto r_g    = mipp::Reg<R>(&this->gamma[idx_g2[0]][i        ]);
+		auto r_max0 = r_a + r_b + r_g;
 		for (auto j = 1; j < 8; j++)
 		{
-			r_a = mipp::load<R>(&this->alpha[       j ][i        ]);
-			r_b = mipp::load<R>(&this->beta [idx_b1[j]][i +stride]);
-			r_g = mipp::load<R>(&this->gamma[idx_g2[j]][i        ]);
+			r_a = mipp::Reg<R>(&this->alpha[       j ][i        ]);
+			r_b = mipp::Reg<R>(&this->beta [idx_b1[j]][i +stride]);
+			r_g = mipp::Reg<R>(&this->gamma[idx_g2[j]][i        ]);
 
-			r_sum = mipp::add<R>(r_a,   r_b);
-			r_sum = mipp::add<R>(r_sum, r_g);
-
+			auto r_sum = r_a + r_b + r_g;
 			r_max0 = MAP(r_max0, r_sum);
 		}
 
-		r_a         = mipp::load<R>(&this->alpha[       0 ][i        ]);
-		r_b         = mipp::load<R>(&this->beta [idx_b2[0]][i +stride]);
-		r_g         = mipp::load<R>(&this->gamma[idx_g2[0]][i        ]);
-		r_sum       = mipp::add <R>(r_a,   r_b);
-		auto r_max1 = mipp::sub <R>(r_sum, r_g);
+		r_a         = mipp::Reg<R>(&this->alpha[       0 ][i        ]);
+		r_b         = mipp::Reg<R>(&this->beta [idx_b2[0]][i +stride]);
+		r_g         = mipp::Reg<R>(&this->gamma[idx_g2[0]][i        ]);
+		auto r_max1 = r_a + r_b - r_g;
 		for (auto j = 1; j < 8; j++)
 		{
-			r_a = mipp::load<R>(&this->alpha[       j ][i        ]);
-			r_b = mipp::load<R>(&this->beta [idx_b2[j]][i +stride]);
-			r_g = mipp::load<R>(&this->gamma[idx_g2[j]][i        ]);
+			r_a = mipp::Reg<R>(&this->alpha[       j ][i        ]);
+			r_b = mipp::Reg<R>(&this->beta [idx_b2[j]][i +stride]);
+			r_g = mipp::Reg<R>(&this->gamma[idx_g2[j]][i        ]);
 
-			r_sum = mipp::add<R>(r_a,   r_b);
-			r_sum = mipp::sub<R>(r_sum, r_g);
-
+			auto r_sum = r_a + r_b - r_g;
 			r_max1 = MAP(r_max1, r_sum);
 		}
 
-		const auto r_post = RSC_BCJR_inter_post<R>::compute(mipp::sub<R>(r_max0, r_max1));
-		const auto r_sys  = mipp::load<R>(&sys[i]);
-		mipp::store<R>(&ext[i], mipp::sub<R>(r_post, r_sys));
+		const auto r_post = RSC_BCJR_inter_post<R>::compute(r_max0 - r_max1);
+		const auto r_ext  = r_post - &sys[i];
+		r_ext.store(&ext[i]);
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_map_in<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {

@@ -16,6 +16,12 @@ inline mipp::reg max_log_MAP_i(const mipp::reg lambda_a, const mipp::reg lambda_
 }
 
 template <typename R>
+inline mipp::Reg<R> max_log_MAP_in(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b)
+{
+	return mipp::max(lambda_a, lambda_b);
+}
+
+template <typename R>
 inline R linear_log_MAP(const R& lambda_a, const R& lambda_b)
 {
 	//return std::max(lambda_a, lambda_b) + std::max((R)0, (R)((R)0.25 * ((R)2.77 - std::abs(lambda_a - lambda_b))));

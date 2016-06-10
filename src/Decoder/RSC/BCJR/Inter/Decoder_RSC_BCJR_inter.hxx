@@ -164,7 +164,7 @@ void Decoder_RSC_BCJR_inter<B,R>
 template <typename R>
 struct RSC_BCJR_inter_div_or_not
 {
-	static mipp::reg apply(mipp::reg r)
+	static mipp::Reg<R> apply(mipp::Reg<R> r)
 	{
 		return r;
 	}
@@ -173,9 +173,9 @@ struct RSC_BCJR_inter_div_or_not
 template <>
 struct RSC_BCJR_inter_div_or_not <signed char>
 {
-	static mipp::reg apply(mipp::reg r)
+	static mipp::Reg<signed char> apply(mipp::Reg<signed char> r)
 	{
-		return mipp::div2<signed char>(r);
+		return mipp::div2(r);
 	}
 };
 
@@ -183,17 +183,17 @@ struct RSC_BCJR_inter_div_or_not <signed char>
 template <typename R>
 struct RSC_BCJR_inter_post
 {
-	static mipp::reg compute(const mipp::reg &r_post)
+	static mipp::Reg<R> compute(const mipp::Reg<R> &r_post)
 	{
-		return mipp::div2<R>(r_post);
+		return mipp::div2(r_post);
 	}
 };
 
 template <>
 struct RSC_BCJR_inter_post <signed char>
 {
-	static mipp::reg compute(const mipp::reg &r_post)
+	static mipp::Reg<signed char> compute(const mipp::Reg<signed char> &r_post)
 	{
-		return mipp::sat<signed char>(r_post, -63, 63);
+		return r_post.sat(-63, 63);
 	}
 };

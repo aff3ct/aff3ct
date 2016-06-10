@@ -13,6 +13,9 @@ using proto_map = R (*)(const R& lambda_a, const R& lambda_b);
 template <typename R>
 using proto_map_i = mipp::reg (*)(const mipp::reg lambda_a, const mipp::reg lambda_b);
 
+template <typename R>
+using proto_map_in = mipp::Reg<R> (*)(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b);
+
 // ------------------------------------------------------------------------------------------------------ tools headers
 
 // ------------------------------------------------------------------------------------------- special function headers
@@ -22,6 +25,9 @@ inline R max_log_MAP(const R& lambda_a, const R& lambda_b) __attribute__((always
 
 template <typename R>
 inline mipp::reg max_log_MAP_i(const mipp::reg lambda_a, const mipp::reg lambda_b) __attribute__((always_inline));
+
+template <typename R>
+inline mipp::Reg<R> max_log_MAP_in(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b) __attribute__((always_inline));
 
 template <typename R>
 inline R linear_log_MAP(const R& lambda_a, const R& lambda_b) __attribute__((always_inline));
