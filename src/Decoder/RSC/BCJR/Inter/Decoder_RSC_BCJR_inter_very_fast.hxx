@@ -3,14 +3,14 @@
 
 #include "../../../../Tools/MIPP/mipp.h"
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 ::Decoder_RSC_BCJR_inter_very_fast(const int &K, const bool buffered_encoding)
 : Decoder_RSC_BCJR_inter<B,R>(K, buffered_encoding)
 {
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 ::~Decoder_RSC_BCJR_inter_very_fast()
 {
@@ -18,7 +18,7 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 
 // Slower and I don't know why... It should be faster without the loading of the alpha metrics
 //
-// template <typename B, typename R, proto_map_in<R> MAP>
+// template <typename B, typename R, proto_map_i<R> MAP>
 // void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 // ::compute_gamma_alpha(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 // {
@@ -75,7 +75,7 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 // 	}
 // }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 ::compute_gamma_alpha(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
@@ -123,7 +123,7 @@ void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
@@ -219,7 +219,7 @@ void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {

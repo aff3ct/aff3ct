@@ -10,13 +10,7 @@ inline R max_log_MAP(const R& lambda_a, const R& lambda_b)
 }
 
 template <typename R>
-inline mipp::reg max_log_MAP_i(const mipp::reg lambda_a, const mipp::reg lambda_b)
-{
-	return mipp::max<R>(lambda_a, lambda_b);
-}
-
-template <typename R>
-inline mipp::Reg<R> max_log_MAP_in(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b)
+inline mipp::Reg<R> max_log_MAP_i(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b)
 {
 	return mipp::max(lambda_a, lambda_b);
 }
@@ -29,15 +23,15 @@ inline R linear_log_MAP(const R& lambda_a, const R& lambda_b)
 }
 
 template <typename R>
-inline mipp::reg linear_log_MAP_i(const mipp::reg lambda_a, const mipp::reg lambda_b)
+inline mipp::Reg<R> linear_log_MAP_i(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b)
 {
-	const auto magic_num       = mipp::set1<R>(0.301);
-	const auto max             = mipp::max <R>(lambda_a, lambda_b);
-	const auto llr             = mipp::sat <R>(mipp::sub<R>(lambda_a, lambda_b), -127, 127);
-	const auto llr_abs         = mipp::abs <R>(llr);
-	const auto correction_term = mipp::sub <R>(magic_num, mipp::div2<R>(llr_abs));
+	const auto magic_num       = mipp::Reg<R>(0.301);
+	const auto max             = mipp::max(lambda_a, lambda_b);
+	const auto llr             = lambda_a - lambda_b;
+	const auto llr_abs         = mipp::abs(llr.sat(-127, 127));
+	const auto correction_term = magic_num - llr_abs.div2();
 
-	return mipp::add<R>(max, mipp::max<R>(mipp::set0<R>(), correction_term));
+	return max + mipp::max(mipp::Reg<R>((R)0), correction_term);
 }
 
 template <typename R>

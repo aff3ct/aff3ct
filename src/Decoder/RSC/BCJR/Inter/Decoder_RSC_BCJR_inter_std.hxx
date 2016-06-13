@@ -2,20 +2,20 @@
 
 #include "../../../../Tools/MIPP/mipp.h"
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::Decoder_RSC_BCJR_inter_std(const int &K, const bool buffered_encoding)
 : Decoder_RSC_BCJR_inter<B,R>(K, buffered_encoding)
 {
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::~Decoder_RSC_BCJR_inter_std()
 {
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
@@ -80,7 +80,7 @@ struct RSC_BCJR_inter_std_normalize <signed char>
 	}
 };
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_alpha()
 {
@@ -107,7 +107,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_beta()
 {
@@ -134,7 +134,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
@@ -180,7 +180,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {

@@ -6,7 +6,7 @@
 
 #include "Decoder_RSC_BCJR_inter.hpp"
 
-template <typename B, typename R, proto_map_in<R> MAP>
+template <typename B, typename R, proto_map_i<R> MAP>
 class Decoder_RSC_BCJR_inter_std : public Decoder_RSC_BCJR_inter<B,R>
 {
 

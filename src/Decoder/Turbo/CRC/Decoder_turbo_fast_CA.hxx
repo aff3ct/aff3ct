@@ -47,13 +47,14 @@ void Decoder_turbo_fast_CA<B,R>
 		// l_se = sys + ext
 		for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 		{
-			const auto r_l_sn = mipp::load<R>(&this->l_sn[i]);
-			const auto r_l_en = mipp::load<R>(&this->l_e1n[i]);
-
-			mipp::store<R>(&this->l_sen[i], mipp::add<R>(r_l_sn, r_l_en));
+			const auto r_l_sen = mipp::Reg<R>(&this->l_sn[i]) + mipp::Reg<R>(&this->l_e1n[i]);
+			r_l_sen.store(&this->l_sen[i]);
 		}
 		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i += mipp::nElReg<R>())
-			mipp::store<R>(&this->l_sen[i], mipp::load<R>(&this->l_sn[i]));
+		{
+			const auto r_l_sen = mipp::Reg<R>(mipp::load<R>(&this->l_sn[i]));
+			r_l_sen.store(&this->l_sen[i]);
+		}
 
 		// SISO in the natural domain
 		this->siso_n.decode(this->l_sen, this->l_pn, this->l_e2n);
@@ -65,11 +66,11 @@ void Decoder_turbo_fast_CA<B,R>
 			const auto loop_size1 = (this->K * n_frames) / mipp::nElReg<R>();
 			for (auto i = 0; i < loop_size1; i++)
 			{
-				const auto r_ext  = mipp::load<R>(&this->l_e2n[i * mipp::nElReg<R>()]);
-				const auto r_sys  = mipp::load<R>(&this->l_sen[i * mipp::nElReg<R>()]);
-				const auto r_post = mipp::add <R>(r_ext, r_sys);
-				const auto r_dec  = mipp::rshift<B>(mipp::sign<R>(r_post), sizeof(B) * 8 -1); // s[i] = (l_e2n[i] < 0);
-				mipp::store<B>(&this->s[i * mipp::nElReg<R>()], r_dec); 
+				const auto r_ext  = mipp::Reg<R>(&this->l_e2n[i * mipp::nElReg<R>()]);
+				const auto r_sys  = mipp::Reg<R>(&this->l_sen[i * mipp::nElReg<R>()]);
+				const auto r_post = r_ext + r_sys;
+				const auto r_dec  = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 -1); // s[i] = (l_e2n[i] < 0);
+				r_dec.store(&this->s[i * mipp::nElReg<R>()]);
 			}
 			const auto loop_size2 = this->K * n_frames;
 			for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
@@ -89,13 +90,14 @@ void Decoder_turbo_fast_CA<B,R>
 			// l_se = sys + ext
 			for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 			{
-				const auto r_l_si = mipp::load<R>(&this->l_si[i]);
-				const auto r_l_ei = mipp::load<R>(&this->l_e1i[i]);
-
-				mipp::store<R>(&this->l_sei[i], mipp::add<R>(r_l_si, r_l_ei));
+				const auto r_l_sei = mipp::Reg<R>(&this->l_si[i]) + mipp::Reg<R>(&this->l_e1i[i]);
+				r_l_sei.store(&this->l_sei[i]);
 			}
-			for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i += mipp::nElReg<R>()) 
-				mipp::store<R>(&this->l_sei[i], mipp::load<R>(&this->l_si[i]));
+			for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i += mipp::nElReg<R>())
+			{
+				const auto r_l_sei = mipp::Reg<R>(&this->l_si[i]);
+				r_l_sei.store(&this->l_sei[i]);
+			}
 
 			// SISO in the interleave domain
 			this->siso_i.decode(this->l_sei, this->l_pi, this->l_e2i);
@@ -107,8 +109,8 @@ void Decoder_turbo_fast_CA<B,R>
 				// add the systematic information to the extrinsic information, gives the a posteriori information
 				for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 				{
-					const auto r_post = mipp::add<R>(mipp::load<R>(&this->l_e2i[i]), mipp::load<R>(&this->l_sei[i]));
-					mipp::store<R>(&this->l_e2i[i], r_post);
+					const auto r_post = mipp::Reg<R>(&this->l_e2i[i]) + mipp::Reg<R>(&this->l_sei[i]);
+					r_post.store(&this->l_e2i[i]);
 				}
 
 			// make the deinterleaving
@@ -120,10 +122,10 @@ void Decoder_turbo_fast_CA<B,R>
 				const auto loop_size1 = (this->K * n_frames) / mipp::nElReg<R>();
 				for (auto i = 0; i < loop_size1; i++)
 				{
-					const auto r_post = mipp::load<R>(&this->l_e1n[i * mipp::nElReg<R>()]);
+					const auto r_post = mipp::Reg<R>(&this->l_e1n[i * mipp::nElReg<R>()]);
 					// s[i] = (l_e1n[i] < 0);
-					const auto r_dec  = mipp::rshift<B>(mipp::sign<R>(r_post), sizeof(B) * 8 -1);
-					mipp::store<B>(&this->s[i * mipp::nElReg<R>()], r_dec); 
+					const auto r_dec = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 -1);
+					r_dec.store(&this->s[i * mipp::nElReg<R>()]);
 				}
 				const auto loop_size2 = this->K * n_frames;
 				for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)

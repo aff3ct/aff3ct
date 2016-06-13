@@ -81,7 +81,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 template <typename R>
 struct RSC_BCJR_inter_intra_div_or_not
 {
-	static mipp::reg apply(mipp::reg r)
+	static mipp::Reg<R> apply(mipp::Reg<R> r)
 	{
 		return r;
 	}
@@ -90,9 +90,9 @@ struct RSC_BCJR_inter_intra_div_or_not
 template <>
 struct RSC_BCJR_inter_intra_div_or_not <signed char>
 {
-	static mipp::reg apply(mipp::reg r)
+	static mipp::Reg<signed char> apply(mipp::Reg<signed char> r)
 	{
-		return mipp::div2<signed char>(r);
+		return mipp::div2(r);
 	}
 };
 
@@ -100,18 +100,18 @@ struct RSC_BCJR_inter_intra_div_or_not <signed char>
 template <typename R>
 struct RSC_BCJR_inter_intra_post
 {
-	static mipp::reg compute(const mipp::reg &r_post)
+	static mipp::Reg<R> compute(const mipp::Reg<R> &r_post)
 	{
-		return mipp::div2<R>(r_post);
+		return mipp::div2(r_post);
 	}
 };
 
 template <>
 struct RSC_BCJR_inter_intra_post <signed char>
 {
-	static mipp::reg compute(const mipp::reg &r_post)
+	static mipp::Reg<signed char> compute(const mipp::Reg<signed char> &r_post)
 	{
-		return mipp::sat<signed char>(r_post, -63, 63);
+		return r_post.sat(-63, 63);
 	}
 };
 
@@ -119,19 +119,17 @@ struct RSC_BCJR_inter_intra_post <signed char>
 template <typename R>
 struct RSC_BCJR_inter_intra_normalize_core
 {
-	static mipp::reg apply(const mipp::reg &r_metrics, const mipp::reg &r_cmask_norm)
+	static mipp::Reg<R> apply(const mipp::Reg<R> &r_metrics, const mipp::Reg<R> &r_cmask_norm)
 	{
-		const auto r_norm         = mipp::shuff2<R>(r_metrics, r_cmask_norm);
-		const auto r_metrics_norm = mipp::sub   <R>(r_metrics, r_norm);
-
-		return r_metrics_norm;
+		const auto r_norm = r_metrics.shuff2(r_cmask_norm);
+		return r_metrics - r_norm;
 	}
 };
 
 template <typename R, int I = -1>
 struct RSC_BCJR_inter_intra_normalize
 {
-	static mipp::reg apply(const mipp::reg &r_metrics, const mipp::reg &r_cmask_norm, const int &i = 0)
+	static mipp::Reg<R> apply(const mipp::Reg<R> &r_metrics, const mipp::Reg<R> &r_cmask_norm, const int &i = 0)
 	{
 		return r_metrics;
 	}
@@ -140,7 +138,7 @@ struct RSC_BCJR_inter_intra_normalize
 template <>
 struct RSC_BCJR_inter_intra_normalize <short, -1>
 {
-	static mipp::reg apply(const mipp::reg &r_metrics, const mipp::reg &r_cmask_norm, const int &i = 0)
+	static mipp::Reg<short> apply(const mipp::Reg<short> &r_metrics, const mipp::Reg<short> &r_cmask_norm, const int &i = 0)
 	{  
 		if (i % 4 == 0)
 			return RSC_BCJR_inter_intra_normalize_core<short>::apply(r_metrics, r_cmask_norm);
@@ -152,25 +150,16 @@ struct RSC_BCJR_inter_intra_normalize <short, -1>
 template <>
 struct RSC_BCJR_inter_intra_normalize <short, 3>
 {
-	static mipp::reg apply(const mipp::reg &r_metrics, const mipp::reg &r_cmask_norm, const int &i = 0)
+	static mipp::Reg<short> apply(const mipp::Reg<short> &r_metrics, const mipp::Reg<short> &r_cmask_norm, const int &i = 0)
 	{
 		return RSC_BCJR_inter_intra_normalize_core<short>::apply(r_metrics, r_cmask_norm);
-	}
-};
-
-template <typename R>
-struct RSC_BCJR_inter_intra_normalize_legacy
-{
-	static void apply(R *metrics, const int &i = 0)
-	{
-		// no need to do something
 	}
 };
 
 template <int I>
 struct RSC_BCJR_inter_intra_normalize <signed char, I>
 {
-	static mipp::reg apply(const mipp::reg &r_metrics, const mipp::reg &r_cmask_norm, const int &i = 0)
+	static mipp::Reg<signed char> apply(const mipp::Reg<signed char> &r_metrics, const mipp::Reg<signed char> &r_cmask_norm, const int &i = 0)
 	{
 		return RSC_BCJR_inter_intra_normalize_core<signed char>::apply(r_metrics, r_cmask_norm);
 		return r_metrics;

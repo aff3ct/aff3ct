@@ -91,13 +91,11 @@ void Decoder_RSC_BCJR<B,R>
 	// take the hard decision
 	for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 	{
-		const auto r_ext  = mipp::load<R>(&ext[i]);
-		const auto r_sys  = mipp::load<R>(&sys[i]);
-		const auto r_post = mipp::add <R>(r_ext, r_sys);
+		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 
 		// s[i] = post[i] < 0;
-		const auto r_s = mipp::rshift<B>(mipp::sign<R>(r_post), sizeof(B) * 8 -1);
-		mipp::store<B>(&s[i], r_s);
+		const auto r_s = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 -1);
+		r_s.store(&s[i]);
 	}
 }
 
