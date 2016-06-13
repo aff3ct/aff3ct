@@ -1798,50 +1798,96 @@
 	}
 #endif
 
-	// ----------------------------------------------------------------------------------------------- Reduction::apply
+	// ------------------------------------------------------------------------------------------------------ reduction
 	template <red_op<double> OP>
-	struct _Reduction<double,OP>
+	struct _reduction<double,OP>
 	{
 		static reg apply(const reg v1) {
-			reg val = v1; 
+			auto val = v1; 
 			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			return val;
+		}
+	};
+
+	template <Red_op<double> OP>
+	struct _Reduction<double,OP>
+	{
+		static Reg<double> apply(const Reg<double> v1) {
+			auto val = v1; 
+			val = OP(val, Reg<double>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
 			return val;
 		}
 	};
 
 	template <red_op<float> OP>
-	struct _Reduction<float,OP>
+	struct _reduction<float,OP>
 	{
 		static reg apply(const reg v1) {
-			reg val = v1; 
+			auto val = v1; 
 			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
 			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
 			return val;
 		}
 	};
 
+	template <Red_op<float> OP>
+	struct _Reduction<float,OP>
+	{
+		static Reg<float> apply(const Reg<float> v1) {
+			auto val = v1; 
+			val = OP(val, Reg<float>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<float>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(2, 3, 0, 1))));
+			return val;
+		}
+	};
+
 	template <red_op<int> OP>
-	struct _Reduction<int,OP>
+	struct _reduction<int,OP>
 	{
 		static reg apply(const reg v1) {
-			reg val = v1; 
+			auto val = v1; 
 			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
 			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
+			return val;
+		}
+	};
+
+	template <Red_op<int> OP>
+	struct _Reduction<int,OP>
+	{
+		static Reg<int> apply(const Reg<int> v1) {
+			auto val = v1; 
+			val = OP(val, Reg<int>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<int>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(2, 3, 0, 1))));
 			return val;
 		}
 	};
 
 #ifdef __SSSE3__
 	template <red_op<short> OP>
-	struct _Reduction<short,OP>
+	struct _reduction<short,OP>
 	{
 		static reg apply(const reg v1) {
 			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
 
-			reg val = v1; 
+			auto val = v1; 
 			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(1, 0, 3, 2)));
 			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(2, 3, 0, 1)));
 			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_16));
+			return val;
+		}
+	};
+
+	template <Red_op<short> OP>
+	struct _Reduction<short,OP>
+	{
+		static Reg<short> apply(const Reg<short> v1) {
+			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+
+			auto val = v1; 
+			val = OP(val, Reg<short>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<short>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(2, 3, 0, 1))));
+			val = OP(val, Reg<short>((reg)_mm_shuffle_epi8 ((__m128i)val.r, mask_16)));
 			return val;
 		}
 	};
@@ -1849,17 +1895,33 @@
 
 #ifdef __SSSE3__
 	template <red_op<signed char> OP>
-	struct _Reduction<signed char,OP>
+	struct _reduction<signed char,OP>
 	{
 		static reg apply(const reg v1) {
 			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
 			__m128i mask_8  = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
 
-			reg val = v1; 
+			auto val = v1; 
 			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(1, 0, 3, 2)));
 			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(2, 3, 0, 1)));
 			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_16));
 			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_8));
+			return val;
+		}
+	};
+
+	template <Red_op<signed char> OP>
+	struct _Reduction<signed char,OP>
+	{
+		static Reg<signed char> apply(const Reg<signed char> v1) {
+			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+			__m128i mask_8  = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
+
+			auto val = v1; 
+			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(2, 3, 0, 1))));
+			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi8 ((__m128i)val.r, mask_16)));
+			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi8 ((__m128i)val.r, mask_8)));
 			return val;
 		}
 	};

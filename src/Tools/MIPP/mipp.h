@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef MY_INTRINSICS_PLUS_PLUS_H_
 #define MY_INTRINSICS_PLUS_PLUS_H_
 
+#ifndef NO_INTRINSICS
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 #include <arm_neon.h>
 #elif defined(__SSE__) || defined(__AVX__) || defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
@@ -63,6 +64,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <smmintrin.h>
 #endif
 #endif
+#endif
 
 #include <unordered_map>
 #include <typeindex>
@@ -73,13 +75,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cassert>
 #include <string>
 #include <vector>
+#include <cmath>
 #include <map>
 
 namespace mipp // My Intrinsics Plus Plus => mipp
 {
 // ------------------------------------------------------------------------------------------ myIntrinsics vector sizes
 // --------------------------------------------------------------------------------------------------------------------
-
+#ifndef NO_INTRINSICS
 // ------------------------------------------------------------------------------------------------------- ARM NEON-128
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 	#define REQUIRED_ALIGNMENT 16
@@ -136,16 +139,27 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	const std::string IntructionsType = "x86 SSE1-128";
 #endif
 
-// ---------------------------------------------------------------------------------------------------------- UNDEFINED
+// ------------------------------------------------------------------------------------------------------ NO_INTRINSICS
 #else
-	#define UNKNOWN_INSTRUCTION_TYPE
+	#define NO_INTRINSICS
 	#define REQUIRED_ALIGNMENT 1
 	constexpr int RequiredAlignment = REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 0;
 
 	using reg = int;
 
-	const std::string IntructionsType = "UNDEFINED";
+	const std::string IntructionsType = "NO INTRINSICS";
+#endif
+
+// ------------------------------------------------------------------------------------------------------ NO_INTRINSICS
+#else
+	#define REQUIRED_ALIGNMENT 1
+	constexpr int RequiredAlignment = REQUIRED_ALIGNMENT;
+	constexpr int RegisterSizeBit = 0;
+
+	using reg = int;
+
+	const std::string IntructionsType = "NO INTRINSICS";
 
 #endif
 
@@ -154,7 +168,7 @@ typedef struct regx2 { reg val[2]; } regx2;
 template <typename T>
 constexpr int nElmtsPerRegister()
 {
-#ifdef UNKNOWN_INSTRUCTION_TYPE
+#ifdef NO_INTRINSICS
 	return 1;
 #else
 	return RegisterSizeBit / (8 * sizeof(T));
@@ -395,48 +409,58 @@ void dump(const mipp::reg r, std::ostream &stream = std::cout, const int elmtWid
 
 // ---------------------------------------------------------------------------------------------------------- reduction
 
+template <typename T>
+class Reg;
 
 template <typename T>
 using red_op = reg (*)(const reg, const reg);
 
 template <typename T>
+using Red_op = Reg<T> (*)(const Reg<T>, const Reg<T>);
+
+template <typename T>
 using ld_op = reg (*)(const T*);
 
 template <typename T, red_op<T> OP>
-struct _Reduction
+struct _reduction
 {
 	static reg apply(const reg) {
-		errorMessage<T>("_Reduction::apply");
+		errorMessage<T>("_reduction::apply");
 		exit(-1); 
 	}
 };
 
-template <typename T>
-class Reg;
+template <typename T, Red_op<T> OP>
+struct _Reduction
+{
+	static Reg<T> apply(const Reg<T> r) {
+#ifndef NO_INTRINSICS
+		errorMessage<T>("_Reduction::apply");
+		exit(-1);
+#else
+		return r;
+#endif
+	}
+};
 
 template <typename T, red_op<T> OP>
-struct Reduction
+struct reduction
 {
-	static reg apply(const Reg<T> r) 
-	{
-		return _Reduction<T,OP>::apply(r.r);
-	}
-
 	static reg apply(const reg r) 
 	{
-		return _Reduction<T,OP>::apply(r);
+		return _reduction<T,OP>::apply(r);
 	}
 
 	template <ld_op<T> LD = mipp::load<T>>
-	static T apply(const mipp::vector<T> &data) 
+	static T apply(const mipp::vector<T> &data)
 	{
-		return Reduction<T,OP>::template apply<LD>(data.data(), data.size());
+		return reduction<T,OP>::template apply<LD>(data.data(), data.size());
 	}
 
 	template <ld_op<T> LD = mipp::loadu<T>>
-	static T apply(const std::vector<T> &data) 
+	static T apply(const std::vector<T> &data)
 	{
-		return Reduction<T,OP>::template apply<LD>(data.data(), data.size());
+		return reduction<T,OP>::template apply<LD>(data.data(), data.size());
 	}
 
 	template <ld_op<T> LD = mipp::loadu<T>>
@@ -448,7 +472,7 @@ struct Reduction
 		auto rRed = LD(&data[0]);
 		for (auto i = mipp::nElReg<T>(); i < dataSize; i += mipp::nElReg<T>())
 			rRed = OP(rRed, LD(&data[i]));
-		rRed = Reduction<T,OP>::apply(rRed);
+		rRed = reduction<T,OP>::apply(rRed);
 
 		T tRed[mipp::nElReg<T>()];
 		mipp::store<T>(tRed, rRed);
@@ -457,17 +481,75 @@ struct Reduction
 	}
 };
 
+template <typename T, Red_op<T> OP>
+struct Reduction
+{
+	static Reg<T> apply(const Reg<T> r) 
+	{
+		return _Reduction<T,OP>::apply(r);
+	}
+
+	template <ld_op<T> LD = mipp::load<T>>
+	static T apply(const mipp::vector<T> &data) 
+	{
+		return Reduction<T,OP>::template apply<LD>(data.data(), data.size());
+	}
+
+	template <ld_op<T> LD = mipp::loadu<T>>
+	static T apply(const std::vector<T> &data)
+	{
+		return Reduction<T,OP>::template apply<LD>(data.data(), data.size());
+	}
+
+	template <ld_op<T> LD = mipp::loadu<T>>
+	static T apply(const T *data, const int dataSize) 
+	{
+		assert(dataSize > 0);
+		assert(dataSize % mipp::nElReg<T>() == 0);
+
+#ifndef NO_INTRINSICS
+		auto rRed = Reg<T>(LD(&data[0]));
+#else
+		auto rRed = Reg<T>(data[0]);
+#endif
+		for (auto i = mipp::nElReg<T>(); i < dataSize; i += mipp::nElReg<T>())
+#ifndef NO_INTRINSICS
+			rRed = OP(rRed, Reg<T>(LD(&data[i])));
+#else
+			rRed = OP(rRed, Reg<T>(data[i]));
+#endif
+		rRed = Reduction<T,OP>::apply(rRed);
+
+		T tRed[mipp::nElReg<T>()];
+		rRed.store(tRed);
+
+		return tRed[0];
+	}
+};
+
 // ------------------------------------------------------------------------- special reduction functions implementation
 
-template <typename T> inline reg sum (const reg v) { return Reduction<T,mipp::add<T>>::apply(v); }
-template <typename T> inline reg hadd(const reg v) { return Reduction<T,mipp::add<T>>::apply(v); }
-template <typename T> inline reg hmin(const reg v) { return Reduction<T,mipp::min<T>>::apply(v); }
-template <typename T> inline reg hmax(const reg v) { return Reduction<T,mipp::max<T>>::apply(v); }
+template <typename T> inline reg sum (const reg v) { return reduction<T,mipp::add<T>>::apply(v); }
+template <typename T> inline reg hadd(const reg v) { return reduction<T,mipp::add<T>>::apply(v); }
+template <typename T> inline reg hsub(const reg v) { return reduction<T,mipp::sub<T>>::apply(v); }
+template <typename T> inline reg hmul(const reg v) { return reduction<T,mipp::mul<T>>::apply(v); }
+template <typename T> inline reg hdiv(const reg v) { return reduction<T,mipp::div<T>>::apply(v); }
+template <typename T> inline reg hmin(const reg v) { return reduction<T,mipp::min<T>>::apply(v); }
+template <typename T> inline reg hmax(const reg v) { return reduction<T,mipp::max<T>>::apply(v); }
 
 // ------------------------------------------------------------------------------------------------- wrapper to objects
 
 template <typename T>
-struct Regx2;
+class Regx2;
+
+#ifndef NO_INTRINSICS
+
+template <typename T> inline Reg<T> add(const Reg<T> v1, const Reg<T> v2);
+template <typename T> inline Reg<T> sub(const Reg<T> v1, const Reg<T> v2);
+template <typename T> inline Reg<T> mul(const Reg<T> v1, const Reg<T> v2);
+template <typename T> inline Reg<T> div(const Reg<T> v1, const Reg<T> v2);
+template <typename T> inline Reg<T> min(const Reg<T> v1, const Reg<T> v2);
+template <typename T> inline Reg<T> max(const Reg<T> v1, const Reg<T> v2);
 
 template <typename T>
 class Reg
@@ -475,15 +557,48 @@ class Reg
 public:
 	reg r;
 
-	Reg(              )                          {}
-	Reg(const reg r   ) : r(r)                   {}
-	Reg(const T   val ) : r(mipp::set1<T>(val))  {}
-	Reg(const T  *data) : r(mipp::load<T>(data)) {}
+	Reg(                              )                           {}
+	Reg(const reg r                   ) : r(r)                    {}
+	Reg(const T   val                 ) : r(mipp::set1 <T>(val))  {}
+	Reg(const T  *data                ) : r(mipp::load <T>(data)) {}
+	Reg(const T  *data, bool unaligned) : r(mipp::loadu<T>(data)) {}
 
 	~Reg() {}
 
-	static inline Reg<T> cmask (const int mask[nElReg<T>()])   { return mipp::cmask  <T>(mask); }
-	static inline Reg<T> cmask2(const int mask[nElReg<T>()/2]) { return mipp::cmask2 <T>(mask); }
+	static inline Reg<T> cmask (const int mask[nElReg<T>()  ]) { return mipp::cmask <T>(mask); }
+	static inline Reg<T> cmask2(const int mask[nElReg<T>()/2]) { return mipp::cmask2<T>(mask); }
+
+	static inline void transpose(Reg<T> regs[nElReg<T>()])
+	{
+		reg rs[nElReg<T>()];
+		for (auto i = 0; i < nElReg<T>(); i++) rs[i] = regs[i].r;
+		mipp::transpose<T>(rs);
+		for (auto i = 0; i < nElReg<T>(); i++) regs[i].r = rs[i];
+	}
+
+	static inline void transpose8x8(Reg<T> regs[8])
+	{
+		reg rs[8];
+		for (auto i = 0; i < 8; i++) rs[i] = regs[i].r;
+		mipp::transpose8x8<T>(rs);
+		for (auto i = 0; i < 8; i++) regs[i].r = rs[i];
+	}
+
+	static inline void transpose2(Reg<T> regs[nElReg<T>()/2])
+	{
+		reg rs[nElReg<T>()/2];
+		for (auto i = 0; i < nElReg<T>()/2; i++) rs[i] = regs[i].r;
+		mipp::transpose2<T>(rs);
+		for (auto i = 0; i < nElReg<T>()/2; i++) regs[i].r = rs[i];
+	}
+
+	static inline void transpose28x8(Reg<T> regs[8])
+	{
+		reg rs[8];
+		for (auto i = 0; i < 8; i++) rs[i] = regs[i].r;
+		mipp::transpose28x8<T>(rs);
+		for (auto i = 0; i < 8; i++) regs[i].r = rs[i];
+	}
 
 	inline void     set0         (               )                        { r = mipp::set0<T>();                          }
 	inline void     set1         (const T val    )                        { r = mipp::set1<T>(val);                       }
@@ -543,7 +658,7 @@ public:
 	template <typename T2> inline Reg<T2> cvt ()               const { return mipp::cvt<T,T2>(r);       }
 	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const { return mipp::pack<T,T2>(r, v.r); }
 
-	inline Reg<T>& operator~  (               )       { r = mipp::notb<T>(r);                    return *this; }
+	inline Reg<T>  operator~  (               )       { auto r_new = mipp::notb<T>(r);           return r_new; }
 
 	inline Reg<T>& operator+= (const Reg<T> &v)       { r   = mipp::add<T>(r, v.r);              return *this; }
 	inline Reg<T>  operator+  (      Reg<T>  v) const { v.r = mipp::add<T>(r, v.r);              return v;     }
@@ -597,11 +712,14 @@ public:
 	inline Reg<T>  operator>= (      Reg<T>  v) const { v = mipp::cmpge<T>(r, v.r);              return v;     }
 	inline Reg<T>  operator>= (      T*   data) const { auto v = Reg<T>(data); v = (*this) >= v; return v;     }
 
-	// ----------------------------------------------------------------------------------------------------- reductions
-	inline Reg<T> sum () const { return mipp::sum <T>(r); }
-	inline Reg<T> hadd() const { return mipp::hadd<T>(r); }
-	inline Reg<T> hmin() const { return mipp::hmin<T>(r); }
-	inline Reg<T> hmax() const { return mipp::hmax<T>(r); }
+	// ------------------------------------------------------------------------------------------------------ reduction
+	inline Reg<T> sum () const { return Reduction<T,mipp::add>::apply(*this); }
+	inline Reg<T> hadd() const { return Reduction<T,mipp::add>::apply(*this); }
+	inline Reg<T> hsub() const { return Reduction<T,mipp::sub>::apply(*this); }
+	inline Reg<T> hmul() const { return Reduction<T,mipp::mul>::apply(*this); }
+	inline Reg<T> hdiv() const { return Reduction<T,mipp::div>::apply(*this); }
+	inline Reg<T> hmin() const { return Reduction<T,mipp::min>::apply(*this); }
+	inline Reg<T> hmax() const { return Reduction<T,mipp::max>::apply(*this); }
 };
 
 template <typename T>
@@ -611,10 +729,212 @@ std::ostream& operator<<(std::ostream& os, const Reg<T>& r)
 }
 
 template <typename T>
-struct Regx2 
-{ 
-	Reg<T> val[2]; 
+class Regx2 
+{
+public:
+	Reg<T> val[2];
+
+	Regx2(regx2 r2) : val({Reg<T>(r2.val[0]), Reg<T>(r2.val[1])}) {}
+
+	~Regx2() {}
 };
+
+#else /* ifdef NO_INTRINSICS */
+
+template <typename T>
+class Reg
+{
+public:
+	T r;
+
+	Reg(                             )              {}
+	Reg(const T  val                 ) : r(val)     {}
+	Reg(const T *data                ) : r(data[0]) {}
+	Reg(const T *data, bool unaligned) : r(data[0]) {}
+
+	~Reg() {}
+
+	static inline Reg<T> cmask (const int mask[nElReg<T>()  ]) { return Reg<T>((T)0); }
+	static inline Reg<T> cmask2(const int mask[nElReg<T>()/2]) { return Reg<T>((T)0); }
+
+	static inline void transpose(Reg<T> regs[nElReg<T>()])
+	{
+		// nothing to do (regs is an array of 1x1...)
+	}
+
+	static inline void transpose8x8(Reg<T> regs[8])
+	{
+		std::cerr << "\"transpose8x8\" static method is a non-sense in sequential mode, exiting." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	static inline void transpose2(Reg<T> regs[nElReg<T>()/2])
+	{
+		std::cerr << "\"transpose2\" static method is a non-sense in sequential mode, exiting." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	static inline void transpose28x8(Reg<T> regs[8])
+	{
+		std::cerr << "\"transpose28x8\" static method is a non-sense in sequential mode, exiting." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	inline void     set0         (               )                        { r = 0;                                    }
+	inline void     set1         (const T val    )                        { r = val;                                  }
+	inline void     load         (const T* data  )                        { r = data[0];                              }
+	inline void     loadu        (const T* data  )                        { r = data[0];                              }
+	inline void     store        (T* data        )                  const { data[0] = r;                              }
+	inline void     storeu       (T* data        )                  const { data[0] = r;                              }
+
+	inline Reg<T>   shuff        (const Reg<T> v_shu)               const { return *this;                             }
+	inline Reg<T>   shuff2       (const Reg<T> v_shu)               const { return *this;                             }
+	inline Reg<T>   interleavelo (const Reg<T> v)                   const { return *this;                             }
+	inline Reg<T>   interleavehi (const Reg<T> v)                   const { return *this;                             }
+	inline Reg<T>   interleavelo2(const Reg<T> v)                   const { return *this;                             }
+	inline Reg<T>   interleavehi2(const Reg<T> v)                   const { return *this;                             }
+	inline Regx2<T> interleave   (const Reg<T> v)                   const { return Regx2<T>(*this, v);                }
+	inline Regx2<T> interleave2  (const Reg<T> v)                   const { return Regx2<T>(*this, v);                }
+	inline Reg<T>   interleave   ()                                 const { return *this;                             }
+	inline Regx2<T> interleavex2 (const Reg<T> v)                   const { return Regx2<T>(*this, v);                }
+	inline Reg<T>   interleavex4 ()                                 const { return *this;                             }
+	inline Reg<T>   interleavex16()                                 const { return *this;                             }
+	inline Reg<T>   andb         (const Reg<T> v)                   const { return   r  &  v.r;                       }
+	inline Reg<T>   andnb        (const Reg<T> v)                   const { return andb(~r);                          }
+	inline Reg<T>   notb         ()                                 const { return  ~r;                               }
+	inline Reg<T>   orb          (const Reg<T> v)                   const { return   r  |  v.r;                       }
+	inline Reg<T>   xorb         (const Reg<T> v)                   const { return   r  ^  v.r;                       }
+	inline Reg<T>   lshift       (const int n)                      const { return   r  << n;                         }
+	inline Reg<T>   rshift       (const int n)                      const { return   r  >> n ;                        }
+	inline Reg<T>   cmpeq        (const Reg<T> v)                   const { return   r  == v.r;                       }
+	inline Reg<T>   cmpneq       (const Reg<T> v)                   const { return   r  != v.r;                       }
+	inline Reg<T>   cmplt        (const Reg<T> v)                   const { return   r  <  v.r;                       }
+	inline Reg<T>   cmple        (const Reg<T> v)                   const { return   r  <= v.r;                       }
+	inline Reg<T>   cmpgt        (const Reg<T> v)                   const { return   r  >  v.r;                       }
+	inline Reg<T>   cmpge        (const Reg<T> v)                   const { return   r  >= v.r;                       }
+	inline Reg<T>   add          (const Reg<T> v)                   const { return   r  +  v.r;                       }
+	inline Reg<T>   sub          (const Reg<T> v)                   const { return   r  -  v.r;                       }
+	inline Reg<T>   mul          (const Reg<T> v)                   const { return   r  *  v.r;                       }
+	inline Reg<T>   div          (const Reg<T> v)                   const { return   r  /  v.r;                       }
+	inline Reg<T>   min          (const Reg<T> v)                   const { return std::min<T>(r, v.r);               }
+	inline Reg<T>   max          (const Reg<T> v)                   const { return std::max<T>(r, v.r);               }
+	// (1 = positive, -1 = negative, 0 = 0)
+	inline Reg<T>   sign         ()                                 const { return (T(0) < r) - (r < T(0));           }
+	inline Reg<T>   sign         (const Reg<T> v)                   const { return sign(Reg<T>(r ^ v.r));             }
+	inline Reg<T>   neg          (const Reg<T> v)                   const { return v.r >= 0 ? Reg<T>(r) : Reg<T>(-r); }
+	inline Reg<T>   abs          ()                                 const { return std::abs<T>(r);                    }
+	inline Reg<T>   sqrt         ()                                 const { return std::sqrt<T>(r);                   }
+	inline Reg<T>   rsqrt        ()                                 const { return 1 / std::sqrt<T>(r);               }
+	inline Reg<T>   exp          ()                                 const { return std::exp<T>(r);                    }
+	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                 }
+	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                }
+	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                 }
+	inline Reg<T>   rot          ()                                 const { return r;                                 }
+	inline Reg<T>   rotr         ()                                 const { return r;                                 }
+	inline Reg<T>   div2         ()                                 const { return r * (T)0.50;                       }
+	inline Reg<T>   div4         ()                                 const { return r * (T)0.25;                       }
+	inline Reg<T>   sat          (T min, T max)                     const { return std::min(std::max(r, min), max);   }
+	inline Reg<T>   round        ()                                 const { return std::round(r);                     }
+
+	template <typename T2> inline Reg<T2> cvt ()               const { return (T2)r; }
+	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const
+	{
+		std::cerr << "\"pack\" method is a non-sense in sequential mode, exiting." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	inline Reg<T>  operator~  (               ) const {                                          return ~r;   }
+
+	inline Reg<T>& operator+= (const Reg<T> &v)       { r   = r + v.r;                           return *this; }
+	inline Reg<T>  operator+  (      Reg<T>  v) const { v.r = r + v.r;                           return v;     }
+	inline Reg<T>  operator+  (      T*   data) const { auto v = Reg<T>(data); v = (*this) + v;  return v;     }
+
+	inline Reg<T>& operator-= (const Reg<T> &v)       { r   = r - v.r;                           return *this; }
+	inline Reg<T>  operator-  (      Reg<T>  v) const { v.r = r - v.r;                           return v;     }
+	inline Reg<T>  operator-  (      T*   data) const { auto v = Reg<T>(data); v = (*this) - v;  return v;     }
+
+	inline Reg<T>& operator*= (const Reg<T> &v)       { r   = r * v.r;                           return *this; }
+	inline Reg<T>  operator*  (      Reg<T>  v) const { v.r = r * v.r;                           return v;     }
+	inline Reg<T>  operator*  (      T*   data) const { auto v = Reg<T>(data); v = (*this) * v;  return v;     }
+
+	inline Reg<T>& operator/= (const Reg<T> &v)       { r   = r / v.r;                           return *this; }
+	inline Reg<T>  operator/  (      Reg<T>  v) const { v.r = r / v.r;                           return v;     }
+	inline Reg<T>  operator/  (      T*   data) const { auto v = Reg<T>(data); v = (*this) / v;  return v;     }
+
+	inline Reg<T>& operator^= (const Reg<T> &v)       { r   = r ^ v.r;                           return *this; }
+	inline Reg<T>  operator^  (      Reg<T>  v) const { v.r = r ^ v.r;                           return v;     }
+	inline Reg<T>  operator^  (      T*   data) const { auto v = Reg<T>(data); v = (*this) ^ v;  return v;     }
+
+	inline Reg<T>& operator|= (const Reg<T> &v)       { r   = r | v.r;                           return *this; }
+	inline Reg<T>  operator|  (      Reg<T>  v) const { v.r = r | v.r;                           return v;     }
+	inline Reg<T>  operator|  (      T*   data) const { auto v = Reg<T>(data); v = (*this) | v;  return v;     }
+
+	inline Reg<T>& operator&= (const Reg<T> &v)       { r   = r & v.r;                           return *this; }
+	inline Reg<T>  operator&  (      Reg<T>  v) const { v.r = r & v.r;                           return v;     }
+	inline Reg<T>  operator&  (      T*   data) const { auto v = Reg<T>(data); v = (*this) & v;  return v;     }
+
+	inline Reg<T>& operator<<=(const int n    )       { r = r << n;                              return *this; }
+	inline Reg<T>  operator<< (const int n    ) const { Reg v = *this; v <<= n;                  return v;     }
+
+	inline Reg<T>& operator>>=(const int n    )       { r = r >> n;                              return *this; }
+	inline Reg<T>  operator>> (const int n    ) const { Reg v = *this; v >>= n;                  return v;     }
+
+	inline Reg<T>  operator== (      Reg<T>  v) const { v = r == v.r;                            return v;     }
+	inline Reg<T>  operator== (      T*   data) const { auto v = Reg<T>(data); v = (*this) == v; return v;     }
+
+	inline Reg<T>  operator!= (      Reg<T>  v) const { v = r != v.r;                            return v;     }
+	inline Reg<T>  operator!= (      T*   data) const { auto v = Reg<T>(data); v = (*this) != v; return v;     }
+
+	inline Reg<T>  operator<  (      Reg<T>  v) const { v = r < v.r;                             return v;     }
+	inline Reg<T>  operator<  (      T*   data) const { auto v = Reg<T>(data); v = (*this) <  v; return v;     }
+
+	inline Reg<T>  operator<= (      Reg<T>  v) const { v = r <= v.r;                            return v;     }
+	inline Reg<T>  operator<= (      T*   data) const { auto v = Reg<T>(data); v = (*this) <= v; return v;     }
+
+	inline Reg<T>  operator>  (      Reg<T>  v) const { v = r > v.r;                             return v;     }
+	inline Reg<T>  operator>  (      T*   data) const { auto v = Reg<T>(data); v = (*this) >  v; return v;     }
+
+	inline Reg<T>  operator>= (      Reg<T>  v) const { v = r >= v.r;                            return v;     }
+	inline Reg<T>  operator>= (      T*   data) const { auto v = Reg<T>(data); v = (*this) >= v; return v;     }
+
+	// ------------------------------------------------------------------------------------------------------ reduction
+	inline Reg<T> sum () const { return *this; }
+	inline Reg<T> hadd() const { return *this; }
+	inline Reg<T> hsub() const { return *this; }
+	inline Reg<T> hmul() const { return *this; }
+	inline Reg<T> hdiv() const { return *this; }
+	inline Reg<T> hmin() const { return *this; }
+	inline Reg<T> hmax() const { return *this; }
+};
+
+template <> Reg<int>         Reg<int        >::div2() const { return r >> 1; }
+template <> Reg<short>       Reg<short      >::div2() const { return r >> 1; }
+template <> Reg<signed char> Reg<signed char>::div2() const { return r >> 1; }
+
+template <> Reg<int>         Reg<int        >::div4() const { return r >> 2; }
+template <> Reg<short>       Reg<short      >::div4() const { return r >> 2; }
+template <> Reg<signed char> Reg<signed char>::div4() const { return r >> 2; }
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Reg<T>& r)
+{
+	os << +r.r;
+	return os;
+}
+
+template <typename T>
+class Regx2 
+{
+public:
+	Reg<T> val[2];
+
+	Regx2()                                     {}
+	Regx2(Reg<T> r1, Reg<T> r2) : val({r1, r2}) {}
+
+	~Regx2() {}
+};
+
+#endif /* NO_INTRINSICS */
 
 template <typename T> inline Reg<T>   shuff        (const Reg<T> v1, const Reg<T> v2)                  { return v1.shuff(v2);         }
 template <typename T> inline Reg<T>   shuff2       (const Reg<T> v1, const Reg<T> v2)                  { return v1.shuff2(v2);        }
@@ -678,6 +998,7 @@ inline Reg<T2> pack(const Reg<T1> v1, const Reg<T1> v2) {
 	return v1.pack(v2);
 }
 
+#ifndef NO_INTRINSICS
 // ------------------------------------------------------------------------------------------------------- ARM NEON-128
 // --------------------------------------------------------------------------------------------------------------------
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
@@ -694,6 +1015,7 @@ inline Reg<T2> pack(const Reg<T1> v1, const Reg<T1> v2) {
 // --------------------------------------------------------------------------------------------------------------------
 #elif defined(__SSE__)
 #include "mipp_impl_SSE.hxx"
+#endif
 #endif
 
 }
