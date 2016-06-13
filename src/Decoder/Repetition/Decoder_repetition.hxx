@@ -26,22 +26,6 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::decode()
-{
-	R soft_accu;
-	for (auto i = 0; i < K; i++)
-	{
-		soft_accu = (R)0;
-		for(auto j = 0; j < rep_count; j++)
-			//soft_accu += ((Y_N[i*rep_count+j])>0)? 1 : -1; // hard decision
-			soft_accu += Y_N[i*rep_count+j]; // soft decision
-
-		V_K[i] = (soft_accu > 0)? (B)0 : (B)1;
-	}
-}
-
-template <typename B, typename R>
-void Decoder_repetition<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
 	V_K = this->V_K;

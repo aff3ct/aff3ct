@@ -8,11 +8,11 @@
 #include "../../../Tools/Factory/Factory_modulator.hpp"
 #include "../../../Tools/Factory/Factory_channel.hpp"
 #include "../../../Tools/Factory/Factory_quantizer.hpp"
+#include "../../../Tools/Factory/Factory_decoder_repetition.hpp"
 #include "../../../Tools/Factory/Factory_error_analyzer.hpp"
 #include "../../../Tools/Factory/Factory_terminal.hpp"
 
 #include "../../../Encoder/Repetition/Encoder_repetition.hpp"
-#include "../../../Decoder/Repetition/Decoder_repetition.hpp"
 
 #include "../../../Tools/params.h"
 #include "../../../Tools/bash_tools.h"
@@ -81,7 +81,8 @@ void Simulation_repetition<B,R,Q>
 	if (terminal  != nullptr) delete terminal;
 
 	// build the decoder
-	decoder = new Decoder_repetition<B,Q>(code_params.K, code_params.N);
+	decoder = Factory_decoder_repetition<B,Q>::build(code_params, deco_params);
+	check_errors(decoder, "Decoder<B,Q>");
 
 	// build the source
 	source = Factory_source<B>::build(code_params);
