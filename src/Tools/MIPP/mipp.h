@@ -990,12 +990,12 @@ template <typename T> inline Reg<T>   hmax         (const Reg<T> v)             
 
 template <typename T1, typename T2> 
 inline Reg<T2> cvt(const Reg<T1> v) {
-	return v.cvt();
+	return v.template cvt<T2>();
 }
 
 template <typename T1, typename T2>
 inline Reg<T2> pack(const Reg<T1> v1, const Reg<T1> v2) {
-	return v1.pack(v2);
+	return v1.template pack<T2>(v2);
 }
 
 #ifndef NO_INTRINSICS
