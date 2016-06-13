@@ -16,19 +16,22 @@ CRC<B>* Factory_CRC<B>
 	CRC<B> *crc = nullptr;
 
 	// build the crc
-#ifdef INTER_SIMD
-	if (!code_params.crc.empty() && deco_params.algo.find("LTE") != std::string::npos)
-		crc = new CRC_polynomial_inter<B>(code_params.K, code_params.crc, mipp::nElmtsPerRegister<B>());
-	else if (!code_params.crc.empty())
-		crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
+	if(deco_params.simd_strategy == "INTER")
+	{
+		if (!code_params.crc.empty() && deco_params.algo.find("LTE") != std::string::npos)
+			crc = new CRC_polynomial_inter<B>(code_params.K, code_params.crc, mipp::nElmtsPerRegister<B>());
+		else if (!code_params.crc.empty())
+			crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
+		else
+			crc = new CRC_NO<B>();
+	}
 	else
-		crc = new CRC_NO<B>();
-#else
-	if (!code_params.crc.empty())
-		crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
-	else
-		crc = new CRC_NO<B>();
-#endif
+	{
+		if (!code_params.crc.empty())
+			crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
+		else
+			crc = new CRC_NO<B>();
+	}
 
 	return crc;
 }
