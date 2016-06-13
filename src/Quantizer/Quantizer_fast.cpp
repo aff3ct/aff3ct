@@ -98,25 +98,18 @@ void Quantizer_fast<float,short>
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
 
-	const auto r_factor = mipp::set1<float>((float) factor);
+	const auto r_factor = mipp::Reg<float>((float) factor);
 
 	for (unsigned i = 0; i < vectorized_size; i += 2 * mipp::nElmtsPerRegister<float>())
 	{
-		const auto r_Y_N1_0 = mipp::load<float>(&Y_N1[i + 0 * mipp::nElmtsPerRegister<float>()]);
-		const auto r_Y_N1_1 = mipp::load<float>(&Y_N1[i + 1 * mipp::nElmtsPerRegister<float>()]);
+		const auto r_q32_0 = r_factor * &Y_N1[i + 0 * mipp::nElmtsPerRegister<float>()];
+		const auto r_q32_1 = r_factor * &Y_N1[i + 1 * mipp::nElmtsPerRegister<float>()];
 
-		auto r_q_0 = mipp::mul<float>(r_factor, r_Y_N1_0);
-		auto r_q_1 = mipp::mul<float>(r_factor, r_Y_N1_1);
+		const auto r_q32i_0 = r_q32_0.round().template cvt<int>();
+		const auto r_q32i_1 = r_q32_1.round().template cvt<int>();
 
-		r_q_0 = mipp::round<float>(r_q_0);
-		r_q_1 = mipp::round<float>(r_q_1);
-
-		r_q_0 = mipp::cvt<float,int>(r_q_0);
-		r_q_1 = mipp::cvt<float,int>(r_q_1);
-
-		const auto r_q = mipp::pack<int,short>(r_q_0, r_q_1);
-
-		mipp::store<short>(&Y_N2[i], mipp::sat<short>(r_q, val_min, val_max));
+		const auto r_q16i = mipp::pack<int,short>(r_q32i_0, r_q32i_1);
+		r_q16i.sat(val_min, val_max).store(&Y_N2[i]);
 	}
 
 	for (unsigned i = vectorized_size; i < size; i++)
@@ -133,36 +126,25 @@ void Quantizer_fast<float,signed char>
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;
 
-	auto r_factor = mipp::set1<float>((float)factor);
+	auto r_factor = mipp::Reg<float>((float)factor);
 
 	for (unsigned i = 0; i < vectorized_size; i += 4 * mipp::nElmtsPerRegister<float>())
 	{
-		const auto r_Y_N1_0 = mipp::load<float>(&Y_N1[i + 0 * mipp::nElmtsPerRegister<float>()]);
-		const auto r_Y_N1_1 = mipp::load<float>(&Y_N1[i + 1 * mipp::nElmtsPerRegister<float>()]);
-		const auto r_Y_N1_2 = mipp::load<float>(&Y_N1[i + 2 * mipp::nElmtsPerRegister<float>()]);
-		const auto r_Y_N1_3 = mipp::load<float>(&Y_N1[i + 3 * mipp::nElmtsPerRegister<float>()]);
+		const auto r_q32_0 = r_factor * &Y_N1[i + 0 * mipp::nElmtsPerRegister<float>()];
+		const auto r_q32_1 = r_factor * &Y_N1[i + 1 * mipp::nElmtsPerRegister<float>()];
+		const auto r_q32_2 = r_factor * &Y_N1[i + 2 * mipp::nElmtsPerRegister<float>()];
+		const auto r_q32_3 = r_factor * &Y_N1[i + 3 * mipp::nElmtsPerRegister<float>()];
 
-		auto r_q_0 = mipp::mul<float>(r_factor, r_Y_N1_0);
-		auto r_q_1 = mipp::mul<float>(r_factor, r_Y_N1_1);
-		auto r_q_2 = mipp::mul<float>(r_factor, r_Y_N1_2);
-		auto r_q_3 = mipp::mul<float>(r_factor, r_Y_N1_3);
+		const auto r_q32i_0 = r_q32_0.round().template cvt<int>();
+		const auto r_q32i_1 = r_q32_1.round().template cvt<int>();
+		const auto r_q32i_2 = r_q32_2.round().template cvt<int>();
+		const auto r_q32i_3 = r_q32_3.round().template cvt<int>();
 
-		r_q_0 = mipp::round<float>(r_q_0);
-		r_q_1 = mipp::round<float>(r_q_1);
-		r_q_2 = mipp::round<float>(r_q_2);
-		r_q_3 = mipp::round<float>(r_q_3);
+		const auto r_q16i_0 = mipp::pack<int,short>(r_q32i_0, r_q32i_1);
+		const auto r_q16i_1 = mipp::pack<int,short>(r_q32i_2, r_q32i_3);
 
-		r_q_0 = mipp::cvt<float,int>(r_q_0);
-		r_q_1 = mipp::cvt<float,int>(r_q_1);
-		r_q_2 = mipp::cvt<float,int>(r_q_2);
-		r_q_3 = mipp::cvt<float,int>(r_q_3);
-
-		r_q_0 = mipp::pack<int,short>(r_q_0, r_q_1);
-		r_q_1 = mipp::pack<int,short>(r_q_2, r_q_3);
-
-		const auto r_q = mipp::pack<short,signed char>(r_q_0, r_q_1);
-
-		mipp::store<signed char>(&Y_N2[i], mipp::sat<signed char>(r_q, val_min, val_max));
+		const auto r_q8i = mipp::pack<short,signed char>(r_q16i_0, r_q16i_1);
+		r_q8i.sat(val_min, val_max).store(&Y_N2[i]);
 	}
 
 	for (unsigned i = vectorized_size; i < size; i++)
