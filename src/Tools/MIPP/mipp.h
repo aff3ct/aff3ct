@@ -734,7 +734,7 @@ class Regx2
 public:
 	Reg<T> val[2];
 
-	Regx2(regx2 r2) : val({Reg<T>(r2.val[0]), Reg<T>(r2.val[1])}) {}
+	Regx2(regx2 r2) : val{Reg<T>(r2.val[0]), Reg<T>(r2.val[1])} {}
 
 	~Regx2() {}
 };
