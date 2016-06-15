@@ -5,8 +5,8 @@
 
 template <typename B, typename R>
 Decoder_repetition_std<B,R>
-::Decoder_repetition_std(const int& K, const int& N)
- : Decoder_repetition<B,R>(K,N)
+::Decoder_repetition_std(const int& K, const int& N, const bool buffered_encoding)
+ : Decoder_repetition<B,R>(K,N,buffered_encoding)
 {
 }
 
@@ -18,16 +18,13 @@ Decoder_repetition_std<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_std<B,R>
-::decode()
+::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
-	R soft_accu;
 	for (auto i = 0; i < this->K; i++)
 	{
-		soft_accu = (R)0;
-		for(auto j = 0; j < this->rep_count; j++)
-			//soft_accu += ((this->Y_N[i*rep_count+j])>0)? 1 : -1; // hard decision
-			soft_accu += this->Y_N[i*this->rep_count+j]; // soft decision
-
-		this->V_K[i] = (soft_accu > 0)? (B)0 : (B)1;
+		ext[i] = sys[i];
+		for (auto j = 0; j < this->rep_count; j++)
+			// ext[i] += (par[j*this->K +i] > 0) ? 1 : -1; // hard decision
+			ext[i] += par[j*this->K +i]; // soft decision
 	}
 }

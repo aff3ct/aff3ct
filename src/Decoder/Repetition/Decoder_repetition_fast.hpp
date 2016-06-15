@@ -10,10 +10,10 @@ template <typename B, typename R>
 class Decoder_repetition_fast : public Decoder_repetition<B,R>
 {
 public:
-	Decoder_repetition_fast(const int& K, const int& N);
+	Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding = true);
 	virtual ~Decoder_repetition_fast();
 
-	void decode();
+	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 };
 
 #include "Decoder_repetition_fast.hxx"
