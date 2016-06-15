@@ -216,13 +216,13 @@ _aff3ct() {
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
+		--version | -v | --help | --h | --disable-sys-enc | --disable-freq | --disable-display | --enable-debug | \
+		--enable-dec-thr | --enable-leg-term)
+			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+		;;
+
 		*)
-			if [[ ${COMP_LINE} == *" "@(-X|--package-names)* ]] ; then
-				_pkgname -I ${cur}
-				COMPREPLY=(${COMPREPLY[@]} $(compgen -W "${opts}"))
-			else
-				COMPREPLY=($(compgen -W "${opts} -- ${cur}"))
-			fi
+			_minimal
 		;;
 	esac
 }
