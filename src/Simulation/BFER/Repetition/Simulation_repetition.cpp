@@ -5,14 +5,13 @@
 #include <algorithm>
 
 #include "../../../Tools/Factory/Factory_source.hpp"
+#include "../../../Tools/Factory/Factory_encoder_repetition.hpp"
 #include "../../../Tools/Factory/Factory_modulator.hpp"
 #include "../../../Tools/Factory/Factory_channel.hpp"
 #include "../../../Tools/Factory/Factory_quantizer.hpp"
 #include "../../../Tools/Factory/Factory_decoder_repetition.hpp"
 #include "../../../Tools/Factory/Factory_error_analyzer.hpp"
 #include "../../../Tools/Factory/Factory_terminal.hpp"
-
-#include "../../../Encoder/Repetition/Encoder_repetition.hpp"
 
 #include "../../../Tools/params.h"
 #include "../../../Tools/bash_tools.h"
@@ -81,7 +80,7 @@ void Simulation_repetition<B,R,Q>
 	if (terminal  != nullptr) delete terminal;
 
 	// build the decoder
-	decoder = Factory_decoder_repetition<B,Q>::build(code_params, deco_params);
+	decoder = Factory_decoder_repetition<B,Q>::build(code_params, enco_params, deco_params);
 	check_errors(decoder, "Decoder<B,Q>");
 
 	// build the source
@@ -89,7 +88,8 @@ void Simulation_repetition<B,R,Q>
 	check_errors(source, "Source<B>");
 
 	// build the encoder
-	encoder = new Encoder_repetition<B>(code_params.K, code_params.N);
+	encoder = Factory_encoder_repetition<B>::build(simu_params, code_params, enco_params);
+	check_errors(encoder, "Encoder<B>");
 
 	// build the modulator
 	modulator = Factory_modulator<B>::build();

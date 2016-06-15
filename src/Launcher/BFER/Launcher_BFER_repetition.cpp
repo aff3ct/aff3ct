@@ -13,13 +13,15 @@ Launcher_BFER_repetition<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv)
 {
 	// override parameters
-	this->chan_params.quant_n_bits    = 7;
+	this->chan_params.quant_n_bits    = 6;
 	this->chan_params.quant_point_pos = 2;
 
 	// default parameters
 	this->code_params.type            = "Repetition";
 	this->deco_params.algo            = "REPETITION";
 	this->deco_params.implem          = "STD";
+
+	this->enco_params.buffered        = true;
 }
 
 template <typename B, typename R, typename Q>
@@ -27,6 +29,9 @@ void Launcher_BFER_repetition<B,R,Q>
 ::build_args()
 {
 	Launcher_BFER<B,R,Q>::build_args();
+
+	this->opt_args["disable-buf-enc"] = "";
+	this->doc_args["disable-buf-enc"] = "disable the buffered encoding.";
 }
 
 template <typename B, typename R, typename Q>
@@ -34,6 +39,8 @@ void Launcher_BFER_repetition<B,R,Q>
 ::store_args()
 {
 	Launcher_BFER<B,R,Q>::store_args();
+
+	if(this->ar.exist_arg("disable-buf-enc")) this->enco_params.buffered = false;
 }
 
 template <typename B, typename R, typename Q>
@@ -41,6 +48,11 @@ void Launcher_BFER_repetition<B,R,Q>
 ::print_header()
 {
 	Launcher_BFER<B,R,Q>::print_header();
+
+	std::string buff_enc = ((this->enco_params.buffered) ? "on" : "off");
+
+	// display configuration and simulation parameters
+	std::clog << "# " << bold("* Buffered encoding             ") << " = " << buff_enc << std::endl;
 }
 
 template <typename B, typename R, typename Q>
