@@ -47,15 +47,15 @@ void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
 #ifdef _WIN32
-	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||-------|-------|-------|---------|---------|-----------||----------|----------" << std::endl;
-	stream << "# " << "  SNR |       FRA |        BE |        FE |       BER |       FER ||    LD |   DEC |    ST |    CTHR |    ITHR |   LATENCY || SIM_CTHR |    ET/RT " << std::endl;
-	stream << "# " << " (dB) |           |           |           |           |           ||   (%) |   (%) |   (%) |  (Mb/s) |  (Mb/s) |      (us) ||   (Mb/s) | (hhmmss) " << std::endl;
-	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||-------|-------|-------|---------|---------|-----------||----------|----------" << std::endl;
+	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||-------|-------|-------|----------|---------|-----------||----------|----------" << std::endl;
+	stream << "# " << "  SNR |       FRA |        BE |        FE |       BER |       FER ||    LD |   DEC |    ST |     CTHR |    ITHR |   LATENCY || SIM_CTHR |    ET/RT " << std::endl;
+	stream << "# " << " (dB) |           |           |           |           |           ||   (%) |   (%) |   (%) |   (Mb/s) |  (Mb/s) |      (us) ||   (Mb/s) | (hhmmss) " << std::endl;
+	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||-------|-------|-------|----------|---------|-----------||----------|----------" << std::endl;
 #else
-	stream << "# " << "------|----------|----------|----------|----------|----------||-------|-------|-------|---------|---------|----------||----------|----------" << std::endl;
-	stream << "# " << "  SNR |      FRA |       BE |       FE |      BER |      FER ||    LD |   DEC |    ST |    CTHR |    ITHR |  LATENCY || SIM_CTHR |    ET/RT " << std::endl;
-	stream << "# " << " (dB) |          |          |          |          |          ||   (%) |   (%) |   (%) |  (Mb/s) |  (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) " << std::endl;
-	stream << "# " << "------|----------|----------|----------|----------|----------||-------|-------|-------|---------|---------|----------||----------|----------" << std::endl;
+	stream << "# " << "------|----------|----------|----------|----------|----------||-------|-------|-------|----------|---------|----------||----------|----------" << std::endl;
+	stream << "# " << "  SNR |      FRA |       BE |       FE |      BER |      FER ||    LD |   DEC |    ST |     CTHR |    ITHR |  LATENCY || SIM_CTHR |    ET/RT " << std::endl;
+	stream << "# " << " (dB) |          |          |          |          |          ||   (%) |   (%) |   (%) |   (Mb/s) |  (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) " << std::endl;
+	stream << "# " << "------|----------|----------|----------|----------|----------||-------|-------|-------|----------|---------|----------||----------|----------" << std::endl;
 #endif
 }
 
@@ -127,7 +127,7 @@ void Terminal_BFER<B,R>
 	stream << setprecision(                 1) <<                            fixed  << setw(5) <<                         load_pc << " | ";
 	stream << setprecision(                 1) <<                            fixed  << setw(5) <<                        decod_pc << " | ";
 	stream << setprecision(                 1) <<                            fixed  << setw(5) <<                        store_pc << " | ";
-	stream << setprecision(                 2) <<                            fixed  << setw(7) <<                        dec_cthr << " | ";
+	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                        dec_cthr << " | ";
 	stream << setprecision(                 2) <<                            fixed  << setw(7) <<                        dec_ithr << " | ";
 	stream << setprecision(                 2) << ((lat > l2) ? scientific : fixed) << setw(9) <<                             lat << " || ";
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
@@ -148,7 +148,7 @@ void Terminal_BFER<B,R>
 	stream << setprecision(                 1) <<                            fixed  << setw(5) <<                         load_pc << " | ";
 	stream << setprecision(                 1) <<                            fixed  << setw(5) <<                        decod_pc << " | ";
 	stream << setprecision(                 1) <<                            fixed  << setw(5) <<                        store_pc << " | ";
-	stream << setprecision(                 2) <<                            fixed  << setw(7) <<                        dec_cthr << " | ";
+	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                        dec_cthr << " | ";
 	stream << setprecision(                 2) <<                            fixed  << setw(7) <<                        dec_ithr << " | ";
 	stream << setprecision(                 2) << ((lat > l2) ? scientific : fixed) << setw(8) <<                             lat << " || ";
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
