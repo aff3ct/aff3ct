@@ -11,13 +11,12 @@ template <typename B>
 class Source_random : public Source<B>
 {
 private:
-	std::random_device rd;
 	std::linear_congruential_engine<std::uint_fast32_t, 48271, 0, 2147483647> rd_engine;
 	//std::subtract_with_carry_engine<std::uint_fast32_t, 24, 10, 24> rd_engine;
 	std::uniform_int_distribution<B> uniform_dist;
 
 public:
-	Source_random(const int seed = 0);
+	Source_random();
 
 	virtual ~Source_random();
 

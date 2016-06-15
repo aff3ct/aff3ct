@@ -2,19 +2,16 @@
 
 template <typename B>
 Source_random<B>
-::Source_random(const int seed) 
-: rd(), 
-  rd_engine(rd()), 
+::Source_random() 
+: rd_engine(rand()), 
   uniform_dist(0, 1) 
 {
-	rd_engine.seed(seed);
 }
 
 template <typename B>
 Source_random<B>
 ::~Source_random()
 {
-
 }
 
 template <typename B>
