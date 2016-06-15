@@ -38,11 +38,13 @@
 typedef __m128 v4sf;  // vector of 4 float (sse1)
 
 // prototypes
-v4sf log_ps(v4sf x);
-v4sf exp_ps(v4sf x);
-v4sf sin_ps(v4sf x);
-v4sf cos_ps(v4sf x);
-void sincos_ps(v4sf x, v4sf *s, v4sf *c);
+inline v4sf log_ps(v4sf x);
+inline v4sf exp_ps(v4sf x);
+inline v4sf sin_ps(v4sf x);
+inline v4sf cos_ps(v4sf x);
+inline void sincos_ps(v4sf x, v4sf *s, v4sf *c);
+
+#include "sse_mathfun.hxx"
 
 #endif
 #endif

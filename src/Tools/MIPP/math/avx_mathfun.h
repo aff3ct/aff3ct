@@ -37,11 +37,13 @@
 typedef __m256 v8sf; // vector of 8 float (avx)
 
 // prototypes
-v8sf log256_ps(v8sf x);
-v8sf exp256_ps(v8sf x);
-v8sf sin256_ps(v8sf x);
-v8sf cos256_ps(v8sf x);
-void sincos256_ps(v8sf x, v8sf *s, v8sf *c);
+inline v8sf log256_ps(v8sf x);
+inline v8sf exp256_ps(v8sf x);
+inline v8sf sin256_ps(v8sf x);
+inline v8sf cos256_ps(v8sf x);
+inline void sincos256_ps(v8sf x, v8sf *s, v8sf *c);
+
+#include "avx_mathfun.hxx"
 
 #endif
 #endif
