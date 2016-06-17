@@ -540,9 +540,9 @@ struct spc_inter_8bit_bitpacking
 		}
 
 
-		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(REQUIRED_ALIGNMENT)));
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
-		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(REQUIRED_ALIGNMENT)));
+		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
@@ -599,9 +599,9 @@ struct spc_inter_8bit_bitpacking <B, R, HI, 0>
 			r_s_a_packed = mipp::set0<B>();
 		}
 
-		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(REQUIRED_ALIGNMENT)));
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
-		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(REQUIRED_ALIGNMENT)));
+		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
@@ -658,9 +658,9 @@ struct spc_inter_8bit_bitpacking <B, R, HI, 4>
 
 		mipp::store<B>(s_a, r_s_a_packed);
 
-		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(REQUIRED_ALIGNMENT)));
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
-		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(REQUIRED_ALIGNMENT)));
+		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
