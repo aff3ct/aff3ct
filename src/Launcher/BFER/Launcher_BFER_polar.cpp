@@ -103,13 +103,6 @@ void Launcher_BFER_polar<B,R,Q>
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (this->deco_params.algo != "SCAN") this->deco_params.max_iter = 1;
-
-	// hack for K when there is a CRC
-	if (!this->code_params.crc.empty())
-	{
-		assert(this->code_params.K > CRC_polynomial<B>::size(this->code_params.crc));
-		this->code_params.K += CRC_polynomial<B>::size(this->code_params.crc);
-	}
 }
 
 template <typename B, typename R, typename Q>
@@ -148,6 +141,14 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_polar<B,R,Q>
 ::build_simu()
 {
+
+	// hack for K when there is a CRC
+	if (!this->code_params.crc.empty())
+	{
+		assert(this->code_params.K > CRC_polynomial<B>::size(this->code_params.crc));
+		this->code_params.K += CRC_polynomial<B>::size(this->code_params.crc);
+	}
+
 	if (this->simu_params.enable_debug)
 		this->simu = new Simulation_polar_debug<B,R,Q>(this->simu_params, 
 		                                               this->code_params, 
