@@ -202,7 +202,8 @@ _aff3ct() {
 			;;
 
 		--crc-type)
-			local params="CRC-1-BAL CRC-2-BAL CRC-4-BAL CRC-8-BAL CRC-16-BAL CRC-16-TIB CRC-24-LTEA CRC-32-GZIP"
+			local params="CRC-1-0x1 CRC-2-0x1 CRC-3-0x3 CRC-4-ITU CRC-8-DVB-S2 CRC-16-CCITT CRC-16-IBM \
+			              CRC-16-TIB CRC-24-LTEA CRC-32-GZIP"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
