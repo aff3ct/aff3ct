@@ -223,7 +223,13 @@ _aff3ct() {
 		;;
 
 		*)
-			_minimal
+			if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] || \
+	   		   [[ ${prev} == @(-q|--quiet) ]] ; then
+				COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+				return 0
+			else
+				_minimal
+			fi
 		;;
 	esac
 }
