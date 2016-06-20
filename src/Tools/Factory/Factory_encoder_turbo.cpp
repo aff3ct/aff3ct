@@ -21,7 +21,7 @@ Encoder<B>* Factory_encoder_turbo<B>
 			encoder = new Encoder_turbo<B>(code_params.K, code_params.N, *interleaver, *sub_encoder_n, *sub_encoder_i, 
 			                               n_frames);
 		else
-			encoder = new Encoder_turbo_legacy<B>(code_params.K, code_params.N, *interleaver, n_frames);
+			encoder = new Encoder_turbo_legacy<B>(code_params.K, code_params.N, *interleaver, *sub_encoder_n, n_frames);
 	}
 
 	return encoder;

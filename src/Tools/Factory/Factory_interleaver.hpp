@@ -2,11 +2,6 @@
 #define FACTORY_INTERLEAVER_HPP
 
 #include "../../Interleaver/Interleaver.hpp"
-#include "../../Interleaver/Interleaver_LTE.hpp"
-#include "../../Interleaver/Interleaver_NO.hpp"
-#include "../../Interleaver/Interleaver_columns.hpp"
-#include "../../Interleaver/Interleaver_golden.hpp"
-#include "../../Interleaver/Interleaver_random.hpp"
 
 #include "../params.h"
 

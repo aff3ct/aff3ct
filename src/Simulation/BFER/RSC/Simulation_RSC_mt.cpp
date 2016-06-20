@@ -43,6 +43,7 @@ Simulation_RSC_mt<B,R,Q,QD>
   Y_N1(n_threads),
   Y_N2(n_threads),
   V_K(n_threads),
+  trellis(n_threads),
   code_rate(0.f),
   sigma(0.f),
   source(n_threads),
@@ -187,14 +188,23 @@ void Simulation_RSC_mt<B,R,Q,QD>
 		if (simu->terminal     != nullptr) delete simu->terminal;
 	}
 
+	// build the encoder
+	simu->encoder[tid] = Factory_encoder_RSC<B>::build(simu->simu_params, simu->code_params, simu->enco_params, 
+	                                                   simu->deco_params);
+	check_errors(simu->encoder[tid], "Encoder_RSC<B>", tid);
+
 	// build the the decoder
+	simu->trellis[tid] = simu->encoder[tid]->get_trellis();
 	simu->decoder[tid] = Factory_decoder_RSC<B,Q,QD>::build(simu->code_params, simu->enco_params, simu->chan_params, 
-	                                                        simu->deco_params);
+	                                                        simu->deco_params, simu->trellis[tid]);
 	check_errors(simu->decoder[tid], "Decoder<B,Q>", tid);
 	
 	const auto n_fra = simu->decoder[tid]->get_n_frames();
-	if (tid == 0) 
+	if (tid == 0)
 		simu->n_frames = n_fra;
+
+	// set the right number of frames to the encoder
+	simu->encoder[tid]->set_n_frames(n_fra);
 
 	// resize the buffers if needed
 	if ((int)simu->U_K [tid].size() != (simu->code_params.K * n_fra)) 
@@ -211,10 +221,6 @@ void Simulation_RSC_mt<B,R,Q,QD>
 	// build the source
 	simu->source[tid] = Factory_source<B>::build(simu->code_params);
 	check_errors(simu->source[tid], "Source<B>", tid);
-
-	// build the encoder
-	simu->encoder[tid] = Factory_encoder_RSC<B>::build(simu->simu_params, simu->code_params, simu->enco_params, n_fra);
-	check_errors(simu->encoder[tid], "Encoder<B>", tid);
 
 	// build the modulator
 	simu->modulator[tid] = Factory_modulator<B>::build();

@@ -12,7 +12,7 @@ template <typename B, typename R, proto_map_i<R> MAP>
 class Decoder_RSC_BCJR_inter_intra_fast_x4_AVX : public Decoder_RSC_BCJR_inter_intra<B,R>
 {
 public:
-	Decoder_RSC_BCJR_inter_intra_fast_x4_AVX(const int &K, const bool buffered_encoding = true);
+	Decoder_RSC_BCJR_inter_intra_fast_x4_AVX(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_inter_intra_fast_x4_AVX();
 
 protected:

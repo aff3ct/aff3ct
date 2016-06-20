@@ -81,9 +81,16 @@ template <typename B, typename R, typename Q, typename QD>
 void Simulation_RSC_bench<B,R,Q,QD>
 ::simulation_Monte_Carlo(Simulation_RSC_bench<B,R,Q,QD> *simu, const int tid)
 {
+	// manually build the trellis
+	mipp::vector<mipp::vector<int>> trellis(4);
+	trellis[0] = {0,4,5,1,2,6,7,3};
+	trellis[1] = {4,0,1,5,6,2,3,7};
+	trellis[2] = {0,1,1,0,0,1,1,0};
+	trellis[3] = {0,0,1,1,1,1,0,0};
+
 	// build the the decoder
 	simu->decoder[tid] = Factory_decoder_RSC<B,Q,QD>::build(simu->code_params, simu->enco_params, simu->chan_params, 
-	                                                        simu->deco_params);
+	                                                        simu->deco_params, trellis);
 	check_errors(simu->decoder[tid], "Decoder<B,Q>", tid);
 
 	const auto n_fra = simu->decoder[tid]->get_n_frames();

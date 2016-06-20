@@ -3,6 +3,8 @@
 #include "../../Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hpp"
 #include "../../Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_very_fast.hpp"
 
+#include "../../Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
+
 #include "../../Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_std.hpp"
 #include "../../Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_fast.hpp"
 #include "../../Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_SSE.hpp"
@@ -17,48 +19,56 @@
 
 template <typename B, typename R, typename RD>
 SISO<R>* Factory_decoder_RSC<B,R,RD>
-::build_siso(const t_code_param    &code_params,
-             const t_encoder_param &enco_params,
-             const t_channel_param &chan_params,
-             const t_decoder_param &deco_params)
+::build_siso(const t_code_param                    &code_params,
+             const t_encoder_param                 &enco_params,
+             const t_channel_param                 &chan_params,
+             const t_decoder_param                 &deco_params,
+             const mipp::vector<mipp::vector<int>> &trellis)
 {
 	SISO<R> *siso = nullptr;
 
 	if (chan_params.domain == "LLR")
 	{
 		// build the decoder
-		if ((deco_params.algo == "LTE"  && code_params.type == "TURBO") || 
-			(deco_params.algo == "BCJR" && code_params.type == "RSC"))
+		if ((deco_params.algo == "LTE"   && code_params.type == "TURBO") || 
+			(deco_params.algo == "CCSDS" && code_params.type == "TURBO") ||
+			(deco_params.algo == "BCJR"  && code_params.type == "RSC"  ) ||
+			(deco_params.algo == "BCJR4" && code_params.type == "RSC"  ))
 		{
 			if (deco_params.implem == "STD")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
-						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				}
 				else if (deco_params.simd_strategy.empty())
-					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
+			}
+			else if (deco_params.implem == "GEN_STD")
+			{
+				if (deco_params.simd_strategy.empty())
+					siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
 			else if (deco_params.implem == "FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 #ifdef __AVX__
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						case 16:
-							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						case 32:
-							siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						default:
 							break;
@@ -67,10 +77,10 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						case 16:
-							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						default:
 							break;
@@ -78,16 +88,16 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 #endif
 				}
 				else if (deco_params.simd_strategy.empty())
-					siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
 			else if (deco_params.implem == "VERY_FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 					siso = nullptr;
 				else if (deco_params.simd_strategy.empty())
-					siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
 			else if (deco_params.implem == "SCAN")
 			{
@@ -96,7 +106,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 				else if (deco_params.simd_strategy == "INTRA")
 					siso = nullptr;
 				else if (deco_params.simd_strategy.empty())	
-					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(code_params.K, trellis, enco_params.buffered);
 			}
 		}
 	}
@@ -106,47 +116,54 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 
 template <typename B, typename R, typename RD>
 Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
-::build(const t_code_param    &code_params,
-        const t_encoder_param &enco_params,
-        const t_channel_param &chan_params,
-        const t_decoder_param &deco_params)
+::build(const t_code_param                    &code_params,
+        const t_encoder_param                 &enco_params,
+        const t_channel_param                 &chan_params,
+        const t_decoder_param                 &deco_params,
+        const mipp::vector<mipp::vector<int>> &trellis)
 {
 	Decoder<B,R> *siso = nullptr;
 
 	if (chan_params.domain == "LLR")
 	{
 		// build the decoder
-		if (deco_params.algo == "BCJR" && code_params.type == "RSC")
+		if ((deco_params.algo == "BCJR"  && code_params.type == "RSC") ||
+			(deco_params.algo == "BCJR4" && code_params.type == "RSC"))
 		{
 			if (deco_params.implem == "STD")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
-						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+						siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				}
 				else
-					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
+			}
+			else if (deco_params.implem == "GEN_STD")
+			{
+				if (deco_params.simd_strategy.empty())
+					siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
 			else if (deco_params.implem == "FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 				{
 #ifdef __AVX__
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						case 16:
-							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						case 32:
-							siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						default:
 							break;
@@ -155,10 +172,10 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						case 16:
-							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+							siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 							break;
 						default:
 							break;
@@ -166,16 +183,16 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 #endif
 				}
 				else
-					siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
 			else if (deco_params.implem == "VERY_FAST")
 			{
 				if (deco_params.simd_strategy == "INTER")
-					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(code_params.K, trellis, enco_params.buffered);
 				else if (deco_params.simd_strategy == "INTRA")
 					siso = nullptr;
 				else
-					siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
 			else if (deco_params.implem == "SCAN")
 			{
@@ -184,7 +201,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 				else if (deco_params.simd_strategy == "INTRA")
 					siso = nullptr;
 				else	
-					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(code_params.K, enco_params.buffered);
+					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(code_params.K, trellis, enco_params.buffered);
 			}
 		}
 	}

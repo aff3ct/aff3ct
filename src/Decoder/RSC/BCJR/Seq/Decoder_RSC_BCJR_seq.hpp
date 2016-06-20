@@ -15,7 +15,7 @@ protected:
 	mipp::vector<R> gamma[2]; // edge metric
 
 public:
-	Decoder_RSC_BCJR_seq(const int &K, const bool buffered_encoding = true);
+	Decoder_RSC_BCJR_seq(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_seq();
 
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;

@@ -8,7 +8,7 @@
 #include "../Simulation_EXIT.hpp"
 
 #include "../../../Source/Source.hpp"
-#include "../../../Encoder/Encoder.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -42,7 +42,10 @@ protected:
 	mipp::vector<B> B_buff;
 	mipp::vector<Q> Le_buff, La_buff;
 
-	//EXIT simu parameters
+	// the trellis representation
+	mipp::vector<mipp::vector<int>> trellis;
+
+	// EXIT simu parameters
 	const int n_trials;
 	int cur_trial;
 	double I_A, I_E;
@@ -57,8 +60,8 @@ protected:
 
 	// communication chain
 	Source<B>          *source;
-	Encoder<B>         *encoder;
-	Modulator<B>       *modulator;	
+	Encoder_RSC<B>     *encoder;
+	Modulator<B>       *modulator;
 	Channel<B,R>       *channel;
 	Channel<B,R>       *channel_a;
 	Quantizer<R,Q>     *quantizer;

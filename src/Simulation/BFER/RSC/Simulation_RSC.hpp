@@ -8,7 +8,7 @@
 #include "../../Simulation.hpp"
 
 #include "../../../Source/Source.hpp"
-#include "../../../Encoder/Encoder.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -36,13 +36,16 @@ protected:
 	mipp::vector<Q> Y_N2; // noisy codeword (after  quantization)
 	mipp::vector<B> V_K;  // decoded codeword without frozen bits inserted
 
+	// the trellis representation
+	mipp::vector<mipp::vector<int>> trellis;
+
 	// code specifications
 	float code_rate;
 	float sigma;
 
 	// communication chain
 	Source<B>           *source;
-	Encoder<B>          *encoder;
+	Encoder_RSC<B>      *encoder;
 	Modulator<B>        *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;

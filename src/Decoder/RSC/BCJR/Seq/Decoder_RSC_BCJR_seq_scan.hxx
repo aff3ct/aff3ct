@@ -8,8 +8,8 @@
 
 template <typename B, typename R, typename RD>
 Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::Decoder_RSC_BCJR_seq_scan(const int &K, const bool buffered_encoding)
-: Decoder_RSC_BCJR_seq<B,R>(K, buffered_encoding)
+::Decoder_RSC_BCJR_seq_scan(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
+: Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding)
 {
 }
 

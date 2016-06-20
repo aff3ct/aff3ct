@@ -1,3 +1,10 @@
+#include "../../Interleaver/Interleaver_LTE.hpp"
+#include "../../Interleaver/Interleaver_CCSDS.hpp"
+#include "../../Interleaver/Interleaver_NO.hpp"
+#include "../../Interleaver/Interleaver_columns.hpp"
+#include "../../Interleaver/Interleaver_golden.hpp"
+#include "../../Interleaver/Interleaver_random.hpp"
+
 #include "../../Tools/Factory/Factory_interleaver.hpp"
 
 template <typename T>
@@ -9,6 +16,8 @@ Interleaver<T>* Factory_interleaver<T>
 	// build the interleaver
 	if (code_params.interleaver == "LTE")
 		interleaver = new Interleaver_LTE<T>(size);
+	else if (code_params.interleaver == "CCSDS")
+		interleaver = new Interleaver_CCSDS<T>(size);
 	else if (code_params.interleaver == "RANDOM")
 		interleaver = new Interleaver_random<T>(size);
 	else if (code_params.interleaver == "COLUMNS")

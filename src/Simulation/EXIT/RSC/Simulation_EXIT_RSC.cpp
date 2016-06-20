@@ -102,8 +102,13 @@ void Simulation_EXIT_RSC<B,R,Q,QD>
 	if (siso      != nullptr) delete siso;
 	if (terminal  != nullptr) delete terminal;
 
+	// build the encoder
+	encoder = Factory_encoder_RSC<B>::build(simu_params, code_params, enco_params, deco_params);
+	check_errors(encoder, "Encoder_RSC<B>");
+
 	//build the decoder
-	siso = Factory_decoder_RSC<B,Q,QD>::build_siso(code_params, enco_params, chan_params, deco_params);
+	trellis = encoder->get_trellis();
+	siso = Factory_decoder_RSC<B,Q,QD>::build_siso(code_params, enco_params, chan_params, deco_params, trellis);
 	check_errors(siso, "SISO<R>");
 
 	if (siso->get_n_frames() > 1)
@@ -115,10 +120,6 @@ void Simulation_EXIT_RSC<B,R,Q,QD>
 	// build the generator
 	source = Factory_source<B>::build(code_params);
 	check_errors(source, "Source<B>");
-
-	// build the encoder
-	encoder = Factory_encoder_RSC<B>::build(simu_params, code_params, enco_params);
-	check_errors(encoder, "Encoder<B>");
 
 	// build the modulator
 	modulator = Factory_modulator<B>::build();

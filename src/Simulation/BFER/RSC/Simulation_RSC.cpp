@@ -83,10 +83,18 @@ void Simulation_RSC<B,R,Q,QD>
 	if (analyzer  != nullptr) delete analyzer;
 	if (terminal  != nullptr) delete terminal;
 
+	// build the encoder
+	encoder = Factory_encoder_RSC<B>::build(simu_params, code_params, enco_params, deco_params);
+	check_errors(encoder, "Encoder_RSC<B>");
+
 	// build the decoder
-	decoder = Factory_decoder_RSC<B,Q,QD>::build(code_params, enco_params, chan_params, deco_params);
+	trellis = encoder->get_trellis();
+	decoder = Factory_decoder_RSC<B,Q,QD>::build(code_params, enco_params, chan_params, deco_params, trellis);
 	check_errors(decoder, "Decoder<B,Q>");
 	n_frames = decoder->get_n_frames();
+
+	// set the right number of frames to the encoder
+	encoder->set_n_frames(n_frames);
 
 	// resize the buffers if needed
 	if (U_K .size() != (unsigned) (code_params.K * n_frames)) U_K .resize(code_params.K * n_frames);
@@ -98,10 +106,6 @@ void Simulation_RSC<B,R,Q,QD>
 	// build the source
 	source = Factory_source<B>::build(code_params);
 	check_errors(source, "Source<B>");
-
-	// build the encoder
-	encoder = Factory_encoder_RSC<B>::build(simu_params, code_params, enco_params, n_frames);
-	check_errors(encoder, "Encoder<B>");
 
 	// build the modulator
 	modulator = Factory_modulator<B>::build();

@@ -34,6 +34,9 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 ::store_args()
 {
 	Launcher_EXIT<B,R,Q>::store_args();
+
+	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
+		this->code_params.tail_length = 2*4;
 }
 
 template <typename B, typename R, typename Q, typename QD>

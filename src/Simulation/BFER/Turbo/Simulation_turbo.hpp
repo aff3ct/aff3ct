@@ -11,7 +11,7 @@
 #include "../../../Source/Source.hpp"
 #include "../../../CRC/CRC.hpp"
 #include "../../../Encoder/Encoder.hpp"
-#include "../../../Encoder/Encoder_sys.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -41,6 +41,9 @@ protected:
 	mipp::vector<Q> Y_N2; // noisy codeword (after  quantization)
 	mipp::vector<B> V_K;  // decoded codeword without frozen bits inserted
 
+	// the trellis representation
+	mipp::vector<mipp::vector<int>> trellis;
+
 	// code specifications
 	float code_rate;
 	float sigma;
@@ -51,7 +54,7 @@ protected:
 	Source<B>           *source;
 	CRC<B>              *crc;
 	Encoder<B>          *encoder;
-	Encoder_sys<B>      *sub_encoder;
+	Encoder_RSC<B>      *sub_encoder;
 	Modulator<B>        *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;

@@ -4,8 +4,8 @@
 
 template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_fast<B,R,MAP>
-::Decoder_RSC_BCJR_inter_fast(const int &K, const bool buffered_encoding)
-: Decoder_RSC_BCJR_inter<B,R>(K, buffered_encoding)
+::Decoder_RSC_BCJR_inter_fast(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
+: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding)
 {
 }
 

@@ -51,6 +51,9 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	if(this->ar.exist_arg("disable-buf-enc")) this->enco_params.buffered = false;
 
 	if(this->ar.exist_arg("dec-simd-strat" )) this->deco_params.simd_strategy   = this->ar.get_arg("dec-simd-strat");
+
+	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
+		this->code_params.tail_length = 2*4;
 }
 
 template <typename B, typename R, typename Q, typename QD>

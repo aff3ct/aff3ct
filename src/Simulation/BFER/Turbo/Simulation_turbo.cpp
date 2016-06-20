@@ -109,14 +109,18 @@ void Simulation_turbo<B,R,Q,QD>
 	crc = Factory_CRC<B>::build(code_params, deco_params);
 	check_errors(crc, "CRC<B>");
 
+	// build the sub_encoder
+	sub_encoder = Factory_encoder_RSC<B>::build(simu_params, code_params, enco_params, deco_params);
+	check_errors(sub_encoder, "Encoder_RSC<B>");
+
 	// build the siso for the decoder
-	siso = Factory_decoder_RSC<B,Q,QD>::build_siso(code_params, enco_params, chan_params, deco_params);
+	trellis = sub_encoder->get_trellis();
+	siso = Factory_decoder_RSC<B,Q,QD>::build_siso(code_params, enco_params, chan_params, deco_params, trellis);
 	check_errors(siso, "SISO<Q>");
 	n_frames = siso->get_n_frames();
 
-	// build the sub_encoder
-	sub_encoder = Factory_encoder_RSC<B>::build(simu_params, code_params, enco_params, n_frames);
-	check_errors(sub_encoder, "Encoder_sys<B>");
+	// set the right number of frames to the sub-encoder
+	sub_encoder->set_n_frames(n_frames);
 
 	// build the encoder
 	encoder = Factory_encoder_turbo<B>::build(code_params, enco_params, interleaver, sub_encoder, sub_encoder, 

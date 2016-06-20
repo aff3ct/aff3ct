@@ -40,11 +40,27 @@ struct RSC_BCJR_intra_init<signed char>
 
 template <typename B, typename R>
 Decoder_RSC_BCJR_intra<B,R>
-::Decoder_RSC_BCJR_intra(const int &K, const bool buffered_encoding)
+::Decoder_RSC_BCJR_intra(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
 : Decoder_RSC_BCJR<B,R>(K, buffered_encoding),
   alpha(8 * (K +4) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) + 2 * mipp::nElReg<R>())
 {
+	mipp::vector<mipp::vector<int>> req_trellis(4);
+	for (unsigned i = 0; i < req_trellis.size(); i++)
+		req_trellis[i].resize(8);
+
+	req_trellis[0] = {0,4,5,1,2,6,7,3};
+	req_trellis[1] = {4,0,1,5,6,2,3,7};
+	req_trellis[2] = {0,1,1,0,0,1,1,0};
+	req_trellis[3] = {0,0,1,1,1,1,0,0};
+
+	for (unsigned i = 0; i < req_trellis.size(); i++)
+		if (trellis[i] != req_trellis[i])
+		{
+			std::cerr << "(EE) This decoder does not support the input trellis... Exiting." << std::endl;
+			exit(-1);
+		}
+
 	// init alpha values
 	RSC_BCJR_intra_init<R>::apply(alpha);
 }

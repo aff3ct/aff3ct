@@ -11,7 +11,7 @@ class Decoder_RSC_BCJR_inter_fast : public Decoder_RSC_BCJR_inter<B,R>
 {
 
 public:
-	Decoder_RSC_BCJR_inter_fast(const int &K, const bool buffered_encoding = true);
+	Decoder_RSC_BCJR_inter_fast(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_inter_fast();
 
 	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);

@@ -55,8 +55,8 @@ struct RSC_BCJR_inter_intra_fast_x2_AVX_init <signed char>
 
 template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,MAP>
-::Decoder_RSC_BCJR_inter_intra_fast_x2_AVX(const int &K, const bool buffered_encoding)
-: Decoder_RSC_BCJR_inter_intra<B,R>(K, buffered_encoding)
+::Decoder_RSC_BCJR_inter_intra_fast_x2_AVX(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
+: Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding)
 {
 	assert(mipp::nElReg<R>() == 16);
 	assert(K % 8 == 0);

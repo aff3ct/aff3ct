@@ -47,6 +47,7 @@ Simulation_turbo_mt<B,R,Q,QD>
   Y_N1(n_threads),
   Y_N2(n_threads),
   V_K(n_threads),
+  trellis(n_threads),
   code_rate(0.f),
   sigma(0.f),
   interleaver(nullptr),
@@ -213,9 +214,15 @@ void Simulation_turbo_mt<B,R,Q,QD>
 	simu->crc[tid] = Factory_CRC<B>::build(simu->code_params, simu->deco_params);
 	check_errors(simu->crc[tid], "CRC<B>");
 
+	// build the sub_encoder
+	simu->sub_encoder[tid] = Factory_encoder_RSC<B>::build(simu->simu_params, simu->code_params, simu->enco_params, 
+	                                                       simu->deco_params);
+	check_errors(simu->sub_encoder[tid], "Encoder_RSC<B>", tid);
+
 	// build the siso for the decoder
+	simu->trellis[tid] = simu->sub_encoder[tid]->get_trellis();
 	simu->siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(simu->code_params, simu->enco_params, simu->chan_params, 
-	                                                          simu->deco_params);
+	                                                          simu->deco_params, simu->trellis[tid]);
 	check_errors(simu->siso[tid], "SISO<Q>", tid);
 	const auto n_fra = simu->siso[tid]->get_n_frames();
 	if (tid == 0) 
@@ -224,14 +231,12 @@ void Simulation_turbo_mt<B,R,Q,QD>
 		simu->interleaver->set_n_frames(n_fra);
 	}
 
+	// set the right number of frames to the sub-encoder
+	simu->sub_encoder[tid]->set_n_frames(n_fra);
+
 	// build the scaling factor for the decoder
 	simu->sf[tid] = Factory_scaling_factor<Q>::build(simu->code_params, simu->deco_params);
 	check_errors(simu->sf[tid], "Scaling_factor<Q>", tid);
-
-	// build the sub_encoder
-	simu->sub_encoder[tid] = Factory_encoder_RSC<B>::build(simu->simu_params, simu->code_params, simu->enco_params, 
-	                                                       n_fra);
-	check_errors(simu->sub_encoder[tid], "Encoder_sys<B>", tid);
 
 	// build the encoder
 	simu->encoder[tid] = Factory_encoder_turbo<B>::build(simu->code_params, simu->enco_params, simu->interleaver, 
