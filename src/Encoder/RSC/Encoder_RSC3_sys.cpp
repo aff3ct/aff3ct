@@ -64,7 +64,7 @@ mipp::vector<mipp::vector<int>> Encoder_RSC3_sys<B>
 {
 	mipp::vector<mipp::vector<int>> trellis(4);
 
-	for (auto i = 0; i < trellis.size(); i++)
+	for (unsigned i = 0; i < trellis.size(); i++)
 		trellis[i].resize(8);
 
 	for (auto i = 0; i < 8; i++)
