@@ -14,7 +14,7 @@
 #include "../../Simulation.hpp"
 
 #include "../../../Source/Source.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -59,7 +59,7 @@ protected:
 
 	// communication chain objects
 	std::vector<Source<B>*>                    source;
-	std::vector<Encoder_RSC<B>*>               encoder;
+	std::vector<Encoder_RSC_sys<B>*>               encoder;
 	std::vector<Modulator<B>*>                 modulator;
 	std::vector<Channel<B,R>*>                 channel;
 	std::vector<Quantizer<R,Q>*>               quantizer;

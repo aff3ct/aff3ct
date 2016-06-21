@@ -17,7 +17,7 @@
 #include "../../../Source/Source.hpp"
 #include "../../../CRC/CRC.hpp"
 #include "../../../Encoder/Encoder.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -67,7 +67,7 @@ protected:
 	std::vector<Source<B>*>                    source;
 	std::vector<CRC<B>*>                       crc;
 	std::vector<Encoder<B>*>                   encoder;
-	std::vector<Encoder_RSC<B>*>               sub_encoder;
+	std::vector<Encoder_RSC_sys<B>*>               sub_encoder;
 	std::vector<Modulator<B>*>                 modulator;
 	std::vector<Channel<B,R>*>                 channel;
 	std::vector<Quantizer<R,Q>*>               quantizer;

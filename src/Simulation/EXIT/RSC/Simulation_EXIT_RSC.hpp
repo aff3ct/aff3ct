@@ -8,7 +8,7 @@
 #include "../Simulation_EXIT.hpp"
 
 #include "../../../Source/Source.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -60,7 +60,7 @@ protected:
 
 	// communication chain
 	Source<B>          *source;
-	Encoder_RSC<B>     *encoder;
+	Encoder_RSC_sys<B>     *encoder;
 	Modulator<B>       *modulator;
 	Channel<B,R>       *channel;
 	Channel<B,R>       *channel_a;

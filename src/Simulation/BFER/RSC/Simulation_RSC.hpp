@@ -1,5 +1,5 @@
-#ifndef SIMULATION_RSC_HPP_
-#define SIMULATION_RSC_HPP_
+#ifndef SIMULATION_RSC_SYS_HPP_
+#define SIMULATION_RSC_SYS_HPP_
 
 #include <chrono>
 #include <vector>
@@ -8,7 +8,7 @@
 #include "../../Simulation.hpp"
 
 #include "../../../Source/Source.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -45,7 +45,7 @@ protected:
 
 	// communication chain
 	Source<B>           *source;
-	Encoder_RSC<B>      *encoder;
+	Encoder_RSC_sys<B>      *encoder;
 	Modulator<B>        *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;
@@ -89,4 +89,4 @@ protected:
 	virtual void simulation_loop();
 };
 
-#endif /* SIMULATION_RSC_HPP_ */
+#endif /* SIMULATION_RSC_SYS_HPP_ */

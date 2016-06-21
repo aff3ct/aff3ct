@@ -11,7 +11,7 @@
 #include "../../../Source/Source.hpp"
 #include "../../../CRC/CRC.hpp"
 #include "../../../Encoder/Encoder.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -54,7 +54,7 @@ protected:
 	Source<B>           *source;
 	CRC<B>              *crc;
 	Encoder<B>          *encoder;
-	Encoder_RSC<B>      *sub_encoder;
+	Encoder_RSC_sys<B>      *sub_encoder;
 	Modulator<B>        *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;
