@@ -86,16 +86,17 @@ struct RSC_BCJR_intra_div_or_not
 {
 	static mipp::Reg<R> apply(mipp::Reg<R> r)
 	{
-		return r;
+		return mipp::div2(r);
 	}
 };
 
 template <>
-struct RSC_BCJR_intra_div_or_not <signed char>
+struct RSC_BCJR_intra_div_or_not <short>
 {
-	static mipp::Reg<signed char> apply(mipp::Reg<signed char> r)
+	static mipp::Reg<short> apply(mipp::Reg<short> r)
 	{
-		return mipp::div2(r);
+		// (WW) work only for max-log-MAP !!!
+		return r;
 	}
 };
 
@@ -105,6 +106,16 @@ struct RSC_BCJR_intra_post
 {
 	static mipp::Reg<R> compute(const mipp::Reg<R> &r_post)
 	{
+		return r_post;
+	}
+};
+
+template <>
+struct RSC_BCJR_intra_post <short>
+{
+	static mipp::Reg<short> compute(const mipp::Reg<short> &r_post)
+	{
+		// (WW) work only for max-log-MAP !!!
 		return mipp::div2(r_post);
 	}
 };

@@ -14,9 +14,12 @@
 
 template <typename B, typename R>	
 Channel<B,R>* Factory_channel<B,R>
-::build(const t_channel_param &chan_params, const R& sigma, const int seed, const R scaling_factor)
+::build(const t_channel_param &chan_params, const R& sigma, const int seed, R scaling_factor)
 {
 	Channel<B,R> *channel = nullptr;
+
+	if (!chan_params.estimator)
+		scaling_factor = (R)1;
 
 	// build the channels
 	if (chan_params.type == "AWGN")

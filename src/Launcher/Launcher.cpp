@@ -35,6 +35,7 @@ Launcher<B,R,Q>
 		this->chan_params.quantizer_type = "STD";
 	else
 		this->chan_params.quantizer_type = "STD_FAST";
+	chan_params.estimator           = true;
 }
 
 template <typename B, typename R, typename Q>
@@ -91,6 +92,8 @@ void Launcher<B,R,Q>
 
 	opt_args["channel-type"   ] = "chan_type";
 	doc_args["channel-type"   ] = "type of the channel to use in the simulation (" + chan_avail + "NO = disabled).";
+	opt_args["disable-chan-es"] = "";
+	doc_args["disable-chan-es"] = "disable the channel estimator (useful for min/sum decoders).";
 	opt_args["dec-algo"       ] = "alg_type";
 	doc_args["dec-algo"       ] = "select the algorithm you want to decode the codeword.";
 	opt_args["dec-implem"     ] = "impl_type";
@@ -146,6 +149,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg("code-gen-method")) code_params.generation_method = ar.get_arg("code-gen-method");
 	if(ar.exist_arg("domain"         )) chan_params.domain            = ar.get_arg("domain");
 	if(ar.exist_arg("channel-type"   )) chan_params.type              = ar.get_arg("channel-type");
+	if(ar.exist_arg("disable-chan-es")) chan_params.estimator         = false;
 	if(ar.exist_arg("dec-algo"       )) deco_params.algo              = ar.get_arg("dec-algo");
 	if(ar.exist_arg("dec-implem"     )) deco_params.implem            = ar.get_arg("dec-implem");
 
@@ -208,6 +212,8 @@ void Launcher<B,R,Q>
 			quantif = "{"+std::to_string(chan_params.quant_n_bits)+", "+std::to_string(chan_params.quant_point_pos)+"}";
 	}
 
+	std::string chan_estimator = (chan_params.estimator) ? "on" : "off";
+
 	// display configuration and simulation parameters
 	std::clog << "# " << bold("-------------------------------------------------")                           << std::endl;
 	std::clog << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                           << std::endl;
@@ -223,6 +229,7 @@ void Launcher<B,R,Q>
 	std::clog << "# " << bold("* SNR step                      ") << " = " << simu_params.snr_step  << " dB" << std::endl;
 	std::clog << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
 	std::clog << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
+	std::clog << "# " << bold("* Channel estimator             ") << " = " << chan_estimator                 << std::endl;
 	std::clog << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
 	std::clog << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;
 	std::clog << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]          << std::endl;

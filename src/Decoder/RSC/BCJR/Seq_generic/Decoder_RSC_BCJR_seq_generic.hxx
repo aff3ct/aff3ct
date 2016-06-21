@@ -111,16 +111,17 @@ struct RSC_BCJR_seq_generic_div_or_not
 {
 	static R apply(R m)
 	{
-		return m;
+		return div2<R>(m);
 	}
 };
 
 template <>
-struct RSC_BCJR_seq_generic_div_or_not <signed char>
+struct RSC_BCJR_seq_generic_div_or_not <short>
 {
-	static signed char apply(signed char m)
+	static short apply(short m)
 	{
-		return div2<signed char>(m);
+		// (WW) work only for max-log-MAP !!!
+		return m;
 	}
 };
 
@@ -130,7 +131,17 @@ struct RSC_BCJR_seq_generic_post
 {
 	static R compute(const RD &post)
 	{
-		return div2<R>(post);
+		return post;
+	}
+};
+
+template <typename RD>
+struct RSC_BCJR_seq_generic_post <short, RD>
+{
+	static short compute(const RD &post)
+	{
+		// (WW) work only for max-log-MAP !!!
+		return div2<RD>(post);
 	}
 };
 

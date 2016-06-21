@@ -271,9 +271,8 @@ void Simulation_turbo_mt<B,R,Q,QD>
 	check_errors(simu->modulator[tid], "Modulator<B>", tid);
 
 	// build the channel
-	// simu->channel[tid] = Factory_channel<B,R>::build(simu->chan_params, simu->sigma, tid,
-	//                                                  1.0 / (2.0 * simu->sigma * simu->sigma));
-	simu->channel[tid] = Factory_channel<B,R>::build(simu->chan_params, simu->sigma, tid);
+	simu->channel[tid] = Factory_channel<B,R>::build(simu->chan_params, simu->sigma, tid,
+	                                                 2.0 / (simu->sigma * simu->sigma));
 	check_errors(simu->channel[tid], "Channel<B,R>", tid);
 
 	// build the quantizer

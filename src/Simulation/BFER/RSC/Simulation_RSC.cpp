@@ -112,8 +112,7 @@ void Simulation_RSC<B,R,Q,QD>
 	check_errors(modulator, "Modulator<B>");
 
 	// build the channel
-	channel = Factory_channel<B,R>::build(chan_params, sigma, 0, 1.0 / (2.0 * sigma * sigma));
-	//channel = Factory_channel<B,R>::build(chan_params, sigma);
+	channel = Factory_channel<B,R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
 	check_errors(channel, "Channel<B,R>");
 
 	// build the quantizer
