@@ -161,9 +161,9 @@ void Decoder_turbo<B,R>
 		{
 			for (auto j = 0; j < n_frames; j++)
 			{
-				l_sn[i*n_frames +j] = Y_N[j*((K*3)+12) + i * 3 +0];
-				l_pn[i*n_frames +j] = Y_N[j*((K*3)+12) + i * 3 +1];
-				l_pi[i*n_frames +j] = Y_N[j*((K*3)+12) + i * 3 +2];
+				l_sn[i*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + i * 3 +0];
+				l_pn[i*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + i * 3 +1];
+				l_pi[i*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + i * 3 +2];
 			}
 		}
 		pi.interleave(l_sn, l_si, true);
@@ -173,8 +173,8 @@ void Decoder_turbo<B,R>
 		{
 			for (auto j = 0; j < n_frames; j++)
 			{
-				l_sn[(K +i)*n_frames +j] = Y_N[j*((K*3)+12) + K*3 + 2*i +0];
-				l_pn[(K +i)*n_frames +j] = Y_N[j*((K*3)+12) + K*3 + 2*i +1];
+				l_sn[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + 2*i +0];
+				l_pn[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + 2*i +1];
 			}
 		}
 
@@ -183,8 +183,8 @@ void Decoder_turbo<B,R>
 		{
 			for (auto j = 0; j < n_frames; j++)
 			{
-				l_si[(K +i)*n_frames +j] = Y_N[j*((K*3)+12) + K*3 + tail_n + 2*i +0];
-				l_pi[(K +i)*n_frames +j] = Y_N[j*((K*3)+12) + K*3 + tail_n + 2*i +1];
+				l_si[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + tail_n + 2*i +0];
+				l_pi[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + tail_n + 2*i +1];
 			}
 		}
 	}

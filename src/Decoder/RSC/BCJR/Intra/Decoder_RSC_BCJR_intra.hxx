@@ -41,7 +41,7 @@ struct RSC_BCJR_intra_init<signed char>
 template <typename B, typename R>
 Decoder_RSC_BCJR_intra<B,R>
 ::Decoder_RSC_BCJR_intra(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, buffered_encoding),
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding),
   alpha(8 * (K +4) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) + 2 * mipp::nElReg<R>())
 {

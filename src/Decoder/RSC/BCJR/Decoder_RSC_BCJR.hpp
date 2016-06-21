@@ -11,16 +11,21 @@ template <typename B, typename R>
 class Decoder_RSC_BCJR : public Decoder<B,R>, public SISO<R>
 {
 protected:
-	const int &K; // n info bits
+	const int  K;
+	const int  n_states;
+	const int  n_ff;
 	const bool buffered_encoding;
-	const int n_frames;
+	const int  n_frames;
 
 	mipp::vector<R> sys, par; // input LLR from the channel
 	mipp::vector<R> ext;      // extrinsic LLRs
 	mipp::vector<B> s;        // hard decision
 
 public:
-	Decoder_RSC_BCJR(const int &K, const bool buffered_encoding = true, const int n_frames = 1);
+	Decoder_RSC_BCJR(const int K, 
+	                 const mipp::vector<mipp::vector<int>> &trellis, 
+	                 const bool buffered_encoding = true, 
+	                 const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR();
 
 	virtual void load  (const mipp::vector<R>& Y_N);
@@ -29,7 +34,7 @@ public:
 
 	int get_n_frames() const { return n_frames; };
 	
-	int tail_length () const { return 2*3; }
+	virtual int tail_length () const { return 2 * n_ff; }
 
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 };

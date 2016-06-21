@@ -7,17 +7,23 @@
 
 template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
-::Decoder_RSC_BCJR(const int &K, const bool buffered_encoding, const int n_frames)
+::Decoder_RSC_BCJR(const int K, 
+                   const mipp::vector<mipp::vector<int>> &trellis, 
+                   const bool buffered_encoding, 
+                   const int n_frames)
 : Decoder<B,R>(),
   SISO<R>(),
   K(K),
+  n_states(trellis[0].size()),
+  n_ff(std::log2(n_states)),
   buffered_encoding(buffered_encoding),
   n_frames(n_frames),
-  sys((K+3) * n_frames + mipp::nElReg<R>()),
-  par((K+3) * n_frames + mipp::nElReg<R>()),
-  ext( K    * n_frames + mipp::nElReg<R>()),
-  s  ( K    * n_frames + mipp::nElReg<R>())
+  sys((K+n_ff) * n_frames + mipp::nElReg<R>()),
+  par((K+n_ff) * n_frames + mipp::nElReg<R>()),
+  ext( K       * n_frames + mipp::nElReg<R>()),
+  s  ( K       * n_frames + mipp::nElReg<R>())
 {
+	assert(is_power_of_2(n_states));
 }
 
 template <typename B, typename R>
@@ -71,12 +77,12 @@ void Decoder_RSC_BCJR<B,R>
 	{
 		// reordering
 		const auto n_frames = this->get_n_frames();
-		for (auto i = 0; i < K +3; i++)
+		for (auto i = 0; i < K + n_ff; i++)
 		{
 			for (auto f = 0; f < n_frames; f++)
 			{
-				sys[(i*n_frames) +f] = Y_N[f*2*(K +3) + i*2 +0];
-				par[(i*n_frames) +f] = Y_N[f*2*(K +3) + i*2 +1];
+				sys[(i*n_frames) +f] = Y_N[f*2*(K +n_ff) + i*2 +0];
+				par[(i*n_frames) +f] = Y_N[f*2*(K +n_ff) + i*2 +1];
 			}
 		}
 	}

@@ -68,7 +68,7 @@ struct RSC_BCJR_seq_init <signed char>
 template <typename B, typename R>
 Decoder_RSC_BCJR_seq<B,R>
 ::Decoder_RSC_BCJR_seq(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, buffered_encoding)
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding)
 {
 	mipp::vector<mipp::vector<int>> req_trellis(4);
 	for (unsigned i = 0; i < req_trellis.size(); i++)

@@ -10,9 +10,6 @@ template <typename B, typename R>
 class Decoder_RSC_BCJR_seq_generic : public Decoder_RSC_BCJR<B,R>
 {
 protected:
-	const int n_states;
-	const int n_ff;
-
 	mipp::vector<mipp::vector<R>> alpha; // node metric (left to right)
 	mipp::vector<mipp::vector<R>> beta;  // node metric (right to left)
 	mipp::vector<mipp::vector<R>> gamma; // edge metric

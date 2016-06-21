@@ -94,7 +94,7 @@ struct RSC_BCJR_inter_init <signed char>
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter<B,R>
 ::Decoder_RSC_BCJR_inter(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, buffered_encoding, mipp::nElmtsPerRegister<R>())
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, mipp::nElmtsPerRegister<R>())
 {
 	mipp::vector<mipp::vector<int>> req_trellis(4);
 	for (unsigned i = 0; i < req_trellis.size(); i++)

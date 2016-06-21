@@ -47,7 +47,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 				else if (deco_params.simd_strategy.empty())
 					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
-			else if (deco_params.implem == "GEN_STD")
+			else if (deco_params.implem == "GENERIC")
 			{
 				if (deco_params.simd_strategy.empty())
 					siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
@@ -142,7 +142,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 				else
 					siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);
 			}
-			else if (deco_params.implem == "GEN_STD")
+			else if (deco_params.implem == "GENERIC")
 			{
 				if (deco_params.simd_strategy.empty())
 					siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(code_params.K, trellis, enco_params.buffered);

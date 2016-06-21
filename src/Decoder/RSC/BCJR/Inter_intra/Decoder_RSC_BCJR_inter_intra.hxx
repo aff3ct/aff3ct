@@ -5,7 +5,7 @@
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter_intra<B,R>
 ::Decoder_RSC_BCJR_inter_intra(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, buffered_encoding, mipp::nElReg<R>() / 8),
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, mipp::nElReg<R>() / 8),
   alpha(8 * (K +4) * (mipp::nElReg<R>()/8) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) * (mipp::nElReg<R>()/8) + 2 * mipp::nElReg<R>())
 {
