@@ -150,8 +150,8 @@ void Simulation_turbo<B,R,Q,QD>
 	check_errors(source, "Source<B>");
 
 	// build the modulator
-	modulator = Factory_modulator<B>::build();
-	check_errors(modulator, "Modulator<B>");
+	modulator = Factory_modulator<B,R>::build();
+	check_errors(modulator, "Modulator<B,R>");
 
 	// build the channel
 	channel = Factory_channel<B,R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
@@ -197,7 +197,7 @@ void Simulation_turbo<B,R,Q,QD>
 		{
 			std::fill(U_K.begin(), U_K.end(), (B)0);
 			std::fill(X_N.begin(), X_N.end(), (B)0);
-			modulator->modulate(X_N);
+			modulator->modulate(X_N, X_N);
 		}
 
 		d_sourc_total = std::chrono::nanoseconds(0);
@@ -253,7 +253,7 @@ void Simulation_turbo<B,R,Q,QD>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			modulator->modulate(X_N);
+			modulator->modulate(X_N, X_N);
 			d_modul = steady_clock::now() - t_modul;
 		}
 

@@ -45,8 +45,8 @@ protected:
 
 	// communication chain
 	Source<B>           *source;
-	Encoder_RSC_sys<B>      *encoder;
-	Modulator<B>        *modulator;
+	Encoder_RSC_sys<B>  *encoder;
+	Modulator<B,R>      *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;
 	Decoder<B,Q>        *decoder;

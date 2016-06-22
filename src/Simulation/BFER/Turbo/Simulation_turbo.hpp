@@ -54,8 +54,8 @@ protected:
 	Source<B>           *source;
 	CRC<B>              *crc;
 	Encoder<B>          *encoder;
-	Encoder_RSC_sys<B>      *sub_encoder;
-	Modulator<B>        *modulator;
+	Encoder_RSC_sys<B>  *sub_encoder;
+	Modulator<B,R>      *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;
 	Scaling_factor<Q>   *sf;

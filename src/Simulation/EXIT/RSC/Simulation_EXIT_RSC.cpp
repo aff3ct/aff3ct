@@ -122,8 +122,8 @@ void Simulation_EXIT_RSC<B,R,Q,QD>
 	check_errors(source, "Source<B>");
 
 	// build the modulator
-	modulator = Factory_modulator<B>::build();
-	check_errors(modulator, "Modulator<B>");
+	modulator = Factory_modulator<B,R>::build();
+	check_errors(modulator, "Modulator<B,R>");
 
 	// build the channel
 	channel = Factory_channel<B,R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
@@ -215,8 +215,8 @@ void Simulation_EXIT_RSC<B,R,Q,QD>
 		X_K = B_K;
 
 		// modulate
-		modulator->modulate(X_K);
-		modulator->modulate(X_N);
+		modulator->modulate(X_K, X_K);
+		modulator->modulate(X_N, X_N);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)

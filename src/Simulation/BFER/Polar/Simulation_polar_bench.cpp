@@ -44,7 +44,7 @@ void Simulation_polar_bench<B,R,Q>
 
 		// modulate
 		auto t_modul = steady_clock::now();
-		this->modulator->modulate(this->X_N);
+		this->modulator->modulate(this->X_N, this->X_N);
 		this->d_modul_total = steady_clock::now() - t_modul;
 	}
 

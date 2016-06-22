@@ -43,7 +43,7 @@ protected:
 	// communication chain
 	Source<B>           *source;
 	Encoder<B>          *encoder;
-	Modulator<B>        *modulator;
+	Modulator<B,R>      *modulator;
 	Channel<B,R>        *channel;
 	Quantizer<R,Q>      *quantizer;
 	Decoder<B,Q>        *decoder;

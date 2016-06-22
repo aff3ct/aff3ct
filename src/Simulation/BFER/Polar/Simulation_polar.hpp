@@ -56,7 +56,7 @@ protected:
 	Source<B>            *source;
 	CRC<B>               *crc;
 	Encoder_polar<B>     *encoder;
-	Modulator<B>         *modulator;
+	Modulator<B,R>       *modulator;
 	Channel<B,R>         *channel;
 	Puncturer_polar<B,Q> *puncturer;
 	Quantizer<R,Q>       *quantizer;

@@ -68,7 +68,7 @@ void Simulation_RA_debug<B,R,Q>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			this->modulator->modulate(this->X_N);
+			this->modulator->modulate(this->X_N, this->X_N);
 			d_modul = steady_clock::now() - t_modul;
 		}
 		else

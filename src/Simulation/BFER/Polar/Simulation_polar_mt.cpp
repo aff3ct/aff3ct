@@ -188,7 +188,7 @@ void Simulation_polar_mt<B,R,Q>
 		std::fill(simu->U_K[tid].begin(), simu->U_K[tid].end(), (B)0);
 		std::fill(simu->U_N[tid].begin(), simu->U_N[tid].end(), (B)0);
 		std::fill(simu->X_N[tid].begin(), simu->X_N[tid].end(), (B)0);
-		simu->modulator[tid]->modulate(simu->X_N[tid]);
+		simu->modulator[tid]->modulate(simu->X_N[tid], simu->X_N[tid]);
 	}
 
 	simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
@@ -282,8 +282,8 @@ void Simulation_polar_mt<B,R,Q>
 	check_errors(simu->encoder[tid], "Encoder_polar<B>");
 
 	// build the modulator
-	simu->modulator[tid] = Factory_modulator<B>::build();
-	check_errors(simu->modulator[tid], "Modulator<B>");
+	simu->modulator[tid] = Factory_modulator<B,R>::build();
+	check_errors(simu->modulator[tid], "Modulator<B,R>");
 
 	// build the channel
 	simu->channel[tid] = Factory_channel<B,R>::build(simu->chan_params, simu->sigma, tid, 
@@ -353,7 +353,7 @@ void Simulation_polar_mt<B,R,Q>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			simu->modulator[tid]->modulate(simu->X_N[tid]);
+			simu->modulator[tid]->modulate(simu->X_N[tid], simu->X_N[tid]);
 			d_modul = steady_clock::now() - t_modul;
 		}
 

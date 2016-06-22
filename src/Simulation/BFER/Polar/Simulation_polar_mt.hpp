@@ -70,7 +70,7 @@ protected:
 	std::vector<Source<B>*>                    source;
 	std::vector<CRC<B>*>                       crc;
 	std::vector<Encoder_polar<B>*>             encoder;
-	std::vector<Modulator<B>*>                 modulator;
+	std::vector<Modulator<B,R>*>               modulator;
 	std::vector<Channel<B,R>*>                 channel;
 	std::vector<Puncturer_polar<B,Q>*>         puncturer;
 	std::vector<Quantizer<R,Q>*>               quantizer;

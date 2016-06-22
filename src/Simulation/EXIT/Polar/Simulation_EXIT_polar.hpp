@@ -65,7 +65,7 @@ protected:
 	// communication chain
 	Source<B>          *source;
 	Encoder_polar<B>   *encoder;
-	Modulator<B>       *modulator;	
+	Modulator<B,R>     *modulator;	
 	Channel<B,R>       *channel;
 	Channel<B,R>       *channel_a;
 	Quantizer<R,Q>     *quantizer;

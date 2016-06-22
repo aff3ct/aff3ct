@@ -5,10 +5,10 @@
 
 #include "../params.h"
 
-template <typename B>
+template <typename B, typename R>
 struct Factory_modulator
 {
-	static Modulator<B>* build();
+	static Modulator<B,R>* build();
 };
 
 #endif /* FACTORY_MODULATOR_HPP */

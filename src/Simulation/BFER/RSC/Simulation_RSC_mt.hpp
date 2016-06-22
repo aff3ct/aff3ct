@@ -59,8 +59,8 @@ protected:
 
 	// communication chain objects
 	std::vector<Source<B>*>                    source;
-	std::vector<Encoder_RSC_sys<B>*>               encoder;
-	std::vector<Modulator<B>*>                 modulator;
+	std::vector<Encoder_RSC_sys<B>*>           encoder;
+	std::vector<Modulator<B,R>*>               modulator;
 	std::vector<Channel<B,R>*>                 channel;
 	std::vector<Quantizer<R,Q>*>               quantizer;
 	std::vector<Decoder<B,Q>*>                 decoder;

@@ -4,14 +4,15 @@
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
-template <typename B>
+template <typename B, typename R>
 class Modulator
 {
 public:
 	Modulator() {};
 	virtual ~Modulator() {};
 
-	virtual void modulate(mipp::vector<B>& X_N) const = 0;
+	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
+	virtual void demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const = 0;
 };
 
 #endif /* MODULATOR_HPP_ */

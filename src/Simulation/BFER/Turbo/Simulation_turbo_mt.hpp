@@ -67,8 +67,8 @@ protected:
 	std::vector<Source<B>*>                    source;
 	std::vector<CRC<B>*>                       crc;
 	std::vector<Encoder<B>*>                   encoder;
-	std::vector<Encoder_RSC_sys<B>*>               sub_encoder;
-	std::vector<Modulator<B>*>                 modulator;
+	std::vector<Encoder_RSC_sys<B>*>           sub_encoder;
+	std::vector<Modulator<B,R>*>               modulator;
 	std::vector<Channel<B,R>*>                 channel;
 	std::vector<Quantizer<R,Q>*>               quantizer;
 	std::vector<Scaling_factor<Q>*>            sf;
