@@ -85,16 +85,19 @@ Decoder_RSC_BCJR_seq_generic<B,R>
 
 	RSC_BCJR_seq_generic_init<R>::apply(alpha, beta, K, this->n_states, this->n_ff);
 
-	for (auto i = 0; i < this->n_states; i++)
-		idx_a1[trellis[0][i]] = i;
-	for (auto i = 0; i < this->n_states; i++)
-		idx_a2[trellis[1][i]] = i;
+	// for (auto i = 0; i < this->n_states; i++)
+	// 	idx_a1[trellis[4][i]] = i;
+	// for (auto i = 0; i < this->n_states; i++)
+	// 	idx_a2[trellis[6][i]] = i;
 
-	idx_b1 = trellis[0];
-	idx_b2 = trellis[1];
+	idx_a1 = trellis[0];
+	idx_a2 = trellis[2];
 
-	idx_g1 = trellis[2];
-	idx_g2 = trellis[3];
+	idx_b1 = trellis[4];
+	idx_b2 = trellis[6];
+
+	idx_g1 = trellis[8];
+	idx_g2 = trellis[9];
 }
 
 template <typename B, typename R>

@@ -17,6 +17,8 @@ protected:
 	const bool buffered_encoding;
 	const int  n_frames;
 
+	const mipp::vector<mipp::vector<int>> &trellis;
+
 	mipp::vector<R> sys, par; // input LLR from the channel
 	mipp::vector<R> ext;      // extrinsic LLRs
 	mipp::vector<B> s;        // hard decision

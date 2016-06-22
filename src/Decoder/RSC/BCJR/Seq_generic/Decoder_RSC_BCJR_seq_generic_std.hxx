@@ -37,8 +37,9 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAP1,MAP2>
 	for (auto i = 1; i < this->K + this->n_ff; i++)
 	{
 		for (auto j = 0; j < this->n_states; j++)
-			this->alpha[j][i] = MAP1(this->alpha[this->idx_a1[j]][i -1] + this->gamma[this->idx_g1[j]][(i -1)],
-			                         this->alpha[this->idx_a2[j]][i -1] - this->gamma[this->idx_g1[j]][(i -1)]);
+			this->alpha[j][i] = MAP1(
+				this->alpha[this->trellis[0][j]][i -1] + this->trellis[1][j] * this->gamma[this->trellis[8][j]][(i -1)],
+				this->alpha[this->trellis[2][j]][i -1] + this->trellis[3][j] * this->gamma[this->trellis[8][j]][(i -1)]);
 
 		RSC_BCJR_seq_generic_normalize<R>::apply(this->alpha, i, this->n_states);
 	}
@@ -52,8 +53,9 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAP1,MAP2>
 	for (auto i = this->K + this->n_ff -1; i >= 1; i--)
 	{
 		for (auto j = 0; j < this->n_states; j++)
-			this->beta[j][i] = MAP1(this->beta[this->idx_b1[j]][i +1] + this->gamma[this->idx_g2[j]][i],
-			                        this->beta[this->idx_b2[j]][i +1] - this->gamma[this->idx_g2[j]][i]);
+			this->beta[j][i] = MAP1(
+				this->beta[this->trellis[4][j]][i +1] + this->trellis[5][j] * this->gamma[this->trellis[9][j]][i],
+				this->beta[this->trellis[6][j]][i +1] + this->trellis[7][j] * this->gamma[this->trellis[9][j]][i]);
 
 		RSC_BCJR_seq_generic_normalize<R>::apply(this->beta, i, this->n_states);
 	}
@@ -66,23 +68,33 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAP1,MAP2>
 	// compute extrinsic values
 	for (auto i = 0; i < this->K; i++)
 	{
-		RD max0 = (RD)this->alpha[             0 ][i   ] + 
-		          (RD)this->beta [this->idx_b1[0]][i +1] + 
-		          (RD)this->gamma[this->idx_g2[0]][i   ];
+		RD max0 = (RD)this->alpha[                 0 ][i   ] + 
+		          (RD)this->beta [this->trellis[4][0]][i +1] + 
+		          (RD)this->gamma[this->trellis[9][0]][i   ];
+
+		RD max1 = (RD)this->alpha[                 0 ][i   ] + 
+		          (RD)this->beta [this->trellis[6][0]][i +1] - 
+		          (RD)this->gamma[this->trellis[9][0]][i   ];
 
 		for (auto j = 1; j < this->n_states; j++)
-			max0 = MAP2(max0, (RD)this->alpha[             j ][i   ] + 
-			                  (RD)this->beta [this->idx_b1[j]][i +1] + 
-			                  (RD)this->gamma[this->idx_g2[j]][i   ]);
-
-		RD max1 = (RD)this->alpha[             0 ][i   ] + 
-		          (RD)this->beta [this->idx_b2[0]][i +1] - 
-		          (RD)this->gamma[this->idx_g2[0]][i   ];
+			if (this->trellis[5][j] == 1)
+				max0 = MAP2(max0, (RD)this->alpha[                 j ][i   ] + 
+				                  (RD)this->beta [this->trellis[4][j]][i +1] + 
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+			else
+				max1 = MAP2(max1, (RD)this->alpha[                 j ][i   ] + 
+				                  (RD)this->beta [this->trellis[4][j]][i +1] - 
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
 
 		for (auto j = 1; j < this->n_states; j++)
-			max1 = MAP2(max1, (RD)this->alpha[             j ][i   ] + 
-			                  (RD)this->beta [this->idx_b2[j]][i +1] - 
-			                  (RD)this->gamma[this->idx_g2[j]][i   ]);
+			if (this->trellis[7][j] == 1)
+				max0 = MAP2(max0, (RD)this->alpha[                 j ][i   ] + 
+				                  (RD)this->beta [this->trellis[6][j]][i +1] + 
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+			else
+				max1 = MAP2(max1, (RD)this->alpha[                 j ][i   ] + 
+				                  (RD)this->beta [this->trellis[6][j]][i +1] - 
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
 
 		ext[i] = RSC_BCJR_seq_generic_post<R,RD>::compute(max0 - max1) - sys[i];
 	}
@@ -152,7 +164,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAP1,MAP2>
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
-	// this->compute_beta (        );
-	// this->compute_ext  (sys, ext);
-	this->compute_beta_ext(sys, ext);
+	this->compute_beta (        );
+	this->compute_ext  (sys, ext);
+	// this->compute_beta_ext(sys, ext);
 }

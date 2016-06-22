@@ -25,6 +25,13 @@ int Encoder_RSC3_sys<B>
 	return xor4;
 }
 
+template <typename B>
+int Encoder_RSC3_sys<B>
+::tail_bit_sys(const int &state)
+{
+	return 0 ^ ((state >> 1) & 0x1) ^ (state & 0x1);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC

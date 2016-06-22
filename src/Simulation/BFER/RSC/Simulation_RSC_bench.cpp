@@ -82,11 +82,20 @@ void Simulation_RSC_bench<B,R,Q,QD>
 ::simulation_Monte_Carlo(Simulation_RSC_bench<B,R,Q,QD> *simu, const int tid)
 {
 	// manually build the trellis
-	mipp::vector<mipp::vector<int>> trellis(4);
-	trellis[0] = {0,4,5,1,2,6,7,3};
-	trellis[1] = {4,0,1,5,6,2,3,7};
-	trellis[2] = {0,1,1,0,0,1,1,0};
-	trellis[3] = {0,0,1,1,1,1,0,0};
+	mipp::vector<mipp::vector<int>> trellis(10);
+	for (unsigned i = 0; i < trellis.size(); i++)
+		trellis[i].resize(8);
+
+	trellis[0] = { 0,  3,  4,  7,  1,  2,  5,  6};
+	trellis[1] = { 1,  1,  1,  1,  1,  1,  1,  1};
+	trellis[2] = { 1,  2,  5,  6,  0,  3,  4,  7};
+	trellis[3] = {-1, -1, -1, -1, -1, -1, -1, -1};
+	trellis[4] = { 0,  4,  5,  1,  2,  6,  7,  3};
+	trellis[5] = { 1,  1,  1,  1,  1,  1,  1,  1};
+	trellis[6] = { 4,  0,  1,  5,  6,  2,  3,  7};
+	trellis[7] = {-1, -1, -1, -1, -1, -1, -1, -1};
+	trellis[8] = { 0,  1,  1,  0,  0,  1,  1,  0};
+	trellis[9] = { 0,  0,  1,  1,  1,  1,  0,  0};
 
 	// build the the decoder
 	simu->decoder[tid] = Factory_decoder_RSC<B,Q,QD>::build(simu->code_params, simu->enco_params, simu->chan_params, 

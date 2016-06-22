@@ -18,6 +18,7 @@ Decoder_RSC_BCJR<B,R>
   n_ff(std::log2(n_states)),
   buffered_encoding(buffered_encoding),
   n_frames(n_frames),
+  trellis(trellis),
   sys((K+n_ff) * n_frames + mipp::nElReg<R>()),
   par((K+n_ff) * n_frames + mipp::nElReg<R>()),
   ext( K       * n_frames + mipp::nElReg<R>()),

@@ -45,14 +45,20 @@ Decoder_RSC_BCJR_intra<B,R>
   alpha(8 * (K +4) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) + 2 * mipp::nElReg<R>())
 {
-	mipp::vector<mipp::vector<int>> req_trellis(4);
+	mipp::vector<mipp::vector<int>> req_trellis(10);
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		req_trellis[i].resize(8);
 
-	req_trellis[0] = {0,4,5,1,2,6,7,3};
-	req_trellis[1] = {4,0,1,5,6,2,3,7};
-	req_trellis[2] = {0,1,1,0,0,1,1,0};
-	req_trellis[3] = {0,0,1,1,1,1,0,0};
+	req_trellis[0] = { 0,  3,  4,  7,  1,  2,  5,  6};
+	req_trellis[1] = { 1,  1,  1,  1,  1,  1,  1,  1};
+	req_trellis[2] = { 1,  2,  5,  6,  0,  3,  4,  7};
+	req_trellis[3] = {-1, -1, -1, -1, -1, -1, -1, -1};
+	req_trellis[4] = { 0,  4,  5,  1,  2,  6,  7,  3};
+	req_trellis[5] = { 1,  1,  1,  1,  1,  1,  1,  1};
+	req_trellis[6] = { 4,  0,  1,  5,  6,  2,  3,  7};
+	req_trellis[7] = {-1, -1, -1, -1, -1, -1, -1, -1};
+	req_trellis[8] = { 0,  1,  1,  0,  0,  1,  1,  0};
+	req_trellis[9] = { 0,  0,  1,  1,  1,  1,  0,  0};
 
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])

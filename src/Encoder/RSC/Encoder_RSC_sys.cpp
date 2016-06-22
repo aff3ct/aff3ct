@@ -59,14 +59,49 @@ void Encoder_RSC_sys<B>
 		frame_encode(U_K.data() + f*K, par.data() + f*(K+2*this->n_ff), 1, true);
 }
 
+// template <typename B>
+// mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
+// ::get_trellis()
+// {
+// 	mipp::vector<mipp::vector<int>> trellis(4);
+
+// 	for (unsigned i = 0; i < trellis.size(); i++)
+// 		trellis[i].resize(this->n_states);
+
+// 	for (auto i = 0; i < this->n_states; i++)
+// 	{
+// 		auto state = i;
+// 		auto bit_sys = 0;
+// 		auto bit_par = inner_encode(bit_sys, state);
+
+// 		trellis[0][           i ] = state;
+// 		trellis[2][trellis[0][i]] = bit_sys ^ bit_par;
+
+// 		// ----------
+
+// 		state = i;
+// 		bit_sys = 1;
+// 		bit_par = inner_encode(bit_sys, state);
+
+// 		trellis[1][i] = state;
+// 		trellis[3][i] = bit_sys ^ bit_par;
+// 	}
+
+// 	return trellis;
+// }
+
 template <typename B>
 mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
 ::get_trellis()
 {
-	mipp::vector<mipp::vector<int>> trellis(4);
+	mipp::vector<mipp::vector<int>> trellis(10);
 
 	for (unsigned i = 0; i < trellis.size(); i++)
 		trellis[i].resize(this->n_states);
+
+	bool occurrence[this->n_states];
+	for (auto i = 0; i < this->n_states; i++)
+		occurrence[i] = false;
 
 	for (auto i = 0; i < this->n_states; i++)
 	{
@@ -74,8 +109,22 @@ mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
 		auto bit_sys = 0;
 		auto bit_par = inner_encode(bit_sys, state);
 
-		trellis[0][           i ] = state;
-		trellis[2][trellis[0][i]] = bit_sys ^ bit_par;
+		trellis[4][i] = state;
+		trellis[5][i] = 1 - (bit_sys + bit_sys); // +1/-1
+
+		if (!occurrence[i])
+		{
+			trellis[0][state] = i;
+			trellis[1][state] = 1 - (bit_sys + bit_sys);
+			occurrence[i] = true;
+		}
+		else
+		{
+			trellis[2][state] = i;
+			trellis[3][state] = 1 - (bit_sys + bit_sys);
+		}
+
+		trellis[8][state] = bit_sys ^ bit_par;
 
 		// ----------
 
@@ -83,10 +132,34 @@ mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
 		bit_sys = 1;
 		bit_par = inner_encode(bit_sys, state);
 
-		trellis[1][i] = state;
-		trellis[3][i] = bit_sys ^ bit_par;
+		trellis[6][i] = state;
+		trellis[7][i] = 1 - (bit_sys + bit_sys); // +1/-1
+
+		if (!occurrence[i])
+		{
+			trellis[0][state] = i;
+			trellis[1][state] = 1 - (bit_sys + bit_sys);
+			occurrence[i] = true;
+		}
+		else
+		{
+			trellis[2][state] = i;
+			trellis[3][state] = 1 - (bit_sys + bit_sys);
+		}
+
+		trellis[9][i] = bit_sys ^ bit_par;
 	}
 
+	/* DEBUG
+	for (auto i = 0; i < 10; i++)
+	{
+		std::cout << "trellis[" << i << "] = {";
+		for (auto s = 0; s < this->n_states; s++)
+			std::cout << ", " << std::setw(4) << trellis[i][s];
+		std::cout << "}" << std::endl;
+	}
+	*/
+	
 	return trellis;
 }
 
@@ -111,7 +184,7 @@ void Encoder_RSC_sys<B>
 	// tail bits for initialization conditions (state of data "state" have to be 0 0 0)
 	for (auto i = 0; i < this->n_ff; i++)
 	{
-		B bit_sys = 0 ^ ((state >> 1) & 0x1) ^ (state & 0x1);
+		B bit_sys = tail_bit_sys(state);
 
 		if (!only_parity)
 		{

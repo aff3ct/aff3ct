@@ -15,6 +15,7 @@ public:
 
 protected:
 	int inner_encode(const int bit_sys, int &state);
+	int tail_bit_sys(const int &state             );
 };
 
 #endif // ENCODER_RSC3_SYS_HPP_
