@@ -4,10 +4,14 @@
 #include <vector>
 
 #include "Simulation_polar.hpp"
+#include "../../../Tools/Frame_trace/Frame_trace.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_polar_debug : public Simulation_polar<B,R,Q>
 {
+private:
+	Frame_trace<B> ft;
+
 public:
 	Simulation_polar_debug(const t_simulation_param& simu_params,
 	                       const t_code_param&       code_params,
@@ -19,11 +23,6 @@ public:
 
 protected:
 	void simulation_loop();
-
-private:
-	void display_bit_vector(mipp::vector<B> vec);
-	void display_real_vector(mipp::vector<R> vec);
-	void display_quantized_vector(mipp::vector<Q> vec);
 };
 
 #endif /* SIMULATION_POLAR_DEBUG_HPP_ */

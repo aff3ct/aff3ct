@@ -12,7 +12,7 @@ Simulation_RSC_debug<B,R,Q,QD>
                        const t_encoder_param&    enco_params,
                        const t_channel_param&    chan_params,
                        const t_decoder_param&    deco_params)
-: Simulation_RSC<B,R,Q,QD>(simu_params, code_params, enco_params, chan_params, deco_params)
+: Simulation_RSC<B,R,Q,QD>(simu_params, code_params, enco_params, chan_params, deco_params), ft(std::clog)
 {
 }
 
@@ -52,7 +52,7 @@ void Simulation_RSC_debug<B,R,Q,QD>
 
 			// display U_K
 			std::clog << "U_K:" << std::endl;
-			this->display_bit_vector(this->U_K);
+			ft.display_bit_vector(this->U_K);
 			std::clog << std::endl;
 
 			// encode U_K into a N bits vector X_N
@@ -63,7 +63,7 @@ void Simulation_RSC_debug<B,R,Q,QD>
 
 			// display X_N
 			std::clog << "X_N:" << std::endl;
-			this->display_bit_vector(this->X_N);
+			ft.display_bit_vector(this->X_N);
 			std::clog << std::endl;
 
 			// modulate
@@ -75,12 +75,12 @@ void Simulation_RSC_debug<B,R,Q,QD>
 		{
 			// display U_K
 			std::clog << "U_K:" << std::endl;
-			this->display_bit_vector(this->U_K);
+			ft.display_bit_vector(this->U_K);
 			std::clog << std::endl;
 
 			// display X_N
 			std::clog << "X_N:" << std::endl;
-			this->display_bit_vector(this->X_N);
+			ft.display_bit_vector(this->X_N);
 			std::clog << std::endl;
 		}
 
@@ -92,7 +92,7 @@ void Simulation_RSC_debug<B,R,Q,QD>
 
 		// display Y_N1
 		std::clog << "Y_N1:" << std::endl;
-		this->display_real_vector(this->Y_N1);
+		ft.display_real_vector(this->Y_N1);
 		std::clog << std::endl;
 
 		// make the quantization
@@ -103,7 +103,7 @@ void Simulation_RSC_debug<B,R,Q,QD>
 
 		// display Y_N2
 		std::clog << "Y_N2:" << std::endl;
-		this->display_quantized_vector(this->Y_N2);
+		ft.display_real_vector(this->Y_N2);
 		std::clog << std::endl;
 
 		// load data in the decoder
@@ -127,7 +127,7 @@ void Simulation_RSC_debug<B,R,Q,QD>
 
 		// display V_K
 		std::clog << "V_K:" << std::endl;
-		this->display_bit_vector(this->V_K);
+		ft.display_bit_vector(this->V_K);
 		std::clog << std::endl;
 
 		// check errors in the frame
@@ -156,51 +156,6 @@ void Simulation_RSC_debug<B,R,Q,QD>
 	}
 
 	this->terminal->legend(std::clog);
-}
-
-template <typename B, typename R, typename Q, typename QD>
-void Simulation_RSC_debug<B,R,Q,QD>
-::display_bit_vector(mipp::vector<B> vec)
-{
-	for(unsigned i = 0; i < vec.size(); i++)
-		std::clog << std::setw(5) << i << "|";
-	std::clog << std::endl;
-
-	for(unsigned i = 0; i < vec.size(); i++)
-		std::clog << std::setw(5) << ((vec[i] == 0) ? (int) 0 : (int) 1) << "|";
-	std::clog << std::endl;
-}
-
-template <typename B, typename R, typename Q, typename QD>
-void Simulation_RSC_debug<B,R,Q,QD>
-::display_real_vector(mipp::vector<R> vec)
-{
-	for(unsigned i = 0; i < vec.size(); i++)
-		std::clog << std::setw(5) << i << "|";
-	std::clog << std::endl;
-
-	for(unsigned i = 0; i < vec.size(); i++)
-		if(vec[i] >= 0)
-			std::clog << std::setprecision(2) << std::setw(5) << vec[i] << "|";
-		else
-			std::clog << std::setprecision(1) << std::setw(5) << vec[i] << "|";
-	std::clog << std::endl;
-}
-
-template <typename B, typename R, typename Q, typename QD>
-void Simulation_RSC_debug<B,R,Q,QD>
-::display_quantized_vector(mipp::vector<Q> vec)
-{
-	for(unsigned i = 0; i < vec.size(); i++)
-		std::clog << std::setw(5) << i << "|";
-	std::clog << std::endl;
-
-	for(unsigned i = 0; i < vec.size(); i++)
-		if(vec[i] >= 0)
-			std::clog << std::setprecision(2) << std::setw(5) << (int)vec[i] << "|";
-		else
-			std::clog << std::setprecision(1) << std::setw(5) << (int)vec[i] << "|";
-	std::clog << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 
