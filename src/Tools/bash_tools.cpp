@@ -107,3 +107,21 @@ std::string bold_blue(std::string str)
 	return "\e[1m\e[94m" + str + "\e[39m\e[0m";
 #endif
 }
+
+std::string orange(std::string str)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+	return "\e[38;5;208m" + str + "\e[39m";
+#endif
+}
+
+std::string bold_orange(std::string str)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+	return "\e[1m\e[38;5;208m" + str + "\e[39m\e[0m";
+#endif
+}

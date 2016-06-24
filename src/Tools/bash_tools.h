@@ -27,4 +27,8 @@ std::string blue(std::string str);
 
 std::string bold_blue(std::string str);
 
+std::string orange(std::string str);
+
+std::string bold_orange(std::string str);
+
 #endif /* BASH_TOOLS_H_ */
