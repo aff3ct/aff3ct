@@ -318,9 +318,6 @@ void Simulation_RSC_mt<B,R,Q,QD>
 		simu->decoder[tid]->store(simu->V_K[tid]);
 		auto d_store = steady_clock::now() - t_store;
 
-		// unpack V_K if we used bit packing in the decoder (do nothing else)
-		simu->decoder[tid]->unpack(simu->V_K[tid]);
-
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		simu->analyzer[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);

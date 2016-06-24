@@ -42,11 +42,10 @@ Simulation_polar<B,R,Q>
   deco_params(deco_params),
   frozen_bits(N_2),
   U_K(code_params.K),
-  U_N(N_2),
   X_N(N_2),
   Y_N1(N_2),
   Y_N2(N_2),
-  V_N(N_2),
+  V_K(code_params.K),
   code_rate(0.f),
   sigma(0.f),
   is_generated_decoder((deco_params.implem.find("_SNR") != std::string::npos) && (deco_params.algo == "SC")),
@@ -127,11 +126,10 @@ void Simulation_polar<B,R,Q>
 	n_frames = decoder->get_n_frames();
 
 	if (U_K .size() != (unsigned) (code_params.K * n_frames)) U_K .resize(code_params.K * n_frames);
-	if (U_N .size() != (unsigned) (N_2 * n_frames)) U_N .resize(N_2 * n_frames);
-	if (X_N .size() != (unsigned) (N_2 * n_frames)) X_N .resize(N_2 * n_frames);
-	if (Y_N1.size() != (unsigned) (N_2 * n_frames)) Y_N1.resize(N_2 * n_frames);
-	if (Y_N2.size() != (unsigned) (N_2 * n_frames)) Y_N2.resize(N_2 * n_frames);
-	if (V_N .size() != (unsigned) (N_2 * n_frames)) V_N .resize(N_2 * n_frames);
+	if (X_N .size() != (unsigned) (N_2           * n_frames)) X_N .resize(N_2           * n_frames);
+	if (Y_N1.size() != (unsigned) (N_2           * n_frames)) Y_N1.resize(N_2           * n_frames);
+	if (Y_N2.size() != (unsigned) (N_2           * n_frames)) Y_N2.resize(N_2           * n_frames);
+	if (V_K .size() != (unsigned) (code_params.K * n_frames)) V_K .resize(code_params.K * n_frames);
 
 	// build the source
 	source = Factory_source<B>::build(code_params);
@@ -139,7 +137,7 @@ void Simulation_polar<B,R,Q>
 
 	// build the encoder
 	encoder = Factory_encoder_polar<B>::build(code_params, enco_params, deco_params, frozen_bits, n_frames);
-	check_errors(encoder, "Encoder_polar<B>");
+	check_errors(encoder, "Encoder<B>");
 
 	// build the modulator
 	modulator = Factory_modulator<B,R>::build();
@@ -203,7 +201,6 @@ void Simulation_polar<B,R,Q>
 		if (code_params.generation_method == "AZCW")
 		{
 			std::fill(U_K.begin(), U_K.end(), (B)0);
-			std::fill(U_N.begin(), U_N.end(), (B)0);
 			std::fill(X_N.begin(), X_N.end(), (B)0);
 			modulator->modulate(X_N, X_N);
 		}
@@ -257,7 +254,7 @@ void Simulation_polar<B,R,Q>
 
 			// encode U_K into a N bits vector X_N
 			auto t_encod = steady_clock::now();
-			encoder->encode(U_K, U_N, X_N);
+			encoder->encode(U_K, X_N);
 			d_encod = steady_clock::now() - t_encod;
 
 			// modulate
@@ -294,17 +291,14 @@ void Simulation_polar<B,R,Q>
 		decoder->decode();
 		auto d_decod = steady_clock::now() - t_decod;
 
-		// store results in V_N
+		// store results in V_K
 		auto t_store = steady_clock::now();
-		decoder->store(V_N);
+		decoder->store(V_K);
 		auto d_store = steady_clock::now() - t_store;
-
-		// unpack V_N
-		decoder->unpack(V_N);
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		analyzer->check_errors(U_N, V_N);
+		analyzer->check_errors(U_K, V_K);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations

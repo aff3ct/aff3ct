@@ -101,10 +101,11 @@ void Generator_polar_SC_sys
 	dec_common1 << "class " << class_name << " : public Decoder_polar_SC_fast_sys<B, R, API_polar>"           << endl;
 	dec_common1 << "{"                                                                                        << endl;
 	dec_common1 << "public:"                                                                                  << endl;
-	dec_common1 << tab << class_name << "(const int& N, const mipp::vector<B>& frozen_bits)"                  << endl;
-	dec_common1 << tab << ": Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits)"                      << endl;
+	dec_common1 << tab << class_name << "(const int& K, const int& N, const mipp::vector<B>& frozen_bits)"    << endl;
+	dec_common1 << tab << ": Decoder_polar_SC_fast_sys<B, R, API_polar>(K, N, frozen_bits)"                   << endl;
 	dec_common1 << tab << "{"                                                                                 << endl;
 	dec_common1 << tab << tab << "assert(N == " << N << ");"                                                  << endl;
+	dec_common1 << tab << tab << "assert(K == " << K << ");"                                                  << endl;
 	dec_common1 << tab << tab                                                                                 << endl;
 	dec_common1 << tab << tab << "auto i = 0;"                                                                << endl;
 	dec_common1 << tab << tab << "while (i < " << N << " && " << fbits_name << "[i] == frozen_bits[i]) i++;"  << endl;

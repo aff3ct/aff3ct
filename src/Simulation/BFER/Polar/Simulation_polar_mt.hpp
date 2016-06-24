@@ -15,7 +15,7 @@
 
 #include "../../../Source/Source.hpp"
 #include "../../../CRC/CRC.hpp"
-#include "../../../Encoder/Polar/Encoder_polar.hpp"
+#include "../../../Encoder/Encoder.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Tools/Polar/Puncturer/Puncturer_polar.hpp"
@@ -53,11 +53,10 @@ protected:
 	// data vector
 	std::vector<mipp::vector<B>> frozen_bits; // known bits (alias frozen bits) are set to true
 	std::vector<mipp::vector<B>> U_K;         // information vector without frozen bits inserted
-	std::vector<mipp::vector<B>> U_N;         // information vector with frozen bits inserted: transmitted codeword
 	std::vector<mipp::vector<B>> X_N;         // encoded codeword
 	std::vector<mipp::vector<R>> Y_N1;        // noisy codeword (before quantization)
 	std::vector<mipp::vector<Q>> Y_N2;        // noisy codeword (after  quantization)
-	std::vector<mipp::vector<B>> V_N;         // decoded codeword without frozen bits inserted
+	std::vector<mipp::vector<B>> V_K;         // decoded codeword without frozen bits inserted
 
 	// code specifications
 	float code_rate;
@@ -69,7 +68,7 @@ protected:
 	// communication chain objects
 	std::vector<Source<B>*>                    source;
 	std::vector<CRC<B>*>                       crc;
-	std::vector<Encoder_polar<B>*>             encoder;
+	std::vector<Encoder<B>*>                   encoder;
 	std::vector<Modulator<B,R>*>               modulator;
 	std::vector<Channel<B,R>*>                 channel;
 	std::vector<Puncturer_polar<B,Q>*>         puncturer;

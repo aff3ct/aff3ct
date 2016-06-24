@@ -6,14 +6,14 @@
 #include "Factory_encoder_polar.hpp"
 
 template <typename B>
-Encoder_polar<B>* Factory_encoder_polar<B>
+Encoder<B>* Factory_encoder_polar<B>
 ::build(const t_code_param    &code_params,
         const t_encoder_param &enco_params,
         const t_decoder_param &deco_params,
         const mipp::vector<B> &frozen_bits,
         const int n_frames)
 {
-	Encoder_polar<B> *encoder = nullptr;
+	Encoder<B> *encoder = nullptr;
 
 	const int N = std::exp2(code_params.m);
 

@@ -8,7 +8,7 @@
 #include "../Simulation_EXIT.hpp"
 
 #include "../../../Source/Source.hpp"
-#include "../../../Encoder/Polar/Encoder_polar.hpp"
+#include "../../../Encoder/Encoder.hpp"
 #include "../../../Modulator/Modulator.hpp"
 #include "../../../Channel/Channel.hpp"
 #include "../../../Quantizer/Quantizer.hpp"
@@ -64,7 +64,7 @@ protected:
 
 	// communication chain
 	Source<B>          *source;
-	Encoder_polar<B>   *encoder;
+	Encoder<B>         *encoder;
 	Modulator<B,R>     *modulator;	
 	Channel<B,R>       *channel;
 	Channel<B,R>       *channel_a;

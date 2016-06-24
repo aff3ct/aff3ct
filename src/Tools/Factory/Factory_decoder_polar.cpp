@@ -42,7 +42,7 @@ SISO<R>* Factory_decoder_polar<B,R>
 	if (enco_params.systematic) // non-systematic encoding / decoding
 		if (chan_params.domain == "LLR")
 			if (deco_params.algo == "SCAN" && deco_params.implem == "NAIVE")
-				siso = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(code_params.m, deco_params.max_iter, frozen_bits);
+				siso = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(code_params.K, code_params.m, deco_params.max_iter, frozen_bits);
 	return siso;
 }
 
@@ -65,18 +65,18 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 		if (chan_params.domain == "LR" && deco_params.simd_strategy.empty())
 		{
 			if (deco_params.algo == "SC" && deco_params.implem == "NAIVE")
-				decoder = new Decoder_polar_SC_naive<B,R,f_LR<R>,g_LR<B,R>,h_LR<B,R>>(N, frozen_bits);
+				decoder = new Decoder_polar_SC_naive<B,R,f_LR<R>,g_LR<B,R>,h_LR<B,R>>(code_params.K, N, frozen_bits);
 		}
 		else if (chan_params.domain == "LLR" && deco_params.simd_strategy.empty())
 		{
 			if (deco_params.algo == "SC" && deco_params.implem == "NAIVE")
-				decoder = new Decoder_polar_SC_naive <B,R,f_LLR<R>,g_LLR<B,R>,h_LLR<B,R>>(N, frozen_bits);
+				decoder = new Decoder_polar_SC_naive <B,R,f_LLR<R>,g_LLR<B,R>,h_LLR<B,R>>(code_params.K, N, frozen_bits);
 			if (deco_params.algo == "SCAN" && deco_params.implem == "NAIVE")
-				decoder = new Decoder_polar_SCAN_naive<B,R,init_LLR<R>,f_LLR<R>,v_LLR<R>,h_LLR<B,R>>(code_params.m, deco_params.max_iter, frozen_bits);
+				decoder = new Decoder_polar_SCAN_naive<B,R,init_LLR<R>,f_LLR<R>,v_LLR<R>,h_LLR<B,R>>(code_params.K, code_params.m, deco_params.max_iter, frozen_bits);
 			if (deco_params.algo == "SCL" && deco_params.implem == "NAIVE" && code_params.crc.empty())
-				decoder = new Decoder_polar_SCL_naive<B,R,f_LLR<R>,g_LLR<B,R>>(N, deco_params.L, frozen_bits);
+				decoder = new Decoder_polar_SCL_naive<B,R,f_LLR<R>,g_LLR<B,R>>(code_params.K, N, deco_params.L, frozen_bits);
 			if (deco_params.algo == "SCL" && deco_params.implem == "NAIVE" && !code_params.crc.empty())
-				decoder = new Decoder_polar_SCL_naive_CA<B,R,f_LLR<R>,g_LLR<B,R>>(N, deco_params.L, frozen_bits, *crc);
+				decoder = new Decoder_polar_SCL_naive_CA<B,R,f_LLR<R>,g_LLR<B,R>>(code_params.K, N, deco_params.L, frozen_bits, *crc);
 		}
 	}
 	else // systematic encoding
@@ -84,20 +84,20 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 		if (chan_params.domain == "LR" && deco_params.simd_strategy.empty())
 		{
 			if (deco_params.algo == "SC" && deco_params.implem == "NAIVE")
-				decoder = new Decoder_polar_SC_naive_sys<B, R, f_LR<R>, g_LR<B,R>, h_LR<B,R>>(N, frozen_bits);
+				decoder = new Decoder_polar_SC_naive_sys<B, R, f_LR<R>, g_LR<B,R>, h_LR<B,R>>(code_params.K, N, frozen_bits);
 		}
 		else if (chan_params.domain == "LLR")
 		{
 			if (deco_params.simd_strategy.empty())
 			{
 				if (deco_params.algo == "SC" && deco_params.implem == "NAIVE")
-					decoder = new Decoder_polar_SC_naive_sys<B, R, f_LLR<R>, g_LLR<B,R>, h_LLR<B,R>>(N, frozen_bits);
+					decoder = new Decoder_polar_SC_naive_sys<B, R, f_LLR<R>, g_LLR<B,R>, h_LLR<B,R>>(code_params.K, N, frozen_bits);
 				if (deco_params.algo == "SCAN" && deco_params.implem == "NAIVE")
-					decoder = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(code_params.m, deco_params.max_iter, frozen_bits);
+					decoder = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(code_params.K, code_params.m, deco_params.max_iter, frozen_bits);
 				if (deco_params.algo == "SCL" && deco_params.implem == "NAIVE" && code_params.crc.empty())
-					decoder = new Decoder_polar_SCL_naive_sys<B,R,f_LLR<R>,g_LLR<B,R>>(N, deco_params.L, frozen_bits);
+					decoder = new Decoder_polar_SCL_naive_sys<B,R,f_LLR<R>,g_LLR<B,R>>(code_params.K, N, deco_params.L, frozen_bits);
 				if (deco_params.algo == "SCL" && deco_params.implem == "NAIVE" && !code_params.crc.empty())
-					decoder = new Decoder_polar_SCL_naive_CA_sys<B,R,f_LLR<R>,g_LLR<B,R>>(N, deco_params.L, frozen_bits, *crc);
+					decoder = new Decoder_polar_SCL_naive_CA_sys<B,R,f_LLR<R>,g_LLR<B,R>>(code_params.K, N, deco_params.L, frozen_bits, *crc);
 			}
 		
 			if (deco_params.algo == "SC" && deco_params.implem == "FAST")
@@ -114,7 +114,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						using API_polar = API_polar_static_inter_8bit_bitpacking
 						                  <B, R, f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(code_params.K, N,frozen_bits);
 					}
 #endif
 					if (decoder == nullptr)
@@ -126,7 +126,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						using API_polar = API_polar_static_inter
 						                  <B, R, f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(code_params.K, N,frozen_bits);
 					}
 				}
 				else if (deco_params.simd_strategy == "INTRA")
@@ -142,7 +142,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
 						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(code_params.K, N,frozen_bits);
 					}
 					else if (typeid(B) == typeid(short))
 					{
@@ -155,7 +155,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
 						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(code_params.K, N,frozen_bits);
 					}
 					else if (typeid(B) == typeid(int))
 					{
@@ -168,7 +168,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
 						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(code_params.K, N,frozen_bits);
 					}
 				}
 				else if (deco_params.simd_strategy.empty())
@@ -180,7 +180,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					using API_polar = API_polar_static_seq
 					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
 #endif
-					decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits);                                
+					decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(code_params.K, N,frozen_bits);                                
 				}
 			}
 		}

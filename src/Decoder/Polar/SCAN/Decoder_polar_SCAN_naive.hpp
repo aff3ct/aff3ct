@@ -12,8 +12,9 @@ template <typename B, typename R,
 class Decoder_polar_SCAN_naive : public Decoder<B,R>
 {
 protected:
-	const int m;            // code log-length
-	const int N;            // code length
+	const int K;            // information bits
+	const int m;            // coded bits log-length
+	const int N;            // coded bits length
 	const int max_iter;
 	const int layers_count; // number of layers in the graph = m+1
 
@@ -22,14 +23,13 @@ protected:
 	std::vector<mipp::vector<R>> soft_graph;
 
 public:
-	Decoder_polar_SCAN_naive(const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits);
+	Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits);
 	virtual ~Decoder_polar_SCAN_naive() {}
 
 	// functions
 	        void load  (const mipp::vector<R>& Y_N);
 	        void decode(                          );
-	virtual void store (      mipp::vector<B>& V_N) const;
-	        void unpack(      mipp::vector<B>& V_N) const;
+	virtual void store (      mipp::vector<B>& V_K) const;
 
 protected:
 	void load_init();

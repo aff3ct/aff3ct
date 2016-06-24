@@ -130,7 +130,7 @@ void Simulation_EXIT_polar<B,R,Q>
 
 	// build the encoder
 	encoder = Factory_encoder_polar<B>::build(code_params, enco_params, deco_params, frozen_bits);
-	check_errors(encoder, "Encoder_polar<B>");
+	check_errors(encoder, "Encoder<B>");
 
 	// build the modulator
 	modulator = Factory_modulator<B,R>::build();

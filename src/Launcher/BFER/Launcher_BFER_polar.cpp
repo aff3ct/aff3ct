@@ -4,7 +4,6 @@
 
 #include "../../Simulation/BFER/Polar/Simulation_polar.hpp"
 #include "../../Simulation/BFER/Polar/Simulation_polar_mt.hpp"
-#include "../../Simulation/BFER/Polar/Simulation_polar_bench.hpp"
 #include "../../Simulation/BFER/Polar/Simulation_polar_debug.hpp"
 
 #include "../../CRC/CRC_polynomial.hpp"
@@ -151,12 +150,6 @@ void Launcher_BFER_polar<B,R,Q>
 
 	if (this->simu_params.enable_debug)
 		this->simu = new Simulation_polar_debug<B,R,Q>(this->simu_params, 
-		                                               this->code_params, 
-		                                               this->enco_params, 
-		                                               this->chan_params, 
-		                                               this->deco_params);
-	else if (this->simu_params.benchs)
-		this->simu = new Simulation_polar_bench<B,R,Q>(this->simu_params, 
 		                                               this->code_params, 
 		                                               this->enco_params, 
 		                                               this->chan_params, 

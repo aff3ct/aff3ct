@@ -12,7 +12,7 @@ template <typename B, typename R,
 class Decoder_polar_SCAN_naive_sys : public Decoder_polar_SCAN_naive<B,R,I,F,V,H>, public SISO<R>
 {
 public:
-	Decoder_polar_SCAN_naive_sys(const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits);
+	Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits);
 	virtual ~Decoder_polar_SCAN_naive_sys();
 
 #ifdef __clang__

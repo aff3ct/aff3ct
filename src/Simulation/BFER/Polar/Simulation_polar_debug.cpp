@@ -72,13 +72,8 @@ void Simulation_polar_debug<B,R,Q>
 			// encode U_K into a N bits vector X_N
 			std::clog << "Encode U_K in X_N..." << std::endl;
 			auto t_encod = steady_clock::now();
-			this->encoder->encode(this->U_K, this->U_N, this->X_N);
+			this->encoder->encode(this->U_K, this->X_N);
 			d_encod = steady_clock::now() - t_encod;
-
-			// display U_N
-			std::clog << "U_N:" << std::endl;
-			this->display_bit_vector(this->U_N);
-			std::clog << std::endl;
 
 			// display X_N
 			std::clog << "X_N:" << std::endl;
@@ -95,11 +90,6 @@ void Simulation_polar_debug<B,R,Q>
 			// display U_K
 			std::clog << "U_K:" << std::endl;
 			this->display_bit_vector(this->U_K);
-			std::clog << std::endl;
-
-			// display U_N
-			std::clog << "U_N:" << std::endl;
-			this->display_bit_vector(this->U_N);
 			std::clog << std::endl;
 
 			// display X_N
@@ -151,27 +141,24 @@ void Simulation_polar_debug<B,R,Q>
 		auto d_load = steady_clock::now() - t_load;
 		
 		// launch decoder
-		std::clog << "Decode Y_N2 and generate V_N..." << std::endl;
+		std::clog << "Decode Y_N2 and generate V_K..." << std::endl;
 		auto t_decod = steady_clock::now();
 		this->decoder->decode();
 		auto d_decod = steady_clock::now() - t_decod;
 
-		// store results in V_N
+		// store results in V_K
 		auto t_store = steady_clock::now();
-		this->decoder->store(this->V_N);
+		this->decoder->store(this->V_K);
 		auto d_store = steady_clock::now() - t_store;
 
-		// unpack V_N if we used bit packing in the decoder (do nothing else)
-		this->decoder->unpack(this->V_N);
-
-		// display V_N
-		std::clog << "V_N:" << std::endl;
-		this->display_bit_vector(this->V_N);
+		// display V_K
+		std::clog << "V_K:" << std::endl;
+		this->display_bit_vector(this->V_K);
 		std::clog << std::endl;
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		this->analyzer->check_errors(this->U_N, this->V_N);
+		this->analyzer->check_errors(this->U_K, this->V_K);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations

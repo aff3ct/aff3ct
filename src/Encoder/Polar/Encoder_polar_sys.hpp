@@ -14,7 +14,6 @@ public:
     virtual ~Encoder_polar_sys() {}
 
     void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-    void encode(const mipp::vector<B>& U_K, mipp::vector<B>& U_N, mipp::vector<B>& X_N);
 };
 
 #endif // ENCODER_POLAR_SYS_HPP_

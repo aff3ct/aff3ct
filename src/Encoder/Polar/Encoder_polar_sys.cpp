@@ -19,38 +19,12 @@ void Encoder_polar_sys<B>
 	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 
-	mipp::vector<B> U_N(this->N * this->n_frames);
-	this->convert(U_K, U_N);
+	this->convert(U_K, this->U_N);
 
 	for (auto i_frame = 0; i_frame < this->n_frames; i_frame++)
 	{
 		// first time encode
-		this->frame_encode(U_N, X_N, i_frame);
-
-		const auto offset_X_N = i_frame * this->N;
-
-		for (auto i = 0; i < this->N; i++)
-			X_N[offset_X_N +i] = !this->frozen_bits[i] && X_N[offset_X_N +i];
-
-		// second time encode because of systematic encoder
-		this->frame_encode(X_N, X_N, i_frame);
-	}
-}
-
-template <typename B>
-void Encoder_polar_sys<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& U_N, mipp::vector<B>& X_N)
-{
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(U_N.size() == (unsigned) (this->N * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-
-	this->convert(U_K, U_N);
-
-	for (auto i_frame = 0; i_frame < this->n_frames; i_frame++)
-	{
-		// first time encode
-		this->frame_encode(U_N, X_N, i_frame);
+		this->frame_encode(this->U_N, X_N, i_frame);
 
 		const auto offset_X_N = i_frame * this->N;
 

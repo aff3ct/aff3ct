@@ -12,7 +12,7 @@ protected:
 	CRC<B>& crc;
 
 public:
-	Decoder_polar_SCL_naive_CA(const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc);
+	Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc);
 
 protected:
 	virtual void select_best_path();

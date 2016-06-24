@@ -9,8 +9,8 @@
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
-::Decoder_polar_SCL_naive(const int& N, const int& L, const mipp::vector<B>& frozen_bits)
-: N(N), m(log2(N)), metric_init(std::numeric_limits<R>::min()), frozen_bits(frozen_bits), L(L)
+::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits)
+: K(K), N(N), m(log2(N)), metric_init(std::numeric_limits<R>::min()), frozen_bits(frozen_bits), L(L)
 {
 	this->active_paths.insert(0);
 	for (auto i = 0 ; i < L ; i++)
@@ -51,7 +51,6 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			contents->lambda[i] = Y_N[i];
 
 		polar_trees[path]->set_path_metric(metric_init);
-			
 	}
 
 	// initialization
@@ -184,21 +183,12 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::store(mipp::vector<B>& V_N) const
+::store(mipp::vector<B>& V_K) const
 {
-	assert(V_N.size() == (unsigned) this->N);
+	assert(V_K.size() == (unsigned) this->K);
 
-	this->recursive_store((Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_N);
-}
-
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
-void Decoder_polar_SCL_naive<B,R,F,G>
-::unpack(mipp::vector<B>& V_N) const
-{
-	assert(V_N.size() == this->frozen_bits.size());
-
-	for (unsigned i = 0; i < V_N.size(); i++)
-		V_N[i] = !this->frozen_bits[i] && V_N[i];
+	auto k = 0;
+	this->recursive_store((Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
@@ -335,17 +325,18 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::recursive_store(const Binary_node<Contents_SCL<B,R>>* node_curr, mipp::vector<B>& V_N) const
+::recursive_store(const Binary_node<Contents_SCL<B,R>>* node_curr, mipp::vector<B>& V_K, int &k) const
 {
 	auto *contents = node_curr->get_contents();
 
 	if (!node_curr->is_leaf()) // stop condition
 	{
-		this->recursive_store(node_curr->get_left(),  V_N); // recursive call
-		this->recursive_store(node_curr->get_right(), V_N); // recursive call
+		this->recursive_store(node_curr->get_left(),  V_K, k); // recursive call
+		this->recursive_store(node_curr->get_right(), V_K, k); // recursive call
 	}
 	else
-		V_N[node_curr->get_lane_id()] = contents->s[0];
+		if (!frozen_bits[node_curr->get_lane_id()])
+			V_K[k++] = contents->s[0] ? 1 : 0;
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>

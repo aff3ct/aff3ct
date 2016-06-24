@@ -45,11 +45,10 @@ Simulation_polar_mt<B,R,Q>
   threads(n_threads -1),
   frozen_bits(n_threads),
   U_K(n_threads),
-  U_N(n_threads),
   X_N(n_threads),
   Y_N1(n_threads),
   Y_N2(n_threads),
-  V_N(n_threads),
+  V_K(n_threads),
   code_rate(0.f),
   sigma(0.f),
   is_generated_decoder((deco_params.implem.find("_SNR") != std::string::npos) && (deco_params.algo == "SC")),
@@ -84,11 +83,10 @@ Simulation_polar_mt<B,R,Q>
 	{
 		frozen_bits[tid].resize(N_2          );
 		U_K        [tid].resize(code_params.K);
-		U_N        [tid].resize(N_2          );
 		X_N        [tid].resize(N_2          );
 		Y_N1       [tid].resize(N_2          );
 		Y_N2       [tid].resize(N_2          );
-		V_N        [tid].resize(N_2          );
+		V_K        [tid].resize(code_params.K);
 	}
 	
 	if (!is_generated_decoder)
@@ -186,7 +184,6 @@ void Simulation_polar_mt<B,R,Q>
 	if (simu->code_params.generation_method == "AZCW")
 	{
 		std::fill(simu->U_K[tid].begin(), simu->U_K[tid].end(), (B)0);
-		std::fill(simu->U_N[tid].begin(), simu->U_N[tid].end(), (B)0);
 		std::fill(simu->X_N[tid].begin(), simu->X_N[tid].end(), (B)0);
 		simu->modulator[tid]->modulate(simu->X_N[tid], simu->X_N[tid]);
 	}
@@ -261,16 +258,14 @@ void Simulation_polar_mt<B,R,Q>
 	// resize the buffers if needed
 	if ((int)simu->U_K [tid].size() != (simu->code_params.K * n_fra)) 
 		simu->U_K [tid].resize(simu->code_params.K * n_fra);
-	if ((int)simu->U_N [tid].size() != (simu->N_2 * n_fra)) 
-		simu->U_N [tid].resize(simu->N_2 * n_fra);
 	if ((int)simu->X_N [tid].size() != (simu->N_2 * n_fra)) 
 		simu->X_N [tid].resize(simu->N_2 * n_fra);
 	if ((int)simu->Y_N1[tid].size() != (simu->N_2 * n_fra)) 
 		simu->Y_N1[tid].resize(simu->N_2 * n_fra);
 	if ((int)simu->Y_N2[tid].size() != (simu->N_2 * n_fra)) 
 		simu->Y_N2[tid].resize(simu->N_2* n_fra);
-	if ((int)simu->V_N [tid].size() != (simu->N_2 * n_fra)) 
-		simu->V_N [tid].resize(simu->N_2 * n_fra);
+	if ((int)simu->V_K [tid].size() != (simu->code_params.K * n_fra)) 
+		simu->V_K [tid].resize(simu->code_params.K * n_fra);
 
 	// build the source
 	simu->source[tid] = Factory_source<B>::build(simu->code_params);
@@ -279,7 +274,7 @@ void Simulation_polar_mt<B,R,Q>
 	// build the encoder
 	simu->encoder[tid] = Factory_encoder_polar<B>::build(simu->code_params, simu->enco_params, simu->deco_params, 
 	                                                     simu->frozen_bits[tid], n_fra);
-	check_errors(simu->encoder[tid], "Encoder_polar<B>");
+	check_errors(simu->encoder[tid], "Encoder<B>");
 
 	// build the modulator
 	simu->modulator[tid] = Factory_modulator<B,R>::build();
@@ -346,9 +341,9 @@ void Simulation_polar_mt<B,R,Q>
 			// add the CRC to U_K
 			simu->crc[tid]->build(simu->U_K[tid]);
 
-			// encode U_N into a N bits vector X_N
+			// encode U_K into a N bits vector X_N
 			auto t_encod = steady_clock::now();
-			simu->encoder[tid]->encode(simu->U_K[tid], simu->U_N[tid], simu->X_N[tid]);
+			simu->encoder[tid]->encode(simu->U_K[tid], simu->X_N[tid]);
 			d_encod = steady_clock::now() - t_encod;
 
 			// modulate
@@ -385,17 +380,14 @@ void Simulation_polar_mt<B,R,Q>
 		simu->decoder[tid]->decode();
 		auto d_decod = steady_clock::now() - t_decod;
 
-		// store results in V_N
+		// store results in V_K
 		auto t_store = steady_clock::now();
-		simu->decoder[tid]->store(simu->V_N[tid]);
+		simu->decoder[tid]->store(simu->V_K[tid]);
 		auto d_store = steady_clock::now() - t_store;
-
-		// unpack V_N if we used bit packing in the decoder (do nothing else)
-		simu->decoder[tid]->unpack(simu->V_N[tid]);
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->analyzer[tid]->check_errors(simu->U_N[tid], simu->V_N[tid]);
+		simu->analyzer[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// update the total number of frame errors if needed

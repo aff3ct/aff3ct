@@ -237,9 +237,6 @@ void Simulation_RSC<B,R,Q,QD>
 		decoder->store(V_K);
 		auto d_store = steady_clock::now() - t_store;
 
-		// unpack V_K if we used bit packing in the decoder (do nothing else)
-		decoder->unpack(V_K);
-
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		analyzer->check_errors(U_K, V_K);

@@ -135,9 +135,6 @@ void Simulation_turbo_debug<B,R,Q,QD>
 		this->decoder->store(this->V_K);
 		auto d_store = steady_clock::now() - t_store;
 
-		// unpack V_K if we used bit packing in the decoder (do nothing else)
-		this->decoder->unpack(this->V_K);
-
 		// display V_K
 		std::clog << "V_K:" << std::endl;
 		this->display_bit_vector(this->V_K);

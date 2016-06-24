@@ -5,8 +5,8 @@
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::Decoder_polar_SCAN_naive_sys(const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits)
-: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(m,max_iter,frozen_bits)
+::Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits)
+: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K,m,max_iter,frozen_bits)
 {
 }
 
@@ -50,11 +50,10 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::store(mipp::vector<B>& V_N) const
 {
+	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
 	{
-		if (this->frozen_bits[i]) // if i is a frozen bit
-			V_N[i] = (H(sat_vals<R>().second) == 0) ? (B)0 : (B)1;
-		else
-			V_N[i] = (H(this->feedback_graph[this->layers_count -1][i]) == 0) ? (B)0 : (B)1;
+		if (!this->frozen_bits[i]) // if i is not a frozen bit
+			V_N[k++] = (H(this->feedback_graph[this->layers_count -1][i]) == 0) ? (B)0 : (B)1;
 	}
 }

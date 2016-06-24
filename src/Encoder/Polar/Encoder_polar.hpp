@@ -15,13 +15,13 @@ protected:
 	const int              m;           // log_2 of code length
 	const int              n_frames;    // number of frames to encode
 	const mipp::vector<B>& frozen_bits; // true means frozen, false means set to 0/1
+	mipp::vector<B>        U_N;
 
 public:
 	Encoder_polar(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames = 1);
 	virtual ~Encoder_polar() {}
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& U_N, mipp::vector<B>& X_N);
 	void light_encode(B *bits);
 
 protected:

@@ -6,11 +6,11 @@ class Decoder_polar_SCL_naive_CA_sys : public Decoder_polar_SCL_naive_CA<B,R,F,G
 {
 
 public:
-	Decoder_polar_SCL_naive_CA_sys(const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc);
+	Decoder_polar_SCL_naive_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc);
 
 protected:
 	virtual void select_best_path();
-	virtual void store (mipp::vector<B>& V_N      ) const;
+	virtual void store (mipp::vector<B>& V_K      ) const;
 };
 
 #include "Decoder_polar_SCL_naive_CA_sys.hxx"
