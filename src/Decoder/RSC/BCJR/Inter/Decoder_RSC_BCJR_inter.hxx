@@ -111,7 +111,6 @@ Decoder_RSC_BCJR_inter<B,R>
 	req_trellis[8] = { 0,  1,  1,  0,  0,  1,  1,  0};
 	req_trellis[9] = { 0,  0,  1,  1,  1,  1,  0,  0};
 
-
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
 		{

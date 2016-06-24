@@ -59,37 +59,6 @@ void Encoder_RSC_sys<B>
 		frame_encode(U_K.data() + f*K, par.data() + f*(K+2*this->n_ff), 1, true);
 }
 
-// template <typename B>
-// mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
-// ::get_trellis()
-// {
-// 	mipp::vector<mipp::vector<int>> trellis(4);
-
-// 	for (unsigned i = 0; i < trellis.size(); i++)
-// 		trellis[i].resize(this->n_states);
-
-// 	for (auto i = 0; i < this->n_states; i++)
-// 	{
-// 		auto state = i;
-// 		auto bit_sys = 0;
-// 		auto bit_par = inner_encode(bit_sys, state);
-
-// 		trellis[0][           i ] = state;
-// 		trellis[2][trellis[0][i]] = bit_sys ^ bit_par;
-
-// 		// ----------
-
-// 		state = i;
-// 		bit_sys = 1;
-// 		bit_par = inner_encode(bit_sys, state);
-
-// 		trellis[1][i] = state;
-// 		trellis[3][i] = bit_sys ^ bit_par;
-// 	}
-
-// 	return trellis;
-// }
-
 template <typename B>
 mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
 ::get_trellis()
@@ -150,7 +119,7 @@ mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
 		trellis[9][i] = bit_sys ^ bit_par;
 	}
 
-	/* DEBUG
+	/* display the trellis
 	for (auto i = 0; i < 10; i++)
 	{
 		std::cout << "trellis[" << i << "] = {";
@@ -159,7 +128,7 @@ mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
 		std::cout << "}" << std::endl;
 	}
 	*/
-	
+
 	return trellis;
 }
 

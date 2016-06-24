@@ -75,29 +75,13 @@ template <typename B, typename R>
 Decoder_RSC_BCJR_seq_generic<B,R>
 ::Decoder_RSC_BCJR_seq_generic(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
 : Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding),
-  alpha(this->n_states), beta(this->n_states), gamma(2), 
-  idx_a1(this->n_states), idx_a2(this->n_states), idx_b1(this->n_states), idx_b2(this->n_states), 
-  idx_g1(this->n_states), idx_g2(this->n_states)
+  alpha(this->n_states), beta(this->n_states), gamma(2)
 {
-	for (auto i = 0; i < this->n_states; i++) alpha[i].resize(K + this->n_ff +1);
-	for (auto i = 0; i < this->n_states; i++) beta [i].resize(K + this->n_ff +1);
-	for (auto i = 0; i < 2;              i++) gamma[i].resize(K + this->n_ff +0);
+	for (unsigned i = 0; i < alpha.size(); i++) alpha[i].resize(K + this->n_ff +1);
+	for (unsigned i = 0; i < beta .size(); i++) beta [i].resize(K + this->n_ff +1);
+	for (unsigned i = 0; i < gamma.size(); i++) gamma[i].resize(K + this->n_ff +0);
 
 	RSC_BCJR_seq_generic_init<R>::apply(alpha, beta, K, this->n_states, this->n_ff);
-
-	// for (auto i = 0; i < this->n_states; i++)
-	// 	idx_a1[trellis[4][i]] = i;
-	// for (auto i = 0; i < this->n_states; i++)
-	// 	idx_a2[trellis[6][i]] = i;
-
-	idx_a1 = trellis[0];
-	idx_a2 = trellis[2];
-
-	idx_b1 = trellis[4];
-	idx_b2 = trellis[6];
-
-	idx_g1 = trellis[8];
-	idx_g2 = trellis[9];
 }
 
 template <typename B, typename R>
