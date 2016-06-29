@@ -70,6 +70,7 @@ Simulation_BFER<B,R,Q>
   d_punct_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_modul_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_chann_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
+  d_demod_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_quant_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_depun_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_load_total (simu_params.n_threads, std::chrono::nanoseconds(0)),
@@ -83,6 +84,7 @@ Simulation_BFER<B,R,Q>
   d_punct_total_sum(std::chrono::nanoseconds(0)),
   d_modul_total_sum(std::chrono::nanoseconds(0)),
   d_chann_total_sum(std::chrono::nanoseconds(0)),
+  d_demod_total_sum(std::chrono::nanoseconds(0)),
   d_quant_total_sum(std::chrono::nanoseconds(0)),
   d_depun_total_sum(std::chrono::nanoseconds(0)),
   d_load_total_sum (std::chrono::nanoseconds(0)),
@@ -166,6 +168,7 @@ void Simulation_BFER<B,R,Q>
 	simu->d_punct_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
+	simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_depun_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_load_total [tid] = std::chrono::nanoseconds(0);
@@ -293,6 +296,11 @@ void Simulation_BFER<B,R,Q>
 		simu->channel[tid]->add_noise(simu->X_N2[tid], simu->Y_N1[tid]);
 		auto d_chann = steady_clock::now() - t_chann;
 
+		// demodulation
+		auto t_demod = steady_clock::now();
+		simu->modulator[tid]->demodulate(simu->Y_N1[tid], simu->Y_N1[tid]);
+		auto d_demod = steady_clock::now() - t_demod;
+
 		// make the quantization
 		auto t_quant = steady_clock::now();
 		simu->quantizer[tid]->process(simu->Y_N1[tid], simu->Y_N2[tid]);
@@ -337,6 +345,7 @@ void Simulation_BFER<B,R,Q>
 		simu->d_punct_total[tid] += d_punct;
 		simu->d_modul_total[tid] += d_modul;
 		simu->d_chann_total[tid] += d_chann;
+		simu->d_demod_total[tid] += d_demod;
 		simu->d_quant_total[tid] += d_quant;
 		simu->d_depun_total[tid] += d_depun;
 		simu->d_load_total [tid] += d_load;
@@ -492,6 +501,11 @@ void Simulation_BFER<B,R,Q>
 		display_real_vector(simu->Y_N1[0]);
 		std::clog << std::endl;
 
+		// demodulation
+		auto t_demod = steady_clock::now();
+		simu->modulator[0]->demodulate(simu->Y_N1[0], simu->Y_N1[0]);
+		auto d_demod = steady_clock::now() - t_demod;
+
 		// make the quantization
 		std::clog << "Make the quantization from Y_N1 to Y_N2..." << std::endl;
 		auto t_quant = steady_clock::now();
@@ -547,6 +561,7 @@ void Simulation_BFER<B,R,Q>
 		simu->d_punct_total[0] += d_punct;
 		simu->d_modul_total[0] += d_modul;
 		simu->d_chann_total[0] += d_chann;
+		simu->d_demod_total[0] += d_demod;
 		simu->d_quant_total[0] += d_quant;
 		simu->d_depun_total[0] += d_depun;
 		simu->d_load_total [0] += d_load;
@@ -578,6 +593,7 @@ void Simulation_BFER<B,R,Q>
 	d_punct_total_red = nanoseconds(0);
 	d_modul_total_red = nanoseconds(0);
 	d_chann_total_red = nanoseconds(0);
+	d_demod_total_red = nanoseconds(0);
 	d_quant_total_red = nanoseconds(0);
 	d_depun_total_red = nanoseconds(0);
 	d_load_total_red  = nanoseconds(0);
@@ -593,6 +609,7 @@ void Simulation_BFER<B,R,Q>
 		d_punct_total_red += d_punct_total[tid];
 		d_modul_total_red += d_modul_total[tid];
 		d_chann_total_red += d_chann_total[tid];
+		d_demod_total_red += d_demod_total[tid];
 		d_quant_total_red += d_quant_total[tid];
 		d_depun_total_red += d_depun_total[tid];
 		d_load_total_red  += d_load_total [tid];
@@ -610,6 +627,7 @@ void Simulation_BFER<B,R,Q>
 			d_punct_total_sum += d_punct_total[tid];
 			d_modul_total_sum += d_modul_total[tid];
 			d_chann_total_sum += d_chann_total[tid];
+			d_demod_total_sum += d_demod_total[tid];
 			d_quant_total_sum += d_quant_total[tid];
 			d_depun_total_sum += d_depun_total[tid];
 			d_load_total_sum  += d_load_total [tid];
@@ -631,6 +649,7 @@ void Simulation_BFER<B,R,Q>
 	               d_punct_total_sum +
 	               d_modul_total_sum +
 	               d_chann_total_sum +
+	               d_demod_total_sum +
 	               d_quant_total_sum + 
 	               d_depun_total_sum + 
 	               d_load_total_sum  +
@@ -644,6 +663,7 @@ void Simulation_BFER<B,R,Q>
 	auto punct_sec     = ((float)d_punct_total_sum.count()) * 0.000000001f;
 	auto modul_sec     = ((float)d_modul_total_sum.count()) * 0.000000001f;
 	auto chann_sec     = ((float)d_chann_total_sum.count()) * 0.000000001f;
+	auto demod_sec     = ((float)d_demod_total_sum.count()) * 0.000000001f;
 	auto quant_sec     = ((float)d_quant_total_sum.count()) * 0.000000001f;
 	auto depun_sec     = ((float)d_depun_total_sum.count()) * 0.000000001f;
 	auto load_sec      = ((float)d_load_total_sum .count()) * 0.000000001f;
@@ -659,6 +679,7 @@ void Simulation_BFER<B,R,Q>
 	auto punct_pc     = (punct_sec     / total_sec)     * 100.f;
 	auto modul_pc     = (modul_sec     / total_sec)     * 100.f;
 	auto chann_pc     = (chann_sec     / total_sec)     * 100.f;
+	auto demod_pc     = (demod_sec     / total_sec)     * 100.f;
 	auto quant_pc     = (quant_sec     / total_sec)     * 100.f;
 	auto depun_pc     = (depun_sec     / total_sec)     * 100.f;
 	auto decod_tot_pc = (decod_tot_sec / total_sec)     * 100.f;
@@ -681,6 +702,8 @@ void Simulation_BFER<B,R,Q>
 	       << " sec (" << std::setw(5) << std::setprecision(2) << modul_pc     << "\%)" << std::endl;
 	stream << "# " << bold           ("* Channel") << "     : " << std::setw(7) << std::setprecision(3) << chann_sec 
 	       << " sec (" << std::setw(5) << std::setprecision(2) << chann_pc     << "\%)" << std::endl;
+	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(7) << std::setprecision(3) << demod_sec 
+	       << " sec (" << std::setw(5) << std::setprecision(2) << demod_pc     << "\%)" << std::endl;
 	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(7) << std::setprecision(3) << quant_sec 
 	       << " sec (" << std::setw(5) << std::setprecision(2) << quant_pc     << "\%)" << std::endl;
 	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(7) << std::setprecision(3) << depun_sec 

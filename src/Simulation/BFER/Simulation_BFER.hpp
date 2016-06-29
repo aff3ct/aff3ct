@@ -82,6 +82,7 @@ protected:
 	std::vector<std::chrono::nanoseconds> d_punct_total;
 	std::vector<std::chrono::nanoseconds> d_modul_total;
 	std::vector<std::chrono::nanoseconds> d_chann_total;
+	std::vector<std::chrono::nanoseconds> d_demod_total;
 	std::vector<std::chrono::nanoseconds> d_quant_total;
 	std::vector<std::chrono::nanoseconds> d_depun_total;
 	std::vector<std::chrono::nanoseconds> d_load_total;
@@ -95,6 +96,7 @@ protected:
 	std::chrono::nanoseconds d_punct_total_red;
 	std::chrono::nanoseconds d_modul_total_red;
 	std::chrono::nanoseconds d_chann_total_red;
+	std::chrono::nanoseconds d_demod_total_red;
 	std::chrono::nanoseconds d_quant_total_red;
 	std::chrono::nanoseconds d_depun_total_red;
 	std::chrono::nanoseconds d_load_total_red;
@@ -108,6 +110,7 @@ protected:
 	std::chrono::nanoseconds d_punct_total_sum;
 	std::chrono::nanoseconds d_modul_total_sum;
 	std::chrono::nanoseconds d_chann_total_sum;
+	std::chrono::nanoseconds d_demod_total_sum;
 	std::chrono::nanoseconds d_quant_total_sum;
 	std::chrono::nanoseconds d_depun_total_sum;
 	std::chrono::nanoseconds d_load_total_sum;
