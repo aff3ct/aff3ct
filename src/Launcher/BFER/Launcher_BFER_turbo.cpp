@@ -1,10 +1,6 @@
 #include <iostream>
 
 #include "../../Simulation/BFER/Turbo/Simulation_turbo.hpp"
-#include "../../Simulation/BFER/Turbo/Simulation_turbo_mt.hpp"
-#include "../../Simulation/BFER/Turbo/Simulation_turbo_bench.hpp"
-#include "../../Simulation/BFER/Turbo/Simulation_turbo_debug.hpp"
-
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_turbo.hpp"
@@ -102,32 +98,11 @@ template <typename B, typename R, typename Q, typename QD>
 void Launcher_BFER_turbo<B,R,Q,QD>
 ::build_simu()
 {
-	if (this->simu_params.enable_debug)
-		this->simu = new Simulation_turbo_debug<B,R,Q,QD>(this->simu_params, 
-		                                                  this->code_params, 
-		                                                  this->enco_params, 
-		                                                  this->chan_params, 
-		                                                  this->deco_params);
-	else if (this->simu_params.benchs)
-		this->simu = new Simulation_turbo_bench<B,R,Q,QD>(this->simu_params, 
-		                                                  this->code_params, 
-		                                                  this->enco_params, 
-		                                                  this->chan_params, 
-		                                                  this->deco_params,
-		                                                  this->simu_params.n_threads);
-	else if (this->simu_params.n_threads)
-		this->simu = new Simulation_turbo_mt<B,R,Q,QD>(this->simu_params, 
-		                                               this->code_params, 
-		                                               this->enco_params, 
-		                                               this->chan_params, 
-		                                               this->deco_params, 
-		                                               this->simu_params.n_threads);
-	else
-		this->simu = new Simulation_turbo<B,R,Q,QD>(this->simu_params, 
-		                                            this->code_params, 
-		                                            this->enco_params, 
-		                                            this->chan_params, 
-		                                            this->deco_params);
+	this->simu = new Simulation_turbo<B,R,Q,QD>(this->simu_params, 
+	                                            this->code_params, 
+	                                            this->enco_params, 
+	                                            this->chan_params, 
+	                                            this->deco_params);
 }
 
 // ==================================================================================== explicit template instantiation 

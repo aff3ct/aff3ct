@@ -3,7 +3,7 @@
 template <typename B>
 Encoder_RSC_sys<B>
 ::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding)
-: Encoder_sys<B>(), K(K), N(N), n_ff(n_ff), n_states(1 << n_ff), n_frames(n_frames), 
+: Encoder_sys<B>(n_frames), K(K), N(N), n_ff(n_ff), n_states(1 << n_ff), 
   buffered_encoding(buffered_encoding)
 {
 	assert(N == (2 * K));
@@ -20,14 +20,6 @@ int Encoder_RSC_sys<B>
 ::tail_length() const
 {
 	return 2 * n_ff;
-}
-
-template <typename B>
-void Encoder_RSC_sys<B>
-::set_n_frames(const int n_frames)
-{
-	assert(n_frames > 0);
-	this->n_frames = n_frames;
 }
 
 template <typename B>

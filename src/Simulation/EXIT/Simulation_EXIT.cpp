@@ -1,9 +1,209 @@
 #include <algorithm>
 
+#include "../../Tools/Factory/Factory_source.hpp"
+#include "../../Tools/Factory/Factory_modulator.hpp"
+#include "../../Tools/Factory/Factory_channel.hpp"
+#include "../../Tools/Factory/Factory_quantizer.hpp"
+
+#include "../../Decoder/decoder_functions.h"
+#include "../../Tools/bash_tools.h"
+#include "../../Tools/simu_tools.h"
+
 #include "Simulation_EXIT.hpp"
 
-template <typename B, typename Q>
-double Simulation_EXIT<B,Q>
+template <typename B, typename R, typename Q>
+Simulation_EXIT<B,R,Q>
+::Simulation_EXIT(const t_simulation_param& simu_params,
+                  const t_code_param&       code_params,
+                  const t_encoder_param&    enco_params,
+                  const t_channel_param&    chan_params,
+                  const t_decoder_param&    deco_params)
+: Simulation(),
+
+  simu_params(simu_params),
+  code_params(code_params),
+  enco_params(enco_params),
+  chan_params(chan_params),
+  deco_params(deco_params),
+
+  B_K        (code_params.K                                                ),
+  B_N        (code_params.N + code_params.tail_length                      ),
+  X_K        (code_params.K                                                ),
+  X_N        (code_params.N + code_params.tail_length                      ),
+  Y_N        (code_params.N + code_params.tail_length                      ),
+  Y_K        (code_params.K                                                ),
+  La_K1      (code_params.K                                                ),
+  Lch_N1     (code_params.N + code_params.tail_length                      ),
+  La_K2      (code_params.K                                                ),
+  Lch_N2     (code_params.N + code_params.tail_length                      ),
+  Le_K       (code_params.K                                                ),
+  sys        (code_params.K                                                ),
+  par        ((code_params.N - code_params.K) + (code_params.tail_length/2)),
+
+  B_buff (0),
+  Le_buff(0),
+  La_buff(0),
+
+  n_trials (200000 / code_params.K),
+  cur_trial(0),
+
+  I_A      (0.0),
+  I_E      (0.0),
+  code_rate(0.f),
+  sigma    (0.f),
+  snr      (0.f),
+
+  source   (nullptr),
+  encoder  (nullptr),
+  modulator(nullptr),
+  channel  (nullptr),
+  channel_a(nullptr),
+  quantizer(nullptr),
+  siso     (nullptr),
+  terminal (nullptr)
+{
+}
+
+template <typename B, typename R, typename Q>
+Simulation_EXIT<B,R,Q>
+::~Simulation_EXIT()
+{
+	release_objects();
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_EXIT<B,R,Q>
+::build_communication_chain()
+{
+	release_objects();
+
+	// build the objects
+	source    = build_source   (); check_errors(source   , "Source<B>"         );
+	encoder   = build_encoder  (); check_errors(encoder  , "Encoder<B>"        );
+	modulator = build_modulator(); check_errors(modulator, "Modulator<B,R>"    );
+	channel   = build_channel  (); check_errors(channel  , "Channel<B,R>"      );
+	channel_a = build_channel_a(); check_errors(channel  , "Channel<B,R>"      );
+	quantizer = build_quantizer(); check_errors(quantizer, "Quantizer<R,Q>"    );
+	siso      = build_siso     (); check_errors(siso     , "SISO<Q>"           );
+	terminal  = build_terminal (); check_errors(terminal , "Terminal_EXIT<B,R>");
+
+	if (siso->get_n_frames() > 1)
+	{
+		std::cout << bold_red("(EE) EXIT simulation does not support inter frame SIMD... Exiting.") << std::endl;
+		exit(-1);
+	}
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_EXIT<B,R,Q>
+::launch()
+{
+	bool first_loop = true;
+
+	launch_precompute();
+
+	// for each channel SNR to be simulated	
+	for (snr = simu_params.snr_min; snr <= simu_params.snr_max; snr += simu_params.snr_step)
+	{
+		// For EXIT simulation, SNR is considered as Es/N0
+		code_rate = 1.f;
+		sigma     = 1.f / sqrt(2.f * code_rate * pow(10.f, (snr / 10.f)));
+
+		snr_precompute();
+
+		// for each "a" standard deviation (sig_a) to be simulated
+		for (sig_a = simu_params.sig_a_min; sig_a <= simu_params.sig_a_max; sig_a += simu_params.sig_a_step)
+		{
+			I_A = 0.0;
+			I_E = 0.0;
+
+			t_snr = std::chrono::steady_clock::now();
+
+			// allocate and build all the communication chain to generate EXIT chart
+			this->build_communication_chain();
+
+			// if sig_a = 0, La_K2 = 0
+			if (sig_a == 0)
+				std::fill(La_K2.begin(), La_K2.end(), chan_params.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
+
+			if (!simu_params.disable_display && first_loop && !simu_params.enable_debug)
+			{
+				terminal->legend(std::clog);
+				first_loop = false;
+			}
+
+			this->simulation_loop();
+
+			if (!simu_params.disable_display)
+				terminal->final_report(std::cout);
+		}
+	}
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_EXIT<B,R,Q>
+::simulation_loop()
+{
+	using namespace std::chrono;
+
+	// simulation loop
+	auto t_simu = steady_clock::now();
+
+	Le_buff.clear();
+	B_buff .clear();
+	La_buff.clear();
+	
+	for (cur_trial = 0; cur_trial < n_trials; cur_trial++) 
+	{
+		// generate a random binary value
+		source->generate(B_K);
+
+		// encode
+		encoder->encode(B_K, X_N);
+
+		// X_K used to generate La_K vector
+		X_K = B_K;
+
+		// modulate
+		modulator->modulate(X_K, X_K);
+		modulator->modulate(X_N, X_N);
+
+		//if sig_a = 0, La_K = 0, no noise to add
+		if (sig_a != 0)
+		{
+			channel_a->add_noise(X_K, La_K1);
+			quantizer->process(La_K1, La_K2);
+		}
+
+		channel->add_noise(X_N, Lch_N1);
+		quantizer->process(Lch_N1, Lch_N2);
+
+		// extract systematic and parity information
+		extract_sys_par(Lch_N2, La_K2, sys, par);
+
+		// decode
+		siso->decode(sys, par, Le_K);
+
+		// store B_K, La_K and Le_K in buffers (add current B and L to the buffers)
+		B_buff .insert(B_buff .end(), B_K  .begin(), B_K  .end());
+		Le_buff.insert(Le_buff.end(), Le_K .begin(), Le_K .end());
+		La_buff.insert(La_buff.end(), La_K2.begin(), La_K2.end());
+
+		// display statistics in terminal
+		if (!simu_params.disable_display && (steady_clock::now() - t_simu) >= simu_params.display_freq)
+		{
+			terminal->temp_report(std::clog);
+			t_simu = steady_clock::now();
+		}
+	}
+
+	// measure mutual information and store it in I_A, I_E, sig_a_array
+	I_A = measure_mutual_info_avg  (La_buff, B_buff) / (code_params.K * n_trials);
+	I_E = measure_mutual_info_histo(Le_buff, B_buff, 1000);
+}
+
+template <typename B, typename R, typename Q>
+double Simulation_EXIT<B,R,Q>
 ::measure_mutual_info_avg(const mipp::vector<Q>& llrs, const mipp::vector<B>& bits)
 {
 	double I_A = 0;
@@ -18,8 +218,8 @@ double Simulation_EXIT<B,Q>
 	return(I_A);
 }
 
-template <typename B, typename Q>
-double Simulation_EXIT<B,Q>
+template <typename B, typename R, typename Q>
+double Simulation_EXIT<B,R,Q>
 ::measure_mutual_info_histo(const mipp::vector<Q>& llrs, const mipp::vector<B>& bits, const int N)
 {
 	const double Inf = 10000000;
@@ -158,14 +358,86 @@ double Simulation_EXIT<B,Q>
 	return I_E;
 }
 
+// ---------------------------------------------------------------------------------------------------- virtual methods
+
+template <typename B, typename R, typename Q>
+void Simulation_EXIT<B,R,Q>
+::release_objects()
+{
+	if (source    != nullptr) { delete source;    source    = nullptr; }
+	if (encoder   != nullptr) { delete encoder;   encoder   = nullptr; }
+	if (modulator != nullptr) { delete modulator; modulator = nullptr; }
+	if (channel   != nullptr) { delete channel;   channel   = nullptr; }
+	if (channel_a != nullptr) { delete channel_a; channel_a = nullptr; }
+	if (quantizer != nullptr) { delete quantizer; quantizer = nullptr; }
+	if (siso      != nullptr) { delete siso;      siso      = nullptr; }
+	if (terminal  != nullptr) { delete terminal;  terminal  = nullptr; }
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_EXIT<B,R,Q>
+::launch_precompute()
+{
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_EXIT<B,R,Q>
+::snr_precompute()
+{
+}
+
+template <typename B, typename R, typename Q>
+Source<B>* Simulation_EXIT<B,R,Q>
+::build_source()
+{
+	return Factory_source<B>::build(code_params);
+}
+
+template <typename B, typename R, typename Q>
+Modulator<B,R>* Simulation_EXIT<B,R,Q>
+::build_modulator()
+{
+	return Factory_modulator<B,R>::build();
+}
+
+template <typename B, typename R, typename Q>
+Channel<B,R>* Simulation_EXIT<B,R,Q>
+::build_channel()
+{
+	return Factory_channel<B,R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
+}
+
+template <typename B, typename R, typename Q>
+Channel<B,R>* Simulation_EXIT<B,R,Q>
+::build_channel_a()
+{
+	return Factory_channel<B,R>::build(chan_params, 2.0 / sig_a, 0, (sig_a * sig_a) / 2.0);
+}
+
+template <typename B, typename R, typename Q>
+Quantizer<R,Q>* Simulation_EXIT<B,R,Q>
+::build_quantizer()
+{
+	return Factory_quantizer<R,Q>::build(chan_params, sigma);
+}
+
+// ------------------------------------------------------------------------------------------------- non-virtual method
+
+template <typename B, typename R, typename Q>
+Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
+::build_terminal()
+{
+	return new Terminal_EXIT<B,R>(code_params.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_EXIT<B_8,Q_8>;
-template class Simulation_EXIT<B_16,Q_16>;
-template class Simulation_EXIT<B_32,Q_32>;
-template class Simulation_EXIT<B_64,Q_64>;
+template class Simulation_EXIT<B_8,R_8,Q_8>;
+template class Simulation_EXIT<B_16,R_16,Q_16>;
+template class Simulation_EXIT<B_32,R_32,Q_32>;
+template class Simulation_EXIT<B_64,R_64,Q_64>;
 #else
-template class Simulation_EXIT<B,Q>;
+template class Simulation_EXIT<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

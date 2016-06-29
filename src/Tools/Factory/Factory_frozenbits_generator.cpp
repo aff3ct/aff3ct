@@ -12,20 +12,18 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 {
 	Frozenbits_generator<B> *fb_generator = nullptr;
 
-	const auto N = (int)std::exp2(code_params.m);
-
 	// build the frozen bits generator
 	if (!simu_params.awgn_codes_file.empty())
 	{
-		fb_generator = new Frozenbits_generator_file<B>(code_params.K, N, simu_params.awgn_codes_file);
+		fb_generator = new Frozenbits_generator_file<B>(code_params.K, code_params.N_code, simu_params.awgn_codes_file);
 	}
 	else
 	{
 		if (code_params.fb_gen_method == "GA")
-			fb_generator = new Frozenbits_generator_GA<B>(code_params.K, N, code_params.sigma);
+			fb_generator = new Frozenbits_generator_GA<B>(code_params.K, code_params.N_code, code_params.sigma);
 #ifdef ENABLE_POLAR_BOUNDS
 		else if (code_params.fb_gen_method == "TV")
-			fb_generator = new Frozenbits_generator_TV<B>(code_params.K, N, simu_params.awgn_codes_dir, 
+			fb_generator = new Frozenbits_generator_TV<B>(code_params.K, code_params.N_code, simu_params.awgn_codes_dir, 
 			                                              simu_params.bin_pb_path, code_params.sigma);
 #endif
 	}

@@ -370,32 +370,32 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::unpack(mipp::vector<B>& V_N) const
 {
-// 	assert(V_N.size() == (unsigned) (N * n_frames));
+	assert(V_N.size() == (unsigned) (N * n_frames));
 
-// 	constexpr int n_frames = API_polar::get_n_frames();
+	constexpr int n_frames = API_polar::get_n_frames();
 
-// 	bool unpack = false;
-// #if defined(ENABLE_BIT_PACKING)
-// 	if (typeid(B) == typeid(signed char) && n_frames == mipp::nElReg<R>())
-// 	{
-// 		// bit unpacking
-// 		auto idx = n_frames * N -1;
-// 		for (auto i = n_frames * N -1; i > 0; i -= N)
-// 			for (unsigned j = (unsigned) 0; j < (unsigned) N; j += sizeof(B) * 8)
-// 			{
-// 				unsigned char packed_vals = (unsigned char) V_N[(i -j) / (sizeof(B) * 8)];
-// 				for (auto k = 0; k < 8; k++)
-// 					V_N[idx--] = !frozen_bits[(N -1 -j) -k] && ((packed_vals >> (7-k)) & 0x01);
-// 			}
+	bool unpack = false;
+#if defined(ENABLE_BIT_PACKING)
+	if (typeid(B) == typeid(signed char) && n_frames == mipp::nElReg<R>())
+	{
+		// bit unpacking
+		auto idx = n_frames * N -1;
+		for (auto i = n_frames * N -1; i > 0; i -= N)
+			for (unsigned j = (unsigned) 0; j < (unsigned) N; j += sizeof(B) * 8)
+			{
+				unsigned char packed_vals = (unsigned char) V_N[(i -j) / (sizeof(B) * 8)];
+				for (auto k = 0; k < 8; k++)
+					V_N[idx--] = !frozen_bits[(N -1 -j) -k] && ((packed_vals >> (7-k)) & 0x01);
+			}
 
-// 		unpack = true;
-// 	}
-// #endif
+		unpack = true;
+	}
+#endif
 
-// 	if (!unpack)
-// 		for (auto i = 0; i < n_frames; i++)
-// 			for (auto j = 0; j < N; j++)
-// 				V_N[i * N + j] = !frozen_bits[j] && V_N[i * N + j];
+	if (!unpack)
+		for (auto i = 0; i < n_frames; i++)
+			for (auto j = 0; j < N; j++)
+				V_N[i * N + j] = !frozen_bits[j] && V_N[i * N + j];
 }
 
 template <typename B, typename R, class API_polar>

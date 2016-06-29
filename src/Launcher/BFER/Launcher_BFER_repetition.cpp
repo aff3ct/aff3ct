@@ -1,8 +1,6 @@
 #include <iostream>
 
 #include "../../Simulation/BFER/Repetition/Simulation_repetition.hpp"
-#include "../../Simulation/BFER/Repetition/Simulation_repetition_debug.hpp"
-
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_repetition.hpp"
@@ -59,18 +57,11 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_repetition<B,R,Q>
 ::build_simu()
 {
-	if (this->simu_params.enable_debug)
-		this->simu = new Simulation_repetition_debug<B,R,Q>(this->simu_params, 
-		                                                    this->code_params, 
-		                                                    this->enco_params, 
-		                                                    this->chan_params,
-		                                                    this->deco_params);
-	else
-		this->simu = new Simulation_repetition<B,R,Q>(this->simu_params, 
-		                                              this->code_params, 
-		                                              this->enco_params, 
-		                                              this->chan_params, 
-		                                              this->deco_params);
+	this->simu = new Simulation_repetition<B,R,Q>(this->simu_params, 
+	                                              this->code_params, 
+	                                              this->enco_params, 
+	                                              this->chan_params,
+	                                              this->deco_params);
 }
 
 // ==================================================================================== explicit template instantiation 

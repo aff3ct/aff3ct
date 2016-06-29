@@ -1,7 +1,7 @@
 /* // GENERATED DECODERS // */
 
 // RATE 1/2
-// #define ENABLE_DECODER_SC_FAST_N4_K2_SNR25
+#define ENABLE_DECODER_SC_FAST_N4_K2_SNR25
 // #define ENABLE_DECODER_SC_FAST_N8_K4_SNR25
 // #define ENABLE_DECODER_SC_FAST_N16_K8_SNR25
 // #define ENABLE_DECODER_SC_FAST_N32_K16_SNR25
@@ -24,7 +24,7 @@
 // #define ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
 
 // RATE 5/6
-// #define ENABLE_DECODER_SC_FAST_N4_K3_SNR40
+#define ENABLE_DECODER_SC_FAST_N4_K3_SNR40
 // #define ENABLE_DECODER_SC_FAST_N8_K7_SNR40
 // #define ENABLE_DECODER_SC_FAST_N16_K13_SNR40
 // #define ENABLE_DECODER_SC_FAST_N32_K27_SNR40
@@ -548,8 +548,6 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 {
 	Decoder<B,R> *decoder = nullptr;
 
-	auto N = (int)std::exp2(code_params.m);
-
 	// build the decoder
 	if (enco_params.systematic) // systematic encoding
 	{
@@ -570,195 +568,195 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 					// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 				}
 #endif
@@ -773,195 +771,195 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 					// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 				}
 			}
@@ -980,195 +978,195 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 					// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 				}
 				else if (typeid(B) == typeid(short))
@@ -1184,195 +1182,195 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 					// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 				}
 				else if (typeid(B) == typeid(int))
@@ -1388,195 +1386,195 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 					// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 				}
 			}
@@ -1591,195 +1589,195 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 				// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
-					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K2_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K2_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
-					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K4_SNR25"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K4_SNR25           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
-					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K8_SNR25"          ) { decoder = new Decoder_polar_SC_fast_sys_N16_K8_SNR25          <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
-					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K16_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K16_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
-					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K32_SNR25"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K32_SNR25         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
-					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K64_SNR25"        ) { decoder = new Decoder_polar_SC_fast_sys_N128_K64_SNR25        <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
-					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K128_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K128_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
-					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K256_SNR25"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K256_SNR25       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
-					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K512_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K512_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
-					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
-					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K2048_SNR33"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K2048_SNR33     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
-					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K4096_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K4096_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
-					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K8192_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K8192_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
-					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR18"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR18   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
-					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K32768_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K32768_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
-					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K65536_SNR25"  ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K65536_SNR25  <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
-					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K131072_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K131072_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
-					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K262144_SNR25" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K262144_SNR25 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
-					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K524288_SNR25") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
-					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4_K3_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N4_K3_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
-					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8_K7_SNR40"           ) { decoder = new Decoder_polar_SC_fast_sys_N8_K7_SNR40           <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
-					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16_K13_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N16_K13_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
-					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32_K27_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N32_K27_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
-					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N64_K53_SNR40"         ) { decoder = new Decoder_polar_SC_fast_sys_N64_K53_SNR40         <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
-					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N128_K107_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N128_K107_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
-					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N256_K213_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N256_K213_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
-					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N512_K427_SNR40"       ) { decoder = new Decoder_polar_SC_fast_sys_N512_K427_SNR40       <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
-					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1024_K853_SNR40"      ) { decoder = new Decoder_polar_SC_fast_sys_N1024_K853_SNR40      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
-					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1707_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1707_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
-					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N4096_K3413_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N4096_K3413_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
-					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N8192_K6827_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N8192_K6827_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
-					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K13653_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K13653_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
-					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27307_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27307_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
-					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N65536_K54613_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N65536_K54613_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
-					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N131072_K109227_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N131072_K109227_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
-					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N262144_K218453_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N262144_K218453_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
-					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N524288_K436907_SNR40" ) { decoder = new Decoder_polar_SC_fast_sys_N524288_K436907_SNR40 <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
-					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N1048576_K873813_SNR40") { decoder = new Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40<B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 0.84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
-					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K27568_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K27568_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
-					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR40"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR40     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
-					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N16384_K14746_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N16384_K14746_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
-					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29492_SNR40"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29492_SNR40   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
-					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K205_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K205_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
-					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K410_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K410_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
-					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K614_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K614_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
-					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K819_SNR25"      ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K819_SNR25      <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
-//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N2048_K1024_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1024_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
-					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1229_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1229_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
-					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1434_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1434_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
-					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1638_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1638_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
-					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N2048_K1843_SNR25"     ) { decoder = new Decoder_polar_SC_fast_sys_N2048_K1843_SNR25     <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
-					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K3277_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K3277_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
-					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K6554_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K6554_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
-					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K9830_SNR25"    ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K9830_SNR25    <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
-					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K13107_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K13107_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
-//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+//					if (deco_params.implem == "N32768_K16384_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K16384_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
-					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K19661_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K19661_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
-					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K22938_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K22938_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
-					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K26214_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K26214_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
-					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, N,frozen_bits); }
+					if (deco_params.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(code_params.K, code_params.N_code, frozen_bits); }
 #endif                               
 			}
 		}

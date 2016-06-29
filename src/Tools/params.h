@@ -12,6 +12,7 @@ struct t_simulation_param
 	int                       benchs;
 	bool                      disable_display;
 	bool                      enable_debug;
+	bool                      time_report;
 	int                       n_threads;
 	bool                      enable_leg_term;
 	bool                      enable_dec_thr;
@@ -33,6 +34,7 @@ struct t_code_param
 {
 	int         K;
 	int         N;
+	int         N_code;
 	int         tail_length;
 	int         m;
 	int         M;
@@ -41,7 +43,6 @@ struct t_code_param
 	std::string generation_method;
 	std::string frozen_bits_path;
 	std::string crc;
-	std::string puncturer;
 	std::string interleaver;
 	std::string fb_gen_method;
 };

@@ -15,13 +15,11 @@ Encoder<B>* Factory_encoder_polar<B>
 {
 	Encoder<B> *encoder = nullptr;
 
-	const int N = std::exp2(code_params.m);
-
 	// build the encoder
 	if (!enco_params.systematic)
-		encoder = new Encoder_polar<B>(code_params.K, N, frozen_bits, n_frames);
+		encoder = new Encoder_polar    <B>(code_params.K, code_params.N_code, frozen_bits, n_frames);
 	else
-		encoder = new Encoder_polar_sys<B>(code_params.K, N, frozen_bits, n_frames);
+		encoder = new Encoder_polar_sys<B>(code_params.K, code_params.N_code, frozen_bits, n_frames);
 
 	return encoder;
 }

@@ -1,26 +1,21 @@
-#include "../Polar/Puncturer/Puncturer_polar_wangliu.hpp"
+#include "../../Puncturer/Puncturer_NO.hpp"
+#include "../../Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "../bash_tools.h"
 
 #include "Factory_puncturer_polar.hpp"
 
-template <typename B, typename R>
-Puncturer_polar<B,R>* Factory_puncturer_polar<B,R>
+template <typename B, typename Q>
+Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
 ::build(const t_code_param &code_params, const t_decoder_param &deco_params, 
         const Frozenbits_generator<B> *fb_generator)
 {
-	Puncturer_polar<B,R> *puncturer = nullptr;
+	Puncturer<B,Q> *puncturer = nullptr;
 
-	// build the generator
-	if (code_params.puncturer == "WANGLIU")
-	{
-		puncturer = new Puncturer_polar_wangliu<B,R>(code_params.N, code_params.K, *fb_generator);
-	}
+	if (code_params.N != code_params.N_code)
+		puncturer = new Puncturer_polar_wangliu<B,Q>(code_params.N, code_params.K, *fb_generator);
 	else
-	{
-		std::cerr << bold_red("(EE) Unknown puncturing type.") << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		puncturer = new Puncturer_NO<B,Q>();
 
 	return puncturer;
 }

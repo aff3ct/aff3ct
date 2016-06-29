@@ -140,6 +140,13 @@ int Error_analyzer<B,R>
 {
 	return n_frames;
 }
+template <typename B, typename R>
+void Error_analyzer<B,R>
+::set_n_frames(const int n_frames) 
+{ 
+	assert(n_frames > 0);
+	this->n_frames = n_frames; 
+}
 
 template <typename B, typename R>
 bool Error_analyzer<B,R>

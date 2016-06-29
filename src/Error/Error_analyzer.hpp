@@ -17,7 +17,7 @@ protected:
 	const int K;
 	const int N;
 	const int max_fe;
-	const int n_frames;
+	      int n_frames;
 
 	int n_bit_errors;
 	int n_frame_errors;
@@ -45,6 +45,7 @@ public:
 	int get_N()        const;
 	int get_K()        const;
 	int get_n_frames() const;
+	void set_n_frames(const int n_frames);
 
 	bool is_last_frame_error() { return last_frame_error; };
 

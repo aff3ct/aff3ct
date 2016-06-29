@@ -15,6 +15,9 @@ public:
 	virtual void decode(                          )       = 0;
 	virtual void store (      mipp::vector<B>& V_K) const = 0;
 
+	virtual void store_fast(mipp::vector<B>& V) const { store(V); }
+	virtual void unpack    (mipp::vector<B>& V) const {           }
+
 	virtual int get_n_frames() const { return 1; }
 };
 

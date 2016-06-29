@@ -1,89 +1,30 @@
 #ifndef SIMULATION_RA_HPP_
 #define SIMULATION_RA_HPP_
 
-#include <chrono>
-#include <vector>
-#include "../../../Tools/MIPP/mipp.h"
+#include "../Simulation_BFER.hpp"
 
-#include "../../Simulation.hpp"
-
-#include "../../../Source/Source.hpp"
-#include "../../../Encoder/Encoder.hpp"
-#include "../../../Modulator/Modulator.hpp"
-#include "../../../Channel/Channel.hpp"
-#include "../../../Quantizer/Quantizer.hpp"
-#include "../../../Decoder/Decoder.hpp"
-#include "../../../Error/Error_analyzer.hpp"
-#include "../../../Terminal/Terminal.hpp"
 #include "../../../Interleaver/Interleaver.hpp"
-
 #include "../../../Tools/params.h"
 
 template <typename B, typename R, typename Q>
-class Simulation_RA : public Simulation
+class Simulation_RA : public Simulation_BFER<B,R,Q>
 {
 protected:
-
-	// simulation parameters
-	const t_simulation_param simu_params;
-	const t_code_param       code_params;
-	const t_encoder_param    enco_params;
-	const t_channel_param    chan_params;
-	const t_decoder_param    deco_params;
-
-	// data vector
-	mipp::vector<B> U_K;  // information vector without frozen bits inserted
-	mipp::vector<B> X_N;  // encoded codeword
-	mipp::vector<R> Y_N1; // noisy codeword (before quantization)
-	mipp::vector<Q> Y_N2; // noisy codeword (after  quantization)
-	mipp::vector<B> V_K;  // decoded codeword without frozen bits inserted
-
-	// code specifications
-	float code_rate;
-	float sigma;
-
-	// communication chain
-	Source<B>           *source;
-	Encoder<B>          *encoder;
-	Modulator<B,R>      *modulator;
-	Channel<B,R>        *channel;
-	Quantizer<R,Q>      *quantizer;
-	Decoder<B,Q>        *decoder;
-	Error_analyzer<B,R> *analyzer;
-	Terminal            *terminal;
-	Interleaver<int>    *interleaver;
-
-	// time points and durations
-	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
-	std::chrono::nanoseconds d_snr;
-	std::chrono::nanoseconds d_simu;
-	std::chrono::nanoseconds d_sourc_total;
-	std::chrono::nanoseconds d_encod_total;
-	std::chrono::nanoseconds d_modul_total;
-	std::chrono::nanoseconds d_chann_total;
-	std::chrono::nanoseconds d_quant_total;
-	std::chrono::nanoseconds d_load_total;
-	std::chrono::nanoseconds d_decod_total;
-	std::chrono::nanoseconds d_store_total;
-	std::chrono::nanoseconds d_check_total;
+	Interleaver<int> *interleaver;
 
 public:
 	Simulation_RA(const t_simulation_param& simu_params,
-			      const t_code_param& code_params,
-			      const t_encoder_param& enco_params,
-			      const t_channel_param& chan_params,
-			      const t_decoder_param& deco_params);
-
+			      const t_code_param&       code_params,
+			      const t_encoder_param&    enco_params,
+			      const t_channel_param&    chan_params,
+			      const t_decoder_param&    deco_params);
 	virtual ~Simulation_RA();
 
-	void launch();
-
 protected:
-	void build_communication_chain(const R& snr);
-	void snr_loop();
-
-protected:
-	virtual void simulation_loop();
+	void          launch_precompute();
+	void          snr_precompute   ();
+	Encoder<B>*   build_encoder    (const int tid = 0);
+	Decoder<B,Q>* build_decoder    (const int tid = 0);
 };
 
 #endif /* SIMULATION_RA_HPP_ */

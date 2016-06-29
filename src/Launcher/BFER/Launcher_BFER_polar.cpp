@@ -3,11 +3,7 @@
 #include <cmath>
 
 #include "../../Simulation/BFER/Polar/Simulation_polar.hpp"
-#include "../../Simulation/BFER/Polar/Simulation_polar_mt.hpp"
-#include "../../Simulation/BFER/Polar/Simulation_polar_debug.hpp"
-
 #include "../../CRC/CRC_polynomial.hpp"
-
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_polar.hpp"
@@ -30,7 +26,6 @@ Launcher_BFER_polar<B,R,Q>
 	this->simu_params.awgn_codes_dir  = "../awgn_polar_codes/TV";
 	this->simu_params.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
 	this->simu_params.awgn_codes_file = "";
-	this->code_params.puncturer       = "";
 	this->deco_params.L               = 1;
 	this->code_params.sigma           = 0.f;
 	this->code_params.crc             = "";
@@ -60,8 +55,6 @@ void Launcher_BFER_polar<B,R,Q>
 #endif
 	this->opt_args["awgn-codes-file"] = "path";
 	this->doc_args["awgn-codes-file"] = "set the best channels bits by giving path to file.";
-	this->opt_args["puncturer"      ] = "puncturer_type";
-	this->doc_args["puncturer"      ] = "enable puncturer, using given type (e.g. WANGLIU).";
 	this->opt_args["L"              ] = "L";
 	this->doc_args["L"              ] = "maximal number of paths in the SCL decoder.";
 	this->opt_args["code-sigma"     ] = "sigma_value";
@@ -90,7 +83,6 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg("bin-pb-path"    )) this->simu_params.bin_pb_path     = this->ar.get_arg("bin-pb-path");
 #endif
 	if(this->ar.exist_arg("awgn-codes-file")) this->simu_params.awgn_codes_file = this->ar.get_arg("awgn-codes-file");
-	if(this->ar.exist_arg("puncturer"      )) this->code_params.puncturer       = this->ar.get_arg("puncturer");
 	if(this->ar.exist_arg("L"              )) this->deco_params.L               = std::stoi(this->ar.get_arg("L"));
 	if(this->ar.exist_arg("code-sigma"     )) this->code_params.sigma           = std::stof(this->ar.get_arg("code-sigma"));
 #ifdef ENABLE_POLAR_BOUNDS
@@ -117,8 +109,6 @@ void Launcher_BFER_polar<B,R,Q>
 	std::clog << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
 	if (!this->simu_params.awgn_codes_file.empty())
 	std::clog << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
-	if (!this->code_params.puncturer.empty())
-	std::clog << "# " << bold("* Puncturer type                ") << " = " << this->code_params.puncturer       << std::endl;
 	if (this->deco_params.algo == "SCL")
 	std::clog << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
 	std::clog << "# " << bold("* Sigma for code generation     ") << " = " << sigma                             << std::endl;
@@ -127,13 +117,6 @@ void Launcher_BFER_polar<B,R,Q>
 	std::clog << "# " << bold("* CRC type                      ") << " = " << this->code_params.crc             << std::endl;
 	if (!this->deco_params.simd_strategy.empty())
 	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy   << std::endl;
-	
-	if (this->code_params.N != exp2(ceil(log2(this->code_params.N))) && this->code_params.puncturer.empty())
-	{
-		std::cerr << bold_red("(EE) N isn't a power of two, please specify a puncturer type (--puncturer).") 
-		          << std::endl;
-		exit(-1);
-	}
 }
 
 template <typename B, typename R, typename Q>
@@ -148,25 +131,11 @@ void Launcher_BFER_polar<B,R,Q>
 		this->code_params.K += CRC_polynomial<B>::size(this->code_params.crc);
 	}
 
-	if (this->simu_params.enable_debug)
-		this->simu = new Simulation_polar_debug<B,R,Q>(this->simu_params, 
-		                                               this->code_params, 
-		                                               this->enco_params, 
-		                                               this->chan_params, 
-		                                               this->deco_params);
-	else if (this->simu_params.n_threads)
-		this->simu = new Simulation_polar_mt<B,R,Q>(this->simu_params, 
-		                                            this->code_params, 
-		                                            this->enco_params, 
-		                                            this->chan_params, 
-		                                            this->deco_params, 
-		                                            this->simu_params.n_threads);
-	else
-		this->simu = new Simulation_polar<B,R,Q>(this->simu_params, 
-		                                         this->code_params, 
-		                                         this->enco_params, 
-		                                         this->chan_params, 
-		                                         this->deco_params);
+	this->simu = new Simulation_polar<B,R,Q>(this->simu_params, 
+	                                         this->code_params, 
+	                                         this->enco_params, 
+	                                         this->chan_params, 
+	                                         this->deco_params);
 }
 
 // ==================================================================================== explicit template instantiation 

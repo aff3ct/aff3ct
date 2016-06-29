@@ -7,10 +7,10 @@
 template <typename B>
 Encoder_turbo_legacy<B>
 ::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, const int n_frames)
-: K(K),
+: Encoder<B>(n_frames),
+  K(K),
   N(N),
   pi(pi),
-  n_frames(n_frames),
   sub_enc(sub_enc),
   U_K_i(K*n_frames),
   X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
@@ -23,15 +23,15 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (K * n_frames));
-	assert(X_N.size() == (unsigned) ((N + (2 * sub_enc.tail_length())) * n_frames));
+	assert(U_K.size() == (unsigned) (K * this->n_frames));
+	assert(X_N.size() == (unsigned) ((N + (2 * sub_enc.tail_length())) * this->n_frames));
 	assert((N / K) == 3);
 
 	pi.interleave (U_K,   U_K_i);
 	sub_enc.encode(U_K,   X_N_n);
 	sub_enc.encode(U_K_i, X_N_i);
 
-	for (auto f = 0; f < n_frames; f++)
+	for (auto f = 0; f < this->n_frames; f++)
 	{
 		const auto off1 = (3*K + (2 * sub_enc.tail_length())) * f;
 		const auto off2 = (2*K + (1 * sub_enc.tail_length())) * f;

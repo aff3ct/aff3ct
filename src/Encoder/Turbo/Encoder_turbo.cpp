@@ -10,10 +10,10 @@ template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Interleaver<short> &pi,
                 Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames)
-: K(K),
+: Encoder<B>(n_frames),
+  K(K),
   N(N),
   pi(pi),
-  n_frames(n_frames),
   enco_n(enco_n),
   enco_i(enco_i),
   U_K_i(K                                    * n_frames),
@@ -26,8 +26,8 @@ template <typename B>
 void Encoder_turbo<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (K                                                 * n_frames));
-	assert(X_N.size() == (unsigned) ((N + enco_n.tail_length() + enco_i.tail_length()) * n_frames));
+	assert(U_K.size() == (unsigned) (K                                                 * this->n_frames));
+	assert(X_N.size() == (unsigned) ((N + enco_n.tail_length() + enco_i.tail_length()) * this->n_frames));
 
 	pi.interleave(U_K, U_K_i);
 
@@ -37,7 +37,7 @@ void Encoder_turbo<B>
 	const auto p_si = (N - K) / 2; // size of the parity
 	const auto t_n = enco_n.tail_length(); // tail_n
 	const auto t_i = enco_i.tail_length(); // tail_i
-	for (auto f = 0; f < n_frames; f++)
+	for (auto f = 0; f < this->n_frames; f++)
 	{
 		const auto off_U  = f * K;               // off_U_K
 		const auto off_X  = f * (N + t_n + t_i); // off_U_N

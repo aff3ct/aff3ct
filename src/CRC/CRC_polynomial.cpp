@@ -7,7 +7,7 @@
 template <typename B>
 CRC_polynomial<B>
 ::CRC_polynomial(const int K, std::string poly_key, const int n_frames)
-: K(K), n_frames(n_frames), polynomial(0), buff_crc(n_frames * K)
+: CRC<B>(n_frames), K(K), polynomial(0), buff_crc(n_frames * K)
 {
 	if (poly_key.empty())
 	{
@@ -49,10 +49,10 @@ template <typename B>
 void CRC_polynomial<B>
 ::build(mipp::vector<B>& U_K)
 {
-	assert(U_K.size() >  (unsigned)(n_frames * this->size()));
-	assert(U_K.size() == (unsigned)(n_frames * this->K));
+	assert(U_K.size() >  (unsigned)(this->n_frames * this->size()));
+	assert(U_K.size() == (unsigned)(this->n_frames * this->K));
 
-	for (auto f = 0; f < n_frames; f++)
+	for (auto f = 0; f < this->n_frames; f++)
 		this->_generate(U_K, U_K, 
 		                K * f, 
 		                K * f + (K - this->size()), 
@@ -83,9 +83,9 @@ template <typename B>
 bool CRC_polynomial<B>
 ::check(const mipp::vector<B>& V_K)
 {
-	assert(V_K.size() > (unsigned)(n_frames * this->size()));
+	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
 
-	auto real_frame_size = V_K.size() / n_frames;
+	auto real_frame_size = V_K.size() / this->n_frames;
 
 	auto i = 0;
 	auto f = 0;
@@ -106,9 +106,9 @@ bool CRC_polynomial<B>
 			i++;
 		f++;
 	}
-	while ((f < n_frames) && (i == this->size()));
+	while ((f < this->n_frames) && (i == this->size()));
 
-	return (f == n_frames) && (i == this->size());
+	return (f == this->n_frames) && (i == this->size());
 }
 
 // ==================================================================================== explicit template instantiation 
