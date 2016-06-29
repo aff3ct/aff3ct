@@ -4,11 +4,11 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Tools/Factory/Factory_frozenbits_generator.hpp"
-#include "../../../Tools/Factory/Factory_puncturer_polar.hpp"
-#include "../../../Tools/Factory/Factory_encoder_polar.hpp"
-#include "../../../Tools/Factory/Factory_decoder_polar.hpp"
-#include "../../../Tools/Factory/Factory_decoder_polar_gen.hpp"
+#include "../../../Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
+#include "../../../Tools/Factory/Polar/Factory_puncturer_polar.hpp"
+#include "../../../Tools/Factory/Polar/Factory_encoder_polar.hpp"
+#include "../../../Tools/Factory/Polar/Factory_decoder_polar.hpp"
+#include "../../../Tools/Factory/Polar/Factory_decoder_polar_gen.hpp"
 
 #include "../../../Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 

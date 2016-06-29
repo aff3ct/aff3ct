@@ -1,10 +1,10 @@
 #ifndef FACTORY_DECODER_RSC_HPP
 #define FACTORY_DECODER_RSC_HPP
 
-#include "../../Decoder/Decoder.hpp"
-#include "../../Decoder/SISO.hpp"
+#include "../../../Decoder/Decoder.hpp"
+#include "../../../Decoder/SISO.hpp"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B, typename R, typename RD>
 struct Factory_decoder_RSC

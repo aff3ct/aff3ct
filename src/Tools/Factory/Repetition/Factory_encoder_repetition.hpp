@@ -1,9 +1,9 @@
 #ifndef FACTORY_ENCODER_REPETITION_HPP
 #define FACTORY_ENCODER_REPETITION_HPP
 
-#include "../../Encoder/Encoder_sys.hpp"
+#include "../../../Encoder/Encoder_sys.hpp"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B>
 struct Factory_encoder_repetition

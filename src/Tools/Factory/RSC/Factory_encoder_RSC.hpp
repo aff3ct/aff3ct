@@ -1,9 +1,9 @@
 #ifndef FACTORY_ENCODER_RSC_HPP
 #define FACTORY_ENCODER_RSC_HPP
 
-#include "../../Encoder/RSC/Encoder_RSC_sys.hpp"
+#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B>
 struct Factory_encoder_RSC

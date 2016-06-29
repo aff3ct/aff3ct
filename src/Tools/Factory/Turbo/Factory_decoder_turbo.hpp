@@ -3,14 +3,14 @@
 
 #include <string>
 
-#include "../../Decoder/Decoder.hpp"
-#include "../../Decoder/SISO.hpp"
-#include "../../Interleaver/Interleaver.hpp"
-#include "../../CRC/CRC.hpp"
+#include "../../../Decoder/Decoder.hpp"
+#include "../../../Decoder/SISO.hpp"
+#include "../../../Interleaver/Interleaver.hpp"
+#include "../../../CRC/CRC.hpp"
 
-#include "../Turbo/Scaling_factor/Scaling_factor.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor.hpp"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B, typename R>
 struct Factory_decoder_turbo

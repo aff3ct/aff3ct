@@ -1,13 +1,13 @@
 #ifndef FACTORY_DECODER_POLAR_HPP
 #define FACTORY_DECODER_POLAR_HPP
 
-#include "../../CRC/CRC.hpp"
-#include "../../Decoder/SISO.hpp"
-#include "../../Decoder/Decoder.hpp"
+#include "../../../CRC/CRC.hpp"
+#include "../../../Decoder/SISO.hpp"
+#include "../../../Decoder/Decoder.hpp"
 
-#include "../MIPP/mipp.h"
+#include "../../MIPP/mipp.h"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B, typename R>
 struct Factory_decoder_polar

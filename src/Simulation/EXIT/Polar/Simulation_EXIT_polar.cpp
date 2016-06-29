@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../../Tools/Factory/Factory_frozenbits_generator.hpp"
-#include "../../../Tools/Factory/Factory_encoder_polar.hpp"
-#include "../../../Tools/Factory/Factory_decoder_polar.hpp"
+#include "../../../Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
+#include "../../../Tools/Factory/Polar/Factory_encoder_polar.hpp"
+#include "../../../Tools/Factory/Polar/Factory_decoder_polar.hpp"
 
 #include "../../../Tools/bash_tools.h"
 #include "../../../Tools/simu_tools.h"

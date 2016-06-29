@@ -1,10 +1,9 @@
 #ifndef FACTORY_SCALING_FACTOR_HPP
 #define FACTORY_SCALING_FACTOR_HPP
 
-#include "../Turbo/Scaling_factor/Scaling_factor.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor.hpp"
 
-#include "../params.h"
-#include "../MIPP/mipp.h"
+#include "../../params.h"
 
 template <typename R>
 struct Factory_scaling_factor

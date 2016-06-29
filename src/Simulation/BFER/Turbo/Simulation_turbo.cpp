@@ -7,11 +7,11 @@
 #include <algorithm>
 
 #include "../../../Tools/Factory/Factory_interleaver.hpp"
-#include "../../../Tools/Factory/Factory_encoder_RSC.hpp"
-#include "../../../Tools/Factory/Factory_encoder_turbo.hpp"
-#include "../../../Tools/Factory/Factory_scaling_factor.hpp"
-#include "../../../Tools/Factory/Factory_decoder_RSC.hpp"
-#include "../../../Tools/Factory/Factory_decoder_turbo.hpp"
+#include "../../../Tools/Factory/RSC/Factory_encoder_RSC.hpp"
+#include "../../../Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
+#include "../../../Tools/Factory/Turbo/Factory_scaling_factor.hpp"
+#include "../../../Tools/Factory/RSC/Factory_decoder_RSC.hpp"
+#include "../../../Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
 
 #include "../../../Tools/bash_tools.h"
 #include "../../../Tools/simu_tools.h"

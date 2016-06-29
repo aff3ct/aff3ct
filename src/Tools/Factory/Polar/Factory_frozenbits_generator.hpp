@@ -1,9 +1,9 @@
 #ifndef FACTORY_FROZENBITS_GENERATOR_HPP
 #define FACTORY_FROZENBITS_GENERATOR_HPP
 
-#include "../Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "../../Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B>
 struct Factory_frozenbits_generator

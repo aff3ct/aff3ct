@@ -4,8 +4,8 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Tools/Factory/Factory_encoder_repetition.hpp"
-#include "../../../Tools/Factory/Factory_decoder_repetition.hpp"
+#include "../../../Tools/Factory/Repetition/Factory_encoder_repetition.hpp"
+#include "../../../Tools/Factory/Repetition/Factory_decoder_repetition.hpp"
 
 #include "../../../Tools/bash_tools.h"
 #include "../../../Tools/simu_tools.h"

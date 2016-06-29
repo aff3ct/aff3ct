@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../../Tools/Factory/Factory_encoder_RSC.hpp"
-#include "../../../Tools/Factory/Factory_decoder_RSC.hpp"
+#include "../../../Tools/Factory/RSC/Factory_encoder_RSC.hpp"
+#include "../../../Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
 #include "../../../Decoder/decoder_functions.h"
 

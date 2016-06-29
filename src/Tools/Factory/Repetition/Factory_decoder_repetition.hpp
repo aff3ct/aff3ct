@@ -3,10 +3,10 @@
 
 #include <string>
 
-#include "../../Decoder/Decoder.hpp"
-#include "../../Decoder/SISO.hpp"
+#include "../../../Decoder/Decoder.hpp"
+#include "../../../Decoder/SISO.hpp"
 
-#include "../params.h"
+#include "../../params.h"
 
 template <typename B, typename R>
 struct Factory_decoder_repetition

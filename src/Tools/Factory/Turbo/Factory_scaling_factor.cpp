@@ -1,14 +1,13 @@
 #include "Factory_scaling_factor.hpp"
 
-#include "../Turbo/Scaling_factor/Scaling_factor_NO.hpp"
-#include "../Turbo/Scaling_factor/Scaling_factor_seq.hpp"
-#include "../Turbo/Scaling_factor/Scaling_factor_vec.hpp"
-#include "../Turbo/Scaling_factor/Scaling_factor_array.hpp"
-#include "../Turbo/Scaling_factor/Scaling_factor_array_fast.hpp"
-#include "../Turbo/Scaling_factor/Scaling_factor_constant.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor_NO.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor_seq.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor_vec.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor_array.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor_array_fast.hpp"
+#include "../../Turbo/Scaling_factor/Scaling_factor_constant.hpp"
 
-#include "../params.h"
-#include "../MIPP/mipp.h"
+#include "../../params.h"
 
 template<typename R>
 Scaling_factor<R>* Factory_scaling_factor<R>
@@ -36,7 +35,7 @@ Scaling_factor<R>* Factory_scaling_factor<R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "../../types.h"
 #ifdef MULTI_PREC
 template struct Factory_scaling_factor<Q_8>;
 template struct Factory_scaling_factor<Q_16>;
