@@ -3,22 +3,22 @@
 #include <cassert>
 #include <math.h>
 
-template <typename B, typename R>
-Channel_AWGN_LR<B,R>
+template <typename R>
+Channel_AWGN_LR<R>
 ::Channel_AWGN_LR(const R& sigma, const int seed, const R scaling_factor)
-: Channel_AWGN<B,R>(sigma, seed, scaling_factor)
+: Channel_AWGN<R>(sigma, seed, scaling_factor)
 {
 }
 
-template <typename B, typename R>
-Channel_AWGN_LR<B,R>
+template <typename R>
+Channel_AWGN_LR<R>
 ::~Channel_AWGN_LR()
 {
 }
 
-template <typename B, typename R>
-void Channel_AWGN_LR<B,R>
-::add_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N)
+template <typename R>
+void Channel_AWGN_LR<R>
+::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
 	assert(X_N.size() == Y_N.size());
 
@@ -30,11 +30,9 @@ void Channel_AWGN_LR<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Channel_AWGN_LR<B_8,R_8>;
-template class Channel_AWGN_LR<B_16,R_16>;
-template class Channel_AWGN_LR<B_32,R_32>;
-template class Channel_AWGN_LR<B_64,R_64>;
+template class Channel_AWGN_LR<R_32>;
+template class Channel_AWGN_LR<R_64>;
 #else
-template class Channel_AWGN_LR<B,R>;
+template class Channel_AWGN_LR<R>;
 #endif
 // ==================================================================================== explicit template instantiation

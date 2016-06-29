@@ -52,6 +52,7 @@ protected:
 	std::vector<mipp::vector<B>> U_K;  // information bit vector
 	std::vector<mipp::vector<B>> X_N1; // encoded codeword
 	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
+	std::vector<mipp::vector<R>> X_N3; // modulate codeword
 	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (before quantization)
 	std::vector<mipp::vector<Q>> Y_N2; // noisy codeword (after  quantization)
 	std::vector<mipp::vector<Q>> Y_N3; // noisy and depunctured codeword
@@ -64,7 +65,7 @@ protected:
 	std::vector<Encoder<B>*>          encoder;
 	std::vector<Puncturer<B,Q>*>      puncturer;
 	std::vector<Modulator<B,R>*>      modulator;
-	std::vector<Channel<B,R>*>        channel;
+	std::vector<Channel<R>*>          channel;
 	std::vector<Quantizer<R,Q>*>      quantizer;
 	std::vector<Decoder<B,Q>*>        decoder;
 	std::vector<Error_analyzer<B,R>*> analyzer;
@@ -147,7 +148,7 @@ protected:
 	virtual Encoder<B>*          build_encoder    (const int tid = 0) = 0;
 	virtual Puncturer<B,Q>*      build_puncturer  (const int tid = 0);
 	virtual Modulator<B,R>*      build_modulator  (const int tid = 0);
-	virtual Channel<B,R>*        build_channel    (const int tid = 0);
+	virtual Channel<R>*          build_channel    (const int tid = 0);
 	virtual Quantizer<R,Q>*      build_quantizer  (const int tid = 0);
 	virtual Decoder<B,Q>*        build_decoder    (const int tid = 0) = 0;
 	virtual Error_analyzer<B,R>* build_analyzer   (const int tid = 0);

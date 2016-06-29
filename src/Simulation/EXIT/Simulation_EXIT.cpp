@@ -28,8 +28,10 @@ Simulation_EXIT<B,R,Q>
 
   B_K        (code_params.K                                                ),
   B_N        (code_params.N + code_params.tail_length                      ),
-  X_K        (code_params.K                                                ),
-  X_N        (code_params.N + code_params.tail_length                      ),
+  X_K1       (code_params.K                                                ),
+  X_N1       (code_params.N + code_params.tail_length                      ),
+  X_K2       (code_params.K                                                ),
+  X_N2       (code_params.N + code_params.tail_length                      ),
   Y_N        (code_params.N + code_params.tail_length                      ),
   Y_K        (code_params.K                                                ),
   La_K1      (code_params.K                                                ),
@@ -81,8 +83,8 @@ void Simulation_EXIT<B,R,Q>
 	source    = build_source   (); check_errors(source   , "Source<B>"         );
 	encoder   = build_encoder  (); check_errors(encoder  , "Encoder<B>"        );
 	modulator = build_modulator(); check_errors(modulator, "Modulator<B,R>"    );
-	channel   = build_channel  (); check_errors(channel  , "Channel<B,R>"      );
-	channel_a = build_channel_a(); check_errors(channel  , "Channel<B,R>"      );
+	channel   = build_channel  (); check_errors(channel  , "Channel<R>"        );
+	channel_a = build_channel_a(); check_errors(channel  , "Channel<R>"        );
 	quantizer = build_quantizer(); check_errors(quantizer, "Quantizer<R,Q>"    );
 	siso      = build_siso     (); check_errors(siso     , "SISO<Q>"           );
 	terminal  = build_terminal (); check_errors(terminal , "Terminal_EXIT<B,R>");
@@ -159,23 +161,23 @@ void Simulation_EXIT<B,R,Q>
 		source->generate(B_K);
 
 		// encode
-		encoder->encode(B_K, X_N);
+		encoder->encode(B_K, X_N1);
 
 		// X_K used to generate La_K vector
-		X_K = B_K;
+		X_K1 = B_K;
 
 		// modulate
-		modulator->modulate(X_K, X_K);
-		modulator->modulate(X_N, X_N);
+		modulator->modulate(X_K1, X_K2);
+		modulator->modulate(X_N1, X_N2);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
 		{
-			channel_a->add_noise(X_K, La_K1);
+			channel_a->add_noise(X_K2, La_K1);
 			quantizer->process(La_K1, La_K2);
 		}
 
-		channel->add_noise(X_N, Lch_N1);
+		channel->add_noise(X_N2, Lch_N1);
 		quantizer->process(Lch_N1, Lch_N2);
 
 		// extract systematic and parity information
@@ -401,17 +403,17 @@ Modulator<B,R>* Simulation_EXIT<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Channel<B,R>* Simulation_EXIT<B,R,Q>
+Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel()
 {
-	return Factory_channel<B,R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
+	return Factory_channel<R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
 }
 
 template <typename B, typename R, typename Q>
-Channel<B,R>* Simulation_EXIT<B,R,Q>
+Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a()
 {
-	return Factory_channel<B,R>::build(chan_params, 2.0 / sig_a, 0, (sig_a * sig_a) / 2.0);
+	return Factory_channel<R>::build(chan_params, 2.0 / sig_a, 0, (sig_a * sig_a) / 2.0);
 }
 
 template <typename B, typename R, typename Q>

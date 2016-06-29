@@ -14,7 +14,7 @@ Modulator_BPSK<B,R>
 
 template <typename B, typename R>
 void Modulator_BPSK<B,R>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
 {
 	auto size = X_N1.size();
 	for (unsigned i = 0; i < size; i++)

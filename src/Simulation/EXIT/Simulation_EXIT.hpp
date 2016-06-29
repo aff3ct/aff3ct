@@ -28,7 +28,8 @@ protected:
 	const t_decoder_param    &deco_params;
 
 	// data vectors
-	mipp::vector<B> B_K, B_N, X_K, X_N;
+	mipp::vector<B> B_K, B_N, X_K1, X_N1;
+	mipp::vector<R> X_K2, X_N2;
 	mipp::vector<R> Y_N, Y_K;
 	mipp::vector<R> La_K1;
 	mipp::vector<R> Lch_N1;
@@ -54,8 +55,8 @@ protected:
 	Source<B>          *source;
 	Encoder<B>         *encoder;
 	Modulator<B,R>     *modulator;	
-	Channel<B,R>       *channel;
-	Channel<B,R>       *channel_a;
+	Channel<R>         *channel;
+	Channel<R>         *channel_a;
 	Quantizer<R,Q>     *quantizer;
 	SISO<Q>            *siso;
 	Terminal_EXIT<B,R> *terminal;
@@ -93,8 +94,8 @@ protected:
 	virtual Source<B>*          build_source     ();
 	virtual Encoder<B>*         build_encoder    () = 0;
 	virtual Modulator<B,R>*     build_modulator  ();
-	virtual Channel<B,R>*       build_channel    ();
-	virtual Channel<B,R>*       build_channel_a  ();
+	virtual Channel<R>*         build_channel    ();
+	virtual Channel<R>*         build_channel_a  ();
 	virtual Quantizer<R,Q>*     build_quantizer  ();
 	virtual SISO<Q>*            build_siso       () = 0;
 	        Terminal_EXIT<B,R>* build_terminal   ();

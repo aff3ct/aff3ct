@@ -46,6 +46,7 @@ Simulation_BFER<B,R,Q>
   U_K (simu_params.n_threads, mipp::vector<B>(code_params.K)),
   X_N1(simu_params.n_threads, mipp::vector<B>(code_params.N)),
   X_N2(simu_params.n_threads, mipp::vector<B>(code_params.N)),
+  X_N3(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N1(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N2(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
   Y_N3(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
@@ -159,7 +160,7 @@ void Simulation_BFER<B,R,Q>
 		std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
 		std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
 		std::fill(simu->X_N2[tid].begin(), simu->X_N2[tid].end(), (B)0);
-		simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N2[tid]);
+		simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
 	}
 
 	simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
@@ -196,7 +197,7 @@ void Simulation_BFER<B,R,Q>
 	simu->puncturer[tid] = simu->build_puncturer(tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
 	simu->encoder  [tid] = simu->build_encoder  (tid); check_errors(simu->encoder  [tid], "Encoder<B>"         );
 	simu->modulator[tid] = simu->build_modulator(tid); check_errors(simu->modulator[tid], "Modulator<B,R>"     );
-	simu->channel  [tid] = simu->build_channel  (tid); check_errors(simu->channel  [tid], "Channel<B,R>"       );
+	simu->channel  [tid] = simu->build_channel  (tid); check_errors(simu->channel  [tid], "Channel<R>"         );
 	simu->quantizer[tid] = simu->build_quantizer(tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>"     );
 	simu->decoder  [tid] = simu->build_decoder  (tid); check_errors(simu->decoder  [tid], "Decoder<B,Q>"       );
 	simu->analyzer [tid] = simu->build_analyzer (tid); check_errors(simu->analyzer [tid], "Error_analyzer<B,R>");
@@ -212,6 +213,7 @@ void Simulation_BFER<B,R,Q>
 	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
 	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
+	if (simu->X_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N3[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N1[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N1[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N2[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N3[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N3[tid].resize((N_code + tail) * n_fra);
@@ -287,13 +289,13 @@ void Simulation_BFER<B,R,Q>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N2[tid]);
+			simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
 			d_modul = steady_clock::now() - t_modul;
 		}
 
 		// add noise
 		auto t_chann = steady_clock::now();
-		simu->channel[tid]->add_noise(simu->X_N2[tid], simu->Y_N1[tid]);
+		simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid]);
 		auto d_chann = steady_clock::now() - t_chann;
 
 		// demodulation
@@ -474,7 +476,7 @@ void Simulation_BFER<B,R,Q>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			simu->modulator[0]->modulate(simu->X_N2[0], simu->X_N2[0]);
+			simu->modulator[0]->modulate(simu->X_N2[0], simu->X_N3[0]);
 			d_modul = steady_clock::now() - t_modul;
 		}
 		else
@@ -491,9 +493,9 @@ void Simulation_BFER<B,R,Q>
 		}
 
 		// add noise
-		std::clog << "Add noise from X_N2 to Y_N1..." << std::endl;
+		std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
 		auto t_chann = steady_clock::now();
-		simu->channel[0]->add_noise(simu->X_N2[0], simu->Y_N1[0]);
+		simu->channel[0]->add_noise(simu->X_N3[0], simu->Y_N1[0]);
 		auto d_chann = steady_clock::now() - t_chann;
 
 		// display Y_N1
@@ -788,10 +790,10 @@ Modulator<B,R>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Channel<B,R>* Simulation_BFER<B,R,Q>
+Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int tid)
 {
-	return Factory_channel<B,R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
+	return Factory_channel<R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
 }
 
 template <typename B, typename R, typename Q>

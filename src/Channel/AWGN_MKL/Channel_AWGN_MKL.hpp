@@ -10,8 +10,8 @@
 
 #include "../Channel.hpp"
 
-template <typename B, typename R>
-class Channel_AWGN_MKL : public Channel<B,R>
+template <typename R>
+class Channel_AWGN_MKL : public Channel<R>
 {
 private:
 	const R sigma;
@@ -22,10 +22,10 @@ public:
 	Channel_AWGN_MKL(const R& sigma, const int seed = 0, const R& scaling_factor = 1);
 	virtual ~Channel_AWGN_MKL();
 
-	virtual void add_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N) = 0;
+	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
 
 protected:
-	void add_gaussian_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N);
+	void add_gaussian_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
 
 #endif // CHANNEL_AWGN_MKL_HPP_
