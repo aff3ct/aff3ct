@@ -38,6 +38,8 @@ Simulation_EXIT<B,R,Q>
   Lch_N1     (code_params.N + code_params.tail_length                      ),
   La_K2      (code_params.K                                                ),
   Lch_N2     (code_params.N + code_params.tail_length                      ),
+  La_K3      (code_params.K                                                ),
+  Lch_N3     (code_params.N + code_params.tail_length                      ),
   Le_K       (code_params.K                                                ),
   sys        (code_params.K                                                ),
   par        ((code_params.N - code_params.K) + (code_params.tail_length/2)),
@@ -94,6 +96,15 @@ void Simulation_EXIT<B,R,Q>
 		std::cout << bold_red("(EE) EXIT simulation does not support inter frame SIMD... Exiting.") << std::endl;
 		exit(-1);
 	}
+
+	// resize the modulation buffers
+	const auto K_mod = modulator->get_buffer_size(code_params.K);
+	const auto N_mod = modulator->get_buffer_size(code_params.N);
+	const auto tail  = code_params.tail_length;
+	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
+	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
+	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
+	if (Lch_N1.size() != (unsigned) (N_mod + tail)) Lch_N1.resize(N_mod + tail);
 }
 
 template <typename B, typename R, typename Q>
@@ -173,15 +184,17 @@ void Simulation_EXIT<B,R,Q>
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
 		{
-			channel_a->add_noise(X_K2, La_K1);
-			quantizer->process(La_K1, La_K2);
+			channel_a->add_noise (X_K2,  La_K1);
+			modulator->demodulate(La_K1, La_K2),
+			quantizer->process   (La_K2, La_K3);
 		}
 
-		channel->add_noise(X_N2, Lch_N1);
-		quantizer->process(Lch_N1, Lch_N2);
+		channel  ->add_noise (X_N2,   Lch_N1);
+		modulator->demodulate(Lch_N1, Lch_N2),
+		quantizer->process   (Lch_N2, Lch_N3);
 
 		// extract systematic and parity information
-		extract_sys_par(Lch_N2, La_K2, sys, par);
+		extract_sys_par(Lch_N3, La_K3, sys, par);
 
 		// decode
 		siso->decode(sys, par, Le_K);

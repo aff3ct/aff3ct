@@ -48,8 +48,9 @@ Simulation_BFER<B,R,Q>
   X_N2(simu_params.n_threads, mipp::vector<B>(code_params.N)),
   X_N3(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N1(simu_params.n_threads, mipp::vector<R>(code_params.N)),
-  Y_N2(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
+  Y_N2(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N3(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
+  Y_N4(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
   V_K (simu_params.n_threads, mipp::vector<B>(code_params.K)),
   V_N (simu_params.n_threads, mipp::vector<B>(code_params.N)),
 
@@ -207,16 +208,18 @@ void Simulation_BFER<B,R,Q>
 
 	// resize the buffers
 	const auto K      = simu->code_params.K;
-	const auto N      = simu->code_params.N;
 	const auto N_code = simu->code_params.N_code;
+	const auto N      = simu->code_params.N;
+	const auto N_mod  = simu->modulator[tid]->get_buffer_size(N);
 	const auto tail   = simu->code_params.tail_length;
 	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
 	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N3[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N1[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N1[tid].resize((N      + tail) * n_fra);
+	if (simu->X_N3[tid].size() != (unsigned) ((N_mod  + tail) * n_fra)) simu->X_N3[tid].resize((N_mod  + tail) * n_fra);
+	if (simu->Y_N1[tid].size() != (unsigned) ((N_mod  + tail) * n_fra)) simu->Y_N1[tid].resize((N_mod  + tail) * n_fra);
 	if (simu->Y_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N3[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N3[tid].resize((N_code + tail) * n_fra);
+	if (simu->Y_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N3[tid].resize((N      + tail) * n_fra);
+	if (simu->Y_N4[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N4[tid].resize((N_code + tail) * n_fra);
 	if (simu->V_K [tid].size() != (unsigned) ( K              * n_fra)) simu->V_K [tid].resize( K              * n_fra);
 	if (simu->V_N [tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->V_N [tid].resize((N_code + tail) * n_fra);
 
@@ -300,22 +303,22 @@ void Simulation_BFER<B,R,Q>
 
 		// demodulation
 		auto t_demod = steady_clock::now();
-		simu->modulator[tid]->demodulate(simu->Y_N1[tid], simu->Y_N1[tid]);
+		simu->modulator[tid]->demodulate(simu->Y_N1[tid], simu->Y_N2[tid]);
 		auto d_demod = steady_clock::now() - t_demod;
 
 		// make the quantization
 		auto t_quant = steady_clock::now();
-		simu->quantizer[tid]->process(simu->Y_N1[tid], simu->Y_N2[tid]);
+		simu->quantizer[tid]->process(simu->Y_N2[tid], simu->Y_N3[tid]);
 		auto d_quant = steady_clock::now() - t_quant;
 
 		// depuncture before the decoding stage
 		auto t_depun = steady_clock::now();
-		simu->puncturer[tid]->depuncture(simu->Y_N2[tid], simu->Y_N3[tid]);
+		simu->puncturer[tid]->depuncture(simu->Y_N3[tid], simu->Y_N4[tid]);
 		auto d_depun = steady_clock::now() - t_depun;
 
 		// load data in the decoder
 		auto t_load = steady_clock::now();
-		simu->decoder[tid]->load(simu->Y_N3[tid]);
+		simu->decoder[tid]->load(simu->Y_N4[tid]);
 		auto d_load = steady_clock::now() - t_load;
 
 		// launch decoder
@@ -382,7 +385,7 @@ void Simulation_BFER<B,R,Q>
 	else
 		for (auto i = 0; i < simu->simu_params.benchs; i++)
 		{
-			simu->decoder[tid]->load      (simu->Y_N2[tid]);
+			simu->decoder[tid]->load      (simu->Y_N4[tid]);
 			simu->decoder[tid]->decode    (               );
 			simu->decoder[tid]->store_fast(simu->V_N [tid]);
 		}
@@ -505,34 +508,34 @@ void Simulation_BFER<B,R,Q>
 
 		// demodulation
 		auto t_demod = steady_clock::now();
-		simu->modulator[0]->demodulate(simu->Y_N1[0], simu->Y_N1[0]);
+		simu->modulator[0]->demodulate(simu->Y_N1[0], simu->Y_N2[0]);
 		auto d_demod = steady_clock::now() - t_demod;
 
 		// make the quantization
-		std::clog << "Make the quantization from Y_N1 to Y_N2..." << std::endl;
+		std::clog << "Make the quantization from Y_N2 to Y_N3..." << std::endl;
 		auto t_quant = steady_clock::now();
-		simu->quantizer[0]->process(simu->Y_N1[0], simu->Y_N2[0]);
+		simu->quantizer[0]->process(simu->Y_N2[0], simu->Y_N3[0]);
 		auto d_quant = steady_clock::now() - t_quant;
 
 		// display Y_N2
-		std::clog << "Y_N2:" << std::endl;
-		display_quantized_vector(simu->Y_N2[0]);
-		std::clog << std::endl;
-
-		// depuncture before the decoding stage
-		std::clog << "Depuncture Y_N2 and generate Y_N3..." << std::endl;
-		auto t_depun = steady_clock::now();
-		simu->puncturer[0]->depuncture(simu->Y_N2[0], simu->Y_N3[0]);
-		auto d_depun = steady_clock::now() - t_depun;
-
-		// display Y_N3
 		std::clog << "Y_N3:" << std::endl;
 		display_quantized_vector(simu->Y_N3[0]);
 		std::clog << std::endl;
 
+		// depuncture before the decoding stage
+		std::clog << "Depuncture Y_N3 and generate Y_N4..." << std::endl;
+		auto t_depun = steady_clock::now();
+		simu->puncturer[0]->depuncture(simu->Y_N3[0], simu->Y_N4[0]);
+		auto d_depun = steady_clock::now() - t_depun;
+
+		// display Y_N4
+		std::clog << "Y_N4:" << std::endl;
+		display_quantized_vector(simu->Y_N4[0]);
+		std::clog << std::endl;
+
 		// load data in the decoder
 		auto t_load = steady_clock::now();
-		simu->decoder[0]->load(simu->Y_N2[0]);
+		simu->decoder[0]->load(simu->Y_N4[0]);
 		auto d_load = steady_clock::now() - t_load;
 		
 		// launch decoder

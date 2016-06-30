@@ -33,21 +33,21 @@ Simulation_EXIT_RSC<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 void Simulation_EXIT_RSC<B,R,Q,QD>
-::extract_sys_par(const mipp::vector<Q> &Lch_N2, 
-                  const mipp::vector<Q> &La_K2, 
+::extract_sys_par(const mipp::vector<Q> &Lch_N, 
+                  const mipp::vector<Q> &La_K, 
                         mipp::vector<Q> &sys, 
                         mipp::vector<Q> &par)
 {
 	// extract systematic and parity information
 	for (auto i = 0; i < this->code_params.K + this->code_params.tail_length/2; i++)
 	{
-		sys[i] = Lch_N2[i*2 +0];
-		par[i] = Lch_N2[i*2 +1];
+		sys[i] = Lch_N[i*2 +0];
+		par[i] = Lch_N[i*2 +1];
 	}
 
 	// add other siso's extrinsic
 	for(auto i = 0 ; i < this->code_params.K ; i ++)
-		sys[i] += La_K2[i];
+		sys[i] += La_K[i];
 }
 
 template <typename B, typename R, typename Q, typename QD>

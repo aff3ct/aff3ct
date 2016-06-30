@@ -33,8 +33,10 @@ protected:
 	mipp::vector<R> Y_N, Y_K;
 	mipp::vector<R> La_K1;
 	mipp::vector<R> Lch_N1;
-	mipp::vector<Q> La_K2;
-	mipp::vector<Q> Lch_N2;
+	mipp::vector<R> La_K2;
+	mipp::vector<R> Lch_N2;
+	mipp::vector<Q> La_K3;
+	mipp::vector<Q> Lch_N3;
 	mipp::vector<Q> Le_K;
 	mipp::vector<Q> sys, par;
 	mipp::vector<B> B_buff;
@@ -82,8 +84,8 @@ private:
 	static double measure_mutual_info_histo(const mipp::vector<Q>& llrs, const mipp::vector<B>& bits, const int N);
 
 protected:
-	virtual void extract_sys_par(const mipp::vector<Q> &Lch_N2, 
-	                             const mipp::vector<Q> &La_K2, 
+	virtual void extract_sys_par(const mipp::vector<Q> &Lch_N, 
+	                             const mipp::vector<Q> &La_K, 
 	                                   mipp::vector<Q> &sys, 
 	                                   mipp::vector<Q> &par) = 0;
 

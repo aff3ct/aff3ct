@@ -25,8 +25,8 @@ public:
 	virtual ~Simulation_EXIT_polar();
 
 protected:
-	void extract_sys_par(const mipp::vector<Q> &Lch_N2, 
-	                     const mipp::vector<Q> &La_K2, 
+	void extract_sys_par(const mipp::vector<Q> &Lch_N, 
+	                     const mipp::vector<Q> &La_K, 
 	                           mipp::vector<Q> &sys, 
 	                           mipp::vector<Q> &par);
 

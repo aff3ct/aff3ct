@@ -53,9 +53,10 @@ protected:
 	std::vector<mipp::vector<B>> X_N1; // encoded codeword
 	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
 	std::vector<mipp::vector<R>> X_N3; // modulate codeword
-	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (before quantization)
-	std::vector<mipp::vector<Q>> Y_N2; // noisy codeword (after  quantization)
-	std::vector<mipp::vector<Q>> Y_N3; // noisy and depunctured codeword
+	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (after the channel noise)
+	std::vector<mipp::vector<R>> Y_N2; // noisy codeword (after the demodulation)
+	std::vector<mipp::vector<Q>> Y_N3; // noisy codeword (after quantization)
+	std::vector<mipp::vector<Q>> Y_N4; // noisy and depunctured codeword
 	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
 	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
 

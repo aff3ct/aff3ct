@@ -41,8 +41,8 @@ Simulation_EXIT_polar<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_EXIT_polar<B,R,Q>
-::extract_sys_par(const mipp::vector<Q> &Lch_N2, 
-                  const mipp::vector<Q> &La_K2, 
+::extract_sys_par(const mipp::vector<Q> &Lch_N, 
+                  const mipp::vector<Q> &La_K, 
                         mipp::vector<Q> &sys, 
                         mipp::vector<Q> &par)
 {
@@ -51,11 +51,11 @@ void Simulation_EXIT_polar<B,R,Q>
 	for (auto j = 0; j < this->code_params.N; j++)
 		if (!frozen_bits[j]) // add La on information (systematic) bits
 		{
-			sys[sys_idx] = Lch_N2[j] + La_K2[sys_idx];
+			sys[sys_idx] = Lch_N[j] + La_K[sys_idx];
 			sys_idx++;
 		}
 		else // parity bit
-			par[par_idx++] = Lch_N2[j];
+			par[par_idx++] = Lch_N[j];
 }
 
 template <typename B, typename R, typename Q>
