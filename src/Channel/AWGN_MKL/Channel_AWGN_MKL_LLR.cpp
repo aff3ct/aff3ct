@@ -5,21 +5,21 @@
 
 #include "Channel_AWGN_MKL_LLR.hpp"
 
-template <typename B, typename R>
-Channel_AWGN_MKL_LLR<B,R>
+template <typename R>
+Channel_AWGN_MKL_LLR<R>
 ::Channel_AWGN_MKL_LLR(const R& sigma, const int seed, const R& scaling_factor)
-: Channel_AWGN_MKL<B,R>(sigma, seed, scaling_factor)
+: Channel_AWGN_MKL<R>(sigma, seed, scaling_factor)
 {
 }
 
-template <typename B, typename R>
-Channel_AWGN_MKL_LLR<B,R>
+template <typename R>
+Channel_AWGN_MKL_LLR<R>
 ::~Channel_AWGN_MKL_LLR() {
 }
 
-template <typename B, typename R>
-void Channel_AWGN_MKL_LLR<B,R>
-::add_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N)
+template <typename R>
+void Channel_AWGN_MKL_LLR<R>
+::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
 	assert(X_N.size() == Y_N.size());
 
@@ -29,12 +29,10 @@ void Channel_AWGN_MKL_LLR<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Channel_AWGN_MKL_LLR<B_8,R_8>;
-template class Channel_AWGN_MKL_LLR<B_16,R_16>;
-template class Channel_AWGN_MKL_LLR<B_32,R_32>;
-template class Channel_AWGN_MKL_LLR<B_64,R_64>;
+template class Channel_AWGN_MKL_LLR<R_32>;
+template class Channel_AWGN_MKL_LLR<R_64>;
 #else
-template class Channel_AWGN_MKL_LLR<B,R>;
+template class Channel_AWGN_MKL_LLR<R>;
 #endif
 // ==================================================================================== explicit template instantiation
 

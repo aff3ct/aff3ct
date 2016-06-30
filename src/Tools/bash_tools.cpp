@@ -9,6 +9,24 @@ std::string bold(std::string str)
 #endif
 }
 
+std::string italic(std::string str)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+	return "\e[3m" + str + "\e[0m";
+#endif
+}
+
+std::string bold_italic(std::string str)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+	return "\e[1m\e[3m" + str + "\e[0m";
+#endif
+}
+
 std::string underlined(std::string str)
 {
 #ifndef ENABLE_COOL_BASH

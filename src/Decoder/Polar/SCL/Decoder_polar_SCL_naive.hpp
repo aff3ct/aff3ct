@@ -25,7 +25,8 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 class Decoder_polar_SCL_naive : public Decoder<B,R>
 {
 protected:
-	const int N;           // n bits input
+	const int K;           // n info bits input
+	const int N;           // n coded bits input
 	const int m;           // graph depth
 	const R   metric_init; // init value of the metrics in the trees
 
@@ -38,13 +39,12 @@ protected:
     std::vector<std::vector<Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
-	Decoder_polar_SCL_naive(const int& N, const int& L, const mipp::vector<B>& frozen_bits);
+	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits);
 	virtual ~Decoder_polar_SCL_naive();
 
 	        void load  (const mipp::vector<R>& Y_N);
 	        void decode(                          );
-	virtual void store (mipp::vector<B>& V_N      ) const;
-	        void unpack(mipp::vector<B>& V_N      ) const;
+	virtual void store (mipp::vector<B>& V_K      ) const;
 
 private:
 	void recursive_compute_llr        (      Binary_node<Contents_SCL<B,R>>* node_cur, int depth);
@@ -64,7 +64,7 @@ protected:
 
 	void recursive_allocate_nodes_contents  (      Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size             );
 	void recursive_initialize_frozen_bits   (const Binary_node<Contents_SCL<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);
-	void recursive_store                    (const Binary_node<Contents_SCL<B,R>>* node_curr,       mipp::vector<B>& V_N        ) const;
+	void recursive_store                    (const Binary_node<Contents_SCL<B,R>>* node_curr,       mipp::vector<B>& V_K, int &k) const;
 	void recursive_deallocate_nodes_contents(      Binary_node<Contents_SCL<B,R>>* node_curr                                    );
 
 	void apply_f     (const Binary_node<Contents_SCL<B,R>>* node_curr);

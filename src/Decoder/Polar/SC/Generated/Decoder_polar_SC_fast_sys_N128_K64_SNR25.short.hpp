@@ -15,10 +15,11 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_SC_fast_sys_N128_K64_SNR25 : public Decoder_polar_SC_fast_sys<B, R, API_polar>
 {
 public:
-	Decoder_polar_SC_fast_sys_N128_K64_SNR25(const int& N, const mipp::vector<B>& frozen_bits)
-	: Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits)
+	Decoder_polar_SC_fast_sys_N128_K64_SNR25(const int& K, const int& N, const mipp::vector<B>& frozen_bits)
+	: Decoder_polar_SC_fast_sys<B, R, API_polar>(K, N, frozen_bits)
 	{
 		assert(N == 128);
+		assert(K == 64);
 		
 		auto i = 0;
 		while (i < 128 && Frozen_bits_128_64_25[i] == frozen_bits[i]) i++;

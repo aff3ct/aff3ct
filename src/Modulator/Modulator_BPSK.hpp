@@ -13,7 +13,7 @@ public:
 	Modulator_BPSK();
 	virtual ~Modulator_BPSK();
 
-	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const;
+	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const;
 	virtual void demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const;
 };
 

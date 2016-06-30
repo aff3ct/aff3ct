@@ -1,8 +1,6 @@
 #include <iostream>
 
 #include "../../Simulation/BFER/RA/Simulation_RA.hpp"
-#include "../../Simulation/BFER/RA/Simulation_RA_debug.hpp"
-
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_RA.hpp"
@@ -62,18 +60,11 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_RA<B,R,Q>
 ::build_simu()
 {
-	if (this->simu_params.enable_debug)
-		this->simu = new Simulation_RA_debug<B,R,Q>(this->simu_params,
-		                                            this->code_params,
-		                                            this->enco_params,
-		                                            this->chan_params,
-		                                            this->deco_params);
-	else
-		this->simu = new Simulation_RA<B,R,Q>(this->simu_params,
-		                                      this->code_params,
-		                                      this->enco_params,
-		                                      this->chan_params,
-		                                      this->deco_params);
+	this->simu = new Simulation_RA<B,R,Q>(this->simu_params,
+	                                      this->code_params,
+	                                      this->enco_params,
+	                                      this->chan_params,
+	                                      this->deco_params);
 }
 
 // ==================================================================================== explicit template instantiation 

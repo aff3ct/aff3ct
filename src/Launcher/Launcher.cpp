@@ -23,7 +23,7 @@ Launcher<B,R,Q>
 	// default parameters
 	simu_params.snr_step            = 0.1f;
 	simu_params.disable_display     = false;
-	simu_params.n_threads           = 0;
+	simu_params.n_threads           = 1;
 	simu_params.stop_time           = std::chrono::seconds(0);
 	simu_params.display_freq        = std::chrono::milliseconds(500);
 	code_params.tail_length         = 0;
@@ -124,9 +124,10 @@ void Launcher<B,R,Q>
 	using namespace std::chrono;
 
 	// required parameters
-	code_params.K = std::stoi(ar.get_arg("K"));
-	code_params.N = std::stoi(ar.get_arg("N"));
-	code_params.m = std::ceil(std::log2(code_params.N));
+	code_params.K      = std::stoi(ar.get_arg("K"));
+	code_params.N      = std::stoi(ar.get_arg("N"));
+	code_params.N_code = std::stoi(ar.get_arg("N"));
+	code_params.m      = std::ceil(std::log2(code_params.N));
 
 	if (code_params.K > code_params.N)
 	{

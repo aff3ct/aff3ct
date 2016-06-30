@@ -114,12 +114,14 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& N, const mipp::vector<B>& frozen_bits)
-: N(N),
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits)
+: K(K),
+  N(N),
   m(log2(N)),
   n_frames(API_polar::get_n_frames()),
-  l(2 * N * n_frames + mipp::nElmtsPerRegister<R>()),
-  s(1 * N * n_frames + mipp::nElmtsPerRegister<B>()),
+  l    (2 * N * n_frames + mipp::nElmtsPerRegister<R>()),
+  s    (1 * N * n_frames + mipp::nElmtsPerRegister<B>()),
+  s_bis(1 * N * n_frames + mipp::nElmtsPerRegister<B>()),
   frozen_bits(frozen_bits)
 {
 	static_assert(sizeof(B) == sizeof(R), "");
@@ -266,14 +268,78 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::store(mipp::vector<B>& V_N) const
+::store(mipp::vector<B>& V_K) const
+{
+	assert(V_K.size() == (unsigned) (K * n_frames));
+
+	constexpr int n_frames = API_polar::get_n_frames();
+
+	if (n_frames == 1)
+	{
+		auto k = 0;
+		for (auto j = 0; j < N; j++)
+			if (!frozen_bits[j])
+				V_K[k++] =  s[j] ? 1 : 0;
+	}
+	else
+	{
+		bool fast_deinterleave = false;
+#if defined(ENABLE_BIT_PACKING)
+		if (typeid(B) == typeid(signed char))
+		{
+			if (!(fast_deinterleave = char_itranspose((signed char*)s.data(), (signed char*)s_bis.data(), (int)N)))
+			{
+				std::cerr << bold_red("(EE) Unsupported N value for itransposition ")
+				          << bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
+				          << std::endl;
+				exit(-1);
+			}
+			else
+			{
+				// bit unpacking
+				auto idx = n_frames * K -1;
+				for (auto i = n_frames * N -1; i > 0; i -= N)
+				for (unsigned j = (unsigned) 0; j < (unsigned) N; j += sizeof(B) * 8)
+				{
+					unsigned char packed_vals = (unsigned char) s_bis[(i -j) / (sizeof(B) * 8)];
+					for (auto k = 0; k < 8; k++)
+						if (!frozen_bits[(N -1 -j) -k])
+							V_K[idx--] = ((packed_vals >> (7-k)) & 0x01);
+				}
+			}
+		}
+#endif
+		if (!fast_deinterleave)
+		{
+			// transpose without bit packing (vectorized)
+			std::vector<B*> frames(n_frames);
+			for (auto f = 0; f < n_frames; f++)
+				frames[f] = (B*)(s_bis.data() + f*N);
+			Reorderer_static<B,n_frames>::apply_rev(s.data(), frames, N);
+
+			for (auto i = 0; i < n_frames; i++)
+			{
+				auto k = 0;
+				for (auto j = 0; j < N; j++)
+					if (!frozen_bits[j])
+						V_K[i * K + (k++)] = s_bis[i * N + j] ? 1 : 0;
+			}
+		}
+	}
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::store_fast(mipp::vector<B>& V_N) const
 {
 	assert(V_N.size() == (unsigned) (N * n_frames));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
 	if (n_frames == 1)
+	{
 		std::copy(s.begin(), s.end() - mipp::nElmtsPerRegister<B>(), V_N.begin());
+	}
 	else
 	{
 		bool fast_deinterleave = false;

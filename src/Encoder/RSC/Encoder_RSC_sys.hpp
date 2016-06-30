@@ -15,7 +15,6 @@ protected:
 	const int N;        // code length
 	const int n_ff;     // number of D flip-flop
 	const int n_states; // number of states in the trellis
-	      int n_frames; // number of frames to encode
 
 	const bool buffered_encoding;
 
@@ -25,8 +24,6 @@ public:
 
 	int get_n_ff   ();
 	int tail_length() const;
-
-	void set_n_frames(const int n_frames);
 
 	void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);

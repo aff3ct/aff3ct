@@ -3,6 +3,8 @@
 
 #include "../bash_tools.h"
 
+#include "Frame_trace.hpp"
+
 template <typename B> template <typename D>
 void Frame_trace<B>
 ::display_bit_vector(mipp::vector<D> vec, mipp::vector<B> ref)
@@ -123,16 +125,3 @@ void Frame_trace<B>
 			break;
 	}
 }
-
-
-// ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
-#ifdef MULTI_PREC
-template class Frame_trace<B_8>;
-template class Frame_trace<B_16>;
-template class Frame_trace<B_32>;
-template class Frame_trace<B_64>;
-#else
-template class Frame_trace<B>;
-#endif
-// ==================================================================================== explicit template instantiation

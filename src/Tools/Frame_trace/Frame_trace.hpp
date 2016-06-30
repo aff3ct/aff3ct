@@ -1,3 +1,6 @@
+#ifndef FRAME_TRACE_HPP
+#define FRAME_TRACE_HPP
+
 #include "../MIPP/mipp.h"
 
 template <typename B>
@@ -10,7 +13,6 @@ private:
 public:
 	Frame_trace(std::ostream &stream = std::cout) : stream(stream) {};
 	~Frame_trace(){}
-
 
 	template <typename D>
 	void display_bit_vector (mipp::vector<D> vec, mipp::vector<B> ref = {});
@@ -37,4 +39,4 @@ private:
 
 #include "Frame_trace.hxx"
 
-
+#endif /* FRAME_TRACE_HPP */

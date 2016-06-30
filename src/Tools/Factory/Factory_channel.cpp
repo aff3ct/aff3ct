@@ -12,11 +12,11 @@
 
 #include "Factory_channel.hpp"
 
-template <typename B, typename R>	
-Channel<B,R>* Factory_channel<B,R>
+template <typename R>	
+Channel<R>* Factory_channel<R>
 ::build(const t_channel_param &chan_params, const R& sigma, const int seed, R scaling_factor)
 {
-	Channel<B,R> *channel = nullptr;
+	Channel<R> *channel = nullptr;
 
 	if (!chan_params.estimator)
 		scaling_factor = (R)1;
@@ -25,31 +25,31 @@ Channel<B,R>* Factory_channel<B,R>
 	if (chan_params.type == "AWGN")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_LLR<B,R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_LLR<R>(sigma, seed +1, scaling_factor);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_LR<B,R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_LR<R>(sigma, seed +1, scaling_factor);
 	}
 #ifdef CHANNEL_MKL
 	else if (chan_params.type == "AWGN_MKL")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_MKL_LLR<B,R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_MKL_LLR<R>(sigma, seed +1, scaling_factor);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_MKL_LR<B,R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_MKL_LR<R>(sigma, seed +1, scaling_factor);
 	}
 #endif
 #ifdef CHANNEL_GSL
 	else if (chan_params.type == "AWGN_GSL")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_GSL_LLR<B,R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_GSL_LLR<R>(sigma, seed +1, scaling_factor);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_GSL_LR<B,R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_GSL_LR<R>(sigma, seed +1, scaling_factor);
 	}
 #endif
 	else if (chan_params.type == "NO")
 	{
-		channel = new Channel_NO<B,R>();
+		channel = new Channel_NO<R>();
 	}
 
 	return channel;
@@ -58,11 +58,9 @@ Channel<B,R>* Factory_channel<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../types.h"
 #ifdef MULTI_PREC
-template struct Factory_channel<B_8,R_8>;
-template struct Factory_channel<B_16,R_16>;
-template struct Factory_channel<B_32,R_32>;
-template struct Factory_channel<B_64,R_64>;
+template struct Factory_channel<R_32>;
+template struct Factory_channel<R_64>;
 #else
-template struct Factory_channel<B,R>;
+template struct Factory_channel<R>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -16,6 +16,7 @@ template <typename B>
 void Encoder_repetition_sys<B>
 ::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
+	assert(this->n_frames == 1);
 	assert(buffered_encoding);
 
 	for (auto i = 0; i < rep_count; i++) // parity bits
@@ -26,6 +27,8 @@ template <typename B>
 void Encoder_repetition_sys<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
+	assert(this->n_frames == 1);
+	
 	// repetition
 	if (!buffered_encoding)
 	{

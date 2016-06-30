@@ -7,7 +7,7 @@
 template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver)
- : K(K), N(N), rep_count(N/K), U(N), interleaver(interleaver)
+ : Encoder<B>(), K(K), N(N), rep_count(N/K), U(N), interleaver(interleaver)
 {	
 	assert(N % K == 0); // check if RA count is consistent
 }
@@ -16,6 +16,8 @@ template <typename B>
 void Encoder_RA<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
+	assert(this->n_frames == 1);
+	
 	// repetition
 	for (auto i = 0; i < K; i++)
 		for (auto j = 0; j < rep_count; j++)

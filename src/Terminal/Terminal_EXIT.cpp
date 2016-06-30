@@ -48,10 +48,10 @@ template <typename B, typename R>
 void Terminal_EXIT<B,R>
 ::legend(std::ostream &stream)
 {
-	stream << "# " << bold("------|-------|-----------|-----------||----------|----------") << std::endl;
-	stream << "# " << bold("  SNR | SIG_A |       I_A |       I_E || SIM_CTHR |    ET/RT ") << std::endl;
-	stream << "# " << bold(" (dB) |  (dB) |           |           ||   (Mb/s) | (hhmmss) ") << std::endl;
-	stream << "# " << bold("------|-------|-----------|-----------||----------|----------") << std::endl;
+	stream << "# " << "------|-------|-----------|-----------||----------|----------" << std::endl;
+	stream << "# " << "  SNR | SIG_A |       I_A |       I_E || SIM_CTHR |    ET/RT " << std::endl;
+	stream << "# " << " (dB) |  (dB) |           |           ||   (Mb/s) | (hhmmss) " << std::endl;
+	stream << "# " << "------|-------|-----------|-----------||----------|----------" << std::endl;
 }
 
 template <typename B, typename R>
@@ -68,10 +68,10 @@ void Terminal_EXIT<B,R>
 	simu_cthr /= 1000.f; // = mbps
 
 	stream << "  ";
-	stream << setprecision(2) << fixed << setw(5) << snr   << bold(" | ");
-	stream << setprecision(2) << fixed << setw(5) << sig_a << bold(" | ");
-	stream << setprecision(6) << fixed << setw(9) << I_A   << bold(" | ");
-	stream << setprecision(6) << fixed << setw(9) << I_E   << bold(" || ");
+	stream << setprecision(2) << fixed << setw(5) << snr   << " | ";
+	stream << setprecision(2) << fixed << setw(5) << sig_a << " | ";
+	stream << setprecision(6) << fixed << setw(9) << I_A   << " | ";
+	stream << setprecision(6) << fixed << setw(9) << I_E   << " || ";
 	stream << setprecision(2) << fixed << setw(8) << simu_cthr;
 }
 
@@ -87,7 +87,7 @@ void Terminal_EXIT<B,R>
 	auto tr = et * (trials / cur_t) - et;
 	auto tr_format = get_time_format((cur_t == 0) ? 0 : tr);
 
-	stream << bold(" | ") << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
+	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
 
 	stream << " ";
 	switch (real_time_state)
@@ -115,7 +115,7 @@ void Terminal_EXIT<B,R>
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto et_format = get_time_format(et);
 
-	stream << bold(" | ") << std::setprecision(0) << std::fixed << std::setw(8) << et_format << "  " << std::endl;
+	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << et_format << "  " << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

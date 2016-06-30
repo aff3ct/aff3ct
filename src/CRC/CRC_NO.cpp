@@ -2,7 +2,8 @@
 
 template <typename B>
 CRC_NO<B>
-::CRC_NO()
+::CRC_NO(const int n_frames)
+: CRC<B>(n_frames)
 {
 }
 

@@ -5,6 +5,10 @@
 
 std::string bold(std::string str);
 
+std::string italic(std::string str);
+
+std::string bold_italic(std::string str);
+
 std::string underlined(std::string str);
 
 std::string bold_underlined(std::string str);

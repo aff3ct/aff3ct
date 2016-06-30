@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "MIPP/mipp.h"
+
 void check_errors(void *ptr, std::string str, const int tid = 0);
 
 #endif /* SIMU_TOOLS_H_ */

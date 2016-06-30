@@ -12,8 +12,8 @@
 	#define VSL_METHOD_SGAUSSIAN_BOXMULLER2 1
 #endif
 
-template <typename B, typename R>
-Channel_AWGN_MKL<B,R>
+template <typename R>
+Channel_AWGN_MKL<R>
 ::Channel_AWGN_MKL(const R& sigma, const int seed, const R& scaling_factor)
 : sigma(sigma),
   scaling_factor(scaling_factor)
@@ -22,14 +22,14 @@ Channel_AWGN_MKL<B,R>
 	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);	
 }
 
-template <typename B, typename R>
-Channel_AWGN_MKL<B,R>
+template <typename R>
+Channel_AWGN_MKL<R>
 ::~Channel_AWGN_MKL()
 {
 	vslDeleteStream(&stream_state);
 }
 
-template <typename B, typename R>
+template <typename R>
 struct MKL_gaussian_noise
 {
 	static void generate(VSLStreamStatePtr &stream_state, mipp::vector<R>& Y_N, const R &sigma)
@@ -39,8 +39,7 @@ struct MKL_gaussian_noise
 	}
 };
 
-template <typename B>
-struct MKL_gaussian_noise <B, float>
+struct MKL_gaussian_noise <float>
 {
 	static void generate(VSLStreamStatePtr &stream_state, mipp::vector<float>& Y_N, const float &sigma)
 	{
@@ -62,8 +61,7 @@ struct MKL_gaussian_noise <B, float>
 	}
 };
 
-template <typename B>
-struct MKL_gaussian_noise <B, double>
+struct MKL_gaussian_noise <double>
 {
 	static void generate(VSLStreamStatePtr &stream_state, mipp::vector<double>& Y_N, const double &sigma)
 	{
@@ -85,30 +83,28 @@ struct MKL_gaussian_noise <B, double>
 	}
 };
 
-template <typename B, typename R>
-void Channel_AWGN_MKL<B,R>
-::add_gaussian_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N)
+template <typename R>
+void Channel_AWGN_MKL<R>
+::add_gaussian_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
 	assert(X_N.size()   == Y_N.size());
 	assert(sigma        != 0         );
 	assert(stream_state != nullptr   );
 
-	MKL_gaussian_noise<B,R>::generate(stream_state, Y_N, sigma);
+	MKL_gaussian_noise<R>::generate(stream_state, Y_N, sigma);
 
 	auto size = Y_N.size();
 	for (unsigned i = 0; i < size; i++)
-		Y_N[i] = ((R)X_N[i] + Y_N[i]) * scaling_factor;
+		Y_N[i] = (X_N[i] + Y_N[i]) * scaling_factor;
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Channel_AWGN_MKL<B_8,R_8>;
-template class Channel_AWGN_MKL<B_16,R_16>;
-template class Channel_AWGN_MKL<B_32,R_32>;
-template class Channel_AWGN_MKL<B_64,R_64>;
+template class Channel_AWGN_MKL<R_32>;
+template class Channel_AWGN_MKL<R_64>;
 #else
-template class Channel_AWGN_MKL<B,R>;
+template class Channel_AWGN_MKL<R>;
 #endif
 // ==================================================================================== explicit template instantiation
 

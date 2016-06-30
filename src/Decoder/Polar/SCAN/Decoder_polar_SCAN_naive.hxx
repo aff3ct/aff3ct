@@ -11,8 +11,9 @@
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::Decoder_polar_SCAN_naive(const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits)
-: m             (m           ),
+::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits)
+: K             (K           ),
+  m             (m           ),
   N             (1 << m      ),
   max_iter      (max_iter    ),
   layers_count  (m +1        ),
@@ -110,27 +111,14 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::store(mipp::vector<B>& V_N) const
+::store(mipp::vector<B>& V_K) const
 {
-	assert(V_N.size() == (unsigned) N);
+	assert(V_K.size() == (unsigned) K);
 
+	auto k = 0;
 	for (auto i = 0; i < N; i++)
-	{
-		if (frozen_bits[i]) // if i is a frozen bit
-			V_N[i] = (H(sat_vals<R>().second) == 0) ? (B)0 : (B)1;
-		else
-			V_N[i] = (H(soft_graph[0][i]) == 0) ? (B)0 : (B)1;
-	}	
-}
-
-template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::unpack(mipp::vector<B>& V_N) const
-{
-	assert(V_N.size() == this->frozen_bits.size());
-	for (unsigned i = 0; i < V_N.size(); i++)
-		V_N[i] = !this->frozen_bits[i] && V_N[i];
+		if (!frozen_bits[i]) // if i is not a frozen bit
+			V_K[k++] = (H(soft_graph[0][i]) == 0) ? (B)0 : (B)1;
 }
 
 /********************************************************************/

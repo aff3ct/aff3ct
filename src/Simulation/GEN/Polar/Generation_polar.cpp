@@ -12,7 +12,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include "../../../Tools/Factory/Factory_frozenbits_generator.hpp"
+#include "../../../Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 
 #include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_standard.hpp"
 #include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_rate0.hpp"

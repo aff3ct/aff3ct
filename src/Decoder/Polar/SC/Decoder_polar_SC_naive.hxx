@@ -4,8 +4,8 @@
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 Decoder_polar_SC_naive<B,R,F,G,H>
-::Decoder_polar_SC_naive(const int& N, const mipp::vector<B>& frozen_bits)
-: N(N), m(log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
+::Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits)
+: K(K), N(N), m(log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
 	this->recursive_allocate_nodes_contents(this->polar_tree.get_root(), this->N);
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
@@ -37,20 +37,13 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::store(mipp::vector<B>& V_N) const
+::store(mipp::vector<B>& V_K) const
 {
-	assert(V_N.size() == (unsigned) this->N);
+	assert(V_K.size() == (unsigned) this->K);
 
-	this->recursive_store(this->polar_tree.get_root(), V_N);
-}
-
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
-void Decoder_polar_SC_naive<B,R,F,G,H>
-::unpack(mipp::vector<B>& V_N) const
-{
-	assert(V_N.size() == this->frozen_bits.size());
-	for (unsigned i = 0; i < V_N.size(); i++)
-		V_N[i] = !this->frozen_bits[i] && V_N[i];
+	auto k = 0;
+	this->recursive_store(this->polar_tree.get_root(), V_K, k);
+	assert(k == this->K);
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
@@ -123,17 +116,18 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::recursive_store(const Binary_node<Contents_SC<B,R>>* node_curr, mipp::vector<B>& V_N) const
+::recursive_store(const Binary_node<Contents_SC<B,R>>* node_curr, mipp::vector<B>& V_K, int &k) const
 {
 	auto *contents = node_curr->get_contents();
 
 	if (!node_curr->is_leaf()) // stop condition
 	{
-		this->recursive_store(node_curr->get_left(),  V_N); // recursive call
-		this->recursive_store(node_curr->get_right(), V_N); // recursive call
+		this->recursive_store(node_curr->get_left(),  V_K, k); // recursive call
+		this->recursive_store(node_curr->get_right(), V_K, k); // recursive call
 	}
 	else
-		V_N[node_curr->get_lane_id()] = contents->s[0];
+		if (!frozen_bits[node_curr->get_lane_id()])
+			V_K[k++] = contents->s[0];
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>

@@ -11,8 +11,8 @@
 
 #include "../Channel.hpp"
 
-template <typename B, typename R>
-class Channel_AWGN_GSL : public Channel<B,R>
+template <typename R>
+class Channel_AWGN_GSL : public Channel<R>
 {
 private:
 	const R sigma;
@@ -24,10 +24,10 @@ public:
 
 	virtual ~Channel_AWGN_GSL();
 
-	virtual void add_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N) = 0;
+	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
 
 protected:
-	void add_gaussian_noise(const mipp::vector<B>& X_N, mipp::vector<R>& Y_N);
+	void add_gaussian_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
 
 #endif // CHANNEL_AWGN_GSL_HPP_
