@@ -8,7 +8,7 @@
 template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
 ::Decoder_RSC_BCJR(const int K, 
-                   const mipp::vector<mipp::vector<int>> &trellis, 
+                   const std::vector<std::vector<int>> &trellis, 
                    const bool buffered_encoding, 
                    const int n_frames)
 : Decoder<B,R>(),

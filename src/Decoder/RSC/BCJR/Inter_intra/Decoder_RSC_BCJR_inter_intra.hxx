@@ -4,15 +4,12 @@
 
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter_intra<B,R>
-::Decoder_RSC_BCJR_inter_intra(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
+::Decoder_RSC_BCJR_inter_intra(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding)
 : Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, mipp::nElReg<R>() / 8),
   alpha(8 * (K +4) * (mipp::nElReg<R>()/8) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) * (mipp::nElReg<R>()/8) + 2 * mipp::nElReg<R>())
 {
-	mipp::vector<mipp::vector<int>> req_trellis(10);
-	for (unsigned i = 0; i < req_trellis.size(); i++)
-		req_trellis[i].resize(8);
-
+	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  3,  4,  7,  1,  2,  5,  6};
 	req_trellis[1] = { 1,  1,  1,  1,  1,  1,  1,  1};
 	req_trellis[2] = { 1,  2,  5,  6,  0,  3,  4,  7};

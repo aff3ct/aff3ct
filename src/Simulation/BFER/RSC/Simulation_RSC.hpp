@@ -8,7 +8,7 @@ class Simulation_RSC : public Simulation_BFER<B,R,Q>
 {
 protected:
 	// the trellis representation
-	mipp::vector<mipp::vector<int>> trellis;
+	std::vector<std::vector<int>> trellis;
 
 public:
 	Simulation_RSC(const t_simulation_param& simu_params,

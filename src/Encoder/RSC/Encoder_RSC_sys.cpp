@@ -52,13 +52,10 @@ void Encoder_RSC_sys<B>
 }
 
 template <typename B>
-mipp::vector<mipp::vector<int>> Encoder_RSC_sys<B>
+std::vector<std::vector<int>> Encoder_RSC_sys<B>
 ::get_trellis()
 {
-	mipp::vector<mipp::vector<int>> trellis(10);
-
-	for (unsigned i = 0; i < trellis.size(); i++)
-		trellis[i].resize(this->n_states);
+	std::vector<std::vector<int>> trellis(10, std::vector<int>(this->n_states));
 
 	bool occurrence[this->n_states];
 	for (auto i = 0; i < this->n_states; i++)

@@ -13,7 +13,7 @@ class Decoder_RSC_BCJR_seq_generic_std : public Decoder_RSC_BCJR_seq_generic<B,R
 {
 public:
 	Decoder_RSC_BCJR_seq_generic_std(const int &K, 
-	                                 const mipp::vector<mipp::vector<int>> &trellis, 
+	                                 const std::vector<std::vector<int>> &trellis, 
 	                                 const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_seq_generic_std();
 
