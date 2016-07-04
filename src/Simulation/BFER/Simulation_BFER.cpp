@@ -743,6 +743,7 @@ void Simulation_BFER<B,R,Q>
 	for (tid = 0; tid < nthr; tid++) if (source   [tid] != nullptr) { delete source   [tid]; source   [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (crc      [tid] != nullptr) { delete crc      [tid]; crc      [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (encoder  [tid] != nullptr) { delete encoder  [tid]; encoder  [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (puncturer[tid] != nullptr) { delete puncturer[tid]; puncturer[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (modulator[tid] != nullptr) { delete modulator[tid]; modulator[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (channel  [tid] != nullptr) { delete channel  [tid]; channel  [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (quantizer[tid] != nullptr) { delete quantizer[tid]; quantizer[tid] = nullptr; }
