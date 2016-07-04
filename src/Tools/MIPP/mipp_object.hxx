@@ -173,7 +173,11 @@ public:
 	inline Reg<T>   abs          ()                                 const { return mipp::abs          <T>(r);             }
 	inline Reg<T>   sqrt         ()                                 const { return mipp::sqrt         <T>(r);             }
 	inline Reg<T>   rsqrt        ()                                 const { return mipp::rsqrt        <T>(r);             }
+	inline Reg<T>   log          ()                                 const { return mipp::log          <T>(r);             }
 	inline Reg<T>   exp          ()                                 const { return mipp::exp          <T>(r);             }
+	inline Reg<T>   sin          ()                                 const { return mipp::sin          <T>(r);             }
+	inline Reg<T>   cos          ()                                 const { return mipp::cos          <T>(r);             }
+	inline void     sincos       (      Reg<T> &s,       Reg<T> &c) const { return mipp::sincos       <T>(r,  s.r,  c.r); }
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmadd        <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return mipp::fnmadd       <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmsub        <T>(r, v1.r, v2.r); }
@@ -222,7 +226,10 @@ public:
 	inline Reg<T>   abs          ()                                 const { return std::abs<T>(r);                        }
 	inline Reg<T>   sqrt         ()                                 const { return std::sqrt<T>(r);                       }
 	inline Reg<T>   rsqrt        ()                                 const { return 1 / std::sqrt<T>(r);                   }
+	inline Reg<T>   log          ()                                 const { return std::log<T>(r);                        }
 	inline Reg<T>   exp          ()                                 const { return std::exp<T>(r);                        }
+	inline Reg<T>   sin          ()                                 const { return std::sin<T>(r);                        }
+	inline Reg<T>   cos          ()                                 const { return std::cos<T>(r);                        }
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
@@ -378,7 +385,11 @@ template <typename T> inline Reg<T>   neg          (const Reg<T> v1, const Reg<T
 template <typename T> inline Reg<T>   abs          (const Reg<T> v)                                    { return v.abs();              }
 template <typename T> inline Reg<T>   sqrt         (const Reg<T> v)                                    { return v.sqrt();             }
 template <typename T> inline Reg<T>   rsqrt        (const Reg<T> v)                                    { return v.rsqrt();            }
+template <typename T> inline Reg<T>   log          (const Reg<T> v)                                    { return v.log();              }
 template <typename T> inline Reg<T>   exp          (const Reg<T> v)                                    { return v.exp();              }
+template <typename T> inline Reg<T>   sin          (const Reg<T> v)                                    { return v.sin();              }
+template <typename T> inline Reg<T>   cos          (const Reg<T> v)                                    { return v.cos();              }
+template <typename T> inline void     sincos       (const Reg<T> x,        Reg<T> &s,       Reg<T> &c) { return x.sincos(s,c);        }
 template <typename T> inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fmadd(v2, v3);     }
 template <typename T> inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fnmadd(v2, v3);    }
 template <typename T> inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fmsub(v2, v3);     }

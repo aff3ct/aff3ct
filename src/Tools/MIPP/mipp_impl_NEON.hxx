@@ -918,6 +918,40 @@
 		return vrsqrteq_f32(v1);
 	}
 
+	// ------------------------------------------------------------------------------------------------------------ log
+	template <>
+	inline reg log<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) log_ps(v_bis);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ exp
+	template <>
+	inline reg exp<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) exp_ps(v_bis);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ sin
+	template <>
+	inline reg sin<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) sin_ps(v_bis);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ cos
+	template <>
+	inline reg cos<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) cos_ps(v_bis);
+	}
+
+	// --------------------------------------------------------------------------------------------------------- sincos
+	template <>
+	inline void sincos<float>(const reg x, reg &s, reg &c) {
+		sincos_ps(x, &s, &c);
+	}
+
 	// ----------------------------------------------------------------------------------------------------------- sqrt
 	template <>
 	inline reg sqrt<float>(const reg v1) {

@@ -1434,6 +1434,25 @@
 		return div<double>(set1<double>(1.0), sqrt<double>(v1));
 	}
 
+	// ------------------------------------------------------------------------------------------------------------ log
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline reg log<float>(const reg v) {
+		return (reg) _mm256_log_ps(v);
+	}
+
+	template <>
+	inline reg log<double>(const reg v) {
+		return (reg) _mm256_log_pd((__m256d) v);
+	}
+#else
+	template <>
+	inline reg log<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) log256_ps(v_bis);
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------------ exp
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 	template <>
@@ -1450,6 +1469,62 @@
 	inline reg exp<float>(const reg v) {
 		auto v_bis = v;
 		return (reg) exp256_ps(v_bis);
+	}
+#endif
+
+	// ------------------------------------------------------------------------------------------------------------ sin
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline reg sin<float>(const reg v) {
+		return (reg) _mm256_sin_ps(v);
+	}
+
+	template <>
+	inline reg sin<double>(const reg v) {
+		return (reg) _mm256_sin_pd((__m256d) v);
+	}
+#else
+	template <>
+	inline reg sin<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) sin256_ps(v_bis);
+	}
+#endif
+
+	// ------------------------------------------------------------------------------------------------------------ cos
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline reg cos<float>(const reg v) {
+		return (reg) _mm256_cos_ps(v);
+	}
+
+	template <>
+	inline reg cos<double>(const reg v) {
+		return (reg) _mm256_cos_pd((__m256d) v);
+	}
+#else
+	template <>
+	inline reg cos<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) cos256_ps(v_bis);
+	}
+#endif
+
+	// --------------------------------------------------------------------------------------------------------- sincos
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline void sincos<float>(const reg x, reg &s, reg &c) {
+		s = _mm256_sincos_ps(&c, x);
+	}
+
+	template <>
+	inline void sincos<double>(const reg x, reg &s, reg &c) {
+		s = (reg)_mm256_sincos_pd((__m256d*) &c, (__m256d)x);
+	}
+#else
+	template <>
+	inline void sincos<float>(const reg x, reg &s, reg &c) {
+		sincos256_ps(x, &s, &c);
 	}
 #endif
 
