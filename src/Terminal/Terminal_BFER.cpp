@@ -47,11 +47,19 @@ void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
 #ifdef _WIN32
+	stream << "# " << "------------------------------------------------------------------||--------------------------------||---------------------" << std::endl;
+	stream << "# " << "    Bit Error Rate (BER) and Frame Error Rate (FER) depending     ||     Decoder throughput and     ||  Global throughput  " << std::endl;
+	stream << "# " << "              on the Signal Noise Ratio (SNR) Eb/N0               ||            latency             ||  and elapsed time   " << std::endl;
+	stream << "# " << "------------------------------------------------------------------||--------------------------------||---------------------" << std::endl;
 	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||----------|---------|-----------||----------|----------" << std::endl;
 	stream << "# " << "  SNR |       FRA |        BE |        FE |       BER |       FER ||     CTHR |    ITHR |   LATENCY || SIM_CTHR |    ET/RT " << std::endl;
 	stream << "# " << " (dB) |           |           |           |           |           ||   (Mb/s) |  (Mb/s) |      (us) ||   (Mb/s) | (hhmmss) " << std::endl;
 	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||----------|---------|-----------||----------|----------" << std::endl;
 #else
+	stream << "# " << "-------------------------------------------------------------||-------------------------------||---------------------" << std::endl;
+	stream << "# " << "  Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||    Decoder throughput and     ||  Global throughput  " << std::endl;
+	stream << "# " << "            on the Signal Noise Ratio (SNR) Eb/N0            ||            latency            ||  and elapsed time   " << std::endl;
+	stream << "# " << "-------------------------------------------------------------||-------------------------------||---------------------" << std::endl;
 	stream << "# " << "------|----------|----------|----------|----------|----------||----------|---------|----------||----------|----------" << std::endl;
 	stream << "# " << "  SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |    ITHR |  LATENCY || SIM_CTHR |    ET/RT " << std::endl;
 	stream << "# " << " (dB) |          |          |          |          |          ||   (Mb/s) |  (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) " << std::endl;
