@@ -53,6 +53,11 @@
 	}
 
 	template <>
+	inline void store<long long>(long long *mem_addr, const reg v) {
+		vst1q_f32((float*) mem_addr, v);
+	}
+
+	template <>
 	inline void store<int>(int *mem_addr, const reg v) {
 		vst1q_f32((float*) mem_addr, v);
 	}
@@ -71,6 +76,11 @@
 	template <>
 	inline void storeu<float>(float *mem_addr, const reg v) {
 		vst1q_f32(mem_addr, v);
+	}
+
+	template <>
+	inline void storeu<long long>(long long *mem_addr, const reg v) {
+		vst1q_f32((float*) mem_addr, v);
 	}
 
 	template <>

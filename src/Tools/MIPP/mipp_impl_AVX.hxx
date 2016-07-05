@@ -78,6 +78,11 @@
 	}
 
 	template <>
+	inline void store<long long>(long long *mem_addr, const reg v) {
+		_mm256_store_ps((float *)mem_addr, v);
+	}
+
+	template <>
 	inline void store<int>(int *mem_addr, const reg v) {
 		_mm256_store_ps((float *)mem_addr, v);
 	}
@@ -101,6 +106,11 @@
 	template <>
 	inline void storeu<double>(double *mem_addr, const reg v) {
 		_mm256_storeu_pd(mem_addr, (__m256d) v);
+	}
+
+	template <>
+	inline void storeu<long long>(long long *mem_addr, const reg v) {
+		_mm256_storeu_ps((float *)mem_addr, v);
 	}
 
 	template <>
