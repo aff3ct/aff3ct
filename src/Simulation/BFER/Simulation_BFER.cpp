@@ -17,6 +17,7 @@
 
 #include "../../Tools/bash_tools.h"
 #include "../../Tools/simu_tools.h"
+#include "../../Tools/Frame_trace/Frame_trace.hpp"
 
 #include "Simulation_BFER.hpp"
 
@@ -210,13 +211,13 @@ void Simulation_BFER<B,R,Q>
 	const auto K      = simu->code_params.K;
 	const auto N_code = simu->code_params.N_code;
 	const auto N      = simu->code_params.N;
-	const auto N_mod  = simu->modulator[tid]->get_buffer_size(N);
 	const auto tail   = simu->code_params.tail_length;
+	const auto N_mod  = simu->modulator[tid]->get_buffer_size(N + tail);
 	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
 	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N3[tid].size() != (unsigned) ((N_mod  + tail) * n_fra)) simu->X_N3[tid].resize((N_mod  + tail) * n_fra);
-	if (simu->Y_N1[tid].size() != (unsigned) ((N_mod  + tail) * n_fra)) simu->Y_N1[tid].resize((N_mod  + tail) * n_fra);
+	if (simu->X_N3[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
+	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
 	if (simu->Y_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N2[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N3[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N4[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N4[tid].resize((N_code + tail) * n_fra);
@@ -404,9 +405,12 @@ void Simulation_BFER<B,R,Q>
 	auto latency_us = latency_ns * 0.001f;
 
 	if (tid == 0)
-		std::cout << "  SNR (Eb/N0) = "          << std::setw(5) << std::setprecision(2) << simu->snr  << " dB"   << ", "
-		          << "information throughput = " << std::setw(8) << std::setprecision(4) << mbps       << " Mbps" << ", " 
-		          << "latency = "                << std::setw(8) << std::setprecision(4) << latency_us << " us."  << std::endl;
+		std::cout << "  SNR (Eb/N0) = "          << std::setw(5) << std::fixed << std::setprecision(2) << simu->snr  
+		          << " dB"   << ", "
+		          << "information throughput = " << std::setw(8) << std::fixed << std::setprecision(4) << mbps       
+		          << " Mbps" << ", " 
+		          << "latency = "                << std::setw(8) << std::fixed << std::setprecision(4) << latency_us 
+		          << " us."  << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -414,6 +418,8 @@ void Simulation_BFER<B,R,Q>
 ::simulation_loop_debug(Simulation_BFER<B,R,Q> *simu)
 {
 	using namespace std::chrono;
+
+	Frame_trace<B> ft; // frame trace to display the vectors
 
 	// simulation loop
 	auto t_simu = steady_clock::now();
@@ -441,7 +447,7 @@ void Simulation_BFER<B,R,Q>
 
 			// display U_K
 			std::clog << "U_K:" << std::endl;
-			display_bit_vector(simu->U_K[0]);
+			ft.display_bit_vector(simu->U_K[0]);
 			std::clog << std::endl;
 
 			// add the CRC to U_K
@@ -452,7 +458,7 @@ void Simulation_BFER<B,R,Q>
 
 			// display U_K
 			std::clog << "U_K:" << std::endl;
-			display_bit_vector(simu->U_K[0]);
+			ft.display_bit_vector(simu->U_K[0]);
 			std::clog << std::endl;
 
 			// encode U_K into a N bits vector X_N1
@@ -463,7 +469,7 @@ void Simulation_BFER<B,R,Q>
 
 			// display X_N1
 			std::clog << "X_N1:" << std::endl;
-			display_bit_vector(simu->X_N1[0]);
+			ft.display_bit_vector(simu->X_N1[0]);
 			std::clog << std::endl;
 
 			// puncture X_N1 into X_N2
@@ -474,7 +480,7 @@ void Simulation_BFER<B,R,Q>
 
 			// display X_N2
 			std::clog << "X_N2:" << std::endl;
-			display_bit_vector(simu->X_N2[0]);
+			ft.display_bit_vector(simu->X_N2[0]);
 			std::clog << std::endl;
 
 			// modulate
@@ -486,12 +492,12 @@ void Simulation_BFER<B,R,Q>
 		{
 			// display U_K
 			std::clog << "U_K:" << std::endl;
-			display_bit_vector(simu->U_K[0]);
+			ft.display_bit_vector(simu->U_K[0]);
 			std::clog << std::endl;
 
 			// display X_N2
 			std::clog << "X_N2:" << std::endl;
-			display_bit_vector(simu->X_N2[0]);
+			ft.display_bit_vector(simu->X_N2[0]);
 			std::clog << std::endl;
 		}
 
@@ -503,7 +509,7 @@ void Simulation_BFER<B,R,Q>
 
 		// display Y_N1
 		std::clog << "Y_N1:" << std::endl;
-		display_real_vector(simu->Y_N1[0]);
+		ft.display_real_vector(simu->Y_N1[0]);
 		std::clog << std::endl;
 
 		// demodulation
@@ -519,7 +525,7 @@ void Simulation_BFER<B,R,Q>
 
 		// display Y_N2
 		std::clog << "Y_N3:" << std::endl;
-		display_quantized_vector(simu->Y_N3[0]);
+		ft.display_real_vector(simu->Y_N3[0]);
 		std::clog << std::endl;
 
 		// depuncture before the decoding stage
@@ -530,7 +536,7 @@ void Simulation_BFER<B,R,Q>
 
 		// display Y_N4
 		std::clog << "Y_N4:" << std::endl;
-		display_quantized_vector(simu->Y_N4[0]);
+		ft.display_real_vector(simu->Y_N4[0]);
 		std::clog << std::endl;
 
 		// load data in the decoder
@@ -551,7 +557,7 @@ void Simulation_BFER<B,R,Q>
 
 		// display V_K
 		std::clog << "V_K:" << std::endl;
-		display_bit_vector(simu->V_K[0]);
+		ft.display_bit_vector(simu->V_K[0]);
 		std::clog << std::endl;
 
 		// check errors in the frame
@@ -695,37 +701,52 @@ void Simulation_BFER<B,R,Q>
 
 	stream << "#" << std::endl;
 	stream << "# " << bold_underlined("Time report:") << std::endl;
-	stream << "# " << bold           ("* Source") << "      : " << std::setw(7) << std::setprecision(3) << sourc_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << sourc_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* CRC") << "         : " << std::setw(7) << std::setprecision(3) << crc_sec   
-	       << " sec (" << std::setw(5) << std::setprecision(2) << crc_pc       << "\%)" << std::endl;
-	stream << "# " << bold           ("* Encoder") << "     : " << std::setw(7) << std::setprecision(3) << encod_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << encod_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Puncturer") << "   : " << std::setw(7) << std::setprecision(3) << punct_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << punct_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Modulator") << "   : " << std::setw(7) << std::setprecision(3) << modul_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << modul_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Channel") << "     : " << std::setw(7) << std::setprecision(3) << chann_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << chann_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(7) << std::setprecision(3) << demod_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << demod_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(7) << std::setprecision(3) << quant_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << quant_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(7) << std::setprecision(3) << depun_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << depun_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(7) << std::setprecision(3) << decod_tot_sec  
-	       << " sec (" << std::setw(5) << std::setprecision(2) << decod_tot_pc << "\%)" << std::endl;
-	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(7) << std::setprecision(3) << load_sec  
-	       << " sec (" << std::setw(5) << std::setprecision(2) << load_pc      << "\%)" << std::endl;
-	stream << "# " << bold_italic    ("  - decode") << "    : " << std::setw(7) << std::setprecision(3) << decod_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << decod_pc     << "\%)" << std::endl;
-	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(7) << std::setprecision(3) << store_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << store_pc     << "\%)" << std::endl;
-	stream << "# " << bold           ("* Check errors") << ": " << std::setw(7) << std::setprecision(3) << check_sec 
-	       << " sec (" << std::setw(5) << std::setprecision(2) << check_pc     << "\%)" << std::endl;
+	stream << "# " << bold           ("* Source") << "      : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << sourc_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << sourc_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* CRC") << "         : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << crc_sec       << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << crc_pc       << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Encoder") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << encod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << encod_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Puncturer") << "   : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << punct_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << punct_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Modulator") << "   : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << modul_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << modul_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Channel") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << chann_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << chann_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << demod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << quant_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << quant_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << depun_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << depun_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << decod_tot_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_tot_pc << "%)" 
+	       << std::endl;
+	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << load_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << load_pc      << "%)" 
+	       << std::endl;
+	stream << "# " << bold_italic    ("  - decode") << "    : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << decod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << store_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << store_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Check errors") << ": " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << check_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc     << "%)" 
+	       << std::endl;
 	stream << "#   ----------------------------------" << std::endl;
-	stream << "# " << bold           ("* TOTAL") << "       : " << std::setw(7) << std::setprecision(3) << total_sec 
-	       << " sec" << std::endl;
+	stream << "# " << bold           ("* TOTAL") << "       : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	       << total_sec     << " sec" 
+	       << std::endl;
 	stream << "#" << std::endl;
 }
 
@@ -740,6 +761,7 @@ void Simulation_BFER<B,R,Q>
 	for (tid = 0; tid < nthr; tid++) if (source   [tid] != nullptr) { delete source   [tid]; source   [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (crc      [tid] != nullptr) { delete crc      [tid]; crc      [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (encoder  [tid] != nullptr) { delete encoder  [tid]; encoder  [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (puncturer[tid] != nullptr) { delete puncturer[tid]; puncturer[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (modulator[tid] != nullptr) { delete modulator[tid]; modulator[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (channel  [tid] != nullptr) { delete channel  [tid]; channel  [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (quantizer[tid] != nullptr) { delete quantizer[tid]; quantizer[tid] = nullptr; }

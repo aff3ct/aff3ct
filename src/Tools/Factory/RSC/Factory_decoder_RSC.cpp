@@ -19,11 +19,11 @@
 
 template <typename B, typename R, typename RD>
 SISO<R>* Factory_decoder_RSC<B,R,RD>
-::build_siso(const t_code_param                    &code_params,
-             const t_encoder_param                 &enco_params,
-             const t_channel_param                 &chan_params,
-             const t_decoder_param                 &deco_params,
-             const mipp::vector<mipp::vector<int>> &trellis)
+::build_siso(const t_code_param                  &code_params,
+             const t_encoder_param               &enco_params,
+             const t_channel_param               &chan_params,
+             const t_decoder_param               &deco_params,
+             const std::vector<std::vector<int>> &trellis)
 {
 	SISO<R> *siso = nullptr;
 
@@ -116,11 +116,11 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 
 template <typename B, typename R, typename RD>
 Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
-::build(const t_code_param                    &code_params,
-        const t_encoder_param                 &enco_params,
-        const t_channel_param                 &chan_params,
-        const t_decoder_param                 &deco_params,
-        const mipp::vector<mipp::vector<int>> &trellis)
+::build(const t_code_param                  &code_params,
+        const t_encoder_param               &enco_params,
+        const t_channel_param               &chan_params,
+        const t_decoder_param               &deco_params,
+        const std::vector<std::vector<int>> &trellis)
 {
 	Decoder<B,R> *siso = nullptr;
 

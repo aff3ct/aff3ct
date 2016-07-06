@@ -14,6 +14,7 @@
 
 #include "../../../Tools/bash_tools.h"
 #include "../../../Tools/simu_tools.h"
+#include "../../../Tools/Frame_trace/Frame_trace.hpp"
 
 #include "Simulation_polar.hpp"
 
@@ -90,7 +91,8 @@ void Simulation_polar<B,R,Q>
 	if (this->simu_params.enable_debug)
 	{
 		std::clog << std::endl << "Frozen bits:" << std::endl;
-		display_bit_vector(frozen_bits);
+		Frame_trace<B> ft;
+		ft.display_bit_vector(frozen_bits);
 		std::clog << std::endl;
 	}
 }

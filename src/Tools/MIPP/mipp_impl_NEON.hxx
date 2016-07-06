@@ -53,6 +53,11 @@
 	}
 
 	template <>
+	inline void store<long long>(long long *mem_addr, const reg v) {
+		vst1q_f32((float*) mem_addr, v);
+	}
+
+	template <>
 	inline void store<int>(int *mem_addr, const reg v) {
 		vst1q_f32((float*) mem_addr, v);
 	}
@@ -71,6 +76,11 @@
 	template <>
 	inline void storeu<float>(float *mem_addr, const reg v) {
 		vst1q_f32(mem_addr, v);
+	}
+
+	template <>
+	inline void storeu<long long>(long long *mem_addr, const reg v) {
+		vst1q_f32((float*) mem_addr, v);
 	}
 
 	template <>
@@ -916,6 +926,40 @@
 	template <>
 	inline reg rsqrt<float>(const reg v1) {
 		return vrsqrteq_f32(v1);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ log
+	template <>
+	inline reg log<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) log_ps(v_bis);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ exp
+	template <>
+	inline reg exp<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) exp_ps(v_bis);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ sin
+	template <>
+	inline reg sin<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) sin_ps(v_bis);
+	}
+
+	// ------------------------------------------------------------------------------------------------------------ cos
+	template <>
+	inline reg cos<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) cos_ps(v_bis);
+	}
+
+	// --------------------------------------------------------------------------------------------------------- sincos
+	template <>
+	inline void sincos<float>(const reg x, reg &s, reg &c) {
+		sincos_ps(x, &s, &c);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------- sqrt

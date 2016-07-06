@@ -17,7 +17,7 @@ protected:
 	const bool buffered_encoding;
 	const int  n_frames;
 
-	const mipp::vector<mipp::vector<int>> &trellis;
+	const std::vector<std::vector<int>> &trellis;
 
 	mipp::vector<R> sys, par; // input LLR from the channel
 	mipp::vector<R> ext;      // extrinsic LLRs
@@ -25,7 +25,7 @@ protected:
 
 public:
 	Decoder_RSC_BCJR(const int K, 
-	                 const mipp::vector<mipp::vector<int>> &trellis, 
+	                 const std::vector<std::vector<int>> &trellis, 
 	                 const bool buffered_encoding = true, 
 	                 const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR();

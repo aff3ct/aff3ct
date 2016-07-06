@@ -36,7 +36,8 @@ _aff3ct() {
 	   ]]
 	then
 		opts="$opts -K -N --snr-min --snr-max --prec --snr-step --disable-display --stop-time --display-freq \
-		      --n-threads --code-gen-method --domain --channel-type --dec-algo --dec-implem"
+		      --n-threads --code-gen-method --domain --channel-type --dec-algo --dec-implem --qn-bits        \
+		      --qpoint-pos"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -127,7 +128,7 @@ _aff3ct() {
  
 	case "${prev}" in
 
-		-N | -K | --prec | --qn-bits | --qn-bits | --qpoint-pos | --snr-max | --snr-min | --snr-step | --snr-max | \
+		-N | -K  | --qn-bits | --qn-bits | --qpoint-pos | --snr-max | --snr-min | --snr-step | --snr-max | \
 		--max-fe | -L | --n-threads | --qmin-max | --stop-time | --disable-freq | --max-iter | --sig-a-min |       \
 		--sig-a-max | --sig-a-step | --code-sigma )
 			COMPREPLY=()

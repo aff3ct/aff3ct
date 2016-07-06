@@ -74,6 +74,11 @@
 #endif
 
 	template <>
+	inline void store<long long>(long long *mem_addr, const reg v) {
+		_mm_store_ps((float*) mem_addr, v);
+	}
+
+	template <>
 	inline void store<int>(int *mem_addr, const reg v) {
 		_mm_store_ps((float*) mem_addr, v);
 	}
@@ -100,6 +105,11 @@
 		_mm_storeu_pd(mem_addr, (__m128d) v);
 	}
 #endif
+
+	template <>
+	inline void storeu<long long>(long long *mem_addr, const reg v) {
+		_mm_storeu_ps((float*) mem_addr, v);
+	}
 
 	template <>
 	inline void storeu<int>(int *mem_addr, const reg v) {
@@ -1588,6 +1598,25 @@
 		return div<double>(set1<double>(1.0), sqrt<double>(v1));
 	}
 
+	// ------------------------------------------------------------------------------------------------------------ log
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline reg log<float>(const reg v) {
+		return (reg) _mm_log_ps(v);
+	}
+
+	template <>
+	inline reg log<double>(const reg v) {
+		return (reg) _mm_log_pd((__m128d) v);
+	}
+#else
+	template <>
+	inline reg log<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) log_ps(v_bis);
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------------ exp
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 	template <>
@@ -1604,6 +1633,62 @@
 	inline reg exp<float>(const reg v) {
 		auto v_bis = v;
 		return (reg) exp_ps(v_bis);
+	}
+#endif
+
+	// ------------------------------------------------------------------------------------------------------------ sin
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline reg sin<float>(const reg v) {
+		return (reg) _mm_sin_ps(v);
+	}
+
+	template <>
+	inline reg sin<double>(const reg v) {
+		return (reg) _mm_sin_pd((__m128d) v);
+	}
+#else
+	template <>
+	inline reg sin<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) sin_ps(v_bis);
+	}
+#endif
+
+	// ------------------------------------------------------------------------------------------------------------ cos
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline reg cos<float>(const reg v) {
+		return (reg) _mm_cos_ps(v);
+	}
+
+	template <>
+	inline reg cos<double>(const reg v) {
+		return (reg) _mm_cos_pd((__m128d) v);
+	}
+#else
+	template <>
+	inline reg cos<float>(const reg v) {
+		auto v_bis = v;
+		return (reg) cos_ps(v_bis);
+	}
+#endif
+
+	// --------------------------------------------------------------------------------------------------------- sincos
+#if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
+	template <>
+	inline void sincos<float>(const reg x, reg &s, reg &c) {
+		s = _mm_sincos_ps(&c, x);
+	}
+
+	template <>
+	inline void sincos<double>(const reg x, reg &s, reg &c) {
+		s = (reg)_mm_sincos_pd((__m128d*) &c, (__m128d)x);
+	}
+#else
+	template <>
+	inline void sincos<float>(const reg x, reg &s, reg &c) {
+		sincos_ps(x, &s, &c);
 	}
 #endif
 

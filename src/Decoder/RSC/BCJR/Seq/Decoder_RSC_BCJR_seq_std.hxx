@@ -2,7 +2,7 @@
 
 template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
 Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
-::Decoder_RSC_BCJR_seq_std(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
+::Decoder_RSC_BCJR_seq_std(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding)
 : Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding)
 {
 }

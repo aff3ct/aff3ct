@@ -12,7 +12,7 @@ class Simulation_EXIT_RSC : public Simulation_EXIT<B,R,Q>
 {
 protected:
 	// the trellis representation
-	mipp::vector<mipp::vector<int>> trellis;
+	std::vector<std::vector<int>> trellis;
 	
 public:
 	Simulation_EXIT_RSC(const t_simulation_param& simu_params,

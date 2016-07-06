@@ -4,7 +4,7 @@
 
 template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_intra_std<B,R,MAP>
-::Decoder_RSC_BCJR_intra_std(const int &K, const mipp::vector<mipp::vector<int>> &trellis, const bool buffered_encoding)
+::Decoder_RSC_BCJR_intra_std(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding)
 : Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding)
 {
 	assert(mipp::nElReg<R>() == 8);
