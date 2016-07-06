@@ -14,7 +14,7 @@ Channel_AWGN_fast_LLR<R>
 {
 	rd_engine.seed(seed);
 
-	std::cout << "min = " << std::numeric_limits<R>::min() << std::endl;
+	// std::cout << "min = " << std::numeric_limits<R>::min() << std::endl;
 }
 
 template <typename R>
