@@ -818,7 +818,7 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int tid)
 {
-	return Factory_channel<R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
+	return Factory_channel<R>::build(chan_params, sigma, tid, 2.0 / (sigma * sigma));
 }
 
 template <typename B, typename R, typename Q>
