@@ -3,13 +3,10 @@
 #ifndef CHANNEL_AWGN_GSL_LR_HPP_
 #define CHANNEL_AWGN_GSL_LR_HPP_
 
-#include <vector>
-#include "../../Tools/MIPP/mipp.h"
-
-#include "Channel_AWGN_GSL.hpp"
+#include "Channel_AWGN_GSL_LLR.hpp"
 
 template <typename R>
-class Channel_AWGN_GSL_LR : public Channel_AWGN_GSL<R>
+class Channel_AWGN_GSL_LR : public Channel_AWGN_GSL_LLR<R>
 {
 public:
 	Channel_AWGN_GSL_LR(const R& sigma, const int seed = 0, const R& scaling_factor = 1);

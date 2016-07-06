@@ -1,13 +1,15 @@
 #include "../../Channel/NO/Channel_NO.hpp"
-#include "../../Channel/AWGN/Channel_AWGN_LR.hpp"
-#include "../../Channel/AWGN/Channel_AWGN_LLR.hpp"
+#include "../../Channel/AWGN/Standard/Channel_AWGN_std_LR.hpp"
+#include "../../Channel/AWGN/Standard/Channel_AWGN_std_LLR.hpp"
+#include "../../Channel/AWGN/Fast/Channel_AWGN_fast_LR.hpp"
+#include "../../Channel/AWGN/Fast/Channel_AWGN_fast_LLR.hpp"
 #ifdef CHANNEL_MKL
-#include "../../Channel/AWGN_MKL/Channel_AWGN_MKL_LR.hpp"
-#include "../../Channel/AWGN_MKL/Channel_AWGN_MKL_LLR.hpp"
+#include "../../Channel/AWGN/MKL/Channel_AWGN_MKL_LR.hpp"
+#include "../../Channel/AWGN/MKL/Channel_AWGN_MKL_LLR.hpp"
 #endif
 #ifdef CHANNEL_GSL
-#include "../../Channel/AWGN_GSL/Channel_AWGN_GSL_LR.hpp"
-#include "../../Channel/AWGN_GSL/Channel_AWGN_GSL_LLR.hpp"
+#include "../../Channel/AWGN/GSL/Channel_AWGN_GSL_LR.hpp"
+#include "../../Channel/AWGN/GSL/Channel_AWGN_GSL_LLR.hpp"
 #endif
 
 #include "Factory_channel.hpp"
@@ -25,9 +27,16 @@ Channel<R>* Factory_channel<R>
 	if (chan_params.type == "AWGN")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_LLR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_std_LLR<R>(sigma, seed +1, scaling_factor);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_LR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_std_LR<R>(sigma, seed +1, scaling_factor);
+	}
+	else if (chan_params.type == "AWGN_FAST")
+	{
+		if (chan_params.domain == "LLR")
+			channel = new Channel_AWGN_fast_LLR<R>(sigma, seed +1, scaling_factor);
+		else if (chan_params.domain == "LR")
+			channel = new Channel_AWGN_fast_LR<R>(sigma, seed +1, scaling_factor);
 	}
 #ifdef CHANNEL_MKL
 	else if (chan_params.type == "AWGN_MKL")

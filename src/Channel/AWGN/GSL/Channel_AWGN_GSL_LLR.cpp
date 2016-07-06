@@ -4,11 +4,11 @@
 #include <algorithm>
 #include <cassert>
 
-#include "Channel_AWGN_GSL.hpp"
+#include "Channel_AWGN_GSL_LLR.hpp"
 
 template <typename R>
-Channel_AWGN_GSL<R>
-::Channel_AWGN_GSL(const R& sigma, const int seed, const R& scaling_factor)
+Channel_AWGN_GSL_LLR<R>
+::Channel_AWGN_GSL_LLR(const R& sigma, const int seed, const R& scaling_factor)
 : sigma(sigma),
   scaling_factor((R)scaling_factor),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
@@ -17,15 +17,15 @@ Channel_AWGN_GSL<R>
 }
 
 template <typename R>
-Channel_AWGN_GSL<R>
-::~Channel_AWGN_GSL()
+Channel_AWGN_GSL_LLR<R>
+::~Channel_AWGN_GSL_LLR()
 {
 	gsl_rng_free(rng);
 }
 
 template <typename R>
-void Channel_AWGN_GSL<R>
-::add_gaussian_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+void Channel_AWGN_GSL_LLR<R>
+::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
 	assert(X_N.size() == Y_N.size());
 	assert(sigma      != 0         );
@@ -39,12 +39,12 @@ void Channel_AWGN_GSL<R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "../../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Channel_AWGN_GSL<R_32>;
-template class Channel_AWGN_GSL<R_64>;
+template class Channel_AWGN_GSL_LLR<R_32>;
+template class Channel_AWGN_GSL_LLR<R_64>;
 #else
-template class Channel_AWGN_GSL<R>;
+template class Channel_AWGN_GSL_LLR<R>;
 #endif
 // ==================================================================================== explicit template instantiation
 
