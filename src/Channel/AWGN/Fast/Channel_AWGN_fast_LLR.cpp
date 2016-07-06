@@ -1,20 +1,16 @@
-#include "Channel_AWGN_fast_LLR.hpp"
-
 #include <algorithm>
 #include <cassert>
+
+#include "Channel_AWGN_fast_LLR.hpp"
 
 template <typename R>
 Channel_AWGN_fast_LLR<R>
 ::Channel_AWGN_fast_LLR(const R& sigma, const int seed, const R scaling_factor)
 : sigma(sigma),
   scaling_factor(scaling_factor),
-  rd(),
-  rd_engine(this->rd()),
-  dist(std::numeric_limits<R>::min(),1)
+  mt19937(seed),
+  mt19937f({1*seed,2*seed,3*seed,4*seed,5*seed,6*seed,7*seed,8*seed})
 {
-	rd_engine.seed(seed);
-
-	// std::cout << "min = " << std::numeric_limits<R>::min() << std::endl;
 }
 
 template <typename R>
@@ -36,11 +32,7 @@ void Channel_AWGN_fast_LLR<R>
 
 	const auto loop_size = (int)Y_N.size();
 	for (auto i = 0; i < loop_size; i++)
-	{
-		Y_N[i] = this->dist(this->rd_engine);
-		// if (Y_N[i] == 0)
-		// 	std::cout << "PROUTTTT" << std::endl;
-	}
+		Y_N[i] = mt19937.randf_oo();
 
 	const mipp::Reg<R> sf       = this->scaling_factor;
 	const mipp::Reg<R> sigma    = this->sigma;
@@ -50,7 +42,6 @@ void Channel_AWGN_fast_LLR<R>
 
 	for (auto i = 0; i < loop_size; i += mipp::nElReg<R>() * 2) 
 	{
-		// const auto u1 = one - mipp::Reg<R>(&Y_N[i                    ]); // [0, 1) -> (0, 1]
 		const auto u1 = mipp::Reg<R>(&Y_N[i                    ]);
 		const auto u2 = mipp::Reg<R>(&Y_N[i + mipp::nElReg<R>()]);
 
@@ -85,10 +76,50 @@ void Channel_AWGN_fast_LLR<R>
 	// 	Y_N[i +0] = (X_N[i +0] + radius * sintheta) * scaling_factor;
 	// 	Y_N[i +1] = (X_N[i +1] + radius * costheta) * scaling_factor;
 	// }
+}
 
-	// for (auto i = 0; i < loop_size; i++)
-	// 	if (std::isnan(Y_N[i]))
-	// 		std::cout << "NaN" << std::endl;
+// box muller method in the polar form
+template <>
+void Channel_AWGN_fast_LLR<float>
+::add_noise(const mipp::vector<float>& X_N, mipp::vector<float>& Y_N)
+{
+	assert(X_N.size() % 2                       == 0         );
+	assert(X_N.size()                           == Y_N.size());
+	assert(scaling_factor                       != 0         );
+	assert(sigma                                != 0         );
+	assert(X_N.size() % (2 * mipp::nElReg<float>()) == 0         );
+
+	const auto loop_size = (int)Y_N.size();
+	for (auto i = 0; i < loop_size; i++)
+		Y_N[i] = mt19937.randf_oo();
+
+	const mipp::Reg<float> sf       = this->scaling_factor;
+	const mipp::Reg<float> sigma    = this->sigma;
+	const mipp::Reg<float> twopi    = 2.0 * 3.14159265358979323846;
+	const mipp::Reg<float> one      = 1.0;
+	const mipp::Reg<float> minustwo = -2.0;
+
+	for (auto i = 0; i < loop_size; i += mipp::nElReg<float>() * 2) 
+	{
+		const auto u1 = mipp::Reg<float>(&Y_N[i                    ]);
+		const auto u2 = mipp::Reg<float>(&Y_N[i + mipp::nElReg<float>()]);
+
+		// const auto u1 = mt19937f.randf_oo();
+		// const auto u2 = mt19937f.randf_oo();
+
+		const auto radius = mipp::sqrt(minustwo * mipp::log(u1)) * sigma;
+		const auto theta  = twopi * u2;
+
+		mipp::Reg<float> sintheta, costheta;
+		mipp::sincos(theta, sintheta, costheta);
+
+		// fmadd(a, b, c) = a * b + c
+		auto awgn1 = mipp::fmadd(radius, costheta, mipp::Reg<float>(&X_N[i                        ])) * sf;
+		auto awgn2 = mipp::fmadd(radius, sintheta, mipp::Reg<float>(&X_N[i + mipp::nElReg<float>()])) * sf;
+
+		awgn1.store(&Y_N[i                        ]);
+		awgn2.store(&Y_N[i + mipp::nElReg<float>()]);
+	}
 }
 
 // ==================================================================================== explicit template instantiation 
