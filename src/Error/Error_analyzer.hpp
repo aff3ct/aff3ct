@@ -21,7 +21,7 @@ protected:
 
 	int n_bit_errors;
 	int n_frame_errors;
-	int n_analyzed_frames;
+	float n_analyzed_frames;
 
     bool last_frame_error;
 
@@ -35,7 +35,7 @@ public:
 	bool fe_limit_achieved() const;
 	int get_fe_limit() const;
 
-	int get_n_analyzed_frames() const;
+	float get_n_analyzed_frames() const;
 	int get_n_fe() const;
 	int get_n_be() const;
 
