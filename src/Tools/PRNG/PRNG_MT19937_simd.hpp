@@ -10,34 +10,28 @@ probabilistic algorithms and so on.
 This implementation is inspired by: https://github.com/cslarsen/mersenne-twister
 */
 
-#ifndef PRNG_MT19937_FAST_HPP
-#define PRNG_MT19937_FAST_HPP
+#ifndef PRNG_MT19937_SIMD_HPP
+#define PRNG_MT19937_SIMD_HPP
 
 #include <vector>
 
 #include "../MIPP/mipp.h"
 
-class PRNG_MT19937_fast
+class PRNG_MT19937_simd
 {
 protected:
 	mipp::vector<mipp::Reg<int>> MT;
 	unsigned index;
 
 public:
-	PRNG_MT19937_fast(const mipp::Reg<int> seed);
-	PRNG_MT19937_fast();
-	virtual ~PRNG_MT19937_fast();
+	PRNG_MT19937_simd(const mipp::Reg<int> seed);
+	PRNG_MT19937_simd();
+	virtual ~PRNG_MT19937_simd();
 
 	/*
 	 * Initialize Mersenne Twister with given seed value.
 	 */
 	void seed(const mipp::Reg<int> seed);
-
-	/*
-	 * Extract a pseudo-random integer in the range 0 ... RAND_MAX.
-	 * (LIBC REPLACEMENT FUNCTION)
-	 */
-	mipp::Reg<int> rand();
 
 	/*
 	 * Extract a pseudo-random unsigned 32-bit integer in the range INT32_MIN ... INT32_MAX
@@ -66,4 +60,4 @@ private:
 	void generate_numbers();
 };
 
-#endif // PRNG_MT19937_fast_FAST_HPP
+#endif // PRNG_MT19937_simd_FAST_HPP

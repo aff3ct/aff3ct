@@ -1,14 +1,25 @@
-/*
-This is an implementation of the fast pseudo-random number generator (PRNG) MT19937, colloquially called the Mersenne 
-Twister. It was given this name because it has a period of 2^19937 - 1, which is a Mersenne prime.
-
-The Mersenne Twister is highly regarded for its performance and high quality pseudo-random numbers. In spite of this, it 
-is not suited for cryptographic code, because one only needs to observe 624 iterates to predict all future ones. It was 
-designed with statistical simulations in mind, and should therefore be quite good for Monte Carlo simulations, 
-probabilistic algorithms and so on.
-
-This implementation is inspired by: https://github.com/cslarsen/mersenne-twister
-*/
+/* 
+ * The Mersenne Twister pseudo-random number generator (PRNG)
+ *
+ * This is an implementation of fast PRNG called MT19937,
+ * meaning it has a period of 2^19937-1, which is a Mersenne
+ * prime.
+ *
+ * This PRNG is fast and suitable for non-cryptographic code.
+ * For instance, it would be perfect for Monte Carlo simulations,
+ * etc.
+ *
+ * This code has been designed as a drop-in replacement for libc rand and
+ * srand().  If you need to mix them, you should encapsulate this code in a
+ * namespace.
+ *
+ * Written by Christian Stigen Larsen
+ * http://csl.name
+ *
+ * Distributed under the modified BSD license.
+ *
+ * 2015-02-17
+ */
 
 #ifndef PRNG_MT19937_HPP
 #define PRNG_MT19937_HPP

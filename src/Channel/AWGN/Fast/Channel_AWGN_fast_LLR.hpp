@@ -4,7 +4,7 @@
 #include <random>
 
 #include "../../../Tools/PRNG/PRNG_MT19937.hpp"
-#include "../../../Tools/PRNG/PRNG_MT19937_fast.hpp"
+#include "../../../Tools/PRNG/PRNG_MT19937_simd.hpp"
 
 #include "../../Channel.hpp"
 
@@ -14,8 +14,8 @@ class Channel_AWGN_fast_LLR : public Channel<R>
 private:
 	const R           sigma;
 	const R           scaling_factor;
-	PRNG_MT19937      mt19937;  // Mersenne Twister 19937 (scalar)
-	PRNG_MT19937_fast mt19937f; // Mersenne Twister 19937 (SIMD)
+	PRNG_MT19937      mt19937;      // Mersenne Twister 19937 (scalar)
+	PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
 
 public:
 	Channel_AWGN_fast_LLR(const R& sigma, const int seed = 0, const R scaling_factor = 1);

@@ -1,6 +1,6 @@
 #include <limits>
 
-#include "PRNG_MT19937_fast.hpp"
+#include "PRNG_MT19937_simd.hpp"
 
 /*
  * We have an array of 624 32-bit values, and there are
@@ -20,13 +20,13 @@ constexpr unsigned DIFF   = SIZE-PERIOD;
 	MT[i] = MT[expr] ^ (y >> 1) ^ m; \
 	++i;
 
-PRNG_MT19937_fast::PRNG_MT19937_fast(const mipp::Reg<int> seed)
+PRNG_MT19937_simd::PRNG_MT19937_simd(const mipp::Reg<int> seed)
 : MT(SIZE), index(0)
 {
 	this->seed(seed);
 }
 
-PRNG_MT19937_fast::PRNG_MT19937_fast()
+PRNG_MT19937_simd::PRNG_MT19937_simd()
 : MT(SIZE), index(0)
 {
 	mipp::vector<int> seed(mipp::nElReg<int>());
@@ -35,11 +35,11 @@ PRNG_MT19937_fast::PRNG_MT19937_fast()
 	this->seed(seed.data());
 }
 
-PRNG_MT19937_fast::~PRNG_MT19937_fast()
+PRNG_MT19937_simd::~PRNG_MT19937_simd()
 {
 }
 
-void PRNG_MT19937_fast::seed(const mipp::Reg<int> seed)
+void PRNG_MT19937_simd::seed(const mipp::Reg<int> seed)
 {
 	/*
 	 * The equation below is a linear congruential generator (LCG),
@@ -79,7 +79,7 @@ void PRNG_MT19937_fast::seed(const mipp::Reg<int> seed)
 		MT[i] = (MT[i-1] ^ MT[i-1] >> 30) * 0x6c078965 +i;
 }
 
-void PRNG_MT19937_fast::generate_numbers()
+void PRNG_MT19937_simd::generate_numbers()
 {
 	/*
 	 * Originally, we had one loop with i going from [0, SIZE) and
@@ -141,7 +141,7 @@ void PRNG_MT19937_fast::generate_numbers()
 	MT[SIZE-1] = MT[PERIOD-1] ^ (y >> 1) ^ m;
 }
 
-mipp::Reg<int> PRNG_MT19937_fast::rand_s32()
+mipp::Reg<int> PRNG_MT19937_simd::rand_s32()
 {
 	if (!index)
 		generate_numbers();
@@ -160,27 +160,7 @@ mipp::Reg<int> PRNG_MT19937_fast::rand_s32()
 	return y;
 }
 
-mipp::Reg<int> PRNG_MT19937_fast::rand()
-{
-	/*
-	 * PORTABILITY WARNING:
-	 *
-	 * rand_u32() uses all 32-bits for the pseudo-random number,
-	 * but rand() must return a number from 0 ... RAND_MAX.
-	 *
-	 * We'll just assume that rand() only uses 31 bits worth of
-	 * data, and that we're on a two's complement system.  
-	 *
-	 * So, to output an integer compatible with rand(), we have
-	 * two options: Either mask off the highest (32nd) bit, or
-	 * shift right by one bit.  Masking with 0x7FFFFFFF will be
-	 * compatible with 64-bit MT[], so we'll just use that here.
-	 *
-	 */
-	return rand_s32() & 0x7FFFFFFF;
-}
-
-mipp::Reg<float> PRNG_MT19937_fast::randf_cc()
+mipp::Reg<float> PRNG_MT19937_simd::randf_cc()
 {
 	mipp::Reg<int>   rand_s32 = this->rand_s32();
 	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();
@@ -188,7 +168,7 @@ mipp::Reg<float> PRNG_MT19937_fast::randf_cc()
 	return mipp::abs(rand_s32.cvt<float>() / max);
 }
 
-mipp::Reg<float> PRNG_MT19937_fast::randf_co()
+mipp::Reg<float> PRNG_MT19937_simd::randf_co()
 {
 	mipp::Reg<int>   rand_s32 = this->rand_s32();
 	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();
@@ -196,7 +176,7 @@ mipp::Reg<float> PRNG_MT19937_fast::randf_co()
 	return mipp::abs(rand_s32.cvt<float>() / (max + 1.0f));
 }
 
-mipp::Reg<float> PRNG_MT19937_fast::randf_oo()
+mipp::Reg<float> PRNG_MT19937_simd::randf_oo()
 {
 	mipp::Reg<int>   rand_s32 = this->rand_s32();
 	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();;

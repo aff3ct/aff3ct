@@ -11,12 +11,12 @@ Channel_AWGN_fast_LLR<R>
 : sigma(sigma),
   scaling_factor(scaling_factor),
   mt19937(seed),
-  mt19937f()
+  mt19937_simd()
 {
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
 		seeds[i] = mt19937.rand();
-	mt19937f.seed(seeds.data());
+	mt19937_simd.seed(seeds.data());
 }
 
 template <typename R>
@@ -45,13 +45,15 @@ template <>
 mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 ::get_random_fast()
 {
-	return mt19937f.randf_oo();
+	// return a vector of numbers between ]0,1[
+	return mt19937_simd.randf_oo();
 }
 
 template <>
 float Channel_AWGN_fast_LLR<float>
 ::get_random()
 {
+	// return a number between ]0,1[
 	return mt19937.randf_oo();
 }
 
