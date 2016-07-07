@@ -4,9 +4,14 @@
 
 template <typename B>
 Source_random_fast<B>
-::Source_random_fast() 
-: g_seed(rand()) 
+::Source_random_fast(const int seed) 
+: mt19937(seed),
+  mt19937_simd()
 {
+	mipp::vector<int> seeds(mipp::nElReg<int>());
+	for (auto i = 0; i < mipp::nElReg<int>(); i++)
+		seeds[i] = mt19937.rand();
+	mt19937_simd.seed(seeds.data());
 }
 
 template <typename B>
@@ -19,27 +24,36 @@ template <typename B>
 void Source_random_fast<B>
 ::generate(mipp::vector<B>& U_K)
 {
-	auto size = U_K.size();
-	// generate a random k bits vector U_k
-	for (unsigned i = 0; i < size; i++)
-		U_K[i] = random_number() & 0x1;
-}
+	const auto size = U_K.size();
 
-template <typename B>
-int Source_random_fast<B>
-::random_number()
-{
-	// Linear Congruential Generator (LCG) algorithm: 
-	// https://software.intel.com/en-us/articles/fast-random-number-generator-on-the-intel-pentiumr-4-processor/
-	g_seed = (214013 * g_seed + 2531011);
-	return (g_seed >> 16) & 0x7FFF;
-}
+	// vectorized loop
+	const auto vec_loop_size = (size / mipp::RegisterSizeBit) * mipp::RegisterSizeBit;
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::RegisterSizeBit)
+	{
+		mipp::Reg<int> randoms_s32 = mt19937_simd.rand_s32();
+		mipp::Reg<B>   randoms     = randoms_s32.r;
 
-template <typename B>
-int Source_random_fast<B>
-::rand_max()
-{
-	return 32767;
+		for (unsigned j = 0; j < (sizeof(B) * 8); j++)
+		{
+			auto r = randoms & 0x1;
+			r.store(&U_K[i + j * mipp::nElReg<B>()]);
+			randoms >>= 1;
+		}
+	}
+
+	// remaining scalar operations
+	for (unsigned i = vec_loop_size; i < size; i += sizeof(B) * 8)
+	{
+		auto randoms = mt19937.rand_u32();
+		unsigned j = 0;
+		while ((j < sizeof(B) * 8) && (i + j < size))
+		{
+			auto r = randoms & 0x1;
+			U_K[i + j] = r;
+			randoms >>= 1;
+			j++;
+		}
+	}
 }
 
 // ==================================================================================== explicit template instantiation 

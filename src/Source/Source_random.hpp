@@ -12,6 +12,7 @@ class Source_random : public Source<B>
 {
 private:
 	std::mt19937 rd_engine; // Mersenne Twister 19937
+	// std::minstd_rand rd_engine; // LCG
 	std::uniform_int_distribution<B> uniform_dist;
 
 public:

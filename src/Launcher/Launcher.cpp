@@ -27,7 +27,7 @@ Launcher<B,R,Q>
 	simu_params.stop_time           = std::chrono::seconds(0);
 	simu_params.display_freq        = std::chrono::milliseconds(500);
 	code_params.tail_length         = 0;
-	code_params.generation_method   = "RAND_FAST";
+	code_params.generation_method   = "RAND";
 	chan_params.domain              = "LLR";
 	chan_params.type                = "AWGN";
 	this->chan_params.quant_min_max = 0.f;
