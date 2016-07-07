@@ -788,7 +788,7 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER<B,R,Q>
 ::build_source(const int tid)
 {
-	return Factory_source<B>::build(code_params);
+	return Factory_source<B>::build(code_params, tid);
 }
 
 template <typename B, typename R, typename Q>

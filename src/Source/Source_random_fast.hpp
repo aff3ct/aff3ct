@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
+
 #include "../Tools/PRNG/PRNG_MT19937.hpp"
 #include "../Tools/PRNG/PRNG_MT19937_simd.hpp"
 

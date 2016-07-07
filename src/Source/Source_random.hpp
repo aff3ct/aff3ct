@@ -16,7 +16,7 @@ private:
 	std::uniform_int_distribution<B> uniform_dist;
 
 public:
-	Source_random();
+	Source_random(const int seed = 0);
 
 	virtual ~Source_random();
 

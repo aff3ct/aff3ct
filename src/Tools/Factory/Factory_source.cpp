@@ -5,17 +5,17 @@
 
 template <typename B>
 Source<B>* Factory_source<B>
-::build(const t_code_param &code_params)
+::build(const t_code_param &code_params, const int seed)
 {
 	Source<B> *source = nullptr;
 
 	// build the generator
 	if (code_params.generation_method == "RAND_FAST")
-		source = new Source_random_fast<B>();
+		source = new Source_random_fast<B>(seed);
 	else if (code_params.generation_method == "RAND")
-		source = new Source_random<B>();
+		source = new Source_random<B>(seed);
 	else if (code_params.generation_method == "AZCW")
-		source = new Source_random_fast<B>();
+		source = new Source_random_fast<B>(seed);
 
 	return source;
 }

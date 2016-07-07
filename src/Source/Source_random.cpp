@@ -2,8 +2,8 @@
 
 template <typename B>
 Source_random<B>
-::Source_random() 
-: rd_engine(rand()), 
+::Source_random(const int seed)
+: rd_engine(seed), 
   uniform_dist(0, 1) 
 {
 }
