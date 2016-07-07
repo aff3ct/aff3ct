@@ -25,7 +25,7 @@ Error_analyzer<B,R>
   n_frames(n_frames),
   n_bit_errors(0),
   n_frame_errors(0),
-  n_analyzed_frames(0)
+  n_analyzed_frames(0.f)
 {
 	assert(n_frames > 0);
 
@@ -47,7 +47,7 @@ template <typename B, typename R>
 void Error_analyzer<B,R>
 ::update_n_analyzed_frames()
 {
-	n_analyzed_frames += n_frames;
+	n_analyzed_frames += (float)n_frames;
 }
 
 template <typename B, typename R>
@@ -84,7 +84,7 @@ int Error_analyzer<B,R>
 }
 
 template <typename B, typename R>
-int Error_analyzer<B,R>
+float Error_analyzer<B,R>
 ::get_n_analyzed_frames() const
 {
 	return n_analyzed_frames;
