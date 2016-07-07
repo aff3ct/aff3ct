@@ -47,23 +47,23 @@ void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
 #ifdef _WIN32
-	stream << "# " << "------------------------------------------------------------------||--------------------------------||---------------------" << std::endl;
-	stream << "# " << "    Bit Error Rate (BER) and Frame Error Rate (FER) depending     ||     Decoder throughput and     ||  Global throughput  " << std::endl;
-	stream << "# " << "              on the Signal Noise Ratio (SNR) Eb/N0               ||            latency             ||  and elapsed time   " << std::endl;
-	stream << "# " << "------------------------------------------------------------------||--------------------------------||---------------------" << std::endl;
-	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||----------|---------|-----------||----------|----------" << std::endl;
-	stream << "# " << "  SNR |       FRA |        BE |        FE |       BER |       FER ||     CTHR |    ITHR |   LATENCY || SIM_CTHR |    ET/RT " << std::endl;
-	stream << "# " << " (dB) |           |           |           |           |           ||   (Mb/s) |  (Mb/s) |      (us) ||   (Mb/s) | (hhmmss) " << std::endl;
-	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||----------|---------|-----------||----------|----------" << std::endl;
+	stream << "# " << "------------------------------------------------------------------||---------------------------------||---------------------" << std::endl;
+	stream << "# " << "    Bit Error Rate (BER) and Frame Error Rate (FER) depending     ||     Decoder throughput and      ||  Global throughput  " << std::endl;
+	stream << "# " << "              on the Signal Noise Ratio (SNR) Eb/N0               ||             latency             ||  and elapsed time   " << std::endl;
+	stream << "# " << "------------------------------------------------------------------||---------------------------------||---------------------" << std::endl;
+	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||----------|----------|-----------||----------|----------" << std::endl;
+	stream << "# " << "  SNR |       FRA |        BE |        FE |       BER |       FER ||     CTHR |    ITHR  |   LATENCY || SIM_CTHR |    ET/RT " << std::endl;
+	stream << "# " << " (dB) |           |           |           |           |           ||   (Mb/s) |  (Mb/s)  |      (us) ||   (Mb/s) | (hhmmss) " << std::endl;
+	stream << "# " << "------|-----------|-----------|-----------|-----------|-----------||----------|----------|-----------||----------|----------" << std::endl;
 #else
-	stream << "# " << "-------------------------------------------------------------||-------------------------------||---------------------" << std::endl;
-	stream << "# " << "  Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||    Decoder throughput and     ||  Global throughput  " << std::endl;
-	stream << "# " << "            on the Signal Noise Ratio (SNR) Eb/N0            ||            latency            ||  and elapsed time   " << std::endl;
-	stream << "# " << "-------------------------------------------------------------||-------------------------------||---------------------" << std::endl;
-	stream << "# " << "------|----------|----------|----------|----------|----------||----------|---------|----------||----------|----------" << std::endl;
-	stream << "# " << "  SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |    ITHR |  LATENCY || SIM_CTHR |    ET/RT " << std::endl;
-	stream << "# " << " (dB) |          |          |          |          |          ||   (Mb/s) |  (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) " << std::endl;
-	stream << "# " << "------|----------|----------|----------|----------|----------||----------|---------|----------||----------|----------" << std::endl;
+	stream << "# " << "-------------------------------------------------------------||--------------------------------||---------------------" << std::endl;
+	stream << "# " << "  Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||     Decoder throughput and     ||  Global throughput  " << std::endl;
+	stream << "# " << "            on the Signal Noise Ratio (SNR) Eb/N0            ||            latency             ||  and elapsed time   " << std::endl;
+	stream << "# " << "-------------------------------------------------------------||--------------------------------||---------------------" << std::endl;
+	stream << "# " << "------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------" << std::endl;
+	stream << "# " << "  SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT " << std::endl;
+	stream << "# " << " (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) " << std::endl;
+	stream << "# " << "------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------" << std::endl;
 #endif
 }
 
@@ -128,7 +128,7 @@ void Terminal_BFER<B,R>
 	stream <<                                                                                                       str_ber.str() << " | ";
 	stream <<                                                                                                       str_fer.str() << " || ";
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                        dec_cthr << " | ";
-	stream << setprecision(                 2) <<                            fixed  << setw(7) <<                        dec_ithr << " | ";
+	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                        dec_ithr << " | ";
 	stream << setprecision(                 2) << ((lat > l2) ? scientific : fixed) << setw(9) <<                             lat << " || ";
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
 #else
@@ -146,7 +146,7 @@ void Terminal_BFER<B,R>
 	stream <<                                                                                                       str_ber.str() << " | ";
 	stream <<                                                                                                       str_fer.str() << " || ";
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                        dec_cthr << " | ";
-	stream << setprecision(                 2) <<                            fixed  << setw(7) <<                        dec_ithr << " | ";
+	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                        dec_ithr << " | ";
 	stream << setprecision(                 2) << ((lat > l2) ? scientific : fixed) << setw(8) <<                             lat << " || ";
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
 #endif
