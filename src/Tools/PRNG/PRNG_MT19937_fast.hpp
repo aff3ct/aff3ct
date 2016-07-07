@@ -27,7 +27,13 @@ protected:
 
 public:
 	PRNG_MT19937_fast(const mipp::Reg<int> seed);
+	PRNG_MT19937_fast();
 	virtual ~PRNG_MT19937_fast();
+
+	/*
+	 * Initialize Mersenne Twister with given seed value.
+	 */
+	void seed(const mipp::Reg<int> seed);
 
 	/*
 	 * Extract a pseudo-random integer in the range 0 ... RAND_MAX.
@@ -36,9 +42,9 @@ public:
 	mipp::Reg<int> rand();
 
 	/*
-	 * Extract a pseudo-random unsigned 32-bit integer in the range 0 ... UINT32_MAX
+	 * Extract a pseudo-random unsigned 32-bit integer in the range INT32_MIN ... INT32_MAX
 	 */
-	mipp::Reg<int> rand_u32();
+	mipp::Reg<int> rand_s32();
 
 	/*
 	 * Combine two unsigned 32-bit pseudo-random numbers into one 64-bit

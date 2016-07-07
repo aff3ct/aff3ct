@@ -23,6 +23,15 @@ constexpr unsigned DIFF   = SIZE-PERIOD;
 PRNG_MT19937::PRNG_MT19937(const uint32_t seed)
 : MT(SIZE), index(0)
 {
+	this->seed(seed);
+}
+
+PRNG_MT19937::~PRNG_MT19937()
+{
+}
+
+void PRNG_MT19937::seed(const uint32_t seed)
+{
 	/*
 	 * The equation below is a linear congruential generator (LCG),
 	 * one of the oldest known pseudo-random number generator
@@ -60,10 +69,6 @@ PRNG_MT19937::PRNG_MT19937(const uint32_t seed)
 
 	for (unsigned i = 1; i < SIZE; ++i)
 		MT[i] = 0x6c078965 * (MT[i-1] ^ MT[i-1] >> 30) +i;
-}
-
-PRNG_MT19937::~PRNG_MT19937()
-{
 }
 
 void PRNG_MT19937::generate_numbers()

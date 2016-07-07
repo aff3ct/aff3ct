@@ -105,8 +105,8 @@ void Quantizer_fast<float,short>
 		const auto r_q32_0 = r_factor * &Y_N1[i + 0 * mipp::nElmtsPerRegister<float>()];
 		const auto r_q32_1 = r_factor * &Y_N1[i + 1 * mipp::nElmtsPerRegister<float>()];
 
-		const auto r_q32i_0 = r_q32_0.round().template cvt<int>();
-		const auto r_q32i_1 = r_q32_1.round().template cvt<int>();
+		const auto r_q32i_0 = r_q32_0.round().cvt<int>();
+		const auto r_q32i_1 = r_q32_1.round().cvt<int>();
 
 		const auto r_q16i = mipp::pack<int,short>(r_q32i_0, r_q32i_1);
 		r_q16i.sat(val_min, val_max).store(&Y_N2[i]);
@@ -135,10 +135,10 @@ void Quantizer_fast<float,signed char>
 		const auto r_q32_2 = r_factor * &Y_N1[i + 2 * mipp::nElmtsPerRegister<float>()];
 		const auto r_q32_3 = r_factor * &Y_N1[i + 3 * mipp::nElmtsPerRegister<float>()];
 
-		const auto r_q32i_0 = r_q32_0.round().template cvt<int>();
-		const auto r_q32i_1 = r_q32_1.round().template cvt<int>();
-		const auto r_q32i_2 = r_q32_2.round().template cvt<int>();
-		const auto r_q32i_3 = r_q32_3.round().template cvt<int>();
+		const auto r_q32i_0 = r_q32_0.round().cvt<int>();
+		const auto r_q32i_1 = r_q32_1.round().cvt<int>();
+		const auto r_q32i_2 = r_q32_2.round().cvt<int>();
+		const auto r_q32i_3 = r_q32_3.round().cvt<int>();
 
 		const auto r_q16i_0 = mipp::pack<int,short>(r_q32i_0, r_q32i_1);
 		const auto r_q16i_1 = mipp::pack<int,short>(r_q32i_2, r_q32i_3);

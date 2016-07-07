@@ -28,6 +28,11 @@ public:
 	virtual ~PRNG_MT19937();
 
 	/*
+	 * Initialize Mersenne Twister with given seed value.
+	 */
+	void seed(const uint32_t seed);
+
+	/*
 	 * Extract a pseudo-random integer in the range 0 ... RAND_MAX.
 	 * (LIBC REPLACEMENT FUNCTION)
 	 */

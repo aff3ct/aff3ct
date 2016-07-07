@@ -11,77 +11,139 @@ constexpr unsigned SIZE   = 624;
 constexpr unsigned PERIOD = 397;
 constexpr unsigned DIFF   = SIZE-PERIOD;
 
+#define M32(x) (x & 0x80000000) // 32nd Most Significant Bit
+#define L31(x) (x & 0x7FFFFFFF) // 31 Least Significant Bits
+
+#define UNROLL(expr) \
+	y = M32(MT[i]) | L31(MT[i+1]); \
+	m = ((y & 1) == 1) & 0x9908b0df; \
+	MT[i] = MT[expr] ^ (y >> 1) ^ m; \
+	++i;
+
 PRNG_MT19937_fast::PRNG_MT19937_fast(const mipp::Reg<int> seed)
 : MT(SIZE), index(0)
 {
-	MT[0] = seed;
-	index = 0;
+	this->seed(seed);
+}
 
-	const mipp::Reg<int> factor = 0x6c078965;
-	for (unsigned i = 1; i < SIZE; ++i)
-		MT[i] = factor * (MT[i-1] ^ MT[i-1] >> 30) +i;
+PRNG_MT19937_fast::PRNG_MT19937_fast()
+: MT(SIZE), index(0)
+{
+	mipp::vector<int> seed(mipp::nElReg<int>());
+	for (auto i = 0; i < mipp::nElReg<int>(); i++)
+		seed[i] = i;
+	this->seed(seed.data());
 }
 
 PRNG_MT19937_fast::~PRNG_MT19937_fast()
 {
 }
 
+void PRNG_MT19937_fast::seed(const mipp::Reg<int> seed)
+{
+	/*
+	 * The equation below is a linear congruential generator (LCG),
+	 * one of the oldest known pseudo-random number generator
+	 * algorithms, in the form X_(n+1) = = (a*X_n + c) (mod m).
+	 *
+	 * We've implicitly got m=32 (mask + word size of 32 bits), so
+	 * there is no need to explicitly use modulus.
+	 *
+	 * What is interesting is the multiplier a.  The one we have
+	 * below is 0x6c07865 --- 1812433253 in decimal, and is called
+	 * the Borosh-Niederreiter multiplier for modulus 2^32.
+	 *
+	 * It is mentioned in passing in Knuth's THE ART OF COMPUTER
+	 * PROGRAMMING, Volume 2, page 106, Table 1, line 13.  LCGs are
+	 * treated in the same book, pp. 10-26
+	 *
+	 * You can read the original paper by Borosh and Niederreiter
+	 * as well.  It's called OPTIMAL MULTIPLIERS FOR PSEUDO-RANDOM
+	 * NUMBER GENERATION BY THE LINEAR CONGRUENTIAL METHOD (1983) at
+	 * http://www.springerlink.com/content/n7765ku70w8857l7/
+	 *
+	 * You can read about LCGs at:
+	 * http://en.wikipedia.org/wiki/Linear_congruential_generator
+	 *
+	 * From that page, it says:
+	 * "A common Mersenne twister implementation, interestingly
+	 * enough, uses an LCG to generate seed data.",
+	 *
+	 * Since we're using 32-bits data types for our MT array, we can skip the
+	 * masking with 0xFFFFFFFF below.
+	 */
+
+	MT[0] = seed;
+	index = 0;
+
+	for (unsigned i = 1; i < SIZE; ++i)
+		MT[i] = (MT[i-1] ^ MT[i-1] >> 30) * 0x6c078965 +i;
+}
+
 void PRNG_MT19937_fast::generate_numbers()
 {
-	// constexpr uint32_t MATRIX[2] = {0, 0x9908b0df};
+	/*
+	 * Originally, we had one loop with i going from [0, SIZE) and
+	 * two modulus operations:
+	 *
+	 * for ( register unsigned i=0; i<SIZE; ++i ) {
+	 *   register uint32_t y = M32(MT[i]) | L31(MT[(i+1) % SIZE]);
+	 *   MT[i] = MT[(i + PERIOD) % SIZE] ^ (y>>1);
+	 *   if ( ODD(y) ) MT[i] ^= 0x9908b0df;
+	 * }
+	 *
+	 * For performance reasons, we've unrolled the loop three times, thus
+	 * mitigating the need for any modulus operations.
+	 *
+	 * Anyway, it seems this trick is old hat:
+	 * http://www.quadibloc.com/crypto/co4814.htm
+	 *
+	 */
+
 	mipp::Reg<int> y, m;
 	uint32_t i = 0;
-
-	mipp::Reg<int> M32  = 0x80000000; // 32nd Most Significant Bit
-	mipp::Reg<int> L31  = 0x7FFFFFFF; // 31 Least Significant Bits
-	mipp::Reg<int> one  = 1;
-	mipp::Reg<int> zero = 0;
-
-	auto unroll = [&](uint32_t j) 
-	{
-		y = (MT[i] & M32) | (MT[i+1] & L31);
-		m = ((y & one) != zero) & 0x9908b0df;
-		MT[i] = MT[j] ^ (y >> 1) ^ m;
-		++i;
-	};
 
 	// i = [0 ... 225]
 	while (i < (DIFF -1)) 
 	{
-	 	// We're doing 226 = 113*2, an even number of steps, so we can
-	 	// safely unroll one more step here for speed:
-		unroll(i+PERIOD);
-		unroll(i+PERIOD);
+		/*
+		 * We're doing 226 = 113*2, an even number of steps, so we can
+		 * safely unroll one more step here for speed:
+		 */
+		UNROLL(i+PERIOD);
+		UNROLL(i+PERIOD);
 	}
 
 	// i = 226
-	unroll((i+PERIOD) % SIZE);
+	UNROLL((i+PERIOD) % SIZE);
 
 	// i = [227 ... 622]
 	while (i < (SIZE-1)) 
 	{
-		// 623-227 = 396 = 2*2*3*3*11, so we can unroll this loop in any number
-		// that evenly divides 396 (2, 4, 6, etc). Here we'll unroll 11 times.
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
-		unroll(i-DIFF);
+		/*
+		 * 623-227 = 396 = 2*2*3*3*11, so we can unroll this loop in any number
+		 * that evenly divides 396 (2, 4, 6, etc). Here we'll unroll 11 times.
+		 */
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
+		UNROLL(i-DIFF);
 	}
 
 	// i = 623
-	y = (MT[SIZE-1] & M32) | (MT[0] & L31);
-	m = ((y & one) != zero) & 0x9908b0df;
+	y = M32(MT[SIZE-1]) | L31(MT[0]);
+	m = ((y & 1) == 1) & 0x9908b0df;
 	MT[SIZE-1] = MT[PERIOD-1] ^ (y >> 1) ^ m;
 }
 
-mipp::Reg<int> PRNG_MT19937_fast::rand_u32()
+mipp::Reg<int> PRNG_MT19937_fast::rand_s32()
 {
 	if (!index)
 		generate_numbers();
@@ -118,7 +180,7 @@ mipp::Reg<int> PRNG_MT19937_fast::rand()
 	 *
 	 */
 	// return static_cast<int>(0x7FFFFFFF & rand_u32());
-	return rand_u32();
+	return rand_s32() & 0x7FFFFFFF;
 }
 
 // mipp::Reg<float> PRNG_MT19937_fast::randf_cc()
@@ -133,12 +195,11 @@ mipp::Reg<int> PRNG_MT19937_fast::rand()
 
 mipp::Reg<float> PRNG_MT19937_fast::randf_oo()
 {
-	auto i = (rand_u32() >> 2);
-	mipp::Reg<float> c = i.r;
-	// mipp::Reg<float> max = (float)UINT32_MAX +1.0f;
-	// c = (c + 0.5f) / max;
+	auto i = rand_s32();
+	auto f = i.cvt<float>() + 0.5f;
+	auto max = mipp::Reg<float>((float)INT32_MAX +1.0f);
+	return mipp::abs(f / max);
 
-	return c;
 	// return (static_cast<float>(rand_u32()) +0.5f) / (UINT32_MAX +1.0f);
 }
 
