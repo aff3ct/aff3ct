@@ -1868,6 +1868,11 @@
 	inline reg cvt<float,int>(const reg v) {
 		return (reg) _mm_cvtps_epi32(v);
 	}
+
+	template <>
+	inline reg cvt<int,float>(const reg v) {
+		return (reg) _mm_cvtepi32_ps((__128i) v);
+	}
 #endif
 
 	// ----------------------------------------------------------------------------------------------------------- pack
