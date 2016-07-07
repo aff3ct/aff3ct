@@ -17,7 +17,7 @@ Frozenbits_generator_GA<B>
 ::Frozenbits_generator_GA(const int K, const int N, const float sigma)
 : Frozenbits_generator<B>(K, N, sigma), m(std::log2(N)), z(std::exp2(m), 0)
 {
-	std::cerr << bold_yellow("(WW) The GA (Gaussian Approximation) frozen bits generator is unaccurate.") 
+	std::cerr << bold_yellow("(WW) The GA (Gaussian Approximation) frozen bits generator is inaccurate.") 
 	          << std::endl;
 }
 
