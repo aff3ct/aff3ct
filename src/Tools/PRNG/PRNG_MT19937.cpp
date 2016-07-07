@@ -63,7 +63,6 @@ void PRNG_MT19937::seed(const uint32_t seed)
 	 * Since we're using 32-bits data types for our MT array, we can skip the
 	 * masking with 0xFFFFFFFF below.
 	 */
-
 	MT[0] = seed;
 	index = 0;
 
@@ -90,7 +89,6 @@ void PRNG_MT19937::generate_numbers()
 	 * http://www.quadibloc.com/crypto/co4814.htm
 	 *
 	 */
-
 	constexpr uint32_t MATRIX[2] = {0, 0x9908b0df};
 	uint32_t y, i = 0;
 

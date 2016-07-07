@@ -55,7 +55,6 @@ float Channel_AWGN_fast_LLR<float>
 	return mt19937.randf_oo();
 }
 
-// box muller method in the polar form
 template <typename R>
 void Channel_AWGN_fast_LLR<R>
 ::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
@@ -66,21 +65,16 @@ void Channel_AWGN_fast_LLR<R>
 	assert(sigma                                != 0         );
 	assert(X_N.size() % (2 * mipp::nElReg<R>()) == 0         );
 
-	const auto loop_size = (int)Y_N.size();
-	// for (auto i = 0; i < loop_size; i++)
-	// 	Y_N[i] = mt19937.randf_oo();
-
 	const mipp::Reg<R> sf       = this->scaling_factor;
 	const mipp::Reg<R> sigma    = this->sigma;
 	const mipp::Reg<R> twopi    = 2.0 * 3.14159265358979323846;
 	const mipp::Reg<R> one      = 1.0;
 	const mipp::Reg<R> minustwo = -2.0;
 
+	// box muller method in the polar form
+	const auto loop_size = (int)Y_N.size();
 	for (auto i = 0; i < loop_size; i += mipp::nElReg<R>() * 2) 
 	{
-		// const auto u1 = mipp::Reg<R>(&Y_N[i                    ]);
-		// const auto u2 = mipp::Reg<R>(&Y_N[i + mipp::nElReg<R>()]);
-
 		const auto u1 = get_random_fast();
 		const auto u2 = get_random_fast();
 
@@ -98,11 +92,13 @@ void Channel_AWGN_fast_LLR<R>
 		awgn2.store(&Y_N[i + mipp::nElReg<R>()]);
 	}
 
+	// // seq version (equivalent to the AWGN_std channel)
+	// const auto loop_size = (int)Y_N.size();
 	// auto twopi = (R)(2.0 * 3.14159265358979323846);
 	// for (auto i = 0; i < loop_size; i += 2)
 	// {
-	// 	const auto u1 = Y_N[i +0];
-	// 	const auto u2 = Y_N[i +1];
+	// 	const auto u1 = get_random();
+	// 	const auto u2 = get_random();
 
 	// 	const auto radius = (R)std::sqrt((R)-2.0 * std::log(u1)) * sigma;
 	// 	const auto theta  = twopi * u2;

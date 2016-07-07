@@ -13,8 +13,6 @@ This implementation is inspired by: https://github.com/cslarsen/mersenne-twister
 #ifndef PRNG_MT19937_FAST_HPP
 #define PRNG_MT19937_FAST_HPP
 
-#define __STDC_LIMIT_MACROS
-#include <cstdint>
 #include <vector>
 
 #include "../MIPP/mipp.h"
@@ -47,45 +45,22 @@ public:
 	mipp::Reg<int> rand_s32();
 
 	/*
-	 * Combine two unsigned 32-bit pseudo-random numbers into one 64-bit
-	 */
-	// mipp::Reg<long long> rand_u64();
-
-	/*
 	 * Return a random float in the CLOSED range [0, 1]
 	 * Mnemonic: randf_co = random float 0=closed 1=closed
 	 */
-	// mipp::Reg<float> randf_cc();
+	mipp::Reg<float> randf_cc();
 
 	/*
 	 * Return a random float in the OPEN range [0, 1>
 	 * Mnemonic: randf_co = random float 0=closed 1=open
 	 */
-	// mipp::Reg<float> randf_co();
+	mipp::Reg<float> randf_co();
 
 	/*
 	 * Return a random float in the OPEN range <0, 1>
 	 * Mnemonic: randf_oo = random float 0=open 1=open
 	 */
 	mipp::Reg<float> randf_oo();
-
-	/*
-	 * Return a random double in the CLOSED range [0, 1]
-	 * Mnemonic: randd_co = random double 0=closed 1=closed
-	 */
-	// mipp::Reg<double> randd_cc();
-
-	/*
-	 * Return a random double in the OPEN range [0, 1>
-	 * Mnemonic: randd_co = random double 0=closed 1=open
-	 */
-	// mipp::Reg<double> randd_co();
-
-	/*
-	 * Return a random double in the OPEN range <0, 1>
-	 * Mnemonic: randd_oo = random double 0=open 1=open
-	 */
-	// mipp::Reg<double> randd_oo();
 
 private:
 	void generate_numbers();

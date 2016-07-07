@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <limits>
 
 #include "PRNG_MT19937_fast.hpp"
 
@@ -72,7 +72,6 @@ void PRNG_MT19937_fast::seed(const mipp::Reg<int> seed)
 	 * Since we're using 32-bits data types for our MT array, we can skip the
 	 * masking with 0xFFFFFFFF below.
 	 */
-
 	MT[0] = seed;
 	index = 0;
 
@@ -99,7 +98,6 @@ void PRNG_MT19937_fast::generate_numbers()
 	 * http://www.quadibloc.com/crypto/co4814.htm
 	 *
 	 */
-
 	mipp::Reg<int> y, m;
 	uint32_t i = 0;
 
@@ -179,46 +177,29 @@ mipp::Reg<int> PRNG_MT19937_fast::rand()
 	 * compatible with 64-bit MT[], so we'll just use that here.
 	 *
 	 */
-	// return static_cast<int>(0x7FFFFFFF & rand_u32());
 	return rand_s32() & 0x7FFFFFFF;
 }
 
-// mipp::Reg<float> PRNG_MT19937_fast::randf_cc()
-// {
-// 	return static_cast<float>(rand_u32()) / UINT32_MAX;
-// }
+mipp::Reg<float> PRNG_MT19937_fast::randf_cc()
+{
+	mipp::Reg<int>   rand_s32 = this->rand_s32();
+	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();
 
-// mipp::Reg<float> PRNG_MT19937_fast::randf_co()
-// {
-// 	return static_cast<float>(rand_u32()) / (UINT32_MAX +1.0f);
-// }
+	return mipp::abs(rand_s32.cvt<float>() / max);
+}
+
+mipp::Reg<float> PRNG_MT19937_fast::randf_co()
+{
+	mipp::Reg<int>   rand_s32 = this->rand_s32();
+	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();
+
+	return mipp::abs(rand_s32.cvt<float>() / (max + 1.0f));
+}
 
 mipp::Reg<float> PRNG_MT19937_fast::randf_oo()
 {
-	auto i = rand_s32();
-	auto f = i.cvt<float>() + 0.5f;
-	auto max = mipp::Reg<float>((float)INT32_MAX +1.0f);
-	return mipp::abs(f / max);
+	mipp::Reg<int>   rand_s32 = this->rand_s32();
+	mipp::Reg<float> max      = (float)std::numeric_limits<int>::max();;
 
-	// return (static_cast<float>(rand_u32()) +0.5f) / (UINT32_MAX +1.0f);
+	return mipp::abs((rand_s32.cvt<float>() + 0.5f) / (max + 1.0f));
 }
-
-// mipp::Reg<double> PRNG_MT19937_fast::randd_cc()
-// {
-// 	return static_cast<double>(rand_u32()) / UINT32_MAX;
-// }
-
-// mipp::Reg<double> PRNG_MT19937_fast::randd_co()
-// {
-// 	return static_cast<double>(rand_u32()) / (UINT32_MAX +1.0);
-// }
-
-// mipp::Reg<double> PRNG_MT19937_fast::randd_oo()
-// {
-// 	return (static_cast<double>(rand_u32()) +0.5) / (UINT32_MAX +1.0);
-// }
-
-// mipp::Reg<long long> PRNG_MT19937_fast::rand_u64()
-// {
-// 	return static_cast<uint64_t>(rand_u32()) << 32 | rand_u32();
-// }
