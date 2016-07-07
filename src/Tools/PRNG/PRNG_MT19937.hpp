@@ -13,7 +13,7 @@
  * srand().  If you need to mix them, you should encapsulate this code in a
  * namespace.
  *
- * Written by Christian Stigen Larsen
+ * Written by Christian Stigen Larsen and modified by Adrien Cassagne after
  * http://csl.name
  *
  * Distributed under the modified BSD license.

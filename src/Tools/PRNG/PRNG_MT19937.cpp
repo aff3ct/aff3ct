@@ -12,7 +12,7 @@
  * For all the details on this algorithm, see the original paper:
  * http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/mt.pdf
  *
- * Written by Christian Stigen Larsen
+ * Written by Christian Stigen Larsen and modified by Adrien Cassagne after
  * http://csl.name
  *
  * Distributed under the modified BSD license.

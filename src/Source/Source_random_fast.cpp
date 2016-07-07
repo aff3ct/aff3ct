@@ -1,22 +1,22 @@
 #include <cstdlib>
 
-#include "Source_random_LCG.hpp"
+#include "Source_random_fast.hpp"
 
 template <typename B>
-Source_random_LCG<B>
-::Source_random_LCG() 
+Source_random_fast<B>
+::Source_random_fast() 
 : g_seed(rand()) 
 {
 }
 
 template <typename B>
-Source_random_LCG<B>
-::~Source_random_LCG()
+Source_random_fast<B>
+::~Source_random_fast()
 {
 }
 
 template <typename B>
-void Source_random_LCG<B>
+void Source_random_fast<B>
 ::generate(mipp::vector<B>& U_K)
 {
 	auto size = U_K.size();
@@ -26,7 +26,7 @@ void Source_random_LCG<B>
 }
 
 template <typename B>
-int Source_random_LCG<B>
+int Source_random_fast<B>
 ::random_number()
 {
 	// Linear Congruential Generator (LCG) algorithm: 
@@ -36,7 +36,7 @@ int Source_random_LCG<B>
 }
 
 template <typename B>
-int Source_random_LCG<B>
+int Source_random_fast<B>
 ::rand_max()
 {
 	return 32767;
@@ -45,11 +45,11 @@ int Source_random_LCG<B>
 // ==================================================================================== explicit template instantiation 
 #include "../Tools/types.h"
 #ifdef MULTI_PREC
-template class Source_random_LCG<B_8>;
-template class Source_random_LCG<B_16>;
-template class Source_random_LCG<B_32>;
-template class Source_random_LCG<B_64>;
+template class Source_random_fast<B_8>;
+template class Source_random_fast<B_16>;
+template class Source_random_fast<B_32>;
+template class Source_random_fast<B_64>;
 #else
-template class Source_random_LCG<B>;
+template class Source_random_fast<B>;
 #endif
 // ==================================================================================== explicit template instantiation

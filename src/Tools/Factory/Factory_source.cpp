@@ -1,5 +1,5 @@
 #include "../../Source/Source_random.hpp"
-#include "../../Source/Source_random_LCG.hpp"
+#include "../../Source/Source_random_fast.hpp"
 
 #include "Factory_source.hpp"
 
@@ -10,12 +10,12 @@ Source<B>* Factory_source<B>
 	Source<B> *source = nullptr;
 
 	// build the generator
-	if (code_params.generation_method == "LCG")
-		source = new Source_random_LCG<B>();
+	if (code_params.generation_method == "RAND_FAST")
+		source = new Source_random_fast<B>();
 	else if (code_params.generation_method == "RAND")
 		source = new Source_random<B>();
 	else if (code_params.generation_method == "AZCW")
-		source = new Source_random_LCG<B>();
+		source = new Source_random_fast<B>();
 
 	return source;
 }
