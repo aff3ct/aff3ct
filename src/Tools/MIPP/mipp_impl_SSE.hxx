@@ -1871,7 +1871,7 @@
 
 	template <>
 	inline reg cvt<int,float>(const reg v) {
-		return (reg) _mm_cvtepi32_ps((__128i) v);
+		return (reg) _mm_cvtepi32_ps((__m128i) v);
 	}
 #endif
 
