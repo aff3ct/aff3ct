@@ -8,10 +8,6 @@
 
 #include "../../../Tools/bash_tools.h"
 
-#ifndef VSL_METHOD_SGAUSSIAN_BOXMULLER2
-	#define VSL_METHOD_SGAUSSIAN_BOXMULLER2 1
-#endif
-
 template <typename R>
 Channel_AWGN_MKL_LLR<R>
 ::Channel_AWGN_MKL_LLR(const R& sigma, const int seed, const R& scaling_factor)
@@ -49,7 +45,7 @@ void Channel_AWGN_MKL_LLR<float>
 	assert(sigma        != 0         );
 	assert(stream_state != nullptr   );
 
-	vsRngGaussian(VSL_METHOD_SGAUSSIAN_BOXMULLER2,
+	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
 	              Y_N.size(),
 	              Y_N.data(),
@@ -77,7 +73,7 @@ void Channel_AWGN_MKL_LLR<double>
 	assert(sigma        != 0         );
 	assert(stream_state != nullptr   );
 
-	vdRngGaussian(VSL_METHOD_SGAUSSIAN_BOXMULLER2,
+	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
 	              Y_N.size(),
 	              Y_N.data(),
