@@ -483,6 +483,11 @@
 	}
 
 	template <>
+	inline reg andb<int>(const reg v1, const reg v2) {
+		return (reg) vandq_u32((uint32x4_t) v1, (uint32x4_t) v2);
+	}
+
+	template <>
 	inline reg andb<short>(const reg v1, const reg v2) {
 		return (reg) vandq_u16((uint16x8_t) v1, (uint16x8_t) v2);
 	}
@@ -781,6 +786,11 @@
 	template <>
 	inline reg mul<float>(const reg v1, const reg v2) {
 		return vmulq_f32(v1, v2);
+	}
+
+	template <>
+	inline reg mul<int>(const reg v1, const reg v2) {
+		return (reg) vmulq_s32((int32x4_t) v1, (int32x4_t) v2);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ div
