@@ -1,0 +1,20 @@
+#ifndef QUANTIZER_NO_HPP_
+#define QUANTIZER_NO_HPP_
+
+#include <vector>
+#include "../Tools/MIPP/mipp.h"
+
+#include "Quantizer.hpp"
+
+template <typename R, typename Q>
+class Quantizer_NO : public Quantizer<R,Q>
+{
+public:
+	Quantizer_NO();
+	virtual ~Quantizer_NO();
+
+	void process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
+};
+
+#endif /* QUANTIZER_NO_HPP_ */
+

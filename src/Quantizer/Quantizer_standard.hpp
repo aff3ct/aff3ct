@@ -21,9 +21,6 @@ public:
 	virtual ~Quantizer_standard();
 
 	void process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
-
-private:
-	inline R saturate(R val) const;
 };
 
 #endif /* QUANTIZER_STANDARD_HPP_ */

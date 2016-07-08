@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "../Decoder/decoder_functions.h"
+
 #include "Quantizer_tricky.hpp"
 
 template <typename R, typename Q>
@@ -17,22 +19,12 @@ Quantizer_tricky<R,Q>
 template <>
 Quantizer_tricky<float,float>
 ::Quantizer_tricky(const float& sigma)
-: val_max(0),
-  val_min(0),
-  delta_inv((float)0),
-  sigma(sigma)
-{
-}
+: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <>
 Quantizer_tricky<double,double>
 ::Quantizer_tricky(const double& sigma)
-: val_max(0),
-  val_min(0),
-  delta_inv((double)0),
-  sigma(sigma)
-{
-}
+: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
@@ -48,22 +40,12 @@ Quantizer_tricky<R,Q>
 template <>
 Quantizer_tricky<float,float>
 ::Quantizer_tricky(const short& saturation_pos, const float& sigma)
-: val_max(0),
-  val_min(0),
-  delta_inv((float)0),
-  sigma(sigma)
-{
-}
+: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <>
 Quantizer_tricky<double,double>
 ::Quantizer_tricky(const short& saturation_pos, const double& sigma)
-: val_max(0),
-  val_min(0),
-  delta_inv((double)0),
-  sigma(sigma)
-{
-}
+: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
@@ -78,22 +60,12 @@ Quantizer_tricky<R,Q>
 template <>
 Quantizer_tricky<float,float>
 ::Quantizer_tricky(const float min_max, const float& sigma)
-: val_max(0),
-  val_min(0),
-  delta_inv((float)1.0 / ((float)std::abs(min_max) / (float)val_max)),
-  sigma(sigma)
-{
-}
+: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <>
 Quantizer_tricky<double,double>
 ::Quantizer_tricky(const float min_max, const double& sigma)
-: val_max(0),
-  val_min(0),
-  delta_inv((double)1.0 / ((double)std::abs(min_max) / (double)val_max)),
-  sigma(sigma)
-{
-}
+: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
@@ -135,54 +107,7 @@ void Quantizer_tricky<R,Q>
 
 	auto size = Y_N1.size();
 	for (unsigned i = 0; i < size; i++)
-		Y_N2[i] = (Q)saturate(round(Y_N1[i] * delta_inv));
-}
-
-template <>
-void Quantizer_tricky<float,float>
-::process(mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = Y_N1[i];
-}
-
-template <>
-void Quantizer_tricky<double,float>
-::process(mipp::vector<double>& Y_N1, mipp::vector<float>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = (float)Y_N1[i];
-}
-
-template <>
-void Quantizer_tricky<float,double>
-::process(mipp::vector<float>& Y_N1, mipp::vector<double>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = (double)Y_N1[i];
-}
-
-template <>
-void Quantizer_tricky<double,double>
-::process(mipp::vector<double>& Y_N1, mipp::vector<double>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = Y_N1[i];
-}
-
-template <typename R, typename Q>
-inline R Quantizer_tricky<R,Q>
-::saturate(R val) const
-{
-	return std::min(std::max(val, (R)val_min), (R)val_max);
+		Y_N2[i] = (Q)saturate(std::round(Y_N1[i] * delta_inv), (R)val_min, (R)val_max);
 }
 
 // ==================================================================================== explicit template instantiation 
