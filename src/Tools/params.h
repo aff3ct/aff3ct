@@ -71,6 +71,7 @@ struct t_decoder_param
 	std::string implem;
 	std::string simd_strategy;
 	std::string scaling_factor;
+	std::string map;
 	int         max_iter;
 	int         L;
 };
