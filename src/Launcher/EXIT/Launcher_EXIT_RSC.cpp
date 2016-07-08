@@ -52,7 +52,7 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	Launcher_EXIT<B,R,Q>::print_header();
 
-	std::clog << "# " << bold("* Decoder MAP implem            ") << " = " << this->deco_params.map << std::endl;
+	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

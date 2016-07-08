@@ -68,7 +68,7 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	std::clog << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                        << std::endl;
 	if (!this->deco_params.simd_strategy.empty())
 	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy << std::endl;
-	std::clog << "# " << bold("* Decoder MAP implem            ") << " = " << this->deco_params.map           << std::endl;
+	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map           << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>
