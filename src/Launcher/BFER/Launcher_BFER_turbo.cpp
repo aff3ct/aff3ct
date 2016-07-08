@@ -55,7 +55,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->doc_args["scaling-factor" ] = "scaling factor type (ex: NO, LTE, LTE_VEC, ARRAY, etc.)";
 
 	this->opt_args["dec-simd-strat" ] = "simd_type";
-	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER, NONE).";
+	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
 	this->opt_args["dec-map"        ] = "map_type";
 	this->doc_args["dec-map"        ] = "the MAP implementation for the nodes (ex: MAX, MAXS, MAXL).";
 }

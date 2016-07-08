@@ -26,12 +26,12 @@ void Launcher_EXIT<B,R,Q>
 	Launcher<B,R,Q>::build_args();
 
 	this->req_args["sig-a-min" ] = "sigma_a_min_value";
-	this->doc_args["sig-a-min" ] = "sigma min value used in EXIT CHARTS.";
+	this->doc_args["sig-a-min" ] = "sigma min value used in EXIT charts.";
 	this->req_args["sig-a-max" ] = "sigma_a_max_value";
-	this->doc_args["sig-a-max" ] = "sigma max value used in EXIT CHARTS.";
+	this->doc_args["sig-a-max" ] = "sigma max value used in EXIT charts.";
 	
 	this->opt_args["sig-a-step"] = "sigma_a_step_value";
-	this->doc_args["sig-a-step"] = "sigma step value used in EXIT CHARTS.";
+	this->doc_args["sig-a-step"] = "sigma step value used in EXIT charts.";
 }
 
 template <typename B, typename R, typename Q>

@@ -36,7 +36,7 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	this->doc_args["disable-buf-enc"] = "disable the buffered encoding.";
 
 	this->opt_args["dec-simd-strat" ] = "simd_type";
-	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER, NONE).";
+	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
 	this->opt_args["dec-map"        ] = "map_type";
 	this->doc_args["dec-map"        ] = "the MAP implementation for the nodes (ex: MAX, MAXS, MAXL).";
 }

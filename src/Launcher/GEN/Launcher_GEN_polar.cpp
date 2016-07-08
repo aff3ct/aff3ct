@@ -37,11 +37,11 @@ void Launcher_GEN_polar<B,R,Q>
 	this->req_args["K"              ] = "n_bits";
 	this->doc_args["K"              ] = "useful number of bit transmitted (only information bits).";
 	this->req_args["N"              ] = "n_bits";
-	this->doc_args["N"              ] = "total number of bit transmitted (includes frozen bits).";
+	this->doc_args["N"              ] = "total number of bit transmitted (includes parity bits).";
 	this->req_args["snr"            ] = "snr_value";
 	this->doc_args["snr"            ] = "signal/noise ratio for the frozen bits generation.";
 	this->req_args["code-type"      ] = "code-type";
-	this->doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC).";
+	this->doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
 
 	this->opt_args["simu-type"      ] = "name";
 	this->doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";

@@ -52,13 +52,13 @@ void Launcher<B,R,Q>
 	req_args["K"              ] = "n_bits";
 	doc_args["K"              ] = "useful number of bit transmitted (only information bits).";
 	req_args["N"              ] = "n_bits";
-	doc_args["N"              ] = "total number of bit transmitted (includes frozen bits).";
+	doc_args["N"              ] = "total number of bit transmitted (includes parity bits).";
 	req_args["snr-min"        ] = "snr_min_value";
 	doc_args["snr-min"        ] = "minimal signal/noise ratio to simulate.";
 	req_args["snr-max"        ] = "snr_max_value";
 	doc_args["snr-max"        ] = "maximal signal/noise ratio to simulate.";
 	req_args["code-type"      ] = "code-type";
-	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC).";
+	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
 
 	opt_args["simu-type"      ] = "name";
 	doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
@@ -77,11 +77,11 @@ void Launcher<B,R,Q>
 	opt_args["n-threads"      ] = "n_threads";
 	doc_args["n-threads"      ] = "enable multi-threaded mode and specify the number of threads.";
 	opt_args["code-gen-method"] = "type";
-	doc_args["code-gen-method"] = "method used to generate the codewords (RAND, LCG, AZCW).";
+	doc_args["code-gen-method"] = "method used to generate the codewords (RAND, RAND_FAST, AZCW).";
 	opt_args["domain"         ] = "LR_or_LLR";
 	doc_args["domain"         ] = "choose the domain in which you want to compute (LR or LLR).";
 
-	std::string chan_avail = "ex: AWGN";
+	std::string chan_avail = "ex: AWGN, AWGN_FAST";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
 #endif 
