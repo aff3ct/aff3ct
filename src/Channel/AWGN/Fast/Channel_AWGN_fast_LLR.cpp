@@ -69,30 +69,25 @@ void Channel_AWGN_fast_LLR<R>
 	const auto twopi = (R)(2.0 * 3.14159265358979323846);
 
 	// SIMD version of the Box Muller method in the polar form
-	const mipp::Reg<R> r_sf       = scaling_factor;
-	const mipp::Reg<R> r_sigma    = sigma;
-	const mipp::Reg<R> r_twopi    = twopi;
-	const mipp::Reg<R> r_minustwo = -2.0;
-
 	const auto loop_size = (int)Y_N.size();
 	const auto vec_loop_size = (int)((loop_size / mipp::nElReg<R>()) * mipp::nElReg<R>());
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2) 
 	{
-		const auto r_u1 = get_random_fast();
-		const auto r_u2 = get_random_fast();
+		const auto u1 = get_random_fast();
+		const auto u2 = get_random_fast();
 
-		const auto r_radius = mipp::sqrt(r_minustwo * mipp::log(r_u1)) * r_sigma;
-		const auto r_theta  = r_twopi * r_u2;
+		const auto radius = mipp::sqrt(mipp::log(u1) * (R)-2.0) * sigma;
+		const auto theta  = u2 * twopi;
 
-		mipp::Reg<R> r_sintheta, r_costheta;
-		mipp::sincos(r_theta, r_sintheta, r_costheta);
+		mipp::Reg<R> sintheta, costheta;
+		mipp::sincos(theta, sintheta, costheta);
 
 		// fmadd(a, b, c) = a * b + c
-		auto r_awgn1 = mipp::fmadd(r_radius, r_costheta, mipp::Reg<R>(&X_N[i                    ])) * r_sf;
-		auto r_awgn2 = mipp::fmadd(r_radius, r_sintheta, mipp::Reg<R>(&X_N[i + mipp::nElReg<R>()])) * r_sf;
+		auto awgn1 = mipp::fmadd(radius, costheta, mipp::Reg<R>(&X_N[i                    ])) * scaling_factor;
+		auto awgn2 = mipp::fmadd(radius, sintheta, mipp::Reg<R>(&X_N[i + mipp::nElReg<R>()])) * scaling_factor;
 
-		r_awgn1.store(&Y_N[i                    ]);
-		r_awgn2.store(&Y_N[i + mipp::nElReg<R>()]);
+		awgn1.store(&Y_N[i                    ]);
+		awgn2.store(&Y_N[i + mipp::nElReg<R>()]);
 	}
 
 	// seq version of the Box Muller method in the polar form
@@ -102,8 +97,8 @@ void Channel_AWGN_fast_LLR<R>
 		const auto u1 = get_random();
 		const auto u2 = get_random();
 
-		const auto radius = (R)std::sqrt((R)-2.0 * std::log(u1)) * sigma;
-		const auto theta  = twopi * u2;
+		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * sigma;
+		const auto theta  = u2 * twopi;
 
 		const auto sintheta = std::sin(theta);
 		const auto costheta = std::cos(theta);
