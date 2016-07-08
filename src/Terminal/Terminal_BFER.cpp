@@ -118,11 +118,12 @@ void Terminal_BFER<B,R>
 	str_ber << setprecision(2) << scientific << setw(9) << ber;
 	str_fer << setprecision(2) << scientific << setw(9) << fer;
 
-	auto l1 = 99999999;  // limit 1
-	auto l2 = 99999.99f; // limit 2
+	unsigned long long l0 = 99999999;  // limit 0
+	auto               l1 = 99999999;  // limit 1
+	auto               l2 = 99999.99f; // limit 2
 	if (Error_analyzer<B,R>::is_interrupt()) stream << "\rx "; else stream << "\r  ";
 	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                             snr << " | ";
-	stream << setprecision((fra > l1) ? 2 : 0) << ((fra > l1) ? scientific : fixed) << setw(9) << ((fra > l1) ? (float)fra : fra) << " | ";
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << " | ";
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << " | ";
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << " | ";
 	stream <<                                                                                                       str_ber.str() << " | ";
@@ -136,11 +137,12 @@ void Terminal_BFER<B,R>
 	str_ber << setprecision(2) << scientific << setw(8) << ber;
 	str_fer << setprecision(2) << scientific << setw(8) << fer;
 
-	auto l1 = 99999999;  // limit 1
-	auto l2 = 99999.99f; // limit 2
+	unsigned long long l0 = 99999999;  // limit 0
+	auto               l1 = 99999999;  // limit 1
+	auto               l2 = 99999.99f; // limit 2
 	if (Error_analyzer<B,R>::is_interrupt()) stream << "\rx "; else stream << "\r  ";
 	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                             snr << " | ";
-	stream << setprecision((fra > l1) ? 2 : 0) << ((fra > l1) ? scientific : fixed) << setw(8) << ((fra > l1) ? (float)fra : fra) << " | ";
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << " | ";
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << " | ";
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << " | ";
 	stream <<                                                                                                       str_ber.str() << " | ";
