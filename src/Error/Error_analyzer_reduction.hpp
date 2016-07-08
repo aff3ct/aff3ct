@@ -17,7 +17,7 @@ private:
 	std::vector<Error_analyzer<B,R>*>& error_analyzers;
 	std::vector<int> prev_n_be;
 	std::vector<int> prev_n_fe;
-	std::vector<float> prev_n_analyzed_frames;
+	std::vector<unsigned long long> prev_n_analyzed_frames;
 
 	std::mutex mutex_total_frame_errors;
 

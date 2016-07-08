@@ -10,9 +10,9 @@ Error_analyzer_reduction<B,R>
   prev_n_fe(error_analyzers.size()),
   prev_n_analyzed_frames(error_analyzers.size())
 {
-	std::fill(prev_n_be             .begin(), prev_n_be             .end(), 0  );
-	std::fill(prev_n_fe             .begin(), prev_n_fe             .end(), 0  );
-	std::fill(prev_n_analyzed_frames.begin(), prev_n_analyzed_frames.end(), 0.f);
+	std::fill(prev_n_be             .begin(), prev_n_be             .end(), 0);
+	std::fill(prev_n_fe             .begin(), prev_n_fe             .end(), 0);
+	std::fill(prev_n_analyzed_frames.begin(), prev_n_analyzed_frames.end(), 0);
 
 	this->reduce();
 }

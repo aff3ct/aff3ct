@@ -25,7 +25,7 @@ Error_analyzer<B,R>
   n_frames(n_frames),
   n_bit_errors(0),
   n_frame_errors(0),
-  n_analyzed_frames(0.f)
+  n_analyzed_frames(0)
 {
 	assert(n_frames > 0);
 
@@ -47,7 +47,7 @@ template <typename B, typename R>
 void Error_analyzer<B,R>
 ::update_n_analyzed_frames()
 {
-	n_analyzed_frames += (float)n_frames;
+	n_analyzed_frames += (unsigned long long)n_frames;
 }
 
 template <typename B, typename R>
@@ -84,7 +84,7 @@ int Error_analyzer<B,R>
 }
 
 template <typename B, typename R>
-float Error_analyzer<B,R>
+unsigned long long Error_analyzer<B,R>
 ::get_n_analyzed_frames() const
 {
 	return n_analyzed_frames;
@@ -108,7 +108,7 @@ template <typename B, typename R>
 R Error_analyzer<B,R>
 ::get_fer_value() const
 {
-	auto t_fer = (R)get_n_fe() / get_n_analyzed_frames();
+	auto t_fer = (R)get_n_fe() / (R)get_n_analyzed_frames();
 	return t_fer;
 }
 
@@ -116,7 +116,7 @@ template <typename B, typename R>
 R Error_analyzer<B,R>
 ::get_ber_value() const
 {
-	auto t_ber = (R)get_n_be() / get_n_analyzed_frames() / K;
+	auto t_ber = (R)get_n_be() / (R)get_n_analyzed_frames() / (R)K;
 	return t_ber;
 }
 
