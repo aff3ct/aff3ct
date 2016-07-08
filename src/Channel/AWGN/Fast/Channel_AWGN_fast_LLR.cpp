@@ -13,6 +13,9 @@ Channel_AWGN_fast_LLR<R>
   mt19937(seed),
   mt19937_simd()
 {
+	assert(scaling_factor != 0);
+	assert(sigma          != 0);
+
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
 		seeds[i] = mt19937.rand();
@@ -61,9 +64,7 @@ template <typename R>
 void Channel_AWGN_fast_LLR<R>
 ::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size()     == Y_N.size());
-	assert(scaling_factor != 0         );
-	assert(sigma          != 0         );
+	assert(X_N.size() == Y_N.size());
 
 	const auto twopi = (R)(2.0 * 3.14159265358979323846);
 

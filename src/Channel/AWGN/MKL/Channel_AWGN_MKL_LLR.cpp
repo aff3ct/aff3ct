@@ -14,8 +14,13 @@ Channel_AWGN_MKL_LLR<R>
 : sigma(sigma),
   scaling_factor(scaling_factor)
 {
+	assert(scaling_factor != 0);
+	assert(sigma          != 0);
+
 	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
 	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
+
+	assert(stream_state != nullptr);
 }
 
 template <typename R>
@@ -29,9 +34,7 @@ template <typename R>
 void Channel_AWGN_MKL_LLR<R>
 ::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size()   == Y_N.size());
-	assert(sigma        != 0         );
-	assert(stream_state != nullptr   );
+	assert(X_N.size() == Y_N.size());
 
 	std::cerr << bold_red("(EE) Adding white Gaussian noise is impossible on this type of data.") << std::endl;
 	exit(-1);
@@ -41,9 +44,7 @@ template <>
 void Channel_AWGN_MKL_LLR<float>
 ::add_noise(const mipp::vector<float>& X_N, mipp::vector<float>& Y_N)
 {
-	assert(X_N.size()   == Y_N.size());
-	assert(sigma        != 0         );
-	assert(stream_state != nullptr   );
+	assert(X_N.size() == Y_N.size());
 
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
@@ -69,9 +70,7 @@ template <>
 void Channel_AWGN_MKL_LLR<double>
 ::add_noise(const mipp::vector<double>& X_N, mipp::vector<double>& Y_N)
 {
-	assert(X_N.size()   == Y_N.size());
-	assert(sigma        != 0         );
-	assert(stream_state != nullptr   );
+	assert(X_N.size() == Y_N.size());
 
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,

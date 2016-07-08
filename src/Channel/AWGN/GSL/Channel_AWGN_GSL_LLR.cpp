@@ -13,7 +13,12 @@ Channel_AWGN_GSL_LLR<R>
   scaling_factor((R)scaling_factor),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
+	assert(scaling_factor != 0);
+	assert(sigma          != 0);
+	
 	gsl_rng_set(rng, seed);
+
+	assert(rng != nullptr);
 }
 
 template <typename R>
@@ -28,8 +33,6 @@ void Channel_AWGN_GSL_LLR<R>
 ::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
 	assert(X_N.size() == Y_N.size());
-	assert(sigma      != 0         );
-	assert(rng        != nullptr   );
 
 	for (unsigned i = 0; i < X_N.size(); i++)
 	{

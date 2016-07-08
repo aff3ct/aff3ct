@@ -12,6 +12,9 @@ Channel_AWGN_std_LLR<R>
   rd_engine(this->rd()),
   normal_dist(0, sigma)
 {
+	assert(scaling_factor != 0);
+	assert(sigma          != 0);
+
 	rd_engine.seed(seed);
 }
 
@@ -25,9 +28,7 @@ template <typename R>
 void Channel_AWGN_std_LLR<R>
 ::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size()     == Y_N.size());
-	assert(scaling_factor != 0         );
-	assert(sigma          != 0         );
+	assert(X_N.size() == Y_N.size());
 
 	for (unsigned i = 0; i < X_N.size(); i++)
 		Y_N[i] = (X_N[i] + this->normal_dist(this->rd_engine)) * scaling_factor;
