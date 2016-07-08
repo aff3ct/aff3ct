@@ -32,6 +32,9 @@ inline mipp::Reg<R> linear_log_MAP_i(const mipp::Reg<R> lambda_a, const mipp::Re
 template <typename R>
 inline R log_MAP(const R& lambda_a, const R& lambda_b) __attribute__((always_inline));
 
+template <typename R>
+inline mipp::Reg<R> log_MAP_i(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b) __attribute__((always_inline));
+
 #include "decoder_RSC_functions.hxx"
 
 #endif /* DECODER_RSC_FUNCTIONS_H */
