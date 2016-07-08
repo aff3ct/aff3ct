@@ -11,6 +11,9 @@ template <typename B, typename R>
 bool Error_analyzer<B,R>::first_interrupt = true;
 
 template <typename B, typename R>
+bool Error_analyzer<B,R>::over = false;
+
+template <typename B, typename R>
 std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> Error_analyzer<B,R>::t_last_interrupt;
 
 template <typename B, typename R>
@@ -156,6 +159,13 @@ bool Error_analyzer<B,R>
 }
 
 template <typename B, typename R>
+bool Error_analyzer<B,R>
+::is_over()
+{
+	return Error_analyzer<B,R>::over;
+}
+
+template <typename B, typename R>
 void Error_analyzer<B,R>
 ::signal_interrupt_handler(int signal)
 {
@@ -164,10 +174,7 @@ void Error_analyzer<B,R>
 	{
 		Error_analyzer<B,R>::d_delta_interrupt = t_now - Error_analyzer<B,R>::t_last_interrupt;
 		if (Error_analyzer<B,R>::d_delta_interrupt < std::chrono::milliseconds(500))
-		{
-			std::clog << "\r# Simulation killed." << std::endl;
-			std::exit(0);
-		}
+			Error_analyzer<B,R>::over = true;
 	}
 	Error_analyzer<B,R>::t_last_interrupt  = t_now;
 

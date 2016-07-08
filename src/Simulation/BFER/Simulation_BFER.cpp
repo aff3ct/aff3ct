@@ -141,6 +141,10 @@ void Simulation_BFER<B,R,Q>
 
 		// release communication objects
 		release_objects();
+
+		// exit simulation (double [ctrl+c])
+		if (Error_analyzer<B,R>::is_over())
+			break;
 	}
 
 	if (simu_params.time_report && !simu_params.benchs)
