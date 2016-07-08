@@ -25,7 +25,7 @@ inline R linear_log_MAP(const R& lambda_a, const R& lambda_b)
 template <typename R>
 inline mipp::Reg<R> linear_log_MAP_i(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b)
 {
-	mipp::Reg<R> zero = 0.0, cst1 = 0.301, cst2 = 0.5;
+	mipp::Reg<R> zero = (R)0.0, cst1 = (R)0.301, cst2 = (R)0.5;
 	return mipp::max(lambda_a, lambda_b) + mipp::max(zero, (cst1 - (mipp::abs(lambda_a - lambda_b) * cst2)));
 }
 
@@ -40,6 +40,6 @@ inline R log_MAP(const R& lambda_a, const R& lambda_b)
 template <typename R>
 inline mipp::Reg<R> log_MAP_i(const mipp::Reg<R> lambda_a, const mipp::Reg<R> lambda_b)
 {
-	mipp::Reg<R> zero = 0.0, one = 1.0;
+	mipp::Reg<R> zero = (R)0.0, one = (R)1.0;
 	return mipp::max(lambda_a, lambda_b) + mipp::log(one + mipp::exp(zero - mipp::abs(lambda_a - lambda_b)));
 }
