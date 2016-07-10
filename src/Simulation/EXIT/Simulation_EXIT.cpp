@@ -412,7 +412,7 @@ template <typename B, typename R, typename Q>
 Modulator<B,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R>::build();
+	return Factory_modulator<B,R>::build(chan_params);
 }
 
 template <typename B, typename R, typename Q>

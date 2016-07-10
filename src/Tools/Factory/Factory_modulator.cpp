@@ -1,15 +1,19 @@
-#include "../../Modulator/Modulator_BPSK.hpp"
+#include "../../Modulator/BPSK/Modulator_BPSK.hpp"
+#include "../../Modulator/BPSK/Modulator_BPSK_fast.hpp"
 
 #include "Factory_modulator.hpp"
 
 template <typename B, typename R>
 Modulator<B,R>* Factory_modulator<B,R>
-::build()
+::build(const t_channel_param &chan_params)
 {
 	Modulator<B,R> *modulator = nullptr;
 
 	// build the modulator
-	modulator = new Modulator_BPSK<B,R>();
+	if (chan_params.modulation_type == "BPSK")
+		modulator = new Modulator_BPSK<B,R>();
+	else if (chan_params.modulation_type == "BPSK_FAST")
+		modulator = new Modulator_BPSK_fast<B,R>();
 
 	return modulator;
 }

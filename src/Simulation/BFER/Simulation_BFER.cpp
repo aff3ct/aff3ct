@@ -815,7 +815,7 @@ template <typename B, typename R, typename Q>
 Modulator<B,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R>::build();
+	return Factory_modulator<B,R>::build(chan_params);
 }
 
 template <typename B, typename R, typename Q>

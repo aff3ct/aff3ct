@@ -8,7 +8,7 @@
 template <typename B, typename R>
 struct Factory_modulator
 {
-	static Modulator<B,R>* build();
+	static Modulator<B,R>* build(const t_channel_param &chan_params);
 };
 
 #endif /* FACTORY_MODULATOR_HPP */

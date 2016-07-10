@@ -2,9 +2,9 @@
 #define MODULATOR_BPSK_HPP_
 
 #include <vector>
-#include "../Tools/MIPP/mipp.h"
+#include "../../Tools/MIPP/mipp.h"
 
-#include "Modulator.hpp"
+#include "../Modulator.hpp"
 
 template <typename B, typename R>
 class Modulator_BPSK : public Modulator<B,R>

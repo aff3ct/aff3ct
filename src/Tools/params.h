@@ -62,6 +62,7 @@ struct t_channel_param
 	std::string domain;
 	std::string type;
 	std::string quantizer_type;
+	std::string modulation_type;
 	bool        estimator;
 };
 
