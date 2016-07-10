@@ -705,50 +705,50 @@ void Simulation_BFER<B,R,Q>
 
 	stream << "#" << std::endl;
 	stream << "# " << bold_underlined("Time report:") << std::endl;
-	stream << "# " << bold           ("* Source") << "      : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Source") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << sourc_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << sourc_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* CRC") << "         : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* CRC") << "         : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << crc_sec       << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << crc_pc       << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Encoder") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Encoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << encod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << encod_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Puncturer") << "   : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Puncturer") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << punct_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << punct_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Modulator") << "   : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Modulator") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << modul_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << modul_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Channel") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Channel") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << chann_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << chann_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << demod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << quant_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << quant_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << depun_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << depun_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_tot_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_tot_pc << "%)" 
 	       << std::endl;
-	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << load_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << load_pc      << "%)" 
 	       << std::endl;
-	stream << "# " << bold_italic    ("  - decode") << "    : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold_italic    ("  - decode") << "    : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << store_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << store_pc     << "%)" 
 	       << std::endl;
-	stream << "# " << bold           ("* Check errors") << ": " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* Check errors") << ": " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << check_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc     << "%)" 
 	       << std::endl;
 	stream << "#   ----------------------------------" << std::endl;
-	stream << "# " << bold           ("* TOTAL") << "       : " << std::setw(7) << std::fixed << std::setprecision(3) 
+	stream << "# " << bold           ("* TOTAL") << "       : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << total_sec     << " sec" 
 	       << std::endl;
 	stream << "#" << std::endl;
