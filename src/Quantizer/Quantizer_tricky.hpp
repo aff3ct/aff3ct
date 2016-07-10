@@ -22,7 +22,7 @@ public:
 	Quantizer_tricky(const float min_max, const short& saturation_pos, const R& sigma);
 	virtual ~Quantizer_tricky();
 
-	void process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
+	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 
 };
 

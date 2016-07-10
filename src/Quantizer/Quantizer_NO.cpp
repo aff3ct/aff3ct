@@ -18,13 +18,29 @@ Quantizer_NO<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_NO<R,Q>
-::process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 
 	const auto loop_size = Y_N1.size();
 	for (unsigned i = 0; i < loop_size; i++)
 		Y_N2[i] = (Q)Y_N1[i];
+}
+
+template<>
+void Quantizer_NO<float,float>
+::process(const mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
+{
+	assert(Y_N1.size() == Y_N2.size());
+	Y_N2 = Y_N1;	
+}
+
+template<>
+void Quantizer_NO<double,double>
+::process(const mipp::vector<double>& Y_N1, mipp::vector<double>& Y_N2)
+{
+	assert(Y_N1.size() == Y_N2.size());
+	Y_N2 = Y_N1;	
 }
 
 // ==================================================================================== explicit template instantiation 

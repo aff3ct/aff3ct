@@ -86,7 +86,7 @@ Quantizer_tricky<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_tricky<R,Q>
-::process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 

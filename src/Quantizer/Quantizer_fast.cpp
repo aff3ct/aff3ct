@@ -63,7 +63,7 @@ Quantizer_fast<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_fast<R,Q>
-::process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	std::cerr << bold_red("(EE) Quantizer_fast only support float to short or float to signed char.") << std::endl;
 	exit(EXIT_FAILURE);
@@ -71,7 +71,7 @@ void Quantizer_fast<R,Q>
 
 template<>
 void Quantizer_fast<float,short>
-::process(mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
+::process(const mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 
@@ -99,7 +99,7 @@ void Quantizer_fast<float,short>
 
 template<>
 void Quantizer_fast<float,signed char>
-::process(mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
+::process(const mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 
