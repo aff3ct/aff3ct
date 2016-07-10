@@ -85,7 +85,7 @@ void Modulator_BPSK_fast<signed char, float>
 
 		auto x1b_low_low   = x1b_low .low ().cvt<int>();
 		auto x1b_low_high  = x1b_low .high().cvt<int>();
-		auto x1b_high_low  = x1b_high.low() .cvt<int>();
+		auto x1b_high_low  = x1b_high.low ().cvt<int>();
 		auto x1b_high_high = x1b_high.high().cvt<int>();
 
 		auto x1r_low_low   = x1b_low_low  .cvt<float>();
