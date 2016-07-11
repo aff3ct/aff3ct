@@ -30,7 +30,7 @@ Launcher<B,R,Q>
 	code_params.generation_method   = "RAND";
 	chan_params.domain              = "LLR";
 	chan_params.type                = "AWGN";
-	mod_params.mod_type             = "BPSK"; // RT
+	mod_params.type                 = "BPSK"; // RT
 	mod_params.bits_per_symbol      = 1;      // RT
 	this->chan_params.quant_min_max = 0.f;
 	if (typeid(R) == typeid(double))
@@ -161,13 +161,13 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg("code-gen-method")) code_params.generation_method = ar.get_arg("code-gen-method");
 	if(ar.exist_arg("domain"         )) chan_params.domain            = ar.get_arg("domain");
 	if(ar.exist_arg("channel-type"   )) chan_params.type              = ar.get_arg("channel-type");
-	if(ar.exist_arg("mod-type"       )) chan_params.modulation_type   = ar.get_arg("mod-type");
+	if(ar.exist_arg("mod-type"       )) mod_params.type               = ar.get_arg("mod-type");
 	if(ar.exist_arg("disable-chan-es")) chan_params.estimator         = false;
 	if(ar.exist_arg("dec-algo"       )) deco_params.algo              = ar.get_arg("dec-algo");
 	if(ar.exist_arg("dec-implem"     )) deco_params.implem            = ar.get_arg("dec-implem");
 
-	if(ar.exist_arg("mod-type"      )) mod_params.mod_type              = ar.get_arg("mod-type");           //RT
-	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol       = std::stof(ar.get_arg("mod-bps")); //RT
+	if(ar.exist_arg("mod-type"      )) mod_params.type                = ar.get_arg("mod-type");           //RT
+	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol     = std::stof(ar.get_arg("mod-bps")); //RT
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
@@ -245,7 +245,7 @@ void Launcher<B,R,Q>
 	std::clog << "# " << bold("* SNR step                      ") << " = " << simu_params.snr_step  << " dB" << std::endl;
 	std::clog << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
 	std::clog << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
-	std::clog << "# " << bold("* Modulation type               ") << " = " << chan_params.modulation_type    << std::endl;
+	std::clog << "# " << bold("* Modulation type               ") << " = " << mod_params.type                << std::endl;
 	std::clog << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
 	std::clog << "# " << bold("* Channel estimator             ") << " = " << chan_estimator                 << std::endl;
 	std::clog << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;

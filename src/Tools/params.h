@@ -49,8 +49,8 @@ struct t_code_param
 
 struct t_mod_param
 {
-	unsigned int bits_per_symbol;   // Bits per symbol
-	std::string  mod_type;          // Modulation type (PAM, QAM, ...)
+	unsigned int bits_per_symbol; // Bits per symbol
+	std::string  type;            // Modulation type (PAM, QAM, ...)
 };
 
 
@@ -69,7 +69,6 @@ struct t_channel_param
 	std::string domain;
 	std::string type;
 	std::string quantizer_type;
-	std::string modulation_type;
 	bool        estimator;
 };
 
