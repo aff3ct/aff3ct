@@ -10,9 +10,9 @@ Modulator<B,R>* Factory_modulator<B,R>
 	Modulator<B,R> *modulator = nullptr;
 
 	// build the modulator
-	if (mod_params.mod_type == "BPSK")
+	if (mod_params.type == "BPSK")
 		modulator = new Modulator_BPSK<B,R>();
-	else if (mod_params.mod_type == "BPSK_FAST")
+	else if (mod_params.type == "BPSK_FAST")
 		modulator = new Modulator_BPSK_fast<B,R>();
 
 	return modulator;
