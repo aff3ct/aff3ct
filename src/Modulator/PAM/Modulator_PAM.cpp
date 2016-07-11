@@ -90,8 +90,8 @@ void Modulator_PAM<B,R>
 
 	for (unsigned n = 0; n < size; n++)// Boucle sur les LLRs
 	{
-		L0 = -INFINITY;
-		L1 = -INFINITY;
+		L0 = -100.0;//-INFINITY;
+		L1 = -100.0; //-INFINITY;
 		b = n % this->bits_per_symbol; // position du bit
 		k = n / this->bits_per_symbol; // Position du symbole
 

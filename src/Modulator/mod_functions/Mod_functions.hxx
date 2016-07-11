@@ -37,3 +37,10 @@ inline R max_star(const R x,const R y)
 }
 
 
+template <typename R>
+inline R max_star_fast(const R& lambda_a, const R& lambda_b)
+{
+	// the two next statements are equivalent !
+	// return std::max(lambda_a, lambda_b) + std::log((R)1 + std::exp(-std::abs(lambda_a - lambda_b)));
+	return std::max(lambda_a, lambda_b) + std::log1p(std::exp(-std::abs(lambda_a - lambda_b)));
+}
