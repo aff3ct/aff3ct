@@ -5,14 +5,14 @@
 
 template <typename B, typename R>
 Modulator<B,R>* Factory_modulator<B,R>
-::build(const t_channel_param &chan_params)
+::build(const t_mod_param &mod_params, const R sigma)
 {
 	Modulator<B,R> *modulator = nullptr;
 
 	// build the modulator
-	if (chan_params.modulation_type == "BPSK")
+	if (mod_params.mod_type == "BPSK")
 		modulator = new Modulator_BPSK<B,R>();
-	else if (chan_params.modulation_type == "BPSK_FAST")
+	else if (mod_params.mod_type == "BPSK_FAST")
 		modulator = new Modulator_BPSK_fast<B,R>();
 
 	return modulator;

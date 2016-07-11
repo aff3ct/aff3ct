@@ -30,8 +30,10 @@ Launcher<B,R,Q>
 	code_params.generation_method   = "RAND";
 	chan_params.domain              = "LLR";
 	chan_params.type                = "AWGN";
-	chan_params.modulation_type     = "BPSK";
-	chan_params.quant_min_max = 0.f;
+	mod_params.mod_type             = "BPSK"; // RT
+	mod_params.bits_per_symbol      = 1;      // RT
+
+	this->chan_params.quant_min_max = 0.f;
 	if (typeid(R) == typeid(double))
 		chan_params.quantizer_type  = "STD";
 	else
@@ -61,6 +63,12 @@ void Launcher<B,R,Q>
 	doc_args["snr-max"        ] = "maximal signal/noise ratio to simulate.";
 	req_args["code-type"      ] = "code-type";
 	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
+
+	opt_args["mod-type"      ] = "modulation name";                                      //RT
+	doc_args["mod-type"      ] = "select the type of modulation (default is BPSK).";     //RT
+	opt_args["mod-bps"       ] = "modulation number of bits per symbol";                 //RT
+	doc_args["mod-bps"       ] = "select the number of bits per symbol (default is 1)."; //RT
+
 
 	opt_args["simu-type"      ] = "name";
 	doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
@@ -158,6 +166,9 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg("disable-chan-es")) chan_params.estimator         = false;
 	if(ar.exist_arg("dec-algo"       )) deco_params.algo              = ar.get_arg("dec-algo");
 	if(ar.exist_arg("dec-implem"     )) deco_params.implem            = ar.get_arg("dec-implem");
+
+	if(ar.exist_arg("mod-type"      )) mod_params.mod_type              = ar.get_arg("mod-type");           //RT
+	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol       = std::stof(ar.get_arg("mod-bps")); //RT
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
