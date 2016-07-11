@@ -124,7 +124,7 @@ void Simulation_BFER<B,R,Q>
 		t_snr = std::chrono::steady_clock::now();
 
 		code_rate = (float)(code_params.K / (float)(code_params.N + code_params.tail_length));
-		sigma     = 1.f / sqrt(2.f * code_rate * pow(10.f, (snr / 10.f)));
+		sigma     = 1.f / sqrt(2.f * code_rate * (float)mod_params.bits_per_symbol * pow(10.f, (snr / 10.f)));
 
 		snr_precompute();
 
