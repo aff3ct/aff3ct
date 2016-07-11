@@ -69,6 +69,7 @@ struct t_channel_param
 	std::string domain;
 	std::string type;
 	std::string quantizer_type;
+	std::string modulation_type;
 	bool        estimator;
 };
 
@@ -78,6 +79,7 @@ struct t_decoder_param
 	std::string implem;
 	std::string simd_strategy;
 	std::string scaling_factor;
+	std::string map;
 	int         max_iter;
 	int         L;
 };

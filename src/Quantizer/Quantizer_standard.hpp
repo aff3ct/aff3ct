@@ -20,10 +20,7 @@ public:
 	Quantizer_standard(const short& fixed_point_pos, const short& saturation_pos);
 	virtual ~Quantizer_standard();
 
-	void process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
-
-private:
-	inline R saturate(R val) const;
+	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
 
 #endif /* QUANTIZER_STANDARD_HPP_ */

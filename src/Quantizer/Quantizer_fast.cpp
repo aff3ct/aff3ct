@@ -3,9 +3,10 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Quantizer_fast.hpp"
-
+#include "../Decoder/decoder_functions.h"
 #include "../Tools/bash_tools.h"
+
+#include "Quantizer_fast.hpp"
 
 template <typename R, typename Q>
 Quantizer_fast<R,Q>
@@ -21,22 +22,12 @@ Quantizer_fast<R,Q>
 template <>
 Quantizer_fast<float,float>
 ::Quantizer_fast(const short& fixed_point_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_fast<double,double>
 ::Quantizer_fast(const short& fixed_point_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <typename R, typename Q>
 Quantizer_fast<R,Q>
@@ -56,22 +47,12 @@ Quantizer_fast<R,Q>
 template <>
 Quantizer_fast<float, float>
 ::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_fast<double, double>
 ::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 
 template <typename R, typename Q>
@@ -82,7 +63,7 @@ Quantizer_fast<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_fast<R,Q>
-::process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	std::cerr << bold_red("(EE) Quantizer_fast only support float to short or float to signed char.") << std::endl;
 	exit(EXIT_FAILURE);
@@ -90,7 +71,7 @@ void Quantizer_fast<R,Q>
 
 template<>
 void Quantizer_fast<float,short>
-::process(mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
+::process(const mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 
@@ -113,12 +94,12 @@ void Quantizer_fast<float,short>
 	}
 
 	for (unsigned i = vectorized_size; i < size; i++)
-		Y_N2[i] = (short)saturate(std::round(factor * Y_N1[i]));
+		Y_N2[i] = (short)saturate((float)std::round((float)factor * Y_N1[i]), (float)val_min, (float)val_max);
 }
 
 template<>
 void Quantizer_fast<float,signed char>
-::process(mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
+::process(const mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 
@@ -148,32 +129,7 @@ void Quantizer_fast<float,signed char>
 	}
 
 	for (unsigned i = vectorized_size; i < size; i++)
-		Y_N2[i] = (signed char)saturate(std::round(factor * Y_N1[i]));
-}
-
-template <>
-void Quantizer_fast<float,float>
-::process(mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	std::copy(Y_N1.begin(), Y_N1.end(), Y_N2.begin());
-}
-
-template <>
-void Quantizer_fast<double,double>
-::process(mipp::vector<double>& Y_N1, mipp::vector<double>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	std::copy(Y_N1.begin(), Y_N1.end(), Y_N2.begin());
-}
-
-template <typename R, typename Q>
-inline R Quantizer_fast<R,Q>
-::saturate(R val) const
-{
-	return std::min(std::max(val, (R)val_min), (R)val_max);
+		Y_N2[i] = (signed char)saturate((float)std::round((float)factor * Y_N1[i]), (float)val_min, (float)val_max);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -11,6 +11,9 @@ template <typename T> inline Reg<T> min(const Reg<T> v1, const Reg<T> v2);
 template <typename T> inline Reg<T> max(const Reg<T> v1, const Reg<T> v2);
 
 template <typename T>
+class Reg_2;
+
+template <typename T>
 class Regx2;
 
 template <typename T>
@@ -126,6 +129,8 @@ public:
 	inline void     loadu        (const T* data  )                        { r = mipp::loadu<T>(data);                     }
 	inline void     store        (T* data        )                  const { mipp::store<T>(data, r);                      }
 	inline void     storeu       (T* data        )                  const { mipp::storeu<T>(data, r);                     }
+	inline Reg_2<T> low          (               )                  const { return mipp::low <T>(r);                      }
+	inline Reg_2<T> high         (               )                  const { return mipp::high<T>(r);                      }
 #else
 	inline void     set0         (               )                        { r = 0;                                        }
 	inline void     set1         (const T val    )                        { r = val;                                      }
@@ -133,6 +138,8 @@ public:
 	inline void     loadu        (const T* data  )                        { r = data[0];                                  }
 	inline void     store        (T* data        )                  const { data[0] = r;                                  }
 	inline void     storeu       (T* data        )                  const { data[0] = r;                                  }
+	inline Reg_2<T> low          (               )                  const { return r;                                     }
+	inline Reg_2<T> high         (               )                  const { return r;                                     }
 #endif
 
 #ifndef MIPP_NO_INTRINSICS
@@ -226,11 +233,11 @@ public:
 	inline Reg<T>   abs          ()                                 const { return std::abs<T>(r);                        }
 	inline Reg<T>   sqrt         ()                                 const { return std::sqrt<T>(r);                       }
 	inline Reg<T>   rsqrt        ()                                 const { return 1 / std::sqrt<T>(r);                   }
-	inline Reg<T>   log          ()                                 const { return std::log<T>(r);                        }
-	inline Reg<T>   exp          ()                                 const { return std::exp<T>(r);                        }
-	inline Reg<T>   sin          ()                                 const { return std::sin<T>(r);                        }
-	inline Reg<T>   cos          ()                                 const { return std::cos<T>(r);                        }
-	inline void     sincos       (      Reg<T> &s,       Reg<T> &c) const { s = std::sin<T>(r); c = std::cos<T>(r);       }
+	inline Reg<T>   log          ()                                 const { return std::log(r);                           }
+	inline Reg<T>   exp          ()                                 const { return std::exp(r);                           }
+	inline Reg<T>   sin          ()                                 const { return std::sin(r);                           }
+	inline Reg<T>   cos          ()                                 const { return std::cos(r);                           }
+	inline void     sincos       (      Reg<T> &s,       Reg<T> &c) const { s = std::sin(r); c = std::cos(r);             }
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
@@ -308,6 +315,31 @@ public:
 	inline Reg<T> hdiv() const { return *this; }
 	inline Reg<T> hmin() const { return *this; }
 	inline Reg<T> hmax() const { return *this; }
+#endif
+};
+
+template <typename T>
+class Reg_2
+{
+public:
+#ifndef MIPP_NO_INTRINSICS
+	reg_2 r;
+#else
+	T r;
+#endif
+
+#ifndef MIPP_NO_INTRINSICS
+	Reg_2(const reg_2 r) : r(r)   {}
+#else
+	Reg_2(const T val  ) : r(val) {}
+#endif
+
+	virtual ~Reg_2() {}
+
+#ifndef MIPP_NO_INTRINSICS
+	template <typename T2> inline Reg<T2> cvt () const { return mipp::cvt<T,T2>(r); }
+#else
+	template <typename T2> inline Reg<T2> cvt () const { return (T2)r;              }
 #endif
 };
 
@@ -407,6 +439,11 @@ template <typename T> inline Reg<T>   hmax         (const Reg<T> v)             
 
 template <typename T1, typename T2> 
 inline Reg<T2> cvt(const Reg<T1> v) {
+	return v.template cvt<T2>();
+}
+
+template <typename T1, typename T2> 
+inline Reg<T2> cvt(const Reg_2<T1> v) {
 	return v.template cvt<T2>();
 }
 

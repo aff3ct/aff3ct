@@ -30,7 +30,7 @@ Channel_AWGN_fast_LLR<R>
 
 template <typename R>
 mipp::Reg<R> Channel_AWGN_fast_LLR<R>
-::get_random_fast()
+::get_random_simd()
 {
 	std::cerr << bold_red("(EE) The MT19937 random generator does not support this type.") << std::endl;
 	std::exit(-1);
@@ -46,7 +46,7 @@ R Channel_AWGN_fast_LLR<R>
 
 template <>
 mipp::Reg<float> Channel_AWGN_fast_LLR<float>
-::get_random_fast()
+::get_random_simd()
 {
 	// return a vector of numbers between ]0,1[
 	return mt19937_simd.randf_oo();
@@ -70,11 +70,11 @@ void Channel_AWGN_fast_LLR<R>
 
 	// SIMD version of the Box Muller method in the polar form
 	const auto loop_size = (int)Y_N.size();
-	const auto vec_loop_size = (int)((loop_size / mipp::nElReg<R>()) * mipp::nElReg<R>());
+	const auto vec_loop_size = (int)((loop_size / (mipp::nElReg<R>() * 2)) * mipp::nElReg<R>() * 2);
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2) 
 	{
-		const auto u1 = get_random_fast();
-		const auto u2 = get_random_fast();
+		const auto u1 = get_random_simd();
+		const auto u2 = get_random_simd();
 
 		const auto radius = mipp::sqrt(mipp::log(u1) * (R)-2.0) * sigma;
 		const auto theta  = u2 * twopi;
@@ -113,7 +113,7 @@ void Channel_AWGN_fast_LLR<R>
 		const auto u1 = get_random();
 		const auto u2 = get_random();
 
-		const auto radius = (R)std::sqrt((R)-2.0 * std::log(u1)) * sigma;
+		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * sigma;
 		const auto theta  = twopi * u2;
 
 		const auto sintheta = std::sin(theta);

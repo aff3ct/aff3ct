@@ -4,7 +4,7 @@
 #include <cmath>
 #include <complex>
 
-#include "mod_functions/Mod_Functions.hpp"
+#include "../mod_functions/Mod_Functions.hpp"
 
 /*
  * Constructor / Destructor
@@ -17,7 +17,6 @@ Modulator_PAM<B,R>
   sigma(sigma),
   sqrtEs(sqrt((this->nbr_symbols*this->nbr_symbols-1)/3.0))
 {
-	assert(N % this->bits_per_symbol == 0);
 }
 
 template <typename B, typename R>
@@ -35,6 +34,7 @@ template <typename B, typename R>
 int Modulator_PAM<B,R>
 :: get_buffer_size(const int N)
 {
+	assert(N % this->bits_per_symbol == 0);
 	return N / this->bits_per_symbol;
 }
 
@@ -121,7 +121,7 @@ void Modulator_PAM<B,R>
 
 
 // ==================================================================================== explicit template instantiation 
-#include "../Tools/types.h"
+#include "../../Tools/types.h"
 #ifdef MULTI_PREC
 template class Modulator_PAM<B_8,R_8>;
 template class Modulator_PAM<B_16,R_16>;

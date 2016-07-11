@@ -1,6 +1,7 @@
 #include "../../Quantizer/Quantizer_standard.hpp"
 #include "../../Quantizer/Quantizer_fast.hpp"
 #include "../../Quantizer/Quantizer_tricky.hpp"
+#include "../../Quantizer/Quantizer_NO.hpp"
 
 #include "Factory_quantizer.hpp"
 
@@ -11,16 +12,21 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 	Quantizer<R,Q> *quantizer = nullptr;
 
 	// build the quantizer
-	if (chan_params.quantizer_type == "STD")
-		quantizer = new Quantizer_standard<R,Q>(chan_params.quant_point_pos, chan_params.quant_n_bits);
-	else if (chan_params.quantizer_type == "STD_FAST")
-		quantizer = new Quantizer_fast<R,Q>(chan_params.quant_point_pos, chan_params.quant_n_bits);
-	else if (chan_params.quantizer_type == "TRICKY")
+	if (typeid(R) == typeid(Q))
+		quantizer = new Quantizer_NO<R,Q>();
+	else
 	{
-		if (chan_params.quant_min_max == 0.f)
-			quantizer = new Quantizer_tricky<R,Q>((short)chan_params.quant_n_bits, sigma); // auto mode
-		else
-			quantizer = new Quantizer_tricky<R,Q>((R)chan_params.quant_min_max, chan_params.quant_n_bits, sigma);
+		if (chan_params.quantizer_type == "STD")
+			quantizer = new Quantizer_standard<R,Q>(chan_params.quant_point_pos, chan_params.quant_n_bits);
+		else if (chan_params.quantizer_type == "STD_FAST")
+			quantizer = new Quantizer_fast<R,Q>(chan_params.quant_point_pos, chan_params.quant_n_bits);
+		else if (chan_params.quantizer_type == "TRICKY")
+		{
+			if (chan_params.quant_min_max == 0.f)
+				quantizer = new Quantizer_tricky<R,Q>((short)chan_params.quant_n_bits, sigma); // auto mode
+			else
+				quantizer = new Quantizer_tricky<R,Q>((R)chan_params.quant_min_max, chan_params.quant_n_bits, sigma);
+		}
 	}
 
 	return quantizer;

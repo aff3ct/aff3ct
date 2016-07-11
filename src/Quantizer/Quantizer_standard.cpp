@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "../Decoder/decoder_functions.h"
+
 #include "Quantizer_standard.hpp"
 
 template <typename R, typename Q>
@@ -18,22 +20,12 @@ Quantizer_standard<R,Q>
 template <>
 Quantizer_standard<float,float>
 ::Quantizer_standard(const short& fixed_point_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_standard<double,double>
 ::Quantizer_standard(const short& fixed_point_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <typename R, typename Q>
 Quantizer_standard<R,Q>
@@ -53,22 +45,12 @@ Quantizer_standard<R,Q>
 template <>
 Quantizer_standard<float, float>
 ::Quantizer_standard(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_standard<double, double>
 ::Quantizer_standard(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(0),
-  val_min(0),
-  fixed_point_pos(0),
-  factor(0)
-{
-}
+: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <typename R, typename Q>
 Quantizer_standard<R,Q>
@@ -78,60 +60,13 @@ Quantizer_standard<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_standard<R,Q>
-::process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 
 	auto size = Y_N1.size();
 	for (unsigned i = 0; i < size; i++)
-		Y_N2[i] = (Q)saturate(round((R)factor * Y_N1[i]));
-}
-
-template <>
-void Quantizer_standard<float,float>
-::process(mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = Y_N1[i];
-}
-
-template <>
-void Quantizer_standard<double,float>
-::process(mipp::vector<double>& Y_N1, mipp::vector<float>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = (float)Y_N1[i];
-}
-
-template <>
-void Quantizer_standard<float,double>
-::process(mipp::vector<float>& Y_N1, mipp::vector<double>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = (double)Y_N1[i];
-}
-
-template <>
-void Quantizer_standard<double,double>
-::process(mipp::vector<double>& Y_N1, mipp::vector<double>& Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-
-	for (unsigned i = 0; i < Y_N1.size(); i++)
-		Y_N2[i] = Y_N1[i];
-}
-
-template <typename R, typename Q>
-inline R Quantizer_standard<R,Q>
-::saturate(R val) const
-{
-	return std::min(std::max(val, (R)val_min), (R)val_max);
+		Y_N2[i] = (Q)saturate((R)std::round((R)factor * Y_N1[i]), (R)val_min, (R)val_max);
 }
 
 // ==================================================================================== explicit template instantiation 

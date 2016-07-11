@@ -20,6 +20,8 @@ Launcher_EXIT_RSC<B,R,Q,QD>
 	this->code_params.type   = "RSC";
 	this->deco_params.algo   = "BCJR";
 	this->deco_params.implem = "FAST";
+	this->deco_params.map    = "MAX";
+
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -27,6 +29,9 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 ::build_args()
 {
 	Launcher_EXIT<B,R,Q>::build_args();
+
+	this->opt_args["dec-map"] = "map_type";
+	this->doc_args["dec-map"] = "the MAP implementation for the nodes (ex: MAX, MAXS, MAXL).";
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -34,6 +39,8 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 ::store_args()
 {
 	Launcher_EXIT<B,R,Q>::store_args();
+
+	if(this->ar.exist_arg("dec-map")) this->deco_params.map = this->ar.get_arg("dec-map");
 
 	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
 		this->code_params.tail_length = 2*4;
@@ -44,6 +51,8 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 ::print_header()
 {
 	Launcher_EXIT<B,R,Q>::print_header();
+
+	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

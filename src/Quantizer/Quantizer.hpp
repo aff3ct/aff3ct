@@ -11,7 +11,7 @@ public:
 	Quantizer() {};
 	virtual ~Quantizer() {};
 
-	virtual void process(mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
+	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
 };
 
 #endif /* QUANTIZER_HPP_ */

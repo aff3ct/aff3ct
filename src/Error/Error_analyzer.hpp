@@ -11,6 +11,7 @@ class Error_analyzer
 protected:
 	static bool interrupt;
 	static bool first_interrupt;
+	static bool over;
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt;
 	static std::chrono::nanoseconds d_delta_interrupt;
 
@@ -50,6 +51,7 @@ public:
 	bool is_last_frame_error() { return last_frame_error; };
 
 	static bool is_interrupt();
+	static bool is_over();
 
 private:
 	static void signal_interrupt_handler(int signal);

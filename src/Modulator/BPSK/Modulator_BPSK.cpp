@@ -29,7 +29,7 @@ void Modulator_BPSK<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../Tools/types.h"
+#include "../../Tools/types.h"
 #ifdef MULTI_PREC
 template class Modulator_BPSK<B_8,R_8>;
 template class Modulator_BPSK<B_16,R_16>;

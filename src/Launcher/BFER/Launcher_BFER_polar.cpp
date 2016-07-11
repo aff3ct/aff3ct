@@ -67,7 +67,7 @@ void Launcher_BFER_polar<B,R,Q>
 	this->doc_args["crc-type"       ] = "select the crc you want to use (ex: CRC-16-IBM).";
 
 	this->opt_args["dec-simd-strat" ] = "simd_type";
-	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER, NONE).";
+	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
 }
 
 template <typename B, typename R, typename Q>

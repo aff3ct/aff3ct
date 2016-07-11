@@ -218,6 +218,68 @@
 	}
 #endif
 
+	// ------------------------------------------------------------------------------------------------------------ low
+	template <>
+	inline reg_2 low<double>(const reg v) {
+		return (reg_2) v;
+	}
+
+	template <>
+	inline reg_2 low<float>(const reg v) {
+		return (reg_2) v;
+	}
+
+	template <>
+	inline reg_2 low<long long>(const reg v) {
+		return (reg_2) v;
+	}
+
+	template <>
+	inline reg_2 low<int>(const reg v) {
+		return (reg_2) v;
+	}
+
+	template <>
+	inline reg_2 low<short>(const reg v) {
+		return (reg_2) v;
+	}
+
+	template <>
+	inline reg_2 low<signed char>(const reg v) {
+		return (reg_2) v;
+	}
+
+	// ----------------------------------------------------------------------------------------------------------- high
+	template <>
+	inline reg_2 high<double>(const reg v) {
+		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+	}
+
+	template <>
+	inline reg_2 high<float>(const reg v) {
+		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+	}
+
+	template <>
+	inline reg_2 high<long long>(const reg v) {
+		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+	}
+
+	template <>
+	inline reg_2 high<int>(const reg v) {
+		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+	}
+
+	template <>
+	inline reg_2 high<short>(const reg v) {
+		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+	}
+
+	template <>
+	inline reg_2 high<signed char>(const reg v) {
+		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+	}
+
 	// ---------------------------------------------------------------------------------------------------------- cmask
 #ifdef __SSE2__
 	template <>
@@ -1872,6 +1934,18 @@
 	template <>
 	inline reg cvt<int,float>(const reg v) {
 		return (reg) _mm_cvtepi32_ps((__m128i) v);
+	}
+#endif
+
+#ifdef __SSE4_1__
+	template <>
+	inline reg cvt<signed char,short>(const reg_2 v) {
+		return (reg) _mm_cvtepi8_epi16(v);
+	}
+
+	template <>
+	inline reg cvt<short,int>(const reg_2 v) {
+		return (reg) _mm_cvtepi16_epi32(v);
 	}
 #endif
 

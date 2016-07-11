@@ -1,8 +1,8 @@
-#include "../../Modulator/Modulator_BPSK.hpp"
-#include "../../Modulator/Modulator_PAM.hpp"
+#include "../../Modulator/BPSK/Modulator_BPSK.hpp"
+#include "../../Modulator/BPSK/Modulator_BPSK_fast.hpp"
+#include "../../Modulator/PAM/Modulator_PAM.hpp"
 
 #include "Factory_modulator.hpp"
-
 
 template <typename B, typename R>
 Modulator<B,R>* Factory_modulator<B,R>
@@ -10,13 +10,13 @@ Modulator<B,R>* Factory_modulator<B,R>
 {
 	Modulator<B,R> *modulator = nullptr;
 
-	if (mod_params.mod_type == "PAM")
-		modulator = new Modulator_PAM<B,R>(mod_params.bits_per_symbol, sigma);
-	else
-		modulator = new Modulator_BPSK<B,R>();
-
 	// build the modulator
-
+	if (mod_params.mod_type == "BPSK")
+		modulator = new Modulator_BPSK<B,R>();
+	else if (mod_params.mod_type == "BPSK_FAST")
+		modulator = new Modulator_BPSK_fast<B,R>();
+	else if (mod_params.mod_type == "PAM")
+		modulator = new Modulator_PAM<B,R>(mod_params.bits_per_symbol, sigma);
 
 	return modulator;
 }

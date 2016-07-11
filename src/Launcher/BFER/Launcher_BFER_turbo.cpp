@@ -27,6 +27,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->code_params.type            = "TURBO";
 	this->deco_params.algo            = "LTE";
 	this->deco_params.implem          = "FAST";
+	this->deco_params.map             = "MAX";
 
 	this->deco_params.max_iter        = 6;
 	this->enco_params.buffered        = true;
@@ -54,7 +55,9 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->doc_args["scaling-factor" ] = "scaling factor type (ex: NO, LTE, LTE_VEC, ARRAY, etc.)";
 
 	this->opt_args["dec-simd-strat" ] = "simd_type";
-	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER, NONE).";
+	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
+	this->opt_args["dec-map"        ] = "map_type";
+	this->doc_args["dec-map"        ] = "the MAP implementation for the nodes (ex: MAX, MAXS, MAXL).";
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -69,7 +72,8 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg("crc-type"       )) this->code_params.crc            = this->ar.get_arg("crc-type");
 	if(this->ar.exist_arg("scaling-factor" )) this->deco_params.scaling_factor = this->ar.get_arg("scaling-factor");
 
-	if(this->ar.exist_arg("dec-simd-strat" )) this->deco_params.simd_strategy   = this->ar.get_arg("dec-simd-strat");
+	if(this->ar.exist_arg("dec-simd-strat" )) this->deco_params.simd_strategy  = this->ar.get_arg("dec-simd-strat");
+	if(this->ar.exist_arg("dec-map"        )) this->deco_params.map            = this->ar.get_arg("dec-map"       );
 
 	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
 		this->code_params.tail_length = 4*4;
@@ -92,6 +96,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	std::clog << "# " << bold("* Scaling factor                ") << " = " << this->deco_params.scaling_factor << std::endl;
 	if (!this->deco_params.simd_strategy.empty())
 	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy  << std::endl;
+	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map            << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

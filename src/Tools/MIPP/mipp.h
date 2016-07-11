@@ -87,7 +87,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	constexpr int RequiredAlignment = MIPP_REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 128;
 
-	using reg = float32x4_t;
+	using reg   = float32x4_t;
+	using reg_2 = float32x2_t; // half a full register
 
 	const std::string IntructionsType = "ARM NEONv1-128";
 
@@ -97,7 +98,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	constexpr int RequiredAlignment = MIPP_REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 512;
 
-	using reg = __m512;
+	using reg   = __m512;
+	using reg_2 = __m256; // half a full register
 
 	const std::string IntructionsType = "x86 AVX-512";
 
@@ -107,7 +109,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	constexpr int RequiredAlignment = MIPP_REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 256;
 
-	using reg = __m256;
+	using reg   = __m256;
+	using reg_2 = __m128; // half a full register
 
 #ifdef __AVX2__
 	const std::string IntructionsType = "x86 AVX2-256";
@@ -121,7 +124,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	constexpr int RequiredAlignment = MIPP_REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 128;
 
-	using reg = __m128;
+	using reg   = __m128;
+	using reg_2 = __m128i; // half a full register (information is in the lower part of the 128 bit register)
 
 #ifdef __SSE4_2__
 	const std::string IntructionsType = "x86 SSE4.2-128";
@@ -316,6 +320,8 @@ template <typename T> inline void  storeu       (T*, const reg)                 
 template <typename T> inline reg   set          (const T[nElReg<T>()])            { errorMessage<T>("set");           exit(-1); }
 template <typename T> inline reg   set1         (const T)                         { errorMessage<T>("set1");          exit(-1); }
 template <typename T> inline reg   set0         ()                                { errorMessage<T>("set0");          exit(-1); }
+template <typename T> inline reg_2 low          (const reg)                       { errorMessage<T>("low");           exit(-1); }
+template <typename T> inline reg_2 high         (const reg)                       { errorMessage<T>("high");          exit(-1); }
 template <typename T> inline reg   cmask        (const int[nElReg<T>()])          { errorMessage<T>("cmask");         exit(-1); }
 template <typename T> inline reg   cmask2       (const int[nElReg<T>()/2])        { errorMessage<T>("cmask2");        exit(-1); }
 template <typename T> inline reg   shuff        (const reg, const reg)            { errorMessage<T>("shuff");         exit(-1); }
@@ -378,6 +384,12 @@ template <typename T1, typename T2>
 inline reg cvt(const reg) {
 	errorMessage<T1,T2>("cvt");  
 	exit(-1); 
+}
+
+template <typename T1, typename T2> 
+inline reg cvt(const reg_2) {
+	errorMessage<T1,T2>("cvt");  
+	exit(-1);
 }
 
 template <typename T1, typename T2>

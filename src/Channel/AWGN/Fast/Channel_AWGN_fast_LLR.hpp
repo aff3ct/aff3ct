@@ -24,7 +24,7 @@ public:
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 
 private:
-	inline mipp::Reg<R> get_random_fast();
+	inline mipp::Reg<R> get_random_simd();
 	inline R            get_random     ();
 };
 

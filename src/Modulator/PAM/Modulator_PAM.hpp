@@ -2,8 +2,8 @@
 #define MODULATOR_PAM_HPP_
 
 #include <vector>
-#include "../Tools/MIPP/mipp.h"
-#include "Modulator.hpp"
+#include "../../Tools/MIPP/mipp.h"
+#include "../Modulator.hpp"
 
 template <typename B, typename R>
 class Modulator_PAM : public Modulator<B,R>

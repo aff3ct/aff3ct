@@ -221,6 +221,68 @@
 		return (__m256) _mm256_setzero_si256();
 	}
 
+	// ------------------------------------------------------------------------------------------------------------ low
+	template <>
+	inline reg_2 low<double>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 0);
+	}
+
+	template <>
+	inline reg_2 low<float>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 0);
+	}
+
+	template <>
+	inline reg_2 low<long long>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 0);
+	}
+
+	template <>
+	inline reg_2 low<int>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 0);
+	}
+
+	template <>
+	inline reg_2 low<short>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 0);
+	}
+
+	template <>
+	inline reg_2 low<signed char>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 0);
+	}
+
+	// ----------------------------------------------------------------------------------------------------------- high
+	template <>
+	inline reg_2 high<double>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 1);
+	}
+
+	template <>
+	inline reg_2 high<float>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 1);
+	}
+
+	template <>
+	inline reg_2 high<long long>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 1);
+	}
+
+	template <>
+	inline reg_2 high<int>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 1);
+	}
+
+	template <>
+	inline reg_2 high<short>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 1);
+	}
+
+	template <>
+	inline reg_2 high<signed char>(const reg v) {
+		return (reg_2) _mm256_extractf128_si256((__m256i) v, 1);
+	}
+
 	// ---------------------------------------------------------------------------------------------------------- cmask
 	template <>
 	inline reg cmask<float>(const int val[nElReg<float>()]) {
@@ -1789,6 +1851,18 @@
 	inline reg cvt<int,float>(const reg v) {
 		return (reg) _mm256_cvtepi32_ps((__m256i) v);
 	}
+
+#ifdef __AVX2__
+	template <>
+	inline reg cvt<signed char,short>(const reg_2 v) {
+		return (reg) _mm256_cvtepi8_epi16((__m128i) v);
+	}
+
+	template <>
+	inline reg cvt<short,int>(const reg_2 v) {
+		return (reg) _mm256_cvtepi16_epi32((__m128i) v);
+	}
+#endif
 
 	// ----------------------------------------------------------------------------------------------------------- pack
 #ifdef __AVX2__
