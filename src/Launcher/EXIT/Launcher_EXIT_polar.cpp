@@ -102,7 +102,8 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	this->simu = new Simulation_EXIT_polar<B,R,Q>(this->simu_params, 
 	                                              this->code_params, 
-	                                              this->enco_params, 
+	                                              this->enco_params,
+	                                              this->mod_params,
 	                                              this->chan_params, 
 	                                              this->deco_params);
 }

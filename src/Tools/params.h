@@ -38,7 +38,7 @@ struct t_code_param
 	int         tail_length;
 	int         m;
 	int         M;
-	float       sigma; // used to set a fixed snr value for frozen bits contstruction
+	float       sigma; // Not noise var, used to set a fixed snr value for frozen bits contstruction
 	std::string type;
 	std::string generation_method;
 	std::string frozen_bits_path;
@@ -46,6 +46,13 @@ struct t_code_param
 	std::string interleaver;
 	std::string fb_gen_method;
 };
+
+struct t_mod_param
+{
+	unsigned int bits_per_symbol;   // Bits per symbol
+	std::string  mod_type;          // Modulation type (PAM, QAM, ...)
+};
+
 
 struct t_encoder_param
 {

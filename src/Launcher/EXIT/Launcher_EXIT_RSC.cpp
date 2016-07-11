@@ -53,6 +53,7 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 	this->simu = new Simulation_EXIT_RSC<B,R,Q,QD>(this->simu_params, 
 	                                               this->code_params, 
 	                                               this->enco_params, 
+	                                               this->mod_params,
 	                                               this->chan_params, 
 	                                               this->deco_params);
 }

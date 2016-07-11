@@ -26,6 +26,7 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const t_simulation_param& simu_params,
                   const t_code_param&       code_params,
                   const t_encoder_param&    enco_params,
+                  const t_mod_param&        mod_params,
                   const t_channel_param&    chan_params,
                   const t_decoder_param&    deco_params)
 : Simulation(),
@@ -33,6 +34,7 @@ Simulation_BFER<B,R,Q>
   simu_params(simu_params),
   code_params(code_params),
   enco_params(enco_params),
+  mod_params(mod_params),
   chan_params(chan_params),
   deco_params(deco_params),
 
@@ -811,7 +813,7 @@ template <typename B, typename R, typename Q>
 Modulator<B,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R>::build();
+	return Factory_modulator<B,R>::build(mod_params,sigma);
 }
 
 template <typename B, typename R, typename Q>

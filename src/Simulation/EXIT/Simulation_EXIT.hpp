@@ -24,6 +24,7 @@ protected:
 	const t_simulation_param &simu_params;
 	const t_code_param       &code_params;
 	const t_encoder_param    &enco_params;
+	const t_mod_param        &mod_params;
 	const t_channel_param    &chan_params;
 	const t_decoder_param    &deco_params;
 
@@ -68,10 +69,11 @@ protected:
 
 public:
 	Simulation_EXIT(const t_simulation_param& simu_params,
-                    const t_code_param&       code_params,
-                    const t_encoder_param&    enco_params,
-                    const t_channel_param&    chan_params,
-                    const t_decoder_param&    deco_params);
+	                const t_code_param&       code_params,
+	                const t_encoder_param&    enco_params,
+	                const t_mod_param&        mod_params,
+	                const t_channel_param&    chan_params,
+	                const t_decoder_param&    deco_params);
 	virtual ~Simulation_EXIT();
 	
 	void launch();

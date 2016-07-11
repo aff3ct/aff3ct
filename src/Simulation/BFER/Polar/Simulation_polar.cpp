@@ -23,9 +23,10 @@ Simulation_polar<B,R,Q>
 ::Simulation_polar(const t_simulation_param& simu_params,
                    const t_code_param&       code_params,
                    const t_encoder_param&    enco_params,
+                   const t_mod_param&        mod_params,
                    const t_channel_param&    chan_params,
                    const t_decoder_param&    deco_params)
-: Simulation_BFER<B,R,Q>(simu_params, code_params, enco_params, chan_params, deco_params),
+: Simulation_BFER<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params),
   frozen_bits(std::exp2(this->code_params.m)),
   is_generated_decoder((deco_params.implem.find("_SNR") != std::string::npos) && (deco_params.algo == "SC")),
   fb_generator(nullptr)
