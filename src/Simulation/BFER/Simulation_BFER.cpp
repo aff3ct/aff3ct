@@ -488,9 +488,15 @@ void Simulation_BFER<B,R,Q>
 			std::clog << std::endl;
 
 			// modulate
+			std::clog << "Modulate X_N2 in X_N3..." << std::endl;
 			auto t_modul = steady_clock::now();
 			simu->modulator[0]->modulate(simu->X_N2[0], simu->X_N3[0]);
 			d_modul = steady_clock::now() - t_modul;
+
+			// display X_N3
+			std::clog << "X_N3:" << std::endl;
+			ft.display_real_vector(simu->X_N3[0]);
+			std::clog << std::endl;
 		}
 		else
 		{
@@ -502,6 +508,11 @@ void Simulation_BFER<B,R,Q>
 			// display X_N2
 			std::clog << "X_N2:" << std::endl;
 			ft.display_bit_vector(simu->X_N2[0]);
+			std::clog << std::endl;
+
+			// display X_N3
+			std::clog << "X_N3:" << std::endl;
+			ft.display_real_vector(simu->X_N3[0]);
 			std::clog << std::endl;
 		}
 
@@ -517,9 +528,15 @@ void Simulation_BFER<B,R,Q>
 		std::clog << std::endl;
 
 		// demodulation
+		std::clog << "Demodulate from Y_N1 to Y_N2..." << std::endl;
 		auto t_demod = steady_clock::now();
 		simu->modulator[0]->demodulate(simu->Y_N1[0], simu->Y_N2[0]);
 		auto d_demod = steady_clock::now() - t_demod;
+
+		// display Y_N2
+		std::clog << "Y_N2:" << std::endl;
+		ft.display_real_vector(simu->Y_N2[0]);
+		std::clog << std::endl;
 
 		// make the quantization
 		std::clog << "Make the quantization from Y_N2 to Y_N3..." << std::endl;
@@ -527,7 +544,7 @@ void Simulation_BFER<B,R,Q>
 		simu->quantizer[0]->process(simu->Y_N2[0], simu->Y_N3[0]);
 		auto d_quant = steady_clock::now() - t_quant;
 
-		// display Y_N2
+		// display Y_N3
 		std::clog << "Y_N3:" << std::endl;
 		ft.display_real_vector(simu->Y_N3[0]);
 		std::clog << std::endl;
