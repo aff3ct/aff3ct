@@ -56,67 +56,50 @@ std::vector<std::vector<int>> Encoder_RSC_sys<B>
 ::get_trellis()
 {
 	std::vector<std::vector<int>> trellis(10, std::vector<int>(this->n_states));
-
-	bool occurrence[this->n_states];
-	for (auto i = 0; i < this->n_states; i++)
-		occurrence[i] = false;
+	std::vector<bool> occurrence(this->n_states, false);
 
 	for (auto i = 0; i < this->n_states; i++)
 	{
-		auto state = i;
+		auto state   = i;
 		auto bit_sys = 0;
 		auto bit_par = inner_encode(bit_sys, state);
 
-		trellis[4][i] = state;
-		trellis[5][i] = 1 - (bit_sys + bit_sys); // +1/-1
+		trellis[0 + (occurrence[state] ? 3 : 0) ][state] = i;                 // initial state
+		trellis[1 + (occurrence[state] ? 3 : 0) ][state] = +1;                // gamma coeff
+		trellis[2 + (occurrence[state] ? 3 : 0) ][state] = bit_sys ^ bit_par; // gamma 
 
-		if (!occurrence[i])
-		{
-			trellis[0][state] = i;
-			trellis[1][state] = 1 - (bit_sys + bit_sys);
-			occurrence[i] = true;
-		}
-		else
-		{
-			trellis[2][state] = i;
-			trellis[3][state] = 1 - (bit_sys + bit_sys);
-		}
+		trellis[6 ][i    ] = state;                                        // final   state, bit syst = 0
+		trellis[7 ][i    ] = bit_sys ^ bit_par;                            // gamma        , bit syst = 1
 
-		trellis[8][state] = bit_sys ^ bit_par;
+		occurrence[state] = true;
 
 		// ----------
 
-		state = i;
+		state   = i;
 		bit_sys = 1;
 		bit_par = inner_encode(bit_sys, state);
 
-		trellis[6][i] = state;
-		trellis[7][i] = 1 - (bit_sys + bit_sys); // +1/-1
+		trellis[0 + (occurrence[state] ? 3 : 0) ][state] = i;                 // initial state
+		trellis[1 + (occurrence[state] ? 3 : 0) ][state] = -1;                // gamma coeff
+		trellis[2 + (occurrence[state] ? 3 : 0) ][state] = bit_sys ^ bit_par; // gamma 
 
-		if (!occurrence[i])
-		{
-			trellis[0][state] = i;
-			trellis[1][state] = 1 - (bit_sys + bit_sys);
-			occurrence[i] = true;
-		}
-		else
-		{
-			trellis[2][state] = i;
-			trellis[3][state] = 1 - (bit_sys + bit_sys);
-		}
+		trellis[8 ][i    ] = state;                                        // initial state, bit syst = 0
+		trellis[9 ][i    ] = bit_sys ^ bit_par;                            // gamma        , bit syst = 1
 
-		trellis[9][i] = bit_sys ^ bit_par;
+		occurrence[state] = true;
 	}
 
-	/* display the trellis
-	for (auto i = 0; i < 10; i++)
-	{
-		std::cout << "trellis[" << i << "] = {";
-		for (auto s = 0; s < this->n_states; s++)
-			std::cout << ", " << std::setw(4) << trellis[i][s];
-		std::cout << "}" << std::endl;
-	}
-	*/
+	
+
+	 // display the trellis
+	// for (auto i = 0; i < 10; i++)
+	// {
+	// 	std::cout << "trellis[" << i << "] = {";
+	// 	for (auto s = 0; s < this->n_states; s++)
+	// 		std::cout << ", " << std::setw(4) << trellis[i][s];
+	// 	std::cout << "}" << std::endl;
+	// }
+	
 
 	return trellis;
 }
