@@ -5,8 +5,8 @@
 
 template <typename R>
 Channel_AWGN_fast_LR<R>
-::Channel_AWGN_fast_LR(const R& sigma, const int seed, const R scaling_factor)
-: Channel_AWGN_fast_LLR<R>(sigma, seed, scaling_factor)
+::Channel_AWGN_fast_LR(const R& sigma, const int seed)
+: Channel_AWGN_fast_LLR<R>(sigma, seed)
 {
 }
 

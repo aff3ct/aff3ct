@@ -57,7 +57,8 @@ protected:
 	// communication chain
 	Source<B>          *source;
 	Encoder<B>         *encoder;
-	Modulator<B,R>     *modulator;	
+	Modulator<B,R>     *modulator;
+	Modulator<B,R>     *modulator_a;
 	Channel<R>         *channel;
 	Channel<R>         *channel_a;
 	Quantizer<R,Q>     *quantizer;
@@ -98,6 +99,7 @@ protected:
 	virtual Source<B>*          build_source     ();
 	virtual Encoder<B>*         build_encoder    () = 0;
 	virtual Modulator<B,R>*     build_modulator  ();
+	virtual Modulator<B,R>*     build_modulator_a();
 	virtual Channel<R>*         build_channel    ();
 	virtual Channel<R>*         build_channel_a  ();
 	virtual Quantizer<R,Q>*     build_quantizer  ();

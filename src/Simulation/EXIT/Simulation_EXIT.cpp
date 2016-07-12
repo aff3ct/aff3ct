@@ -59,14 +59,15 @@ Simulation_EXIT<B,R,Q>
   sigma    (0.f),
   snr      (0.f),
 
-  source   (nullptr),
-  encoder  (nullptr),
-  modulator(nullptr),
-  channel  (nullptr),
-  channel_a(nullptr),
-  quantizer(nullptr),
-  siso     (nullptr),
-  terminal (nullptr)
+  source     (nullptr),
+  encoder    (nullptr),
+  modulator  (nullptr),
+  modulator_a(nullptr),
+  channel    (nullptr),
+  channel_a  (nullptr),
+  quantizer  (nullptr),
+  siso       (nullptr),
+  terminal   (nullptr)
 {
 }
 
@@ -84,14 +85,15 @@ void Simulation_EXIT<B,R,Q>
 	release_objects();
 
 	// build the objects
-	source    = build_source   (); check_errors(source   , "Source<B>"         );
-	encoder   = build_encoder  (); check_errors(encoder  , "Encoder<B>"        );
-	modulator = build_modulator(); check_errors(modulator, "Modulator<B,R>"    );
-	channel   = build_channel  (); check_errors(channel  , "Channel<R>"        );
-	channel_a = build_channel_a(); check_errors(channel  , "Channel<R>"        );
-	quantizer = build_quantizer(); check_errors(quantizer, "Quantizer<R,Q>"    );
-	siso      = build_siso     (); check_errors(siso     , "SISO<Q>"           );
-	terminal  = build_terminal (); check_errors(terminal , "Terminal_EXIT<B,R>");
+	source      = build_source     (); check_errors(source     , "Source<B>"         );
+	encoder     = build_encoder    (); check_errors(encoder    , "Encoder<B>"        );
+	modulator   = build_modulator  (); check_errors(modulator  , "Modulator<B,R>"    );
+	modulator_a = build_modulator_a(); check_errors(modulator_a, "Modulator<B,R>"    );
+	channel     = build_channel    (); check_errors(channel    , "Channel<R>"        );
+	channel_a   = build_channel_a  (); check_errors(channel    , "Channel<R>"        );
+	quantizer   = build_quantizer  (); check_errors(quantizer  , "Quantizer<R,Q>"    );
+	siso        = build_siso       (); check_errors(siso       , "SISO<Q>"           );
+	terminal    = build_terminal   (); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames() > 1)
 	{
@@ -100,8 +102,8 @@ void Simulation_EXIT<B,R,Q>
 	}
 
 	// resize the modulation buffers
-	const auto K_mod = modulator->get_buffer_size(code_params.K);
-	const auto N_mod = modulator->get_buffer_size(code_params.N);
+	const auto K_mod = modulator_a->get_buffer_size(code_params.K);
+	const auto N_mod = modulator  ->get_buffer_size(code_params.N);
 	const auto tail  = code_params.tail_length;
 	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
@@ -180,20 +182,26 @@ void Simulation_EXIT<B,R,Q>
 		X_K1 = B_K;
 
 		// modulate
-		modulator->modulate(X_K1, X_K2);
-		modulator->modulate(X_N1, X_N2);
+		modulator_a->modulate(X_K1, X_K2);
+		modulator  ->modulate(X_N1, X_N2);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
 		{
-			channel_a->add_noise (X_K2,  La_K1);
-			modulator->demodulate(La_K1, La_K2),
-			quantizer->process   (La_K2, La_K3);
+			channel_a->add_noise(X_K2, La_K1);
+			if (mod_params.disable_demodulation)
+				La_K2 = La_K1;
+			else
+				modulator_a->demodulate(La_K1, La_K2),
+			quantizer->process(La_K2, La_K3);
 		}
 
-		channel  ->add_noise (X_N2,   Lch_N1);
-		modulator->demodulate(Lch_N1, Lch_N2),
-		quantizer->process   (Lch_N2, Lch_N3);
+		channel->add_noise (X_N2, Lch_N1);
+		if (mod_params.disable_demodulation)
+			Lch_N2 = Lch_N1;
+		else
+			modulator->demodulate(Lch_N1, Lch_N2),
+		quantizer->process(Lch_N2, Lch_N3);
 
 		// extract systematic and parity information
 		extract_sys_par(Lch_N3, La_K3, sys, par);
@@ -381,14 +389,15 @@ template <typename B, typename R, typename Q>
 void Simulation_EXIT<B,R,Q>
 ::release_objects()
 {
-	if (source    != nullptr) { delete source;    source    = nullptr; }
-	if (encoder   != nullptr) { delete encoder;   encoder   = nullptr; }
-	if (modulator != nullptr) { delete modulator; modulator = nullptr; }
-	if (channel   != nullptr) { delete channel;   channel   = nullptr; }
-	if (channel_a != nullptr) { delete channel_a; channel_a = nullptr; }
-	if (quantizer != nullptr) { delete quantizer; quantizer = nullptr; }
-	if (siso      != nullptr) { delete siso;      siso      = nullptr; }
-	if (terminal  != nullptr) { delete terminal;  terminal  = nullptr; }
+	if (source      != nullptr) { delete source;      source      = nullptr; }
+	if (encoder     != nullptr) { delete encoder;     encoder     = nullptr; }
+	if (modulator   != nullptr) { delete modulator;   modulator   = nullptr; }
+	if (modulator_a != nullptr) { delete modulator_a; modulator_a = nullptr; }
+	if (channel     != nullptr) { delete channel;     channel     = nullptr; }
+	if (channel_a   != nullptr) { delete channel_a;   channel_a   = nullptr; }
+	if (quantizer   != nullptr) { delete quantizer;   quantizer   = nullptr; }
+	if (siso        != nullptr) { delete siso;        siso        = nullptr; }
+	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -418,17 +427,24 @@ Modulator<B,R>* Simulation_EXIT<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Modulator<B,R>* Simulation_EXIT<B,R,Q>
+::build_modulator_a()
+{
+	return Factory_modulator<B,R>::build(mod_params, 2.0 / sig_a);
+}
+
+template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel()
 {
-	return Factory_channel<R>::build(chan_params, sigma, 0, 2.0 / (sigma * sigma));
+	return Factory_channel<R>::build(chan_params, sigma, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a()
 {
-	return Factory_channel<R>::build(chan_params, 2.0 / sig_a, 0, (sig_a * sig_a) / 2.0);
+	return Factory_channel<R>::build(chan_params, 2.0 / sig_a, 0);
 }
 
 template <typename B, typename R, typename Q>

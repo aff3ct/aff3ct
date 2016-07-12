@@ -51,6 +51,7 @@ struct t_mod_param
 {
 	unsigned int bits_per_symbol; // Bits per symbol
 	std::string  type;            // Modulation type (PAM, QAM, ...)
+	bool disable_demodulation;    // do not demodulate (useful for the BPSK and min/sum decoders)
 };
 
 
@@ -69,7 +70,6 @@ struct t_channel_param
 	std::string domain;
 	std::string type;
 	std::string quantizer_type;
-	bool        estimator;
 };
 
 struct t_decoder_param

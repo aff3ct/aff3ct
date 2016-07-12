@@ -8,13 +8,11 @@
 
 template <typename R>
 Channel_AWGN_GSL_LLR<R>
-::Channel_AWGN_GSL_LLR(const R& sigma, const int seed, const R& scaling_factor)
+::Channel_AWGN_GSL_LLR(const R& sigma, const int seed)
 : sigma(sigma),
-  scaling_factor((R)scaling_factor),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
-	assert(scaling_factor != 0);
-	assert(sigma          != 0);
+	assert(sigma != 0);
 	
 	gsl_rng_set(rng, seed);
 
@@ -37,7 +35,7 @@ void Channel_AWGN_GSL_LLR<R>
 	for (unsigned i = 0; i < X_N.size(); i++)
 	{
 		double r1 = gsl_ran_gaussian(rng, sigma);
-		Y_N[i] = ((R)X_N[i] + (R)r1) * scaling_factor;
+		Y_N[i] = (R)X_N[i] + (R)r1;
 	}
 }
 
