@@ -5,15 +5,13 @@
 
 template <typename R>
 Channel_AWGN_std_LLR<R>
-::Channel_AWGN_std_LLR(const R& sigma, const int seed, const R scaling_factor)
+::Channel_AWGN_std_LLR(const R& sigma, const int seed)
 : sigma(sigma),
-  scaling_factor(scaling_factor),
   rd(),
   rd_engine(this->rd()),
   normal_dist(0, sigma)
 {
-	assert(scaling_factor != 0);
-	assert(sigma          != 0);
+	assert(sigma != 0);
 
 	rd_engine.seed(seed);
 }
@@ -31,7 +29,7 @@ void Channel_AWGN_std_LLR<R>
 	assert(X_N.size() == Y_N.size());
 
 	for (unsigned i = 0; i < X_N.size(); i++)
-		Y_N[i] = (X_N[i] + this->normal_dist(this->rd_engine)) * scaling_factor;
+		Y_N[i] = X_N[i] + this->normal_dist(this->rd_engine);
 }
 
 // ==================================================================================== explicit template instantiation 

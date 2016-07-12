@@ -10,12 +10,10 @@
 
 template <typename R>
 Channel_AWGN_MKL_LLR<R>
-::Channel_AWGN_MKL_LLR(const R& sigma, const int seed, const R& scaling_factor)
-: sigma(sigma),
-  scaling_factor(scaling_factor)
+::Channel_AWGN_MKL_LLR(const R& sigma, const int seed)
+: sigma(sigma)
 {
-	assert(scaling_factor != 0);
-	assert(sigma          != 0);
+	assert(sigma != 0);
 
 	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
 	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
@@ -63,7 +61,7 @@ void Channel_AWGN_MKL_LLR<float>
 
 	auto size = Y_N.size();
 	for (unsigned i = 0; i < size; i++)
-		Y_N[i] = (X_N[i] + Y_N[i]) * scaling_factor;
+		Y_N[i] = X_N[i] + Y_N[i];
 }
 
 template <>
@@ -89,7 +87,7 @@ void Channel_AWGN_MKL_LLR<double>
 
 	auto size = Y_N.size();
 	for (unsigned i = 0; i < size; i++)
-		Y_N[i] = (X_N[i] + Y_N[i]) * scaling_factor;
+		Y_N[i] = X_N[i] + Y_N[i];
 }
 
 

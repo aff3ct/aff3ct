@@ -2,7 +2,8 @@
 
 template <typename B, typename R>
 Modulator_BPSK<B,R>
-::Modulator_BPSK()
+::Modulator_BPSK(const R sigma)
+: two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 
@@ -25,7 +26,9 @@ template <typename B, typename R>
 void Modulator_BPSK<B,R>
 ::demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
 {
-	Y_N2 = Y_N1;
+	auto size = Y_N1.size();
+	for (unsigned i = 0; i < size; i++)
+		Y_N2[i] = Y_N1[i] * two_on_square_sigma;
 }
 
 // ==================================================================================== explicit template instantiation 

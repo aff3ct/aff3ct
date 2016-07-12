@@ -16,44 +16,41 @@
 
 template <typename R>	
 Channel<R>* Factory_channel<R>
-::build(const t_channel_param &chan_params, const R& sigma, const int seed, R scaling_factor)
+::build(const t_channel_param &chan_params, const R& sigma, const int seed)
 {
 	Channel<R> *channel = nullptr;
-
-	if (!chan_params.estimator)
-		scaling_factor = (R)1;
 
 	// build the channels
 	if (chan_params.type == "AWGN")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_std_LLR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_std_LLR<R>(sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_std_LR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_std_LR<R>(sigma, seed +1);
 	}
 	else if (chan_params.type == "AWGN_FAST")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_fast_LLR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_fast_LLR<R>(sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_fast_LR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_fast_LR<R>(sigma, seed +1);
 	}
 #ifdef CHANNEL_MKL
 	else if (chan_params.type == "AWGN_MKL")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_MKL_LLR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_MKL_LLR<R>(sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_MKL_LR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_MKL_LR<R>(sigma, seed +1);
 	}
 #endif
 #ifdef CHANNEL_GSL
 	else if (chan_params.type == "AWGN_GSL")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_GSL_LLR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_GSL_LLR<R>(sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_GSL_LR<R>(sigma, seed +1, scaling_factor);
+			channel = new Channel_AWGN_GSL_LR<R>(sigma, seed +1);
 	}
 #endif
 	else if (chan_params.type == "NO")

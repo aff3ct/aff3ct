@@ -13,11 +13,10 @@ class Channel_AWGN_GSL_LLR : public Channel<R>
 {
 private:
 	const R sigma;
-	const R scaling_factor;
 	gsl_rng *rng;
 
 public:
-	Channel_AWGN_GSL_LLR(const R& sigma, const int seed = 0, const R& scaling_factor = 1);
+	Channel_AWGN_GSL_LLR(const R& sigma, const int seed = 0);
 
 	virtual ~Channel_AWGN_GSL_LLR();
 

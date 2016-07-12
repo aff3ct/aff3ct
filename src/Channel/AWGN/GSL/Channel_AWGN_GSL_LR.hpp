@@ -9,7 +9,7 @@ template <typename R>
 class Channel_AWGN_GSL_LR : public Channel_AWGN_GSL_LLR<R>
 {
 public:
-	Channel_AWGN_GSL_LR(const R& sigma, const int seed = 0, const R& scaling_factor = 1);
+	Channel_AWGN_GSL_LR(const R& sigma, const int seed = 0);
 
 	virtual ~Channel_AWGN_GSL_LR();
 

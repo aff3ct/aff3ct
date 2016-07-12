@@ -8,15 +8,15 @@
 
 template <typename B, typename R>
 Modulator<B,R>* Factory_modulator<B,R>
-::build(const t_mod_param &mod_params, const R sigma)
+::build(const t_mod_param &mod_params, const float sigma)
 {
 	Modulator<B,R> *modulator = nullptr;
 
 	// build the modulator
 	if (mod_params.type == "BPSK")
-		modulator = new Modulator_BPSK<B,R>();
+		modulator = new Modulator_BPSK<B,R>(sigma);
 	else if (mod_params.type == "BPSK_FAST")
-		modulator = new Modulator_BPSK_fast<B,R>();
+		modulator = new Modulator_BPSK_fast<B,R>(sigma);
 	else if (mod_params.type == "PAM")
 		modulator = new Modulator_PAM<B,R>(mod_params.bits_per_symbol, sigma);
 	else if (mod_params.type == "QAM")

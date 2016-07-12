@@ -7,14 +7,12 @@
 
 template <typename R>
 Channel_AWGN_fast_LLR<R>
-::Channel_AWGN_fast_LLR(const R& sigma, const int seed, const R scaling_factor)
+::Channel_AWGN_fast_LLR(const R& sigma, const int seed)
 : sigma(sigma),
-  scaling_factor(scaling_factor),
   mt19937(seed),
   mt19937_simd()
 {
-	assert(scaling_factor != 0);
-	assert(sigma          != 0);
+	assert(sigma != 0);
 
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
@@ -83,8 +81,8 @@ void Channel_AWGN_fast_LLR<R>
 		mipp::sincos(theta, sintheta, costheta);
 
 		// fmadd(a, b, c) = a * b + c
-		auto awgn1 = mipp::fmadd(radius, costheta, mipp::Reg<R>(&X_N[i                    ])) * scaling_factor;
-		auto awgn2 = mipp::fmadd(radius, sintheta, mipp::Reg<R>(&X_N[i + mipp::nElReg<R>()])) * scaling_factor;
+		auto awgn1 = mipp::fmadd(radius, costheta, mipp::Reg<R>(&X_N[i                    ]));
+		auto awgn2 = mipp::fmadd(radius, sintheta, mipp::Reg<R>(&X_N[i + mipp::nElReg<R>()]));
 
 		awgn1.store(&Y_N[i                    ]);
 		awgn2.store(&Y_N[i + mipp::nElReg<R>()]);
@@ -103,8 +101,8 @@ void Channel_AWGN_fast_LLR<R>
 		const auto sintheta = std::sin(theta);
 		const auto costheta = std::cos(theta);
 
-		Y_N[i +0] = (radius * sintheta + X_N[i +0]) * scaling_factor;
-		Y_N[i +1] = (radius * costheta + X_N[i +1]) * scaling_factor;
+		Y_N[i +0] = radius * sintheta + X_N[i +0];
+		Y_N[i +1] = radius * costheta + X_N[i +1];
 	}
 
 	// distribute the last odd element
@@ -118,7 +116,7 @@ void Channel_AWGN_fast_LLR<R>
 
 		const auto sintheta = std::sin(theta);
 
-		Y_N[loop_size -1] = (radius * sintheta + X_N[loop_size -1]) * scaling_factor;
+		Y_N[loop_size -1] = radius * sintheta + X_N[loop_size -1];
 	}	
 
 }

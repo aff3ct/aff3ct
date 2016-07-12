@@ -7,8 +7,8 @@
 
 template <typename R>
 Channel_AWGN_MKL_LR<R>
-::Channel_AWGN_MKL_LR(const R& sigma, const int seed, const R& scaling_factor)
-: Channel_AWGN_MKL_LLR<R>(sigma, seed, scaling_factor)
+::Channel_AWGN_MKL_LR(const R& sigma, const int seed)
+: Channel_AWGN_MKL_LLR<R>(sigma, seed)
 {
 }
 

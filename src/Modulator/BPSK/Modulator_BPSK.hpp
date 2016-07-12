@@ -9,8 +9,11 @@
 template <typename B, typename R>
 class Modulator_BPSK : public Modulator<B,R>
 {
+private:
+	const R two_on_square_sigma;
+
 public:
-	Modulator_BPSK();
+	Modulator_BPSK(const R sigma);
 	virtual ~Modulator_BPSK();
 
 	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const;

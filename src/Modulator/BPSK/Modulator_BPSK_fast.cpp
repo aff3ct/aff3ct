@@ -3,7 +3,8 @@
 
 template <typename B, typename R>
 Modulator_BPSK_fast<B,R>
-::Modulator_BPSK_fast()
+::Modulator_BPSK_fast(const R sigma)
+: two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 
@@ -112,7 +113,16 @@ template <typename B, typename R>
 void Modulator_BPSK_fast<B,R>
 ::demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
 {
-	Y_N2 = Y_N1;
+	auto size = Y_N1.size();
+
+	auto vec_loop_size = (size / mipp::nElReg<R>()) * mipp::nElReg<R>();
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
+	{
+		auto y = mipp::Reg<R>(&Y_N1[i]) * two_on_square_sigma;
+		y.store(&Y_N2[i]);
+	}
+	for (unsigned i = vec_loop_size; i < size; i++)
+		Y_N2[i] = Y_N1[i] * two_on_square_sigma;
 }
 
 // ==================================================================================== explicit template instantiation 

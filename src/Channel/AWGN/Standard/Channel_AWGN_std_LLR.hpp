@@ -10,7 +10,6 @@ class Channel_AWGN_std_LLR : public Channel<R>
 {
 private:
 	const R sigma;
-	const R scaling_factor;
 
 	std::random_device          rd;
 	// std::minstd_rand            rd_engine; // LCG
@@ -18,7 +17,7 @@ private:
 	std::normal_distribution<R> normal_dist;
 
 public:
-	Channel_AWGN_std_LLR(const R& sigma, const int seed = 0, const R scaling_factor = 1);
+	Channel_AWGN_std_LLR(const R& sigma, const int seed = 0);
 	virtual ~Channel_AWGN_std_LLR();
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
