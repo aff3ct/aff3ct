@@ -46,9 +46,9 @@ template <typename B, typename R>
 int Modulator_QAM<B,R>
 :: get_buffer_size(const int N)
 {
-	assert(N % this->bits_per_symbol == 0);
+	//assert(N % this->bits_per_symbol == 0);
 	assert( this->bits_per_symbol % 2 == 0);
-	return 2 * N / this->bits_per_symbol;
+	return 2 * std::ceil((float)N / (float)this->bits_per_symbol);
 }
 
 
@@ -80,22 +80,30 @@ template <typename B,typename R>
 void Modulator_QAM<B,R>
 :: modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
 {
-	auto size = X_N2.size();
-	auto bps = this->bits_per_symbol;
-	unsigned int idx;
-	//std::complex<R> symbol;
+	auto size_out    = X_N2.size();
+	auto size_in     = X_N1.size();
+	auto bps         = this->bits_per_symbol;
+	unsigned int idx = 0;
+	auto size_rest   = size_in % bps;
 
-	for (unsigned i = 0; i < size/2; i++)
+	for (unsigned i = 0; i < size_out/2 - 1; i++)
 	{
-		//symbol = bits_to_symbol(&X_N1[i*bps]);
 		idx = 0;
 		for (unsigned j = 0; j < bps; j++)
 		{
 			idx += (1 << j) * X_N1[i*bps + j];
 		}
-		 X_N2[2*i] = this->Constellation[idx].real();
+		 X_N2[2*i]   = this->Constellation[idx].real();
 		 X_N2[2*i+1] = this->Constellation[idx].imag();
 	}
+
+	idx = 0;
+	for (unsigned j = 0; j < bps-size_rest; j++)
+	{
+		idx += (1 << j) * X_N1[(size_out/2 - 1)*bps + j];
+	}
+	X_N2[size_out - 2] = this->Constellation[idx].real();
+	X_N2[size_out - 1] = this->Constellation[idx].imag();
 }
 
 /*
@@ -106,21 +114,19 @@ void Modulator_QAM<B,R>
 :: demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
 {
 	auto size = Y_N2.size();
-	mipp::vector<B> bits(this->bits_per_symbol);
-	std::complex<R> current_symbol;
 	std::complex<R> complex_Yk;
-	mipp::vector<R> distances(this->nbr_symbols);
 	R L0;
 	R L1;
-	unsigned k, b;
+	unsigned k;
+	unsigned b;
 
 	for (unsigned n = 0; n < size; n++)// Boucle sur les LLRs
 	{
-		L0 = -INFINITY;
-		L1 = -INFINITY;
-		b = n % this->bits_per_symbol; // position du bit
-		k = n / this->bits_per_symbol; // Position du symbole
-		complex_Yk =std::complex<R>(Y_N1[2*k],Y_N1[2*k+1]);
+		L0 = -std::numeric_limits<R>::infinity();
+		L1 = -std::numeric_limits<R>::infinity();
+		b  = n % this->bits_per_symbol; // position du bit
+		k  = n / this->bits_per_symbol; // Position du symbole
+		complex_Yk = std::complex<R>(Y_N1[2*k],Y_N1[2*k+1]);
 
 		R sigma2 = this->sigma*this->sigma;
 
