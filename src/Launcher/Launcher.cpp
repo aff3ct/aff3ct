@@ -177,6 +177,10 @@ void Launcher<B,R,Q>
 		if(ar.exist_arg("qn-bits"       )) chan_params.quant_n_bits    = std::stoi(ar.get_arg("qn-bits"));
 		if(ar.exist_arg("qmin-max"      )) chan_params.quant_min_max   = std::stof(ar.get_arg("qmin-max"));
 	}
+
+	// force the number of bits per symbol to 1 when BPSK mod
+	if (mod_params.type == "BPSK" || mod_params.type == "BPSK_FAST")
+		mod_params.bits_per_symbol = 1;
 }
 
 template <typename B, typename R, typename Q>
