@@ -101,8 +101,8 @@ void Channel_AWGN_fast_LLR<R>
 		const auto sintheta = std::sin(theta);
 		const auto costheta = std::cos(theta);
 
-		Y_N[i +0] = (radius * sintheta + X_N[i +0]);
-		Y_N[i +1] = (radius * costheta + X_N[i +1]);
+		Y_N[i +0] = radius * sintheta + X_N[i +0];
+		Y_N[i +1] = radius * costheta + X_N[i +1];
 	}
 
 	// distribute the last odd element
@@ -116,7 +116,7 @@ void Channel_AWGN_fast_LLR<R>
 
 		const auto sintheta = std::sin(theta);
 
-		Y_N[loop_size -1] = (radius * sintheta + X_N[loop_size -1]);
+		Y_N[loop_size -1] = radius * sintheta + X_N[loop_size -1];
 	}	
 
 }
