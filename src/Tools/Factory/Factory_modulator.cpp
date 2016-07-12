@@ -2,6 +2,7 @@
 #include "../../Modulator/BPSK/Modulator_BPSK_fast.hpp"
 #include "../../Modulator/PAM/Modulator_PAM.hpp"
 #include "../../Modulator/QAM/Modulator_QAM.hpp"
+#include "../../Modulator/PSK/Modulator_PSK.hpp"
 
 #include "Factory_modulator.hpp"
 
@@ -20,6 +21,8 @@ Modulator<B,R>* Factory_modulator<B,R>
 		modulator = new Modulator_PAM<B,R>(mod_params.bits_per_symbol, sigma);
 	else if (mod_params.type == "QAM")
 		modulator = new Modulator_QAM<B,R>(mod_params.bits_per_symbol, sigma);
+	else if (mod_params.type == "PSK")
+		modulator = new Modulator_PSK<B,R>(mod_params.bits_per_symbol, sigma);
 
 	return modulator;
 }
