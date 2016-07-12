@@ -23,7 +23,7 @@ public:
 	int nbr_symbols;
 	R sigma;
 	R sqrtEs;
-
+	mipp::vector<std::complex<R>> Constellation;
 private:
 	std::complex<R> bits_to_symbol (const B* bits) const;
 };

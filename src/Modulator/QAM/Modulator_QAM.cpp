@@ -17,6 +17,18 @@ Modulator_QAM<B,R>
   sigma(sigma),
   sqrtEs(sqrt(2.0*(this->nbr_symbols-1)/3.0))
 {
+	mipp::vector<B> bits(this->bits_per_symbol);
+	this->Constellation.resize(this->nbr_symbols);
+
+	for (unsigned j = 0; j < this->nbr_symbols; j++)
+	{
+		for (unsigned l=0; l< this->bits_per_symbol; l++)
+		{
+			bits[l] = (j >> l) & 1;
+		}
+
+		this->Constellation[j] = this->bits_to_symbol(&bits[0]);
+	}
 }
 
 template <typename B, typename R>
@@ -70,13 +82,19 @@ void Modulator_QAM<B,R>
 {
 	auto size = X_N2.size();
 	auto bps = this->bits_per_symbol;
-	std::complex<R> symbol;
+	unsigned int idx;
+	//std::complex<R> symbol;
 
 	for (unsigned i = 0; i < size/2; i++)
 	{
-		symbol = bits_to_symbol(&X_N1[i*bps]);
-		 X_N2[2*i] = symbol.real();
-		 X_N2[2*i+1] = symbol.imag();
+		//symbol = bits_to_symbol(&X_N1[i*bps]);
+		idx = 0;
+		for (unsigned j = 0; j < bps; j++)
+		{
+			idx += (1 << j) * X_N1[i*bps + j];
+		}
+		 X_N2[2*i] = this->Constellation[idx].real();
+		 X_N2[2*i+1] = this->Constellation[idx].imag();
 	}
 }
 
@@ -103,23 +121,16 @@ void Modulator_QAM<B,R>
 		b = n % this->bits_per_symbol; // position du bit
 		k = n / this->bits_per_symbol; // Position du symbole
 		complex_Yk =std::complex<R>(Y_N1[2*k],Y_N1[2*k+1]);
+
 		R sigma2 = this->sigma*this->sigma;
 
 		for (unsigned j = 0; j < this->nbr_symbols; j++)
 		{
-			for (unsigned l=0; l< this->bits_per_symbol; l++)
-			{
-				bits[l] = (j >> l) & 1;
-			}
 
-			//current_symbol[0] = 0;
-			current_symbol = this->bits_to_symbol(&bits[0]);
-			//
-
-			if (bits[b] == 0)
-			L0 = max_star(L0,-std::norm(complex_Yk-current_symbol)/(sigma2));
+			if ( (j & (1 << b)) == 0 )
+				L0 = max_star(L0,-std::norm(complex_Yk-this->Constellation[j])/(sigma2));
 			else
-			L1 = max_star(L1,-std::norm(complex_Yk-current_symbol)/(sigma2));
+				L1 = max_star(L1,-std::norm(complex_Yk-this->Constellation[j])/(sigma2));
 
 		}
 		Y_N2[n] = L0-L1;
