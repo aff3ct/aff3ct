@@ -96,6 +96,11 @@ Simulation_BFER<B,R,Q>
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
 	assert(simu_params.n_threads >= 1);
+
+	if (simu_params.n_threads > 1 && simu_params.enable_debug)
+		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
+		          << bold_yellow("because you launched the simulation with more than 1 thread!")
+		          << std::endl;
 }
 
 template <typename B, typename R, typename Q>
