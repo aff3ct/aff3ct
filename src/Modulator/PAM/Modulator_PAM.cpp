@@ -17,6 +17,18 @@ Modulator_PAM<B,R>
   sigma(sigma),
   sqrtEs(sqrt((this->nbr_symbols*this->nbr_symbols-1)/3.0))
 {
+	mipp::vector<B> bits(this->bits_per_symbol);
+	this->Constellation.resize(this->nbr_symbols);
+
+	for (unsigned j = 0; j < this->nbr_symbols; j++)
+	{
+		for (unsigned l=0; l< this->bits_per_symbol; l++)
+		{
+			bits[l] = (j >> l) & 1;
+		}
+
+		this->Constellation[j] = this->bits_to_symbol(&bits[0]);
+	}
 }
 
 template <typename B, typename R>
@@ -67,9 +79,16 @@ void Modulator_PAM<B,R>
 {
 	auto size = X_N2.size();
 	auto bps = this->bits_per_symbol;
+	unsigned int idx;
+
 	for (unsigned i = 0; i < size; i++)
 	{
-		 X_N2[i] = bits_to_symbol(&X_N1[i*bps]);
+		idx = 0;
+		for (unsigned j = 0; j < bps; j++)
+		{
+			idx += (1 << j) * X_N1[i*bps + j];
+		}
+		X_N2[i] = this->Constellation[idx];
 	}
 }
 
@@ -82,35 +101,25 @@ void Modulator_PAM<B,R>
 {
 	auto size = Y_N2.size();
 	mipp::vector<B> bits(this->bits_per_symbol);
-	R current_symbol;
 	mipp::vector<R> distances(this->nbr_symbols);
 	R L0 = -INFINITY;
 	R L1 = -INFINITY;
 	unsigned k, b;
+	R sigma2 = this->sigma*this->sigma;
 
 	for (unsigned n = 0; n < size; n++)// Boucle sur les LLRs
 	{
-		L0 = -100.0;//-INFINITY;
-		L1 = -100.0; //-INFINITY;
+		L0 = -INFINITY;
+		L1 = -INFINITY;
 		b = n % this->bits_per_symbol; // position du bit
 		k = n / this->bits_per_symbol; // Position du symbole
 
-		R sigma2 = this->sigma*this->sigma;
-
 		for (unsigned j = 0; j < this->nbr_symbols; j++)
 		{
-			for (unsigned l=0; l< this->bits_per_symbol; l++)
-			{
-				bits[l] = (j >> l) & 1;
-			}
-
-			//current_symbol[0] = 0;
-			current_symbol = this->bits_to_symbol(&bits[0]);
-			//
-			if (bits[b] == 0)
-				L0 = max_star(L0,-(Y_N1[k]-current_symbol)*(Y_N1[k]-current_symbol)/(sigma2));
+			if ( (j & (1 << b)) == 0 )
+				L0 = max_star(L0,-(Y_N1[k]-this->Constellation[j])*(Y_N1[k]-this->Constellation[j])/(sigma2));
 			else
-				L1 = max_star(L1,-(Y_N1[k]-current_symbol)*(Y_N1[k]-current_symbol)/(sigma2));
+				L1 = max_star(L1,-(Y_N1[k]-this->Constellation[j])*(Y_N1[k]-this->Constellation[j])/(sigma2));
 
 		}
 		Y_N2[n] = L0-L1;

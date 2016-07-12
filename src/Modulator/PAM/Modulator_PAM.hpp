@@ -21,7 +21,7 @@ public:
 	int nbr_symbols;
 	R sigma;
 	R sqrtEs;
-
+	mipp::vector<R> Constellation;
 private:
 	R bits_to_symbol (const B* bits) const;
 };
