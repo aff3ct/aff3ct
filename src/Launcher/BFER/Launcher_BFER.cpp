@@ -17,8 +17,7 @@ Launcher_BFER<B,R,Q>
 	this->simu_params.enable_leg_term = false;
 	this->simu_params.enable_dec_thr  = false;
 	this->simu_params.time_report     = false;
-	this->simu_params.trace           = false;
-	this->simu_params.trace_path_file = "debug_out.csv";
+	this->simu_params.trace_path_file = "";
 	this->enco_params.systematic      = true;
 }
 
@@ -57,9 +56,7 @@ void Launcher_BFER<B,R,Q>
 	if(this->ar.exist_arg("enable-dec-thr" )) this->simu_params.enable_dec_thr  = true;
 	if(this->ar.exist_arg("enable-debug"   )) this->simu_params.enable_debug    = true;
 	if(this->ar.exist_arg("time-report"    )) this->simu_params.time_report     = true;
-	if(this->ar.exist_arg("trace"          )) this->simu_params.trace           = true;
-	if(!this->ar.get_arg("trace").empty())
-		this->simu_params.trace_path_file = this->ar.get_arg("trace");
+	if(this->ar.exist_arg("trace"          )) this->simu_params.trace_path_file = this->ar.get_arg("trace");
 }
 
 template <typename B, typename R, typename Q>

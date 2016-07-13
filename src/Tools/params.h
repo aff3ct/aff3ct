@@ -7,13 +7,10 @@
 
 struct t_simulation_param
 {
-	std::string               type;
 	int                       max_fe;
 	int                       benchs;
 	bool                      disable_display;
 	bool                      enable_debug;
-	bool                      trace;//RT
-	std::string               trace_path_file;//RT
 	bool                      time_report;
 	int                       n_threads;
 	bool                      enable_leg_term;
@@ -26,6 +23,8 @@ struct t_simulation_param
 	float                     sig_a_max;
 	float                     sig_a_step;
 	std::chrono::seconds      stop_time;
+	std::string               type;
+	std::string               trace_path_file;
 	std::string               awgn_codes_dir;
 	std::string               bin_pb_path;
 	std::string               awgn_codes_file;
