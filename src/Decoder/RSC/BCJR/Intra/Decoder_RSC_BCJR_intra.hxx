@@ -46,15 +46,15 @@ Decoder_RSC_BCJR_intra<B,R>
   gamma(2 * (K +3) + 2 * mipp::nElReg<R>())
 {
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
-	req_trellis[0] = { 0,  3,  4,  7,  1,  2,  5,  6};
-	req_trellis[1] = { 1,  1,  1,  1,  1,  1,  1,  1};
-	req_trellis[2] = { 1,  2,  5,  6,  0,  3,  4,  7};
-	req_trellis[3] = {-1, -1, -1, -1, -1, -1, -1, -1};
-	req_trellis[4] = { 0,  4,  5,  1,  2,  6,  7,  3};
-	req_trellis[5] = { 1,  1,  1,  1,  1,  1,  1,  1};
-	req_trellis[6] = { 4,  0,  1,  5,  6,  2,  3,  7};
-	req_trellis[7] = {-1, -1, -1, -1, -1, -1, -1, -1};
-	req_trellis[8] = { 0,  1,  1,  0,  0,  1,  1,  0};
+	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};
+	req_trellis[1] = { 1, -1,  1, -1, -1,  1, -1,  1};
+	req_trellis[2] = { 0,  1,  1,  0,  0,  1,  1,  0};
+	req_trellis[3] = { 1,  3,  5,  7,  1,  3,  5,  7};
+	req_trellis[4] = {-1,  1, -1,  1,  1, -1,  1, -1};
+	req_trellis[5] = { 0,  1,  1,  0,  0,  1,  1,  0};
+	req_trellis[6] = { 0,  4,  5,  1,  2,  6,  7,  3};
+	req_trellis[7] = { 0,  0,  1,  1,  1,  1,  0,  0};
+	req_trellis[8] = { 4,  0,  1,  5,  6,  2,  3,  7};
 	req_trellis[9] = { 0,  0,  1,  1,  1,  1,  0,  0};
 
 	for (unsigned i = 0; i < req_trellis.size(); i++)
