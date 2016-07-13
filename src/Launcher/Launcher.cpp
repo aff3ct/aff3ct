@@ -64,11 +64,10 @@ void Launcher<B,R,Q>
 	req_args["code-type"      ] = "code-type";
 	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
 
-	opt_args["mod-type"      ] = "modulation name";                                      //RT
-	doc_args["mod-type"      ] = "select the type of modulation (default is BPSK).";     //RT
-	opt_args["mod-bps"       ] = "modulation number of bits per symbol";                 //RT
-	doc_args["mod-bps"       ] = "select the number of bits per symbol (default is 1)."; //RT
-
+	opt_args["mod-type"       ] = "modulation name";                                      //RT
+	doc_args["mod-type"       ] = "select the type of modulation (default is BPSK).";     //RT
+	opt_args["mod-bps"        ] = "modulation number of bits per symbol";                 //RT
+	doc_args["mod-bps"        ] = "select the number of bits per symbol (default is 1)."; //RT
 
 	opt_args["simu-type"      ] = "name";
 	doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
@@ -235,6 +234,8 @@ void Launcher<B,R,Q>
 
 	std::string demodulation = (mod_params.disable_demodulation) ? "off" : "on";
 
+	std::string modulation = std::to_string((int)(1 << mod_params.bits_per_symbol)) + "-" + mod_params.type;
+
 	// display configuration and simulation parameters
 	std::clog << "# " << bold("-------------------------------------------------")                           << std::endl;
 	std::clog << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                           << std::endl;
@@ -250,7 +251,7 @@ void Launcher<B,R,Q>
 	std::clog << "# " << bold("* SNR step                      ") << " = " << simu_params.snr_step  << " dB" << std::endl;
 	std::clog << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
 	std::clog << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
-	std::clog << "# " << bold("* Modulation type               ") << " = " << (int)(1<<mod_params.bits_per_symbol)<<"-"<< mod_params.type                << std::endl;
+	std::clog << "# " << bold("* Modulation type               ") << " = " << modulation                     << std::endl;
 	std::clog << "# " << bold("* Demodulation                  ") << " = " << demodulation                   << std::endl;
 	std::clog << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
 	std::clog << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;
