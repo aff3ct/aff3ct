@@ -12,6 +12,8 @@ struct t_simulation_param
 	int                       benchs;
 	bool                      disable_display;
 	bool                      enable_debug;
+	bool                      trace;//RT
+	std::string               trace_path_file;//RT
 	bool                      time_report;
 	int                       n_threads;
 	bool                      enable_leg_term;

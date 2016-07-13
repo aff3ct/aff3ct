@@ -137,6 +137,7 @@ private:
 	static void simulation_loop          (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_bench    (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_debug    (Simulation_BFER<B,R,Q> *simu);
+	static void trace                    (Simulation_BFER<B,R,Q> *simu);
 
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);

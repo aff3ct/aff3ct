@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cassert>
 #include <algorithm>
+#include <iostream>//RT : for file writting
+#include <fstream>//RT : for file writting
 
 #include "../../Tools/Factory/Factory_source.hpp"
 #include "../../Tools/Factory/Factory_CRC.hpp"
@@ -373,6 +375,12 @@ void Simulation_BFER<B,R,Q>
 		simu->d_store_total[tid] += d_store;
 		simu->d_check_total[tid] += d_check;
 
+		// Save Trace in file
+		if (simu->simu_params.trace)
+		{
+			trace(simu);
+		}
+
 		// display statistics in terminal
 		if (tid == 0 && !simu->simu_params.disable_display && simu->simu_params.display_freq != nanoseconds(0) &&
 		    (steady_clock::now() - simu->t_simu) >= simu->simu_params.display_freq)
@@ -614,6 +622,12 @@ void Simulation_BFER<B,R,Q>
 		simu->d_store_total[0] += d_store;
 		simu->d_check_total[0] += d_check;
 
+		// Save Trace in file
+		if (simu->simu_params.trace)
+		{
+			trace(simu);
+		}
+
 		// display statistics in terminal
 		if (!simu->simu_params.disable_display && simu->simu_params.display_freq != nanoseconds(0) && 
 		    (steady_clock::now() - t_simu) >= simu->simu_params.display_freq)
@@ -625,6 +639,65 @@ void Simulation_BFER<B,R,Q>
 
 	simu->terminal->legend(std::clog);
 }
+
+
+template <typename B, typename R, typename Q>
+void Simulation_BFER<B,R,Q>
+::trace(Simulation_BFER<B,R,Q> *simu)
+{
+	std::ofstream myfile;
+	myfile.open(simu->simu_params.trace_path_file);
+	myfile << "U_K, \t X_N1, \t X_N2, \t X_N3_I, \t X_N3_Q, \t Y_N1_I, \t Y_N1_Q, \t Y_N2, \t Y_N3, \t Y_N4, \t V_K"<<std::endl;
+
+	for (unsigned l_idx = 0; l_idx < simu->Y_N2[0].size(); l_idx++)
+	{
+		if(l_idx < simu->U_K[0].size()) myfile << simu->U_K[0].at(l_idx);
+		myfile << ", \t ";
+		if(l_idx < simu->X_N1[0].size()) myfile << simu->X_N1[0].at(l_idx);
+		myfile << ", \t ";
+		if(l_idx < simu->X_N2[0].size()) myfile << simu->X_N2[0].at(l_idx);
+		myfile << ", \t ";
+		if (simu->mod_params.type == "PAM" || simu->mod_params.type == "BPSK" || simu->mod_params.type == "BPSK_FAST")
+		{
+			if(l_idx < simu->X_N3[0].size())
+				myfile << simu->X_N3[0].at(l_idx) << ", \t " << 0;
+			else
+				myfile << ", \t ";
+			myfile << ", \t ";
+			if(l_idx < simu->Y_N1[0].size())
+				myfile << simu->Y_N1[0].at(l_idx) << ", \t " << 0;
+			else
+				myfile << ", \t ";
+			myfile << ", \t ";
+		}
+		else
+		{
+			if(2*l_idx < simu->X_N3[0].size())
+				myfile << simu->X_N3[0].at(2*l_idx) << ", \t " << simu->X_N3[0].at(2*l_idx+1);
+			else
+				myfile << ", \t ";
+			myfile << ", \t ";
+
+			if(2*l_idx < simu->Y_N1[0].size())
+				myfile << simu->Y_N1[0].at(2*l_idx) << ", \t " << simu->Y_N1[0].at(2*l_idx+1);
+			else
+				myfile << ", \t ";
+			myfile << ", \t ";
+		}
+		if(l_idx < simu->Y_N2[0].size()) myfile << simu->Y_N2[0].at(l_idx);
+		myfile << ", \t ";
+		if(l_idx < simu->Y_N3[0].size()) myfile << simu->Y_N3[0].at(l_idx);
+		myfile << ", \t ";
+		if(l_idx < simu->Y_N4[0].size()) myfile << simu->Y_N4[0].at(l_idx);
+		myfile << ", \t ";
+		if(l_idx < simu->V_K[0].size()) myfile << simu->V_K[0].at(l_idx);
+		myfile << std::endl;
+	}
+	myfile.close();
+}
+
+
+
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>

@@ -8,32 +8,37 @@
 
 #include "../mod_functions/Mod_Functions.hpp"
 
+#define the_max(a,b) \
+({a > b ? a : b; })
+
+
+template <typename R>
+inline R fast_max(const R x,const R y)
+{
+	return the_max(x,y);
+}
+
+
+
 template <typename R>
 inline R max_star(const R x,const R y)
 {
-    R d = fabs(x-y);
+    R d = std::abs(x-y);
 
-    if (isinf(x) && isinf(y)){
-        if (x<0 && y<0)
-            return -INFINITY;
-        else
-            return INFINITY;
-    }else{
-        if (d >= 37)
-        {
-            d = 0;//exp(-d);
-        }
-        else if (d < 37 && d >=9)
-        {
-        	d = exp(-d);
-        }
-        else
-        {
-            d = log(1+exp(-d));
-        }
+	if (d >= 37 || std::isnan(d))
+	{
+		d = 0.0;//exp(-d);
+	}
+	else if (d < 37 && d >=9)
+	{
+		d = std::exp(-d);
+	}
+	else
+	{
+		d = std::log1p(std::exp(-d));
+	}
 
-        return std::max(x,y) + d;
-    }
+	return the_max(x,y) + d;
 }
 
 
