@@ -54,8 +54,9 @@ Simulation_BFER<B,R,Q>
   X_N3(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N1(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N2(simu_params.n_threads, mipp::vector<R>(code_params.N)),
-  Y_N3(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
+  Y_N3(simu_params.n_threads, mipp::vector<R>(code_params.N)),
   Y_N4(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
+  Y_N5(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
   V_K (simu_params.n_threads, mipp::vector<B>(code_params.K)),
   V_N (simu_params.n_threads, mipp::vector<B>(code_params.N)),
 
@@ -77,6 +78,7 @@ Simulation_BFER<B,R,Q>
   d_punct_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_modul_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_chann_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
+  d_filte_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_demod_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_quant_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
   d_depun_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
@@ -91,6 +93,7 @@ Simulation_BFER<B,R,Q>
   d_punct_total_sum(std::chrono::nanoseconds(0)),
   d_modul_total_sum(std::chrono::nanoseconds(0)),
   d_chann_total_sum(std::chrono::nanoseconds(0)),
+  d_filte_total_sum(std::chrono::nanoseconds(0)),
   d_demod_total_sum(std::chrono::nanoseconds(0)),
   d_quant_total_sum(std::chrono::nanoseconds(0)),
   d_depun_total_sum(std::chrono::nanoseconds(0)),
@@ -184,6 +187,7 @@ void Simulation_BFER<B,R,Q>
 	simu->d_punct_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
+	simu->d_filte_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_depun_total[tid] = std::chrono::nanoseconds(0);
@@ -225,15 +229,17 @@ void Simulation_BFER<B,R,Q>
 	const auto N_code = simu->code_params.N_code;
 	const auto N      = simu->code_params.N;
 	const auto tail   = simu->code_params.tail_length;
-	const auto N_mod  = simu->modulator[tid]->get_buffer_size(N + tail);
+	const auto N_mod  = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
+	const auto N_fil  = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
 	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
 	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
 	if (simu->X_N3[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
 	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
-	if (simu->Y_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N2[tid].resize((N      + tail) * n_fra);
+	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil          * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
 	if (simu->Y_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N3[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N4[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N4[tid].resize((N_code + tail) * n_fra);
+	if (simu->Y_N4[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
+	if (simu->Y_N5[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N5[tid].resize((N_code + tail) * n_fra);
 	if (simu->V_K [tid].size() != (unsigned) ( K              * n_fra)) simu->V_K [tid].resize( K              * n_fra);
 	if (simu->V_N [tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->V_N [tid].resize((N_code + tail) * n_fra);
 
@@ -315,27 +321,32 @@ void Simulation_BFER<B,R,Q>
 		simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid]);
 		auto d_chann = steady_clock::now() - t_chann;
 
+		// filtering
+		auto t_filte = steady_clock::now();
+		simu->modulator[tid]->filter(simu->Y_N1[tid], simu->Y_N2[tid]);
+		auto d_filte = steady_clock::now() - t_filte;
+
 		// demodulation
 		auto t_demod = steady_clock::now();
 		if (simu->mod_params.disable_demodulation)
-			simu->Y_N2[tid] = simu->Y_N1[tid];
+			simu->Y_N3[tid] = simu->Y_N2[tid];
 		else
-			simu->modulator[tid]->demodulate(simu->Y_N1[tid], simu->Y_N2[tid]);
+			simu->modulator[tid]->demodulate(simu->Y_N2[tid], simu->Y_N3[tid]);
 		auto d_demod = steady_clock::now() - t_demod;
 
 		// make the quantization
 		auto t_quant = steady_clock::now();
-		simu->quantizer[tid]->process(simu->Y_N2[tid], simu->Y_N3[tid]);
+		simu->quantizer[tid]->process(simu->Y_N3[tid], simu->Y_N4[tid]);
 		auto d_quant = steady_clock::now() - t_quant;
 
 		// depuncture before the decoding stage
 		auto t_depun = steady_clock::now();
-		simu->puncturer[tid]->depuncture(simu->Y_N3[tid], simu->Y_N4[tid]);
+		simu->puncturer[tid]->depuncture(simu->Y_N4[tid], simu->Y_N5[tid]);
 		auto d_depun = steady_clock::now() - t_depun;
 
 		// load data in the decoder
 		auto t_load = steady_clock::now();
-		simu->decoder[tid]->load(simu->Y_N4[tid]);
+		simu->decoder[tid]->load(simu->Y_N5[tid]);
 		auto d_load = steady_clock::now() - t_load;
 
 		// launch decoder
@@ -367,6 +378,7 @@ void Simulation_BFER<B,R,Q>
 		simu->d_punct_total[tid] += d_punct;
 		simu->d_modul_total[tid] += d_modul;
 		simu->d_chann_total[tid] += d_chann;
+		simu->d_filte_total[tid] += d_filte;
 		simu->d_demod_total[tid] += d_demod;
 		simu->d_quant_total[tid] += d_quant;
 		simu->d_depun_total[tid] += d_depun;
@@ -543,49 +555,60 @@ void Simulation_BFER<B,R,Q>
 		ft.display_real_vector(simu->Y_N1[0]);
 		std::clog << std::endl;
 
-		// demodulation
-		std::clog << "Demodulate from Y_N1 to Y_N2..." << std::endl;
-		auto t_demod = steady_clock::now();
-		if (simu->mod_params.disable_demodulation)
-			simu->Y_N2[0] = simu->Y_N1[0];
-		else
-			simu->modulator[0]->demodulate(simu->Y_N1[0], simu->Y_N2[0]);
-		auto d_demod = steady_clock::now() - t_demod;
+		// filtering
+		std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
+		auto t_filte = steady_clock::now();
+		simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
+		auto d_filte = steady_clock::now() - t_filte;
 
 		// display Y_N2
 		std::clog << "Y_N2:" << std::endl;
 		ft.display_real_vector(simu->Y_N2[0]);
 		std::clog << std::endl;
 
-		// make the quantization
-		std::clog << "Make the quantization from Y_N2 to Y_N3..." << std::endl;
-		auto t_quant = steady_clock::now();
-		simu->quantizer[0]->process(simu->Y_N2[0], simu->Y_N3[0]);
-		auto d_quant = steady_clock::now() - t_quant;
+		// demodulation
+		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
+		auto t_demod = steady_clock::now();
+		if (simu->mod_params.disable_demodulation)
+			simu->Y_N3[0] = simu->Y_N2[0];
+		else
+			simu->modulator[0]->demodulate(simu->Y_N2[0], simu->Y_N3[0]);
+		auto d_demod = steady_clock::now() - t_demod;
 
 		// display Y_N3
 		std::clog << "Y_N3:" << std::endl;
 		ft.display_real_vector(simu->Y_N3[0]);
 		std::clog << std::endl;
 
-		// depuncture before the decoding stage
-		std::clog << "Depuncture Y_N3 and generate Y_N4..." << std::endl;
-		auto t_depun = steady_clock::now();
-		simu->puncturer[0]->depuncture(simu->Y_N3[0], simu->Y_N4[0]);
-		auto d_depun = steady_clock::now() - t_depun;
+		// make the quantization
+		std::clog << "Make the quantization from Y_N3 to Y_N4..." << std::endl;
+		auto t_quant = steady_clock::now();
+		simu->quantizer[0]->process(simu->Y_N3[0], simu->Y_N4[0]);
+		auto d_quant = steady_clock::now() - t_quant;
 
 		// display Y_N4
 		std::clog << "Y_N4:" << std::endl;
 		ft.display_real_vector(simu->Y_N4[0]);
 		std::clog << std::endl;
 
+		// depuncture before the decoding stage
+		std::clog << "Depuncture Y_N4 and generate Y_N5..." << std::endl;
+		auto t_depun = steady_clock::now();
+		simu->puncturer[0]->depuncture(simu->Y_N4[0], simu->Y_N5[0]);
+		auto d_depun = steady_clock::now() - t_depun;
+
+		// display Y_N5
+		std::clog << "Y_N5:" << std::endl;
+		ft.display_real_vector(simu->Y_N5[0]);
+		std::clog << std::endl;
+
 		// load data in the decoder
 		auto t_load = steady_clock::now();
-		simu->decoder[0]->load(simu->Y_N4[0]);
+		simu->decoder[0]->load(simu->Y_N5[0]);
 		auto d_load = steady_clock::now() - t_load;
 		
 		// launch decoder
-		std::clog << "Decode Y_N2 and generate V_K..." << std::endl;
+		std::clog << "Decode Y_N5 and generate V_K..." << std::endl;
 		auto t_decod = steady_clock::now();
 		simu->decoder[0]->decode();
 		auto d_decod = steady_clock::now() - t_decod;
@@ -612,6 +635,7 @@ void Simulation_BFER<B,R,Q>
 		simu->d_punct_total[0] += d_punct;
 		simu->d_modul_total[0] += d_modul;
 		simu->d_chann_total[0] += d_chann;
+		simu->d_filte_total[0] += d_filte;
 		simu->d_demod_total[0] += d_demod;
 		simu->d_quant_total[0] += d_quant;
 		simu->d_depun_total[0] += d_depun;
@@ -691,6 +715,7 @@ void Simulation_BFER<B,R,Q>
 	d_modul_total_red = nanoseconds(0);
 	d_chann_total_red = nanoseconds(0);
 	d_demod_total_red = nanoseconds(0);
+	d_filte_total_red = nanoseconds(0);
 	d_quant_total_red = nanoseconds(0);
 	d_depun_total_red = nanoseconds(0);
 	d_load_total_red  = nanoseconds(0);
@@ -706,6 +731,7 @@ void Simulation_BFER<B,R,Q>
 		d_punct_total_red += d_punct_total[tid];
 		d_modul_total_red += d_modul_total[tid];
 		d_chann_total_red += d_chann_total[tid];
+		d_filte_total_red += d_filte_total[tid];
 		d_demod_total_red += d_demod_total[tid];
 		d_quant_total_red += d_quant_total[tid];
 		d_depun_total_red += d_depun_total[tid];
@@ -724,6 +750,7 @@ void Simulation_BFER<B,R,Q>
 			d_punct_total_sum += d_punct_total[tid];
 			d_modul_total_sum += d_modul_total[tid];
 			d_chann_total_sum += d_chann_total[tid];
+			d_filte_total_sum += d_filte_total[tid];
 			d_demod_total_sum += d_demod_total[tid];
 			d_quant_total_sum += d_quant_total[tid];
 			d_depun_total_sum += d_depun_total[tid];
@@ -746,6 +773,7 @@ void Simulation_BFER<B,R,Q>
 	               d_punct_total_sum +
 	               d_modul_total_sum +
 	               d_chann_total_sum +
+	               d_filte_total_sum +
 	               d_demod_total_sum +
 	               d_quant_total_sum + 
 	               d_depun_total_sum + 
@@ -760,6 +788,7 @@ void Simulation_BFER<B,R,Q>
 	auto punct_sec     = ((float)d_punct_total_sum.count()) * 0.000000001f;
 	auto modul_sec     = ((float)d_modul_total_sum.count()) * 0.000000001f;
 	auto chann_sec     = ((float)d_chann_total_sum.count()) * 0.000000001f;
+	auto filte_sec     = ((float)d_filte_total_sum.count()) * 0.000000001f;
 	auto demod_sec     = ((float)d_demod_total_sum.count()) * 0.000000001f;
 	auto quant_sec     = ((float)d_quant_total_sum.count()) * 0.000000001f;
 	auto depun_sec     = ((float)d_depun_total_sum.count()) * 0.000000001f;
@@ -776,6 +805,7 @@ void Simulation_BFER<B,R,Q>
 	auto punct_pc     = (punct_sec     / total_sec)     * 100.f;
 	auto modul_pc     = (modul_sec     / total_sec)     * 100.f;
 	auto chann_pc     = (chann_sec     / total_sec)     * 100.f;
+	auto filte_pc     = (filte_sec     / total_sec)     * 100.f;
 	auto demod_pc     = (demod_sec     / total_sec)     * 100.f;
 	auto quant_pc     = (quant_sec     / total_sec)     * 100.f;
 	auto depun_pc     = (depun_sec     / total_sec)     * 100.f;
@@ -804,6 +834,9 @@ void Simulation_BFER<B,R,Q>
 	       << std::endl;
 	stream << "# " << bold           ("* Channel") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << chann_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << chann_pc     << "%)" 
+	       << std::endl;
+	stream << "# " << bold           ("* Filter") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
+	       << filte_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << filte_pc     << "%)" 
 	       << std::endl;
 	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << demod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc     << "%)" 
@@ -894,10 +927,10 @@ CRC<B>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modulator<B,R>* Simulation_BFER<B,R,Q>
+Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R>::build(mod_params, sigma);
+	return Factory_modulator<B,R,R>::build(mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>

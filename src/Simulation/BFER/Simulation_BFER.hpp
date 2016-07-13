@@ -55,9 +55,10 @@ protected:
 	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
 	std::vector<mipp::vector<R>> X_N3; // modulate codeword
 	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (after the channel noise)
-	std::vector<mipp::vector<R>> Y_N2; // noisy codeword (after the demodulation)
-	std::vector<mipp::vector<Q>> Y_N3; // noisy codeword (after quantization)
-	std::vector<mipp::vector<Q>> Y_N4; // noisy and depunctured codeword
+	std::vector<mipp::vector<R>> Y_N2; // noisy codeword (after the filtering)
+	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after the demodulation)
+	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
+	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
 	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
 	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
 
@@ -66,7 +67,7 @@ protected:
 	std::vector<CRC<B>*>              crc;
 	std::vector<Encoder<B>*>          encoder;
 	std::vector<Puncturer<B,Q>*>      puncturer;
-	std::vector<Modulator<B,R>*>      modulator;
+	std::vector<Modulator<B,R,R>*>    modulator;
 	std::vector<Channel<R>*>          channel;
 	std::vector<Quantizer<R,Q>*>      quantizer;
 	std::vector<Decoder<B,Q>*>        decoder;
@@ -85,6 +86,7 @@ protected:
 	std::vector<std::chrono::nanoseconds> d_punct_total;
 	std::vector<std::chrono::nanoseconds> d_modul_total;
 	std::vector<std::chrono::nanoseconds> d_chann_total;
+	std::vector<std::chrono::nanoseconds> d_filte_total;
 	std::vector<std::chrono::nanoseconds> d_demod_total;
 	std::vector<std::chrono::nanoseconds> d_quant_total;
 	std::vector<std::chrono::nanoseconds> d_depun_total;
@@ -99,6 +101,7 @@ protected:
 	std::chrono::nanoseconds d_punct_total_red;
 	std::chrono::nanoseconds d_modul_total_red;
 	std::chrono::nanoseconds d_chann_total_red;
+	std::chrono::nanoseconds d_filte_total_red;
 	std::chrono::nanoseconds d_demod_total_red;
 	std::chrono::nanoseconds d_quant_total_red;
 	std::chrono::nanoseconds d_depun_total_red;
@@ -113,6 +116,7 @@ protected:
 	std::chrono::nanoseconds d_punct_total_sum;
 	std::chrono::nanoseconds d_modul_total_sum;
 	std::chrono::nanoseconds d_chann_total_sum;
+	std::chrono::nanoseconds d_filte_total_sum;
 	std::chrono::nanoseconds d_demod_total_sum;
 	std::chrono::nanoseconds d_quant_total_sum;
 	std::chrono::nanoseconds d_depun_total_sum;
@@ -151,7 +155,7 @@ protected:
 	virtual CRC<B>*              build_crc        (const int tid = 0);
 	virtual Encoder<B>*          build_encoder    (const int tid = 0) = 0;
 	virtual Puncturer<B,Q>*      build_puncturer  (const int tid = 0);
-	virtual Modulator<B,R>*      build_modulator  (const int tid = 0);
+	virtual Modulator<B,R,R>*    build_modulator  (const int tid = 0);
 	virtual Channel<R>*          build_channel    (const int tid = 0);
 	virtual Quantizer<R,Q>*      build_quantizer  (const int tid = 0);
 	virtual Decoder<B,Q>*        build_decoder    (const int tid = 0) = 0;

@@ -39,7 +39,7 @@ struct t_code_param
 	int         tail_length;
 	int         m;
 	int         M;
-	float       sigma; // Not noise var, used to set a fixed snr value for frozen bits contstruction
+	float       sigma; // not noise var, used to set a fixed snr value for frozen bits contstruction (in polar codes)
 	std::string type;
 	std::string generation_method;
 	std::string frozen_bits_path;
@@ -50,10 +50,10 @@ struct t_code_param
 
 struct t_mod_param
 {
-	unsigned int bits_per_symbol; // Bits per symbol
-	std::string  type;            // Modulation type (PAM, QAM, ...)
-	std::string  demod_max;       // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
-	bool disable_demodulation;    // do not demodulate (useful for the BPSK and min/sum decoders)
+	int bits_per_symbol;       // bits per symbol
+	int n_demod_ite;           // number of demodulations/decoding sessions to perform in the BFERI simulations
+	std::string  type;         // modulation type (PAM, QAM, ...)
+	bool disable_demodulation; // do not demodulate (useful for the BPSK and min/sum decoders)	
 };
 
 struct t_encoder_param

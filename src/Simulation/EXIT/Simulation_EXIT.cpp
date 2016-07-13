@@ -102,8 +102,8 @@ void Simulation_EXIT<B,R,Q>
 	}
 
 	// resize the modulation buffers
-	const auto K_mod = modulator_a->get_buffer_size(code_params.K);
-	const auto N_mod = modulator  ->get_buffer_size(code_params.N);
+	const auto K_mod = modulator_a->get_buffer_size_after_modulation(code_params.K);
+	const auto N_mod = modulator  ->get_buffer_size_after_modulation(code_params.N);
 	const auto tail  = code_params.tail_length;
 	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
@@ -420,17 +420,17 @@ Source<B>* Simulation_EXIT<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modulator<B,R>* Simulation_EXIT<B,R,Q>
+Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R>::build(mod_params, sigma);
+	return Factory_modulator<B,R,R>::build(mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
-Modulator<B,R>* Simulation_EXIT<B,R,Q>
+Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R>::build(mod_params, 2.0 / sig_a);
+	return Factory_modulator<B,R,R>::build(mod_params, 2.0 / sig_a);
 }
 
 template <typename B, typename R, typename Q>

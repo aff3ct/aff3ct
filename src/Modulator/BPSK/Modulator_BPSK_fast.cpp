@@ -1,21 +1,21 @@
 #include "../../Tools/bash_tools.h"
 #include "Modulator_BPSK_fast.hpp"
 
-template <typename B, typename R>
-Modulator_BPSK_fast<B,R>
+template <typename B, typename R, typename Q>
+Modulator_BPSK_fast<B,R,Q>
 ::Modulator_BPSK_fast(const R sigma)
 : two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 
-template <typename B, typename R>
-Modulator_BPSK_fast<B,R>
+template <typename B, typename R, typename Q>
+Modulator_BPSK_fast<B,R,Q>
 ::~Modulator_BPSK_fast()
 {
 }
 
-template <typename B, typename R>
-void Modulator_BPSK_fast<B,R>
+template <typename B, typename R, typename Q>
+void Modulator_BPSK_fast<B,R,Q>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
 {
 	std::cerr << bold_red("(EE) The fast modulator does not support this type of data.") << std::endl;
@@ -23,7 +23,7 @@ void Modulator_BPSK_fast<B,R>
 }
 
 template <>
-void Modulator_BPSK_fast<int, float>
+void Modulator_BPSK_fast<int, float, float>
 ::modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2) const
 {
 	auto size = X_N1.size();
@@ -43,7 +43,7 @@ void Modulator_BPSK_fast<int, float>
 }
 
 template <>
-void Modulator_BPSK_fast<short, float>
+void Modulator_BPSK_fast<short, float, float>
 ::modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2) const
 {
 	auto size = X_N1.size();
@@ -71,7 +71,7 @@ void Modulator_BPSK_fast<short, float>
 }
 
 template <>
-void Modulator_BPSK_fast<signed char, float>
+void Modulator_BPSK_fast<signed char, float, float>
 ::modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2) const
 {
 	auto size = X_N1.size();
@@ -109,16 +109,19 @@ void Modulator_BPSK_fast<signed char, float>
 		X_N2[i] = 1 - (X_N1[i] + X_N1[i]); // (X_N[i] == 1) ? -1 : +1
 }
 
-template <typename B, typename R>
-void Modulator_BPSK_fast<B,R>
-::demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
+template <typename B, typename R, typename Q>
+void Modulator_BPSK_fast<B,R,Q>
+::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
 {
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+
 	auto size = Y_N1.size();
 
-	auto vec_loop_size = (size / mipp::nElReg<R>()) * mipp::nElReg<R>();
-	for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
+	auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 	{
-		auto y = mipp::Reg<R>(&Y_N1[i]) * two_on_square_sigma;
+		auto y = mipp::Reg<Q>(&Y_N1[i]) * two_on_square_sigma;
 		y.store(&Y_N2[i]);
 	}
 	for (unsigned i = vec_loop_size; i < size; i++)
@@ -128,11 +131,16 @@ void Modulator_BPSK_fast<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Modulator_BPSK_fast<B_8,R_8>;
-template class Modulator_BPSK_fast<B_16,R_16>;
-template class Modulator_BPSK_fast<B_32,R_32>;
-template class Modulator_BPSK_fast<B_64,R_64>;
+template struct Modulator_BPSK_fast<B_8,R_8,R_8>;
+template struct Modulator_BPSK_fast<B_8,R_8,Q_8>;
+template struct Modulator_BPSK_fast<B_16,R_16,R_16>;
+template struct Modulator_BPSK_fast<B_16,R_16,Q_16>;
+template struct Modulator_BPSK_fast<B_32,R_32,R_32>;
+template struct Modulator_BPSK_fast<B_64,R_64,R_64>;
 #else
-template class Modulator_BPSK_fast<B,R>;
+template struct Modulator_BPSK_fast<B,R,Q>;
+#if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
+template struct Modulator_BPSK_fast<B,R,R>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation
