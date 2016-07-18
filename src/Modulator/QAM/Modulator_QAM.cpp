@@ -121,6 +121,8 @@ void Modulator_QAM<B,R>
 	unsigned k;
 	unsigned b;
 
+	R sigma2 = this->sigma*this->sigma;
+
 	for (unsigned n = 0; n < size; n++)// Boucle sur les LLRs
 	{
 		L0 = -std::numeric_limits<R>::infinity();
@@ -128,8 +130,6 @@ void Modulator_QAM<B,R>
 		b  = n % this->bits_per_symbol; // position du bit
 		k  = n / this->bits_per_symbol; // Position du symbole
 		complex_Yk = std::complex<R>(Y_N1[2*k],Y_N1[2*k+1]);
-
-		R sigma2 = this->sigma*this->sigma;
 
 		for (unsigned j = 0; j < this->nbr_symbols; j++)
 		{
