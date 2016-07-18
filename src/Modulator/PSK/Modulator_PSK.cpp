@@ -83,7 +83,8 @@ void Modulator_PSK<B,R>
 	unsigned int idx = 0;
 	auto size_rest   = size_in % bps;
 	//std::complex<R> symbol;
-
+	//std::cout << "Size In : " << size_in << std::endl;
+	//std::cout << "Size Out : " << size_out << std::endl;
 	for (unsigned i = 0; i < size_out/2-1; i++)
 	{
 		//symbol = bits_to_symbol(&X_N1[i*bps]);
@@ -97,8 +98,9 @@ void Modulator_PSK<B,R>
 	}
 
 	idx = 0;
-	for (unsigned j = 0; j < bps-size_rest; j++)
+	for (unsigned j = 0; j < size_rest ;j++)
 	{
+		//std::cout<< "j= "<< j << std::endl;
 		idx += (1 << j) * X_N1[((size_out/2-1)*bps + j)];
 	}
 	X_N2[size_out - 2] = this->Constellation[idx].real();

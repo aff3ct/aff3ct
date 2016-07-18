@@ -95,7 +95,7 @@ void Modulator_PAM<B,R>
 	}
 
 	idx = 0;
-	for (unsigned j = 0; j < bps-size_rest; j++)
+	for (unsigned j = 0; j < size_rest; j++)
 	{
 		idx += (1 << j) * X_N1[(size_out - 1)*bps + j];
 	}

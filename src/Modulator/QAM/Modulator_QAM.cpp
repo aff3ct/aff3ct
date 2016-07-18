@@ -135,9 +135,9 @@ void Modulator_QAM<B,R>
 		{
 
 			if ( (j & (1 << b)) == 0 )
-				L0 = max_star(L0,-std::norm(complex_Yk-this->Constellation[j])/(sigma2));//max_star
+				L0 = max_star(L0,-std::norm(complex_Yk-this->Constellation[j])/(sigma2));
 			else
-				L1 = max_star(L1,-std::norm(complex_Yk-this->Constellation[j])/(sigma2));//max_star
+				L1 = max_star(L1,-std::norm(complex_Yk-this->Constellation[j])/(sigma2));
 
 		}
 		Y_N2[n] = L0-L1;
