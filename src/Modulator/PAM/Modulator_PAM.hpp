@@ -8,22 +8,24 @@
 template <typename B, typename R>
 class Modulator_PAM : public Modulator<B,R>
 {
-public:
+private:
+	const int bits_per_symbol;
+	const int nbr_symbols;
+	const R sigma;
+	const R sqrt_es;
+	mipp::vector<R> constellation;
 
-	Modulator_PAM(const unsigned int bits_per_symbol = 1,const R sigma = 1.0);
+public:
+	Modulator_PAM(const int bits_per_symbol = 1, const R sigma = 1.0);
     virtual ~Modulator_PAM();
 
-	virtual void modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const;
+	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const;
 	virtual void demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const;
+
 	int get_buffer_size(const int N);
 
-	int bits_per_symbol;
-	int nbr_symbols;
-	R sigma;
-	R sqrtEs;
-	mipp::vector<R> Constellation;
 private:
-	R bits_to_symbol (const B* bits) const;
+	inline R bits_to_symbol(const B* bits) const;
 };
 
 #endif // MODULATOR_PAM_HPP_

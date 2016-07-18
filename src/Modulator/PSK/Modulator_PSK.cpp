@@ -11,7 +11,7 @@
  */
 template <typename B, typename R>
 Modulator_PSK<B,R>
-::Modulator_PSK(const unsigned int bits_per_symbol, const R sigma)
+::Modulator_PSK(const int bits_per_symbol, const R sigma)
 : bits_per_symbol(bits_per_symbol     ),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma               ),
@@ -55,7 +55,7 @@ std::complex<R> Modulator_PSK<B,R>
 {
 	auto bps = this->bits_per_symbol;
 
-	R symbol = 1 - ((R)bits[0] + (R)bits[0]);
+	auto symbol = (R)1.0 - ((R)bits[0] + (R)bits[0]);
 	for (auto j = 1; j < bps; j++)
 		symbol = (1.0 - ((R)bits[j] + (R)bits[j])) * ((1 << j) - symbol);
 
@@ -109,10 +109,9 @@ template <typename B,typename R>
 void Modulator_PSK<B,R>
 ::demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
 {
-	auto size = (int)Y_N2.size();
-	std::complex<R> complex_Yk;
+	auto size   = (int)Y_N2.size();
+	auto sigma2 = this->sigma * this->sigma;
 
-	R sigma2 = this->sigma * this->sigma;
 	for (auto n = 0; n < size; n++)// boucle sur les LLRs
 	{
 		auto L0 = -std::numeric_limits<R>::infinity();
@@ -120,10 +119,10 @@ void Modulator_PSK<B,R>
 		auto b  = n % this->bits_per_symbol; // position du bit
 		auto k  = n / this->bits_per_symbol; // position du symbole
 
-		complex_Yk = std::complex<R>(Y_N1[2*k], Y_N1[2*k+1]);
+		auto complex_Yk = std::complex<R>(Y_N1[2*k], Y_N1[2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ( (j & (1 << b)) == 0 )
+			if ((j & (1 << b)) == 0)
 				L0 = max_star(L0, -std::norm(complex_Yk - this->constellation[j]) / sigma2);
 			else
 				L1 = max_star(L1, -std::norm(complex_Yk - this->constellation[j]) / sigma2);
