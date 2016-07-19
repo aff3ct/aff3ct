@@ -4,6 +4,12 @@
 #include "max.h"
 
 template <typename R>
+inline R max(const R& a, const R& b)
+{
+	return std::max(a, b);
+}
+
+template <typename R>
 inline R max_linear(const R& a, const R& b)
 {
 	//return std::max(a, b) + std::max((R)0, (R)((R)0.25 * ((R)2.77 - std::abs(a - b))));
@@ -31,6 +37,12 @@ inline R max_star_safe(const R& a, const R& b)
 		d = std::log1p(std::exp(-d));
 
 	return std::max(a, b) + d;
+}
+
+template <typename R>
+inline mipp::Reg<R> max_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
+{
+	return mipp::max(a, b);
 }
 
 template <typename R>

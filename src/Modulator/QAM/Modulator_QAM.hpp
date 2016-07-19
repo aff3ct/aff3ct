@@ -4,9 +4,11 @@
 #include <complex>
 #include <vector>
 #include "../../Tools/MIPP/mipp.h"
+#include "../../Tools/Math/max.h"
+
 #include "../Modulator.hpp"
 
-template <typename B, typename R>
+template <typename B, typename R, proto_max<R> MAX>
 class Modulator_QAM : public Modulator<B,R>
 {
 private:
@@ -18,7 +20,7 @@ private:
 
 public:
 	Modulator_QAM(const int bits_per_symbol = 2, const R sigma = 1.0);
-    virtual ~Modulator_QAM();
+	virtual ~Modulator_QAM();
 
 	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const;
 	virtual void demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const;
@@ -28,5 +30,7 @@ public:
 private:
 	inline std::complex<R> bits_to_symbol(const B* bits) const;
 };
+
+#include "Modulator_QAM.hxx"
 
 #endif // MODULATOR_QAM_HPP_

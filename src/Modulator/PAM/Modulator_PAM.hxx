@@ -3,15 +3,13 @@
 #include <complex>
 #include <limits>
 
-#include "../../Tools/Math/max.h"
-
 #include "Modulator_PAM.hpp"
 
 /*
  * Constructor / Destructor
  */
-template <typename B, typename R>
-Modulator_PAM<B,R>
+template <typename B, typename R, proto_max<R> MAX>
+Modulator_PAM<B,R,MAX>
 ::Modulator_PAM(const int bits_per_symbol, const R sigma)
 : bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
@@ -30,8 +28,8 @@ Modulator_PAM<B,R>
 	}
 }
 
-template <typename B, typename R>
-Modulator_PAM<B,R>
+template <typename B, typename R, proto_max<R> MAX>
+Modulator_PAM<B,R,MAX>
 ::~Modulator_PAM()
 {
 }
@@ -41,8 +39,8 @@ Modulator_PAM<B,R>
  * N = number of input bits
  * returns number of output symbols
  */
-template <typename B, typename R>
-int Modulator_PAM<B,R>
+template <typename B, typename R, proto_max<R> MAX>
+int Modulator_PAM<B,R,MAX>
 ::get_buffer_size(const int N)
 {
 	return std::ceil((float)N / (float)this->bits_per_symbol);
@@ -51,8 +49,8 @@ int Modulator_PAM<B,R>
 /*
  * Mapping function
  */
-template <typename B, typename R>
-R Modulator_PAM<B,R>
+template <typename B, typename R, proto_max<R> MAX>
+R Modulator_PAM<B,R,MAX>
 ::bits_to_symbol(const B* bits) const
  {
 	auto bps = this->bits_per_symbol;
@@ -67,8 +65,8 @@ R Modulator_PAM<B,R>
 /*
  * Modulator
  */
-template <typename B,typename R>
-void Modulator_PAM<B,R>
+template <typename B,typename R, proto_max<R> MAX>
+void Modulator_PAM<B,R,MAX>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
 {
 	auto size_in  = (int)X_N1.size();
@@ -105,8 +103,8 @@ void Modulator_PAM<B,R>
 /*
  * Demodulator
  */
-template <typename B,typename R>
-void Modulator_PAM<B,R>
+template <typename B,typename R, proto_max<R> MAX>
+void Modulator_PAM<B,R,MAX>
 ::demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
 {
 	auto size   = (int)Y_N2.size();
@@ -121,24 +119,10 @@ void Modulator_PAM<B,R>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
-				L0 = max_star(L0, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]) / sigma2);
+				L0 = MAX(L0, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]) / sigma2);
 			else
-				L1 = max_star(L1, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]) / sigma2);
+				L1 = MAX(L1, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]) / sigma2);
 
 		Y_N2[n] = L0 - L1;
 	}
 }
-
-
-
-// ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
-#ifdef MULTI_PREC
-template class Modulator_PAM<B_8,R_8>;
-template class Modulator_PAM<B_16,R_16>;
-template class Modulator_PAM<B_32,R_32>;
-template class Modulator_PAM<B_64,R_64>;
-#else
-template class Modulator_PAM<B,R>;
-#endif
-// ==================================================================================== explicit template instantiation

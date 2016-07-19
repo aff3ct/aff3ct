@@ -19,6 +19,7 @@ Launcher_BFER<B,R,Q>
 	this->simu_params.time_report     = false;
 	this->simu_params.trace_path_file = "";
 	this->enco_params.systematic      = true;
+	this->mod_params.demod_max        = "MAX";
 }
 
 template <typename B, typename R, typename Q>

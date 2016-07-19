@@ -1,3 +1,5 @@
+#include "../Math/max.h"
+
 #include "../../Modulator/BPSK/Modulator_BPSK.hpp"
 #include "../../Modulator/BPSK/Modulator_BPSK_fast.hpp"
 #include "../../Modulator/PAM/Modulator_PAM.hpp"
@@ -18,11 +20,38 @@ Modulator<B,R>* Factory_modulator<B,R>
 	else if (mod_params.type == "BPSK_FAST")
 		modulator = new Modulator_BPSK_fast<B,R>(sigma);
 	else if (mod_params.type == "PAM")
-		modulator = new Modulator_PAM<B,R>(mod_params.bits_per_symbol, sigma);
+	{
+		if (mod_params.demod_max == "MAX")
+			modulator = new Modulator_PAM<B,R,max<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXL")
+			modulator = new Modulator_PAM<B,R,max_linear<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXS")
+			modulator = new Modulator_PAM<B,R,max_star<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXSS")
+			modulator = new Modulator_PAM<B,R,max_star_safe<R>>(mod_params.bits_per_symbol, sigma);
+	}
 	else if (mod_params.type == "QAM")
-		modulator = new Modulator_QAM<B,R>(mod_params.bits_per_symbol, sigma);
+	{
+		if (mod_params.demod_max == "MAX")
+			modulator = new Modulator_QAM<B,R,max<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXL")
+			modulator = new Modulator_QAM<B,R,max_linear<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXS")
+			modulator = new Modulator_QAM<B,R,max_star<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXSS")
+			modulator = new Modulator_QAM<B,R,max_star_safe<R>>(mod_params.bits_per_symbol, sigma);
+	}
 	else if (mod_params.type == "PSK")
-		modulator = new Modulator_PSK<B,R>(mod_params.bits_per_symbol, sigma);
+	{
+		if (mod_params.demod_max == "MAX")
+			modulator = new Modulator_PSK<B,R,max<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXL")
+			modulator = new Modulator_PSK<B,R,max_linear<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXS")
+			modulator = new Modulator_PSK<B,R,max_star<R>>(mod_params.bits_per_symbol, sigma);
+		else if (mod_params.demod_max == "MAXSS")
+			modulator = new Modulator_PSK<B,R,max_star_safe<R>>(mod_params.bits_per_symbol, sigma);
+	}
 
 	return modulator;
 }

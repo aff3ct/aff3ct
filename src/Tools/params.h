@@ -52,9 +52,9 @@ struct t_mod_param
 {
 	unsigned int bits_per_symbol; // Bits per symbol
 	std::string  type;            // Modulation type (PAM, QAM, ...)
+	std::string  demod_max;       // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
 	bool disable_demodulation;    // do not demodulate (useful for the BPSK and min/sum decoders)
 };
-
 
 struct t_encoder_param
 {

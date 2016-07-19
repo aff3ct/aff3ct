@@ -30,8 +30,9 @@ Launcher<B,R,Q>
 	code_params.generation_method   = "RAND";
 	chan_params.domain              = "LLR";
 	chan_params.type                = "AWGN";
-	mod_params.type                 = "BPSK"; // RT
-	mod_params.bits_per_symbol      = 1;      // RT
+	mod_params.type                 = "BPSK";
+	mod_params.bits_per_symbol      = 1;
+	mod_params.demod_max            = "MAXSS";
 
 	this->chan_params.quant_min_max = 0.f;
 	if (typeid(R) == typeid(double))
@@ -64,10 +65,12 @@ void Launcher<B,R,Q>
 	req_args["code-type"      ] = "code-type";
 	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
 
-	opt_args["mod-type"       ] = "modulation name";                                      //RT
-	doc_args["mod-type"       ] = "select the type of modulation (default is BPSK).";     //RT
-	opt_args["mod-bps"        ] = "modulation number of bits per symbol";                 //RT
-	doc_args["mod-bps"        ] = "select the number of bits per symbol (default is 1)."; //RT
+	opt_args["mod-type"       ] = "type";
+	doc_args["mod-type"       ] = "select the type of modulation (default is BPSK).";
+	opt_args["mod-bps"        ] = "bps_number";
+	doc_args["mod-bps"        ] = "select the number of bits per symbol (default is 1).";
+	opt_args["demod-max"      ] = "max_type";
+	doc_args["demod-max"      ] = "select the type of the max operation to use in the demodulation (MAX, MAXL, MAXS or MAXSS).";
 
 	opt_args["simu-type"      ] = "name";
 	doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
@@ -166,8 +169,9 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg("dec-algo"       )) deco_params.algo                = ar.get_arg("dec-algo");
 	if(ar.exist_arg("dec-implem"     )) deco_params.implem              = ar.get_arg("dec-implem");
 
-	if(ar.exist_arg("mod-type"      )) mod_params.type                  = ar.get_arg("mod-type");           //RT
-	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol       = std::stof(ar.get_arg("mod-bps")); //RT
+	if(ar.exist_arg("mod-type"      )) mod_params.type                  = ar.get_arg("mod-type");
+	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol       = std::stof(ar.get_arg("mod-bps"));
+	if(ar.exist_arg("demod-max"     )) mod_params.demod_max             = ar.get_arg("demod-max");
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
@@ -233,6 +237,10 @@ void Launcher<B,R,Q>
 	}
 
 	std::string demodulation = (mod_params.disable_demodulation) ? "off" : "on";
+	std::string demod_max    = (mod_params.disable_demodulation) || 
+	                           (mod_params.type == "BPSK")       || 
+	                           (mod_params.type == "BPSK_FAST") ? 
+	                           "unused" : mod_params.demod_max;
 
 	std::string modulation = std::to_string((int)(1 << mod_params.bits_per_symbol)) + "-" + mod_params.type;
 
@@ -253,6 +261,7 @@ void Launcher<B,R,Q>
 	std::clog << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
 	std::clog << "# " << bold("* Modulation type               ") << " = " << modulation                     << std::endl;
 	std::clog << "# " << bold("* Demodulation                  ") << " = " << demodulation                   << std::endl;
+	std::clog << "# " << bold("* Demodulation max type         ") << " = " << demod_max                      << std::endl;
 	std::clog << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
 	std::clog << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;
 	std::clog << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]          << std::endl;
