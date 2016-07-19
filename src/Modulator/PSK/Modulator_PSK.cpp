@@ -3,7 +3,7 @@
 #include <complex>
 #include <limits>
 
-#include "../mod_functions/Mod_Functions.hpp"
+#include "../mod_functions.h"
 
 #include "Modulator_PSK.hpp"
 
