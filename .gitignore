@@ -1,2 +1,5 @@
 *~
 build
+.gitignore
+.cproject
+.project
