@@ -3,7 +3,7 @@
 #include <complex>
 #include <limits>
 
-#include "../mod_functions.h"
+#include "../../Tools/Math/max.h"
 
 #include "Modulator_QAM.hpp"
 
