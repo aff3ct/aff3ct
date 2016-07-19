@@ -1,11 +1,11 @@
-#include "Modulator_PAM.hpp"
-
 #include <cassert>
 #include <cmath>
 #include <complex>
 #include <limits>
 
 #include "../mod_functions/Mod_Functions.hpp"
+
+#include "Modulator_PAM.hpp"
 
 /*
  * Constructor / Destructor
@@ -71,8 +71,8 @@ template <typename B,typename R>
 void Modulator_PAM<B,R>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
 {
-	auto size_out = (int)X_N2.size();
 	auto size_in  = (int)X_N1.size();
+	auto size_out = (int)X_N2.size();
 	auto bps      = this->bits_per_symbol;
 
 	auto main_loop_size = size_in / bps;
@@ -96,8 +96,9 @@ void Modulator_PAM<B,R>
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (main_loop_size * bps); j++)
 			idx += (1 << j) * X_N1[main_loop_size * bps +j];
+		auto symbol = this->constellation[idx];
 
-		X_N2[size_out -1] = this->constellation[idx];
+		X_N2[size_out -1] = symbol;
 	}
 }
 
@@ -116,7 +117,7 @@ void Modulator_PAM<B,R>
 		auto L0 = -std::numeric_limits<R>::infinity();
 		auto L1 = -std::numeric_limits<R>::infinity();
 		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // Position du symbole
+		auto k  = n / this->bits_per_symbol; // position du symbole
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)

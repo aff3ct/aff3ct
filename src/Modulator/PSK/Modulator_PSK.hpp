@@ -1,9 +1,8 @@
 #ifndef MODULATOR_PSK_HPP_
 #define MODULATOR_PSK_HPP_
 
-#include <vector>
-#include <cmath>
 #include <complex>
+#include <vector>
 #include "../../Tools/MIPP/mipp.h"
 #include "../Modulator.hpp"
 

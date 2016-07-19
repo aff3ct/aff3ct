@@ -4,6 +4,7 @@
 #include <limits>
 
 #include "../mod_functions/Mod_Functions.hpp"
+
 #include "Modulator_PSK.hpp"
 
 /*
@@ -86,8 +87,8 @@ void Modulator_PSK<B,R>
 			idx += (1 << j) * X_N1[i * bps +j];
 		auto symbol = this->constellation[idx];
 
-		 X_N2[2*i +0] = symbol.real();
-		 X_N2[2*i +1] = symbol.imag();
+		X_N2[2*i +0] = symbol.real();
+		X_N2[2*i +1] = symbol.imag();
 	}
 
 	// last elements if "size_in" is not a multiple of the number of bits per symbol
@@ -96,9 +97,10 @@ void Modulator_PSK<B,R>
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (main_loop_size * bps); j++)
 			idx += (1 << j) * X_N1[main_loop_size * bps +j];
+		auto symbol = this->constellation[idx];
 
-		X_N2[size_out -2] = this->constellation[idx].real();
-		X_N2[size_out -1] = this->constellation[idx].imag();
+		X_N2[size_out -2] = symbol.real();
+		X_N2[size_out -1] = symbol.imag();
 	}
 }
 
