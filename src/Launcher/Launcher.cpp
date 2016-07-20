@@ -243,6 +243,8 @@ void Launcher<B,R,Q>
 	                           "unused" : mod_params.demod_max;
 
 	std::string modulation = std::to_string((int)(1 << mod_params.bits_per_symbol)) + "-" + mod_params.type;
+	if ((mod_params.type == "BPSK") || (mod_params.type == "BPSK_FAST"))
+		modulation = mod_params.type;
 
 	// display configuration and simulation parameters
 	std::clog << "# " << bold("-------------------------------------------------")                           << std::endl;
