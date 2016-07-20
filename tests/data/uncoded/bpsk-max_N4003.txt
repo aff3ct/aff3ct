@@ -1,0 +1,52 @@
+Run command:
+./bin/aff3ct --code-type UNCODED --snr-min 0.0 --snr-max 11.1 --snr-step 1.0 -K 4003 -N 4003 --mod-type BPSK --demod-max MAX --mod-bps 1 --prec 32 --channel-type AWGN_FAST --code-gen-method RAND_FAST --n-threads 4
+Trace:
+# -------------------------------------------------
+# ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
+# -------------------------------------------------
+#
+# Simulation parameters:
+# * Simulation type                = BFER
+# * Code type                      = UNCODED codes
+# * Number of information bits (K) = 4003
+# * Codeword length            (N) = 4003
+# * SNR min                        = 0 dB
+# * SNR max                        = 11.1 dB
+# * SNR step                       = 1 dB
+# * Domain                         = LLR
+# * Codewords generation method    = RAND_FAST
+# * Modulation type                = BPSK
+# * Demodulation                   = on
+# * Demodulation max type          = unused
+# * Channel type                   = AWGN_FAST
+# * Type of bits               (B) = int (32 bits)
+# * Type of reals              (R) = float (32 bits)
+# * Max frame error count     (FE) = 100
+# * Systematic encoding            = on
+# * Decoding algorithm             = NONE
+# * Decoding implementation        = NONE
+# * Multi-threading                = 4 thread(s)
+#
+# The simulation is running...
+# -------------------------------------------------------------||--------------------------------||---------------------
+#   Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||     Decoder throughput and     ||  Global throughput  
+#             on the Signal Noise Ratio (SNR) Eb/N0            ||      latency (per thread)      ||  and elapsed time   
+# -------------------------------------------------------------||--------------------------------||---------------------
+# ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+#   SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
+#  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
+# ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+   0.00 |      103 |    32185 |      103 | 7.81e-02 | 1.00e+00 ||  1036.65 |  1036.65 |     3.86 ||   273.24 | 00h00'00  
+   1.00 |      103 |    22961 |      103 | 5.57e-02 | 1.00e+00 ||  1631.09 |  1631.09 |     2.45 ||   359.25 | 00h00'00  
+   2.00 |      103 |    15119 |      103 | 3.67e-02 | 1.00e+00 ||  1307.22 |  1307.22 |     3.06 ||   249.40 | 00h00'00  
+   3.00 |      103 |     9367 |      103 | 2.27e-02 | 1.00e+00 ||  1337.56 |  1337.56 |     2.99 ||   255.82 | 00h00'00  
+   4.00 |      102 |     5022 |      102 | 1.23e-02 | 1.00e+00 ||  1227.50 |  1227.50 |     3.26 ||   123.32 | 00h00'00  
+   5.00 |      102 |     2373 |      102 | 5.81e-03 | 1.00e+00 ||  1265.36 |  1265.36 |     3.16 ||   169.34 | 00h00'00  
+   6.00 |      102 |      951 |      102 | 2.33e-03 | 1.00e+00 ||  1702.23 |  1702.23 |     2.35 ||    74.35 | 00h00'00  
+   7.00 |      106 |      320 |      102 | 7.54e-04 | 9.62e-01 ||  1263.14 |  1263.14 |     3.17 ||   261.08 | 00h00'00  
+   8.00 |      186 |      135 |      102 | 1.81e-04 | 5.48e-01 ||  1145.87 |  1145.87 |     3.49 ||   243.77 | 00h00'00  
+   9.00 |      762 |      106 |      100 | 3.48e-05 | 1.31e-01 ||  1221.98 |  1221.98 |     3.28 ||   277.88 | 00h00'00  
+  10.00 |     6252 |      101 |      100 | 4.04e-06 | 1.60e-02 ||  1185.28 |  1185.28 |     3.38 ||   306.16 | 00h00'00  
+  11.00 |   112337 |      100 |      100 | 2.22e-07 | 8.90e-04 ||  1345.94 |  1345.94 |     2.97 ||   355.66 | 00h00'01  
+# 12.00 |  2916720 |      100 |      100 | 8.56e-09 | 3.43e-05 ||  1305.44 |  1305.44 |     3.07 ||   347.73 | 00h00'33  
+# End of the simulation.
