@@ -20,9 +20,7 @@ Retry         = 0   # unimplemented
 # ==================================================================== PACKAGES
 
 import os
-import sys
 import math
-import shutil # copy files
 import subprocess
 
 # ==================================================================== PACKAGES
@@ -50,9 +48,10 @@ def recursivelyGetFilenames(currentPath, fileNames):
 
 # -----
 
-def printLine(simuType, codeType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, state, separator):
+def printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, state, separator):
 	print(repr(simuType   ).rjust( 9), end="  ",           flush=True)
 	print(repr(codeType   ).rjust(11), end="  ",           flush=True)
+	print(repr(moduType   ).rjust(11), end="  ",           flush=True)
 	print(repr(N          ).rjust( 6), end="  ",           flush=True)
 	print(repr(K          ).rjust( 6), end="  ",           flush=True)
 	print(repr(snrMin     ).rjust( 7), end="  ",           flush=True)
@@ -85,6 +84,7 @@ for f in fileNamesTmp:
 # print the legend
 print(str("SIMU_TYPE"  ).rjust( 9), end="  ", flush=True)
 print(str("CODE_TYPE"  ).rjust(11), end="  ", flush=True)
+print(str("MODU_TYPE"  ).rjust(11), end="  ", flush=True)
 print(str("N"          ).rjust( 6), end="  ", flush=True)
 print(str("K"          ).rjust( 6), end="  ", flush=True)
 print(str("SNR-MIN"    ).rjust( 7), end="  ", flush=True)
@@ -97,6 +97,7 @@ print(str("TEST-ID"    ).rjust( 7), end="  ", flush=True)
 print(str("TEST-RESULT").rjust(13), end="\n", flush=True)
 
 print(str("---------"  ).rjust( 9), end="  ", flush=True)
+print(str("---------"  ).rjust(11), end="  ", flush=True)
 print(str("---------"  ).rjust(11), end="  ", flush=True)
 print(str("-"          ).rjust( 6), end="  ", flush=True)
 print(str("-"          ).rjust( 6), end="  ", flush=True)
@@ -115,6 +116,7 @@ for fn in fileNames:
 	# default caracteristics of the current test
 	simuType  = "UNDEF"
 	codeType  = "UNDEF"
+	moduType  = "UNDEF"
 	N         = 0
 	K         = 0
 	snrMin    = 0.0
@@ -146,6 +148,9 @@ for fn in fileNames:
 			elif "Code type" in l:
 				tmp = l.replace("codes", "").replace(" ", "").strip().split("=")
 				codeType = tmp[1]
+			elif "Modulation type" in l:
+				tmp = l.replace(" ", "").replace("\n", "").split("=")
+				moduType = tmp[1]
 			elif "Number of information bits" in l:
 				tmp = l.replace(" ", "").split("=")
 				K = int(tmp[1])
@@ -189,7 +194,7 @@ for fn in fileNames:
 	f.close()
 
 	# run the tests
-	printLine(simuType, codeType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "RUNNING", "\r")
+	printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "RUNNING", "\r")
 
 	argsAFFECT = []
 	argsAFFECT = runCommand.split(" ")
@@ -250,11 +255,11 @@ for fn in fileNames:
 		idx = idx + 1
 
 	if valid == idx:
-		printLine(simuType, codeType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "STRONG PASSED", "\n")
+		printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "STRONG PASSED", "\n")
 	elif idx != 0 and float(valid) / float(idx) >= WeakRate:
-		printLine(simuType, codeType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "WEAK PASSED", "\n")
+		printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "WEAK PASSED", "\n")
 	else:
-		printLine(simuType, codeType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "FAILED", "\n")
+		printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decAlgo, decImplem, decSIMD, testId, "FAILED", "\n")
 
 	fRes.write("# End of the simulation.\n")
 	fRes.close();
