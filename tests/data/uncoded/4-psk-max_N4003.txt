@@ -11,7 +11,7 @@ Trace:
 # * Number of information bits (K) = 4003
 # * Codeword length            (N) = 4003
 # * SNR min                        = 0 dB
-# * SNR max                        = 35.1 dB
+# * SNR max                        = 11.1 dB
 # * SNR step                       = 1 dB
 # * Domain                         = LLR
 # * Codewords generation method    = RAND_FAST
