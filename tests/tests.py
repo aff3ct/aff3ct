@@ -3,15 +3,15 @@
 # =============================================================================
 # ================================================================== PARAMETERS
 
-PathTests     = "data"
-PathResults   = "results"
+PathTests     = "data"     # can be overrided by arg1 from the cmd line
+PathResults   = "results"  # can be overrided by arg2 from the cmd line
 PathBuild     = "../build"
 Sensibility   = 1.0
 Nthreads      = 8
 RecursiveScan = True
 MaxFE         = 100
-WeakRate      = 0.8 # 0 < WeakRate < 1
-Retry         = 0   # unimplemented
+WeakRate      = 0.8        # 0 < WeakRate < 1
+Retry         = 0          # unimplemented for now
 
 # ================================================================== PARAMETERS
 # =============================================================================
@@ -20,6 +20,7 @@ Retry         = 0   # unimplemented
 # ==================================================================== PACKAGES
 
 import os
+import sys
 import math
 import subprocess
 
@@ -68,6 +69,12 @@ def printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decAlgo,
 
 # =============================================================================
 # ======================================================================== MAIN
+
+if len(sys.argv) >= 2:
+	PathTests = sys.argv[1]
+
+if len(sys.argv) >= 3:
+	PathResults = sys.argv[2]
 
 PathOrigin = os.getcwd()
 
