@@ -113,6 +113,8 @@ void Terminal_BFER<B,R>
 	lat += (use_only_decoder_time_thr) ? 0 : (load_time_ms + store_time_ms) * 1000.f;
 	lat = (lat / (float) err_analyzer.get_n_analyzed_frames()) * err_analyzer.get_n_frames();
 
+	if (Error_analyzer<B,R>::is_interrupt()) stream << "\r";
+
 #ifdef _WIN32
 	stringstream str_ber, str_fer;
 	str_ber << setprecision(2) << scientific << setw(9) << ber;
@@ -121,7 +123,7 @@ void Terminal_BFER<B,R>
 	unsigned long long l0 = 99999999;  // limit 0
 	auto               l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
-	if (Error_analyzer<B,R>::is_interrupt()) stream << "\rx "; else stream << "\r  ";
+	stream << "  ";
 	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                             snr << " | ";
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << " | ";
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << " | ";
@@ -140,7 +142,7 @@ void Terminal_BFER<B,R>
 	unsigned long long l0 = 99999999;  // limit 0
 	auto               l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
-	if (Error_analyzer<B,R>::is_interrupt()) stream << "\rx "; else stream << "\r  ";
+	stream << "  ";
 	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                             snr << " | ";
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << " | ";
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << " | ";
@@ -194,7 +196,10 @@ void Terminal_BFER<B,R>
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto et_format = get_time_format(et);
 
-	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << et_format << "  " << std::endl;
+	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
+
+	if (Error_analyzer<B,R>::is_interrupt()) stream << " x" << std::endl;
+	else                                     stream << "  " << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 
