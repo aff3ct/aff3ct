@@ -64,14 +64,12 @@ void Launcher<B,R,Q>
 	doc_args["snr-max"        ] = "maximal signal/noise ratio to simulate.";
 	req_args["code-type"      ] = "code-type";
 	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
-
-	opt_args["mod-type"       ] = "type";
-	doc_args["mod-type"       ] = "select the type of modulation (default is BPSK).";
+	opt_args["mod-type"       ] = "mod_type";
+	doc_args["mod-type"       ] = "type of the modulation to use in the simulation (ex: BPSK, BPSK_FAST, PSK, PAM, QAM).";
 	opt_args["mod-bps"        ] = "bps_number";
 	doc_args["mod-bps"        ] = "select the number of bits per symbol (default is 1).";
 	opt_args["demod-max"      ] = "max_type";
 	doc_args["demod-max"      ] = "select the type of the max operation to use in the demodulation (MAX, MAXL, MAXS or MAXSS).";
-
 	opt_args["simu-type"      ] = "name";
 	doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
 #ifdef MULTI_PREC
@@ -85,7 +83,7 @@ void Launcher<B,R,Q>
 	opt_args["stop-time"      ] = "time_value";
 	doc_args["stop-time"      ] = "time in sec after what the current SNR iteration should stop.";
 	opt_args["display-freq"   ] = "freq_value";
-	doc_args["display-freq"   ] = "display frequency in ms (refresh time step for each iteration).";
+	doc_args["display-freq"   ] = "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).";
 	opt_args["n-threads"      ] = "n_threads";
 	doc_args["n-threads"      ] = "enable multi-threaded mode and specify the number of threads.";
 	opt_args["code-gen-method"] = "type";
@@ -104,8 +102,6 @@ void Launcher<B,R,Q>
 
 	opt_args["channel-type"   ] = "chan_type";
 	doc_args["channel-type"   ] = "type of the channel to use in the simulation (" + chan_avail + "NO = disabled).";
-	opt_args["mod-type"       ] = "mod_type";
-	doc_args["mod-type"       ] = "type of the modulation to use in the simulation (ex: BPSK, BPSK_FAST).";
 	opt_args["disable-demod"  ] = "";
 	doc_args["disable-demod"  ] = "turn off the demodulation (useful for BPSK modulation and min/sum decoders).";
 	opt_args["dec-algo"       ] = "alg_type";
