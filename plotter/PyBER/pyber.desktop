@@ -1,0 +1,13 @@
+# This file is an example of how to create a gnome icon for the PyBER application.
+# Think to change the paths to your PyBER location in your the system.
+# Place this file in the "~/.local/share/applications/" directory.
+[Desktop Entry]
+Encoding=UTF-8
+Name=PyBER Plotter
+# Firt arg is the location of the PyBER python script, second arg is the location of 
+# the data to browse in PyBER (if nothing is specified, PyBER will try to open the 
+# "data/" folder).
+Exec=[full_path_to_PyBER]/pyBER.py [full_path_to_PyBER]/data/
+Icon=[full_path_to_PyBER]/woody.png
+Type=Application
+Categories=Development;
