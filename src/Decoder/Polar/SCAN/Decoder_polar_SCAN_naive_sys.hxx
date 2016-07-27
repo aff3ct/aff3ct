@@ -57,3 +57,13 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 			V_N[k++] = (H(this->feedback_graph[this->layers_count -1][i]) == 0) ? (B)0 : (B)1;
 	}
 }
+
+
+template <typename B, typename R,
+          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
+::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+{
+	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
+	std::exit(-1);
+}

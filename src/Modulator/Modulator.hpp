@@ -11,9 +11,13 @@ public:
 	Modulator() {};
 	virtual ~Modulator() {};
 
-	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const = 0;
-	virtual void     filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const;
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
+	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) const = 0;
+	virtual void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2) const;
+	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2) const = 0;
+	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3) const
+	{
+		demodulate(Y_N1, Y_N3);
+	}
 
 	virtual int get_buffer_size_after_modulation(const int N) { return N;                                   }
 	virtual int get_buffer_size_after_filtering (const int N) { return get_buffer_size_after_modulation(N); }

@@ -11,16 +11,12 @@ Terminal_BFER<B,R>
 ::Terminal_BFER(const R& snr,
                 const Error_analyzer<B,R> &err_analyzer,
                 const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-                const std::chrono::nanoseconds &d_load_total,
                 const std::chrono::nanoseconds &d_decod_total,
-                const std::chrono::nanoseconds &d_store_total,
                 const bool use_only_decoder_time_thr)
 : snr(snr),
   err_analyzer(err_analyzer),
   t_snr(t_snr),
-  d_load_total(d_load_total),
   d_decod_total(d_decod_total),
-  d_store_total(d_store_total),
   real_time_state(0),
   use_only_decoder_time_thr(use_only_decoder_time_thr)
 {
@@ -89,12 +85,8 @@ void Terminal_BFER<B,R>
 	auto be  = err_analyzer.get_n_be();
 	auto fe  = err_analyzer.get_n_fe();
 
-	auto load_time_ms  = (float)d_load_total .count() * 0.000001f;
-	auto store_time_ms = (float)d_store_total.count() * 0.000001f;
 	auto decod_time_ms = (float)d_decod_total.count() * 0.000001f;
-
 	auto total_time = d_decod_total.count();
-	total_time += (use_only_decoder_time_thr) ? 0 : d_load_total.count() + d_store_total.count();
 
 	auto dec_cthr = ((float)err_analyzer.get_N() * (float)err_analyzer.get_n_analyzed_frames()) /
 		             (total_time * 0.000000001f); // = bps
@@ -110,7 +102,6 @@ void Terminal_BFER<B,R>
 	simu_cthr /= 1000.f; // = mbps
 
 	auto lat = decod_time_ms * 1000.f;
-	lat += (use_only_decoder_time_thr) ? 0 : (load_time_ms + store_time_ms) * 1000.f;
 	lat = (lat / (float) err_analyzer.get_n_analyzed_frames()) * err_analyzer.get_n_frames();
 
 	if (Error_analyzer<B,R>::is_interrupt()) stream << "\r";

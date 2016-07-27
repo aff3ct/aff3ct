@@ -39,6 +39,7 @@ public:
 	virtual int tail_length () const { return 2 * n_ff; }
 
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
+	        void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
 
 #include "Decoder_RSC_BCJR.hxx"

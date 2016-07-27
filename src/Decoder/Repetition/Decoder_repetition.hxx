@@ -1,6 +1,8 @@
 #include <cassert>
 #include <algorithm>
 
+#include "../../Tools/bash_tools.h"
+
 #include "Decoder_repetition.hpp"
 
 template <typename B, typename R>
@@ -66,4 +68,12 @@ void Decoder_repetition<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
 	V_K = s;
+}
+
+template <typename B, typename R>
+void Decoder_repetition<B,R>
+::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+{
+	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
+	std::exit(-1);
 }

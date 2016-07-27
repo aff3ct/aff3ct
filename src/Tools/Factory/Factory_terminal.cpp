@@ -9,9 +9,7 @@ Terminal* Factory_terminal<B,R>
                 const R snr, 
                 const Error_analyzer<B,R> *analyzer, 
                 const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-                const std::chrono::nanoseconds &d_load_total,
-                const std::chrono::nanoseconds &d_decod_total,
-                const std::chrono::nanoseconds &d_store_total)
+                const std::chrono::nanoseconds &d_decod_total)
 {
 	Terminal *terminal = nullptr;
 
@@ -19,9 +17,7 @@ Terminal* Factory_terminal<B,R>
 	if(simu_params.enable_leg_term)
 		terminal = new Terminal_BFER_legacy<B,R>(snr, *analyzer, t_snr);
 	else
-		terminal = new Terminal_BFER<B,R>(snr, *analyzer, t_snr,
-		                                  d_load_total, d_decod_total, d_store_total,
-		                                  simu_params.enable_dec_thr);
+		terminal = new Terminal_BFER<B,R>(snr, *analyzer, t_snr, d_decod_total, simu_params.enable_dec_thr);
 
 	return terminal;
 }

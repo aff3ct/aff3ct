@@ -20,6 +20,7 @@ public:
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
 	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif

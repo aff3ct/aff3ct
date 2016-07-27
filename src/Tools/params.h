@@ -51,9 +51,10 @@ struct t_code_param
 struct t_mod_param
 {
 	int bits_per_symbol;       // bits per symbol
-	int n_demod_ite;           // number of demodulations/decoding sessions to perform in the BFERI simulations
-	std::string  type;         // modulation type (PAM, QAM, ...)
-	bool disable_demodulation; // do not demodulate (useful for the BPSK and min/sum decoders)	
+	int demod_n_ite;           // number of demodulations/decoding sessions to perform in the BFERI simulations
+	std::string  type;         // Modulation type (PAM, QAM, ...)
+	std::string  demod_max;    // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
+	bool disable_demodulation; // do not demodulate (useful for the BPSK and min/sum decoders)
 };
 
 struct t_encoder_param

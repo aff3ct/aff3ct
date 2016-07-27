@@ -721,6 +721,7 @@ void Simulation_BFER<B,R,Q>
 	d_load_total_red  = nanoseconds(0);
 	d_decod_total_red = nanoseconds(0);
 	d_store_total_red = nanoseconds(0);
+	d_decod_all_red   = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
 	for (auto tid = 0; tid < simu_params.n_threads; tid++)
@@ -738,6 +739,7 @@ void Simulation_BFER<B,R,Q>
 		d_load_total_red  += d_load_total [tid];
 		d_decod_total_red += d_decod_total[tid];
 		d_store_total_red += d_store_total[tid];
+		d_decod_all_red   += (d_load_total[tid] + d_decod_total[tid] + d_store_total[tid]);
 		d_check_total_red += d_check_total[tid];
 	}
 
@@ -960,8 +962,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(simu_params, snr, analyzer_red, t_snr,
-	                                    d_load_total_red, d_decod_total_red, d_store_total_red);
+	return Factory_terminal<B,R>::build(simu_params, snr, analyzer_red, t_snr, d_decod_all_red);
 }
 
 // ==================================================================================== explicit template instantiation 

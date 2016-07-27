@@ -14,9 +14,7 @@ protected:
 	const R                                                                             snr;
 	const Error_analyzer<B,R>                                                          &err_analyzer;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
-	const std::chrono::nanoseconds                                                     &d_load_total;
 	const std::chrono::nanoseconds                                                     &d_decod_total;
-	const std::chrono::nanoseconds                                                     &d_store_total;
 	unsigned short                                                                      real_time_state;
 	const bool                                                                          use_only_decoder_time_thr;
 
@@ -24,9 +22,7 @@ public:
 	Terminal_BFER(const R& snr,
 	              const Error_analyzer<B,R> &err_analyzer,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-	              const std::chrono::nanoseconds &d_load_total,
 	              const std::chrono::nanoseconds &d_decod_total,
-	              const std::chrono::nanoseconds &d_store_total,
 	              const bool use_only_decoder_time_thr = false);
 	virtual ~Terminal_BFER() {}
 

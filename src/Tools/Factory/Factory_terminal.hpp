@@ -13,9 +13,7 @@ struct Factory_terminal
 	                       const R snr, 
 	                       const Error_analyzer<B,R> *analyzer, 
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-	                       const std::chrono::nanoseconds &d_load_total,
-	                       const std::chrono::nanoseconds &d_decod_total,
-	                       const std::chrono::nanoseconds &d_store_total);
+	                       const std::chrono::nanoseconds &d_decod_total);
 };
 
 #endif /* FACTORY_TERMINAL_HPP */
