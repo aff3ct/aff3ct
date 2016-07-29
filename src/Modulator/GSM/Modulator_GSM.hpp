@@ -20,7 +20,7 @@
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_GSM : public Modulator<B,R,Q>
 {
-private:
+protected:
     const R sigma;
     
 public:
