@@ -5,7 +5,7 @@
 #include <algorithm>
 
 #include "../../../Encoder/Encoder_NO.hpp"
-#include "../../../Decoder/Decoder_NO.hpp"
+#include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_naive.hpp"
 
 #include "../../../Tools/bash_tools.h"
 #include "../../../Tools/simu_tools.h"
@@ -54,14 +54,16 @@ template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_siso(const int tid)
 {
-	return new Decoder_NO<B,Q>();
+	// return new Decoder_NO<B,Q>();
+	return new Decoder_LDPC_BP_naive<B,Q>();
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return new Decoder_NO<B,Q>();
+	// return new Decoder_NO<B,Q>();
+	return new Decoder_LDPC_BP_naive<B,Q>();
 }
 
 // ==================================================================================== explicit template instantiation 
