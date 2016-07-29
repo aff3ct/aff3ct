@@ -20,7 +20,7 @@ Launcher_BFERI<B,R,Q>
 	this->simu_params.trace_path_file = "";
 	this->enco_params.systematic      = true;
 	this->mod_params.demod_max        = "MAX";
-	this->mod_params.demod_n_ite      = 6;
+	this->mod_params.demod_n_ite      = 30;
 }
 
 template <typename B, typename R, typename Q>

@@ -4,8 +4,8 @@
 
 template <typename B, typename R>
 Decoder_LDPC_BP_naive<B,R>
-::Decoder_LDPC_BP_naive(const int &N, const int &K)
-: Decoder<B,R>(), Y_N(N), V_K(K)
+::Decoder_LDPC_BP_naive(const int &N, const int &K, const int& n_ite)
+: Decoder<B,R>(), Y_N(N), V_K(K), n_ite(n_ite)
 {
 	// TODO: implement the BP algo in order to remove this assertion
 	assert(N == K);

@@ -54,14 +54,14 @@ template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_siso(const int tid)
 {
-	return new Decoder_LDPC_BP_naive<B,Q>(this->code_params.K, this->code_params.N);
+	return new Decoder_LDPC_BP_naive<B,Q>(this->code_params.K, this->code_params.N, this->deco_params.max_iter);
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return new Decoder_LDPC_BP_naive<B,Q>(this->code_params.K, this->code_params.N);
+	return new Decoder_LDPC_BP_naive<B,Q>(this->code_params.K, this->code_params.N, this->deco_params.max_iter);
 }
 
 // ==================================================================================== explicit template instantiation 

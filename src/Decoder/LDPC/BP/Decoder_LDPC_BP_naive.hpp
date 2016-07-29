@@ -10,9 +10,10 @@ class Decoder_LDPC_BP_naive : public Decoder<B,R>, public SISO<R>
 private:
 	mipp::vector<R> Y_N;
 	mipp::vector<B> V_K;
+	const int n_ite;
 	
 public:
-	Decoder_LDPC_BP_naive(const int &N, const int &K);
+	Decoder_LDPC_BP_naive(const int &N, const int &K, const int& n_ite);
 	virtual ~Decoder_LDPC_BP_naive();
 
 	// unsupported prototype

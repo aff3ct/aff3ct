@@ -17,8 +17,8 @@ Launcher_BFERI_LDPC<B,R,Q>
 	// default parameters
 	this->deco_params.max_iter        = 6;
 	this->code_params.type            = "Channel";
-	this->deco_params.algo            = "NONE";
-	this->deco_params.implem          = "NONE";
+	this->deco_params.algo            = "BP";
+	this->deco_params.implem          = "NAIVE";
 	this->code_params.interleaver     = "RANDOM_HARD";
 }
 
