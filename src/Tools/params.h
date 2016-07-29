@@ -51,6 +51,7 @@ struct t_code_param
 struct t_mod_param
 {
 	int          bits_per_symbol; // bits per symbol
+	int          upsample_factor; // samples per symbol
 	int          demod_n_ite;     // number of demodulations/decoding sessions to perform in the BFERI simulations
 	std::string  type;            // modulation type (PAM, QAM, ...)
 	std::string  demod_max;       // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)

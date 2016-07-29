@@ -35,7 +35,7 @@ Simulation_BFERI<B,R,Q>
   simu_params(simu_params),
   code_params(code_params),
   enco_params(enco_params),
-  mod_params(mod_params),
+  mod_params (mod_params ),
   chan_params(chan_params),
   deco_params(deco_params),
 
@@ -126,7 +126,8 @@ void Simulation_BFERI<B,R,Q>
 		t_snr = std::chrono::steady_clock::now();
 
 		code_rate = (float)(code_params.K / (float)(code_params.N + code_params.tail_length));
-		sigma     = 1.f / std::sqrt(2.f * code_rate * (float)mod_params.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		sigma     = std::sqrt((float)mod_params.upsample_factor) / 
+		            std::sqrt(2.f * code_rate * (float)mod_params.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 
 		snr_precompute();
 

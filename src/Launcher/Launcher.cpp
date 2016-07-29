@@ -32,6 +32,7 @@ Launcher<B,R,Q>
 	chan_params.type                = "AWGN";
 	mod_params.type                 = "BPSK";
 	mod_params.bits_per_symbol      = 1;
+	mod_params.upsample_factor      = 1;
 	mod_params.demod_max            = "MAXSS";
 
 	this->chan_params.quant_min_max = 0.f;
@@ -68,6 +69,8 @@ void Launcher<B,R,Q>
 	doc_args["mod-type"       ] = "type of the modulation to use in the simulation (ex: BPSK, BPSK_FAST, PSK, PAM, QAM).";
 	opt_args["mod-bps"        ] = "bps_number";
 	doc_args["mod-bps"        ] = "select the number of bits per symbol (default is 1).";
+	doc_args["mod-ups"        ] = "select the symbol upsample factor (default is 1).";
+	opt_args["mod-ups"        ] = "ups_factor";
 	opt_args["demod-max"      ] = "max_type";
 	doc_args["demod-max"      ] = "select the type of the max operation to use in the demodulation (MAX, MAXL, MAXS or MAXSS).";
 	opt_args["simu-type"      ] = "name";
@@ -167,6 +170,7 @@ void Launcher<B,R,Q>
 
 	if(ar.exist_arg("mod-type"      )) mod_params.type                  = ar.get_arg("mod-type");
 	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol       = std::stof(ar.get_arg("mod-bps"));
+	if(ar.exist_arg("mod-ups"       )) mod_params.upsample_factor       = std::stoi(ar.get_arg("mod-ups"));
 	if(ar.exist_arg("demod-max"     )) mod_params.demod_max             = ar.get_arg("demod-max");
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
@@ -180,6 +184,9 @@ void Launcher<B,R,Q>
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (mod_params.type == "BPSK" || mod_params.type == "BPSK_FAST")
 		mod_params.bits_per_symbol = 1;
+
+	if (mod_params.type != "GSM" && mod_params.type != "GSM_TBLESS")
+		mod_params.upsample_factor = 1;
 }
 
 template <typename B, typename R, typename Q>
@@ -241,6 +248,7 @@ void Launcher<B,R,Q>
 	std::string modulation = std::to_string((int)(1 << mod_params.bits_per_symbol)) + "-" + mod_params.type;
 	if ((mod_params.type == "BPSK") || (mod_params.type == "BPSK_FAST"))
 		modulation = mod_params.type;
+	modulation += " (UPS = " + std::to_string(mod_params.upsample_factor) + ")";
 
 	// display configuration and simulation parameters
 	stream << "# " << bold("-------------------------------------------------")                           << std::endl;
