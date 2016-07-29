@@ -482,10 +482,10 @@ void Modulator_GSM<B,R,Q,MAX>
     	assert( Y_N1.size() == (Y_N2.size() +6) * nb_output_symbs );
 
         /* Estimator Processing */ 
-        Q   estimator  = this->sigma * this->sigma;
+        Q estimator = this->sigma * this->sigma;
 
 
-        BCJR_decode(    /* inputs */   this->L_a_cpm,         estimator /*Estimator*/,      this->filtered_signal_r,
+        BCJR_decode(    /* inputs */   this->L_a_cpm,         estimator           ,   Y_N1,
                         /* outputs */  this->proba_msg_symb,  this->proba_msg_bits,   this->L_ext_cpm);
 
         for(unsigned int i = 0; i < Y_N2.size(); i++)

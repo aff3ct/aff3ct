@@ -102,7 +102,10 @@ void Modulator_GSM_TBLess<B,R,Q,MAX>
 {
         assert( Y_N1.size() == Y_N2.size() * this->nb_output_symbs );
 
-        this->BCJR_decode(      /* inputs */   this->L_a_cpm,         1.f /*Estimator*/,      this->filtered_signal_r,
+        /* Estimator Processing */ 
+        Q estimator = this->sigma * this->sigma;
+
+        this->BCJR_decode(      /* inputs */   this->L_a_cpm,         estimator           ,   Y_N1,
                                 /* outputs */  this->proba_msg_symb,  this->proba_msg_bits,   this->L_ext_cpm);
 
         Y_N2 = this->L_ext_cpm;
