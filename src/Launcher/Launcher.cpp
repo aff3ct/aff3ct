@@ -246,7 +246,8 @@ void Launcher<B,R,Q>
 	                           "unused" : mod_params.demod_max;
 
 	std::string modulation = std::to_string((int)(1 << mod_params.bits_per_symbol)) + "-" + mod_params.type;
-	if ((mod_params.type == "BPSK") || (mod_params.type == "BPSK_FAST"))
+	if ((mod_params.type == "BPSK") || (mod_params.type == "BPSK_FAST")|| (mod_params.type == "GSM") || 
+		(mod_params.type == "GSM_TBLESS"))
 		modulation = mod_params.type;
 	modulation += " (UPS = " + std::to_string(mod_params.upsample_factor) + ")";
 
