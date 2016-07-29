@@ -15,7 +15,7 @@ Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
+::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
 	auto size = X_N1.size();
 	for (unsigned i = 0; i < size; i++)
@@ -24,7 +24,7 @@ void Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));

@@ -16,7 +16,7 @@ Modulator_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
+::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
 	std::cerr << bold_red("(EE) The fast modulator does not support this type of data.") << std::endl;
 	std::exit(-1);
@@ -24,7 +24,7 @@ void Modulator_BPSK_fast<B,R,Q>
 
 template <>
 void Modulator_BPSK_fast<int, float, float>
-::modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2) const
+::modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2)
 {
 	auto size = X_N1.size();
 	
@@ -44,7 +44,7 @@ void Modulator_BPSK_fast<int, float, float>
 
 template <>
 void Modulator_BPSK_fast<short, float, float>
-::modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2) const
+::modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2)
 {
 	auto size = X_N1.size();
 	
@@ -72,7 +72,7 @@ void Modulator_BPSK_fast<short, float, float>
 
 template <>
 void Modulator_BPSK_fast<signed char, float, float>
-::modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2) const
+::modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2)
 {
 	auto size = X_N1.size();
 	
@@ -111,7 +111,7 @@ void Modulator_BPSK_fast<signed char, float, float>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));

@@ -53,7 +53,7 @@ int Modulator_QAM<B,R,MAX>
 template <typename B, typename R, proto_max<R> MAX>
 std::complex<R> Modulator_QAM<B,R,MAX>
 ::bits_to_symbol(const B* bits) const
- {
+{
 	auto bps = this->bits_per_symbol;
 
 	auto symbol_I = (R)1.0 - (bits[      0] + bits[      0]);
@@ -66,14 +66,14 @@ std::complex<R> Modulator_QAM<B,R,MAX>
 	}
 
 	return std::complex<R>(symbol_I, symbol_Q) / (std::complex<R>)this->sqrt_es;
- }
+}
 
 /*
  * Modulator
  */
-template <typename B,typename R, proto_max<R> MAX>
-void Modulator_QAM<B,R,MAX>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const
+template <typename B,typename R, typename Q, proto_max<Q> MAX>
+void Modulator_QAM<B,R,Q,MAX>
+::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
 	auto size_in  = (int)X_N1.size();
 	auto size_out = (int)X_N2.size();
@@ -111,9 +111,9 @@ void Modulator_QAM<B,R,MAX>
 /*
  * Demodulator
  */
-template <typename B,typename R, proto_max<R> MAX>
-void Modulator_QAM<B,R,MAX>
-::demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
+template <typename B,typename R, typename Q, proto_max<Q> MAX>
+void Modulator_QAM<B,R,Q,MAX>
+::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	auto size   = (int)Y_N2.size();
 	auto sigma2 = this->sigma * this->sigma;

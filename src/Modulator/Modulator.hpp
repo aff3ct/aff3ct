@@ -11,10 +11,10 @@ public:
 	Modulator() {};
 	virtual ~Modulator() {};
 
-	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) const = 0;
-	virtual void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2) const;
-	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2) const = 0;
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3) const
+	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) = 0;
+	virtual void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2);
+	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2) = 0;
+	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 	{
 		demodulate(Y_N1, Y_N3);
 	}
@@ -25,7 +25,7 @@ public:
 
 template <typename B, typename R, typename Q>
 void Modulator<B,R,Q>
-::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const
+::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 	Y_N2 = Y_N1;

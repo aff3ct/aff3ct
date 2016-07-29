@@ -848,7 +848,7 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,Q>* Simulation_BFERI<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,Q>::build(mod_params, sigma);
+	return Factory_modulator<B,R,Q>::build(code_params, mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
