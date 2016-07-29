@@ -12,7 +12,7 @@ private:
 	mipp::vector<B> V_K;
 	
 public:
-	Decoder_LDPC_BP_naive();
+	Decoder_LDPC_BP_naive(const int &N, const int &K);
 	virtual ~Decoder_LDPC_BP_naive();
 
 	// unsupported prototype

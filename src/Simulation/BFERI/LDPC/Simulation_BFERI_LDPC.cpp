@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Encoder/Encoder_NO.hpp"
+#include "../../../Encoder/LDPC/Encoder_LDPC_fake.hpp"
 #include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_naive.hpp"
 
 #include "../../../Tools/bash_tools.h"
@@ -47,23 +47,21 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return new Encoder_NO<B>();
+	return new Encoder_LDPC_fake<B>();
 }
 
 template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_siso(const int tid)
 {
-	// return new Decoder_NO<B,Q>();
-	return new Decoder_LDPC_BP_naive<B,Q>();
+	return new Decoder_LDPC_BP_naive<B,Q>(this->code_params.K, this->code_params.N);
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
-	// return new Decoder_NO<B,Q>();
-	return new Decoder_LDPC_BP_naive<B,Q>();
+	return new Decoder_LDPC_BP_naive<B,Q>(this->code_params.K, this->code_params.N);
 }
 
 // ==================================================================================== explicit template instantiation 

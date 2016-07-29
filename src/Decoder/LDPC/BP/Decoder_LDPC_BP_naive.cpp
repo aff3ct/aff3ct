@@ -4,10 +4,11 @@
 
 template <typename B, typename R>
 Decoder_LDPC_BP_naive<B,R>
-::Decoder_LDPC_BP_naive()
-: Decoder<B,R>()
+::Decoder_LDPC_BP_naive(const int &N, const int &K)
+: Decoder<B,R>(), Y_N(N), V_K(K)
 {
-	// get K and N to pre-allocate Y_N and V_K inner buffers
+	// TODO: implement the BP algo in order to remove this assertion
+	assert(N == K);
 }
 
 template <typename B, typename R>
@@ -30,13 +31,15 @@ void Decoder_LDPC_BP_naive<B,R>
 {
 	assert(Y_N1.size() == Y_N2.size());
 
-	// do something here => BP algo
+	// TODO: implement BP algo instead of a simple copy
+	Y_N2 = Y_N1;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_naive<B,R>
 ::load(const mipp::vector<R>& Y_N)
 {
+	assert(Y_N.size() == this->Y_N.size());
 	this->Y_N = Y_N;
 }
 
@@ -44,11 +47,9 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_naive<B,R>
 ::decode()
 {
-	// read LLR from this->Y_N
-
-	// do something here => BP algo
-
-	// store LLR to this->V_K
+	// TODO: implement BP algo instead of directly making the hard decision
+	for (unsigned i = 0; i < V_K.size(); i++)
+		V_K[i] = Y_N[i] < 0;
 }
 
 template <typename B, typename R>
