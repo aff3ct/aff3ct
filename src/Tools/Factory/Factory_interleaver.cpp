@@ -4,6 +4,7 @@
 #include "../../Interleaver/Interleaver_columns.hpp"
 #include "../../Interleaver/Interleaver_golden.hpp"
 #include "../../Interleaver/Interleaver_random.hpp"
+#include "../../Interleaver/Interleaver_random_hard.hpp"
 
 #include "../../Tools/Factory/Factory_interleaver.hpp"
 
@@ -20,6 +21,8 @@ Interleaver<T>* Factory_interleaver<T>
 		interleaver = new Interleaver_CCSDS<T>(size);
 	else if (code_params.interleaver == "RANDOM")
 		interleaver = new Interleaver_random<T>(size);
+	else if (code_params.interleaver == "RANDOM_HARD")
+		interleaver = new Interleaver_random_hard<T>(size);
 	else if (code_params.interleaver == "COLUMNS")
 		interleaver = new Interleaver_columns<T>(code_params.K, code_params.M);
 	else if (code_params.interleaver == "GOLDEN")

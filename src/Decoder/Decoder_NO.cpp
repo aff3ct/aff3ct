@@ -48,6 +48,24 @@ void Decoder_NO<B,R>
 		V_K[i] = Y_N[i] < 0;
 }
 
+template <typename B, typename R>
+void Decoder_NO<B,R>
+::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+{
+	assert(sys.size() == ext.size());
+
+	ext = sys;
+}
+
+template <typename B, typename R>
+void Decoder_NO<B,R>
+::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+{
+	assert(Y_N1.size() == Y_N2.size());
+
+	Y_N2 = Y_N1;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "../Tools/types.h"
 #ifdef MULTI_PREC

@@ -45,6 +45,8 @@ void Launcher_BFERI<B,R,Q>
 	this->doc_args["time-report"    ] = "display time information about the simulation chain.";
 	this->opt_args["demod-ite"      ] = "n_iter";
 	this->doc_args["demod-ite"      ] = "number of iterations in the turbo demodulation.";
+	this->opt_args["interleaver"    ] = "interleaver";
+	this->doc_args["interleaver"    ] = "specify the type of the interleaver (ex: LTE, RANDOM, COLUMNS, GOLDEN, NO).";
 }
 
 template <typename B, typename R, typename Q>
@@ -62,6 +64,7 @@ void Launcher_BFERI<B,R,Q>
 	if(this->ar.exist_arg("time-report"    )) this->simu_params.time_report     = true;
 	if(this->ar.exist_arg("trace"          )) this->simu_params.trace_path_file = this->ar.get_arg("trace");
 	if(this->ar.exist_arg("demod-ite"      )) this-> mod_params.demod_n_ite     = std::stoi(this->ar.get_arg("demod-ite"));
+	if(this->ar.exist_arg("interleaver"    )) this->code_params.interleaver    = this->ar.get_arg("interleaver");
 }
 
 template <typename B, typename R, typename Q>
@@ -77,12 +80,13 @@ void Launcher_BFERI<B,R,Q>
 		threads = std::to_string(this->simu_params.n_threads) + " thread(s)";
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("* Max frame error count     (FE)") << " = " << this->simu_params.max_fe     << std::endl;
-	std::clog << "# " << bold("* Number of turbo demod. ite.   ") << " = " << this->mod_params.demod_n_ite << std::endl;
-	std::clog << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                     << std::endl;
-	std::clog << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo       << std::endl;
-	std::clog << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem     << std::endl;
-	std::clog << "# " << bold("* Multi-threading               ") << " = " << threads                      << std::endl;
+	std::clog << "# " << bold("* Max frame error count     (FE)") << " = " << this->simu_params.max_fe      << std::endl;
+	std::clog << "# " << bold("* Interleaver                   ") << " = " << this->code_params.interleaver << std::endl;
+	std::clog << "# " << bold("* Number of turbo demod. ite.   ") << " = " << this->mod_params.demod_n_ite  << std::endl;
+	std::clog << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                      << std::endl;
+	std::clog << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo        << std::endl;
+	std::clog << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem      << std::endl;
+	std::clog << "# " << bold("* Multi-threading               ") << " = " << threads                       << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 
