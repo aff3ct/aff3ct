@@ -14,6 +14,8 @@ public:
 public:
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
+
+	virtual void reset(){}
 	
 	virtual int get_n_frames() const { return 1; }
 	virtual int tail_length () const { return 0; }
