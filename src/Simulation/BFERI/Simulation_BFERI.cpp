@@ -334,7 +334,6 @@ void Simulation_BFERI<B,R,Q>
 		auto d_decod = nanoseconds(0);
 
 		std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
-		simu->siso[tid]->reset();
 		for (auto ite = 1; ite <= simu->mod_params.demod_n_ite; ite++)
 		{
 			// demodulation
