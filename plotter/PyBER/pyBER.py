@@ -41,12 +41,12 @@ win.setWindowTitle('PyBER (deluxe) plotter')
 # Create docks, place them into the window one at a time.
 # Note that size arguments are only a suggestion; docks will still have to
 # fill the entire dock area and obey the limits of their internal widgets.
-dFile = Dock("File explorer",                  size=(250,400))
-dLege = Dock("Legend",                         size=(250,400))
-dBER  = Dock("Bit Error Rate (BER)",           size=(500,200))
-dFER  = Dock("Frame Error Rate (FER)",         size=(500,200))
-dBEFE = Dock("BE/FE",                          size=(500,125))
-dThr  = Dock("Decoder information throughput", size=(500,125))
+dFile = Dock("File explorer",                  size=(275,400))
+dLege = Dock("Legend",                         size=(275,400))
+dBER  = Dock("Bit Error Rate (BER)",           size=(400,200))
+dFER  = Dock("Frame Error Rate (FER)",         size=(400,200))
+dBEFE = Dock("BE/FE",                          size=(400,125))
+dThr  = Dock("Decoder information throughput", size=(400,125))
 
 area.addDock(dFile, 'left'         )
 area.addDock(dBER,  'right',  dFile)
