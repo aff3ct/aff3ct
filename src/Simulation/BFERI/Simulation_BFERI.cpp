@@ -548,6 +548,8 @@ void Simulation_BFERI<B,R,Q>
 		std::fill(simu->Y_N7[0].begin(), simu->Y_N7[0].end(), 0);
 		for (auto ite = 0; ite <= simu->mod_params.demod_n_ite; ite++)
 		{
+			std::clog << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
+			
 			// demodulation
 			std::clog << "Demodulate from Y_N3 to Y_N4..." << std::endl;
 			auto t_demod = steady_clock::now();
