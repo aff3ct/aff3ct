@@ -133,7 +133,8 @@ def buildLegendLayout(filename):
     layout.addRow("<b>File name</b>: ", QtGui.QLabel(os.path.basename(filename)))
 
     for entry in entries:
-        layout.addRow("<b>" + entry[0] + "</b>: ", QtGui.QLabel(entry[1]))
+        if len(entry) == 2:
+            layout.addRow("<b>" + entry[0] + "</b>: ", QtGui.QLabel(entry[1]))
 
     if runCommand:
         layout.addRow("<b>Run command</b>: ", runCmd)
