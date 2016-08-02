@@ -2,6 +2,7 @@
 
 #include <limits>
 
+#include "../../../Tools/bash_tools.h"
 #include "../../../Tools/MIPP/mipp.h"
 #include "../../../Tools/Reorderer/Reorderer.hpp"
 
@@ -129,6 +130,6 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	std::cerr << "(EE) This decoder does not support this interface." << std::endl;
+	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
 }

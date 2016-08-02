@@ -1,0 +1,95 @@
+#include <iostream>
+
+#include "../../Simulation/BFERI/RSC/Simulation_BFERI_RSC.hpp"
+#include "../../Tools/bash_tools.h"
+
+#include "Launcher_BFERI_RSC.hpp"
+
+template <typename B, typename R, typename Q, typename QD>
+Launcher_BFERI_RSC<B,R,Q,QD>
+::Launcher_BFERI_RSC(const int argc, const char **argv)
+: Launcher_BFERI<B,R,Q>(argc, argv)
+{
+	// override parameters
+	this->code_params.tail_length     = 2*3;
+	this->chan_params.quant_n_bits    = 6;
+	this->chan_params.quant_point_pos = 3;
+
+	// default parameters
+	this->code_params.type            = "RSC";
+	this->deco_params.algo            = "BCJR";
+	this->deco_params.implem          = "GENERIC";
+	this->deco_params.map             = "MAXS";
+
+	this->enco_params.buffered        = true;
+	this->deco_params.simd_strategy   = "";
+}
+
+template <typename B, typename R, typename Q, typename QD>
+void Launcher_BFERI_RSC<B,R,Q,QD>
+::build_args()
+{
+	Launcher_BFERI<B,R,Q>::build_args();
+
+	this->opt_args["disable-buf-enc"] = "";
+	this->doc_args["disable-buf-enc"] = "disable the buffered encoding.";
+
+	this->opt_args["dec-simd-strat" ] = "simd_type";
+	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
+	this->opt_args["dec-map"        ] = "map_type";
+	this->doc_args["dec-map"        ] = "the MAP implementation for the nodes (ex: MAX, MAXS, MAXL).";
+}
+
+template <typename B, typename R, typename Q, typename QD>
+void Launcher_BFERI_RSC<B,R,Q,QD>
+::store_args()
+{
+	Launcher_BFERI<B,R,Q>::store_args();
+
+	if(this->ar.exist_arg("disable-buf-enc")) this->enco_params.buffered = false;
+
+	if(this->ar.exist_arg("dec-simd-strat" )) this->deco_params.simd_strategy = this->ar.get_arg("dec-simd-strat");
+	if(this->ar.exist_arg("dec-map"        )) this->deco_params.map           = this->ar.get_arg("dec-map"       );
+
+	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
+		this->code_params.tail_length = 2*4;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+void Launcher_BFERI_RSC<B,R,Q,QD>
+::print_header()
+{
+	Launcher_BFERI<B,R,Q>::print_header();
+
+	std::string buff_enc = ((this->enco_params.buffered) ? "on" : "off");
+
+	// display configuration and simulation parameters
+	std::clog << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                        << std::endl;
+	if (!this->deco_params.simd_strategy.empty())
+	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy << std::endl;
+	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map           << std::endl;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+void Launcher_BFERI_RSC<B,R,Q,QD>
+::build_simu()
+{
+	this->simu = new Simulation_BFERI_RSC<B,R,Q,QD>(this->simu_params, 
+	                                                this->code_params, 
+	                                                this->enco_params, 
+	                                                this->mod_params,
+	                                                this->chan_params, 
+	                                                this->deco_params);
+}
+
+// ==================================================================================== explicit template instantiation 
+#include "../../Tools/types.h"
+#ifdef MULTI_PREC
+template class Launcher_BFERI_RSC<B_8,R_8,Q_8,QD_8>;
+template class Launcher_BFERI_RSC<B_16,R_16,Q_16,QD_16>;
+template class Launcher_BFERI_RSC<B_32,R_32,Q_32,QD_32>;
+template class Launcher_BFERI_RSC<B_64,R_64,Q_64,QD_64>;
+#else
+template class Launcher_BFERI_RSC<B,R,Q,QD>;
+#endif
+// ==================================================================================== explicit template instantiation

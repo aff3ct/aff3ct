@@ -14,6 +14,7 @@
 #include "Launcher/BFER/Launcher_BFER_repetition.hpp"
 #include "Launcher/BFER/Launcher_BFER_uncoded.hpp"
 
+#include "Launcher/BFERI/Launcher_BFERI_RSC.hpp"
 #include "Launcher/BFERI/Launcher_BFERI_LDPC.hpp"
 
 #include "Launcher/EXIT/Launcher_EXIT_polar.hpp"
@@ -160,6 +161,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	{
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
+		else if (simu_type == "BFERI")
+			launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
 		else if (simu_type == "EXIT" && (typeid(Q) == typeid(float) || typeid(Q) == typeid(double)))
 			launcher = new Launcher_EXIT_RSC<B,R,Q,QD>(argc, argv);
 	}

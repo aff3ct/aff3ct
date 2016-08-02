@@ -34,6 +34,18 @@ void Modulator_BPSK<B,R,Q>
 		Y_N2[i] = Y_N1[i] * two_on_square_sigma;
 }
 
+template <typename B, typename R, typename Q>
+void Modulator_BPSK<B,R,Q>
+::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+{
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+
+	auto size = Y_N1.size();
+	for (unsigned i = 0; i < size; i++)
+		Y_N3[i] = (Y_N1[i] * two_on_square_sigma) + Y_N2[i];
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC

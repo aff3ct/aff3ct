@@ -21,6 +21,7 @@ Launcher_BFERI<B,R,Q>
 	this->enco_params.systematic      = true;
 	this->mod_params.demod_max        = "MAX";
 	this->mod_params.demod_n_ite      = 30;
+	this->code_params.interleaver     = "RANDOM";
 }
 
 template <typename B, typename R, typename Q>

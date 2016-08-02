@@ -334,7 +334,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_decod = nanoseconds(0);
 
 		std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
-		for (auto ite = 1; ite <= simu->mod_params.demod_n_ite; ite++)
+		for (auto ite = 0; ite <= simu->mod_params.demod_n_ite; ite++)
 		{
 			// demodulation
 			auto t_demod = steady_clock::now();
@@ -522,7 +522,7 @@ void Simulation_BFERI<B,R,Q>
 		// filtering
 		std::clog << "Apply the filtering from Y_N1 to Y_N2..." << std::endl;
 		auto t_filte = steady_clock::now();
-		simu->channel[0]->add_noise(simu->Y_N1[0], simu->Y_N2[0]);
+		simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
 		auto d_filte = steady_clock::now() - t_filte;
 
 		// display Y_N2
@@ -546,17 +546,17 @@ void Simulation_BFERI<B,R,Q>
 		auto d_decod = nanoseconds(0);
 
 		std::fill(simu->Y_N7[0].begin(), simu->Y_N7[0].end(), 0);
-		for (auto ite = 1; ite <= simu->mod_params.demod_n_ite; ite++)
+		for (auto ite = 0; ite <= simu->mod_params.demod_n_ite; ite++)
 		{
 			// demodulation
 			std::clog << "Demodulate from Y_N3 to Y_N4..." << std::endl;
 			auto t_demod = steady_clock::now();
-			simu->modulator[0]->demodulate(simu->Y_N4[0], simu->Y_N7[0], simu->Y_N5[0]);
+			simu->modulator[0]->demodulate(simu->Y_N3[0], simu->Y_N7[0], simu->Y_N4[0]);
 			d_demod = steady_clock::now() - t_demod;
 
 			// display Y_N5
 			std::clog << "Y_N4:" << std::endl;
-			ft.display_real_vector(simu->Y_N5[0]);
+			ft.display_real_vector(simu->Y_N4[0]);
 			std::clog << std::endl;
 
 			// deinterleaving
@@ -841,7 +841,7 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFERI<B,R,Q>
 ::build_interleaver(const int tid)
 {
-	return Factory_interleaver<int>::build(code_params, code_params.K);
+	return Factory_interleaver<int>::build(code_params, code_params.N + code_params.tail_length);
 }
 
 template <typename B, typename R, typename Q>

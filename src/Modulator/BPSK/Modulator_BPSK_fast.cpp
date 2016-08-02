@@ -128,6 +128,26 @@ void Modulator_BPSK_fast<B,R,Q>
 		Y_N2[i] = Y_N1[i] * two_on_square_sigma;
 }
 
+template <typename B, typename R, typename Q>
+void Modulator_BPSK_fast<B,R,Q>
+::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+{
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+
+	auto size = Y_N1.size();
+
+	auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
+	for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
+	{
+		// mipp::fmadd(a, b, c) = a * b + c
+		auto y = mipp::fmadd(mipp::Reg<Q>(&Y_N1[i]), mipp::Reg<Q>(two_on_square_sigma), mipp::Reg<Q>(&Y_N2[i]));
+		y.store(&Y_N3[i]);
+	}
+	for (unsigned i = vec_loop_size; i < size; i++)
+		Y_N3[i] = (Y_N1[i] * two_on_square_sigma) + Y_N2[i];
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
