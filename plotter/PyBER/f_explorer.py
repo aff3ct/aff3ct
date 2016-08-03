@@ -30,54 +30,76 @@ from PyQt4 import QtCore
 from pyqtgraph.dockarea import *
 
 class AdvTreeView(QtGui.QTreeView):
-    plot_ber  = []
-    plot_fer  = []
-    plot_befe = []
-    plot_thr  = []
-    plot_lege = []
+    plot_ber   = []
+    plot_fer   = []
+    plot_befe  = []
+    plot_thr   = []
+    plot_lege  = []
+    fs_watcher = []
 
-    def selectionChanged(self, selected, deselected):
-        super().selectionChanged(selected, deselected)
-        paths = [ self.model().filePath(index) for index in self.selectedIndexes()
-                        if not self.model().isDir(index)] # TODO: remove this restriction
+    last_snr     = []
+    paths        = []
+    styles       = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine, QtCore.Qt.DotLine, QtCore.Qt.DashDotLine, QtCore.Qt.DashDotDotLine]
+    dashPatterns = [[1, 3, 4, 3], [2, 3, 4, 3], [1, 3, 1, 3], [4, 3, 4, 3], [3, 3, 2, 3], [4, 3, 1, 3]]
 
-        self.plot_ber.clearPlots()
-        self.plot_fer.clearPlots()
-        self.plot_befe.clearPlots()
-        self.plot_thr.clearPlots()
-        self.plot_lege.clear()
+    def getPathId(self, path):
+        if path in self.paths:
+            curId = 0
+            for p in self.paths:
+                if p == path:
+                    return curId
+                else:
+                    curId = curId +1
+            return -1
+        else:
+            return -1
 
-        styles = []
-        styles.append(QtCore.Qt.SolidLine)
-        styles.append(QtCore.Qt.DashLine)
-        styles.append(QtCore.Qt.DotLine)
-        styles.append(QtCore.Qt.DashDotLine)
-        styles.append(QtCore.Qt.DashDotDotLine)
+    def updateCurve(self, path):
+        if path in self.paths:
+            icolor = self.getPathId(path)
 
-        space = 3
-        dashPatterns = []
-        dashPatterns.append([1, space, 4, space])
-        dashPatterns.append([2, space, 4, space])
-        dashPatterns.append([1, space, 1, space])
-        dashPatterns.append([4, space, 4, space])
-        dashPatterns.append([3, space, 2, space])
-        dashPatterns.append([4, space, 1, space])
+            # for filename in self.paths:
+            pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
+            pen.setDashPattern(self.dashPatterns[icolor % len(self.dashPatterns)])
+            
+            data_snr = []
+            data_snr = libs.perf_reader.perf_snr_reader (path)
+            if data_snr:
+                if data_snr[len(data_snr) -1] > self.last_snr[icolor]:
+                    data_ber  = libs.perf_reader.perf_ber_reader (path)
+                    data_fer  = libs.perf_reader.perf_fer_reader (path)
+                    data_bps  = libs.perf_reader.perf_bps_reader (path)
+                    data_befe = libs.perf_reader.perf_befe_reader(path)
 
-        icolor = 0
-        for filename in paths:
-            pen1 = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
-            pen1.setDashPattern(dashPatterns[icolor % len(dashPatterns)])
-            data_snr  = libs.perf_reader.perf_snr_reader (filename)
-            data_ber  = libs.perf_reader.perf_ber_reader (filename)
-            data_fer  = libs.perf_reader.perf_fer_reader (filename)
-            data_bps  = libs.perf_reader.perf_bps_reader (filename)
-            data_befe = libs.perf_reader.perf_befe_reader(filename)
-            self.plot_ber.plot (x=data_snr, y=data_ber,  pen=pen1, symbol='x', name='BER plot'  )
-            self.plot_fer.plot (x=data_snr, y=data_fer,  pen=pen1, symbol='x', name='FER plot'  )
-            self.plot_befe.plot(x=data_snr, y=data_befe, pen=pen1, symbol='x', name='BE/FE plot')
-            self.plot_thr.plot (x=data_snr, y=data_bps,  pen=pen1, symbol='x', name='T/P plot'  )
+                    nPop = 0
+                    for i in range(0, len(data_snr)):
+                        if self.last_snr[icolor] >= data_snr[i]:
+                            nPop = i
 
-            # Debug legend
+                    for i in range(0, nPop):
+                        data_snr.pop(0)
+                        data_ber.pop(0)
+                        data_fer.pop(0)
+                        data_befe.pop(0)
+                        data_bps.pop(0)
+
+                    self.plot_ber.plot (x=data_snr, y=data_ber,  pen=pen, symbol='x', name='BER plot'  )
+                    self.plot_fer.plot (x=data_snr, y=data_fer,  pen=pen, symbol='x', name='FER plot'  )
+                    self.plot_befe.plot(x=data_snr, y=data_befe, pen=pen, symbol='x', name='BE/FE plot')
+                    self.plot_thr.plot (x=data_snr, y=data_bps,  pen=pen, symbol='x', name='T/P plot'  )
+
+                    self.last_snr[icolor] = data_snr[len(data_snr) -1]
+
+    def updateLegend(self, path):
+        if path in self.paths:
+            icolor = self.getPathId(path)
+
+            # for filename in self.paths:
+            pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
+            pen.setDashPattern(self.dashPatterns[icolor % len(self.dashPatterns)])
+            data_snr = libs.perf_reader.perf_snr_reader(path)
+            data_ber = libs.perf_reader.perf_ber_reader(path)
+
             legendArea = DockArea()
             dCurve     = Dock("", size=(250,600))
             dInfo      = Dock("", size=(250,900))
@@ -86,7 +108,7 @@ class AdvTreeView(QtGui.QTreeView):
             legendArea.addDock(dInfo,  'bottom')
 
             wCur = QtGui.QWidget();
-            wCur.setLayout(libs.perf_reader.buildLegendLayout(filename))
+            wCur.setLayout(libs.perf_reader.buildLegendLayout(path))
 
             sCur = QtGui.QScrollArea()
             sCur.setWidget(wCur)
@@ -95,13 +117,54 @@ class AdvTreeView(QtGui.QTreeView):
 
             wLegend = pg.PlotWidget(title="BER preview")
             wLegend.setLogMode(False, True)
-            wLegend.plot(x=data_snr, y=data_ber,  pen=pen1, name='BER plot')
+            wLegend.plot(x=data_snr, y=data_ber,  pen=pen, name='BER plot')
             wLegend.showGrid(False, False)
             dCurve.addWidget(wLegend)
 
-            self.plot_lege.addTab(legendArea,'Curve ' + str(icolor +1))
-            
-            icolor = icolor +1
+            self.plot_lege.addTab(legendArea, 'Curve ' + str(icolor +1))
+
+
+    def selectionChanged(self, selected, deselected):
+        super().selectionChanged(selected, deselected)
+        new_paths = [ self.model().filePath(index) for index in self.selectedIndexes()
+                        if not self.model().isDir(index)] # TODO: remove this restriction
+
+        self.last_snr = []
+        for p in new_paths:
+            self.last_snr.append(-999.0)
+
+        paths_to_remove = []
+        for p in self.paths:
+            if p not in new_paths:
+                paths_to_remove.append(p)
+
+        for p in paths_to_remove:
+            pId = self.getPathId(p)
+            self.paths.pop(pId)
+
+        paths_to_add = []
+        for p in new_paths:
+            if p not in self.paths:
+                paths_to_add.append(p)
+
+        for p in paths_to_add:
+            self.paths.append(p)
+
+        if len(paths_to_remove) > 0:
+            self.fs_watcher.removePaths(paths_to_remove)
+        if len(paths_to_add) > 0:
+            self.fs_watcher.addPaths(paths_to_add)
+        self.fs_watcher.fileChanged.connect(self.updateCurve)
+
+        self.plot_ber.clearPlots()
+        self.plot_fer.clearPlots()
+        self.plot_befe.clearPlots()
+        self.plot_thr.clearPlots()
+        self.plot_lege.clear()
+
+        for path in self.paths:
+            self.updateCurve(path)
+            self.updateLegend(path)
 
 def gen_panel():
     if len(sys.argv) >= 2:

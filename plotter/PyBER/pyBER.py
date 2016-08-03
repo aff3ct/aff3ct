@@ -100,6 +100,9 @@ wFile.plot_befe = wBEFE
 wFile.plot_thr  = wThr
 wFile.plot_lege = wLege
 
+fs_watcher = QtCore.QFileSystemWatcher()
+wFile.fs_watcher = fs_watcher
+
 win.show()
 
 # Start Qt event loop unless running in interactive mode or using pyside.

@@ -93,9 +93,15 @@ def perf_be_reader(filename):
     return perf_reader(filename, 6)
 
 def perf_befe_reader(filename):
+    a = []
+    b = []
     a = perf_be_reader(filename)
     b = perf_fe_reader(filename)
-    c = np.divide(a, b)
+    c = []
+    if a and b:
+        for i in range(0, len(a)):
+            c.append(a[i] / b[i])
+    # c = np.divide(a, b)
     return c
 
 def buildLegendLayout(filename):
