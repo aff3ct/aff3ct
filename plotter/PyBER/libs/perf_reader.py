@@ -100,7 +100,10 @@ def perf_befe_reader(filename):
     c = []
     if a and b:
         for i in range(0, len(a)):
-            c.append(a[i] / b[i])
+            if b[i] == 0:
+                c.append(0.0)
+            else :
+                c.append(a[i] / b[i])
     # c = np.divide(a, b)
     return c
 
