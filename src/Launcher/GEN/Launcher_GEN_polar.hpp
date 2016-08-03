@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q>
 class Launcher_GEN_polar : public Launcher_GEN<B,R,Q>
 {
 public:
-	Launcher_GEN_polar(const int argc, const char **argv);
+	Launcher_GEN_polar(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_GEN_polar() {};
 
 protected:

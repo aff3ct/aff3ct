@@ -32,9 +32,10 @@ protected:
 	t_decoder_param    deco_params;
 
 	Simulation *simu;
+	std::ostream &stream;
 	
 public:
-	Launcher(const int argc, const char **argv);
+	Launcher(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher();
 
 	void launch();

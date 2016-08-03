@@ -145,7 +145,7 @@ void Simulation_EXIT<B,R,Q>
 
 			if (!simu_params.disable_display && first_loop && !simu_params.enable_debug)
 			{
-				terminal->legend(std::clog);
+				terminal->legend(std::cout);
 				first_loop = false;
 			}
 

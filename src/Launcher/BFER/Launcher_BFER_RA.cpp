@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_RA<B,R,Q>
-::Launcher_BFER_RA(const int argc, const char **argv)
-: Launcher_BFER<B,R,Q>(argc, argv)
+::Launcher_BFER_RA(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->chan_params.quant_n_bits    = 7;
@@ -52,8 +52,8 @@ void Launcher_BFER_RA<B,R,Q>
 	Launcher_BFER<B,R,Q>::print_header();
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter    << std::endl;
-	std::clog << "# " << bold("* Interleaver                   ") << " = " << this->code_params.interleaver << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter    << std::endl;
+	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->code_params.interleaver << std::endl;
 }
 
 template <typename B, typename R, typename Q>

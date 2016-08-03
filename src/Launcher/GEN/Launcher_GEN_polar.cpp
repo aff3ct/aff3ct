@@ -10,8 +10,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_GEN_polar<B,R,Q>
-::Launcher_GEN_polar(const int argc, const char **argv)
-: Launcher_GEN<B,R,Q>(argc, argv)
+::Launcher_GEN_polar(const int argc, const char **argv, std::ostream &stream)
+: Launcher_GEN<B,R,Q>(argc, argv, stream)
 {
 	// default parameters
 	this->code_params.type            = "POLAR";
@@ -101,20 +101,20 @@ void Launcher_GEN_polar<B,R,Q>
 ::print_header()
 {
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("-------------------------------------------------")                                 << std::endl;
-	std::clog << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                 << std::endl;
-	std::clog << "# " << bold("-------------------------------------------------")                                 << std::endl;
-	std::clog << "#"                                                                                               << std::endl;
-	std::clog << "# " << bold_underlined("Simulation parameters:")                                                 << std::endl;
-	std::clog << "# " << bold("* Simulation type               ") << " = " << this->simu_params.type               << std::endl;
-	std::clog << "# " << bold("* Code type                     ") << " = " << this->code_params.type << " codes"   << std::endl;
-	std::clog << "# " << bold("* Number of information bits (K)") << " = " << this->code_params.K                  << std::endl;
-	std::clog << "# " << bold("* Codeword length            (N)") << " = " << this->code_params.N                  << std::endl;
-	std::clog << "# " << bold("* SNR                           ") << " = " << this->simu_params.snr_min   << " dB" << std::endl;
-	std::clog << "# " << bold("* Generated decoder directory   ") << " = " << this->simu_params.gen_decoder_dir    << std::endl;
+	this->stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
+	this->stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                 << std::endl;
+	this->stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
+	this->stream << "#"                                                                                               << std::endl;
+	this->stream << "# " << bold_underlined("Simulation parameters:")                                                 << std::endl;
+	this->stream << "# " << bold("* Simulation type               ") << " = " << this->simu_params.type               << std::endl;
+	this->stream << "# " << bold("* Code type                     ") << " = " << this->code_params.type << " codes"   << std::endl;
+	this->stream << "# " << bold("* Number of information bits (K)") << " = " << this->code_params.K                  << std::endl;
+	this->stream << "# " << bold("* Codeword length            (N)") << " = " << this->code_params.N                  << std::endl;
+	this->stream << "# " << bold("* SNR                           ") << " = " << this->simu_params.snr_min   << " dB" << std::endl;
+	this->stream << "# " << bold("* Generated decoder directory   ") << " = " << this->simu_params.gen_decoder_dir    << std::endl;
 	if (!this->simu_params.awgn_codes_file.empty())
-	std::clog << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file    << std::endl;
-	std::clog << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method      << std::endl;
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file    << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method      << std::endl;
 	
 	if (this->code_params.N != exp2(ceil(log2(this->code_params.N))))
 	{

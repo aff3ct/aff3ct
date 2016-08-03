@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q>
 class Launcher_EXIT : public Launcher<B,R,Q>
 {
 public:
-	Launcher_EXIT(const int argc, const char **argv);
+	Launcher_EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_EXIT() {};
 
 protected:

@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_repetition<B,R,Q>
-::Launcher_BFER_repetition(const int argc, const char **argv)
-: Launcher_BFER<B,R,Q>(argc, argv)
+::Launcher_BFER_repetition(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->chan_params.quant_n_bits    = 6;
@@ -50,7 +50,7 @@ void Launcher_BFER_repetition<B,R,Q>
 	std::string buff_enc = ((this->enco_params.buffered) ? "on" : "off");
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("* Buffered encoding             ") << " = " << buff_enc << std::endl;
+	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc << std::endl;
 }
 
 template <typename B, typename R, typename Q>

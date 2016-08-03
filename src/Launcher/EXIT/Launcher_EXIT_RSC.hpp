@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q, typename QD>
 class Launcher_EXIT_RSC : public Launcher_EXIT<B,R,Q>
 {
 public:
-	Launcher_EXIT_RSC(const int argc, const char **argv);
+	Launcher_EXIT_RSC(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_EXIT_RSC() {};
 
 protected:

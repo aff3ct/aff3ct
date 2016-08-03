@@ -8,8 +8,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher<B,R,Q>
-::Launcher(const int argc, const char **argv)
-: ar(argc, argv), simu(nullptr)
+::Launcher(const int argc, const char **argv, std::ostream &stream)
+: ar(argc, argv), simu(nullptr), stream(stream)
 {
 	// define type names
 	type_names[typeid(char)]        = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
@@ -243,32 +243,32 @@ void Launcher<B,R,Q>
 		modulation = mod_params.type;
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("-------------------------------------------------")                           << std::endl;
-	std::clog << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                           << std::endl;
-	std::clog << "# " << bold("-------------------------------------------------")                           << std::endl;
-	std::clog << "#"                                                                                         << std::endl;
-	std::clog << "# " << bold_underlined("Simulation parameters:")                                           << std::endl;
-	std::clog << "# " << bold("* Simulation type               ") << " = " << simu_params.type               << std::endl;
-	std::clog << "# " << bold("* Code type                     ") << " = " << code_params.type << " codes"   << std::endl;
-	std::clog << "# " << bold("* Number of information bits (K)") << " = " << code_params.K                  << std::endl;
-	std::clog << "# " << bold("* Codeword length            (N)") << " = " << N                              << std::endl;
-	std::clog << "# " << bold("* SNR min                       ") << " = " << simu_params.snr_min   << " dB" << std::endl;
-	std::clog << "# " << bold("* SNR max                       ") << " = " << simu_params.snr_max   << " dB" << std::endl;
-	std::clog << "# " << bold("* SNR step                      ") << " = " << simu_params.snr_step  << " dB" << std::endl;
-	std::clog << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
-	std::clog << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
-	std::clog << "# " << bold("* Modulation type               ") << " = " << modulation                     << std::endl;
-	std::clog << "# " << bold("* Demodulation                  ") << " = " << demodulation                   << std::endl;
-	std::clog << "# " << bold("* Demodulation max type         ") << " = " << demod_max                      << std::endl;
-	std::clog << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
-	std::clog << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;
-	std::clog << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]          << std::endl;
+	stream << "# " << bold("-------------------------------------------------")                           << std::endl;
+	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                           << std::endl;
+	stream << "# " << bold("-------------------------------------------------")                           << std::endl;
+	stream << "#"                                                                                         << std::endl;
+	stream << "# " << bold_underlined("Simulation parameters:")                                           << std::endl;
+	stream << "# " << bold("* Simulation type               ") << " = " << simu_params.type               << std::endl;
+	stream << "# " << bold("* Code type                     ") << " = " << code_params.type << " codes"   << std::endl;
+	stream << "# " << bold("* Number of information bits (K)") << " = " << code_params.K                  << std::endl;
+	stream << "# " << bold("* Codeword length            (N)") << " = " << N                              << std::endl;
+	stream << "# " << bold("* SNR min                       ") << " = " << simu_params.snr_min   << " dB" << std::endl;
+	stream << "# " << bold("* SNR max                       ") << " = " << simu_params.snr_max   << " dB" << std::endl;
+	stream << "# " << bold("* SNR step                      ") << " = " << simu_params.snr_step  << " dB" << std::endl;
+	stream << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
+	stream << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
+	stream << "# " << bold("* Modulation type               ") << " = " << modulation                     << std::endl;
+	stream << "# " << bold("* Demodulation                  ") << " = " << demodulation                   << std::endl;
+	stream << "# " << bold("* Demodulation max type         ") << " = " << demod_max                      << std::endl;
+	stream << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
+	stream << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;
+	stream << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]          << std::endl;
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		std::clog << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]      << std::endl;
-		std::clog << "# " << bold("* Quantizer type                ") << " = " << chan_params.quantizer_type << std::endl;
-		std::clog << "# " << bold("* Fixed-point representation    ") << " = " << quantif                    << std::endl;
+		stream << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]      << std::endl;
+		stream << "# " << bold("* Quantizer type                ") << " = " << chan_params.quantizer_type << std::endl;
+		stream << "# " << bold("* Fixed-point representation    ") << " = " << quantif                    << std::endl;
 	}
 }
 
@@ -278,13 +278,13 @@ void Launcher<B,R,Q>
 {
 	this->read_arguments();
 	this->print_header(); 
-	std::clog << "#" << std::endl;
+	stream << "#" << std::endl;
 	this->build_simu();
 
 	// launch the simulation
-	std::clog << "# The simulation is running..." << std::endl;
+	stream << "# The simulation is running..." << std::endl;
 	simu->launch();
-	std::clog << "# End of the simulation." << std::endl;
+	stream << "# End of the simulation." << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

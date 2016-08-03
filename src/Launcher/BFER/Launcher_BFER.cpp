@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
-::Launcher_BFER(const int argc, const char **argv)
-: Launcher<B,R,Q>(argc, argv)
+::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
+: Launcher<B,R,Q>(argc, argv, stream)
 {
 	this->simu_params.type            = "BFER";
 	this->simu_params.max_fe          = 100;
@@ -73,11 +73,11 @@ void Launcher_BFER<B,R,Q>
 		threads = std::to_string(this->simu_params.n_threads) + " thread(s)";
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("* Max frame error count     (FE)") << " = " << this->simu_params.max_fe << std::endl;
-	std::clog << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                 << std::endl;
-	std::clog << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo   << std::endl;
-	std::clog << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem << std::endl;
-	std::clog << "# " << bold("* Multi-threading               ") << " = " << threads                  << std::endl;
+	this->stream << "# " << bold("* Max frame error count     (FE)") << " = " << this->simu_params.max_fe << std::endl;
+	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                 << std::endl;
+	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo   << std::endl;
+	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem << std::endl;
+	this->stream << "# " << bold("* Multi-threading               ") << " = " << threads                  << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

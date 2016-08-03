@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_turbo<B,R,Q,QD>
-::Launcher_BFER_turbo(const int argc, const char **argv)
-: Launcher_BFER<B,R,Q>(argc, argv)
+::Launcher_BFER_turbo(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->code_params.tail_length = 4 * 3;
@@ -88,15 +88,15 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	std::string buff_enc = (this->enco_params.buffered) ? "on" : "off";
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter       << std::endl;
-	std::clog << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                         << std::endl;
-	std::clog << "# " << bold("* Interleaver                   ") << " = " << this->code_params.interleaver    << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter       << std::endl;
+	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                         << std::endl;
+	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->code_params.interleaver    << std::endl;
 	if (!this->code_params.crc.empty())
-	std::clog << "# " << bold("* CRC type                      ") << " = " << this->code_params.crc            << std::endl;
-	std::clog << "# " << bold("* Scaling factor                ") << " = " << this->deco_params.scaling_factor << std::endl;
+	this->stream << "# " << bold("* CRC type                      ") << " = " << this->code_params.crc            << std::endl;
+	this->stream << "# " << bold("* Scaling factor                ") << " = " << this->deco_params.scaling_factor << std::endl;
 	if (!this->deco_params.simd_strategy.empty())
-	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy  << std::endl;
-	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map            << std::endl;
+	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy  << std::endl;
+	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map            << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

@@ -10,8 +10,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_polar<B,R,Q>
-::Launcher_BFER_polar(const int argc, const char **argv)
-: Launcher_BFER<B,R,Q>(argc, argv)
+::Launcher_BFER_polar(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->chan_params.quant_n_bits    = 6;
@@ -106,17 +106,17 @@ void Launcher_BFER_polar<B,R,Q>
 
 	// display configuration and simulation parameters
 	if (this->deco_params.algo == "SCAN")
-	std::clog << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
 	if (!this->simu_params.awgn_codes_file.empty())
-	std::clog << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
 	if (this->deco_params.algo == "SCL")
-	std::clog << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
-	std::clog << "# " << bold("* Sigma for code generation     ") << " = " << sigma                             << std::endl;
-	std::clog << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method   << std::endl;
+	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
+	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << sigma                             << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method   << std::endl;
 	if (!this->code_params.crc.empty())
-	std::clog << "# " << bold("* CRC type                      ") << " = " << this->code_params.crc             << std::endl;
+	this->stream << "# " << bold("* CRC type                      ") << " = " << this->code_params.crc             << std::endl;
 	if (!this->deco_params.simd_strategy.empty())
-	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy   << std::endl;
+	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy   << std::endl;
 }
 
 template <typename B, typename R, typename Q>

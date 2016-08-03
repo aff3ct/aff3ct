@@ -8,8 +8,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_EXIT_polar<B,R,Q>
-::Launcher_EXIT_polar(const int argc, const char **argv)
-: Launcher_EXIT<B,R,Q>(argc, argv)
+::Launcher_EXIT_polar(const int argc, const char **argv, std::ostream &stream)
+: Launcher_EXIT<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->chan_params.quant_n_bits    = 6;
@@ -88,12 +88,12 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::print_header();
 
-	std::clog << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
 	if (!this->simu_params.awgn_codes_file.empty())
-	std::clog << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
-	std::clog << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
-	std::clog << "# " << bold("* Sigma for code generation     ") << " = " << this->code_params.sigma           << std::endl;
-	std::clog << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method   << std::endl;
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
+	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
+	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << this->code_params.sigma           << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method   << std::endl;
 }
 
 template <typename B, typename R, typename Q>

@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_uncoded<B,R,Q>
-::Launcher_BFER_uncoded(const int argc, const char **argv)
-: Launcher_BFER<B,R,Q>(argc, argv)
+::Launcher_BFER_uncoded(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->chan_params.quant_n_bits    = 6;

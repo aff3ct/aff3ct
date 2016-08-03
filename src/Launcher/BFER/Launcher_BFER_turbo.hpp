@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q, typename QD>
 class Launcher_BFER_turbo : public Launcher_BFER<B,R,Q>
 {
 public:
-	Launcher_BFER_turbo(const int argc, const char **argv);
+	Launcher_BFER_turbo(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_BFER_turbo() {};
 
 protected:

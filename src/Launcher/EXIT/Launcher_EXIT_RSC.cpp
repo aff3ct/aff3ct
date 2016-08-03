@@ -8,8 +8,8 @@
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_EXIT_RSC<B,R,Q,QD>
-::Launcher_EXIT_RSC(const int argc, const char **argv)
-: Launcher_EXIT<B,R,Q>(argc, argv)
+::Launcher_EXIT_RSC(const int argc, const char **argv, std::ostream &stream)
+: Launcher_EXIT<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->code_params.tail_length     = 2*3;
@@ -52,7 +52,7 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	Launcher_EXIT<B,R,Q>::print_header();
 
-	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map << std::endl;
+	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

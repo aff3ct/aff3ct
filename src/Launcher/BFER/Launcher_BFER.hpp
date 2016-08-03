@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q>
 class Launcher_BFER : public Launcher<B,R,Q>
 {
 public:
-	Launcher_BFER(const int argc, const char **argv);
+	Launcher_BFER(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_BFER() {};
 
 protected:

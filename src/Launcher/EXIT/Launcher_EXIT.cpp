@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_EXIT<B,R,Q>
-::Launcher_EXIT(const int argc, const char **argv)
-: Launcher<B,R,Q>(argc, argv)
+::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)
+: Launcher<B,R,Q>(argc, argv, stream)
 {
 	// default parameters
 	this->simu_params.type = "EXIT";
@@ -53,12 +53,12 @@ void Launcher_EXIT<B,R,Q>
 
 	std::string syst_enc = ((this->enco_params.systematic) ? "on" : "off");
 
-	std::clog << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                     << std::endl;
-	std::clog << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo       << std::endl;
-	std::clog << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem     << std::endl;
-	std::clog << "# " << bold("* SIG a min                     ") << " = " << this->simu_params.sig_a_min  << std::endl;
-	std::clog << "# " << bold("* SIG a max                     ") << " = " << this->simu_params.sig_a_max  << std::endl;
-	std::clog << "# " << bold("* SIG a step                    ") << " = " << this->simu_params.sig_a_step << std::endl;
+	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                     << std::endl;
+	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo       << std::endl;
+	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem     << std::endl;
+	this->stream << "# " << bold("* SIG a min                     ") << " = " << this->simu_params.sig_a_min  << std::endl;
+	this->stream << "# " << bold("* SIG a max                     ") << " = " << this->simu_params.sig_a_max  << std::endl;
+	this->stream << "# " << bold("* SIG a step                    ") << " = " << this->simu_params.sig_a_step << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

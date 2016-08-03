@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q>
 class Launcher_EXIT_polar : public Launcher_EXIT<B,R,Q>
 {
 public:
-	Launcher_EXIT_polar(const int argc, const char **argv);
+	Launcher_EXIT_polar(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_EXIT_polar() {};
 
 protected:
