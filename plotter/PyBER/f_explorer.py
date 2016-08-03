@@ -37,6 +37,7 @@ class AdvTreeView(QtGui.QTreeView):
     plot_lege  = []
     fs_watcher = []
 
+    colors       = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     last_snr     = []
     paths        = []
     styles       = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine, QtCore.Qt.DotLine, QtCore.Qt.DashDotLine, QtCore.Qt.DashDotDotLine]
@@ -56,16 +57,17 @@ class AdvTreeView(QtGui.QTreeView):
 
     def updateCurve(self, path):
         if path in self.paths:
-            icolor = self.getPathId(path)
+            pathId = self.getPathId(path)
+            icolor = self.colors[pathId] % len(self.colors)
 
             # for filename in self.paths:
             pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
-            pen.setDashPattern(self.dashPatterns[icolor % len(self.dashPatterns)])
+            pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
             
             data_snr = []
             data_snr = libs.perf_reader.perf_snr_reader (path)
             if data_snr:
-                if data_snr[len(data_snr) -1] > self.last_snr[icolor]:
+                if data_snr[len(data_snr) -1] > self.last_snr[pathId]:
                     data_ber  = libs.perf_reader.perf_ber_reader (path)
                     data_fer  = libs.perf_reader.perf_fer_reader (path)
                     data_bps  = libs.perf_reader.perf_bps_reader (path)
@@ -73,7 +75,7 @@ class AdvTreeView(QtGui.QTreeView):
 
                     nPop = 0
                     for i in range(0, len(data_snr)):
-                        if self.last_snr[icolor] >= data_snr[i]:
+                        if self.last_snr[pathId] >= data_snr[i]:
                             nPop = i
 
                     for i in range(0, nPop):
@@ -88,15 +90,16 @@ class AdvTreeView(QtGui.QTreeView):
                     self.plot_befe.plot(x=data_snr, y=data_befe, pen=pen, symbol='x', name='BE/FE plot')
                     self.plot_thr.plot (x=data_snr, y=data_bps,  pen=pen, symbol='x', name='T/P plot'  )
 
-                    self.last_snr[icolor] = data_snr[len(data_snr) -1]
+                    self.last_snr[pathId] = data_snr[len(data_snr) -1]
 
     def updateLegend(self, path):
         if path in self.paths:
-            icolor = self.getPathId(path)
+            pathId = self.getPathId(path)
+            icolor = self.colors[pathId] % len(self.colors)
 
             # for filename in self.paths:
             pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
-            pen.setDashPattern(self.dashPatterns[icolor % len(self.dashPatterns)])
+            pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
             data_snr = libs.perf_reader.perf_snr_reader(path)
             data_ber = libs.perf_reader.perf_ber_reader(path)
 
@@ -121,7 +124,7 @@ class AdvTreeView(QtGui.QTreeView):
             wLegend.showGrid(False, False)
             dCurve.addWidget(wLegend)
 
-            self.plot_lege.addTab(legendArea, 'Curve ' + str(icolor +1))
+            self.plot_lege.addTab(legendArea, 'Curve ' + str(pathId +1))
 
 
     def selectionChanged(self, selected, deselected):
