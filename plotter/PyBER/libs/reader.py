@@ -76,7 +76,7 @@ def dataReader(filename):
     dataThr  = []
     dataLege = []
 
-    dataLege.append(["File name", str(filename)])
+    dataLege.append(["File name", os.path.basename(filename)])
     for line in lines:
         if line.startswith("#"):
             if len(line) > 3 and line[0] == '#' and line[2] == '*':
