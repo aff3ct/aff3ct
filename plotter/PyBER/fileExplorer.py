@@ -23,6 +23,7 @@
 import os
 import sys
 import libs.reader
+import pyqtgraph as pg
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from pyqtgraph.dockarea import *
