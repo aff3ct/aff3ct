@@ -28,7 +28,7 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph.console
 import numpy as np
-import f_explorer
+import fileExplorer
 from pyqtgraph.dockarea import *
 
 app  = QtGui.QApplication([])
@@ -58,7 +58,7 @@ area.addDock(dLege, 'bottom', dFile)
 # Add widgets into each dock
 pg.setConfigOptions(antialias=True)
 
-wFile = f_explorer.gen_panel()
+wFile = fileExplorer.generatePannel()
 dFile.addWidget(wFile)
 
 wLege = QtGui.QTabWidget()
@@ -94,14 +94,14 @@ wThr.showLabel('left', True)
 wThr.showLabel('bottom', True)
 dThr.addWidget(wThr)
 
-wFile.plot_ber  = wBER
-wFile.plot_fer  = wFER
-wFile.plot_befe = wBEFE
-wFile.plot_thr  = wThr
-wFile.plot_lege = wLege
+wFile.wBER  = wBER
+wFile.wFER  = wFER
+wFile.wBEFE = wBEFE
+wFile.wThr  = wThr
+wFile.wLege = wLege
 
-fs_watcher = QtCore.QFileSystemWatcher()
-wFile.fs_watcher = fs_watcher
+fsWatcher = QtCore.QFileSystemWatcher()
+wFile.fsWatcher = fsWatcher
 
 win.show()
 
