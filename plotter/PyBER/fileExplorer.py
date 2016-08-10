@@ -50,6 +50,18 @@ class AdvTreeView(QtGui.QTreeView):
     styles       = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine, QtCore.Qt.DotLine, QtCore.Qt.DashDotLine, QtCore.Qt.DashDotDotLine]
     dashPatterns = [[1, 3, 4, 3], [2, 3, 4, 3], [1, 3, 1, 3], [4, 3, 4, 3], [3, 3, 2, 3], [4, 3, 1, 3]]
 
+    def __init__(self, wBER, wFER, wBEFE, wThr, wLege):
+        super().__init__()
+
+        self.wBER  = wBER
+        self.wFER  = wFER
+        self.wBEFE = wBEFE
+        self.wThr  = wThr
+        self.wLege = wLege
+
+        self.fsWatcher = QtCore.QFileSystemWatcher()
+        self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
+
     def getPathId(self, path):
         if path in self.paths:
             curId = 0
@@ -191,7 +203,6 @@ class AdvTreeView(QtGui.QTreeView):
         for p in newPaths:
             if p not in self.paths:
                 pathsToAdd.append(p)
-
         for p in pathsToAdd:
             self.paths.append(p)
 
@@ -199,7 +210,6 @@ class AdvTreeView(QtGui.QTreeView):
             self.fsWatcher.removePaths(pathsToRemove)
         if len(pathsToAdd) > 0:
             self.fsWatcher.addPaths(pathsToAdd)
-        self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
 
         for path in self.paths:
             self.updateData(path)
@@ -210,7 +220,7 @@ class AdvTreeView(QtGui.QTreeView):
         self.updateCurves()
         self.updateLegends()
 
-def generatePannel():
+def generatePannel(wBER, wFER, wBEFE, wThr, wLege):
     if len(sys.argv) >= 2:
         os.chdir(sys.argv[1])
     else:
@@ -222,7 +232,7 @@ def generatePannel():
     model.setNameFilters(['*.perf', '*.dat', '*.txt', '*.data'])
     model.setNameFilterDisables(False)
 
-    view = AdvTreeView()
+    view = AdvTreeView(wBER, wFER, wBEFE, wThr, wLege)
     view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
     view.setModel(model)
     view.hideColumn(1);

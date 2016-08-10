@@ -58,9 +58,6 @@ area.addDock(dLege, 'bottom', dFile)
 # Add widgets into each dock
 pg.setConfigOptions(antialias=True)
 
-wFile = fileExplorer.generatePannel()
-dFile.addWidget(wFile)
-
 wLege = QtGui.QTabWidget()
 dLege.addWidget(wLege)
 
@@ -94,14 +91,8 @@ wThr.showLabel('left', True)
 wThr.showLabel('bottom', True)
 dThr.addWidget(wThr)
 
-wFile.wBER  = wBER
-wFile.wFER  = wFER
-wFile.wBEFE = wBEFE
-wFile.wThr  = wThr
-wFile.wLege = wLege
-
-fsWatcher = QtCore.QFileSystemWatcher()
-wFile.fsWatcher = fsWatcher
+wFile = fileExplorer.generatePannel(wBER, wFER, wBEFE, wThr, wLege)
+dFile.addWidget(wFile)
 
 win.show()
 
