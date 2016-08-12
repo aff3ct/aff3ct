@@ -39,8 +39,6 @@ void Launcher_BFER_uncoded<B,R,Q>
 ::print_header()
 {
 	Launcher_BFER<B,R,Q>::print_header();
-
-	std::string buff_enc = ((this->enco_params.buffered) ? "on" : "off");
 }
 
 template <typename B, typename R, typename Q>
