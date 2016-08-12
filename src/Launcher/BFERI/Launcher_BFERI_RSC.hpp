@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q, typename QD>
 class Launcher_BFERI_RSC : public Launcher_BFERI<B,R,Q>
 {
 public:
-	Launcher_BFERI_RSC(const int argc, const char **argv);
+	Launcher_BFERI_RSC(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_BFERI_RSC() {};
 
 protected:

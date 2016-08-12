@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFERI_RSC<B,R,Q,QD>
-::Launcher_BFERI_RSC(const int argc, const char **argv)
-: Launcher_BFERI<B,R,Q>(argc, argv)
+::Launcher_BFERI_RSC(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFERI<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->code_params.tail_length     = 2*3;
@@ -64,10 +64,10 @@ void Launcher_BFERI_RSC<B,R,Q,QD>
 	std::string buff_enc = ((this->enco_params.buffered) ? "on" : "off");
 
 	// display configuration and simulation parameters
-	std::clog << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                        << std::endl;
+	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                        << std::endl;
 	if (!this->deco_params.simd_strategy.empty())
-	std::clog << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy << std::endl;
-	std::clog << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map           << std::endl;
+	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy << std::endl;
+	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map           << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

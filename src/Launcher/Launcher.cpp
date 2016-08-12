@@ -186,7 +186,10 @@ void Launcher<B,R,Q>
 		mod_params.bits_per_symbol = 1;
 
 	if (mod_params.type != "GSM" && mod_params.type != "GSM_TBLESS")
-		mod_params.upsample_factor = 1;
+	{
+		mod_params.bits_per_symbol = 1;
+		mod_params.upsample_factor = 5;
+	}
 }
 
 template <typename B, typename R, typename Q>

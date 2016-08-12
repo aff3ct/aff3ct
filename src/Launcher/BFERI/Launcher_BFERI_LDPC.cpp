@@ -7,8 +7,8 @@
 
 template <typename B, typename R, typename Q>
 Launcher_BFERI_LDPC<B,R,Q>
-::Launcher_BFERI_LDPC(const int argc, const char **argv)
-: Launcher_BFERI<B,R,Q>(argc, argv)
+::Launcher_BFERI_LDPC(const int argc, const char **argv, std::ostream &stream)
+: Launcher_BFERI<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
 	this->chan_params.quant_n_bits    = 6;
@@ -47,7 +47,7 @@ void Launcher_BFERI_LDPC<B,R,Q>
 {
 	Launcher_BFERI<B,R,Q>::print_header();
 
-	std::clog << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter << std::endl;
 }
 
 template <typename B, typename R, typename Q>

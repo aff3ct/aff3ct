@@ -23,7 +23,7 @@ Simulation_BFERI_RSC<B,R,Q,QD>
                        const t_mod_param&        mod_params,
                        const t_channel_param&    chan_params,
                        const t_decoder_param&    deco_params)
-:  Simulation_BFERI<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+: Simulation_BFERI<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
 {
 	assert(code_params.N / code_params.K == 2);
 }

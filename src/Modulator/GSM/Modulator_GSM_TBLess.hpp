@@ -14,14 +14,15 @@ class Modulator_GSM_TBLess : public Modulator_GSM<B,R,Q,MAX>
 {
 	
 public:
-	Modulator_GSM_TBLess(int N, const R sigma = 1.0);
+	Modulator_GSM_TBLess(int N, const R sigma);
 	virtual ~Modulator_GSM_TBLess();
 
-	void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2); //const; // Changed To allow Coset Approach in IterDEV
-	void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2); //const; // Changed To allow Coset Approach in IterDEV
-	
+	void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
+	void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
+	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
+
 	int get_buffer_size_after_modulation(const int N);
-	int  get_buffer_size_after_filtering(const int N);
+	int get_buffer_size_after_filtering (const int N);
 };
 
 #include "Modulator_GSM_TBLess.hxx"

@@ -1,420 +1,50 @@
 /*
-*
-*
 * BCJR Decoding, Memoryless Modulation, and Filtering come for Tarik BENADDI (Toulouse INP)
-*
-*
 */
-
 #include <cassert>
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
 
-#include "Modulator_GSM.hpp"
 #include "../../Encoder/RSC/Encoder_RSC3_CPE_sys.hpp"
+#include "../../Tools/Math/matrix.h"
 
+#include "Modulator_GSM.hpp"
 
-//
-//  BCJR FUNCTIONS FOR DEMODULATION ////////////////////////////////////////////////////////////////////////////////////
-//
-
-/* Maths Functions */
-
-// Complete Version of Matricial Product
+// translation of binary_symbols
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::matCProd( /* Inputs */    int rowNb1, int columnNb1, R *mat1_r, R *mat1_i, 
-                            int rowNb2, int columnNb2, R *mat2_r, R *mat2_i, 
-            /* Outputs */   R *output_r, R *output_i) //const // Changed To allow Coset Approach in IterDEV
-{
-    // Init
-    int 	i, j, k = 0;
-    R  		sum_r = 0; 
-    R 		sum_i = 0;
- 
-    // Size Check
-    if (columnNb1 != rowNb2)
-    {
-        std::cout << "Matrices with entered orders can't be multiplied with each other." << std::endl;
-        return;
-    }
-    else
-    {
-        // Processing...
-        for (i = 0; i < rowNb1; i++) 
-        {
-            for (j = 0; j < columnNb2; j++) 
-            {
-                for (k = 0; k < rowNb2; k++) 
-                {
-                    //out_r += r1 * r2 - i1 * i2;
-                    sum_r += mat1_r[i * columnNb1 + k] * mat2_r[j * rowNb2 + k] - mat1_i[i * columnNb1 + k] * mat2_i[j * rowNb2 + k];
-                    //out_i += i1 * r2 + r1 * i2;
-                    sum_i += mat1_i[i * columnNb1 + k] * mat2_r[j * rowNb2 + k] + mat1_r[i * columnNb1 + k] * mat2_i[j * rowNb2 + k];
-                }
-                output_r[j * rowNb1 + i] = sum_r;
-                output_i[j * rowNb1 + i] = sum_i;
-                sum_r = 0;
-                sum_i = 0;
-            }
-        }
-    }
-}
+const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_binary_symbols = {
+	0, 1
+};
 
-// Real Part Output Only Version of Matricial Product 
+// translation of trellis
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::R_matCProd(  	/* Inputs */    int rowNb1, int columnNb1, R *mat1_r, R *mat1_i, 
-                   	            int rowNb2, int columnNb2, R *mat2_r, R *mat2_i, 
-                /* Outputs */   mipp::vector<R> &output_r) //const // Changed To allow Coset Approach in IterDEV
-{
-    // Init
-    B   i, j, k = 0;
-    R  	sum_r = 0;
- 
-    // Size Check
-    if (columnNb1 != rowNb2)
-    {
-        std::cout << "Matrices with entered orders can't be multiplied with each other." << std::endl;
-        return;
-    }
-    else
-    {
-        // Processing...
-        for (i = 0; i < rowNb1; i++) 
-        {
-            for (j = 0; j < columnNb2; j++) 
-            {
-                for (k = 0; k < rowNb2; k++) 
-                {
-                    //out_r += r1 * r2 - i1 * i2;
-                    sum_r += mat1_r[i * columnNb1 + k] * mat2_r[j * rowNb2 + k] - mat1_i[i * columnNb1 + k] * mat2_i[j * rowNb2 + k];
-                }
-                output_r[j * rowNb1 + i] = sum_r;
-                sum_r = 0;
-            }
-        }
-    }
-}
+const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_trellis = {
+	0,  1,  1,  0,  2,  3,  3,  2,  4,  5,  5,  4,  6,  7,  7,  6, 
+	0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+};
 
-
-/* BCJR Algorithm Functions */
-
-// Retrieve Log Symbols Probability from LLR
+// translation of anti_trellis
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::BCJR_LLR2LogSymbProba(const   mipp::vector<Q> &llr, 
-                                mipp::vector<Q> &log_proba_msg_symb) //const // Changed To allow Coset Approach in IterDEV
-{
-    unsigned int depth, ii, jj;
-
-    for (ii = 0; ii < llr.size(); ii++)
-    {
-        this->log_bits_probability[2 * ii]        = llr[ii] / 2;
-        this->log_bits_probability[1 + 2 * ii]    = -llr[ii] / 2;
-    }
-
-    for (ii = 0; ii < (unsigned int)m_order; ii++)
-    {
-        for (jj = 0; jj < log_proba_msg_symb.size() / m_order; jj++)
-        {
-            log_proba_msg_symb[ii + m_order * jj] = 0;
-        }
-    }
-        
-    for (depth = 0; depth < log_proba_msg_symb.size() / m_order; depth++)
-    {
-        for (ii = 0; ii < (unsigned int)m_order; ii++)
-        {
-            for (jj = 0; jj < (unsigned int)nb_bits_per_symb; jj++)
-            {
-                if (binary_symbols[ii + m_order * jj] == 0)
-                {
-                    log_proba_msg_symb[ii + m_order * depth] = log_proba_msg_symb[ii + m_order * depth] + log_bits_probability[2 * (depth * nb_bits_per_symb + jj)];
-                }
-                else if (binary_symbols[ii + m_order * jj] == 1)
-                {
-                    log_proba_msg_symb[ii + m_order * depth] = log_proba_msg_symb[ii + m_order * depth] + log_bits_probability[1 + 2 * (depth * nb_bits_per_symb + jj)];
-                }
-            }
-        }
-    }
-
-}
-
-// Compute Gamma, Alpha and Beta, heart of the processing
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::BCJR_compute_alpha_beta_gamma(
-                                const B               *trellis,                const B   *anti_trellis, 
-                                const mipp::vector<Q> &symbol_apriori_prob,    const int M, 
-                                const int             cpm_symb_message_length, 
-                                const int             nb_output_symbs,         const Q   noise_var, 
-                                const mipp::vector<Q> &signal, 
-
-                                      mipp::vector<Q> &gamma,                 mipp::vector<Q> &alpha, 
-                                      mipp::vector<Q> &beta) //const // Changed To allow Coset Approach in IterDEV
-{
-    //
-    //  VARIABLES DECLARATION
-    //
-
-    Q      log_lambda, beta_final_equi_proba, sum_proba_alpha, sum_proba_beta;
-    int    ii, jj, kk, symb_ctr, depth_ctr, state_ctr, branch_ctr;
-    B      output_symbol;
-    B     *ptr_prev_states;
-    B     *ptr_prev_symb;
-    B     *input_symb, *original_state;
-
-    //
-    //  ALPHA, BETA, AND GAMMA INITIALIZATION
-    //
-
-    for (ii = 0; ii < nb_states; ii++)
-    {
-        for (jj = 0; jj < cpm_symb_message_length; jj++)
-        {
-            alpha[ ii + nb_states * jj ] = -std::numeric_limits<Q>::infinity();
-            beta[ ii + nb_states * jj ]  = -std::numeric_limits<Q>::infinity();
-        }
-    }
-    alpha[0] = 0;
-    beta_final_equi_proba = 1./ nb_states;
-    for (ii = 0; ii < nb_states; ii++)
-    {
-        beta[ ii + nb_states * (cpm_symb_message_length - 1) ] = log(beta_final_equi_proba);
-    }
-    
-    //
-    //  PROCESSING STARTS HERE
-    //      
-
-    /* Compute Gamma */
-
-    // For all Symbols
-    for (ii = 0; ii < cpm_symb_message_length; ii++)
-    {
-        // For all States
-        for (jj = 0; jj < nb_states; jj++)
-        {
-            // For all Values of the alphabet (M is the Modulation Order)
-            for (kk = 0; kk < M; kk++)
-            {
-                output_symbol       = trellis[ jj + nb_states * (kk + M) ];
-                log_lambda          = 2 * signal[ ii + cpm_symb_message_length * output_symbol ] / noise_var; 
-                gamma[ ii + cpm_symb_message_length * ( jj + nb_states * kk ) ] = log_lambda + symbol_apriori_prob[ kk + M * ii ];
-            }
-        }
-    }
-
-    /* Compute alpha and beta */
-    for (depth_ctr = 1; depth_ctr < cpm_symb_message_length; depth_ctr++)
-    {
-        for (state_ctr = 0; state_ctr < nb_states; state_ctr++)
-        {
-
-            /* compute alpha */
-            /**/
-            ptr_prev_states = (B*) anti_trellis + state_ctr * nb_prev_branches;
-
-            if (ptr_prev_states != NULL) //A tester
-            {
-
-                ptr_prev_symb   = (B*) anti_trellis + state_ctr * nb_prev_branches + nb_states * nb_prev_branches;
-                original_state  = ptr_prev_states;
-                input_symb      = ptr_prev_symb;
-
-                for (branch_ctr = 0; branch_ctr < nb_prev_branches; branch_ctr++)
-                {
-
-                    alpha[ state_ctr + nb_states * depth_ctr ] = 
-                        MAX(
-                                    alpha[ state_ctr + nb_states * depth_ctr ], 
-                                    gamma[ depth_ctr - 1 + cpm_symb_message_length * (original_state[branch_ctr] + nb_states * input_symb[branch_ctr] ) ]
-                                    + alpha[original_state[branch_ctr] + nb_states * (depth_ctr - 1)]
-                                   );
-                }
-
-            }
-
-            /* Compute beta */
-            /**/
-            for (symb_ctr = 0; symb_ctr < M; symb_ctr++)
-            {
-                beta[state_ctr + nb_states * (cpm_symb_message_length - (depth_ctr + 1))] = 
-                    MAX(
-                                beta[ state_ctr + nb_states * (cpm_symb_message_length - (depth_ctr + 1)) ],
-                                gamma[ cpm_symb_message_length - depth_ctr + cpm_symb_message_length * (state_ctr + nb_states * symb_ctr) ]
-                                + beta[ trellis[ state_ctr + nb_states * symb_ctr ] + nb_states * (cpm_symb_message_length - depth_ctr) ]
-                               );
-            }
-        }
-        
-        /* Normalize vectors alpha and beta*/
-        if (depth_ctr != 0)
-        {
-            sum_proba_alpha = -std::numeric_limits<Q>::infinity();
-            sum_proba_beta  = -std::numeric_limits<Q>::infinity();
-            for (ii = 0; ii < nb_states; ii++)
-            {
-                sum_proba_alpha = MAX(sum_proba_alpha, alpha[ ii + nb_states * depth_ctr ]);
-                sum_proba_beta  = MAX(sum_proba_beta,   beta[ ii + nb_states * (cpm_symb_message_length - depth_ctr - 1) ]);
-            }
-            /**/
-            for (ii = 0; ii < nb_states; ii++)
-            {
-                alpha[ ii + nb_states * depth_ctr ]                                 -= sum_proba_alpha;
-                 beta[ ii + nb_states * (cpm_symb_message_length - depth_ctr - 1) ] -= sum_proba_beta;
-            }
-            /**/
-        }
-    }
-}
-
-// From Alpha, Beta, and Gamma computes new Symbol Probability
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::BCJR_symboles_probas(const B               *trellis,                   const mipp::vector<Q> &alpha, 
-                       const mipp::vector<Q> &beta,                      const mipp::vector<Q> &gamma, 
-                       const int             cpm_symb_message_length,    const int M,
-                             mipp::vector<Q> &proba_msg_symb) //const // Changed To allow Coset Approach in IterDEV
-{
-    int ii, jj, depth_ctr, symb_ctr, state_ctr;
-    
-    /* Initialize proba_msg_symb */
-    for (ii = 0; ii < M; ii++)
-    {
-        for (jj = 0; jj < cpm_symb_message_length; jj++)
-        {
-            proba_msg_symb[ii + M * jj] = -std::numeric_limits<Q>::infinity();
-        }
-    }
-
-    for (depth_ctr = 0; depth_ctr < cpm_symb_message_length; depth_ctr++)
-    {
-        for (symb_ctr = 0; symb_ctr < M; symb_ctr++)
-        {
-            for (state_ctr = 0; state_ctr < nb_states; state_ctr++)
-            {
-                proba_msg_symb[symb_ctr + M * depth_ctr] = MAX(
-                                        proba_msg_symb[symb_ctr + M * depth_ctr],
-                                        alpha[state_ctr + nb_states * depth_ctr]
-                                        + gamma[depth_ctr + cpm_symb_message_length*(state_ctr + nb_states*symb_ctr)]
-                                        + beta[trellis[state_ctr + nb_states*symb_ctr] + nb_states * depth_ctr]);
-            }
-        }
-    }
-}
-
-// From Symbol Probabilities, computes bit probabilities
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::BCJR_bits_probas( const mipp::vector<Q> &proba_msg_symb,            const B       *binary_symbols, 
-                    const int             M,                          const int     cpm_bits_message_length, 
-                    const int             cpm_symb_message_length,    const int     nb_bits_per_input_symb, 
-                          mipp::vector<Q> &proba_msg_bits) //const // Changed To allow Coset Approach in IterDEV
-{
-
-    int depth_ctr, index_start, bit_ctr, jj, symb_ctr;
-
-    /* Initialize proba_msg_bits */
-    for (jj = 0; jj < 2 * cpm_bits_message_length; jj++)
-    {
-        proba_msg_bits[jj] = -std::numeric_limits<Q>::infinity();
-    }
-
-    for (depth_ctr = 0; depth_ctr < cpm_symb_message_length; depth_ctr++)
-    {
-        index_start = depth_ctr * nb_bits_per_input_symb;
-
-        for (bit_ctr = 0; bit_ctr < nb_bits_per_input_symb; bit_ctr++)
-        {
-            for (symb_ctr = 0; symb_ctr < M; symb_ctr++)
-            {
-                // Bit 0
-                if ( binary_symbols[symb_ctr + M * bit_ctr] == 0 )
-                {
-                    proba_msg_bits[2*(index_start + bit_ctr)] = 
-                                MAX(
-                                            proba_msg_bits[2*(index_start + bit_ctr)], 
-                                            proba_msg_symb[symb_ctr +  M * depth_ctr]
-                                           );
-                }
-                // Bit 1
-                else if ( binary_symbols[symb_ctr + M * bit_ctr] == 1 )
-                {
-                    proba_msg_bits[1 + 2*(index_start + bit_ctr)] = 
-                                MAX(
-                                            proba_msg_bits[1 + 2*(index_start + bit_ctr)],
-                                            proba_msg_symb[symb_ctr + M * depth_ctr]
-                                           );
-                }
-            }
-        }
-    }
-}
-
-// Extrinsic information processing from bit probabilities and CPM A Priori LLR
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::BCJR_compute_ext( const mipp::vector<Q> &proba_msg_bits, const mipp::vector<Q> &llr,
-                          mipp::vector<Q> &L_ext) //const // Changed To allow Coset Approach in IterDEV
-{
-    unsigned int ii;
-    for (ii = 0; ii < L_ext.size() * 2; ii += 2)
-    {
-        // Processing aposteriori and substracting a priori to directly obtain extrinsic
-        L_ext[ii / 2] = proba_msg_bits[ii] - proba_msg_bits[ii + 1] - llr[ii / 2];
-    }
-}
-
-// High Level function to use in code
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_GSM<B,R,Q,MAX>
-::BCJR_decode(const mipp::vector<Q> &llr,            const Q noise_var,                     
-              const mipp::vector<Q> &signal,
-                    mipp::vector<Q> &proba_msg_symb, mipp::vector<Q> &proba_msg_bits, 
-                    mipp::vector<Q> &L_ext) //const // Changed To allow Coset Approach in IterDEV
-{
-
-    BCJR_LLR2LogSymbProba(  /* inputs */    llr,                    
-                            /* outputs */   this->symb_apriori_prob);
-
-    BCJR_compute_alpha_beta_gamma(  (B*) trellis,   (B*) anti_trellis,  this->symb_apriori_prob,  m_order,            proba_msg_symb.size() / m_order,
-                                    nb_output_symbs, noise_var, signal, this->BCJR_gamma,   this->BCJR_alpha,   this->BCJR_beta);
-
-    BCJR_symboles_probas((B*) trellis, this->BCJR_alpha, this->BCJR_beta, this->BCJR_gamma, proba_msg_symb.size() / m_order, m_order, proba_msg_symb);
-
-    BCJR_bits_probas(proba_msg_symb, (B*) binary_symbols, m_order, proba_msg_bits.size() / 2, proba_msg_symb.size() / m_order, nb_bits_per_symb, proba_msg_bits);
-
-    BCJR_compute_ext(   /* Inputs */    proba_msg_bits, llr,
-                        /* Outputs */   L_ext);
-
-}
-
-//
-//  OTHER PUBLIC METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
-//
-
+const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_anti_trellis = {
+	0,  3,  1,  2,  4,  7,  5,  6,  0,  3,  1,  2,  4,  7,  5,  6, 
+	0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1
+};
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM<B,R,Q,MAX>
-::Modulator_GSM(int N, const R sigma)
+::Modulator_GSM(const int N, const R sigma)
 : Modulator<B,R,Q>(),
   sigma(sigma),
-  parity_enc(N + 6),
-  wave_enc((N +6) * UP_SAMPLE_FACTOR * 2),
-  L_a_cpm(N +6, 0),
-  L_ext_cpm(N +6, 0),
-  proba_msg_symb((N +6) *M_ORDER, 0),
-  proba_msg_bits((N +6) *2, 0),
-  filtered_signal_r((N +6) * NB_OUTPUT_SYMBS),
-  symb_apriori_prob(M_ORDER *(N +6)),
-  BCJR_gamma(NB_STATES *M_ORDER * (N +6)),
-  BCJR_alpha(NB_STATES *(N +6)),
-  BCJR_beta(NB_STATES  *(N +6)),
-  log_bits_probability(2 *(N +6))
+  parity_enc(N +6),
+  BCJR(N +6, 
+       BCJR_n_states,
+       BCJR_m_order,
+       BCJR_n_bits_per_symb,
+       BCJR_n_prev_branches,
+       BCJR_binary_symbols,
+       BCJR_trellis,
+       BCJR_anti_trellis)
 {
 }
 
@@ -428,111 +58,208 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 int Modulator_GSM<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
-    return (N +6) *up_sample_factor *2;
-    // +6: tails bit
-    // *up_sample_factor because work with waveforms
-    // *2: because of complex numbers
+	// +6: tails bit
+	// *up_sample_factor: because work with waveforms
+	// *2: because of complex numbers
+	return (N +6) * up_sample_factor * 2;
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 int Modulator_GSM<B,R,Q,MAX>
 ::get_buffer_size_after_filtering(const int N)
 {
-    return (N +6) * nb_output_symbs;
+	return (N +6) * n_output_symbs;
 }
+
+// translation of base band vectors (80 complex elmts)
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+const mipp::vector<R> Modulator_GSM<B,R,Q,MAX>::baseband = {
+	// real part:
+	-0.00564198672890523552497787918014,  0.00564198672890511322697282281524, -0.52091994211246372969981166534126,  
+	 0.52091994211246384072211412785691, -0.52091994211246317458829935276299,  0.52091994211246339663290427779430, 
+	-0.00564198672890548098834972989835,  0.00564198672890560328635478626325, -0.00564198672890523552497787918014,  
+	 0.00564198672890511322697282281524, -0.52091994211246372969981166534126,  0.52091994211246384072211412785691, 
+	-0.52091994211246317458829935276299,  0.52091994211246339663290427779430, -0.00564198672890548098834972989835, 
+	 0.00564198672890560328635478626325, -0.00776877723203855691941344119300,  0.00776877723203887871061823489072, 
+	-0.28757227949570324243566687982820,  0.28757227949570335345796934234386, -0.78729088687072712460235379694495, 
+	 0.78729088687072712460235379694495,  0.57035903678899979585281698746257, -0.57035903678899968483051452494692, 
+	-0.02137400816179174656284089905967,  0.02137400816179184717680250571448, -0.27451404512079868869278698184644, 
+	 0.27451404512079879971508944436209, -0.79560744046001319329519674283802,  0.79560744046001286022828935529105, 
+	 0.58148244165252382931186048153904, -0.58148244165252371828955801902339, -0.00834221760492034544731687617514, 
+	 0.00834221760492066810588340786126, -0.13452830303649640497631878588436,  0.13452830303649651599862124840001, 
+	-0.97383659537451217058645625002100,  0.97383659537451217058645625002100,  0.93140875618689789039450488417060, 
+	-0.93140875618689789039450488417060, -0.05833956743729826893707368640207,  0.05833956743729836608158834110327, 
+	-0.08480504399984668817413790975479,  0.08480504399984681307422818008490, -0.98398270811805732538601887426921, 
+	 0.98398270811805732538601887426921,  0.94844553546340304439610235931468, -0.94844553546340293337379989679903, 
+	-0.00858018935547101568861450004988,  0.00858018935547133661245755575919, -0.05270696031830793965022863289960, 
+	 0.05270696031830806455031890322971, -0.97253937780659382994485895324033,  0.97253937780659382994485895324033, 
+	 0.98497264802923345516916242559091, -0.98497264802923345516916242559091, -0.14011593487553636316889082991111, 
+	 0.14011593487553603010198344236414,  0.07918383214916917267611751185541, -0.07918383214916904777602724152530, 
+	-0.93344722234109755998332502713311,  0.93344722234109778202792995216441,  0.95367293175296929952367008809233, 
+	-0.95367293175296929952367008809233, -0.00915443117019493039776545373343,  0.00915443117019525305633198541955, 
+	-0.01573363938574873222009387063736,  0.01573363938574885365073718901385, -0.78380065831311762636346429644618, 
+	 0.78380065831311740431885937141487,  0.79901259618196074363538627949310, -0.79901259618195974443466411685222, 
+	-0.29297109943652965835525492366287,  0.29297109943653021346676723624114,  0.26908606242929095087035307187762, 
+	-0.26908606242929083984805060936196, -0.57498371378513679630373189866077,  0.57498371378513690732603436117643, 
+	 0.59516671290393219351244624704123, -0.59516671290393230453474870955688,
+	// imag part:
+	 0.99998408386621373544755897455616, -0.99998408386621373544755897455616, -0.85360553765164115525010402052430, 
+	 0.85360553765164115525010402052430,  0.85360553765164148831701140807127, -0.85360553765164137729470894555561, 
+	-0.99998408386621373544755897455616,  0.99998408386621373544755897455616,  0.99998408386621373544755897455616, 
+	-0.99998408386621373544755897455616, -0.85360553765164115525010402052430,  0.85360553765164115525010402052430, 
+	 0.85360553765164148831701140807127, -0.85360553765164137729470894555561, -0.99998408386621373544755897455616, 
+	 0.99998408386621373544755897455616,  0.99996982259482158905683490957017, -0.99996982259482158905683490957017, 
+	-0.95775893838984615946685607923428,  0.95775893838984615946685607923428,  0.61658175406859383471669389109593, 
+	-0.61658175406859394573899635361158, -0.82139550105483560837882350824657,  0.82139550105483560837882350824657, 
+	 0.99977154979280125068896722950740, -0.99977154979280125068896722950740, -0.96158309002988195945960114841000, 
+	 0.96158309002988195945960114841000,  0.60581251281619008519641056409455, -0.60581251281619052928562041415717, 
+	-0.81355895302665015567100681437296,  0.81355895302665026669330927688861,  0.99996520309730385633883997797966, 
+	-0.99996520309730385633883997797966, -0.99090975153245952622427239475655,  0.99090975153245941520196993224090, 
+	 0.22724939055887161121205508607090, -0.22724939055887172223435754858656, -0.36397490146763655793904490565183,  
+	 0.36397490146763666896134736816748,  0.99829679698535989107455179691897, -0.99829679698535989107455179691897, 
+	-0.99639756348165764432422975005466,  0.99639756348165764432422975005466,  0.17826393388639785730909181893367, 
+	-0.17826393388639799608696989707823, -0.31694016195417507031351078694570,  0.31694016195417518133581324946135, 
+	 0.99996318949780560458862055384088, -0.99996318949780560458862055384088, -0.99861002214778737950950926460791, 
+	 0.99861002214778737950950926460791, -0.23273839093618237106042556661123,  0.23273839093618267637175733852928, 
+	 0.17271040105992410684798699094245, -0.17271040105992399582568452842679,  0.99013510431352469431942608935060, 
+	-0.99013510431352480534172855186625, -0.99686003065935602229785672534490,  0.99686003065935602229785672534490, 
+	-0.35871476566164589572238696746354,  0.35871476566164534061087465488527,  0.30084537430663010892928355133336, 
+	-0.30084537430662999790698108881770,  0.99995809731705764811238168476848, -0.99995809731705764811238168476848, 
+	-0.99987621863492648355276060101460,  0.99987621863492648355276060101460, -0.62101250231208993124454309509019,  
+	 0.62101250231209015328914802012150,  0.60131428649464413460634659713833, -0.60131428649464535585167368481052, 
+	 0.95612129716629101761071751752752, -0.95612129716629090658841505501186, -0.96311613578337462726608464436140, 
+	 0.96311613578337462726608464436140, -0.81816485434284691447004433939583,  0.81816485434284680344774187688017, 
+	 0.80360225475736957179151431773789, -0.80360225475736957179151431773789
+};
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) //const // Changed To allow Coset Approach in IterDEV
+::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
-	assert(((X_N1.size() +6) *up_sample_factor *2) == X_N2.size());
+	assert(((X_N1.size() +6) * up_sample_factor * 2) == X_N2.size());
+	
+	// bit mapping -> not done here
 
+	// Rimoldi phase tilting -> for GSM only consists in transforming -1/+1 in 0/1
 
-	// CPE Encoder Instanciation
-	Encoder_RSC3_CPE_sys<B> enc(X_N1.size(), X_N1.size()*2, 1, false);
-
-	// Bit Mapping -> Not done here
-
-	// Rimoldi Phase Tilting -> For GSM only consists in transforming -1 / +1 in 0 / 1
-
-	// CPE Encoding
+	// CPE encoding
+	Encoder_RSC3_CPE_sys<B> enc(X_N1.size(), X_N1.size() * 2, 1, false);
 	enc.encode_sys(X_N1, this->parity_enc);
 
-	// Memoryless Modulation (Attributing Complex Waveforms to Symbols)
-	R* wave_enc_r = this->wave_enc.data();
-	R* wave_enc_i = this->wave_enc.data() + (X_N1.size() +6) * up_sample_factor;
-	unsigned int ii;
-    int          jj;
-    for (ii = 0; ii < X_N1.size() +6; ii++)
-	{
-		for (jj = 0; jj < up_sample_factor; jj++)
+	// memoryless modulation (attributing complex waveforms to symbols)
+	const auto off_X_r  = 0;
+	const auto off_X_i  = (X_N1.size() +6) * up_sample_factor;
+	const auto off_BB_r = 0;
+	const auto off_BB_i = (int)(baseband.size() / 2);
+
+	const auto loop_size = X_N1.size() +6;
+	for (auto i = 0; i < loop_size; i++)
+		for (auto j = 0; j < up_sample_factor; j++)
 		{
-			wave_enc_r[ii * up_sample_factor + jj] = baseband_vector_r[this->parity_enc[ii] + nb_output_symbs * jj];
-			wave_enc_i[ii * up_sample_factor + jj] = baseband_vector_i[this->parity_enc[ii] + nb_output_symbs * jj];
+			X_N2[off_X_r + i * up_sample_factor + j] = baseband[off_BB_r + j * n_output_symbs + this->parity_enc[i]];
+			X_N2[off_X_i + i * up_sample_factor + j] = baseband[off_BB_i + j * n_output_symbs + this->parity_enc[i]];
 		}
-	}
+}
 
-	X_N2 = this->wave_enc;
+// translation of filtering generator familly (80 complex elmts)
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+const mipp::vector<R> Modulator_GSM<B,R,Q,MAX>::projection = {
+	// real part:
+	-0.00132029697684193014425857448657, -0.00058505123686783551927026447714, -0.00339468397069032836593782676005, 
+	-0.00040650650234961400140976106599, -0.00219078471377524104310441366295,  0.00132029697684190217184252436056, 
+	 0.00058505123686791336498624893636,  0.00339468397069037433610994014543,  0.00040650650234968924504053155999, 
+	 0.00219078471377530305946867983380, -0.10401748554092599130527219131181, -0.05837574642016117587584034254178, 
+	-0.02534602518731315576316909243815, -0.01173906302348584791694907636384, -0.00281456991227095219484932719922, 
+	 0.10401748554092603293863561475519,  0.05837574642016116893694643863455,  0.02534602518731318004929775611345, 
+	 0.01173906302348587740724816796956,  0.00281456991227097778202059785713, -0.10419838646349323385553731213804, 
+	-0.15737182038912753134773936380952, -0.19493752797443592017501146074210, -0.19436919790676290831221706412180, 
+	-0.15680021941424224229955086684640,  0.10419838646349324773332511995250,  0.15737182038912755910331497943844, 
+	 0.19493752797443592017501146074210,  0.19436919790676288055664144849288,  0.15680021941424218678839963558858, 
+	-0.00110369058882891146397553505665,  0.11406293921541321711998762111762,  0.18615930726484100632411866627081, 
+	 0.19716837111164342566382856603013,  0.15973801222277886346923025939759,  0.00110369058882893249749768127543, 
+	-0.11406293921541320324219981330316, -0.18615930726484103407969428189972, -0.19716837111164342566382856603013, 
+	-0.15973801222277864142462533436628, -0.00141366279319429452576706296441, -0.00285994240979238478761459418820, 
+	-0.01415919085618501035983562985621, -0.02615087290929190427801742657721, -0.05910515553292910312377372861192,  
+	 0.00141366279319428541846881408617,  0.00285994240979233101118683890718,  0.01415919085618514219881980409355, 
+	 0.02615087290929176550013934843264,  0.05910515553292924190165180675649, -0.10392385970452529264651531093477, 
+	-0.05622480885151811408340094544656, -0.01459459897167380768023825510227,  0.01403539744041460562984369175865, 
+	 0.05431356462776571608630504783832,  0.10392385970452532040209092656369,  0.05622480885151812102229484935378,  
+	 0.01459459897167383370109039475437, -0.01403539744041458481316198003697, -0.05431356462776569526962333611664, 
+	-0.10381139199392126759580179395925, -0.16067748314182234148361771985947, -0.19441140682922075644256665327703, 
+	-0.18827180589878331207209782860446, -0.11460877603955207937325155853614,  0.10381139199392130922916521740262, 
+	 0.16067748314182225821689087297273,  0.19441140682922078419814226890594,  0.18827180589878333982767344423337,  
+	 0.11460877603955207937325155853614, -0.00148861390352549114585167799873,  0.11790671198601079816548065082316, 
+	 0.18706804997001283408231131488719,  0.19257748293331786171300734622491,  0.11855691706085519365743152775394, 
+	 0.00148861390352552540664032854068, -0.11790671198601074265432941956533, -0.18706804997001277857116008362937, 
+	-0.19257748293331783395743173059600, -0.11855691706085520753521933556840,
+	// imag part:
+	-0.20022994699815499508588345634053, -0.19930212538608207961665641505533, -0.20064714980915868136612800753937, 
+	-0.19983533762996610883000414560229, -0.19996481148887482182097130589682,  0.20022994699815499508588345634053, 
+	 0.19930212538608207961665641505533,  0.20064714980915868136612800753937,  0.19983533762996610883000414560229, 
+	 0.19996481148887482182097130589682,  0.17094374945445667268728584531345,  0.19087396185449426178060150505189, 
+	 0.19885754516415377057825253359624,  0.19952120033548864652672705233272,  0.19996601402686037252109940709488, 
+	-0.17094374945445667268728584531345, -0.19087396185449428953617712068080, -0.19885754516415371506710130233841, 
+	-0.19952120033548867428230266796163, -0.19996601402686037252109940709488, -0.17075199660761980480216948308225, 
+	-0.12321342678018226690639380649372, -0.04557004002377239987309209823252,  0.04660179542834700511244605536376, 
+	 0.12419528167265808660246761974122,  0.17075199660761977704659386745334,  0.12321342678018232241754503775155, 
+	 0.04557004002377246926203113730480, -0.04660179542834712307364242178664, -0.12419528167265811435804323537013, 
+	 0.19991334030230489826607254144619,  0.16462218757988547612747254333954,  0.07227703165261167850275114687975, 
+	-0.03420387753798159041762616539017, -0.12034449819846976259540838327666, -0.19991334030230492602164815707511, 
+	-0.16462218757988550388304815896845, -0.07227703165261160911381210780746,  0.03420387753798150715089931850343,  
+	 0.12034449819847002627337673175134, -0.20031873203795824700534922158113, -0.19901969626463703044727537871950, 
+	-0.20050097565137225963383116322802, -0.19787101498833303825364282602095, -0.19116743224502591447233612598211, 
+	 0.20031873203795824700534922158113,  0.19901969626463703044727537871950,  0.20050097565137228738940677885694, 
+	 0.19787101498833312152036967290769,  0.19116743224502588671676051035320,  0.17104582243181359890726866979094, 
+	 0.19134568439589577648618501370947,  0.20021232807485411786529994060402,  0.19913131203074838082578423836821, 
+	 0.19259287894233698135160182118852, -0.17104582243181359890726866979094, -0.19134568439589577648618501370947, 
+	-0.20021232807485411786529994060402, -0.19913131203074838082578423836821, -0.19259287894233698135160182118852, 
+	-0.17058670284035754027840425806062, -0.12129395515095907354119475485277, -0.03607130478167273196499209575450, 
+	 0.07244269184042320675054327239195,  0.16336166612556776711606687513267,  0.17058670284035754027840425806062, 
+	 0.12129395515095930946358748769853,  0.03607130478167259318711401760993, -0.07244269184042299858372615517510, 
+	-0.16336166612556776711606687513267,  0.19976310701392277491272864153871,  0.16323402056012617511449036555859, 
+	 0.06324205730973511685455434871983, -0.06051781170779292617911693241695, -0.16052965288872450555501814051240, 
+	-0.19976310701392277491272864153871, -0.16323402056012620287006598118751, -0.06324205730973513073234215653429, 
+	 0.06051781170779291230132912460249,  0.16052965288872450555501814051240
+};
+
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+void Modulator_GSM<B,R,Q,MAX>
+::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+{
+	// /16 because 16 modulated symbols in GSM
+	// *2  because we only keep real part here
+	assert(Y_N1.size() / up_sample_factor == 2 * (Y_N2.size() / 16));
+
+	const int M = Y_N1.size() / (2 * up_sample_factor); // number of row    in "Y_N1"
+	const int N = n_output_symbs;                       // number of column in "projection"
+	const int K = up_sample_factor;                     // number of column in "Y_N1"
+
+	// perform the matrix multiplication: Y_N2 = Y_N1 * projection (keep only the real part of the complexes in Y_N2)
+	cgemm_r(M, N, K, Y_N1, projection, Y_N2);
+
+	// channel estimation
+	// tips: it could be a good idea to comment these next lines in the fixed point mode
+	const auto estimator = (R)2.0 / ((R)this->sigma * (R)this->sigma);
+	const auto loop_size = (int)Y_N2.size();
+	for (auto i = 0; i < loop_size; i++)
+		Y_N2[i] *= estimator;
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) //const // Changed To allow Coset Approach in IterDEV
+::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-    	assert( Y_N1.size() == (Y_N2.size() +6) * nb_output_symbs );
+	assert(Y_N1.size() == (Y_N2.size() +6) * n_output_symbs);
 
-        /* Estimator Processing */ 
-        Q estimator = this->sigma * this->sigma;
-
-
-        BCJR_decode(    /* inputs */   this->L_a_cpm,         estimator           ,   Y_N1,
-                        /* outputs */  this->proba_msg_symb,  this->proba_msg_bits,   this->L_ext_cpm);
-
-        for(unsigned int i = 0; i < Y_N2.size(); i++)
-            Y_N2[i] = L_ext_cpm[i];
+	BCJR.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
-::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) //const // Changed To allow Coset Approach in IterDEV
+::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
+	assert(Y_N1.size() == (Y_N3.size() +6) * n_output_symbs);
+	assert(Y_N2.size() == Y_N3.size());
 
-    assert( Y_N1.size() / up_sample_factor == 2 * (Y_N2.size() / 16) ); 
-    // /16 Because 16 Modulated Symbols in GSM
-    // *2  Because we only keep real part here
-
-    // Incoming Data
-    R* signal_r = (R*) Y_N1.data();
-    R* signal_i = (R*) Y_N1.data() + (Y_N1.size() / 2);
-
-    unsigned int size_signal = (Y_N1.size() / 2);
-
-    // // Canal Values Testing:
-    // std::cout << "================ CANAL ================" << std::endl << std::endl;
-    // std::cout << std::setprecision(8);
-    // for(unsigned int rr = 0; rr < Y_N1.size() /2; rr++)
-    // {
-    //  std::cout << signal_r[rr] << " + i " << signal_i[rr] << "," << std::endl;
-    // }
-    // std::cout << std::endl;
-
-    // Filtering
-    this->R_matCProd(   
-                        /*IN*/
-                        size_signal / up_sample_factor,  up_sample_factor, 
-                        signal_r,                        signal_i, 
-                        up_sample_factor,                nb_output_symbs,  
-                        (R*) proj_r,                     (R*) proj_i,
-                        /*OUT*/
-                        Y_N2
-                    );
-
-    // // Filter Values Testing:
-    // std::cout << "================ FILTER ================" << std::endl << std::endl;
-    // std::cout << std::setprecision(8);
-    // for(unsigned int rr = 0; rr < this->filtered_signal_r.size(); rr++)
-    // {
-    //  std::cout << this->filtered_signal_r[rr] << ", " << std::endl;
-    // }
-    // std::cout << std::endl;
+	BCJR.decode(Y_N1, Y_N2, Y_N3);
 }

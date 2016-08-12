@@ -169,7 +169,7 @@ void Simulation_BFERI<B,R,Q>
 
 	if (tid == 0 && (!simu->simu_params.disable_display && simu->snr == simu->simu_params.snr_min && 
 	    !(simu->simu_params.enable_debug && simu->simu_params.n_threads == 1) && !simu->simu_params.benchs))
-		simu->terminal->legend(std::clog);
+		simu->terminal->legend(std::cout);
 
 	if (simu->code_params.generation_method == "AZCW")
 	{

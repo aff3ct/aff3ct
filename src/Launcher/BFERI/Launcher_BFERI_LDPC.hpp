@@ -7,7 +7,7 @@ template <typename B, typename R, typename Q>
 class Launcher_BFERI_LDPC : public Launcher_BFERI<B,R,Q>
 {
 public:
-	Launcher_BFERI_LDPC(const int argc, const char **argv);
+	Launcher_BFERI_LDPC(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_BFERI_LDPC() {};
 
 protected:
