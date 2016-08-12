@@ -96,29 +96,32 @@ class AdvTreeView(QtGui.QTreeView):
             
             if self.dataSNR[pathId]:
                 if self.dataSNR[pathId][len(self.dataSNR[pathId]) -1] > self.lastSNR[pathId]:
-                    dataSNR  = self.dataSNR [pathId]
-                    dataBER  = self.dataBER [pathId]
-                    dataFER  = self.dataFER [pathId]
-                    dataThr  = self.dataThr [pathId]
-                    dataBEFE = self.dataBEFE[pathId]
+                    curDataSNR  = list(self.dataSNR [pathId]) # make a copy
+                    curDataBER  = list(self.dataBER [pathId]) # make a copy
+                    curDataFER  = list(self.dataFER [pathId]) # make a copy
+                    curDataThr  = list(self.dataThr [pathId]) # make a copy
+                    curDataBEFE = list(self.dataBEFE[pathId]) # make a copy
 
                     nPop = 0
-                    for i in range(len(dataSNR)):
-                        if self.lastSNR[pathId] >= dataSNR[i]:
+                    for i in range(len(curDataSNR)):
+                        if self.lastSNR[pathId] >= curDataSNR[i]:
                             nPop = i
 
                     for i in range(nPop):
-                        dataSNR .pop(0)
-                        dataBER .pop(0)
-                        dataFER .pop(0)
-                        dataBEFE.pop(0)
-                        dataThr .pop(0)
+                        curDataSNR .pop(0)
+                        curDataBER .pop(0)
+                        curDataFER .pop(0)
+                        curDataBEFE.pop(0)
+                        curDataThr .pop(0)
 
-                    self.plotCurve(pathId, dataSNR, dataBER, dataFER, dataBEFE, dataThr)
+                    self.plotCurve(pathId, curDataSNR, curDataBER, curDataFER, curDataBEFE, curDataThr)
                     self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
                 elif self.dataSNR[pathId][len(self.dataSNR[pathId]) -1] < self.lastSNR[pathId]:
                     self.updateCurves()
                     self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
+            else:
+                self.updateCurves()
+                self.lastSNR[pathId] = -999.0
 
     def updateCurves(self):
         self.wBER .clearPlots()
@@ -215,7 +218,10 @@ class AdvTreeView(QtGui.QTreeView):
             self.updateData(path)
 
         for pathId in range(len(self.paths)):
-            self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
+            if len(self.dataSNR[pathId]) > 0:
+                self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
+            else:
+               self.lastSNR[pathId] = -999.0 
 
         self.updateCurves()
         self.updateLegends()
