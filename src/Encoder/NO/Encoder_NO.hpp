@@ -1,7 +1,7 @@
 #ifndef ENCODER_NO_HPP_
 #define ENCODER_NO_HPP_
 
-#include "Encoder.hpp"
+#include "../Encoder.hpp"
 
 template <typename B>
 class Encoder_NO : public Encoder<B>

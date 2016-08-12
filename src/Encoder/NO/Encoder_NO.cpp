@@ -24,7 +24,7 @@ void Encoder_NO<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../Tools/types.h"
+#include "../../Tools/types.h"
 #ifdef MULTI_PREC
 template class Encoder_NO<B_8>;
 template class Encoder_NO<B_16>;

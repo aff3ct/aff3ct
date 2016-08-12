@@ -1,8 +1,8 @@
 #ifndef DECODER_NO_HPP_
 #define DECODER_NO_HPP_
 
-#include "Decoder.hpp"
-#include "SISO.hpp"
+#include "../Decoder.hpp"
+#include "../SISO.hpp"
 
 template <typename B, typename R>
 class Decoder_NO : public Decoder<B,R>, public SISO<R>
