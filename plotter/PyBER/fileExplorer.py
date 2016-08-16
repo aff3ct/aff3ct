@@ -199,7 +199,13 @@ class AdvTreeView(QtGui.QTreeView):
             sCur.setWidgetResizable(True)
             dInfo.addWidget(sCur)
 
-            self.wDeta.addTab(legendArea, self.dataName[pathId])
+            wLegend = pg.PlotWidget(title="BER preview")
+            wLegend.setLogMode(False, True)
+            wLegend.plot(x=self.dataSNR[pathId], y=self.dataBER[pathId], pen=pen, name='BER plot')
+            wLegend.showGrid(False, False)
+            dCurve.addWidget(wLegend)
+
+            self.wLege.addTab(legendArea, 'Curve ' + str(pathId +1))
 
     def selectionChanged(self, selected, deselected):
         super().selectionChanged(selected, deselected)
