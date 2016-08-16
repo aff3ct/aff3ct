@@ -179,7 +179,6 @@ class AdvTreeView(QtGui.QTreeView):
 
             self.wLege.addTab(legendArea, 'Curve ' + str(pathId +1))
 
-
     def selectionChanged(self, selected, deselected):
         super().selectionChanged(selected, deselected)
         newPaths = [ self.model().filePath(index) for index in self.selectedIndexes()
