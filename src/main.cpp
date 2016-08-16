@@ -3,6 +3,10 @@
 #include <iostream>
 #include <map>
 
+#ifdef SYSTEMC
+#include <systemc>
+#endif
+
 #include "Tools/types.h"
 
 #include "Launcher/Launcher.hpp"
@@ -213,6 +217,7 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	delete launcher;
 }
 
+#ifndef SYSTEMC
 int main(int argc, char **argv)
 {
 	srand(0);
@@ -247,3 +252,11 @@ int main(int argc, char **argv)
 
 	return EXIT_SUCCESS;
 }
+#else
+int sc_main(int argc, char **argv)
+{
+	sc_core::sc_start(); // Start simulation
+
+	return EXIT_SUCCESS;
+}
+#endif
