@@ -185,7 +185,7 @@ void Launcher<B,R,Q>
 	if (mod_params.type == "BPSK" || mod_params.type == "BPSK_FAST")
 		mod_params.bits_per_symbol = 1;
 
-	if (mod_params.type != "GSM" && mod_params.type != "GSM_TBLESS")
+	if (mod_params.type == "GSM" || mod_params.type == "GSM_TBLESS")
 	{
 		mod_params.bits_per_symbol = 1;
 		mod_params.upsample_factor = 5;
@@ -252,7 +252,7 @@ void Launcher<B,R,Q>
 	if ((mod_params.type == "BPSK") || (mod_params.type == "BPSK_FAST")|| (mod_params.type == "GSM") || 
 		(mod_params.type == "GSM_TBLESS"))
 		modulation = mod_params.type;
-	modulation += " (UPS = " + std::to_string(mod_params.upsample_factor) + ")";
+	modulation += " (" + std::to_string(mod_params.upsample_factor) + "-UPS)";
 
 	// display configuration and simulation parameters
 	stream << "# " << bold("-------------------------------------------------")                           << std::endl;
