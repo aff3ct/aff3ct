@@ -253,9 +253,21 @@ int main(int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 #else
+#include "Source/Source_random.hpp"
+#include "Tools/SystemC/Dummy.hpp"
 int sc_main(int argc, char **argv)
 {
-	sc_core::sc_start(); // Start simulation
+	Source_random<B>* source_random = new Source_random<B>();
+	Dummy<B>* dummy = new Dummy<B>("dummy");
+
+	source_random->socket(dummy->socket);
+
+	sc_core::sc_start(100, SC_MS); // Start simulation
+
+	delete source_random;
+	delete dummy;
+
+	std::cout << "End of simulation" << std::endl;
 
 	return EXIT_SUCCESS;
 }
