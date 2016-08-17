@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <limits>
 
+#include "../Tools/MIPP/mipp.h"
+
 // ------------------------------------------------------------------------------------------------------ tools headers
 
 template <typename R> inline R           div2(R           val) { return val * (R)0.50; }
@@ -41,6 +43,15 @@ constexpr B bit_init() { return (((B)1) << (sizeof(B) * 8 -1)); }
 // make a saturation on a the value "val"
 template <typename T>
 inline T saturate(const T val, const T min, const T max) { return std::min(std::max(val, min), max); }
+
+// make a saturation on a full vector
+template <typename T>
+inline void saturate(mipp::vector<T> array, const T min, const T max) 
+{
+	const auto loop_size = (int)array.size();
+	for (auto i = 0; i < loop_size; i++)
+		array[i] = saturate<T>(array[i], min, max);
+}
 
 template <typename B, typename R>
 B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }

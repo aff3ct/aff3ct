@@ -8,6 +8,12 @@
 template <typename B, typename R, typename Q>
 class Simulation_BFERI_LDPC : public Simulation_BFERI<B,R,Q>
 {
+protected:
+	// LDPC bi-partite graph representation
+	std::vector<unsigned char> n_variables_per_parity;
+	std::vector<unsigned char> n_parities_per_variable;
+	std::vector<unsigned int > transpose;
+
 public:
 	Simulation_BFERI_LDPC(const t_simulation_param& simu_params,
 	                      const t_code_param&       code_params,

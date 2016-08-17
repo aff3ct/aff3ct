@@ -1,12 +1,16 @@
 #include <cassert>
 
+#include "hard_coded_matrices.h"
+
 #include "Encoder_LDPC_fake.hpp"
 
 template <typename B>
 Encoder_LDPC_fake<B>
-::Encoder_LDPC_fake(const int n_frames)
-: Encoder<B>(n_frames)
+::Encoder_LDPC_fake(const int K, const int N, const int n_frames)
+: Encoder_LDPC_sys<B>(n_frames), K(K), N(N)
 {
+	assert(N == (int)n_parities_per_variable_4224.size());
+	assert(K == N - (int)n_variables_per_parity_2112.size());
 }
 
 template <typename B>
@@ -16,13 +20,40 @@ Encoder_LDPC_fake<B>
 }
 
 template <typename B>
+std::vector<unsigned char> Encoder_LDPC_fake<B>
+::get_n_variables_per_parity()
+{
+	return n_variables_per_parity_2112;
+}
+
+template <typename B>
+std::vector<unsigned char> Encoder_LDPC_fake<B>
+::get_n_parities_per_variable()
+{
+	return n_parities_per_variable_4224;
+}
+
+template <typename B>
+std::vector<unsigned int > Encoder_LDPC_fake<B>
+::get_transpose()
+{
+	return transpose_7392;
+}
+
+template <typename B>
 void Encoder_LDPC_fake<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
 	// TODO: make a fake encoding for the coset approach
-
 	assert(U_K.size() == X_N.size());
 	X_N = U_K;
+}
+
+template <typename B>
+void Encoder_LDPC_fake<B>
+::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+{
+	assert(par.size() == 0);
 }
 
 // ==================================================================================== explicit template instantiation 

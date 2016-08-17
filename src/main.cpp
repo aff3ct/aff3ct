@@ -9,6 +9,7 @@
 
 #include "Launcher/BFER/Launcher_BFER_polar.hpp"
 #include "Launcher/BFER/Launcher_BFER_turbo.hpp"
+#include "Launcher/BFER/Launcher_BFER_LDPC.hpp"
 #include "Launcher/BFER/Launcher_BFER_RSC.hpp"
 #include "Launcher/BFER/Launcher_BFER_RA.hpp"
 #include "Launcher/BFER/Launcher_BFER_repetition.hpp"
@@ -188,7 +189,9 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 
 	if (code_type == "LDPC")
 	{
-		if (simu_type == "BFERI")
+		if (simu_type == "BFER")
+			launcher = new Launcher_BFER_LDPC<B,R,Q>(argc, argv);
+		else if (simu_type == "BFERI")
 			launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
 	}
 
