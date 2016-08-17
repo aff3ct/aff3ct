@@ -11,9 +11,9 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
-class Source : 
+class Source 
 #ifdef SYSTEMC
-public sc_core::sc_module
+: public sc_core::sc_module
 #endif
 {
 public:
