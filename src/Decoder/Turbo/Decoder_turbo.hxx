@@ -16,8 +16,10 @@ Decoder_turbo<B,R>
                 SISO<R> &siso_n,
                 SISO<R> &siso_i,
                 Scaling_factor<R> &scaling_factor,
-                const bool buffered_encoding)
-: K(K),
+                const bool buffered_encoding,
+                const std::string name)
+: Decoder<B,R>(name),
+  K(K),
   N(N),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),

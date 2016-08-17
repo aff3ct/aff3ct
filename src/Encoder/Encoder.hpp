@@ -1,6 +1,7 @@
 #ifndef ENCODER_HPP_
 #define ENCODER_HPP_
 
+#include <string>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
@@ -11,7 +12,7 @@ protected:
 	int n_frames;
 
 public:
-	Encoder(const int n_frames = 1) : n_frames(n_frames) {};
+	Encoder(const int n_frames = 1, const std::string name = "Encoder") : n_frames(n_frames) {};
 	virtual ~Encoder() {};
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N) = 0;

@@ -6,8 +6,9 @@
 
 template <typename B>
 CRC_polynomial_double<B>
-::CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames)
-: CRC_polynomial<B>(K, poly_key, n_frames), cut_index(cut_index)
+::CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames, 
+                        const std::string name)
+: CRC_polynomial<B>(K, poly_key, n_frames, name), cut_index(cut_index)
 {
 	assert(n_frames == 1);
 	assert((this->K - 2 * this->size()) > (cut_index - this->size()));

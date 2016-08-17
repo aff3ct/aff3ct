@@ -1,6 +1,7 @@
 #ifndef CRC_HPP_
 #define CRC_HPP_
 
+#include <string>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
@@ -11,7 +12,7 @@ protected:
 	int n_frames;
 
 public:
-	CRC(const int n_frames = 1) : n_frames(n_frames) {};
+	CRC(const int n_frames = 1, const std::string name = "CRC") : n_frames(n_frames) {};
 	virtual ~CRC(){};
 
 	virtual int  size (                          ) const = 0;

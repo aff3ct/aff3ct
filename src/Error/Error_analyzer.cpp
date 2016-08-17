@@ -1,5 +1,6 @@
 #include "Error_analyzer.hpp"
 
+#include <string>
 #include <vector>
 #include <cassert>
 #include <csignal>
@@ -21,7 +22,7 @@ std::chrono::nanoseconds Error_analyzer<B,R>::d_delta_interrupt = std::chrono::n
 
 template <typename B, typename R>
 Error_analyzer<B,R>
-::Error_analyzer(const int& K, const int& N, const int& max_fe, const int& n_frames)
+::Error_analyzer(const int& K, const int& N, const int& max_fe, const int& n_frames, const std::string name)
 : K(K),
   N(N),
   max_fe(max_fe),

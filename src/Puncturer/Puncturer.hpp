@@ -1,6 +1,7 @@
 #ifndef PUNCTURER_HPP_
 #define PUNCTURER_HPP_
 
+#include <string>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
@@ -11,7 +12,7 @@ protected:
 	int n_frames;
 
 public:
-	Puncturer(const int n_frames = 1) : n_frames(n_frames) {};
+	Puncturer(const int n_frames = 1, const std::string name = "Puncturer") : n_frames(n_frames) {};
 	virtual ~Puncturer() {};
 
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;

@@ -2,8 +2,8 @@
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 Decoder_polar_SC_naive_sys<B,R,F,G,H>
-::Decoder_polar_SC_naive_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits)
-: Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits)
+::Decoder_polar_SC_naive_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const std::string name)
+: Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, name)
 {
 }
 

@@ -1,6 +1,7 @@
 #ifndef DECODER_HPP_
 #define DECODER_HPP_
 
+#include <string>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
@@ -8,7 +9,7 @@ template <typename B, typename R>
 class Decoder
 {
 public:
-	Decoder() {};
+	Decoder(std::string name = "Decoder") {};
 	virtual ~Decoder() {};
 
 	virtual void load  (const mipp::vector<R>& Y_N)       = 0;

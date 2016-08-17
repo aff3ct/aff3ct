@@ -7,8 +7,8 @@
 
 template <typename R>
 Channel_AWGN_GSL_LR<R>
-::Channel_AWGN_GSL_LR(const R& sigma, const int seed)
-: Channel_AWGN_GSL_LLR<R>(sigma, seed)
+::Channel_AWGN_GSL_LR(const R& sigma, const int seed, const std::string name)
+: Channel_AWGN_GSL_LLR<R>(sigma, seed, name)
 {
 }
 

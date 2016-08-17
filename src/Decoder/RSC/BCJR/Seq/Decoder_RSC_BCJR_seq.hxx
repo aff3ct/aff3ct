@@ -67,8 +67,11 @@ struct RSC_BCJR_seq_init <signed char>
 
 template <typename B, typename R>
 Decoder_RSC_BCJR_seq<B,R>
-::Decoder_RSC_BCJR_seq(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding)
+::Decoder_RSC_BCJR_seq(const int &K,
+                       const std::vector<std::vector<int>> &trellis,
+                       const bool buffered_encoding,
+                       const std::string name)
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, 1, name)
 {
 	std::vector<std::vector<int>> req_trellis(10, std::vector<int>(8));
 	req_trellis[0] = { 0,  2,  4,  6,  0,  2,  4,  6};

@@ -49,8 +49,11 @@ struct RSC_BCJR_inter_intra_fast_x2_SSE_init <signed char>
 
 template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAP>
-::Decoder_RSC_BCJR_inter_intra_fast_x2_SSE(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding)
+::Decoder_RSC_BCJR_inter_intra_fast_x2_SSE(const int &K,
+                                           const std::vector<std::vector<int>> &trellis,
+                                           const bool buffered_encoding,
+                                           const std::string name)
+: Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, name)
 {
 	assert(mipp::nElReg<R>() == 16);
 	assert(K % 8 == 0);

@@ -32,7 +32,8 @@ protected:
 	Binary_tree<Contents_SC<B,R>> polar_tree;
 
 public:
-	Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits);
+	Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
+ 	                       const std::string name = "Decoder_polar_SC_naive");
 	virtual ~Decoder_polar_SC_naive();
 
 	        void load  (const mipp::vector<R>& Y_N);

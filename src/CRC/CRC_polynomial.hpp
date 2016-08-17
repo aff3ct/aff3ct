@@ -16,7 +16,7 @@ protected:
 	mipp::vector<B> buff_crc;
 
 public:
-	CRC_polynomial(const int K, std::string poly_key, const int n_frames = 1);
+	CRC_polynomial(const int K, std::string poly_key, const int n_frames = 1, const std::string name = "CRC_polynomial");
 	virtual ~CRC_polynomial(){};
 
 	static  int  size (      std::string poly_key);

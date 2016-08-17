@@ -24,7 +24,8 @@ protected:
     Interleaver<int>& interleaver;
 
 public:
-    Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter);
+    Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter,
+               const std::string name = "Decoder_RA");
     virtual ~Decoder_RA();
 
     void load  (const mipp::vector<R>& Y_N);

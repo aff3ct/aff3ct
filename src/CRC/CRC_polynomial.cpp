@@ -6,8 +6,8 @@
 
 template <typename B>
 CRC_polynomial<B>
-::CRC_polynomial(const int K, std::string poly_key, const int n_frames)
-: CRC<B>(n_frames), K(K), polynomial(0), buff_crc(n_frames * K)
+::CRC_polynomial(const int K, std::string poly_key, const int n_frames, const std::string name)
+: CRC<B>(n_frames, name), K(K), polynomial(0), buff_crc(n_frames * K)
 {
 	if (poly_key.empty())
 	{

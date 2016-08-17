@@ -23,7 +23,8 @@ protected:
 	mipp::vector<B> s;
 
 public:
-	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true);
+	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, 
+	                   const std::string name = "Decoder_repetition");
 	virtual ~Decoder_repetition();
 
 	void load  (const mipp::vector<R>& Y_N);

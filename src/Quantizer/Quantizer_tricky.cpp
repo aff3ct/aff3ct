@@ -8,8 +8,9 @@
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const R& sigma)
-: val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
+::Quantizer_tricky(const R& sigma, const std::string name)
+: Quantizer<R,Q>(name),
+  val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   delta_inv((R)0),
   sigma(sigma)
@@ -18,18 +19,19 @@ Quantizer_tricky<R,Q>
 
 template <>
 Quantizer_tricky<float,float>
-::Quantizer_tricky(const float& sigma)
-: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const float& sigma, const std::string name)
+: Quantizer<float,float>(name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <>
 Quantizer_tricky<double,double>
-::Quantizer_tricky(const double& sigma)
-: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const double& sigma, const std::string name)
+: Quantizer<double,double>(name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const short& saturation_pos, const R& sigma)
-: val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
+::Quantizer_tricky(const short& saturation_pos, const R& sigma, const std::string name)
+: Quantizer<R,Q>(name),
+  val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   delta_inv((R)0),
   sigma(sigma)
@@ -39,18 +41,19 @@ Quantizer_tricky<R,Q>
 
 template <>
 Quantizer_tricky<float,float>
-::Quantizer_tricky(const short& saturation_pos, const float& sigma)
-: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const short& saturation_pos, const float& sigma, const std::string name)
+: Quantizer<float,float>(name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <>
 Quantizer_tricky<double,double>
-::Quantizer_tricky(const short& saturation_pos, const double& sigma)
-: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const short& saturation_pos, const double& sigma, const std::string name)
+: Quantizer<double,double>(name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const float min_max, const R& sigma)
-: val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
+::Quantizer_tricky(const float min_max, const R& sigma, const std::string name)
+: Quantizer<R,Q>(name),
+  val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max)),
   sigma(sigma)
@@ -59,18 +62,19 @@ Quantizer_tricky<R,Q>
 
 template <>
 Quantizer_tricky<float,float>
-::Quantizer_tricky(const float min_max, const float& sigma)
-: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const float min_max, const float& sigma, const std::string name)
+: Quantizer<float,float>(name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <>
 Quantizer_tricky<double,double>
-::Quantizer_tricky(const float min_max, const double& sigma)
-: val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+::Quantizer_tricky(const float min_max, const double& sigma, const std::string name)
+: Quantizer<double,double>(name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
-::Quantizer_tricky(const float min_max, const short& saturation_pos, const R& sigma)
-: val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
+::Quantizer_tricky(const float min_max, const short& saturation_pos, const R& sigma, const std::string name)
+: Quantizer<R,Q>(name),
+  val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max)),
   sigma(sigma)

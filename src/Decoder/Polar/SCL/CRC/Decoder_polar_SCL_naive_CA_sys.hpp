@@ -6,7 +6,8 @@ class Decoder_polar_SCL_naive_CA_sys : public Decoder_polar_SCL_naive_CA<B,R,F,G
 {
 
 public:
-	Decoder_polar_SCL_naive_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc);
+	Decoder_polar_SCL_naive_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
+	                               CRC<B>& crc, const std::string name = "Decoder_polar_SCL_naive_CA_sys");
 
 protected:
 	virtual void select_best_path();

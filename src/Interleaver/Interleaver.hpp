@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 
+#include <string>
 #include <cassert>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
@@ -17,7 +18,8 @@ protected:
 	virtual void gen_lookup_tables() = 0; // to implement
 
 public:
-	Interleaver(const int size, const int n_frames = 1) : pi(size), pi_inv(size), n_frames(n_frames) {};
+	Interleaver(const int size, const int n_frames = 1, const std::string name = "Interleaver") 
+	: pi(size), pi_inv(size), n_frames(n_frames) {};
 	virtual ~Interleaver() {};
 
 	mipp::vector<T> get_lookup_table        () const { return pi;     }

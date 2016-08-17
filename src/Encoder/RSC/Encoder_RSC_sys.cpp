@@ -2,8 +2,9 @@
 
 template <typename B>
 Encoder_RSC_sys<B>
-::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding)
-: Encoder_sys<B>(n_frames), K(K), N(N), n_ff(n_ff), n_states(1 << n_ff), 
+::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,
+                  const std::string name)
+: Encoder_sys<B>(n_frames, name), K(K), N(N), n_ff(n_ff), n_states(1 << n_ff), 
   buffered_encoding(buffered_encoding)
 {
 	assert(N == (2 * K));

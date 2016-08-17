@@ -11,8 +11,10 @@
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits)
-: K             (K           ),
+::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
+                           const std::string name)
+: Decoder<B,R>  (name        ),
+  K             (K           ),
   m             (m           ),
   N             (1 << m      ),
   max_iter      (max_iter    ),

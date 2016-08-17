@@ -23,7 +23,8 @@ private:
 
 public:
 	Error_analyzer_reduction(const int& K, const int& N, const int& max_fe, 
-	                         std::vector<Error_analyzer<B,R>*>& error_analyzers, const int& n_frames = 1);
+	                         std::vector<Error_analyzer<B,R>*>& error_analyzers, const int& n_frames = 1, 
+	                         const std::string name = "Error_analyzer_reduction");
 	virtual ~Error_analyzer_reduction();
 
 	void reduce();

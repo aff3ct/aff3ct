@@ -14,8 +14,9 @@ Decoder_turbo_naive<B,R>
                       SISO<R> &siso_n,
                       SISO<R> &siso_i,
                       Scaling_factor<R> &scaling_factor,
-                      const bool buffered_encoding)
-: Decoder_turbo<B,R>(K,N,n_ite,pi,siso_n,siso_i,scaling_factor,buffered_encoding)
+                      const bool buffered_encoding,
+                      const std::string name)
+: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding, name)
 {
 }
 

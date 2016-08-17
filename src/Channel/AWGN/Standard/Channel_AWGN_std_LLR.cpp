@@ -5,8 +5,9 @@
 
 template <typename R>
 Channel_AWGN_std_LLR<R>
-::Channel_AWGN_std_LLR(const R& sigma, const int seed)
-: sigma(sigma),
+::Channel_AWGN_std_LLR(const R& sigma, const int seed, const std::string name)
+: Channel<R>(name),
+  sigma(sigma),
   rd(),
   rd_engine(this->rd()),
   normal_dist(0, sigma)

@@ -7,8 +7,9 @@
 
 template <typename B, typename R>
 Decoder_repetition<B,R>
-::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding)
- : K(K), N(N), rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
+::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const std::string name)
+ : Decoder<B,R>(name), 
+   K(K), N(N), rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
 {
 	assert(N % K == 0);
 }

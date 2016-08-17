@@ -7,7 +7,7 @@ template <typename R>
 class Channel_AWGN_fast_LR : public Channel_AWGN_fast_LLR<R>
 {
 public:
-	Channel_AWGN_fast_LR(const R& sigma, const int seed = 0);
+	Channel_AWGN_fast_LR(const R& sigma, const int seed = 0, const std::string name = "Channel_AWGN_fast_LR");
 	virtual ~Channel_AWGN_fast_LR();
 
 	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);

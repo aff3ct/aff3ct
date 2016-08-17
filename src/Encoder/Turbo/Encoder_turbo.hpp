@@ -26,7 +26,8 @@ protected:
 
 public:
 	Encoder_turbo(const int& K, const int& N, const Interleaver<short> &pi,
-	              Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames = 1);
+	              Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames = 1,
+	              const std::string name = "Encoder_turbo");
 	virtual ~Encoder_turbo() {}
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);

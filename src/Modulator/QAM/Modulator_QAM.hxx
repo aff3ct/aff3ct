@@ -8,10 +8,11 @@
 /*
  * Constructor / Destructor
  */
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
-Modulator_QAM<B,R,Q,MAX>
-::Modulator_QAM(const int bits_per_symbol, const R sigma, const bool disable_sig2)
-: bits_per_symbol(bits_per_symbol),
+template <typename B, typename R, proto_max<R> MAX>
+Modulator_QAM<B,R,MAX>
+::Modulator_QAM(const int bits_per_symbol, const R sigma, const std::string name)
+: Modulator<B,R> (name),
+  bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
   sqrt_es        (std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),

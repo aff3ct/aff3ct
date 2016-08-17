@@ -19,7 +19,8 @@ public:
 	                    SISO<R> &siso_n,
 	                    SISO<R> &siso_i,
 	                    Scaling_factor<R> &scaling_factor,
-	                    const bool buffered_encoding = true);
+	                    const bool buffered_encoding = true,
+	                    const std::string name = "Decoder_turbo_naive");
 	virtual ~Decoder_turbo_naive();
 
 	virtual void decode();

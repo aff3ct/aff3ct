@@ -6,8 +6,8 @@
 
 template <typename B>
 Encoder_repetition_sys<B>
-::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding)
-: K(K), N(N), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
+::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const std::string name)
+: Encoder_sys<B>(1, name), K(K), N(N), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
 	assert(N % K == 0); // check if repetition count is consistent
 }

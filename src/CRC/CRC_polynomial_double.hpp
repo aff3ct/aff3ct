@@ -12,7 +12,8 @@ private:
 	const int cut_index;
 
 public:
-	CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames = 1);
+	CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames = 1, 
+	                      const std::string name = "CRC_polynomial_double");
 	virtual ~CRC_polynomial_double(){};
 
 	virtual void build(mipp::vector<B>& U_K);

@@ -1,6 +1,7 @@
 #ifndef MODULATOR_HPP_
 #define MODULATOR_HPP_
 
+#include <string>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
@@ -8,7 +9,7 @@ template <typename B, typename R, typename Q>
 class Modulator
 {
 public:
-	Modulator() {};
+	Modulator(const std::string name = "Modulator") {};
 	virtual ~Modulator() {};
 
 	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) = 0;

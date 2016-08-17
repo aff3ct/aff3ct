@@ -1,10 +1,10 @@
 #include "../../Tools/bash_tools.h"
 #include "Modulator_BPSK_fast.hpp"
 
-template <typename B, typename R, typename Q>
-Modulator_BPSK_fast<B,R,Q>
-::Modulator_BPSK_fast(const R sigma, const bool disable_sig2)
-: disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
+template <typename B, typename R>
+Modulator_BPSK_fast<B,R>
+::Modulator_BPSK_fast(const R sigma, const std::string name)
+: Modulator<B,R>(name), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 

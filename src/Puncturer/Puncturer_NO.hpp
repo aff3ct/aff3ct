@@ -10,7 +10,7 @@ template <typename B, typename Q>
 class Puncturer_NO : public Puncturer<B,Q>
 {
 public:
-	Puncturer_NO(const int n_frames = 1);
+	Puncturer_NO(const int n_frames = 1, const std::string name = "Puncturer_NO");
 	virtual ~Puncturer_NO();
 
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const;

@@ -19,7 +19,8 @@ protected:
 	const bool buffered_encoding;
 
 public:
-	Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding);
+	Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,
+	                const std::string name = "Encoder_RSC_sys");
 	virtual ~Encoder_RSC_sys() {}
 
 	int get_n_ff   ();

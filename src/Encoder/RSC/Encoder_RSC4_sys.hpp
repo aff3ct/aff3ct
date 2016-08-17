@@ -10,7 +10,8 @@ template <typename B>
 class Encoder_RSC4_sys : public Encoder_RSC_sys<B>
 {
 public:
-	Encoder_RSC4_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true);
+	Encoder_RSC4_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true,
+	                 const std::string name = "Encoder_RSC4_sys");
 	virtual ~Encoder_RSC4_sys() {}
 
 protected:

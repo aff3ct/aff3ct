@@ -23,7 +23,8 @@ protected:
 	std::vector<mipp::vector<R>> soft_graph;
 
 public:
-	Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits);
+	Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits,
+	                         const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 
 	// functions

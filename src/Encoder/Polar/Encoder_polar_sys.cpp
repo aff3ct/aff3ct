@@ -7,8 +7,9 @@
 
 template <typename B>
 Encoder_polar_sys<B>
-::Encoder_polar_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int& n_frames)
-: Encoder_polar<B>(K, N, frozen_bits, n_frames)
+::Encoder_polar_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int& n_frames,
+                    const std::string name)
+: Encoder_polar<B>(K, N, frozen_bits, n_frames, name)
 {
 }
 

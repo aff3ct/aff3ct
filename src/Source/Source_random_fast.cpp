@@ -4,8 +4,9 @@
 
 template <typename B>
 Source_random_fast<B>
-::Source_random_fast(const int seed) 
-: mt19937(seed),
+::Source_random_fast(const int seed, const std::string name)
+: Source<B>(name),
+  mt19937(seed),
   mt19937_simd()
 {
 	mipp::vector<int> seeds(mipp::nElReg<int>());

@@ -11,8 +11,9 @@ Decoder_RSC_BCJR<B,R>
 ::Decoder_RSC_BCJR(const int K, 
                    const std::vector<std::vector<int>> &trellis, 
                    const bool buffered_encoding, 
-                   const int n_frames)
-: Decoder<B,R>(),
+                   const int n_frames,
+                   const std::string name)
+: Decoder<B,R>(name),
   SISO<R>(),
   K(K),
   n_states(trellis[0].size()),

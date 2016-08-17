@@ -7,7 +7,7 @@ template <typename B>
 class Encoder_sys : public Encoder<B>
 {
 public:
-	Encoder_sys(const int n_frames = 1) : Encoder<B>(n_frames) {};
+	Encoder_sys(const int n_frames = 1, const std::string name = "Encoder_sys") : Encoder<B>(n_frames) {};
 	virtual ~Encoder_sys() {};
 
 	// par bits : [par | tail bit sys | tail bits par]

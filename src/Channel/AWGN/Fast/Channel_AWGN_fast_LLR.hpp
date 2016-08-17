@@ -17,7 +17,7 @@ private:
 	PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
 
 public:
-	Channel_AWGN_fast_LLR(const R& sigma, const int seed = 0);
+	Channel_AWGN_fast_LLR(const R& sigma, const int seed = 0, const std::string name = "Channel_AWGN_fast_LLR");
 	virtual ~Channel_AWGN_fast_LLR();
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);

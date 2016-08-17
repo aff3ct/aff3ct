@@ -6,8 +6,9 @@
 
 template <typename B>
 Encoder_RSC4_sys<B>
-::Encoder_RSC4_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding)
-: Encoder_RSC_sys<B>(K, N, 4, n_frames, buffered_encoding)
+::Encoder_RSC4_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding,
+                   const std::string name)
+: Encoder_RSC_sys<B>(K, N, 4, n_frames, buffered_encoding, name)
 {
 }
 

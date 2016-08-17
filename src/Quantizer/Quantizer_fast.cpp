@@ -10,8 +10,9 @@
 
 template <typename R, typename Q>
 Quantizer_fast<R,Q>
-::Quantizer_fast(const short& fixed_point_pos)
-: val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
+::Quantizer_fast(const short& fixed_point_pos, const std::string name)
+: Quantizer<R,Q>(name),
+  val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
@@ -21,18 +22,19 @@ Quantizer_fast<R,Q>
 
 template <>
 Quantizer_fast<float,float>
-::Quantizer_fast(const short& fixed_point_pos)
-: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_fast(const short& fixed_point_pos, const std::string name)
+: Quantizer<float,float>(name), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_fast<double,double>
-::Quantizer_fast(const short& fixed_point_pos)
-: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_fast(const short& fixed_point_pos, const std::string name)
+: Quantizer<double,double>(name), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <typename R, typename Q>
 Quantizer_fast<R,Q>
-::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
+::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos, const std::string name)
+: Quantizer<R,Q>(name),
+  val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
@@ -46,13 +48,13 @@ Quantizer_fast<R,Q>
 
 template <>
 Quantizer_fast<float, float>
-::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos, const std::string name)
+: Quantizer<float,float>(name), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_fast<double, double>
-::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos)
-: val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos, const std::string name)
+: Quantizer<double,double>(name), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 
 template <typename R, typename Q>

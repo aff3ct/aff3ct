@@ -13,7 +13,10 @@ class Decoder_RSC_BCJR_seq_std : public Decoder_RSC_BCJR_seq<B,R>
 {
 
 public:
-	Decoder_RSC_BCJR_seq_std(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding = true);
+	Decoder_RSC_BCJR_seq_std(const int &K,
+	                         const std::vector<std::vector<int>> &trellis,
+	                         const bool buffered_encoding = true,
+	                         const std::string name = "Decoder_RSC_BCJR_seq_std");
 	virtual ~Decoder_RSC_BCJR_seq_std();
 
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);

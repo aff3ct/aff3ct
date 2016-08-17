@@ -5,8 +5,8 @@
 
 template <typename B, typename R>
 Decoder_repetition_std<B,R>
-::Decoder_repetition_std(const int& K, const int& N, const bool buffered_encoding)
- : Decoder_repetition<B,R>(K,N,buffered_encoding)
+::Decoder_repetition_std(const int& K, const int& N, const bool buffered_encoding, const std::string name)
+ : Decoder_repetition<B,R>(K,N,buffered_encoding, name)
 {
 }
 

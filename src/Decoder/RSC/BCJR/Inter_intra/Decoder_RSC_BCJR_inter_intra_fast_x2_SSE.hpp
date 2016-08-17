@@ -12,7 +12,10 @@ template <typename B, typename R, proto_map_i<R> MAP>
 class Decoder_RSC_BCJR_inter_intra_fast_x2_SSE : public Decoder_RSC_BCJR_inter_intra<B,R>
 {
 public:
-	Decoder_RSC_BCJR_inter_intra_fast_x2_SSE(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding = true);
+	Decoder_RSC_BCJR_inter_intra_fast_x2_SSE(const int &K,
+	                                         const std::vector<std::vector<int>> &trellis,
+	                                         const bool buffered_encoding = true,
+	                                         const std::string name = "Decoder_RSC_BCJR_inter_intra_fast_x2_SSE");
 	virtual ~Decoder_RSC_BCJR_inter_intra_fast_x2_SSE();
 
 protected:

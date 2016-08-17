@@ -25,7 +25,7 @@ protected:
 
 public:
 	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
-	                     const int n_frames = 1);
+	                     const int n_frames = 1, const std::string name = "Encoder_turbo_legacy");
 	virtual ~Encoder_turbo_legacy() {}
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);

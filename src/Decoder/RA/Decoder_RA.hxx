@@ -5,8 +5,9 @@
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter)
- : K(K),
+::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const std::string name)
+ : Decoder<B,R>(name),
+   K(K),
    N(N),
    rep_count(N/K),
    max_iter(max_iter),

@@ -5,8 +5,11 @@
 
 template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>
-::Decoder_RSC_BCJR_inter_very_fast(const int &K, const std::vector<std::vector<int>> &trellis, const bool buffered_encoding)
-: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding)
+::Decoder_RSC_BCJR_inter_very_fast(const int &K,
+                                   const std::vector<std::vector<int>> &trellis,
+                                   const bool buffered_encoding,
+                                   const std::string name)
+: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding, name)
 {
 }
 

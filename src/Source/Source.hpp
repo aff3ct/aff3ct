@@ -2,6 +2,7 @@
 #define SOURCE_HPP_
 
 #include <vector>
+#include <string>
 #ifdef SYSTEMC
 #include <systemc>
 #include <tlm>
@@ -18,9 +19,9 @@ class Source
 {
 public:
 #ifndef SYSTEMC
-	Source() {};
+	Source(const std::string name = "Source") {};
 #else
-	Source() : sc_module("Source"), socket("socket") { SC_THREAD(sc_generate); };
+	Source(const std::string name = "Source") : sc_module(name.c_str()), socket("socket") { SC_THREAD(sc_generate); };
 	SC_HAS_PROCESS(Source);
 #endif
 	virtual ~Source() {};

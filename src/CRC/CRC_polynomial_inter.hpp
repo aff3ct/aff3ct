@@ -9,7 +9,8 @@ template <typename B>
 class CRC_polynomial_inter : public CRC_polynomial<B>
 {
 public:
-	CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames);
+	CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames, 
+	                     const std::string name = "CRC_polynomial_inter");
 	virtual ~CRC_polynomial_inter(){};
 
 	virtual bool check(const mipp::vector<B>& V_K);

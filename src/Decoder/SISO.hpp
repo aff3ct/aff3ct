@@ -1,6 +1,7 @@
 #ifndef SISO_HPP_
 #define SISO_HPP_
 
+#include <string>
 #include <vector>
 #include "../Tools/MIPP/mipp.h"
 
@@ -8,7 +9,7 @@ template <typename R>
 class SISO
 {
 public:
-	SISO() {};
+	SISO(std::string name = "SISO") {};
 	virtual ~SISO() {};
 
 public:

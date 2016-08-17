@@ -7,8 +7,9 @@
 
 template <typename R>
 Channel_AWGN_fast_LLR<R>
-::Channel_AWGN_fast_LLR(const R& sigma, const int seed)
-: sigma(sigma),
+::Channel_AWGN_fast_LLR(const R& sigma, const int seed, const std::string name)
+: Channel<R>(name),
+  sigma(sigma),
   mt19937(seed),
   mt19937_simd()
 {

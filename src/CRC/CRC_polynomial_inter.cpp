@@ -7,8 +7,8 @@
 
 template <typename B>
 CRC_polynomial_inter<B>
-::CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames)
-: CRC_polynomial<B>(K, poly_key, n_frames)
+::CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames, const std::string name)
+: CRC_polynomial<B>(K, poly_key, n_frames, name)
 {
 	assert(mipp::nElmtsPerRegister<B>() == n_frames);
 }

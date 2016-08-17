@@ -1,9 +1,9 @@
 #include "Modulator_BPSK.hpp"
 
-template <typename B, typename R, typename Q>
-Modulator_BPSK<B,R,Q>
-::Modulator_BPSK(const R sigma, const bool disable_sig2)
-: disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
+template <typename B, typename R>
+Modulator_BPSK<B,R>
+::Modulator_BPSK(const R sigma, const std::string name)
+: Modulator<B,R>(name), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 

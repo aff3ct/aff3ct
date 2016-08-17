@@ -6,7 +6,8 @@
 
 template <typename R, typename Q>
 Quantizer_NO<R,Q>
-::Quantizer_NO()
+::Quantizer_NO(const std::string name)
+: Quantizer<R,Q>(name)
 {
 }
 

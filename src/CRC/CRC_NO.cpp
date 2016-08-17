@@ -2,8 +2,8 @@
 
 template <typename B>
 CRC_NO<B>
-::CRC_NO(const int n_frames)
-: CRC<B>(n_frames)
+::CRC_NO(const int n_frames, const std::string name)
+: CRC<B>(n_frames, name)
 {
 }
 

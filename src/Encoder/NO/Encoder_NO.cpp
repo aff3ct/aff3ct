@@ -4,8 +4,8 @@
 
 template <typename B>
 Encoder_NO<B>
-::Encoder_NO(const int n_frames)
-: Encoder<B>(n_frames)
+::Encoder_NO(const int n_frames, const std::string name)
+: Encoder<B>(n_frames, name)
 {
 }
 

@@ -6,8 +6,9 @@
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, const int n_frames)
-: Encoder<B>(n_frames),
+::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
+                       const int n_frames, const std::string name)
+: Encoder<B>(n_frames, name),
   K(K),
   N(N),
   pi(pi),

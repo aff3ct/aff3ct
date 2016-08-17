@@ -27,7 +27,8 @@ protected:
     bool last_frame_error;
 
 public:
-	Error_analyzer(const int& K, const int& N, const int& max_fe, const int& n_frames = 1);
+	Error_analyzer(const int& K, const int& N, const int& max_fe, const int& n_frames = 1, 
+	               const std::string name = "Error_analyzer");
 	virtual ~Error_analyzer(){};
 
 	void update_n_analyzed_frames();

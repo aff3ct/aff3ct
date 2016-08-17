@@ -19,7 +19,7 @@ private:
 	mipp::vector<std::complex<R>> constellation;
 
 public:
-	Modulator_PSK(const int bits_per_symbol = 2, const R sigma = 1.0, const bool disable_sig2 = false);
+	Modulator_PSK(const int bits_per_symbol = 2, const R sigma = 1.0, const std::string name = "Modulator_PSK");
 	virtual ~Modulator_PSK();
 
 	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);

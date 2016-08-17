@@ -39,7 +39,8 @@ protected:
     std::vector<std::vector<Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
-	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits);
+	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
+	                        const std::string name = "Decoder_polar_SCL_naive");
 	virtual ~Decoder_polar_SCL_naive();
 
 	        void load  (const mipp::vector<R>& Y_N);

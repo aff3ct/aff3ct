@@ -17,7 +17,8 @@ protected:
 	const bool buffered_encoding;
 	
 public:
-	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true);
+	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true,
+	                       const std::string name = "Encoder_repetition_sys");
 	virtual ~Encoder_repetition_sys() {}
 
 	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);

@@ -14,7 +14,7 @@ private:
 	const R two_on_square_sigma;
 	
 public:
-	Modulator_BPSK_fast(const R sigma, const bool disable_sig2 = false);
+	Modulator_BPSK_fast(const R sigma, const std::string name = "Modulator_BPSK_fast");
 	virtual ~Modulator_BPSK_fast();
 
 	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);

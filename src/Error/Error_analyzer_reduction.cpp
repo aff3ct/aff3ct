@@ -3,8 +3,9 @@
 template <typename B, typename R>
 Error_analyzer_reduction<B,R>
 ::Error_analyzer_reduction(const int& K, const int& N, const int& max_fe, 
-                           std::vector<Error_analyzer<B,R>*>& error_analyzers, const int& n_frames)
-: Error_analyzer<B,R>(K, N, max_fe, n_frames),
+                           std::vector<Error_analyzer<B,R>*>& error_analyzers, const int& n_frames,
+                           const std::string name)
+: Error_analyzer<B,R>(K, N, max_fe, n_frames, name),
   error_analyzers(error_analyzers),
   prev_n_be(error_analyzers.size()),
   prev_n_fe(error_analyzers.size()),

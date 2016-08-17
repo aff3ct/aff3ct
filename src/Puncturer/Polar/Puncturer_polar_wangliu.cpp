@@ -9,8 +9,9 @@ Puncturer_polar_wangliu<B,Q>
 ::Puncturer_polar_wangliu(const int &N,
                           const int &K,
                           const Frozenbits_generator<B> &fb_generator,
-                          const int n_frames)
-: Puncturer<B,Q>(n_frames),
+                          const int n_frames,
+                          const std::string name)
+: Puncturer<B,Q>(n_frames, name),
   N(N), 
   N_code(std::exp2(std::ceil(std::log2(N)))), 
   K(K), 

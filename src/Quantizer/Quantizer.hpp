@@ -8,7 +8,7 @@ template <typename R, typename Q>
 class Quantizer
 {
 public:
-	Quantizer() {};
+	Quantizer(const std::string name = "Quantizer") {};
 	virtual ~Quantizer() {};
 
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;

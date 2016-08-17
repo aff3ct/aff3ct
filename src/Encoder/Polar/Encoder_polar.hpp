@@ -17,7 +17,8 @@ protected:
 	mipp::vector<B>        U_N;
 
 public:
-	Encoder_polar(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames = 1);
+	Encoder_polar(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames = 1, 
+	              const std::string name = "Encoder_polar");
 	virtual ~Encoder_polar() {}
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);

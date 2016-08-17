@@ -8,8 +8,9 @@
 
 template <typename R>
 Channel_AWGN_GSL_LLR<R>
-::Channel_AWGN_GSL_LLR(const R& sigma, const int seed)
-: sigma(sigma),
+::Channel_AWGN_GSL_LLR(const R& sigma, const int seed, const std::string name)
+: Channel<R>(name),
+  sigma(sigma),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
 	assert(sigma != 0);
