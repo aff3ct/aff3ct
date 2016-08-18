@@ -31,12 +31,12 @@ bool Decoder_LDPC_BP_log_sum_product_naive<B,R>
 	auto syndrome = 0;
 	auto transpose_ptr = this->transpose.data();
 
+	R values[32]; // lets suppose that 32 >= length is always true...
 	for (auto i = 0; i < this->n_C_nodes; i++)
 	{
 		const auto length = this->n_variables_per_parity[i];
 
-		R values[32]; // lets suppose that 32 >= length is always true...
-		auto sign = 0;
+		auto sign =    0;
 		auto sum  = (R)0;
 
 		// accumulate the incoming information in CN
