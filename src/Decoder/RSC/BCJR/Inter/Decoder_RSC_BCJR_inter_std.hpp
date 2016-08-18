@@ -9,7 +9,6 @@
 template <typename B, typename R, proto_map_i<R> MAP>
 class Decoder_RSC_BCJR_inter_std : public Decoder_RSC_BCJR_inter<B,R>
 {
-
 public:
 	Decoder_RSC_BCJR_inter_std(const int &K,
 	                           const std::vector<std::vector<int>> &trellis, 

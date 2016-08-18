@@ -2,8 +2,8 @@
 
 template <typename B, typename R>
 Decoder_NO<B,R>
-::Decoder_NO(std::string name)
-: Decoder<B,R>(name)
+::Decoder_NO(const int K, const int N, std::string name)
+: Decoder<B,R>(K, N, name.c_str())
 {
 }
 

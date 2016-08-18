@@ -5,7 +5,7 @@
 template <typename R>
 Channel_NO<R>
 ::Channel_NO(const std::string name)
-: Channel<R>(name)
+: Channel<R>(name.c_str())
 {
 }
 

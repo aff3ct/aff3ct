@@ -8,8 +8,8 @@
 template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const std::string name)
- : Decoder<B,R>(name), 
-   K(K), N(N), rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
+ : Decoder<B,R>(K, N, name.c_str()), 
+   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
 {
 	assert(N % K == 0);
 }
@@ -26,21 +26,21 @@ void Decoder_repetition<B,R>
 {
 	if (!buffered_encoding)
 	{
-		for (auto i = 0; i < K; i++)
+		for (auto i = 0; i < this->K; i++)
 		{
 			const auto off1 = i * (rep_count +1);
 			const auto off2 = off1 +1;
 
 			sys[i] = Y_N[off1];
 			for (auto j = 0; j < rep_count; j++)
-				par[j*K +i] = Y_N[off2 +j];
+				par[j*this->K +i] = Y_N[off2 +j];
 		}
 	}
 	else
 	{
-		std::copy(Y_N.begin(), Y_N.begin() + K, sys.begin());
+		std::copy(Y_N.begin(), Y_N.begin() + this->K, sys.begin());
 		for (auto i = 0; i < rep_count; i++)
-			std::copy(Y_N.begin() + (i +1) * K, Y_N.begin() + (i +2) * K, par.begin() + (i +0) * K);
+			std::copy(Y_N.begin() + (i +1) * this->K, Y_N.begin() + (i +2) * this->K, par.begin() + (i +0) * this->K);
 	}
 }
 
@@ -60,7 +60,7 @@ void Decoder_repetition<B,R>
 		const auto r_s = mipp::Reg<B>(r_ext.sign().r) >> (sizeof(B) * 8 -1);
 		r_s.store(&s[i]);
 	}
-	for (auto i = vec_loop_size; i < K; i++)
+	for (auto i = vec_loop_size; i < this->K; i++)
 		s[i] = ext[i] < 0;
 }
 

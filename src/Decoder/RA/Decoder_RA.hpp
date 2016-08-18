@@ -11,8 +11,6 @@ template <typename B, typename R>
 class Decoder_RA : public Decoder<B, R>
 {
 protected:
-    const int K;         // n info bits
-    const int N;         // n bits input
     const int rep_count; // number of repetitions
     int max_iter;        // max number of iterations
 

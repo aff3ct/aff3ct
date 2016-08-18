@@ -25,8 +25,6 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 class Decoder_polar_SCL_naive : public Decoder<B,R>
 {
 protected:
-	const int K;           // n info bits input
-	const int N;           // n coded bits input
 	const int m;           // graph depth
 	const R   metric_init; // init value of the metrics in the trees
 

@@ -16,7 +16,7 @@ private:
 
 public:
 	Interleaver_columns(const int& K, const int& M, const std::string name = "Interleaver_columns") 
-	: Interleaver<T>(K, 1, name), K(K), M(M) 
+	: Interleaver<T>(K, 1, name.c_str()), K(K), M(M) 
 	{ 
 		assert(K % M == 0);
 		gen_lookup_tables(); 

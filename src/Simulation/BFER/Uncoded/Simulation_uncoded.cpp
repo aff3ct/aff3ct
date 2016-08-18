@@ -54,7 +54,7 @@ template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_uncoded<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return new Decoder_NO<B,Q>();
+	return new Decoder_NO<B,Q>(this->code_params.K, this->code_params.N);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -13,9 +13,8 @@ Decoder_RSC_BCJR<B,R>
                    const bool buffered_encoding, 
                    const int n_frames,
                    const std::string name)
-: Decoder<B,R>(name),
+: Decoder<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), name.c_str()),
   SISO<R>(),
-  K(K),
   n_states(trellis[0].size()),
   n_ff(std::log2(n_states)),
   buffered_encoding(buffered_encoding),
@@ -45,47 +44,47 @@ void Decoder_RSC_BCJR<B,R>
 
 		if (this->get_n_frames() == 1)
 		{
-			std::copy(Y_N.begin() + 0*K, Y_N.begin() + 1*K, sys.begin());
-			std::copy(Y_N.begin() + 1*K, Y_N.begin() + 2*K, par.begin());
+			std::copy(Y_N.begin() + 0*this->K, Y_N.begin() + 1*this->K, sys.begin());
+			std::copy(Y_N.begin() + 1*this->K, Y_N.begin() + 2*this->K, par.begin());
 			
 			// tails bit
-			std::copy(Y_N.begin() + 2*K         , Y_N.begin() + 2*K + tail/2, par.begin() +K);
-			std::copy(Y_N.begin() + 2*K + tail/2, Y_N.begin() + 2*K + tail  , sys.begin() +K);
+			std::copy(Y_N.begin() + 2*this->K         , Y_N.begin() + 2*this->K + tail/2, par.begin() +this->K);
+			std::copy(Y_N.begin() + 2*this->K + tail/2, Y_N.begin() + 2*this->K + tail  , sys.begin() +this->K);
 		}
 		else
 		{
 			const auto n_frames = this->get_n_frames();
-			const auto frame_size = 2*K + tail;
+			const auto frame_size = 2*this->K + tail;
 
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N.data() + f*frame_size;
-			Reorderer<R>::apply(frames, sys.data(), K);
+			Reorderer<R>::apply(frames, sys.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +K;
-			Reorderer<R>::apply(frames, par.data(), K);
+				frames[f] = Y_N.data() + f*frame_size +this->K;
+			Reorderer<R>::apply(frames, par.data(), this->K);
 
 			// tails bit
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size + 2*K + tail/2;
-			Reorderer<R>::apply(frames, &sys[K*n_frames], tail/2);
+				frames[f] = Y_N.data() + f*frame_size + 2*this->K + tail/2;
+			Reorderer<R>::apply(frames, &sys[this->K*n_frames], tail/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size + 2*K;
-			Reorderer<R>::apply(frames, &par[K*n_frames], tail/2);
+				frames[f] = Y_N.data() + f*frame_size + 2*this->K;
+			Reorderer<R>::apply(frames, &par[this->K*n_frames], tail/2);
 		}
 	}
 	else
 	{
 		// reordering
 		const auto n_frames = this->get_n_frames();
-		for (auto i = 0; i < K + n_ff; i++)
+		for (auto i = 0; i < this->K + n_ff; i++)
 		{
 			for (auto f = 0; f < n_frames; f++)
 			{
-				sys[(i*n_frames) +f] = Y_N[f*2*(K +n_ff) + i*2 +0];
-				par[(i*n_frames) +f] = Y_N[f*2*(K +n_ff) + i*2 +1];
+				sys[(i*n_frames) +f] = Y_N[f*2*(this->K +n_ff) + i*2 +0];
+				par[(i*n_frames) +f] = Y_N[f*2*(this->K +n_ff) + i*2 +1];
 			}
 		}
 	}
@@ -114,7 +113,7 @@ void Decoder_RSC_BCJR<B,R>
 {
 	if (this->get_n_frames() == 1)
 	{
-		std::copy(s.begin(), s.begin() + K, V_K.begin());
+		std::copy(s.begin(), s.begin() + this->K, V_K.begin());
 	}
 	else // inter frame => output reordering
 	{
@@ -122,8 +121,8 @@ void Decoder_RSC_BCJR<B,R>
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = V_K.data() + f*K;
-		Reorderer<B>::apply_rev(s.data(), frames, K);
+			frames[f] = V_K.data() + f*this->K;
+		Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
 }
 

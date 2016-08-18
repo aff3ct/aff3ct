@@ -6,14 +6,14 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
-class CRC
+class CRC_interface // please use CRC<B> for inheritance (instead of CRC_interface<B>)
 {
 protected:
 	int n_frames;
 
 public:
-	CRC(const int n_frames = 1, const std::string name = "CRC") : n_frames(n_frames) {};
-	virtual ~CRC(){};
+	CRC_interface(const int n_frames = 1, const std::string name = "CRC_interface") : n_frames(n_frames) {};
+	virtual ~CRC_interface(){};
 
 	virtual int  size (                          ) const = 0;
 	virtual void build(      mipp::vector<B>& U_K)       = 0;
@@ -25,5 +25,7 @@ public:
 		this->n_frames = n_frames;
 	}
 };
+
+#include "SC_CRC.hpp"
 
 #endif

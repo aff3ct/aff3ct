@@ -15,8 +15,6 @@ template <typename B, typename R>
 class Decoder_turbo : public Decoder<B,R>
 {
 protected:
-	const int  K;     // n info bits
-	const int  N;     // n bits input
 	const int  n_ite; // number of iterations
 	const bool buffered_encoding;
 

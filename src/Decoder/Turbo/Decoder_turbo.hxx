@@ -18,9 +18,7 @@ Decoder_turbo<B,R>
                 Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(name),
-  K(K),
-  N(N),
+: Decoder<B,R>(K, N + siso_n.tail_length() + siso_i.tail_length(), name.c_str()),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
@@ -65,58 +63,60 @@ void Decoder_turbo<B,R>
 	const auto tail_n = siso_n.tail_length();
 	const auto tail_i = siso_i.tail_length();
 	
-	const auto p_size = (N - K) / 2; // size of the parity
+	const auto N_without_tb = this->N - (siso_n.tail_length() + siso_i.tail_length());
+
+	const auto p_size = (N_without_tb - this->K) / 2; // size of the parity
 	if (this->get_n_frames() == 1)
 	{
-		std::copy(Y_N.begin()               , Y_N.begin() + K           , l_sn.begin());
-		std::copy(Y_N.begin() + K           , Y_N.begin() + K + 1*p_size, l_pn.begin());
-		std::copy(Y_N.begin() + K + 1*p_size, Y_N.begin() + K + 2*p_size, l_pi.begin());
+		std::copy(Y_N.begin()                     , Y_N.begin() + this->K           , l_sn.begin());
+		std::copy(Y_N.begin() + this->K           , Y_N.begin() + this->K + 1*p_size, l_pn.begin());
+		std::copy(Y_N.begin() + this->K + 1*p_size, Y_N.begin() + this->K + 2*p_size, l_pi.begin());
 		pi.interleave(l_sn, l_si);
 
 		// tails bit in the natural domain
-		std::copy(Y_N.begin() + N           , Y_N.begin() + N + tail_n/2, l_pn.begin() +p_size);
-		std::copy(Y_N.begin() + N + tail_n/2, Y_N.begin() + N + tail_n  , l_sn.begin() +p_size);
+		std::copy(Y_N.begin() + N_without_tb           , Y_N.begin() + N_without_tb + tail_n/2, l_pn.begin() +p_size);
+		std::copy(Y_N.begin() + N_without_tb + tail_n/2, Y_N.begin() + N_without_tb + tail_n  , l_sn.begin() +p_size);
 
 		// tails bit in the interleaved domain
-		std::copy(Y_N.begin() + N + tail_n           , Y_N.begin() + N + tail_n + tail_i/2, l_pi.begin() +p_size);
-		std::copy(Y_N.begin() + N + tail_n + tail_i/2, Y_N.begin() + N + tail_n + tail_i  , l_si.begin() +p_size);
+		std::copy(Y_N.begin() + N_without_tb + tail_n           , Y_N.begin() + N_without_tb + tail_n + tail_i/2, l_pi.begin() +p_size);
+		std::copy(Y_N.begin() + N_without_tb + tail_n + tail_i/2, Y_N.begin() + N_without_tb + tail_n + tail_i  , l_si.begin() +p_size);
 	}
 	else
 	{
 		const auto n_frames = this->get_n_frames();
-		const auto frame_size = N + tail_n + tail_i;
+		const auto frame_size = this->N;
 
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N.data() + f*frame_size;
-		Reorderer<R>::apply(frames, l_sn.data(), K);
+		Reorderer<R>::apply(frames, l_sn.data(), this->K);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +K;
+			frames[f] = Y_N.data() + f*frame_size +this->K;
 		Reorderer<R>::apply(frames, l_pn.data(), p_size);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +K + p_size;
+			frames[f] = Y_N.data() + f*frame_size +this->K + p_size;
 		Reorderer<R>::apply(frames, l_pi.data(), p_size);
 
 		pi.interleave(l_sn, l_si, true);
 
 		// tails bit in the natural domain
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +N + tail_n/2;
-		Reorderer<R>::apply(frames, &l_sn[K*n_frames], tail_n/2);
+			frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n/2;
+		Reorderer<R>::apply(frames, &l_sn[this->K*n_frames], tail_n/2);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +N;
+			frames[f] = Y_N.data() + f*frame_size +N_without_tb;
 		Reorderer<R>::apply(frames, &l_pn[p_size*n_frames], tail_n/2);
 
 		// tails bit in the interleaved domain
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +N + tail_n + tail_i/2;
-		Reorderer<R>::apply(frames, &l_si[K*n_frames], tail_i/2);
+			frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n + tail_i/2;
+		Reorderer<R>::apply(frames, &l_si[this->K*n_frames], tail_i/2);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +N + tail_n;
+			frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n;
 		Reorderer<R>::apply(frames, &l_pi[p_size*n_frames], tail_i/2);
 	}
 	std::fill(l_e1n.begin(), l_e1n.end(), (R)0);
@@ -126,14 +126,14 @@ template <typename B, typename R>
 void Decoder_turbo<B,R>
 ::standard_load(const mipp::vector<R>& Y_N)
 {
-	assert(K == (N - K) / 2);
+	assert(this->K == (this->N - (siso_n.tail_length() + siso_i.tail_length()) - this->K) / 2);
 
 	const auto tail_n = siso_n.tail_length();
 	const auto tail_i = siso_i.tail_length();
 
 	if (this->get_n_frames() == 1)
 	{
-		for (auto i = 0; i < K; i++)
+		for (auto i = 0; i < this->K; i++)
 		{
 			l_sn[i] = Y_N[i*3 +0];
 			l_pn[i] = Y_N[i*3 +1];
@@ -144,28 +144,28 @@ void Decoder_turbo<B,R>
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
 		{
-			l_sn[K +i] = Y_N[K*3 + 2*i +0];
-			l_pn[K +i] = Y_N[K*3 + 2*i +1];
+			l_sn[this->K +i] = Y_N[this->K*3 + 2*i +0];
+			l_pn[this->K +i] = Y_N[this->K*3 + 2*i +1];
 		}
 
 		// tails bit in the interleaved domain
 		for (auto i = 0; i < tail_i/2; i++)
 		{
-			l_si[K +i] = Y_N[K*3 + tail_n + 2*i +0];
-			l_pi[K +i] = Y_N[K*3 + tail_n + 2*i +1];
+			l_si[this->K +i] = Y_N[this->K*3 + tail_n + 2*i +0];
+			l_pi[this->K +i] = Y_N[this->K*3 + tail_n + 2*i +1];
 		}
 	}
 	else // inter frame => input reordering
 	{
 		const auto n_frames = this->get_n_frames();
 
-		for (auto i = 0; i < K; i++)
+		for (auto i = 0; i < this->K; i++)
 		{
 			for (auto j = 0; j < n_frames; j++)
 			{
-				l_sn[i*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + i * 3 +0];
-				l_pn[i*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + i * 3 +1];
-				l_pi[i*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + i * 3 +2];
+				l_sn[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +0];
+				l_pn[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +1];
+				l_pi[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +2];
 			}
 		}
 		pi.interleave(l_sn, l_si, true);
@@ -175,8 +175,8 @@ void Decoder_turbo<B,R>
 		{
 			for (auto j = 0; j < n_frames; j++)
 			{
-				l_sn[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + 2*i +0];
-				l_pn[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + 2*i +1];
+				l_sn[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + 2*i +0];
+				l_pn[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + 2*i +1];
 			}
 		}
 
@@ -185,8 +185,8 @@ void Decoder_turbo<B,R>
 		{
 			for (auto j = 0; j < n_frames; j++)
 			{
-				l_si[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + tail_n + 2*i +0];
-				l_pi[(K +i)*n_frames +j] = Y_N[j*((K*3) + tail_n + tail_i) + K*3 + tail_n + 2*i +1];
+				l_si[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + tail_n + 2*i +0];
+				l_pi[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + tail_n + 2*i +1];
 			}
 		}
 	}
@@ -208,7 +208,7 @@ void Decoder_turbo<B,R>
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = V_K.data() + f*K;
-		Reorderer<B>::apply_rev(s.data(), frames, K);
+			frames[f] = V_K.data() + f*this->K;
+		Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
 }

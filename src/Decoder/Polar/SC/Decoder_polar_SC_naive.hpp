@@ -24,8 +24,6 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 class Decoder_polar_SC_naive : public Decoder<B,R>
 {
 protected:
-	const int K; // n info    bits 
-	const int N; // n encoded bits
 	const int m; // graph depth
 
 	const mipp::vector<B> &frozen_bits;

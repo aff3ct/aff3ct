@@ -13,23 +13,21 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
                            const std::string name)
-: Decoder<B,R>  (name        ),
-  K             (K           ),
-  m             (m           ),
-  N             (1 << m      ),
-  max_iter      (max_iter    ),
-  layers_count  (m +1        ),
-  frozen_bits   (frozen_bits ),
-  feedback_graph(layers_count),
-  soft_graph    (layers_count)
+: Decoder<B,R>  (K, 1 << m, name.c_str()),
+  m             (m                      ),
+  max_iter      (max_iter               ),
+  layers_count  (m +1                   ),
+  frozen_bits   (frozen_bits            ),
+  feedback_graph(layers_count           ),
+  soft_graph    (layers_count           )
 {
-	assert(max_iter           >  0           );
-	assert(frozen_bits.size() == (unsigned) N);
+	assert(max_iter           >  0                 );
+	assert(frozen_bits.size() == (unsigned) this->N);
 
 	for (auto t = 0; t < layers_count; t++)
 	{
-		feedback_graph[t].resize(N);
-		soft_graph[t].resize(N);
+		feedback_graph[t].resize(this->N);
+		soft_graph[t].resize(this->N);
 	}
 }
 
@@ -42,7 +40,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::load_init()
 {
 	// init feedback graph (special case for the left most stage)
-	for (auto i = 0; i < N; i++)
+	for (auto i = 0; i < this->N; i++)
 		if (frozen_bits[i])// if i is a frozen bit		
 			feedback_graph[0][i] = sat_vals<R>().second;
 		else		
@@ -50,13 +48,13 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 
 	// init the rest of the feedback graph 
 	for (auto t = 1; t < layers_count; t++)
-		for (auto i = 0; i < N; i++)
+		for (auto i = 0; i < this->N; i++)
 			feedback_graph[t][i] = I();
 	
 	// init the softGraph 
 	// (except for the layer "layers_count -1" because it will made by the "load" routine from the LLRs)
 	for (auto t = 0; t < layers_count -1; t++)
-		for (auto i = 0; i < N; i++)
+		for (auto i = 0; i < this->N; i++)
 			soft_graph[t][i] = I();
 }
 
@@ -65,12 +63,12 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() == (unsigned) N);
+	assert(Y_N.size() == (unsigned) this->N);
 
 	load_init();
 		
 	// init the softGraph (special case for the right most stage)
-	for (auto i = 0; i < N; i++)
+	for (auto i = 0; i < this->N; i++)
 		soft_graph[layers_count - 1][i] = Y_N[i];
 }
 
@@ -84,7 +82,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 {
 	for (auto iter = 0; iter < max_iter; iter++)
 	{
-		for (auto i = 0; i < N; i++)
+		for (auto i = 0; i < this->N; i++)
 		{
 			/**********************/
 			/* forward (right to left) propagation of soft information in the graph */
@@ -115,10 +113,10 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == (unsigned) K);
+	assert(V_K.size() == (unsigned) this->K);
 
 	auto k = 0;
-	for (auto i = 0; i < N; i++)
+	for (auto i = 0; i < this->N; i++)
 		if (!frozen_bits[i]) // if i is not a frozen bit
 			V_K[k++] = (H(soft_graph[0][i]) == 0) ? (B)0 : (B)1;
 }
@@ -186,7 +184,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::display_decoder_graph()
 {
 	std::cout << "soft_graph:" << std::endl;
-	for (auto i = 0; i < N; i++)
+	for (auto i = 0; i < this->N; i++)
 	{
 		for (auto j = 0; j <= m; j++)
 			std::cout << "\t\t" << std::setprecision(4) << std::setw(4) << soft_graph[j][i];
@@ -195,7 +193,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	std::cout << std::endl << std::endl;
 
 	std::cout << "feedback_graph:" << std::endl;
-	for (auto i = 0; i < N; i++)
+	for (auto i = 0; i < this->N; i++)
 	{
 		for (auto j = 0; j <= m; j++)
 			std::cout << "\t\t" << std::setprecision(4) << std::setw(4) << feedback_graph[j][i];

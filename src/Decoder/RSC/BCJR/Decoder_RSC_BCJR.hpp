@@ -11,7 +11,6 @@ template <typename B, typename R>
 class Decoder_RSC_BCJR : public Decoder<B,R>, public SISO<R>
 {
 protected:
-	const int  K;
 	const int  n_states;
 	const int  n_ff;
 	const bool buffered_encoding;

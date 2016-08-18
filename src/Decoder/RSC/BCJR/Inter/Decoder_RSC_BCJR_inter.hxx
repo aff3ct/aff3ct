@@ -118,11 +118,11 @@ Decoder_RSC_BCJR_inter<B,R>
 			exit(-1);
 		}
 		
-	for (auto i = 0; i < 8; i++) alpha[i].resize((this->K +4) * mipp::nElmtsPerRegister<R>());
-	for (auto i = 0; i < 8; i++) beta [i].resize((this->K +4) * mipp::nElmtsPerRegister<R>());
-	for (auto i = 0; i < 2; i++) gamma[i].resize((this->K +3) * mipp::nElmtsPerRegister<R>());
+	for (auto i = 0; i < 8; i++) alpha[i].resize((K +4) * mipp::nElmtsPerRegister<R>());
+	for (auto i = 0; i < 8; i++) beta [i].resize((K +4) * mipp::nElmtsPerRegister<R>());
+	for (auto i = 0; i < 2; i++) gamma[i].resize((K +3) * mipp::nElmtsPerRegister<R>());
 
-	RSC_BCJR_inter_init<R>::apply(alpha, beta, this->K);
+	RSC_BCJR_inter_init<R>::apply(alpha, beta, K);
 }
 
 template <typename B, typename R>

@@ -12,8 +12,6 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
 protected:
-	const int             K;            // n information bits
-	const int             N;            // n coded bits
 	const int             m;            // graph depth
 	const int             n_frames;     // number of frames to decode in parallel
 	      mipp::vector<R> l;            // lambda, LR or LLR

@@ -26,7 +26,7 @@ class Interleaver_CCSDS : public Interleaver<T>
 {
 public:
 	Interleaver_CCSDS(int size, const std::string name = "Interleaver_CCSDS") 
-	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
+	: Interleaver<T>(size, 1, name.c_str()) { gen_lookup_tables(); }
 
 protected:
 	void gen_lookup_tables()

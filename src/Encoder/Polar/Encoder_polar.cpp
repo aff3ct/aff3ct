@@ -8,7 +8,7 @@ template <typename B>
 Encoder_polar<B>
 ::Encoder_polar(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames, 
                 const std::string name)
-: Encoder<B>(n_frames, name), K(K), N(N), m(log2(N)), frozen_bits(frozen_bits), U_N(N * n_frames)
+: Encoder<B>(n_frames, name.c_str()), K(K), N(N), m(log2(N)), frozen_bits(frozen_bits), U_N(N * n_frames)
 {
 	assert(frozen_bits.size() == (unsigned) N);
 	assert(this->n_frames > 0);

@@ -4,7 +4,7 @@
 template <typename B, typename R>
 Modulator_BPSK_fast<B,R>
 ::Modulator_BPSK_fast(const R sigma, const std::string name)
-: Modulator<B,R>(name), two_on_square_sigma((R)2.0 / (sigma * sigma))
+: Modulator<B,R>(name.c_str()), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 

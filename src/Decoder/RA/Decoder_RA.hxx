@@ -6,9 +6,7 @@
 template <typename B, typename R>
 Decoder_RA<B, R>
 ::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const std::string name)
- : Decoder<B,R>(name),
-   K(K),
-   N(N),
+ : Decoder<B,R>(K, N, name.c_str()),
    rep_count(N/K),
    max_iter(max_iter),
    Y_N(N),
@@ -50,7 +48,7 @@ void Decoder_RA<B, R>
 ::decode()
 {
 	//set F, B and Td at 0
-	for (auto i = 0; i < N; i++)
+	for (auto i = 0; i < this->N; i++)
 	{
 		Fw[i] = 0;
 		Bw[i] = 0;
@@ -65,19 +63,19 @@ void Decoder_RA<B, R>
 
 		// Forward
 		Fw[0] = Td[0];
-		for (auto i = 1; i < N; i++)
+		for (auto i = 1; i < this->N; i++)
 			Fw[i] = check_node(Fw[i - 1] + Y_N[i - 1], Td[i]);
 
 		// Backward
-		Bw[N - 2] = check_node(Y_N[N - 1], Td[N - 1]);
+		Bw[this->N - 2] = check_node(Y_N[this->N - 1], Td[this->N - 1]);
 
-		for (auto i = N - 3; i >= 0; i--)
+		for (auto i = this->N - 3; i >= 0; i--)
 			Bw[i] = check_node(Bw[i + 1] + Y_N[i + 1], Td[i + 1]);
 
 		// Extrinsic
 		Tu[0] = Bw[0] + Y_N[0];
-		Tu[N - 1] = check_node(Y_N[N - 1], Y_N[N - 2] + Fw[N - 2]);
-		for (auto i = 1; i < N - 1; i++)
+		Tu[this->N - 1] = check_node(Y_N[this->N - 1], Y_N[this->N - 2] + Fw[this->N - 2]);
+		for (auto i = 1; i < this->N - 1; i++)
 			Tu[i] = check_node(Fw[i - 1] + Y_N[i - 1], Bw[i] + Y_N[i]);
 
 		// Deinterleave
@@ -85,7 +83,7 @@ void Decoder_RA<B, R>
 
 		// U computation
 		R tmp;
-		for (auto i = 0; i < K; i++)
+		for (auto i = 0; i < this->K; i++)
 		{
 			tmp = 0;
 			for (auto j = 0; j < rep_count; j++)
@@ -98,7 +96,7 @@ void Decoder_RA<B, R>
 		// Interleaving
 		interleaver.interleave(Wd, Td);
 	}
-	for (auto i = 0; i < K; i++)
+	for (auto i = 0; i < this->K; i++)
 		V_K[i] = (U[i] > 0) ? 0 : 1;
 }
 

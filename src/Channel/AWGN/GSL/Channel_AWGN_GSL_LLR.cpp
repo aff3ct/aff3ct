@@ -9,7 +9,7 @@
 template <typename R>
 Channel_AWGN_GSL_LLR<R>
 ::Channel_AWGN_GSL_LLR(const R& sigma, const int seed, const std::string name)
-: Channel<R>(name),
+: Channel<R>(name.c_str()),
   sigma(sigma),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {

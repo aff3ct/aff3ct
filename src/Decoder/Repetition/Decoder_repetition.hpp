@@ -11,8 +11,6 @@ template <typename B, typename R>
 class Decoder_repetition : public Decoder<B,R>, public SISO<R>
 {
 protected:
-	const int K; // n info bits
-	const int N; // n bits input
 	const int rep_count; // number of repetitions
 
 	const bool buffered_encoding;

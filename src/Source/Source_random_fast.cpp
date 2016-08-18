@@ -5,7 +5,7 @@
 template <typename B>
 Source_random_fast<B>
 ::Source_random_fast(const int seed, const std::string name)
-: Source<B>(name),
+: Source<B>(name.c_str()),
   mt19937(seed),
   mt19937_simd()
 {

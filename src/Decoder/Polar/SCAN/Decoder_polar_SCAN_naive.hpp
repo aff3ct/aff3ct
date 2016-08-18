@@ -12,9 +12,7 @@ template <typename B, typename R,
 class Decoder_polar_SCAN_naive : public Decoder<B,R>
 {
 protected:
-	const int K;            // information bits
 	const int m;            // coded bits log-length
-	const int N;            // coded bits length
 	const int max_iter;
 	const int layers_count; // number of layers in the graph = m+1
 

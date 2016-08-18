@@ -6,16 +6,16 @@
 
 #include "../Tools/MIPP/mipp.h"
 
-#include "Source_SC.hpp"
-
 template <typename B>
-class Source : public Source_SC<B>
+class Source_interface // please use Source<B> for inheritance (instead of Source_interface<B>)
 {
 public:
-	Source(const std::string name = "Source") : Source_SC<B>(name) {};
-	virtual ~Source() {};
+	Source_interface(const std::string name = "Source_interface") {};
+	virtual ~Source_interface() {};
 
 	virtual void generate(mipp::vector<B>& U_K) = 0;
 };
+
+#include "SC_Source.hpp"
 
 #endif /* SOURCE_HPP_ */

@@ -3,7 +3,7 @@
 template <typename B, typename Q>
 Puncturer_NO<B,Q>
 ::Puncturer_NO(const int n_frames, const std::string name)
-: Puncturer<B,Q>(n_frames, name)
+: Puncturer<B,Q>(n_frames, name.c_str())
 {
 }
 

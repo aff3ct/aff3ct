@@ -6,13 +6,15 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename R>
-class Channel
+class Channel_interface // please use Channel<B> for inheritance (instead of Channel_interface<B>)
 {
 public:
-	Channel(const std::string name = "Channel") {};
-	virtual ~Channel() {};
+	Channel_interface(const std::string name = "Channel_interface") {};
+	virtual ~Channel_interface() {};
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
 };
+
+#include "SC_Channel.hpp"
 
 #endif /* CHANNELS_HPP_ */

@@ -11,7 +11,7 @@
 template <typename R>
 Channel_AWGN_MKL_LLR<R>
 ::Channel_AWGN_MKL_LLR(const R& sigma, const int seed, const std::string name)
-: Channel<R>(name),
+: Channel<R>(name.c_str()),
   sigma(sigma)
 {
 	assert(sigma != 0);

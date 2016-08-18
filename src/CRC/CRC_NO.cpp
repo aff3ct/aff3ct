@@ -3,7 +3,7 @@
 template <typename B>
 CRC_NO<B>
 ::CRC_NO(const int n_frames, const std::string name)
-: CRC<B>(n_frames, name)
+: CRC<B>(n_frames, name.c_str())
 {
 }
 
