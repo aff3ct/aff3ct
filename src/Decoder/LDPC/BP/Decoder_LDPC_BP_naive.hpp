@@ -50,7 +50,9 @@ public:
 
 protected:
 	// BP functions for decoding
-	virtual bool BP_decode(const mipp::vector<R> &Y_N) = 0;
+	bool BP_decode(const mipp::vector<R> &Y_N);
+
+	virtual bool BP_process() = 0;
 };
 
 #endif /* DECODER_LDPC_BP_NAIVE_HPP_ */

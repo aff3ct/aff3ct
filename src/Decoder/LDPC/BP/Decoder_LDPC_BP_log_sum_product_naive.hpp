@@ -14,8 +14,8 @@ public:
 	virtual ~Decoder_LDPC_BP_log_sum_product_naive();
 
 protected:
-	// BP functions for decoding
-	virtual bool BP_decode(const mipp::vector<R> &Y_N);
+	// // BP functions for decoding
+	virtual bool BP_process();
 };
 
 #endif /* DECODER_LDPC_BP_LOG_SUM_PRODUCT_NAIVE_HPP_ */

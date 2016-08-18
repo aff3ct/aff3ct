@@ -111,6 +111,69 @@ void Decoder_LDPC_BP_naive<B,R>
 	V_K = this->V_K;
 }
 
+// BP algorithm
+template <typename B, typename R>
+bool Decoder_LDPC_BP_naive<B,R>
+::BP_decode(const mipp::vector<R> &Y_N)
+{
+	// actual decoding
+	auto syndromes = false;
+	for (auto ite = 0; ite < this->n_ite; ite++)
+	{
+		// begining of the iteration upon all the matrix lines
+		R *C_to_V_ptr = this->C_to_V.data();
+		R *V_to_C_ptr = this->V_to_C.data();
+
+		for (auto i = 0; i < this->n_V_nodes; i++)
+		{
+			// VN node accumulate all the incoming messages
+			const auto length = this->n_parities_per_variable[i];
+
+			auto sum_C_to_V = (R)0;
+			for (auto j = 0; j < length; j++)
+				sum_C_to_V += C_to_V_ptr[j];
+
+			// update the intern values
+			const auto temp = Y_N[i] + sum_C_to_V;
+
+			// generate the outcoming messages to the CNs
+			for (auto j = 0; j < length; j++)
+				V_to_C_ptr[j] = temp - C_to_V_ptr[j];
+
+			C_to_V_ptr += length; // jump to the next node
+			V_to_C_ptr += length; // jump to the next node
+		}
+
+		// specific inner code depending on the selected implementation (min-sum or sum-product for example)
+		syndromes = this->BP_process();
+		
+		// make a saturation
+		saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
+
+		// stop criterion
+		if (syndromes)
+			break;
+	}
+
+	// begining of the iteration upon all the matrix lines
+	R *C_to_V_ptr = this->C_to_V.data();
+	for (auto i = 0; i < this->n_V_nodes; i++) 
+	{
+		const auto length = this->n_parities_per_variable[i];
+
+		auto sum_C_to_V = (R)0;
+		for (auto j = 0; j < length; j++)
+			sum_C_to_V += C_to_V_ptr[j];
+
+		// filling the output
+		this->Lp_N[i] = Y_N[i] + sum_C_to_V;
+
+		C_to_V_ptr += length;
+	}
+
+	return syndromes;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "../../../Tools/types.h"
 #ifdef MULTI_PREC
