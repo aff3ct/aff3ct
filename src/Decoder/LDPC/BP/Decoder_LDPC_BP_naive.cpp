@@ -117,7 +117,7 @@ bool Decoder_LDPC_BP_naive<B,R>
 ::BP_decode(const mipp::vector<R> &Y_N)
 {
 	// actual decoding
-	auto syndromes = false;
+	auto syndrome = false;
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// begining of the iteration upon all the matrix lines
@@ -145,13 +145,13 @@ bool Decoder_LDPC_BP_naive<B,R>
 		}
 
 		// specific inner code depending on the selected implementation (min-sum or sum-product for example)
-		syndromes = this->BP_process();
+		syndrome = this->BP_process();
 		
 		// make a saturation
 		saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
 
 		// stop criterion
-		if (syndromes)
+		if (syndrome)
 			break;
 	}
 
@@ -171,7 +171,7 @@ bool Decoder_LDPC_BP_naive<B,R>
 		C_to_V_ptr += length;
 	}
 
-	return syndromes;
+	return syndrome;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -28,7 +28,7 @@ template <typename B, typename R>
 bool Decoder_LDPC_BP_min_sum_naive<B,R>
 ::BP_process()
 {
-	auto syndromes = 0;	
+	auto syndrome = 0;	
 	auto transpose_ptr = this->transpose.data();
 
 	for (auto i = 0; i < this->n_C_nodes; i++)
@@ -75,10 +75,10 @@ bool Decoder_LDPC_BP_min_sum_naive<B,R>
 		}
 
 		transpose_ptr += length;
-		syndromes = syndromes || sign;
+		syndrome = syndrome || sign;
 	}
 
-	return (syndromes == 0);
+	return (syndrome == 0);
 }
 
 // ==================================================================================== explicit template instantiation 
