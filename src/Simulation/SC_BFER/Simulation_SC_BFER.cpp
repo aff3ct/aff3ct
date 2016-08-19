@@ -121,12 +121,12 @@ void Simulation_SC_BFER<B,R,Q>
 	{
 	// 	this->simulation_loop();
 
-		Source_random<B>* source_random = new Source_random<B>();
+		Source_random<B>* source_random = new Source_random<B>(this->code_params.K);
 		SC_Dummy<B>* dummy = new SC_Dummy<B>("dummy");
 
 		source_random->socket_out(dummy->socket_in);
 
-		sc_core::sc_start(100, SC_MS); // Start simulation
+		sc_core::sc_start(100, SC_MS); // start simulation
 
 		delete source_random;
 		delete dummy;
@@ -154,6 +154,7 @@ void Simulation_SC_BFER<B,R,Q>
 	this->n_frames = this->decoder->get_n_frames();
 
 	// set the real number of frames per thread
+	this->source   ->set_n_frames(this->n_frames);
 	this->crc      ->set_n_frames(this->n_frames);
 	this->encoder  ->set_n_frames(this->n_frames);
 	this->puncturer->set_n_frames(this->n_frames);

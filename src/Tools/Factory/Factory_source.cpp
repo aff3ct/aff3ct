@@ -1,3 +1,4 @@
+#include "../../Source/Source_AZCW.hpp"
 #include "../../Source/Source_random.hpp"
 #include "../../Source/Source_random_fast.hpp"
 #include "../../Source/Source_fixed.hpp"
@@ -12,13 +13,11 @@ Source<B>* Factory_source<B>
 
 	// build the generator
 	if (code_params.generation_method == "RAND_FAST")
-		source = new Source_random_fast<B>(seed);
+		source = new Source_random_fast<B>(code_params.K, seed);
 	else if (code_params.generation_method == "RAND")
-		source = new Source_random<B>(seed);
+		source = new Source_random<B>(code_params.K, seed);
 	else if (code_params.generation_method == "AZCW")
-		source = new Source_random_fast<B>(seed);
-	else if (code_params.generation_method == "FIXED")
-		source = new Source_fixed<B>();
+		source = new Source_AZCW<B>(code_params.K);
 
 	return source;
 }

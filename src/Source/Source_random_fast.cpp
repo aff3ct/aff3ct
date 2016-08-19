@@ -4,8 +4,8 @@
 
 template <typename B>
 Source_random_fast<B>
-::Source_random_fast(const int seed, const std::string name)
-: Source<B>(name.c_str()),
+::Source_random_fast(const int K, const int seed, const int n_frames, const std::string name)
+: Source<B>(K, n_frames, name.c_str()),
   mt19937(seed),
   mt19937_simd()
 {

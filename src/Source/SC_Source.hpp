@@ -20,8 +20,8 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Source> socket_out;
 
 public:
-	SC_Source(const sc_core::sc_module_name name = "Source_SC")
-	: sc_module(name), Source_interface<B>(), socket_out("socket_out_SC_Source")
+	SC_Source(const int K, const int n_frames = 1, const sc_core::sc_module_name name = "Source_SC")
+	: sc_module(name), Source_interface<B>(K, n_frames), socket_out("socket_out_SC_Source")
 	{ 
 		SC_THREAD(sc_generate); 
 	}
@@ -34,7 +34,7 @@ public:
 	{
 		while (1)
 		{
-			mipp::vector<B> U_K(10);
+			mipp::vector<B> U_K(this->K * this->n_frames);
 
 			generate(U_K);
 

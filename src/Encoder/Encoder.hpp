@@ -9,8 +9,8 @@ template <typename B>
 class Encoder_interface // please use Encoder<B> for inheritance (instead of Encoder_interface<B>)
 {
 protected:
-	const int K; // frame size
-	const int N; // number of information bits in the frame size
+	const int K; // number of information bits in the frame size
+	const int N; // frame size
 	      int n_frames;
 
 public:
