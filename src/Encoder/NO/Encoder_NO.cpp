@@ -4,8 +4,8 @@
 
 template <typename B>
 Encoder_NO<B>
-::Encoder_NO(const int n_frames, const std::string name)
-: Encoder<B>(n_frames, name)
+::Encoder_NO(const int K, const int N, const int n_frames, const std::string name)
+: Encoder<B>(K, N, n_frames, name.c_str())
 {
 }
 
@@ -19,6 +19,7 @@ template <typename B>
 void Encoder_NO<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
+	assert(U_K.size() == this->K   );
 	assert(U_K.size() == X_N.size());
 	X_N = U_K;
 }

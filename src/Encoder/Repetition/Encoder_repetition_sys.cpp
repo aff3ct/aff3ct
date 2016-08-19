@@ -7,7 +7,7 @@
 template <typename B>
 Encoder_repetition_sys<B>
 ::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const std::string name)
-: Encoder_sys<B>(1, name), K(K), N(N), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
+: Encoder_sys<B>(K, N, 1, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
 	assert(N % K == 0); // check if repetition count is consistent
 }
@@ -20,7 +20,7 @@ void Encoder_repetition_sys<B>
 	assert(buffered_encoding);
 
 	for (auto i = 0; i < rep_count; i++) // parity bits
-		std::copy(U_K.begin(), U_K.end(), par.begin() + i * K);
+		std::copy(U_K.begin(), U_K.end(), par.begin() + i * this->K);
 }
 
 template <typename B>
@@ -32,7 +32,7 @@ void Encoder_repetition_sys<B>
 	// repetition
 	if (!buffered_encoding)
 	{
-		for (auto i = 0; i < K; i++)
+		for (auto i = 0; i < this->K; i++)
 		{
 			const auto off1 = i * (rep_count +1);
 			const auto off2 = off1 +1;
@@ -50,7 +50,7 @@ void Encoder_repetition_sys<B>
 	{
 		std::copy(U_K.begin(), U_K.end(), X_N.begin()); // systematic bits
 		for (auto i = 1; i <= rep_count; i++) // parity bits
-			std::copy(U_K.begin(), U_K.end(), X_N.begin() + i * K);
+			std::copy(U_K.begin(), U_K.end(), X_N.begin() + i * this->K);
 	}
 }
 

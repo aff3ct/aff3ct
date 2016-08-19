@@ -47,7 +47,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_uncoded<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return new Encoder_NO<B>();
+	return new Encoder_NO<B>(this->code_params.K, this->code_params.N);
 }
 
 template <typename B, typename R, typename Q>

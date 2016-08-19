@@ -11,8 +11,6 @@ template <typename B>
 class Encoder_RSC_sys : public Encoder_sys<B>
 {
 protected:
-	const int K;        // info bits
-	const int N;        // code length
 	const int n_ff;     // number of D flip-flop
 	const int n_states; // number of states in the trellis
 

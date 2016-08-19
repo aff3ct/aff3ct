@@ -14,8 +14,6 @@ template <typename B>
 class Encoder_turbo_legacy : public Encoder<B>
 {
 protected:
-	const int K;                  // info bits
-	const int N;                  // code length
 	const Interleaver<short> &pi; // the interleaver
 
 	Encoder_sys <B> &sub_enc; // sub encoder
@@ -24,22 +22,13 @@ protected:
 	mipp::vector<B>  X_N_i;   // internal buffer for the encoded    bits in the interleaved domain
 
 public:
-	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
+	Encoder_turbo_legacy(const int& K, const int& N_without_tb, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
 	                     const int n_frames = 1, const std::string name = "Encoder_turbo_legacy");
 	virtual ~Encoder_turbo_legacy() {}
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 
-	void set_n_frames(const int n_frames) 
-	{ 
-		assert(n_frames > 0);
-		Encoder<B>::set_n_frames(n_frames);
-		sub_enc.set_n_frames(n_frames);
-
-		U_K_i.resize(K * n_frames);
-		X_N_n.resize((2 * (K + sub_enc.tail_length()/2)) * n_frames);
-		X_N_i.resize((2 * (K + sub_enc.tail_length()/2)) * n_frames);
-	}
+	void set_n_frames(const int n_frames);
 };
 
 #endif // ENCODER_TURBO_LEGACY_HPP_

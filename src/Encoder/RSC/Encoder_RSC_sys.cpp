@@ -4,7 +4,7 @@ template <typename B>
 Encoder_RSC_sys<B>
 ::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,
                   const std::string name)
-: Encoder_sys<B>(n_frames, name), K(K), N(N), n_ff(n_ff), n_states(1 << n_ff), 
+: Encoder_sys<B>(K, N + 2*n_ff, n_frames, name), n_ff(n_ff), n_states(1 << n_ff), 
   buffered_encoding(buffered_encoding)
 {
 	assert(N == (2 * K));
@@ -27,29 +27,29 @@ template <typename B>
 void Encoder_RSC_sys<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (K * this->n_frames));
-	assert(X_N.size() == (unsigned) ((N + 2*this->n_ff) * this->n_frames));
+	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
+	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 
 	if (buffered_encoding)
 		for (auto f = 0; f < this->n_frames; f++)
 		{
-			std::copy   (U_K.data() + f*K, U_K.data() + f*K +K, X_N.data() + f*2*(K+this->n_ff)); // sys
-			frame_encode(U_K.data() + f*K, X_N.data() + f*2*(K+this->n_ff) +K, 1, true);          // par + tail bits
+			std::copy   (U_K.data() + f*this->K, U_K.data() + f*this->K +this->K, X_N.data() + f*2*(this->K+this->n_ff)); // sys
+			frame_encode(U_K.data() + f*this->K, X_N.data() + f*2*(this->K+this->n_ff) +this->K, 1, true);                // par + tail bits
 		}
 	else
 		for (auto f = 0; f < this->n_frames; f++)
-			frame_encode(U_K.data() + f*K, X_N.data() + f*2*(K+this->n_ff));
+			frame_encode(U_K.data() + f*this->K, X_N.data() + f*2*(this->K+this->n_ff));
 }
 
 template <typename B>
 void Encoder_RSC_sys<B>
 ::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
-	assert(par.size() == (unsigned) ((K +2*this->n_ff) * this->n_frames));
+	assert(par.size() == (unsigned) ((this->K +2*this->n_ff) * this->n_frames));
 
 	// par bits: [par | tail bit sys | tail bits par]
 	for (auto f = 0 ; f < this->n_frames ; f++)
-		frame_encode(U_K.data() + f*K, par.data() + f*(K+2*this->n_ff), 1, true);
+		frame_encode(U_K.data() + f*this->K, par.data() + f*(this->K+2*this->n_ff), 1, true);
 }
 
 template <typename B>
@@ -99,7 +99,7 @@ void Encoder_RSC_sys<B>
 	auto state = 0; // initial (and final) state 0 0 0
 
 	// standard frame encoding process
-	for (auto i = 0; i < K; i++)
+	for (auto i = 0; i < this->K; i++)
 	{
 		if (!only_parity)
 		{
@@ -127,11 +127,11 @@ void Encoder_RSC_sys<B>
 
 	assert(state == 0);
 	if (!only_parity)
-		assert(j == (N + 2*this->n_ff) * stride);
+		assert(j == this->N * stride);
 	else
 	{
 		j += this->n_ff * stride;
-		assert(j == (K + 2*this->n_ff) * stride);
+		assert(j == (this->K + 2*this->n_ff) * stride);
 	}
 }
 

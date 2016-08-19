@@ -7,7 +7,7 @@
 template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const std::string name)
- : Encoder<B>(1, name.c_str()), K(K), N(N), rep_count(N/K), U(N), interleaver(interleaver)
+ : Encoder<B>(K, N, 1, name.c_str()), rep_count(N/K), U(N), interleaver(interleaver)
 {	
 	assert(N % K == 0); // check if RA count is consistent
 }
@@ -19,14 +19,14 @@ void Encoder_RA<B>
 	assert(this->n_frames == 1);
 	
 	// repetition
-	for (auto i = 0; i < K; i++)
+	for (auto i = 0; i < this->K; i++)
 		for (auto j = 0; j < rep_count; j++)
 			U[i * rep_count +j] = U_K[i];
 
 	interleaver.interleave(U, X_N);
 
 	// accumulation
-	for (auto i = 1; i < N; i++)
+	for (auto i = 1; i < this->N; i++)
 		X_N[i] = X_N[i-1] ^ X_N[i];
 }
 

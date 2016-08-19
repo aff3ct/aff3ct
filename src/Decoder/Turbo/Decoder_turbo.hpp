@@ -38,7 +38,7 @@ protected:
 
 public:
 	Decoder_turbo(const int& K,
-	              const int& N,
+	              const int& N_without_tb,
 	              const int& n_ite,
 	              const Interleaver<short> &pi,
 	              SISO<R> &siso_n,

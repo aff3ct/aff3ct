@@ -11,8 +11,6 @@ template <typename B>
 class Encoder_RA : public Encoder<B>
 {
 protected:
-    const int K;         // info bits
-    const int N;         // code length
     const int rep_count; // number of repetitions
     mipp::vector<B> U;
 

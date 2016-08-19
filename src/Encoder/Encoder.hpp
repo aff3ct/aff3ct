@@ -6,14 +6,17 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
-class Encoder
+class Encoder_interface
 {
 protected:
-	int n_frames;
+	const int K; // frame size
+	const int N; // number of information bits in the frame size
+	      int n_frames;
 
 public:
-	Encoder(const int n_frames = 1, const std::string name = "Encoder") : n_frames(n_frames) {};
-	virtual ~Encoder() {};
+	Encoder_interface(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_interface") 
+	: K(K), N(N), n_frames(n_frames) {};
+	virtual ~Encoder_interface() {};
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N) = 0;
 
@@ -25,5 +28,7 @@ public:
 		this->n_frames = n_frames; 
 	}
 };
+
+#include "SC_Encoder.hpp"
 
 #endif /* ENCODER_HPP_ */

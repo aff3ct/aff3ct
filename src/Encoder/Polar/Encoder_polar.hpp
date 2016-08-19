@@ -10,8 +10,6 @@ template <typename B>
 class Encoder_polar : public Encoder<B>
 {
 protected:
-	const int              K;           // info bits
-	const int              N;           // code length
 	const int              m;           // log_2 of code length
 	const mipp::vector<B>& frozen_bits; // true means frozen, false means set to 0/1
 	mipp::vector<B>        U_N;
@@ -28,7 +26,7 @@ public:
 	{ 
 		assert(n_frames > 0);
 		Encoder<B>::set_n_frames(n_frames);
-		U_N.resize(N * n_frames);
+		U_N.resize(this->N * n_frames);
 	}
 
 protected:

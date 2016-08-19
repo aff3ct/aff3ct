@@ -10,8 +10,6 @@ template <typename B>
 class Encoder_repetition_sys : public Encoder_sys<B>
 {
 protected:
-	const int K;         // info bits
-	const int N;         // code length
 	const int rep_count; // number of repetition
 
 	const bool buffered_encoding;

@@ -10,7 +10,7 @@
 template <typename B, typename R>
 Decoder_turbo<B,R>
 ::Decoder_turbo(const int& K,
-                const int& N,
+                const int& N_without_tb,
                 const int& n_ite,
                 const Interleaver<short> &pi,
                 SISO<R> &siso_n,
@@ -18,24 +18,24 @@ Decoder_turbo<B,R>
                 Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(K, N + siso_n.tail_length() + siso_i.tail_length(), name.c_str()),
+: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), name.c_str()),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
   siso_n(siso_n),
   siso_i(siso_i),
   scaling_factor(scaling_factor),
-  l_sn ((K       + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_si ((K       + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_sen((K       + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_sei((K       + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_pn (((N-K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_pi (((N-K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_e1n((K                                   ) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_e2n((K                                   ) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_e1i((K                                   ) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_e2i((K                                   ) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  s    ((K                                   ) * siso_n.get_n_frames()                    )
+  l_sn ((K                  + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
+  l_si ((K                  + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
+  l_sen((K                  + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
+  l_sei((K                  + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
+  l_pn (((N_without_tb-K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
+  l_pi (((N_without_tb-K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
+  l_e1n((K                                              ) * siso_n.get_n_frames() + mipp::nElReg<R>()),
+  l_e2n((K                                              ) * siso_n.get_n_frames() + mipp::nElReg<R>()),
+  l_e1i((K                                              ) * siso_i.get_n_frames() + mipp::nElReg<R>()),
+  l_e2i((K                                              ) * siso_i.get_n_frames() + mipp::nElReg<R>()),
+  s    ((K                                              ) * siso_n.get_n_frames()                    )
 {
 	assert(siso_n.get_n_frames() == siso_i.get_n_frames());
 }

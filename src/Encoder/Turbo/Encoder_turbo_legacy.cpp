@@ -6,11 +6,9 @@
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
+::Encoder_turbo_legacy(const int& K, const int& N_without_tb, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
                        const int n_frames, const std::string name)
-: Encoder<B>(n_frames, name.c_str()),
-  K(K),
-  N(N),
+: Encoder<B>(K, N_without_tb + 2*sub_enc.tail_length(), n_frames, name.c_str()),
   pi(pi),
   sub_enc(sub_enc),
   U_K_i(K*n_frames),
@@ -24,9 +22,11 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (K * this->n_frames));
-	assert(X_N.size() == (unsigned) ((N + (2 * sub_enc.tail_length())) * this->n_frames));
-	assert((N / K) == 3);
+	const auto N_without_tb = this->N - (sub_enc.tail_length() + sub_enc.tail_length());
+	
+	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
+	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
+	assert((N_without_tb / this->K) == 3);
 
 	pi.interleave (U_K,   U_K_i);
 	sub_enc.encode(U_K,   X_N_n);
@@ -34,17 +34,17 @@ void Encoder_turbo_legacy<B>
 
 	for (auto f = 0; f < this->n_frames; f++)
 	{
-		const auto off1 = (3*K + (2 * sub_enc.tail_length())) * f;
-		const auto off2 = (2*K + (1 * sub_enc.tail_length())) * f;
-		for (auto i = 0; i < K; i++)
+		const auto off1 = (3*this->K + (2 * sub_enc.tail_length())) * f;
+		const auto off2 = (2*this->K + (1 * sub_enc.tail_length())) * f;
+		for (auto i = 0; i < this->K; i++)
 		{
 			X_N[off1 + 3*i +0] = X_N_n[off2 + 2*i +0];
 			X_N[off1 + 3*i +1] = X_N_n[off2 + 2*i +1];
 			X_N[off1 + 3*i +2] = X_N_i[off2 + 2*i +1];
 		}
 
-		const auto off1_tails_n = off1 + 3*K;
-		const auto off2_tails_n = off2 + 2*K;
+		const auto off1_tails_n = off1 + 3*this->K;
+		const auto off2_tails_n = off2 + 2*this->K;
 		for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
 		{
 			X_N[off1_tails_n + 2*i +0] = X_N_n[off2_tails_n + 2*i +0];
@@ -59,6 +59,20 @@ void Encoder_turbo_legacy<B>
 			X_N[off1_tails_i + 2*i +1] = X_N_i[off2_tails_i + 2*i +1];
 		}
 	}
+}
+
+template <typename B>
+void Encoder_turbo_legacy<B>
+::set_n_frames(const int n_frames)
+{
+	assert(n_frames > 0);
+		
+	Encoder<B>::set_n_frames(n_frames);
+	sub_enc.set_n_frames(n_frames);
+
+	U_K_i.resize(this->K * n_frames);
+	X_N_n.resize((2 * (this->K + sub_enc.tail_length()/2)) * n_frames);
+	X_N_i.resize((2 * (this->K + sub_enc.tail_length()/2)) * n_frames);
 }
 
 // ==================================================================================== explicit template instantiation 

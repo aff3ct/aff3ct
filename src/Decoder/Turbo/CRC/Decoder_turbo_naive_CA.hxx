@@ -8,7 +8,7 @@
 template <typename B, typename R>
 Decoder_turbo_naive_CA<B,R>
 ::Decoder_turbo_naive_CA(const int& K,
-                         const int& N,
+                         const int& N_without_tb,
                          const int& n_ite,
                          const Interleaver<short> &pi,
                          SISO<R> &siso_n,
@@ -16,7 +16,7 @@ Decoder_turbo_naive_CA<B,R>
                          Scaling_factor<R> &scaling_factor,
                          CRC<B> &crc,
                          const bool buffered_encoding)
-: Decoder_turbo_naive<B,R>(K, N, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding), crc(crc)
+: Decoder_turbo_naive<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding), crc(crc)
 {
 }
 
