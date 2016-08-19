@@ -219,6 +219,9 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 
 #ifndef SYSTEMC
 int main(int argc, char **argv)
+#else
+int sc_main(int argc, char **argv)
+#endif
 {
 	srand(0);
 
@@ -252,23 +255,3 @@ int main(int argc, char **argv)
 
 	return EXIT_SUCCESS;
 }
-#else
-#include "Source/Source_random.hpp"
-#include "Tools/SystemC/SC_Dummy.hpp"
-int sc_main(int argc, char **argv)
-{
-	Source_random<B>* source_random = new Source_random<B>();
-	SC_Dummy<B>* dummy = new SC_Dummy<B>("dummy");
-
-	source_random->socket_out(dummy->socket_in);
-
-	sc_core::sc_start(100, SC_MS); // Start simulation
-
-	delete source_random;
-	delete dummy;
-
-	std::cout << "End of simulation" << std::endl;
-
-	return EXIT_SUCCESS;
-}
-#endif

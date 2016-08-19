@@ -1,6 +1,10 @@
 #include <iostream>
 
+#ifdef SYSTEMC
+#include "../../Simulation/SC_BFER/Turbo/Simulation_SC_BFER_turbo.hpp"
+#else
 #include "../../Simulation/BFER/Turbo/Simulation_turbo.hpp"
+#endif
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_turbo.hpp"
@@ -103,12 +107,21 @@ template <typename B, typename R, typename Q, typename QD>
 void Launcher_BFER_turbo<B,R,Q,QD>
 ::build_simu()
 {
+#ifdef SYSTEMC
+	this->simu = new Simulation_SC_BFER_turbo<B,R,Q,QD>(this->simu_params, 
+	                                                    this->code_params, 
+	                                                    this->enco_params,
+	                                                    this->mod_params,
+	                                                    this->chan_params, 
+	                                                    this->deco_params);
+#else
 	this->simu = new Simulation_turbo<B,R,Q,QD>(this->simu_params, 
 	                                            this->code_params, 
 	                                            this->enco_params,
 	                                            this->mod_params,
 	                                            this->chan_params, 
 	                                            this->deco_params);
+#endif
 }
 
 // ==================================================================================== explicit template instantiation 

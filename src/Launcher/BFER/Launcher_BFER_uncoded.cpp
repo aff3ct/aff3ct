@@ -1,6 +1,10 @@
 #include <iostream>
 
+#ifdef SYSTEMC
+#include "../../Simulation/SC_BFER/Uncoded/Simulation_SC_BFER_uncoded.hpp"
+#else
 #include "../../Simulation/BFER/Uncoded/Simulation_uncoded.hpp"
+#endif
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_uncoded.hpp"
@@ -45,12 +49,21 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_uncoded<B,R,Q>
 ::build_simu()
 {
+#ifdef SYSTEMC
+	this->simu = new Simulation_SC_BFER_uncoded<B,R,Q>(this->simu_params, 
+	                                                   this->code_params, 
+	                                                   this->enco_params, 
+	                                                   this->mod_params,
+	                                                   this->chan_params,
+	                                                   this->deco_params);
+#else
 	this->simu = new Simulation_uncoded<B,R,Q>(this->simu_params, 
 	                                           this->code_params, 
 	                                           this->enco_params, 
 	                                           this->mod_params,
 	                                           this->chan_params,
 	                                           this->deco_params);
+#endif
 }
 
 // ==================================================================================== explicit template instantiation 
