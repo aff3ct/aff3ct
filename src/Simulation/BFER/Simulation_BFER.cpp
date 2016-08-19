@@ -911,7 +911,7 @@ template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER<B,R,Q>
 ::build_puncturer(const int tid)
 {
-	auto puncturer = new Puncturer_NO<B,Q>();
+	auto puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N);
 	check_errors(puncturer, "Puncturer<B,Q>");
 	return puncturer;
 }

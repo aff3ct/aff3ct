@@ -63,7 +63,7 @@ private:
 template <typename B, typename R>
 using Decoder = SC_Decoder<B,R>;
 #else
-template <typename R>
+template <typename B, typename R>
 using Decoder = Decoder_interface<B,R>;
 #endif
 

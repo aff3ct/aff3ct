@@ -13,9 +13,9 @@ Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
 	Puncturer<B,Q> *puncturer = nullptr;
 
 	if (code_params.N != code_params.N_code)
-		puncturer = new Puncturer_polar_wangliu<B,Q>(code_params.N, code_params.K, *fb_generator);
+		puncturer = new Puncturer_polar_wangliu<B,Q>(code_params.K, code_params.N, *fb_generator);
 	else
-		puncturer = new Puncturer_NO<B,Q>();
+		puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N);
 
 	return puncturer;
 }

@@ -9,10 +9,6 @@ template <typename B, typename Q>
 class Puncturer_polar_wangliu : public Puncturer<B,Q>
 {
 protected:
-	const int& N;
-	const int  N_code; // next power of two of N
-	const int& K;
-
 	const Frozenbits_generator<B> &fb_generator;
 
 public:

@@ -59,7 +59,7 @@ private:
 template <typename B>
 using Encoder = SC_Encoder<B>;
 #else
-template <typename R>
+template <typename B>
 using Encoder = Encoder_interface<B>;
 #endif
 

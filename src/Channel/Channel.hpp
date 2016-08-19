@@ -6,7 +6,7 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename R>
-class Channel_interface // please use Channel<B> for inheritance (instead of Channel_interface<B>)
+class Channel_interface // please use Channel<R> for inheritance (instead of Channel_interface<R>)
 {
 public:
 	Channel_interface(const std::string name = "Channel_interface") {};

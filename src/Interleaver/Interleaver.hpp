@@ -7,7 +7,7 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename T>
-class Interleaver
+class Interleaver_interface // please use Interleaver<T> for inheritance (instead of Interleaver_interface<T>)
 {
 protected:
 	mipp::vector<T> pi;     //   interleaver lookup table
@@ -18,9 +18,9 @@ protected:
 	virtual void gen_lookup_tables() = 0; // to implement
 
 public:
-	Interleaver(const int size, const int n_frames = 1, const std::string name = "Interleaver") 
+	Interleaver_interface(const int size, const int n_frames = 1, const std::string name = "Interleaver_interface") 
 	: pi(size), pi_inv(size), n_frames(n_frames) {};
-	virtual ~Interleaver() {};
+	virtual ~Interleaver_interface() {};
 
 	mipp::vector<T> get_lookup_table        () const { return pi;     }
 	mipp::vector<T> get_lookup_table_inverse() const { return pi_inv; }
@@ -115,5 +115,7 @@ private:
 		}
 	}
 };
+
+#include "SC_Interleaver.hpp"
 
 #endif /* INTERLEAVER_HPP_ */

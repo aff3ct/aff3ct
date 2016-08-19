@@ -6,15 +6,12 @@
 
 template <typename B, typename Q>
 Puncturer_polar_wangliu<B,Q>
-::Puncturer_polar_wangliu(const int &N,
-                          const int &K,
+::Puncturer_polar_wangliu(const int &K,
+                          const int &N,
                           const Frozenbits_generator<B> &fb_generator,
                           const int n_frames,
                           const std::string name)
-: Puncturer<B,Q>(n_frames, name.c_str()),
-  N(N), 
-  N_code(std::exp2(std::ceil(std::log2(N)))), 
-  K(K), 
+: Puncturer<B,Q>(K, N, std::exp2(std::ceil(std::log2(N))), n_frames, name.c_str()),
   fb_generator(fb_generator)
 {
 }
@@ -37,10 +34,10 @@ void Puncturer_polar_wangliu<B,Q>
 	std::fill(frozen_bits.begin(), frozen_bits.end(), (B)1);
 
 	auto i = 0;
-	while (info_bits_placed < K)
+	while (info_bits_placed < this->K)
 	{
- 		if (best_channels[i] < N) // choose best channels in interval [0 ; N]
-		{                         // interval [0 ; N] are frozen
+ 		if (best_channels[i] < this->N) // choose best channels in interval [0 ; N]
+		{                               // interval [0 ; N] are frozen
 			frozen_bits[best_channels[i]] = (B)0;
 			info_bits_placed++;
 		}
@@ -52,26 +49,26 @@ template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
 ::puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
 {
-	assert(X_N1.size() == (unsigned) (N_code * this->n_frames));
-	assert(X_N2.size() == (unsigned) (N      * this->n_frames));
+	assert(X_N1.size() == (unsigned) (this->N_code * this->n_frames));
+	assert(X_N2.size() == (unsigned) (this->N      * this->n_frames));
 
 	for (auto f = 0; f < this->n_frames; f++)
-		std::copy(X_N1.begin() + f * N_code, X_N1.begin() + f * N_code + N, X_N2.begin() + f * N);
+		std::copy(X_N1.begin() + f * this->N_code, X_N1.begin() + f * this->N_code + this->N, X_N2.begin() + f * this->N);
 }
 
 template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
 ::depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
 {
-	assert(Y_N1.size() == (unsigned) (N      * this->n_frames));
-	assert(Y_N2.size() == (unsigned) (N_code * this->n_frames));
+	assert(Y_N1.size() == (unsigned) (this->N      * this->n_frames));
+	assert(Y_N2.size() == (unsigned) (this->N_code * this->n_frames));
 
 	for (auto f = 0; f < this->n_frames; f++)
-		std::copy(Y_N1.begin() + f * N, Y_N1.begin() + f * N + N, Y_N2.begin() + f * N_code);
+		std::copy(Y_N1.begin() + f * this->N, Y_N1.begin() + f * this->N + this->N, Y_N2.begin() + f * this->N_code);
 
 	// +inf (bit = 0)
 	for (auto f = 0; f < this->n_frames; f++)
-		std::fill(Y_N2.begin() + f * N_code + N, Y_N2.begin() + f * N_code + N_code, sat_vals<Q>().second);
+		std::fill(Y_N2.begin() + f * this->N_code + this->N, Y_N2.begin() + f * this->N_code + this->N_code, sat_vals<Q>().second);
 }
 
 // ==================================================================================== explicit template instantiation 

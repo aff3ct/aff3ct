@@ -6,7 +6,7 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
-class Encoder_interface
+class Encoder_interface // please use Encoder<B> for inheritance (instead of Encoder_interface<B>)
 {
 protected:
 	const int K; // frame size
