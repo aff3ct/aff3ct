@@ -23,14 +23,14 @@ CRC<B>* Factory_CRC<B>
 		else if (!code_params.crc.empty())
 			crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
 		else
-			crc = new CRC_NO<B>();
+			crc = new CRC_NO<B>(code_params.K);
 	}
 	else
 	{
 		if (!code_params.crc.empty())
 			crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
 		else
-			crc = new CRC_NO<B>();
+			crc = new CRC_NO<B>(code_params.K);
 	}
 
 	return crc;

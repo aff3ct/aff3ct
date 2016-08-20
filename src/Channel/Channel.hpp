@@ -8,11 +8,21 @@
 template <typename R>
 class Channel_interface // please use Channel<R> for inheritance (instead of Channel_interface<R>)
 {
+protected:
+	const int N; // frame size
+	      int n_frames;
 public:
-	Channel_interface(const std::string name = "Channel_interface") {};
+	Channel_interface(const int N, const int n_frames = 1, const std::string name = "Channel_interface")
+	: N(N), n_frames(n_frames) {};
 	virtual ~Channel_interface() {};
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
+
+	virtual void set_n_frames(const int n_frames)
+	{
+		assert(n_frames > 0);
+		this->n_frames = n_frames;
+	}
 };
 
 #include "SC_Channel.hpp"

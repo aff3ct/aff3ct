@@ -5,8 +5,8 @@
 
 template <typename R>
 Channel_AWGN_std_LR<R>
-::Channel_AWGN_std_LR(const R& sigma, const int seed, const std::string name)
-: Channel_AWGN_std_LLR<R>(sigma, seed, name)
+::Channel_AWGN_std_LR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)
+: Channel_AWGN_std_LLR<R>(N, sigma, seed, n_frames, name)
 {
 }
 

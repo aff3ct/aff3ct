@@ -7,7 +7,7 @@
 template <typename B>
 CRC_polynomial<B>
 ::CRC_polynomial(const int K, std::string poly_key, const int n_frames, const std::string name)
-: CRC<B>(n_frames, name.c_str()), K(K), polynomial(0), buff_crc(n_frames * K)
+: CRC<B>(K, n_frames, name.c_str()), polynomial(0), buff_crc(n_frames * K)
 {
 	if (poly_key.empty())
 	{
@@ -54,9 +54,9 @@ void CRC_polynomial<B>
 
 	for (auto f = 0; f < this->n_frames; f++)
 		this->_generate(U_K, U_K, 
-		                K * f, 
-		                K * f + (K - this->size()), 
-		                K - this->size());
+		                this->K * f, 
+		                this->K * f + (this->K - this->size()), 
+		                this->K - this->size());
 }
 
 template <typename B>

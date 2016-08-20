@@ -8,8 +8,8 @@
 
 template <typename R, typename Q>
 Quantizer_standard<R,Q>
-::Quantizer_standard(const short& fixed_point_pos, const std::string name)
-: Quantizer<R,Q>(name.c_str()), 
+::Quantizer_standard(const int N, const short& fixed_point_pos, const int n_frames, const std::string name)
+: Quantizer<R,Q>(N, n_frames, name.c_str()), 
   val_max(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)),
   val_min(-val_max),
   fixed_point_pos(fixed_point_pos),
@@ -20,18 +20,19 @@ Quantizer_standard<R,Q>
 
 template <>
 Quantizer_standard<float,float>
-::Quantizer_standard(const short& fixed_point_pos, const std::string name)
-: Quantizer<float,float>(name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_standard(const int N, const short& fixed_point_pos, const int n_frames, const std::string name)
+: Quantizer<float,float>(N, n_frames, name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_standard<double,double>
-::Quantizer_standard(const short& fixed_point_pos, const std::string name)
-: Quantizer<double,double>(name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_standard(const int N, const short& fixed_point_pos, const int n_frames, const std::string name)
+: Quantizer<double,double>(N, n_frames, name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <typename R, typename Q>
 Quantizer_standard<R,Q>
-::Quantizer_standard(const short& fixed_point_pos, const short& saturation_pos, const std::string name)
-: Quantizer<R,Q>(name.c_str()), 
+::Quantizer_standard(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames, 
+                     const std::string name)
+: Quantizer<R,Q>(N, n_frames, name.c_str()), 
   val_max(((1 << (saturation_pos -2))) + ((1 << (saturation_pos -2)) -1)),
   val_min(-val_max),
   fixed_point_pos(fixed_point_pos),
@@ -46,13 +47,15 @@ Quantizer_standard<R,Q>
 
 template <>
 Quantizer_standard<float, float>
-::Quantizer_standard(const short& fixed_point_pos, const short& saturation_pos, const std::string name)
-: Quantizer<float,float>(name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_standard(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames, 
+                     const std::string name)
+: Quantizer<float,float>(N, n_frames, name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <>
 Quantizer_standard<double, double>
-::Quantizer_standard(const short& fixed_point_pos, const short& saturation_pos, const std::string name)
-: Quantizer<double,double>(name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
+::Quantizer_standard(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames, 
+                     const std::string name)
+: Quantizer<double,double>(N, n_frames, name.c_str()), val_max(0), val_min(0), fixed_point_pos(0), factor(0) {}
 
 template <typename R, typename Q>
 Quantizer_standard<R,Q>

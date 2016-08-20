@@ -22,8 +22,8 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Quantizer> socket_out;
 
 public:
-	SC_Quantizer(const sc_core::sc_module_name name = "SC_Quantizer")
-	: sc_module(name), Quantizer_interface<R,Q>(), 
+	SC_Quantizer(const int N, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Quantizer")
+	: sc_module(name), Quantizer_interface<R,Q>(N, n_frames), 
 	  socket_in("socket_in_SC_Quantizer"), 
 	  socket_out("socket_out_SC_Quantizer")
 	{ 

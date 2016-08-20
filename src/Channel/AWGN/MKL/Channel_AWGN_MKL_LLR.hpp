@@ -15,7 +15,8 @@ private:
 	VSLStreamStatePtr stream_state;
 
 public:
-	Channel_AWGN_MKL_LLR(const R& sigma, const int seed = 0, const std::string name = "Channel_AWGN_MKL_LLR");
+	Channel_AWGN_MKL_LLR(const int N, const R& sigma, const int seed = 0, const int n_frames = 1, 
+	                     const std::string name = "Channel_AWGN_MKL_LLR");
 	virtual ~Channel_AWGN_MKL_LLR();
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);

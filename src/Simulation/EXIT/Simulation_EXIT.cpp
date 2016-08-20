@@ -418,35 +418,35 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, sigma);
+	return Factory_modulator<B,R>::build(code_params, mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, 2.0 / sig_a);
+	return Factory_modulator<B,R>::build(code_params, mod_params, 2.0 / sig_a);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel()
 {
-	return Factory_channel<R>::build(chan_params, sigma, 0);
+	return Factory_channel<R>::build(code_params, chan_params, sigma, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a()
 {
-	return Factory_channel<R>::build(chan_params, 2.0 / sig_a, 0);
+	return Factory_channel<R>::build(code_params, chan_params, 2.0 / sig_a, 0);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_EXIT<B,R,Q>
 ::build_quantizer()
 {
-	return Factory_quantizer<R,Q>::build(chan_params, sigma);
+	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

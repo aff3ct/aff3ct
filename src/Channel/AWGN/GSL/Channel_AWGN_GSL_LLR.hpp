@@ -16,7 +16,8 @@ private:
 	gsl_rng *rng;
 
 public:
-	Channel_AWGN_GSL_LLR(const R& sigma, const int seed = 0, const std::string name = "Channel_AWGN_GSL_LLR");
+	Channel_AWGN_GSL_LLR(const int N, const R& sigma, const int seed = 0, const int n_frames = 1, 
+	                     const std::string name = "Channel_AWGN_GSL_LLR");
 
 	virtual ~Channel_AWGN_GSL_LLR();
 

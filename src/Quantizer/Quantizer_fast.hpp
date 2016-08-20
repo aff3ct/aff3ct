@@ -16,8 +16,10 @@ private:
 	const int   factor;
 
 public:
-	Quantizer_fast(const short& fixed_point_pos,                              const std::string name = "Quantizer_fast");
-	Quantizer_fast(const short& fixed_point_pos, const short& saturation_pos, const std::string name = "Quantizer_fast");
+	Quantizer_fast(const int N, const short& fixed_point_pos, const int n_frames = 1, 
+	               const std::string name = "Quantizer_fast");
+	Quantizer_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames = 1,
+	               const std::string name = "Quantizer_fast");
 	virtual ~Quantizer_fast();
 
 	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);

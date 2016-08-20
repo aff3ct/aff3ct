@@ -142,8 +142,8 @@ void Simulation_SC_BFER<B,R,Q>
 	// build the objects
 	this->source    = this->build_source   (); check_errors(this->source   , "Source<B>"          );
 	this->crc       = this->build_crc      (); check_errors(this->crc      , "CRC<B>"             );
-	this->puncturer = this->build_puncturer(); check_errors(this->puncturer, "Puncturer<B,Q>"     );
 	this->encoder   = this->build_encoder  (); check_errors(this->encoder  , "Encoder<B>"         );
+	this->puncturer = this->build_puncturer(); check_errors(this->puncturer, "Puncturer<B,Q>"     );
 	this->modulator = this->build_modulator(); check_errors(this->modulator, "Modulator<B,R>"     );
 	this->channel   = this->build_channel  (); check_errors(this->channel  , "Channel<R>"         );
 	this->quantizer = this->build_quantizer(); check_errors(this->quantizer, "Quantizer<R,Q>"     );
@@ -158,6 +158,9 @@ void Simulation_SC_BFER<B,R,Q>
 	this->crc      ->set_n_frames(this->n_frames);
 	this->encoder  ->set_n_frames(this->n_frames);
 	this->puncturer->set_n_frames(this->n_frames);
+	this->modulator->set_n_frames(this->n_frames);
+	this->channel  ->set_n_frames(this->n_frames);
+	this->quantizer->set_n_frames(this->n_frames);
 	this->analyzer ->set_n_frames(this->n_frames);
 
 	// build the terminal to display the BER/FER
@@ -387,21 +390,21 @@ template <typename B, typename R, typename Q>
 Modulator<B,R>* Simulation_SC_BFER<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R>::build(mod_params, sigma);
+	return Factory_modulator<B,R>::build(code_params, mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_SC_BFER<B,R,Q>
 ::build_channel()
 {
-	return Factory_channel<R>::build(chan_params, sigma);
+	return Factory_channel<R>::build(code_params, chan_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_SC_BFER<B,R,Q>
 ::build_quantizer()
 {
-	return Factory_quantizer<R,Q>::build(chan_params, sigma);
+	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma);
 }
 
 template <typename B, typename R, typename Q>

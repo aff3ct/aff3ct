@@ -16,13 +16,25 @@ private:
 	const R& sigma;
 
 public:
-	Quantizer_tricky(const R& sigma, 
+	Quantizer_tricky(const int N,
+	                 const R& sigma,
+	                 const int n_frames = 1, 
 	                 const std::string name = "Quantizer_tricky");
-	Quantizer_tricky(const short& saturation_pos, const R& sigma, 
+	Quantizer_tricky(const int N,
+	                 const short& saturation_pos, 
+	                 const R& sigma, 
+	                 const int n_frames = 1,
 	                 const std::string name = "Quantizer_tricky");
-	Quantizer_tricky(const float min_max, const R& sigma, 
+	Quantizer_tricky(const int N, 
+	                 const float min_max, 
+	                 const R& sigma, 
+	                 const int n_frames = 1,
 	                 const std::string name = "Quantizer_tricky");
-	Quantizer_tricky(const float min_max, const short& saturation_pos, const R& sigma, 
+	Quantizer_tricky(const int N,
+	                 const float min_max, 
+	                 const short& saturation_pos, 
+	                 const R& sigma, 
+	                 const int n_frames = 1,
 	                 const std::string name = "Quantizer_tricky");
 	virtual ~Quantizer_tricky();
 

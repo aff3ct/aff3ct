@@ -8,8 +8,13 @@
 template <typename B, typename R>
 class Modulator_interface // please use Modulator<B,R> for inheritance (instead of Modulator_interface<B,R>)
 {
+protected:
+	const int N; // frame size
+	      int n_frames;
+
 public:
-	Modulator_interface(const std::string name = "Modulator_interface") {};
+	Modulator_interface(const int N, const int n_frames = 1, const std::string name = "Modulator_interface") 
+	: N(N), n_frames(n_frames) {};
 	virtual ~Modulator_interface() {};
 
 	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) = 0;
@@ -20,8 +25,13 @@ public:
 		demodulate(Y_N1, Y_N3);
 	}
 
-	virtual int get_buffer_size_after_modulation(const int N) { return N;                                   }
-	virtual int get_buffer_size_after_filtering (const int N) { return get_buffer_size_after_modulation(N); }
+	virtual int get_buffer_size(const int N) { return N; }
+
+	virtual void set_n_frames(const int n_frames)
+	{
+		assert(n_frames > 0);
+		this->n_frames = n_frames;
+	}
 };
 
 #include "SC_Modulator.hpp"

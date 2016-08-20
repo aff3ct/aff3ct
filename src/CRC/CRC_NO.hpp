@@ -7,7 +7,7 @@ template <typename B>
 class CRC_NO : public CRC<B>
 {
 public:
-	CRC_NO(const int n_frames = 1, const std::string name = "CRC_NO");
+	CRC_NO(const int K, const int n_frames = 1, const std::string name = "CRC_NO");
 	virtual ~CRC_NO();
 
 	int  size (                          ) const;

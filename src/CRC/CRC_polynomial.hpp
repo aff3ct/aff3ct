@@ -9,8 +9,7 @@ template <typename B>
 class CRC_polynomial : public CRC<B>
 {
 protected:
-	const static std::map<std::string, mipp::vector<B>> polynomials;						   
-	const int K;
+	const static std::map<std::string, mipp::vector<B>> polynomials;
 //const int insert_pos;
 	mipp::vector<B> polynomial;
 	mipp::vector<B> buff_crc;

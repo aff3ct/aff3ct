@@ -16,10 +16,14 @@ private:
 	const int   factor;
 
 public:
-	Quantizer_standard(const short& fixed_point_pos, 
+	Quantizer_standard(const int N, 
+	                   const short& fixed_point_pos, 
+	                   const int n_frames = 1, 
 	                   const std::string name = "Quantizer_standard");
-	Quantizer_standard(const short& fixed_point_pos, 
+	Quantizer_standard(const int N,
+	                   const short& fixed_point_pos, 
 	                   const short& saturation_pos, 
+	                   const int n_frames = 1,
 	                   const std::string name = "Quantizer_standard");
 	virtual ~Quantizer_standard();
 

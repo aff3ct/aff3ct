@@ -26,8 +26,8 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Modulator> socket_out;
 
 public:
-	SC_Modulator(const sc_core::sc_module_name name = "SC_Modulator")
-	: sc_module(name), Modulator_interface<B,R>(), frame_size(0),
+	SC_Modulator(const int N, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Modulator")
+	: sc_module(name), Modulator_interface<B,R>(N, n_frames), frame_size(0),
 	  socket_in_modulate  ("socket_in_modulate_SC_Modulator"),
 	  socket_in_demodulate("socket_in_demodulate_SC_Modulator"),
 	  socket_out          ("socket_out_SC_Modulator")

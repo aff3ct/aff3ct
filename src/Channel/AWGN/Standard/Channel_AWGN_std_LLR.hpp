@@ -17,7 +17,8 @@ private:
 	std::normal_distribution<R> normal_dist;
 
 public:
-	Channel_AWGN_std_LLR(const R& sigma, const int seed = 0, const std::string name = "Channel_AWGN_std_LLR");
+	Channel_AWGN_std_LLR(const int N, const R& sigma, const int seed = 0, const int n_frames = 1, 
+	                     const std::string name = "Channel_AWGN_std_LLR");
 	virtual ~Channel_AWGN_std_LLR();
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);

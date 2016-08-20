@@ -214,8 +214,8 @@ void Simulation_BFER<B,R,Q>
 	// build the objects
 	simu->source   [tid] = simu->build_source   (tid); check_errors(simu->source   [tid], "Source<B>"          );
 	simu->crc      [tid] = simu->build_crc      (tid); check_errors(simu->crc      [tid], "CRC<B>"             );
-	simu->puncturer[tid] = simu->build_puncturer(tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
 	simu->encoder  [tid] = simu->build_encoder  (tid); check_errors(simu->encoder  [tid], "Encoder<B>"         );
+	simu->puncturer[tid] = simu->build_puncturer(tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
 	simu->modulator[tid] = simu->build_modulator(tid); check_errors(simu->modulator[tid], "Modulator<B,R>"     );
 	simu->channel  [tid] = simu->build_channel  (tid); check_errors(simu->channel  [tid], "Channel<R>"         );
 	simu->quantizer[tid] = simu->build_quantizer(tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>"     );
@@ -245,9 +245,13 @@ void Simulation_BFER<B,R,Q>
 	if (simu->V_N [tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->V_N [tid].resize((N_code + tail) * n_fra);
 
 	// set the real number of frames per thread
+	simu->source   [tid]->set_n_frames(n_fra);
 	simu->crc      [tid]->set_n_frames(n_fra);
 	simu->encoder  [tid]->set_n_frames(n_fra);
 	simu->puncturer[tid]->set_n_frames(n_fra);
+	simu->modulator[tid]->set_n_frames(n_fra);
+	simu->channel  [tid]->set_n_frames(n_fra);
+	simu->quantizer[tid]->set_n_frames(n_fra);
 	simu->analyzer [tid]->set_n_frames(n_fra);
 
 	simu->barrier(tid);
@@ -927,21 +931,21 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, sigma);
+	return Factory_modulator<B,R>::build(code_params, mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int tid)
 {
-	return Factory_channel<R>::build(chan_params, sigma, tid);
+	return Factory_channel<R>::build(code_params, chan_params, sigma, tid);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build(chan_params, sigma);
+	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma);
 }
 
 template <typename B, typename R, typename Q>

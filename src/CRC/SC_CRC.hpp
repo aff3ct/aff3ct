@@ -22,8 +22,8 @@ public:
 	tlm_utils::simple_initiator_socket<SC_CRC> socket_out;
 
 public:
-	SC_CRC(const int n_frames = 1, const sc_core::sc_module_name name = "SC_CRC") 
-	: sc_module(name), CRC_interface<B>(n_frames), socket_in("socket_in_SC_CRC"), socket_out("socket_out_SC_CRC")
+	SC_CRC(const int K, const int n_frames = 1, const sc_core::sc_module_name name = "SC_CRC") 
+	: sc_module(name), CRC_interface<B>(K, n_frames), socket_in("socket_in_SC_CRC"), socket_out("socket_out_SC_CRC")
 	{ 
 		socket_in.register_b_transport(this, &SC_CRC::b_transport);
 	}
