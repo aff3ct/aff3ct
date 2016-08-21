@@ -43,16 +43,16 @@ protected:
 	float sigma;
 
 	// communication chain
-	SC_Source<B>        *source;
-	SC_CRC<B>           *crc;
-	SC_Encoder<B>       *encoder;
-	SC_Puncturer<B,Q>   *puncturer;
-	SC_Modulator<B,R>   *modulator;
-	SC_Channel<R>       *channel;
-	SC_Quantizer<R,Q>   *quantizer;
-	SC_Decoder<B,Q>     *decoder;
-	Error_analyzer<B>   *analyzer;
-	Terminal            *terminal;
+	SC_Source<B>         *source;
+	SC_CRC<B>            *crc;
+	SC_Encoder<B>        *encoder;
+	SC_Puncturer<B,Q>    *puncturer;
+	SC_Modulator<B,R>    *modulator;
+	SC_Channel<R>        *channel;
+	SC_Quantizer<R,Q>    *quantizer;
+	SC_Decoder<B,Q>      *decoder;
+	SC_Error_analyzer<B> *analyzer;
+	Terminal             *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;

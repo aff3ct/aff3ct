@@ -61,17 +61,10 @@ private:
 			payload.set_data_ptr((unsigned char*)U_K.data());
 			payload.set_data_length(U_K.size() * sizeof(B));
 
-			/* DEBUG 
-			Frame_trace<B> ft;
-			std::cout << "Source output:" << std::endl;
-			ft.display_bit_vector(U_K);
-			std::cout << std::endl;
-			*/
-
 			sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
 			socket_out->b_transport(payload, zero_time);
 
-			sc_core::wait(10, sc_core::SC_MS);
+			sc_core::wait(1, sc_core::SC_MS);
 		}
 	}
 };
