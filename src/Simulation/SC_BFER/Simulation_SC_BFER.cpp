@@ -128,6 +128,8 @@ void Simulation_SC_BFER<B,R,Q>
 	{
 		this->bind_sockets();
 		sc_core::sc_start(10000, SC_MS); // start simulation
+		sc_core::sc_curr_simcontext = new sc_simcontext();
+		sc_core::sc_default_global_context = sc_curr_simcontext;
 	}
 }
 
