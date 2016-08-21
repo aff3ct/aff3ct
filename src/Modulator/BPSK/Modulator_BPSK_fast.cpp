@@ -4,7 +4,7 @@
 template <typename B, typename R>
 Modulator_BPSK_fast<B,R>
 ::Modulator_BPSK_fast(const int N, const R sigma, const int n_frames, const std::string name)
-: Modulator<B,R>(N, n_frames, name.c_str()), two_on_square_sigma((R)2.0 / (sigma * sigma))
+: Modulator<B,R>(N, this->get_buffer_size(N), n_frames, name.c_str()), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 

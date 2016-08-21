@@ -13,12 +13,11 @@ Decoder_RSC_BCJR<B,R>
                    const bool buffered_encoding, 
                    const int n_frames,
                    const std::string name)
-: Decoder<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), name.c_str()),
+: Decoder<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name.c_str()),
   SISO<R>(),
   n_states(trellis[0].size()),
   n_ff(std::log2(n_states)),
   buffered_encoding(buffered_encoding),
-  n_frames(n_frames),
   trellis(trellis),
   sys((K+n_ff) * n_frames + mipp::nElReg<R>()),
   par((K+n_ff) * n_frames + mipp::nElReg<R>()),
@@ -97,7 +96,7 @@ void Decoder_RSC_BCJR<B,R>
 	decode(sys, par, ext);
 
 	// take the hard decision
-	for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
+	for (auto i = 0; i < this->K * this->n_frames; i += mipp::nElReg<R>())
 	{
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 

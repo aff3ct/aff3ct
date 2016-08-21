@@ -13,7 +13,6 @@ class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
 protected:
 	const int             m;            // graph depth
-	const int             n_frames;     // number of frames to decode in parallel
 	      mipp::vector<R> l;            // lambda, LR or LLR
 	      mipp::vector<B> s;            // bits, partial sums
 	      mipp::vector<B> s_bis;        // bits, partial sums
@@ -31,9 +30,7 @@ public:
 	        void store     (      mipp::vector<B>& V_K) const;
 	        void store_fast(      mipp::vector<B>& V_N) const;
 	        void unpack    (      mipp::vector<B>& V_N) const;
-
-	int get_n_frames() const;
-
+	        
 protected:
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);
 };

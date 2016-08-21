@@ -4,6 +4,7 @@
 #ifdef SYSTEMC
 #include <vector>
 #include <string>
+#include <cassert>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
@@ -21,11 +22,18 @@ public:
 	tlm_utils::simple_target_socket   <SC_Quantizer> socket_in;
 	tlm_utils::simple_initiator_socket<SC_Quantizer> socket_out;
 
+private:
+	mipp::vector<R> Y_N1;
+	mipp::vector<Q> Y_N2;
+
 public:
 	SC_Quantizer(const int N, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Quantizer")
-	: sc_module(name), Quantizer_interface<R,Q>(N, n_frames), 
+	: sc_module(name),
+	  Quantizer_interface<R,Q>(N, n_frames), 
 	  socket_in("socket_in_SC_Quantizer"), 
-	  socket_out("socket_out_SC_Quantizer")
+	  socket_out("socket_out_SC_Quantizer"),
+	  Y_N1(N * n_frames),
+	  Y_N2(N * n_frames)
 	{ 
 		socket_in.register_b_transport(this, &SC_Quantizer::b_transport);
 	}
@@ -34,16 +42,22 @@ public:
 
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
 
+	virtual void set_n_frames(const int n_frames)
+	{
+		assert(n_frames > 0);
+		this->n_frames = n_frames;
+
+		if ((int)Y_N1.size() != this->N * this->n_frames) this->Y_N1.resize(this->N * this->n_frames);
+		if ((int)Y_N2.size() != this->N * this->n_frames) this->Y_N2.resize(this->N * this->n_frames);
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		int length = trans.get_data_length() / sizeof(R);
-		
-		mipp::vector<R> Y_N1(length);
-		mipp::vector<Q> Y_N2(length);
+		assert((trans.get_data_length() / sizeof(R)) == Y_N1.size());
 
-		std::copy(buffer_in, buffer_in + length, Y_N1.begin());
+		const R* buffer_in = (R*)trans.get_data_ptr();
+		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
 
 		this->process(Y_N1, Y_N2);
 

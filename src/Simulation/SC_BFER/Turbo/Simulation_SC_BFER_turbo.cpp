@@ -103,7 +103,7 @@ Decoder<B,Q>* Simulation_SC_BFER_turbo<B,R,Q,QD>
 	                                               trellis);
 	check_errors(siso, "SISO<Q>");
 
-	interleaver->set_n_frames(siso->get_n_frames());
+	interleaver->set_n_frames(siso->get_n_frames_siso());
 
 	return Factory_decoder_turbo<B,Q>::build(this->code_params,
 	                                         this->enco_params,

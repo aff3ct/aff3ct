@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <systemc>
+#include <cassert>
 #include <tlm>
 #include <tlm_utils/simple_initiator_socket.h>
 
@@ -19,9 +20,15 @@ class SC_Source : public sc_core::sc_module, public Source_interface<B>
 public:
 	tlm_utils::simple_initiator_socket<SC_Source> socket_out;
 
+private:
+	mipp::vector<B> U_K;
+
 public:
 	SC_Source(const int K, const int n_frames = 1, const sc_core::sc_module_name name = "Source_SC")
-	: sc_module(name), Source_interface<B>(K, n_frames), socket_out("socket_out_SC_Source")
+	: sc_module(name), 
+	  Source_interface<B>(K, n_frames), 
+	  socket_out("socket_out_SC_Source"),
+	  U_K(K * n_frames)
 	{ 
 		SC_THREAD(sc_generate); 
 	}
@@ -30,12 +37,19 @@ public:
 
 	virtual void generate(mipp::vector<B>& U_K) = 0;
 
+	virtual void set_n_frames(const int n_frames)
+	{
+		assert(n_frames > 0);
+		this->n_frames = n_frames;
+
+		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
+	}
+
+private:
 	void sc_generate()
 	{
 		while (1)
 		{
-			mipp::vector<B> U_K(this->K * this->n_frames);
-
 			generate(U_K);
 
 			tlm::tlm_generic_payload payload;

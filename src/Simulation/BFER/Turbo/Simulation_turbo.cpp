@@ -108,7 +108,7 @@ Decoder<B,Q>* Simulation_turbo<B,R,Q,QD>
 	check_errors(siso[tid], "SISO<Q>");
 
 	if (tid == 0)
-		interleaver->set_n_frames(siso[tid]->get_n_frames());
+		interleaver->set_n_frames(siso[tid]->get_n_frames_siso());
 
 	return Factory_decoder_turbo<B,Q>::build(this->code_params,
 	                                         this->enco_params,

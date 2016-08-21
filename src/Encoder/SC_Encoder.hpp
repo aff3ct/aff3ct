@@ -4,6 +4,7 @@
 #ifdef SYSTEMC
 #include <vector>
 #include <string>
+#include <cassert>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
@@ -21,9 +22,18 @@ public:
 	tlm_utils::simple_target_socket   <SC_Encoder> socket_in;
 	tlm_utils::simple_initiator_socket<SC_Encoder> socket_out;
 
+private:
+	mipp::vector<B> U_K;
+	mipp::vector<B> X_N;
+
 public:
 	SC_Encoder(const int K, const int N, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Encoder")
-	: sc_module(name), Encoder_interface<B>(K, N, n_frames), socket_in("socket_in_SC_Encoder"), socket_out("socket_out_SC_Encoder")
+	: sc_module(name),
+	  Encoder_interface<B>(K, N, n_frames),
+	  socket_in ("socket_in_SC_Encoder"),
+	  socket_out("socket_out_SC_Encoder"),
+	  U_K(K * n_frames),
+	  X_N(N * n_frames)
 	{
 		socket_in.register_b_transport(this, &SC_Encoder::b_transport);
 	};
@@ -32,18 +42,22 @@ public:
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N) = 0;
 
+	virtual void set_n_frames(const int n_frames)
+	{
+		assert(n_frames > 0);
+		this->n_frames = n_frames;
+
+		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
+		if ((int)X_N.size() != this->N * this->n_frames) this->X_N.resize(this->N * this->n_frames);
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
+		assert((trans.get_data_length() / sizeof(B)) == (int)U_K.size());
+
 		const B* buffer_in = (B*)trans.get_data_ptr();
-		int length = trans.get_data_length() / sizeof(B);
-		
-		assert(length == this->K * this->n_frames);
-
-		mipp::vector<B> U_K(this->K * this->n_frames);
-		mipp::vector<B> X_N(this->N * this->n_frames);
-
-		std::copy(buffer_in, buffer_in + length, U_K.begin());
+		std::copy(buffer_in, buffer_in + U_K.size(), U_K.begin());
 
 		this->encode(U_K, X_N);
 

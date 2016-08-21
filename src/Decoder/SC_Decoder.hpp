@@ -4,6 +4,7 @@
 #ifdef SYSTEMC
 #include <vector>
 #include <string>
+#include <cassert>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
@@ -21,9 +22,18 @@ public:
 	tlm_utils::simple_target_socket   <SC_Decoder> socket_in;
 	tlm_utils::simple_initiator_socket<SC_Decoder> socket_out;
 
+private:
+	mipp::vector<R> Y_N;
+	mipp::vector<B> V_K;
+
 public:
-	SC_Decoder(const int K, const int N, const sc_core::sc_module_name name = "SC_Decoder")
-	: sc_module(name), Decoder_interface<B,R>(K, N), socket_in("socket_in_SC_Decoder"), socket_out("socket_out_SC_Decoder")
+	SC_Decoder(const int K, const int N, const int n_frames, const sc_core::sc_module_name name = "SC_Decoder")
+	: sc_module(name), 
+	  Decoder_interface<B,R>(K, N),
+	  socket_in ("socket_in_SC_Decoder"),
+	  socket_out("socket_out_SC_Decoder"),
+	  Y_N(N * n_frames),
+	  V_K(K * n_frames)
 	{
 		socket_in.register_b_transport(this, &SC_Decoder::b_transport);
 	};
@@ -37,15 +47,10 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
+		assert((trans.get_data_length() / sizeof(R)) == Y_N.size());
+
 		const R* buffer_in = (R*)trans.get_data_ptr();
-		int length = trans.get_data_length() / sizeof(R);
-		
-		assert(length == this->N * this->get_n_frames());
-
-		mipp::vector<R> Y_N(this->N * this->get_n_frames());
-		mipp::vector<B> V_K(this->K * this->get_n_frames());
-
-		std::copy(buffer_in, buffer_in + length, Y_N.begin());
+		std::copy(buffer_in, buffer_in + Y_N.size(), Y_N.begin());
 
 		this->load  (Y_N);
 		this->decode(   );

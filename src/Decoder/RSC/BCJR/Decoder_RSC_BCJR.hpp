@@ -14,7 +14,6 @@ protected:
 	const int  n_states;
 	const int  n_ff;
 	const bool buffered_encoding;
-	const int  n_frames;
 
 	const std::vector<std::vector<int>> &trellis;
 
@@ -33,10 +32,9 @@ public:
 	virtual void load  (const mipp::vector<R>& Y_N);
 	        void decode(                          );
 	virtual void store (      mipp::vector<B>& V_K) const;
-
-	int get_n_frames() const { return n_frames; };
 	
-	virtual int tail_length () const { return 2 * n_ff; }
+	virtual int get_n_frames_siso() const { return this->n_frames; }
+	virtual int tail_length      () const { return 2 * n_ff;       }
 
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);

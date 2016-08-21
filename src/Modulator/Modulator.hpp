@@ -9,12 +9,14 @@ template <typename B, typename R>
 class Modulator_interface // please use Modulator<B,R> for inheritance (instead of Modulator_interface<B,R>)
 {
 protected:
-	const int N; // frame size
+	const int N;     // frame size
+	const int N_mod; // number of elements after the modulation (could be smaller, bigger or equal to N)
 	      int n_frames;
 
 public:
-	Modulator_interface(const int N, const int n_frames = 1, const std::string name = "Modulator_interface") 
-	: N(N), n_frames(n_frames) {};
+	Modulator_interface(const int N, const int N_mod, const int n_frames = 1, 
+	                    const std::string name = "Modulator_interface")
+	: N(N), N_mod(N_mod), n_frames(n_frames) {};
 	virtual ~Modulator_interface() {};
 
 	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) = 0;

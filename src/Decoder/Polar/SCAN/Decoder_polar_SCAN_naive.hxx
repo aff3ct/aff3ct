@@ -13,13 +13,13 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
                            const std::string name)
-: Decoder<B,R>  (K, 1 << m, name.c_str()),
-  m             (m                      ),
-  max_iter      (max_iter               ),
-  layers_count  (m +1                   ),
-  frozen_bits   (frozen_bits            ),
-  feedback_graph(layers_count           ),
-  soft_graph    (layers_count           )
+: Decoder<B,R>  (K, 1 << m, 1, name.c_str()),
+  m             (m           ),
+  max_iter      (max_iter    ),
+  layers_count  (m +1        ),
+  frozen_bits   (frozen_bits ),
+  feedback_graph(layers_count),
+  soft_graph    (layers_count)
 {
 	assert(max_iter           >  0                 );
 	assert(frozen_bits.size() == (unsigned) this->N);

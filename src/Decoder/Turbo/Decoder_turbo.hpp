@@ -51,8 +51,6 @@ public:
 	virtual void load (const mipp::vector<R>& Y_N);
 	virtual void store(      mipp::vector<B>& V_K) const;
 
-	int get_n_frames() const { return siso_n.get_n_frames(); }
-
 private:
 	void buffered_load(const mipp::vector<R>& Y_N);
 	void standard_load(const mipp::vector<R>& Y_N);

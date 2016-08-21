@@ -3,7 +3,7 @@
 template <typename B, typename R>
 Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int N, std::string name)
-: Decoder<B,R>(K, N, name.c_str())
+: Decoder<B,R>(K, N, 1, name.c_str())
 {
 }
 

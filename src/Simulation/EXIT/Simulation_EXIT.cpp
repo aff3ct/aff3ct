@@ -95,7 +95,7 @@ void Simulation_EXIT<B,R,Q>
 	siso        = build_siso       (); check_errors(siso       , "SISO<Q>"           );
 	terminal    = build_terminal   (); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
-	if (siso->get_n_frames() > 1)
+	if (siso->get_n_frames_siso() > 1)
 	{
 		std::cout << bold_red("(EE) EXIT simulation does not support inter frame SIMD... Exiting.") << std::endl;
 		exit(-1);
