@@ -1,3 +1,5 @@
+#ifdef SYSTEMC
+
 #ifndef SIMULATION_SC_BFER_REPETITION_HPP_
 #define SIMULATION_SC_BFER_REPETITION_HPP_
 
@@ -26,3 +28,5 @@ protected:
 };
 
 #endif /* SIMULATION_SC_BFER_REPETITION_HPP_ */
+
+#endif

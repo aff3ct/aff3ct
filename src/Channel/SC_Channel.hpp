@@ -23,22 +23,33 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Channel> socket_out;
 
 private:
+	bool sockets_binded;
 	mipp::vector<R> X_N;
 	mipp::vector<R> Y_N;
 
 public:
 	SC_Channel(const int N, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Channel")
 	: sc_module(name),
-	  Channel_interface<R>(N, n_frames), 
-	  socket_in ("socket_in_SC_Channel"), 
+	  Channel_interface<R>(N, n_frames),
+	  socket_in ("socket_in_SC_Channel"),
 	  socket_out("socket_out_SC_Channel"),
-	  X_N(N * n_frames),
-	  Y_N(N * n_frames)
-	{ 
-		socket_in.register_b_transport(this, &SC_Channel::b_transport);
+	  sockets_binded(false),
+	  X_N(0),
+	  Y_N(0)
+	{
 	}
 
 	virtual ~SC_Channel() {};
+
+	void register_sockets()
+	{
+		socket_in.register_b_transport(this, &SC_Channel::b_transport);
+		sockets_binded = true;
+
+		this->resize_buffers();
+	}
+
+	bool socket_binded() { return sockets_binded; }
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
 
@@ -47,11 +58,17 @@ public:
 		assert(n_frames > 0);
 		this->n_frames = n_frames;
 
+		if (sockets_binded)
+			this->resize_buffers();
+	}
+
+private:
+	void resize_buffers()
+	{
 		if ((int)X_N.size() != this->N * this->n_frames) this->X_N.resize(this->N * this->n_frames);
 		if ((int)Y_N.size() != this->N * this->n_frames) this->Y_N.resize(this->N * this->n_frames);
 	}
 
-private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(R)) == X_N.size());

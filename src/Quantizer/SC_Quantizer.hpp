@@ -23,6 +23,7 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Quantizer> socket_out;
 
 private:
+	bool sockets_binded;
 	mipp::vector<R> Y_N1;
 	mipp::vector<Q> Y_N2;
 
@@ -32,13 +33,23 @@ public:
 	  Quantizer_interface<R,Q>(N, n_frames), 
 	  socket_in("socket_in_SC_Quantizer"), 
 	  socket_out("socket_out_SC_Quantizer"),
-	  Y_N1(N * n_frames),
-	  Y_N2(N * n_frames)
+	  sockets_binded(false),
+	  Y_N1(0),
+	  Y_N2(0)
 	{ 
-		socket_in.register_b_transport(this, &SC_Quantizer::b_transport);
 	}
 
 	virtual ~SC_Quantizer() {};
+
+	void register_sockets()
+	{
+		socket_in.register_b_transport(this, &SC_Quantizer::b_transport);
+		sockets_binded = true;
+
+		this->resize_buffers();
+	}
+
+	bool socket_binded() { return sockets_binded; }
 
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
 
@@ -47,11 +58,17 @@ public:
 		assert(n_frames > 0);
 		this->n_frames = n_frames;
 
+		if (sockets_binded)
+			this->resize_buffers();
+	}
+
+private:
+	void resize_buffers()
+	{
 		if ((int)Y_N1.size() != this->N * this->n_frames) this->Y_N1.resize(this->N * this->n_frames);
 		if ((int)Y_N2.size() != this->N * this->n_frames) this->Y_N2.resize(this->N * this->n_frames);
 	}
 
-private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(R)) == Y_N1.size());

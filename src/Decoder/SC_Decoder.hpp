@@ -23,6 +23,7 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Decoder> socket_out;
 
 private:
+	bool sockets_binded;
 	mipp::vector<R> Y_N;
 	mipp::vector<B> V_K;
 
@@ -32,19 +33,35 @@ public:
 	  Decoder_interface<B,R>(K, N),
 	  socket_in ("socket_in_SC_Decoder"),
 	  socket_out("socket_out_SC_Decoder"),
-	  Y_N(N * n_frames),
-	  V_K(K * n_frames)
+	  sockets_binded(false),
+	  Y_N(0),
+	  V_K(0)
 	{
-		socket_in.register_b_transport(this, &SC_Decoder::b_transport);
-	};
+	}
 
 	virtual ~SC_Decoder() {};
+
+	void register_sockets()
+	{
+		socket_in.register_b_transport(this, &SC_Decoder::b_transport);
+		sockets_binded = true;
+
+		this->resize_buffers();
+	}
+
+	bool socket_binded() { return sockets_binded; }
 
 	virtual void load  (const mipp::vector<R>& Y_N)       = 0;
 	virtual void decode(                          )       = 0;
 	virtual void store (      mipp::vector<B>& V_K) const = 0;
 
 private:
+	void resize_buffers()
+	{
+		if ((int)Y_N.size() != this->N * this->n_frames) Y_N.resize(this->N * this->n_frames);
+		if ((int)V_K.size() != this->K * this->n_frames) V_K.resize(this->K * this->n_frames);
+	}
+
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(R)) == Y_N.size());

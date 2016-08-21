@@ -12,7 +12,7 @@ class Terminal_BFER : public Terminal
 {
 protected:
 	const R                                                                             snr;
-	const Error_analyzer<B,R>                                                          &err_analyzer;
+	const Error_analyzer<B>                                                            &err_analyzer;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	const std::chrono::nanoseconds                                                     &d_decod_total;
 	unsigned short                                                                      real_time_state;
@@ -20,7 +20,7 @@ protected:
 
 public:
 	Terminal_BFER(const R& snr,
-	              const Error_analyzer<B,R> &err_analyzer,
+	              const Error_analyzer<B> &err_analyzer,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	              const std::chrono::nanoseconds &d_decod_total,
 	              const bool use_only_decoder_time_thr = false);

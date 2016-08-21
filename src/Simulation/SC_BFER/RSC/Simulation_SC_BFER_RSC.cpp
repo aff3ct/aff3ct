@@ -1,3 +1,5 @@
+#ifdef SYSTEMC
+
 #include <map>
 #include <chrono>
 #include <vector>
@@ -81,3 +83,5 @@ template class Simulation_SC_BFER_RSC<B_64,R_64,Q_64,QD_64>;
 template class Simulation_SC_BFER_RSC<B,R,Q,QD>;
 #endif
 // ==================================================================================== explicit template instantiation
+
+#endif

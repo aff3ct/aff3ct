@@ -7,7 +7,7 @@
 template <typename B, typename R>
 Terminal_BFER_legacy<B,R>
 ::Terminal_BFER_legacy(const R& snr,
-                       const Error_analyzer<B,R> &err_analyzer,
+                       const Error_analyzer<B> &err_analyzer,
                        const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr)
 : snr(snr), err_analyzer(err_analyzer), t_snr(t_snr), real_time_state(0)
 {

@@ -19,11 +19,13 @@ class SC_Puncturer : public sc_core::sc_module, public Puncturer_interface<B,Q>
 	SC_HAS_PROCESS(SC_Puncturer);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Puncturer> socket_in_puncture;
-	tlm_utils::simple_target_socket   <SC_Puncturer> socket_in_depuncture;
-	tlm_utils::simple_initiator_socket<SC_Puncturer> socket_out;
+	tlm_utils::simple_target_socket   <SC_Puncturer> socket_in_punct;
+	tlm_utils::simple_target_socket   <SC_Puncturer> socket_in_depunct;
+	tlm_utils::simple_initiator_socket<SC_Puncturer> socket_out_punct;
+	tlm_utils::simple_initiator_socket<SC_Puncturer> socket_out_depunct;
 
 private:
+	bool sockets_binded;
 	mipp::vector<B> X_N1, X_N2;
 	mipp::vector<Q> Y_N1, Y_N2;
 
@@ -32,19 +34,30 @@ public:
 	             const sc_core::sc_module_name name = "SC_Puncturer")
 	: sc_module(name), 
 	  Puncturer_interface<B,Q>(K, N, N_code, n_frames),
-	  socket_in_puncture  ("socket_in_puncture_SC_Puncturer"),
-	  socket_in_depuncture("socket_in_depuncture_SC_Puncturer"),
-	  socket_out          ("socket_out_SC_Puncturer"),
-	  X_N1(N_code * n_frames),
-	  X_N2(N      * n_frames),
-	  Y_N1(N      * n_frames),
-	  Y_N2(N_code * n_frames)
+	  socket_in_punct   ("socket_in_punct_SC_Puncturer"),
+	  socket_in_depunct ("socket_in_depunct_SC_Puncturer"),
+	  socket_out_punct  ("socket_out_punct_SC_Puncturer"),
+	  socket_out_depunct("socket_out_depunct_SC_Puncturer"),
+	  sockets_binded(false),
+	  X_N1(0),
+	  X_N2(0),
+	  Y_N1(0),
+	  Y_N2(0)
 	{
-		socket_in_puncture  .register_b_transport(this, &SC_Puncturer::b_transport_puncture);
-		socket_in_depuncture.register_b_transport(this, &SC_Puncturer::b_transport_depuncture);
 	};
 
 	virtual ~SC_Puncturer() {};
+
+	void register_sockets()
+	{
+		socket_in_punct  .register_b_transport(this, &SC_Puncturer::b_transport_puncture);
+		socket_in_depunct.register_b_transport(this, &SC_Puncturer::b_transport_depuncture);
+		sockets_binded = true;
+
+		this->resize_buffers();
+	}
+
+	bool socket_binded() { return sockets_binded; }
 
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
 	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
@@ -54,13 +67,19 @@ public:
 		assert(n_frames > 0);
 		this->n_frames = n_frames;
 
+		if (sockets_binded)
+			this->resize_buffers();
+	}
+
+private:
+	void resize_buffers()
+	{
 		if ((int)X_N1.size() != this->N_code * this->n_frames) this->X_N1.resize(this->N_code * this->n_frames);
 		if ((int)X_N2.size() != this->N      * this->n_frames) this->X_N2.resize(this->N      * this->n_frames);
 		if ((int)Y_N1.size() != this->N      * this->n_frames) this->Y_N1.resize(this->N      * this->n_frames);
 		if ((int)Y_N2.size() != this->N_code * this->n_frames) this->Y_N2.resize(this->N_code * this->n_frames);
 	}
 
-private:
 	void b_transport_puncture(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(B)) == X_N1.size());
@@ -75,7 +94,7 @@ private:
 		payload.set_data_length(X_N2.size() * sizeof(B));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out->b_transport(payload, zero_time);
+		socket_out_punct->b_transport(payload, zero_time);
 	}
 
 	void b_transport_depuncture(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
@@ -92,7 +111,7 @@ private:
 		payload.set_data_length(Y_N2.size() * sizeof(Q));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out->b_transport(payload, zero_time);
+		socket_out_depunct->b_transport(payload, zero_time);
 	}
 };
 

@@ -1,11 +1,11 @@
 #include "../Error/Error_analyzer_reduction.hpp"
 
-template <typename B, typename R>
-Error_analyzer_reduction<B,R>
+template <typename B>
+Error_analyzer_reduction<B>
 ::Error_analyzer_reduction(const int& K, const int& N, const int& max_fe, 
-                           std::vector<Error_analyzer<B,R>*>& error_analyzers, const int& n_frames,
+                           std::vector<Error_analyzer<B>*>& error_analyzers, const int& n_frames,
                            const std::string name)
-: Error_analyzer<B,R>(K, N, max_fe, n_frames, name),
+: Error_analyzer_std<B>(K, N, max_fe, n_frames, name),
   error_analyzers(error_analyzers),
   prev_n_be(error_analyzers.size()),
   prev_n_fe(error_analyzers.size()),
@@ -18,14 +18,14 @@ Error_analyzer_reduction<B,R>
 	this->reduce();
 }
 
-template <typename B, typename R>
-Error_analyzer_reduction<B,R>
+template <typename B>
+Error_analyzer_reduction<B>
 ::~Error_analyzer_reduction()
 {
 }
 
-template <typename B, typename R>
-void Error_analyzer_reduction<B,R>
+template <typename B>
+void Error_analyzer_reduction<B>
 ::reduce()
 {
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
@@ -48,8 +48,8 @@ void Error_analyzer_reduction<B,R>
 	}
 }
 
-template <typename B, typename R>
-void Error_analyzer_reduction<B,R>
+template <typename B>
+void Error_analyzer_reduction<B>
 ::increment_frame_errors(const int n_frames)
 {
 	this->mutex_total_frame_errors.lock();
@@ -60,11 +60,11 @@ void Error_analyzer_reduction<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../Tools/types.h"
 #ifdef MULTI_PREC
-template class Error_analyzer_reduction<B_8,R_8>;
-template class Error_analyzer_reduction<B_16,R_16>;
-template class Error_analyzer_reduction<B_32,R_32>;
-template class Error_analyzer_reduction<B_64,R_64>;
+template class Error_analyzer_reduction<B_8>;
+template class Error_analyzer_reduction<B_16>;
+template class Error_analyzer_reduction<B_32>;
+template class Error_analyzer_reduction<B_64>;
 #else
-template class Error_analyzer_reduction<B,R>;
+template class Error_analyzer_reduction<B>;
 #endif
 // ==================================================================================== explicit template instantiation

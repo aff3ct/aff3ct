@@ -29,7 +29,7 @@ public:
 	  Source_interface<B>(K, n_frames), 
 	  socket_out("socket_out_SC_Source"),
 	  U_K(K * n_frames)
-	{ 
+	{
 		SC_THREAD(sc_generate); 
 	}
 
@@ -42,10 +42,15 @@ public:
 		assert(n_frames > 0);
 		this->n_frames = n_frames;
 
-		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
+		this->resize_buffers();
 	}
 
 private:
+	void resize_buffers()
+	{
+		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
+	}
+
 	void sc_generate()
 	{
 		while (1)
@@ -56,11 +61,12 @@ private:
 			payload.set_data_ptr((unsigned char*)U_K.data());
 			payload.set_data_length(U_K.size() * sizeof(B));
 
-			/* DEBUG */
+			/* DEBUG 
 			Frame_trace<B> ft;
 			std::cout << "Source output:" << std::endl;
 			ft.display_bit_vector(U_K);
 			std::cout << std::endl;
+			*/
 
 			sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
 			socket_out->b_transport(payload, zero_time);

@@ -156,7 +156,7 @@ void Simulation_BFER<B,R,Q>
 		release_objects();
 
 		// exit simulation (double [ctrl+c])
-		if (Error_analyzer<B,R>::is_over())
+		if (Error_analyzer<B>::is_over())
 			break;
 	}
 
@@ -260,11 +260,11 @@ void Simulation_BFER<B,R,Q>
 		simu->n_frames = n_fra;
 
 		// build an error analyzer to compute BER/FER (reduce the other analyzers)
-		simu->analyzer_red = new Error_analyzer_reduction<B,R>(simu->code_params.K, 
-		                                                       simu->code_params.N, 
-		                                                       simu->simu_params.max_fe, 
-		                                                       simu->analyzer,
-		                                                       simu->n_frames);
+		simu->analyzer_red = new Error_analyzer_reduction<B>(simu->code_params.K, 
+		                                                     simu->code_params.N, 
+		                                                     simu->simu_params.max_fe, 
+		                                                     simu->analyzer,
+		                                                     simu->n_frames);
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal(tid);
 		check_errors(simu->terminal, "Terminal");
@@ -949,10 +949,10 @@ Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Error_analyzer<B,R>* Simulation_BFER<B,R,Q>
+Error_analyzer<B>* Simulation_BFER<B,R,Q>
 ::build_analyzer(const int tid)
 {
-	return Factory_error_analyzer<B,R>::build(simu_params, code_params, n_frames);
+	return Factory_error_analyzer<B>::build(simu_params, code_params, n_frames);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

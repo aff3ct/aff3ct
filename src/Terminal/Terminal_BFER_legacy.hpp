@@ -12,13 +12,13 @@ class Terminal_BFER_legacy : public Terminal
 {
 protected:
 	const R                                                                             snr;
-	const Error_analyzer<B,R>                                                          &err_analyzer;
+	const Error_analyzer<B>                                                            &err_analyzer;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	unsigned short                                                                      real_time_state;
 
 public:
     Terminal_BFER_legacy(const R& snr,
-	                     const Error_analyzer<B,R> &err_analyzer,
+	                     const Error_analyzer<B> &err_analyzer,
 	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr);
 	virtual ~Terminal_BFER_legacy() {}
 

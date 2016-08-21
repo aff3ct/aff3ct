@@ -23,20 +23,31 @@ public:
 	tlm_utils::simple_initiator_socket<SC_CRC> socket_out;
 
 private:
+	bool sockets_binded;
 	mipp::vector<B> U_K;
 
 public:
 	SC_CRC(const int K, const int n_frames = 1, const sc_core::sc_module_name name = "SC_CRC") 
-	: sc_module(name), 
+	: sc_module(name),
 	  CRC_interface<B>(K, n_frames),
 	  socket_in ("socket_in_SC_CRC"),
 	  socket_out("socket_out_SC_CRC"),
-	  U_K(K * n_frames)
-	{ 
-		socket_in.register_b_transport(this, &SC_CRC::b_transport);
+	  sockets_binded(false),
+	  U_K(0)
+	{
 	}
 
 	virtual ~SC_CRC() {};
+
+	void register_sockets()
+	{
+		socket_in.register_b_transport(this, &SC_CRC::b_transport);
+		sockets_binded = true;
+
+		this->resize_buffers();
+	}
+
+	bool socket_binded() { return sockets_binded; }
 
 	virtual void build(mipp::vector<B>& U_K) = 0;
 
@@ -45,10 +56,16 @@ public:
 		assert(n_frames > 0);
 		this->n_frames = n_frames;
 
-		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
+		if (sockets_binded)
+			this->resize_buffers();
 	}
 
 private:
+	void resize_buffers()
+	{
+		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
+	}
+
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(B)) == (int)U_K.size());

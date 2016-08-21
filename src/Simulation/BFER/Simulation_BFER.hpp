@@ -66,8 +66,8 @@ protected:
 	std::vector<Channel<R>*>          channel;
 	std::vector<Quantizer<R,Q>*>      quantizer;
 	std::vector<Decoder<B,Q>*>        decoder;
-	std::vector<Error_analyzer<B,R>*> analyzer;
-	Error_analyzer_reduction<B,R>    *analyzer_red;
+	std::vector<Error_analyzer<B>*>   analyzer;
+	Error_analyzer_reduction<B>      *analyzer_red;
 	Terminal                         *terminal;
 
 	// time points and durations
@@ -143,20 +143,20 @@ private:
 	void time_report   (std::ostream &stream = std::clog);
 
 protected:
-	virtual void                 release_objects  ();
-	virtual void                 launch_precompute();
-	virtual void                 snr_precompute   ();
+	virtual void               release_objects  ();
+	virtual void               launch_precompute();
+	virtual void               snr_precompute   ();
 
-	virtual Source<B>*           build_source     (const int tid = 0);
-	virtual CRC<B>*              build_crc        (const int tid = 0);
-	virtual Encoder<B>*          build_encoder    (const int tid = 0) = 0;
-	virtual Puncturer<B,Q>*      build_puncturer  (const int tid = 0);
-	virtual Modulator<B,R,R>*    build_modulator  (const int tid = 0);
-	virtual Channel<R>*          build_channel    (const int tid = 0);
-	virtual Quantizer<R,Q>*      build_quantizer  (const int tid = 0);
-	virtual Decoder<B,Q>*        build_decoder    (const int tid = 0) = 0;
-	virtual Error_analyzer<B,R>* build_analyzer   (const int tid = 0);
-	        Terminal*            build_terminal   (const int tid = 0);
+	virtual Source<B>*         build_source     (const int tid = 0);
+	virtual CRC<B>*            build_crc        (const int tid = 0);
+	virtual Encoder<B>*        build_encoder    (const int tid = 0) = 0;
+	virtual Puncturer<B,Q>*    build_puncturer  (const int tid = 0);
+	virtual Modulator<B,R>*    build_modulator  (const int tid = 0);
+	virtual Channel<R>*        build_channel    (const int tid = 0);
+	virtual Quantizer<R,Q>*    build_quantizer  (const int tid = 0);
+	virtual Decoder<B,Q>*      build_decoder    (const int tid = 0) = 0;
+	virtual Error_analyzer<B>* build_analyzer   (const int tid = 0);
+	        Terminal*          build_terminal   (const int tid = 0);
 
 };
 

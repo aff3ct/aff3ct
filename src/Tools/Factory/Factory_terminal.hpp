@@ -11,7 +11,7 @@ struct Factory_terminal
 {
 	static Terminal* build(const t_simulation_param &simu_params,
 	                       const R snr, 
-	                       const Error_analyzer<B,R> *analyzer, 
+	                       const Error_analyzer<B> *analyzer, 
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	                       const std::chrono::nanoseconds &d_decod_total);
 };

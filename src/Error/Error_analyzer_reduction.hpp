@@ -8,13 +8,13 @@
 #include <mingw.mutex.h>
 #endif*/
 
-#include "Error_analyzer.hpp"
+#include "Error_analyzer_std.hpp"
 
-template <typename B, typename R>
-class Error_analyzer_reduction : public Error_analyzer<B,R>
+template <typename B>
+class Error_analyzer_reduction : public Error_analyzer_std<B>
 {
 private:
-	std::vector<Error_analyzer<B,R>*>& error_analyzers;
+	std::vector<Error_analyzer<B>*>& error_analyzers;
 	std::vector<int> prev_n_be;
 	std::vector<int> prev_n_fe;
 	std::vector<unsigned long long> prev_n_analyzed_frames;
@@ -23,7 +23,7 @@ private:
 
 public:
 	Error_analyzer_reduction(const int& K, const int& N, const int& max_fe, 
-	                         std::vector<Error_analyzer<B,R>*>& error_analyzers, const int& n_frames = 1, 
+	                         std::vector<Error_analyzer<B>*>& error_analyzers, const int& n_frames = 1, 
 	                         const std::string name = "Error_analyzer_reduction");
 	virtual ~Error_analyzer_reduction();
 

@@ -1,3 +1,5 @@
+#ifdef SYSTEMC
+
 #ifndef SIMULATION_SC_BFER_RSC_HPP_
 #define SIMULATION_SC_BFER_RSC_HPP_
 
@@ -27,3 +29,5 @@ protected:
 };
 
 #endif /* SIMULATION_SC_BFER_RSC_HPP_ */
+
+#endif

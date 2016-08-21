@@ -1,3 +1,5 @@
+#ifdef SYSTEMC
+
 #include <string>
 #include <vector>
 #include <chrono>
@@ -68,3 +70,5 @@ template class Simulation_SC_BFER_repetition<B_64,R_64,Q_64>;
 template class Simulation_SC_BFER_repetition<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+
+#endif
