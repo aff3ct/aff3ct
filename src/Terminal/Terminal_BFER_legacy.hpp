@@ -19,7 +19,8 @@ protected:
 public:
     Terminal_BFER_legacy(const R& snr,
 	                     const Error_analyzer<B> &err_analyzer,
-	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr);
+	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
+	                     const std::string name = "Terminal_BFER_legacy");
 	virtual ~Terminal_BFER_legacy() {}
 
 	void temp_report (std::ostream &stream = std::cout);

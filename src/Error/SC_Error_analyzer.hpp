@@ -10,7 +10,6 @@
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "../Tools/Frame_trace/Frame_trace.hpp"
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
@@ -19,9 +18,8 @@ class SC_Error_analyzer : public sc_core::sc_module, public Error_analyzer_inter
 	SC_HAS_PROCESS(SC_Error_analyzer);
 	
 public:
-	tlm_utils::simple_target_socket   <SC_Error_analyzer> socket_in_source;
-	tlm_utils::simple_target_socket   <SC_Error_analyzer> socket_in_decoder;
-	tlm_utils::simple_initiator_socket<SC_Error_analyzer> socket_out;
+	tlm_utils::simple_target_socket<SC_Error_analyzer> socket_in_source;
+	tlm_utils::simple_target_socket<SC_Error_analyzer> socket_in_decoder;
 
 private:
 	bool sockets_binded;
@@ -33,7 +31,6 @@ public:
 	  Error_analyzer_interface<B>(K, N, n_frames),
 	  socket_in_source ("socket_in_source_SC_Error_analyzer"),
 	  socket_in_decoder("socket_in_decoder_SC_Error_analyzer"),
-	  socket_out       ("socket_out_SC_Error_analyzer"),
 	  sockets_binded(false),
 	  U_K(0),
 	  V_K(0)
@@ -99,15 +96,8 @@ private:
 
 		this->check_errors(U_K, V_K);
 
-		// if (this->fe_limit_achieved())
-		// 	sc_stop();
-
-		tlm::tlm_generic_payload payload;
-		payload.set_data_ptr((unsigned char*)V_K.data());
-		payload.set_data_length(V_K.size() * sizeof(B));
-
-		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out->b_transport(payload, zero_time);
+		if (this->fe_limit_achieved())
+			sc_core::sc_stop();
 	}
 };
 

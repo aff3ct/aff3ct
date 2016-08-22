@@ -9,7 +9,6 @@
 #include <tlm>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "../Tools/Frame_trace/Frame_trace.hpp"
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
@@ -64,7 +63,7 @@ private:
 			sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
 			socket_out->b_transport(payload, zero_time);
 
-			sc_core::wait(1, sc_core::SC_MS);
+			sc_core::wait(0, sc_core::SC_MS);
 		}
 	}
 };

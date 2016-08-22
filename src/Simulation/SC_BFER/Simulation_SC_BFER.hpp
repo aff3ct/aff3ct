@@ -23,6 +23,9 @@
 #include "../../Tools/params.h"
 #include "../../Tools/Threads/Barrier.hpp"
 
+#include "../../Tools/SystemC/SC_Debug.hpp"
+#include "../../Tools/SystemC/SC_Duplicator.hpp"
+
 template <typename B, typename R, typename Q>
 class Simulation_SC_BFER : public Simulation
 {
@@ -54,6 +57,11 @@ protected:
 	SC_Error_analyzer<B> *analyzer;
 	Terminal             *terminal;
 
+	SC_Duplicator<B> *duplicator;
+	SC_Debug<B> *dbg_B[5];
+	SC_Debug<R> *dbg_R[3];
+	SC_Debug<Q> *dbg_Q[2];
+
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
@@ -75,12 +83,12 @@ public:
 	void launch();
 
 private:
-	void Monte_Carlo_method       ();
+	void launch_simulation        ();
 	void build_communication_chain();
 	void bind_sockets             ();
 	void bind_sockets_debug       ();
-	void simulation_loop          ();
-	void simulation_loop_debug    ();
+
+	static void terminal_temp_report(Simulation_SC_BFER<B,R,Q> *simu);
 
 protected:
 	virtual void               release_objects  ();

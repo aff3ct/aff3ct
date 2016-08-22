@@ -10,7 +10,6 @@
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "../Tools/Frame_trace/Frame_trace.hpp"
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>

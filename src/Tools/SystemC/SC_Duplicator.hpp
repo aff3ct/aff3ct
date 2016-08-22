@@ -10,8 +10,6 @@
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "../Frame_trace/Frame_trace.hpp"
-
 using namespace sc_core;
 
 template <typename T>

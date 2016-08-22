@@ -23,7 +23,9 @@ public:
 	              const Error_analyzer<B> &err_analyzer,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	              const std::chrono::nanoseconds &d_decod_total,
-	              const bool use_only_decoder_time_thr = false);
+	              const std::chrono::nanoseconds &d_store_total,
+	              const bool use_only_decoder_time_thr = false,
+	              const std::string name = "Terminal_BFER");
 	virtual ~Terminal_BFER() {}
 
 	void legend      (std::ostream &stream = std::cout);

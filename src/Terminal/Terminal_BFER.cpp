@@ -12,8 +12,11 @@ Terminal_BFER<B,R>
                 const Error_analyzer<B> &err_analyzer,
                 const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
                 const std::chrono::nanoseconds &d_decod_total,
-                const bool use_only_decoder_time_thr)
-: snr(snr),
+                const std::chrono::nanoseconds &d_store_total,
+                const bool use_only_decoder_time_thr,
+                const std::string name)
+: Terminal(name.c_str()),
+  snr(snr),
   err_analyzer(err_analyzer),
   t_snr(t_snr),
   d_decod_total(d_decod_total),

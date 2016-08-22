@@ -28,7 +28,8 @@ public:
 	              const int& cur_t,
 	              const int& trials,
 	              double& I_A,
-	              double& I_E);
+	              double& I_E,
+	              const std::string name = "Terminal_EXIT");
 
 	virtual ~Terminal_EXIT() {}
 

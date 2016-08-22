@@ -4,7 +4,7 @@
 class Terminal
 {
 public:
-	Terminal() {};
+	Terminal(const std::string name = "Terminal") {}
 	virtual ~Terminal() {}
 
 	virtual void legend      (std::ostream &stream) { };
