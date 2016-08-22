@@ -7,7 +7,7 @@ template <typename B, typename R>
 class Decoder_LDPC_BP_log_sum_product_naive : public Decoder_LDPC_BP_naive<B,R>
 {
 public:
-	Decoder_LDPC_BP_log_sum_product_naive(const int &N, const int &K, const int& n_ite, 
+	Decoder_LDPC_BP_log_sum_product_naive(const int &K, const int &N, const int& n_ite, 
 	                                      const std::vector<unsigned char> &n_variables_per_parity,
 	                                      const std::vector<unsigned char> &n_parities_per_variable,
 	                                      const std::vector<unsigned int > &transpose);

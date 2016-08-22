@@ -31,7 +31,7 @@ protected:
 	mipp::vector<R> V_to_C; // variable nodes to check    nodes messages
 
 public:
-	Decoder_LDPC_BP_naive(const int &N, const int &K, const int& n_ite, 
+	Decoder_LDPC_BP_naive(const int &K, const int &N, const int& n_ite, 
 	                      const std::vector<unsigned char> &n_variables_per_parity,
 	                      const std::vector<unsigned char> &n_parities_per_variable,
 	                      const std::vector<unsigned int > &transpose);
