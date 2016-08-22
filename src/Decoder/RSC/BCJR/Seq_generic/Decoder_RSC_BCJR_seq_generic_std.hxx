@@ -271,8 +271,8 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAP1,MAP2>
 ::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	assert(this->buffered_encoding);
-	assert(Y_N1.size() == 2 * this->K + this->tail_length());
-	assert(Y_N1.size() == Y_N2.size());
+	assert((int) Y_N1.size() == 2 * this->K + this->tail_length());
+	assert(Y_N1.size()       == Y_N2.size());
 
 	const R* sys          = Y_N1.data();
 	const R* par          = Y_N1.data() + 1 * this->K;

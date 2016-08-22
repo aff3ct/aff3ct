@@ -153,7 +153,7 @@ void Modulator_GSM<B,R,Q,MAX>
 	const auto off_BB_i = (int)(baseband.size() / 2);
 
 	const auto loop_size = X_N1.size() +6;
-	for (auto i = 0; i < loop_size; i++)
+	for (auto i = 0; i < (int)loop_size; i++)
 		for (auto j = 0; j < up_sample_factor; j++)
 		{
 			X_N2[off_X_r + i * up_sample_factor + j] = baseband[off_BB_r + j * n_output_symbs + this->parity_enc[i]];
