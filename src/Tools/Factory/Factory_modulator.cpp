@@ -70,11 +70,11 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 		if (mod_params.demod_max == "MAX")
 			modulator = new Modulator_GSM_TBLess<B,R,Q,max<Q>>(code_params.N + code_params.tail_length, sigma);
 		else if (mod_params.demod_max == "MAXL")
-			modulator = new Modulator_GSM<B,R,Q,max_linear<Q>>(code_params.N + code_params.tail_length, sigma);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max_linear<Q>>(code_params.N + code_params.tail_length, sigma);
 		else if (mod_params.demod_max == "MAXS")
-			modulator = new Modulator_GSM<B,R,Q,max_star<Q>>(code_params.N + code_params.tail_length, sigma);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max_star<Q>>(code_params.N + code_params.tail_length, sigma);
 		else if (mod_params.demod_max == "MAXSS")
-			modulator = new Modulator_GSM<B,R,Q,max_star_safe<Q>>(code_params.N + code_params.tail_length, sigma);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max_star_safe<Q>>(code_params.N + code_params.tail_length, sigma);
 	}
 
 	return modulator;
