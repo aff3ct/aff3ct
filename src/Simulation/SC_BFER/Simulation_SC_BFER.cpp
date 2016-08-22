@@ -194,14 +194,15 @@ void Simulation_SC_BFER<B,R,Q>
 	this->analyzer  = this->build_analyzer (); check_errors(this->analyzer , "Error_analyzer<B,R>");
 
 	// registering of the sockets in the modules (allocate the buffers)
-	this->crc      ->register_sockets();
-	this->encoder  ->register_sockets();
-	this->puncturer->register_sockets();
-	this->modulator->register_sockets();
-	this->channel  ->register_sockets();
-	this->quantizer->register_sockets();
-	this->decoder  ->register_sockets();
-	this->analyzer ->register_sockets();
+	this->source   ->create_sc_sockets();
+	this->crc      ->create_sc_sockets();
+	this->encoder  ->create_sc_sockets();
+	this->puncturer->create_sc_sockets();
+	this->modulator->create_sc_sockets();
+	this->channel  ->create_sc_sockets();
+	this->quantizer->create_sc_sockets();
+	this->decoder  ->create_sc_sockets();
+	this->analyzer ->create_sc_sockets();
 
 	// get the real number of frames per threads (from the decoder)
 	this->n_frames = this->decoder->get_n_frames();
@@ -225,36 +226,36 @@ template <typename B, typename R, typename Q>
 void Simulation_SC_BFER<B,R,Q>
 ::bind_sockets()
 {
-	this->source    ->socket_out        (this->duplicator->socket_in        );
-	this->duplicator->socket_out1       (this->analyzer  ->socket_in_source );
-	this->duplicator->socket_out2       (this->crc       ->socket_in        );
-	this->crc       ->socket_out        (this->encoder   ->socket_in        );
-	this->encoder   ->socket_out        (this->puncturer ->socket_in_punct  );
-	this->puncturer ->socket_out_punct  (this->modulator ->socket_in_mod    );
-	this->modulator ->socket_out_mod    (this->channel   ->socket_in        );
-	this->channel   ->socket_out        (this->modulator ->socket_in_demod  );
-	this->modulator ->socket_out_demod  (this->quantizer ->socket_in        );
-	this->quantizer ->socket_out        (this->puncturer ->socket_in_depunct);
-	this->puncturer ->socket_out_depunct(this->decoder   ->socket_in        );
-	this->decoder   ->socket_out        (this->analyzer  ->socket_in_decoder);
+	this->source    ->sockets->out        (this->duplicator->socket_in          );
+	this->duplicator->socket_out1         (this->analyzer  ->sockets->in_source );
+	this->duplicator->socket_out2         (this->crc       ->sockets->in        );
+	this->crc       ->sockets->out        (this->encoder   ->sockets->in        );
+	this->encoder   ->sockets->out        (this->puncturer ->sockets->in_punct  );
+	this->puncturer ->sockets->out_punct  (this->modulator ->sockets->in_mod    );
+	this->modulator ->sockets->out_mod    (this->channel   ->sockets->in        );
+	this->channel   ->sockets->out        (this->modulator ->sockets->in_demod  );
+	this->modulator ->sockets->out_demod  (this->quantizer ->sockets->in        );
+	this->quantizer ->sockets->out        (this->puncturer ->sockets->in_depunct);
+	this->puncturer ->sockets->out_depunct(this->decoder   ->sockets->in        );
+	this->decoder   ->sockets->out        (this->analyzer  ->sockets->in_decoder);
 }
 
 template <typename B, typename R, typename Q>
 void Simulation_SC_BFER<B,R,Q>
 ::bind_sockets_debug()
 {
-	this->source    ->socket_out        (this->dbg_B[0]->socket_in); this->dbg_B[0]->socket_out (duplicator     ->socket_in        );
-	this->duplicator                                                               ->socket_out1(this->analyzer ->socket_in_source );
-	this->duplicator                                                               ->socket_out2(this->crc      ->socket_in        );
-	this->crc       ->socket_out        (this->dbg_B[1]->socket_in); this->dbg_B[1]->socket_out (this->encoder  ->socket_in        );
-	this->encoder   ->socket_out        (this->dbg_B[2]->socket_in); this->dbg_B[2]->socket_out (this->puncturer->socket_in_punct  );
-	this->puncturer ->socket_out_punct  (this->dbg_B[3]->socket_in); this->dbg_B[3]->socket_out (this->modulator->socket_in_mod    );
-	this->modulator ->socket_out_mod    (this->dbg_R[0]->socket_in); this->dbg_R[0]->socket_out (this->channel  ->socket_in        );
-	this->channel   ->socket_out        (this->dbg_R[1]->socket_in); this->dbg_R[1]->socket_out (this->modulator->socket_in_demod  );
-	this->modulator ->socket_out_demod  (this->dbg_R[2]->socket_in); this->dbg_R[2]->socket_out (this->quantizer->socket_in        );
-	this->quantizer ->socket_out        (this->dbg_Q[0]->socket_in); this->dbg_Q[0]->socket_out (this->puncturer->socket_in_depunct);
-	this->puncturer ->socket_out_depunct(this->dbg_Q[1]->socket_in); this->dbg_Q[1]->socket_out (this->decoder  ->socket_in        );
-	this->decoder   ->socket_out        (this->dbg_B[4]->socket_in); this->dbg_B[4]->socket_out (this->analyzer ->socket_in_decoder);
+	this->source    ->sockets->out        (this->dbg_B[0]->socket_in); this->dbg_B[0]->socket_out (duplicator     ->socket_in          );
+	this->duplicator                                                                 ->socket_out1(this->analyzer ->sockets->in_source );
+	this->duplicator                                                                 ->socket_out2(this->crc      ->sockets->in        );
+	this->crc       ->sockets->out        (this->dbg_B[1]->socket_in); this->dbg_B[1]->socket_out (this->encoder  ->sockets->in        );
+	this->encoder   ->sockets->out        (this->dbg_B[2]->socket_in); this->dbg_B[2]->socket_out (this->puncturer->sockets->in_punct  );
+	this->puncturer ->sockets->out_punct  (this->dbg_B[3]->socket_in); this->dbg_B[3]->socket_out (this->modulator->sockets->in_mod    );
+	this->modulator ->sockets->out_mod    (this->dbg_R[0]->socket_in); this->dbg_R[0]->socket_out (this->channel  ->sockets->in        );
+	this->channel   ->sockets->out        (this->dbg_R[1]->socket_in); this->dbg_R[1]->socket_out (this->modulator->sockets->in_demod  );
+	this->modulator ->sockets->out_demod  (this->dbg_R[2]->socket_in); this->dbg_R[2]->socket_out (this->quantizer->sockets->in        );
+	this->quantizer ->sockets->out        (this->dbg_Q[0]->socket_in); this->dbg_Q[0]->socket_out (this->puncturer->sockets->in_depunct);
+	this->puncturer ->sockets->out_depunct(this->dbg_Q[1]->socket_in); this->dbg_Q[1]->socket_out (this->decoder  ->sockets->in        );
+	this->decoder   ->sockets->out        (this->dbg_B[4]->socket_in); this->dbg_B[4]->socket_out (this->analyzer ->sockets->in_decoder);
 }
 
 template <typename B, typename R, typename Q>
@@ -319,7 +320,7 @@ template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_SC_BFER<B,R,Q>
 ::build_puncturer()
 {
-	auto puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N);
+	auto puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N + code_params.tail_length);
 	check_errors(puncturer, "Puncturer<B,Q>");
 	return puncturer;
 }

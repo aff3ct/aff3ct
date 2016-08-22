@@ -13,76 +13,56 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename T>
-class SC_Interleaver : public sc_core::sc_module, public Interleaver_interface<T>
+class SC_Interleaver;
+
+template <typename T>
+class SC_Interleaver_sockets : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Interleaver);
-	
+	SC_HAS_PROCESS(SC_Interleaver_sockets);
+
 public:
-	tlm_utils::simple_target_socket   <SC_Interleaver> socket_in_interleave;
-	tlm_utils::simple_target_socket   <SC_Interleaver> socket_in_deinterleave;
-	tlm_utils::simple_initiator_socket<SC_Interleaver> socket_out;
+	tlm_utils::simple_target_socket   <SC_Interleaver_sockets> in_interleave;
+	tlm_utils::simple_target_socket   <SC_Interleaver_sockets> in_deinterleave;
+	tlm_utils::simple_initiator_socket<SC_Interleaver_sockets> out;
 
 private:
-	bool sockets_binded;
+	SC_Interleaver<T> &interleaver;
 	mipp::vector<char     > natural_vec_1, interleaved_vec_1;
 	mipp::vector<short    > natural_vec_2, interleaved_vec_2;
 	mipp::vector<int      > natural_vec_4, interleaved_vec_4;
 	mipp::vector<long long> natural_vec_8, interleaved_vec_8;
 
 public:
-	SC_Interleaver(const int size, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Interleaver")
-	: sc_module(name), 
-	  Interleaver_interface<T>(size, n_frames),
-	  socket_in_interleave  ("socket_in_interleave_SC_Interleaver"),
-	  socket_in_deinterleave("socket_in_deinterleave_SC_Interleaver"),
-	  socket_out            ("socket_out_SC_Interleaver"),
-	  sockets_binded(false),
-	  natural_vec_1(0), interleaved_vec_1(0),
-	  natural_vec_2(0), interleaved_vec_2(0),
-	  natural_vec_4(0), interleaved_vec_4(0),
-	  natural_vec_8(0), interleaved_vec_8(0)
+	SC_Interleaver_sockets(SC_Interleaver<T> &interleaver, const sc_core::sc_module_name name = "SC_Interleaver_sockets")
+	: sc_module(name), in_interleave("in_interleave"), in_deinterleave("in_deinterleave"), out("out"),
+	  interleaver(interleaver),
+	  natural_vec_1    (interleaver.size * interleaver.n_frames),
+	  interleaved_vec_1(interleaver.size * interleaver.n_frames),
+	  natural_vec_2    (interleaver.size * interleaver.n_frames),
+	  interleaved_vec_2(interleaver.size * interleaver.n_frames),
+	  natural_vec_4    (interleaver.size * interleaver.n_frames),
+	  interleaved_vec_4(interleaver.size * interleaver.n_frames),
+	  natural_vec_8    (interleaver.size * interleaver.n_frames),
+	  interleaved_vec_8(interleaver.size * interleaver.n_frames)
 	{
+		in_interleave  .register_b_transport(this, &SC_Interleaver_sockets::b_transport_interleave);
+		in_deinterleave.register_b_transport(this, &SC_Interleaver_sockets::b_transport_deinterleave);
 	}
 
-	virtual ~SC_Interleaver() {};
-
-	void register_sockets()
-	{
-		socket_in_interleave  .register_b_transport(this, &SC_Interleaver::b_transport_interleave);
-		socket_in_deinterleave.register_b_transport(this, &SC_Interleaver::b_transport_deinterleave);
-		sockets_binded = true;
-
-		this->resize_buffers();
-	}
-
-	bool socket_binded() { return sockets_binded; }
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		assert(n_frames > 0);
-		this->n_frames = n_frames;
-
-		if (sockets_binded)
-			this->resize_buffers();
-	}
-
-protected:
-	virtual void gen_lookup_tables() = 0; // to implement
-
-private:
 	void resize_buffers()
 	{
-		const int size = this->pi.size();
-		if ((int)natural_vec_1    .size() != size * this->n_frames) natural_vec_1    .resize(size * this->n_frames);
-		if ((int)natural_vec_2    .size() != size * this->n_frames) natural_vec_2    .resize(size * this->n_frames);
-		if ((int)natural_vec_4    .size() != size * this->n_frames) natural_vec_4    .resize(size * this->n_frames);
-		if ((int)natural_vec_8    .size() != size * this->n_frames) natural_vec_8    .resize(size * this->n_frames);
-		if ((int)interleaved_vec_1.size() != size * this->n_frames) interleaved_vec_1.resize(size * this->n_frames);
-		if ((int)interleaved_vec_2.size() != size * this->n_frames) interleaved_vec_2.resize(size * this->n_frames);
-		if ((int)interleaved_vec_4.size() != size * this->n_frames) interleaved_vec_4.resize(size * this->n_frames);
-		if ((int)interleaved_vec_8.size() != size * this->n_frames) interleaved_vec_8.resize(size * this->n_frames);
+		const int size = interleaver.pi.size();
+		if ((int)natural_vec_1    .size() != size * interleaver.n_frames) natural_vec_1    .resize(size * interleaver.n_frames);
+		if ((int)natural_vec_2    .size() != size * interleaver.n_frames) natural_vec_2    .resize(size * interleaver.n_frames);
+		if ((int)natural_vec_4    .size() != size * interleaver.n_frames) natural_vec_4    .resize(size * interleaver.n_frames);
+		if ((int)natural_vec_8    .size() != size * interleaver.n_frames) natural_vec_8    .resize(size * interleaver.n_frames);
+		if ((int)interleaved_vec_1.size() != size * interleaver.n_frames) interleaved_vec_1.resize(size * interleaver.n_frames);
+		if ((int)interleaved_vec_2.size() != size * interleaver.n_frames) interleaved_vec_2.resize(size * interleaver.n_frames);
+		if ((int)interleaved_vec_4.size() != size * interleaver.n_frames) interleaved_vec_4.resize(size * interleaver.n_frames);
+		if ((int)interleaved_vec_8.size() != size * interleaver.n_frames) interleaved_vec_8.resize(size * interleaver.n_frames);
 	}
 
+private:
 	void b_transport_interleave(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert(trans.get_data_length() % (this->pi.size() * this->n_frames) == 0);
@@ -111,14 +91,14 @@ private:
 		const D* buffer_in = (D*)trans.get_data_ptr();
 		std::copy(buffer_in, buffer_in + natural_vec.size(), natural_vec.begin());
 
-		this->interleave(natural_vec, interleaved_vec);
+		interleaver.interleave(natural_vec, interleaved_vec);
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)interleaved_vec.data());
 		payload.set_data_length(interleaved_vec.size() * sizeof(D));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out->b_transport(payload, zero_time);
+		out->b_transport(payload, zero_time);
 	}
 
 	void b_transport_deinterleave(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
@@ -149,15 +129,49 @@ private:
 		const D* buffer_in = (D*)trans.get_data_ptr();
 		std::copy(buffer_in, buffer_in + interleaved_vec.size(), interleaved_vec.begin());
 
-		this->deinterleave(interleaved_vec, natural_vec);
+		interleaver.deinterleave(interleaved_vec, natural_vec);
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)natural_vec.data());
 		payload.set_data_length(natural_vec.size() * sizeof(D));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out->b_transport(payload, zero_time);
+		out->b_transport(payload, zero_time);
 	}
+};
+
+template <typename T>
+class SC_Interleaver : public Interleaver_interface<T>
+{
+	friend SC_Interleaver_sockets<T>;
+
+private:
+	std::string name;
+
+public:
+	SC_Interleaver_sockets<T> *sockets;
+
+public:
+	SC_Interleaver(const int size, const int n_frames = 1, const std::string name = "SC_Interleaver")
+	: Interleaver_interface<T>(size, n_frames, name), name(name), sockets(nullptr) {}
+
+	virtual ~SC_Interleaver() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } }
+
+	virtual void set_n_frames(const int n_frames)
+	{
+		Interleaver_interface<T>::set_n_frames(n_frames);
+
+		if (sockets != nullptr)
+			sockets->resize_buffers();
+	}
+
+	void create_sc_sockets()
+	{
+		this->sockets = new SC_Interleaver_sockets<T>(*this, name.c_str());
+	}
+
+protected:
+	virtual void gen_lookup_tables() = 0;
 };
 
 template <typename T>

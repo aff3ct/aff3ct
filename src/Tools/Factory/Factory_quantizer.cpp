@@ -13,19 +13,19 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 
 	// build the quantizer
 	if (typeid(R) == typeid(Q))
-		quantizer = new Quantizer_NO<R,Q>(code_params.N);
+		quantizer = new Quantizer_NO<R,Q>(code_params.N + code_params.tail_length);
 	else
 	{
 		if (chan_params.quantizer_type == "STD")
-			quantizer = new Quantizer_standard<R,Q>(code_params.N, chan_params.quant_point_pos, chan_params.quant_n_bits);
+			quantizer = new Quantizer_standard<R,Q>(code_params.N + code_params.tail_length, chan_params.quant_point_pos, chan_params.quant_n_bits);
 		else if (chan_params.quantizer_type == "STD_FAST")
-			quantizer = new Quantizer_fast<R,Q>(code_params.N, chan_params.quant_point_pos, chan_params.quant_n_bits);
+			quantizer = new Quantizer_fast<R,Q>(code_params.N + code_params.tail_length, chan_params.quant_point_pos, chan_params.quant_n_bits);
 		else if (chan_params.quantizer_type == "TRICKY")
 		{
 			if (chan_params.quant_min_max == 0.f)
-				quantizer = new Quantizer_tricky<R,Q>(code_params.N, (short)chan_params.quant_n_bits, sigma); // auto mode
+				quantizer = new Quantizer_tricky<R,Q>(code_params.N + code_params.tail_length, (short)chan_params.quant_n_bits, sigma); // auto mode
 			else
-				quantizer = new Quantizer_tricky<R,Q>(code_params.N, (R)chan_params.quant_min_max, chan_params.quant_n_bits, sigma);
+				quantizer = new Quantizer_tricky<R,Q>(code_params.N + code_params.tail_length, (R)chan_params.quant_min_max, chan_params.quant_n_bits, sigma);
 		}
 	}
 

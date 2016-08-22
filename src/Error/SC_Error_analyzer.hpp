@@ -13,42 +13,78 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B>
-class SC_Error_analyzer : public sc_core::sc_module, public Error_analyzer_interface<B>
+class SC_Error_analyzer;
+
+template <typename B>
+class SC_Error_analyzer_sockets : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Error_analyzer);
-	
+	SC_HAS_PROCESS(SC_Error_analyzer_sockets);
+
 public:
-	tlm_utils::simple_target_socket<SC_Error_analyzer> socket_in_source;
-	tlm_utils::simple_target_socket<SC_Error_analyzer> socket_in_decoder;
+	tlm_utils::simple_target_socket<SC_Error_analyzer_sockets> in_source;
+	tlm_utils::simple_target_socket<SC_Error_analyzer_sockets> in_decoder;
 
 private:
-	bool sockets_binded;
-	mipp::vector<B> U_K, V_K;
+	SC_Error_analyzer<B> &analyzer;
+	mipp::vector<B> V_K;
+	mipp::vector<B> U_K;
 
 public:
-	SC_Error_analyzer(const int K, const int N, const int n_frames = 1, const sc_core::sc_module_name name = "SC_Error_analyzer")
-	: sc_module(name),
-	  Error_analyzer_interface<B>(K, N, n_frames),
-	  socket_in_source ("socket_in_source_SC_Error_analyzer"),
-	  socket_in_decoder("socket_in_decoder_SC_Error_analyzer"),
-	  sockets_binded(false),
-	  U_K(0),
-	  V_K(0)
+	SC_Error_analyzer_sockets(SC_Error_analyzer<B> &analyzer, const sc_core::sc_module_name name = "SC_Error_analyzer_sockets")
+	: sc_module(name), in_source("in_source"), in_decoder("in_decoder"),
+	  analyzer(analyzer),
+	  V_K(analyzer.K * analyzer.n_frames),
+	  U_K(analyzer.K * analyzer.n_frames)
 	{
+		in_source .register_b_transport(this, &SC_Error_analyzer_sockets::b_transport_source);
+		in_decoder.register_b_transport(this, &SC_Error_analyzer_sockets::b_transport_decoder);
 	}
 
-	virtual ~SC_Error_analyzer() {};
-
-	void register_sockets()
+	void resize_buffers()
 	{
-		socket_in_source .register_b_transport(this, &SC_Error_analyzer::b_transport_source);
-		socket_in_decoder.register_b_transport(this, &SC_Error_analyzer::b_transport_decoder);
-		sockets_binded = true;
-
-		this->resize_buffers();
+		if ((int)U_K.size() != analyzer.K * analyzer.n_frames) U_K.resize(analyzer.K * analyzer.n_frames);
+		if ((int)V_K.size() != analyzer.K * analyzer.n_frames) V_K.resize(analyzer.K * analyzer.n_frames);
 	}
 
-	bool socket_binded() { return sockets_binded; }
+private:
+	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+	{
+		assert((trans.get_data_length() / sizeof(B)) == U_K.size());
+
+		const B* buffer_in = (B*)trans.get_data_ptr();
+		std::copy(buffer_in, buffer_in + U_K.size(), U_K.begin());
+	}
+
+	void b_transport_decoder(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+	{
+		assert((trans.get_data_length() / sizeof(B)) == V_K.size());
+
+		const B* buffer_in = (B*)trans.get_data_ptr();
+		std::copy(buffer_in, buffer_in + V_K.size(), V_K.begin());
+
+		analyzer.check_errors(U_K, V_K);
+
+		if (analyzer.fe_limit_achieved())
+			sc_core::sc_stop();
+	}
+};
+
+template <typename B>
+class SC_Error_analyzer : public Error_analyzer_interface<B>
+{
+	friend SC_Error_analyzer_sockets<B>;
+
+private:
+	std::string name;
+
+public:
+	SC_Error_analyzer_sockets<B> *sockets;
+
+public:
+	SC_Error_analyzer(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Error_analyzer")
+	: Error_analyzer_interface<B>(K, N, n_frames, name), name(name), sockets(nullptr) {}
+
+	virtual ~SC_Error_analyzer() {if (sockets != nullptr) { delete sockets; sockets = nullptr; }};
 
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
 
@@ -65,39 +101,15 @@ public:
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		assert(n_frames > 0);
-		this->n_frames = n_frames;
+		Error_analyzer_interface<B>::set_n_frames(n_frames);
 
-		if (sockets_binded)
-			this->resize_buffers();
+		if (sockets != nullptr)
+			sockets->resize_buffers();
 	}
 
-private:
-	void resize_buffers()
+	void create_sc_sockets()
 	{
-		if ((int)U_K.size() != this->K * this->n_frames) this->U_K.resize(this->K * this->n_frames);
-		if ((int)V_K.size() != this->K * this->n_frames) this->V_K.resize(this->K * this->n_frames);
-	}
-
-	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
-	{
-		assert((trans.get_data_length() / sizeof(B)) == U_K.size());
-
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + U_K.size(), U_K.begin());
-	}
-
-	void b_transport_decoder(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
-	{
-		assert((trans.get_data_length() / sizeof(B)) == V_K.size());
-
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + V_K.size(), V_K.begin());
-
-		this->check_errors(U_K, V_K);
-
-		if (this->fe_limit_achieved())
-			sc_core::sc_stop();
+		this->sockets = new SC_Error_analyzer_sockets<B>(*this, name.c_str());
 	}
 };
 
