@@ -128,9 +128,11 @@ template <typename Q, proto_max<Q> MAX>
 void Modulator_GSM_BCJR<Q,MAX>
 ::LLR_to_logsymb_proba(const mipp::vector<Q> &Ldec_N)
 {
+	assert(Ldec_N.size() <= this->symb_apriori_prob.size() / m_order);
+
 	std::fill(this->symb_apriori_prob.begin(), this->symb_apriori_prob.end(), 0);
 
-	for (auto i = 0; i < (int) this->symb_apriori_prob.size() / m_order; i++)
+	for (auto i = 0; i < (int)Ldec_N.size(); i++)
 		for (auto j = 0; j < this->m_order; j++)
 			for (auto k = 0; k < this->n_bits_per_symb; k++)
 			{
