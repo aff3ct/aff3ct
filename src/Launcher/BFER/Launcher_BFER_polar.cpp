@@ -2,11 +2,7 @@
 #include <cassert>
 #include <cmath>
 
-#ifdef SYSTEMC
-#include "../../Simulation/SC_BFER/Polar/Simulation_SC_BFER_polar.hpp"
-#else
 #include "../../Simulation/BFER/Polar/Simulation_polar.hpp"
-#endif
 #include "../../CRC/CRC_polynomial.hpp"
 #include "../../Tools/bash_tools.h"
 
@@ -135,21 +131,12 @@ void Launcher_BFER_polar<B,R,Q>
 		this->code_params.K += CRC_polynomial<B>::size(this->code_params.crc);
 	}
 
-#ifdef SYSTEMC
-	this->simu = new Simulation_SC_BFER_polar<B,R,Q>(this->simu_params, 
-	                                                 this->code_params, 
-	                                                 this->enco_params, 
-	                                                 this->mod_params,
-	                                                 this->chan_params, 
-	                                                 this->deco_params);
-#else
 	this->simu = new Simulation_polar<B,R,Q>(this->simu_params, 
 	                                         this->code_params, 
 	                                         this->enco_params, 
 	                                         this->mod_params,
 	                                         this->chan_params, 
 	                                         this->deco_params);
-#endif
 }
 
 // ==================================================================================== explicit template instantiation 

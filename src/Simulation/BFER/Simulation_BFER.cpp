@@ -1,3 +1,5 @@
+#ifndef SYSTEMC
+
 #include <string>
 #include <vector>
 #include <chrono>
@@ -975,3 +977,5 @@ template class Simulation_BFER<B_64,R_64,Q_64>;
 template class Simulation_BFER<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+
+#endif /* NOT SYSTEMC */

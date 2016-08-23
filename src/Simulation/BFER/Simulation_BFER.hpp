@@ -1,3 +1,7 @@
+#ifdef SYSTEMC
+#include "Simulation_SC_BFER.hpp"
+#else
+
 #ifndef SIMULATION_BFER_HPP_
 #define SIMULATION_BFER_HPP_
 
@@ -161,3 +165,5 @@ protected:
 };
 
 #endif /* SIMULATION_BFER_HPP_ */
+
+#endif /* SYSTEMC */
