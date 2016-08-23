@@ -6,9 +6,9 @@ inline void cgemm(const int M, const int N, const int K,
                   const mipp::vector<T> &tB, 
                         mipp::vector<T> &tC)
 {
-	assert( A.size() == (M * K * 2));
-	assert(tB.size() == (K * N * 2));
-	assert(tC.size() == (M * N * 2));
+	assert( A.size() == unsigned(M * K * 2));
+	assert(tB.size() == unsigned(K * N * 2));
+	assert(tC.size() == unsigned(M * N * 2));
 
 	const T*  A_real =  A.data();
 	const T*  A_imag =  A.data() + ( A.size() >> 1);
@@ -40,9 +40,9 @@ inline void cgemm_r(const int M, const int N, const int K,
                     const mipp::vector<T> &tB, 
                           mipp::vector<T> &tC)
 {
-	assert( A.size() == unsigned (M * K * 2));
-	assert(tB.size() == unsigned (K * N * 2));
-	assert(tC.size() == unsigned (M * N * 1)); // because we only store the real part
+	assert( A.size() == unsigned(M * K * 2));
+	assert(tB.size() == unsigned(K * N * 2));
+	assert(tC.size() == unsigned(M * N * 1)); // because we only store the real part
 
 	const T*  A_real =  A.data();
 	const T*  A_imag =  A.data() + ( A.size() >> 1);
