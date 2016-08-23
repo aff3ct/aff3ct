@@ -1,9 +1,10 @@
 #include "Modulator_BPSK.hpp"
 
-template <typename B, typename R>
-Modulator_BPSK<B,R>
-::Modulator_BPSK(const int N, const R sigma, const int n_frames, const std::string name)
-: Modulator<B,R>(N, this->get_buffer_size(N), n_frames, name.c_str()), two_on_square_sigma((R)2.0 / (sigma * sigma))
+template <typename B, typename R, typename Q>
+Modulator_BPSK<B,R,Q>
+::Modulator_BPSK(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
+: Modulator<B,R,Q>(N, n_frames, name.c_str()),
+  disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 

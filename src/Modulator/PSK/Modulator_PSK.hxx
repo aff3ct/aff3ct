@@ -8,14 +8,19 @@
 /*
  * Constructor / Destructor
  */
-template <typename B, typename R, proto_max<R> MAX>
-Modulator_PSK<B,R,MAX>
-::Modulator_PSK(const int N, const int bits_per_symbol, const R sigma, const int n_frames, const std::string name)
-: Modulator<B,R> (N, this->get_buffer_size(N), n_frames, name.c_str()),
-  bits_per_symbol(bits_per_symbol     ),
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+Modulator_PSK<B,R,Q,MAX>
+::Modulator_PSK(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
+                const std::string name)
+: Modulator<B,R,Q>(N, 
+                   this->get_buffer_size_after_modulation(N),
+                   n_frames, 
+                   name.c_str()),
+  bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
-  sigma          (sigma               ),
-  constellation  (nbr_symbols         )
+  sigma          (sigma),
+  disable_sig2   (disable_sig2),
+  constellation  (nbr_symbols)
 {
 	mipp::vector<B> bits(this->bits_per_symbol);
 
@@ -28,20 +33,20 @@ Modulator_PSK<B,R,MAX>
 	}
 }
 
-template <typename B, typename R, proto_max<R> MAX>
-Modulator_PSK<B,R,MAX>
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+Modulator_PSK<B,R,Q,MAX>
 ::~Modulator_PSK()
 {
 }
 
 /*
- * int get_buffer_size(const int N)
+ * int get_buffer_size_after_modulation(const int N)
  * N = number of input bits
  * returns number of output symbols
  */
-template <typename B, typename R, proto_max<R> MAX>
-int Modulator_PSK<B,R,MAX>
-::get_buffer_size(const int N)
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+int Modulator_PSK<B,R,Q,MAX>
+::get_buffer_size_after_modulation(const int N)
 {
 	return std::ceil((float)N / (float)this->bits_per_symbol) * 2;
 }
@@ -49,8 +54,8 @@ int Modulator_PSK<B,R,MAX>
 /*
  * Mapping function
  */
-template <typename B, typename R, proto_max<R> MAX>
-std::complex<R> Modulator_PSK<B,R,MAX>
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+std::complex<R> Modulator_PSK<B,R,Q,MAX>
 ::bits_to_symbol(const B* bits) const
 {
 	auto bps = this->bits_per_symbol;
@@ -118,12 +123,12 @@ void Modulator_PSK<B,R,Q,MAX>
 
 	for (auto n = 0; n < size; n++)// boucle sur les LLRs
 	{
-		auto L0 = -std::numeric_limits<R>::infinity();
-		auto L1 = -std::numeric_limits<R>::infinity();
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
 		auto b  = n % this->bits_per_symbol; // position du bit
 		auto k  = n / this->bits_per_symbol; // position du symbole
 
-		auto complex_Yk = std::complex<R>(Y_N1[2*k], Y_N1[2*k+1]);
+		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
