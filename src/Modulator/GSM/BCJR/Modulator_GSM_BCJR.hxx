@@ -38,7 +38,7 @@ struct BCJR_normalize
 	static void apply(Q *metrics, const int &i, const int &n_states)
 	{
 		// normalization
-		auto norm_val = negative_inf<signed char>::get();
+		auto norm_val = negative_inf<Q>::get();
 		for (auto j = 0; j < n_states; j++)
 			norm_val = MAX(norm_val, metrics[j]);
 
