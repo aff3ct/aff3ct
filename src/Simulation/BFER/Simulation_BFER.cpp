@@ -329,10 +329,7 @@ void Simulation_BFER<B,R,Q>
 
 		// demodulation
 		auto t_demod = steady_clock::now();
-		if (simu->mod_params.disable_demodulation)
-			simu->Y_N3[tid] = simu->Y_N2[tid];
-		else
-			simu->modulator[tid]->demodulate(simu->Y_N2[tid], simu->Y_N3[tid]);
+		simu->modulator[tid]->demodulate(simu->Y_N2[tid], simu->Y_N3[tid]);
 		auto d_demod = steady_clock::now() - t_demod;
 
 		// make the quantization
@@ -570,10 +567,7 @@ void Simulation_BFER<B,R,Q>
 		// demodulation
 		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
 		auto t_demod = steady_clock::now();
-		if (simu->mod_params.disable_demodulation)
-			simu->Y_N3[0] = simu->Y_N2[0];
-		else
-			simu->modulator[0]->demodulate(simu->Y_N2[0], simu->Y_N3[0]);
+		simu->modulator[0]->demodulate(simu->Y_N2[0], simu->Y_N3[0]);
 		auto d_demod = steady_clock::now() - t_demod;
 
 		// display Y_N3

@@ -2,8 +2,8 @@
 
 template <typename B, typename R, typename Q>
 Modulator_BPSK<B,R,Q>
-::Modulator_BPSK(const R sigma)
-: two_on_square_sigma((R)2.0 / (sigma * sigma))
+::Modulator_BPSK(const R sigma, const bool disable_sig2)
+: disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 
@@ -29,9 +29,14 @@ void Modulator_BPSK<B,R,Q>
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
-	auto size = Y_N1.size();
-	for (unsigned i = 0; i < size; i++)
-		Y_N2[i] = Y_N1[i] * two_on_square_sigma;
+	if (disable_sig2)
+		Y_N2 = Y_N1;
+	else
+	{
+		auto size = Y_N1.size();
+		for (unsigned i = 0; i < size; i++)
+			Y_N2[i] = Y_N1[i] * two_on_square_sigma;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -42,8 +47,12 @@ void Modulator_BPSK<B,R,Q>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
 	auto size = Y_N1.size();
-	for (unsigned i = 0; i < size; i++)
-		Y_N3[i] = (Y_N1[i] * two_on_square_sigma) + Y_N2[i];
+	if (disable_sig2)
+		for (unsigned i = 0; i < size; i++)
+			Y_N3[i] = Y_N1[i] + Y_N2[i];
+	else
+		for (unsigned i = 0; i < size; i++)
+			Y_N3[i] = (Y_N1[i] * two_on_square_sigma) + Y_N2[i];
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -27,6 +27,7 @@ private:
 
 protected:
 	const R sigma;
+	const bool disable_sig2;
 	const int n_output_symbs   = 16;
 	const int up_sample_factor = 5;
 
@@ -40,7 +41,7 @@ protected:
 	Modulator_GSM_BCJR<Q,MAX> BCJR;
 
 public:
-	Modulator_GSM(int N, const R sigma);
+	Modulator_GSM(int N, const R sigma, const bool disable_sig2 = false);
 	virtual ~Modulator_GSM();
 
 	int get_buffer_size_after_modulation(const int N);

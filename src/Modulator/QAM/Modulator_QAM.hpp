@@ -16,10 +16,11 @@ private:
 	const int nbr_symbols;
 	const R sigma;
 	const R sqrt_es;
+	const bool disable_sig2;
 	mipp::vector<std::complex<R>> constellation;
 
 public:
-	Modulator_QAM(const int bits_per_symbol = 2, const R sigma = 1.0);
+	Modulator_QAM(const int bits_per_symbol = 2, const R sigma = 1.0, const bool disable_sig2 = false);
 	virtual ~Modulator_QAM();
 
 	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);

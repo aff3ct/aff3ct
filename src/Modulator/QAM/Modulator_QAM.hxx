@@ -8,13 +8,14 @@
 /*
  * Constructor / Destructor
  */
-template <typename B, typename R, proto_max<R> MAX>
-Modulator_QAM<B,R,MAX>
-::Modulator_QAM(const int bits_per_symbol, const R sigma)
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+Modulator_QAM<B,R,Q,MAX>
+::Modulator_QAM(const int bits_per_symbol, const R sigma, const bool disable_sig2)
 : bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
   sqrt_es        (std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),
+  disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
 	mipp::vector<B> bits(this->bits_per_symbol);
@@ -115,8 +116,11 @@ template <typename B,typename R, typename Q, proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	auto size   = (int)Y_N2.size();
-	auto sigma2 = this->sigma * this->sigma;
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	
+	auto size       = (int)Y_N2.size();
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
 	{
@@ -129,10 +133,10 @@ void Modulator_QAM<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
-				L0 = MAX(L0, -std::norm(complex_Yk - this->constellation[j]) / sigma2);
+				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j])));
 			else
-				L1 = MAX(L1, -std::norm(complex_Yk - this->constellation[j]) / sigma2);
+				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j])));
 
-		Y_N2[n] = L0 - L1;
+		Y_N2[n] = (L0 - L1) * inv_sigma2;
 	}
 }

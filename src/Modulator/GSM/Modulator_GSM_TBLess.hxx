@@ -12,8 +12,8 @@
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM_TBLess<B,R,Q,MAX>
-::Modulator_GSM_TBLess(int N, const R sigma)
-: Modulator_GSM<B,R,Q,MAX>(N -6, sigma)
+::Modulator_GSM_TBLess(int N, const R sigma, const bool disable_sig2)
+: Modulator_GSM<B,R,Q,MAX>(N -6, sigma, disable_sig2)
 {
 	// resize buffers from the modulation/demodulation without tail bits
 	this->parity_enc.resize(N +6);

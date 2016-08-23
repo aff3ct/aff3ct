@@ -10,10 +10,11 @@ template <typename B, typename R, typename Q>
 class Modulator_BPSK : public Modulator<B,R,Q>
 {
 private:
+	const bool disable_sig2;
 	const R two_on_square_sigma;
 
 public:
-	Modulator_BPSK(const R sigma);
+	Modulator_BPSK(const R sigma, const bool disable_sig2 = false);
 	virtual ~Modulator_BPSK();
 
 	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);

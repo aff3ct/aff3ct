@@ -14,7 +14,7 @@ class Modulator_GSM_TBLess : public Modulator_GSM<B,R,Q,MAX>
 {
 	
 public:
-	Modulator_GSM_TBLess(int N, const R sigma);
+	Modulator_GSM_TBLess(int N, const R sigma, const bool disable_sig2 = false);
 	virtual ~Modulator_GSM_TBLess();
 
 	void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);

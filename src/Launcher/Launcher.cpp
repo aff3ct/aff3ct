@@ -41,7 +41,7 @@ Launcher<B,R,Q>
 	else
 		chan_params.quantizer_type  = "STD_FAST";
 
-	mod_params.disable_demodulation = false;
+	mod_params.disable_demod_sig2   = false;
 }
 
 template <typename B, typename R, typename Q>
@@ -55,44 +55,44 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::build_args()
 {
-	req_args["K"              ] = "n_bits";
-	doc_args["K"              ] = "useful number of bit transmitted (only information bits).";
-	req_args["N"              ] = "n_bits";
-	doc_args["N"              ] = "total number of bit transmitted (includes parity bits).";
-	req_args["snr-min"        ] = "snr_min_value";
-	doc_args["snr-min"        ] = "minimal signal/noise ratio to simulate.";
-	req_args["snr-max"        ] = "snr_max_value";
-	doc_args["snr-max"        ] = "maximal signal/noise ratio to simulate.";
-	req_args["code-type"      ] = "code-type";
-	doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
-	opt_args["mod-type"       ] = "mod_type";
-	doc_args["mod-type"       ] = "type of the modulation to use in the simulation (ex: BPSK, BPSK_FAST, PSK, PAM, QAM).";
-	opt_args["mod-bps"        ] = "bps_number";
-	doc_args["mod-bps"        ] = "select the number of bits per symbol (default is 1).";
-	doc_args["mod-ups"        ] = "select the symbol upsample factor (default is 1).";
-	opt_args["mod-ups"        ] = "ups_factor";
-	opt_args["demod-max"      ] = "max_type";
-	doc_args["demod-max"      ] = "select the type of the max operation to use in the demodulation (MAX, MAXL, MAXS or MAXSS).";
-	opt_args["simu-type"      ] = "name";
-	doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
+	req_args["K"                 ] = "n_bits";
+	doc_args["K"                 ] = "useful number of bit transmitted (only information bits).";
+	req_args["N"                 ] = "n_bits";
+	doc_args["N"                 ] = "total number of bit transmitted (includes parity bits).";
+	req_args["snr-min"           ] = "snr_min_value";
+	doc_args["snr-min"           ] = "minimal signal/noise ratio to simulate.";
+	req_args["snr-max"           ] = "snr_max_value";
+	doc_args["snr-max"           ] = "maximal signal/noise ratio to simulate.";
+	req_args["code-type"         ] = "code-type";
+	doc_args["code-type"         ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
+	opt_args["mod-type"          ] = "mod_type";
+	doc_args["mod-type"          ] = "type of the modulation to use in the simulation (ex: BPSK, BPSK_FAST, PSK, PAM, QAM).";
+	opt_args["mod-bps"           ] = "bps_number";
+	doc_args["mod-bps"           ] = "select the number of bits per symbol (default is 1).";
+	doc_args["mod-ups"           ] = "select the symbol upsample factor (default is 1).";
+	opt_args["mod-ups"           ] = "ups_factor";
+	opt_args["demod-max"         ] = "max_type";
+	doc_args["demod-max"         ] = "select the type of the max operation to use in the demodulation (MAX, MAXL, MAXS or MAXSS).";
+	opt_args["simu-type"         ] = "name";
+	doc_args["simu-type"         ] = "select the type of simulation to launch (default is BFER).";
 #ifdef MULTI_PREC
-	opt_args["prec"           ] = "prec";
-	doc_args["prec"           ] = "the simulation precision in bit (ex: 8, 16, 32 or 64).";
+	opt_args["prec"              ] = "prec";
+	doc_args["prec"              ] = "the simulation precision in bit (ex: 8, 16, 32 or 64).";
 #endif
-	opt_args["snr-step"       ] = "snr_step_value";
-	doc_args["snr-step"       ] = "signal/noise ratio step between each simulation.";
-	opt_args["disable-display"] = "";
-	doc_args["disable-display"] = "disable reporting for each iteration.";
-	opt_args["stop-time"      ] = "time_value";
-	doc_args["stop-time"      ] = "time in sec after what the current SNR iteration should stop.";
-	opt_args["display-freq"   ] = "freq_value";
-	doc_args["display-freq"   ] = "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).";
-	opt_args["n-threads"      ] = "n_threads";
-	doc_args["n-threads"      ] = "enable multi-threaded mode and specify the number of threads.";
-	opt_args["code-gen-method"] = "type";
-	doc_args["code-gen-method"] = "method used to generate the codewords (RAND, RAND_FAST, AZCW).";
-	opt_args["domain"         ] = "LR_or_LLR";
-	doc_args["domain"         ] = "choose the domain in which you want to compute (LR or LLR).";
+	opt_args["snr-step"          ] = "snr_step_value";
+	doc_args["snr-step"          ] = "signal/noise ratio step between each simulation.";
+	opt_args["disable-display"   ] = "";
+	doc_args["disable-display"   ] = "disable reporting for each iteration.";
+	opt_args["stop-time"         ] = "time_value";
+	doc_args["stop-time"         ] = "time in sec after what the current SNR iteration should stop.";
+	opt_args["display-freq"      ] = "freq_value";
+	doc_args["display-freq"      ] = "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh).";
+	opt_args["n-threads"         ] = "n_threads";
+	doc_args["n-threads"         ] = "enable multi-threaded mode and specify the number of threads.";
+	opt_args["code-gen-method"   ] = "type";
+	doc_args["code-gen-method"   ] = "method used to generate the codewords (RAND, RAND_FAST, AZCW).";
+	opt_args["domain"            ] = "LR_or_LLR";
+	doc_args["domain"            ] = "choose the domain in which you want to compute (LR or LLR).";
 
 	std::string chan_avail = "ex: AWGN, AWGN_FAST";
 #ifdef CHANNEL_GSL
@@ -103,19 +103,19 @@ void Launcher<B,R,Q>
 #endif
 	chan_avail += ", ";
 
-	opt_args["channel-type"   ] = "chan_type";
-	doc_args["channel-type"   ] = "type of the channel to use in the simulation (" + chan_avail + "NO = disabled).";
-	opt_args["disable-demod"  ] = "";
-	doc_args["disable-demod"  ] = "turn off the demodulation (useful for BPSK modulation and min/sum decoders).";
-	opt_args["dec-algo"       ] = "alg_type";
-	doc_args["dec-algo"       ] = "select the algorithm you want to decode the codeword.";
-	opt_args["dec-implem"     ] = "impl_type";
-	doc_args["dec-implem"     ] = "select the implementation of the algorithm to decode (ex: NAIVE, STD, FAST, VERY_FAST).";
+	opt_args["channel-type"      ] = "chan_type";
+	doc_args["channel-type"      ] = "type of the channel to use in the simulation (" + chan_avail + "NO = disabled).";
+	opt_args["disable-demod-sig2"] = "";
+	doc_args["disable-demod-sig2"] = "turn off the division by sigma square in the demodulation.";
+	opt_args["dec-algo"          ] = "alg_type";
+	doc_args["dec-algo"          ] = "select the algorithm you want to decode the codeword.";
+	opt_args["dec-implem"        ] = "impl_type";
+	doc_args["dec-implem"        ] = "select the implementation of the algorithm to decode (ex: NAIVE, STD, FAST, VERY_FAST).";
 
-	opt_args["v"              ] = "";
-	doc_args["v"              ] = "print informations about the version of the code.";
-	opt_args["version"        ] = "";
-	doc_args["version"        ] = "print informations about the version of the code.";
+	opt_args["v"                 ] = "";
+	doc_args["v"                 ] = "print informations about the version of the code.";
+	opt_args["version"           ] = "";
+	doc_args["version"           ] = "print informations about the version of the code.";
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
@@ -154,24 +154,24 @@ void Launcher<B,R,Q>
 	code_params.type = ar.get_arg("code-type");
 
 	// facultative parameters
-	if(ar.exist_arg("simu-type"      )) simu_params.type                = ar.get_arg("simu-type");
-	if(ar.exist_arg("snr-step"       )) simu_params.snr_step            = std::stof(ar.get_arg("snr-step"));
-	if(ar.exist_arg("disable-display")) simu_params.disable_display     = true;
-	if(ar.exist_arg("stop-time"      )) simu_params.stop_time           = seconds(std::stoi(ar.get_arg("stop-time")));
-	if(ar.exist_arg("display-freq"   )) simu_params.display_freq        = milliseconds(std::stoi(ar.get_arg("display-freq")));
-	if(ar.exist_arg("n-threads"      )) simu_params.n_threads           = std::stoi(ar.get_arg("n-threads"));
-	if(ar.exist_arg("code-gen-method")) code_params.generation_method   = ar.get_arg("code-gen-method");
-	if(ar.exist_arg("domain"         )) chan_params.domain              = ar.get_arg("domain");
-	if(ar.exist_arg("channel-type"   )) chan_params.type                = ar.get_arg("channel-type");
-	if(ar.exist_arg("mod-type"       )) mod_params.type                 = ar.get_arg("mod-type");
-	if(ar.exist_arg("disable-demod"  )) mod_params.disable_demodulation = true;
-	if(ar.exist_arg("dec-algo"       )) deco_params.algo                = ar.get_arg("dec-algo");
-	if(ar.exist_arg("dec-implem"     )) deco_params.implem              = ar.get_arg("dec-implem");
+	if(ar.exist_arg("simu-type"         )) simu_params.type              = ar.get_arg("simu-type");
+	if(ar.exist_arg("snr-step"          )) simu_params.snr_step          = std::stof(ar.get_arg("snr-step"));
+	if(ar.exist_arg("disable-display"   )) simu_params.disable_display   = true;
+	if(ar.exist_arg("stop-time"         )) simu_params.stop_time         = seconds(std::stoi(ar.get_arg("stop-time")));
+	if(ar.exist_arg("display-freq"      )) simu_params.display_freq      = milliseconds(std::stoi(ar.get_arg("display-freq")));
+	if(ar.exist_arg("n-threads"         )) simu_params.n_threads         = std::stoi(ar.get_arg("n-threads"));
+	if(ar.exist_arg("code-gen-method"   )) code_params.generation_method = ar.get_arg("code-gen-method");
+	if(ar.exist_arg("domain"            )) chan_params.domain            = ar.get_arg("domain");
+	if(ar.exist_arg("channel-type"      )) chan_params.type              = ar.get_arg("channel-type");
+	if(ar.exist_arg("mod-type"          )) mod_params.type               = ar.get_arg("mod-type");
+	if(ar.exist_arg("disable-demod-sig2")) mod_params.disable_demod_sig2 = true;
+	if(ar.exist_arg("dec-algo"          )) deco_params.algo              = ar.get_arg("dec-algo");
+	if(ar.exist_arg("dec-implem"        )) deco_params.implem            = ar.get_arg("dec-implem");
 
-	if(ar.exist_arg("mod-type"      )) mod_params.type                  = ar.get_arg("mod-type");
-	if(ar.exist_arg("mod-bps"       )) mod_params.bits_per_symbol       = std::stof(ar.get_arg("mod-bps"));
-	if(ar.exist_arg("mod-ups"       )) mod_params.upsample_factor       = std::stoi(ar.get_arg("mod-ups"));
-	if(ar.exist_arg("demod-max"     )) mod_params.demod_max             = ar.get_arg("demod-max");
+	if(ar.exist_arg("mod-type"          )) mod_params.type               = ar.get_arg("mod-type");
+	if(ar.exist_arg("mod-bps"           )) mod_params.bits_per_symbol    = std::stof(ar.get_arg("mod-bps"));
+	if(ar.exist_arg("mod-ups"           )) mod_params.upsample_factor    = std::stoi(ar.get_arg("mod-ups"));
+	if(ar.exist_arg("demod-max"         )) mod_params.demod_max          = ar.get_arg("demod-max");
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
@@ -242,9 +242,8 @@ void Launcher<B,R,Q>
 			quantif = "{"+std::to_string(chan_params.quant_n_bits)+", "+std::to_string(chan_params.quant_point_pos)+"}";
 	}
 
-	std::string demodulation = (mod_params.disable_demodulation) ? "off" : "on";
-	std::string demod_max    = (mod_params.disable_demodulation) || 
-	                           (mod_params.type == "BPSK")       || 
+	std::string demod_sig2 = (mod_params.disable_demod_sig2) ? "off" : "on";
+	std::string demod_max  = (mod_params.type == "BPSK") || 
 	                           (mod_params.type == "BPSK_FAST") ? 
 	                           "unused" : mod_params.demod_max;
 
@@ -270,7 +269,7 @@ void Launcher<B,R,Q>
 	stream << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
 	stream << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
 	stream << "# " << bold("* Modulation type               ") << " = " << modulation                     << std::endl;
-	stream << "# " << bold("* Demodulation                  ") << " = " << demodulation                   << std::endl;
+	stream << "# " << bold("* Demodulation sigma square     ") << " = " << demod_sig2                     << std::endl;
 	stream << "# " << bold("* Demodulation max type         ") << " = " << demod_max                      << std::endl;
 	stream << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
 	stream << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;

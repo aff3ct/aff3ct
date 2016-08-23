@@ -189,20 +189,14 @@ void Simulation_EXIT<B,R,Q>
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
 		{
-			channel_a->add_noise(X_K2, La_K1);
-			if (mod_params.disable_demodulation)
-				La_K2 = La_K1;
-			else
-				modulator_a->demodulate(La_K1, La_K2),
-			quantizer->process(La_K2, La_K3);
+			channel_a  ->add_noise (X_K2,  La_K1);
+			modulator_a->demodulate(La_K1, La_K2),
+			quantizer  ->process   (La_K2, La_K3);
 		}
 
-		channel->add_noise (X_N2, Lch_N1);
-		if (mod_params.disable_demodulation)
-			Lch_N2 = Lch_N1;
-		else
-			modulator->demodulate(Lch_N1, Lch_N2),
-		quantizer->process(Lch_N2, Lch_N3);
+		channel  ->add_noise (X_N2,   Lch_N1);
+		modulator->demodulate(Lch_N1, Lch_N2),
+		quantizer->process   (Lch_N2, Lch_N3);
 
 		// extract systematic and parity information
 		extract_sys_par(Lch_N3, La_K3, sys, par);
