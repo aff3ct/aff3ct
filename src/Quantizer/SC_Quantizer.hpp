@@ -16,13 +16,13 @@ template <typename R, typename Q>
 class SC_Quantizer;
 
 template <typename R, typename Q>
-class SC_Quantizer_sockets : public sc_core::sc_module
+class SC_Quantizer_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Quantizer_sockets);
+	SC_HAS_PROCESS(SC_Quantizer_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Quantizer_sockets> in;
-	tlm_utils::simple_initiator_socket<SC_Quantizer_sockets> out;
+	tlm_utils::simple_target_socket   <SC_Quantizer_module> s_in;
+	tlm_utils::simple_initiator_socket<SC_Quantizer_module> s_out;
 
 private:
 	SC_Quantizer<R,Q> &quantizer;
@@ -30,13 +30,13 @@ private:
 	mipp::vector<Q> Y_N2;
 
 public:
-	SC_Quantizer_sockets(SC_Quantizer<R,Q> &quantizer, const sc_core::sc_module_name name = "SC_Quantizer_sockets")
-	: sc_module(name), in("in"), out("out"),
+	SC_Quantizer_module(SC_Quantizer<R,Q> &quantizer, const sc_core::sc_module_name name = "SC_Quantizer_module")
+	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  quantizer(quantizer),
 	  Y_N1(quantizer.N * quantizer.n_frames),
 	  Y_N2(quantizer.N * quantizer.n_frames)
 	{
-		in.register_b_transport(this, &SC_Quantizer_sockets::b_transport);
+		s_in.register_b_transport(this, &SC_Quantizer_module::b_transport);
 	}
 
 	void resize_buffers()
@@ -60,26 +60,26 @@ private:
 		payload.set_data_length(Y_N2.size() * sizeof(Q));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out->b_transport(payload, zero_time);
+		s_out->b_transport(payload, zero_time);
 	}
 };
 
 template <typename R, typename Q>
 class SC_Quantizer : public Quantizer_interface<R,Q>
 {
-	friend SC_Quantizer_sockets<R,Q>;
+	friend SC_Quantizer_module<R,Q>;
 
 private:
 	std::string name;
 
 public:
-	SC_Quantizer_sockets<R,Q> *sockets;
+	SC_Quantizer_module<R,Q> *module;
 
 public:
 	SC_Quantizer(const int N, const int n_frames = 1, const std::string name = "SC_Quantizer")
-	: Quantizer_interface<R,Q>(N, n_frames, name), name(name), sockets(nullptr) {}
+	: Quantizer_interface<R,Q>(N, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Quantizer() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } };
+	virtual ~SC_Quantizer() { if (module != nullptr) { delete module; module = nullptr; } };
 
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
 
@@ -87,13 +87,13 @@ public:
 	{
 		Quantizer_interface<R,Q>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Quantizer_sockets<R,Q>(*this, name.c_str());
+		this->module = new SC_Quantizer_module<R,Q>(*this, name.c_str());
 	}
 };
 

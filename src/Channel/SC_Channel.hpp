@@ -16,13 +16,13 @@ template <typename R>
 class SC_Channel;
 
 template <typename R>
-class SC_Channel_sockets : public sc_core::sc_module
+class SC_Channel_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Channel_sockets);
+	SC_HAS_PROCESS(SC_Channel_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Channel_sockets> in;
-	tlm_utils::simple_initiator_socket<SC_Channel_sockets> out;
+	tlm_utils::simple_target_socket   <SC_Channel_module> s_in;
+	tlm_utils::simple_initiator_socket<SC_Channel_module> s_out;
 
 private:
 	SC_Channel<R> &channel;
@@ -30,13 +30,13 @@ private:
 	mipp::vector<R> Y_N;
 
 public:
-	SC_Channel_sockets(SC_Channel<R> &channel, const sc_core::sc_module_name name = "SC_Channel_sockets")
-	: sc_module(name), in("in"), out("out"),
+	SC_Channel_module(SC_Channel<R> &channel, const sc_core::sc_module_name name = "SC_Channel_module")
+	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  channel(channel),
 	  X_N(channel.N * channel.n_frames),
 	  Y_N(channel.N * channel.n_frames)
 	{
-		in.register_b_transport(this, &SC_Channel_sockets::b_transport);
+		s_in.register_b_transport(this, &SC_Channel_module::b_transport);
 	}
 
 	void resize_buffers()
@@ -60,26 +60,26 @@ private:
 		payload.set_data_length(Y_N.size() * sizeof(R));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out->b_transport(payload, zero_time);
+		s_out->b_transport(payload, zero_time);
 	}
 };
 
 template <typename R>
 class SC_Channel : public Channel_interface<R>
 {
-	friend SC_Channel_sockets<R>;
+	friend SC_Channel_module<R>;
 
 private:
 	std::string name;
 
 public:
-	SC_Channel_sockets<R> *sockets;
+	SC_Channel_module<R> *module;
 
 public:
 	SC_Channel(const int N, const int n_frames = 1, const std::string name = "SC_Channel")
-	: Channel_interface<R>(N, n_frames, name), name(name), sockets(nullptr) {}
+	: Channel_interface<R>(N, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Channel() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } };
+	virtual ~SC_Channel() { if (module != nullptr) { delete module; module = nullptr; } };
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
 
@@ -87,13 +87,13 @@ public:
 	{
 		Channel_interface<R>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Channel_sockets<R>(*this, name.c_str());
+		this->module = new SC_Channel_module<R>(*this, name.c_str());
 	}
 };
 

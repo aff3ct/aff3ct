@@ -16,13 +16,13 @@ template <typename B>
 class SC_Error_analyzer;
 
 template <typename B>
-class SC_Error_analyzer_sockets : public sc_core::sc_module
+class SC_Error_analyzer_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Error_analyzer_sockets);
+	SC_HAS_PROCESS(SC_Error_analyzer_module);
 
 public:
-	tlm_utils::simple_target_socket<SC_Error_analyzer_sockets> in_source;
-	tlm_utils::simple_target_socket<SC_Error_analyzer_sockets> in_decoder;
+	tlm_utils::simple_target_socket<SC_Error_analyzer_module> s_in_source;
+	tlm_utils::simple_target_socket<SC_Error_analyzer_module> s_in_decoder;
 
 private:
 	SC_Error_analyzer<B> &analyzer;
@@ -30,14 +30,14 @@ private:
 	mipp::vector<B> U_K;
 
 public:
-	SC_Error_analyzer_sockets(SC_Error_analyzer<B> &analyzer, const sc_core::sc_module_name name = "SC_Error_analyzer_sockets")
-	: sc_module(name), in_source("in_source"), in_decoder("in_decoder"),
+	SC_Error_analyzer_module(SC_Error_analyzer<B> &analyzer, const sc_core::sc_module_name name = "SC_Error_analyzer_module")
+	: sc_module(name), s_in_source("s_in_source"), s_in_decoder("s_in_decoder"),
 	  analyzer(analyzer),
 	  V_K(analyzer.K * analyzer.n_frames),
 	  U_K(analyzer.K * analyzer.n_frames)
 	{
-		in_source .register_b_transport(this, &SC_Error_analyzer_sockets::b_transport_source);
-		in_decoder.register_b_transport(this, &SC_Error_analyzer_sockets::b_transport_decoder);
+		s_in_source .register_b_transport(this, &SC_Error_analyzer_module::b_transport_source);
+		s_in_decoder.register_b_transport(this, &SC_Error_analyzer_module::b_transport_decoder);
 	}
 
 	void resize_buffers()
@@ -72,19 +72,19 @@ private:
 template <typename B>
 class SC_Error_analyzer : public Error_analyzer_interface<B>
 {
-	friend SC_Error_analyzer_sockets<B>;
+	friend SC_Error_analyzer_module<B>;
 
 private:
 	std::string name;
 
 public:
-	SC_Error_analyzer_sockets<B> *sockets;
+	SC_Error_analyzer_module<B> *module;
 
 public:
 	SC_Error_analyzer(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Error_analyzer")
-	: Error_analyzer_interface<B>(K, N, n_frames, name), name(name), sockets(nullptr) {}
+	: Error_analyzer_interface<B>(K, N, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Error_analyzer() {if (sockets != nullptr) { delete sockets; sockets = nullptr; }};
+	virtual ~SC_Error_analyzer() {if (module != nullptr) { delete module; module = nullptr; }};
 
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
 
@@ -103,13 +103,13 @@ public:
 	{
 		Error_analyzer_interface<B>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Error_analyzer_sockets<B>(*this, name.c_str());
+		this->module = new SC_Error_analyzer_module<B>(*this, name.c_str());
 	}
 };
 

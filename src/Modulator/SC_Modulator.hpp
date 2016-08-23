@@ -16,15 +16,15 @@ template <typename B, typename R>
 class SC_Modulator;
 
 template <typename B, typename R>
-class SC_Modulator_sockets : public sc_core::sc_module
+class SC_Modulator_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Modulator_sockets);
+	SC_HAS_PROCESS(SC_Modulator_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Modulator_sockets> in_mod;
-	tlm_utils::simple_target_socket   <SC_Modulator_sockets> in_demod;
-	tlm_utils::simple_initiator_socket<SC_Modulator_sockets> out_mod;
-	tlm_utils::simple_initiator_socket<SC_Modulator_sockets> out_demod;
+	tlm_utils::simple_target_socket   <SC_Modulator_module> s_in_mod;
+	tlm_utils::simple_target_socket   <SC_Modulator_module> s_in_demod;
+	tlm_utils::simple_initiator_socket<SC_Modulator_module> s_out_mod;
+	tlm_utils::simple_initiator_socket<SC_Modulator_module> s_out_demod;
 
 private:
 	SC_Modulator<B,R> &modulator;
@@ -33,16 +33,18 @@ private:
 	mipp::vector<R> Y_N1, Y_N2;
 
 public:
-	SC_Modulator_sockets(SC_Modulator<B,R> &modulator, const sc_core::sc_module_name name = "SC_Modulator_sockets")
-	: sc_module(name), in_mod("in_mod"), in_demod("in_demod"), out_mod("out_mod"), out_demod("out_demod"),
+	SC_Modulator_module(SC_Modulator<B,R> &modulator, const sc_core::sc_module_name name = "SC_Modulator_module")
+	: sc_module(name), 
+	  s_in_mod ("s_in_mod"),  s_in_demod ("s_in_demod"), 
+	  s_out_mod("s_out_mod"), s_out_demod("s_out_demod"),
 	  modulator(modulator),
 	  X_N1(modulator.N     * modulator.n_frames),
 	  X_N2(modulator.N_mod * modulator.n_frames),
 	  Y_N1(modulator.N_mod * modulator.n_frames),
 	  Y_N2(modulator.N     * modulator.n_frames)
 	{
-		in_mod  .register_b_transport(this, &SC_Modulator_sockets::b_transport_modulate);
-		in_demod.register_b_transport(this, &SC_Modulator_sockets::b_transport_demodulate);
+		s_in_mod  .register_b_transport(this, &SC_Modulator_module::b_transport_modulate);
+		s_in_demod.register_b_transport(this, &SC_Modulator_module::b_transport_demodulate);
 	}
 
 	void resize_buffers()
@@ -68,7 +70,7 @@ private:
 		payload.set_data_length(X_N2.size() * sizeof(R));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out_mod->b_transport(payload, zero_time);
+		s_out_mod->b_transport(payload, zero_time);
 	}
 
 	void b_transport_demodulate(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
@@ -85,26 +87,26 @@ private:
 		payload.set_data_length(Y_N2.size() * sizeof(R));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out_demod->b_transport(payload, zero_time);
+		s_out_demod->b_transport(payload, zero_time);
 	}
 };
 
 template <typename B, typename R>
 class SC_Modulator : public Modulator_interface<B,R>
 {
-	friend SC_Modulator_sockets<B,R>;
+	friend SC_Modulator_module<B,R>;
 
 private:
 	std::string name;
 
 public:
-	SC_Modulator_sockets<B,R> *sockets;
+	SC_Modulator_module<B,R> *module;
 
 public:
 	SC_Modulator(const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_interface<B,R>(N, N_mod, n_frames, name), name(name), sockets(nullptr) {}
+	: Modulator_interface<B,R>(N, N_mod, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Modulator() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } }
+	virtual ~SC_Modulator() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) const = 0;
 	virtual void demodulate(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2) const = 0;
@@ -113,13 +115,13 @@ public:
 	{
 		Modulator_interface<B,R>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Modulator_sockets<B,R>(*this, name.c_str());
+		this->module = new SC_Modulator_module<B,R>(*this, name.c_str());
 	}
 };
 

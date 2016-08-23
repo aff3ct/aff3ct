@@ -16,25 +16,25 @@ template <typename B>
 class SC_CRC;
 
 template <typename B>
-class SC_CRC_sockets : public sc_core::sc_module
+class SC_CRC_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_CRC_sockets);
+	SC_HAS_PROCESS(SC_CRC_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_CRC_sockets> in;
-	tlm_utils::simple_initiator_socket<SC_CRC_sockets> out;
+	tlm_utils::simple_target_socket   <SC_CRC_module> s_in;
+	tlm_utils::simple_initiator_socket<SC_CRC_module> s_out;
 
 private:
 	SC_CRC<B> &crc;
 	mipp::vector<B> U_K;
 
 public:
-	SC_CRC_sockets(SC_CRC<B> &crc, const sc_core::sc_module_name name = "SC_CRC_sockets")
-	: sc_module(name), in("in"), out("out"),
+	SC_CRC_module(SC_CRC<B> &crc, const sc_core::sc_module_name name = "SC_CRC_module")
+	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  crc(crc),
 	  U_K(crc.K * crc.n_frames)
 	{
-		in.register_b_transport(this, &SC_CRC_sockets::b_transport);
+		s_in.register_b_transport(this, &SC_CRC_module::b_transport);
 	}
 
 	void resize_buffers()
@@ -57,26 +57,26 @@ private:
 		payload.set_data_length(U_K.size() * sizeof(B));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out->b_transport(payload, zero_time);
+		s_out->b_transport(payload, zero_time);
 	}
 };
 
 template <typename B>
 class SC_CRC : public CRC_interface<B>
 {
-	friend SC_CRC_sockets<B>;
+	friend SC_CRC_module<B>;
 
 private:
 	std::string name;
 
 public:
-	SC_CRC_sockets<B> *sockets;
+	SC_CRC_module<B> *module;
 
 public:
 	SC_CRC(const int K, const int n_frames = 1, const std::string name = "SC_CRC") 
-	: CRC_interface<B>(K, n_frames, name), name(name), sockets(nullptr) {}
+	: CRC_interface<B>(K, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_CRC() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } }
+	virtual ~SC_CRC() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void build(mipp::vector<B>& U_K) = 0;
 
@@ -84,13 +84,13 @@ public:
 	{
 		CRC_interface<B>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_CRC_sockets<B>(*this, name.c_str());
+		this->module = new SC_CRC_module<B>(*this, name.c_str());
 	}
 };
 

@@ -16,13 +16,13 @@ template <typename B, typename R>
 class SC_Decoder;
 
 template <typename B, typename R>
-class SC_Decoder_sockets : public sc_core::sc_module
+class SC_Decoder_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Decoder_sockets);
+	SC_HAS_PROCESS(SC_Decoder_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Decoder_sockets> in;
-	tlm_utils::simple_initiator_socket<SC_Decoder_sockets> out;
+	tlm_utils::simple_target_socket   <SC_Decoder_module> s_in;
+	tlm_utils::simple_initiator_socket<SC_Decoder_module> s_out;
 
 private:
 	SC_Decoder<B,R> &decoder;
@@ -30,13 +30,13 @@ private:
 	mipp::vector<B> V_K;
 
 public:
-	SC_Decoder_sockets(SC_Decoder<B,R> &decoder, const sc_core::sc_module_name name = "SC_Decoder_sockets")
-	: sc_module(name), in ("in"), out("out"),
+	SC_Decoder_module(SC_Decoder<B,R> &decoder, const sc_core::sc_module_name name = "SC_Decoder_module")
+	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  decoder(decoder),
 	  Y_N(decoder.N * decoder.n_frames),
 	  V_K(decoder.K * decoder.n_frames)
 	{
-		in.register_b_transport(this, &SC_Decoder_sockets::b_transport);
+		s_in.register_b_transport(this, &SC_Decoder_module::b_transport);
 	}
 
 	void resize_buffers()
@@ -62,34 +62,34 @@ private:
 		payload.set_data_length(V_K.size() * sizeof(B));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out->b_transport(payload, zero_time);
+		s_out->b_transport(payload, zero_time);
 	}
 };
 
 template <typename B, typename R>
 class SC_Decoder : public Decoder_interface<B,R>
 {
-	friend SC_Decoder_sockets<B,R>;
+	friend SC_Decoder_module<B,R>;
 
 private:
 	std::string name;
 
 public:
-	SC_Decoder_sockets<B,R> *sockets;
+	SC_Decoder_module<B,R> *module;
 
 public:
 	SC_Decoder(const int K, const int N, const int n_frames, const std::string name = "SC_Decoder")
-	: Decoder_interface<B,R>(K, N, n_frames, name), name(name), sockets(nullptr) {}
+	: Decoder_interface<B,R>(K, N, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Decoder() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } }
+	virtual ~SC_Decoder() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void load  (const mipp::vector<R>& Y_N)       = 0;
 	virtual void decode(                          )       = 0;
 	virtual void store (      mipp::vector<B>& V_K) const = 0;
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Decoder_sockets<B,R>(*this, name.c_str());
+		this->module = new SC_Decoder_module<B,R>(*this, name.c_str());
 	}
 };
 

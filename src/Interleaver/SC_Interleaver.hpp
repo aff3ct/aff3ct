@@ -16,14 +16,15 @@ template <typename T>
 class SC_Interleaver;
 
 template <typename T>
-class SC_Interleaver_sockets : public sc_core::sc_module
+class SC_Interleaver_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Interleaver_sockets);
+	SC_HAS_PROCESS(SC_Interleaver_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Interleaver_sockets> in_interleave;
-	tlm_utils::simple_target_socket   <SC_Interleaver_sockets> in_deinterleave;
-	tlm_utils::simple_initiator_socket<SC_Interleaver_sockets> out;
+	tlm_utils::simple_target_socket   <SC_Interleaver_module> s_in_interleave;
+	tlm_utils::simple_target_socket   <SC_Interleaver_module> s_in_deinterleave;
+	tlm_utils::simple_initiator_socket<SC_Interleaver_module> s_out_interleave;
+	tlm_utils::simple_initiator_socket<SC_Interleaver_module> s_out_deinterleave;
 
 private:
 	SC_Interleaver<T> &interleaver;
@@ -33,8 +34,10 @@ private:
 	mipp::vector<long long> natural_vec_8, interleaved_vec_8;
 
 public:
-	SC_Interleaver_sockets(SC_Interleaver<T> &interleaver, const sc_core::sc_module_name name = "SC_Interleaver_sockets")
-	: sc_module(name), in_interleave("in_interleave"), in_deinterleave("in_deinterleave"), out("out"),
+	SC_Interleaver_module(SC_Interleaver<T> &interleaver, const sc_core::sc_module_name name = "SC_Interleaver_module")
+	: sc_module(name), 
+	  s_in_interleave ("s_in_interleave"),  s_in_deinterleave ("s_in_deinterleave"), 
+	  s_out_interleave("s_out_interleave"), s_out_deinterleave("s_out_deinterleave"),
 	  interleaver(interleaver),
 	  natural_vec_1    (interleaver.size * interleaver.n_frames),
 	  interleaved_vec_1(interleaver.size * interleaver.n_frames),
@@ -45,8 +48,8 @@ public:
 	  natural_vec_8    (interleaver.size * interleaver.n_frames),
 	  interleaved_vec_8(interleaver.size * interleaver.n_frames)
 	{
-		in_interleave  .register_b_transport(this, &SC_Interleaver_sockets::b_transport_interleave);
-		in_deinterleave.register_b_transport(this, &SC_Interleaver_sockets::b_transport_deinterleave);
+		s_in_interleave  .register_b_transport(this, &SC_Interleaver_module::b_transport_interleave);
+		s_in_deinterleave.register_b_transport(this, &SC_Interleaver_module::b_transport_deinterleave);
 	}
 
 	void resize_buffers()
@@ -98,7 +101,7 @@ private:
 		payload.set_data_length(interleaved_vec.size() * sizeof(D));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out->b_transport(payload, zero_time);
+		s_out_interleave->b_transport(payload, zero_time);
 	}
 
 	void b_transport_deinterleave(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
@@ -136,38 +139,38 @@ private:
 		payload.set_data_length(natural_vec.size() * sizeof(D));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out->b_transport(payload, zero_time);
+		s_out_deinterleave->b_transport(payload, zero_time);
 	}
 };
 
 template <typename T>
 class SC_Interleaver : public Interleaver_interface<T>
 {
-	friend SC_Interleaver_sockets<T>;
+	friend SC_Interleaver_module<T>;
 
 private:
 	std::string name;
 
 public:
-	SC_Interleaver_sockets<T> *sockets;
+	SC_Interleaver_module<T> *module;
 
 public:
 	SC_Interleaver(const int size, const int n_frames = 1, const std::string name = "SC_Interleaver")
-	: Interleaver_interface<T>(size, n_frames, name), name(name), sockets(nullptr) {}
+	: Interleaver_interface<T>(size, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Interleaver() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } }
+	virtual ~SC_Interleaver() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void set_n_frames(const int n_frames)
 	{
 		Interleaver_interface<T>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Interleaver_sockets<T>(*this, name.c_str());
+		this->module = new SC_Interleaver_module<T>(*this, name.c_str());
 	}
 
 protected:

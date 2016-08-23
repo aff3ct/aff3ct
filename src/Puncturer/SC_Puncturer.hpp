@@ -16,15 +16,15 @@ template <typename B, typename Q>
 class SC_Puncturer;
 
 template <typename B, typename Q>
-class SC_Puncturer_sockets : public sc_core::sc_module
+class SC_Puncturer_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Puncturer_sockets);
+	SC_HAS_PROCESS(SC_Puncturer_module);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Puncturer_sockets> in_punct;
-	tlm_utils::simple_target_socket   <SC_Puncturer_sockets> in_depunct;
-	tlm_utils::simple_initiator_socket<SC_Puncturer_sockets> out_punct;
-	tlm_utils::simple_initiator_socket<SC_Puncturer_sockets> out_depunct;
+	tlm_utils::simple_target_socket   <SC_Puncturer_module> s_in_punct;
+	tlm_utils::simple_target_socket   <SC_Puncturer_module> s_in_depunct;
+	tlm_utils::simple_initiator_socket<SC_Puncturer_module> s_out_punct;
+	tlm_utils::simple_initiator_socket<SC_Puncturer_module> s_out_depunct;
 
 private:
 	SC_Puncturer<B,Q> &puncturer;
@@ -32,16 +32,18 @@ private:
 	mipp::vector<Q> Y_N1, Y_N2;
 
 public:
-	SC_Puncturer_sockets(SC_Puncturer<B,Q> &puncturer, const sc_core::sc_module_name name = "SC_Puncturer_sockets")
-	: sc_module(name), in_punct("in_punct"), in_depunct("in_depunct"), out_punct("out_punct"), out_depunct("out_depunct"),
+	SC_Puncturer_module(SC_Puncturer<B,Q> &puncturer, const sc_core::sc_module_name name = "SC_Puncturer_module")
+	: sc_module(name), 
+	  s_in_punct ("s_in_punct"),  s_in_depunct ("s_in_depunct"), 
+	  s_out_punct("s_out_punct"), s_out_depunct("s_out_depunct"),
 	  puncturer(puncturer),
 	  X_N1(puncturer.N_code * puncturer.n_frames),
 	  X_N2(puncturer.N      * puncturer.n_frames),
 	  Y_N1(puncturer.N      * puncturer.n_frames),
 	  Y_N2(puncturer.N_code * puncturer.n_frames)
 	{
-		in_punct  .register_b_transport(this, &SC_Puncturer_sockets::b_transport_puncture);
-		in_depunct.register_b_transport(this, &SC_Puncturer_sockets::b_transport_depuncture);
+		s_in_punct  .register_b_transport(this, &SC_Puncturer_module::b_transport_puncture);
+		s_in_depunct.register_b_transport(this, &SC_Puncturer_module::b_transport_depuncture);
 	}
 
 	void resize_buffers()
@@ -67,7 +69,7 @@ private:
 		payload.set_data_length(X_N2.size() * sizeof(B));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out_punct->b_transport(payload, zero_time);
+		s_out_punct->b_transport(payload, zero_time);
 	}
 
 	void b_transport_depuncture(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
@@ -84,27 +86,27 @@ private:
 		payload.set_data_length(Y_N2.size() * sizeof(Q));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		out_depunct->b_transport(payload, zero_time);
+		s_out_depunct->b_transport(payload, zero_time);
 	}
 };
 
 template <typename B, typename Q>
 class SC_Puncturer : public Puncturer_interface<B,Q>
 {
-	friend SC_Puncturer_sockets<B,Q>;
+	friend SC_Puncturer_module<B,Q>;
 
 private:
 	std::string name;
 
 public:
-	SC_Puncturer_sockets<B,Q> *sockets;
+	SC_Puncturer_module<B,Q> *module;
 
 public:
 	SC_Puncturer(const int K, const int N, const int N_code, const int n_frames = 1, 
 	             const std::string name = "SC_Puncturer")
-	: Puncturer_interface<B,Q>(K, N, N_code, n_frames, name), name(name), sockets(nullptr) {}
+	: Puncturer_interface<B,Q>(K, N, N_code, n_frames, name), name(name), module(nullptr) {}
 
-	virtual ~SC_Puncturer() { if (sockets != nullptr) { delete sockets; sockets = nullptr; } }
+	virtual ~SC_Puncturer() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
 	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
@@ -113,13 +115,13 @@ public:
 	{
 		Puncturer_interface<B,Q>::set_n_frames(n_frames);
 
-		if (sockets != nullptr)
-			sockets->resize_buffers();
+		if (module != nullptr)
+			module->resize_buffers();
 	}
 
-	void create_sc_sockets()
+	void create_sc_module()
 	{
-		this->sockets = new SC_Puncturer_sockets<B,Q>(*this, name.c_str());
+		this->module = new SC_Puncturer_module<B,Q>(*this, name.c_str());
 	}
 };
 

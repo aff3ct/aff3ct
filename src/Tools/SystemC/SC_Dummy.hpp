@@ -15,14 +15,13 @@ class SC_Dummy : sc_module
 	SC_HAS_PROCESS(SC_Dummy);
 
 public:
-	tlm_utils::simple_target_socket<SC_Dummy> socket_in;
+	tlm_utils::simple_target_socket<SC_Dummy> s_in;
 
 public:
     SC_Dummy(sc_module_name name)
-    : sc_module(name), 
-      socket_in("socket_in_SC_Dummy")
+    : sc_module(name), s_in("s_in")
 	{
-		socket_in.register_b_transport(this, &SC_Dummy::b_transport);
+		s_in.register_b_transport(this, &SC_Dummy::b_transport);
 	}
 
 private:

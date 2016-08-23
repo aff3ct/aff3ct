@@ -20,20 +20,17 @@ class SC_Debug : sc_module
 	SC_HAS_PROCESS(SC_Debug);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Debug> socket_in;
-	tlm_utils::simple_initiator_socket<SC_Debug> socket_out;
+	tlm_utils::simple_target_socket   <SC_Debug> s_in;
+	tlm_utils::simple_initiator_socket<SC_Debug> s_out;
 
 private:
 	std::string message;
 
 public:
     SC_Debug(std::string message = "Debug:\n", sc_module_name name = "SC_Debug")
-    : sc_module(name), 
-      socket_in ("socket_in_SC_Debug"),
-      socket_out("socket_out_SC_Debug"),
-      message(message)
+    : sc_module(name), s_in("s_in"), s_out("s_out"), message(message)
 	{
-		socket_in.register_b_transport(this, &SC_Debug::b_transport);
+		s_in.register_b_transport(this, &SC_Debug::b_transport);
 	}
 
 private:
@@ -59,7 +56,7 @@ private:
 		payload.set_data_length(data_in.size() * sizeof(T));
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out->b_transport(payload, zero_time);
+		s_out->b_transport(payload, zero_time);
 	}
 };
 

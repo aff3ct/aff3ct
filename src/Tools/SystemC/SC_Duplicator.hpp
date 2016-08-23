@@ -18,26 +18,23 @@ class SC_Duplicator : sc_module
 	SC_HAS_PROCESS(SC_Duplicator);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Duplicator> socket_in;
-	tlm_utils::simple_initiator_socket<SC_Duplicator> socket_out1;
-	tlm_utils::simple_initiator_socket<SC_Duplicator> socket_out2;
+	tlm_utils::simple_target_socket   <SC_Duplicator> s_in;
+	tlm_utils::simple_initiator_socket<SC_Duplicator> s_out1;
+	tlm_utils::simple_initiator_socket<SC_Duplicator> s_out2;
 
 public:
     SC_Duplicator(sc_module_name name = "SC_Duplicator")
-    : sc_module(name), 
-      socket_in  ("socket_in_SC_Duplicator"),
-      socket_out1("socket_out1_SC_Duplicator"),
-      socket_out2("socket_out2_SC_Duplicator")
+    : sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2")
 	{
-		socket_in.register_b_transport(this, &SC_Duplicator::b_transport);
+		s_in.register_b_transport(this, &SC_Duplicator::b_transport);
 	}
 
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		socket_out1->b_transport(trans, zero_time);
-		socket_out2->b_transport(trans, zero_time);
+		s_out1->b_transport(trans, zero_time);
+		s_out2->b_transport(trans, zero_time);
 	}
 };
 
