@@ -133,28 +133,28 @@ void Simulation_SC_BFER<B,R,Q>
 	    !(this->simu_params.enable_debug && this->simu_params.n_threads == 1) && !this->simu_params.benchs))
 		this->terminal->legend(std::cout);
 
-	duplicator = new SC_Duplicator<B>("Duplicator");
+	this->duplicator = new SC_Duplicator<B>("Duplicator");
 
 	if (this->simu_params.n_threads == 1 && this->simu_params.enable_debug)
 	{
-		dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", "Debug_B0");
-		dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", "Debug_B1");
-		dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", "Debug_B2");
-		dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", "Debug_B3");
-		dbg_B[4] = new SC_Debug<B>("Decode Y_N2 and generate V_K...           \nY_N5:\n", "Debug_B4");
-		dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", "Debug_R0");
-		dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", "Debug_R1");
-		dbg_R[2] = new SC_Debug<R>("Demodulate from Y_N1 to Y_N2...           \nY_N2:\n", "Debug_R2");
-		dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N2 to Y_N3...\nY_N3:\n", "Debug_Q0");
-		dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N3 and generate Y_N4...      \nY_N4:\n", "Debug_Q1");
+		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", "Debug_B0");
+		this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", "Debug_B1");
+		this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", "Debug_B2");
+		this->dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", "Debug_B3");
+		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", "Debug_R0");
+		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", "Debug_R1");
+		this->dbg_R[2] = new SC_Debug<R>("Demodulate from Y_N1 to Y_N2...           \nY_N2:\n", "Debug_R2");
+		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N2 to Y_N3...\nY_N3:\n", "Debug_Q0");
+		this->dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N3 and generate Y_N4...      \nY_N4:\n", "Debug_Q1");
+		this->dbg_B[4] = new SC_Debug<B>("Decode Y_N2 and generate V_K...           \nY_N5:\n", "Debug_B4");
 
 		this->bind_sockets_debug();
 		sc_core::sc_start(); // start simulation
 		this->terminal->legend(std::cout);
 
-		for (auto i = 0; i < 5; i++) { delete dbg_B[i]; dbg_B[i] = nullptr; }
-		for (auto i = 0; i < 3; i++) { delete dbg_R[i]; dbg_R[i] = nullptr; }
-		for (auto i = 0; i < 2; i++) { delete dbg_Q[i]; dbg_Q[i] = nullptr; }
+		for (auto i = 0; i < 5; i++) { delete this->dbg_B[i]; this->dbg_B[i] = nullptr; }
+		for (auto i = 0; i < 3; i++) { delete this->dbg_R[i]; this->dbg_R[i] = nullptr; }
+		for (auto i = 0; i < 2; i++) { delete this->dbg_Q[i]; this->dbg_Q[i] = nullptr; }
 	}
 	else
 	{
@@ -169,7 +169,7 @@ void Simulation_SC_BFER<B,R,Q>
 		thread.join();
 	}
 
-	delete duplicator; duplicator = nullptr;
+	delete this->duplicator; this->duplicator = nullptr;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STANDARD! /!\ //
@@ -262,10 +262,7 @@ template <typename B, typename R, typename Q>
 void Simulation_SC_BFER<B,R,Q>
 ::terminal_temp_report(Simulation_SC_BFER<B,R,Q> *simu)
 {
-	using namespace std::chrono;
-	simu->t_simu = steady_clock::now();
-
-	if (!simu->simu_params.disable_display && simu->simu_params.display_freq != nanoseconds(0))
+	if (!simu->simu_params.disable_display && simu->simu_params.display_freq != std::chrono::nanoseconds(0))
 	{
 		while (!simu->analyzer->fe_limit_achieved() && !simu->analyzer->is_interrupt())
 		{
@@ -274,7 +271,6 @@ void Simulation_SC_BFER<B,R,Q>
 
 			// display statistics in terminal
 			simu->terminal->temp_report(std::clog);
-			simu->t_simu = steady_clock::now();
 		}
 	}
 }
