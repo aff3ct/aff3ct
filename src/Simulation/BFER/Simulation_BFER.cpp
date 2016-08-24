@@ -214,20 +214,20 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source   [tid] = simu->build_source   (       tid); check_errors(simu->source   [tid], "Source<B>"          );
-	simu->crc      [tid] = simu->build_crc      (       tid); check_errors(simu->crc      [tid], "CRC<B>"             );
-	simu->encoder  [tid] = simu->build_encoder  (       tid); check_errors(simu->encoder  [tid], "Encoder<B>"         );
-	simu->puncturer[tid] = simu->build_puncturer(       tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
-	simu->modulator[tid] = simu->build_modulator(       tid); check_errors(simu->modulator[tid], "Modulator<B,R>"     );
+	simu->source   [tid] = simu->build_source   (        tid); check_errors(simu->source   [tid], "Source<B>"          );
+	simu->crc      [tid] = simu->build_crc      (        tid); check_errors(simu->crc      [tid], "CRC<B>"             );
+	simu->encoder  [tid] = simu->build_encoder  (        tid); check_errors(simu->encoder  [tid], "Encoder<B>"         );
+	simu->puncturer[tid] = simu->build_puncturer(        tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
+	simu->modulator[tid] = simu->build_modulator(        tid); check_errors(simu->modulator[tid], "Modulator<B,R>"     );
 
 	const auto N     = simu->code_params.N;
 	const auto tail  = simu->code_params.tail_length;
 	const auto N_mod = this->modulator[tid]->get_buffer_size_after_modulation(N + tail);
 
-	simu->channel  [tid] = simu->build_channel  (N_mod, tid); check_errors(simu->channel  [tid], "Channel<R>"         );
-	simu->quantizer[tid] = simu->build_quantizer(N    , tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>"     );
-	simu->decoder  [tid] = simu->build_decoder  (       tid); check_errors(simu->decoder  [tid], "Decoder<B,Q>"       );
-	simu->analyzer [tid] = simu->build_analyzer (       tid); check_errors(simu->analyzer [tid], "Error_analyzer<B,R>");
+	simu->channel  [tid] = simu->build_channel  (N_mod , tid); check_errors(simu->channel  [tid], "Channel<R>"         );
+	simu->quantizer[tid] = simu->build_quantizer(N+tail, tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>"     );
+	simu->decoder  [tid] = simu->build_decoder  (        tid); check_errors(simu->decoder  [tid], "Decoder<B,Q>"       );
+	simu->analyzer [tid] = simu->build_analyzer (        tid); check_errors(simu->analyzer [tid], "Error_analyzer<B,R>");
 
 	// get the real number of frames per threads (from the decoder)
 	auto n_fra = simu->decoder[tid]->get_n_frames();

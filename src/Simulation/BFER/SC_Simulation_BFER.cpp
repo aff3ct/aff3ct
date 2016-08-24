@@ -186,20 +186,20 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain()
 {
 	// build the objects
-	this->source   [0] = this->build_source   (     ); check_errors(this->source   [0], "Source<B>"          );
-	this->crc      [0] = this->build_crc      (     ); check_errors(this->crc      [0], "CRC<B>"             );
-	this->encoder  [0] = this->build_encoder  (     ); check_errors(this->encoder  [0], "Encoder<B>"         );
-	this->puncturer[0] = this->build_puncturer(     ); check_errors(this->puncturer[0], "Puncturer<B,Q>"     );
-	this->modulator[0] = this->build_modulator(     ); check_errors(this->modulator[0], "Modulator<B,R>"     );
+	this->source   [0] = this->build_source   (      ); check_errors(this->source   [0], "Source<B>"          );
+	this->crc      [0] = this->build_crc      (      ); check_errors(this->crc      [0], "CRC<B>"             );
+	this->encoder  [0] = this->build_encoder  (      ); check_errors(this->encoder  [0], "Encoder<B>"         );
+	this->puncturer[0] = this->build_puncturer(      ); check_errors(this->puncturer[0], "Puncturer<B,Q>"     );
+	this->modulator[0] = this->build_modulator(      ); check_errors(this->modulator[0], "Modulator<B,R>"     );
 
 	const auto N     = this->code_params.N;
 	const auto tail  = this->code_params.tail_length;
 	const auto N_mod = this->modulator[0]->get_buffer_size_after_modulation(N + tail);
 	
-	this->channel  [0] = this->build_channel  (N_mod); check_errors(this->channel  [0], "Channel<R>"         );
-	this->quantizer[0] = this->build_quantizer(N    ); check_errors(this->quantizer[0], "Quantizer<R,Q>"     );
-	this->decoder  [0] = this->build_decoder  (     ); check_errors(this->decoder  [0], "Decoder<B,Q>"       );
-	this->analyzer [0] = this->build_analyzer (     ); check_errors(this->analyzer [0], "Error_analyzer<B,R>");
+	this->channel  [0] = this->build_channel  (N_mod ); check_errors(this->channel  [0], "Channel<R>"         );
+	this->quantizer[0] = this->build_quantizer(N+tail); check_errors(this->quantizer[0], "Quantizer<R,Q>"     );
+	this->decoder  [0] = this->build_decoder  (      ); check_errors(this->decoder  [0], "Decoder<B,Q>"       );
+	this->analyzer [0] = this->build_analyzer (      ); check_errors(this->analyzer [0], "Error_analyzer<B,R>");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source   [0]->create_sc_module            ();

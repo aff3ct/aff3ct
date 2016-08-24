@@ -85,20 +85,20 @@ void Simulation_EXIT<B,R,Q>
 	release_objects();
 
 	// build the objects
-	source      = build_source     (     ); check_errors(source     , "Source<B>"         );
-	encoder     = build_encoder    (     ); check_errors(encoder    , "Encoder<B>"        );
-	modulator   = build_modulator  (     ); check_errors(modulator  , "Modulator<B,R>"    );
-	modulator_a = build_modulator_a(     ); check_errors(modulator_a, "Modulator<B,R>"    );
+	source      = build_source     (      ); check_errors(source     , "Source<B>"         );
+	encoder     = build_encoder    (      ); check_errors(encoder    , "Encoder<B>"        );
+	modulator   = build_modulator  (      ); check_errors(modulator  , "Modulator<B,R>"    );
+	modulator_a = build_modulator_a(      ); check_errors(modulator_a, "Modulator<B,R>"    );
 
 	const auto N     = code_params.N;
 	const auto tail  = code_params.tail_length;
 	const auto N_mod = modulator->get_buffer_size_after_modulation(N + tail);
 
-	channel     = build_channel    (N_mod); check_errors(channel    , "Channel<R>"        );
-	channel_a   = build_channel_a  (N_mod); check_errors(channel    , "Channel<R>"        );
-	quantizer   = build_quantizer  (N    ); check_errors(quantizer  , "Quantizer<R,Q>"    );
-	siso        = build_siso       (     ); check_errors(siso       , "SISO<Q>"           );
-	terminal    = build_terminal   (     ); check_errors(terminal   , "Terminal_EXIT<B,R>");
+	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
+	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
+	quantizer   = build_quantizer  (N+tail); check_errors(quantizer  , "Quantizer<R,Q>"    );
+	siso        = build_siso       (      ); check_errors(siso       , "SISO<Q>"           );
+	terminal    = build_terminal   (      ); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames_siso() > 1)
 	{
