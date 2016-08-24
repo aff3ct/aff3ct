@@ -1,5 +1,5 @@
 #ifdef SYSTEMC
-#include "Simulation_SC_BFER.hpp"
+#include "SC_Simulation_BFER.hpp"
 #else
 
 #ifndef SIMULATION_BFER_HPP_

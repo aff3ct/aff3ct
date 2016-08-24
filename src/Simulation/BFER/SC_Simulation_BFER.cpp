@@ -23,7 +23,7 @@
 #include "../../Tools/bash_tools.h"
 #include "../../Tools/simu_tools.h"
 
-#include "Simulation_BFER.hpp"
+#include "SC_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
@@ -44,7 +44,7 @@ Simulation_BFER<B,R,Q>
 
   barrier(simu_params.n_threads),
   n_frames(1),
- 
+
   snr      (0.f),
   code_rate(0.f),
   sigma    (0.f),
