@@ -155,7 +155,7 @@ protected:
 	virtual CRC<B>*            build_crc        (const int tid = 0);
 	virtual Encoder<B>*        build_encoder    (const int tid = 0) = 0;
 	virtual Puncturer<B,Q>*    build_puncturer  (const int tid = 0);
-	virtual Modulator<B,R>*    build_modulator  (const int tid = 0);
+	virtual Modulator<B,R,R>*  build_modulator  (const int tid = 0);
 	virtual Channel<R>*        build_channel    (const int tid = 0);
 	virtual Quantizer<R,Q>*    build_quantizer  (const int tid = 0);
 	virtual Decoder<B,Q>*      build_decoder    (const int tid = 0) = 0;
