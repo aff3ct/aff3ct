@@ -71,15 +71,12 @@ class SC_Decoder : public Decoder_interface<B,R>
 {
 	friend SC_Decoder_module<B,R>;
 
-private:
-	std::string name;
-
 public:
 	SC_Decoder_module<B,R> *module;
 
 public:
 	SC_Decoder(const int K, const int N, const int n_frames, const std::string name = "SC_Decoder")
-	: Decoder_interface<B,R>(K, N, n_frames, name), name(name), module(nullptr) {}
+	: Decoder_interface<B,R>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Decoder() { if (module != nullptr) { delete module; module = nullptr; } }
 
@@ -89,7 +86,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Decoder_module<B,R>(*this, name.c_str());
+		this->module = new SC_Decoder_module<B,R>(*this, this->name.c_str());
 	}
 };
 

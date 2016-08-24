@@ -74,15 +74,12 @@ class SC_Error_analyzer : public Error_analyzer_interface<B>
 {
 	friend SC_Error_analyzer_module<B>;
 
-private:
-	std::string name;
-
 public:
 	SC_Error_analyzer_module<B> *module;
 
 public:
 	SC_Error_analyzer(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Error_analyzer")
-	: Error_analyzer_interface<B>(K, N, n_frames, name), name(name), module(nullptr) {}
+	: Error_analyzer_interface<B>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Error_analyzer() {if (module != nullptr) { delete module; module = nullptr; }};
 
@@ -109,7 +106,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Error_analyzer_module<B>(*this, name.c_str());
+		this->module = new SC_Error_analyzer_module<B>(*this, this->name.c_str());
 	}
 };
 

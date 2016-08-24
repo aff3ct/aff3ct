@@ -12,9 +12,11 @@ protected:
 	const int K; // number of information bit (the CRC bits are incuded in K)
 	      int n_frames;
 
+	const std::string name; // module name
+
 public:
 	CRC_interface(const int K, const int n_frames = 1, const std::string name = "CRC_interface") 
-	: K(K), n_frames(n_frames) {};
+	: K(K), n_frames(n_frames), name(name) {};
 	virtual ~CRC_interface(){};
 
 	virtual int  size (                          ) const = 0;

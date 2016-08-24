@@ -69,15 +69,12 @@ class SC_Channel : public Channel_interface<R>
 {
 	friend SC_Channel_module<R>;
 
-private:
-	std::string name;
-
 public:
 	SC_Channel_module<R> *module;
 
 public:
 	SC_Channel(const int N, const int n_frames = 1, const std::string name = "SC_Channel")
-	: Channel_interface<R>(N, n_frames, name), name(name), module(nullptr) {}
+	: Channel_interface<R>(N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Channel() { if (module != nullptr) { delete module; module = nullptr; } };
 
@@ -93,7 +90,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Channel_module<R>(*this, name.c_str());
+		this->module = new SC_Channel_module<R>(*this, this->name.c_str());
 	}
 };
 

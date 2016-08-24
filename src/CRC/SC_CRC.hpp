@@ -66,15 +66,12 @@ class SC_CRC : public CRC_interface<B>
 {
 	friend SC_CRC_module<B>;
 
-private:
-	std::string name;
-
 public:
 	SC_CRC_module<B> *module;
 
 public:
 	SC_CRC(const int K, const int n_frames = 1, const std::string name = "SC_CRC") 
-	: CRC_interface<B>(K, n_frames, name), name(name), module(nullptr) {}
+	: CRC_interface<B>(K, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_CRC() { if (module != nullptr) { delete module; module = nullptr; } }
 
@@ -90,7 +87,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_CRC_module<B>(*this, name.c_str());
+		this->module = new SC_CRC_module<B>(*this, this->name.c_str());
 	}
 };
 

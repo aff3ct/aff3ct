@@ -11,9 +11,12 @@ class Channel_interface // please use Channel<R> for inheritance (instead of Cha
 protected:
 	const int N; // frame size
 	      int n_frames;
+
+	const std::string name; // module name
+
 public:
 	Channel_interface(const int N, const int n_frames = 1, const std::string name = "Channel_interface")
-	: N(N), n_frames(n_frames) {};
+	: N(N), n_frames(n_frames), name(name) {};
 	virtual ~Channel_interface() {};
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;

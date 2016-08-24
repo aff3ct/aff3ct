@@ -14,12 +14,14 @@ protected:
 	mipp::vector<T> pi_inv; // deinterleaver lookup table
 
 	int n_frames;
+
+	const std::string name; // module name
 	
 	virtual void gen_lookup_tables() = 0; // to implement
 
 public:
 	Interleaver_interface(const int size, const int n_frames = 1, const std::string name = "Interleaver_interface") 
-	: pi(size), pi_inv(size), n_frames(n_frames) {};
+	: pi(size), pi_inv(size), n_frames(n_frames), name(name) {};
 	virtual ~Interleaver_interface() {};
 
 	mipp::vector<T> get_lookup_table        () const { return pi;     }

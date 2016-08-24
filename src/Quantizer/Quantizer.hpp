@@ -10,9 +10,12 @@ class Quantizer_interface // please use Quantizer<R,Q> for inheritance (instead 
 protected:
 	const int N; // frame size
 	      int n_frames;
+
+	const std::string name; // module name
+
 public:
 	Quantizer_interface(const int N, const int n_frames = 1, const std::string name = "Quantizer_interface")
-	: N(N), n_frames(n_frames) {};
+	: N(N), n_frames(n_frames), name(name) {};
 	virtual ~Quantizer_interface() {};
 
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;

@@ -65,15 +65,12 @@ class SC_Source : public Source_interface<B>
 {
 	friend SC_Source_module<B>;
 
-private:
-	std::string name;
-
 public:
 	SC_Source_module<B> *module;
 
 public:
 	SC_Source(const int K, const int n_frames = 1, const std::string name = "Source_SC")
-	: Source_interface<B>(K, n_frames, name), name(name), module(nullptr) {}
+	: Source_interface<B>(K, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Source() { if (module != nullptr) { delete module; module = nullptr; } };
 
@@ -89,7 +86,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Source_module<B>(*this, name.c_str());
+		this->module = new SC_Source_module<B>(*this, this->name.c_str());
 	}
 };
 

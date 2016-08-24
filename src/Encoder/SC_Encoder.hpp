@@ -69,15 +69,12 @@ class SC_Encoder : public Encoder_interface<B>
 {
 	friend SC_Encoder_module<B>;
 
-private:
-	std::string name;
-
 public:
 	SC_Encoder_module<B> *module;
 
 public:
 	SC_Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Encoder")
-	: Encoder_interface<B>(K, N, n_frames, name), name(name), module(nullptr) {}
+	: Encoder_interface<B>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Encoder() { if (module != nullptr) { delete module; module = nullptr; } }
 
@@ -93,7 +90,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Encoder_module<B>(*this, name.c_str());
+		this->module = new SC_Encoder_module<B>(*this, this->name.c_str());
 	}
 };
 

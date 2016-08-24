@@ -20,10 +20,12 @@ protected:
 	const int N; // frame size
 	      int n_frames;
 
+	const std::string name; // module name
+
 public:
 	Error_analyzer_interface(const int& K, const int& N, const int& n_frames = 1, 
 	                         const std::string name = "Error_analyzer_interface")
-	: K(K), N(N), n_frames(n_frames) 
+	: K(K), N(N), n_frames(n_frames), name(name) 
 	{
 		Error_analyzer_interface<B>::interrupt = false;
 		Error_analyzer_interface<B>::d_delta_interrupt = std::chrono::nanoseconds(0);

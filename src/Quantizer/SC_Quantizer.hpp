@@ -69,15 +69,12 @@ class SC_Quantizer : public Quantizer_interface<R,Q>
 {
 	friend SC_Quantizer_module<R,Q>;
 
-private:
-	std::string name;
-
 public:
 	SC_Quantizer_module<R,Q> *module;
 
 public:
 	SC_Quantizer(const int N, const int n_frames = 1, const std::string name = "SC_Quantizer")
-	: Quantizer_interface<R,Q>(N, n_frames, name), name(name), module(nullptr) {}
+	: Quantizer_interface<R,Q>(N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Quantizer() { if (module != nullptr) { delete module; module = nullptr; } };
 
@@ -93,7 +90,7 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Quantizer_module<R,Q>(*this, name.c_str());
+		this->module = new SC_Quantizer_module<R,Q>(*this, this->name.c_str());
 	}
 };
 

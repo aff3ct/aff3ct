@@ -13,9 +13,11 @@ protected:
 	const int N; // frame size
 	      int n_frames;
 
+	const std::string name; // module name
+
 public:
 	Encoder_interface(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_interface") 
-	: K(K), N(N), n_frames(n_frames) {};
+	: K(K), N(N), n_frames(n_frames), name(name) {};
 	virtual ~Encoder_interface() {};
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N) = 0;

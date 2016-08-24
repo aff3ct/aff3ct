@@ -13,9 +13,11 @@ protected:
 	const int N; // number of information bits in the frame size
 	const int n_frames;
 
+	const std::string name; // module name
+
 public:
 	Decoder_interface(const int K, const int N, const int n_frames = 1, std::string name = "Decoder_interface") 
-	: K(K), N(N), n_frames(n_frames) {};
+	: K(K), N(N), n_frames(n_frames), name(name) {};
 	virtual ~Decoder_interface() {};
 
 	virtual void load  (const mipp::vector<R>& Y_N)       = 0;

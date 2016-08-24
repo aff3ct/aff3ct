@@ -12,13 +12,14 @@ protected:
 	const int K;      // number of information bits
 	const int N;      // frame size
 	const int N_code; // real size of the code (N_code >= N)
+	      int n_frames;
 
-	int n_frames;
+	const std::string name; // module name
 
 public:
 	Puncturer_interface(const int K, const int N, const int N_code, const int n_frames = 1, 
 	                    const std::string name = "Puncturer_interface") 
-	: K(K), N(N), N_code(N_code), n_frames(n_frames) {};
+	: K(K), N(N), N_code(N_code), n_frames(n_frames), name(name) {};
 	virtual ~Puncturer_interface() {};
 
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
