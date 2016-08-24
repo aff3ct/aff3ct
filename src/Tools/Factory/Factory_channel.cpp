@@ -16,7 +16,11 @@
 
 template <typename R>	
 Channel<R>* Factory_channel<R>
-::build(const t_code_param &code_params, const t_channel_param &chan_params, const R& sigma, const int seed)
+::build(const t_code_param &code_params, 
+        const t_channel_param &chan_params, 
+        const R& sigma, 
+        const int size, 
+        const int seed)
 {
 	Channel<R> *channel = nullptr;
 
@@ -24,38 +28,38 @@ Channel<R>* Factory_channel<R>
 	if (chan_params.type == "AWGN")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_std_LLR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_std_LLR<R>(size, sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_std_LR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_std_LR<R>(size, sigma, seed +1);
 	}
 	else if (chan_params.type == "AWGN_FAST")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_fast_LLR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_fast_LLR<R>(size, sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_fast_LR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_fast_LR<R>(size, sigma, seed +1);
 	}
 #ifdef CHANNEL_MKL
 	else if (chan_params.type == "AWGN_MKL")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_MKL_LLR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_MKL_LLR<R>(size, sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_MKL_LR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_MKL_LR<R>(size, sigma, seed +1);
 	}
 #endif
 #ifdef CHANNEL_GSL
 	else if (chan_params.type == "AWGN_GSL")
 	{
 		if (chan_params.domain == "LLR")
-			channel = new Channel_AWGN_GSL_LLR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_GSL_LLR<R>(size, sigma, seed +1);
 		else if (chan_params.domain == "LR")
-			channel = new Channel_AWGN_GSL_LR<R>(code_params.N + code_params.tail_length, sigma, seed +1);
+			channel = new Channel_AWGN_GSL_LR<R>(size, sigma, seed +1);
 	}
 #endif
 	else if (chan_params.type == "NO")
 	{
-		channel = new Channel_NO<R>(code_params.N + code_params.tail_length);
+		channel = new Channel_NO<R>(size);
 	}
 
 	return channel;

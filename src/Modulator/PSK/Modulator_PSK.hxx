@@ -13,7 +13,7 @@ Modulator_PSK<B,R,Q,MAX>
 ::Modulator_PSK(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
                 const std::string name)
 : Modulator<B,R,Q>(N, 
-                   this->get_buffer_size_after_modulation(N),
+                   std::ceil((float)N / (float)bits_per_symbol) * 2,
                    n_frames, 
                    name.c_str()),
   bits_per_symbol(bits_per_symbol),

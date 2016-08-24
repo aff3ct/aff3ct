@@ -153,7 +153,7 @@ void Simulation_BFERI<B,R,Q>
 		release_objects();
 
 		// exit simulation (double [ctrl+c])
-		if (Error_analyzer<B,R>::is_over())
+		if (Error_analyzer<B>::is_over())
 			break;
 	}
 
@@ -205,27 +205,29 @@ void Simulation_BFERI<B,R,Q>
 ::build_communication_chain(Simulation_BFERI<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source     [tid] = simu->build_source     (tid); check_errors(simu->source     [tid], "Source<B>"          );
-	simu->crc        [tid] = simu->build_crc        (tid); check_errors(simu->crc        [tid], "CRC<B>"             );
-	simu->encoder    [tid] = simu->build_encoder    (tid); check_errors(simu->encoder    [tid], "Encoder<B>"         );
-	simu->interleaver[tid] = simu->build_interleaver(tid); check_errors(simu->interleaver[tid], "Interleaver<int>"   );
-	simu->modulator  [tid] = simu->build_modulator  (tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"     );
-	simu->channel    [tid] = simu->build_channel    (tid); check_errors(simu->channel    [tid], "Channel<R>"         );
-	simu->quantizer  [tid] = simu->build_quantizer  (tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"     );
-	simu->siso       [tid] = simu->build_siso       (tid); check_errors(simu->siso       [tid], "SISO<Q>"            );
-	simu->decoder    [tid] = simu->build_decoder    (tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"       );
-	simu->analyzer   [tid] = simu->build_analyzer   (tid); check_errors(simu->analyzer   [tid], "Error_analyzer<B,R>");
-
-	// get the real number of frames per threads (from the decoder)
-	auto n_fra = simu->siso[tid]->get_n_frames();
-	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
-
-	// resize the buffers
-	const auto K     = simu->code_params.K;
+	simu->source     [tid] = simu->build_source     (       tid); check_errors(simu->source     [tid], "Source<B>"          );
+	simu->crc        [tid] = simu->build_crc        (       tid); check_errors(simu->crc        [tid], "CRC<B>"             );
+	simu->encoder    [tid] = simu->build_encoder    (       tid); check_errors(simu->encoder    [tid], "Encoder<B>"         );
+	simu->interleaver[tid] = simu->build_interleaver(       tid); check_errors(simu->interleaver[tid], "Interleaver<int>"   );
+	simu->modulator  [tid] = simu->build_modulator  (       tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"     );
+	
 	const auto N     = simu->code_params.N;
 	const auto tail  = simu->code_params.tail_length;
 	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
 	const auto N_fil = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
+
+	simu->channel    [tid] = simu->build_channel    (N_mod, tid); check_errors(simu->channel    [tid], "Channel<R>"         );
+	simu->quantizer  [tid] = simu->build_quantizer  (N_fil, tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"     );
+	simu->siso       [tid] = simu->build_siso       (       tid); check_errors(simu->siso       [tid], "SISO<Q>"            );
+	simu->decoder    [tid] = simu->build_decoder    (       tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"       );
+	simu->analyzer   [tid] = simu->build_analyzer   (       tid); check_errors(simu->analyzer   [tid], "Error_analyzer<B,R>");
+
+	// get the real number of frames per threads (from the decoder)
+	auto n_fra = simu->siso[tid]->get_n_frames_siso();
+	assert(simu->siso[tid]->get_n_frames_siso() == simu->decoder[tid]->get_n_frames());
+
+	// resize the buffers
+	const auto K = simu->code_params.K;
 	if (simu->U_K [tid].size() != (unsigned) ( K             * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N1[tid].resize((N      + tail) * n_fra);
 	if (simu->X_N2[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
@@ -254,11 +256,11 @@ void Simulation_BFERI<B,R,Q>
 		simu->n_frames = n_fra;
 
 		// build an error analyzer to compute BER/FER (reduce the other analyzers)
-		simu->analyzer_red = new Error_analyzer_reduction<B,R>(simu->code_params.K, 
-		                                                       simu->code_params.N, 
-		                                                       simu->simu_params.max_fe, 
-		                                                       simu->analyzer,
-		                                                       simu->n_frames);
+		simu->analyzer_red = new Error_analyzer_reduction<B>(simu->code_params.K, 
+		                                                     simu->code_params.N, 
+		                                                     simu->simu_params.max_fe, 
+		                                                     simu->analyzer,
+		                                                     simu->n_frames);
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal(tid);
 		check_errors(simu->terminal, "Terminal");
@@ -855,23 +857,23 @@ Modulator<B,R,Q>* Simulation_BFERI<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFERI<B,R,Q>
-::build_channel(const int tid)
+::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(chan_params, sigma, tid);
+	return Factory_channel<R>::build(code_params, chan_params, sigma, size, tid);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFERI<B,R,Q>
-::build_quantizer(const int tid)
+::build_quantizer(const int size, const int tid)
 {
-	return Factory_quantizer<R,Q>::build(chan_params, sigma);
+	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma, size);
 }
 
 template <typename B, typename R, typename Q>
-Error_analyzer<B,R>* Simulation_BFERI<B,R,Q>
+Error_analyzer<B>* Simulation_BFERI<B,R,Q>
 ::build_analyzer(const int tid)
 {
-	return Factory_error_analyzer<B,R>::build(simu_params, code_params, n_frames);
+	return Factory_error_analyzer<B>::build(simu_params, code_params, n_frames);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

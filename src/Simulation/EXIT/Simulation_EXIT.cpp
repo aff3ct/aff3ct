@@ -85,15 +85,20 @@ void Simulation_EXIT<B,R,Q>
 	release_objects();
 
 	// build the objects
-	source      = build_source     (); check_errors(source     , "Source<B>"         );
-	encoder     = build_encoder    (); check_errors(encoder    , "Encoder<B>"        );
-	modulator   = build_modulator  (); check_errors(modulator  , "Modulator<B,R>"    );
-	modulator_a = build_modulator_a(); check_errors(modulator_a, "Modulator<B,R>"    );
-	channel     = build_channel    (); check_errors(channel    , "Channel<R>"        );
-	channel_a   = build_channel_a  (); check_errors(channel    , "Channel<R>"        );
-	quantizer   = build_quantizer  (); check_errors(quantizer  , "Quantizer<R,Q>"    );
-	siso        = build_siso       (); check_errors(siso       , "SISO<Q>"           );
-	terminal    = build_terminal   (); check_errors(terminal   , "Terminal_EXIT<B,R>");
+	source      = build_source     (     ); check_errors(source     , "Source<B>"         );
+	encoder     = build_encoder    (     ); check_errors(encoder    , "Encoder<B>"        );
+	modulator   = build_modulator  (     ); check_errors(modulator  , "Modulator<B,R>"    );
+	modulator_a = build_modulator_a(     ); check_errors(modulator_a, "Modulator<B,R>"    );
+
+	const auto N     = code_params.N;
+	const auto tail  = code_params.tail_length;
+	const auto N_mod = modulator->get_buffer_size_after_modulation(N + tail);
+
+	channel     = build_channel    (N_mod); check_errors(channel    , "Channel<R>"        );
+	channel_a   = build_channel_a  (N_mod); check_errors(channel    , "Channel<R>"        );
+	quantizer   = build_quantizer  (N    ); check_errors(quantizer  , "Quantizer<R,Q>"    );
+	siso        = build_siso       (     ); check_errors(siso       , "SISO<Q>"           );
+	terminal    = build_terminal   (     ); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames_siso() > 1)
 	{
@@ -103,8 +108,6 @@ void Simulation_EXIT<B,R,Q>
 
 	// resize the modulation buffers
 	const auto K_mod = modulator_a->get_buffer_size_after_modulation(code_params.K);
-	const auto N_mod = modulator  ->get_buffer_size_after_modulation(code_params.N);
-	const auto tail  = code_params.tail_length;
 	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
 	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
@@ -430,23 +433,23 @@ Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
-::build_channel()
+::build_channel(const int size)
 {
-	return Factory_channel<R>::build(code_params, chan_params, sigma, 0);
+	return Factory_channel<R>::build(code_params, chan_params, sigma, size, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
-::build_channel_a()
+::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(code_params, chan_params, 2.0 / sig_a, 0);
+	return Factory_channel<R>::build(code_params, chan_params, 2.0 / sig_a, size, 0);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_EXIT<B,R,Q>
-::build_quantizer()
+::build_quantizer(const int size)
 {
-	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma);
+	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma, size);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

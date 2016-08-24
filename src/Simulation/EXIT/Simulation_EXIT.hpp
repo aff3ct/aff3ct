@@ -96,15 +96,15 @@ protected:
 	virtual void                launch_precompute();
 	virtual void                snr_precompute   ();
 
-	virtual Source<B>*          build_source     ();
-	virtual Encoder<B>*         build_encoder    () = 0;
-	virtual Modulator<B,R,R>*   build_modulator  ();
-	virtual Modulator<B,R,R>*   build_modulator_a();
-	virtual Channel<R>*         build_channel    ();
-	virtual Channel<R>*         build_channel_a  ();
-	virtual Quantizer<R,Q>*     build_quantizer  ();
-	virtual SISO<Q>*            build_siso       () = 0;
-	        Terminal_EXIT<B,R>* build_terminal   ();
+	virtual Source<B>*          build_source     (              );
+	virtual Encoder<B>*         build_encoder    (              ) = 0;
+	virtual Modulator<B,R,R>*   build_modulator  (              );
+	virtual Modulator<B,R,R>*   build_modulator_a(              );
+	virtual Channel<R>*         build_channel    (const int size);
+	virtual Channel<R>*         build_channel_a  (const int size);
+	virtual Quantizer<R,Q>*     build_quantizer  (const int size);
+	virtual SISO<Q>*            build_siso       (              ) = 0;
+	        Terminal_EXIT<B,R>* build_terminal   (              );
 };
 
 #endif /* SIMULATION_EXIT_HPP_ */
