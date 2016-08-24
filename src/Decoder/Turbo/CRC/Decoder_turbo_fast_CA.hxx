@@ -52,8 +52,9 @@ void Decoder_turbo_fast_CA<B,R>
 		}
 		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i += mipp::nElReg<R>())
 		{
-			const auto r_l_sen = mipp::Reg<R>(mipp::load<R>(&this->l_sn[i]));
-			r_l_sen.store(&this->l_sen[i]);
+			mipp::Reg<R> r_l_sen;
+			r_l_sen.loadu (&this->l_sn [i]);
+			r_l_sen.storeu(&this->l_sen[i]);
 		}
 
 		// SISO in the natural domain
@@ -95,8 +96,9 @@ void Decoder_turbo_fast_CA<B,R>
 			}
 			for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i += mipp::nElReg<R>())
 			{
-				const auto r_l_sei = mipp::Reg<R>(&this->l_si[i]);
-				r_l_sei.store(&this->l_sei[i]);
+				mipp::Reg<R> r_l_sei;
+				r_l_sei.loadu (&this->l_si [i]);
+				r_l_sei.storeu(&this->l_sei[i]);
 			}
 
 			// SISO in the interleave domain
