@@ -11,7 +11,7 @@ Puncturer_polar_wangliu<B,Q>
                           const Frozenbits_generator<B> &fb_generator,
                           const int n_frames,
                           const std::string name)
-: Puncturer<B,Q>(K, N, std::exp2(std::ceil(std::log2(N))), n_frames, name.c_str()),
+: Puncturer<B,Q>(K, N, std::exp2(std::ceil(std::log2(N))), n_frames, name),
   fb_generator(fb_generator)
 {
 }

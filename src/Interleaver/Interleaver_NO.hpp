@@ -8,7 +8,7 @@ class Interleaver_NO : public Interleaver<T>
 {
 public:
 	Interleaver_NO(int size, const std::string name = "Interleaver_NO") 
-	: Interleaver<T>(size, 1, name.c_str()) { gen_lookup_tables(); }
+	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
 
 protected:
 	void gen_lookup_tables()

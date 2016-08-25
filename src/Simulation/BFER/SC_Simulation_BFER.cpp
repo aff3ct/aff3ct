@@ -65,9 +65,7 @@ Simulation_BFER<B,R,Q>
   dbg_R{nullptr, nullptr, nullptr},
   dbg_Q{nullptr, nullptr},
 
-  d_load_total_fake (std::chrono::nanoseconds(0)),
-  d_decod_total_fake(std::chrono::nanoseconds(0)),
-  d_store_total_fake(std::chrono::nanoseconds(0))
+  d_decod_total_fake(std::chrono::nanoseconds(0))
 {
 	if (simu_params.n_threads > 1)
 	{
@@ -135,7 +133,7 @@ void Simulation_BFER<B,R,Q>
 	    !(this->simu_params.enable_debug && this->simu_params.n_threads == 1) && !this->simu_params.benchs))
 		this->terminal->legend(std::cout);
 
-	this->duplicator = new SC_Duplicator<B>("Duplicator");
+	this->duplicator = new SC_Duplicator("Duplicator");
 
 	if (this->simu_params.n_threads == 1 && this->simu_params.enable_debug)
 	{
@@ -145,8 +143,8 @@ void Simulation_BFER<B,R,Q>
 		this->dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", "Debug_B3");
 		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", "Debug_R0");
 		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", "Debug_R1");
-		this->dbg_R[2] = new SC_Debug<R>("Demodulate from Y_N1 to Y_N2...           \nY_N2:\n", "Debug_R2");
-		this->dbg_R[3] = new SC_Debug<R>("Filter from Y_N2 to Y_N3...               \nY_N3:\n", "Debug_R3");
+		this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", "Debug_R2");
+		this->dbg_R[3] = new SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", "Debug_R3");
 		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", "Debug_Q0");
 		this->dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", "Debug_Q1");
 		this->dbg_B[4] = new SC_Debug<B>("Decode Y_N5 and generate V_K...           \nV_K: \n", "Debug_B4");
@@ -165,7 +163,7 @@ void Simulation_BFER<B,R,Q>
 		std::thread thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
 
 		this->bind_sockets();
-		sc_core::sc_report_handler::set_actions(SC_INFO, SC_DO_NOTHING);
+		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 		sc_core::sc_start(); // start simulation
 
 		// wait the terminal thread to finish
@@ -177,8 +175,8 @@ void Simulation_BFER<B,R,Q>
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STANDARD! /!\ //
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	sc_core::sc_curr_simcontext = new sc_simcontext();
-	sc_core::sc_default_global_context = sc_curr_simcontext;
+	sc_core::sc_curr_simcontext = new sc_core::sc_simcontext();
+	sc_core::sc_default_global_context = sc_core::sc_curr_simcontext;
 }
 
 template <typename B, typename R, typename Q>
@@ -186,20 +184,20 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain()
 {
 	// build the objects
-	this->source   [0] = this->build_source   (      ); check_errors(this->source   [0], "Source<B>"          );
-	this->crc      [0] = this->build_crc      (      ); check_errors(this->crc      [0], "CRC<B>"             );
-	this->encoder  [0] = this->build_encoder  (      ); check_errors(this->encoder  [0], "Encoder<B>"         );
-	this->puncturer[0] = this->build_puncturer(      ); check_errors(this->puncturer[0], "Puncturer<B,Q>"     );
-	this->modulator[0] = this->build_modulator(      ); check_errors(this->modulator[0], "Modulator<B,R>"     );
+	this->source   [0] = this->build_source   (      ); check_errors(this->source   [0], "Source<B>"        );
+	this->crc      [0] = this->build_crc      (      ); check_errors(this->crc      [0], "CRC<B>"           );
+	this->encoder  [0] = this->build_encoder  (      ); check_errors(this->encoder  [0], "Encoder<B>"       );
+	this->puncturer[0] = this->build_puncturer(      ); check_errors(this->puncturer[0], "Puncturer<B,Q>"   );
+	this->modulator[0] = this->build_modulator(      ); check_errors(this->modulator[0], "Modulator<B,R>"   );
 
 	const auto N     = this->code_params.N;
 	const auto tail  = this->code_params.tail_length;
 	const auto N_mod = this->modulator[0]->get_buffer_size_after_modulation(N + tail);
 	
-	this->channel  [0] = this->build_channel  (N_mod ); check_errors(this->channel  [0], "Channel<R>"         );
-	this->quantizer[0] = this->build_quantizer(N+tail); check_errors(this->quantizer[0], "Quantizer<R,Q>"     );
-	this->decoder  [0] = this->build_decoder  (      ); check_errors(this->decoder  [0], "Decoder<B,Q>"       );
-	this->analyzer [0] = this->build_analyzer (      ); check_errors(this->analyzer [0], "Error_analyzer<B,R>");
+	this->channel  [0] = this->build_channel  (N_mod ); check_errors(this->channel  [0], "Channel<R>"       );
+	this->quantizer[0] = this->build_quantizer(N+tail); check_errors(this->quantizer[0], "Quantizer<R,Q>"   );
+	this->decoder  [0] = this->build_decoder  (      ); check_errors(this->decoder  [0], "Decoder<B,Q>"     );
+	this->analyzer [0] = this->build_analyzer (      ); check_errors(this->analyzer [0], "Error_analyzer<B>");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source   [0]->create_sc_module            ();

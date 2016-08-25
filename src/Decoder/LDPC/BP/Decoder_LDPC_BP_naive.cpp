@@ -12,10 +12,10 @@ Decoder_LDPC_BP_naive<B,R>
 ::Decoder_LDPC_BP_naive(const int &K, const int &N, const int& n_ite,
                         const std::vector<unsigned char> &n_variables_per_parity,
                         const std::vector<unsigned char> &n_parities_per_variable,
-                        const std::vector<unsigned int > &transpose)
-: Decoder<B,R>(),
-  K                      (K                      ),
-  N                      (N                      ),
+                        const std::vector<unsigned int > &transpose,
+                        const std::string name)
+: Decoder<B,R>(K, N, 1, name          ),
+  SISO   <  R>(K, N, 1, name + "_siso"),
   n_ite                  (n_ite                  ),
   n_V_nodes              (N                      ), // same as N but more explicit
   n_C_nodes              (N - K                  ),

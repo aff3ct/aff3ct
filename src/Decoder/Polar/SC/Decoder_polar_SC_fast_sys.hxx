@@ -115,7 +115,7 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const std::string name)
-: Decoder<B,R>(K, N, API_polar::get_n_frames(), name.c_str()),
+: Decoder<B,R>(K, N, API_polar::get_n_frames(), name),
   m(log2(N)),
   l    (2 * N * this->n_frames + mipp::nElmtsPerRegister<R>()),
   s    (1 * N * this->n_frames + mipp::nElmtsPerRegister<B>()),

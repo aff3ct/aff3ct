@@ -7,7 +7,7 @@
 template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const std::string name)
- : Encoder<B>(K, N, 1, name.c_str()), rep_count(N/K), U(N), interleaver(interleaver)
+ : Encoder<B>(K, N, 1, name), rep_count(N/K), U(N), interleaver(interleaver)
 {	
 	assert(N % K == 0); // check if RA count is consistent
 }

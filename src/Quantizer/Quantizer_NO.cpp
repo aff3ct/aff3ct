@@ -7,7 +7,7 @@
 template <typename R, typename Q>
 Quantizer_NO<R,Q>
 ::Quantizer_NO(const int N, const int n_frames, const std::string name)
-: Quantizer<R,Q>(N, n_frames, name.c_str())
+: Quantizer<R,Q>(N, n_frames, name)
 {
 }
 

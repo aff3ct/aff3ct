@@ -11,7 +11,7 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
                           const std::string name)
-: Decoder<B,R>(K, N, 1, name.c_str()), 
+: Decoder<B,R>(K, N, 1, name), 
   m(log2(N)), 
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits), 

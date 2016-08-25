@@ -7,7 +7,8 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
                                const std::string name)
-: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K, m, max_iter, frozen_bits, name)
+: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K, m, max_iter, frozen_bits, name),
+  SISO<R>(K, 1 << m, 1, name + "_siso")
 {
 }
 

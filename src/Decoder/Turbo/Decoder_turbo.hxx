@@ -18,7 +18,7 @@ Decoder_turbo<B,R>
                 Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), siso_n.get_n_frames_siso(), name.c_str()),
+: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), siso_n.get_n_frames_siso(), name),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),

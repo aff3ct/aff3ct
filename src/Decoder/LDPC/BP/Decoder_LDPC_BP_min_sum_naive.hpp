@@ -10,7 +10,8 @@ public:
 	Decoder_LDPC_BP_min_sum_naive(const int &K, const int &N, const int& n_ite, 
 	                              const std::vector<unsigned char> &n_variables_per_parity,
 	                              const std::vector<unsigned char> &n_parities_per_variable,
-	                              const std::vector<unsigned int > &transpose);
+	                              const std::vector<unsigned int > &transpose,
+	                              const std::string name = "Decoder_LDPC_BP_min_sum_naive");
 	virtual ~Decoder_LDPC_BP_min_sum_naive();
 
 protected:

@@ -1,7 +1,7 @@
 #ifdef SYSTEMC
 
-#ifndef SIMULATION_SC_BFER_HPP_
-#define SIMULATION_SC_BFER_HPP_
+#ifndef SC_SIMULATION_BFER_HPP_
+#define SC_SIMULATION_BFER_HPP_
 
 #include <chrono>
 #include <vector>
@@ -58,7 +58,7 @@ protected:
 	std::vector<SC_Error_analyzer<B>*>  analyzer;
 	Terminal                           *terminal;
 
-	SC_Duplicator<B> *duplicator;
+	SC_Duplicator *duplicator;
 	SC_Debug<B> *dbg_B[5];
 	SC_Debug<R> *dbg_R[4];
 	SC_Debug<Q> *dbg_Q[2];
@@ -69,9 +69,7 @@ protected:
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
 
-	std::chrono::nanoseconds d_load_total_fake;
 	std::chrono::nanoseconds d_decod_total_fake;
-	std::chrono::nanoseconds d_store_total_fake;
 
 public:
 	Simulation_BFER(const t_simulation_param& simu_params,

@@ -15,7 +15,7 @@ Modulator_PAM<B,R,Q,MAX>
 : Modulator<B,R,Q>(N,
                    std::ceil((float)N / (float)bits_per_symbol),
                    n_frames, 
-                   name.c_str()),
+                   name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),

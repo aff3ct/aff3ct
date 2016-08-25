@@ -213,7 +213,11 @@ template <typename T>
 class Interleaver_random_hard : public Interleaver<T>
 {
 public:
-	Interleaver_random_hard(int size) : Interleaver<T>(size) { gen_lookup_tables(); }
+	Interleaver_random_hard(int size, const std::string name = "Interleaver_random_hard") 
+	: Interleaver<T>(size, 1, name) 
+	{
+		gen_lookup_tables();
+	}
 
 protected:
 	void gen_lookup_tables()

@@ -1,3 +1,5 @@
+#ifndef SYSTEMC
+
 #include <string>
 #include <vector>
 #include <chrono>
@@ -245,9 +247,13 @@ void Simulation_BFERI<B,R,Q>
 	std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
 
 	// set the real number of frames per thread
+	simu->source     [tid]->set_n_frames(n_fra);
 	simu->crc        [tid]->set_n_frames(n_fra);
 	simu->encoder    [tid]->set_n_frames(n_fra);
 	simu->interleaver[tid]->set_n_frames(n_fra);
+	simu->modulator  [tid]->set_n_frames(n_fra);
+	simu->channel    [tid]->set_n_frames(n_fra);
+	simu->quantizer  [tid]->set_n_frames(n_fra);
 	simu->analyzer   [tid]->set_n_frames(n_fra);
 
 	simu->barrier(tid);
@@ -845,7 +851,7 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFERI<B,R,Q>
 ::build_interleaver(const int tid)
 {
-	return Factory_interleaver<int>::build(code_params, code_params.N + code_params.tail_length);
+	return Factory_interleaver<int>::build(code_params, code_params.N + code_params.tail_length, 0);
 }
 
 template <typename B, typename R, typename Q>
@@ -896,3 +902,5 @@ template class Simulation_BFERI<B_64,R_64,Q_64>;
 template class Simulation_BFERI<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
+
+#endif /* NOT SYSTEMC */

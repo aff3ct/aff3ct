@@ -169,8 +169,8 @@ class SC_Modulator_module_tdemodulator : public sc_core::sc_module
 	SC_HAS_PROCESS(SC_Modulator_module_tdemodulator);
 
 public:
-	tlm_utils::simple_target_socket   <SC_Modulator_module_tdemodulator> s_in;
-	tlm_utils::simple_target_socket   <SC_Modulator_module_tdemodulator> s_in_decoder;
+	tlm_utils::simple_target_socket   <SC_Modulator_module_tdemodulator> s_in1;
+	tlm_utils::simple_target_socket   <SC_Modulator_module_tdemodulator> s_in2;
 	tlm_utils::simple_initiator_socket<SC_Modulator_module_tdemodulator> s_out;
 
 private:
@@ -180,33 +180,44 @@ private:
 public:
 	SC_Modulator_module_tdemodulator(SC_Modulator<B,R,Q> &modulator, 
 	                                       const sc_core::sc_module_name name = "SC_Modulator_module_tdemodulator")
-	: sc_module(name), s_in("s_in"), s_in_decoder("s_in_decoder"), s_out("s_out"),
+	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  modulator(modulator),
 	  Y_N1(modulator.N_fil * modulator.n_frames),
 	  Y_N2(modulator.N     * modulator.n_frames),
-	  Y_N2(modulator.N     * modulator.n_frames)
+	  Y_N3(modulator.N     * modulator.n_frames)
 	{
-		s_in        .register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport);
-		s_in_decoder.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport_decoder);
+		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport1);
+		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport2);
 	}
 
 	void resize_buffers()
 	{
 		if ((int)Y_N1.size() != modulator.N_fil * modulator.n_frames) Y_N1.resize(modulator.N_fil * modulator.n_frames);
 		if ((int)Y_N2.size() != modulator.N     * modulator.n_frames) Y_N2.resize(modulator.N     * modulator.n_frames);
-		if ((int)Y_N2.size() != modulator.N     * modulator.n_frames) Y_N2.resize(modulator.N     * modulator.n_frames);
+		if ((int)Y_N3.size() != modulator.N     * modulator.n_frames) Y_N3.resize(modulator.N     * modulator.n_frames);
 	}
 
 private:
-	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(Q)) == Y_N1.size());
 
 		const Q* buffer_in = (Q*)trans.get_data_ptr();
 		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+
+		std::fill(Y_N2.begin(), Y_N2.end(), 0);
+		modulator.demodulate(Y_N1, Y_N2, Y_N3);
+		// modulator.demodulate(Y_N1, Y_N3); // optim to avoid the 0 init
+
+		tlm::tlm_generic_payload payload;
+		payload.set_data_ptr((unsigned char*)Y_N3.data());
+		payload.set_data_length(Y_N3.size() * sizeof(Q));
+
+		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
+		s_out->b_transport(payload, zero_time);
 	}
 
-	void b_transport_decoder(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		assert((trans.get_data_length() / sizeof(Q)) == Y_N2.size());
 

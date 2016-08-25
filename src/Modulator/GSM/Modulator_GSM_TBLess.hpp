@@ -1,7 +1,6 @@
 #ifndef MODULATOR_GSM_TBLESS_HPP_
 #define MODULATOR_GSM_TBLESS_HPP_
 
-
 #include <vector>
 #include "../../Tools/MIPP/mipp.h"
 #include "../../Tools/params.h"
@@ -12,9 +11,9 @@
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_GSM_TBLess : public Modulator_GSM<B,R,Q,MAX>
 {
-	
 public:
-	Modulator_GSM_TBLess(int N, const R sigma, const bool disable_sig2 = false);
+	Modulator_GSM_TBLess(int N, const R sigma, const bool disable_sig2 = false, 
+	                     const std::string name = "Modulator_GSM_TBLess");
 	virtual ~Modulator_GSM_TBLess();
 
 	void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);

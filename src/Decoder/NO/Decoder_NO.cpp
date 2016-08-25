@@ -2,8 +2,9 @@
 
 template <typename B, typename R>
 Decoder_NO<B,R>
-::Decoder_NO(const int K, const int N, std::string name)
-: Decoder<B,R>(K, N, 1, name.c_str())
+::Decoder_NO(const int K, const int N, const std::string name)
+: Decoder<B,R>(K, N, 1, name          ),
+  SISO   <  R>(K, N, 1, name + "_siso")
 {
 }
 

@@ -12,8 +12,9 @@ Decoder_LDPC_BP_sum_product_naive<B,R>
 ::Decoder_LDPC_BP_sum_product_naive(const int &K, const int &N, const int& n_ite,
                                     const std::vector<unsigned char> &n_variables_per_parity,
                                     const std::vector<unsigned char> &n_parities_per_variable,
-                                    const std::vector<unsigned int > &transpose)
-: Decoder_LDPC_BP_naive<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose)
+                                    const std::vector<unsigned int > &transpose,
+                                    const std::string name)
+: Decoder_LDPC_BP_naive<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, name)
 {
 }
 

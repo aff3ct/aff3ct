@@ -33,17 +33,17 @@ private:
 
 public:
 	SC_Interleaver_module_interleaver(SC_Interleaver<T> &interleaver,
-	                                 const sc_core::sc_module_name name = "SC_Interleaver_module_interleaver")
+	                                  const sc_core::sc_module_name name = "SC_Interleaver_module_interleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  natural_vec_1    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_1(interleaver.size * interleaver.n_frames),
-	  natural_vec_2    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_2(interleaver.size * interleaver.n_frames),
-	  natural_vec_4    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_4(interleaver.size * interleaver.n_frames),
-	  natural_vec_8    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_8(interleaver.size * interleaver.n_frames)
+	  natural_vec_1    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_1(interleaver.pi.size() * interleaver.n_frames),
+	  natural_vec_2    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_2(interleaver.pi.size() * interleaver.n_frames),
+	  natural_vec_4    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_4(interleaver.pi.size() * interleaver.n_frames),
+	  natural_vec_8    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_8(interleaver.pi.size() * interleaver.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_interleaver::b_transport);
 	}
@@ -64,9 +64,8 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert(trans.get_data_length() % (this->pi.size() * this->n_frames) == 0);
+		int size_of_data = trans.get_data_length() / (interleaver.pi.size() * interleaver.n_frames);
 
-		int size_of_data = trans.get_data_length() / (this->pi.size() * this->n_frames);
 		switch (size_of_data)
 		{
 			case 1: _b_transport<char     >(trans, t, natural_vec_1, interleaved_vec_1); break;
@@ -122,14 +121,14 @@ public:
 	                                   const sc_core::sc_module_name name = "SC_Interleaver_module_deinterleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  natural_vec_1    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_1(interleaver.size * interleaver.n_frames),
-	  natural_vec_2    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_2(interleaver.size * interleaver.n_frames),
-	  natural_vec_4    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_4(interleaver.size * interleaver.n_frames),
-	  natural_vec_8    (interleaver.size * interleaver.n_frames),
-	  interleaved_vec_8(interleaver.size * interleaver.n_frames)
+	  natural_vec_1    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_1(interleaver.pi.size() * interleaver.n_frames),
+	  natural_vec_2    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_2(interleaver.pi.size() * interleaver.n_frames),
+	  natural_vec_4    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_4(interleaver.pi.size() * interleaver.n_frames),
+	  natural_vec_8    (interleaver.pi.size() * interleaver.n_frames),
+	  interleaved_vec_8(interleaver.pi.size() * interleaver.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_deinterleaver::b_transport);
 	}
@@ -150,9 +149,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert(trans.get_data_length() % (this->pi.size() * this->n_frames) == 0);
-
-		int size_of_data = trans.get_data_length() / (this->pi.size() * this->n_frames);
+		int size_of_data = trans.get_data_length() / (interleaver.pi.size() * interleaver.n_frames);
 		switch (size_of_data)
 		{
 			case 1: _b_transport<char     >(trans, t, interleaved_vec_1, natural_vec_1); break;
@@ -224,7 +221,7 @@ public:
 	void create_sc_module_deinterleaver()
 	{
 		const std::string new_name = this->name + "_deinter";
-		this->module_inter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
+		this->module_deinter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
 	}
 
 protected:

@@ -12,10 +12,8 @@
 
 #include "../Frame_trace/Frame_trace.hpp"
 
-using namespace sc_core;
-
 template <typename T>
-class SC_Debug : sc_module
+class SC_Debug : sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Debug);
 
@@ -27,7 +25,7 @@ private:
 	std::string message;
 
 public:
-    SC_Debug(std::string message = "Debug:\n", sc_module_name name = "SC_Debug")
+    SC_Debug(std::string message = "Debug:\n", sc_core::sc_module_name name = "SC_Debug")
     : sc_module(name), s_in("s_in"), s_out("s_out"), message(message)
 	{
 		s_in.register_b_transport(this, &SC_Debug::b_transport);

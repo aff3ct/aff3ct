@@ -7,10 +7,7 @@
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 
-using namespace sc_core;
-
-template <typename T>
-class SC_Dummy : sc_module
+class SC_Dummy : sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Dummy);
 
@@ -18,7 +15,7 @@ public:
 	tlm_utils::simple_target_socket<SC_Dummy> s_in;
 
 public:
-    SC_Dummy(sc_module_name name)
+    SC_Dummy(sc_core::sc_module_name name)
     : sc_module(name), s_in("s_in")
 	{
 		s_in.register_b_transport(this, &SC_Dummy::b_transport);

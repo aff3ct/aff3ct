@@ -10,7 +10,7 @@ template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N_without_tb, const Interleaver<short> &pi,
                 Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames, const std::string name)
-: Encoder<B>(K, N_without_tb + enco_n.tail_length() + enco_i.tail_length(), n_frames, name.c_str()),
+: Encoder<B>(K, N_without_tb + enco_n.tail_length() + enco_i.tail_length(), n_frames, name),
   pi(pi),
   enco_n(enco_n),
   enco_i(enco_i),

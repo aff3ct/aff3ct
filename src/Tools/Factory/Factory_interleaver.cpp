@@ -10,7 +10,7 @@
 
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>
-::build(const t_code_param &code_params, const int &size)
+::build(const t_code_param &code_params, const int &size, const int seed)
 {
 	Interleaver<T> *interleaver = nullptr;
 
@@ -20,7 +20,7 @@ Interleaver<T>* Factory_interleaver<T>
 	else if (code_params.interleaver == "CCSDS")
 		interleaver = new Interleaver_CCSDS<T>(size);
 	else if (code_params.interleaver == "RANDOM")
-		interleaver = new Interleaver_random<T>(size);
+		interleaver = new Interleaver_random<T>(size, seed);
 	else if (code_params.interleaver == "RANDOM_HARD")
 		interleaver = new Interleaver_random_hard<T>(size);
 	else if (code_params.interleaver == "COLUMNS")

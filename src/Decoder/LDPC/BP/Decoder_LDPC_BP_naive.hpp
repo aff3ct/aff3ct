@@ -8,8 +8,6 @@ template <typename B, typename R>
 class Decoder_LDPC_BP_naive : public Decoder<B,R>, public SISO<R>
 {
 protected:
-	const int K;
-	const int N;
 	const int n_ite;      // number of iterations to perform
 	const int n_V_nodes;  // number of variable nodes (= N)
 	const int n_C_nodes;  // number of check    nodes (= N - K)
@@ -34,7 +32,8 @@ public:
 	Decoder_LDPC_BP_naive(const int &K, const int &N, const int& n_ite, 
 	                      const std::vector<unsigned char> &n_variables_per_parity,
 	                      const std::vector<unsigned char> &n_parities_per_variable,
-	                      const std::vector<unsigned int > &transpose);
+	                      const std::vector<unsigned int > &transpose,
+	                      const std::string name = "Decoder_LDPC_BP_naive");
 	virtual ~Decoder_LDPC_BP_naive();
 
 	// unsupported prototype

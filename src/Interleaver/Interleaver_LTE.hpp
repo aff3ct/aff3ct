@@ -19,7 +19,7 @@ class Interleaver_LTE : public Interleaver<T>
 {
 public:
 	Interleaver_LTE(int size, const std::string name = "Interleaver_LTE") 
-	: Interleaver<T>(size, 1, name.c_str()) { gen_lookup_tables(); }
+	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
 
 protected:
 	void gen_lookup_tables()

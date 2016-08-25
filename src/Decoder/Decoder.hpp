@@ -6,7 +6,7 @@
 #include "../Tools/MIPP/mipp.h"
 
 template <typename B, typename R>
-class Decoder_interface // please use Decoder<B> for inheritance (instead of Decoder_interface<B>)
+class Decoder_interface // please use Decoder<B,R> for inheritance (instead of Decoder_interface<B,R>)
 {
 protected:
 	const int K; // frame size

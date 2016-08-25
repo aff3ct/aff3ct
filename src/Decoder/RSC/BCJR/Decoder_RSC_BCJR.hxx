@@ -13,8 +13,8 @@ Decoder_RSC_BCJR<B,R>
                    const bool buffered_encoding, 
                    const int n_frames,
                    const std::string name)
-: Decoder<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name.c_str()),
-  SISO<R>(),
+: Decoder<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name),
+  SISO   <  R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name + "_siso"),
   n_states(trellis[0].size()),
   n_ff(std::log2(n_states)),
   buffered_encoding(buffered_encoding),

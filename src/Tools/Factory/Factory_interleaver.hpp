@@ -9,7 +9,8 @@ template <typename T>
 struct Factory_interleaver
 {
 	static Interleaver<T>* build(const t_code_param &code_params,
-	                             const int          &size);
+	                             const int          &size,
+	                             const int           seed = -1);
 };
 
 #endif /* FACTORY_INTERLEAVER_HPP */

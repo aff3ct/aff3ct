@@ -15,7 +15,7 @@ protected:
 
 	int n_frames;
 
-	const std::string name; // module name
+	std::string name; // module name
 	
 	virtual void gen_lookup_tables() = 0; // to implement
 
@@ -43,10 +43,34 @@ public:
 		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering);
 	}
 
-	void set_n_frames(const int n_frames)
+	virtual void set_n_frames(const int n_frames)
 	{
 		assert(n_frames > 0);
 		this->n_frames = n_frames;
+	}
+
+	bool same_lookup_table(Interleaver_interface<T> &interleaver)
+	{
+		if (interleaver.pi.size() != this->pi.size())
+			return false;
+
+		if (interleaver.pi_inv.size() != this->pi_inv.size())
+			return false;
+
+		for (auto i = 0; i < (int)this->pi.size(); i++)
+			if (this->pi[i] != interleaver.pi[i])
+				return false;
+
+		for (auto i = 0; i < (int)this->pi_inv.size(); i++)
+			if (this->pi_inv[i] != interleaver.pi_inv[i])
+				return false;
+
+		return true;
+	}
+
+	void rename(const std::string name)
+	{
+		this->name = name;
 	}
 
 private:

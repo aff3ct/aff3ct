@@ -3,7 +3,7 @@
 template <typename B>
 Source_random<B>
 ::Source_random(const int K, const int seed, const int n_frames, const std::string name)
-: Source<B>(K, n_frames, name.c_str()),
+: Source<B>(K, n_frames, name),
   rd_engine(seed), 
   uniform_dist(0, 1) 
 {

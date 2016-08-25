@@ -3,7 +3,7 @@
 template <typename B>
 Source_AZCW<B>
 ::Source_AZCW(const int K, const int n_frames, const std::string name)
-: Source<B>(K, n_frames, name.c_str())
+: Source<B>(K, n_frames, name)
 {
 }
 
