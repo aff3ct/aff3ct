@@ -5,8 +5,6 @@
 
 #include "Decoder_LDPC_BP_sum_product_naive.hpp"
 
-// constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
-
 template <typename B, typename R>
 Decoder_LDPC_BP_sum_product_naive<B,R>
 ::Decoder_LDPC_BP_sum_product_naive(const int &K, const int &N, const int& n_ite,
