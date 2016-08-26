@@ -82,7 +82,7 @@ constexpr char fixed_word[4224] = {
 template <typename B>
 Source_fixed<B>
 ::Source_fixed(const int K, const int n_frames, const std::string name)
-: Source_fixed<B>(K, n_frames, name)
+: Source<B>(K, n_frames, name)
 {
 	assert(K == 4224);
 }
