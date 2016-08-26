@@ -32,7 +32,7 @@ template <typename B>
 int Encoder_RSC3_CPE_sys<B>
 ::tail_bit_sys(const int &state)
 {
-	if(((state & 0x1) ^ ((state >> 1) &0x1) ^ ((state >> 2) &0x1)) && 0x1)
+	if(((state & 0x1) ^ ((state >> 1) & 0x1) ^ ((state >> 2) & 0x1)) & 0x1)
 		return 1;
 	else
 		return 0;
