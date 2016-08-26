@@ -59,16 +59,16 @@ void Modulator_BPSK<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "../../Tools/types.h"
 #ifdef MULTI_PREC
-template struct Modulator_BPSK<B_8,R_8,R_8>;
-template struct Modulator_BPSK<B_8,R_8,Q_8>;
-template struct Modulator_BPSK<B_16,R_16,R_16>;
-template struct Modulator_BPSK<B_16,R_16,Q_16>;
-template struct Modulator_BPSK<B_32,R_32,R_32>;
-template struct Modulator_BPSK<B_64,R_64,R_64>;
+template class Modulator_BPSK<B_8,R_8,R_8>;
+template class Modulator_BPSK<B_8,R_8,Q_8>;
+template class Modulator_BPSK<B_16,R_16,R_16>;
+template class Modulator_BPSK<B_16,R_16,Q_16>;
+template class Modulator_BPSK<B_32,R_32,R_32>;
+template class Modulator_BPSK<B_64,R_64,R_64>;
 #else
-template struct Modulator_BPSK<B,R,Q>;
+template class Modulator_BPSK<B,R,Q>;
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template struct Modulator_BPSK<B,R,R>;
+template class Modulator_BPSK<B,R,R>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation
