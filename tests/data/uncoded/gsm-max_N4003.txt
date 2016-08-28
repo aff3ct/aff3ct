@@ -1,5 +1,7 @@
 Run command:
-./bin/aff3ct --prec 32 --code-type UNCODED --snr-min 0.0 --snr-max 15.1 --snr-step 1.0 -K 4003 -N 4003 --max-fe 500 --mod-type GSM --demod-max MAX --channel-type AWGN_FAST --code-gen-method RAND_FAST --n-threads 1
+./bin/aff3ct --prec 32 --code-type UNCODED --snr-min 0.0 --snr-max 11.1 --snr-step 1.0 -K 4003 -N 4003 --max-fe 500 --mod-type GSM --demod-max MAX --channel-type AWGN_FAST --code-gen-method RAND_FAST --n-threads 1
+Curve name:
+GSM
 Trace:
 # -------------------------------------------------
 # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
