@@ -74,14 +74,15 @@ def dataReader(filename):
     dataFER  = []
     dataBEFE = []
     dataThr  = []
-    dataLege = []
+    dataDeta = []
+    dataName = []
 
-    dataLege.append(["File name", os.path.basename(filename)])
+    dataDeta.append(["File name", os.path.basename(filename)])
     for line in lines:
         if line.startswith("#"):
             if len(line) > 3 and line[0] == '#' and line[2] == '*':
                 entry = line.replace("# * ", "").replace("\n", "").split(" = ")
-                dataLege.append(entry)
+                dataDeta.append(entry)
 
         else:
             snr = getVal(line, 0)
@@ -103,8 +104,18 @@ def dataReader(filename):
 
     # get the command to to run to reproduce this trace
     if lines and "Run command:" in lines[0]:
-        dataLege.append(["Run command", str(lines[1].strip())])
+        dataDeta.append(["Run command", str(lines[1].strip())])
     else:
-        dataLege.append(["Run command", ""])
+        dataDeta.append(["Run command", ""])
+    if lines and "Run command:" in lines[2]:
+        dataDeta.append(["Run command", str(lines[3].strip())])
+    else:
+        dataDeta.append(["Run command", ""])
 
-    return dataSNR, dataBER, dataFER, dataBEFE, dataThr, dataLege
+    # get the curve name (is there is one)
+    if lines and "Curve name:" in lines[0]:
+        dataName = str(lines[1].strip())
+    if lines and "Curve name:" in lines[2]:
+        dataName = str(lines[3].strip())
+
+    return dataSNR, dataBER, dataFER, dataBEFE, dataThr, dataDeta, dataName

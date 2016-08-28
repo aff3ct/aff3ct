@@ -27,21 +27,30 @@ import pyqtgraph as pg
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from pyqtgraph.dockarea import *
+import numpy as np
 
 class AdvTreeView(QtGui.QTreeView):
     wBER      = []
     wFER      = []
     wBEFE     = []
     wThr      = []
-    wLege     = []
+    wDeta     = []
     fsWatcher = []
+
+    blackOnWhite = []
+
+    lBER  = []
+    lFER  = []
+    lBEFE = []
+    lThr  = []
 
     dataSNR  = []
     dataBER  = []
     dataFER  = []
     dataBEFE = []
     dataThr  = []
-    dataLege = []
+    dataDeta = []
+    dataName = [] 
 
     #               1  2  3  4  5  6  7  8  9  10  11  12  13  14  15, 16
     colors       = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17]
@@ -50,14 +59,29 @@ class AdvTreeView(QtGui.QTreeView):
     styles       = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine, QtCore.Qt.DotLine, QtCore.Qt.DashDotLine, QtCore.Qt.DashDotDotLine]
     dashPatterns = [[1, 3, 4, 3], [2, 3, 4, 3], [1, 3, 1, 3], [4, 3, 4, 3], [3, 3, 2, 3], [4, 3, 1, 3]]
 
-    def __init__(self, wBER, wFER, wBEFE, wThr, wLege):
+    def __init__(self, wBER, wFER, wBEFE, wThr, wDeta, blackOnWhite):
         super().__init__()
 
         self.wBER  = wBER
         self.wFER  = wFER
         self.wBEFE = wBEFE
         self.wThr  = wThr
-        self.wLege = wLege
+        self.wDeta = wDeta
+
+        self.blackOnWhite = blackOnWhite;
+
+        self.lBER  = self.wBER .addLegend()
+        self.lFER  = self.wFER .addLegend()
+        self.lBEFE = self.wBEFE.addLegend()
+        self.lThr  = self.wThr .addLegend()
+
+        # hide the legend
+        # self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+        # self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+        self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+        self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+        self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
+        self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
 
         self.fsWatcher = QtCore.QFileSystemWatcher()
         self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
@@ -78,17 +102,23 @@ class AdvTreeView(QtGui.QTreeView):
         if path in self.paths:
             pathId = self.getPathId(path)
 
-            self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataLege[pathId] = libs.reader.dataReader(path)
+            dataName = []
+            self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = libs.reader.dataReader(path)
+
+            if not self.dataName[pathId]:
+                self.dataName[pathId] = dataName
+                if not self.dataName[pathId]:
+                    self.dataName[pathId] = "Curve " + str(pathId)
 
     def plotCurve(self, pathId, dataSNR, dataBER, dataFER, dataBEFE, dataThr):
         icolor = self.colors[pathId % len(self.colors)]
         pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
         pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
 
-        self.wBER. plot(x=dataSNR, y=dataBER,  pen=pen, symbol='x', name='BER plot'  )
-        self.wFER. plot(x=dataSNR, y=dataFER,  pen=pen, symbol='x', name='FER plot'  )
-        self.wBEFE.plot(x=dataSNR, y=dataBEFE, pen=pen, symbol='x', name='BE/FE plot')
-        self.wThr. plot(x=dataSNR, y=dataThr,  pen=pen, symbol='x', name='T/P plot'  )
+        self.wBER. plot(x=dataSNR, y=dataBER,  pen=pen, symbol='x', name=self.dataName[pathId])
+        self.wFER. plot(x=dataSNR, y=dataFER,  pen=pen, symbol='x', name=self.dataName[pathId])
+        self.wBEFE.plot(x=dataSNR, y=dataBEFE, pen=pen, symbol='x', name=self.dataName[pathId])
+        self.wThr. plot(x=dataSNR, y=dataThr,  pen=pen, symbol='x', name=self.dataName[pathId])
 
     def updateCurve(self, path):
         if path in self.paths:
@@ -128,7 +158,7 @@ class AdvTreeView(QtGui.QTreeView):
         self.wFER .clearPlots()
         self.wBEFE.clearPlots()
         self.wThr .clearPlots()
-        
+
         for pathId in range(len(self.paths)):
             self.plotCurve(pathId, self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId])
 
@@ -136,8 +166,8 @@ class AdvTreeView(QtGui.QTreeView):
         self.updateData(path)
         self.updateCurve(path)
 
-    def updateLegends(self):
-        self.wLege.clear()
+    def updateDetails(self):
+        self.wDeta.clear()
 
         for pathId in range(len(self.paths)):
             icolor = self.colors[pathId % len(self.colors)]
@@ -148,14 +178,12 @@ class AdvTreeView(QtGui.QTreeView):
             pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
 
             legendArea = DockArea()
-            dCurve     = Dock("", size=(250,600))
             dInfo      = Dock("", size=(250,900))
 
-            legendArea.addDock(dCurve, 'top'   )
-            legendArea.addDock(dInfo,  'bottom')
+            legendArea.addDock(dInfo, 'bottom')
 
             layoutLegend = QtGui.QFormLayout()
-            for entry in self.dataLege[pathId]:
+            for entry in self.dataDeta[pathId]:
                 if len(entry) == 2 and entry[1]:
                     if entry[0] == "Run command":
                         runCmd = QtGui.QLineEdit(str(entry[1]))
@@ -171,13 +199,7 @@ class AdvTreeView(QtGui.QTreeView):
             sCur.setWidgetResizable(True)
             dInfo.addWidget(sCur)
 
-            wLegend = pg.PlotWidget(title="BER preview")
-            wLegend.setLogMode(False, True)
-            wLegend.plot(x=self.dataSNR[pathId], y=self.dataBER[pathId], pen=pen, name='BER plot')
-            wLegend.showGrid(False, False)
-            dCurve.addWidget(wLegend)
-
-            self.wLege.addTab(legendArea, 'Curve ' + str(pathId +1))
+            self.wDeta.addTab(legendArea, self.dataName[pathId])
 
     def selectionChanged(self, selected, deselected):
         super().selectionChanged(selected, deselected)
@@ -189,8 +211,32 @@ class AdvTreeView(QtGui.QTreeView):
         self.dataFER  = [0 for x in range(len(newPaths))]
         self.dataBEFE = [0 for x in range(len(newPaths))]
         self.dataThr  = [0 for x in range(len(newPaths))]
-        self.dataLege = [0 for x in range(len(newPaths))]
+        self.dataDeta = [0 for x in range(len(newPaths))]
         self.lastSNR  = [0 for x in range(len(newPaths))]
+
+        for name in self.dataName:
+            if self.lBER:  self.lBER .removeItem(name)
+            if self.lFER:  self.lFER .removeItem(name)
+            if self.lBEFE: self.lBEFE.removeItem(name)
+            if self.lThr:  self.lThr .removeItem(name)
+        self.dataName = [0 for x in range(len(newPaths))]
+
+        if not len(newPaths):
+            # hide the legend
+            # self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+            # self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+            self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+            self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+            self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
+            self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
+        else:
+            # display the legend
+            # self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
+            # self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
+            self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+            self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+            self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+            self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
 
         pathsToRemove = []
         for p in self.paths:
@@ -223,9 +269,9 @@ class AdvTreeView(QtGui.QTreeView):
                self.lastSNR[pathId] = -999.0 
 
         self.updateCurves()
-        self.updateLegends()
+        self.updateDetails()
 
-def generatePannel(wBER, wFER, wBEFE, wThr, wLege):
+def generatePannel(wBER, wFER, wBEFE, wThr, wDeta, blackOnWhite):
     if len(sys.argv) >= 2:
         os.chdir(sys.argv[1])
     else:
@@ -237,7 +283,7 @@ def generatePannel(wBER, wFER, wBEFE, wThr, wLege):
     model.setNameFilters(['*.perf', '*.dat', '*.txt', '*.data'])
     model.setNameFilterDisables(False)
 
-    view = AdvTreeView(wBER, wFER, wBEFE, wThr, wLege)
+    view = AdvTreeView(wBER, wFER, wBEFE, wThr, wDeta, blackOnWhite)
     view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
     view.setModel(model)
     view.hideColumn(1);

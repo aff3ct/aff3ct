@@ -31,6 +31,12 @@ import numpy as np
 import fileExplorer
 from pyqtgraph.dockarea import *
 
+blackOnWhite = False
+
+if (blackOnWhite):
+	pg.setConfigOption('background', 'w')
+	pg.setConfigOption('foreground', 'k')
+
 app  = QtGui.QApplication([])
 win  = QtGui.QMainWindow()
 area = DockArea()
@@ -42,7 +48,7 @@ win.setWindowTitle('PyBER (deluxe) plotter')
 # Note that size arguments are only a suggestion; docks will still have to
 # fill the entire dock area and obey the limits of their internal widgets.
 dFile = Dock("File explorer",                  size=(275,400))
-dLege = Dock("Legend",                         size=(275,400))
+dDeta = Dock("Details",                        size=(275,400))
 dBER  = Dock("Bit Error Rate (BER)",           size=(400,200))
 dFER  = Dock("Frame Error Rate (FER)",         size=(400,200))
 dBEFE = Dock("BE/FE",                          size=(400,125))
@@ -53,13 +59,13 @@ area.addDock(dBER,  'right',  dFile)
 area.addDock(dFER,  'right',  dBER )
 area.addDock(dBEFE, 'bottom', dBER )
 area.addDock(dThr,  'bottom', dFER )
-area.addDock(dLege, 'bottom', dFile)
+area.addDock(dDeta, 'bottom', dFile)
 
 # Add widgets into each dock
 pg.setConfigOptions(antialias=True)
 
-wLege = QtGui.QTabWidget()
-dLege.addWidget(wLege)
+wDeta = QtGui.QTabWidget()
+dDeta.addWidget(wDeta)
 
 wBER = pg.PlotWidget(labels={'left': "Bit Error Rate", 'bottom': "Eb/N0 (dB)"})
 wBER.plot(np.random.normal(size=100))
@@ -91,7 +97,7 @@ wThr.showLabel('left', True)
 wThr.showLabel('bottom', True)
 dThr.addWidget(wThr)
 
-wFile = fileExplorer.generatePannel(wBER, wFER, wBEFE, wThr, wLege)
+wFile = fileExplorer.generatePannel(wBER, wFER, wBEFE, wThr, wDeta, blackOnWhite)
 dFile.addWidget(wFile)
 
 win.show()
