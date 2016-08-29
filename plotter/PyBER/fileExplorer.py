@@ -115,6 +115,11 @@ class AdvTreeView(QtGui.QTreeView):
         pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
         pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
 
+        if self.lBER:  self.lBER .removeItem(self.dataName[pathId])
+        if self.lFER:  self.lFER .removeItem(self.dataName[pathId])
+        if self.lBEFE: self.lBEFE.removeItem(self.dataName[pathId])
+        if self.lThr:  self.lThr .removeItem(self.dataName[pathId])
+
         self.wBER. plot(x=dataSNR, y=dataBER,  pen=pen, symbol='x', name=self.dataName[pathId])
         self.wFER. plot(x=dataSNR, y=dataFER,  pen=pen, symbol='x', name=self.dataName[pathId])
         self.wBEFE.plot(x=dataSNR, y=dataBEFE, pen=pen, symbol='x', name=self.dataName[pathId])
