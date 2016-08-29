@@ -45,7 +45,8 @@ def getVal(line, idColumn):
         line = line.replace("ERR", "")
         line = line.replace(" ", "")
         line = line.split('|')
-        return float(line[idColumn])
+
+        val = float(line[idColumn])
     # new
     else:
         line = line.replace("||", "|")
@@ -57,9 +58,14 @@ def getVal(line, idColumn):
             return float(-999.0)
 
         if(len(line) == 14):
-            return float(line[convert_to_v1[idColumn]])
+            val = float(line[convert_to_v1[idColumn]])
         else:
-            return float(line[convert_to_v2[idColumn]])
+            val = float(line[convert_to_v2[idColumn]])
+
+    if "inf" in str(val):
+        val = float(0.0)
+
+    return val
 
 def dataReader(filename):
     # read all the lines from the current file

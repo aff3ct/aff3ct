@@ -31,11 +31,9 @@ import numpy as np
 import fileExplorer
 from pyqtgraph.dockarea import *
 
-blackOnWhite = False
-
-if (blackOnWhite):
-	pg.setConfigOption('background', 'w')
-	pg.setConfigOption('foreground', 'k')
+# uncomment those next lines to display the plot in black on white instead of white on black
+# pg.setConfigOption('background', 'w')
+# pg.setConfigOption('foreground', 'k')
 
 app  = QtGui.QApplication([])
 win  = QtGui.QMainWindow()
@@ -97,7 +95,7 @@ wThr.showLabel('left', True)
 wThr.showLabel('bottom', True)
 dThr.addWidget(wThr)
 
-wFile = fileExplorer.generatePannel(wBER, wFER, wBEFE, wThr, wDeta, blackOnWhite)
+wFile = fileExplorer.generatePannel(wBER, wFER, wBEFE, wThr, wDeta)
 dFile.addWidget(wFile)
 
 win.show()
