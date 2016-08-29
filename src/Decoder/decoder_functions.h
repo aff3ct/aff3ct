@@ -42,12 +42,7 @@ constexpr B bit_init() { return (((B)1) << (sizeof(B) * 8 -1)); }
 
 // make a saturation on a the value "val"
 template <typename T>
-inline T saturate(const T val, const T min, const T max)
-{
-	//return std::min(std::max(val, min), max);
-	T max_temp = ((val > min) ? val : min);
-	return ((max_temp < max) ? max_temp : max);
-}
+inline T saturate(const T val, const T min, const T max) { return std::min(std::max(val, min), max); }
 
 // make a saturation on a full vector
 template <typename T>
