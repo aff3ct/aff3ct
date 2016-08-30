@@ -421,14 +421,14 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R>::build(code_params, mod_params, sigma);
+	return Factory_modulator<B,R,R>::build(code_params, mod_params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R>::build(code_params, mod_params, 2.0 / sig_a);
+	return Factory_modulator<B,R,R>::build(code_params, mod_params, 2.0 / sig_a);
 }
 
 template <typename B, typename R, typename Q>

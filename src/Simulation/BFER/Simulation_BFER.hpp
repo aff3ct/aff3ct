@@ -1,8 +1,11 @@
 #ifdef SYSTEMC
+#include "SC_Simulation_BFER.hpp"
+#else
 
-#ifndef SIMULATION_SC_BFER_HPP_
-#define SIMULATION_SC_BFER_HPP_
+#ifndef SIMULATION_BFER_HPP_
+#define SIMULATION_BFER_HPP_
 
+#include <thread>
 #include <chrono>
 #include <vector>
 #include "../../Tools/MIPP/mipp.h"
@@ -18,13 +21,11 @@
 #include "../../Quantizer/Quantizer.hpp"
 #include "../../Decoder/Decoder.hpp"
 #include "../../Error/Error_analyzer.hpp"
+#include "../../Error/Error_analyzer_reduction.hpp"
 #include "../../Terminal/Terminal.hpp"
 
 #include "../../Tools/params.h"
 #include "../../Tools/Threads/Barrier.hpp"
-
-#include "../../Tools/SystemC/SC_Debug.hpp"
-#include "../../Tools/SystemC/SC_Duplicator.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation
@@ -38,40 +39,91 @@ protected:
 	const t_channel_param    &chan_params;
 	const t_decoder_param    &deco_params;
 
-	Barrier barrier; // a barrier to synchronize the threads
-	int n_frames;    // number of simulated frames per thread
+	std::vector<std::thread> threads; // array of threads
+	Barrier barrier;                  // a barrier to synchronize the threads
+	int n_frames;                     // number of simulated frames per thread
 
 	// code specifications
 	float snr;
 	float code_rate;
 	float sigma;
 
-	// communication chain
-	std::vector<SC_Source<B>*>          source;
-	std::vector<SC_CRC<B>*>             crc;
-	std::vector<SC_Encoder<B>*>         encoder;
-	std::vector<SC_Puncturer<B,Q>*>     puncturer;
-	std::vector<SC_Modulator<B,R,R>*>   modulator;
-	std::vector<SC_Channel<R>*>         channel;
-	std::vector<SC_Quantizer<R,Q>*>     quantizer;
-	std::vector<SC_Decoder<B,Q>*>       decoder;
-	std::vector<SC_Error_analyzer<B>*>  analyzer;
-	Terminal                           *terminal;
+	// data vector
+	std::vector<mipp::vector<B>> U_K;  // information bit vector
+	std::vector<mipp::vector<B>> X_N1; // encoded codeword
+	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
+	std::vector<mipp::vector<R>> X_N3; // modulate codeword
+	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (after the channel noise)
+	std::vector<mipp::vector<R>> Y_N2; // noisy codeword (after the filtering)
+	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after the demodulation)
+	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
+	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
+	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
+	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
 
-	SC_Duplicator<B> *duplicator;
-	SC_Debug<B> *dbg_B[5];
-	SC_Debug<R> *dbg_R[4];
-	SC_Debug<Q> *dbg_Q[2];
+	// communication chain
+	std::vector<Source<B>*>           source;
+	std::vector<CRC<B>*>              crc;
+	std::vector<Encoder<B>*>          encoder;
+	std::vector<Puncturer<B,Q>*>      puncturer;
+	std::vector<Modulator<B,R,R>*>    modulator;
+	std::vector<Channel<R>*>          channel;
+	std::vector<Quantizer<R,Q>*>      quantizer;
+	std::vector<Decoder<B,Q>*>        decoder;
+	std::vector<Error_analyzer<B>*>   analyzer;
+	Error_analyzer_reduction<B>      *analyzer_red;
+	Terminal                         *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
+	std::vector<std::chrono::nanoseconds> d_sourc_total;
+	std::vector<std::chrono::nanoseconds> d_crc_total;
+	std::vector<std::chrono::nanoseconds> d_encod_total;
+	std::vector<std::chrono::nanoseconds> d_punct_total;
+	std::vector<std::chrono::nanoseconds> d_modul_total;
+	std::vector<std::chrono::nanoseconds> d_chann_total;
+	std::vector<std::chrono::nanoseconds> d_filte_total;
+	std::vector<std::chrono::nanoseconds> d_demod_total;
+	std::vector<std::chrono::nanoseconds> d_quant_total;
+	std::vector<std::chrono::nanoseconds> d_depun_total;
+	std::vector<std::chrono::nanoseconds> d_load_total;
+	std::vector<std::chrono::nanoseconds> d_decod_total;
+	std::vector<std::chrono::nanoseconds> d_store_total;
+	std::vector<std::chrono::nanoseconds> d_check_total;
 
-	std::chrono::nanoseconds d_load_total_fake;
-	std::chrono::nanoseconds d_decod_total_fake;
-	std::chrono::nanoseconds d_store_total_fake;
+	std::chrono::nanoseconds d_sourc_total_red;
+	std::chrono::nanoseconds d_crc_total_red;
+	std::chrono::nanoseconds d_encod_total_red;
+	std::chrono::nanoseconds d_punct_total_red;
+	std::chrono::nanoseconds d_modul_total_red;
+	std::chrono::nanoseconds d_chann_total_red;
+	std::chrono::nanoseconds d_filte_total_red;
+	std::chrono::nanoseconds d_demod_total_red;
+	std::chrono::nanoseconds d_quant_total_red;
+	std::chrono::nanoseconds d_depun_total_red;
+	std::chrono::nanoseconds d_load_total_red;
+	std::chrono::nanoseconds d_decod_total_red;
+	std::chrono::nanoseconds d_store_total_red;
+	std::chrono::nanoseconds d_check_total_red;
+	std::chrono::nanoseconds d_decod_all_red;
+
+	std::chrono::nanoseconds d_sourc_total_sum;
+	std::chrono::nanoseconds d_crc_total_sum;
+	std::chrono::nanoseconds d_encod_total_sum;
+	std::chrono::nanoseconds d_punct_total_sum;
+	std::chrono::nanoseconds d_modul_total_sum;
+	std::chrono::nanoseconds d_chann_total_sum;
+	std::chrono::nanoseconds d_filte_total_sum;
+	std::chrono::nanoseconds d_demod_total_sum;
+	std::chrono::nanoseconds d_quant_total_sum;
+	std::chrono::nanoseconds d_depun_total_sum;
+	std::chrono::nanoseconds d_load_total_sum;
+	std::chrono::nanoseconds d_decod_total_sum;
+	std::chrono::nanoseconds d_store_total_sum;
+	std::chrono::nanoseconds d_check_total_sum;
 
 public:
 	Simulation_BFER(const t_simulation_param& simu_params,
@@ -84,12 +136,15 @@ public:
 	void launch();
 
 private:
-	void launch_simulation        ();
-	void build_communication_chain();
-	void bind_sockets             ();
-	void bind_sockets_debug       ();
+	static void Monte_Carlo_method       (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	static void build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	static void simulation_loop          (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	static void simulation_loop_bench    (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	static void simulation_loop_debug    (Simulation_BFER<B,R,Q> *simu);
+	static void trace                    (Simulation_BFER<B,R,Q> *simu);
 
-	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
+	void time_reduction(const bool is_snr_done = false  );
+	void time_report   (std::ostream &stream = std::clog);
 
 protected:
 	virtual void               release_objects  ();
@@ -106,9 +161,8 @@ protected:
 	virtual Decoder<B,Q>*      build_decoder    (                const int tid = 0) = 0;
 	virtual Error_analyzer<B>* build_analyzer   (                const int tid = 0);
 	        Terminal*          build_terminal   (                const int tid = 0);
-
 };
 
-#endif /* SIMULATION_SC_BFER_HPP_ */
+#endif /* SIMULATION_BFER_HPP_ */
 
 #endif /* SYSTEMC */

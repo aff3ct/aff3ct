@@ -21,8 +21,8 @@ class SC_Error_analyzer_module : public sc_core::sc_module
 	SC_HAS_PROCESS(SC_Error_analyzer_module);
 
 public:
-	tlm_utils::simple_target_socket<SC_Error_analyzer_module> s_in_source;
-	tlm_utils::simple_target_socket<SC_Error_analyzer_module> s_in_decoder;
+	tlm_utils::simple_target_socket<SC_Error_analyzer_module> s_in1;
+	tlm_utils::simple_target_socket<SC_Error_analyzer_module> s_in2;
 
 private:
 	SC_Error_analyzer<B> &analyzer;
@@ -30,14 +30,15 @@ private:
 	mipp::vector<B> U_K;
 
 public:
-	SC_Error_analyzer_module(SC_Error_analyzer<B> &analyzer, const sc_core::sc_module_name name = "SC_Error_analyzer_module")
-	: sc_module(name), s_in_source("s_in_source"), s_in_decoder("s_in_decoder"),
+	SC_Error_analyzer_module(SC_Error_analyzer<B> &analyzer, 
+	                         const sc_core::sc_module_name name = "SC_Error_analyzer_module")
+	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"),
 	  analyzer(analyzer),
 	  V_K(analyzer.K * analyzer.n_frames),
 	  U_K(analyzer.K * analyzer.n_frames)
 	{
-		s_in_source .register_b_transport(this, &SC_Error_analyzer_module::b_transport_source);
-		s_in_decoder.register_b_transport(this, &SC_Error_analyzer_module::b_transport_decoder);
+		s_in1.register_b_transport(this, &SC_Error_analyzer_module::b_transport_source);
+		s_in2.register_b_transport(this, &SC_Error_analyzer_module::b_transport_decoder);
 	}
 
 	void resize_buffers()

@@ -7,7 +7,7 @@ template <typename B>
 class Encoder_LDPC_sys : public Encoder_sys<B>
 {
 public:
-	Encoder_LDPC_sys(const int n_frames = 1);
+	Encoder_LDPC_sys(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC_sys");
 	virtual ~Encoder_LDPC_sys();
 
 	virtual void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N) = 0;

@@ -11,7 +11,7 @@ template <typename B>
 class Source_fixed : public Source<B>
 {
 public:
-	Source_fixed();
+	Source_fixed(const int K, const int n_frames = 1, const std::string name = "Source_fixed");
 	virtual ~Source_fixed();
 
 	void generate(mipp::vector<B>& U_K);

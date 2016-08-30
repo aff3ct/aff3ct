@@ -86,10 +86,6 @@ else( WIN32 AND NOT CYGWIN AND NOT MSYS )
           GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}")
         string( REGEX REPLACE "-I[^;]+;" ""
           GSL_CFLAGS "${GSL_CFLAGS}")
- 
-        message("GSL_DEFINITIONS=${GSL_DEFINITIONS}")
-        message("GSL_INCLUDE_DIRS=${GSL_INCLUDE_DIRS}")
-        message("GSL_CFLAGS=${GSL_CFLAGS}")
       else( RET EQUAL 0 )
         set( GSL_FOUND FALSE )
       endif( RET EQUAL 0 )

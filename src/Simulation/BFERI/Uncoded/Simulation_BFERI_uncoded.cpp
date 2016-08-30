@@ -47,21 +47,21 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFERI_uncoded<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return new Encoder_NO<B>();
+	return new Encoder_NO<B>(this->code_params.K, this->code_params.N);
 }
 
 template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_uncoded<B,R,Q>
 ::build_siso(const int tid)
 {
-	return new Decoder_NO<B,Q>();
+	return new Decoder_NO<B,Q>(this->code_params.K, this->code_params.N);
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFERI_uncoded<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return new Decoder_NO<B,Q>();
+	return new Decoder_NO<B,Q>(this->code_params.K, this->code_params.N);
 }
 
 // ==================================================================================== explicit template instantiation 

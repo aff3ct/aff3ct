@@ -2,8 +2,8 @@
 
 template <typename B>
 Encoder_LDPC_sys<B>
-::Encoder_LDPC_sys(const int n_frames)
-: Encoder_sys<B>(n_frames)
+::Encoder_LDPC_sys(const int K, const int N, const int n_frames, const std::string name)
+: Encoder_sys<B>(K, N, n_frames, name)
 {
 }
 

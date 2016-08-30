@@ -84,6 +84,15 @@ public:
 	virtual void decode(                          )       = 0;
 	virtual void store (      mipp::vector<B>& V_K) const = 0;
 
+	virtual void store_fast(mipp::vector<B>& V) const 
+	{
+		Decoder_interface<B,R>::store_fast(V);
+	}
+	virtual void unpack(mipp::vector<B>& V) const
+	{
+		Decoder_interface<B,R>::unpack(V);
+	}
+
 	void create_sc_module()
 	{
 		this->module = new SC_Decoder_module<B,R>(*this, this->name.c_str());

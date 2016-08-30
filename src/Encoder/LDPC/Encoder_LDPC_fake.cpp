@@ -6,8 +6,8 @@
 
 template <typename B>
 Encoder_LDPC_fake<B>
-::Encoder_LDPC_fake(const int K, const int N, const int n_frames)
-: Encoder_LDPC_sys<B>(n_frames), K(K), N(N)
+::Encoder_LDPC_fake(const int K, const int N, const int n_frames, const std::string name)
+: Encoder_LDPC_sys<B>(K, N, n_frames, name)
 {
 	assert(N == (int)n_parities_per_variable_4224.size());
 	assert(K == N - (int)n_variables_per_parity_2112.size());

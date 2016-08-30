@@ -11,7 +11,7 @@ private:
 	mipp::vector<R> Y_N;
 	
 public:
-	Decoder_NO();
+	Decoder_NO(const int K, const int N, const std::string name = "Decoder_NO");
 	virtual ~Decoder_NO();
 
 	void load  (const mipp::vector<R>& Y_N);

@@ -18,6 +18,9 @@ Source<B>* Factory_source<B>
 		source = new Source_random<B>(code_params.K, seed);
 	else if (code_params.generation_method == "AZCW")
 		source = new Source_AZCW<B>(code_params.K);
+	else if (code_params.generation_method == "FIXED")
+		source = new Source_fixed<B>(code_params.K);
+
 
 	return source;
 }

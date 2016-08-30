@@ -6,12 +6,8 @@
 template <typename B>
 class Encoder_LDPC_fake : public Encoder_LDPC_sys<B>
 {
-protected:
-	const int K;
-	const int N;
-
 public:
-	Encoder_LDPC_fake(const int K, const int N, const int n_frames = 1);
+	Encoder_LDPC_fake(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC_fake");
 	virtual ~Encoder_LDPC_fake();
 
 	std::vector<unsigned char> get_n_variables_per_parity ();
