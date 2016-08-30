@@ -17,11 +17,15 @@ public:
 	virtual ~Modulator_GSM_TBLess();
 
 	void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
+	void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2);
 	void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
 	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
 	int get_buffer_size_after_modulation(const int N);
 	int get_buffer_size_after_filtering (const int N);
+
+protected:
+	void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);
 };
 
 #include "Modulator_GSM_TBLess.hxx"

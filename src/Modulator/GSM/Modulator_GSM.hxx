@@ -33,16 +33,16 @@ const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_anti_trellis = {
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM<B,R,Q,MAX>
-::Modulator_GSM(const int N, const R sigma, const bool disable_sig2, const std::string name)
+::Modulator_GSM(const int N, const R sigma, const bool disable_sig2, const std::string name, const bool tbless)
 : Modulator<B,R,Q>(N, 
-                   (N +6) *  5 * 2, // up_sample_factor =  5
-                   (N +6) * 16,     // n_output_symbs   = 16
+                   (tbless ? N : (N +6)) *  5 * 2, // up_sample_factor =  5
+                   (tbless ? N : (N +6)) * 16,     // n_output_symbs   = 16
                    1, 
                    name),
   sigma(sigma),
   disable_sig2(disable_sig2),
   parity_enc(N +6),
-  BCJR(N +6, 
+  BCJR((tbless ? N : N +6),
        BCJR_n_states,
        BCJR_m_order,
        BCJR_n_bits_per_symb,
@@ -66,14 +66,14 @@ int Modulator_GSM<B,R,Q,MAX>
 	// +6: tails bit
 	// *up_sample_factor: because work with waveforms
 	// *2: because of complex numbers
-	return (N +6) * up_sample_factor * 2;
+	return (N + this->n_frames * 6) * up_sample_factor * 2;
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 int Modulator_GSM<B,R,Q,MAX>
 ::get_buffer_size_after_filtering(const int N)
 {
-	return (N +6) * n_output_symbs;
+	return (N + this->n_frames * 6) * n_output_symbs;
 }
 
 // translation of base band vectors (80 complex elmts)
@@ -141,8 +141,33 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
+	assert(((X_N1.size() + this->n_frames * 6) * up_sample_factor * 2) == X_N2.size());
+
+	if (this->n_frames == 1)
+	{
+		_modulate(X_N1, X_N2);
+	}
+	else // more than 1 frame
+	{
+		mipp::vector<B> X_N1_tmp(this->N);
+		mipp::vector<R> X_N2_tmp((this->N +6) * up_sample_factor * 2);
+		for (auto f = 0; f < this->n_frames; f++)
+		{
+			std::copy(X_N1.begin() + f * this->N, X_N1.begin() + (f +1) * this->N, X_N1_tmp.begin());
+
+			_modulate(X_N1_tmp, X_N2_tmp);
+
+			std::copy(X_N2_tmp.begin(), X_N2_tmp.end(), X_N2.begin() + f * ((this->N +6) * up_sample_factor * 2));
+		}
+	}
+}
+
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+void Modulator_GSM<B,R,Q,MAX>
+::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+{
 	assert(((X_N1.size() +6) * up_sample_factor * 2) == X_N2.size());
-	
+
 	// bit mapping -> not done here
 
 	// Rimoldi phase tilting -> for GSM only consists in transforming -1/+1 in 0/1
@@ -235,6 +260,36 @@ void Modulator_GSM<B,R,Q,MAX>
 	// *2  because we only keep real part here
 	assert(Y_N1.size() / up_sample_factor == 2 * (Y_N2.size() / 16));
 
+	if (this->n_frames == 1)
+	{
+		_filter(Y_N1, Y_N2);
+	}
+	else // mote than 1 frame
+	{
+		mipp::vector<R> Y_N1_tmp((this->N +6) * up_sample_factor * 2);
+		mipp::vector<R> Y_N2_tmp((this->N +6) * n_output_symbs      );
+
+		for (auto f = 0; f < this->n_frames; f++)
+		{
+			std::copy(Y_N1.begin() + (f +0) * (this->N +6) * up_sample_factor * 2, 
+			          Y_N1.begin() + (f +1) * (this->N +6) * up_sample_factor * 2,
+			          Y_N1_tmp.begin());
+
+			_filter(Y_N1_tmp, Y_N2_tmp);
+
+			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * (this->N +6) * n_output_symbs);
+		}
+	}
+}
+
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+void Modulator_GSM<B,R,Q,MAX>
+::_filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+{
+	// /16 because 16 modulated symbols in GSM
+	// *2  because we only keep real part here
+	assert(Y_N1.size() / up_sample_factor == 2 * (Y_N2.size() / 16));
+
 	const int M = Y_N1.size() / (2 * up_sample_factor); // number of row    in "Y_N1"
 	const int N = n_output_symbs;                       // number of column in "projection"
 	const int K = up_sample_factor;                     // number of column in "Y_N1"
@@ -256,25 +311,65 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert(Y_N1.size() == (Y_N2.size() +6) * n_output_symbs);
+	assert(Y_N1.size() == (Y_N2.size() + this->n_frames * 6) * n_output_symbs);
 
-	BCJR.decode(Y_N1, Y_N2);
+	if (this->n_frames == 1)
+	{
+		BCJR.decode(Y_N1, Y_N2);
+	}
+	else // more than 1 frame
+	{
+		mipp::vector<Q> Y_N1_tmp((this->N +6) * n_output_symbs);
+		mipp::vector<Q> Y_N2_tmp(this->N);
+
+		for (auto f = 0; f < this->n_frames; f++)
+		{
+			std::copy(Y_N1.begin() + (f +0) * (this->N +6) * n_output_symbs,
+			          Y_N1.begin() + (f +1) * (this->N +6) * n_output_symbs,
+			          Y_N1_tmp.begin());
+
+			BCJR.decode(Y_N1_tmp, Y_N2_tmp);
+
+			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * this->N);
+		}
+	}
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	assert(Y_N1.size() == (Y_N3.size() +6) * n_output_symbs);
+	assert(Y_N1.size() == (Y_N3.size() + this->n_frames * 6) * n_output_symbs);
 	assert(Y_N2.size() == Y_N3.size());
 
-	BCJR.decode(Y_N1, Y_N2, Y_N3);
+	if (this->n_frames == 1)
+	{
+		BCJR.decode(Y_N1, Y_N2, Y_N3);
+	}
+	else
+	{
+		mipp::vector<Q> Y_N1_tmp((this->N +6) * n_output_symbs);
+		mipp::vector<Q> Y_N2_tmp(this->N);
+		mipp::vector<Q> Y_N3_tmp(this->N);
+
+		for (auto f = 0; f < this->n_frames; f++)
+		{
+			std::copy(Y_N1.begin() + (f +0) * (this->N +6) * n_output_symbs,
+			          Y_N1.begin() + (f +1) * (this->N +6) * n_output_symbs,
+			          Y_N1_tmp.begin());
+			std::copy(Y_N2.begin() + (f +0) * this->N, Y_N2.begin() + (f +1) * this->N, Y_N2_tmp.begin());
+
+			BCJR.decode(Y_N1_tmp, Y_N2_tmp, Y_N3_tmp);
+
+			std::copy(Y_N3_tmp.begin(), Y_N3_tmp.end(), Y_N3.begin() + f * this->N);
+		}
+	}
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
 ::set_n_frames(const int n_frames)
 {
-	assert(n_frames == 1);
+	// assert(n_frames == 1);
 	Modulator<B,R,Q>::set_n_frames(n_frames);
 }
