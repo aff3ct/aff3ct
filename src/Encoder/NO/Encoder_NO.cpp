@@ -19,8 +19,8 @@ template <typename B>
 void Encoder_NO<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == this->K   );
-	assert(U_K.size() == X_N.size());
+	assert(U_K.size() == (unsigned) this->K);
+	assert(U_K.size() == X_N.size()        );
 	X_N = U_K;
 }
 
