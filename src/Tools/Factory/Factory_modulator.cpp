@@ -20,7 +20,7 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	if (mod_params.type == "BPSK")
 		modulator = new Modulator_BPSK<B,R,Q>(code_params.N + code_params.tail_length, sigma, mod_params.disable_demod_sig2);
 	else if (mod_params.type == "BPSK_FAST")
-		modulator = new Modulator_BPSK_fast<B,R,Q>(sigma, mod_params.disable_demod_sig2);
+		modulator = new Modulator_BPSK_fast<B,R,Q>(code_params.N + code_params.tail_length, sigma, mod_params.disable_demod_sig2);
 	else if (mod_params.type == "PAM")
 	{
 		if (mod_params.demod_max == "MAX")
