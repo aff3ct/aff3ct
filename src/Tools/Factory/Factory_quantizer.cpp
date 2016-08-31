@@ -17,15 +17,15 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 	else
 	{
 		if (chan_params.quantizer_type == "STD")
-			quantizer = new Quantizer_standard<R,Q>(size, chan_params.quant_point_pos, chan_params.quant_n_bits);
+			quantizer = new Quantizer_standard<R,Q>(size, chan_params.quant_point_pos, chan_params.quant_n_bits, 1);
 		else if (chan_params.quantizer_type == "STD_FAST")
-			quantizer = new Quantizer_fast<R,Q>(size, chan_params.quant_point_pos, chan_params.quant_n_bits);
+			quantizer = new Quantizer_fast<R,Q>(size, chan_params.quant_point_pos, chan_params.quant_n_bits, 1);
 		else if (chan_params.quantizer_type == "TRICKY")
 		{
 			if (chan_params.quant_min_max == 0.f)
-				quantizer = new Quantizer_tricky<R,Q>(size, (short)chan_params.quant_n_bits, sigma); // auto mode
+				quantizer = new Quantizer_tricky<R,Q>(size, (short)chan_params.quant_n_bits, sigma, 1); // auto mode
 			else
-				quantizer = new Quantizer_tricky<R,Q>(size, (R)chan_params.quant_min_max, chan_params.quant_n_bits, sigma);
+				quantizer = new Quantizer_tricky<R,Q>(size, (R)chan_params.quant_min_max, chan_params.quant_n_bits, sigma, 1);
 		}
 	}
 
