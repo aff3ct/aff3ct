@@ -76,14 +76,13 @@ Simulation_BFERI<B,R,Q>
 {
 	if (simu_params.n_threads > 1)
 	{
-		std::cerr << bold_red("(EE) SystemC BFER simulation does not support the multi-threaded mode... Exiting.") 
-		          << std::endl;
+		std::cerr << bold_red("(EE) SystemC simulation does not support multi-threading... Exiting.") << std::endl;
 		std::exit(-1);
 	}
 
 	if (simu_params.benchs)
 	{
-		std::cerr << bold_red("(EE) SystemC BFER simulation does not support the bench mode... Exiting") << std::endl;
+		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
 		std::exit(-1);
 	}
 
