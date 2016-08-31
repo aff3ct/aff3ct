@@ -121,9 +121,13 @@ class AdvTreeView(QtGui.QTreeView):
             self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = libs.reader.dataReader(path)
 
             if not self.dataName[pathId]:
-                self.dataName[pathId] = dataName
-                if not self.dataName[pathId]:
+                if not dataName:
                     self.dataName[pathId] = "Curve " + str(pathId)
+                elif dataName in self.dataName:
+                    self.dataName[pathId] = dataName + "_" + str(pathId)
+                else:
+                    self.dataName[pathId] = dataName
+
 
     def plotCurve(self, pathId, dataSNR, dataBER, dataFER, dataBEFE, dataThr):
         icolor = self.colors[pathId % len(self.colors)]
