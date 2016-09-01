@@ -80,7 +80,7 @@ Simulation_BFER<B,R,Q>
 	}
 
 	if (simu_params.time_report)
-		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC BFER simulation.") << std::endl;
+		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
 }
 
 template <typename B, typename R, typename Q>
