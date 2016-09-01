@@ -2,7 +2,6 @@
 
 #include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_min_sum_naive.hpp"
 #include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_sum_product_naive.hpp"
-#include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_log_sum_product_naive.hpp"
 
 #include "Factory_decoder_LDPC.hpp"
 
@@ -36,16 +35,6 @@ SISO<R>* Factory_decoder_LDPC<B,R>
 			                                                     n_variables_per_parity,
 			                                                     n_parities_per_variable,
 			                                                     transpose);
-	}
-	else if (deco_params.algo == "BP_LOG_SUM_PRODUCT")
-	{
-		if (deco_params.implem == "NAIVE")
-			decoder = new Decoder_LDPC_BP_log_sum_product_naive<B,R>(code_params.K,
-			                                                         code_params.N,
-			                                                         deco_params.max_iter,
-			                                                         n_variables_per_parity,
-			                                                         n_parities_per_variable,
-			                                                         transpose);
 	}
 
 	return decoder;
@@ -82,17 +71,7 @@ Decoder<B,R>* Factory_decoder_LDPC<B,R>
 			                                                     n_parities_per_variable,
 			                                                     transpose);
 	}
-	else if (deco_params.algo == "BP_LOG_SUM_PRODUCT")
-	{
-		if (deco_params.implem == "NAIVE")
-			decoder = new Decoder_LDPC_BP_log_sum_product_naive<B,R>(code_params.K,
-			                                                         code_params.N,
-			                                                         deco_params.max_iter,
-			                                                         n_variables_per_parity,
-			                                                         n_parities_per_variable,
-			                                                         transpose);
-	}
-
+	
 	return decoder;
 }
 

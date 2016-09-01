@@ -22,7 +22,7 @@ Decoder_LDPC_BP_sum_product_naive<B,R>
 {
 }
 
-// sum-product implementation
+// log sum-product implementation
 template <typename B, typename R>
 bool Decoder_LDPC_BP_sum_product_naive<B,R>
 ::BP_process()
@@ -43,7 +43,7 @@ bool Decoder_LDPC_BP_sum_product_naive<B,R>
 		{
 			const auto value  = this->V_to_C[transpose_ptr[j]];
 			const auto v_abs  = (R)std::abs(value);
-			const auto res    = (R)std::tanh(v_abs * (R)0.5);
+			const auto res    = (R)std::log(std::tanh(v_abs * (R)0.5));
 			const auto c_sign = std::signbit(value) ? -1 : 0;
 
 			sign ^= c_sign;
@@ -56,9 +56,7 @@ bool Decoder_LDPC_BP_sum_product_naive<B,R>
 		{
 			const auto value   = this->V_to_C[transpose_ptr[j]];
 			const auto v_sig   = sign ^ (std::signbit(value) ? -1 : 0);
-			const auto tmp1    = sum / values[j];
-			const auto tmp2    = (tmp1 >= 1) ? 0.9999 : tmp1; // saturation to avoid infinite numbers
-			const auto v_res   = (R)2.0 * std::atanh(tmp2);
+			const auto v_res   = (R)2.0 * std::atanh(std::exp(sum - values[j]));
 			const auto v_to_st = (R)std::copysign(v_res, v_sig);
 
 			this->C_to_V[transpose_ptr[j]] = v_to_st;

@@ -15,7 +15,7 @@ public:
 	virtual ~Decoder_LDPC_BP_sum_product_naive();
 
 protected:
-	// BP functions for decoding
+	// // BP functions for decoding
 	virtual bool BP_process();
 };
 
