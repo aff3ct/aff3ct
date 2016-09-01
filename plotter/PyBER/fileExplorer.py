@@ -79,19 +79,19 @@ class AdvTreeView(QtGui.QTreeView):
 
     def hideLegend(self):
         # hide the legend
-        # if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
-        # if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
-        if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
-        if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+        if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+        if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+        # if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+        # if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
         if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
         if self.lThr:  self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
 
     def showLegend(self):
         # display the legend
-        # if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
-        # if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
-        if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
-        if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+        if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
+        if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
+        # if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+        # if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
         if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
         if self.lThr:  self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
 
