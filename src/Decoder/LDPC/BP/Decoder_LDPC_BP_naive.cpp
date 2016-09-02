@@ -5,7 +5,7 @@
 
 #include "Decoder_LDPC_BP_naive.hpp"
 
-constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
+// constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
 
 template <typename B, typename R>
 Decoder_LDPC_BP_naive<B,R>
@@ -70,7 +70,7 @@ void Decoder_LDPC_BP_naive<B,R>
 	for (auto i = 0; i < (int)Y_N2.size(); i++)
 		Y_N2[i] = this->Lp_N[i] - Y_N1[i];
 
-	saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
+	// saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
 }
 
 template <typename B, typename R>
@@ -148,7 +148,7 @@ bool Decoder_LDPC_BP_naive<B,R>
 		syndrome = this->BP_process();
 		
 		// make a saturation
-		saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
+		// saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
 
 		// stop criterion
 		if (syndrome)
