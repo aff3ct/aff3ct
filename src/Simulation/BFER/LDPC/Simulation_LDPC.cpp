@@ -63,6 +63,7 @@ template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
+	this->barrier(tid);
 	return Factory_decoder_LDPC<B,Q>::build(this->code_params, this->enco_params, this->deco_params,
 	                                        n_variables_per_parity, n_parities_per_variable, transpose);
 }
