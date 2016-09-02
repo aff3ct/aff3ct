@@ -46,7 +46,7 @@ inline T saturate(const T val, const T min, const T max) { return std::min(std::
 
 // make a saturation on a full vector
 template <typename T>
-inline void saturate(mipp::vector<T> array, const T min, const T max) 
+inline void saturate(mipp::vector<T> &array, const T min, const T max) 
 {
 	const auto loop_size = (int)array.size();
 	for (auto i = 0; i < loop_size; i++)
