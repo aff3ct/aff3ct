@@ -6,7 +6,7 @@
 #include "Factory_decoder_LDPC.hpp"
 
 template <typename B, typename R>
-SISO<R>* Factory_decoder_LDPC<B,R>
+Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 ::build_siso(const t_code_param               &code_params,
 	         const t_encoder_param            &enco_params,
 	         const t_decoder_param            &deco_params,
@@ -14,7 +14,7 @@ SISO<R>* Factory_decoder_LDPC<B,R>
 	         const std::vector<unsigned char> &n_parities_per_variable,
 	         const std::vector<unsigned int > &transpose)
 {
-	SISO<R> *decoder = nullptr;
+	Decoder_SISO<B,R> *decoder = nullptr;
 
 	if (deco_params.algo == "BP" || deco_params.algo == "BP_MIN_SUM")
 	{

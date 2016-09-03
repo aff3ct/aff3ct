@@ -1,11 +1,10 @@
 #ifndef DECODER_LDPC_BP_NAIVE_HPP_
 #define DECODER_LDPC_BP_NAIVE_HPP_
 
-#include "../../Decoder.hpp"
-#include "../../SISO.hpp"
+#include "../../Decoder_SISO.hpp"
 
 template <typename B, typename R>
-class Decoder_LDPC_BP_naive : public Decoder<B,R>, public SISO<R>
+class Decoder_LDPC_BP_naive : public Decoder_SISO<B,R>
 {
 protected:
 	const int n_ite;      // number of iterations to perform

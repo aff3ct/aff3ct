@@ -3,6 +3,8 @@
 
 #include "../Simulation_BFERI.hpp"
 
+#include "../../../Decoder/Decoder_SISO.hpp"
+
 #include "../../../Tools/params.h"
 
 template <typename B, typename R, typename Q>
@@ -13,6 +15,8 @@ protected:
 	std::vector<unsigned char> n_variables_per_parity;
 	std::vector<unsigned char> n_parities_per_variable;
 	std::vector<unsigned int > transpose;
+
+	std::vector<Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
 	Simulation_BFERI_LDPC(const t_simulation_param& simu_params,

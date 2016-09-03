@@ -338,7 +338,13 @@ void Simulation_BFERI<B,R,Q>
 	if (modulator  [0] != nullptr) { delete modulator  [0]; modulator  [0] = nullptr; }
 	if (channel    [0] != nullptr) { delete channel    [0]; channel    [0] = nullptr; }
 	if (quantizer  [0] != nullptr) { delete quantizer  [0]; quantizer  [0] = nullptr; }
-	if (siso       [0] != nullptr) { delete siso       [0]; siso       [0] = nullptr; }
+	if (siso[0] != nullptr)
+	{
+		// do not delete the siso if the decoder and the siso are the same pointers
+		if (decoder[0] == nullptr || siso[0] != dynamic_cast<SISO<Q>*>(decoder[0]))
+			delete siso[0];
+		siso[0] = nullptr;
+	}
 	if (decoder    [0] != nullptr) { delete decoder    [0]; decoder    [0] = nullptr; }
 	if (analyzer   [0] != nullptr) { delete analyzer   [0]; analyzer   [0] = nullptr; }
 	if (terminal       != nullptr) { delete terminal;       terminal       = nullptr; }

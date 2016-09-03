@@ -20,7 +20,8 @@ Simulation_BFERI_LDPC<B,R,Q>
                         const t_mod_param&        mod_params,
                         const t_channel_param&    chan_params,
                         const t_decoder_param&    deco_params)
-: Simulation_BFERI<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+: Simulation_BFERI<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params),
+  decoder_siso(simu_params.n_threads, nullptr)
 {
 }
 
@@ -64,16 +65,18 @@ SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_siso(const int tid)
 {
 	this->barrier(tid);
-	return Factory_decoder_LDPC<B,Q>::build_siso(this->code_params, this->enco_params, this->deco_params,
-	                                             n_variables_per_parity, n_parities_per_variable, transpose);
+
+	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build_siso(this->code_params, this->enco_params, this->deco_params,
+	                                                          n_variables_per_parity, n_parities_per_variable, 
+	                                                          transpose);
+	return decoder_siso[tid];
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return Factory_decoder_LDPC<B,Q>::build(this->code_params, this->enco_params, this->deco_params,
-	                                        n_variables_per_parity, n_parities_per_variable, transpose);
+	return decoder_siso[tid];
 }
 
 // ==================================================================================== explicit template instantiation 

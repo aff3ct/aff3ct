@@ -44,9 +44,7 @@ template <typename B>
 void Encoder_LDPC_fake<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	// TODO: make a fake encoding for the coset approach
-	assert(U_K.size() == X_N.size());
-	X_N = U_K;
+	std::fill(X_N.begin(), X_N.end(), (B)0);
 }
 
 template <typename B>

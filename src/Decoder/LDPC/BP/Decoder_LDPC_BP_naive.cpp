@@ -14,8 +14,7 @@ Decoder_LDPC_BP_naive<B,R>
                         const std::vector<unsigned char> &n_parities_per_variable,
                         const std::vector<unsigned int > &transpose,
                         const std::string name)
-: Decoder<B,R>(K, N, 1, name          ),
-  SISO   <  R>(K, N, 1, name + "_siso"),
+: Decoder_SISO<B,R>      (K, N, 1, name          ),
   n_ite                  (n_ite                  ),
   n_V_nodes              (N                      ), // same as N but more explicit
   n_C_nodes              (N - K                  ),
@@ -34,6 +33,7 @@ Decoder_LDPC_BP_naive<B,R>
 {
 	assert(N == (int)n_parities_per_variable.size());
 	assert(K == N - (int) n_variables_per_parity.size());
+	assert(n_ite > 0);
 }
 
 template <typename B, typename R>

@@ -813,7 +813,14 @@ void Simulation_BFERI<B,R,Q>
 	for (tid = 0; tid < nthr; tid++) if (modulator  [tid] != nullptr) { delete modulator  [tid]; modulator  [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (channel    [tid] != nullptr) { delete channel    [tid]; channel    [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (quantizer  [tid] != nullptr) { delete quantizer  [tid]; quantizer  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (siso       [tid] != nullptr) { delete siso       [tid]; siso       [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++)
+		if (siso[tid] != nullptr)
+		{
+			// do not delete the siso if the decoder and the siso are the same pointers
+			if (decoder[tid] == nullptr || siso[tid] != dynamic_cast<SISO<Q>*>(decoder[tid]))
+				delete siso[tid];
+			siso[tid] = nullptr;
+		}
 	for (tid = 0; tid < nthr; tid++) if (decoder    [tid] != nullptr) { delete decoder    [tid]; decoder    [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (analyzer   [tid] != nullptr) { delete analyzer   [tid]; analyzer   [tid] = nullptr; }
 	
