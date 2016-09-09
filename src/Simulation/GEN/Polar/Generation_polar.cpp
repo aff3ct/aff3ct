@@ -51,6 +51,8 @@ Generation_polar
   generator(nullptr),
   directory(simu_params.gen_decoder_dir)
 {
+	const_cast<t_code_param&>(this->code_params).N_code = std::exp2(this->code_params.m);
+
 	// pattern allocations
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::STANDARD   >());
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::RATE_0_LEFT>());
@@ -66,7 +68,7 @@ Generation_polar
 	sigma     = (float)1.0 / sqrt((float)2.0 * code_rate * pow((float)10.0, (snr / (float)10.0)));
 
 	// build the frozen bits generator
-	fb_generator = Factory_frozenbits_generator<int>::build(simu_params, code_params);
+	fb_generator = Factory_frozenbits_generator<int>::build(this->simu_params, this->code_params);
 	check_errors(fb_generator, "Frozenbits_generator<int>");
 
 	// generate the frozen bits
