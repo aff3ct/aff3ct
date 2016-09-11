@@ -1,5 +1,5 @@
 # How to run the code
-This project use `cmake` in order to generate a specific Makefile.
+This project use `cmake` in order to generate the Makefile.
 
 ## Install cmake
 ```bash
@@ -12,13 +12,26 @@ This project use `cmake` in order to generate a specific Makefile.
 > cd build
 > cmake ..
 ```
-This command will generate many files but we are just interessting in some of them:
 
-- Makefile : used to compile the code (we don't have to modify directly the Makefile),
-- CMakeCache.txt : the most important file, the Makefile refers to this file for the compiling options (flags, librairies, etc.).
+### Facultative cmake options
+
+Enabling the GNU Scientific Librairy (GSL) (used for the AWGN channel):
+```bash
+> cmake .. -DENABLE_GSL=ON
+```
+
+Enabling the Intel Math Kernel Librairy (MKL) (used for the AWGN channel):
+```bash
+> cmake .. -DENABLE_MKL=ON
+```
+
+Enabling the SystemC/TLM standard between the modules:
+```bash
+> cmake .. -DENABLE_SYSTEMC=ON
+```
 
 ### Modifying the CMakeCache.txt
-By default the configuration file is configured to generate a debug binary.
+By default the configuration file will generate a debug binary.
 If we want to produce a release binary we have to modify the `CMAKE_BUILD_TYPE:STRING` variable like this:
 ```bash
 CMAKE_BUILD_TYPE:STRING=Release
@@ -28,24 +41,23 @@ We can also add some flags in the `CMAKE_CXX_FLAGS:STRING` variable:
 CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops
 ```
 
-There is also numerous specific flags to configure the static optimizations inside the decoders (you have to add those flags in the `CMAKE_CXX_FLAGS:STRING` variable):
+There is some specific flags to configure the type of data to use in the simulation modules (you have to add those flags in the `CMAKE_CXX_FLAGS:STRING` variable):
 
-- `-DPREC_64_BIT`: use 64-bit precision inside the decoder (floating point representation for the output channel values, integer for the bits),
-- `-DPREC_32_BIT`: use 32-bit precision inside the decoder (floating point representation for the output channel values, integer for the bits, this is the default when we don't specify any flag),
-- `-DPREC_16_BIT`: use 16-bit precision inside the decoder (fixed point representation for the channel values, integer for the bits),
-- `-DPREC_8_BIT`: use 8-bit precision inside the decoder (fixed point representation for the channel values, integer for the bits),
-- `-DMULTI_PREC`: build a binary with all the previous precisions (specific type can be selected at runtime),
-- `-DENABLE_BIT_PACKING`: use the bit packing technique to compress the storage of the bits inside the decoder (work only with `SC_FAST` decoder and in 8-bit mode).
+- `-DPREC_64_BIT`: use 64-bit precision when it is possible (floating-point representation for the LLRs),
+- `-DPREC_32_BIT`: use 32-bit precision when it is possible (floating-point representation for the LLRs, this is the default when you don't specify any flag),
+- `-DPREC_16_BIT`: use 16-bit precision when it is possble (fixed-point representation for the LLRs),
+- `-DPREC_8_BIT`: use 8-bit precision  when it is possible (fixed-point representation for the LLRs),
+- `-DMULTI_PREC`: build a binary containing all the previous precisions (specific type can be selected at runtime with the `--prec` option).
 
-Notice that the hard coded SIMD set of instructions needs also some specific compiler flags (it has been tested on g++-4.8):
+Notice that some parts of the code use SIMD (Single Instruction Multiple Data) parallelism and this type of instructions often requires additionnal compiler options to be enabled (specific GNU compiler flags are given):
 
-- `-msse2`: enable the SSE2 set of instructions on x86 CPUs (128-bit vector size, required for 32-bit data),
+- `-msse2`: enable the SSE2 set of instructions on x86 CPUs (128-bit vector size, required for 32-bit and 64-bit data),
 - `-mssse3`: enable the SSSE3 set of instructions on x86 CPUs (128-bit vector size, specifically required for 32-bit data and the `SC_FAST` decoder),
 - `-msse4.1`: enable the SSE4.1 set of instructions on x86 CPUs (128-bit vector size, required for 8-bit and 16-bit data),
-- `-mavx`: enable the AVX set of instructions on x86 CPUs (256-bit vector size, required for 32-bit data),
+- `-mavx`: enable the AVX set of instructions on x86 CPUs (256-bit vector size, required for 32-bit and 64-bit data),
 - `-mavx2`: enable the AVX2 set of instructions on x86 CPUs (256-bit vector size, required for 8-bit and 16-bit data),
 - `-mfpu=neon`: enable the NEON set of instructions on ARMv7 and ARMv8 CPUs (128-bit vector size, required for 8-bit, 16-bit data and 32-bit data),
-- `-march=native`: let the compiler choose the best set of instructions available on the current x86 architecture (it does not work for ARMv7 architectures since the NEON instructions are not IEEE 754 compatible).
+- `-march=native`: let the compiler choose the best set of instructions available on the current architecture (it does not work for ARMv7 architectures since the NEON instructions are not IEEE 754 compatible).
 
 #### Enabling the cool bash mode
 
@@ -56,7 +68,7 @@ CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -DENABLE_COOL_BASH
 
 ## Compiling with make
 ```bash
-> make
+> make -j4
 ```
 This command will use the generated Makefile.
 
@@ -66,7 +78,7 @@ Here are some examples of runs.
 ### Decoding of the Polar codes with the Successive Cancellation decoder
 
 ```bash
-> ./aff3ct --simu-type BFER --code-type POLAR -K 1024 -N 2048 --snr-min 1.5 --snr-max 3.01 --code-sigma 0.862 --dec-algo SC --dec-implem FAST
+> ./bin/aff3ct --simu-type BFER --code-type POLAR -K 1024 -N 2048 --snr-min 1.5 --snr-max 3.01 --code-sigma 0.862 --dec-algo SC --dec-implem FAST
 ```
 
 Expected output:
@@ -124,7 +136,7 @@ Expected output:
 ### Decoding of the Turbo codes with the LTE BCJR decoder (8 states trellis)
 
 ```bash
-> ./aff3ct --simu-type BFER --code-type TURBO -K 1024 -N 3072 --snr-min 0.0 --snr-max 1.01 --dec-algo LTE --dec-implem FAST --max-iter 6
+> ./bin/aff3ct --simu-type BFER --code-type TURBO -K 1024 -N 3072 --snr-min 0.0 --snr-max 1.01 --dec-algo LTE --dec-implem FAST --max-iter 6
 ```
 
 Expected output:
@@ -180,5 +192,5 @@ There is some additional examples of runs in the `scripts` folder (from the root
 ## About eclipse
 You may encounter an issue with eclipse, which doesn't handle C++11 as a default behaviour. To solve it you have to add the following:
 
-- add `GXX_EXPERIMENTAL_CXX0X` in Eclipse's symbols (C/C++ General > Path and Symbols > Symbols),
-- add `-std=c++11` in Compiler Options (C/C++ General > Preprocessor Include Paths, Macros etc. > Providers  > DCT GCC Built-in Compiler Settings >  Commands to get compiler specs). You have to uncheck "Use global provider shared between projects".
+- add `GXX_EXPERIMENTAL_CXX0X` (or `__GXX_EXPERIMENTAL_CXX0X__`) in Eclipse's symbols (C/C++ General > Path and Symbols > Symbols),
+- add `-std=c++11` (or `-std=c++1y`) in Compiler Options (C/C++ General > Preprocessor Include Paths, Macros etc. > Providers  > DCT GCC Built-in Compiler Settings >  Commands to get compiler specs). You have to uncheck "Use global provider shared between projects".
