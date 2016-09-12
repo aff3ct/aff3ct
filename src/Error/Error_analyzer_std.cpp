@@ -11,7 +11,8 @@ Error_analyzer_std<B>
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
-  n_analyzed_frames(0)
+  n_analyzed_frames(0),
+  last_frame_error(false)
 {
 	assert(n_frames > 0);
 }
