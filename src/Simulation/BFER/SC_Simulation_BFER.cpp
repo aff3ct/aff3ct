@@ -49,6 +49,8 @@ Simulation_BFER<B,R,Q>
   code_rate(0.f),
   sigma    (0.f),
 
+  X_N1(simu_params.n_threads), // hack for the compilation but never used
+
   source   (1, nullptr),
   crc      (1, nullptr),
   encoder  (1, nullptr),
@@ -76,6 +78,12 @@ Simulation_BFER<B,R,Q>
 	if (simu_params.benchs)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
+		std::exit(-1);
+	}
+
+	if (code_params.coset)
+	{
+		std::cerr << bold_red("(EE) SystemC simulation does not support the coset approach... Exiting") << std::endl;
 		std::exit(-1);
 	}
 
@@ -136,17 +144,19 @@ void Simulation_BFER<B,R,Q>
 
 	if (this->simu_params.n_threads == 1 && this->simu_params.enable_debug)
 	{
-		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", "Debug_B0");
-		this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", "Debug_B1");
-		this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", "Debug_B2");
-		this->dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", "Debug_B3");
-		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", "Debug_R0");
-		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", "Debug_R1");
-		this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", "Debug_R2");
-		this->dbg_R[3] = new SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", "Debug_R3");
-		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", "Debug_Q0");
-		this->dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", "Debug_Q1");
-		this->dbg_B[4] = new SC_Debug<B>("Decode Y_N5 and generate V_K...           \nV_K: \n", "Debug_B4");
+		const auto dl = this->simu_params.debug_limit;
+
+		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
+		this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
+		this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", dl, "Debug_B2");
+		this->dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", dl, "Debug_B3");
+		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
+		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
+		this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
+		this->dbg_R[3] = new SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", dl, "Debug_R3");
+		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", dl, "Debug_Q0");
+		this->dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", dl, "Debug_Q1");
+		this->dbg_B[4] = new SC_Debug<B>("Decode Y_N5 and generate V_K...           \nV_K: \n", dl, "Debug_B4");
 
 		this->bind_sockets_debug();
 		sc_core::sc_start(); // start simulation

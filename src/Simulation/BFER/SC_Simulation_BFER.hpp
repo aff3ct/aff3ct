@@ -46,6 +46,9 @@ protected:
 	float code_rate;
 	float sigma;
 
+	// data vector
+	std::vector<mipp::vector<B>> X_N1; // fake encoded codeword (required to compile but never used)
+
 	// communication chain
 	std::vector<SC_Source<B>*>          source;
 	std::vector<SC_CRC<B>*>             crc;

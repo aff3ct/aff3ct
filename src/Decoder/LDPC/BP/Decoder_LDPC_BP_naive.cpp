@@ -10,21 +10,25 @@
 template <typename B, typename R>
 Decoder_LDPC_BP_naive<B,R>
 ::Decoder_LDPC_BP_naive(const int &K, const int &N, const int& n_ite,
-                        const std::vector<unsigned char> &n_variables_per_parity,
-                        const std::vector<unsigned char> &n_parities_per_variable,
-                        const std::vector<unsigned int > &transpose,
+                        const std ::vector<unsigned char> &n_variables_per_parity,
+                        const std ::vector<unsigned char> &n_parities_per_variable,
+                        const std ::vector<unsigned int > &transpose,
+                        const mipp::vector<B            > &X_N,
+                        const bool                        coset,
                         const std::string name)
 : Decoder_SISO<B,R>      (K, N, 1, name          ),
   n_ite                  (n_ite                  ),
   n_V_nodes              (N                      ), // same as N but more explicit
   n_C_nodes              (N - K                  ),
   n_branches             (transpose.size()       ),
+  coset                  (coset                  ),
   init_flag              (false                  ),
 
   n_variables_per_parity (n_variables_per_parity ),
   n_parities_per_variable(n_parities_per_variable),
   transpose              (transpose              ),
 
+  X_N                    (X_N                    ),
   Y_N                    (N                      ),
   V_K                    (K                      ),
   Lp_N                   (N,                   -1), // -1 in order to fail when AZCW
@@ -55,6 +59,8 @@ void Decoder_LDPC_BP_naive<B,R>
 ::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
+	assert(Y_N1.size() == this->Y_N.size());
+	assert(!this->coset || (this->coset && this->X_N.size() == this->N));
 
 	// memory zones initialization
 	if (this->init_flag)
@@ -63,12 +69,24 @@ void Decoder_LDPC_BP_naive<B,R>
 		this->init_flag = false;
 	}
 
+	// coset pre-processing
+	if (this->coset)
+		for (auto i = 0; i < (int)Y_N1.size(); i++)
+			this->Y_N[i] = this->X_N[i] ? -Y_N1[i] : Y_N1[i];
+	else
+		std::copy(Y_N1.begin(), Y_N1.end(), this->Y_N.begin());
+
 	// actual decoding
-	this->BP_decode(Y_N1);
+	this->BP_decode(this->Y_N);
 
 	// prepare for next round by processing extrinsic information
 	for (auto i = 0; i < (int)Y_N2.size(); i++)
-		Y_N2[i] = this->Lp_N[i] - Y_N1[i];
+		Y_N2[i] = this->Lp_N[i] - this->Y_N[i];
+
+	// coset post-processing
+	if (this->coset)
+		for (auto i = 0; i < (int)Y_N2.size(); i++)
+			Y_N2[i] = this->X_N[i] ? -Y_N2[i] : Y_N2[i];
 
 	// saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
 }
@@ -85,6 +103,8 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_naive<B,R>
 ::decode()
 {
+	assert(!this->coset || (this->coset && this->X_N.size() == this->N));
+
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -92,14 +112,24 @@ void Decoder_LDPC_BP_naive<B,R>
 		this->init_flag = false;
 	}
 
+	// coset pre-processing
+	if (this->coset)
+		for (auto i = 0; i < (int)this->Y_N.size(); i++)
+			this->Y_N[i] = this->X_N[i] ? -this->Y_N[i] : this->Y_N[i];
+
 	// actual decoding
 	this->BP_decode(this->Y_N);
 
 	// take the hard decision
-	for (unsigned i = 0; i < V_K.size(); i++)
-		V_K[i] = this->Lp_N[i] < 0;
+	for (unsigned i = 0; i < this->V_K.size(); i++)
+		this->V_K[i] = this->Lp_N[i] < 0;
 
-	// set the flag so C_to_V structure can be reset to 0 only at the begining of the loop in iterative decoding
+	// coset post-processing (coset pre-processing is made in BP_decode method)
+	if (this->coset)
+		for (auto i = 0; i < (int)this->V_K.size(); i++)
+			this->V_K[i] = this->X_N[i] ? !this->V_K[i] : this->V_K[i];
+
+	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
 	this->init_flag = true;
 }
 
@@ -120,7 +150,7 @@ bool Decoder_LDPC_BP_naive<B,R>
 	auto syndrome = false;
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
-		// begining of the iteration upon all the matrix lines
+		// beginning of the iteration upon all the matrix lines
 		R *C_to_V_ptr = this->C_to_V.data();
 		R *V_to_C_ptr = this->V_to_C.data();
 

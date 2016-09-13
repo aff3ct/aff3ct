@@ -14,6 +14,7 @@ Launcher_BFER<B,R,Q>
 	this->simu_params.max_fe          = 100;
 	this->simu_params.benchs          = 0;
 	this->simu_params.enable_debug    = false;
+	this->simu_params.debug_limit     = 0;
 	this->simu_params.enable_leg_term = false;
 	this->simu_params.enable_dec_thr  = false;
 	this->simu_params.time_report     = false;
@@ -38,6 +39,8 @@ void Launcher_BFER<B,R,Q>
 	this->doc_args["enable-dec-thr" ] = "enable the display of the decoder throughput considering only the decoder time.";
 	this->opt_args["enable-debug"   ] = "";
 	this->doc_args["enable-debug"   ] = "enable debug mode: print array values after each step.";
+	this->opt_args["debug-limit"    ] = "n_vals";
+	this->doc_args["debug-limit"    ] = "set the max number of elements to display in the debug mode.";
 	this->opt_args["trace"          ] = "enables trace";
 	this->doc_args["trace"          ] = "traces array values in a CSV file.";
 	this->opt_args["time-report"    ] = "";
@@ -56,6 +59,11 @@ void Launcher_BFER<B,R,Q>
 	if(this->ar.exist_arg("enable-leg-term")) this->simu_params.enable_leg_term = true;
 	if(this->ar.exist_arg("enable-dec-thr" )) this->simu_params.enable_dec_thr  = true;
 	if(this->ar.exist_arg("enable-debug"   )) this->simu_params.enable_debug    = true;
+	if(this->ar.exist_arg("debug-limit"    ))
+	{
+		this->simu_params.enable_debug = true;
+		this->simu_params.debug_limit  = std::stoi(this->ar.get_arg("debug-limit"));
+	}
 	if(this->ar.exist_arg("time-report"    )) this->simu_params.time_report     = true;
 	if(this->ar.exist_arg("trace"          )) this->simu_params.trace_path_file = this->ar.get_arg("trace");
 }

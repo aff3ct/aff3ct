@@ -48,7 +48,8 @@ Encoder<B>* Simulation_LDPC<B,R,Q>
 {
 	auto encoder = Factory_encoder_LDPC<B>::build(this->simu_params,
 	                                              this->code_params,
-	                                              this->enco_params);
+	                                              this->enco_params,
+	                                              tid);
 	if (tid == 0)
 	{
 		n_variables_per_parity  = encoder->get_n_variables_per_parity();
@@ -65,7 +66,8 @@ Decoder<B,Q>* Simulation_LDPC<B,R,Q>
 {
 	this->barrier(tid);
 	return Factory_decoder_LDPC<B,Q>::build(this->code_params, this->enco_params, this->deco_params,
-	                                        n_variables_per_parity, n_parities_per_variable, transpose);
+	                                        n_variables_per_parity, n_parities_per_variable, transpose,
+	                                        this->X_N1[tid], this->code_params.coset);
 }
 
 // ==================================================================================== explicit template instantiation 

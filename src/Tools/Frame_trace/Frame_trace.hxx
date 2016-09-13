@@ -40,24 +40,30 @@ void Frame_trace<B>
 	unsigned int stride         = 0;
 	bool         enable_ref     = !ref.empty();
 	
-	if (enable_ref)
-		assert(ref.size() == vec.size());
+	assert(!enable_ref || ref.size() == vec.size());
+	assert(this->n_bits >= 0);
 
+	const auto n_bits = this->n_bits ? (this->n_bits <= vec.size() ? this->n_bits : vec.size()) : (int)vec.size();
 	if (row_width == vec.size())
 	{
-		for(unsigned i = 0; i < vec.size(); i++)
+		for (auto i = 0; i < n_bits; i++)
 			stream << std::setw(5) << i << "|";
+
+		if (n_bits < vec.size())
+			stream << " ..." << std::endl;
 		stream << std::endl;
 	}
 
-	while(stride < vec.size())
+	while (stride < vec.size())
 	{
-		for(unsigned i = stride; (i < stride + row_width) && i < vec.size(); i++)
+		for (auto i = stride; (i < stride + n_bits) && i < vec.size(); i++)
 			if (enable_ref)
 				display_value(vec[i], version, ref[i]);
 			else
 				display_value(vec[i], version);
 
+		if (n_bits < vec.size())
+			stream << " ..." << std::endl;
 		stream << std::endl;
 
 		stride += row_width;

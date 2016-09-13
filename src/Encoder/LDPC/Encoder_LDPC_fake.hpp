@@ -14,8 +14,8 @@ public:
 	std::vector<unsigned char> get_n_parities_per_variable();
 	std::vector<unsigned int > get_transpose              ();
 
-	void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
+	virtual void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
 };
 
 #endif /* ENCODER_LDPC_FAKE_HPP_ */

@@ -11,6 +11,7 @@ struct t_simulation_param
 	int                       benchs;
 	bool                      disable_display;
 	bool                      enable_debug;
+	int                       debug_limit;
 	bool                      time_report;
 	int                       n_threads;
 	bool                      enable_leg_term;
@@ -46,6 +47,7 @@ struct t_code_param
 	std::string crc;
 	std::string interleaver;
 	std::string fb_gen_method;
+	bool        coset; // true = enable coset approach
 };
 
 struct t_mod_param

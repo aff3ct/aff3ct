@@ -49,7 +49,8 @@ Encoder<B>* Simulation_BFERI_LDPC<B,R,Q>
 {
 	auto encoder = Factory_encoder_LDPC<B>::build(this->simu_params,
 	                                              this->code_params,
-	                                              this->enco_params);
+	                                              this->enco_params,
+	                                              tid);
 	if (tid == 0)
 	{
 		n_variables_per_parity  = encoder->get_n_variables_per_parity();
@@ -66,9 +67,9 @@ SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 {
 	this->barrier(tid);
 
-	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build_siso(this->code_params, this->enco_params, this->deco_params,
-	                                                          n_variables_per_parity, n_parities_per_variable, 
-	                                                          transpose);
+	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->code_params, this->enco_params, this->deco_params,
+	                                                     n_variables_per_parity, n_parities_per_variable,
+	                                                     transpose, this->X_N1[tid], this->code_params.coset);
 	return decoder_siso[tid];
 }
 

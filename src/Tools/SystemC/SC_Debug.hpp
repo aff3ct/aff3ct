@@ -23,10 +23,11 @@ public:
 
 private:
 	std::string message;
+	const int debug_limit;
 
 public:
-    SC_Debug(std::string message = "Debug:\n", sc_core::sc_module_name name = "SC_Debug")
-    : sc_module(name), s_in("s_in"), s_out("s_out"), message(message)
+	SC_Debug(std::string message = "Debug:\n", const int debug_limit = 0, sc_core::sc_module_name name = "SC_Debug")
+	: sc_module(name), s_in("s_in"), s_out("s_out"), message(message), debug_limit(debug_limit)
 	{
 		s_in.register_b_transport(this, &SC_Debug::b_transport);
 	}
@@ -41,7 +42,7 @@ private:
 		std::copy(buffer, buffer + length, data_in.begin());
 
 		// display input data
-		Frame_trace<T> ft;
+		Frame_trace<T> ft(debug_limit);
 		std::cout << message;
 		if (typeid(T) == typeid(float) || typeid(T) == typeid(double))
 			ft.display_real_vector(data_in);

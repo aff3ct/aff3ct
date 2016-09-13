@@ -19,6 +19,7 @@ Launcher_BFER_LDPC<B,R,Q>
 	this->code_params.type            = "LDPC";
 	this->deco_params.algo            = "BP_MIN_SUM";
 	this->deco_params.implem          = "NAIVE";
+	this->code_params.coset           = false;
 }
 
 template <typename B, typename R, typename Q>
@@ -29,6 +30,9 @@ void Launcher_BFER_LDPC<B,R,Q>
 
 	this->opt_args["max-iter"] = "n_iterations";
 	this->doc_args["max-iter"] = "maximal number of iterations in the turbo decoder.";
+
+	this->opt_args["enable-coset"] = "";
+	this->doc_args["enable-coset"] = "enable the coset approach.";
 }
 
 template <typename B, typename R, typename Q>
@@ -37,7 +41,8 @@ void Launcher_BFER_LDPC<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("max-iter")) this->deco_params.max_iter = std::stoi(this->ar.get_arg("max-iter"));
+	if(this->ar.exist_arg("max-iter"    )) this->deco_params.max_iter = std::stoi(this->ar.get_arg("max-iter"));
+	if(this->ar.exist_arg("enable-coset")) this->code_params.coset    = true;
 }
 
 template <typename B, typename R, typename Q>
@@ -46,6 +51,9 @@ void Launcher_BFER_LDPC<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::print_header();
 
+	std::string coset = this->code_params.coset ? "on" : "off";
+
+	this->stream << "# " << bold("* Coset approach                ") << " = " << coset                      << std::endl;
 	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter << std::endl;
 }
 
