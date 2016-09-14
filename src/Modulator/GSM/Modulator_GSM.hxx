@@ -1,6 +1,3 @@
-/*
-* BCJR Decoding, Memoryless Modulation, and Filtering come for Tarik BENADDI (Toulouse INP)
-*/
 #include <cassert>
 #include <cstdlib>
 #include <cstdio>
