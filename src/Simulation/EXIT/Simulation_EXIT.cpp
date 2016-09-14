@@ -5,7 +5,7 @@
 #include "../../Tools/Factory/Factory_channel.hpp"
 #include "../../Tools/Factory/Factory_quantizer.hpp"
 
-#include "../../Decoder/decoder_functions.h"
+#include "../../Tools/Math/utils.h"
 #include "../../Tools/bash_tools.h"
 #include "../../Tools/simu_tools.h"
 

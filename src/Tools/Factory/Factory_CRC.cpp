@@ -1,9 +1,9 @@
 #include <string>
 
-#include "../../CRC/CRC_NO.hpp"
-#include "../../CRC/CRC_polynomial.hpp"
-#include "../../CRC/CRC_polynomial_inter.hpp"
-#include "../../CRC/CRC_polynomial_double.hpp"
+#include "../../CRC/NO/CRC_NO.hpp"
+#include "../../CRC/Polynomial/CRC_polynomial.hpp"
+#include "../../CRC/Polynomial/CRC_polynomial_inter.hpp"
+#include "../../CRC/Polynomial/CRC_polynomial_double.hpp"
 
 #include "../MIPP/mipp.h"
 

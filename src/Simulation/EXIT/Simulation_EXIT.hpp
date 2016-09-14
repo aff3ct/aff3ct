@@ -12,7 +12,7 @@
 #include "../../Channel/Channel.hpp"
 #include "../../Quantizer/Quantizer.hpp"
 #include "../../Decoder/SISO.hpp"
-#include "../../Terminal/Terminal_EXIT.hpp"
+#include "../../Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "../../Tools/params.h"
 

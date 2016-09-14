@@ -1,4 +1,4 @@
-#include "../../../Decoder/decoder_functions.h"
+#include "../../../Tools/Math/utils.h"
 #include "../../MIPP/mipp.h"
 
 #include "Scaling_factor_vec.hpp"

@@ -1,12 +1,12 @@
-#include "../../Interleaver/Interleaver_LTE.hpp"
-#include "../../Interleaver/Interleaver_CCSDS.hpp"
-#include "../../Interleaver/Interleaver_NO.hpp"
-#include "../../Interleaver/Interleaver_columns.hpp"
-#include "../../Interleaver/Interleaver_golden.hpp"
-#include "../../Interleaver/Interleaver_random.hpp"
-#include "../../Interleaver/Interleaver_random_hard.hpp"
+#include "../../Interleaver/LTE/Interleaver_LTE.hpp"
+#include "../../Interleaver/CCSDS/Interleaver_CCSDS.hpp"
+#include "../../Interleaver/NO/Interleaver_NO.hpp"
+#include "../../Interleaver/Columns/Interleaver_columns.hpp"
+#include "../../Interleaver/Golden/Interleaver_golden.hpp"
+#include "../../Interleaver/Random/Interleaver_random.hpp"
+#include "../../Interleaver/Random_hard/Interleaver_random_hard.hpp"
 
-#include "../../Tools/Factory/Factory_interleaver.hpp"
+#include "Factory_interleaver.hpp"
 
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>

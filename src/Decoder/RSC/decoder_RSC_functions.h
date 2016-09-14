@@ -2,8 +2,7 @@
 #define DECODER_RSC_FUNCTIONS_H
 
 #include "../../Tools/MIPP/mipp.h"
-
-#include "../decoder_functions.h"
+#include "../../Tools/Math/utils.h"
 
 // -------------------------------------------------------------------------- special function prototypes for templates
 

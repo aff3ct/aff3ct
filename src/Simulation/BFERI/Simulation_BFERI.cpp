@@ -16,8 +16,6 @@
 #include "../../Tools/Factory/Factory_error_analyzer.hpp"
 #include "../../Tools/Factory/Factory_terminal.hpp"
 
-#include "../../Puncturer/Puncturer_NO.hpp"
-
 #include "../../Tools/bash_tools.h"
 #include "../../Tools/simu_tools.h"
 #include "../../Tools/Frame_trace/Frame_trace.hpp"

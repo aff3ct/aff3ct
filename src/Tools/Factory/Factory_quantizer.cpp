@@ -1,7 +1,7 @@
-#include "../../Quantizer/Quantizer_standard.hpp"
-#include "../../Quantizer/Quantizer_fast.hpp"
-#include "../../Quantizer/Quantizer_tricky.hpp"
-#include "../../Quantizer/Quantizer_NO.hpp"
+#include "../../Quantizer/Standard/Quantizer_standard.hpp"
+#include "../../Quantizer/Fast/Quantizer_fast.hpp"
+#include "../../Quantizer/Tricky/Quantizer_tricky.hpp"
+#include "../../Quantizer/NO/Quantizer_NO.hpp"
 
 #include "Factory_quantizer.hpp"
 

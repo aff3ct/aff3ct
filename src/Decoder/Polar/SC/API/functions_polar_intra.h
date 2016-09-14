@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #include "../../../../Tools/MIPP/mipp.h"
-#include "../../../decoder_functions.h"
+#include "../../../../Tools/Math/utils.h"
 #include "../../decoder_polar_functions.h"
 
 // ================================================================================================================ f()

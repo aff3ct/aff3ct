@@ -22,7 +22,7 @@
 #include "../../Decoder/SISO.hpp"
 #include "../../Decoder/Decoder.hpp"
 #include "../../Error/Error_analyzer.hpp"
-#include "../../Error/Error_analyzer_reduction.hpp"
+#include "../../Error/Standard/Error_analyzer_reduction.hpp"
 #include "../../Terminal/Terminal.hpp"
 
 #include "../../Tools/params.h"

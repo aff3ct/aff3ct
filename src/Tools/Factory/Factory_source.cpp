@@ -1,7 +1,7 @@
-#include "../../Source/Source_AZCW.hpp"
-#include "../../Source/Source_random.hpp"
-#include "../../Source/Source_random_fast.hpp"
-#include "../../Source/Source_fixed.hpp"
+#include "../../Source/AZCW/Source_AZCW.hpp"
+#include "../../Source/Random/Source_random.hpp"
+#include "../../Source/Random/Source_random_fast.hpp"
+#include "../../Source/Fixed/Source_fixed.hpp"
 
 #include "Factory_source.hpp"
 

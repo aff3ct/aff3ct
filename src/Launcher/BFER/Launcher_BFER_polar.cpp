@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "../../Simulation/BFER/Polar/Simulation_polar.hpp"
-#include "../../CRC/CRC_polynomial.hpp"
+#include "../../CRC/Polynomial/CRC_polynomial.hpp"
 #include "../../Tools/bash_tools.h"
 
 #include "Launcher_BFER_polar.hpp"

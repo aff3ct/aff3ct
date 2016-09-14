@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "../../Decoder/decoder_functions.h"
+#include "../../Tools/Math/utils.h"
 
 #include "Puncturer_polar_wangliu.hpp"
 

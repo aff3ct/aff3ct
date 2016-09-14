@@ -1,7 +1,7 @@
 #include <limits>
 
 #include "../../../Tools/bash_tools.h"
-#include "../../decoder_functions.h"
+#include "../../../Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_sum_product.hpp"
 

@@ -1,4 +1,4 @@
-#include "../../../Puncturer/Puncturer_NO.hpp"
+#include "../../../Puncturer/NO/Puncturer_NO.hpp"
 #include "../../../Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "../../bash_tools.h"
