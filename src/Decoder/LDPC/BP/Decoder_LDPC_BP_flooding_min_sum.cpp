@@ -3,30 +3,31 @@
 #include "../../../Tools/bash_tools.h"
 #include "../../decoder_functions.h"
 
-#include "Decoder_LDPC_BP_min_sum_naive.hpp"
+#include "Decoder_LDPC_BP_flooding_min_sum.hpp"
 
 template <typename B, typename R>
-Decoder_LDPC_BP_min_sum_naive<B,R>
-::Decoder_LDPC_BP_min_sum_naive(const int &K, const int &N, const int& n_ite,
-                                const std ::vector<unsigned char> &n_variables_per_parity,
-                                const std ::vector<unsigned char> &n_parities_per_variable,
-                                const std ::vector<unsigned int > &transpose,
-                                const mipp::vector<B            > &U_N,
-                                const bool                         coset,
-                                const std::string name)
-: Decoder_LDPC_BP_naive<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, U_N, coset, name)
+Decoder_LDPC_BP_flooding_min_sum<B,R>
+::Decoder_LDPC_BP_flooding_min_sum(const int &K, const int &N, const int& n_ite,
+                                   const std ::vector<unsigned char> &n_variables_per_parity,
+                                   const std ::vector<unsigned char> &n_parities_per_variable,
+                                   const std ::vector<unsigned int > &transpose,
+                                   const mipp::vector<B            > &U_N,
+                                   const bool                         coset,
+                                   const std::string name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, U_N, coset,
+                                name)
 {
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_min_sum_naive<B,R>
-::~Decoder_LDPC_BP_min_sum_naive()
+Decoder_LDPC_BP_flooding_min_sum<B,R>
+::~Decoder_LDPC_BP_flooding_min_sum()
 {
 }
 
 // normalized offest min-sum implementation
 template <typename B, typename R>
-bool Decoder_LDPC_BP_min_sum_naive<B,R>
+bool Decoder_LDPC_BP_flooding_min_sum<B,R>
 ::BP_process()
 {
 	auto syndrome = 0;	
@@ -45,7 +46,7 @@ bool Decoder_LDPC_BP_min_sum_naive<B,R>
 		{
 			const auto value  = this->V_to_C[transpose_ptr[j]];
 			const auto c_sign = std::signbit(value) ? -1 : 0;
-			const auto v_abs  = (R)std::abs(value); // std::trunc(std::abs(value));
+			const auto v_abs  = (R)std::abs(value);
 			const auto v_temp = min1;
 
 			sign ^= c_sign;
@@ -67,7 +68,7 @@ bool Decoder_LDPC_BP_min_sum_naive<B,R>
 		for (auto j = 0; j < length; j++)
 		{
 			const auto value   = this->V_to_C[transpose_ptr[j]];
-			const auto v_abs   = (R)std::abs(value);                    // std::trunc(std::abs(value));
+			const auto v_abs   = (R)std::abs(value);
 			const auto v_res   = ((v_abs == min1) ? cste1 : cste2);     // cmov
 			const auto v_sig   = sign ^ (std::signbit(value) ? -1 : 0); // xor bit
 			const auto v_to_st = (R)std::copysign(v_res, v_sig);        // magnitude of v_res, sign of v_sig
@@ -85,11 +86,11 @@ bool Decoder_LDPC_BP_min_sum_naive<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_min_sum_naive<B_8,Q_8>;
-template class Decoder_LDPC_BP_min_sum_naive<B_16,Q_16>;
-template class Decoder_LDPC_BP_min_sum_naive<B_32,Q_32>;
-template class Decoder_LDPC_BP_min_sum_naive<B_64,Q_64>;
+template class Decoder_LDPC_BP_flooding_min_sum<B_8,Q_8>;
+template class Decoder_LDPC_BP_flooding_min_sum<B_16,Q_16>;
+template class Decoder_LDPC_BP_flooding_min_sum<B_32,Q_32>;
+template class Decoder_LDPC_BP_flooding_min_sum<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_min_sum_naive<B,Q>;
+template class Decoder_LDPC_BP_flooding_min_sum<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

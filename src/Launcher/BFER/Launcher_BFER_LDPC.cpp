@@ -15,10 +15,10 @@ Launcher_BFER_LDPC<B,R,Q>
 	this->chan_params.quant_point_pos = 2;
 
 	// default parameters
-	this->deco_params.max_iter        = 6;
+	this->deco_params.max_iter        = 10;
 	this->code_params.type            = "LDPC";
-	this->deco_params.algo            = "BP_MIN_SUM";
-	this->deco_params.implem          = "NAIVE";
+	this->deco_params.algo            = "BP_FLOODING";
+	this->deco_params.implem          = "MIN_SUM";
 	this->code_params.coset           = false;
 }
 

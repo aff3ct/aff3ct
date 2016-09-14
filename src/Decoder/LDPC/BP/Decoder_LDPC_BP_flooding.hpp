@@ -1,10 +1,10 @@
-#ifndef DECODER_LDPC_BP_NAIVE_HPP_
-#define DECODER_LDPC_BP_NAIVE_HPP_
+#ifndef DECODER_LDPC_BP_FLOODING_HPP_
+#define DECODER_LDPC_BP_FLOODING_HPP_
 
 #include "../../Decoder_SISO.hpp"
 
 template <typename B, typename R>
-class Decoder_LDPC_BP_naive : public Decoder_SISO<B,R>
+class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_ite;      // number of iterations to perform
@@ -30,14 +30,14 @@ protected:
 	mipp::vector<R> V_to_C; // variable nodes to check    nodes messages
 
 public:
-	Decoder_LDPC_BP_naive(const int &K, const int &N, const int& n_ite, 
-	                      const std ::vector<unsigned char> &n_variables_per_parity,
-	                      const std ::vector<unsigned char> &n_parities_per_variable,
-	                      const std ::vector<unsigned int > &transpose,
-	                      const mipp::vector<B>             &X_N,
-	                      const bool                        coset = false,
-	                      const std::string name = "Decoder_LDPC_BP_naive");
-	virtual ~Decoder_LDPC_BP_naive();
+	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
+	                         const std ::vector<unsigned char> &n_variables_per_parity,
+	                         const std ::vector<unsigned char> &n_parities_per_variable,
+	                         const std ::vector<unsigned int > &transpose,
+	                         const mipp::vector<B>             &X_N,
+	                         const bool                        coset = false,
+	                         const std::string name = "Decoder_LDPC_BP_flooding");
+	virtual ~Decoder_LDPC_BP_flooding();
 
 	// unsupported prototype
 	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
@@ -57,4 +57,4 @@ protected:
 	virtual bool BP_process() = 0;
 };
 
-#endif /* DECODER_LDPC_BP_NAIVE_HPP_ */
+#endif /* DECODER_LDPC_BP_FLOODING_HPP_ */

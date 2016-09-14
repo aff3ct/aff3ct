@@ -3,19 +3,19 @@
 #include "../../../Tools/bash_tools.h"
 #include "../../decoder_functions.h"
 
-#include "Decoder_LDPC_BP_naive.hpp"
+#include "Decoder_LDPC_BP_flooding.hpp"
 
 // constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
 
 template <typename B, typename R>
-Decoder_LDPC_BP_naive<B,R>
-::Decoder_LDPC_BP_naive(const int &K, const int &N, const int& n_ite,
-                        const std ::vector<unsigned char> &n_variables_per_parity,
-                        const std ::vector<unsigned char> &n_parities_per_variable,
-                        const std ::vector<unsigned int > &transpose,
-                        const mipp::vector<B            > &X_N,
-                        const bool                        coset,
-                        const std::string name)
+Decoder_LDPC_BP_flooding<B,R>
+::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
+                           const std ::vector<unsigned char> &n_variables_per_parity,
+                           const std ::vector<unsigned char> &n_parities_per_variable,
+                           const std ::vector<unsigned int > &transpose,
+                           const mipp::vector<B            > &X_N,
+                           const bool                        coset,
+                           const std::string name)
 : Decoder_SISO<B,R>      (K, N, 1, name          ),
   n_ite                  (n_ite                  ),
   n_V_nodes              (N                      ), // same as N but more explicit
@@ -41,13 +41,13 @@ Decoder_LDPC_BP_naive<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_naive<B,R>
-::~Decoder_LDPC_BP_naive()
+Decoder_LDPC_BP_flooding<B,R>
+::~Decoder_LDPC_BP_flooding()
 {
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_naive<B,R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
@@ -55,7 +55,7 @@ void Decoder_LDPC_BP_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_naive<B,R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
@@ -92,7 +92,7 @@ void Decoder_LDPC_BP_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_naive<B,R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::load(const mipp::vector<R>& Y_N)
 {
 	assert(Y_N.size() == this->Y_N.size());
@@ -100,7 +100,7 @@ void Decoder_LDPC_BP_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_naive<B,R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::decode()
 {
 	assert(!this->coset || (this->coset && this->X_N.size() == this->N));
@@ -134,7 +134,7 @@ void Decoder_LDPC_BP_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_naive<B,R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
 	assert(V_K.size() == this->V_K.size());
@@ -143,7 +143,7 @@ void Decoder_LDPC_BP_naive<B,R>
 
 // BP algorithm
 template <typename B, typename R>
-bool Decoder_LDPC_BP_naive<B,R>
+bool Decoder_LDPC_BP_flooding<B,R>
 ::BP_decode(const mipp::vector<R> &Y_N)
 {
 	// actual decoding
@@ -207,11 +207,11 @@ bool Decoder_LDPC_BP_naive<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_naive<B_8,Q_8>;
-template class Decoder_LDPC_BP_naive<B_16,Q_16>;
-template class Decoder_LDPC_BP_naive<B_32,Q_32>;
-template class Decoder_LDPC_BP_naive<B_64,Q_64>;
+template class Decoder_LDPC_BP_flooding<B_8,Q_8>;
+template class Decoder_LDPC_BP_flooding<B_16,Q_16>;
+template class Decoder_LDPC_BP_flooding<B_32,Q_32>;
+template class Decoder_LDPC_BP_flooding<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_naive<B,Q>;
+template class Decoder_LDPC_BP_flooding<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

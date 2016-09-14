@@ -3,30 +3,31 @@
 #include "../../../Tools/bash_tools.h"
 #include "../../decoder_functions.h"
 
-#include "Decoder_LDPC_BP_sum_product_naive.hpp"
+#include "Decoder_LDPC_BP_flooding_sum_product.hpp"
 
 template <typename B, typename R>
-Decoder_LDPC_BP_sum_product_naive<B,R>
-::Decoder_LDPC_BP_sum_product_naive(const int &K, const int &N, const int& n_ite,
-                                    const std ::vector<unsigned char> &n_variables_per_parity,
-                                    const std ::vector<unsigned char> &n_parities_per_variable,
-                                    const std ::vector<unsigned int > &transpose,
-                                    const mipp::vector<B            > &U_N,
-                                    const bool                         coset,
-                                    const std::string name)
-: Decoder_LDPC_BP_naive<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, U_N, coset, name)
+Decoder_LDPC_BP_flooding_sum_product<B,R>
+::Decoder_LDPC_BP_flooding_sum_product(const int &K, const int &N, const int& n_ite,
+                                       const std ::vector<unsigned char> &n_variables_per_parity,
+                                       const std ::vector<unsigned char> &n_parities_per_variable,
+                                       const std ::vector<unsigned int > &transpose,
+                                       const mipp::vector<B            > &U_N,
+                                       const bool                         coset,
+                                       const std::string name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, U_N, coset,
+                                name)
 {
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_sum_product_naive<B,R>
-::~Decoder_LDPC_BP_sum_product_naive()
+Decoder_LDPC_BP_flooding_sum_product<B,R>
+::~Decoder_LDPC_BP_flooding_sum_product()
 {
 }
 
 // log sum-product implementation
 template <typename B, typename R>
-bool Decoder_LDPC_BP_sum_product_naive<B,R>
+bool Decoder_LDPC_BP_flooding_sum_product<B,R>
 ::BP_process()
 {
 	auto syndrome = 0;
@@ -74,11 +75,11 @@ bool Decoder_LDPC_BP_sum_product_naive<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "../../../Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_sum_product_naive<B_8,Q_8>;
-template class Decoder_LDPC_BP_sum_product_naive<B_16,Q_16>;
-template class Decoder_LDPC_BP_sum_product_naive<B_32,Q_32>;
-template class Decoder_LDPC_BP_sum_product_naive<B_64,Q_64>;
+template class Decoder_LDPC_BP_flooding_sum_product<B_8,Q_8>;
+template class Decoder_LDPC_BP_flooding_sum_product<B_16,Q_16>;
+template class Decoder_LDPC_BP_flooding_sum_product<B_32,Q_32>;
+template class Decoder_LDPC_BP_flooding_sum_product<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_sum_product_naive<B,Q>;
+template class Decoder_LDPC_BP_flooding_sum_product<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
