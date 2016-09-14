@@ -7,19 +7,19 @@
 
 template <typename B>
 Source<B>* Factory_source<B>
-::build(const t_code_param &code_params, const int seed)
+::build(const parameters &params, const int seed)
 {
 	Source<B> *source = nullptr;
 
 	// build the generator
-	if (code_params.generation_method == "RAND_FAST")
-		source = new Source_random_fast<B>(code_params.K, seed);
-	else if (code_params.generation_method == "RAND")
-		source = new Source_random<B>(code_params.K, seed);
-	else if (code_params.generation_method == "AZCW")
-		source = new Source_AZCW<B>(code_params.K);
-	else if (code_params.generation_method == "FIXED")
-		source = new Source_fixed<B>(code_params.K);
+	if (params.code.generation_method == "RAND_FAST")
+		source = new Source_random_fast<B>(params.code.K, seed);
+	else if (params.code.generation_method == "RAND")
+		source = new Source_random<B>(params.code.K, seed);
+	else if (params.code.generation_method == "AZCW")
+		source = new Source_AZCW<B>(params.code.K);
+	else if (params.code.generation_method == "FIXED")
+		source = new Source_fixed<B>(params.code.K);
 
 
 	return source;

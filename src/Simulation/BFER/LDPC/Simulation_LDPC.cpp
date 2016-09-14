@@ -14,13 +14,8 @@
 
 template <typename B, typename R, typename Q>
 Simulation_LDPC<B,R,Q>
-::Simulation_LDPC(const t_simulation_param& simu_params,
-                  const t_code_param&       code_params,
-                  const t_encoder_param&    enco_params,
-                  const t_mod_param&        mod_params,
-                  const t_channel_param&    chan_params,
-                  const t_decoder_param&    deco_params)
-: Simulation_BFER<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+::Simulation_LDPC(const parameters& params)
+: Simulation_BFER<B,R,Q>(params)
 {
 }
 
@@ -46,10 +41,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_LDPC<B,R,Q>
 ::build_encoder(const int tid)
 {
-	auto encoder = Factory_encoder_LDPC<B>::build(this->simu_params,
-	                                              this->code_params,
-	                                              this->enco_params,
-	                                              tid);
+	auto encoder = Factory_encoder_LDPC<B>::build(this->params, tid);
 	if (tid == 0)
 	{
 		n_variables_per_parity  = encoder->get_n_variables_per_parity();
@@ -65,9 +57,8 @@ Decoder<B,Q>* Simulation_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
 	this->barrier(tid);
-	return Factory_decoder_LDPC<B,Q>::build(this->code_params, this->enco_params, this->deco_params,
-	                                        n_variables_per_parity, n_parities_per_variable, transpose,
-	                                        this->X_N1[tid], this->code_params.coset);
+	return Factory_decoder_LDPC<B,Q>::build(this->params, n_variables_per_parity, n_parities_per_variable, transpose,
+	                                        this->X_N1[tid]);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -14,15 +14,10 @@
 
 template <typename B, typename R, typename Q>
 Simulation_BFERI_uncoded<B,R,Q>
-::Simulation_BFERI_uncoded(const t_simulation_param& simu_params,
-                           const t_code_param&       code_params,
-                           const t_encoder_param&    enco_params,
-                           const t_mod_param&        mod_params,
-                           const t_channel_param&    chan_params,
-                           const t_decoder_param&    deco_params)
-: Simulation_BFERI<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+::Simulation_BFERI_uncoded(const parameters& params)
+: Simulation_BFERI<B,R,Q>(params)
 {
-	assert(code_params.N == code_params.K);
+	assert(params.code.N == params.code.K);
 }
 
 template <typename B, typename R, typename Q>
@@ -47,21 +42,21 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFERI_uncoded<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return new Encoder_NO<B>(this->code_params.K, this->code_params.N);
+	return new Encoder_NO<B>(this->params.code.K, this->params.code.N);
 }
 
 template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_uncoded<B,R,Q>
 ::build_siso(const int tid)
 {
-	return new Decoder_NO<B,Q>(this->code_params.K, this->code_params.N);
+	return new Decoder_NO<B,Q>(this->params.code.K, this->params.code.N);
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFERI_uncoded<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return new Decoder_NO<B,Q>(this->code_params.K, this->code_params.N);
+	return new Decoder_NO<B,Q>(this->params.code.K, this->params.code.N);
 }
 
 // ==================================================================================== explicit template instantiation 

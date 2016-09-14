@@ -9,7 +9,7 @@
 template <typename B, typename R>
 struct Factory_terminal
 {
-	static Terminal* build(const t_simulation_param &simu_params,
+	static Terminal* build(const parameters &params,
 	                       const R snr, 
 	                       const Error_analyzer<B> *analyzer, 
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,

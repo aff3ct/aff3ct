@@ -4,14 +4,12 @@
 
 template <typename B>
 Error_analyzer<B>* Factory_error_analyzer<B>
-::build(const t_simulation_param &simu_params, 
-        const t_code_param &code_params, 
-        const int n_frames)
+::build(const parameters &params, const int n_frames)
 {
 	Error_analyzer<B> *analyzer = nullptr;
 
 	// build the analyser
-	analyzer = new Error_analyzer_std<B>(code_params.K, code_params.N, simu_params.max_fe, n_frames);
+	analyzer = new Error_analyzer_std<B>(params.code.K, params.code.N, params.simulation.max_fe, n_frames);
 
 	return analyzer;
 }

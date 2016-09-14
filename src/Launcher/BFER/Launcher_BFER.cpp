@@ -10,17 +10,17 @@ Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
 : Launcher<B,R,Q>(argc, argv, stream)
 {
-	this->simu_params.type            = "BFER";
-	this->simu_params.max_fe          = 100;
-	this->simu_params.benchs          = 0;
-	this->simu_params.enable_debug    = false;
-	this->simu_params.debug_limit     = 0;
-	this->simu_params.enable_leg_term = false;
-	this->simu_params.enable_dec_thr  = false;
-	this->simu_params.time_report     = false;
-	this->simu_params.trace_path_file = "";
-	this->enco_params.systematic      = true;
-	this->mod_params.demod_max        = "MAX";
+	this->params.simulation.type            = "BFER";
+	this->params.simulation.max_fe          = 100;
+	this->params.simulation.benchs          = 0;
+	this->params.simulation.enable_debug    = false;
+	this->params.simulation.debug_limit     = 0;
+	this->params.simulation.enable_leg_term = false;
+	this->params.simulation.enable_dec_thr  = false;
+	this->params.simulation.time_report     = false;
+	this->params.simulation.trace_path_file = "";
+	this->params.encoder.systematic         = true;
+	this->params.modulator.demod_max        = "MAX";
 }
 
 template <typename B, typename R, typename Q>
@@ -54,18 +54,18 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// facultative parameters
-	if(this->ar.exist_arg("max-fe"         )) this->simu_params.max_fe          = std::stoi(this->ar.get_arg("max-fe"));
-	if(this->ar.exist_arg("benchs"         )) this->simu_params.benchs          = std::stoi(this->ar.get_arg("benchs"));
-	if(this->ar.exist_arg("enable-leg-term")) this->simu_params.enable_leg_term = true;
-	if(this->ar.exist_arg("enable-dec-thr" )) this->simu_params.enable_dec_thr  = true;
-	if(this->ar.exist_arg("enable-debug"   )) this->simu_params.enable_debug    = true;
+	if(this->ar.exist_arg("max-fe"         )) this->params.simulation.max_fe          = std::stoi(this->ar.get_arg("max-fe"));
+	if(this->ar.exist_arg("benchs"         )) this->params.simulation.benchs          = std::stoi(this->ar.get_arg("benchs"));
+	if(this->ar.exist_arg("enable-leg-term")) this->params.simulation.enable_leg_term = true;
+	if(this->ar.exist_arg("enable-dec-thr" )) this->params.simulation.enable_dec_thr  = true;
+	if(this->ar.exist_arg("enable-debug"   )) this->params.simulation.enable_debug    = true;
 	if(this->ar.exist_arg("debug-limit"    ))
 	{
-		this->simu_params.enable_debug = true;
-		this->simu_params.debug_limit  = std::stoi(this->ar.get_arg("debug-limit"));
+		this->params.simulation.enable_debug = true;
+		this->params.simulation.debug_limit  = std::stoi(this->ar.get_arg("debug-limit"));
 	}
-	if(this->ar.exist_arg("time-report"    )) this->simu_params.time_report     = true;
-	if(this->ar.exist_arg("trace"          )) this->simu_params.trace_path_file = this->ar.get_arg("trace");
+	if(this->ar.exist_arg("time-report"    )) this->params.simulation.time_report     = true;
+	if(this->ar.exist_arg("trace"          )) this->params.simulation.trace_path_file = this->ar.get_arg("trace");
 }
 
 template <typename B, typename R, typename Q>
@@ -74,18 +74,18 @@ void Launcher_BFER<B,R,Q>
 {
 	Launcher<B,R,Q>::print_header();
 
-	std::string syst_enc = ((this->enco_params.systematic) ? "on" : "off");
+	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
 	std::string threads = "unused";
-	if (this->simu_params.n_threads)
-		threads = std::to_string(this->simu_params.n_threads) + " thread(s)";
+	if (this->params.simulation.n_threads)
+		threads = std::to_string(this->params.simulation.n_threads) + " thread(s)";
 
 	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Max frame error count     (FE)") << " = " << this->simu_params.max_fe << std::endl;
-	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                 << std::endl;
-	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo   << std::endl;
-	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem << std::endl;
-	this->stream << "# " << bold("* Multi-threading               ") << " = " << threads                  << std::endl;
+	this->stream << "# " << bold("* Max frame error count     (FE)") << " = " << this->params.simulation.max_fe << std::endl;
+	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                       << std::endl;
+	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->params.decoder.algo      << std::endl;
+	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->params.decoder.implem    << std::endl;
+	this->stream << "# " << bold("* Multi-threading               ") << " = " << threads                        << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

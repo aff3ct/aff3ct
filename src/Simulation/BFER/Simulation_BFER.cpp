@@ -27,67 +27,57 @@
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
-::Simulation_BFER(const t_simulation_param& simu_params,
-                  const t_code_param&       code_params,
-                  const t_encoder_param&    enco_params,
-                  const t_mod_param&        mod_params,
-                  const t_channel_param&    chan_params,
-                  const t_decoder_param&    deco_params)
+::Simulation_BFER(const parameters& params)
 : Simulation(),
   
-  simu_params(simu_params),
-  code_params(code_params),
-  enco_params(enco_params),
-  mod_params (mod_params ),
-  chan_params(chan_params),
-  deco_params(deco_params),
+  params(params),
 
-  threads(simu_params.n_threads -1),
-  barrier(simu_params.n_threads),
+  threads(params.simulation.n_threads -1),
+  barrier(params.simulation.n_threads),
   n_frames(1),
  
   snr      (0.f),
   code_rate(0.f),
   sigma    (0.f),
 
-  U_K (simu_params.n_threads, mipp::vector<B>(code_params.K)),
-  X_N1(simu_params.n_threads, mipp::vector<B>(code_params.N)),
-  X_N2(simu_params.n_threads, mipp::vector<B>(code_params.N)),
-  X_N3(simu_params.n_threads, mipp::vector<R>(code_params.N)),
-  Y_N1(simu_params.n_threads, mipp::vector<R>(code_params.N)),
-  Y_N2(simu_params.n_threads, mipp::vector<R>(code_params.N)),
-  Y_N3(simu_params.n_threads, mipp::vector<R>(code_params.N)),
-  Y_N4(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
-  Y_N5(simu_params.n_threads, mipp::vector<Q>(code_params.N)),
-  V_K (simu_params.n_threads, mipp::vector<B>(code_params.K)),
-  V_N (simu_params.n_threads, mipp::vector<B>(code_params.N)),
+  U_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
+  X_N1(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
+  X_N2(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
+  X_N3(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
+  Y_N1(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
+  Y_N2(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
+  Y_N3(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
+  Y_N4(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
+  Y_N5(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
+  V_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
+  V_N (params.simulation.n_threads, mipp::vector<B>(params.code.N)),
 
-  source      (simu_params.n_threads, nullptr),
-  crc         (simu_params.n_threads, nullptr),
-  encoder     (simu_params.n_threads, nullptr),
-  puncturer   (simu_params.n_threads, nullptr),
-  modulator   (simu_params.n_threads, nullptr),
-  channel     (simu_params.n_threads, nullptr),
-  quantizer   (simu_params.n_threads, nullptr),
-  decoder     (simu_params.n_threads, nullptr),
-  analyzer    (simu_params.n_threads, nullptr),
-  analyzer_red(                       nullptr),
-  terminal    (                       nullptr),
+  source      (params.simulation.n_threads, nullptr),
+  crc         (params.simulation.n_threads, nullptr),
+  encoder     (params.simulation.n_threads, nullptr),
+  puncturer   (params.simulation.n_threads, nullptr),
+  modulator   (params.simulation.n_threads, nullptr),
+  channel     (params.simulation.n_threads, nullptr),
+  quantizer   (params.simulation.n_threads, nullptr),
+  decoder     (params.simulation.n_threads, nullptr),
+  analyzer    (params.simulation.n_threads, nullptr),
+  analyzer_red(                             nullptr),
+  terminal    (                             nullptr),
 
-  d_sourc_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_crc_total  (simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_encod_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_punct_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_modul_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_chann_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_filte_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_demod_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_quant_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_depun_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_load_total (simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_decod_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_store_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
-  d_check_total(simu_params.n_threads, std::chrono::nanoseconds(0)),
+  d_sourc_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_crc_total  (params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_encod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_punct_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_modul_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_chann_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_filte_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_demod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_quant_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_depun_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_load_total (params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_decod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_store_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_check_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
 
   d_sourc_total_sum(std::chrono::nanoseconds(0)),
   d_crc_total_sum  (std::chrono::nanoseconds(0)),
@@ -104,9 +94,9 @@ Simulation_BFER<B,R,Q>
   d_store_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
-	assert(simu_params.n_threads >= 1);
+	assert(params.simulation.n_threads >= 1);
 
-	if (simu_params.n_threads > 1 && simu_params.enable_debug)
+	if (params.simulation.n_threads > 1 && params.simulation.enable_debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
 		          << std::endl;
@@ -126,28 +116,28 @@ void Simulation_BFER<B,R,Q>
 	launch_precompute();
 	
 	// for each SNR to be simulated
-	for (snr = simu_params.snr_min; snr <= simu_params.snr_max; snr += simu_params.snr_step)
+	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
 		t_snr = std::chrono::steady_clock::now();
 
-		code_rate = (float)(code_params.K / (float)(code_params.N + code_params.tail_length));
-		sigma     = std::sqrt((float)mod_params.upsample_factor) / 
-		            std::sqrt(2.f * code_rate * (float)mod_params.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		code_rate = (float)(params.code.K / (float)(params.code.N + params.code.tail_length));
+		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
+		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 
 		snr_precompute();
 
 		// launch a group of slave threads (there is "n_threads -1" slave threads)
-		for (auto tid = 1; tid < simu_params.n_threads; tid++)
+		for (auto tid = 1; tid < params.simulation.n_threads; tid++)
 			threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::Monte_Carlo_method, this, tid);
 
 		// launch the master thread
 		Simulation_BFER<B,R,Q>::Monte_Carlo_method(this, 0);
 
 		// join the slave threads with the master thread
-		for (auto tid = 1; tid < simu_params.n_threads; tid++)
+		for (auto tid = 1; tid < params.simulation.n_threads; tid++)
 			threads[tid -1].join();
 
-		if (!simu_params.disable_display && !simu_params.benchs)
+		if (!params.simulation.disable_display && !params.simulation.benchs)
 		{
 			analyzer_red->reduce();
 			time_reduction(true);
@@ -162,7 +152,7 @@ void Simulation_BFER<B,R,Q>
 			break;
 	}
 
-	if (simu_params.time_report && !simu_params.benchs)
+	if (params.simulation.time_report && !params.simulation.benchs)
 		time_report();
 }
 
@@ -172,11 +162,11 @@ void Simulation_BFER<B,R,Q>
 {
 	Simulation_BFER<B,R,Q>::build_communication_chain(simu, tid);
 
-	if (tid == 0 && (!simu->simu_params.disable_display && simu->snr == simu->simu_params.snr_min && 
-	    !(simu->simu_params.enable_debug && simu->simu_params.n_threads == 1) && !simu->simu_params.benchs))
+	if (tid == 0 && (!simu->params.simulation.disable_display && simu->snr == simu->params.simulation.snr_min &&
+	    !(simu->params.simulation.enable_debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
 		simu->terminal->legend(std::cout);
 
-	if (simu->code_params.generation_method == "AZCW")
+	if (simu->params.code.generation_method == "AZCW")
 	{
 		std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
 		std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
@@ -201,9 +191,9 @@ void Simulation_BFER<B,R,Q>
 
 	simu->barrier(tid);
 
-	if (simu->simu_params.n_threads == 1 && simu->simu_params.enable_debug)
+	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.enable_debug)
 		Simulation_BFER<B,R,Q>::simulation_loop_debug(simu);
-	else if (simu->simu_params.benchs)
+	else if (simu->params.simulation.benchs)
 		Simulation_BFER<B,R,Q>::simulation_loop_bench(simu, tid);
 	else
 		Simulation_BFER<B,R,Q>::simulation_loop(simu, tid);
@@ -220,8 +210,8 @@ void Simulation_BFER<B,R,Q>
 	simu->puncturer[tid] = simu->build_puncturer(        tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
 	simu->modulator[tid] = simu->build_modulator(        tid); check_errors(simu->modulator[tid], "Modulator<B,R>"     );
 
-	const auto N     = simu->code_params.N;
-	const auto tail  = simu->code_params.tail_length;
+	const auto N     = simu->params.code.N;
+	const auto tail  = simu->params.code.tail_length;
 	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
 
 	simu->channel  [tid] = simu->build_channel  (N_mod , tid); check_errors(simu->channel  [tid], "Channel<R>"         );
@@ -233,8 +223,8 @@ void Simulation_BFER<B,R,Q>
 	auto n_fra = simu->decoder[tid]->get_n_frames();
 
 	// resize the buffers
-	const auto K      = simu->code_params.K;
-	const auto N_code = simu->code_params.N_code;
+	const auto K      = simu->params.code.K;
+	const auto N_code = simu->params.code.N_code;
 	const auto N_fil  = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
 	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
@@ -264,9 +254,9 @@ void Simulation_BFER<B,R,Q>
 		simu->n_frames = n_fra;
 
 		// build an error analyzer to compute BER/FER (reduce the other analyzers)
-		simu->analyzer_red = new Error_analyzer_reduction<B>(simu->code_params.K, 
-		                                                     simu->code_params.N, 
-		                                                     simu->simu_params.max_fe, 
+		simu->analyzer_red = new Error_analyzer_reduction<B>(simu->params.code.K,
+		                                                     simu->params.code.N,
+		                                                     simu->params.simulation.max_fe,
 		                                                     simu->analyzer,
 		                                                     simu->n_frames);
 		// build the terminal to display the BER/FER
@@ -288,8 +278,8 @@ void Simulation_BFER<B,R,Q>
 
 	// simulation loop
 	while ((!simu->analyzer_red->fe_limit_achieved()) && // while max frame error count has not been reached
-	        (simu->simu_params.stop_time == seconds(0) || 
-	         (steady_clock::now() - simu->t_snr) < simu->simu_params.stop_time))
+	        (simu->params.simulation.stop_time == seconds(0) ||
+	         (steady_clock::now() - simu->t_snr) < simu->params.simulation.stop_time))
 	{
 		auto d_sourc = nanoseconds(0);
 		auto d_crc   = nanoseconds(0);
@@ -297,7 +287,7 @@ void Simulation_BFER<B,R,Q>
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (simu->code_params.generation_method != "AZCW")
+		if (simu->params.code.generation_method != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			auto t_sourc = steady_clock::now();
@@ -394,12 +384,12 @@ void Simulation_BFER<B,R,Q>
 		simu->d_check_total[tid] += d_check;
 
 		// save trace in file
-		if (tid == 0 && !simu->simu_params.trace_path_file.empty())
+		if (tid == 0 && !simu->params.simulation.trace_path_file.empty())
 			trace(simu);
 
 		// display statistics in terminal
-		if (tid == 0 && !simu->simu_params.disable_display && simu->simu_params.display_freq != nanoseconds(0) &&
-		    (steady_clock::now() - simu->t_simu) >= simu->simu_params.display_freq)
+		if (tid == 0 && !simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
+		    (steady_clock::now() - simu->t_simu) >= simu->params.simulation.display_freq)
 		{
 			simu->analyzer_red->reduce();
 			simu->time_reduction();
@@ -418,11 +408,11 @@ void Simulation_BFER<B,R,Q>
 	simu->barrier(tid);
 	auto t_start = std::chrono::steady_clock::now(); // start time
 	simu->barrier(tid);
-	if (simu->simu_params.enable_dec_thr)
-		for (auto i = 0; i < simu->simu_params.benchs; i++)
+	if (simu->params.simulation.enable_dec_thr)
+		for (auto i = 0; i < simu->params.simulation.benchs; i++)
 			simu->decoder[tid]->decode();
 	else
-		for (auto i = 0; i < simu->simu_params.benchs; i++)
+		for (auto i = 0; i < simu->params.simulation.benchs; i++)
 		{
 			simu->decoder[tid]->load      (simu->Y_N4[tid]);
 			simu->decoder[tid]->decode    (               );
@@ -431,15 +421,15 @@ void Simulation_BFER<B,R,Q>
 	simu->barrier(tid);
 	auto t_stop = std::chrono::steady_clock::now(); // stop time
 
-	auto frames   = (float)simu->simu_params.benchs * (float)simu->n_frames * (float)simu->simu_params.n_threads;
-	auto bits     = (float)frames * (float)simu->code_params.K;
+	auto frames   = (float)simu->params.simulation.benchs * (float)simu->n_frames * (float)simu->params.simulation.n_threads;
+	auto bits     = (float)frames * (float)simu->params.code.K;
 	auto duration = t_stop - t_start;
 
 	auto  bps = (float)bits / (float)(duration.count() * 0.000000001f);
 	auto kbps =  bps * 0.001f;
 	auto mbps = kbps * 0.001f;
 
-	auto latency_ns = (float)duration.count() / (float)simu->simu_params.benchs;
+	auto latency_ns = (float)duration.count() / (float)simu->params.simulation.benchs;
 	auto latency_us = latency_ns * 0.001f;
 
 	if (tid == 0)
@@ -457,13 +447,13 @@ void Simulation_BFER<B,R,Q>
 {
 	using namespace std::chrono;
 
-	Frame_trace<B> ft(simu->simu_params.debug_limit); // frame trace to display the vectors
+	Frame_trace<B> ft(simu->params.simulation.debug_limit); // frame trace to display the vectors
 
 	// simulation loop
 	auto t_simu = steady_clock::now();
 	while (!simu->analyzer_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (simu->simu_params.stop_time == seconds(0) ||
-	        (steady_clock::now() - simu->t_snr) < simu->simu_params.stop_time))
+	       (simu->params.simulation.stop_time == seconds(0) ||
+	        (steady_clock::now() - simu->t_snr) < simu->params.simulation.stop_time))
 	{
 		std::clog << "-------------------------------" << std::endl;
 		std::clog << "New encoding/decoding session !" << std::endl;
@@ -475,7 +465,7 @@ void Simulation_BFER<B,R,Q>
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (simu->code_params.generation_method != "AZCW")
+		if (simu->params.code.generation_method != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			std::clog << "Generate random bits U_K..." << std::endl;
@@ -648,12 +638,12 @@ void Simulation_BFER<B,R,Q>
 		simu->d_check_total[0] += d_check;
 
 		// save trace in file
-		if (!simu->simu_params.trace_path_file.empty())
+		if (!simu->params.simulation.trace_path_file.empty())
 			trace(simu);
 
 		// display statistics in terminal
-		if (!simu->simu_params.disable_display && simu->simu_params.display_freq != nanoseconds(0) && 
-		    (steady_clock::now() - t_simu) >= simu->simu_params.display_freq)
+		if (!simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
+		    (steady_clock::now() - t_simu) >= simu->params.simulation.display_freq)
 		{
 			simu->terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();
@@ -668,7 +658,7 @@ void Simulation_BFER<B,R,Q>
 ::trace(Simulation_BFER<B,R,Q> *simu)
 {
 	std::ofstream myfile;
-	myfile.open(simu->simu_params.trace_path_file);
+	myfile.open(simu->params.simulation.trace_path_file);
 	myfile << "U_K, \t X_N1, \t X_N2, \t X_N3_I, \t X_N3_Q, \t Y_N1_I, \t Y_N1_Q, \t Y_N2, \t Y_N3, \t Y_N4, \t V_K" 
 	       << std::endl;
 
@@ -677,7 +667,7 @@ void Simulation_BFER<B,R,Q>
 		if (l_idx < simu->U_K [0].size()) myfile << simu->U_K [0][l_idx]; myfile << ", \t ";
 		if (l_idx < simu->X_N1[0].size()) myfile << simu->X_N1[0][l_idx]; myfile << ", \t ";
 		if (l_idx < simu->X_N2[0].size()) myfile << simu->X_N2[0][l_idx]; myfile << ", \t ";
-		if (simu->mod_params.type == "PAM" || simu->mod_params.type == "BPSK" || simu->mod_params.type == "BPSK_FAST")
+		if (simu->params.modulator.type == "PAM" || simu->params.modulator.type == "BPSK" || simu->params.modulator.type == "BPSK_FAST")
 		{
 			if (l_idx < simu->X_N3[0].size()) myfile << simu->X_N3[0][l_idx] << ", \t " << 0; 
 			else myfile << ", \t ";
@@ -727,7 +717,7 @@ void Simulation_BFER<B,R,Q>
 	d_decod_all_red   = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
-	for (auto tid = 0; tid < simu_params.n_threads; tid++)
+	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 	{
 		d_sourc_total_red += d_sourc_total[tid];
 		d_crc_total_red   += d_crc_total  [tid];
@@ -747,7 +737,7 @@ void Simulation_BFER<B,R,Q>
 	}
 
 	if (is_snr_done)
-		for (auto tid = 0; tid < simu_params.n_threads; tid++)
+		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 		{
 			d_sourc_total_sum += d_sourc_total[tid];
 			d_crc_total_sum   += d_crc_total  [tid];
@@ -881,7 +871,7 @@ void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
 	int tid;
-	const auto nthr = simu_params.n_threads;
+	const auto nthr = params.simulation.n_threads;
 	for (tid = 0; tid < nthr; tid++) if (source   [tid] != nullptr) { delete source   [tid]; source   [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (crc      [tid] != nullptr) { delete crc      [tid]; crc      [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (encoder  [tid] != nullptr) { delete encoder  [tid]; encoder  [tid] = nullptr; }
@@ -912,14 +902,14 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER<B,R,Q>
 ::build_source(const int tid)
 {
-	return Factory_source<B>::build(code_params, tid);
+	return Factory_source<B>::build(params, tid);
 }
 
 template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER<B,R,Q>
 ::build_puncturer(const int tid)
 {
-	auto puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N);
+	auto puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N);
 	check_errors(puncturer, "Puncturer<B,Q>");
 	return puncturer;
 }
@@ -928,35 +918,35 @@ template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC<B>::build(code_params, deco_params);
+	return Factory_CRC<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, sigma);
+	return Factory_modulator<B,R,R>::build(params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(code_params, chan_params, sigma, size, tid);
+	return Factory_channel<R>::build(params, sigma, size, tid);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 ::build_quantizer(const int size, const int tid)
 {
-	return Factory_quantizer<R,Q>::build(code_params, chan_params, size, sigma);
+	return Factory_quantizer<R,Q>::build(params, size, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Error_analyzer<B>* Simulation_BFER<B,R,Q>
 ::build_analyzer(const int tid)
 {
-	return Factory_error_analyzer<B>::build(simu_params, code_params, n_frames);
+	return Factory_error_analyzer<B>::build(params, n_frames);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
@@ -965,7 +955,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(simu_params, snr, analyzer_red, t_snr, d_decod_all_red);
+	return Factory_terminal<B,R>::build(params, snr, analyzer_red, t_snr, d_decod_all_red);
 }
 
 // ==================================================================================== explicit template instantiation 

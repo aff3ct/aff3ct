@@ -14,10 +14,7 @@
 template <typename B, typename R>
 struct Factory_decoder_turbo
 {
-	static Decoder<B,R>* build(const t_code_param        &code_params,
-	                           const t_encoder_param     &enco_params,
-	                           const t_channel_param     &chan_params,
-	                           const t_decoder_param     &deco_params,
+	static Decoder<B,R>* build(const parameters          &params,
 	                           const Interleaver<short>  *interleaver,
 	                                 SISO<R>             *siso_n, 
 	                                 SISO<R>             *siso_i,

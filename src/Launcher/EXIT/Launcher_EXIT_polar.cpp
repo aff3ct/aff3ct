@@ -11,24 +11,24 @@ Launcher_EXIT_polar<B,R,Q>
 : Launcher_EXIT<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
-	this->chan_params.quant_n_bits    = 6;
-	this->chan_params.quant_point_pos = 3;
+	this->params.channel.quant_n_bits       = 6;
+	this->params.channel.quant_point_pos    = 3;
 
 	// default parameters
-	this->code_params.type            = "POLAR";
-	this->deco_params.algo            = "SCAN";
-	this->deco_params.implem          = "NAIVE";
+	this->params.code.type                  = "POLAR";
+	this->params.decoder.algo               = "SCAN";
+	this->params.decoder.implem             = "NAIVE";
 
-	this->deco_params.max_iter        = 1;
-	this->simu_params.awgn_codes_dir  = "../awgn_polar_codes/TV";
-	this->simu_params.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
-	this->simu_params.awgn_codes_file = "";
-	this->deco_params.L               = 1;
-	this->code_params.sigma           = 0.3;
+	this->params.decoder.max_iter           = 1;
+	this->params.simulation.awgn_codes_dir  = "../awgn_polar_codes/TV";
+	this->params.simulation.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
+	this->params.simulation.awgn_codes_file = "";
+	this->params.decoder.L                  = 1;
+	this->params.code.sigma                 = 0.3;
 #ifdef ENABLE_POLAR_BOUNDS
-	this->code_params.fb_gen_method   = "TV";
+	this->params.code.fb_gen_method         = "TV";
 #else
-	this->code_params.fb_gen_method   = "GA";
+	this->params.code.fb_gen_method         = "GA";
 #endif
 }
 
@@ -65,20 +65,20 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("max-iter"       )) this->deco_params.max_iter        = std::stoi(this->ar.get_arg("max-iter"));
+	if(this->ar.exist_arg("max-iter"       )) this->params.decoder.max_iter           = std::stoi(this->ar.get_arg("max-iter"));
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("awgn-codes-dir" )) this->simu_params.awgn_codes_dir  = this->ar.get_arg("awgn-codes-dir");
-	if(this->ar.exist_arg("bin-pb-path"    )) this->simu_params.bin_pb_path     = this->ar.get_arg("bin-pb-path");
+	if(this->ar.exist_arg("awgn-codes-dir" )) this->params.simulation.awgn_codes_dir  = this->ar.get_arg("awgn-codes-dir");
+	if(this->ar.exist_arg("bin-pb-path"    )) this->params.simulation.bin_pb_path     = this->ar.get_arg("bin-pb-path");
 #endif
-	if(this->ar.exist_arg("awgn-codes-file")) this->simu_params.awgn_codes_file = this->ar.get_arg("awgn-codes-file");
-	if(this->ar.exist_arg("L"              )) this->deco_params.L               = std::stoi(this->ar.get_arg("L"));
-	if(this->ar.exist_arg("code-sigma"     )) this->code_params.sigma           = std::stof(this->ar.get_arg("code-sigma"));
+	if(this->ar.exist_arg("awgn-codes-file")) this->params.simulation.awgn_codes_file = this->ar.get_arg("awgn-codes-file");
+	if(this->ar.exist_arg("L"              )) this->params.decoder.L                  = std::stoi(this->ar.get_arg("L"));
+	if(this->ar.exist_arg("code-sigma"     )) this->params.code.sigma                 = std::stof(this->ar.get_arg("code-sigma"));
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("fb-gen-method"  )) this->code_params.fb_gen_method   = this->ar.get_arg("fb-gen-method");
+	if(this->ar.exist_arg("fb-gen-method"  )) this->params.code.fb_gen_method         = this->ar.get_arg("fb-gen-method");
 #endif
 
 	// force 1 iteration max if not SCAN (and polar code)
-	if (this->deco_params.algo != "SCAN") this->deco_params.max_iter = 1;
+	if (this->params.decoder.algo != "SCAN") this->params.decoder.max_iter = 1;
 }
 
 template <typename B, typename R, typename Q>
@@ -87,24 +87,19 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::print_header();
 
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
-	if (!this->simu_params.awgn_codes_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
-	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
-	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << this->code_params.sigma           << std::endl;
-	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method   << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.max_iter           << std::endl;
+	if (!this->params.simulation.awgn_codes_file.empty())
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.simulation.awgn_codes_file << std::endl;
+	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->params.decoder.L                  << std::endl;
+	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << this->params.code.sigma                 << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method         << std::endl;
 }
 
 template <typename B, typename R, typename Q>
 void Launcher_EXIT_polar<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_EXIT_polar<B,R,Q>(this->simu_params, 
-	                                              this->code_params, 
-	                                              this->enco_params,
-	                                              this->mod_params,
-	                                              this->chan_params, 
-	                                              this->deco_params);
+	this->simu = new Simulation_EXIT_polar<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -10,24 +10,24 @@
 
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>
-::build(const t_code_param &code_params, const int &size, const int seed)
+::build(const parameters &params, const int &size, const int seed)
 {
 	Interleaver<T> *interleaver = nullptr;
 
 	// build the interleaver
-	if (code_params.interleaver == "LTE")
+	if (params.code.interleaver == "LTE")
 		interleaver = new Interleaver_LTE<T>(size);
-	else if (code_params.interleaver == "CCSDS")
+	else if (params.code.interleaver == "CCSDS")
 		interleaver = new Interleaver_CCSDS<T>(size);
-	else if (code_params.interleaver == "RANDOM")
+	else if (params.code.interleaver == "RANDOM")
 		interleaver = new Interleaver_random<T>(size, seed);
-	else if (code_params.interleaver == "RANDOM_HARD")
+	else if (params.code.interleaver == "RANDOM_HARD")
 		interleaver = new Interleaver_random_hard<T>(size);
-	else if (code_params.interleaver == "COLUMNS")
-		interleaver = new Interleaver_columns<T>(code_params.K, code_params.M);
-	else if (code_params.interleaver == "GOLDEN")
+	else if (params.code.interleaver == "COLUMNS")
+		interleaver = new Interleaver_columns<T>(params.code.K, params.code.M);
+	else if (params.code.interleaver == "GOLDEN")
 		interleaver = new Interleaver_golden<T>(size);
-	else if (code_params.interleaver == "NO")
+	else if (params.code.interleaver == "NO")
 		interleaver = new Interleaver_NO<T>(size);
 
 	return interleaver;

@@ -14,15 +14,10 @@
 
 template <typename B, typename R, typename Q>
 Simulation_repetition<B,R,Q>
-::Simulation_repetition(const t_simulation_param& simu_params,
-                        const t_code_param&       code_params,
-                        const t_encoder_param&    enco_params,
-                        const t_mod_param&        mod_params,
-                        const t_channel_param&    chan_params,
-                        const t_decoder_param&    deco_params)
-: Simulation_BFER<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+::Simulation_repetition(const parameters& params)
+: Simulation_BFER<B,R,Q>(params)
 {
-	assert(code_params.N % code_params.K == 0);
+	assert(params.code.N % params.code.K == 0);
 }
 
 template <typename B, typename R, typename Q>
@@ -47,14 +42,14 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_repetition<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return Factory_encoder_repetition<B>::build(this->simu_params, this->code_params, this->enco_params);
+	return Factory_encoder_repetition<B>::build(this->params);
 }
 
 template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_repetition<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return Factory_decoder_repetition<B,Q>::build(this->code_params, this->enco_params, this->deco_params);
+	return Factory_decoder_repetition<B,Q>::build(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

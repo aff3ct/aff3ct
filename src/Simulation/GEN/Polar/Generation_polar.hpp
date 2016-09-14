@@ -18,11 +18,7 @@ class Generation_polar : public Simulation
 {
 protected:
 	// simulation parameters
-	const t_simulation_param simu_params;
-	const t_code_param       code_params;
-	const t_encoder_param    enco_params;
-	const t_channel_param    chan_params;
-	const t_decoder_param    deco_params;
+	const parameters params;
 
 	// data vector
 	mipp::vector<int> frozen_bits; // known bits (alias frozen bits) are set to true
@@ -50,11 +46,7 @@ protected:
 	std::fstream short_graph_file;
 
 public:
-	Generation_polar(const t_simulation_param& simu_params,
-	                 const t_code_param&       code_params,
-	                 const t_encoder_param&    enco_params,
-	                 const t_channel_param&    chan_params,
-	                 const t_decoder_param&    deco_params);
+	Generation_polar(const parameters& params);
 
 	virtual ~Generation_polar();
 

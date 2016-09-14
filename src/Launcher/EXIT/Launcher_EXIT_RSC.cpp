@@ -11,15 +11,15 @@ Launcher_EXIT_RSC<B,R,Q,QD>
 : Launcher_EXIT<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
-	this->code_params.tail_length     = 2*3;
-	this->chan_params.quant_n_bits    = 6;
-	this->chan_params.quant_point_pos = 3;
+	this->params.code.tail_length        = 2*3;
+	this->params.channel.quant_n_bits    = 6;
+	this->params.channel.quant_point_pos = 3;
 
 	// default parameters
-	this->code_params.type   = "RSC";
-	this->deco_params.algo   = "BCJR";
-	this->deco_params.implem = "FAST";
-	this->deco_params.map    = "MAX";
+	this->params.code.type               = "RSC";
+	this->params.decoder.algo            = "BCJR";
+	this->params.decoder.implem          = "FAST";
+	this->params.decoder.map             = "MAX";
 
 }
 
@@ -39,10 +39,10 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	Launcher_EXIT<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("dec-map")) this->deco_params.map = this->ar.get_arg("dec-map");
+	if(this->ar.exist_arg("dec-map")) this->params.decoder.map = this->ar.get_arg("dec-map");
 
-	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
-		this->code_params.tail_length = 2*4;
+	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
+		this->params.code.tail_length = 2*4;
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -51,19 +51,14 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	Launcher_EXIT<B,R,Q>::print_header();
 
-	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map << std::endl;
+	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->params.decoder.map << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>
 void Launcher_EXIT_RSC<B,R,Q,QD>
 ::build_simu()
 {
-	this->simu = new Simulation_EXIT_RSC<B,R,Q,QD>(this->simu_params, 
-	                                               this->code_params, 
-	                                               this->enco_params, 
-	                                               this->mod_params,
-	                                               this->chan_params, 
-	                                               this->deco_params);
+	this->simu = new Simulation_EXIT_RSC<B,R,Q,QD>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

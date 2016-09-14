@@ -11,26 +11,26 @@
 
 template <typename B>
 CRC<B>* Factory_CRC<B>
-::build(const t_code_param &code_params, const t_decoder_param &deco_params)
+::build(const parameters &params)
 {
 	CRC<B> *crc = nullptr;
 
 	// build the crc
-	if(deco_params.simd_strategy == "INTER")
+	if(params.decoder.simd_strategy == "INTER")
 	{
-		if (!code_params.crc.empty() && deco_params.algo.find("LTE") != std::string::npos)
-			crc = new CRC_polynomial_inter<B>(code_params.K, code_params.crc, mipp::nElmtsPerRegister<B>());
-		else if (!code_params.crc.empty())
-			crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
+		if (!params.code.crc.empty() && params.decoder.algo.find("LTE") != std::string::npos)
+			crc = new CRC_polynomial_inter<B>(params.code.K, params.code.crc, mipp::nElmtsPerRegister<B>());
+		else if (!params.code.crc.empty())
+			crc = new CRC_polynomial<B>(params.code.K, params.code.crc);
 		else
-			crc = new CRC_NO<B>(code_params.K);
+			crc = new CRC_NO<B>(params.code.K);
 	}
 	else
 	{
-		if (!code_params.crc.empty())
-			crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
+		if (!params.code.crc.empty())
+			crc = new CRC_polynomial<B>(params.code.K, params.code.crc);
 		else
-			crc = new CRC_NO<B>(code_params.K);
+			crc = new CRC_NO<B>(params.code.K);
 	}
 
 	return crc;

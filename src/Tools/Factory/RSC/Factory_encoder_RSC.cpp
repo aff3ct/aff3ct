@@ -5,23 +5,19 @@
 
 template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
-::build(const t_simulation_param &simu_params,
-        const t_code_param       &code_params,
-        const t_encoder_param    &enco_params,
-        const t_decoder_param    &deco_params,
-        const int                 n_frames)
+::build(const parameters &params, const int n_frames)
 {
 	Encoder_RSC_sys<B> *encoder = nullptr;
 
-	const auto N = (code_params.type.find("TURBO") != std::string::npos) ? 2*code_params.K : code_params.N;
+	const auto N = (params.code.type.find("TURBO") != std::string::npos) ? 2*params.code.K : params.code.N;
 
 	// build the encoder
-	if (enco_params.systematic)
+	if (params.encoder.systematic)
 	{
-		if (deco_params.algo == "BCJR4" || deco_params.algo == "CCSDS")
-			encoder = new Encoder_RSC4_sys<B>(code_params.K, N, n_frames, enco_params.buffered);
+		if (params.decoder.algo == "BCJR4" || params.decoder.algo == "CCSDS")
+			encoder = new Encoder_RSC4_sys<B>(params.code.K, N, n_frames, params.encoder.buffered);
 		else
-			encoder = new Encoder_RSC3_sys<B>(code_params.K, N, n_frames, enco_params.buffered);
+			encoder = new Encoder_RSC3_sys<B>(params.code.K, N, n_frames, params.encoder.buffered);
 	}
 
 	return encoder;

@@ -7,37 +7,34 @@
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const t_code_param                &code_params,
-        const t_encoder_param             &enco_params,
-        const t_decoder_param             &deco_params,
+::build(const parameters                  &params,
         const std ::vector<unsigned char> &n_variables_per_parity,
         const std ::vector<unsigned char> &n_parities_per_variable,
         const std ::vector<unsigned int > &transpose,
-        const mipp::vector<B            > &X_N,
-        const bool                         coset)
+        const mipp::vector<B            > &X_N)
 {
 	Decoder_SISO<B,R> *decoder = nullptr;
 
-	if (deco_params.algo == "BP" || deco_params.algo == "BP_FLOODING")
+	if (params.decoder.algo == "BP" || params.decoder.algo == "BP_FLOODING")
 	{
-		if (deco_params.implem == "MIN_SUM")
-			decoder = new Decoder_LDPC_BP_flooding_min_sum<B,R>(code_params.K, 
-			                                                    code_params.N,
-			                                                    deco_params.max_iter,
+		if (params.decoder.implem == "MIN_SUM")
+			decoder = new Decoder_LDPC_BP_flooding_min_sum<B,R>(params.code.K,
+			                                                    params.code.N,
+			                                                    params.decoder.max_iter,
 			                                                    n_variables_per_parity,
 			                                                    n_parities_per_variable,
 			                                                    transpose,
 			                                                    X_N,
-			                                                    coset);
-		else if (deco_params.implem == "SUM_PRODUCT")
-			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(code_params.K,
-			                                                        code_params.N,
-			                                                        deco_params.max_iter,
+			                                                    params.code.coset);
+		else if (params.decoder.implem == "SUM_PRODUCT")
+			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
+			                                                        params.code.N,
+			                                                        params.decoder.max_iter,
 			                                                        n_variables_per_parity,
 			                                                        n_parities_per_variable,
 			                                                        transpose,
 			                                                        X_N,
-			                                                        coset);
+			                                                        params.code.coset);
 	}
 
 	return decoder;

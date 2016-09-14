@@ -24,12 +24,7 @@ protected:
 
 	Arguments_reader ar;
 
-	t_simulation_param simu_params;
-	t_code_param       code_params;
-	t_encoder_param    enco_params;
-	t_mod_param        mod_params;
-	t_channel_param    chan_params;
-	t_decoder_param    deco_params;
+	parameters params;
 
 	Simulation *simu;
 	std::ostream &stream;

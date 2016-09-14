@@ -10,8 +10,7 @@
 template <typename B>
 struct Factory_encoder_turbo
 {
-	static Encoder<B>* build(const t_code_param        &code_params,
-	                         const t_encoder_param     &enco_params,
+	static Encoder<B>* build(const parameters          &params,
 	                         const Interleaver<short>  *interleaver,
 	                               Encoder_sys<B>      *sub_encoder_n,
 	                               Encoder_sys<B>      *sub_encoder_i,

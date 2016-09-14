@@ -13,44 +13,34 @@
 
 template <typename B, typename R, typename Q>
 Simulation_EXIT<B,R,Q>
-::Simulation_EXIT(const t_simulation_param& simu_params,
-                  const t_code_param&       code_params,
-                  const t_encoder_param&    enco_params,
-                  const t_mod_param&        mod_params,
-                  const t_channel_param&    chan_params,
-                  const t_decoder_param&    deco_params)
+::Simulation_EXIT(const parameters& params)
 : Simulation(),
 
-  simu_params(simu_params),
-  code_params(code_params),
-  enco_params(enco_params),
-  mod_params (mod_params ),
-  chan_params(chan_params),
-  deco_params(deco_params),
+  params(params),
 
-  B_K        (code_params.K                                                ),
-  B_N        (code_params.N + code_params.tail_length                      ),
-  X_K1       (code_params.K                                                ),
-  X_N1       (code_params.N + code_params.tail_length                      ),
-  X_K2       (code_params.K                                                ),
-  X_N2       (code_params.N + code_params.tail_length                      ),
-  Y_N        (code_params.N + code_params.tail_length                      ),
-  Y_K        (code_params.K                                                ),
-  La_K1      (code_params.K                                                ),
-  Lch_N1     (code_params.N + code_params.tail_length                      ),
-  La_K2      (code_params.K                                                ),
-  Lch_N2     (code_params.N + code_params.tail_length                      ),
-  La_K3      (code_params.K                                                ),
-  Lch_N3     (code_params.N + code_params.tail_length                      ),
-  Le_K       (code_params.K                                                ),
-  sys        (code_params.K                                                ),
-  par        ((code_params.N - code_params.K) + (code_params.tail_length/2)),
+  B_K        (params.code.K                                                ),
+  B_N        (params.code.N + params.code.tail_length                      ),
+  X_K1       (params.code.K                                                ),
+  X_N1       (params.code.N + params.code.tail_length                      ),
+  X_K2       (params.code.K                                                ),
+  X_N2       (params.code.N + params.code.tail_length                      ),
+  Y_N        (params.code.N + params.code.tail_length                      ),
+  Y_K        (params.code.K                                                ),
+  La_K1      (params.code.K                                                ),
+  Lch_N1     (params.code.N + params.code.tail_length                      ),
+  La_K2      (params.code.K                                                ),
+  Lch_N2     (params.code.N + params.code.tail_length                      ),
+  La_K3      (params.code.K                                                ),
+  Lch_N3     (params.code.N + params.code.tail_length                      ),
+  Le_K       (params.code.K                                                ),
+  sys        (params.code.K                                                ),
+  par        ((params.code.N - params.code.K) + (params.code.tail_length/2)),
 
   B_buff (0),
   Le_buff(0),
   La_buff(0),
 
-  n_trials (200000 / code_params.K),
+  n_trials (200000 / params.code.K),
   cur_trial(0),
 
   I_A      (0.0),
@@ -91,8 +81,8 @@ void Simulation_EXIT<B,R,Q>
 	modulator   = build_modulator  (      ); check_errors(modulator  , "Modulator<B,R>"    );
 	modulator_a = build_modulator_a(      ); check_errors(modulator_a, "Modulator<B,R>"    );
 
-	const auto N     = code_params.N;
-	const auto tail  = code_params.tail_length;
+	const auto N     = params.code.N;
+	const auto tail  = params.code.tail_length;
 	const auto N_mod = modulator->get_buffer_size_after_modulation(N + tail);
 
 	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
@@ -108,7 +98,7 @@ void Simulation_EXIT<B,R,Q>
 	}
 
 	// resize the modulation buffers
-	const auto K_mod = modulator_a->get_buffer_size_after_modulation(code_params.K);
+	const auto K_mod = modulator_a->get_buffer_size_after_modulation(params.code.K);
 	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
 	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
@@ -124,17 +114,17 @@ void Simulation_EXIT<B,R,Q>
 	launch_precompute();
 
 	// for each channel SNR to be simulated	
-	for (snr = simu_params.snr_min; snr <= simu_params.snr_max; snr += simu_params.snr_step)
+	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		code_rate = 1.f;
-		sigma     = std::sqrt((float)mod_params.upsample_factor) / 
-		            std::sqrt(2.f * code_rate * (float)mod_params.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
+		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 
 		snr_precompute();
 
 		// for each "a" standard deviation (sig_a) to be simulated
-		for (sig_a = simu_params.sig_a_min; sig_a <= simu_params.sig_a_max; sig_a += simu_params.sig_a_step)
+		for (sig_a = params.simulation.sig_a_min; sig_a <= params.simulation.sig_a_max; sig_a += params.simulation.sig_a_step)
 		{
 			I_A = 0.0;
 			I_E = 0.0;
@@ -146,9 +136,9 @@ void Simulation_EXIT<B,R,Q>
 
 			// if sig_a = 0, La_K2 = 0
 			if (sig_a == 0)
-				std::fill(La_K2.begin(), La_K2.end(), chan_params.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
+				std::fill(La_K2.begin(), La_K2.end(), params.channel.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
 
-			if (!simu_params.disable_display && first_loop && !simu_params.enable_debug)
+			if (!params.simulation.disable_display && first_loop && !params.simulation.enable_debug)
 			{
 				terminal->legend(std::cout);
 				first_loop = false;
@@ -156,7 +146,7 @@ void Simulation_EXIT<B,R,Q>
 
 			this->simulation_loop();
 
-			if (!simu_params.disable_display)
+			if (!params.simulation.disable_display)
 				terminal->final_report(std::cout);
 		}
 	}
@@ -214,7 +204,7 @@ void Simulation_EXIT<B,R,Q>
 		La_buff.insert(La_buff.end(), La_K2.begin(), La_K2.end());
 
 		// display statistics in terminal
-		if (!simu_params.disable_display && (steady_clock::now() - t_simu) >= simu_params.display_freq)
+		if (!params.simulation.disable_display && (steady_clock::now() - t_simu) >= params.simulation.display_freq)
 		{
 			terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();
@@ -222,7 +212,7 @@ void Simulation_EXIT<B,R,Q>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = measure_mutual_info_avg  (La_buff, B_buff) / (code_params.K * n_trials);
+	I_A = measure_mutual_info_avg  (La_buff, B_buff) / (params.code.K * n_trials);
 	I_E = measure_mutual_info_histo(Le_buff, B_buff, 1000);
 }
 
@@ -415,42 +405,42 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_EXIT<B,R,Q>
 ::build_source()
 {
-	return Factory_source<B>::build(code_params);
+	return Factory_source<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, sigma);
+	return Factory_modulator<B,R,R>::build(params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, 2.0 / sig_a);
+	return Factory_modulator<B,R,R>::build(params, 2.0 / sig_a);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(code_params, chan_params, sigma, size, 0);
+	return Factory_channel<R>::build(params, sigma, size, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(code_params, chan_params, 2.0 / sig_a, size, 0);
+	return Factory_channel<R>::build(params, 2.0 / sig_a, size, 0);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_EXIT<B,R,Q>
 ::build_quantizer(const int size)
 {
-	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma, size);
+	return Factory_quantizer<R,Q>::build(params, sigma, size);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
@@ -459,7 +449,7 @@ template <typename B, typename R, typename Q>
 Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
 ::build_terminal()
 {
-	return new Terminal_EXIT<B,R>(code_params.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
+	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation 

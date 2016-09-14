@@ -8,9 +8,7 @@
 template <typename B>
 struct Factory_encoder_repetition
 {
-	static Encoder_sys<B>* build(const t_simulation_param &simu_params,
-	                             const t_code_param       &code_params,
-	                             const t_encoder_param    &enco_params);
+	static Encoder_sys<B>* build(const parameters &params);
 };
 
 #endif /* FACTORY_ENCODER_REPETITION_HPP */

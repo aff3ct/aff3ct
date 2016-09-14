@@ -17,15 +17,10 @@
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_BFERI_RSC<B,R,Q,QD>
-::Simulation_BFERI_RSC(const t_simulation_param& simu_params,
-                       const t_code_param&       code_params,
-                       const t_encoder_param&    enco_params,
-                       const t_mod_param&        mod_params,
-                       const t_channel_param&    chan_params,
-                       const t_decoder_param&    deco_params)
-: Simulation_BFERI<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+::Simulation_BFERI_RSC(const parameters& params)
+: Simulation_BFERI<B,R,Q>(params)
 {
-	assert(code_params.N / code_params.K == 2);
+	assert(params.code.N / params.code.K == 2);
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -50,10 +45,7 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_BFERI_RSC<B,R,Q,QD>
 ::build_encoder(const int tid)
 {
-	auto encoder = Factory_encoder_RSC<B>::build(this->simu_params,
-	                                             this->code_params,
-	                                             this->enco_params,
-	                                             this->deco_params);
+	auto encoder = Factory_encoder_RSC<B>::build(this->params);
 	if (tid == 0)
 		trellis = encoder->get_trellis();
 	return encoder;
@@ -64,11 +56,7 @@ SISO<Q>* Simulation_BFERI_RSC<B,R,Q, QD>
 ::build_siso(const int tid)
 {
 	this->barrier(tid);
-	return Factory_decoder_RSC<B,Q,QD>::build_siso(this->code_params,
-	                                               this->enco_params,
-	                                               this->chan_params,
-	                                               this->deco_params,
-	                                               trellis);
+	return Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis);
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -76,11 +64,7 @@ Decoder<B,Q>* Simulation_BFERI_RSC<B,R,Q,QD>
 ::build_decoder(const int tid)
 {
 	this->barrier(tid);
-	return Factory_decoder_RSC<B,Q,QD>::build(this->code_params,
-	                                          this->enco_params,
-	                                          this->chan_params,
-	                                          this->deco_params,
-	                                          trellis);
+	return Factory_decoder_RSC<B,Q,QD>::build(this->params, trellis);
 }
 
 // ==================================================================================== explicit template instantiation 

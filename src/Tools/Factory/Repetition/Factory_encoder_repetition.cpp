@@ -4,15 +4,13 @@
 
 template <typename B>
 Encoder_sys<B>* Factory_encoder_repetition<B>
-::build(const t_simulation_param &simu_params,
-        const t_code_param       &code_params,
-        const t_encoder_param    &enco_params)
+::build(const parameters &params)
 {
 	Encoder_sys<B> *encoder = nullptr;
 
 	// build the encoder
-	if (enco_params.systematic)
-		encoder = new Encoder_repetition_sys<B>(code_params.K, code_params.N, enco_params.buffered);
+	if (params.encoder.systematic)
+		encoder = new Encoder_repetition_sys<B>(params.code.K, params.code.N, params.encoder.buffered);
 
 	return encoder;
 }

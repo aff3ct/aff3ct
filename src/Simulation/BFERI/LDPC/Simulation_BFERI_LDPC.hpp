@@ -19,12 +19,7 @@ protected:
 	std::vector<Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Simulation_BFERI_LDPC(const t_simulation_param& simu_params,
-	                      const t_code_param&       code_params,
-	                      const t_encoder_param&    enco_params,
-	                      const t_mod_param&        mod_params,
-	                      const t_channel_param&    chan_params,
-	                      const t_decoder_param&    deco_params);
+	Simulation_BFERI_LDPC(const parameters& params);
 
 	virtual ~Simulation_BFERI_LDPC();
 

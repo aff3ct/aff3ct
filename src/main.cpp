@@ -8,6 +8,10 @@
 #endif
 
 #include "Tools/types.h"
+#include "Tools/params.h"
+#include "Tools/bash_tools.h"
+#include "Tools/MIPP/mipp.h"
+#include "Tools/Arguments_reader.hpp"
 
 #include "Launcher/Launcher.hpp"
 
@@ -27,11 +31,6 @@
 #include "Launcher/EXIT/Launcher_EXIT_RSC.hpp"
 
 #include "Launcher/GEN/Launcher_GEN_polar.hpp"
-
-#include "Tools/params.h"
-#include "Tools/bash_tools.h"
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Arguments_reader.hpp"
 
 void print_version()
 {

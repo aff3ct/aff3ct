@@ -13,20 +13,20 @@ Launcher_GEN_polar<B,R,Q>
 : Launcher_GEN<B,R,Q>(argc, argv, stream)
 {
 	// default parameters
-	this->code_params.type            = "POLAR";
-	this->deco_params.algo            = "SC";
+	this->params.code.type                  = "POLAR";
+	this->params.decoder.algo               = "SC";
 
-	this->simu_params.gen_decoder_dir = "../src/Decoder/Polar/SC/Generated";
-	this->simu_params.awgn_codes_dir  = "../awgn_polar_codes/TV";
-	this->simu_params.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
-	this->simu_params.awgn_codes_file = "";
-	this->code_params.sigma           = 0.f;
+	this->params.simulation.gen_decoder_dir = "../src/Decoder/Polar/SC/Generated";
+	this->params.simulation.awgn_codes_dir  = "../awgn_polar_codes/TV";
+	this->params.simulation.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
+	this->params.simulation.awgn_codes_file = "";
+	this->params.code.sigma                 = 0.f;
 #ifdef ENABLE_POLAR_BOUNDS
-	this->code_params.fb_gen_method   = "TV";
+	this->params.code.fb_gen_method         = "TV";
 #else
-	this->code_params.fb_gen_method   = "GA";
+	this->params.code.fb_gen_method         = "GA";
 #endif
-	this->deco_params.simd_strategy   = "";
+	this->params.decoder.simd_strategy      = "";
 }
 
 template <typename B, typename R, typename Q>
@@ -69,29 +69,29 @@ void Launcher_GEN_polar<B,R,Q>
 ::store_args()
 {
 	// required parameters
-	this->code_params.K = std::stoi(this->ar.get_arg("K"));
-	this->code_params.N = std::stoi(this->ar.get_arg("N"));
-	this->code_params.m = std::ceil(std::log2(this->code_params.N));
+	this->params.code.K = std::stoi(this->ar.get_arg("K"));
+	this->params.code.N = std::stoi(this->ar.get_arg("N"));
+	this->params.code.m = std::ceil(std::log2(this->params.code.N));
 
-	if (this->code_params.K > this->code_params.N)
+	if (this->params.code.K > this->params.code.N)
 	{
 		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	this->simu_params.snr_min = std::stof(this->ar.get_arg("snr"));
+	this->params.simulation.snr_min = std::stof(this->ar.get_arg("snr"));
 
 	// facultative parameters
-	if(this->ar.exist_arg("simu-type"      )) this->simu_params.type              = this->ar.get_arg("simu-type");
-	if(this->ar.exist_arg("code-gen-method")) this->code_params.generation_method = this->ar.get_arg("code-gen-method");
-	if(this->ar.exist_arg("gen-decoder-dir")) this->simu_params.gen_decoder_dir   = this->ar.get_arg("gen-decoder-dir");
+	if(this->ar.exist_arg("simu-type"      )) this->params.simulation.type              = this->ar.get_arg("simu-type");
+	if(this->ar.exist_arg("code-gen-method")) this->params.code.generation_method       = this->ar.get_arg("code-gen-method");
+	if(this->ar.exist_arg("gen-decoder-dir")) this->params.simulation.gen_decoder_dir   = this->ar.get_arg("gen-decoder-dir");
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("awgn-codes-dir" )) this->simu_params.awgn_codes_dir    = this->ar.get_arg("awgn-codes-dir");
-	if(this->ar.exist_arg("bin-pb-path"    )) this->simu_params.bin_pb_path       = this->ar.get_arg("bin-pb-path");
+	if(this->ar.exist_arg("awgn-codes-dir" )) this->params.simulation.awgn_codes_dir    = this->ar.get_arg("awgn-codes-dir");
+	if(this->ar.exist_arg("bin-pb-path"    )) this->params.simulation.bin_pb_path       = this->ar.get_arg("bin-pb-path");
 #endif
-	if(this->ar.exist_arg("awgn-codes-file")) this->simu_params.awgn_codes_file   = this->ar.get_arg("awgn-codes-file");
+	if(this->ar.exist_arg("awgn-codes-file")) this->params.simulation.awgn_codes_file   = this->ar.get_arg("awgn-codes-file");
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("fb-gen-method"  )) this->code_params.fb_gen_method     = this->ar.get_arg("fb-gen-method");
+	if(this->ar.exist_arg("fb-gen-method"  )) this->params.code.fb_gen_method           = this->ar.get_arg("fb-gen-method");
 #endif
 }
 
@@ -100,22 +100,22 @@ void Launcher_GEN_polar<B,R,Q>
 ::print_header()
 {
 	// display configuration and simulation parameters
-	this->stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
-	this->stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                 << std::endl;
-	this->stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
-	this->stream << "#"                                                                                               << std::endl;
-	this->stream << "# " << bold_underlined("Simulation parameters:")                                                 << std::endl;
-	this->stream << "# " << bold("* Simulation type               ") << " = " << this->simu_params.type               << std::endl;
-	this->stream << "# " << bold("* Code type                     ") << " = " << this->code_params.type << " codes"   << std::endl;
-	this->stream << "# " << bold("* Number of information bits (K)") << " = " << this->code_params.K                  << std::endl;
-	this->stream << "# " << bold("* Codeword length            (N)") << " = " << this->code_params.N                  << std::endl;
-	this->stream << "# " << bold("* SNR                           ") << " = " << this->simu_params.snr_min   << " dB" << std::endl;
-	this->stream << "# " << bold("* Generated decoder directory   ") << " = " << this->simu_params.gen_decoder_dir    << std::endl;
-	if (!this->simu_params.awgn_codes_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file    << std::endl;
-	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method      << std::endl;
+	this->stream << "# " << bold("-------------------------------------------------")                                       << std::endl;
+	this->stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                       << std::endl;
+	this->stream << "# " << bold("-------------------------------------------------")                                       << std::endl;
+	this->stream << "#"                                                                                                     << std::endl;
+	this->stream << "# " << bold_underlined("Simulation parameters:")                                                       << std::endl;
+	this->stream << "# " << bold("* Simulation type               ") << " = " << this->params.simulation.type               << std::endl;
+	this->stream << "# " << bold("* Code type                     ") << " = " << this->params.code.type << " codes"         << std::endl;
+	this->stream << "# " << bold("* Number of information bits (K)") << " = " << this->params.code.K                        << std::endl;
+	this->stream << "# " << bold("* Codeword length            (N)") << " = " << this->params.code.N                        << std::endl;
+	this->stream << "# " << bold("* SNR                           ") << " = " << this->params.simulation.snr_min   << " dB" << std::endl;
+	this->stream << "# " << bold("* Generated decoder directory   ") << " = " << this->params.simulation.gen_decoder_dir    << std::endl;
+	if (!this->params.simulation.awgn_codes_file.empty())
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.simulation.awgn_codes_file    << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method            << std::endl;
 	
-	if (this->code_params.N != exp2(ceil(log2(this->code_params.N))))
+	if (this->params.code.N != exp2(ceil(log2(this->params.code.N))))
 	{
 		std::cerr << bold_red("(EE) N isn't a power of two.")  << std::endl;
 		exit(-1);
@@ -126,11 +126,7 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN_polar<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Generation_polar(this->simu_params,
-	                                  this->code_params,
-	                                  this->enco_params,
-	                                  this->chan_params,
-	                                  this->deco_params);
+	this->simu = new Generation_polar(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

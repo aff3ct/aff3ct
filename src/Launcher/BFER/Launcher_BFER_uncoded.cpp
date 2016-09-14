@@ -11,13 +11,13 @@ Launcher_BFER_uncoded<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
-	this->chan_params.quant_n_bits    = 6;
-	this->chan_params.quant_point_pos = 2;
+	this->params.channel.quant_n_bits    = 6;
+	this->params.channel.quant_point_pos = 2;
 
 	// default parameters
-	this->code_params.type            = "Channel";
-	this->deco_params.algo            = "NONE";
-	this->deco_params.implem          = "NONE";
+	this->params.code.type               = "Channel";
+	this->params.decoder.algo            = "NONE";
+	this->params.decoder.implem          = "NONE";
 }
 
 template <typename B, typename R, typename Q>
@@ -45,12 +45,7 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_uncoded<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_uncoded<B,R,Q>(this->simu_params, 
-	                                           this->code_params, 
-	                                           this->enco_params, 
-	                                           this->mod_params,
-	                                           this->chan_params,
-	                                           this->deco_params);
+	this->simu = new Simulation_uncoded<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

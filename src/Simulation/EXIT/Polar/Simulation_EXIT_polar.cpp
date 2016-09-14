@@ -15,21 +15,16 @@
 
 template <typename B, typename R, typename Q>
 Simulation_EXIT_polar<B,R,Q>
-::Simulation_EXIT_polar(const t_simulation_param& simu_params,
-                        const t_code_param&       code_params,
-                        const t_encoder_param&    enco_params,
-                        const t_mod_param&        mod_params,
-                        const t_channel_param&    chan_params,
-                        const t_decoder_param&    deco_params)
-: Simulation_EXIT<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params),
-  frozen_bits(code_params.N),
+::Simulation_EXIT_polar(const parameters& params)
+: Simulation_EXIT<B,R,Q>(params),
+  frozen_bits(params.code.N),
   fb_generator(nullptr)
 {
 	// fixed fronzen bits is mandatory
-	assert(code_params.sigma != 0.f);
+	assert(params.code.sigma != 0.f);
 
 	// build the frozen bits generator
-	fb_generator = Factory_frozenbits_generator<B>::build(simu_params, code_params);
+	fb_generator = Factory_frozenbits_generator<B>::build(params);
 	check_errors(fb_generator, "Frozenbits_generator<B>");
 }
 
@@ -49,7 +44,7 @@ void Simulation_EXIT_polar<B,R,Q>
 {
 	// extract systematic and parity information
 	auto par_idx = 0, sys_idx = 0;
-	for (auto j = 0; j < this->code_params.N; j++)
+	for (auto j = 0; j < this->params.code.N; j++)
 		if (!frozen_bits[j]) // add La on information (systematic) bits
 		{
 			sys[sys_idx] = Lch_N[j] + La_K[sys_idx];
@@ -77,18 +72,14 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_EXIT_polar<B,R,Q>
 ::build_encoder()
 {
-	return Factory_encoder_polar<B>::build(this->code_params, this->enco_params, this->deco_params, frozen_bits);
+	return Factory_encoder_polar<B>::build(this->params, frozen_bits);
 }
 
 template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_EXIT_polar<B,R,Q>
 ::build_siso()
 {
-	return Factory_decoder_polar<B,Q>::build_siso(this->code_params,
-	                                              this->enco_params,
-	                                              this->chan_params,
-	                                              this->deco_params,
-	                                              frozen_bits);
+	return Factory_decoder_polar<B,Q>::build_siso(this->params, frozen_bits);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -31,13 +31,7 @@ template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation
 {
 protected:
-	// simulation parameters
-	const t_simulation_param &simu_params;
-	const t_code_param       &code_params;
-	const t_encoder_param    &enco_params;
-	const t_mod_param        &mod_params;
-	const t_channel_param    &chan_params;
-	const t_decoder_param    &deco_params;
+	const parameters &params; // simulation parameters
 
 	Barrier barrier; // a barrier to synchronize the threads
 	int n_frames;    // number of simulated frames per thread
@@ -76,12 +70,7 @@ protected:
 	std::chrono::nanoseconds d_decod_total_fake;
 
 public:
-	Simulation_BFER(const t_simulation_param& simu_params,
-	                const t_code_param&       code_params,
-	                const t_encoder_param&    enco_params,
-	                const t_mod_param&        mod_params,
-	                const t_channel_param&    chan_params,
-	                const t_decoder_param&    deco_params);
+	Simulation_BFER(const parameters& params);
 	virtual ~Simulation_BFER();
 	void launch();
 

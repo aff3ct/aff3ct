@@ -7,19 +7,15 @@
 
 template <typename B>
 Encoder<B>* Factory_encoder_polar<B>
-::build(const t_code_param    &code_params,
-        const t_encoder_param &enco_params,
-        const t_decoder_param &deco_params,
-        const mipp::vector<B> &frozen_bits,
-        const int n_frames)
+::build(const parameters &params, const mipp::vector<B> &frozen_bits, const int n_frames)
 {
 	Encoder<B> *encoder = nullptr;
 
 	// build the encoder
-	if (!enco_params.systematic)
-		encoder = new Encoder_polar    <B>(code_params.K, code_params.N_code, frozen_bits, n_frames);
+	if (!params.encoder.systematic)
+		encoder = new Encoder_polar    <B>(params.code.K, params.code.N_code, frozen_bits, n_frames);
 	else
-		encoder = new Encoder_polar_sys<B>(code_params.K, code_params.N_code, frozen_bits, n_frames);
+		encoder = new Encoder_polar_sys<B>(params.code.K, params.code.N_code, frozen_bits, n_frames);
 
 	return encoder;
 }

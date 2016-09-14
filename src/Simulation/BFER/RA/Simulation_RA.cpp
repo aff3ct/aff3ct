@@ -15,19 +15,14 @@
 
 template <typename B, typename R, typename Q>
 Simulation_RA<B,R,Q>
-::Simulation_RA(const t_simulation_param& simu_params,
-                const t_code_param&       code_params,
-                const t_encoder_param&    enco_params,
-                const t_mod_param&        mod_params,
-                const t_channel_param&    chan_params,
-                const t_decoder_param&    deco_params)
-: Simulation_BFER<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params),
+::Simulation_RA(const parameters& params)
+: Simulation_BFER<B,R,Q>(params),
   interleaver(nullptr)
 {
-	assert(code_params.N % code_params.K == 0);
+	assert(params.code.N % params.code.K == 0);
 
 	// build the interleaver for the encoder and the decoder
-	interleaver = Factory_interleaver<int>::build(this->code_params, this->code_params.N);
+	interleaver = Factory_interleaver<int>::build(this->params, this->params.code.N);
 }
 
 template <typename B, typename R, typename Q>
@@ -53,7 +48,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_RA<B,R,Q>
 ::build_encoder(const int tid)
 {
-	Encoder<B>* encoder = new Encoder_RA<B>(this->code_params.K, this->code_params.N, *interleaver);
+	Encoder<B>* encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *interleaver);
 	return encoder;
 }
 
@@ -61,10 +56,10 @@ template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_RA<B,R,Q>
 ::build_decoder(const int tid)
 {
-	Decoder<B,Q>* decoder = new Decoder_RA<B,Q>(this->code_params.K,
-	                                            this->code_params.N,
+	Decoder<B,Q>* decoder = new Decoder_RA<B,Q>(this->params.code.K,
+	                                            this->params.code.N,
 	                                            *interleaver,
-	                                            this->deco_params.max_iter);
+	                                            this->params.decoder.max_iter);
 	if (tid == 0)
 		interleaver->set_n_frames(decoder->get_n_frames());
 

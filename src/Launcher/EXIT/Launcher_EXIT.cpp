@@ -11,12 +11,12 @@ Launcher_EXIT<B,R,Q>
 : Launcher<B,R,Q>(argc, argv, stream)
 {
 	// default parameters
-	this->simu_params.type = "EXIT";
+	this->params.simulation.type       = "EXIT";
 
-	this->enco_params.systematic = true;
-	this->simu_params.sig_a_min  = 0.0f;
-	this->simu_params.sig_a_max  = 5.0f;
-	this->simu_params.sig_a_step = 0.5f;
+	this->params.encoder.systematic    = true;
+	this->params.simulation.sig_a_min  = 0.0f;
+	this->params.simulation.sig_a_max  = 5.0f;
+	this->params.simulation.sig_a_step = 0.5f;
 }
 
 template <typename B, typename R, typename Q>
@@ -40,9 +40,9 @@ void Launcher_EXIT<B,R,Q>
 {
 	Launcher<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("sig-a-min" )) this->simu_params.sig_a_min  = std::stof(this->ar.get_arg("sig-a-min"));
-	if(this->ar.exist_arg("sig-a-max" )) this->simu_params.sig_a_max  = std::stof(this->ar.get_arg("sig-a-max"));
-	if(this->ar.exist_arg("sig-a-step")) this->simu_params.sig_a_step = std::stof(this->ar.get_arg("sig-a-step"));
+	if(this->ar.exist_arg("sig-a-min" )) this->params.simulation.sig_a_min  = std::stof(this->ar.get_arg("sig-a-min"));
+	if(this->ar.exist_arg("sig-a-max" )) this->params.simulation.sig_a_max  = std::stof(this->ar.get_arg("sig-a-max"));
+	if(this->ar.exist_arg("sig-a-step")) this->params.simulation.sig_a_step = std::stof(this->ar.get_arg("sig-a-step"));
 }
 
 template <typename B, typename R, typename Q>
@@ -51,14 +51,14 @@ void Launcher_EXIT<B,R,Q>
 {
 	Launcher<B,R,Q>::print_header();
 
-	std::string syst_enc = ((this->enco_params.systematic) ? "on" : "off");
+	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
-	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                     << std::endl;
-	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->deco_params.algo       << std::endl;
-	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->deco_params.implem     << std::endl;
-	this->stream << "# " << bold("* SIG a min                     ") << " = " << this->simu_params.sig_a_min  << std::endl;
-	this->stream << "# " << bold("* SIG a max                     ") << " = " << this->simu_params.sig_a_max  << std::endl;
-	this->stream << "# " << bold("* SIG a step                    ") << " = " << this->simu_params.sig_a_step << std::endl;
+	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                           << std::endl;
+	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->params.decoder.algo          << std::endl;
+	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->params.decoder.implem        << std::endl;
+	this->stream << "# " << bold("* SIG a min                     ") << " = " << this->params.simulation.sig_a_min  << std::endl;
+	this->stream << "# " << bold("* SIG a max                     ") << " = " << this->params.simulation.sig_a_max  << std::endl;
+	this->stream << "# " << bold("* SIG a step                    ") << " = " << this->params.simulation.sig_a_step << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

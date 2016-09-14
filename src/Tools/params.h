@@ -5,7 +5,7 @@
 #include <string>
 #include <chrono>
 
-struct t_simulation_param
+struct simulation_parameters
 {
 	int                       max_fe;
 	int                       benchs;
@@ -32,7 +32,7 @@ struct t_simulation_param
 	std::string               gen_decoder_dir;
 };
 
-struct t_code_param
+struct code_parameters
 {
 	int         K;
 	int         N;
@@ -50,24 +50,40 @@ struct t_code_param
 	bool        coset; // true = enable coset approach
 };
 
-struct t_mod_param
+struct source_parameters
 {
-	int          bits_per_symbol; // bits per symbol
-	int          upsample_factor; // samples per symbol
-	int          demod_n_ite;     // number of demodulations/decoding sessions to perform in the BFERI simulations
-	std::string  type;            // modulation type (PAM, QAM, ...)
-	std::string  demod_max;       // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
-	bool disable_demod_sig2;      // do not divide by (sig^2) / 2 in the demodulation
 };
 
-struct t_encoder_param
+struct crc_parameters
+{
+};
+
+struct modulator_parameters
+{
+	int          bits_per_symbol;    // bits per symbol
+	int          upsample_factor;    // samples per symbol
+	int          demod_n_ite;        // number of demodulations/decoding sessions to perform in the BFERI simulations
+	std::string  type;               // modulation type (PAM, QAM, ...)
+	std::string  demod_max;          // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
+	bool         disable_demod_sig2; // do not divide by (sig^2) / 2 in the demodulation
+};
+
+struct encoder_parameters
 {
 	std::string type;
 	bool systematic;
 	bool buffered;
 };
 
-struct t_channel_param
+struct interleaver_parameters
+{
+};
+
+struct pucturer_parameters
+{
+};
+
+struct channel_parameters
 {
 	int         quant_point_pos;
 	int         quant_n_bits;
@@ -78,7 +94,11 @@ struct t_channel_param
 	bool        estimator;
 };
 
-struct t_decoder_param
+struct quantizer_parameters
+{
+};
+
+struct decoder_parameters
 {
 	std::string algo;
 	std::string implem;
@@ -89,5 +109,19 @@ struct t_decoder_param
 	int         L;
 };
 
-#endif /* PARAMS_H_ */
+struct parameters
+{
+	simulation_parameters  simulation;
+	code_parameters        code;
+	source_parameters      source;
+	crc_parameters         crc;
+	modulator_parameters   modulator;
+	encoder_parameters     encoder;
+	interleaver_parameters interleaver;
+	pucturer_parameters    puncturer;
+	channel_parameters     channel;
+	quantizer_parameters   quantizer;
+	decoder_parameters     decoder;
+};
 
+#endif /* PARAMS_H_ */

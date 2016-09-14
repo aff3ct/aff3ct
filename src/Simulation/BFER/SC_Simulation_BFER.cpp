@@ -27,29 +27,19 @@
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
-::Simulation_BFER(const t_simulation_param& simu_params,
-                  const t_code_param&       code_params,
-                  const t_encoder_param&    enco_params,
-                  const t_mod_param&        mod_params,
-                  const t_channel_param&    chan_params,
-                  const t_decoder_param&    deco_params)
+::Simulation_BFER(const parameters& params)
 : Simulation(),
   
-  simu_params(simu_params),
-  code_params(code_params),
-  enco_params(enco_params),
-  mod_params (mod_params ),
-  chan_params(chan_params),
-  deco_params(deco_params),
+  params(params),
 
-  barrier(simu_params.n_threads),
+  barrier(params.simulation.n_threads),
   n_frames(1),
 
   snr      (0.f),
   code_rate(0.f),
   sigma    (0.f),
 
-  X_N1(simu_params.n_threads), // hack for the compilation but never used
+  X_N1(params.simulation.n_threads), // hack for the compilation but never used
 
   source   (1, nullptr),
   crc      (1, nullptr),
@@ -69,25 +59,25 @@ Simulation_BFER<B,R,Q>
 
   d_decod_total_fake(std::chrono::nanoseconds(0))
 {
-	if (simu_params.n_threads > 1)
+	if (params.simulation.n_threads > 1)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support multi-threading... Exiting.") << std::endl;
 		std::exit(-1);
 	}
 
-	if (simu_params.benchs)
+	if (params.simulation.benchs)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
 		std::exit(-1);
 	}
 
-	if (code_params.coset)
+	if (params.code.coset)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support the coset approach... Exiting") << std::endl;
 		std::exit(-1);
 	}
 
-	if (simu_params.time_report)
+	if (params.simulation.time_report)
 		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
 }
 
@@ -105,20 +95,20 @@ void Simulation_BFER<B,R,Q>
 	launch_precompute();
 
 	// for each SNR to be simulated
-	for (snr = simu_params.snr_min; snr <= simu_params.snr_max; snr += simu_params.snr_step)
+	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
 		t_snr = std::chrono::steady_clock::now();
 
-		code_rate = (float)(code_params.K / (float)(code_params.N + code_params.tail_length));
-		sigma     = std::sqrt((float)mod_params.upsample_factor) / 
-		            std::sqrt(2.f * code_rate * (float)mod_params.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		code_rate = (float)(params.code.K / (float)(params.code.N + params.code.tail_length));
+		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
+		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 
 		snr_precompute();
 
 		// launch the simulation
 		this->launch_simulation();
 
-		if (!simu_params.disable_display && !simu_params.benchs)
+		if (!params.simulation.disable_display && !params.simulation.benchs)
 			terminal->final_report(std::cout);
 
 		// release communication objects
@@ -136,15 +126,15 @@ void Simulation_BFER<B,R,Q>
 {
 	this->build_communication_chain();
 
-	if ((!this->simu_params.disable_display && this->snr == this->simu_params.snr_min && 
-	    !(this->simu_params.enable_debug && this->simu_params.n_threads == 1) && !this->simu_params.benchs))
+	if ((!this->params.simulation.disable_display && this->snr == this->params.simulation.snr_min &&
+	    !(this->params.simulation.enable_debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
 		this->terminal->legend(std::cout);
 
 	this->duplicator = new SC_Duplicator("Duplicator");
 
-	if (this->simu_params.n_threads == 1 && this->simu_params.enable_debug)
+	if (this->params.simulation.n_threads == 1 && this->params.simulation.enable_debug)
 	{
-		const auto dl = this->simu_params.debug_limit;
+		const auto dl = this->params.simulation.debug_limit;
 
 		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
 		this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
@@ -199,8 +189,8 @@ void Simulation_BFER<B,R,Q>
 	this->puncturer[0] = this->build_puncturer(      ); check_errors(this->puncturer[0], "Puncturer<B,Q>"   );
 	this->modulator[0] = this->build_modulator(      ); check_errors(this->modulator[0], "Modulator<B,R>"   );
 
-	const auto N     = this->code_params.N;
-	const auto tail  = this->code_params.tail_length;
+	const auto N     = this->params.code.N;
+	const auto tail  = this->params.code.tail_length;
 	const auto N_mod = this->modulator[0]->get_buffer_size_after_modulation(N + tail);
 	
 	this->channel  [0] = this->build_channel  (N_mod ); check_errors(this->channel  [0], "Channel<R>"       );
@@ -282,11 +272,11 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::terminal_temp_report(Simulation_BFER<B,R,Q> *simu)
 {
-	if (!simu->simu_params.disable_display && simu->simu_params.display_freq != std::chrono::nanoseconds(0))
+	if (!simu->params.simulation.disable_display && simu->params.simulation.display_freq != std::chrono::nanoseconds(0))
 	{
 		while (!simu->analyzer[0]->fe_limit_achieved() && !simu->analyzer[0]->is_interrupt())
 		{
-			const auto sleep_time = simu->simu_params.display_freq - std::chrono::milliseconds(0);
+			const auto sleep_time = simu->params.simulation.display_freq - std::chrono::milliseconds(0);
 			std::this_thread::sleep_for(sleep_time);
 
 			// display statistics in terminal
@@ -329,14 +319,14 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER<B,R,Q>
 ::build_source(const int tid)
 {
-	return Factory_source<B>::build(code_params, tid);
+	return Factory_source<B>::build(params, tid);
 }
 
 template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER<B,R,Q>
 ::build_puncturer(const int tid)
 {
-	auto puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N + code_params.tail_length);
+	auto puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N + params.code.tail_length);
 	check_errors(puncturer, "Puncturer<B,Q>");
 	return puncturer;
 }
@@ -345,35 +335,35 @@ template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC<B>::build(code_params, deco_params);
+	return Factory_CRC<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(code_params, mod_params, sigma);
+	return Factory_modulator<B,R,R>::build(params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(code_params, chan_params, sigma, size, tid);
+	return Factory_channel<R>::build(params, sigma, size, tid);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 ::build_quantizer(const int size, const int tid)
 {
-	return Factory_quantizer<R,Q>::build(code_params, chan_params, sigma, size);
+	return Factory_quantizer<R,Q>::build(params, sigma, size);
 }
 
 template <typename B, typename R, typename Q>
 Error_analyzer<B>* Simulation_BFER<B,R,Q>
 ::build_analyzer(const int tid)
 {
-	return Factory_error_analyzer<B>::build(simu_params, code_params, n_frames);
+	return Factory_error_analyzer<B>::build(params, n_frames);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
@@ -382,7 +372,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(simu_params, snr, analyzer[0], t_snr, d_decod_total_fake);
+	return Factory_terminal<B,R>::build(params, snr, analyzer[0], t_snr, d_decod_total_fake);
 }
 
 // ==================================================================================== explicit template instantiation 

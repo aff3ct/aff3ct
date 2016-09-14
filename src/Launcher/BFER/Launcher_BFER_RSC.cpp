@@ -11,18 +11,18 @@ Launcher_BFER_RSC<B,R,Q,QD>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
-	this->code_params.tail_length     = 2*3;
-	this->chan_params.quant_n_bits    = 6;
-	this->chan_params.quant_point_pos = 3;
+	this->params.code.tail_length        = 2*3;
+	this->params.channel.quant_n_bits    = 6;
+	this->params.channel.quant_point_pos = 3;
 
 	// default parameters
-	this->code_params.type            = "RSC";
-	this->deco_params.algo            = "BCJR";
-	this->deco_params.implem          = "FAST";
-	this->deco_params.map             = "MAX";
+	this->params.code.type               = "RSC";
+	this->params.decoder.algo            = "BCJR";
+	this->params.decoder.implem          = "FAST";
+	this->params.decoder.map             = "MAX";
 
-	this->enco_params.buffered        = true;
-	this->deco_params.simd_strategy   = "";
+	this->params.encoder.buffered        = true;
+	this->params.decoder.simd_strategy   = "";
 
 }
 
@@ -47,13 +47,13 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("disable-buf-enc")) this->enco_params.buffered = false;
+	if(this->ar.exist_arg("disable-buf-enc")) this->params.encoder.buffered      = false;
 
-	if(this->ar.exist_arg("dec-simd-strat" )) this->deco_params.simd_strategy = this->ar.get_arg("dec-simd-strat");
-	if(this->ar.exist_arg("dec-map"        )) this->deco_params.map           = this->ar.get_arg("dec-map"       );
+	if(this->ar.exist_arg("dec-simd-strat" )) this->params.decoder.simd_strategy = this->ar.get_arg("dec-simd-strat");
+	if(this->ar.exist_arg("dec-map"        )) this->params.decoder.map           = this->ar.get_arg("dec-map"       );
 
-	if (this->deco_params.algo == "BCJR4" || this->deco_params.algo == "CCSDS")
-		this->code_params.tail_length = 2*4;
+	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
+		this->params.code.tail_length = 2*4;
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -62,25 +62,20 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::print_header();
 
-	std::string buff_enc = ((this->enco_params.buffered) ? "on" : "off");
+	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
 
 	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                        << std::endl;
-	if (!this->deco_params.simd_strategy.empty())
-	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy << std::endl;
-	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->deco_params.map           << std::endl;
+	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                           << std::endl;
+	if (!this->params.decoder.simd_strategy.empty())
+	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy << std::endl;
+	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->params.decoder.map           << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>
 void Launcher_BFER_RSC<B,R,Q,QD>
 ::build_simu()
 {
-	this->simu = new Simulation_RSC<B,R,Q,QD>(this->simu_params, 
-	                                          this->code_params, 
-	                                          this->enco_params, 
-	                                          this->mod_params,
-	                                          this->chan_params, 
-	                                          this->deco_params);
+	this->simu = new Simulation_RSC<B,R,Q,QD>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

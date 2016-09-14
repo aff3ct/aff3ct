@@ -9,12 +9,7 @@ template <typename B, typename R, typename Q>
 class Simulation_BFERI_uncoded : public Simulation_BFERI<B,R,Q>
 {
 public:
-	Simulation_BFERI_uncoded(const t_simulation_param& simu_params,
-	                         const t_code_param&       code_params,
-	                         const t_encoder_param&    enco_params,
-	                         const t_mod_param&        mod_params,
-	                         const t_channel_param&    chan_params,
-	                         const t_decoder_param&    deco_params);
+	Simulation_BFERI_uncoded(const parameters& params);
 
 	virtual ~Simulation_BFERI_uncoded();
 

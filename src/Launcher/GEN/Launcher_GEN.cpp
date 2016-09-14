@@ -10,8 +10,8 @@ Launcher_GEN<B,R,Q>
 ::Launcher_GEN(const int argc, const char **argv, std::ostream &stream)
 : Launcher<B,R,Q>(argc, argv, stream)
 {
-	this->simu_params.type       = "GEN";
-	this->enco_params.systematic = true;
+	this->params.simulation.type    = "GEN";
+	this->params.encoder.systematic = true;
 }
 
 template <typename B, typename R, typename Q>

@@ -15,27 +15,27 @@ Launcher_BFER_polar<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
-	this->chan_params.quant_n_bits    = 6;
-	this->chan_params.quant_point_pos = 1;
+	this->params.channel.quant_n_bits       = 6;
+	this->params.channel.quant_point_pos    = 1;
 
 	// default parameters
-	this->code_params.type            = "POLAR";
-	this->deco_params.algo            = "SC";
-	this->deco_params.implem          = "FAST";
+	this->params.code.type                  = "POLAR";
+	this->params.decoder.algo               = "SC";
+	this->params.decoder.implem             = "FAST";
 
-	this->deco_params.max_iter        = 1;
-	this->simu_params.awgn_codes_dir  = "../awgn_polar_codes/TV";
-	this->simu_params.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
-	this->simu_params.awgn_codes_file = "";
-	this->deco_params.L               = 1;
-	this->code_params.sigma           = 0.f;
-	this->code_params.crc             = "";
+	this->params.decoder.max_iter           = 1;
+	this->params.simulation.awgn_codes_dir  = "../awgn_polar_codes/TV";
+	this->params.simulation.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
+	this->params.simulation.awgn_codes_file = "";
+	this->params.decoder.L                  = 1;
+	this->params.code.sigma                 = 0.f;
+	this->params.code.crc                   = "";
 #ifdef ENABLE_POLAR_BOUNDS
-	this->code_params.fb_gen_method   = "TV";
+	this->params.code.fb_gen_method         = "TV";
 #else
-	this->code_params.fb_gen_method   = "GA";
+	this->params.code.fb_gen_method         = "GA";
 #endif
-	this->deco_params.simd_strategy   = "";
+	this->params.decoder.simd_strategy      = "";
 }
 
 template <typename B, typename R, typename Q>
@@ -77,24 +77,24 @@ void Launcher_BFER_polar<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("disable-sys-enc")) this->enco_params.systematic      = false;
-	if(this->ar.exist_arg("max-iter"       )) this->deco_params.max_iter        = std::stoi(this->ar.get_arg("max-iter"));
+	if(this->ar.exist_arg("disable-sys-enc")) this->params.encoder.systematic         = false;
+	if(this->ar.exist_arg("max-iter"       )) this->params.decoder.max_iter           = std::stoi(this->ar.get_arg("max-iter"));
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("awgn-codes-dir" )) this->simu_params.awgn_codes_dir  = this->ar.get_arg("awgn-codes-dir");
-	if(this->ar.exist_arg("bin-pb-path"    )) this->simu_params.bin_pb_path     = this->ar.get_arg("bin-pb-path");
+	if(this->ar.exist_arg("awgn-codes-dir" )) this->params.simulation.awgn_codes_dir  = this->ar.get_arg("awgn-codes-dir");
+	if(this->ar.exist_arg("bin-pb-path"    )) this->params.simulation.bin_pb_path     = this->ar.get_arg("bin-pb-path");
 #endif
-	if(this->ar.exist_arg("awgn-codes-file")) this->simu_params.awgn_codes_file = this->ar.get_arg("awgn-codes-file");
-	if(this->ar.exist_arg("L"              )) this->deco_params.L               = std::stoi(this->ar.get_arg("L"));
-	if(this->ar.exist_arg("code-sigma"     )) this->code_params.sigma           = std::stof(this->ar.get_arg("code-sigma"));
+	if(this->ar.exist_arg("awgn-codes-file")) this->params.simulation.awgn_codes_file = this->ar.get_arg("awgn-codes-file");
+	if(this->ar.exist_arg("L"              )) this->params.decoder.L                  = std::stoi(this->ar.get_arg("L"));
+	if(this->ar.exist_arg("code-sigma"     )) this->params.code.sigma                 = std::stof(this->ar.get_arg("code-sigma"));
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("fb-gen-method"  )) this->code_params.fb_gen_method   = this->ar.get_arg("fb-gen-method");
+	if(this->ar.exist_arg("fb-gen-method"  )) this->params.code.fb_gen_method         = this->ar.get_arg("fb-gen-method");
 #endif
-	if(this->ar.exist_arg("crc-type"       )) this->code_params.crc             = this->ar.get_arg("crc-type");
+	if(this->ar.exist_arg("crc-type"       )) this->params.code.crc                   = this->ar.get_arg("crc-type");
 
-	if(this->ar.exist_arg("dec-simd-strat" )) this->deco_params.simd_strategy   = this->ar.get_arg("dec-simd-strat");
+	if(this->ar.exist_arg("dec-simd-strat" )) this->params.decoder.simd_strategy      = this->ar.get_arg("dec-simd-strat");
 
 	// force 1 iteration max if not SCAN (and polar code)
-	if (this->deco_params.algo != "SCAN") this->deco_params.max_iter = 1;
+	if (this->params.decoder.algo != "SCAN") this->params.decoder.max_iter = 1;
 }
 
 template <typename B, typename R, typename Q>
@@ -103,21 +103,21 @@ void Launcher_BFER_polar<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::print_header();
 
-	std::string sigma = (this->code_params.sigma == 0.f) ? "adaptative" : std::to_string(this->code_params.sigma);
+	std::string sigma = (this->params.code.sigma == 0.f) ? "adaptative" : std::to_string(this->params.code.sigma);
 
 	// display configuration and simulation parameters
-	if (this->deco_params.algo == "SCAN")
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter        << std::endl;
-	if (!this->simu_params.awgn_codes_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->simu_params.awgn_codes_file << std::endl;
-	if (this->deco_params.algo == "SCL")
-	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->deco_params.L               << std::endl;
-	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << sigma                             << std::endl;
-	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->code_params.fb_gen_method   << std::endl;
-	if (!this->code_params.crc.empty())
-	this->stream << "# " << bold("* CRC type                      ") << " = " << this->code_params.crc             << std::endl;
-	if (!this->deco_params.simd_strategy.empty())
-	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->deco_params.simd_strategy   << std::endl;
+	if (this->params.decoder.algo == "SCAN")
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.max_iter           << std::endl;
+	if (!this->params.simulation.awgn_codes_file.empty())
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.simulation.awgn_codes_file << std::endl;
+	if (this->params.decoder.algo == "SCL")
+	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->params.decoder.L                  << std::endl;
+	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << sigma                                   << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method         << std::endl;
+	if (!this->params.code.crc.empty())
+	this->stream << "# " << bold("* CRC type                      ") << " = " << this->params.code.crc                   << std::endl;
+	if (!this->params.decoder.simd_strategy.empty())
+	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy      << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -126,18 +126,13 @@ void Launcher_BFER_polar<B,R,Q>
 {
 
 	// hack for K when there is a CRC
-	if (!this->code_params.crc.empty())
+	if (!this->params.code.crc.empty())
 	{
-		assert(this->code_params.K > CRC_polynomial<B>::size(this->code_params.crc));
-		this->code_params.K += CRC_polynomial<B>::size(this->code_params.crc);
+		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.code.crc));
+		this->params.code.K += CRC_polynomial<B>::size(this->params.code.crc);
 	}
 
-	this->simu = new Simulation_polar<B,R,Q>(this->simu_params, 
-	                                         this->code_params, 
-	                                         this->enco_params, 
-	                                         this->mod_params,
-	                                         this->chan_params, 
-	                                         this->deco_params);
+	this->simu = new Simulation_polar<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

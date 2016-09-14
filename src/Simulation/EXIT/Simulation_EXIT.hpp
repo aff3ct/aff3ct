@@ -21,13 +21,7 @@ template <typename B, typename R, typename Q>
 class Simulation_EXIT : public Simulation
 {
 protected:
-	// simulation parameters
-	const t_simulation_param &simu_params;
-	const t_code_param       &code_params;
-	const t_encoder_param    &enco_params;
-	const t_mod_param        &mod_params;
-	const t_channel_param    &chan_params;
-	const t_decoder_param    &deco_params;
+	const parameters &params; // simulation parameters
 
 	// data vectors
 	mipp::vector<B> B_K, B_N, X_K1, X_N1;
@@ -70,12 +64,7 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
 
 public:
-	Simulation_EXIT(const t_simulation_param& simu_params,
-	                const t_code_param&       code_params,
-	                const t_encoder_param&    enco_params,
-	                const t_mod_param&        mod_params,
-	                const t_channel_param&    chan_params,
-	                const t_decoder_param&    deco_params);
+	Simulation_EXIT(const parameters& params);
 	virtual ~Simulation_EXIT();
 	
 	void launch();

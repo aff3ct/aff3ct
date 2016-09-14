@@ -1,6 +1,8 @@
 #ifndef PREDICATE_ITE_HPP
 #define PREDICATE_ITE_HPP
 
+#include <cassert>
+
 #include "Predicate.hpp"
 
 class Predicate_ite : public Predicate

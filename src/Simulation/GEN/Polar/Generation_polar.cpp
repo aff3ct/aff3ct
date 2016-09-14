@@ -29,18 +29,10 @@
 #include "Generation_polar.hpp"
 
 Generation_polar
-::Generation_polar(const t_simulation_param& simu_params,
-                   const t_code_param&       code_params,
-                   const t_encoder_param&    enco_params,
-                   const t_channel_param&    chan_params,
-                   const t_decoder_param&    deco_params)
+::Generation_polar(const parameters& params)
 : Simulation(),
-  simu_params(simu_params),
-  code_params(code_params),
-  enco_params(enco_params),
-  chan_params(chan_params),
-  deco_params(deco_params),
-  frozen_bits(code_params.N),
+  params(params),
+  frozen_bits(params.code.N),
   code_rate(0.f),
   sigma(0.f),
   patterns_SC(),
@@ -48,7 +40,7 @@ Generation_polar
   pattern_SC_rate1(new Pattern_SC<pattern_SC_type::RATE_1>()),
   fb_generator(nullptr),
   generator(nullptr),
-  directory(simu_params.gen_decoder_dir)
+  directory(params.simulation.gen_decoder_dir)
 {
 	// pattern allocations
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::STANDARD   >());
@@ -59,13 +51,13 @@ Generation_polar
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::REP        >());
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::SPC        >());
 
-	float snr = simu_params.snr_min;
+	float snr = params.simulation.snr_min;
 
-	code_rate = (float)code_params.K / (float)code_params.N;
+	code_rate = (float)params.code.K / (float)params.code.N;
 	sigma     = (float)1.0 / sqrt((float)2.0 * code_rate * pow((float)10.0, (snr / (float)10.0)));
 
 	// build the frozen bits generator
-	fb_generator = Factory_frozenbits_generator<int>::build(simu_params, code_params);
+	fb_generator = Factory_frozenbits_generator<int>::build(params);
 	check_errors(fb_generator, "Frozenbits_generator<int>");
 
 	// generate the frozen bits
@@ -73,8 +65,8 @@ Generation_polar
 	fb_generator->generate(frozen_bits);
 
 	// work only for SC and systematic encoding...
-	fileName  = "Decoder_polar_SC_fast_sys_N"   + std::to_string(code_params.N) +
-	                                     "_K"   + std::to_string(code_params.K) +
+	fileName  = "Decoder_polar_SC_fast_sys_N"   + std::to_string(params.code.N) +
+	                                     "_K"   + std::to_string(params.code.K) +
 	                                   "_SNR" + std::to_string((int)(snr*10));
 
 	dec_file        .open((directory + "/" + fileName + ".hpp"      ).c_str(), std::ios_base::out);
@@ -82,7 +74,7 @@ Generation_polar
 	graph_file      .open((directory + "/" + fileName + ".dot"      ).c_str(), std::ios_base::out);
 	short_graph_file.open((directory + "/" + fileName + ".short.dot").c_str(), std::ios_base::out);
 
-	generator = new Generator_polar_SC_sys(code_params.K, code_params.N, snr, frozen_bits,
+	generator = new Generator_polar_SC_sys(params.code.K, params.code.N, snr, frozen_bits,
 	                                       patterns_SC, *pattern_SC_rate0, *pattern_SC_rate1,
 	                                       dec_file, short_dec_file, graph_file, short_graph_file);
 }
@@ -107,7 +99,7 @@ void Generation_polar
 {
 	this->generator->generate();
 
-	if (!simu_params.disable_display)
+	if (!params.simulation.disable_display)
 	{
 		std::string tab = "   ";
 
@@ -115,7 +107,7 @@ void Generation_polar
 		std::cout << "General statistics:" << std::endl;
 		std::cout << "-------------------" << std::endl;
 
-		unsigned long n_nodes     = code_params.N -1;
+		unsigned long n_nodes     = params.code.N -1;
 		unsigned long n_nodes_gen = generator->get_n_generated_nodes();
 
 		std::cout << tab << "Generated decoder file name = " << directory << "/" << fileName << ".hpp" << std::endl;
@@ -147,13 +139,13 @@ void Generation_polar
 
 		std::cout << "Per layer (graph depth) statistics:" << std::endl;
 		std::cout << "-----------------------------------" << std::endl;
-		for (auto d = 0; d < code_params.m +1; d++)
+		for (auto d = 0; d < params.code.m +1; d++)
 		{
 			n_nodes     = pow(2, d);
 			n_nodes_gen = generator->get_n_generated_nodes(d);
 
 			std::cout << tab        << "* Graph depth = " << d                               << std::endl;
-			std::cout << tab << tab << "Sub-code length = " << std::pow(2, code_params.m -d) << std::endl;
+			std::cout << tab << tab << "Sub-code length = " << std::pow(2, params.code.m -d) << std::endl;
 			std::cout << tab << tab << "Nodes number before pruning = " << n_nodes           << std::endl;
 			std::cout << tab << tab << "Nodes number  after pruning = " << n_nodes_gen       << std::endl;
 			std::cout << tab << tab << "Terminal nodes (alias pruning rules)"                << std::endl;
@@ -176,7 +168,7 @@ void Generation_polar
 					          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), d) 
 					          << " / " << n_nodes_gen << std::endl;
 			}
-			if (d < code_params.m)
+			if (d < params.code.m)
 				std::cout << std::endl;
 			else
 				std::cerr << "#" << std::endl;

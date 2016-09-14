@@ -15,13 +15,8 @@
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_EXIT_RSC<B,R,Q,QD>
-::Simulation_EXIT_RSC(const t_simulation_param& simu_params,
-                      const t_code_param&       code_params,
-                      const t_encoder_param&    enco_params,
-                      const t_mod_param&        mod_params,
-                      const t_channel_param&    chan_params,
-                      const t_decoder_param&    deco_params)
-: Simulation_EXIT<B,R,Q>(simu_params, code_params, enco_params, mod_params, chan_params, deco_params)
+::Simulation_EXIT_RSC(const parameters& params)
+: Simulation_EXIT<B,R,Q>(params)
 {
 }
 
@@ -39,14 +34,14 @@ void Simulation_EXIT_RSC<B,R,Q,QD>
                         mipp::vector<Q> &par)
 {
 	// extract systematic and parity information
-	for (auto i = 0; i < this->code_params.K + this->code_params.tail_length/2; i++)
+	for (auto i = 0; i < this->params.code.K + this->params.code.tail_length/2; i++)
 	{
 		sys[i] = Lch_N[i*2 +0];
 		par[i] = Lch_N[i*2 +1];
 	}
 
 	// add other siso's extrinsic
-	for(auto i = 0 ; i < this->code_params.K ; i ++)
+	for(auto i = 0 ; i < this->params.code.K ; i ++)
 		sys[i] += La_K[i];
 }
 
@@ -66,10 +61,7 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_EXIT_RSC<B,R,Q,QD>
 ::build_encoder()
 {
-	auto encoder = Factory_encoder_RSC<B>::build(this->simu_params,
-	                                             this->code_params,
-	                                             this->enco_params,
-	                                             this->deco_params);
+	auto encoder = Factory_encoder_RSC<B>::build(this->params);
 	trellis = encoder->get_trellis();
 	return encoder;
 }
@@ -78,11 +70,7 @@ template <typename B, typename R, typename Q, typename QD>
 SISO<Q>* Simulation_EXIT_RSC<B,R,Q,QD>
 ::build_siso()
 {
-	return Factory_decoder_RSC<B,Q,QD>::build_siso(this->code_params,
-	                                               this->enco_params,
-	                                               this->chan_params,
-	                                               this->deco_params,
-	                                               trellis);
+	return Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis);
 }
 
 // ==================================================================================== explicit template instantiation 

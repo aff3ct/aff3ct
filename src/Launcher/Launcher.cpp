@@ -21,27 +21,27 @@ Launcher<B,R,Q>
 	type_names[typeid(double)]      = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
 
 	// default parameters
-	simu_params.snr_step            = 0.1f;
-	simu_params.disable_display     = false;
-	simu_params.n_threads           = 1;
-	simu_params.stop_time           = std::chrono::seconds(0);
-	simu_params.display_freq        = std::chrono::milliseconds(500);
-	code_params.tail_length         = 0;
-	code_params.generation_method   = "RAND";
-	chan_params.domain              = "LLR";
-	chan_params.type                = "AWGN";
-	mod_params.type                 = "BPSK";
-	mod_params.bits_per_symbol      = 1;
-	mod_params.upsample_factor      = 1;
-	mod_params.demod_max            = "MAXSS";
+	params.simulation.snr_step        = 0.1f;
+	params.simulation.disable_display = false;
+	params.simulation.n_threads       = 1;
+	params.simulation.stop_time       = std::chrono::seconds(0);
+	params.simulation.display_freq    = std::chrono::milliseconds(500);
+	params.code.tail_length           = 0;
+	params.code.generation_method     = "RAND";
+	params.channel.domain             = "LLR";
+	params.channel.type               = "AWGN";
+	params.modulator.type             = "BPSK";
+	params.modulator.bits_per_symbol  = 1;
+	params.modulator.upsample_factor  = 1;
+	params.modulator.demod_max        = "MAXSS";
 
-	this->chan_params.quant_min_max = 0.f;
+	params.channel.quant_min_max      = 0.f;
 	if (typeid(R) == typeid(double))
-		chan_params.quantizer_type  = "STD";
+		params.channel.quantizer_type = "STD";
 	else
-		chan_params.quantizer_type  = "STD_FAST";
+		params.channel.quantizer_type = "STD_FAST";
 
-	mod_params.disable_demod_sig2   = false;
+	params.modulator.disable_demod_sig2   = false;
 }
 
 template <typename B, typename R, typename Q>
@@ -137,58 +137,58 @@ void Launcher<B,R,Q>
 	using namespace std::chrono;
 
 	// required parameters
-	code_params.K      = std::stoi(ar.get_arg("K"));
-	code_params.N      = std::stoi(ar.get_arg("N"));
-	code_params.N_code = std::stoi(ar.get_arg("N"));
-	code_params.m      = std::ceil(std::log2(code_params.N));
+	params.code.K      = std::stoi(ar.get_arg("K"));
+	params.code.N      = std::stoi(ar.get_arg("N"));
+	params.code.N_code = std::stoi(ar.get_arg("N"));
+	params.code.m      = std::ceil(std::log2(params.code.N));
 
-	if (code_params.K > code_params.N)
+	if (params.code.K > params.code.N)
 	{
 		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	simu_params.snr_min = std::stof(ar.get_arg("snr-min"));
-	simu_params.snr_max = std::stof(ar.get_arg("snr-max"));
+	params.simulation.snr_min = std::stof(ar.get_arg("snr-min"));
+	params.simulation.snr_max = std::stof(ar.get_arg("snr-max"));
 
-	code_params.type = ar.get_arg("code-type");
+	params.code.type = ar.get_arg("code-type");
 
 	// facultative parameters
-	if(ar.exist_arg("simu-type"         )) simu_params.type              = ar.get_arg("simu-type");
-	if(ar.exist_arg("snr-step"          )) simu_params.snr_step          = std::stof(ar.get_arg("snr-step"));
-	if(ar.exist_arg("disable-display"   )) simu_params.disable_display   = true;
-	if(ar.exist_arg("stop-time"         )) simu_params.stop_time         = seconds(std::stoi(ar.get_arg("stop-time")));
-	if(ar.exist_arg("display-freq"      )) simu_params.display_freq      = milliseconds(std::stoi(ar.get_arg("display-freq")));
-	if(ar.exist_arg("n-threads"         )) simu_params.n_threads         = std::stoi(ar.get_arg("n-threads"));
-	if(ar.exist_arg("code-gen-method"   )) code_params.generation_method = ar.get_arg("code-gen-method");
-	if(ar.exist_arg("domain"            )) chan_params.domain            = ar.get_arg("domain");
-	if(ar.exist_arg("channel-type"      )) chan_params.type              = ar.get_arg("channel-type");
-	if(ar.exist_arg("mod-type"          )) mod_params.type               = ar.get_arg("mod-type");
-	if(ar.exist_arg("disable-demod-sig2")) mod_params.disable_demod_sig2 = true;
-	if(ar.exist_arg("dec-algo"          )) deco_params.algo              = ar.get_arg("dec-algo");
-	if(ar.exist_arg("dec-implem"        )) deco_params.implem            = ar.get_arg("dec-implem");
+	if(ar.exist_arg("simu-type"         )) params.simulation.type              = ar.get_arg("simu-type");
+	if(ar.exist_arg("snr-step"          )) params.simulation.snr_step          = std::stof(ar.get_arg("snr-step"));
+	if(ar.exist_arg("disable-display"   )) params.simulation.disable_display   = true;
+	if(ar.exist_arg("stop-time"         )) params.simulation.stop_time         = seconds(std::stoi(ar.get_arg("stop-time")));
+	if(ar.exist_arg("display-freq"      )) params.simulation.display_freq      = milliseconds(std::stoi(ar.get_arg("display-freq")));
+	if(ar.exist_arg("n-threads"         )) params.simulation.n_threads         = std::stoi(ar.get_arg("n-threads"));
+	if(ar.exist_arg("code-gen-method"   )) params.code.generation_method       = ar.get_arg("code-gen-method");
+	if(ar.exist_arg("domain"            )) params.channel.domain               = ar.get_arg("domain");
+	if(ar.exist_arg("channel-type"      )) params.channel.type                 = ar.get_arg("channel-type");
+	if(ar.exist_arg("mod-type"          )) params.modulator.type               = ar.get_arg("mod-type");
+	if(ar.exist_arg("disable-demod-sig2")) params.modulator.disable_demod_sig2 = true;
+	if(ar.exist_arg("dec-algo"          )) params.decoder.algo                 = ar.get_arg("dec-algo");
+	if(ar.exist_arg("dec-implem"        )) params.decoder.implem               = ar.get_arg("dec-implem");
 
-	if(ar.exist_arg("mod-type"          )) mod_params.type               = ar.get_arg("mod-type");
-	if(ar.exist_arg("mod-bps"           )) mod_params.bits_per_symbol    = std::stof(ar.get_arg("mod-bps"));
-	if(ar.exist_arg("mod-ups"           )) mod_params.upsample_factor    = std::stoi(ar.get_arg("mod-ups"));
-	if(ar.exist_arg("demod-max"         )) mod_params.demod_max          = ar.get_arg("demod-max");
+	if(ar.exist_arg("mod-type"          )) params.modulator.type               = ar.get_arg("mod-type");
+	if(ar.exist_arg("mod-bps"           )) params.modulator.bits_per_symbol    = std::stof(ar.get_arg("mod-bps"));
+	if(ar.exist_arg("mod-ups"           )) params.modulator.upsample_factor    = std::stoi(ar.get_arg("mod-ups"));
+	if(ar.exist_arg("demod-max"         )) params.modulator.demod_max          = ar.get_arg("demod-max");
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		if(ar.exist_arg("quantizer-type")) chan_params.quantizer_type    = ar.get_arg("quantizer-type");
-		if(ar.exist_arg("qpoint-pos"    )) chan_params.quant_point_pos   = std::stoi(ar.get_arg("qpoint-pos"));
-		if(ar.exist_arg("qn-bits"       )) chan_params.quant_n_bits      = std::stoi(ar.get_arg("qn-bits"));
-		if(ar.exist_arg("qmin-max"      )) chan_params.quant_min_max     = std::stof(ar.get_arg("qmin-max"));
+		if(ar.exist_arg("quantizer-type")) params.channel.quantizer_type       = ar.get_arg("quantizer-type");
+		if(ar.exist_arg("qpoint-pos"    )) params.channel.quant_point_pos      = std::stoi(ar.get_arg("qpoint-pos"));
+		if(ar.exist_arg("qn-bits"       )) params.channel.quant_n_bits         = std::stoi(ar.get_arg("qn-bits"));
+		if(ar.exist_arg("qmin-max"      )) params.channel.quant_min_max        = std::stof(ar.get_arg("qmin-max"));
 	}
 
 	// force the number of bits per symbol to 1 when BPSK mod
-	if (mod_params.type == "BPSK" || mod_params.type == "BPSK_FAST")
-		mod_params.bits_per_symbol = 1;
+	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
+		params.modulator.bits_per_symbol = 1;
 
-	if (mod_params.type == "GSM" || mod_params.type == "GSM_TBLESS")
+	if (params.modulator.type == "GSM" || params.modulator.type == "GSM_TBLESS")
 	{
-		mod_params.bits_per_symbol = 1;
-		mod_params.upsample_factor = 5;
+		params.modulator.bits_per_symbol = 1;
+		params.modulator.upsample_factor = 5;
 	}
 }
 
@@ -229,57 +229,57 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::print_header()
 {
-	std::string N = std::to_string(code_params.N);
-	if (code_params.tail_length > 0) 
-		N += " + " + std::to_string(code_params.tail_length) + " (tail bits)";
+	std::string N = std::to_string(params.code.N);
+	if (params.code.tail_length > 0)
+		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
 	std::string quantif = "unused";
 	if (type_names[typeid(R)] != type_names[typeid(Q)])
 	{
-		if (chan_params.quantizer_type == "TRICKY")
-			quantif = "{"+std::to_string(chan_params.quant_n_bits)+", "+std::to_string(chan_params.quant_min_max)+"f}";
+		if (params.channel.quantizer_type == "TRICKY")
+			quantif = "{"+std::to_string(params.channel.quant_n_bits)+", "+std::to_string(params.channel.quant_min_max)+"f}";
 		else
-			quantif = "{"+std::to_string(chan_params.quant_n_bits)+", "+std::to_string(chan_params.quant_point_pos)+"}";
+			quantif = "{"+std::to_string(params.channel.quant_n_bits)+", "+std::to_string(params.channel.quant_point_pos)+"}";
 	}
 
-	std::string demod_sig2 = (mod_params.disable_demod_sig2) ? "off" : "on";
-	std::string demod_max  = (mod_params.type == "BPSK") || 
-	                           (mod_params.type == "BPSK_FAST") ? 
-	                           "unused" : mod_params.demod_max;
+	std::string demod_sig2 = (params.modulator.disable_demod_sig2) ? "off" : "on";
+	std::string demod_max  = (params.modulator.type == "BPSK") ||
+	                           (params.modulator.type == "BPSK_FAST") ?
+	                           "unused" : params.modulator.demod_max;
 
-	std::string modulation = std::to_string((int)(1 << mod_params.bits_per_symbol)) + "-" + mod_params.type;
-	if ((mod_params.type == "BPSK") || (mod_params.type == "BPSK_FAST")|| (mod_params.type == "GSM") || 
-		(mod_params.type == "GSM_TBLESS"))
-		modulation = mod_params.type;
-	modulation += " (" + std::to_string(mod_params.upsample_factor) + "-UPS)";
+	std::string modulation = std::to_string((int)(1 << params.modulator.bits_per_symbol)) + "-" + params.modulator.type;
+	if ((params.modulator.type == "BPSK") || (params.modulator.type == "BPSK_FAST")|| (params.modulator.type == "GSM") ||
+		(params.modulator.type == "GSM_TBLESS"))
+		modulation = params.modulator.type;
+	modulation += " (" + std::to_string(params.modulator.upsample_factor) + "-UPS)";
 
 	// display configuration and simulation parameters
-	stream << "# " << bold("-------------------------------------------------")                           << std::endl;
-	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                           << std::endl;
-	stream << "# " << bold("-------------------------------------------------")                           << std::endl;
-	stream << "#"                                                                                         << std::endl;
-	stream << "# " << bold_underlined("Simulation parameters:")                                           << std::endl;
-	stream << "# " << bold("* Simulation type               ") << " = " << simu_params.type               << std::endl;
-	stream << "# " << bold("* Code type                     ") << " = " << code_params.type << " codes"   << std::endl;
-	stream << "# " << bold("* Number of information bits (K)") << " = " << code_params.K                  << std::endl;
-	stream << "# " << bold("* Codeword length            (N)") << " = " << N                              << std::endl;
-	stream << "# " << bold("* SNR min                       ") << " = " << simu_params.snr_min   << " dB" << std::endl;
-	stream << "# " << bold("* SNR max                       ") << " = " << simu_params.snr_max   << " dB" << std::endl;
-	stream << "# " << bold("* SNR step                      ") << " = " << simu_params.snr_step  << " dB" << std::endl;
-	stream << "# " << bold("* Domain                        ") << " = " << chan_params.domain             << std::endl;
-	stream << "# " << bold("* Codewords generation method   ") << " = " << code_params.generation_method  << std::endl;
-	stream << "# " << bold("* Modulation type               ") << " = " << modulation                     << std::endl;
-	stream << "# " << bold("* Demodulation sigma square     ") << " = " << demod_sig2                     << std::endl;
-	stream << "# " << bold("* Demodulation max type         ") << " = " << demod_max                      << std::endl;
-	stream << "# " << bold("* Channel type                  ") << " = " << chan_params.type               << std::endl;
-	stream << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]          << std::endl;
-	stream << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]          << std::endl;
+	stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
+	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                 << std::endl;
+	stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
+	stream << "#"                                                                                               << std::endl;
+	stream << "# " << bold_underlined("Simulation parameters:")                                                 << std::endl;
+	stream << "# " << bold("* Simulation type               ") << " = " << params.simulation.type               << std::endl;
+	stream << "# " << bold("* Code type                     ") << " = " << params.code.type << " codes"         << std::endl;
+	stream << "# " << bold("* Number of information bits (K)") << " = " << params.code.K                        << std::endl;
+	stream << "# " << bold("* Codeword length            (N)") << " = " << N                                    << std::endl;
+	stream << "# " << bold("* SNR min                       ") << " = " << params.simulation.snr_min   << " dB" << std::endl;
+	stream << "# " << bold("* SNR max                       ") << " = " << params.simulation.snr_max   << " dB" << std::endl;
+	stream << "# " << bold("* SNR step                      ") << " = " << params.simulation.snr_step  << " dB" << std::endl;
+	stream << "# " << bold("* Domain                        ") << " = " << params.channel.domain                << std::endl;
+	stream << "# " << bold("* Codewords generation method   ") << " = " << params.code.generation_method        << std::endl;
+	stream << "# " << bold("* Modulation type               ") << " = " << modulation                           << std::endl;
+	stream << "# " << bold("* Demodulation sigma square     ") << " = " << demod_sig2                           << std::endl;
+	stream << "# " << bold("* Demodulation max type         ") << " = " << demod_max                            << std::endl;
+	stream << "# " << bold("* Channel type                  ") << " = " << params.channel.type                  << std::endl;
+	stream << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]                << std::endl;
+	stream << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]                << std::endl;
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		stream << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]      << std::endl;
-		stream << "# " << bold("* Quantizer type                ") << " = " << chan_params.quantizer_type << std::endl;
-		stream << "# " << bold("* Fixed-point representation    ") << " = " << quantif                    << std::endl;
+		stream << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]         << std::endl;
+		stream << "# " << bold("* Quantizer type                ") << " = " << params.channel.quantizer_type << std::endl;
+		stream << "# " << bold("* Fixed-point representation    ") << " = " << quantif                       << std::endl;
 	}
 }
 

@@ -7,15 +7,14 @@
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
-::build(const t_code_param &code_params, const t_decoder_param &deco_params, 
-        const Frozenbits_generator<B> *fb_generator)
+::build(const parameters &params, const Frozenbits_generator<B> *fb_generator)
 {
 	Puncturer<B,Q> *puncturer = nullptr;
 
-	if (code_params.N != code_params.N_code)
-		puncturer = new Puncturer_polar_wangliu<B,Q>(code_params.K, code_params.N, *fb_generator);
+	if (params.code.N != params.code.N_code)
+		puncturer = new Puncturer_polar_wangliu<B,Q>(params.code.K, params.code.N, *fb_generator);
 	else
-		puncturer = new Puncturer_NO<B,Q>(code_params.K, code_params.N);
+		puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N);
 
 	return puncturer;
 }

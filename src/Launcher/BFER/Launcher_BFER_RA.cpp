@@ -11,16 +11,16 @@ Launcher_BFER_RA<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	// override parameters
-	this->chan_params.quant_n_bits    = 7;
-	this->chan_params.quant_point_pos = 2;
+	this->params.channel.quant_n_bits    = 7;
+	this->params.channel.quant_point_pos = 2;
 
 	// default parameters
-	this->code_params.type            = "RA";
-	this->deco_params.algo            = "RA";
-	this->deco_params.implem          = "STD";
+	this->params.code.type               = "RA";
+	this->params.decoder.algo            = "RA";
+	this->params.decoder.implem          = "STD";
 
-	this->deco_params.max_iter        = 10;
-	this->code_params.interleaver     = "RANDOM";
+	this->params.decoder.max_iter        = 10;
+	this->params.code.interleaver        = "RANDOM";
 }
 
 template <typename B, typename R, typename Q>
@@ -41,8 +41,8 @@ void Launcher_BFER_RA<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("max-iter"   )) this->deco_params.max_iter    = std::stoi(this->ar.get_arg("max-iter"));
-	if(this->ar.exist_arg("interleaver")) this->code_params.interleaver = this->ar.get_arg("interleaver");
+	if(this->ar.exist_arg("max-iter"   )) this->params.decoder.max_iter = std::stoi(this->ar.get_arg("max-iter"));
+	if(this->ar.exist_arg("interleaver")) this->params.code.interleaver = this->ar.get_arg("interleaver");
 }
 
 template <typename B, typename R, typename Q>
@@ -52,20 +52,15 @@ void Launcher_BFER_RA<B,R,Q>
 	Launcher_BFER<B,R,Q>::print_header();
 
 	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->deco_params.max_iter    << std::endl;
-	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->code_params.interleaver << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.max_iter << std::endl;
+	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->params.code.interleaver << std::endl;
 }
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_RA<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_RA<B,R,Q>(this->simu_params,
-	                                      this->code_params,
-	                                      this->enco_params,
-	                                      this->mod_params,
-	                                      this->chan_params,
-	                                      this->deco_params);
+	this->simu = new Simulation_RA<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

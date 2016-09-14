@@ -7,8 +7,7 @@
 template <typename R>
 struct Factory_scaling_factor
 {
-	static Scaling_factor<R>* build(const t_code_param    &code_params,
-	                                const t_decoder_param &deco_params);
+	static Scaling_factor<R>* build(const parameters &params);
 };
 
 #endif /* FACTORY_SCALING_FACTOR_HPP */

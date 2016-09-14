@@ -8,23 +8,23 @@
 
 template <typename B>
 Frozenbits_generator<B>* Factory_frozenbits_generator<B>
-::build(const t_simulation_param &simu_params, const t_code_param &code_params)
+::build(const parameters &params)
 {
 	Frozenbits_generator<B> *fb_generator = nullptr;
 
 	// build the frozen bits generator
-	if (!simu_params.awgn_codes_file.empty())
+	if (!params.simulation.awgn_codes_file.empty())
 	{
-		fb_generator = new Frozenbits_generator_file<B>(code_params.K, code_params.N_code, simu_params.awgn_codes_file);
+		fb_generator = new Frozenbits_generator_file<B>(params.code.K, params.code.N_code, params.simulation.awgn_codes_file);
 	}
 	else
 	{
-		if (code_params.fb_gen_method == "GA")
-			fb_generator = new Frozenbits_generator_GA<B>(code_params.K, code_params.N_code, code_params.sigma);
+		if (params.code.fb_gen_method == "GA")
+			fb_generator = new Frozenbits_generator_GA<B>(params.code.K, params.code.N_code, params.code.sigma);
 #ifdef ENABLE_POLAR_BOUNDS
-		else if (code_params.fb_gen_method == "TV")
-			fb_generator = new Frozenbits_generator_TV<B>(code_params.K, code_params.N_code, simu_params.awgn_codes_dir, 
-			                                              simu_params.bin_pb_path, code_params.sigma);
+		else if (params.code.fb_gen_method == "TV")
+			fb_generator = new Frozenbits_generator_TV<B>(params.code.K, params.code.N_code, params.simulation.awgn_codes_dir,
+			                                              params.simulation.bin_pb_path, params.code.sigma);
 #endif
 	}
 
