@@ -55,7 +55,7 @@ Simulation_EXIT<B,R,Q>
 
   I_A      (0.0),
   I_E      (0.0),
-  sig_a    (0.0),
+  sig_a    (0.f),
   code_rate(0.f),
   sigma    (0.f),
   snr      (0.f),
