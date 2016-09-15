@@ -12,7 +12,7 @@
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
-class Simulation_turbo : public Simulation_BFER<B,R,Q>
+class Simulation_BFER_turbo : public Simulation_BFER<B,R,Q>
 {
 protected:
 	// the trellis representation
@@ -23,8 +23,8 @@ protected:
 	std::vector<Scaling_factor<Q>*>  sf;
 
 public:
-	Simulation_turbo(const parameters& params);
-	virtual ~Simulation_turbo();
+	Simulation_BFER_turbo(const parameters& params);
+	virtual ~Simulation_BFER_turbo();
 
 protected:
 	void          release_objects  ();

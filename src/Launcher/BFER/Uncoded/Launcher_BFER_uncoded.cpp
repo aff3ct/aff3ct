@@ -1,9 +1,8 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/BFER/Uncoded/Simulation_uncoded.hpp"
-
 #include "Launcher_BFER_uncoded.hpp"
+#include "../../../Simulation/BFER/Uncoded/Simulation_BFER_uncoded.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_uncoded<B,R,Q>
@@ -45,7 +44,7 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_uncoded<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_uncoded<B,R,Q>(this->params);
+	this->simu = new Simulation_BFER_uncoded<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

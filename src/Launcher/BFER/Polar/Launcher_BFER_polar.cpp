@@ -4,10 +4,10 @@
 
 #include "Tools/Display/bash_tools.h"
 
-#include "Simulation/BFER/Polar/Simulation_polar.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 #include "Launcher_BFER_polar.hpp"
+#include "../../../Simulation/BFER/Polar/Simulation_BFER_polar.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_polar<B,R,Q>
@@ -132,7 +132,7 @@ void Launcher_BFER_polar<B,R,Q>
 		this->params.code.K += CRC_polynomial<B>::size(this->params.code.crc);
 	}
 
-	this->simu = new Simulation_polar<B,R,Q>(this->params);
+	this->simu = new Simulation_BFER_polar<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

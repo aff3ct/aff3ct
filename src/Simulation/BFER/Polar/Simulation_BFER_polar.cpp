@@ -1,3 +1,5 @@
+#include "Simulation_BFER_polar.hpp"
+
 #include <string>
 #include <vector>
 #include <chrono>
@@ -15,11 +17,10 @@
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
-#include "Simulation_polar.hpp"
 
 template <typename B, typename R, typename Q>
-Simulation_polar<B,R,Q>
-::Simulation_polar(const parameters& params)
+Simulation_BFER_polar<B,R,Q>
+::Simulation_BFER_polar(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
   frozen_bits(std::exp2(this->params.code.m)),
   is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos) && (params.decoder.algo == "SC")),
@@ -40,14 +41,14 @@ Simulation_polar<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation_polar<B,R,Q>
-::~Simulation_polar()
+Simulation_BFER_polar<B,R,Q>
+::~Simulation_BFER_polar()
 {
 	if (fb_generator != nullptr) { delete fb_generator; fb_generator = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_polar<B,R,Q>
+void Simulation_BFER_polar<B,R,Q>
 ::launch_precompute()
 {
 	if (!is_generated_decoder)
@@ -67,7 +68,7 @@ void Simulation_polar<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_polar<B,R,Q>
+void Simulation_BFER_polar<B,R,Q>
 ::snr_precompute()
 {
 	// adaptative frozen bits generation
@@ -93,21 +94,21 @@ void Simulation_polar<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Puncturer<B,Q>* Simulation_polar<B,R,Q>
+Puncturer<B,Q>* Simulation_BFER_polar<B,R,Q>
 ::build_puncturer(const int tid)
 {
 	return Factory_puncturer_polar<B,Q>::build(this->params, fb_generator);
 }
 
 template <typename B, typename R, typename Q>
-Encoder<B>* Simulation_polar<B,R,Q>
+Encoder<B>* Simulation_BFER_polar<B,R,Q>
 ::build_encoder(const int tid)
 {
 	return Factory_encoder_polar<B>::build(this->params, frozen_bits);
 }
 
 template <typename B, typename R, typename Q>
-Decoder<B,Q>* Simulation_polar<B,R,Q>
+Decoder<B,Q>* Simulation_BFER_polar<B,R,Q>
 ::build_decoder(const int tid)
 {
 	if (is_generated_decoder)
@@ -119,11 +120,11 @@ Decoder<B,Q>* Simulation_polar<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_polar<B_8,R_8,Q_8>;
-template class Simulation_polar<B_16,R_16,Q_16>;
-template class Simulation_polar<B_32,R_32,Q_32>;
-template class Simulation_polar<B_64,R_64,Q_64>;
+template class Simulation_BFER_polar<B_8,R_8,Q_8>;
+template class Simulation_BFER_polar<B_16,R_16,Q_16>;
+template class Simulation_BFER_polar<B_32,R_32,Q_32>;
+template class Simulation_BFER_polar<B_64,R_64,Q_64>;
 #else
-template class Simulation_polar<B,R,Q>;
+template class Simulation_BFER_polar<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

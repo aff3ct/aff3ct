@@ -7,7 +7,7 @@
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
-class Simulation_polar : public Simulation_BFER<B,R,Q>
+class Simulation_BFER_polar : public Simulation_BFER<B,R,Q>
 {
 protected:
 	mipp::vector<B> frozen_bits; // known bits (alias frozen bits) are set to true
@@ -15,8 +15,8 @@ protected:
 	Frozenbits_generator<B> *fb_generator;
 
 public:
-	Simulation_polar(const parameters& params);
-	virtual ~Simulation_polar();
+	Simulation_BFER_polar(const parameters& params);
+	virtual ~Simulation_BFER_polar();
 
 protected:
 	void            launch_precompute();

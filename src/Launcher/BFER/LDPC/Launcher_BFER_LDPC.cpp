@@ -1,9 +1,8 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/BFER/LDPC/Simulation_LDPC.hpp"
-
 #include "Launcher_BFER_LDPC.hpp"
+#include "../../../Simulation/BFER/LDPC/Simulation_BFER_LDPC.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_LDPC<B,R,Q>
@@ -60,7 +59,7 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_LDPC<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_LDPC<B,R,Q>(this->params);
+	this->simu = new Simulation_BFER_LDPC<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

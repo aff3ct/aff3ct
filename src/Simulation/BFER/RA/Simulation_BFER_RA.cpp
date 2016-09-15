@@ -1,3 +1,5 @@
+#include "Simulation_BFER_RA.hpp"
+
 #include <string>
 #include <vector>
 #include <chrono>
@@ -10,11 +12,10 @@
 #include "Module/Encoder/RA/Encoder_RA.hpp"
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
-#include "Simulation_RA.hpp"
 
 template <typename B, typename R, typename Q>
-Simulation_RA<B,R,Q>
-::Simulation_RA(const parameters& params)
+Simulation_BFER_RA<B,R,Q>
+::Simulation_BFER_RA(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
   interleaver(nullptr)
 {
@@ -25,26 +26,26 @@ Simulation_RA<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation_RA<B,R,Q>
-::~Simulation_RA()
+Simulation_BFER_RA<B,R,Q>
+::~Simulation_BFER_RA()
 {
 	delete interleaver;
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_RA<B,R,Q>
+void Simulation_BFER_RA<B,R,Q>
 ::launch_precompute()
 {
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_RA<B,R,Q>
+void Simulation_BFER_RA<B,R,Q>
 ::snr_precompute()
 {
 }
 
 template <typename B, typename R, typename Q>
-Encoder<B>* Simulation_RA<B,R,Q>
+Encoder<B>* Simulation_BFER_RA<B,R,Q>
 ::build_encoder(const int tid)
 {
 	Encoder<B>* encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *interleaver);
@@ -52,7 +53,7 @@ Encoder<B>* Simulation_RA<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Decoder<B,Q>* Simulation_RA<B,R,Q>
+Decoder<B,Q>* Simulation_BFER_RA<B,R,Q>
 ::build_decoder(const int tid)
 {
 	Decoder<B,Q>* decoder = new Decoder_RA<B,Q>(this->params.code.K,
@@ -68,11 +69,11 @@ Decoder<B,Q>* Simulation_RA<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_RA<B_8,R_8,Q_8>;
-template class Simulation_RA<B_16,R_16,Q_16>;
-template class Simulation_RA<B_32,R_32,Q_32>;
-template class Simulation_RA<B_64,R_64,Q_64>;
+template class Simulation_BFER_RA<B_8,R_8,Q_8>;
+template class Simulation_BFER_RA<B_16,R_16,Q_16>;
+template class Simulation_BFER_RA<B_32,R_32,Q_32>;
+template class Simulation_BFER_RA<B_64,R_64,Q_64>;
 #else
-template class Simulation_RA<B,R,Q>;
+template class Simulation_BFER_RA<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

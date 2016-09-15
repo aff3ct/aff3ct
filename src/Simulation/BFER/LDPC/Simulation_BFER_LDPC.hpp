@@ -4,7 +4,7 @@
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
-class Simulation_LDPC : public Simulation_BFER<B,R,Q>
+class Simulation_BFER_LDPC : public Simulation_BFER<B,R,Q>
 {
 protected:
 	// LDPC bi-partite graph representation
@@ -13,9 +13,9 @@ protected:
 	std::vector<unsigned int > transpose;
 
 public:
-	Simulation_LDPC(const parameters& params);
+	Simulation_BFER_LDPC(const parameters& params);
 
-	virtual ~Simulation_LDPC();
+	virtual ~Simulation_BFER_LDPC();
 
 protected:
 	void          launch_precompute();

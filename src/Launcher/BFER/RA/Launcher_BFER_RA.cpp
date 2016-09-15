@@ -1,9 +1,8 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/BFER/RA/Simulation_RA.hpp"
-
 #include "Launcher_BFER_RA.hpp"
+#include "../../../Simulation/BFER/RA/Simulation_BFER_RA.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_RA<B,R,Q>
@@ -60,7 +59,7 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_RA<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_RA<B,R,Q>(this->params);
+	this->simu = new Simulation_BFER_RA<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

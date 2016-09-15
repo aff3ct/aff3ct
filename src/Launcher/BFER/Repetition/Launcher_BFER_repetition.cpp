@@ -1,9 +1,8 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/BFER/Repetition/Simulation_repetition.hpp"
-
 #include "Launcher_BFER_repetition.hpp"
+#include "../../../Simulation/BFER/Repetition/Simulation_BFER_repetition.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_repetition<B,R,Q>
@@ -57,7 +56,7 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_repetition<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_repetition<B,R,Q>(this->params);
+	this->simu = new Simulation_BFER_repetition<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

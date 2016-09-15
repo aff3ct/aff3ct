@@ -4,15 +4,15 @@
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
-class Simulation_RSC : public Simulation_BFER<B,R,Q>
+class Simulation_BFER_RSC : public Simulation_BFER<B,R,Q>
 {
 protected:
 	// the trellis representation
 	std::vector<std::vector<int>> trellis;
 
 public:
-	Simulation_RSC(const parameters& params);
-	virtual ~Simulation_RSC();
+	Simulation_BFER_RSC(const parameters& params);
+	virtual ~Simulation_BFER_RSC();
 
 protected:
 	void          launch_precompute();

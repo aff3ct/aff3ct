@@ -6,12 +6,12 @@
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
-class Simulation_repetition : public Simulation_BFER<B,R,Q>
+class Simulation_BFER_repetition : public Simulation_BFER<B,R,Q>
 {
 public:
-	Simulation_repetition(const parameters& params);
+	Simulation_BFER_repetition(const parameters& params);
 
-	virtual ~Simulation_repetition();
+	virtual ~Simulation_BFER_repetition();
 
 protected:
 	void          launch_precompute();

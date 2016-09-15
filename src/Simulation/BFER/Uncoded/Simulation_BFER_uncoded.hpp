@@ -6,12 +6,12 @@
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
-class Simulation_uncoded : public Simulation_BFER<B,R,Q>
+class Simulation_BFER_uncoded : public Simulation_BFER<B,R,Q>
 {
 public:
-	Simulation_uncoded(const parameters& params);
+	Simulation_BFER_uncoded(const parameters& params);
 
-	virtual ~Simulation_uncoded();
+	virtual ~Simulation_BFER_uncoded();
 
 protected:
 	void          launch_precompute();
