@@ -220,8 +220,8 @@ void Simulation_BFERI<B,R,Q>
 	simu->analyzer   [tid] = simu->build_analyzer   (       tid); check_errors(simu->analyzer   [tid], "Error_analyzer<B,R>");
 
 	// get the real number of frames per threads (from the decoder)
-	auto n_fra = simu->siso[tid]->get_n_frames_siso();
-	assert(simu->siso[tid]->get_n_frames_siso() == simu->decoder[tid]->get_n_frames());
+	auto n_fra = simu->siso[tid]->get_n_frames();
+	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
 
 	// resize the buffers
 	const auto K = simu->params.code.K;

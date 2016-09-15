@@ -6,8 +6,10 @@
 #include <vector>
 #include "Tools/MIPP/mipp.h"
 
+#include "Module/Module.hpp"
+
 template <typename B>
-class Error_analyzer_interface // please use Error_analyzer<B> for inheritance (instead of Error_analyzer_interface<B>)
+class Error_analyzer_interface : public Module // please use Error_analyzer<B> for inheritance (instead of Error_analyzer_interface<B>)
 {
 protected:
 	static bool interrupt;
@@ -18,14 +20,11 @@ protected:
 
 	const int K; // number of information bits
 	const int N; // frame size
-	      int n_frames;
-
-	const std::string name; // module name
 
 public:
 	Error_analyzer_interface(const int& K, const int& N, const int& n_frames = 1, 
 	                         const std::string name = "Error_analyzer_interface")
-	: K(K), N(N), n_frames(n_frames), name(name) 
+	: Module(n_frames, name), K(K), N(N)
 	{
 		Error_analyzer_interface<B>::interrupt = false;
 		Error_analyzer_interface<B>::d_delta_interrupt = std::chrono::nanoseconds(0);

@@ -13,8 +13,7 @@ Decoder_RSC_BCJR<B,R>
                    const bool buffered_encoding, 
                    const int n_frames,
                    const std::string name)
-: Decoder<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name),
-  SISO   <  R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name + "_siso"),
+: Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name),
   n_states(trellis[0].size()),
   n_ff(std::log2(n_states)),
   buffered_encoding(buffered_encoding),
@@ -39,9 +38,10 @@ void Decoder_RSC_BCJR<B,R>
 {
 	if (buffered_encoding)
 	{
-		const auto tail = this->tail_length();
+		const auto tail     = this->tail_length();
+		const auto n_frames = Decoder<B,R>::get_n_frames();
 
-		if (this->get_n_frames() == 1)
+		if (n_frames == 1)
 		{
 			std::copy(Y_N.begin() + 0*this->K, Y_N.begin() + 1*this->K, sys.begin());
 			std::copy(Y_N.begin() + 1*this->K, Y_N.begin() + 2*this->K, par.begin());
@@ -52,7 +52,6 @@ void Decoder_RSC_BCJR<B,R>
 		}
 		else
 		{
-			const auto n_frames = this->get_n_frames();
 			const auto frame_size = 2*this->K + tail;
 
 			std::vector<const R*> frames(n_frames);
@@ -96,7 +95,7 @@ void Decoder_RSC_BCJR<B,R>
 	decode(sys, par, ext);
 
 	// take the hard decision
-	for (auto i = 0; i < this->K * this->n_frames; i += mipp::nElReg<R>())
+	for (auto i = 0; i < this->K * SISO<R>::n_frames; i += mipp::nElReg<R>())
 	{
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 

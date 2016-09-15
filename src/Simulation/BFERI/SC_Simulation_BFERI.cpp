@@ -237,7 +237,7 @@ void Simulation_BFERI<B,R,Q>
 
 	// get the real number of frames per threads (from the decoder)
 	this->n_frames = this->decoder[0]->get_n_frames();
-	assert(this->siso[0]->get_n_frames_siso() == this->decoder[0]->get_n_frames());
+	assert(this->siso[0]->get_n_frames() == this->decoder[0]->get_n_frames());
 
 	// set the real number of frames per thread
 	this->source     [0]->set_n_frames(this->n_frames);

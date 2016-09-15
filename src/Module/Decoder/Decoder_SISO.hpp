@@ -1,6 +1,8 @@
 #ifndef DECODER_SISO_HPP_
 #define DECODER_SISO_HPP_
 
+#include <cassert>
+
 #include "Decoder.hpp"
 #include "SISO.hpp"
 
@@ -25,6 +27,11 @@ public:
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 	
+	virtual int get_n_frames() const
+	{
+		assert((SISO<R>::n_frames) == (Decoder<B,R>::n_frames));
+		return SISO<R>::n_frames;
+	}
 	virtual int tail_length() const { return SISO<R>::tail_length(); }
 };
 

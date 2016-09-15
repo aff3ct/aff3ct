@@ -32,16 +32,16 @@ public:
 	SC_SISO_module(SC_SISO<R> &siso, const sc_core::sc_module_name name = "SC_SISO_module")
 	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  siso(siso),
-	  Y_N1(siso.N_siso * siso.n_frames_siso),
-	  Y_N2(siso.N_siso * siso.n_frames_siso)
+	  Y_N1(siso.N_siso * siso.n_frames),
+	  Y_N2(siso.N_siso * siso.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_SISO_module::b_transport);
 	}
 
 	void resize_buffers()
 	{
-		if ((int)Y_N1.size() != siso.N_siso * siso.n_frames_siso) Y_N1.resize(siso.N_siso * siso.n_frames_siso);
-		if ((int)Y_N2.size() != siso.N_siso * siso.n_frames_siso) Y_N2.resize(siso.N_siso * siso.n_frames_siso);
+		if ((int)Y_N1.size() != siso.N_siso * siso.n_frames) Y_N1.resize(siso.N_siso * siso.n_frames);
+		if ((int)Y_N2.size() != siso.N_siso * siso.n_frames) Y_N2.resize(siso.N_siso * siso.n_frames);
 	}
 
 private:
@@ -80,12 +80,11 @@ public:
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 
-	virtual int get_n_frames_siso() const { return SISO_interface<R>::get_n_frames_siso(); }
-	virtual int tail_length      () const { return SISO_interface<R>::tail_length      (); }
+	virtual int tail_length() const { return SISO_interface<R>::tail_length(); }
 
 	void create_sc_module_siso()
 	{
-		this->module_siso = new SC_SISO_module<R>(*this, this->name_siso.c_str());
+		this->module_siso = new SC_SISO_module<R>(*this, this->name.c_str());
 	}
 };
 
