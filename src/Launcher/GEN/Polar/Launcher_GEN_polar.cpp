@@ -16,7 +16,7 @@ Launcher_GEN_polar<B,R,Q>
 	this->params.code.type                  = "POLAR";
 	this->params.decoder.algo               = "SC";
 
-	this->params.simulation.gen_decoder_dir = "../src/Decoder/Polar/SC/Generated";
+	this->params.simulation.gen_decoder_dir = "../src/Module/Decoder/Polar/SC/Generated";
 	this->params.simulation.awgn_codes_dir  = "../awgn_polar_codes/TV";
 	this->params.simulation.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
 	this->params.simulation.awgn_codes_file = "";
@@ -69,9 +69,10 @@ void Launcher_GEN_polar<B,R,Q>
 ::store_args()
 {
 	// required parameters
-	this->params.code.K = std::stoi(this->ar.get_arg("K"));
-	this->params.code.N = std::stoi(this->ar.get_arg("N"));
-	this->params.code.m = std::ceil(std::log2(this->params.code.N));
+	this->params.code.K      = std::stoi(this->ar.get_arg("K"));
+	this->params.code.N      = std::stoi(this->ar.get_arg("N"));
+	this->params.code.N_code = std::stoi(this->ar.get_arg("N"));
+	this->params.code.m      = std::ceil(std::log2(this->params.code.N));
 
 	if (this->params.code.K > this->params.code.N)
 	{
