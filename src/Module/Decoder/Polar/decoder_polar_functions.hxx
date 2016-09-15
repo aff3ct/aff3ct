@@ -3,7 +3,7 @@
 #include <algorithm> // min()
 #include <chrono>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "decoder_polar_functions.h"
 

@@ -2,7 +2,7 @@
 #define DECODER_REPETITION_FAST
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Decoder_repetition.hpp"
 

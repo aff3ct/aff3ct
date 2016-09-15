@@ -3,7 +3,7 @@
 
 #include <map>
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"

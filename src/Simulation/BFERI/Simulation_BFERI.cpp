@@ -7,9 +7,8 @@
 #include <cassert>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
-#include "Tools/Frame_trace/Frame_trace.hpp"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"

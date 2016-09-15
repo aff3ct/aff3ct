@@ -1,7 +1,7 @@
 #ifndef PUNCTURER_POLAR_WANGLIU_HPP_
 #define PUNCTURER_POLAR_WANGLIU_HPP_
 
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "../Puncturer.hpp"
 

@@ -2,7 +2,7 @@
 #define FACTORY_FROZENBITS_GENERATOR_HPP
 
 #include "Tools/params.h"
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 template <typename B>
 struct Factory_frozenbits_generator

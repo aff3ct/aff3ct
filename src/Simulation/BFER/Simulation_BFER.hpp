@@ -9,7 +9,7 @@
 #include <chrono>
 #include <vector>
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 #include "Tools/Threads/Barrier.hpp"
 
@@ -24,7 +24,7 @@
 #include "Module/Error/Error_analyzer.hpp"
 #include "Module/Error/Standard/Error_analyzer_reduction.hpp"
 
-#include "Terminal/Terminal.hpp"
+#include "Tools/Display/Terminal/Terminal.hpp"
 
 #include "../Simulation.hpp"
 

@@ -2,12 +2,12 @@
 
 #include "Tools/params.h"
 
-#include "Tools/Turbo/Scaling_factor/Scaling_factor_NO.hpp"
-#include "Tools/Turbo/Scaling_factor/Scaling_factor_seq.hpp"
-#include "Tools/Turbo/Scaling_factor/Scaling_factor_vec.hpp"
-#include "Tools/Turbo/Scaling_factor/Scaling_factor_array.hpp"
-#include "Tools/Turbo/Scaling_factor/Scaling_factor_array_fast.hpp"
-#include "Tools/Turbo/Scaling_factor/Scaling_factor_constant.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_seq.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_vec.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_array.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_array_fast.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_constant.hpp"
 
 template<typename R>
 Scaling_factor<R>* Factory_scaling_factor<R>

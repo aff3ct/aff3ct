@@ -2,7 +2,7 @@
 #define ENCODER_RSC4_SYS_HPP_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Encoder_RSC_sys.hpp"
 

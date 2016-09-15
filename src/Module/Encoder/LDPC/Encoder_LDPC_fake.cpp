@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "hard_coded_matrices.h"
 

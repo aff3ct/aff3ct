@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cassert>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Channel_AWGN_fast_LLR.hpp"
 

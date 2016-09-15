@@ -1,7 +1,7 @@
 #include <cassert>
 
-#include "Tools/bash_tools.h"
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "CRC_polynomial_inter.hpp"
 

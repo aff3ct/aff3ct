@@ -2,9 +2,9 @@
 
 #include <limits>
 
-#include "Tools/bash_tools.h"
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Reorderer/Reorderer.hpp"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>

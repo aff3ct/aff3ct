@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "Tools/Math/utils.h"
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Quantizer_fast.hpp"
 

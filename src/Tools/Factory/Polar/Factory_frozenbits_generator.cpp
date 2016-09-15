@@ -1,8 +1,8 @@
 #include <cmath>
 
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
 
 #include "Factory_frozenbits_generator.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef DECODER_RSC_FUNCTIONS_H
 #define DECODER_RSC_FUNCTIONS_H
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
 // -------------------------------------------------------------------------- special function prototypes for templates

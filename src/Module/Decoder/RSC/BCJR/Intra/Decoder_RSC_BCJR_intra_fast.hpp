@@ -2,7 +2,7 @@
 #define DECODER_RSC_BCJR_INTRA_FAST_HPP_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "../../decoder_RSC_functions.h"
 

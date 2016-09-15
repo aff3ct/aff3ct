@@ -1,7 +1,7 @@
 #ifndef MAX_H
 #define MAX_H
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 // -------------------------------------------------------------------------- special function prototypes for templates
 

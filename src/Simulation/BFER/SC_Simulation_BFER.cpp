@@ -10,8 +10,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"

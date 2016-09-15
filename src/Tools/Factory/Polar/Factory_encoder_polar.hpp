@@ -2,7 +2,7 @@
 #define FACTORY_ENCODER_POLAR_HPP
 
 #include "Tools/params.h"
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Encoder/Encoder.hpp"
 

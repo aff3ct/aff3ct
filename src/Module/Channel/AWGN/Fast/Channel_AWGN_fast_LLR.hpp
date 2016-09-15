@@ -3,8 +3,8 @@
 
 #include <random>
 
-#include "Tools/PRNG/PRNG_MT19937.hpp"
-#include "Tools/PRNG/PRNG_MT19937_simd.hpp"
+#include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
+#include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 
 #include "../../Channel.hpp"
 

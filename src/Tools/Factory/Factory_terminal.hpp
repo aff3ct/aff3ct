@@ -3,7 +3,7 @@
 
 #include "Tools/params.h"
 
-#include "Terminal/Terminal.hpp"
+#include "Tools/Display/Terminal/Terminal.hpp"
 #include "Module/Error/Error_analyzer.hpp"
 
 template <typename B, typename R>

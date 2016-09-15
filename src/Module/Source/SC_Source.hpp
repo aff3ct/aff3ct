@@ -9,7 +9,7 @@
 #include <tlm>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 template <typename B>
 class SC_Source;

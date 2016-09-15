@@ -1,5 +1,5 @@
-#include "Terminal/BFER/Terminal_BFER.hpp"
-#include "Terminal/BFER/Terminal_BFER_legacy.hpp"
+#include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+#include "Tools/Display/Terminal/BFER/Terminal_BFER_legacy.hpp"
 
 #include "Factory_terminal.hpp"
 

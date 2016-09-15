@@ -6,8 +6,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
@@ -31,7 +30,7 @@ Simulation_turbo<B,R,Q,QD>
 
 	// build the interleaver for the encoder and the decoder
 	interleaver = Factory_interleaver<short>::build(this->params, this->params.code.K);
-	check_errors(interleaver, "Interleaver<short>");
+	Simulation::check_errors(interleaver, "Interleaver<short>");
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -72,7 +71,7 @@ Encoder<B>* Simulation_turbo<B,R,Q,QD>
 ::build_encoder(const int tid)
 {
 	sub_encoder[tid] = Factory_encoder_RSC<B>::build(this->params);
-	check_errors(sub_encoder[tid], "Encoder_RSC_sys<B>");
+	Simulation::check_errors(sub_encoder[tid], "Encoder_RSC_sys<B>");
 
 	if (tid == 0)
 		trellis = sub_encoder[tid]->get_trellis();
@@ -85,11 +84,11 @@ Decoder<B,Q>* Simulation_turbo<B,R,Q,QD>
 ::build_decoder(const int tid)
 {
 	sf[tid] = Factory_scaling_factor<Q>::build(this->params);
-	check_errors(sf[tid], "Scaling_factor<Q>");
+	Simulation::check_errors(sf[tid], "Scaling_factor<Q>");
 
 	this->barrier(tid);
 	siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis);
-	check_errors(siso[tid], "SISO<Q>");
+	Simulation::check_errors(siso[tid], "SISO<Q>");
 
 	if (tid == 0)
 		interleaver->set_n_frames(siso[tid]->get_n_frames());

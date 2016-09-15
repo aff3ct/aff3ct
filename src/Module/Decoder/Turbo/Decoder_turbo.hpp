@@ -2,8 +2,8 @@
 #define DECODER_TURBO_HPP_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Turbo/Scaling_factor/Scaling_factor.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
 
 #include "../../Interleaver/Interleaver.hpp"
 

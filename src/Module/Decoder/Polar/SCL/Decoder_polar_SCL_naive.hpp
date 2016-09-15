@@ -3,8 +3,8 @@
 
 #include <set>
 #include <vector>
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Polar/SCL/Binary_tree_metric.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Code/Polar/SCL/Binary_tree_metric.hpp"
 
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"

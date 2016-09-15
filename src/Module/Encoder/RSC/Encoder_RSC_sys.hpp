@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "../Encoder_sys.hpp"
 

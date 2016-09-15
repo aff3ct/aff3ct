@@ -2,8 +2,8 @@
 #define DECODER_POLAR_SC_NAIVE_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Tree/Binary_tree.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Algo/Tree/Binary_tree.hpp"
 
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"

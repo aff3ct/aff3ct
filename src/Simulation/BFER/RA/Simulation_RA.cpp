@@ -4,8 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Module/Encoder/RA/Encoder_RA.hpp"

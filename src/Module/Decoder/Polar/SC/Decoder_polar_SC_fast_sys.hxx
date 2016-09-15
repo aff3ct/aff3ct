@@ -2,10 +2,10 @@
 #include <iostream>
 #include <sstream>
 
-#include "Tools/bash_tools.h"
-#include "Tools/Reorderer/Reorderer.hpp"
-#include "Tools/Polar/Pattern_parser_polar.hpp"
-#include "Tools/Transpose/transpose_selector.h"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
+#include "Tools/Perf/Transpose/transpose_selector.h"
+#include "Tools/Code/Polar/Pattern_parser_polar.hpp"
 
 #include "Patterns/Pattern_SC_standard.hpp"
 #include "Patterns/Pattern_SC_rate0.hpp"

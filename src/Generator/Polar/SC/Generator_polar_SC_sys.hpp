@@ -4,9 +4,9 @@
 #include <map>
 #include <vector>
 
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Tree/Binary_tree.hpp"
-#include "Tools/Polar/Pattern_parser_polar.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Code/Polar/Pattern_parser_polar.hpp"
 
 #include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 

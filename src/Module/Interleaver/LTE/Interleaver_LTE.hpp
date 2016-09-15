@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "../Interleaver.hpp"
 

@@ -2,7 +2,7 @@
 
 #include <limits>
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 template <typename R>
 struct RSC_BCJR_inter_init

@@ -9,9 +9,9 @@
 
 #include "Tools/types.h"
 #include "Tools/params.h"
-#include "Tools/bash_tools.h"
-#include "Tools/MIPP/mipp.h"
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Launcher/Launcher.hpp"
 

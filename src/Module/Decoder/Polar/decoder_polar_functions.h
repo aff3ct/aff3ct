@@ -4,7 +4,7 @@
 #include <limits>
 #include <utility> // pair
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
 // -------------------------------------------------------------------------- special function prototypes for templates

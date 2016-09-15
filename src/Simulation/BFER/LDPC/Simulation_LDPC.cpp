@@ -4,8 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"

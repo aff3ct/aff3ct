@@ -5,9 +5,9 @@
 #include "Module/Decoder/SISO.hpp"
 #include "Module/Decoder/Decoder.hpp"
 
-#include "../../MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
-#include "../../params.h"
+#include "Tools/params.h"
 
 template <typename B, typename R>
 struct Factory_decoder_polar

@@ -3,7 +3,7 @@
 
 #include "Module/Decoder/Decoder.hpp"
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 
 template <typename B, typename R>

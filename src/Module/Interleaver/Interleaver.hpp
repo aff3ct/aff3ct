@@ -4,7 +4,7 @@
 #include <string>
 #include <cassert>
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
 

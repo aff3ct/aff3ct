@@ -2,7 +2,7 @@
 #define FACTORY_PUNCTURER_POLAR_HPP
 
 #include "Tools/params.h"
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "Module/Puncturer/Puncturer.hpp"
 

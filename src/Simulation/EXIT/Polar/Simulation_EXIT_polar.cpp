@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 #include "Tools/Factory/Polar/Factory_encoder_polar.hpp"
@@ -25,7 +24,7 @@ Simulation_EXIT_polar<B,R,Q>
 
 	// build the frozen bits generator
 	fb_generator = Factory_frozenbits_generator<B>::build(params);
-	check_errors(fb_generator, "Frozenbits_generator<B>");
+	Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");
 }
 
 template <typename B, typename R, typename Q>

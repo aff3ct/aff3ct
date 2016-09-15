@@ -2,10 +2,10 @@
 #define SOURCE_RANDOM_FAST_HPP_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
-#include "Tools/PRNG/PRNG_MT19937.hpp"
-#include "Tools/PRNG/PRNG_MT19937_simd.hpp"
+#include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
+#include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 
 #include "../Source.hpp"
 

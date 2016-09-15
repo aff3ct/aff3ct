@@ -1,7 +1,6 @@
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Factory/Factory_source.hpp"

@@ -10,7 +10,7 @@
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "Tools/Math/Predicate.hpp"
+#include "Tools/Algo/Predicate.hpp"
 
 class SC_Router : sc_core::sc_module
 {

@@ -4,8 +4,8 @@
 #include <chrono>
 #include <vector>
 
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "../Simulation_EXIT.hpp"
 

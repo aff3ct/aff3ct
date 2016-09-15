@@ -2,7 +2,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Barrier.hpp"
 

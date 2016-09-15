@@ -2,10 +2,9 @@
 #define DECODER_RSC_BCJR_HPP_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "../../Decoder_SISO.hpp"
-//#include "../../SISO.hpp"
 
 template <typename B, typename R>
 class Decoder_RSC_BCJR : public Decoder_SISO<B,R>

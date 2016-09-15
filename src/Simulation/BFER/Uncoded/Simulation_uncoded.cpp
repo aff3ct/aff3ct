@@ -4,8 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 
 #include "Module/Source/Source.hpp"
@@ -13,7 +13,7 @@
 #include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Decoder/SISO.hpp"
 
-#include "Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "../Simulation.hpp"
 

@@ -5,8 +5,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/Reorderer/Reorderer.hpp"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 template <typename B, typename R>
 Decoder_turbo<B,R>

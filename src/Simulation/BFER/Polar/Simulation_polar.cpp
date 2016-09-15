@@ -4,9 +4,8 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
-#include "Tools/Frame_trace/Frame_trace.hpp"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 #include "Tools/Factory/Polar/Factory_puncturer_polar.hpp"
@@ -32,7 +31,7 @@ Simulation_polar<B,R,Q>
 	{
 		// build the frozen bits generator
 		fb_generator = Factory_frozenbits_generator<B>::build(params);
-		check_errors(fb_generator, "Frozenbits_generator<B>");
+		Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");
 	}
 	else
 		assert(this->params.code.N == this->params.code.N_code);

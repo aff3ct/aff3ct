@@ -2,7 +2,7 @@
 #define DECODER_POLAR_SCAN_NAIVE_SYS_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "../../SISO.hpp"
 #include "Decoder_polar_SCAN_naive.hpp"

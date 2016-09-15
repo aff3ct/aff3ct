@@ -3,7 +3,7 @@
 #include <math.h>
 #include <cassert>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Decoder_polar_SCAN_naive.hpp"
 

@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Tools/bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Encoder_LDPC_fake_coset.hpp"
 

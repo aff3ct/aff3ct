@@ -1,7 +1,7 @@
 #include "Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Decoder_RSC_BCJR_inter_very_fast.hpp"
 
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 template <typename B, typename R, proto_map_i<R> MAP>
 Decoder_RSC_BCJR_inter_very_fast<B,R,MAP>

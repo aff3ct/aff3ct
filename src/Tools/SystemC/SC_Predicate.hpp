@@ -7,7 +7,7 @@
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 
-#include "Tools/Math/Predicate.hpp"
+#include "Tools/Algo/Predicate.hpp"
 
 class SC_Predicate : sc_core::sc_module
 {

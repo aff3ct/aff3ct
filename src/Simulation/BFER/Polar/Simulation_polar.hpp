@@ -2,7 +2,7 @@
 #define SIMULATION_POLAR_HPP_
 
 #include "Tools/params.h"
-#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "../Simulation_BFER.hpp"
 

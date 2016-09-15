@@ -8,8 +8,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
@@ -20,7 +19,7 @@
 #include "Tools/Factory/Factory_error_analyzer.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
-#include "Tools/Math/Predicate_ite.hpp"
+#include "Tools/Algo/Predicate_ite.hpp"
 
 #include "SC_Simulation_BFERI.hpp"
 

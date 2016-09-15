@@ -9,8 +9,8 @@
 #include <string>
 #include <typeinfo>
 
-#include "Tools/Tree/Binary_tree.hpp"
-#include "Tools/Tree/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary_node.hpp"
 
 enum pattern_SC_type
 {

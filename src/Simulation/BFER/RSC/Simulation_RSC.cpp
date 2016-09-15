@@ -7,8 +7,7 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/bash_tools.h"
-#include "Tools/simu_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"

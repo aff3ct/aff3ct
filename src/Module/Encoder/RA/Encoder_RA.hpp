@@ -2,7 +2,7 @@
 #define ENCODER_RA_HPP_
 
 #include <vector>
-#include "Tools/MIPP/mipp.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "../Encoder.hpp"
 #include "../../Interleaver/Interleaver.hpp"
