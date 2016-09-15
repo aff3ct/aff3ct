@@ -31,6 +31,8 @@ public:
 	        void store_fast(      mipp::vector<B>& V_N) const;
 	        void unpack    (      mipp::vector<B>& V_N) const;
 	        
+	void set_n_frames(const int n_frames);
+
 protected:
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);
 };

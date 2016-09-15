@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "Tools/bash_tools.h"
+
 #include "Decoder_RA.hpp"
 
 template <typename B, typename R>
@@ -105,6 +107,13 @@ void Decoder_RA<B, R>
 ::store(mipp::vector<B>& V_K) const
 {
 	V_K = this->V_K;
+}
+
+template <typename B, typename R>
+void Decoder_RA<B, R>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 template <typename B, typename R>

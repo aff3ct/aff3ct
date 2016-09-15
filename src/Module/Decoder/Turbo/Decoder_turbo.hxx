@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Tools/bash_tools.h"
 #include "Tools/Reorderer/Reorderer.hpp"
 
 template <typename B, typename R>
@@ -211,4 +212,11 @@ void Decoder_turbo<B,R>
 			frames[f] = V_K.data() + f*this->K;
 		Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }

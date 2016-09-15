@@ -3,6 +3,8 @@
 #include <math.h>
 #include <cassert>
 
+#include "Tools/bash_tools.h"
+
 #include "Decoder_polar_SCAN_naive.hpp"
 
 /********************************************************************/
@@ -119,6 +121,17 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	for (auto i = 0; i < this->N; i++)
 		if (!frozen_bits[i]) // if i is not a frozen bit
 			V_K[k++] = (H(soft_graph[0][i]) == 0) ? (B)0 : (B)1;
+}
+
+/********************************************************************/
+/** set the number of frames **/
+/********************************************************************/
+template <typename B, typename R,
+          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 /********************************************************************/

@@ -1,5 +1,7 @@
 #include <algorithm>
 
+#include "Tools/bash_tools.h"
+
 #include "Decoder_polar_SC_naive.hpp"
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
@@ -44,6 +46,13 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 	auto k = 0;
 	this->recursive_store(this->polar_tree.get_root(), V_K, k);
 	assert(k == this->K);
+}
+
+template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+void Decoder_polar_SC_naive<B,R,F,G,H>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>

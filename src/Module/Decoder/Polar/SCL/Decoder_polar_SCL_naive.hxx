@@ -5,6 +5,8 @@
 #include <cmath>
 #include <map>
 
+#include "Tools/bash_tools.h"
+
 #include "Decoder_polar_SCL_naive.hpp"
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
@@ -194,6 +196,13 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 	auto k = 0;
 	this->recursive_store((Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);
+}
+
+template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+void Decoder_polar_SCL_naive<B,R,F,G>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>

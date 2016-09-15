@@ -38,6 +38,8 @@ public:
 	        void decode(                          );
 	virtual void store (      mipp::vector<B>& V_K) const;
 
+	void set_n_frames(const int n_frames);
+
 private:
 	void recursive_allocate_nodes_contents  (      Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size                     );
 	void recursive_initialize_frozen_bits   (const Binary_node<Contents_SC<B,R>>* node_curr, const mipp::vector<B>& frozen_bits        );

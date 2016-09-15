@@ -1,3 +1,5 @@
+#include "Tools/bash_tools.h"
+
 #include "Decoder_NO.hpp"
 
 template <typename B, typename R>
@@ -65,6 +67,13 @@ void Decoder_NO<B,R>
 	assert(Y_N1.size() == Y_N2.size());
 
 	Y_N2 = Y_N1;
+}
+
+template <typename B, typename R>
+void Decoder_NO<B,R>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

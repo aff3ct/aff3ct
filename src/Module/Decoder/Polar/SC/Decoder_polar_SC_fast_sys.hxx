@@ -393,3 +393,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			for (auto j = 0; j < this->N; j++)
 				V_N[i * this->N + j] = !frozen_bits[j] && V_N[i * this->N + j];
 }
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
+}

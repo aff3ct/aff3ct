@@ -30,6 +30,8 @@ public:
 	        void decode(                          );
 	virtual void store (      mipp::vector<B>& V_K) const;
 
+	void set_n_frames(const int n_frames);
+
 protected:
 	void load_init();
 

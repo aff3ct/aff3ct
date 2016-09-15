@@ -29,6 +29,8 @@ public:
 	void decode(                          );
 	void store (      mipp::vector<B>& V_K) const;
 
+	void set_n_frames(const int n_frames);
+
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 	        void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };

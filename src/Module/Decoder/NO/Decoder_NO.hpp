@@ -20,6 +20,8 @@ public:
 
 	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext );
 	void decode(const mipp::vector<R> &Y_N1,                            mipp::vector<R> &Y_N2);
+
+	void set_n_frames(const int n_frames);
 };
 
 #endif /* DECODER_NO_HPP_ */

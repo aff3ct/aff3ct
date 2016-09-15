@@ -204,6 +204,13 @@ bool Decoder_LDPC_BP_flooding<B,R>
 	return syndrome;
 }
 
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding<B,R>
+::set_n_frames(const int n_frames)
+{
+	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

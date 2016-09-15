@@ -30,6 +30,8 @@ public:
     void decode(                          );
     void store (      mipp::vector<B>& V_K) const;
     
+    void set_n_frames(const int n_frames);
+
 private:
 	R check_node(R a, R b);
 	int sign(R x);

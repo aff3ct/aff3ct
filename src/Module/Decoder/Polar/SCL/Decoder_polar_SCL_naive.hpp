@@ -45,6 +45,8 @@ public:
 	        void decode(                          );
 	virtual void store (mipp::vector<B>& V_K      ) const;
 
+	void set_n_frames(const int n_frames);
+
 private:
 	void recursive_compute_llr        (      Binary_node<Contents_SCL<B,R>>* node_cur, int depth);
 	void propagate_sums               (const Binary_node<Contents_SCL<B,R>>* node_cur           );

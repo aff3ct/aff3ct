@@ -50,6 +50,8 @@ public:
 	void decode(                          );
 	void store (      mipp::vector<B>& V_K) const;
 
+	void set_n_frames(const int n_frames);
+
 protected:
 	// BP functions for decoding
 	bool BP_decode(const mipp::vector<R> &Y_N);
