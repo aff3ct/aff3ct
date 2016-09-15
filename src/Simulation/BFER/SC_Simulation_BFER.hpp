@@ -21,7 +21,7 @@
 #include "Module/Channel/Channel.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Decoder/Decoder.hpp"
-#include "Module/Error/Error_analyzer.hpp"
+#include "Module/Monitor/Monitor.hpp"
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 
@@ -45,16 +45,16 @@ protected:
 	std::vector<mipp::vector<B>> X_N1; // fake encoded codeword (required to compile but never used)
 
 	// communication chain
-	std::vector<SC_Source<B>*>          source;
-	std::vector<SC_CRC<B>*>             crc;
-	std::vector<SC_Encoder<B>*>         encoder;
-	std::vector<SC_Puncturer<B,Q>*>     puncturer;
-	std::vector<SC_Modulator<B,R,R>*>   modulator;
-	std::vector<SC_Channel<R>*>         channel;
-	std::vector<SC_Quantizer<R,Q>*>     quantizer;
-	std::vector<SC_Decoder<B,Q>*>       decoder;
-	std::vector<SC_Error_analyzer<B>*>  analyzer;
-	Terminal                           *terminal;
+	std::vector<SC_Source<B>*>         source;
+	std::vector<SC_CRC<B>*>            crc;
+	std::vector<SC_Encoder<B>*>        encoder;
+	std::vector<SC_Puncturer<B,Q>*>    puncturer;
+	std::vector<SC_Modulator<B,R,R>*>  modulator;
+	std::vector<SC_Channel<R>*>        channel;
+	std::vector<SC_Quantizer<R,Q>*>    quantizer;
+	std::vector<SC_Decoder<B,Q>*>      decoder;
+	std::vector<SC_Monitor<B>*>        monitor;
+	Terminal                          *terminal;
 
 	SC_Duplicator *duplicator;
 	SC_Debug<B> *dbg_B[5];
@@ -83,20 +83,20 @@ private:
 	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 
 protected:
-	virtual void               release_objects  ();
-	virtual void               launch_precompute();
-	virtual void               snr_precompute   ();
+	virtual void              release_objects  ();
+	virtual void              launch_precompute();
+	virtual void              snr_precompute   ();
 
-	virtual Source<B>*         build_source     (                const int tid = 0);
-	virtual CRC<B>*            build_crc        (                const int tid = 0);
-	virtual Encoder<B>*        build_encoder    (                const int tid = 0) = 0;
-	virtual Puncturer<B,Q>*    build_puncturer  (                const int tid = 0);
-	virtual Modulator<B,R,R>*  build_modulator  (                const int tid = 0);
-	virtual Channel<R>*        build_channel    (const int size, const int tid = 0);
-	virtual Quantizer<R,Q>*    build_quantizer  (const int size, const int tid = 0);
-	virtual Decoder<B,Q>*      build_decoder    (                const int tid = 0) = 0;
-	virtual Error_analyzer<B>* build_analyzer   (                const int tid = 0);
-	        Terminal*          build_terminal   (                const int tid = 0);
+	virtual Source<B>*        build_source     (                const int tid = 0);
+	virtual CRC<B>*           build_crc        (                const int tid = 0);
+	virtual Encoder<B>*       build_encoder    (                const int tid = 0) = 0;
+	virtual Puncturer<B,Q>*   build_puncturer  (                const int tid = 0);
+	virtual Modulator<B,R,R>* build_modulator  (                const int tid = 0);
+	virtual Channel<R>*       build_channel    (const int size, const int tid = 0);
+	virtual Quantizer<R,Q>*   build_quantizer  (const int size, const int tid = 0);
+	virtual Decoder<B,Q>*     build_decoder    (                const int tid = 0) = 0;
+	virtual Monitor<B>*       build_monitor    (                const int tid = 0);
+	        Terminal*         build_terminal   (                const int tid = 0);
 
 };
 

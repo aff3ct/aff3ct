@@ -1,11 +1,11 @@
-#include "Error_analyzer_reduction.hpp"
+#include "Monitor_reduction.hpp"
 
 template <typename B>
-Error_analyzer_reduction<B>
-::Error_analyzer_reduction(const int& K, const int& N, const int& max_fe, 
-                           std::vector<Error_analyzer<B>*>& error_analyzers, const int& n_frames,
-                           const std::string name)
-: Error_analyzer_std<B>(K, N, max_fe, n_frames, name),
+Monitor_reduction<B>
+::Monitor_reduction(const int& K, const int& N, const int& max_fe,
+                    std::vector<Monitor<B>*>& error_analyzers, const int& n_frames,
+                    const std::string name)
+: Monitor_std<B>(K, N, max_fe, n_frames, name),
   error_analyzers(error_analyzers),
   prev_n_be(error_analyzers.size()),
   prev_n_fe(error_analyzers.size()),
@@ -19,13 +19,13 @@ Error_analyzer_reduction<B>
 }
 
 template <typename B>
-Error_analyzer_reduction<B>
-::~Error_analyzer_reduction()
+Monitor_reduction<B>
+::~Monitor_reduction()
 {
 }
 
 template <typename B>
-void Error_analyzer_reduction<B>
+void Monitor_reduction<B>
 ::reduce()
 {
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
@@ -49,7 +49,7 @@ void Error_analyzer_reduction<B>
 }
 
 template <typename B>
-void Error_analyzer_reduction<B>
+void Monitor_reduction<B>
 ::increment_frame_errors(const int n_frames)
 {
 	this->mutex_total_frame_errors.lock();
@@ -60,11 +60,11 @@ void Error_analyzer_reduction<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Error_analyzer_reduction<B_8>;
-template class Error_analyzer_reduction<B_16>;
-template class Error_analyzer_reduction<B_32>;
-template class Error_analyzer_reduction<B_64>;
+template class Monitor_reduction<B_8>;
+template class Monitor_reduction<B_16>;
+template class Monitor_reduction<B_32>;
+template class Monitor_reduction<B_64>;
 #else
-template class Error_analyzer_reduction<B>;
+template class Monitor_reduction<B>;
 #endif
 // ==================================================================================== explicit template instantiation

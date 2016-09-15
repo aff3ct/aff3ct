@@ -7,7 +7,7 @@ template <typename B, typename R>
 Terminal* Factory_terminal<B,R>
 ::build(const parameters &params,
         const R snr,
-        const Error_analyzer<B> *analyzer,
+        const Monitor<B> *monitor,
         const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
         const std::chrono::nanoseconds &d_decod_total)
 {
@@ -15,9 +15,9 @@ Terminal* Factory_terminal<B,R>
 
 	// build a terminal to display the BER/FER
 	if(params.simulation.enable_leg_term)
-		terminal = new Terminal_BFER_legacy<B,R>(snr, *analyzer, t_snr);
+		terminal = new Terminal_BFER_legacy<B,R>(snr, *monitor, t_snr);
 	else
-		terminal = new Terminal_BFER<B,R>(snr, *analyzer, t_snr, d_decod_total, params.simulation.enable_dec_thr);
+		terminal = new Terminal_BFER<B,R>(snr, *monitor, t_snr, d_decod_total, params.simulation.enable_dec_thr);
 
 	return terminal;
 }

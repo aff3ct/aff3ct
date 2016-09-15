@@ -7,10 +7,10 @@
 template <typename B, typename R>
 Terminal_BFER_legacy<B,R>
 ::Terminal_BFER_legacy(const R& snr,
-                       const Error_analyzer<B> &err_analyzer,
+                       const Monitor<B> &monitor,
                        const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
                        const std::string name)
-: Terminal(name.c_str()), snr(snr), err_analyzer(err_analyzer), t_snr(t_snr), real_time_state(0)
+: Terminal(name.c_str()), snr(snr), monitor(monitor), t_snr(t_snr), real_time_state(0)
 {
 }
 
@@ -35,25 +35,25 @@ void Terminal_BFER_legacy<B,R>::_report(std::ostream &stream)
 	using namespace std::chrono;
 
 	auto ber = 0.f, fer = 0.f, be_fe = 0.f;
-	if (err_analyzer.get_n_be() != 0)
+	if (monitor.get_n_be() != 0)
 	{
-		ber   = (float)err_analyzer.get_ber_value();
-		fer   = (float)err_analyzer.get_fer_value();
-		be_fe = (float)err_analyzer.get_n_be() / (float)err_analyzer.get_n_fe();
+		ber   = (float)monitor.get_ber_value();
+		fer   = (float)monitor.get_fer_value();
+		be_fe = (float)monitor.get_n_be() / (float)monitor.get_n_fe();
 	}
 	else
 	{
-		ber = (1.f) / ((float)err_analyzer.get_n_analyzed_frames()) / err_analyzer.get_K();
-		fer = (1.f) / ((float)err_analyzer.get_n_analyzed_frames());
+		ber = (1.f) / ((float)monitor.get_n_analyzed_frames()) / monitor.get_K();
+		fer = (1.f) / ((float)monitor.get_n_analyzed_frames());
 	}
 
 	auto rt   = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto fpmn = (60.f * err_analyzer.get_n_analyzed_frames()) / rt;
-	auto bps  = (fpmn * (float)err_analyzer.get_N()) / 60.f / 1000.f / 1000.f;
+	auto fpmn = (60.f * monitor.get_n_analyzed_frames()) / rt;
+	auto bps  = (fpmn * (float)monitor.get_N()) / 60.f / 1000.f / 1000.f;
 
-	auto fra = err_analyzer.get_n_analyzed_frames();
-	auto fe  = err_analyzer.get_n_fe();
-	auto be  = err_analyzer.get_n_be();
+	auto fra = monitor.get_n_analyzed_frames();
+	auto fe  = monitor.get_n_fe();
+	auto be  = monitor.get_n_be();
 
 	stream << "SNR = "      << std::setprecision(2) << std::fixed      << std::setw(4) << snr << " | ";
 	stream << "BER = "      << std::setprecision(2) << std::scientific << std::setw(4) << ber << " | ";
@@ -73,8 +73,8 @@ void Terminal_BFER_legacy<B,R>::temp_report(std::ostream &stream)
 	_report(stream);
 
 	auto rt        = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto et        = rt * ((float)err_analyzer.get_fe_limit() / (float)err_analyzer.get_n_fe()) - rt;
-	auto et_format = get_time_format((err_analyzer.get_n_fe() == 0) ? 0 : et);
+	auto et        = rt * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - rt;
+	auto et_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : et);
 
 	stream << " | ESTTIME = " << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
 

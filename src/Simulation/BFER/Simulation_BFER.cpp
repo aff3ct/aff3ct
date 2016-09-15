@@ -17,7 +17,7 @@
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
-#include "Tools/Factory/Factory_error_analyzer.hpp"
+#include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
@@ -51,17 +51,17 @@ Simulation_BFER<B,R,Q>
   V_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
   V_N (params.simulation.n_threads, mipp::vector<B>(params.code.N)),
 
-  source      (params.simulation.n_threads, nullptr),
-  crc         (params.simulation.n_threads, nullptr),
-  encoder     (params.simulation.n_threads, nullptr),
-  puncturer   (params.simulation.n_threads, nullptr),
-  modulator   (params.simulation.n_threads, nullptr),
-  channel     (params.simulation.n_threads, nullptr),
-  quantizer   (params.simulation.n_threads, nullptr),
-  decoder     (params.simulation.n_threads, nullptr),
-  analyzer    (params.simulation.n_threads, nullptr),
-  analyzer_red(                             nullptr),
-  terminal    (                             nullptr),
+  source     (params.simulation.n_threads, nullptr),
+  crc        (params.simulation.n_threads, nullptr),
+  encoder    (params.simulation.n_threads, nullptr),
+  puncturer  (params.simulation.n_threads, nullptr),
+  modulator  (params.simulation.n_threads, nullptr),
+  channel    (params.simulation.n_threads, nullptr),
+  quantizer  (params.simulation.n_threads, nullptr),
+  decoder    (params.simulation.n_threads, nullptr),
+  monitor    (params.simulation.n_threads, nullptr),
+  monitor_red(                             nullptr),
+  terminal   (                             nullptr),
 
   d_sourc_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_crc_total  (params.simulation.n_threads, std::chrono::nanoseconds(0)),
@@ -138,7 +138,7 @@ void Simulation_BFER<B,R,Q>
 
 		if (!params.simulation.disable_display && !params.simulation.benchs)
 		{
-			analyzer_red->reduce();
+			monitor_red->reduce();
 			time_reduction(true);
 			terminal->final_report(std::cout);
 		}
@@ -147,7 +147,7 @@ void Simulation_BFER<B,R,Q>
 		release_objects();
 
 		// exit simulation (double [ctrl+c])
-		if (Error_analyzer<B>::is_over())
+		if (Monitor<B>::is_over())
 			break;
 	}
 
@@ -203,20 +203,20 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source   [tid] = simu->build_source   (        tid); check_errors(simu->source   [tid], "Source<B>"          );
-	simu->crc      [tid] = simu->build_crc      (        tid); check_errors(simu->crc      [tid], "CRC<B>"             );
-	simu->encoder  [tid] = simu->build_encoder  (        tid); check_errors(simu->encoder  [tid], "Encoder<B>"         );
-	simu->puncturer[tid] = simu->build_puncturer(        tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>"     );
-	simu->modulator[tid] = simu->build_modulator(        tid); check_errors(simu->modulator[tid], "Modulator<B,R>"     );
+	simu->source   [tid] = simu->build_source   (        tid); check_errors(simu->source   [tid], "Source<B>"     );
+	simu->crc      [tid] = simu->build_crc      (        tid); check_errors(simu->crc      [tid], "CRC<B>"        );
+	simu->encoder  [tid] = simu->build_encoder  (        tid); check_errors(simu->encoder  [tid], "Encoder<B>"    );
+	simu->puncturer[tid] = simu->build_puncturer(        tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>");
+	simu->modulator[tid] = simu->build_modulator(        tid); check_errors(simu->modulator[tid], "Modulator<B,R>");
 
 	const auto N     = simu->params.code.N;
 	const auto tail  = simu->params.code.tail_length;
 	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
 
-	simu->channel  [tid] = simu->build_channel  (N_mod , tid); check_errors(simu->channel  [tid], "Channel<R>"         );
-	simu->quantizer[tid] = simu->build_quantizer(N+tail, tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>"     );
-	simu->decoder  [tid] = simu->build_decoder  (        tid); check_errors(simu->decoder  [tid], "Decoder<B,Q>"       );
-	simu->analyzer [tid] = simu->build_analyzer (        tid); check_errors(simu->analyzer [tid], "Error_analyzer<B,R>");
+	simu->channel  [tid] = simu->build_channel  (N_mod , tid); check_errors(simu->channel  [tid], "Channel<R>"    );
+	simu->quantizer[tid] = simu->build_quantizer(N+tail, tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>");
+	simu->decoder  [tid] = simu->build_decoder  (        tid); check_errors(simu->decoder  [tid], "Decoder<B,Q>"  );
+	simu->monitor  [tid] = simu->build_monitor  (        tid); check_errors(simu->monitor  [tid], "Monitor<B>"    );
 
 	// get the real number of frames per threads (from the decoder)
 	auto n_fra = simu->decoder[tid]->get_n_frames();
@@ -245,19 +245,19 @@ void Simulation_BFER<B,R,Q>
 	simu->modulator[tid]->set_n_frames(n_fra);
 	simu->channel  [tid]->set_n_frames(n_fra);
 	simu->quantizer[tid]->set_n_frames(n_fra);
-	simu->analyzer [tid]->set_n_frames(n_fra);
+	simu->monitor  [tid]->set_n_frames(n_fra);
 
 	simu->barrier(tid);
 	if (tid == 0)
 	{
 		simu->n_frames = n_fra;
 
-		// build an error analyzer to compute BER/FER (reduce the other analyzers)
-		simu->analyzer_red = new Error_analyzer_reduction<B>(simu->params.code.K,
-		                                                     simu->params.code.N,
-		                                                     simu->params.simulation.max_fe,
-		                                                     simu->analyzer,
-		                                                     simu->n_frames);
+		// build a monitor to compute BER/FER (reduce the other monitors)
+		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
+		                                             simu->params.code.N,
+		                                             simu->params.simulation.max_fe,
+		                                             simu->monitor,
+		                                             simu->n_frames);
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal(tid);
 		check_errors(simu->terminal, "Terminal");
@@ -276,7 +276,7 @@ void Simulation_BFER<B,R,Q>
 	int prev_n_fe = 0;
 
 	// simulation loop
-	while ((!simu->analyzer_red->fe_limit_achieved()) && // while max frame error count has not been reached
+	while ((!simu->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
 	        (simu->params.simulation.stop_time == seconds(0) ||
 	         (steady_clock::now() - simu->t_snr) < simu->params.simulation.stop_time))
 	{
@@ -356,14 +356,14 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->analyzer[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
+		simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// update the total number of frame errors if needed
-		if (simu->analyzer[tid]->get_n_fe() > prev_n_fe)
+		if (simu->monitor[tid]->get_n_fe() > prev_n_fe)
 		{
-			simu->analyzer_red->increment_frame_errors(simu->analyzer[tid]->get_n_fe() - prev_n_fe);
-			prev_n_fe = simu->analyzer[tid]->get_n_fe();
+			simu->monitor_red->increment_frame_errors(simu->monitor[tid]->get_n_fe() - prev_n_fe);
+			prev_n_fe = simu->monitor[tid]->get_n_fe();
 		}
 
 		// increment total durations for each operations
@@ -390,7 +390,7 @@ void Simulation_BFER<B,R,Q>
 		if (tid == 0 && !simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
 		    (steady_clock::now() - simu->t_simu) >= simu->params.simulation.display_freq)
 		{
-			simu->analyzer_red->reduce();
+			simu->monitor_red->reduce();
 			simu->time_reduction();
 			simu->terminal->temp_report(std::clog);
 			simu->t_simu = steady_clock::now();
@@ -450,7 +450,7 @@ void Simulation_BFER<B,R,Q>
 
 	// simulation loop
 	auto t_simu = steady_clock::now();
-	while (!simu->analyzer_red->fe_limit_achieved() && // while max frame error count has not been reached
+	while (!simu->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (simu->params.simulation.stop_time == seconds(0) ||
 	        (steady_clock::now() - simu->t_snr) < simu->params.simulation.stop_time))
 	{
@@ -617,7 +617,7 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->analyzer_red->check_errors(simu->U_K[0], simu->V_K[0]);
+		simu->monitor_red->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations
@@ -879,10 +879,10 @@ void Simulation_BFER<B,R,Q>
 	for (tid = 0; tid < nthr; tid++) if (channel  [tid] != nullptr) { delete channel  [tid]; channel  [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (quantizer[tid] != nullptr) { delete quantizer[tid]; quantizer[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (decoder  [tid] != nullptr) { delete decoder  [tid]; decoder  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (analyzer [tid] != nullptr) { delete analyzer [tid]; analyzer [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (monitor  [tid] != nullptr) { delete monitor  [tid]; monitor  [tid] = nullptr; }
 	
-	if (analyzer_red != nullptr) { delete analyzer_red; analyzer_red = nullptr; }
-	if (terminal     != nullptr) { delete terminal;     terminal     = nullptr; }
+	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
+	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -942,10 +942,10 @@ Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Error_analyzer<B>* Simulation_BFER<B,R,Q>
-::build_analyzer(const int tid)
+Monitor<B>* Simulation_BFER<B,R,Q>
+::build_monitor(const int tid)
 {
-	return Factory_error_analyzer<B>::build(params, n_frames);
+	return Factory_monitor<B>::build(params, n_frames);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
@@ -954,7 +954,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(params, snr, analyzer_red, t_snr, d_decod_all_red);
+	return Factory_terminal<B,R>::build(params, snr, monitor_red, t_snr, d_decod_all_red);
 }
 
 // ==================================================================================== explicit template instantiation 

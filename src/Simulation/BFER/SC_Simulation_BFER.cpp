@@ -17,7 +17,7 @@
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
-#include "Tools/Factory/Factory_error_analyzer.hpp"
+#include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
@@ -48,7 +48,7 @@ Simulation_BFER<B,R,Q>
   channel  (1, nullptr),
   quantizer(1, nullptr),
   decoder  (1, nullptr),
-  analyzer (1, nullptr),
+  monitor  (1, nullptr),
   terminal (   nullptr),
 
   duplicator(nullptr),
@@ -114,7 +114,7 @@ void Simulation_BFER<B,R,Q>
 		release_objects();
 
 		// exit simulation (double [ctrl+c])
-		if (Error_analyzer<B>::is_over())
+		if (Monitor<B>::is_over())
 			break;
 	}
 }
@@ -182,20 +182,20 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain()
 {
 	// build the objects
-	this->source   [0] = this->build_source   (      ); check_errors(this->source   [0], "Source<B>"        );
-	this->crc      [0] = this->build_crc      (      ); check_errors(this->crc      [0], "CRC<B>"           );
-	this->encoder  [0] = this->build_encoder  (      ); check_errors(this->encoder  [0], "Encoder<B>"       );
-	this->puncturer[0] = this->build_puncturer(      ); check_errors(this->puncturer[0], "Puncturer<B,Q>"   );
-	this->modulator[0] = this->build_modulator(      ); check_errors(this->modulator[0], "Modulator<B,R>"   );
+	this->source   [0] = this->build_source   (      ); check_errors(this->source   [0], "Source<B>"     );
+	this->crc      [0] = this->build_crc      (      ); check_errors(this->crc      [0], "CRC<B>"        );
+	this->encoder  [0] = this->build_encoder  (      ); check_errors(this->encoder  [0], "Encoder<B>"    );
+	this->puncturer[0] = this->build_puncturer(      ); check_errors(this->puncturer[0], "Puncturer<B,Q>");
+	this->modulator[0] = this->build_modulator(      ); check_errors(this->modulator[0], "Modulator<B,R>");
 
 	const auto N     = this->params.code.N;
 	const auto tail  = this->params.code.tail_length;
 	const auto N_mod = this->modulator[0]->get_buffer_size_after_modulation(N + tail);
 	
-	this->channel  [0] = this->build_channel  (N_mod ); check_errors(this->channel  [0], "Channel<R>"       );
-	this->quantizer[0] = this->build_quantizer(N+tail); check_errors(this->quantizer[0], "Quantizer<R,Q>"   );
-	this->decoder  [0] = this->build_decoder  (      ); check_errors(this->decoder  [0], "Decoder<B,Q>"     );
-	this->analyzer [0] = this->build_analyzer (      ); check_errors(this->analyzer [0], "Error_analyzer<B>");
+	this->channel  [0] = this->build_channel  (N_mod ); check_errors(this->channel  [0], "Channel<R>"    );
+	this->quantizer[0] = this->build_quantizer(N+tail); check_errors(this->quantizer[0], "Quantizer<R,Q>");
+	this->decoder  [0] = this->build_decoder  (      ); check_errors(this->decoder  [0], "Decoder<B,Q>"  );
+	this->monitor  [0] = this->build_monitor  (      ); check_errors(this->monitor  [0], "Monitor<B>"    );
 
 	// create the sc_module inside the objects of the communication chain
 	this->source   [0]->create_sc_module            ();
@@ -209,7 +209,7 @@ void Simulation_BFER<B,R,Q>
 	this->channel  [0]->create_sc_module            ();
 	this->quantizer[0]->create_sc_module            ();
 	this->decoder  [0]->create_sc_module            ();
-	this->analyzer [0]->create_sc_module            ();
+	this->monitor  [0]->create_sc_module            ();
 
 	// get the real number of frames per threads (from the decoder)
 	this->n_frames = this->decoder[0]->get_n_frames();
@@ -222,7 +222,7 @@ void Simulation_BFER<B,R,Q>
 	this->modulator[0]->set_n_frames(this->n_frames);
 	this->channel  [0]->set_n_frames(this->n_frames);
 	this->quantizer[0]->set_n_frames(this->n_frames);
-	this->analyzer [0]->set_n_frames(this->n_frames);
+	this->monitor  [0]->set_n_frames(this->n_frames);
 
 	// build the terminal to display the BER/FER
 	this->terminal = this->build_terminal();
@@ -234,7 +234,7 @@ void Simulation_BFER<B,R,Q>
 ::bind_sockets()
 {
 	this->source    [0]->module        ->s_out (this->duplicator                  ->s_in );
-	this->duplicator                   ->s_out1(this->analyzer [0]->module        ->s_in1);
+	this->duplicator                   ->s_out1(this->monitor  [0]->module        ->s_in1);
 	this->duplicator                   ->s_out2(this->crc      [0]->module        ->s_in );
 	this->crc       [0]->module        ->s_out (this->encoder  [0]->module        ->s_in );
 	this->encoder   [0]->module        ->s_out (this->puncturer[0]->module_punct  ->s_in );
@@ -245,7 +245,7 @@ void Simulation_BFER<B,R,Q>
 	this->modulator [0]->module_demod  ->s_out (this->quantizer[0]->module        ->s_in );
 	this->quantizer [0]->module        ->s_out (this->puncturer[0]->module_depunct->s_in );
 	this->puncturer [0]->module_depunct->s_out (this->decoder  [0]->module        ->s_in );
-	this->decoder   [0]->module        ->s_out (this->analyzer [0]->module        ->s_in2);
+	this->decoder   [0]->module        ->s_out (this->monitor  [0]->module        ->s_in2);
 }
 
 template <typename B, typename R, typename Q>
@@ -253,7 +253,7 @@ void Simulation_BFER<B,R,Q>
 ::bind_sockets_debug()
 {
 	this->source    [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator                  ->s_in );
-	this->duplicator                                                                ->s_out1(this->analyzer [0]->module        ->s_in1);
+	this->duplicator                                                                ->s_out1(this->monitor  [0]->module        ->s_in1);
 	this->duplicator                                                                ->s_out2(this->crc      [0]->module        ->s_in );
 	this->crc       [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder  [0]->module        ->s_in );
 	this->encoder   [0]->module        ->s_out(this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->puncturer[0]->module_punct  ->s_in );
@@ -264,7 +264,7 @@ void Simulation_BFER<B,R,Q>
 	this->modulator [0]->module_demod  ->s_out(this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer[0]->module        ->s_in );
 	this->quantizer [0]->module        ->s_out(this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer[0]->module_depunct->s_in );
 	this->puncturer [0]->module_depunct->s_out(this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->decoder  [0]->module        ->s_in );
-	this->decoder   [0]->module        ->s_out(this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->analyzer [0]->module        ->s_in2);
+	this->decoder   [0]->module        ->s_out(this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->monitor  [0]->module        ->s_in2);
 }
 
 template <typename B, typename R, typename Q>
@@ -273,7 +273,7 @@ void Simulation_BFER<B,R,Q>
 {
 	if (!simu->params.simulation.disable_display && simu->params.simulation.display_freq != std::chrono::nanoseconds(0))
 	{
-		while (!simu->analyzer[0]->fe_limit_achieved() && !simu->analyzer[0]->is_interrupt())
+		while (!simu->monitor[0]->fe_limit_achieved() && !simu->monitor[0]->is_interrupt())
 		{
 			const auto sleep_time = simu->params.simulation.display_freq - std::chrono::milliseconds(0);
 			std::this_thread::sleep_for(sleep_time);
@@ -298,7 +298,7 @@ void Simulation_BFER<B,R,Q>
 	if (channel  [0] != nullptr) { delete channel  [0]; channel  [0] = nullptr; }
 	if (quantizer[0] != nullptr) { delete quantizer[0]; quantizer[0] = nullptr; }
 	if (decoder  [0] != nullptr) { delete decoder  [0]; decoder  [0] = nullptr; }
-	if (analyzer [0] != nullptr) { delete analyzer [0]; analyzer [0] = nullptr; }
+	if (monitor  [0] != nullptr) { delete monitor  [0]; monitor  [0] = nullptr; }
 	if (terminal     != nullptr) { delete terminal    ; terminal     = nullptr; }
 }
 
@@ -359,10 +359,10 @@ Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Error_analyzer<B>* Simulation_BFER<B,R,Q>
-::build_analyzer(const int tid)
+Monitor<B>* Simulation_BFER<B,R,Q>
+::build_monitor(const int tid)
 {
-	return Factory_error_analyzer<B>::build(params, n_frames);
+	return Factory_monitor<B>::build(params, n_frames);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
@@ -371,7 +371,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(params, snr, analyzer[0], t_snr, d_decod_total_fake);
+	return Factory_terminal<B,R>::build(params, snr, monitor[0], t_snr, d_decod_total_fake);
 }
 
 // ==================================================================================== explicit template instantiation 

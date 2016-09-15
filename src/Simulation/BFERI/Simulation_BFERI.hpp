@@ -1,3 +1,4 @@
+
 #ifdef SYSTEMC
 #include "SC_Simulation_BFERI.hpp"
 #else
@@ -22,8 +23,8 @@
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Decoder/SISO.hpp"
 #include "Module/Decoder/Decoder.hpp"
-#include "Module/Error/Error_analyzer.hpp"
-#include "Module/Error/Standard/Error_analyzer_reduction.hpp"
+#include "Module/Monitor/Monitor.hpp"
+#include "Module/Monitor/Standard/Monitor_reduction.hpp"
 
 #include "Tools/Display/Terminal/Terminal.hpp"
 
@@ -59,18 +60,18 @@ protected:
 	std::vector<mipp::vector<B>> V_K;  // decoded codeword
 
 	// communication chain
-	std::vector<Source<B>*>          source;
-	std::vector<CRC<B>*>             crc;
-	std::vector<Encoder<B>*>         encoder;
-	std::vector<Modulator<B,R,Q>*>   modulator;
-	std::vector<Channel<R>*>         channel;
-	std::vector<Quantizer<R,Q>*>     quantizer;
-	std::vector<Interleaver<int>*>   interleaver;
-	std::vector<SISO<Q>*>            siso;
-	std::vector<Decoder<B,Q>*>       decoder;
-	std::vector<Error_analyzer<B>*>  analyzer;
-	Error_analyzer_reduction<B>     *analyzer_red;
-	Terminal                        *terminal;
+	std::vector<Source<B>*>         source;
+	std::vector<CRC<B>*>            crc;
+	std::vector<Encoder<B>*>        encoder;
+	std::vector<Modulator<B,R,Q>*>  modulator;
+	std::vector<Channel<R>*>        channel;
+	std::vector<Quantizer<R,Q>*>    quantizer;
+	std::vector<Interleaver<int>*>  interleaver;
+	std::vector<SISO<Q>*>           siso;
+	std::vector<Decoder<B,Q>*>      decoder;
+	std::vector<Monitor<B>*>        monitor;
+	Monitor_reduction<B>           *monitor_red;
+	Terminal                       *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
@@ -136,17 +137,17 @@ protected:
 	virtual void               launch_precompute();
 	virtual void               snr_precompute   ();
 
-	virtual Source<B>*         build_source     (                const int tid = 0);
-	virtual CRC<B>*            build_crc        (                const int tid = 0);
-	virtual Encoder<B>*        build_encoder    (                const int tid = 0) = 0;
-	virtual Interleaver<int>*  build_interleaver(                const int tid = 0);
-	virtual Modulator<B,R,Q>*  build_modulator  (                const int tid = 0);
-	virtual Channel<R>*        build_channel    (const int size, const int tid = 0);
-	virtual Quantizer<R,Q>*    build_quantizer  (const int size, const int tid = 0);
-	virtual SISO<Q>*           build_siso       (                const int tid = 0) = 0;
-	virtual Decoder<B,Q>*      build_decoder    (                const int tid = 0) = 0;
-	virtual Error_analyzer<B>* build_analyzer   (                const int tid = 0);
-	        Terminal*          build_terminal   (                const int tid = 0);
+	virtual Source<B>*        build_source     (                const int tid = 0);
+	virtual CRC<B>*           build_crc        (                const int tid = 0);
+	virtual Encoder<B>*       build_encoder    (                const int tid = 0) = 0;
+	virtual Interleaver<int>* build_interleaver(                const int tid = 0);
+	virtual Modulator<B,R,Q>* build_modulator  (                const int tid = 0);
+	virtual Channel<R>*       build_channel    (const int size, const int tid = 0);
+	virtual Quantizer<R,Q>*   build_quantizer  (const int size, const int tid = 0);
+	virtual SISO<Q>*          build_siso       (                const int tid = 0) = 0;
+	virtual Decoder<B,Q>*     build_decoder    (                const int tid = 0) = 0;
+	virtual Monitor<B>*       build_monitor    (                const int tid = 0);
+	        Terminal*         build_terminal   (                const int tid = 0);
 };
 
 #endif /* SIMULATION_BFERI_HPP_ */

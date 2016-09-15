@@ -1,14 +1,15 @@
-#ifndef ERROR_ANALYZER_STD_HPP_
-#define ERROR_ANALYZER_STD_HPP_
+#ifndef MONITOR_STD_HPP_
+#define MONITOR_STD_HPP_
 
 #include <chrono>
 #include <vector>
+
 #include "Tools/Perf/MIPP/mipp.h"
 
-#include "../Error_analyzer.hpp"
+#include "../Monitor.hpp"
 
 template <typename B>
-class Error_analyzer_std : public Error_analyzer<B>
+class Monitor_std : public Monitor<B>
 {
 protected:
 	const int max_fe;
@@ -20,9 +21,9 @@ protected:
     bool last_frame_error;
 
 public:
-	Error_analyzer_std(const int& K, const int& N, const int& max_fe, const int& n_frames = 1, 
-	                   const std::string name = "Error_analyzer_std");
-	virtual ~Error_analyzer_std(){};
+	Monitor_std(const int& K, const int& N, const int& max_fe, const int& n_frames = 1,
+	            const std::string name = "Monitor_std");
+	virtual ~Monitor_std(){};
 
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
 
@@ -42,4 +43,4 @@ private:
 	void update_n_analyzed_frames();
 };
 
-#endif /* ERROR_ANALYZER_STD_HPP_ */
+#endif /* MONITOR_STD_HPP_ */

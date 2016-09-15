@@ -9,12 +9,12 @@
 template <typename B, typename R>
 Terminal_BFER<B,R>
 ::Terminal_BFER(const R& snr,
-                const Error_analyzer<B> &err_analyzer,
+                const Monitor<B> &monitor,
                 const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
                 const std::chrono::nanoseconds &d_decod_total,
                 const bool use_only_decoder_time_thr)
 : snr(snr),
-  err_analyzer(err_analyzer),
+  monitor(monitor),
   t_snr(t_snr),
   d_decod_total(d_decod_total),
   real_time_state(0),
@@ -71,40 +71,40 @@ void Terminal_BFER<B,R>
 	using namespace std;
 
 	auto ber = 0.f, fer = 0.f;
-	if(err_analyzer.get_n_be() != 0 )
+	if(monitor.get_n_be() != 0 )
 	{
-		ber = (float)err_analyzer.get_ber_value();
-		fer = (float)err_analyzer.get_fer_value();
+		ber = (float)monitor.get_ber_value();
+		fer = (float)monitor.get_fer_value();
 	}
 	else
 	{
-		ber = (1.f) / ((float)err_analyzer.get_n_analyzed_frames()) / err_analyzer.get_K();
-		fer = (1.f) / ((float)err_analyzer.get_n_analyzed_frames());
+		ber = (1.f) / ((float)monitor.get_n_analyzed_frames()) / monitor.get_K();
+		fer = (1.f) / ((float)monitor.get_n_analyzed_frames());
 	}
-	auto fra = err_analyzer.get_n_analyzed_frames();
-	auto be  = err_analyzer.get_n_be();
-	auto fe  = err_analyzer.get_n_fe();
+	auto fra = monitor.get_n_analyzed_frames();
+	auto be  = monitor.get_n_be();
+	auto fe  = monitor.get_n_fe();
 
 	auto decod_time_ms = (float)d_decod_total.count() * 0.000001f;
 	auto total_time = d_decod_total.count();
 
-	auto dec_cthr = ((float)err_analyzer.get_N() * (float)err_analyzer.get_n_analyzed_frames()) /
+	auto dec_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_frames()) /
 		             (total_time * 0.000000001f); // = bps
 	dec_cthr /= 1000.f; // = kbps
 	dec_cthr /= 1000.f; // = mbps
 
-	auto dec_ithr = dec_cthr * ((float)err_analyzer.get_K() / (float)err_analyzer.get_N());
+	auto dec_ithr = dec_cthr * ((float)monitor.get_K() / (float)monitor.get_N());
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)err_analyzer.get_N() * (float)err_analyzer.get_n_analyzed_frames()) /
+	auto simu_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_frames()) /
 		              simu_time ; // = bps
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
 	auto lat = decod_time_ms * 1000.f;
-	lat = (lat / (float) err_analyzer.get_n_analyzed_frames()) * err_analyzer.get_n_frames();
+	lat = (lat / (float) monitor.get_n_analyzed_frames()) * monitor.get_n_frames();
 
-	if (Error_analyzer<B>::is_interrupt()) stream << "\r";
+	if (Monitor<B>::is_interrupt()) stream << "\r";
 
 #ifdef _WIN32
 	stringstream str_ber, str_fer;
@@ -156,8 +156,8 @@ void Terminal_BFER<B,R>
 	_report(stream);
 
 	auto et = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto tr = et * ((float)err_analyzer.get_fe_limit() / (float)err_analyzer.get_n_fe()) - et;
-	auto tr_format = get_time_format((err_analyzer.get_n_fe() == 0) ? 0 : tr);
+	auto tr = et * ((float)monitor.get_fe_limit() / (float)monitor.get_n_fe()) - et;
+	auto tr_format = get_time_format((monitor.get_n_fe() == 0) ? 0 : tr);
 
 	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << tr_format;
 
@@ -189,8 +189,8 @@ void Terminal_BFER<B,R>
 
 	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
 
-	if (Error_analyzer<B>::is_interrupt()) stream << " x" << std::endl;
-	else                                   stream << "  " << std::endl;
+	if (Monitor<B>::is_interrupt()) stream << " x" << std::endl;
+	else                            stream << "  " << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

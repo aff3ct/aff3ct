@@ -4,8 +4,7 @@
 #include <string>
 #include <chrono>
 
-#include "Module/Error/Error_analyzer.hpp"
-
+#include "Module/Monitor/Monitor.hpp"
 #include "../Terminal.hpp"
 
 template <typename B, typename R>
@@ -13,13 +12,13 @@ class Terminal_BFER_legacy : public Terminal
 {
 protected:
 	const R                                                                             snr;
-	const Error_analyzer<B>                                                            &err_analyzer;
+	const Monitor<B>                                                                   &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	unsigned short                                                                      real_time_state;
 
 public:
     Terminal_BFER_legacy(const R& snr,
-	                     const Error_analyzer<B> &err_analyzer,
+	                     const Monitor<B> &monitor,
 	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	                     const std::string name = "Terminal_BFER_legacy");
 	virtual ~Terminal_BFER_legacy() {}

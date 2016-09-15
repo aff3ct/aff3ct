@@ -4,8 +4,7 @@
 #include <string>
 #include <chrono>
 
-#include "Module/Error/Error_analyzer.hpp"
-
+#include "Module/Monitor/Monitor.hpp"
 #include "../Terminal.hpp"
 
 template <typename B, typename R>
@@ -13,7 +12,7 @@ class Terminal_BFER : public Terminal
 {
 protected:
 	const R                                                                             snr;
-	const Error_analyzer<B>                                                            &err_analyzer;
+	const Monitor<B>                                                                   &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	const std::chrono::nanoseconds                                                     &d_decod_total;
 	unsigned short                                                                      real_time_state;
@@ -21,7 +20,7 @@ protected:
 
 public:
 	Terminal_BFER(const R& snr,
-	              const Error_analyzer<B> &err_analyzer,
+	              const Monitor<B> &monitor,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	              const std::chrono::nanoseconds &d_decod_total,
 	              const bool use_only_decoder_time_thr = false);
