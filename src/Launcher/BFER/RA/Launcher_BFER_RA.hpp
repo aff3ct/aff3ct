@@ -1,7 +1,7 @@
 #ifndef LAUNCHER_BFER_RA_HPP_
 #define LAUNCHER_BFER_RA_HPP_
 
-#include "Launcher_BFER.hpp"
+#include "../Launcher_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Launcher_BFER_RA : public Launcher_BFER<B,R,Q>

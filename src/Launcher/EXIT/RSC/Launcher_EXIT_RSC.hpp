@@ -1,7 +1,7 @@
 #ifndef LAUNCHER_EXIT_RSC_HPP_
 #define LAUNCHER_EXIT_RSC_HPP_
 
-#include "Launcher_EXIT.hpp"
+#include "../Launcher_EXIT.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 class Launcher_EXIT_RSC : public Launcher_EXIT<B,R,Q>

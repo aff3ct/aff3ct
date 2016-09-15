@@ -1,7 +1,7 @@
 #ifndef LAUNCHER_BFERI_LDPC_HPP_
 #define LAUNCHER_BFERI_LDPC_HPP_
 
-#include "Launcher_BFERI.hpp"
+#include "../Launcher_BFERI.hpp"
 
 template <typename B, typename R, typename Q>
 class Launcher_BFERI_LDPC : public Launcher_BFERI<B,R,Q>

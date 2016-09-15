@@ -15,22 +15,22 @@
 
 #include "Launcher/Launcher.hpp"
 
-#include "Launcher/BFER/Launcher_BFER_polar.hpp"
-#include "Launcher/BFER/Launcher_BFER_turbo.hpp"
-#include "Launcher/BFER/Launcher_BFER_LDPC.hpp"
-#include "Launcher/BFER/Launcher_BFER_RSC.hpp"
-#include "Launcher/BFER/Launcher_BFER_RA.hpp"
-#include "Launcher/BFER/Launcher_BFER_repetition.hpp"
-#include "Launcher/BFER/Launcher_BFER_uncoded.hpp"
+#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
+#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
+#include "Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp"
+#include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
+#include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
+#include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
+#include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
 
-#include "Launcher/BFERI/Launcher_BFERI_RSC.hpp"
-#include "Launcher/BFERI/Launcher_BFERI_LDPC.hpp"
-#include "Launcher/BFERI/Launcher_BFERI_uncoded.hpp"
+#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
+#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
+#include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
 
-#include "Launcher/EXIT/Launcher_EXIT_polar.hpp"
-#include "Launcher/EXIT/Launcher_EXIT_RSC.hpp"
+#include "Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp"
+#include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
 
-#include "Launcher/GEN/Launcher_GEN_polar.hpp"
+#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
 void print_version()
 {
