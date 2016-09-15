@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --prec 32 --simu-type BFER --code-type TURBO -K 6144 -N 18432 --max-fe 500 --snr-min 0.0 --snr-max 1.01 --dec-algo LTE --dec-implem STD --max-iter 6 --interleaver LTE --scaling-factor LTE_VEC --n-threads 64 --disable-demod --dec-map MAX
+./bin/aff3ct --prec 32 --simu-type BFER --code-type TURBO -K 6144 -N 18432 --max-fe 500 --snr-min 0.0 --snr-max 1.01 --dec-algo LTE --dec-implem STD --max-iter 6 --interleaver LTE --scaling-factor LTE_VEC --n-threads 64 --disable-demod --dec-max MAX
 Curve name:
 Turbo LTE-STD-seq 32-bit
 Trace:

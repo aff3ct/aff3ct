@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --code-type TURBO -K 1784 -N 5352 --snr-min 0.0 --snr-max 0.91 --dec-algo CCSDS --dec-implem GENERIC --max-iter 10 --interleaver CCSDS --scaling-factor NO --dec-map MAXS --n-threads 64
+./bin/aff3ct --code-type TURBO -K 1784 -N 5352 --snr-min 0.0 --snr-max 0.91 --dec-algo CCSDS --dec-implem GENERIC --max-iter 10 --interleaver CCSDS --scaling-factor NO --dec-max MAXS --n-threads 64
 Curve name:
 Turbo CCSDS
 Trace:
