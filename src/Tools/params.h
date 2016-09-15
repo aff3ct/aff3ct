@@ -104,7 +104,7 @@ struct decoder_parameters
 	std::string implem;
 	std::string simd_strategy;
 	std::string scaling_factor;
-	std::string map;
+	std::string max;
 	int         max_iter;
 	int         L;
 };

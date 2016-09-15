@@ -2,8 +2,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_std(const int &K,
                              const std::vector<std::vector<int>> &trellis,
                              const bool buffered_encoding,
@@ -12,14 +12,14 @@ Decoder_RSC_BCJR_inter_std<B,R,MAP>
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::~Decoder_RSC_BCJR_inter_std()
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -83,8 +83,8 @@ struct RSC_BCJR_inter_std_normalize <signed char>
 	}
 };
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::compute_alpha()
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -101,7 +101,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 			const auto r_a1 = mipp::Reg<R>(&this->alpha[idx_a1[j]][i -stride]);
 			const auto r_a2 = mipp::Reg<R>(&this->alpha[idx_a2[j]][i -stride]);
 
-			const auto r_a3 = MAP(r_a1 + r_g1, r_a2 - r_g1);
+			const auto r_a3 = MAX(r_a1 + r_g1, r_a2 - r_g1);
 
 			r_a3.store(&this->alpha[j][i]);
 		}
@@ -110,8 +110,8 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::compute_beta()
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -128,7 +128,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 			const auto r_b1 = mipp::Reg<R>(&this->beta [idx_b1[j]][i +stride]);
 			const auto r_b2 = mipp::Reg<R>(&this->beta [idx_b2[j]][i +stride]);
 
-			const auto r_b3 = MAP(r_b1 + r_g2, r_b2 - r_g2);
+			const auto r_b3 = MAX(r_b1 + r_g2, r_b2 - r_g2);
 
 			r_b3.store(&this->beta[j][i]);
 		}
@@ -137,8 +137,8 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -160,7 +160,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 			r_g = mipp::Reg<R>(&this->gamma[idx_g2[j]][i        ]);
 
 			auto r_sum = r_a + r_b + r_g;
-			r_max0 = MAP(r_max0, r_sum);
+			r_max0 = MAX(r_max0, r_sum);
 		}
 
 		r_a         = mipp::Reg<R>(&this->alpha[       0 ][i        ]);
@@ -174,7 +174,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 			r_g = mipp::Reg<R>(&this->gamma[idx_g2[j]][i        ]);
 
 			auto r_sum = r_a + r_b - r_g;
-			r_max1 = MAP(r_max1, r_sum);
+			r_max1 = MAX(r_max1, r_sum);
 		}
 
 		const auto r_post = RSC_BCJR_inter_post<R>::compute(r_max0 - r_max1);
@@ -183,8 +183,8 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	this->compute_gamma(sys, par);

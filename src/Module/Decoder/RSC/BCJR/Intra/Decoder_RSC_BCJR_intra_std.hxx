@@ -2,8 +2,8 @@
 
 #include "Decoder_RSC_BCJR_intra_std.hpp"
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_intra_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::Decoder_RSC_BCJR_intra_std(const int &K,
                              const std::vector<std::vector<int>> &trellis,
                              const bool buffered_encoding,
@@ -14,14 +14,14 @@ Decoder_RSC_BCJR_intra_std<B,R,MAP>
 	assert(K % 8 == 0);
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_intra_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::~Decoder_RSC_BCJR_intra_std()
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_intra_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	// compute gamma values
@@ -42,8 +42,8 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_intra_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::compute_alpha()
 {
 	constexpr int cmask_a0  [8] = {0, 3, 4, 7, 1, 2, 5, 6}; // alpha trellis transitions 0.
@@ -75,7 +75,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 		const auto r_g      = r_g4.shuff(r_cmask_g[(i -1) % 4]);
 		const auto r_a0     = r_a_prev.shuff(r_cmask_a0);
 		const auto r_a1     = r_a_prev.shuff(r_cmask_a1);
-		      auto r_a      = MAP(r_a0 + r_g, r_a1 - r_g);
+		      auto r_a      = MAX(r_a0 + r_g, r_a1 - r_g);
 
 		// normalization
 		r_a = RSC_BCJR_intra_normalize<R>::apply(r_a, r_cmask_norm, i);
@@ -84,8 +84,8 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_intra_std<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	constexpr int cmask_b0  [8] = {0, 4, 5, 1, 2, 6, 7, 3}; // beta trellis transitions 0.
@@ -113,7 +113,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 		const auto r_b0 = r_b.shuff(r_cmask_b0);
 		const auto r_b1 = r_b.shuff(r_cmask_b1);
 		const auto r_g  = r_g4_bis.shuff(r_cmask_g[i % 4]);
-		           r_b  = MAP(r_b0 + r_g, r_b1 - r_g);
+		           r_b  = MAX(r_b0 + r_g, r_b1 - r_g);
 		// normalization
 		r_b = RSC_BCJR_intra_normalize<R>::apply(r_b, r_cmask_norm, i);
 	}
@@ -135,14 +135,14 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAP>
 			const auto r_g  = r_g4.shuff(r_cmask_g[(i+j+0) % 4]);
 			const auto r_b0 = r_b.shuff(r_cmask_b0);
 			const auto r_b1 = r_b.shuff(r_cmask_b1.r);
-			           r_b  = MAP(r_b0 + r_g, r_b1 - r_g);
+			           r_b  = MAX(r_b0 + r_g, r_b1 - r_g);
 
 			// normalization
 			r_b = RSC_BCJR_intra_normalize<R>::apply(r_b, r_cmask_norm, i+j);
 
 			const auto r_a    = mipp::Reg<R>(&this->alpha[(i+j+0)*8]);
-			const auto r_max0 = mipp::Reduction<R,MAP>::apply(r_a + r_b0 + r_g);
-			const auto r_max1 = mipp::Reduction<R,MAP>::apply(r_a + r_b1 - r_g);
+			const auto r_max0 = mipp::Reduction<R,MAX>::apply(r_a + r_b0 + r_g);
+			const auto r_max1 = mipp::Reduction<R,MAX>::apply(r_a + r_b1 - r_g);
 			const auto r_post = r_m1e & (r_max0 - r_max1);
 
 			r_buffer_post = r_buffer_post.rot() ^ r_post;

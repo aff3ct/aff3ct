@@ -3,12 +3,11 @@
 
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
-
-#include "../../decoder_RSC_functions.h"
+#include "Tools/Math/max.h"
 
 #include "Decoder_RSC_BCJR_seq.hpp"
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 class Decoder_RSC_BCJR_seq_fast : public Decoder_RSC_BCJR_seq<B,R>
 {
 

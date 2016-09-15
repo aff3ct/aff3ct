@@ -77,8 +77,8 @@ struct RSC_BCJR_inter_intra_fast_x4_AVX_init <signed char>
 	}
 };
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_intra_fast_x4_AVX(const int &K,
                                            const std::vector<std::vector<int>> &trellis,
                                            const bool buffered_encoding,
@@ -91,14 +91,14 @@ Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 	RSC_BCJR_inter_intra_fast_x4_AVX_init<R>::apply(this->alpha);
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::~Decoder_RSC_BCJR_inter_intra_fast_x4_AVX()
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
@@ -130,8 +130,8 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::compute_alpha()
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
@@ -162,7 +162,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__0  = r_g4    .shuff2(r_cmask_g0);
 		const auto r_a0__0 = r_a_prev.shuff2(r_cmask_a0);
 		const auto r_a1__0 = r_a_prev.shuff2(r_cmask_a1);
-		      auto r_a__0  = MAP(r_a0__0 + r_g__0, r_a1__0 - r_g__0);
+		      auto r_a__0  = MAX(r_a0__0 + r_g__0, r_a1__0 - r_g__0);
 		r_a__0 = RSC_BCJR_inter_intra_normalize<R,0>::apply(r_a__0, r_cmask_norm);
 		r_a__0.store(&this->alpha[(i+1)*8*n_frames]);
 
@@ -170,7 +170,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__1  = r_g4  .shuff2(r_cmask_g1);
 		const auto r_a0__1 = r_a__0.shuff2(r_cmask_a0);
 		const auto r_a1__1 = r_a__0.shuff2(r_cmask_a1);
-		      auto r_a__1  = MAP(r_a0__1 + r_g__1, r_a1__1 - r_g__1);
+		      auto r_a__1  = MAX(r_a0__1 + r_g__1, r_a1__1 - r_g__1);
 		r_a__1 = RSC_BCJR_inter_intra_normalize<R,1>::apply(r_a__1, r_cmask_norm);
 		r_a__1.store(&this->alpha[(i+2)*8*n_frames]);
 
@@ -178,7 +178,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__2  = r_g4  .shuff2(r_cmask_g2);
 		const auto r_a0__2 = r_a__1.shuff2(r_cmask_a0);
 		const auto r_a1__2 = r_a__1.shuff2(r_cmask_a1);
-		      auto r_a__2  = MAP(r_a0__2 + r_g__2, r_a1__2 - r_g__2);
+		      auto r_a__2  = MAX(r_a0__2 + r_g__2, r_a1__2 - r_g__2);
 		r_a__2 = RSC_BCJR_inter_intra_normalize<R,2>::apply(r_a__2, r_cmask_norm);
 		r_a__2.store(&this->alpha[(i+3)*8*n_frames]);
 
@@ -186,7 +186,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__3  = r_g4  .shuff2(r_cmask_g3);
 		const auto r_a0__3 = r_a__2.shuff2(r_cmask_a0);
 		const auto r_a1__3 = r_a__2.shuff2(r_cmask_a1);
-		      auto r_a__3  = MAP(r_a0__3 + r_g__3, r_a1__3 - r_g__3);
+		      auto r_a__3  = MAX(r_a0__3 + r_g__3, r_a1__3 - r_g__3);
 		r_a__3 = RSC_BCJR_inter_intra_normalize<R,3>::apply(r_a__3, r_cmask_norm);
 		r_a__3.store(&this->alpha[(i+4)*8*n_frames]);
 
@@ -194,8 +194,8 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
@@ -225,7 +225,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_b0     = r_b_prev.shuff2(r_cmask_b0);
 		const auto r_b1     = r_b_prev.shuff2(r_cmask_b1);
 		const auto r_g      = r_g4_bis.shuff2(r_cmask_g[i % 4]);
-		           r_b_prev = MAP(r_b0 + r_g, r_b1 - r_g);
+		           r_b_prev = MAX(r_b0 + r_g, r_b1 - r_g);
 		// normalization
 		r_b_prev = RSC_BCJR_inter_intra_normalize<R>::apply(r_b_prev, r_cmask_norm, i);
 	}
@@ -242,7 +242,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__7  = r_g4.shuff2(r_cmask_g3);
 		const auto r_b0__7 = r_b_prev.shuff2(r_cmask_b0);
 		const auto r_b1__7 = r_b_prev.shuff2(r_cmask_b1);
-		      auto r_b__7  = MAP(r_b0__7 + r_g__7, r_b1__7 - r_g__7);
+		      auto r_b__7  = MAX(r_b0__7 + r_g__7, r_b1__7 - r_g__7);
 		r_b__7 = RSC_BCJR_inter_intra_normalize<R,0>::apply(r_b__7, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+7
 		r_max0[7] = r_a__7 + r_b0__7 + r_g__7;
@@ -253,7 +253,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__6  = r_g4.shuff2(r_cmask_g2);
 		const auto r_b0__6 = r_b__7.shuff2(r_cmask_b0);
 		const auto r_b1__6 = r_b__7.shuff2(r_cmask_b1);
-		      auto r_b__6  = MAP(r_b0__6 + r_g__6, r_b1__6 - r_g__6);
+		      auto r_b__6  = MAX(r_b0__6 + r_g__6, r_b1__6 - r_g__6);
 		r_b__6 = RSC_BCJR_inter_intra_normalize<R,1>::apply(r_b__6, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+6
 		r_max0[6] = r_a__6 + r_b0__6 + r_g__6;
@@ -264,7 +264,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__5  = r_g4.shuff2(r_cmask_g1);
 		const auto r_b0__5 = r_b__6.shuff2(r_cmask_b0);
 		const auto r_b1__5 = r_b__6.shuff2(r_cmask_b1);
-		      auto r_b__5  = MAP(r_b0__5 + r_g__5, r_b1__5 - r_g__5);
+		      auto r_b__5  = MAX(r_b0__5 + r_g__5, r_b1__5 - r_g__5);
 		r_b__5 = RSC_BCJR_inter_intra_normalize<R,2>::apply(r_b__5, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+5
 		r_max0[5] = r_a__5 + r_b0__5 + r_g__5;
@@ -275,7 +275,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__4  = r_g4.shuff2(r_cmask_g0);
 		const auto r_b0__4 = r_b__5.shuff2(r_cmask_b0);
 		const auto r_b1__4 = r_b__5.shuff2(r_cmask_b1);
-		      auto r_b__4  = MAP(r_b0__4 + r_g__4, r_b1__4 - r_g__4);
+		      auto r_b__4  = MAX(r_b0__4 + r_g__4, r_b1__4 - r_g__4);
 		r_b__4 = RSC_BCJR_inter_intra_normalize<R,3>::apply(r_b__4, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+4
 		r_max0[4] = r_a__4 + r_b0__4 + r_g__4;
@@ -289,7 +289,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__3  = r_g4.shuff2(r_cmask_g3);
 		const auto r_b0__3 = r_b__4.shuff2(r_cmask_b0);
 		const auto r_b1__3 = r_b__4.shuff2(r_cmask_b1);
-		      auto r_b__3  = MAP(r_b0__3 + r_g__3, r_b1__3 - r_g__3);
+		      auto r_b__3  = MAX(r_b0__3 + r_g__3, r_b1__3 - r_g__3);
 		r_b__3 = RSC_BCJR_inter_intra_normalize<R,0>::apply(r_b__3, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+3
 		r_max0[3] = r_a__3 + r_b0__3 + r_g__3;
@@ -300,7 +300,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__2  = r_g4.shuff2(r_cmask_g2);
 		const auto r_b0__2 = r_b__3.shuff2(r_cmask_b0);
 		const auto r_b1__2 = r_b__3.shuff2(r_cmask_b1);
-		      auto r_b__2  = MAP(r_b0__2 + r_g__2, r_b1__2 - r_g__2);
+		      auto r_b__2  = MAX(r_b0__2 + r_g__2, r_b1__2 - r_g__2);
 		r_b__2 = RSC_BCJR_inter_intra_normalize<R,1>::apply(r_b__2, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+2
 		r_max0[2] = r_a__2 + r_b0__2 + r_g__2;
@@ -311,7 +311,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__1  = r_g4.shuff2(r_cmask_g1);
 		const auto r_b0__1 = r_b__2.shuff2(r_cmask_b0);
 		const auto r_b1__1 = r_b__2.shuff2(r_cmask_b1);
-		      auto r_b__1  = MAP(r_b0__1 + r_g__1, r_b1__1 - r_g__1);
+		      auto r_b__1  = MAX(r_b0__1 + r_g__1, r_b1__1 - r_g__1);
 		r_b__1 = RSC_BCJR_inter_intra_normalize<R,2>::apply(r_b__1, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+1
 		r_max0[1] = r_a__1 + r_b0__1 + r_g__1;
@@ -322,7 +322,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		const auto r_g__0  = r_g4.shuff2(r_cmask_g0);
 		const auto r_b0__0 = r_b__1.shuff2(r_cmask_b0);
 		const auto r_b1__0 = r_b__1.shuff2(r_cmask_b1);
-		      auto r_b__0  = MAP(r_b0__0 + r_g__0, r_b1__0 - r_g__0);
+		      auto r_b__0  = MAX(r_b0__0 + r_g__0, r_b1__0 - r_g__0);
 		r_b_prev = r_b__0 = RSC_BCJR_inter_intra_normalize<R,3>::apply(r_b__0, r_cmask_norm);
 		// buffer the alpha+beta+gamma for the section i+0
 		r_max0[0] = r_a__0 + r_b0__0 + r_g__0;
@@ -333,22 +333,22 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAP>
 		mipp::Reg<R>::transpose28x8(r_max1);
 
 		// perform the final max operations in parallel
-		r_max0[0] = MAP(r_max0[0], r_max0[1]);
-		r_max1[0] = MAP(r_max1[0], r_max1[1]);
-		r_max0[1] = MAP(r_max0[2], r_max0[3]);
-		r_max1[1] = MAP(r_max1[2], r_max1[3]);
-		r_max0[2] = MAP(r_max0[4], r_max0[5]);
-		r_max1[2] = MAP(r_max1[4], r_max1[5]);
-		r_max0[3] = MAP(r_max0[6], r_max0[7]);
-		r_max1[3] = MAP(r_max1[6], r_max1[7]);
+		r_max0[0] = MAX(r_max0[0], r_max0[1]);
+		r_max1[0] = MAX(r_max1[0], r_max1[1]);
+		r_max0[1] = MAX(r_max0[2], r_max0[3]);
+		r_max1[1] = MAX(r_max1[2], r_max1[3]);
+		r_max0[2] = MAX(r_max0[4], r_max0[5]);
+		r_max1[2] = MAX(r_max1[4], r_max1[5]);
+		r_max0[3] = MAX(r_max0[6], r_max0[7]);
+		r_max1[3] = MAX(r_max1[6], r_max1[7]);
 
-		r_max0[0] = MAP(r_max0[0], r_max0[1]);
-		r_max1[0] = MAP(r_max1[0], r_max1[1]);
-		r_max0[1] = MAP(r_max0[2], r_max0[3]);
-		r_max1[1] = MAP(r_max1[2], r_max1[3]);
+		r_max0[0] = MAX(r_max0[0], r_max0[1]);
+		r_max1[0] = MAX(r_max1[0], r_max1[1]);
+		r_max0[1] = MAX(r_max0[2], r_max0[3]);
+		r_max1[1] = MAX(r_max1[2], r_max1[3]);
 
-		r_max0[0] = MAP(r_max0[0], r_max0[1]);
-		r_max1[0] = MAP(r_max1[0], r_max1[1]);
+		r_max0[0] = MAX(r_max0[0], r_max0[1]);
+		r_max1[0] = MAX(r_max1[0], r_max1[1]);
 
 		// saturate r_post if the computation are made in 8-bit, do nothing else.
 		auto r_post = RSC_BCJR_inter_intra_post<R>::compute(mipp::sub<R>(r_max0[0], r_max1[0]));

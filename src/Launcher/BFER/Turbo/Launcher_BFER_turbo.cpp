@@ -26,7 +26,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.code.type                   = "TURBO";
 	this->params.decoder.algo                = "LTE";
 	this->params.decoder.implem              = "FAST";
-	this->params.decoder.map                 = "MAX";
+	this->params.decoder.max                 = "MAX";
 
 	this->params.decoder.max_iter            = 6;
 	this->params.encoder.buffered            = true;
@@ -55,8 +55,8 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	this->opt_args["dec-simd-strat" ] = "simd_type";
 	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
-	this->opt_args["dec-map"        ] = "map_type";
-	this->doc_args["dec-map"        ] = "the MAP implementation for the nodes (ex: MAX, MAXS, MAXL).";
+	this->opt_args["dec-max"        ] = "max_type";
+	this->doc_args["dec-max"        ] = "the MAX implementation for the nodes (ex: MAX, MAXS, MAXL).";
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -72,7 +72,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg("scaling-factor" )) this->params.decoder.scaling_factor = this->ar.get_arg("scaling-factor");
 
 	if(this->ar.exist_arg("dec-simd-strat" )) this->params.decoder.simd_strategy  = this->ar.get_arg("dec-simd-strat");
-	if(this->ar.exist_arg("dec-map"        )) this->params.decoder.map            = this->ar.get_arg("dec-map"       );
+	if(this->ar.exist_arg("dec-max"        )) this->params.decoder.max            = this->ar.get_arg("dec-max"       );
 
 	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
 		this->params.code.tail_length = 4*4;
@@ -95,7 +95,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->stream << "# " << bold("* Scaling factor                ") << " = " << this->params.decoder.scaling_factor << std::endl;
 	if (!this->params.decoder.simd_strategy.empty())
 	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy  << std::endl;
-	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->params.decoder.map            << std::endl;
+	this->stream << "# " << bold("* Decoder MAX implementation    ") << " = " << this->params.decoder.max            << std::endl;
 }
 
 template <typename B, typename R, typename Q, typename QD>

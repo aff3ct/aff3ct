@@ -3,8 +3,7 @@
 
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
-
-#include "Decoder_RSC_BCJR_seq_fast.hpp"
+#include "Tools/Math/max.h"
 
 template <typename B, typename R, typename RD>
 class Decoder_RSC_BCJR_seq_scan : public Decoder_RSC_BCJR_seq<B,R>

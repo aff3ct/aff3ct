@@ -2,8 +2,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_fast(const int &K, 
                               const std::vector<std::vector<int>> &trellis,
                               const bool buffered_encoding,
@@ -12,14 +12,14 @@ Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::~Decoder_RSC_BCJR_inter_fast()
 {
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -95,8 +95,8 @@ struct RSC_BCJR_inter_fast_normalize <signed char>
 	}
 };
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::compute_alpha()
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -116,14 +116,14 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 		const auto r_a6_prev = mipp::Reg<R>(&this->alpha[6][i -stride]);
 		const auto r_a7_prev = mipp::Reg<R>(&this->alpha[7][i -stride]);
 
-		auto r_a0 = MAP(r_a0_prev + r_g0, r_a1_prev - r_g0);
-		auto r_a1 = MAP(r_a3_prev + r_g1, r_a2_prev - r_g1);
-		auto r_a2 = MAP(r_a4_prev + r_g1, r_a5_prev - r_g1);
-		auto r_a3 = MAP(r_a7_prev + r_g0, r_a6_prev - r_g0);
-		auto r_a4 = MAP(r_a1_prev + r_g0, r_a0_prev - r_g0);
-		auto r_a5 = MAP(r_a2_prev + r_g1, r_a3_prev - r_g1);
-		auto r_a6 = MAP(r_a5_prev + r_g1, r_a4_prev - r_g1);
-		auto r_a7 = MAP(r_a6_prev + r_g0, r_a7_prev - r_g0);
+		auto r_a0 = MAX(r_a0_prev + r_g0, r_a1_prev - r_g0);
+		auto r_a1 = MAX(r_a3_prev + r_g1, r_a2_prev - r_g1);
+		auto r_a2 = MAX(r_a4_prev + r_g1, r_a5_prev - r_g1);
+		auto r_a3 = MAX(r_a7_prev + r_g0, r_a6_prev - r_g0);
+		auto r_a4 = MAX(r_a1_prev + r_g0, r_a0_prev - r_g0);
+		auto r_a5 = MAX(r_a2_prev + r_g1, r_a3_prev - r_g1);
+		auto r_a6 = MAX(r_a5_prev + r_g1, r_a4_prev - r_g1);
+		auto r_a7 = MAX(r_a6_prev + r_g0, r_a7_prev - r_g0);
 
 		RSC_BCJR_inter_fast_normalize<R>::apply(r_a0, r_a1, r_a2, r_a3, r_a4, r_a5, r_a6, r_a7, i);
 
@@ -138,8 +138,8 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::compute_beta()
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -159,14 +159,14 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 		const auto r_b6_prev = mipp::Reg<R>(&this->beta[6][i +stride]);
 		const auto r_b7_prev = mipp::Reg<R>(&this->beta[7][i +stride]);
 
-		auto r_b0 = MAP(r_b0_prev + r_g0, r_b4_prev - r_g0);
-		auto r_b1 = MAP(r_b4_prev + r_g0, r_b0_prev - r_g0);
-		auto r_b2 = MAP(r_b5_prev + r_g1, r_b1_prev - r_g1);
-		auto r_b3 = MAP(r_b1_prev + r_g1, r_b5_prev - r_g1);
-		auto r_b4 = MAP(r_b2_prev + r_g1, r_b6_prev - r_g1);
-		auto r_b5 = MAP(r_b6_prev + r_g1, r_b2_prev - r_g1);
-		auto r_b6 = MAP(r_b7_prev + r_g0, r_b3_prev - r_g0);
-		auto r_b7 = MAP(r_b3_prev + r_g0, r_b7_prev - r_g0);
+		auto r_b0 = MAX(r_b0_prev + r_g0, r_b4_prev - r_g0);
+		auto r_b1 = MAX(r_b4_prev + r_g0, r_b0_prev - r_g0);
+		auto r_b2 = MAX(r_b5_prev + r_g1, r_b1_prev - r_g1);
+		auto r_b3 = MAX(r_b1_prev + r_g1, r_b5_prev - r_g1);
+		auto r_b4 = MAX(r_b2_prev + r_g1, r_b6_prev - r_g1);
+		auto r_b5 = MAX(r_b6_prev + r_g1, r_b2_prev - r_g1);
+		auto r_b6 = MAX(r_b7_prev + r_g0, r_b3_prev - r_g0);
+		auto r_b7 = MAX(r_b3_prev + r_g0, r_b7_prev - r_g0);
 
 		RSC_BCJR_inter_fast_normalize<R>::apply(r_b0, r_b1, r_b2, r_b3, r_b4, r_b5, r_b6, r_b7, i);
 
@@ -181,8 +181,8 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
@@ -214,23 +214,23 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 		const auto r_g0 = mipp::Reg<R>(&this->gamma[0][i]);
 		const auto r_g1 = mipp::Reg<R>(&this->gamma[1][i]);
 
-		auto r_sum0 = r_a0 + r_b0 + r_g0; r_max0 = MAP(r_max0, r_sum0);
-		auto r_sum1 = r_a1 + r_b4 + r_g0; r_max0 = MAP(r_max0, r_sum1);
-		auto r_sum2 = r_a2 + r_b5 + r_g1; r_max0 = MAP(r_max0, r_sum2);
-		auto r_sum3 = r_a3 + r_b1 + r_g1; r_max0 = MAP(r_max0, r_sum3);
-		auto r_sum4 = r_a4 + r_b2 + r_g1; r_max0 = MAP(r_max0, r_sum4);
-		auto r_sum5 = r_a5 + r_b6 + r_g1; r_max0 = MAP(r_max0, r_sum5);
-		auto r_sum6 = r_a6 + r_b7 + r_g0; r_max0 = MAP(r_max0, r_sum6);
-		auto r_sum7 = r_a7 + r_b3 + r_g0; r_max0 = MAP(r_max0, r_sum7);
+		auto r_sum0 = r_a0 + r_b0 + r_g0; r_max0 = MAX(r_max0, r_sum0);
+		auto r_sum1 = r_a1 + r_b4 + r_g0; r_max0 = MAX(r_max0, r_sum1);
+		auto r_sum2 = r_a2 + r_b5 + r_g1; r_max0 = MAX(r_max0, r_sum2);
+		auto r_sum3 = r_a3 + r_b1 + r_g1; r_max0 = MAX(r_max0, r_sum3);
+		auto r_sum4 = r_a4 + r_b2 + r_g1; r_max0 = MAX(r_max0, r_sum4);
+		auto r_sum5 = r_a5 + r_b6 + r_g1; r_max0 = MAX(r_max0, r_sum5);
+		auto r_sum6 = r_a6 + r_b7 + r_g0; r_max0 = MAX(r_max0, r_sum6);
+		auto r_sum7 = r_a7 + r_b3 + r_g0; r_max0 = MAX(r_max0, r_sum7);
 
-		     r_sum0 = r_a0 + r_b4 - r_g0; r_max1 = MAP(r_max1, r_sum0);
-		     r_sum1 = r_a1 + r_b0 - r_g0; r_max1 = MAP(r_max1, r_sum1);
-		     r_sum2 = r_a2 + r_b1 - r_g1; r_max1 = MAP(r_max1, r_sum2);
-		     r_sum3 = r_a3 + r_b5 - r_g1; r_max1 = MAP(r_max1, r_sum3);
-		     r_sum4 = r_a4 + r_b6 - r_g1; r_max1 = MAP(r_max1, r_sum4);
-		     r_sum5 = r_a5 + r_b2 - r_g1; r_max1 = MAP(r_max1, r_sum5);
-		     r_sum6 = r_a6 + r_b3 - r_g0; r_max1 = MAP(r_max1, r_sum6);
-		     r_sum7 = r_a7 + r_b7 - r_g0; r_max1 = MAP(r_max1, r_sum7);
+		     r_sum0 = r_a0 + r_b4 - r_g0; r_max1 = MAX(r_max1, r_sum0);
+		     r_sum1 = r_a1 + r_b0 - r_g0; r_max1 = MAX(r_max1, r_sum1);
+		     r_sum2 = r_a2 + r_b1 - r_g1; r_max1 = MAX(r_max1, r_sum2);
+		     r_sum3 = r_a3 + r_b5 - r_g1; r_max1 = MAX(r_max1, r_sum3);
+		     r_sum4 = r_a4 + r_b6 - r_g1; r_max1 = MAX(r_max1, r_sum4);
+		     r_sum5 = r_a5 + r_b2 - r_g1; r_max1 = MAX(r_max1, r_sum5);
+		     r_sum6 = r_a6 + r_b3 - r_g0; r_max1 = MAX(r_max1, r_sum6);
+		     r_sum7 = r_a7 + r_b7 - r_g0; r_max1 = MAX(r_max1, r_sum7);
 
 		const auto r_post = RSC_BCJR_inter_post<R>::compute(r_max0 - r_max1);
 		const auto r_ext  = r_post - &sys[i];
@@ -238,8 +238,8 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
 	}
 }
 
-template <typename B, typename R, proto_map_i<R> MAP>
-void Decoder_RSC_BCJR_inter_fast<B,R,MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
+void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	this->compute_gamma(sys, par);

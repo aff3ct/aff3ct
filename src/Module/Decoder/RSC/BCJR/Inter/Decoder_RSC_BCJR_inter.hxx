@@ -3,6 +3,7 @@
 #include <limits>
 
 #include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Math/utils.h"
 
 template <typename R>
 struct RSC_BCJR_inter_init

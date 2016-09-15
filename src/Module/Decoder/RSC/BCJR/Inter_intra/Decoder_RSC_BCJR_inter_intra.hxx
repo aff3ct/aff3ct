@@ -1,5 +1,7 @@
 #include <limits>
 
+#include "Tools/Math/utils.h"
+
 #include "Decoder_RSC_BCJR_inter_intra.hpp"
 
 template <typename B, typename R>

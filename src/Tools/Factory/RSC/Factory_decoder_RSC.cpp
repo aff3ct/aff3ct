@@ -35,57 +35,57 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 			{
 				if (params.decoder.simd_strategy == "INTER")
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_inter_std<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_inter_std<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
 					{
-						if (params.decoder.map == "MAX")
-							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-						else if (params.decoder.map == "MAXS")
-							siso = new Decoder_RSC_BCJR_intra_std<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-						else if (params.decoder.map == "MAXL")
-							siso = new Decoder_RSC_BCJR_intra_std<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+						if (params.decoder.max == "MAX")
+							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+						else if (params.decoder.max == "MAXS")
+							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+						else if (params.decoder.max == "MAXL")
+							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 					}
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "GENERIC")
 			{
 				if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "FAST")
 			{
 				if (params.decoder.simd_strategy == "INTER")
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_inter_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_inter_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
 				{
@@ -93,28 +93,28 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						case 16:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						case 32:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						default:
 							break;
@@ -123,20 +123,20 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						case 16:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						default:
 							break;
@@ -145,35 +145,35 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "VERY_FAST")
 			{
 				if (params.decoder.simd_strategy == "INTER")
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
 					siso = nullptr;
 				else if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "SCAN")
@@ -182,7 +182,7 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 					siso = nullptr;
 				else if (params.decoder.simd_strategy == "INTRA")
 					siso = nullptr;
-				else if (params.decoder.simd_strategy.empty() && params.decoder.map == "MAX")
+				else if (params.decoder.simd_strategy.empty() && params.decoder.max == "MAX")
 					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(params.code.K, trellis, params.encoder.buffered);
 			}
 		}
@@ -207,57 +207,57 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 			{
 				if (params.decoder.simd_strategy == "INTER")
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_inter_std<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_inter_std<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_inter_std<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
 				{
 					if (mipp::nElReg<R>() == 8)
 					{
-						if (params.decoder.map == "MAX")
-							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-						else if (params.decoder.map == "MAXS")
-							siso = new Decoder_RSC_BCJR_intra_std<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-						else if (params.decoder.map == "MAXL")
-							siso = new Decoder_RSC_BCJR_intra_std<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+						if (params.decoder.max == "MAX")
+							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+						else if (params.decoder.max == "MAXS")
+							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+						else if (params.decoder.max == "MAXL")
+							siso = new Decoder_RSC_BCJR_intra_std<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 					}
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "GENERIC")
 			{
 				if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "FAST")
 			{
 				if (params.decoder.simd_strategy == "INTER")
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_inter_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_inter_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_inter_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
 				{
@@ -265,28 +265,28 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						case 16:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						case 32:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						default:
 							break;
@@ -295,20 +295,20 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 					switch (mipp::nElReg<R>())
 					{
 						case 8:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_intra_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_intra_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						case 16:
-							if (params.decoder.map == "MAX")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXS")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-							else if (params.decoder.map == "MAXL")
-								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							if (params.decoder.max == "MAX")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXS")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+							else if (params.decoder.max == "MAXL")
+								siso = new Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 							break;
 						default:
 							break;
@@ -317,35 +317,35 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_fast<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "VERY_FAST")
 			{
 				if (params.decoder.simd_strategy == "INTER")
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,linear_log_MAP_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_star_i<R>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_inter_very_fast<B,R,max_linear_i<R>>(params.code.K, trellis, params.encoder.buffered);
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
 					siso = nullptr;
 				else if (params.decoder.simd_strategy.empty())
 				{
-					if (params.decoder.map == "MAX")
-						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_log_MAP<R>,max_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXS")
-						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,log_MAP<R>,log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
-					else if (params.decoder.map == "MAXL")
-						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,linear_log_MAP<R>,linear_log_MAP<RD>>(params.code.K, trellis, params.encoder.buffered);
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_very_fast<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 				}
 			}
 			else if (params.decoder.implem == "SCAN")
@@ -354,7 +354,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 					siso = nullptr;
 				else if (params.decoder.simd_strategy == "INTRA")
 					siso = nullptr;
-				else if (params.decoder.simd_strategy.empty() && params.decoder.map == "MAX")
+				else if (params.decoder.simd_strategy.empty() && params.decoder.max == "MAX")
 					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(params.code.K, trellis, params.encoder.buffered);
 			}
 		}

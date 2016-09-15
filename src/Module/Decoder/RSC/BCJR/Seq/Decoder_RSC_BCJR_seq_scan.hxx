@@ -1,5 +1,3 @@
-#include "../../decoder_RSC_functions.h"
-
 #include "Decoder_RSC_BCJR_seq_fast.hpp"
 #include "Decoder_RSC_BCJR_seq_scan.hpp"
 

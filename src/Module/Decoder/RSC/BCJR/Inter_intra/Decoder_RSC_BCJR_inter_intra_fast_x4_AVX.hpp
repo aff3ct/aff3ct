@@ -3,12 +3,11 @@
 
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
-
-#include "../../decoder_RSC_functions.h"
+#include "Tools/Math/max.h"
 
 #include "Decoder_RSC_BCJR_inter_intra.hpp"
 
-template <typename B, typename R, proto_map_i<R> MAP>
+template <typename B, typename R, proto_max_i<R> MAX>
 class Decoder_RSC_BCJR_inter_intra_fast_x4_AVX : public Decoder_RSC_BCJR_inter_intra<B,R>
 {
 public:

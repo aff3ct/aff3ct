@@ -1,7 +1,7 @@
 #include "Decoder_RSC_BCJR_seq_std.hpp"
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_std(const int &K, 
                            const std::vector<std::vector<int>> &trellis,
                            const bool buffered_encoding,
@@ -10,14 +10,14 @@ Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 {
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::~Decoder_RSC_BCJR_seq_std()
 {
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
 	// compute gamma values (auto-vectorized loop)
@@ -30,8 +30,8 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	}
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::compute_alpha()
 {
 	// compute alpha values [trellis forward traversal ->]
@@ -41,15 +41,15 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	for (auto i = 1; i < this->K +3; i++)
 	{
 		for (auto j = 0; j < 8; j++)
-			this->alpha[j][i] = MAP1(this->alpha[idx_a1[j]][i -1] + this->gamma[idx_g1[j]][(i -1)],
+			this->alpha[j][i] = MAX1(this->alpha[idx_a1[j]][i -1] + this->gamma[idx_g1[j]][(i -1)],
 			                         this->alpha[idx_a2[j]][i -1] - this->gamma[idx_g1[j]][(i -1)]);
 
 		RSC_BCJR_seq_normalize<R>::apply(this->alpha, i);
 	}
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::compute_beta()
 {
 	// compute beta values [trellis backward traversal <-]
@@ -59,15 +59,15 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	for (auto i = this->K +2; i >= 1; i--)
 	{
 		for (auto j = 0; j < 8; j++)
-			this->beta[j][i] = MAP1(this->beta[idx_b1[j]][i +1] + this->gamma[idx_g2[j]][i],
+			this->beta[j][i] = MAX1(this->beta[idx_b1[j]][i +1] + this->gamma[idx_g2[j]][i],
 			                        this->beta[idx_b2[j]][i +1] - this->gamma[idx_g2[j]][i]);
 
 		RSC_BCJR_seq_normalize<R>::apply(this->beta, i);
 	}
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	// compute extrinsic values
@@ -78,18 +78,18 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	{
 		RD max0 = (RD)this->alpha[0][i] + (RD)this->beta[idx_b1[0]][i +1] + (RD)this->gamma[idx_g2[0]][i];
 		for (auto j = 1; j < 8; j++)
-			max0 = MAP2(max0, (RD)this->alpha[j][i] + (RD)this->beta[idx_b1[j]][i +1] + (RD)this->gamma[idx_g2[j]][i]);
+			max0 = MAX2(max0, (RD)this->alpha[j][i] + (RD)this->beta[idx_b1[j]][i +1] + (RD)this->gamma[idx_g2[j]][i]);
 
 		RD max1 = (RD)this->alpha[0][i] + (RD)this->beta[idx_b2[0]][i +1] - (RD)this->gamma[idx_g2[0]][i];
 		for (auto j = 1; j < 8; j++)
-			max1 = MAP2(max1, (RD)this->alpha[j][i] + (RD)this->beta[idx_b2[j]][i +1] - (RD)this->gamma[idx_g2[j]][i]);
+			max1 = MAX2(max1, (RD)this->alpha[j][i] + (RD)this->beta[idx_b2[j]][i +1] - (RD)this->gamma[idx_g2[j]][i]);
 
 		ext[i] = RSC_BCJR_seq_post<R,RD>::compute(max0 - max1) - sys[i];
 	}
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	constexpr int idx_b1[8] = {0, 4, 5, 1, 2, 6, 7, 3};
@@ -104,7 +104,7 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	{
 		R beta_cur[8];
 		for (auto j = 0; j < 8; j++)
-			beta_cur[j] = MAP1(beta_prev[idx_b1[j]] + this->gamma[idx_g2[j]][i],
+			beta_cur[j] = MAX1(beta_prev[idx_b1[j]] + this->gamma[idx_g2[j]][i],
 			                   beta_prev[idx_b2[j]] - this->gamma[idx_g2[j]][i]);
 
 		RSC_BCJR_seq_normalize<R>::apply(beta_cur, i);
@@ -118,11 +118,11 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	{
 		RD max0 = (RD)this->alpha[0][i] + (RD)beta_prev[idx_b1[0]] + (RD)this->gamma[idx_g2[0]][i];
 		for (auto j = 1; j < 8; j++)
-			max0 = MAP2(max0, (RD)this->alpha[j][i] + (RD)beta_prev[idx_b1[j]] + (RD)this->gamma[idx_g2[j]][i]);
+			max0 = MAX2(max0, (RD)this->alpha[j][i] + (RD)beta_prev[idx_b1[j]] + (RD)this->gamma[idx_g2[j]][i]);
 
 		RD max1 = (RD)this->alpha[0][i] + (RD)beta_prev[idx_b2[0]] - (RD)this->gamma[idx_g2[0]][i];
 		for (auto j = 1; j < 8; j++)
-			max1 = MAP2(max1, (RD)this->alpha[j][i] + (RD)beta_prev[idx_b2[j]] - (RD)this->gamma[idx_g2[j]][i]);
+			max1 = MAX2(max1, (RD)this->alpha[j][i] + (RD)beta_prev[idx_b2[j]] - (RD)this->gamma[idx_g2[j]][i]);
 
 		ext[i] = RSC_BCJR_seq_post<R,RD>::compute(max0 - max1) - sys[i];
 
@@ -130,7 +130,7 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 		// compute the beta values
 		R beta_cur[8];
 		for (auto j = 0; j < 8; j++)
-			beta_cur[j] = MAP1(beta_prev[idx_b1[j]] + this->gamma[idx_g2[j]][i],
+			beta_cur[j] = MAX1(beta_prev[idx_b1[j]] + this->gamma[idx_g2[j]][i],
 			                   beta_prev[idx_b2[j]] - this->gamma[idx_g2[j]][i]);
 
 		RSC_BCJR_seq_normalize<R>::apply(beta_cur, i);
@@ -140,8 +140,8 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
 	}
 }
 
-template <typename B, typename R, typename RD, proto_map<R> MAP1, proto_map<RD> MAP2>
-void Decoder_RSC_BCJR_seq_std<B,R,RD,MAP1,MAP2>
+template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	this->compute_gamma   (sys, par);
