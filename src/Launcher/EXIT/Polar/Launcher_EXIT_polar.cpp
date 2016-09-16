@@ -38,24 +38,31 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::build_args();
 
-	this->req_args["code-sigma"     ] = "sigma_value";
-	this->doc_args["code-sigma"     ] = "sigma value used for the polar codes generation.";
+	this->req_args[{"code-sigma"}] =
+		{"float",
+		 "sigma value used for the polar codes generation."};
 
-	this->opt_args["max-iter"       ] = "n_iterations";
-	this->doc_args["max-iter"       ] = "maximal number of iterations in the SCAN decoder.";
+	this->opt_args[{"max-iter"}] =
+		{"integer",
+		 "maximal number of iterations in the SCAN decoder."};
 #ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args["awgn-codes-dir" ] = "directory";
-	this->doc_args["awgn-codes-dir" ] = "directory where are located the best channels to use for information bits.";
-	this->opt_args["bin-pb-path"    ] = "path";
-	this->doc_args["bin-pb-path"    ] = "path of the polar bounds code generator (generates best channels to use).";
+	this->opt_args[{"awgn-codes-dir"}] =
+		{"string",
+		 "directory where are located the best channels to use for information bits."};
+	this->opt_args[{"bin-pb-path"}] =
+		{"string",
+		 "path of the polar bounds code generator (generates best channels to use)."};
 #endif
-	this->opt_args["awgn-codes-file"] = "path";
-	this->doc_args["awgn-codes-file"] = "set the best channels bits by giving path to file.";
-	this->opt_args["L"              ] = "L";
-	this->doc_args["L"              ] = "maximal number of paths in the SCL decoder.";
+	this->opt_args[{"awgn-codes-file"}] =
+		{"string",
+		 "set the best channels bits by giving path to file."};
+	this->opt_args[{"L"}] =
+		{"integer",
+		 "maximal number of paths in the SCL decoder."};
 #ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args["fb-gen-method"  ] = "method";
-	this->doc_args["fb-gen-method"  ] = "select the frozen bits generation method (ex: GA or TV).";
+	this->opt_args[{"fb-gen-method"}] =
+		{"string",
+		 "select the frozen bits generation method (ex: GA or TV)."};
 #endif
 }
 
@@ -65,16 +72,16 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("max-iter"       )) this->params.decoder.max_iter           = std::stoi(this->ar.get_arg("max-iter"));
+	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter           = std::stoi(this->ar.get_arg({"max-iter"}));
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("awgn-codes-dir" )) this->params.simulation.awgn_codes_dir  = this->ar.get_arg("awgn-codes-dir");
-	if(this->ar.exist_arg("bin-pb-path"    )) this->params.simulation.bin_pb_path     = this->ar.get_arg("bin-pb-path");
+	if(this->ar.exist_arg({"awgn-codes-dir" })) this->params.simulation.awgn_codes_dir  = this->ar.get_arg({"awgn-codes-dir"});
+	if(this->ar.exist_arg({"bin-pb-path"    })) this->params.simulation.bin_pb_path     = this->ar.get_arg({"bin-pb-path"});
 #endif
-	if(this->ar.exist_arg("awgn-codes-file")) this->params.simulation.awgn_codes_file = this->ar.get_arg("awgn-codes-file");
-	if(this->ar.exist_arg("L"              )) this->params.decoder.L                  = std::stoi(this->ar.get_arg("L"));
-	if(this->ar.exist_arg("code-sigma"     )) this->params.code.sigma                 = std::stof(this->ar.get_arg("code-sigma"));
+	if(this->ar.exist_arg({"awgn-codes-file"})) this->params.simulation.awgn_codes_file = this->ar.get_arg({"awgn-codes-file"});
+	if(this->ar.exist_arg({"L"              })) this->params.decoder.L                  = std::stoi(this->ar.get_arg({"L"}));
+	if(this->ar.exist_arg({"code-sigma"     })) this->params.code.sigma                 = std::stof(this->ar.get_arg({"code-sigma"}));
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("fb-gen-method"  )) this->params.code.fb_gen_method         = this->ar.get_arg("fb-gen-method");
+	if(this->ar.exist_arg({"fb-gen-method"  })) this->params.code.fb_gen_method         = this->ar.get_arg({"fb-gen-method"});
 #endif
 
 	// force 1 iteration max if not SCAN (and polar code)

@@ -25,13 +25,15 @@ void Launcher_EXIT<B,R,Q>
 {
 	Launcher<B,R,Q>::build_args();
 
-	this->req_args["sig-a-min" ] = "sigma_a_min_value";
-	this->doc_args["sig-a-min" ] = "sigma min value used in EXIT charts.";
-	this->req_args["sig-a-max" ] = "sigma_a_max_value";
-	this->doc_args["sig-a-max" ] = "sigma max value used in EXIT charts.";
-	
-	this->opt_args["sig-a-step"] = "sigma_a_step_value";
-	this->doc_args["sig-a-step"] = "sigma step value used in EXIT charts.";
+	this->req_args[{"sig-a-min"}] =
+		{"float",
+		 "sigma min value used in EXIT charts."};
+	this->req_args[{"sig-a-max"}] =
+		{"float",
+		 "sigma max value used in EXIT charts."};
+	this->opt_args[{"sig-a-step"}] =
+		{"float",
+		 "sigma step value used in EXIT charts."};
 }
 
 template <typename B, typename R, typename Q>
@@ -40,9 +42,9 @@ void Launcher_EXIT<B,R,Q>
 {
 	Launcher<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("sig-a-min" )) this->params.simulation.sig_a_min  = std::stof(this->ar.get_arg("sig-a-min"));
-	if(this->ar.exist_arg("sig-a-max" )) this->params.simulation.sig_a_max  = std::stof(this->ar.get_arg("sig-a-max"));
-	if(this->ar.exist_arg("sig-a-step")) this->params.simulation.sig_a_step = std::stof(this->ar.get_arg("sig-a-step"));
+	if(this->ar.exist_arg({"sig-a-min" })) this->params.simulation.sig_a_min  = std::stof(this->ar.get_arg({"sig-a-min" }));
+	if(this->ar.exist_arg({"sig-a-max" })) this->params.simulation.sig_a_max  = std::stof(this->ar.get_arg({"sig-a-max" }));
+	if(this->ar.exist_arg({"sig-a-step"})) this->params.simulation.sig_a_step = std::stof(this->ar.get_arg({"sig-a-step"}));
 }
 
 template <typename B, typename R, typename Q>

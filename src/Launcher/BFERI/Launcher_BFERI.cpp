@@ -31,26 +31,36 @@ void Launcher_BFERI<B,R,Q>
 {
 	Launcher<B,R,Q>::build_args();
 
-	this->opt_args["max-fe"         ] = "n_fe";
-	this->doc_args["max-fe"         ] = "max number of frame errors for each SNR simulation.";
-	this->opt_args["benchs"         ] = "n_benchs";
-	this->doc_args["benchs"         ] = "enable special benchmark mode with a loop around the decoder.";
-	this->opt_args["enable-leg-term"] = "";
-	this->doc_args["enable-leg-term"] = "enable the legacy display (needed for retro-compatibility with PyBer).";
-	this->opt_args["enable-dec-thr" ] = "";
-	this->doc_args["enable-dec-thr" ] = "enable the display of the decoder throughput considering only the decoder time.";
-	this->opt_args["enable-debug"   ] = "";
-	this->doc_args["enable-debug"   ] = "enable debug mode: print array values after each step.";
-	this->opt_args["debug-limit"    ] = "n_vals";
-	this->doc_args["debug-limit"    ] = "set the max number of elements to display in the debug mode.";
-	this->opt_args["trace"          ] = "enables trace";
-	this->doc_args["trace"          ] = "traces array values in a CSV file.";
-	this->opt_args["time-report"    ] = "";
-	this->doc_args["time-report"    ] = "display time information about the simulation chain.";
-	this->opt_args["demod-ite"      ] = "n_iter";
-	this->doc_args["demod-ite"      ] = "number of iterations in the turbo demodulation.";
-	this->opt_args["interleaver"    ] = "interleaver";
-	this->doc_args["interleaver"    ] = "specify the type of the interleaver (ex: LTE, RANDOM, COLUMNS, GOLDEN, NO).";
+	this->opt_args[{"max-fe"}] =
+		{"integer",
+		 "max number of frame errors for each SNR simulation."};
+	this->opt_args[{"benchs"}] =
+		{"integer",
+		 "enable special benchmark mode with a loop around the decoder."};
+	this->opt_args[{"enable-leg-term"}] =
+		{"",
+		 "enable the legacy display (needed for retro-compatibility with PyBer)."};
+	this->opt_args[{"enable-dec-thr"}] =
+		{"",
+		 "enable the display of the decoder throughput considering only the decoder time."};
+	this->opt_args[{"enable-debug"}] =
+		{"",
+		 "enable debug mode: print array values after each step."};
+	this->opt_args[{"debug-limit"}] =
+		{"integer",
+		 "set the max number of elements to display in the debug mode."};
+	this->opt_args[{"trace"}] =
+		{"",
+		 "traces array values in a CSV file."};
+	this->opt_args[{"time-report"}] =
+		{"",
+		 "display time information about the simulation chain."};
+	this->opt_args[{"demod-ite"}] =
+		{"integer",
+		 "number of iterations in the turbo demodulation."};
+	this->opt_args[{"interleaver"}] =
+		{"string",
+		 "specify the type of the interleaver (ex: LTE, RANDOM, COLUMNS, GOLDEN, NO)."};
 }
 
 template <typename B, typename R, typename Q>
@@ -60,20 +70,20 @@ void Launcher_BFERI<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// facultative parameters
-	if(this->ar.exist_arg("max-fe"         )) this->params.simulation.max_fe          = std::stoi(this->ar.get_arg("max-fe"));
-	if(this->ar.exist_arg("benchs"         )) this->params.simulation.benchs          = std::stoi(this->ar.get_arg("benchs"));
-	if(this->ar.exist_arg("enable-leg-term")) this->params.simulation.enable_leg_term = true;
-	if(this->ar.exist_arg("enable-dec-thr" )) this->params.simulation.enable_dec_thr  = true;
-	if(this->ar.exist_arg("enable-debug"   )) this->params.simulation.enable_debug    = true;
-	if(this->ar.exist_arg("debug-limit"    ))
+	if(this->ar.exist_arg({"max-fe"         })) this->params.simulation.max_fe          = std::stoi(this->ar.get_arg({"max-fe"}));
+	if(this->ar.exist_arg({"benchs"         })) this->params.simulation.benchs          = std::stoi(this->ar.get_arg({"benchs"}));
+	if(this->ar.exist_arg({"enable-leg-term"})) this->params.simulation.enable_leg_term = true;
+	if(this->ar.exist_arg({"enable-dec-thr" })) this->params.simulation.enable_dec_thr  = true;
+	if(this->ar.exist_arg({"enable-debug"   })) this->params.simulation.enable_debug    = true;
+	if(this->ar.exist_arg({"debug-limit"    }))
 	{
 		this->params.simulation.enable_debug = true;
-		this->params.simulation.debug_limit  = std::stoi(this->ar.get_arg("debug-limit"));
+		this->params.simulation.debug_limit  = std::stoi(this->ar.get_arg({"debug-limit"}));
 	}
-	if(this->ar.exist_arg("time-report"    )) this->params.simulation.time_report     = true;
-	if(this->ar.exist_arg("trace"          )) this->params.simulation.trace_path_file = this->ar.get_arg("trace");
-	if(this->ar.exist_arg("demod-ite"      )) this-> params.modulator.demod_n_ite     = std::stoi(this->ar.get_arg("demod-ite"));
-	if(this->ar.exist_arg("interleaver"    )) this->params.code.interleaver           = this->ar.get_arg("interleaver");
+	if(this->ar.exist_arg({"time-report"    })) this->params.simulation.time_report     = true;
+	if(this->ar.exist_arg({"trace"          })) this->params.simulation.trace_path_file = this->ar.get_arg({"trace"});
+	if(this->ar.exist_arg({"demod-ite"      })) this-> params.modulator.demod_n_ite     = std::stoi(this->ar.get_arg({"demod-ite"}));
+	if(this->ar.exist_arg({"interleaver"    })) this->params.code.interleaver           = this->ar.get_arg({"interleaver"});
 }
 
 template <typename B, typename R, typename Q>

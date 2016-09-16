@@ -33,34 +33,45 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN_polar<B,R,Q>
 ::build_args()
 {
-	this->req_args["K"              ] = "n_bits";
-	this->doc_args["K"              ] = "useful number of bit transmitted (only information bits).";
-	this->req_args["N"              ] = "n_bits";
-	this->doc_args["N"              ] = "total number of bit transmitted (includes parity bits).";
-	this->req_args["snr"            ] = "snr_value";
-	this->doc_args["snr"            ] = "signal/noise ratio for the frozen bits generation.";
-	this->req_args["code-type"      ] = "code-type";
-	this->doc_args["code-type"      ] = "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED).";
+	this->req_args[{"K"}] =
+		{"integer",
+		 "useful number of bit transmitted (only information bits)."};
+	this->req_args[{"N"}] =
+		{"integer",
+		 "total number of bit transmitted (includes parity bits)."};
+	this->req_args[{"snr"}] =
+		{"float",
+		 "signal/noise ratio for the frozen bits generation."};
+	this->req_args[{"code-type"}] =
+		{"string",
+		 "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED)."};
 
-	this->opt_args["simu-type"      ] = "name";
-	this->doc_args["simu-type"      ] = "select the type of simulation to launch (default is BFER).";
+	this->opt_args[{"simu-type"}] =
+		{"string",
+		 "select the type of simulation to launch (default is BFER)."};
 #ifdef MULTI_PREC
-	this->opt_args["prec"           ] = "prec";
-	this->doc_args["prec"           ] = "the simulation precision in bit (ex: 8, 16, 32 or 64).";
+	this->opt_args[{"prec"}] =
+		{"integer",
+		 "the simulation precision in bit (ex: 8, 16, 32 or 64)."};
 #endif
-	this->opt_args["gen-decoder-dir"] = "directory";
-	this->doc_args["gen-decoder-dir"] = "directory where are located the generated decoders.";
+	this->opt_args[{"gen-decoder-dir"}] =
+		{"string",
+		 "directory where are located the generated decoders."};
 #ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args["awgn-codes-dir" ] = "directory";
-	this->doc_args["awgn-codes-dir" ] = "directory where are located the best channels to use for information bits.";
-	this->opt_args["bin-pb-path"    ] = "path";
-	this->doc_args["bin-pb-path"    ] = "path of the polar bounds code generator (generates best channels to use).";
+	this->opt_args[{"awgn-codes-dir"}] =
+		{"string",
+		 "directory where are located the best channels to use for information bits."};
+	this->opt_args[{"bin-pb-path"}] =
+		{"string",
+		 "path of the polar bounds code generator (generates best channels to use)."};
 #endif
-	this->opt_args["awgn-codes-file"] = "path";
-	this->doc_args["awgn-codes-file"] = "set the best channels bits by giving path to file.";
+	this->opt_args[{"awgn-codes-file"}] =
+		{"string",
+		 "set the best channels bits by giving path to file."};
 #ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args["fb-gen-method"  ] = "method";
-	this->doc_args["fb-gen-method"  ] = "select the frozen bits generation method (ex: GA or TV).";
+	this->opt_args[{"fb-gen-method"}] =
+		{"string",
+		 "select the frozen bits generation method (ex: GA or TV)."};
 #endif
 }
 
@@ -69,9 +80,9 @@ void Launcher_GEN_polar<B,R,Q>
 ::store_args()
 {
 	// required parameters
-	this->params.code.K      = std::stoi(this->ar.get_arg("K"));
-	this->params.code.N      = std::stoi(this->ar.get_arg("N"));
-	this->params.code.N_code = std::stoi(this->ar.get_arg("N"));
+	this->params.code.K      = std::stoi(this->ar.get_arg({"K"}));
+	this->params.code.N      = std::stoi(this->ar.get_arg({"N"}));
+	this->params.code.N_code = std::stoi(this->ar.get_arg({"N"}));
 	this->params.code.m      = std::ceil(std::log2(this->params.code.N));
 
 	if (this->params.code.K > this->params.code.N)
@@ -80,19 +91,19 @@ void Launcher_GEN_polar<B,R,Q>
 		exit(EXIT_FAILURE);
 	}
 
-	this->params.simulation.snr_min = std::stof(this->ar.get_arg("snr"));
+	this->params.simulation.snr_min = std::stof(this->ar.get_arg({"snr"}));
 
 	// facultative parameters
-	if(this->ar.exist_arg("simu-type"      )) this->params.simulation.type              = this->ar.get_arg("simu-type");
-	if(this->ar.exist_arg("code-gen-method")) this->params.code.generation_method       = this->ar.get_arg("code-gen-method");
-	if(this->ar.exist_arg("gen-decoder-dir")) this->params.simulation.gen_decoder_dir   = this->ar.get_arg("gen-decoder-dir");
+	if(this->ar.exist_arg({"simu-type"      })) this->params.simulation.type              = this->ar.get_arg({"simu-type"});
+	if(this->ar.exist_arg({"code-gen-method"})) this->params.code.generation_method       = this->ar.get_arg({"code-gen-method"});
+	if(this->ar.exist_arg({"gen-decoder-dir"})) this->params.simulation.gen_decoder_dir   = this->ar.get_arg({"gen-decoder-dir"});
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("awgn-codes-dir" )) this->params.simulation.awgn_codes_dir    = this->ar.get_arg("awgn-codes-dir");
-	if(this->ar.exist_arg("bin-pb-path"    )) this->params.simulation.bin_pb_path       = this->ar.get_arg("bin-pb-path");
+	if(this->ar.exist_arg({"awgn-codes-dir" })) this->params.simulation.awgn_codes_dir    = this->ar.get_arg({"awgn-codes-dir"});
+	if(this->ar.exist_arg({"bin-pb-path"    })) this->params.simulation.bin_pb_path       = this->ar.get_arg({"bin-pb-path"});
 #endif
-	if(this->ar.exist_arg("awgn-codes-file")) this->params.simulation.awgn_codes_file   = this->ar.get_arg("awgn-codes-file");
+	if(this->ar.exist_arg({"awgn-codes-file"})) this->params.simulation.awgn_codes_file   = this->ar.get_arg({"awgn-codes-file"});
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg("fb-gen-method"  )) this->params.code.fb_gen_method           = this->ar.get_arg("fb-gen-method");
+	if(this->ar.exist_arg({"fb-gen-method"  })) this->params.code.fb_gen_method           = this->ar.get_arg({"fb-gen-method"});
 #endif
 }
 

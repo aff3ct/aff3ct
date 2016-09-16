@@ -18,9 +18,8 @@ class Launcher
 protected:
 	std::unordered_map<std::type_index,std::string> type_names;
 
-	std::map<std::string, std::string> req_args;
-	std::map<std::string, std::string> opt_args;
-	std::map<std::string, std::string> doc_args;
+	std::map<std::vector<std::string>, std::vector<std::string>> req_args;
+	std::map<std::vector<std::string>, std::vector<std::string>> opt_args;
 
 	Arguments_reader ar;
 

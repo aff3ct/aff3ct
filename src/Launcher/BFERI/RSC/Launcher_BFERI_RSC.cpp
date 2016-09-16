@@ -31,13 +31,15 @@ void Launcher_BFERI_RSC<B,R,Q,QD>
 {
 	Launcher_BFERI<B,R,Q>::build_args();
 
-	this->opt_args["disable-buf-enc"] = "";
-	this->doc_args["disable-buf-enc"] = "disable the buffered encoding.";
-
-	this->opt_args["dec-simd-strat" ] = "simd_type";
-	this->doc_args["dec-simd-strat" ] = "the SIMD strategy you want to use (ex: INTRA, INTER).";
-	this->opt_args["dec-max"        ] = "max_type";
-	this->doc_args["dec-max"        ] = "the MAX implementation for the nodes (ex: MAX, MAXS, MAXL).";
+	this->opt_args[{"disable-buf-enc"}] =
+		{"",
+		 "disable the buffered encoding."};
+	this->opt_args[{"dec-simd-strat"}] =
+		{"string",
+		 "the SIMD strategy you want to use (ex: INTRA, INTER)."};
+	this->opt_args[{"dec-max"}] =
+		{"string",
+		 "the MAX implementation for the nodes (ex: MAX, MAXS, MAXL)."};
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -46,10 +48,10 @@ void Launcher_BFERI_RSC<B,R,Q,QD>
 {
 	Launcher_BFERI<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg("disable-buf-enc")) this->params.encoder.buffered      = false;
+	if(this->ar.exist_arg({"disable-buf-enc"})) this->params.encoder.buffered      = false;
 
-	if(this->ar.exist_arg("dec-simd-strat" )) this->params.decoder.simd_strategy = this->ar.get_arg("dec-simd-strat");
-	if(this->ar.exist_arg("dec-max"        )) this->params.decoder.max           = this->ar.get_arg("dec-max"       );
+	if(this->ar.exist_arg({"dec-simd-strat" })) this->params.decoder.simd_strategy = this->ar.get_arg({"dec-simd-strat"});
+	if(this->ar.exist_arg({"dec-max"        })) this->params.decoder.max           = this->ar.get_arg({"dec-max"       });
 
 	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
 		this->params.code.tail_length = 2*4;

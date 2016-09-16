@@ -92,45 +92,42 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 {
 	using namespace std::chrono;
 
-	std::map<std::string, std::string> req_args, opt_args, doc_args;
+	std::map<std::vector<std::string>, std::vector<std::string>> req_args, opt_args;
 	Arguments_reader ar(argc, argv);
 
-	req_args["code-type"] = "code_type";
-	doc_args["code-type"] = "the type of codes you want to simulate (POLAR, TURBO, REPETITION, RA or RSC).";
-	
-	opt_args["simu-type"] = "simu_type";
-	doc_args["simu-type"] = "the type of simulation to run (BFER [default], EXIT or GEN).";
-
-	opt_args["v"        ] = "";
-	doc_args["v"        ] = "print informations about the version of the code.";
-	opt_args["version"  ] = "";
-	doc_args["version"  ] = "print informations about the version of the code.";
-
-	opt_args["h"        ] = "";
-	doc_args["h"        ] = "print this help.";
-	opt_args["help"     ] = "";
-	doc_args["help"     ] = "print this help.";
-
+	req_args[{"code-type"}] =
+		{"string",
+	     "the type of codes you want to simulate (POLAR, TURBO, REPETITION, RA or RSC)."};
+	opt_args[{"simu-type"}] =
+		{"string",
+		 "the type of simulation to run (BFER [default], EXIT or GEN)."};
+	opt_args[{"version", "v"}] =
+		{"",
+		 "print informations about the version of the code."};
+	opt_args[{"help", "h"}] =
+		{"",
+		 "print this help."};
 #ifdef MULTI_PREC
-	opt_args["prec"] = "prec";
-	doc_args["prec"] = "the simulation precision in bit (ex: 8, 16, 32 or 64).";
+	opt_args[{"prec", "p"}] =
+		{"integer",
+		 "the simulation precision in bit (ex: 8, 16, 32 or 64)."};
 #endif
 
 	auto display_help = true;
 	auto parsing = ar.parse_arguments(req_args, opt_args);
 
-	if (ar.exist_arg("v") || ar.exist_arg("version")) 
+	if (ar.exist_arg({"version", "v"}))
 		print_version();
 
 	if (parsing)
 	{
 		// required parameters
-		code_type = ar.get_arg("code-type");
+		code_type = ar.get_arg({"code-type"});
 
 		// facultative parameters
-		if(ar.exist_arg("simu-type")) simu_type = ar.get_arg("simu-type");
+		if(ar.exist_arg({"simu-type"})) simu_type = ar.get_arg({"simu-type"});
 #ifdef MULTI_PREC
-		if(ar.exist_arg("prec")) prec = stoi(ar.get_arg("prec"));
+		if(ar.exist_arg({"prec", "p"})) prec = stoi(ar.get_arg({"prec", "p"}));
 #endif
 
 		display_help = false;
@@ -138,12 +135,8 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	if (display_help)
 	{
-		if (ar.parse_doc_args(doc_args))
-			ar.print_usage();
-		else
-			std::cerr << bold_red("(EE) A problem was encountered when parsing arguments documentation, exiting.") 
-			          << std::endl;
-		exit(EXIT_FAILURE);
+		ar.print_usage();
+		std::exit(EXIT_FAILURE);
 	}
 }
 

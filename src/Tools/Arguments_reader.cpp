@@ -27,7 +27,7 @@ Arguments_reader
 	this->m_program_name = argv[0];
 
 	for(unsigned short i = 0; i < argc; ++i)
-		this->m_argv[i] = argv[i];
+		this->m_argv[i] = string(argv[i]);
 }
 
 Arguments_reader
@@ -36,7 +36,7 @@ Arguments_reader
 }
 
 bool Arguments_reader
-::parse_arguments(map<string, string> required_args, map<string, string> optional_args)
+::parse_arguments(map<vector<string>, vector<string>> required_args, map<vector<string>, vector<string>> optional_args)
 {
 	unsigned short int n_req_arg = 0;
 
@@ -56,73 +56,58 @@ bool Arguments_reader
 }
 
 bool Arguments_reader
-::sub_parse_arguments(map<string, string> args, unsigned short pos_arg)
+::sub_parse_arguments(map<vector<string>, vector<string>> args, unsigned short pos_arg)
 {
 	assert(pos_arg < this->m_argv.size());
 
-	bool is_found = false;
-
-	map<string, string>::iterator it;
-	for(it = args.begin(); it != args.end(); ++it)
+	auto is_found = false;
+	for (auto it = args.begin(); it != args.end(); ++it)
 	{
-		this->max_n_char_arg = max(this->max_n_char_arg, (unsigned int)it->first.size());
+		assert(it->first .size() > 0);
+		assert(it->second.size() > 0);
 
-		string cur_arg = ((it->first.size() == 1) ? "-" : "--") + it->first;
-		if(cur_arg == this->m_argv[pos_arg])
+		auto i = 0;
+		do
 		{
-			if(it->second != "")
+			// remember the biggest argument length to display the doc after
+			this->max_n_char_arg = max(this->max_n_char_arg, (unsigned int)it->first[i].length());
+
+			const auto cur_arg = ((it->first[i].length() == 1) ? "-" : "--") + it->first[i];
+			if (cur_arg == this->m_argv[pos_arg])
 			{
-				if(pos_arg != (this->m_argv.size() -1))
+				if(it->second[0] != "")
 				{
-					this->m_args[it->first] = this->m_argv[pos_arg +1];
+					if(pos_arg != (this->m_argv.size() -1))
+					{
+						this->m_args[it->first] = this->m_argv[pos_arg +1];
+						is_found = true;
+					}
+				}
+				else
+				{
+					this->m_args[it->first] = "";
 					is_found = true;
 				}
 			}
-			else
-			{
-				this->m_args[it->first] = "";
-				is_found = true;
-			}
+
+			i++;
 		}
+		while(!is_found && i < (int)it->first.size());
 	}
 
 	return is_found;
 }
 
 bool Arguments_reader
-::exist_argument(std::string tag)
+::exist_argument(vector<string> tags)
 {
-	return (this->m_args.find(tag) != this->m_args.end());
+	return (this->m_args.find(tags) != this->m_args.end());
 }
 
 string Arguments_reader
-::get_argument(string tag)
+::get_argument(vector<string> tags)
 {
-	return this->m_args[tag];
-}
-
-bool Arguments_reader
-::parse_doc_args(std::map<std::string, std::string> doc_args)
-{
-	bool re_val = true;
-
-	if(doc_args.empty())
-		re_val = false;
-
-	map<string, string>::iterator it;
-	for(it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
-		if(!(doc_args.find(it->first) != doc_args.end()))
-			re_val = false;
-		else
-			this->m_doc_args[it->first] = doc_args[it->first];
-
-	for(it = this->m_optional_args.begin(); it != this->m_optional_args.end(); ++it)
-		if(!(doc_args.find(it->first) != doc_args.end()))
-			re_val = false;
-		else
-			this->m_doc_args[it->first] = doc_args[it->first];
-
-	return re_val;
+	return this->m_args[tags];
 }
 
 void Arguments_reader
@@ -130,47 +115,42 @@ void Arguments_reader
 {
 	cout << "Usage: " << this->m_program_name;
 
-	map<string, string>::iterator it;
-	for(it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
-		if(it->second != "")
-			cout << ((it->first.size() == 1) ? " -" : " --") << it->first << " " << it->second;
+	for (auto it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
+		if(it->second[0] != "")
+			cout << ((it->first[0].size() == 1) ? " -" : " --") << it->first[0] << " " << it->second[0];
 		else
-			cout << ((it->first.size() == 1) ? " -" : " --") << it->first;
+			cout << ((it->first[0].size() == 1) ? " -" : " --") << it->first[0];
 
-	for(it = this->m_optional_args.begin(); it != this->m_optional_args.end(); ++it)
-		if(it->second != "")
-			cout << ((it->first.size() == 1) ? " [-" : " [--") << it->first << " " << it->second << "]";
+	for (auto it = this->m_optional_args.begin(); it != this->m_optional_args.end(); ++it)
+		if(it->second[0] != "")
+			cout << ((it->first[0].size() == 1) ? " [-" : " [--") << it->first[0] << " " << it->second[0] << "]";
 		else
-			cout << ((it->first.size() == 1) ? " [-" : " [--") << it->first << "]";
+			cout << ((it->first[0].size() == 1) ? " [-" : " [--") << it->first[0] << "]";
 
-	cout << endl;
+	cout << endl << endl;
 
-	if(!this->m_doc_args.empty())
-	{
-		cout << endl;
-		if (this->m_required_args.size())
-			cout << "Required argument(s): " << endl
-			     << "--------------------- " << endl << endl;
-		for(it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
-			if(this->m_doc_args.find(it->first) != this->m_doc_args.end())
-			{
-				cout << "\t" << ((it->first.size() == 1) ? " -" : " --") << it->first;
-				for(unsigned i = 0; i < this->max_n_char_arg - (unsigned)it->first.size(); i++) cout << " ";
-				cout << "\t" << this->m_doc_args.find(it->first)->second << endl;
-			}
-		if (this->m_required_args.size()) cout << endl << endl;
+	if (this->m_required_args.size())
+		cout << "Required argument(s): " << endl
+			 << "--------------------- " << endl << endl;
+	for (auto it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
+		if (it->second.size() >= 2 && !it->second[1].empty())
+		{
+			cout << "\t" << ((it->first[0].length() == 1) ? " -" : " --") << it->first[0];
+			for(unsigned i = 0; i < this->max_n_char_arg - (unsigned)it->first[0].length(); i++) cout << " ";
+			cout << "\t" << it->second[1] << endl;
+		}
+	if (this->m_required_args.size()) cout << endl << endl;
 
-		if (this->m_optional_args.size())
-			cout << "Optional argument(s): " << endl
-			     << "--------------------- " << endl << endl;
-		for(it = this->m_optional_args.begin(); it != this->m_optional_args.end(); ++it)
-			if(this->m_doc_args.find(it->first) != this->m_doc_args.end())
-			{
-				cout << "\t" << ((it->first.size() == 1) ? " -" : " --") << it->first;
-				for(unsigned i = 0; i < this->max_n_char_arg - (unsigned)it->first.size(); i++) cout << " ";
-				cout << "\t" << this->m_doc_args.find(it->first)->second << endl;
-			}
-	}
+	if (this->m_optional_args.size())
+		cout << "Optional argument(s): " << endl
+			 << "--------------------- " << endl << endl;
+	for(auto it = this->m_optional_args.begin(); it != this->m_optional_args.end(); ++it)
+		if (it->second.size() >= 2 && !it->second[1].empty())
+		{
+			cout << "\t" << ((it->first[0].length() == 1) ? " -" : " --") << it->first[0];
+			for(unsigned i = 0; i < this->max_n_char_arg - (unsigned)it->first[0].length(); i++) cout << " ";
+			cout << "\t" << it->second[1] << endl;
+		}
 }
 
 void Arguments_reader
@@ -179,5 +159,4 @@ void Arguments_reader
 	this->m_required_args.clear();
 	this->m_optional_args.clear();
 	this->m_args.clear();
-	this->m_doc_args.clear();
 }
