@@ -43,7 +43,6 @@ struct code_parameters
 	float       sigma; // not noise var, used to set a fixed snr value for frozen bits contstruction (in polar codes)
 	std::string type;
 	std::string generation_method;
-	std::string frozen_bits_path;
 	std::string crc;
 	std::string interleaver;
 	std::string fb_gen_method;
@@ -91,7 +90,6 @@ struct channel_parameters
 	std::string domain;
 	std::string type;
 	std::string quantizer_type;
-	bool        estimator;
 };
 
 struct quantizer_parameters
