@@ -97,10 +97,12 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	req_args[{"code-type"}] =
 		{"string",
-	     "the type of codes you want to simulate (POLAR, TURBO, REPETITION, RA or RSC)."};
+		 "the type of codes you want to simulate.",
+		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED"};
 	opt_args[{"simu-type"}] =
 		{"string",
-		 "the type of simulation to run (BFER [default], EXIT or GEN)."};
+		 "the type of simulation to run.",
+		 "BFER, BFERI, EXIT, GEN"};
 	opt_args[{"version", "v"}] =
 		{"",
 		 "print informations about the version of the code."};
@@ -110,7 +112,8 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 #ifdef MULTI_PREC
 	opt_args[{"prec", "p"}] =
 		{"integer",
-		 "the simulation precision in bit (ex: 8, 16, 32 or 64)."};
+		 "the simulation precision in bit.",
+		 "8, 16, 32, 64"};
 #endif
 
 	auto display_help = true;
@@ -127,7 +130,7 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		// facultative parameters
 		if(ar.exist_arg({"simu-type"})) simu_type = ar.get_arg({"simu-type"});
 #ifdef MULTI_PREC
-		if(ar.exist_arg({"prec", "p"})) prec = stoi(ar.get_arg({"prec", "p"}));
+		if(ar.exist_arg({"prec", "p"})) prec = ar.get_arg_int({"prec", "p"});
 #endif
 
 		display_help = false;

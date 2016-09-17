@@ -56,10 +56,10 @@ void Launcher<B,R,Q>
 ::build_args()
 {
 	req_args[{"K"}] =
-		{"integer",
+		{"positive_int",
 		 "useful number of bit transmitted (only information bits)."};
 	req_args[{"N"}] =
-		{"integer",
+		{"positive_int",
 		 "total number of bit transmitted (includes parity bits)."};
 	req_args[{"snr-min"}] =
 		{"float",
@@ -69,50 +69,58 @@ void Launcher<B,R,Q>
 		 "maximal signal/noise ratio to simulate."};
 	req_args[{"code-type"}] =
 		{"string",
-		 "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED)."};
+		 "select the code type you want to use.",
+		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED" };
+
 	opt_args[{"mod-type"}] =
 		{"string",
-		 "type of the modulation to use in the simulation (ex: BPSK, BPSK_FAST, PSK, PAM, QAM)."};
+		 "type of the modulation to use in the simulation.",
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS"};
 	opt_args[{"mod-bps"}] =
-		{"integer",
+		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
 	opt_args[{"mod-ups"}] =
-		{"integer",
+		{"positive_int",
 		 "select the symbol upsample factor (default is 1)."};
 	opt_args[{"demod-max"}] =
 		{"string",
-		 "select the type of the max operation to use in the demodulation (MAX, MAXL, MAXS or MAXSS)."};
+		 "select the type of the max operation to use in the demodulation.",
+		 "MAX, MAXL, MAXS, MAXSS"};
 	opt_args[{"simu-type"}] =
 		{"string",
-		 "select the type of simulation to launch (default is BFER)."};
+		 "select the type of simulation to launch (default is BFER).",
+		 "BFER, BFERI, EXIT, GEN"};
 #ifdef MULTI_PREC
 	opt_args[{"prec", "p"}] =
-		{"integer",
-		 "the simulation precision in bit (ex: 8, 16, 32 or 64)."};
+		{"positive_int",
+		 "the simulation precision in bit.",
+		 "8, 16, 32, 64"};
 #endif
 	opt_args[{"snr-step"}] =
-		{"float",
+		{"positive_float",
 		 "signal/noise ratio step between each simulation."};
 	opt_args[{"disable-display"}] =
 		{"",
 		 "disable reporting for each iteration."};
 	opt_args[{"stop-time"}] =
-		{"integer",
+		{"positive_int",
 		 "time in sec after what the current SNR iteration should stop."};
 	opt_args[{"display-freq"}] =
-		{"integer",
+		{"positive_int",
 		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
 	opt_args[{"n-threads"}] =
-		{"integer",
+		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
 	opt_args[{"code-gen-method"}] =
 		{"string",
-		 "method used to generate the codewords (RAND, RAND_FAST, AZCW)."};
+		 "method used to generate the codewords.",
+		 "RAND, RAND_FAST, AZCW"};
 	opt_args[{"domain"}] =
 		{"string",
-		 "choose the domain in which you want to compute (LR or LLR)."};
+		 "choose the domain in which you want to compute.",
+		 "LR, LLR"};
 
-	std::string chan_avail = "ex: AWGN, AWGN_FAST";
+	std::string chan_avail = "NO, AWGN, AWGN_FAST";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
 #endif 
@@ -123,7 +131,8 @@ void Launcher<B,R,Q>
 
 	opt_args[{"channel-type"}] =
 		{"string",
-		 "type of the channel to use in the simulation (" + chan_avail + "NO = disabled)."};
+		 "type of the channel to use in the simulation.",
+		 chan_avail};
 	opt_args[{"disable-demod-sig2"}] =
 		{"",
 		 "turn off the division by sigma square in the demodulation."};
@@ -132,7 +141,7 @@ void Launcher<B,R,Q>
 		 "select the algorithm you want to decode the codeword."};
 	opt_args[{"dec-implem"}] =
 		{"string",
-		 "select the implementation of the algorithm to decode (ex: NAIVE, STD, FAST, VERY_FAST)."};
+		 "select the implementation of the algorithm to decode."};
 
 	opt_args[{"version", "v"}] =
 		{"",
@@ -145,15 +154,16 @@ void Launcher<B,R,Q>
 	{
 		opt_args[{"quantizer-type"}] =
 			{"string",
-			 "type of the quantizer to use in the simulation (STD, STD_FAST or TRICKY)."};
+			 "type of the quantizer to use in the simulation.",
+			 "STD, STD_FAST, TRICKY"};
 		opt_args[{"qpoint-pos"}] =
-			{"integer",
+			{"positive_int",
 			 "the position of the fixed point in the quantified representation."};
 		opt_args[{"qn-bits"}] =
-			{"integer",
+			{"positive_int",
 			 "the number of bits used for the quantizer."};
 		opt_args[{"qmin-max"}] =
-			{"float",
+			{"positive_float",
 			 "the min/max bound for the tricky quantizer."};
 	}
 }
@@ -183,11 +193,11 @@ void Launcher<B,R,Q>
 
 	// facultative parameters
 	if(ar.exist_arg({"simu-type"         })) params.simulation.type              = ar.get_arg({"simu-type"});
-	if(ar.exist_arg({"snr-step"          })) params.simulation.snr_step          = std::stof(ar.get_arg({"snr-step"}));
+	if(ar.exist_arg({"snr-step"          })) params.simulation.snr_step          = ar.get_arg_float({"snr-step"});
 	if(ar.exist_arg({"disable-display"   })) params.simulation.disable_display   = true;
-	if(ar.exist_arg({"stop-time"         })) params.simulation.stop_time         = seconds(std::stoi(ar.get_arg({"stop-time"})));
-	if(ar.exist_arg({"display-freq"      })) params.simulation.display_freq      = milliseconds(std::stoi(ar.get_arg({"display-freq"})));
-	if(ar.exist_arg({"n-threads"         })) params.simulation.n_threads         = std::stoi(ar.get_arg({"n-threads"}));
+	if(ar.exist_arg({"stop-time"         })) params.simulation.stop_time         = seconds(ar.get_arg_int({"stop-time"}));
+	if(ar.exist_arg({"display-freq"      })) params.simulation.display_freq      = milliseconds(ar.get_arg_int({"display-freq"}));
+	if(ar.exist_arg({"n-threads"         })) params.simulation.n_threads         = ar.get_arg_int({"n-threads"});
 	if(ar.exist_arg({"code-gen-method"   })) params.code.generation_method       = ar.get_arg({"code-gen-method"});
 	if(ar.exist_arg({"domain"            })) params.channel.domain               = ar.get_arg({"domain"});
 	if(ar.exist_arg({"channel-type"      })) params.channel.type                 = ar.get_arg({"channel-type"});
@@ -197,16 +207,16 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dec-implem"        })) params.decoder.implem               = ar.get_arg({"dec-implem"});
 
 	if(ar.exist_arg({"mod-type"          })) params.modulator.type               = ar.get_arg({"mod-type"});
-	if(ar.exist_arg({"mod-bps"           })) params.modulator.bits_per_symbol    = std::stof(ar.get_arg({"mod-bps"}));
-	if(ar.exist_arg({"mod-ups"           })) params.modulator.upsample_factor    = std::stoi(ar.get_arg({"mod-ups"}));
+	if(ar.exist_arg({"mod-bps"           })) params.modulator.bits_per_symbol    = ar.get_arg_float({"mod-bps"});
+	if(ar.exist_arg({"mod-ups"           })) params.modulator.upsample_factor    = ar.get_arg_int({"mod-ups"});
 	if(ar.exist_arg({"demod-max"         })) params.modulator.demod_max          = ar.get_arg({"demod-max"});
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
 		if(ar.exist_arg({"quantizer-type"})) params.channel.quantizer_type       = ar.get_arg({"quantizer-type"});
-		if(ar.exist_arg({"qpoint-pos"    })) params.channel.quant_point_pos      = std::stoi(ar.get_arg({"qpoint-pos"}));
-		if(ar.exist_arg({"qn-bits"       })) params.channel.quant_n_bits         = std::stoi(ar.get_arg({"qn-bits"}));
-		if(ar.exist_arg({"qmin-max"      })) params.channel.quant_min_max        = std::stof(ar.get_arg({"qmin-max"}));
+		if(ar.exist_arg({"qpoint-pos"    })) params.channel.quant_point_pos      = ar.get_arg_int({"qpoint-pos"});
+		if(ar.exist_arg({"qn-bits"       })) params.channel.quant_n_bits         = ar.get_arg_int({"qn-bits"});
+		if(ar.exist_arg({"qmin-max"      })) params.channel.quant_min_max        = ar.get_arg_float({"qmin-max"});
 	}
 
 	// force the number of bits per symbol to 1 when BPSK mod

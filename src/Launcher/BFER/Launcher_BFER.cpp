@@ -30,14 +30,14 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::build_args();
 
 	this->opt_args[{"max-fe"}] =
-		{"integer",
+		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
 	this->opt_args[{"benchs"}] =
-		{"integer",
+		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
 	this->opt_args[{"enable-leg-term"}] =
 		{"",
-		 "enable the legacy display (needed for retro-compatibility with PyBer)."};
+		 "enable the legacy display (needed for retro-compatibility with PyBER)."};
 	this->opt_args[{"enable-dec-thr"}] =
 		{"",
 		 "enable the display of the decoder throughput considering only the decoder time."};
@@ -45,7 +45,7 @@ void Launcher_BFER<B,R,Q>
 		{"",
 		 "enable debug mode: print array values after each step."};
 	this->opt_args[{"debug-limit"}] =
-		{"integer",
+		{"positive_int",
 		 "set the max number of elements to display in the debug mode."};
 	this->opt_args[{"trace"}] =
 		{"",
@@ -62,8 +62,8 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// facultative parameters
-	if(this->ar.exist_arg({"max-fe"         })) this->params.simulation.max_fe          = std::stoi(this->ar.get_arg({"max-fe"}));
-	if(this->ar.exist_arg({"benchs"         })) this->params.simulation.benchs          = std::stoi(this->ar.get_arg({"benchs"}));
+	if(this->ar.exist_arg({"max-fe"         })) this->params.simulation.max_fe          = this->ar.get_arg_int({"max-fe"});
+	if(this->ar.exist_arg({"benchs"         })) this->params.simulation.benchs          = this->ar.get_arg_int({"benchs"});
 	if(this->ar.exist_arg({"enable-leg-term"})) this->params.simulation.enable_leg_term = true;
 	if(this->ar.exist_arg({"enable-dec-thr" })) this->params.simulation.enable_dec_thr  = true;
 	if(this->ar.exist_arg({"enable-debug"   })) this->params.simulation.enable_debug    = true;

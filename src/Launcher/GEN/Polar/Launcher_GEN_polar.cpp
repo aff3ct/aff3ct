@@ -34,25 +34,28 @@ void Launcher_GEN_polar<B,R,Q>
 ::build_args()
 {
 	this->req_args[{"K"}] =
-		{"integer",
+		{"positive_int",
 		 "useful number of bit transmitted (only information bits)."};
 	this->req_args[{"N"}] =
-		{"integer",
+		{"positive_int",
 		 "total number of bit transmitted (includes parity bits)."};
 	this->req_args[{"snr"}] =
 		{"float",
 		 "signal/noise ratio for the frozen bits generation."};
 	this->req_args[{"code-type"}] =
 		{"string",
-		 "select the code type you want to use (ex: POLAR, TURBO, REPETITION, RA, RSC, UNCODED)."};
+		 "select the code type you want to use.",
+		 "POLAR, TURBO, REPETITION, LDPC, RA, UNCODED"};
 
 	this->opt_args[{"simu-type"}] =
 		{"string",
-		 "select the type of simulation to launch (default is BFER)."};
+		 "select the type of simulation to launch.",
+		 "BFER, BFERI, EXIT, GEN"};
 #ifdef MULTI_PREC
 	this->opt_args[{"prec"}] =
-		{"integer",
-		 "the simulation precision in bit (ex: 8, 16, 32 or 64)."};
+		{"positive_int",
+		 "the simulation precision in bit.",
+		 "8, 16, 32, 64"};
 #endif
 	this->opt_args[{"gen-decoder-dir"}] =
 		{"string",
@@ -71,7 +74,8 @@ void Launcher_GEN_polar<B,R,Q>
 #ifdef ENABLE_POLAR_BOUNDS
 	this->opt_args[{"fb-gen-method"}] =
 		{"string",
-		 "select the frozen bits generation method (ex: GA or TV)."};
+		 "select the frozen bits generation method.",
+		 "GA, TV"};
 #endif
 }
 

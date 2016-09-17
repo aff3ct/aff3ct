@@ -31,7 +31,8 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 
 	this->opt_args[{"dec-max"}] =
 		{"string",
-		 "the MAX implementation for the nodes (ex: MAX, MAXS, MAXL)."};
+		 "the MAX implementation for the nodes.",
+		 "MAX, MAXS, MAXL"};
 }
 
 template <typename B, typename R, typename Q, typename QD>

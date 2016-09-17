@@ -60,8 +60,8 @@ public:
 	 *
 	 *  \return Vrai si tous les arguments requis sont bien présents.
 	 */
-	bool parse_arguments(std::map<std::vector<std::string>, std::vector<std::string>> required_args,
-	                     std::map<std::vector<std::string>, std::vector<std::string>> optional_args);
+	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
+	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args);
 
 	/*!
 	 *  \brief Cherche si un agument existe.
@@ -70,8 +70,8 @@ public:
 	 *
 	 *  \return Vrai si l'argument existe (à utiliser après parse_arguments).
 	 */
-	bool exist_argument(std::vector<std::string> tags);
-	bool exist_arg     (std::vector<std::string> tags) { return exist_argument(tags); }
+	bool exist_argument(const std::vector<std::string> &tags);
+	bool exist_arg     (const std::vector<std::string> &tags) { return exist_argument(tags); }
 
 	/*!
 	 *  \brief Retourne la valeur d'un argument.
@@ -80,13 +80,16 @@ public:
 	 *
 	 *  \return La valeur d'un argument avec son tag (à utiliser après parse_arguments).
 	 */
-	std::string get_argument(std::vector<std::string> tags);
-	std::string get_arg     (std::vector<std::string> tags) { return get_argument(tags); }
+	std::string get_argument (const std::vector<std::string> &tags);
+	std::string get_arg      (const std::vector<std::string> &tags) { return           get_argument(tags);  }
+	int         get_arg_int  (const std::vector<std::string> &tags) { return std::stoi(get_argument(tags)); }
+	float       get_arg_float(const std::vector<std::string> &tags) { return std::stof(get_argument(tags)); }
 
 	/*!
 	 *  \brief Affiche une aide pour l'utilisation de la commande.
 	 */
-	void print_usage();
+	void print_usage(                                                          );
+	void print_usage(std::map<std::string, std::vector<std::string>> arg_groups);
 
 private:
 	/*!
@@ -97,13 +100,21 @@ private:
 	 *
 	 *  \return Vrai si l'argument "m_argv[pos_arg]" est dans args.
 	 */
-	bool sub_parse_arguments(std::map<std::vector<std::string>, std::vector<std::string>> args,
+	bool sub_parse_arguments(std::map<std::vector<std::string>, std::vector<std::string>> &args,
 	                         unsigned short pos_arg);
+
+	void check_argument(const std::vector<std::string> &tags,
+	                          std::map<std::vector<std::string>, std::vector<std::string>> &args);
 
 	/*!
 	 *  \brief Clear m_required_args, m_optional_args, m_args and m_doc_args.
 	 */
 	void clear_arguments();
+
+	void print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values,
+	                 const bool required = false);
+
+	std::vector<std::string> split(std::string str);
 };
 
 #endif /* ARGUMENTS_READER_HPP_ */

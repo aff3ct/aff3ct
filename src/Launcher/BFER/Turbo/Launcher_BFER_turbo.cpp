@@ -43,26 +43,31 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	Launcher_BFER<B,R,Q>::build_args();
 
 	this->opt_args[{"max-iter"}] =
-		{"integer",
+		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};
 	this->opt_args[{"disable-buf-enc"}] =
 		{"",
 		 "disable the buffered encoding."};
 	this->opt_args[{"interleaver"}] =
 		{"string",
-		 "specify the type of the interleaver (ex: LTE, RANDOM, COLUMNS, GOLDEN, NO)."};
+		 "specify the type of the interleaver.",
+		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
 	this->opt_args[{"crc-type"}] =
 		{"string",
-		 "select the crc you want to use (ex: CRC-LTEA-24)."};
+		 "select the crc you want to use.",
+		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
 	this->opt_args[{"scaling-factor"}] =
 		{"string",
-		 "scaling factor type (ex: NO, LTE, LTE_VEC, ARRAY, etc.)"};
+		 "scaling factor type.",
+		 "NO, LTE, LTE_VEC, ARRAY"};
 	this->opt_args[{"dec-simd-strat"}] =
 		{"string",
-		 "the SIMD strategy you want to use (ex: INTRA, INTER)."};
+		 "the SIMD strategy you want to use.",
+		 "INTRA, INTER"};
 	this->opt_args[{"dec-max"}] =
 		{"string",
-		 "the MAX implementation for the nodes (ex: MAX, MAXS, MAXL)."};
+		 "the MAX implementation for the nodes.",
+		 "MAX, MAXS, MAXL"};
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -71,7 +76,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter       = std::stoi(this->ar.get_arg({"max-iter"}));
+	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter       = this->ar.get_arg_int({"max-iter"});
 	if(this->ar.exist_arg({"disable-buf-enc"})) this->params.encoder.buffered       = false;
 	if(this->ar.exist_arg({"interleaver"    })) this->params.code.interleaver       = this->ar.get_arg({"interleaver"});
 	if(this->ar.exist_arg({"crc-type"       })) this->params.code.crc               = this->ar.get_arg({"crc-type"});

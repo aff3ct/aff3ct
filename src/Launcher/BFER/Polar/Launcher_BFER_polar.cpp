@@ -48,7 +48,7 @@ void Launcher_BFER_polar<B,R,Q>
 		{"",
 		 "disable the systematic encoding."};
 	this->opt_args[{"max-iter"}] =
-		{"integer",
+		{"positive_int",
 		 "maximal number of iterations in the SCAN decoder."};
 #ifdef ENABLE_POLAR_BOUNDS
 	this->opt_args[{"awgn-codes-dir"}] =
@@ -62,22 +62,25 @@ void Launcher_BFER_polar<B,R,Q>
 		{"string",
 		 "set the best channels bits by giving path to file."};
 	this->opt_args[{"L"}] =
-		{"integer",
+		{"positive_int",
 		 "maximal number of paths in the SCL decoder."};
 	this->opt_args[{"code-sigma"}] =
-		{"float",
+		{"positive_float",
 		 "sigma value for the polar codes generation (adaptative frozen bits if sigma is not set)."};
 #ifdef ENABLE_POLAR_BOUNDS
 	this->opt_args[{"fb-gen-method"}] =
 		{"string",
-		 "select the frozen bits generation method (ex: GA or TV)."};
+		 "select the frozen bits generation method.",
+		 "GA, TV"};
 #endif
 	this->opt_args[{"crc-type"}] =
 		{"string",
-		 "select the crc you want to use (ex: CRC-16-IBM)."};
+		 "select the crc you want to use.",
+		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
 	this->opt_args[{"dec-simd-strat"}] =
 		{"string",
-		 "the SIMD strategy you want to use (ex: INTRA, INTER)."};
+		 "the SIMD strategy you want to use.",
+		 "INTRA, INTER"};
 }
 
 template <typename B, typename R, typename Q>
@@ -87,14 +90,14 @@ void Launcher_BFER_polar<B,R,Q>
 	Launcher_BFER<B,R,Q>::store_args();
 
 	if(this->ar.exist_arg({"disable-sys-enc"})) this->params.encoder.systematic         = false;
-	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter           = std::stoi(this->ar.get_arg({"max-iter"}));
+	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter           = this->ar.get_arg_int({"max-iter"});
 #ifdef ENABLE_POLAR_BOUNDS
 	if(this->ar.exist_arg({"awgn-codes-dir" })) this->params.simulation.awgn_codes_dir  = this->ar.get_arg({"awgn-codes-dir"});
 	if(this->ar.exist_arg({"bin-pb-path"    })) this->params.simulation.bin_pb_path     = this->ar.get_arg({"bin-pb-path"});
 #endif
 	if(this->ar.exist_arg({"awgn-codes-file"})) this->params.simulation.awgn_codes_file = this->ar.get_arg({"awgn-codes-file"});
-	if(this->ar.exist_arg({"L"              })) this->params.decoder.L                  = std::stoi(this->ar.get_arg({"L"}));
-	if(this->ar.exist_arg({"code-sigma"     })) this->params.code.sigma                 = std::stof(this->ar.get_arg({"code-sigma"}));
+	if(this->ar.exist_arg({"L"              })) this->params.decoder.L                  = this->ar.get_arg_int({"L"});
+	if(this->ar.exist_arg({"code-sigma"     })) this->params.code.sigma                 = this->ar.get_arg_float({"code-sigma"});
 #ifdef ENABLE_POLAR_BOUNDS
 	if(this->ar.exist_arg({"fb-gen-method"  })) this->params.code.fb_gen_method         = this->ar.get_arg({"fb-gen-method"});
 #endif

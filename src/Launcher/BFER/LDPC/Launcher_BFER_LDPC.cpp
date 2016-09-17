@@ -28,7 +28,7 @@ void Launcher_BFER_LDPC<B,R,Q>
 	Launcher_BFER<B,R,Q>::build_args();
 
 	this->opt_args[{"max-iter"}] =
-		{"integer",
+		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};
 	this->opt_args[{"enable-coset"}] =
 		{"",
@@ -41,7 +41,7 @@ void Launcher_BFER_LDPC<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"max-iter"    })) this->params.decoder.max_iter = std::stoi(this->ar.get_arg({"max-iter"}));
+	if(this->ar.exist_arg({"max-iter"    })) this->params.decoder.max_iter = this->ar.get_arg_int({"max-iter"});
 	if(this->ar.exist_arg({"enable-coset"})) this->params.code.coset       = true;
 }
 

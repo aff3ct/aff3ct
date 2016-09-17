@@ -29,11 +29,12 @@ void Launcher_BFER_RA<B,R,Q>
 	Launcher_BFER<B,R,Q>::build_args();
 
 	this->opt_args[{"max-iter"}] =
-		{"integer",
+		{"positive_int",
 		 "maximal number of iterations in the decoder."};
 	this->opt_args[{"interleaver"}] =
-		{"interleaver",
-		 "specify the type of the interleaver (ex: LTE, RANDOM, COLUMNS, GOLDEN, NO)."};
+		{"string",
+		 "specify the type of the interleaver.",
+		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
 }
 
 template <typename B, typename R, typename Q>
@@ -42,7 +43,7 @@ void Launcher_BFER_RA<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"max-iter"   })) this->params.decoder.max_iter = std::stoi(this->ar.get_arg({"max-iter"}));
+	if(this->ar.exist_arg({"max-iter"   })) this->params.decoder.max_iter = this->ar.get_arg_int({"max-iter"});
 	if(this->ar.exist_arg({"interleaver"})) this->params.code.interleaver = this->ar.get_arg({"interleaver"});
 }
 
