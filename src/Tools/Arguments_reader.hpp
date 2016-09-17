@@ -88,8 +88,10 @@ public:
 	/*!
 	 *  \brief Affiche une aide pour l'utilisation de la commande.
 	 */
-	void print_usage(                                                          );
-	void print_usage(std::map<std::string, std::vector<std::string>> arg_groups);
+	void print_usage(                                                );
+	void print_usage(std::vector<std::vector<std::string>> arg_groups);
+
+	bool check_arguments();
 
 private:
 	/*!
@@ -103,7 +105,7 @@ private:
 	bool sub_parse_arguments(std::map<std::vector<std::string>, std::vector<std::string>> &args,
 	                         unsigned short pos_arg);
 
-	void check_argument(const std::vector<std::string> &tags,
+	bool check_argument(const std::vector<std::string> &tags,
 	                          std::map<std::vector<std::string>, std::vector<std::string>> &args);
 
 	/*!

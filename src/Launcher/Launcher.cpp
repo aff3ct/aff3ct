@@ -41,7 +41,7 @@ Launcher<B,R,Q>
 	else
 		params.channel.quantizer_type = "STD_FAST";
 
-	params.modulator.disable_demod_sig2   = false;
+	params.modulator.disable_demod_sig2 = false;
 }
 
 template <typename B, typename R, typename Q>
@@ -55,19 +55,19 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::build_args()
 {
-	req_args[{"K"}] =
+	req_args[{"cde-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (only information bits)."};
-	req_args[{"N"}] =
+	req_args[{"cde-size", "N"}] =
 		{"positive_int",
 		 "total number of bit transmitted (includes parity bits)."};
-	req_args[{"snr-min"}] =
+	req_args[{"sim-snr-min", "m"}] =
 		{"float",
 		 "minimal signal/noise ratio to simulate."};
-	req_args[{"snr-max"}] =
+	req_args[{"sim-snr-max", "M"}] =
 		{"float",
 		 "maximal signal/noise ratio to simulate."};
-	req_args[{"code-type"}] =
+	req_args[{"cde-type"}] =
 		{"string",
 		 "select the code type you want to use.",
 		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED" };
@@ -82,40 +82,40 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-ups"}] =
 		{"positive_int",
 		 "select the symbol upsample factor (default is 1)."};
-	opt_args[{"demod-max"}] =
+	opt_args[{"dmod-max"}] =
 		{"string",
 		 "select the type of the max operation to use in the demodulation.",
 		 "MAX, MAXL, MAXS, MAXSS"};
-	opt_args[{"simu-type"}] =
+	opt_args[{"sim-type"}] =
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
 		 "BFER, BFERI, EXIT, GEN"};
 #ifdef MULTI_PREC
-	opt_args[{"prec", "p"}] =
+	opt_args[{"sim-prec", "p"}] =
 		{"positive_int",
 		 "the simulation precision in bit.",
 		 "8, 16, 32, 64"};
 #endif
-	opt_args[{"snr-step"}] =
+	opt_args[{"sim-snr-step", "s"}] =
 		{"positive_float",
 		 "signal/noise ratio step between each simulation."};
-	opt_args[{"disable-display"}] =
+	opt_args[{"term-no"}] =
 		{"",
 		 "disable reporting for each iteration."};
-	opt_args[{"stop-time"}] =
+	opt_args[{"sim-stop-time"}] =
 		{"positive_int",
 		 "time in sec after what the current SNR iteration should stop."};
-	opt_args[{"display-freq"}] =
+	opt_args[{"term-freq"}] =
 		{"positive_int",
 		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
-	opt_args[{"n-threads"}] =
+	opt_args[{"sim-threads", "t"}] =
 		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
-	opt_args[{"code-gen-method"}] =
+	opt_args[{"src-type"}] =
 		{"string",
 		 "method used to generate the codewords.",
 		 "RAND, RAND_FAST, AZCW"};
-	opt_args[{"domain"}] =
+	opt_args[{"sim-domain"}] =
 		{"string",
 		 "choose the domain in which you want to compute.",
 		 "LR, LLR"};
@@ -129,14 +129,14 @@ void Launcher<B,R,Q>
 #endif
 	chan_avail += ", ";
 
-	opt_args[{"channel-type"}] =
+	opt_args[{"chn-type"}] =
 		{"string",
 		 "type of the channel to use in the simulation.",
 		 chan_avail};
-	opt_args[{"disable-demod-sig2"}] =
+	opt_args[{"dmod-no-sig2"}] =
 		{"",
 		 "turn off the division by sigma square in the demodulation."};
-	opt_args[{"dec-algo"}] =
+	opt_args[{"dec-type", "D"}] =
 		{"string",
 		 "select the algorithm you want to decode the codeword."};
 	opt_args[{"dec-implem"}] =
@@ -152,17 +152,17 @@ void Launcher<B,R,Q>
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		opt_args[{"quantizer-type"}] =
+		opt_args[{"qnt-type"}] =
 			{"string",
 			 "type of the quantizer to use in the simulation.",
 			 "STD, STD_FAST, TRICKY"};
-		opt_args[{"qpoint-pos"}] =
+		opt_args[{"qnt-dec"}] =
 			{"positive_int",
 			 "the position of the fixed point in the quantified representation."};
-		opt_args[{"qn-bits"}] =
+		opt_args[{"qnt-bits"}] =
 			{"positive_int",
 			 "the number of bits used for the quantizer."};
-		opt_args[{"qmin-max"}] =
+		opt_args[{"qnt-range"}] =
 			{"positive_float",
 			 "the min/max bound for the tricky quantizer."};
 	}
@@ -175,9 +175,9 @@ void Launcher<B,R,Q>
 	using namespace std::chrono;
 
 	// required parameters
-	params.code.K      = std::stoi(ar.get_arg({"K"}));
-	params.code.N      = std::stoi(ar.get_arg({"N"}));
-	params.code.N_code = std::stoi(ar.get_arg({"N"}));
+	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"});
+	params.code.N      = ar.get_arg_int({"cde-size",      "N"});
+	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
 	params.code.m      = std::ceil(std::log2(params.code.N));
 
 	if (params.code.K > params.code.N)
@@ -186,37 +186,37 @@ void Launcher<B,R,Q>
 		exit(EXIT_FAILURE);
 	}
 
-	params.simulation.snr_min = std::stof(ar.get_arg({"snr-min"}));
-	params.simulation.snr_max = std::stof(ar.get_arg({"snr-max"}));
+	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"});
+	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"});
 
-	params.code.type = ar.get_arg({"code-type"});
+	params.code.type = ar.get_arg({"cde-type"});
 
 	// facultative parameters
-	if(ar.exist_arg({"simu-type"         })) params.simulation.type              = ar.get_arg({"simu-type"});
-	if(ar.exist_arg({"snr-step"          })) params.simulation.snr_step          = ar.get_arg_float({"snr-step"});
-	if(ar.exist_arg({"disable-display"   })) params.simulation.disable_display   = true;
-	if(ar.exist_arg({"stop-time"         })) params.simulation.stop_time         = seconds(ar.get_arg_int({"stop-time"}));
-	if(ar.exist_arg({"display-freq"      })) params.simulation.display_freq      = milliseconds(ar.get_arg_int({"display-freq"}));
-	if(ar.exist_arg({"n-threads"         })) params.simulation.n_threads         = ar.get_arg_int({"n-threads"});
-	if(ar.exist_arg({"code-gen-method"   })) params.code.generation_method       = ar.get_arg({"code-gen-method"});
-	if(ar.exist_arg({"domain"            })) params.channel.domain               = ar.get_arg({"domain"});
-	if(ar.exist_arg({"channel-type"      })) params.channel.type                 = ar.get_arg({"channel-type"});
-	if(ar.exist_arg({"mod-type"          })) params.modulator.type               = ar.get_arg({"mod-type"});
-	if(ar.exist_arg({"disable-demod-sig2"})) params.modulator.disable_demod_sig2 = true;
-	if(ar.exist_arg({"dec-algo"          })) params.decoder.algo                 = ar.get_arg({"dec-algo"});
-	if(ar.exist_arg({"dec-implem"        })) params.decoder.implem               = ar.get_arg({"dec-implem"});
+	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"});
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"term-no"          })) params.simulation.disable_display   = true;
+	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time         = seconds(ar.get_arg_int({"sim-stop-time"}));
+	if(ar.exist_arg({"term-freq"        })) params.simulation.display_freq      = milliseconds(ar.get_arg_int({"term-freq"}));
+	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads", "t"});
+	if(ar.exist_arg({"src-type"         })) params.code.generation_method       = ar.get_arg      ({"src-type"});
+	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"});
+	if(ar.exist_arg({"chn-type"         })) params.channel.type                 = ar.get_arg      ({"chn-type"});
+	if(ar.exist_arg({"mod-type"         })) params.modulator.type               = ar.get_arg      ({"mod-type"});
+	if(ar.exist_arg({"dmod-no-sig2"     })) params.modulator.disable_demod_sig2 = true;
+	if(ar.exist_arg({"dec-type",     "D"})) params.decoder.algo                 = ar.get_arg      ({"dec-type", "D"});
+	if(ar.exist_arg({"dec-implem"       })) params.decoder.implem               = ar.get_arg      ({"dec-implem"});
 
-	if(ar.exist_arg({"mod-type"          })) params.modulator.type               = ar.get_arg({"mod-type"});
-	if(ar.exist_arg({"mod-bps"           })) params.modulator.bits_per_symbol    = ar.get_arg_float({"mod-bps"});
-	if(ar.exist_arg({"mod-ups"           })) params.modulator.upsample_factor    = ar.get_arg_int({"mod-ups"});
-	if(ar.exist_arg({"demod-max"         })) params.modulator.demod_max          = ar.get_arg({"demod-max"});
+	if(ar.exist_arg({"mod-type"         })) params.modulator.type               = ar.get_arg      ({"mod-type"});
+	if(ar.exist_arg({"mod-bps"          })) params.modulator.bits_per_symbol    = ar.get_arg_float({"mod-bps"});
+	if(ar.exist_arg({"mod-ups"          })) params.modulator.upsample_factor    = ar.get_arg_int  ({"mod-ups"});
+	if(ar.exist_arg({"dmod-max"         })) params.modulator.demod_max          = ar.get_arg      ({"dmod-max"});
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		if(ar.exist_arg({"quantizer-type"})) params.channel.quantizer_type       = ar.get_arg({"quantizer-type"});
-		if(ar.exist_arg({"qpoint-pos"    })) params.channel.quant_point_pos      = ar.get_arg_int({"qpoint-pos"});
-		if(ar.exist_arg({"qn-bits"       })) params.channel.quant_n_bits         = ar.get_arg_int({"qn-bits"});
-		if(ar.exist_arg({"qmin-max"      })) params.channel.quant_min_max        = ar.get_arg_float({"qmin-max"});
+		if(ar.exist_arg({"qnt-type"     })) params.channel.quantizer_type       = ar.get_arg      ({"qnt-type"});
+		if(ar.exist_arg({"qnt-dec"      })) params.channel.quant_point_pos      = ar.get_arg_int  ({"qnt-dec"});
+		if(ar.exist_arg({"qnt-bits"     })) params.channel.quant_n_bits         = ar.get_arg_int  ({"qnt-bits"});
+		if(ar.exist_arg({"qnt-range"    })) params.channel.quant_min_max        = ar.get_arg_float({"qnt-range"});
 	}
 
 	// force the number of bits per symbol to 1 when BPSK mod
@@ -253,9 +253,29 @@ void Launcher<B,R,Q>
 
 	if (display_help)
 	{
-		ar.print_usage();
+		std::vector<std::vector<std::string>> arg_grp;
+		arg_grp.push_back({"sim",  "Simulation parameter(s)" });
+		arg_grp.push_back({"cde",  "Code parameter(s)"       });
+		arg_grp.push_back({"src",  "Source parameter(s)"     });
+		arg_grp.push_back({"crc",  "CRC parameter(s)"        });
+		arg_grp.push_back({"itl",  "Interleaver parameter(s)"});
+		arg_grp.push_back({"pct",  "Puncturer parameter(s)"  });
+		arg_grp.push_back({"dpct", "Depuncturer parameter(s)"});
+		arg_grp.push_back({"enc",  "Encoder parameter(s)"    });
+		arg_grp.push_back({"mod",  "Modulator parameter(s)"  });
+		arg_grp.push_back({"dmod", "Demodulator parameter(s)"});
+		arg_grp.push_back({"chn",  "Channel parameter(s)"    });
+		arg_grp.push_back({"qnt",  "Quantizer parameter(s)"  });
+		arg_grp.push_back({"dec",  "Decoder parameter(s)"    });
+		arg_grp.push_back({"mnt",  "Monitor parameter(s)"    });
+		arg_grp.push_back({"term", "Terminal parameter(s)"   });
+
+		ar.print_usage(arg_grp);
 		exit(EXIT_FAILURE);
 	}
+
+	if (!ar.check_arguments())
+		std::exit(EXIT_FAILURE);
 }
 
 template <typename B, typename R, typename Q>

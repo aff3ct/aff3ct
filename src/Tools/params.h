@@ -57,6 +57,23 @@ struct crc_parameters
 {
 };
 
+struct encoder_parameters
+{
+	std::string type;
+	bool systematic;
+	bool buffered;
+};
+
+struct puncturer_parameters
+{
+	std::string type;
+};
+
+struct interleaver_parameters
+{
+	std::string type;
+};
+
 struct modulator_parameters
 {
 	int          bits_per_symbol;    // bits per symbol
@@ -65,21 +82,6 @@ struct modulator_parameters
 	std::string  type;               // modulation type (PAM, QAM, ...)
 	std::string  demod_max;          // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
 	bool         disable_demod_sig2; // do not divide by (sig^2) / 2 in the demodulation
-};
-
-struct encoder_parameters
-{
-	std::string type;
-	bool systematic;
-	bool buffered;
-};
-
-struct interleaver_parameters
-{
-};
-
-struct pucturer_parameters
-{
 };
 
 struct channel_parameters
@@ -107,6 +109,14 @@ struct decoder_parameters
 	int         L;
 };
 
+struct monitor_parameters
+{
+};
+
+struct terminal_parameters
+{
+};
+
 struct parameters
 {
 	simulation_parameters  simulation;
@@ -116,10 +126,12 @@ struct parameters
 	modulator_parameters   modulator;
 	encoder_parameters     encoder;
 	interleaver_parameters interleaver;
-	pucturer_parameters    puncturer;
+	puncturer_parameters   puncturer;
 	channel_parameters     channel;
 	quantizer_parameters   quantizer;
 	decoder_parameters     decoder;
+	monitor_parameters     monitor;
+	terminal_parameters    terminal;
 };
 
 #endif /* PARAMS_H_ */

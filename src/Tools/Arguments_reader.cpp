@@ -90,14 +90,12 @@ bool Arguments_reader
 					if(pos_arg != (this->m_argv.size() -1))
 					{
 						this->m_args[it->first] = this->m_argv[pos_arg +1];
-						this->check_argument(it->first, args);
 						is_found = true;
 					}
 				}
 				else
 				{
 					this->m_args[it->first] = "";
-					this->check_argument(it->first, args);
 					is_found = true;
 				}
 			}
@@ -125,7 +123,7 @@ string Arguments_reader
 void Arguments_reader
 ::print_usage()
 {
-	cout << "usage: " << this->m_program_name;
+	cout << "Usage: " << this->m_program_name;
 
 	for (auto it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
 		if(it->second[0] != "")
@@ -139,71 +137,108 @@ void Arguments_reader
 
 	for (auto it = this->m_optional_args.begin(); it != this->m_optional_args.end(); ++it)
 		this->print_usage(it->first, it->second, false);
+
+	cout << endl;
 }
 
 void Arguments_reader
-::print_usage(map<string, vector<string>> arg_groups)
+::print_usage(std::vector<std::vector<std::string>> arg_groups)
 {
-	cout << "usage: " << this->m_program_name;
+	cout << "Usage: " << this->m_program_name;
 
 	for (auto it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
+	{
+		const auto last = it->first.size() -1;
 		if(it->second[0] != "")
-			cout << ((it->first[0].size() == 1) ? " -" : " --") << it->first[0] << " <" << it->second[0] << ">";
+			cout << ((it->first[last].size() == 1) ? " -" : " --") << it->first[last] << " <" << it->second[0] << ">";
 		else
-			cout << ((it->first[0].size() == 1) ? " -" : " --") << it->first[0];
+			cout << ((it->first[last].size() == 1) ? " -" : " --") << it->first[last];
+	}
 	cout << " [optional args...]" << endl << endl;
 
 	auto req_args_cpy = this->m_required_args;
 	auto opt_args_cpy = this->m_optional_args;
 
-	for (auto gr = arg_groups.begin(); gr != arg_groups.end(); ++gr)
+	for (auto i = 0; i < (int)arg_groups.size(); i++)
 	{
-		assert(gr->second.size() > 0);
+		assert(arg_groups[i].size() > 1);
 
-		cout << gr->second[0] << ": " << endl;
-		for (auto i = 0; i < (int)gr->second[0].length() +1; i++) cout << "-";
-		cout << endl;
-		if (gr->second.size() > 1)
-			std::cout << gr->second[1] << std::endl;
-
+		// detect if there is at least one argument of this group
+		auto display = false;
 		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); ++it)
 		{
-			const auto res = std::mismatch(gr->first.begin(), gr->first.end(), it->first[0].begin());
-			if (res.first == gr->first.end())
+			const auto res = std::mismatch(arg_groups[i][0].begin(), arg_groups[i][0].end(), it->first[0].begin());
+			if (res.first == arg_groups[i][0].end())
 			{
-				// gr->first is a prefix of it->first[0].
-				this->print_usage(it->first, it->second, true);
-				req_args_cpy.erase(it->first);
+				display = true;
+				break;
 			}
+		}
+		if (!display)
+		{
+			for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end(); ++it)
+			{
+				const auto res = std::mismatch(arg_groups[i][0].begin(), arg_groups[i][0].end(), it->first[0].begin());
+				if (res.first == arg_groups[i][0].end())
+				{
+					display = true;
+					break;
+				}
+			}
+		}
+
+		if (display)
+		{
+			cout << arg_groups[i][1] << ": " << endl;
+			if (arg_groups[i].size() > 2)
+				std::cout << arg_groups[i][2] << std::endl;
+
+			const auto req_args_cpy2 = req_args_cpy;
+			for (auto it = req_args_cpy2.begin(); it != req_args_cpy2.end(); ++it)
+			{
+				const auto res = std::mismatch(arg_groups[i][0].begin(), arg_groups[i][0].end(), it->first[0].begin());
+				if (res.first == arg_groups[i][0].end())
+				{
+					// gr->first is a prefix of it->first[0].
+					this->print_usage(it->first, it->second, true);
+					req_args_cpy.erase(it->first);
+				}
+			}
+
+			const auto opt_args_cpy2 = opt_args_cpy;
+			for (auto it = opt_args_cpy2.begin(); it != opt_args_cpy2.end(); ++it)
+			{
+				const auto res = std::mismatch(arg_groups[i][0].begin(), arg_groups[i][0].end(), it->first[0].begin());
+				if (res.first == arg_groups[i][0].end())
+				{
+					// gr->first is a prefix of it->first[0].
+					this->print_usage(it->first, it->second, false);
+					opt_args_cpy.erase(it->first);
+				}
+			}
+
+			cout << endl;
+		}
+	}
+
+	if (!req_args_cpy.empty() || !opt_args_cpy.empty())
+	{
+		cout << "Other parameter(s): " << endl;
+		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); ++it)
+		{
+			// gr->first is a prefix of it->first[0].
+			this->print_usage(it->first, it->second, true);
+			req_args_cpy.erase(it->first);
 		}
 
 		for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end(); ++it)
 		{
-			const auto res = std::mismatch(gr->first.begin(), gr->first.end(), it->first[0].begin());
-			if (res.first == gr->first.end())
-			{
-				// gr->first is a prefix of it->first[0].
-				this->print_usage(it->first, it->second, false);
-				opt_args_cpy.erase(it->first);
-			}
+			// gr->first is a prefix of it->first[0].
+			this->print_usage(it->first, it->second, false);
+			opt_args_cpy.erase(it->first);
 		}
-	}
 
-	cout << "Others: " << endl;
-	for (auto i = 0; i < 7; i++) cout << "-";
-	cout << endl;
-	for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); ++it)
-	{
-		// gr->first is a prefix of it->first[0].
-		this->print_usage(it->first, it->second, true);
-		req_args_cpy.erase(it->first);
-	}
-
-	for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end(); ++it)
-	{
-		// gr->first is a prefix of it->first[0].
-		this->print_usage(it->first, it->second, false);
-		opt_args_cpy.erase(it->first);
+		cout << endl;
 	}
 }
 
@@ -244,11 +279,31 @@ void Arguments_reader
 		if (required)
 			cout << " {REQUIRED}";
 		cout << endl;
-		cout << tab << values[1] << endl << endl;
+		cout << tab << values[1] << endl;
 	}
 }
 
-void Arguments_reader
+bool Arguments_reader
+::check_arguments()
+{
+	auto success = true;
+	for (auto it = this->m_args.begin(); it != this->m_args.end(); ++it)
+	{
+		if (this->m_required_args.find(it->first) != this->m_required_args.end())
+			success = this->check_argument(it->first, this->m_required_args);
+		else if (this->m_optional_args.find(it->first) != this->m_optional_args.end())
+			success = this->check_argument(it->first, this->m_optional_args);
+		else
+			success = false;
+
+		if (!success)
+			break;
+	}
+
+	return success;
+}
+
+bool Arguments_reader
 ::check_argument(const vector<string> &tags, map<vector<string>, vector<string>> &args)
 {
 	// check if the input is positive
@@ -259,7 +314,7 @@ void Arguments_reader
 		{
 			cerr << bold_red("(EE) The \"") << ((tags[0].length() == 1) ? bold_red("-") : bold_red("--"))
 			     << bold_red(tags[0]) << bold_red("\" argument have to be positive, exiting.") << endl;
-			exit(EXIT_FAILURE);
+			return false;
 		}
 	}
 
@@ -271,7 +326,7 @@ void Arguments_reader
 		{
 			cerr << bold_red("(EE) The \"") << ((tags[0].length() == 1) ? bold_red("-") : bold_red("--"))
 			     << bold_red(tags[0]) << bold_red("\" argument have to be positive, exiting.") << endl;
-			exit(EXIT_FAILURE);
+			return false;
 		}
 	}
 
@@ -300,9 +355,11 @@ void Arguments_reader
 			cerr << bold_red("(EE) The \"") << ((tags[0].length() == 1) ? bold_red("-") : bold_red("--"))
 			     << bold_red(tags[0]) << bold_red("\" argument have to be in the ") << bold_red(set)
 			     << bold_red(" set, exiting.") << endl;
-			exit(EXIT_FAILURE);
+			return false;
 		}
 	}
+
+	return true;
 }
 
 vector<string> Arguments_reader

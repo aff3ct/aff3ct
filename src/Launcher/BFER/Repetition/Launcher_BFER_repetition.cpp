@@ -27,7 +27,7 @@ void Launcher_BFER_repetition<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
-	this->opt_args[{"disable-buf-enc"}] =
+	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
 }
@@ -38,7 +38,7 @@ void Launcher_BFER_repetition<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"disable-buf-enc"})) this->params.encoder.buffered = false;
+	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
 }
 
 template <typename B, typename R, typename Q>

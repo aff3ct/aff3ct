@@ -42,13 +42,13 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
-	this->opt_args[{"max-iter"}] =
+	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};
-	this->opt_args[{"disable-buf-enc"}] =
+	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
-	this->opt_args[{"interleaver"}] =
+	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
 		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
@@ -56,11 +56,11 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		{"string",
 		 "select the crc you want to use.",
 		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
-	this->opt_args[{"scaling-factor"}] =
+	this->opt_args[{"dec-sf"}] =
 		{"string",
 		 "scaling factor type.",
 		 "NO, LTE, LTE_VEC, ARRAY"};
-	this->opt_args[{"dec-simd-strat"}] =
+	this->opt_args[{"dec-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTRA, INTER"};
@@ -76,14 +76,13 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter       = this->ar.get_arg_int({"max-iter"});
-	if(this->ar.exist_arg({"disable-buf-enc"})) this->params.encoder.buffered       = false;
-	if(this->ar.exist_arg({"interleaver"    })) this->params.code.interleaver       = this->ar.get_arg({"interleaver"});
-	if(this->ar.exist_arg({"crc-type"       })) this->params.code.crc               = this->ar.get_arg({"crc-type"});
-	if(this->ar.exist_arg({"scaling-factor" })) this->params.decoder.scaling_factor = this->ar.get_arg({"scaling-factor"});
-
-	if(this->ar.exist_arg({"dec-simd-strat" })) this->params.decoder.simd_strategy  = this->ar.get_arg({"dec-simd-strat"});
-	if(this->ar.exist_arg({"dec-max"        })) this->params.decoder.max            = this->ar.get_arg({"dec-max"       });
+	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.max_iter       = this->ar.get_arg_int({"dec-ite", "i"});
+	if(this->ar.exist_arg({"enc-no-buff" })) this->params.encoder.buffered       = false;
+	if(this->ar.exist_arg({"itl-type"    })) this->params.code.interleaver       = this->ar.get_arg    ({"itl-type"    });
+	if(this->ar.exist_arg({"crc-type"    })) this->params.code.crc               = this->ar.get_arg    ({"crc-type"    });
+	if(this->ar.exist_arg({"dec-sf"      })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"      });
+	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
+	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
 
 	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
 		this->params.code.tail_length = 4*4;

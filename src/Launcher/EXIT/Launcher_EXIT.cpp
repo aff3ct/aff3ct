@@ -25,13 +25,13 @@ void Launcher_EXIT<B,R,Q>
 {
 	Launcher<B,R,Q>::build_args();
 
-	this->req_args[{"sig-a-min"}] =
+	this->req_args[{"sim-siga-min", "a"}] =
 		{"positive_float",
 		 "sigma min value used in EXIT charts."};
-	this->req_args[{"sig-a-max"}] =
+	this->req_args[{"sim-siga-max", "A"}] =
 		{"positive_float",
 		 "sigma max value used in EXIT charts."};
-	this->opt_args[{"sig-a-step"}] =
+	this->opt_args[{"sim-siga-step"}] =
 		{"positive_float",
 		 "sigma step value used in EXIT charts."};
 }
@@ -42,9 +42,9 @@ void Launcher_EXIT<B,R,Q>
 {
 	Launcher<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"sig-a-min" })) this->params.simulation.sig_a_min  = this->ar.get_arg_float({"sig-a-min" });
-	if(this->ar.exist_arg({"sig-a-max" })) this->params.simulation.sig_a_max  = this->ar.get_arg_float({"sig-a-max" });
-	if(this->ar.exist_arg({"sig-a-step"})) this->params.simulation.sig_a_step = this->ar.get_arg_float({"sig-a-step"});
+	if(this->ar.exist_arg({"sim-siga-min", "a"})) this->params.simulation.sig_a_min  = this->ar.get_arg_float({"sim-siga-min", "a"});
+	if(this->ar.exist_arg({"sim-siga-max", "A"})) this->params.simulation.sig_a_max  = this->ar.get_arg_float({"sim-siga-max", "A"});
+	if(this->ar.exist_arg({"sim-siga-step"    })) this->params.simulation.sig_a_step = this->ar.get_arg_float({"sim-siga-step"    });
 }
 
 template <typename B, typename R, typename Q>

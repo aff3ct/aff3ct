@@ -95,11 +95,11 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	std::map<std::vector<std::string>, std::vector<std::string>> req_args, opt_args;
 	Arguments_reader ar(argc, argv);
 
-	req_args[{"code-type"}] =
+	req_args[{"cde-type"}] =
 		{"string",
 		 "the type of codes you want to simulate.",
 		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED"};
-	opt_args[{"simu-type"}] =
+	opt_args[{"sim-type"}] =
 		{"string",
 		 "the type of simulation to run.",
 		 "BFER, BFERI, EXIT, GEN"};
@@ -110,7 +110,7 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		{"",
 		 "print this help."};
 #ifdef MULTI_PREC
-	opt_args[{"prec", "p"}] =
+	opt_args[{"sim-prec", "p"}] =
 		{"integer",
 		 "the simulation precision in bit.",
 		 "8, 16, 32, 64"};
@@ -125,12 +125,12 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	if (parsing)
 	{
 		// required parameters
-		code_type = ar.get_arg({"code-type"});
+		code_type = ar.get_arg({"cde-type"});
 
 		// facultative parameters
-		if(ar.exist_arg({"simu-type"})) simu_type = ar.get_arg({"simu-type"});
+		if(ar.exist_arg({"sim-type"})) simu_type = ar.get_arg({"sim-type"});
 #ifdef MULTI_PREC
-		if(ar.exist_arg({"prec", "p"})) prec = ar.get_arg_int({"prec", "p"});
+		if(ar.exist_arg({"sim-prec", "p"})) prec = ar.get_arg_int({"sim-prec", "p"});
 #endif
 
 		display_help = false;
@@ -138,9 +138,15 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	if (display_help)
 	{
-		ar.print_usage();
+		std::vector<std::vector<std::string>> arg_grp;
+		arg_grp.push_back({"sim", "Simulation parameter(s)"});
+		arg_grp.push_back({"cde", "Code parameter(s)"      });
+		ar.print_usage(arg_grp);
 		std::exit(EXIT_FAILURE);
 	}
+
+	if (!ar.check_arguments())
+		std::exit(EXIT_FAILURE);
 }
 
 template <typename B, typename R, typename Q, typename QD>

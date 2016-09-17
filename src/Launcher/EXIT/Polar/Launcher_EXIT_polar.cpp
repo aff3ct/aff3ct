@@ -38,29 +38,29 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::build_args();
 
-	this->req_args[{"code-sigma"}] =
+	this->req_args[{"cde-sigma"}] =
 		{"float",
 		 "sigma value used for the polar codes generation."};
 
-	this->opt_args[{"max-iter"}] =
+	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the SCAN decoder."};
 #ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args[{"awgn-codes-dir"}] =
+	this->opt_args[{"cde-awgn-fb-path"}] =
 		{"string",
 		 "directory where are located the best channels to use for information bits."};
-	this->opt_args[{"bin-pb-path"}] =
+	this->opt_args[{"sim-pb-path"}] =
 		{"string",
 		 "path of the polar bounds code generator (generates best channels to use)."};
 #endif
-	this->opt_args[{"awgn-codes-file"}] =
+	this->opt_args[{"cde-awgn-fb-file"}] =
 		{"string",
 		 "set the best channels bits by giving path to file."};
-	this->opt_args[{"L"}] =
+	this->opt_args[{"dec-lists", "L"}] =
 		{"positive_int",
 		 "maximal number of paths in the SCL decoder."};
 #ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args[{"fb-gen-method"}] =
+	this->opt_args[{"cde-fb-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
 		 "GA, TV"};
@@ -73,16 +73,16 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"max-iter"       })) this->params.decoder.max_iter           = this->ar.get_arg_int({"max-iter"});
+	if(this->ar.exist_arg({"dec-ite", "i"     })) this->params.decoder.max_iter           = this->ar.get_arg_int  ({"dec-ite", "i"});
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"awgn-codes-dir" })) this->params.simulation.awgn_codes_dir  = this->ar.get_arg({"awgn-codes-dir"});
-	if(this->ar.exist_arg({"bin-pb-path"    })) this->params.simulation.bin_pb_path     = this->ar.get_arg({"bin-pb-path"});
+	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.simulation.awgn_codes_dir  = this->ar.get_arg      ({"cde-awgn-fb-path"});
+	if(this->ar.exist_arg({"sim-pb-path"      })) this->params.simulation.bin_pb_path     = this->ar.get_arg      ({"sim-pb-path"});
 #endif
-	if(this->ar.exist_arg({"awgn-codes-file"})) this->params.simulation.awgn_codes_file = this->ar.get_arg({"awgn-codes-file"});
-	if(this->ar.exist_arg({"L"              })) this->params.decoder.L                  = this->ar.get_arg_int({"L"});
-	if(this->ar.exist_arg({"code-sigma"     })) this->params.code.sigma                 = this->ar.get_arg_float({"code-sigma"});
+	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.simulation.awgn_codes_file = this->ar.get_arg      ({"cde-awgn-fb-file"});
+	if(this->ar.exist_arg({"dec-lists", "L"   })) this->params.decoder.L                  = this->ar.get_arg_int  ({"dec-lists", "L"});
+	if(this->ar.exist_arg({"cde-sigma"        })) this->params.code.sigma                 = this->ar.get_arg_float({"cde-sigma"});
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"fb-gen-method"  })) this->params.code.fb_gen_method         = this->ar.get_arg({"fb-gen-method"});
+	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method         = this->ar.get_arg      ({"cde-fb-gen-method"});
 #endif
 
 	// force 1 iteration max if not SCAN (and polar code)

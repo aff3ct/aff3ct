@@ -31,10 +31,10 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
-	this->opt_args[{"disable-buf-enc"}] =
+	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
-	this->opt_args[{"dec-simd-strat"}] =
+	this->opt_args[{"dec-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTRA, INTER"};
@@ -50,10 +50,9 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"disable-buf-enc"})) this->params.encoder.buffered      = false;
-
-	if(this->ar.exist_arg({"dec-simd-strat" })) this->params.decoder.simd_strategy = this->ar.get_arg({"dec-simd-strat"});
-	if(this->ar.exist_arg({"dec-max"        })) this->params.decoder.max           = this->ar.get_arg({"dec-max"       });
+	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered      = false;
+	if(this->ar.exist_arg({"dec-simd"   })) this->params.decoder.simd_strategy = this->ar.get_arg({"dec-simd"});
+	if(this->ar.exist_arg({"dec-max"    })) this->params.decoder.max           = this->ar.get_arg({"dec-max" });
 
 	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
 		this->params.code.tail_length = 2*4;
