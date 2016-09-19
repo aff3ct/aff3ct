@@ -16,19 +16,19 @@ Scaling_factor<R>* Factory_scaling_factor<R>
 	Scaling_factor<R> *scaling_factor = nullptr;
 
 	if (isdigit(params.decoder.scaling_factor[0]))
-		scaling_factor = new Scaling_factor_constant<R>(params.code.K, params.decoder.max_iter,
+		scaling_factor = new Scaling_factor_constant<R>(params.code.K, params.decoder.n_ite,
 		                                                stof(params.decoder.scaling_factor));
 	else if (params.decoder.scaling_factor.find("LTE_VEC") != std::string::npos)
-		scaling_factor = new Scaling_factor_vec<R>(params.code.K, params.decoder.max_iter);
+		scaling_factor = new Scaling_factor_vec<R>(params.code.K, params.decoder.n_ite);
 	else if (params.decoder.scaling_factor.find("LTE") != std::string::npos)
-		scaling_factor = new Scaling_factor_seq<R>(params.code.K, params.decoder.max_iter);
+		scaling_factor = new Scaling_factor_seq<R>(params.code.K, params.decoder.n_ite);
 	else if (params.decoder.scaling_factor.find("ARRAY") != std::string::npos)
 		if(params.decoder.implem.find("FAST") != std::string::npos)
-			scaling_factor = new Scaling_factor_array_fast<R>(params.code.K, params.decoder.max_iter);
+			scaling_factor = new Scaling_factor_array_fast<R>(params.code.K, params.decoder.n_ite);
 		else
-			scaling_factor = new Scaling_factor_array<R>(params.code.K, params.decoder.max_iter);
+			scaling_factor = new Scaling_factor_array<R>(params.code.K, params.decoder.n_ite);
 	else if (params.decoder.scaling_factor.find("NO") != std::string::npos)
-		scaling_factor = new Scaling_factor_NO<R>(params.code.K, params.decoder.max_iter);
+		scaling_factor = new Scaling_factor_NO<R>(params.code.K, params.decoder.n_ite);
 
 	return scaling_factor;
 }

@@ -10,13 +10,11 @@ Launcher_EXIT<B,R,Q>
 ::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)
 : Launcher<B,R,Q>(argc, argv, stream)
 {
-	// default parameters
 	this->params.simulation.type       = "EXIT";
-
-	this->params.encoder.systematic    = true;
 	this->params.simulation.sig_a_min  = 0.0f;
 	this->params.simulation.sig_a_max  = 5.0f;
 	this->params.simulation.sig_a_step = 0.5f;
+	this->params.encoder   .systematic = true;
 }
 
 template <typename B, typename R, typename Q>
@@ -58,7 +56,7 @@ void Launcher_EXIT<B,R,Q>
 	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
 	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                           << std::endl;
-	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->params.decoder.algo          << std::endl;
+	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->params.decoder.type          << std::endl;
 	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->params.decoder.implem        << std::endl;
 	this->stream << "# " << bold("* SIG a min                     ") << " = " << this->params.simulation.sig_a_min  << std::endl;
 	this->stream << "# " << bold("* SIG a max                     ") << " = " << this->params.simulation.sig_a_max  << std::endl;

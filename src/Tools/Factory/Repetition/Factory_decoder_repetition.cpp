@@ -11,7 +11,7 @@ Decoder<B,R>* Factory_decoder_repetition<B,R>
 {
 	Decoder<B,R> *decoder = nullptr;
 
-	if (params.decoder.algo == "REPETITION")
+	if (params.decoder.type == "REPETITION")
 	{
 		if (params.decoder.implem == "STD")
 			decoder = new Decoder_repetition_std<B,R>(params.code.K, params.code.N, params.encoder.buffered);

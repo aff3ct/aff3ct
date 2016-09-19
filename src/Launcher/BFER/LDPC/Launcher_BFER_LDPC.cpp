@@ -9,16 +9,13 @@ Launcher_BFER_LDPC<B,R,Q>
 ::Launcher_BFER_LDPC(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.channel.quant_n_bits    = 6;
-	this->params.channel.quant_point_pos = 2;
-
-	// default parameters
-	this->params.decoder.max_iter        = 10;
-	this->params.code.type               = "LDPC";
-	this->params.decoder.algo            = "BP_FLOODING";
-	this->params.decoder.implem          = "MIN_SUM";
-	this->params.code.coset              = false;
+	this->params.code     .type       = "LDPC";
+	this->params.code     .coset      = false;
+	this->params.quantizer.n_bits     = 6;
+	this->params.quantizer.n_decimals = 2;
+	this->params.decoder  .type       = "BP_FLOODING";
+	this->params.decoder  .implem     = "MIN_SUM";
+	this->params.decoder  .n_ite      = 10;
 }
 
 template <typename B, typename R, typename Q>
@@ -47,7 +44,7 @@ void Launcher_BFER_LDPC<B,R,Q>
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.max_iter = this->ar.get_arg_int({"de-ite", "i"});
+	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"de-ite", "i"});
 }
 
 template <typename B, typename R, typename Q>
@@ -58,8 +55,8 @@ void Launcher_BFER_LDPC<B,R,Q>
 
 	std::string coset = this->params.code.coset ? "on" : "off";
 
-	this->stream << "# " << bold("* Coset approach                ") << " = " << coset                         << std::endl;
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.max_iter << std::endl;
+	this->stream << "# " << bold("* Coset approach                ") << " = " << coset                      << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite << std::endl;
 }
 
 template <typename B, typename R, typename Q>

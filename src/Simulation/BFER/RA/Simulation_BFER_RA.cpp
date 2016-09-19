@@ -59,7 +59,7 @@ Decoder<B,Q>* Simulation_BFER_RA<B,R,Q>
 	Decoder<B,Q>* decoder = new Decoder_RA<B,Q>(this->params.code.K,
 	                                            this->params.code.N,
 	                                            *interleaver,
-	                                            this->params.decoder.max_iter);
+	                                            this->params.decoder.n_ite);
 	if (tid == 0)
 		interleaver->set_n_frames(decoder->get_n_frames());
 

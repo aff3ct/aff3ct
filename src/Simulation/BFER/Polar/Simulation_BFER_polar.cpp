@@ -23,7 +23,7 @@ Simulation_BFER_polar<B,R,Q>
 ::Simulation_BFER_polar(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
   frozen_bits(std::exp2(this->params.code.m)),
-  is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos) && (params.decoder.algo == "SC")),
+  is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos) && (params.decoder.type == "SC")),
   fb_generator(nullptr)
 {
 	const_cast<code_parameters&>(this->params.code).N_code = std::exp2(this->params.code.m);
@@ -53,7 +53,7 @@ void Simulation_BFER_polar<B,R,Q>
 {
 	if (!is_generated_decoder)
 	{
-		if (!this->params.simulation.awgn_codes_file.empty() || this->params.code.sigma != 0.f)
+		if (!this->params.code.awgn_fb_file.empty() || this->params.code.sigma != 0.f)
 		{
 			fb_generator->generate(frozen_bits);
 			if (this->params.code.N != this->params.code.N_code)
@@ -72,7 +72,7 @@ void Simulation_BFER_polar<B,R,Q>
 ::snr_precompute()
 {
 	// adaptative frozen bits generation
-	if (this->params.simulation.awgn_codes_file.empty() && this->params.code.sigma == 0.f && !is_generated_decoder)
+	if (this->params.code.awgn_fb_file.empty() && this->params.code.sigma == 0.f && !is_generated_decoder)
 	{
 		fb_generator->set_sigma(this->sigma);
 		fb_generator->generate(frozen_bits);
@@ -84,7 +84,7 @@ void Simulation_BFER_polar<B,R,Q>
 		}
 	}
 
-	if (this->params.simulation.enable_debug)
+	if (this->params.simulation.debug)
 	{
 		std::clog << std::endl << "Frozen bits:" << std::endl;
 		Frame_trace<B> ft;

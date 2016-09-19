@@ -90,7 +90,7 @@ Simulation_BFERI<B,R,Q>
 {
 	assert(params.simulation.n_threads >= 1);
 
-	if (params.simulation.n_threads > 1 && params.simulation.enable_debug)
+	if (params.simulation.n_threads > 1 && params.simulation.debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
 		          << std::endl;
@@ -131,7 +131,7 @@ void Simulation_BFERI<B,R,Q>
 		for (auto tid = 1; tid < params.simulation.n_threads; tid++)
 			threads[tid -1].join();
 
-		if (!params.simulation.disable_display && !params.simulation.benchs)
+		if (!params.terminal.disabled && !params.simulation.benchs)
 		{
 			monitor_red->reduce();
 			time_reduction(true);
@@ -156,11 +156,11 @@ void Simulation_BFERI<B,R,Q>
 {
 	Simulation_BFERI<B,R,Q>::build_communication_chain(simu, tid);
 
-	if (tid == 0 && (!simu->params.simulation.disable_display && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.enable_debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
+	if (tid == 0 && (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
+	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
 		simu->terminal->legend(std::cout);
 
-	if (simu->params.code.generation_method == "AZCW")
+	if (simu->params.source.type == "AZCW")
 	{
 		std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
 		std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
@@ -183,7 +183,7 @@ void Simulation_BFERI<B,R,Q>
 
 	simu->barrier(tid);
 
-	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.enable_debug)
+	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
 		Simulation_BFERI<B,R,Q>::simulation_loop_debug(simu);
 	else
 		Simulation_BFERI<B,R,Q>::simulation_loop(simu, tid);
@@ -251,7 +251,7 @@ void Simulation_BFERI<B,R,Q>
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
 		                                             simu->params.code.N,
-		                                             simu->params.simulation.max_fe,
+		                                             simu->params.monitor.n_frame_errors,
 		                                             simu->monitor,
 		                                             simu->n_frames);
 		// build the terminal to display the BER/FER
@@ -282,7 +282,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_inter = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (simu->params.code.generation_method != "AZCW")
+		if (simu->params.source.type != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			auto t_sourc = steady_clock::now();
@@ -329,7 +329,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_decod = nanoseconds(0);
 
 		std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
-		for (auto ite = 0; ite <= simu->params.modulator.demod_n_ite; ite++)
+		for (auto ite = 0; ite <= simu->params.demodulator.n_ite; ite++)
 		{
 			// demodulation
 			auto t_demod = steady_clock::now();
@@ -342,7 +342,7 @@ void Simulation_BFERI<B,R,Q>
 			d_deint += steady_clock::now() - t_deint;
 
 			// soft decode
-			if (ite != simu->params.modulator.demod_n_ite)
+			if (ite != simu->params.demodulator.n_ite)
 			{
 				// decode
 				auto t_decod = steady_clock::now();
@@ -393,8 +393,8 @@ void Simulation_BFERI<B,R,Q>
 		simu->d_check_total[tid] += d_check;
 
 		// display statistics in terminal
-		if (tid == 0 && !simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
-		    (steady_clock::now() - simu->t_simu) >= simu->params.simulation.display_freq)
+		if (tid == 0 && !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
+		    (steady_clock::now() - simu->t_simu) >= simu->params.terminal.frequency)
 		{
 			simu->monitor_red->reduce();
 			simu->time_reduction();
@@ -428,7 +428,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_inter = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (simu->params.code.generation_method != "AZCW")
+		if (simu->params.source.type != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			std::clog << "Generate random bits U_K..." << std::endl;
@@ -541,7 +541,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_decod = nanoseconds(0);
 
 		std::fill(simu->Y_N7[0].begin(), simu->Y_N7[0].end(), 0);
-		for (auto ite = 0; ite <= simu->params.modulator.demod_n_ite; ite++)
+		for (auto ite = 0; ite <= simu->params.demodulator.n_ite; ite++)
 		{
 			std::clog << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
 			
@@ -568,7 +568,7 @@ void Simulation_BFERI<B,R,Q>
 			std::clog << std::endl;
 
 			// soft decode
-			if (ite != simu->params.modulator.demod_n_ite)
+			if (ite != simu->params.demodulator.n_ite)
 			{
 				// decode
 				std::clog << "Soft decode form Y_N5 to Y_N6..." << std::endl;
@@ -630,8 +630,8 @@ void Simulation_BFERI<B,R,Q>
 		simu->d_check_total[0] += d_check;
 
 		// display statistics in terminal
-		if (!simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
-		    (steady_clock::now() - t_simu) >= simu->params.simulation.display_freq)
+		if (!simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
+		    (steady_clock::now() - t_simu) >= simu->params.terminal.frequency)
 		{
 			simu->terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();

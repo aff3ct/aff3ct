@@ -12,13 +12,13 @@ Source<B>* Factory_source<B>
 	Source<B> *source = nullptr;
 
 	// build the generator
-	if (params.code.generation_method == "RAND_FAST")
+	if (params.source.type == "RAND_FAST")
 		source = new Source_random_fast<B>(params.code.K, seed);
-	else if (params.code.generation_method == "RAND")
+	else if (params.source.type == "RAND")
 		source = new Source_random<B>(params.code.K, seed);
-	else if (params.code.generation_method == "AZCW")
+	else if (params.source.type == "AZCW")
 		source = new Source_AZCW<B>(params.code.K);
-	else if (params.code.generation_method == "FIXED")
+	else if (params.source.type == "FIXED")
 		source = new Source_fixed<B>(params.code.K);
 
 

@@ -10,14 +10,11 @@ Launcher_BFERI_uncoded<B,R,Q>
 ::Launcher_BFERI_uncoded(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFERI<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.channel.quant_n_bits    = 6;
-	this->params.channel.quant_point_pos = 2;
-
-	// default parameters
-	this->params.code.type               = "Channel";
-	this->params.decoder.algo            = "NONE";
-	this->params.decoder.implem          = "NONE";
+	this->params.code     .type       = "Channel";
+	this->params.quantizer.n_bits     = 6;
+	this->params.quantizer.n_decimals = 2;
+	this->params.decoder  .type       = "NONE";
+	this->params.decoder  .implem     = "NONE";
 }
 
 template <typename B, typename R, typename Q>

@@ -10,17 +10,13 @@ Launcher_EXIT_RSC<B,R,Q,QD>
 ::Launcher_EXIT_RSC(const int argc, const char **argv, std::ostream &stream)
 : Launcher_EXIT<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.code.tail_length        = 2*3;
-	this->params.channel.quant_n_bits    = 6;
-	this->params.channel.quant_point_pos = 3;
-
-	// default parameters
-	this->params.code.type               = "RSC";
-	this->params.decoder.algo            = "BCJR";
-	this->params.decoder.implem          = "FAST";
-	this->params.decoder.max             = "MAX";
-
+	this->params.code     .type        = "RSC";
+	this->params.code     .tail_length = 2*3;
+	this->params.quantizer.n_bits      = 6;
+	this->params.quantizer.n_decimals  = 3;
+	this->params.decoder  .type        = "BCJR";
+	this->params.decoder  .implem      = "FAST";
+	this->params.decoder  .max         = "MAX";
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -45,7 +41,7 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-max"})) this->params.decoder.max = this->ar.get_arg({"dec-max"});
 
-	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
+	if (this->params.decoder.type == "BCJR4" || this->params.decoder.type == "CCSDS")
 		this->params.code.tail_length = 2*4;
 }
 

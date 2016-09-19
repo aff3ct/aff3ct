@@ -15,12 +15,12 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 {
 	Decoder_SISO<B,R> *decoder = nullptr;
 
-	if (params.decoder.algo == "BP" || params.decoder.algo == "BP_FLOODING")
+	if (params.decoder.type == "BP" || params.decoder.type == "BP_FLOODING")
 	{
 		if (params.decoder.implem == "MIN_SUM")
 			decoder = new Decoder_LDPC_BP_flooding_min_sum<B,R>(params.code.K,
 			                                                    params.code.N,
-			                                                    params.decoder.max_iter,
+			                                                    params.decoder.n_ite,
 			                                                    n_variables_per_parity,
 			                                                    n_parities_per_variable,
 			                                                    transpose,
@@ -29,7 +29,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 		else if (params.decoder.implem == "SUM_PRODUCT")
 			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
 			                                                        params.code.N,
-			                                                        params.decoder.max_iter,
+			                                                        params.decoder.n_ite,
 			                                                        n_variables_per_parity,
 			                                                        n_parities_per_variable,
 			                                                        transpose,

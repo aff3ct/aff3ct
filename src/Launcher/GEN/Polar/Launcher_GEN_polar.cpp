@@ -12,21 +12,19 @@ Launcher_GEN_polar<B,R,Q>
 ::Launcher_GEN_polar(const int argc, const char **argv, std::ostream &stream)
 : Launcher_GEN<B,R,Q>(argc, argv, stream)
 {
-	// default parameters
-	this->params.code.type                  = "POLAR";
-	this->params.decoder.algo               = "SC";
-
-	this->params.simulation.gen_decoder_dir = "../src/Module/Decoder/Polar/SC/Generated";
-	this->params.simulation.awgn_codes_dir  = "../awgn_polar_codes/TV";
-	this->params.simulation.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
-	this->params.simulation.awgn_codes_file = "";
-	this->params.code.sigma                 = 0.f;
+	this->params.simulation.bin_pb_path   = "../lib/polar_bounds/bin/polar_bounds";
+	this->params.code      .type          = "POLAR";
+	this->params.code      .awgn_fb_path  = "../awgn_polar_codes/TV";
+	this->params.code      .awgn_fb_file  = "";
+	this->params.code      .sigma         = 0.f;
 #ifdef ENABLE_POLAR_BOUNDS
-	this->params.code.fb_gen_method         = "TV";
+	this->params.code      .fb_gen_method = "TV";
 #else
-	this->params.code.fb_gen_method         = "GA";
+	this->params.code      .fb_gen_method = "GA";
 #endif
-	this->params.decoder.simd_strategy      = "";
+	this->params.decoder   .simd_strategy = "";
+	this->params.decoder   .type          = "SC";
+	this->params.decoder   .gen_path      = "../src/Module/Decoder/Polar/SC/Generated";
 }
 
 template <typename B, typename R, typename Q>
@@ -109,15 +107,15 @@ void Launcher_GEN_polar<B,R,Q>
 	this->params.simulation.snr_min = this->ar.get_arg_float({"dec-snr"});
 
 	// facultative parameters
-	if(this->ar.exist_arg({"sim-type"         })) this->params.simulation.type              = this->ar.get_arg({"sim-type"         });
-	if(this->ar.exist_arg({"dec-gen-path"     })) this->params.simulation.gen_decoder_dir   = this->ar.get_arg({"dec-gen-path"     });
+	if(this->ar.exist_arg({"sim-type"         })) this->params.simulation.type         = this->ar.get_arg({"sim-type"         });
+	if(this->ar.exist_arg({"dec-gen-path"     })) this->params.decoder.gen_path        = this->ar.get_arg({"dec-gen-path"     });
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.simulation.awgn_codes_dir    = this->ar.get_arg({"cde-awgn-fb-path" });
-	if(this->ar.exist_arg({"sim-pb-path"      })) this->params.simulation.bin_pb_path       = this->ar.get_arg({"sim-pb-path"      });
+	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path       = this->ar.get_arg({"cde-awgn-fb-path" });
+	if(this->ar.exist_arg({"sim-pb-path"      })) this->params.simulation.bin_pb_path  = this->ar.get_arg({"sim-pb-path"      });
 #endif
-	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.simulation.awgn_codes_file   = this->ar.get_arg({"cde-awgn-fb-file" });
+	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.code.awgn_fb_file       = this->ar.get_arg({"cde-awgn-fb-file" });
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method           = this->ar.get_arg({"cde-fb-gen-method"});
+	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method      = this->ar.get_arg({"cde-fb-gen-method"});
 #endif
 }
 
@@ -136,9 +134,9 @@ void Launcher_GEN_polar<B,R,Q>
 	this->stream << "# " << bold("* Number of information bits (K)") << " = " << this->params.code.K                        << std::endl;
 	this->stream << "# " << bold("* Codeword length            (N)") << " = " << this->params.code.N                        << std::endl;
 	this->stream << "# " << bold("* SNR                           ") << " = " << this->params.simulation.snr_min   << " dB" << std::endl;
-	this->stream << "# " << bold("* Generated decoder directory   ") << " = " << this->params.simulation.gen_decoder_dir    << std::endl;
-	if (!this->params.simulation.awgn_codes_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.simulation.awgn_codes_file    << std::endl;
+	this->stream << "# " << bold("* Generated decoder directory   ") << " = " << this->params.decoder.gen_path              << std::endl;
+	if (!this->params.code.awgn_fb_file.empty())
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.code.awgn_fb_file             << std::endl;
 	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method            << std::endl;
 	
 	if (this->params.code.N != exp2(ceil(log2(this->params.code.N))))

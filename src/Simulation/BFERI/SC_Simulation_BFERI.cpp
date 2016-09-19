@@ -112,7 +112,7 @@ void Simulation_BFERI<B,R,Q>
 		// launch the simulation
 		this->launch_simulation();
 
-		if (!params.simulation.disable_display && !params.simulation.benchs)
+		if (!params.terminal.disabled && !params.simulation.benchs)
 			terminal->final_report(std::cout);
 
 		// release communication objects
@@ -130,18 +130,18 @@ void Simulation_BFERI<B,R,Q>
 {
 	this->build_communication_chain();
 
-	if ((!this->params.simulation.disable_display && this->snr == this->params.simulation.snr_min &&
-	    !(this->params.simulation.enable_debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
+	if ((!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
+	    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
 		this->terminal->legend(std::cout);
 
-	Predicate_ite p(this->params.modulator.demod_n_ite);
+	Predicate_ite p(this->params.demodulator.n_ite);
 
 	this->duplicator1 = new SC_Duplicator(   "Duplicator1");
 	this->duplicator2 = new SC_Duplicator(   "Duplicator2");
 	this->router      = new SC_Router    (p, "Router"     );
 	this->predicate   = new SC_Predicate (p, "Predicate"  );
 
-	if (this->params.simulation.n_threads == 1 && this->params.simulation.enable_debug)
+	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
 	{
 		const auto dl = this->params.simulation.debug_limit;
 
@@ -308,11 +308,11 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::terminal_temp_report(Simulation_BFERI<B,R,Q> *simu)
 {
-	if (!simu->params.simulation.disable_display && simu->params.simulation.display_freq != std::chrono::nanoseconds(0))
+	if (!simu->params.terminal.disabled && simu->params.terminal.frequency != std::chrono::nanoseconds(0))
 	{
 		while (!simu->monitor[0]->fe_limit_achieved() && !simu->monitor[0]->is_interrupt())
 		{
-			const auto sleep_time = simu->params.simulation.display_freq - std::chrono::milliseconds(0);
+			const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
 			std::this_thread::sleep_for(sleep_time);
 
 			// display statistics in terminal

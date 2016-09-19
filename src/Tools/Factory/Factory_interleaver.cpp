@@ -15,19 +15,19 @@ Interleaver<T>* Factory_interleaver<T>
 	Interleaver<T> *interleaver = nullptr;
 
 	// build the interleaver
-	if (params.code.interleaver == "LTE")
+	if (params.interleaver.type == "LTE")
 		interleaver = new Interleaver_LTE<T>(size);
-	else if (params.code.interleaver == "CCSDS")
+	else if (params.interleaver.type == "CCSDS")
 		interleaver = new Interleaver_CCSDS<T>(size);
-	else if (params.code.interleaver == "RANDOM")
+	else if (params.interleaver.type == "RANDOM")
 		interleaver = new Interleaver_random<T>(size, seed);
-	else if (params.code.interleaver == "RANDOM_HARD")
+	else if (params.interleaver.type == "RANDOM_HARD")
 		interleaver = new Interleaver_random_hard<T>(size);
-	else if (params.code.interleaver == "COLUMNS")
+	else if (params.interleaver.type == "COLUMNS")
 		interleaver = new Interleaver_columns<T>(params.code.K, params.code.M);
-	else if (params.code.interleaver == "GOLDEN")
+	else if (params.interleaver.type == "GOLDEN")
 		interleaver = new Interleaver_golden<T>(size);
-	else if (params.code.interleaver == "NO")
+	else if (params.interleaver.type == "NO")
 		interleaver = new Interleaver_NO<T>(size);
 
 	return interleaver;

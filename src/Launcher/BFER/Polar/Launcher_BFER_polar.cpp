@@ -14,28 +14,24 @@ Launcher_BFER_polar<B,R,Q>
 ::Launcher_BFER_polar(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.channel.quant_n_bits       = 6;
-	this->params.channel.quant_point_pos    = 1;
-
-	// default parameters
-	this->params.code.type                  = "POLAR";
-	this->params.decoder.algo               = "SC";
-	this->params.decoder.implem             = "FAST";
-
-	this->params.decoder.max_iter           = 1;
-	this->params.simulation.awgn_codes_dir  = "../awgn_polar_codes/TV";
-	this->params.simulation.bin_pb_path     = "../lib/polar_bounds/bin/polar_bounds";
-	this->params.simulation.awgn_codes_file = "";
-	this->params.decoder.L                  = 1;
-	this->params.code.sigma                 = 0.f;
-	this->params.code.crc                   = "";
+	this->params.simulation.bin_pb_path   = "../lib/polar_bounds/bin/polar_bounds";
+	this->params.code      .type          = "POLAR";
+	this->params.code      .awgn_fb_path  = "../awgn_polar_codes/TV";
+	this->params.code      .awgn_fb_file  = "";
+	this->params.code      .sigma         = 0.f;
 #ifdef ENABLE_POLAR_BOUNDS
-	this->params.code.fb_gen_method         = "TV";
+	this->params.code      .fb_gen_method = "TV";
 #else
-	this->params.code.fb_gen_method         = "GA";
+	this->params.code      .fb_gen_method = "GA";
 #endif
-	this->params.decoder.simd_strategy      = "";
+	this->params.crc.type                 = "";
+	this->params.quantizer .n_bits        = 6;
+	this->params.quantizer .n_decimals    = 1;
+	this->params.decoder   .type          = "SC";
+	this->params.decoder   .implem        = "FAST";
+	this->params.decoder   .n_ite         = 1;
+	this->params.decoder   .L             = 1;
+	this->params.decoder   .simd_strategy = "";
 }
 
 template <typename B, typename R, typename Q>
@@ -104,26 +100,26 @@ void Launcher_BFER_polar<B,R,Q>
 #endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	if(this->ar.exist_arg({"cde-sigma"        })) this->params.code.sigma                 = this->ar.get_arg_float({"cde-sigma"});
-	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.simulation.awgn_codes_file = this->ar.get_arg      ({"cde-awgn-fb-file" });
+	if(this->ar.exist_arg({"cde-sigma"        })) this->params.code.sigma         = this->ar.get_arg_float({"cde-sigma"});
+	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.code.awgn_fb_file  = this->ar.get_arg      ({"cde-awgn-fb-file" });
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.simulation.awgn_codes_dir  = this->ar.get_arg      ({"cde-awgn-fb-path" });
-	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method         = this->ar.get_arg      ({"cde-fb-gen-method"});
+	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path  = this->ar.get_arg      ({"cde-awgn-fb-path" });
+	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg      ({"cde-fb-gen-method"});
 #endif
 
 	// ----------------------------------------------------------------------------------------------------------- crc
-	if(this->ar.exist_arg({"crc-type"})) this->params.code.crc = this->ar.get_arg({"crc-type"});
+	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg({"crc-type"});
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.max_iter      = this->ar.get_arg_int  ({"dec-ite",   "i"});
+	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int  ({"dec-ite",   "i"});
 	if(this->ar.exist_arg({"dec-lists", "L"})) this->params.decoder.L             = this->ar.get_arg_int  ({"dec-lists", "L"});
 	if(this->ar.exist_arg({"dec-simd"      })) this->params.decoder.simd_strategy = this->ar.get_arg      ({"dec-simd"      });
 
 	// force 1 iteration max if not SCAN (and polar code)
-	if (this->params.decoder.algo != "SCAN") this->params.decoder.max_iter = 1;
+	if (this->params.decoder.type != "SCAN") this->params.decoder.n_ite = 1;
 }
 
 template <typename B, typename R, typename Q>
@@ -135,18 +131,18 @@ void Launcher_BFER_polar<B,R,Q>
 	std::string sigma = (this->params.code.sigma == 0.f) ? "adaptative" : std::to_string(this->params.code.sigma);
 
 	// display configuration and simulation parameters
-	if (this->params.decoder.algo == "SCAN")
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.max_iter           << std::endl;
-	if (!this->params.simulation.awgn_codes_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.simulation.awgn_codes_file << std::endl;
-	if (this->params.decoder.algo == "SCL")
-	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->params.decoder.L                  << std::endl;
-	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << sigma                                   << std::endl;
-	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method         << std::endl;
-	if (!this->params.code.crc.empty())
-	this->stream << "# " << bold("* CRC type                      ") << " = " << this->params.code.crc                   << std::endl;
+	if (this->params.decoder.type == "SCAN")
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite         << std::endl;
+	if (!this->params.code.awgn_fb_file.empty())
+	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.code.awgn_fb_file     << std::endl;
+	if (this->params.decoder.type == "SCL")
+	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->params.decoder.L             << std::endl;
+	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << sigma                              << std::endl;
+	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method    << std::endl;
+	if (!this->params.crc.type.empty())
+	this->stream << "# " << bold("* CRC type                      ") << " = " << this->params.crc.type              << std::endl;
 	if (!this->params.decoder.simd_strategy.empty())
-	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy      << std::endl;
+	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -155,10 +151,10 @@ void Launcher_BFER_polar<B,R,Q>
 {
 
 	// hack for K when there is a CRC
-	if (!this->params.code.crc.empty())
+	if (!this->params.crc.type.empty())
 	{
-		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.code.crc));
-		this->params.code.K += CRC_polynomial<B>::size(this->params.code.crc);
+		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.type));
+		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.type);
 	}
 
 	this->simu = new Simulation_BFER_polar<B,R,Q>(this->params);

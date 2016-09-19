@@ -23,26 +23,26 @@ Decoder<B,R>* Factory_decoder_turbo<B,R>
 		if (typeid(B) == typeid(long long))
 		{
 			// there is a CRC
-			if (crc != nullptr && !params.code.crc.empty())
-				decoder = new Decoder_turbo_naive_CA<B,R>(params.code.K, params.code.N, params.decoder.max_iter,
+			if (crc != nullptr && !params.crc.type.empty())
+				decoder = new Decoder_turbo_naive_CA<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
 				                                          *interleaver, *siso_n, *siso_i, *scaling_factor, *crc, 
 				                                          params.encoder.buffered);
 			// there is no CRC
 			else
-				decoder = new Decoder_turbo_naive<B,R>(params.code.K, params.code.N, params.decoder.max_iter,
+				decoder = new Decoder_turbo_naive<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
 				                                       *interleaver, *siso_n, *siso_i, *scaling_factor, 
 				                                       params.encoder.buffered);
 		}
 		else
 		{
 			// there is a CRC
-			if (crc != nullptr && !params.code.crc.empty())
-				decoder = new Decoder_turbo_fast_CA<B,R>(params.code.K, params.code.N, params.decoder.max_iter,
+			if (crc != nullptr && !params.crc.type.empty())
+				decoder = new Decoder_turbo_fast_CA<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
 				                                         *interleaver, *siso_n, *siso_i, *scaling_factor, *crc, 
 				                                         params.encoder.buffered);
 			// there is no CRC
 			else
-				decoder = new Decoder_turbo_fast<B,R>(params.code.K, params.code.N, params.decoder.max_iter,
+				decoder = new Decoder_turbo_fast<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
 				                                      *interleaver, *siso_n, *siso_i, *scaling_factor, 
 				                                      params.encoder.buffered);
 		}

@@ -14,10 +14,10 @@ Terminal* Factory_terminal<B,R>
 	Terminal *terminal = nullptr;
 
 	// build a terminal to display the BER/FER
-	if(params.simulation.enable_leg_term)
+	if(params.terminal.type == "LEGACY")
 		terminal = new Terminal_BFER_legacy<B,R>(snr, *monitor, t_snr);
-	else
-		terminal = new Terminal_BFER<B,R>(snr, *monitor, t_snr, d_decod_total, params.simulation.enable_dec_thr);
+	else if (params.terminal.type == "STD")
+		terminal = new Terminal_BFER<B,R>(snr, *monitor, t_snr, d_decod_total, params.simulation.benchs_no_ldst);
 
 	return terminal;
 }

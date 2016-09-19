@@ -547,7 +547,7 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 	// build the decoder
 	if (params.encoder.systematic) // systematic encoding
 	{
-		if (params.channel.domain == "LLR" && params.decoder.algo == "SC")
+		if (params.channel.domain == "LLR" && params.decoder.type == "SC")
 		{
 			/* // GENERATED DECODERS // */
 			if (params.decoder.simd_strategy == "INTER")

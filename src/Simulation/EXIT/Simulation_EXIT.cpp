@@ -137,7 +137,7 @@ void Simulation_EXIT<B,R,Q>
 			if (sig_a == 0)
 				std::fill(La_K2.begin(), La_K2.end(), params.channel.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
 
-			if (!params.simulation.disable_display && first_loop && !params.simulation.enable_debug)
+			if (!params.terminal.disabled && first_loop && !params.simulation.debug)
 			{
 				terminal->legend(std::cout);
 				first_loop = false;
@@ -145,7 +145,7 @@ void Simulation_EXIT<B,R,Q>
 
 			this->simulation_loop();
 
-			if (!params.simulation.disable_display)
+			if (!params.terminal.disabled)
 				terminal->final_report(std::cout);
 		}
 	}
@@ -203,7 +203,7 @@ void Simulation_EXIT<B,R,Q>
 		La_buff.insert(La_buff.end(), La_K2.begin(), La_K2.end());
 
 		// display statistics in terminal
-		if (!params.simulation.disable_display && (steady_clock::now() - t_simu) >= params.simulation.display_freq)
+		if (!params.terminal.disabled && (steady_clock::now() - t_simu) >= params.terminal.frequency)
 		{
 			terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();

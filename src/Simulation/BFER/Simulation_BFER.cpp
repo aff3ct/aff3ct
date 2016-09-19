@@ -95,7 +95,7 @@ Simulation_BFER<B,R,Q>
 {
 	assert(params.simulation.n_threads >= 1);
 
-	if (params.simulation.n_threads > 1 && params.simulation.enable_debug)
+	if (params.simulation.n_threads > 1 && params.simulation.debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
 		          << std::endl;
@@ -136,7 +136,7 @@ void Simulation_BFER<B,R,Q>
 		for (auto tid = 1; tid < params.simulation.n_threads; tid++)
 			threads[tid -1].join();
 
-		if (!params.simulation.disable_display && !params.simulation.benchs)
+		if (!params.terminal.disabled && !params.simulation.benchs)
 		{
 			monitor_red->reduce();
 			time_reduction(true);
@@ -161,11 +161,11 @@ void Simulation_BFER<B,R,Q>
 {
 	Simulation_BFER<B,R,Q>::build_communication_chain(simu, tid);
 
-	if (tid == 0 && (!simu->params.simulation.disable_display && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.enable_debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
+	if (tid == 0 && (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
+	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
 		simu->terminal->legend(std::cout);
 
-	if (simu->params.code.generation_method == "AZCW")
+	if (simu->params.source.type == "AZCW")
 	{
 		std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
 		std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
@@ -190,7 +190,7 @@ void Simulation_BFER<B,R,Q>
 
 	simu->barrier(tid);
 
-	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.enable_debug)
+	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
 		Simulation_BFER<B,R,Q>::simulation_loop_debug(simu);
 	else if (simu->params.simulation.benchs)
 		Simulation_BFER<B,R,Q>::simulation_loop_bench(simu, tid);
@@ -255,7 +255,7 @@ void Simulation_BFER<B,R,Q>
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
 		                                             simu->params.code.N,
-		                                             simu->params.simulation.max_fe,
+		                                             simu->params.monitor.n_frame_errors,
 		                                             simu->monitor,
 		                                             simu->n_frames);
 		// build the terminal to display the BER/FER
@@ -286,7 +286,7 @@ void Simulation_BFER<B,R,Q>
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (simu->params.code.generation_method != "AZCW")
+		if (simu->params.source.type != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			auto t_sourc = steady_clock::now();
@@ -383,12 +383,12 @@ void Simulation_BFER<B,R,Q>
 		simu->d_check_total[tid] += d_check;
 
 		// save trace in file
-		if (tid == 0 && !simu->params.simulation.trace_path_file.empty())
+		if (tid == 0 && !simu->params.simulation.trace_path.empty())
 			trace(simu);
 
 		// display statistics in terminal
-		if (tid == 0 && !simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
-		    (steady_clock::now() - simu->t_simu) >= simu->params.simulation.display_freq)
+		if (tid == 0 && !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
+		    (steady_clock::now() - simu->t_simu) >= simu->params.terminal.frequency)
 		{
 			simu->monitor_red->reduce();
 			simu->time_reduction();
@@ -407,7 +407,7 @@ void Simulation_BFER<B,R,Q>
 	simu->barrier(tid);
 	auto t_start = std::chrono::steady_clock::now(); // start time
 	simu->barrier(tid);
-	if (simu->params.simulation.enable_dec_thr)
+	if (simu->params.simulation.benchs_no_ldst)
 		for (auto i = 0; i < simu->params.simulation.benchs; i++)
 			simu->decoder[tid]->decode();
 	else
@@ -464,7 +464,7 @@ void Simulation_BFER<B,R,Q>
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
 
-		if (simu->params.code.generation_method != "AZCW")
+		if (simu->params.source.type != "AZCW")
 		{
 			// generate a random K bits vector U_K
 			std::clog << "Generate random bits U_K..." << std::endl;
@@ -637,12 +637,12 @@ void Simulation_BFER<B,R,Q>
 		simu->d_check_total[0] += d_check;
 
 		// save trace in file
-		if (!simu->params.simulation.trace_path_file.empty())
+		if (!simu->params.simulation.trace_path.empty())
 			trace(simu);
 
 		// display statistics in terminal
-		if (!simu->params.simulation.disable_display && simu->params.simulation.display_freq != nanoseconds(0) &&
-		    (steady_clock::now() - t_simu) >= simu->params.simulation.display_freq)
+		if (!simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
+		    (steady_clock::now() - t_simu) >= simu->params.terminal.frequency)
 		{
 			simu->terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();
@@ -657,7 +657,7 @@ void Simulation_BFER<B,R,Q>
 ::trace(Simulation_BFER<B,R,Q> *simu)
 {
 	std::ofstream myfile;
-	myfile.open(simu->params.simulation.trace_path_file);
+	myfile.open(simu->params.simulation.trace_path);
 	myfile << "U_K, \t X_N1, \t X_N2, \t X_N3_I, \t X_N3_Q, \t Y_N1_I, \t Y_N1_Q, \t Y_N2, \t Y_N3, \t Y_N4, \t V_K" 
 	       << std::endl;
 

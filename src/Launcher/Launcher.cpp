@@ -21,27 +21,22 @@ Launcher<B,R,Q>
 	type_names[typeid(double)]      = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
 
 	// default parameters
-	params.simulation.snr_step        = 0.1f;
-	params.simulation.disable_display = false;
-	params.simulation.n_threads       = 1;
-	params.simulation.stop_time       = std::chrono::seconds(0);
-	params.simulation.display_freq    = std::chrono::milliseconds(500);
-	params.code.tail_length           = 0;
-	params.code.generation_method     = "RAND";
-	params.channel.domain             = "LLR";
-	params.channel.type               = "AWGN";
-	params.modulator.type             = "BPSK";
-	params.modulator.bits_per_symbol  = 1;
-	params.modulator.upsample_factor  = 1;
-	params.modulator.demod_max        = "MAXSS";
-
-	params.channel.quant_min_max      = 0.f;
-	if (typeid(R) == typeid(double))
-		params.channel.quantizer_type = "STD";
-	else
-		params.channel.quantizer_type = "STD_FAST";
-
-	params.modulator.disable_demod_sig2 = false;
+	params.simulation .snr_step        = 0.1f;
+	params.simulation .n_threads       = 1;
+	params.simulation .stop_time       = std::chrono::seconds(0);
+	params.source     .type            = "RAND";
+	params.code       .tail_length     = 0;
+	params.modulator  .type            = "BPSK";
+	params.modulator  .bits_per_symbol = 1;
+	params.modulator  .upsample_factor = 1;
+	params.demodulator.max             = "MAXSS";
+	params.demodulator.no_sig2         = false;
+	params.channel    .domain          = "LLR";
+	params.channel    .type            = "AWGN";
+	params.quantizer  .type            = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
+	params.quantizer  .range           = 0.f;
+	params.terminal   .disabled        = false;
+	params.terminal   .frequency       = std::chrono::milliseconds(500);
 }
 
 template <typename B, typename R, typename Q>
@@ -211,7 +206,7 @@ void Launcher<B,R,Q>
 	}
 
 	// -------------------------------------------------------------------------------------------------------- source
-	if(ar.exist_arg({"src-type"})) params.code.generation_method = ar.get_arg({"src-type"});
+	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
@@ -230,8 +225,8 @@ void Launcher<B,R,Q>
 	}
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	if(ar.exist_arg({"dmod-no-sig2"})) params.modulator.disable_demod_sig2 = true;
-	if(ar.exist_arg({"dmod-max"    })) params.modulator.demod_max          = ar.get_arg({"dmod-max"});
+	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
+	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max        = ar.get_arg({"dmod-max"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
 	if(ar.exist_arg({"chn-type"})) params.channel.type = ar.get_arg({"chn-type"});
@@ -239,19 +234,19 @@ void Launcher<B,R,Q>
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		if(ar.exist_arg({"qnt-type" })) params.channel.quantizer_type  = ar.get_arg      ({"qnt-type" });
-		if(ar.exist_arg({"qnt-dec"  })) params.channel.quant_point_pos = ar.get_arg_int  ({"qnt-dec"  });
-		if(ar.exist_arg({"qnt-bits" })) params.channel.quant_n_bits    = ar.get_arg_int  ({"qnt-bits" });
-		if(ar.exist_arg({"qnt-range"})) params.channel.quant_min_max   = ar.get_arg_float({"qnt-range"});
+		if(ar.exist_arg({"qnt-type" })) params.quantizer.type = ar.get_arg      ({"qnt-type" });
+		if(ar.exist_arg({"qnt-dec"  })) params.quantizer.n_decimals= ar.get_arg_int  ({"qnt-dec"  });
+		if(ar.exist_arg({"qnt-bits" })) params.quantizer.n_bits   = ar.get_arg_int  ({"qnt-bits" });
+		if(ar.exist_arg({"qnt-range"})) params.quantizer.range  = ar.get_arg_float({"qnt-range"});
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(ar.exist_arg({"dec-type",  "D"})) params.decoder.algo   = ar.get_arg({"dec-type",  "D"});
+	if(ar.exist_arg({"dec-type",  "D"})) params.decoder.type   = ar.get_arg({"dec-type",  "D"});
 	if(ar.exist_arg({"dec-implem"    })) params.decoder.implem = ar.get_arg({"dec-implem"    });
 
 	// ------------------------------------------------------------------------------------------------------ terminal
-	if(ar.exist_arg({"term-no"  })) params.simulation.disable_display = true;
-	if(ar.exist_arg({"term-freq"})) params.simulation.display_freq    = milliseconds(ar.get_arg_int({"term-freq"}));
+	if(ar.exist_arg({"term-no"  })) params.terminal.disabled = true;
+	if(ar.exist_arg({"term-freq"})) params.terminal.frequency = milliseconds(ar.get_arg_int({"term-freq"}));
 }
 
 template <typename B, typename R, typename Q>
@@ -313,16 +308,16 @@ void Launcher<B,R,Q>
 	std::string quantif = "unused";
 	if (type_names[typeid(R)] != type_names[typeid(Q)])
 	{
-		if (params.channel.quantizer_type == "TRICKY")
-			quantif = "{"+std::to_string(params.channel.quant_n_bits)+", "+std::to_string(params.channel.quant_min_max)+"f}";
+		if (params.quantizer.type == "TRICKY")
+			quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.range)+"f}";
 		else
-			quantif = "{"+std::to_string(params.channel.quant_n_bits)+", "+std::to_string(params.channel.quant_point_pos)+"}";
+			quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.n_decimals)+"}";
 	}
 
-	std::string demod_sig2 = (params.modulator.disable_demod_sig2) ? "off" : "on";
+	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
 	std::string demod_max  = (params.modulator.type == "BPSK") ||
 	                           (params.modulator.type == "BPSK_FAST") ?
-	                           "unused" : params.modulator.demod_max;
+	                           "unused" : params.demodulator.max;
 
 	std::string modulation = std::to_string((int)(1 << params.modulator.bits_per_symbol)) + "-" + params.modulator.type;
 	if ((params.modulator.type == "BPSK") || (params.modulator.type == "BPSK_FAST")|| (params.modulator.type == "GSM") ||
@@ -344,7 +339,7 @@ void Launcher<B,R,Q>
 	stream << "# " << bold("* SNR max                       ") << " = " << params.simulation.snr_max   << " dB" << std::endl;
 	stream << "# " << bold("* SNR step                      ") << " = " << params.simulation.snr_step  << " dB" << std::endl;
 	stream << "# " << bold("* Domain                        ") << " = " << params.channel.domain                << std::endl;
-	stream << "# " << bold("* Codewords generation method   ") << " = " << params.code.generation_method        << std::endl;
+	stream << "# " << bold("* Codewords generation method   ") << " = " << params.source.type      << std::endl;
 	stream << "# " << bold("* Modulation type               ") << " = " << modulation                           << std::endl;
 	stream << "# " << bold("* Demodulation sigma square     ") << " = " << demod_sig2                           << std::endl;
 	stream << "# " << bold("* Demodulation max type         ") << " = " << demod_max                            << std::endl;
@@ -354,9 +349,9 @@ void Launcher<B,R,Q>
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		stream << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]         << std::endl;
-		stream << "# " << bold("* Quantizer type                ") << " = " << params.channel.quantizer_type << std::endl;
-		stream << "# " << bold("* Fixed-point representation    ") << " = " << quantif                       << std::endl;
+		stream << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]           << std::endl;
+		stream << "# " << bold("* Quantizer type                ") << " = " << params.quantizer.type << std::endl;
+		stream << "# " << bold("* Fixed-point representation    ") << " = " << quantif                         << std::endl;
 	}
 }
 

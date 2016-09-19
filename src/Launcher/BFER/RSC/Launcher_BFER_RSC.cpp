@@ -9,20 +9,15 @@ Launcher_BFER_RSC<B,R,Q,QD>
 ::Launcher_BFER_RSC(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.code.tail_length        = 2*3;
-	this->params.channel.quant_n_bits    = 6;
-	this->params.channel.quant_point_pos = 3;
-
-	// default parameters
-	this->params.code.type               = "RSC";
-	this->params.decoder.algo            = "BCJR";
-	this->params.decoder.implem          = "FAST";
-	this->params.decoder.max             = "MAX";
-
-	this->params.encoder.buffered        = true;
-	this->params.decoder.simd_strategy   = "";
-
+	this->params.code     .tail_length   = 2*3;
+	this->params.code     .type          = "RSC";
+	this->params.encoder  .buffered      = true;
+	this->params.quantizer.n_bits        = 6;
+	this->params.quantizer.n_decimals    = 3;
+	this->params.decoder  .type          = "BCJR";
+	this->params.decoder  .implem        = "FAST";
+	this->params.decoder  .max           = "MAX";
+	this->params.decoder  .simd_strategy = "";
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -60,7 +55,7 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	if(this->ar.exist_arg({"dec-simd"   })) this->params.decoder.simd_strategy = this->ar.get_arg({"dec-simd"});
 	if(this->ar.exist_arg({"dec-max"    })) this->params.decoder.max           = this->ar.get_arg({"dec-max" });
 
-	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")
+	if (this->params.decoder.type == "BCJR4" || this->params.decoder.type == "CCSDS")
 		this->params.code.tail_length = 2*4;
 }
 

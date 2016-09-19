@@ -39,7 +39,7 @@ Generation_polar
   pattern_SC_rate1(new Pattern_SC<pattern_SC_type::RATE_1>()),
   fb_generator(nullptr),
   generator(nullptr),
-  directory(params.simulation.gen_decoder_dir)
+  directory(params.decoder.gen_path)
 {
 	// pattern allocations
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::STANDARD   >());
@@ -98,7 +98,7 @@ void Generation_polar
 {
 	this->generator->generate();
 
-	if (!params.simulation.disable_display)
+	if (!params.terminal.disabled)
 	{
 		std::string tab = "   ";
 

@@ -26,10 +26,10 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 	if (params.channel.domain == "LLR")
 	{
 		// build the decoder
-		if ((params.decoder.algo == "LTE"   && params.code.type == "TURBO") ||
-			(params.decoder.algo == "CCSDS" && params.code.type == "TURBO") ||
-			(params.decoder.algo == "BCJR"  && params.code.type == "RSC"  ) ||
-			(params.decoder.algo == "BCJR4" && params.code.type == "RSC"  ))
+		if ((params.decoder.type == "LTE"   && params.code.type == "TURBO") ||
+			(params.decoder.type == "CCSDS" && params.code.type == "TURBO") ||
+			(params.decoder.type == "BCJR"  && params.code.type == "RSC"  ) ||
+			(params.decoder.type == "BCJR4" && params.code.type == "RSC"  ))
 		{
 			if (params.decoder.implem == "STD")
 			{
@@ -200,8 +200,8 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 	if (params.channel.domain == "LLR")
 	{
 		// build the decoder
-		if ((params.decoder.algo == "BCJR"  && params.code.type == "RSC") ||
-			(params.decoder.algo == "BCJR4" && params.code.type == "RSC"))
+		if ((params.decoder.type == "BCJR"  && params.code.type == "RSC") ||
+			(params.decoder.type == "BCJR4" && params.code.type == "RSC"))
 		{
 			if (params.decoder.implem == "STD")
 			{

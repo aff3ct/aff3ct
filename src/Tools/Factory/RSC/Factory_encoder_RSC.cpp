@@ -14,7 +14,7 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 	// build the encoder
 	if (params.encoder.systematic)
 	{
-		if (params.decoder.algo == "BCJR4" || params.decoder.algo == "CCSDS")
+		if (params.decoder.type == "BCJR4" || params.decoder.type == "CCSDS")
 			encoder = new Encoder_RSC4_sys<B>(params.code.K, N, n_frames, params.encoder.buffered);
 		else
 			encoder = new Encoder_RSC3_sys<B>(params.code.K, N, n_frames, params.encoder.buffered);

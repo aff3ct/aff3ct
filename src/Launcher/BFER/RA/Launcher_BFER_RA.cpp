@@ -9,17 +9,13 @@ Launcher_BFER_RA<B,R,Q>
 ::Launcher_BFER_RA(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.channel.quant_n_bits    = 7;
-	this->params.channel.quant_point_pos = 2;
-
-	// default parameters
-	this->params.code.type               = "RA";
-	this->params.decoder.algo            = "RA";
-	this->params.decoder.implem          = "STD";
-
-	this->params.decoder.max_iter        = 10;
-	this->params.code.interleaver        = "RANDOM";
+	this->params.code       .type       = "RA";
+	this->params.interleaver.type       = "RANDOM";
+	this->params.quantizer  .n_bits     = 7;
+	this->params.quantizer  .n_decimals = 2;
+	this->params.decoder    .type       = "RA";
+	this->params.decoder    .implem     = "STD";
+	this->params.decoder    .n_ite      = 10;
 }
 
 template <typename B, typename R, typename Q>
@@ -47,10 +43,10 @@ void Launcher_BFER_RA<B,R,Q>
 	Launcher_BFER<B,R,Q>::store_args();
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	if(this->ar.exist_arg({"itl-type"})) this->params.code.interleaver = this->ar.get_arg({"itl-type"});
+	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.max_iter = this->ar.get_arg_int({"dec-ite", "i"});
+	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"dec-ite", "i"});
 }
 
 template <typename B, typename R, typename Q>
@@ -60,8 +56,8 @@ void Launcher_BFER_RA<B,R,Q>
 	Launcher_BFER<B,R,Q>::print_header();
 
 	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.max_iter << std::endl;
-	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->params.code.interleaver << std::endl;
+	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite    << std::endl;
+	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->params.interleaver.type << std::endl;
 }
 
 template <typename B, typename R, typename Q>

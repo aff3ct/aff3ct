@@ -13,9 +13,9 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 	Frozenbits_generator<B> *fb_generator = nullptr;
 
 	// build the frozen bits generator
-	if (!params.simulation.awgn_codes_file.empty())
+	if (!params.code.awgn_fb_file.empty())
 	{
-		fb_generator = new Frozenbits_generator_file<B>(params.code.K, params.code.N_code, params.simulation.awgn_codes_file);
+		fb_generator = new Frozenbits_generator_file<B>(params.code.K, params.code.N_code, params.code.awgn_fb_file);
 	}
 	else
 	{
@@ -23,7 +23,7 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 			fb_generator = new Frozenbits_generator_GA<B>(params.code.K, params.code.N_code, params.code.sigma);
 #ifdef ENABLE_POLAR_BOUNDS
 		else if (params.code.fb_gen_method == "TV")
-			fb_generator = new Frozenbits_generator_TV<B>(params.code.K, params.code.N_code, params.simulation.awgn_codes_dir,
+			fb_generator = new Frozenbits_generator_TV<B>(params.code.K, params.code.N_code, params.code.awgn_fb_path,
 			                                              params.simulation.bin_pb_path, params.code.sigma);
 #endif
 	}

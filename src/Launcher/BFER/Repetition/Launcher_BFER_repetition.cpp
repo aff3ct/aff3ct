@@ -9,16 +9,12 @@ Launcher_BFER_repetition<B,R,Q>
 ::Launcher_BFER_repetition(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	// override parameters
-	this->params.channel.quant_n_bits    = 6;
-	this->params.channel.quant_point_pos = 2;
-
-	// default parameters
-	this->params.code.type               = "Repetition";
-	this->params.decoder.algo            = "REPETITION";
-	this->params.decoder.implem          = "STD";
-
-	this->params.encoder.buffered        = true;
+	this->params.code     .type       = "Repetition";
+	this->params.encoder  .buffered   = true;
+	this->params.quantizer.n_bits     = 6;
+	this->params.quantizer.n_decimals = 2;
+	this->params.decoder  .type       = "REPETITION";
+	this->params.decoder  .implem     = "STD";
 }
 
 template <typename B, typename R, typename Q>
