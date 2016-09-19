@@ -31,9 +31,12 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
+	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
@@ -50,7 +53,10 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered      = false;
+
+	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-simd"   })) this->params.decoder.simd_strategy = this->ar.get_arg({"dec-simd"});
 	if(this->ar.exist_arg({"dec-max"    })) this->params.decoder.max           = this->ar.get_arg({"dec-max" });
 

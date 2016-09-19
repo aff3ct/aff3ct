@@ -29,6 +29,7 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	Launcher_EXIT<B,R,Q>::build_args();
 
+	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-max"}] =
 		{"string",
 		 "the MAX implementation for the nodes.",
@@ -41,6 +42,7 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	Launcher_EXIT<B,R,Q>::store_args();
 
+	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-max"})) this->params.decoder.max = this->ar.get_arg({"dec-max"});
 
 	if (this->params.decoder.algo == "BCJR4" || this->params.decoder.algo == "CCSDS")

@@ -28,13 +28,16 @@ void Launcher_BFER_RA<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
-	this->opt_args[{"dec-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the decoder."};
+	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
 		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the decoder."};
 }
 
 template <typename B, typename R, typename Q>
@@ -43,8 +46,11 @@ void Launcher_BFER_RA<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	// --------------------------------------------------------------------------------------------------- interleaver
+	if(this->ar.exist_arg({"itl-type"})) this->params.code.interleaver = this->ar.get_arg({"itl-type"});
+
+	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.max_iter = this->ar.get_arg_int({"dec-ite", "i"});
-	if(this->ar.exist_arg({"itl-type"    })) this->params.code.interleaver = this->ar.get_arg    ({"itl-type"    });
 }
 
 template <typename B, typename R, typename Q>

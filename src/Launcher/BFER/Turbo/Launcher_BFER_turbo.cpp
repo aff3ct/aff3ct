@@ -42,20 +42,27 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
-	this->opt_args[{"dec-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the turbo decoder."};
-	this->opt_args[{"enc-no-buff"}] =
-		{"",
-		 "disable the buffered encoding."};
-	this->opt_args[{"itl-type"}] =
-		{"string",
-		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
+	// ----------------------------------------------------------------------------------------------------------- crc
 	this->opt_args[{"crc-type"}] =
 		{"string",
 		 "select the crc you want to use.",
 		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-no-buff"}] =
+		{"",
+		 "disable the buffered encoding."};
+
+	// --------------------------------------------------------------------------------------------------- interleaver
+	this->opt_args[{"itl-type"}] =
+		{"string",
+		 "specify the type of the interleaver.",
+		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the turbo decoder."};
 	this->opt_args[{"dec-sf"}] =
 		{"string",
 		 "scaling factor type.",
@@ -76,10 +83,17 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	// ----------------------------------------------------------------------------------------------------------- crc
+	if(this->ar.exist_arg({"crc-type"})) this->params.code.crc = this->ar.get_arg({"crc-type"});
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
+
+	// --------------------------------------------------------------------------------------------------- interleaver
+	if(this->ar.exist_arg({"itl-type"})) this->params.code.interleaver = this->ar.get_arg({"itl-type"});
+
+	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.max_iter       = this->ar.get_arg_int({"dec-ite", "i"});
-	if(this->ar.exist_arg({"enc-no-buff" })) this->params.encoder.buffered       = false;
-	if(this->ar.exist_arg({"itl-type"    })) this->params.code.interleaver       = this->ar.get_arg    ({"itl-type"    });
-	if(this->ar.exist_arg({"crc-type"    })) this->params.code.crc               = this->ar.get_arg    ({"crc-type"    });
 	if(this->ar.exist_arg({"dec-sf"      })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"      });
 	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
 	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });

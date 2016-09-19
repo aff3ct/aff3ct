@@ -28,12 +28,15 @@ void Launcher_BFERI_LDPC<B,R,Q>
 {
 	Launcher_BFERI<B,R,Q>::build_args();
 
-	this->opt_args[{"dec-ite", "i"}] =
-		{"positive_int",
-		 "maximal number of iterations in the turbo decoder."};
+	// ---------------------------------------------------------------------------------------------------------- code
 	this->opt_args[{"cde-coset", "c"}] =
 		{"",
 		 "enable the coset approach."};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-ite", "i"}] =
+			{"positive_int",
+			 "maximal number of iterations in the turbo decoder."};
 }
 
 template <typename B, typename R, typename Q>
@@ -42,8 +45,12 @@ void Launcher_BFERI_LDPC<B,R,Q>
 {
 	Launcher_BFERI<B,R,Q>::store_args();
 
-	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.max_iter = this->ar.get_arg_int({"dec-ite", "i"});
-	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset       = true;
+	// ---------------------------------------------------------------------------------------------------------- code
+	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.max_iter = this->ar.get_arg_int({"dec-ite", "i"});
+
 }
 
 template <typename B, typename R, typename Q>

@@ -29,15 +29,10 @@ void Launcher_BFER<B,R,Q>
 {
 	Launcher<B,R,Q>::build_args();
 
-	this->opt_args[{"mnt-max-fe", "e"}] =
-		{"positive_int",
-		 "max number of frame errors for each SNR simulation."};
+	// ---------------------------------------------------------------------------------------------------- simulation
 	this->opt_args[{"sim-benchs"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
-	this->opt_args[{"term-legacy"}] =
-		{"",
-		 "enable the legacy display (needed for retro-compatibility with PyBER)."};
 	this->opt_args[{"sim-benchs-no-ldst", "B"}] =
 		{"",
 		 "enable the display of the decoder throughput considering only the decoder time."};
@@ -53,6 +48,16 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
+
+	// ------------------------------------------------------------------------------------------------------- monitor
+	this->opt_args[{"mnt-max-fe", "e"}] =
+		{"positive_int",
+		 "max number of frame errors for each SNR simulation."};
+
+	// ------------------------------------------------------------------------------------------------------ terminal
+	this->opt_args[{"term-legacy"}] =
+		{"",
+		 "enable the legacy display (needed for retro-compatibility with PyBER)."};
 }
 
 template <typename B, typename R, typename Q>
@@ -61,19 +66,23 @@ void Launcher_BFER<B,R,Q>
 {
 	Launcher<B,R,Q>::store_args();
 
-	// facultative parameters
-	if(this->ar.exist_arg({"mnt-max-fe",         "e"})) this->params.simulation.max_fe          = this->ar.get_arg_int({"mnt-max-fe", "e"});
-	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs          = this->ar.get_arg_int({"sim-benchs"     });
-	if(this->ar.exist_arg({"term-legacy"            })) this->params.simulation.enable_leg_term = true;
+	// ---------------------------------------------------------------------------------------------------- simulation
+	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path_file = this->ar.get_arg    ({"sim-trace-path"});
+	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs          = this->ar.get_arg_int({"sim-benchs"    });
 	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.enable_dec_thr  = true;
+	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report     = true;
 	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.enable_debug    = true;
 	if(this->ar.exist_arg({"sim-debug-limit"        }))
 	{
 		this->params.simulation.enable_debug = true;
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
-	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report     = true;
-	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path_file = this->ar.get_arg({"sim-trace-path"});
+
+	// ------------------------------------------------------------------------------------------------------- monitor
+	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.simulation.max_fe = this->ar.get_arg_int({"mnt-max-fe", "e"});
+
+	// ------------------------------------------------------------------------------------------------------ terminal
+	if(this->ar.exist_arg({"term-legacy"})) this->params.simulation.enable_leg_term = true;
 }
 
 template <typename B, typename R, typename Q>

@@ -31,15 +31,10 @@ void Launcher_BFERI<B,R,Q>
 {
 	Launcher<B,R,Q>::build_args();
 
-	this->opt_args[{"mnt-max-fe", "e"}] =
-		{"positive_int",
-		 "max number of frame errors for each SNR simulation."};
+	// ---------------------------------------------------------------------------------------------------- simulation
 	this->opt_args[{"sim-benchs", "b"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
-	this->opt_args[{"term-legagy"}] =
-		{"",
-		 "enable the legacy display (needed for retro-compatibility with PyBER)."};
 	this->opt_args[{"sim-benchs-no-ldst"}] =
 		{"",
 		 "enable the display of the decoder throughput considering only the decoder time."};
@@ -55,13 +50,27 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
-	this->opt_args[{"dmod-ite"}] =
-		{"positive_int",
-		 "number of iterations in the turbo demodulation."};
+
+	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
 		 "LTE, CCSDS, RANDOM, RANDOM_HARD, GOLDEN, NO"};
+
+	// --------------------------------------------------------------------------------------------------- demodulator
+	this->opt_args[{"dmod-ite"}] =
+		{"positive_int",
+		 "number of iterations in the turbo demodulation."};
+
+	// ------------------------------------------------------------------------------------------------------- monitor
+	this->opt_args[{"mnt-max-fe", "e"}] =
+		{"positive_int",
+		 "max number of frame errors for each SNR simulation."};
+
+	// ------------------------------------------------------------------------------------------------------ terminal
+	this->opt_args[{"term-legagy"}] =
+		{"",
+		 "enable the legacy display (needed for retro-compatibility with PyBER)."};
 }
 
 template <typename B, typename R, typename Q>
@@ -70,20 +79,28 @@ void Launcher_BFERI<B,R,Q>
 {
 	Launcher<B,R,Q>::store_args();
 
-	// facultative parameters
-	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.simulation.max_fe          = this->ar.get_arg_int({"mnt-max-fe", "e"});
-	if(this->ar.exist_arg({"sim-benchs", "b"})) this->params.simulation.benchs          = this->ar.get_arg_int({"sim-benchs", "b"});
-	if(this->ar.exist_arg({"term-legacy"    })) this->params.simulation.enable_leg_term = true;
-	if(this->ar.exist_arg({"sim-debug",  "d"})) this->params.simulation.enable_debug    = true;
-	if(this->ar.exist_arg({"sim-debug-limit"}))
+	// ---------------------------------------------------------------------------------------------------- simulation
+	if(this->ar.exist_arg({"sim-trace-path"    })) this->params.simulation.trace_path_file = this->ar.get_arg    ({"sim-trace-path" });
+	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs          = this->ar.get_arg_int({"sim-benchs", "b"});
+	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report     = true;
+	if(this->ar.exist_arg({"sim-debug",     "d"})) this->params.simulation.enable_debug    = true;
+	if(this->ar.exist_arg({"sim-debug-limit"   }))
 	{
 		this->params.simulation.enable_debug = true;
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
-	if(this->ar.exist_arg({"sim-time-report"})) this->params.simulation.time_report     = true;
-	if(this->ar.exist_arg({"sim-trace-path" })) this->params.simulation.trace_path_file = this->ar.get_arg    ({"sim-trace-path"});
-	if(this->ar.exist_arg({"dmod-ite"       })) this-> params.modulator.demod_n_ite     = this->ar.get_arg_int({"dmod-ite"      });
-	if(this->ar.exist_arg({"itl-type"       })) this->params.code.interleaver           = this->ar.get_arg    ({"itl-type"      });
+
+	// --------------------------------------------------------------------------------------------------- interleaver
+	if(this->ar.exist_arg({"itl-type"})) this->params.code.interleaver = this->ar.get_arg({"itl-type"});
+
+	// --------------------------------------------------------------------------------------------------- demodulator
+	if(this->ar.exist_arg({"dmod-ite"})) this-> params.modulator.demod_n_ite = this->ar.get_arg_int({"dmod-ite"});
+
+	// ------------------------------------------------------------------------------------------------------- monitor
+	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.simulation.max_fe = this->ar.get_arg_int({"mnt-max-fe", "e"});
+
+	// ------------------------------------------------------------------------------------------------------ terminal
+	if(this->ar.exist_arg({"term-legacy"})) this->params.simulation.enable_leg_term = true;
 }
 
 template <typename B, typename R, typename Q>

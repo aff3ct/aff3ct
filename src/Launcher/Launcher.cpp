@@ -55,23 +55,56 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::build_args()
 {
-	req_args[{"cde-info-bits", "K"}] =
-		{"positive_int",
-		 "useful number of bit transmitted (only information bits)."};
-	req_args[{"cde-size", "N"}] =
-		{"positive_int",
-		 "total number of bit transmitted (includes parity bits)."};
+	// ---------------------------------------------------------------------------------------------------- simulation
 	req_args[{"sim-snr-min", "m"}] =
 		{"float",
 		 "minimal signal/noise ratio to simulate."};
 	req_args[{"sim-snr-max", "M"}] =
 		{"float",
 		 "maximal signal/noise ratio to simulate."};
+	opt_args[{"sim-snr-step", "s"}] =
+		{"positive_float",
+		 "signal/noise ratio step between each simulation."};
+	opt_args[{"sim-type"}] =
+		{"string",
+		 "select the type of simulation to launch (default is BFER).",
+		 "BFER, BFERI, EXIT, GEN"};
+	opt_args[{"sim-stop-time"}] =
+		{"positive_int",
+		 "time in sec after what the current SNR iteration should stop."};
+	opt_args[{"sim-threads", "t"}] =
+		{"positive_int",
+		 "enable multi-threaded mode and specify the number of threads."};
+	opt_args[{"sim-domain"}] =
+		{"string",
+		 "choose the domain in which you want to compute.",
+		 "LR, LLR"};
+#ifdef MULTI_PREC
+	opt_args[{"sim-prec", "p"}] =
+		{"positive_int",
+		 "the simulation precision in bit.",
+		 "8, 16, 32, 64"};
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-type"}] =
 		{"string",
 		 "select the code type you want to use.",
 		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED" };
+	req_args[{"cde-info-bits", "K"}] =
+		{"positive_int",
+		 "useful number of bit transmitted (only information bits)."};
+	req_args[{"cde-size", "N"}] =
+		{"positive_int",
+		 "total number of bit transmitted (includes parity bits)."};
 
+	// -------------------------------------------------------------------------------------------------------- source
+	opt_args[{"src-type"}] =
+		{"string",
+		 "method used to generate the codewords.",
+		 "RAND, RAND_FAST, AZCW"};
+
+	// ----------------------------------------------------------------------------------------------------- modulator
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
@@ -82,44 +115,17 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-ups"}] =
 		{"positive_int",
 		 "select the symbol upsample factor (default is 1)."};
+
+	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{"dmod-max"}] =
 		{"string",
 		 "select the type of the max operation to use in the demodulation.",
 		 "MAX, MAXL, MAXS, MAXSS"};
-	opt_args[{"sim-type"}] =
-		{"string",
-		 "select the type of simulation to launch (default is BFER).",
-		 "BFER, BFERI, EXIT, GEN"};
-#ifdef MULTI_PREC
-	opt_args[{"sim-prec", "p"}] =
-		{"positive_int",
-		 "the simulation precision in bit.",
-		 "8, 16, 32, 64"};
-#endif
-	opt_args[{"sim-snr-step", "s"}] =
-		{"positive_float",
-		 "signal/noise ratio step between each simulation."};
-	opt_args[{"term-no"}] =
+	opt_args[{"dmod-no-sig2"}] =
 		{"",
-		 "disable reporting for each iteration."};
-	opt_args[{"sim-stop-time"}] =
-		{"positive_int",
-		 "time in sec after what the current SNR iteration should stop."};
-	opt_args[{"term-freq"}] =
-		{"positive_int",
-		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
-	opt_args[{"sim-threads", "t"}] =
-		{"positive_int",
-		 "enable multi-threaded mode and specify the number of threads."};
-	opt_args[{"src-type"}] =
-		{"string",
-		 "method used to generate the codewords.",
-		 "RAND, RAND_FAST, AZCW"};
-	opt_args[{"sim-domain"}] =
-		{"string",
-		 "choose the domain in which you want to compute.",
-		 "LR, LLR"};
+		 "turn off the division by sigma square in the demodulation."};
 
+	// ------------------------------------------------------------------------------------------------------- channel
 	std::string chan_avail = "NO, AWGN, AWGN_FAST";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
@@ -128,28 +134,12 @@ void Launcher<B,R,Q>
 	chan_avail += ", AWGN_MKL";
 #endif
 	chan_avail += ", ";
-
 	opt_args[{"chn-type"}] =
 		{"string",
 		 "type of the channel to use in the simulation.",
 		 chan_avail};
-	opt_args[{"dmod-no-sig2"}] =
-		{"",
-		 "turn off the division by sigma square in the demodulation."};
-	opt_args[{"dec-type", "D"}] =
-		{"string",
-		 "select the algorithm you want to decode the codeword."};
-	opt_args[{"dec-implem"}] =
-		{"string",
-		 "select the implementation of the algorithm to decode."};
 
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
-
+	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
 		opt_args[{"qnt-type"}] =
@@ -166,6 +156,30 @@ void Launcher<B,R,Q>
 			{"positive_float",
 			 "the min/max bound for the tricky quantizer."};
 	}
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	opt_args[{"dec-type", "D"}] =
+		{"string",
+		 "select the algorithm you want to decode the codeword."};
+	opt_args[{"dec-implem"}] =
+		{"string",
+		 "select the implementation of the algorithm to decode."};
+
+	// ------------------------------------------------------------------------------------------------------ terminal
+	opt_args[{"term-no"}] =
+		{"",
+		 "disable reporting for each iteration."};
+	opt_args[{"term-freq"}] =
+		{"positive_int",
+		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
+
+	// --------------------------------------------------------------------------------------------------------- other
+	opt_args[{"version", "v"}] =
+		{"",
+		 "print informations about the version of the code."};
+	opt_args[{"help", "h"}] =
+		{"",
+		 "print this help."};
 }
 
 template <typename B, typename R, typename Q>
@@ -174,50 +188,36 @@ void Launcher<B,R,Q>
 {
 	using namespace std::chrono;
 
-	// required parameters
-	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"});
-	params.code.N      = ar.get_arg_int({"cde-size",      "N"});
+	// ---------------------------------------------------------------------------------------------------- simulation
+	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
+	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
+
+	if(ar.exist_arg({"sim-type"         })) params.simulation.type      = ar.get_arg      ({"sim-type"         });
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step  = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads = ar.get_arg_int  ({"sim-threads",  "t"});
+	if(ar.exist_arg({"sim-domain"       })) params.channel.domain       = ar.get_arg      ({"sim-domain"       });
+	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int({"sim-stop-time"}));
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
+	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
+	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
 	params.code.m      = std::ceil(std::log2(params.code.N));
-
 	if (params.code.K > params.code.N)
 	{
 		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 
-	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"});
-	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"});
+	// -------------------------------------------------------------------------------------------------------- source
+	if(ar.exist_arg({"src-type"})) params.code.generation_method = ar.get_arg({"src-type"});
 
-	params.code.type = ar.get_arg({"cde-type"});
-
-	// facultative parameters
-	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"});
-	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"term-no"          })) params.simulation.disable_display   = true;
-	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time         = seconds(ar.get_arg_int({"sim-stop-time"}));
-	if(ar.exist_arg({"term-freq"        })) params.simulation.display_freq      = milliseconds(ar.get_arg_int({"term-freq"}));
-	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads", "t"});
-	if(ar.exist_arg({"src-type"         })) params.code.generation_method       = ar.get_arg      ({"src-type"});
-	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"});
-	if(ar.exist_arg({"chn-type"         })) params.channel.type                 = ar.get_arg      ({"chn-type"});
-	if(ar.exist_arg({"mod-type"         })) params.modulator.type               = ar.get_arg      ({"mod-type"});
-	if(ar.exist_arg({"dmod-no-sig2"     })) params.modulator.disable_demod_sig2 = true;
-	if(ar.exist_arg({"dec-type",     "D"})) params.decoder.algo                 = ar.get_arg      ({"dec-type", "D"});
-	if(ar.exist_arg({"dec-implem"       })) params.decoder.implem               = ar.get_arg      ({"dec-implem"});
-
-	if(ar.exist_arg({"mod-type"         })) params.modulator.type               = ar.get_arg      ({"mod-type"});
-	if(ar.exist_arg({"mod-bps"          })) params.modulator.bits_per_symbol    = ar.get_arg_float({"mod-bps"});
-	if(ar.exist_arg({"mod-ups"          })) params.modulator.upsample_factor    = ar.get_arg_int  ({"mod-ups"});
-	if(ar.exist_arg({"dmod-max"         })) params.modulator.demod_max          = ar.get_arg      ({"dmod-max"});
-
-	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
-	{
-		if(ar.exist_arg({"qnt-type"     })) params.channel.quantizer_type       = ar.get_arg      ({"qnt-type"});
-		if(ar.exist_arg({"qnt-dec"      })) params.channel.quant_point_pos      = ar.get_arg_int  ({"qnt-dec"});
-		if(ar.exist_arg({"qnt-bits"     })) params.channel.quant_n_bits         = ar.get_arg_int  ({"qnt-bits"});
-		if(ar.exist_arg({"qnt-range"    })) params.channel.quant_min_max        = ar.get_arg_float({"qnt-range"});
-	}
+	// ----------------------------------------------------------------------------------------------------- modulator
+	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
+	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
+	if(ar.exist_arg({"mod-bps" })) params.modulator.bits_per_symbol = ar.get_arg_float({"mod-bps" });
+	if(ar.exist_arg({"mod-ups" })) params.modulator.upsample_factor = ar.get_arg_int  ({"mod-ups" });
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
@@ -228,6 +228,30 @@ void Launcher<B,R,Q>
 		params.modulator.bits_per_symbol = 1;
 		params.modulator.upsample_factor = 5;
 	}
+
+	// --------------------------------------------------------------------------------------------------- demodulator
+	if(ar.exist_arg({"dmod-no-sig2"})) params.modulator.disable_demod_sig2 = true;
+	if(ar.exist_arg({"dmod-max"    })) params.modulator.demod_max          = ar.get_arg({"dmod-max"});
+
+	// ------------------------------------------------------------------------------------------------------- channel
+	if(ar.exist_arg({"chn-type"})) params.channel.type = ar.get_arg({"chn-type"});
+
+	// ----------------------------------------------------------------------------------------------------- quantizer
+	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
+	{
+		if(ar.exist_arg({"qnt-type" })) params.channel.quantizer_type  = ar.get_arg      ({"qnt-type" });
+		if(ar.exist_arg({"qnt-dec"  })) params.channel.quant_point_pos = ar.get_arg_int  ({"qnt-dec"  });
+		if(ar.exist_arg({"qnt-bits" })) params.channel.quant_n_bits    = ar.get_arg_int  ({"qnt-bits" });
+		if(ar.exist_arg({"qnt-range"})) params.channel.quant_min_max   = ar.get_arg_float({"qnt-range"});
+	}
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(ar.exist_arg({"dec-type",  "D"})) params.decoder.algo   = ar.get_arg({"dec-type",  "D"});
+	if(ar.exist_arg({"dec-implem"    })) params.decoder.implem = ar.get_arg({"dec-implem"    });
+
+	// ------------------------------------------------------------------------------------------------------ terminal
+	if(ar.exist_arg({"term-no"  })) params.simulation.disable_display = true;
+	if(ar.exist_arg({"term-freq"})) params.simulation.display_freq    = milliseconds(ar.get_arg_int({"term-freq"}));
 }
 
 template <typename B, typename R, typename Q>

@@ -95,26 +95,31 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	std::map<std::vector<std::string>, std::vector<std::string>> req_args, opt_args;
 	Arguments_reader ar(argc, argv);
 
+	// ---------------------------------------------------------------------------------------------------- simulation
+	opt_args[{"sim-type"}] =
+			{"string",
+			 "the type of simulation to run.",
+			 "BFER, BFERI, EXIT, GEN"};
+#ifdef MULTI_PREC
+	opt_args[{"sim-prec", "p"}] =
+		{"positive_int",
+		 "the simulation precision in bit.",
+		 "8, 16, 32, 64"};
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-type"}] =
 		{"string",
 		 "the type of codes you want to simulate.",
-		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED"};
-	opt_args[{"sim-type"}] =
-		{"string",
-		 "the type of simulation to run.",
-		 "BFER, BFERI, EXIT, GEN"};
+		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, UNCODED"};
+
+	// --------------------------------------------------------------------------------------------------------- other
 	opt_args[{"version", "v"}] =
 		{"",
 		 "print informations about the version of the code."};
 	opt_args[{"help", "h"}] =
 		{"",
 		 "print this help."};
-#ifdef MULTI_PREC
-	opt_args[{"sim-prec", "p"}] =
-		{"integer",
-		 "the simulation precision in bit.",
-		 "8, 16, 32, 64"};
-#endif
 
 	auto display_help = true;
 	auto parsing = ar.parse_arguments(req_args, opt_args);

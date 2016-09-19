@@ -27,6 +27,7 @@ void Launcher_BFER_repetition<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
+	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
@@ -38,6 +39,7 @@ void Launcher_BFER_repetition<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
 }
 

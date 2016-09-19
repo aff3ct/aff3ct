@@ -33,49 +33,55 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN_polar<B,R,Q>
 ::build_args()
 {
+	// ---------------------------------------------------------------------------------------------------- simulation
+	this->opt_args[{"sim-type"}] =
+		{"string",
+		 "select the type of simulation to launch.",
+		 "BFER, BFERI, EXIT, GEN"};
+#ifdef ENABLE_POLAR_BOUNDS
+	this->opt_args[{"sim-pb-path"}] =
+		{"string",
+		 "path of the polar bounds code generator (generates best channels to use)."};
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- code
 	this->req_args[{"cde-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (only information bits)."};
 	this->req_args[{"cde-size", "N"}] =
 		{"positive_int",
 		 "total number of bit transmitted (includes parity bits)."};
-	this->req_args[{"dec-snr"}] =
-		{"float",
-		 "signal/noise ratio for the frozen bits generation."};
 	this->req_args[{"cde-type"}] =
 		{"string",
 		 "select the code type you want to use.",
 		 "POLAR, TURBO, REPETITION, LDPC, RA, UNCODED"};
-
-	this->opt_args[{"sim-type"}] =
+	this->opt_args[{"cde-awgn-fb-file"}] =
 		{"string",
-		 "select the type of simulation to launch.",
-		 "BFER, BFERI, EXIT, GEN"};
+		 "set the best channels bits by giving path to file."};
+#ifdef ENABLE_POLAR_BOUNDS
+	this->opt_args[{"cde-awgn-fb-path"}] =
+		{"string",
+		 "directory where are located the best channels to use for information bits."};
+	this->opt_args[{"cde-fb-gen-method"}] =
+		{"string",
+		 "select the frozen bits generation method.",
+		 "GA, TV"};
+#endif
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	this->req_args[{"dec-snr"}] =
+		{"float",
+		 "signal/noise ratio for the frozen bits generation."};
+	this->opt_args[{"dec-gen-path"}] =
+		{"string",
+		 "directory where are located the generated decoders."};
+
+	// --------------------------------------------------------------------------------------------------------- other
 #ifdef MULTI_PREC
 	this->opt_args[{"prec", "p"}] =
 		{"positive_int",
 		 "the simulation precision in bit.",
 		 "8, 16, 32, 64"};
-#endif
-	this->opt_args[{"dec-gen-path"}] =
-		{"string",
-		 "directory where are located the generated decoders."};
-#ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args[{"cde-awgn-fb-path"}] =
-		{"string",
-		 "directory where are located the best channels to use for information bits."};
-	this->opt_args[{"sim-pb-path"}] =
-		{"string",
-		 "path of the polar bounds code generator (generates best channels to use)."};
-#endif
-	this->opt_args[{"cde-awgn-fb-file"}] =
-		{"string",
-		 "set the best channels bits by giving path to file."};
-#ifdef ENABLE_POLAR_BOUNDS
-	this->opt_args[{"cde-fb-gen-method"}] =
-		{"string",
-		 "select the frozen bits generation method.",
-		 "GA, TV"};
 #endif
 }
 
@@ -83,6 +89,11 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN_polar<B,R,Q>
 ::store_args()
 {
+	// ---------------------------------------------------------------------------------------------------- simulation
+
+	// ---------------------------------------------------------------------------------------------------------- code
+
+
 	// required parameters
 	this->params.code.K      = this->ar.get_arg_int({"cde-info-bits", "K"});
 	this->params.code.N      = this->ar.get_arg_int({"cde-size",      "N"});
