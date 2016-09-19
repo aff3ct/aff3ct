@@ -57,7 +57,7 @@ void Launcher_BFER<B,R,Q>
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
 		{"string",
-		 "select the terminal you want."
+		 "select the terminal you want.",
 		 "STD, LEGACY"};
 }
 
@@ -83,7 +83,7 @@ void Launcher_BFER<B,R,Q>
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
 
 	// ------------------------------------------------------------------------------------------------------ terminal
-	if(this->ar.exist_arg({"term-legacy"})) this->params.terminal.type = this->ar.get_arg({"term-legacy"});
+	if(this->ar.exist_arg({"term-type"})) this->params.terminal.type = this->ar.get_arg({"term-type"});
 }
 
 template <typename B, typename R, typename Q>

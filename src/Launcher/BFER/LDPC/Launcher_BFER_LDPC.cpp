@@ -44,7 +44,7 @@ void Launcher_BFER_LDPC<B,R,Q>
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"de-ite", "i"});
+	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"dec-ite", "i"});
 }
 
 template <typename B, typename R, typename Q>

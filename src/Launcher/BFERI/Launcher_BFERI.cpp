@@ -70,7 +70,7 @@ void Launcher_BFERI<B,R,Q>
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
 		{"string",
-		 "select the terminal you want."
+		 "select the terminal you want.",
 		 "STD, LEGACY"};
 }
 

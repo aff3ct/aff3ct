@@ -85,7 +85,7 @@ void Launcher<B,R,Q>
 	req_args[{"cde-type"}] =
 		{"string",
 		 "select the code type you want to use.",
-		 "POLAR, TURBO, REPETITION, RA, RSC, UNCODED" };
+		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, UNCODED" };
 	req_args[{"cde-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (only information bits)."};
@@ -128,7 +128,6 @@ void Launcher<B,R,Q>
 #ifdef CHANNEL_MKL
 	chan_avail += ", AWGN_MKL";
 #endif
-	chan_avail += ", ";
 	opt_args[{"chn-type"}] =
 		{"string",
 		 "type of the channel to use in the simulation.",
