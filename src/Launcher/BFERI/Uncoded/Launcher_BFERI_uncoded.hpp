@@ -11,10 +11,9 @@ public:
 	virtual ~Launcher_BFERI_uncoded() {};
 
 protected:
-	virtual void build_args  ();
-	virtual void store_args  ();
-	virtual void print_header();
-	virtual void build_simu  ();
+	virtual void build_args();
+	virtual void store_args();
+	virtual void build_simu();
 };
 
 #endif /* LAUNCHER_BFERI_UNCODED_HPP_ */

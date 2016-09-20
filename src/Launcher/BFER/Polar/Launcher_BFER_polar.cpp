@@ -124,32 +124,8 @@ void Launcher_BFER_polar<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_polar<B,R,Q>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-
-	std::string sigma = (this->params.code.sigma == 0.f) ? "adaptative" : std::to_string(this->params.code.sigma);
-
-	// display configuration and simulation parameters
-	if (this->params.decoder.type == "SCAN")
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite         << std::endl;
-	if (!this->params.code.awgn_fb_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.code.awgn_fb_file     << std::endl;
-	if (this->params.decoder.type == "SCL")
-	this->stream << "# " << bold("* Number of lists in the SCL (L)") << " = " << this->params.decoder.L             << std::endl;
-	this->stream << "# " << bold("* Sigma for code generation     ") << " = " << sigma                              << std::endl;
-	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method    << std::endl;
-	if (!this->params.crc.type.empty())
-	this->stream << "# " << bold("* CRC type                      ") << " = " << this->params.crc.type              << std::endl;
-	if (!this->params.decoder.simd_strategy.empty())
-	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy << std::endl;
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_BFER_polar<B,R,Q>
 ::build_simu()
 {
-
 	// hack for K when there is a CRC
 	if (!this->params.crc.type.empty())
 	{
@@ -158,6 +134,52 @@ void Launcher_BFER_polar<B,R,Q>
 	}
 
 	this->simu = new Simulation_BFER_polar<B,R,Q>(this->params);
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_polar<B,R,Q>
+::header_code()
+{
+	std::string sigma = (this->params.code.sigma == 0.f) ? "adaptative" : std::to_string(this->params.code.sigma);
+
+	auto p = Launcher_BFER<B,R,Q>::header_code();
+
+	p.push_back({"Sigma for code gen.",     sigma});
+	p.push_back({"Frozen bits gen. method", this->params.code.fb_gen_method});
+	if (!this->params.code.awgn_fb_file.empty())
+		p.push_back({"Path to the channels file", this->params.code.awgn_fb_file});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_polar<B,R,Q>
+::header_crc()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_crc();
+
+	if (!this->params.crc.type.empty())
+		p.push_back({"Type", this->params.crc.type});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_polar<B,R,Q>
+::header_decoder()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_decoder();
+
+	if (!this->params.decoder.simd_strategy.empty())
+		p.push_back({"SIMD strategy", this->params.decoder.simd_strategy});
+
+	if (this->params.decoder.type == "SCAN")
+		p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+
+	if (this->params.decoder.type == "SCL")
+		p.push_back({"Num. of lists (L)", std::to_string(this->params.decoder.L)});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

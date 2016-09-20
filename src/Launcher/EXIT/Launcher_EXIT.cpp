@@ -48,19 +48,41 @@ void Launcher_EXIT<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_EXIT<B,R,Q>
-::print_header()
+std::vector<std::vector<std::string>> Launcher_EXIT<B,R,Q>
+::header_simulation()
 {
-	Launcher<B,R,Q>::print_header();
+	auto p = Launcher<B,R,Q>::header_simulation();
 
+	p.push_back({"Sigma-a min (a)", std::to_string(this->params.simulation.sig_a_min )});
+	p.push_back({"Sigma-a max (A)", std::to_string(this->params.simulation.sig_a_max )});
+	p.push_back({"Sigma-a step",    std::to_string(this->params.simulation.sig_a_step)});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_EXIT<B,R,Q>
+::header_encoder()
+{
 	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
-	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                           << std::endl;
-	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->params.decoder.type          << std::endl;
-	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->params.decoder.implem        << std::endl;
-	this->stream << "# " << bold("* SIG a min                     ") << " = " << this->params.simulation.sig_a_min  << std::endl;
-	this->stream << "# " << bold("* SIG a max                     ") << " = " << this->params.simulation.sig_a_max  << std::endl;
-	this->stream << "# " << bold("* SIG a step                    ") << " = " << this->params.simulation.sig_a_step << std::endl;
+	auto p = Launcher<B,R,Q>::header_encoder();
+
+	p.push_back({"Systematic", syst_enc});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_EXIT<B,R,Q>
+::header_decoder()
+{
+	auto p = Launcher<B,R,Q>::header_decoder();
+
+	p.push_back({"Type (D)",       this->params.decoder.type  });
+	p.push_back({"Implementation", this->params.decoder.implem});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

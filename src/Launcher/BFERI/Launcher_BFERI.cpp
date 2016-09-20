@@ -105,25 +105,76 @@ void Launcher_BFERI<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFERI<B,R,Q>
-::print_header()
+std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+::header_simulation()
 {
-	Launcher<B,R,Q>::print_header();
-
-	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
-
 	std::string threads = "unused";
 	if (this->params.simulation.n_threads)
 		threads = std::to_string(this->params.simulation.n_threads) + " thread(s)";
 
-	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Max frame error count     (FE)") << " = " << this->params.monitor.n_frame_errors << std::endl;
-	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->params.interleaver.type       << std::endl;
-	this->stream << "# " << bold("* Number of turbo demod. ite.   ") << " = " << this->params.demodulator.n_ite      << std::endl;
-	this->stream << "# " << bold("* Systematic encoding           ") << " = " << syst_enc                            << std::endl;
-	this->stream << "# " << bold("* Decoding algorithm            ") << " = " << this->params.decoder.type           << std::endl;
-	this->stream << "# " << bold("* Decoding implementation       ") << " = " << this->params.decoder.implem         << std::endl;
-	this->stream << "# " << bold("* Multi-threading               ") << " = " << threads                             << std::endl;
+	auto p = Launcher<B,R,Q>::header_simulation();
+
+	p.push_back({"Multi-threading (t)", threads});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+::header_encoder()
+{
+	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
+
+	auto p = Launcher<B,R,Q>::header_encoder();
+
+	p.push_back({"Systematic", syst_enc});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+::header_interleaver()
+{
+	auto p = Launcher<B,R,Q>::header_interleaver();
+
+	p.push_back({"Type", this->params.interleaver.type});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+::header_demodulator()
+{
+	auto p = Launcher<B,R,Q>::header_demodulator();
+
+	p.push_back({"Turbo demod. iterations", std::to_string(this->params.demodulator.n_ite)});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+::header_decoder()
+{
+	auto p = Launcher<B,R,Q>::header_decoder();
+
+	p.push_back({"Type (D)",       this->params.decoder.type  });
+	p.push_back({"Implementation", this->params.decoder.implem});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+::header_monitor()
+{
+	auto p = Launcher<B,R,Q>::header_monitor();
+
+	p.push_back({"Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

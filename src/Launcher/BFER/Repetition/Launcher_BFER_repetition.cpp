@@ -41,21 +41,22 @@ void Launcher_BFER_repetition<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_repetition<B,R,Q>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-
-	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
-
-	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc << std::endl;
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_BFER_repetition<B,R,Q>
 ::build_simu()
 {
 	this->simu = new Simulation_BFER_repetition<B,R,Q>(this->params);
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_repetition<B,R,Q>
+::header_encoder()
+{
+	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
+
+	auto p = Launcher_BFER<B,R,Q>::header_encoder();
+
+	p.push_back({"Buffered", buff_enc});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -121,36 +121,55 @@ void Launcher_GEN_polar<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_GEN_polar<B,R,Q>
-::print_header()
-{
-	// display configuration and simulation parameters
-	this->stream << "# " << bold("-------------------------------------------------")                                       << std::endl;
-	this->stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                       << std::endl;
-	this->stream << "# " << bold("-------------------------------------------------")                                       << std::endl;
-	this->stream << "#"                                                                                                     << std::endl;
-	this->stream << "# " << bold_underlined("Simulation parameters:")                                                       << std::endl;
-	this->stream << "# " << bold("* Simulation type               ") << " = " << this->params.simulation.type               << std::endl;
-	this->stream << "# " << bold("* Code type                     ") << " = " << this->params.code.type << " codes"         << std::endl;
-	this->stream << "# " << bold("* Number of information bits (K)") << " = " << this->params.code.K                        << std::endl;
-	this->stream << "# " << bold("* Codeword length            (N)") << " = " << this->params.code.N                        << std::endl;
-	this->stream << "# " << bold("* SNR                           ") << " = " << this->params.simulation.snr_min   << " dB" << std::endl;
-	this->stream << "# " << bold("* Generated decoder directory   ") << " = " << this->params.decoder.gen_path              << std::endl;
-	if (!this->params.code.awgn_fb_file.empty())
-	this->stream << "# " << bold("* Path to best channels file    ") << " = " << this->params.code.awgn_fb_file             << std::endl;
-	this->stream << "# " << bold("* Frozen bits generation method ") << " = " << this->params.code.fb_gen_method            << std::endl;
-	
-	if (this->params.code.N != exp2(ceil(log2(this->params.code.N))))
-	{
-		std::cerr << bold_red("(EE) N isn't a power of two.")  << std::endl;
-		exit(-1);
-	}
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_GEN_polar<B,R,Q>
 ::build_simu()
 {
 	this->simu = new Generation_polar(this->params);
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
+::header_simulation()
+{
+	std::vector<std::vector<std::string>> p;
+
+	p.push_back({"Type", this->params.simulation.type                           });
+	p.push_back({"SNR",  std::to_string(this->params.simulation.snr_min) + " dB"});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
+::header_code()
+{
+	std::vector<std::vector<std::string>> p;
+
+	if (this->params.code.N != exp2(ceil(log2(this->params.code.N))))
+	{
+		std::cerr << bold_red("(EE) N isn't a power of two.")  << std::endl;
+		std::exit(-1);
+	}
+
+	p.push_back({"Type",              this->params.code.type + " codes"  });
+	p.push_back({"Info. bits (K)",    std::to_string(this->params.code.K)});
+	p.push_back({"Codeword size (N)", std::to_string(this->params.code.N)});
+	if (!this->params.code.awgn_fb_file.empty())
+		p.push_back({"Path to the channels file", this->params.code.awgn_fb_file});
+
+	p.push_back({"Frozen bits gen. method", this->params.code.fb_gen_method});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
+::header_decoder()
+{
+	std::vector<std::vector<std::string>> p;
+
+	p.push_back({"Generated decoder path", this->params.decoder.gen_path});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

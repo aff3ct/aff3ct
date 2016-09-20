@@ -1,6 +1,9 @@
 #include <cmath>
 #include <chrono>
+#include <cassert>
+#include <sstream>
 #include <iostream>
+#include <algorithm>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -9,7 +12,7 @@
 template <typename B, typename R, typename Q>
 Launcher<B,R,Q>
 ::Launcher(const int argc, const char **argv, std::ostream &stream)
-: ar(argc, argv), simu(nullptr), stream(stream)
+: max_n_characters(0), ar(argc, argv), simu(nullptr), stream(stream)
 {
 	// define type names
 	type_names[typeid(char)]        = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
@@ -297,61 +300,261 @@ void Launcher<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::print_header()
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_simulation()
 {
+	std::vector<std::vector<std::string>> p;
+
+	p.push_back({"Type",          params.simulation.type});
+	p.push_back({"SNR min (m)",   std::to_string(params.simulation.snr_min)  + " dB"});
+	p.push_back({"SNR max (M)",   std::to_string(params.simulation.snr_max)  + " dB"});
+	p.push_back({"SNR step (s)",  std::to_string(params.simulation.snr_step) + " dB"});
+	p.push_back({"Type of bits",  type_names[typeid(B)]});
+	p.push_back({"Type of reals", type_names[typeid(R)]});
+	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
+		p.push_back({"Type of quantified reals", type_names[typeid(Q)]});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_code()
+{
+	std::vector<std::vector<std::string>> p;
+
 	std::string N = std::to_string(params.code.N);
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
-	std::string quantif = "unused";
-	if (type_names[typeid(R)] != type_names[typeid(Q)])
-	{
-		if (params.quantizer.type == "TRICKY")
-			quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.range)+"f}";
-		else
-			quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.n_decimals)+"}";
-	}
+	p.push_back({"Type",              params.code.type + " codes"  });
+	p.push_back({"Info. bits (K)",    std::to_string(params.code.K)});
+	p.push_back({"Codeword size (N)", N                            });
 
-	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
-	std::string demod_max  = (params.modulator.type == "BPSK") ||
-	                           (params.modulator.type == "BPSK_FAST") ?
-	                           "unused" : params.demodulator.max;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_source()
+{
+	std::vector<std::vector<std::string>> p;
+
+	p.push_back({"Type", params.source.type});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_crc()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_encoder()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_puncturer()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_interleaver()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_modulator()
+{
+	std::vector<std::vector<std::string>> p;
 
 	std::string modulation = std::to_string((int)(1 << params.modulator.bits_per_symbol)) + "-" + params.modulator.type;
 	if ((params.modulator.type == "BPSK") || (params.modulator.type == "BPSK_FAST")|| (params.modulator.type == "GSM") ||
 		(params.modulator.type == "GSM_TBLESS"))
 		modulation = params.modulator.type;
-	modulation += " (" + std::to_string(params.modulator.upsample_factor) + "-UPS)";
+	if (params.modulator.upsample_factor > 1)
+		modulation += " (" + std::to_string(params.modulator.upsample_factor) + "-UPS)";
 
-	// display configuration and simulation parameters
-	stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
-	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----")                                 << std::endl;
-	stream << "# " << bold("-------------------------------------------------")                                 << std::endl;
-	stream << "#"                                                                                               << std::endl;
-	stream << "# " << bold_underlined("Simulation parameters:")                                                 << std::endl;
-	stream << "# " << bold("* Simulation type               ") << " = " << params.simulation.type               << std::endl;
-	stream << "# " << bold("* Code type                     ") << " = " << params.code.type << " codes"         << std::endl;
-	stream << "# " << bold("* Number of information bits (K)") << " = " << params.code.K                        << std::endl;
-	stream << "# " << bold("* Codeword length            (N)") << " = " << N                                    << std::endl;
-	stream << "# " << bold("* SNR min                       ") << " = " << params.simulation.snr_min   << " dB" << std::endl;
-	stream << "# " << bold("* SNR max                       ") << " = " << params.simulation.snr_max   << " dB" << std::endl;
-	stream << "# " << bold("* SNR step                      ") << " = " << params.simulation.snr_step  << " dB" << std::endl;
-	stream << "# " << bold("* Domain                        ") << " = " << params.channel.domain                << std::endl;
-	stream << "# " << bold("* Codewords generation method   ") << " = " << params.source.type      << std::endl;
-	stream << "# " << bold("* Modulation type               ") << " = " << modulation                           << std::endl;
-	stream << "# " << bold("* Demodulation sigma square     ") << " = " << demod_sig2                           << std::endl;
-	stream << "# " << bold("* Demodulation max type         ") << " = " << demod_max                            << std::endl;
-	stream << "# " << bold("* Channel type                  ") << " = " << params.channel.type                  << std::endl;
-	stream << "# " << bold("* Type of bits               (B)") << " = " << type_names[typeid(B)]                << std::endl;
-	stream << "# " << bold("* Type of reals              (R)") << " = " << type_names[typeid(R)]                << std::endl;
+	p.push_back({"Type", modulation});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_channel()
+{
+	std::vector<std::vector<std::string>> p;
+
+	p.push_back({"Type",   params.channel.type  });
+	p.push_back({"Domain", params.channel.domain});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_demodulator()
+{
+	std::vector<std::vector<std::string>> p;
+
+	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
+	std::string demod_max  = (params.modulator.type == "BPSK") ||
+							   (params.modulator.type == "BPSK_FAST") ?
+							   "unused" : params.demodulator.max;
+
+	p.push_back({"Sigma square", demod_sig2});
+	p.push_back({"Max type",     demod_max });
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_depuncturer()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_quantizer()
+{
+	std::vector<std::vector<std::string>> p;
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		stream << "# " << bold("* Type of quantified reals   (Q)") << " = " << type_names[typeid(Q)]           << std::endl;
-		stream << "# " << bold("* Quantizer type                ") << " = " << params.quantizer.type << std::endl;
-		stream << "# " << bold("* Fixed-point representation    ") << " = " << quantif                         << std::endl;
+		std::string quantif = "unused";
+		if (type_names[typeid(R)] != type_names[typeid(Q)])
+		{
+			if (params.quantizer.type == "TRICKY")
+				quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.range)+"f}";
+			else
+				quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.n_decimals)+"}";
+		}
+
+		p.push_back({"Type"               , params.quantizer.type});
+		p.push_back({"Fixed-point config.", quantif              });
 	}
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_decoder()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_monitor()
+{
+	std::vector<std::vector<std::string>> params;
+	return params;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher<B,R,Q>
+::header_terminal()
+{
+	std::vector<std::vector<std::string>> p;
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+void Launcher<B,R,Q>
+::compute_max_n_characters()
+{
+	std::function<void (std::vector<std::vector<std::string>>)> compute_max =
+		[&](std::vector<std::vector<std::string>> params)
+	{
+		for (auto i = 0; i < (int)params.size(); i++)
+		{
+			assert(params[i].size() >= 1);
+			this->max_n_characters = std::max(this->max_n_characters, (int)params[i][0].length());
+		}
+	};
+
+	compute_max(header_simulation ());
+	compute_max(header_code       ());
+	compute_max(header_source     ());
+	compute_max(header_crc        ());
+	compute_max(header_encoder    ());
+	compute_max(header_puncturer  ());
+	compute_max(header_interleaver());
+	compute_max(header_modulator  ());
+	compute_max(header_channel    ());
+	compute_max(header_demodulator());
+	compute_max(header_depuncturer());
+	compute_max(header_quantizer  ());
+	compute_max(header_decoder    ());
+	compute_max(header_monitor    ());
+	compute_max(header_terminal   ());
+}
+
+template <typename B, typename R, typename Q>
+void Launcher<B,R,Q>
+::print_parameters(std::string grp_name, std::vector<std::vector<std::string>> params)
+{
+	stream << "# * " << bold_underlined(grp_name) << std::endl;
+	for (auto i = 0; i < (int)params.size(); i++)
+	{
+		assert(params[i].size() >= 2);
+
+		stream << "#    ** " << bold(params[i][0]);
+		for (auto j = 0; j < this->max_n_characters - (int)params[i][0].length(); j++) stream << " ";
+		stream << " = " << params[i][1] << std::endl;
+	}
+}
+
+template <typename B, typename R, typename Q>
+void Launcher<B,R,Q>
+::print_header()
+{
+	this->compute_max_n_characters();
+
+	// display configuration and simulation parameters
+	stream << "# " << bold("-------------------------------------------------") << std::endl;
+	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----") << std::endl;
+	stream << "# " << bold("-------------------------------------------------") << std::endl;
+	stream << "# " << bold_underlined("Parameters") << ":" << std::endl;
+
+	std::vector<std::vector<std::string>> params;
+	params = this->header_simulation();  if (params.size()) this->print_parameters("Simulation",  params);
+	params = this->header_code();        if (params.size()) this->print_parameters("Code",        params);
+	params = this->header_source();      if (params.size()) this->print_parameters("Source",      params);
+	params = this->header_crc();         if (params.size()) this->print_parameters("CRC",         params);
+	params = this->header_encoder();     if (params.size()) this->print_parameters("Encoder",     params);
+	params = this->header_puncturer();   if (params.size()) this->print_parameters("Puncturer",   params);
+	params = this->header_interleaver(); if (params.size()) this->print_parameters("Interleaver", params);
+	params = this->header_modulator();   if (params.size()) this->print_parameters("Modulator",   params);
+	params = this->header_channel();     if (params.size()) this->print_parameters("Channel",     params);
+	params = this->header_demodulator(); if (params.size()) this->print_parameters("Demodulator", params);
+	params = this->header_depuncturer(); if (params.size()) this->print_parameters("Depuncturer", params);
+	params = this->header_quantizer();   if (params.size()) this->print_parameters("Quantizer",   params);
+	params = this->header_decoder();     if (params.size()) this->print_parameters("Decoder",     params);
+	params = this->header_monitor();     if (params.size()) this->print_parameters("Monitor",     params);
+	params = this->header_terminal();    if (params.size()) this->print_parameters("Terminal",    params);
+	stream << "#" << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -359,8 +562,7 @@ void Launcher<B,R,Q>
 ::launch()
 {
 	this->read_arguments();
-	this->print_header(); 
-	stream << "#" << std::endl;
+	this->print_header();
 	this->build_simu();
 
 	// launch the simulation

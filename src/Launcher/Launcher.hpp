@@ -15,6 +15,9 @@
 template <typename B, typename R, typename Q>
 class Launcher
 {
+private:
+	int max_n_characters;
+
 protected:
 	std::unordered_map<std::type_index,std::string> type_names;
 
@@ -38,8 +41,31 @@ protected:
 	virtual void build_args    ();
 	virtual void store_args    ();
 	        void read_arguments();
-	virtual void print_header  ();
-	virtual void build_simu    () = 0;
+
+	virtual std::vector<std::vector<std::string>> header_simulation ();
+	virtual std::vector<std::vector<std::string>> header_code       ();
+	virtual std::vector<std::vector<std::string>> header_source     ();
+	virtual std::vector<std::vector<std::string>> header_crc        ();
+	virtual std::vector<std::vector<std::string>> header_encoder    ();
+	virtual std::vector<std::vector<std::string>> header_puncturer  ();
+	virtual std::vector<std::vector<std::string>> header_interleaver();
+	virtual std::vector<std::vector<std::string>> header_modulator  ();
+	virtual std::vector<std::vector<std::string>> header_channel    ();
+	virtual std::vector<std::vector<std::string>> header_demodulator();
+	virtual std::vector<std::vector<std::string>> header_depuncturer();
+	virtual std::vector<std::vector<std::string>> header_quantizer  ();
+	virtual std::vector<std::vector<std::string>> header_decoder    ();
+	virtual std::vector<std::vector<std::string>> header_monitor    ();
+	virtual std::vector<std::vector<std::string>> header_terminal   ();
+
+	void print_parameters(std::string grp_name, std::vector<std::vector<std::string>> params);
+
+	void print_header();
+
+	virtual void build_simu() = 0;
+
+private:
+	void compute_max_n_characters();
 };
 
 #endif /* LAUNCHER_HPP_ */

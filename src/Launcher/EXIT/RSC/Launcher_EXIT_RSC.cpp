@@ -47,18 +47,20 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 void Launcher_EXIT_RSC<B,R,Q,QD>
-::print_header()
-{
-	Launcher_EXIT<B,R,Q>::print_header();
-
-	this->stream << "# " << bold("* Decoder MAP implementation    ") << " = " << this->params.decoder.max << std::endl;
-}
-
-template <typename B, typename R, typename Q, typename QD>
-void Launcher_EXIT_RSC<B,R,Q,QD>
 ::build_simu()
 {
 	this->simu = new Simulation_EXIT_RSC<B,R,Q,QD>(this->params);
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_EXIT_RSC<B,R,Q,QD>
+::header_decoder()
+{
+	auto p = Launcher_EXIT<B,R,Q>::header_decoder();
+
+	p.push_back({"Max type", this->params.decoder.max});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

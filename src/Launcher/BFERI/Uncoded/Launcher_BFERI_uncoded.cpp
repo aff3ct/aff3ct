@@ -33,13 +33,6 @@ void Launcher_BFERI_uncoded<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_BFERI_uncoded<B,R,Q>
-::print_header()
-{
-	Launcher_BFERI<B,R,Q>::print_header();
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_BFERI_uncoded<B,R,Q>
 ::build_simu()
 {
 	this->simu = new Simulation_BFERI_uncoded<B,R,Q>(this->params);

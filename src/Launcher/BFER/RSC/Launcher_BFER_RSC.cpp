@@ -61,24 +61,36 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 void Launcher_BFER_RSC<B,R,Q,QD>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-
-	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
-
-	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                           << std::endl;
-	if (!this->params.decoder.simd_strategy.empty())
-	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy << std::endl;
-	this->stream << "# " << bold("* Decoder MAX implementation    ") << " = " << this->params.decoder.max           << std::endl;
-}
-
-template <typename B, typename R, typename Q, typename QD>
-void Launcher_BFER_RSC<B,R,Q,QD>
 ::build_simu()
 {
 	this->simu = new Simulation_BFER_RSC<B,R,Q,QD>(this->params);
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_BFER_RSC<B,R,Q,QD>
+::header_encoder()
+{
+	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
+
+	auto p = Launcher_BFER<B,R,Q>::header_encoder();
+
+	p.push_back({"Buffered", buff_enc});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_BFER_RSC<B,R,Q,QD>
+::header_decoder()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_decoder();
+
+	if (!this->params.decoder.simd_strategy.empty())
+		p.push_back({"SIMD strategy", this->params.decoder.simd_strategy});
+
+	p.push_back({"Max type", this->params.decoder.max});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -11,10 +11,13 @@ public:
 	virtual ~Launcher_GEN_polar() {};
 
 protected:
-	virtual void build_args  ();
-	virtual void store_args  ();
-	virtual void print_header();
-	virtual void build_simu  ();
+	virtual void build_args();
+	virtual void store_args();
+	virtual void build_simu();
+
+	virtual std::vector<std::vector<std::string>> header_simulation();
+	virtual std::vector<std::vector<std::string>> header_code      ();
+	virtual std::vector<std::vector<std::string>> header_decoder   ();
 };
 
 #endif /* LAUNCHER_GEN_POLAR_HPP_ */

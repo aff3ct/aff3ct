@@ -51,20 +51,31 @@ void Launcher_BFER_RA<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_RA<B,R,Q>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-
-	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite    << std::endl;
-	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->params.interleaver.type << std::endl;
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_BFER_RA<B,R,Q>
 ::build_simu()
 {
 	this->simu = new Simulation_BFER_RA<B,R,Q>(this->params);
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_RA<B,R,Q>
+::header_interleaver()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
+
+	p.push_back({"Type", this->params.interleaver.type});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_RA<B,R,Q>
+::header_decoder()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_decoder();
+
+	p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

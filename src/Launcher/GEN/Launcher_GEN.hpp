@@ -11,9 +11,8 @@ public:
 	virtual ~Launcher_GEN() {};
 
 protected:
-	virtual void build_args  ();
-	virtual void store_args  ();
-	virtual void print_header();
+	virtual void build_args();
+	virtual void store_args();
 };
 
 #endif /* LAUNCHER_GEN_HPP_ */

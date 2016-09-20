@@ -32,13 +32,6 @@ void Launcher_BFER_uncoded<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_uncoded<B,R,Q>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_BFER_uncoded<B,R,Q>
 ::build_simu()
 {
 	this->simu = new Simulation_BFER_uncoded<B,R,Q>(this->params);

@@ -28,13 +28,6 @@ void Launcher_GEN<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 }
 
-template <typename B, typename R, typename Q>
-void Launcher_GEN<B,R,Q>
-::print_header()
-{
-	Launcher<B,R,Q>::print_header();
-}
-
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

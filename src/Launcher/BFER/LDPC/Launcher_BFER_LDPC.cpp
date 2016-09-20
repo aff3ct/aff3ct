@@ -49,21 +49,33 @@ void Launcher_BFER_LDPC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_LDPC<B,R,Q>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-
-	std::string coset = this->params.code.coset ? "on" : "off";
-
-	this->stream << "# " << bold("* Coset approach                ") << " = " << coset                      << std::endl;
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite << std::endl;
-}
-
-template <typename B, typename R, typename Q>
-void Launcher_BFER_LDPC<B,R,Q>
 ::build_simu()
 {
 	this->simu = new Simulation_BFER_LDPC<B,R,Q>(this->params);
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_LDPC<B,R,Q>
+::header_code()
+{
+	std::string coset = this->params.code.coset ? "on" : "off";
+
+	auto p = Launcher_BFER<B,R,Q>::header_code();
+
+	p.push_back({"Coset approach (c)", coset});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::vector<std::string>> Launcher_BFER_LDPC<B,R,Q>
+::header_decoder()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_decoder();
+
+	p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -11,10 +11,11 @@ public:
 	virtual ~Launcher_BFER_repetition() {};
 
 protected:
-	virtual void build_args  ();
-	virtual void store_args  ();
-	virtual void print_header();
-	virtual void build_simu  ();
+	virtual void build_args();
+	virtual void store_args();
+	virtual void build_simu();
+
+	virtual std::vector<std::vector<std::string>> header_encoder();
 };
 
 #endif /* LAUNCHER_BFER_REPETITION_HPP_ */

@@ -92,29 +92,61 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 void Launcher_BFER_turbo<B,R,Q,QD>
-::print_header()
-{
-	Launcher_BFER<B,R,Q>::print_header();
-
-	std::string buff_enc = (this->params.encoder.buffered) ? "on" : "off";
-
-	// display configuration and simulation parameters
-	this->stream << "# " << bold("* Decoding iterations per frame ") << " = " << this->params.decoder.n_ite          << std::endl;
-	this->stream << "# " << bold("* Buffered encoding             ") << " = " << buff_enc                            << std::endl;
-	this->stream << "# " << bold("* Interleaver                   ") << " = " << this->params.interleaver.type       << std::endl;
-	if (!this->params.crc.type.empty())
-	this->stream << "# " << bold("* CRC type                      ") << " = " << this->params.crc.type               << std::endl;
-	this->stream << "# " << bold("* Scaling factor                ") << " = " << this->params.decoder.scaling_factor << std::endl;
-	if (!this->params.decoder.simd_strategy.empty())
-	this->stream << "# " << bold("* Decoder SIMD strategy         ") << " = " << this->params.decoder.simd_strategy  << std::endl;
-	this->stream << "# " << bold("* Decoder MAX implementation    ") << " = " << this->params.decoder.max            << std::endl;
-}
-
-template <typename B, typename R, typename Q, typename QD>
-void Launcher_BFER_turbo<B,R,Q,QD>
 ::build_simu()
 {
 	this->simu = new Simulation_BFER_turbo<B,R,Q,QD>(this->params);
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_crc()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_crc();
+
+	if (!this->params.crc.type.empty())
+		p.push_back({"Type", this->params.crc.type});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_encoder()
+{
+	std::string buff_enc = (this->params.encoder.buffered) ? "on" : "off";
+
+	auto p = Launcher_BFER<B,R,Q>::header_encoder();
+
+	p.push_back({"Buffered", buff_enc});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_interleaver()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
+
+	p.push_back({"Type", this->params.interleaver.type});
+
+	return p;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::vector<std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_decoder()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_decoder();
+
+	if (!this->params.decoder.simd_strategy.empty())
+		p.push_back({"SIMD strategy", this->params.decoder.simd_strategy});
+
+	p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+	p.push_back({"Scaling factor",         this->params.decoder.scaling_factor       });
+	p.push_back({"Max type",               this->params.decoder.max                  });
+
+	return p;
 }
 
 // ==================================================================================== explicit template instantiation 
