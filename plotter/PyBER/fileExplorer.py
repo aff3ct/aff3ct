@@ -203,6 +203,7 @@ class AdvTreeView(QtGui.QTreeView):
 
             legendArea.addDock(dInfo, 'bottom')
 
+            firstTitle   = True;
             layoutLegend = QtGui.QFormLayout()
             for entry in self.dataDeta[pathId]:
                 if len(entry) == 2 and entry[1]:
@@ -212,6 +213,14 @@ class AdvTreeView(QtGui.QTreeView):
                         layoutLegend.addRow("<b>" + entry[0] + "</b>: ", runCmd)
                     else:
                         layoutLegend.addRow("<b>" + entry[0] + "</b>: ", QtGui.QLabel(entry[1]))
+                elif len(entry) == 1:
+                    if not firstTitle:
+                        line = QtGui.QFrame()
+                        line.setFrameShape(QtGui.QFrame.HLine)
+                        line.setFrameShadow(QtGui.QFrame.Sunken)
+                        layoutLegend.addRow(line)
+                    firstTitle = False
+                    layoutLegend.addRow("<h3>" + entry[0] + "</h3>", QtGui.QLabel(""))
             wCur = QtGui.QWidget();
             wCur.setLayout(layoutLegend)
 

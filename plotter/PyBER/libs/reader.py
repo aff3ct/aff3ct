@@ -83,13 +83,16 @@ def dataReader(filename):
     dataDeta = []
     dataName = []
 
-    dataDeta.append(["File name", os.path.basename(filename)])
     for line in lines:
         if line.startswith("#"):
             if len(line) > 3 and line[0] == '#' and line[2] == '*':
                 entry = line.replace("# * ", "").replace("\n", "").split(" = ")
+                if len(entry) == 1:
+                    entry[0] = entry[0].replace("-", "")
                 dataDeta.append(entry)
-
+            elif len(line) > 7 and line[0] == '#' and line[5] == '*' and line[6] == '*':
+                entry = line.replace("#    ** ", "").replace("\n", "").split(" = ")
+                dataDeta.append(entry)
         else:
             snr = getVal(line, 0)
             if snr == -999.0:
@@ -107,6 +110,9 @@ def dataReader(filename):
                 dataBEFE.append(0.0)
             else :
                 dataBEFE.append(be/fe)
+
+    dataDeta.append(["Other"])
+    dataDeta.append(["File name", os.path.basename(filename)])
 
     # get the command to to run to reproduce this trace
     if lines and "Run command:" in lines[0]:
