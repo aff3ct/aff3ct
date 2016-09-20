@@ -59,6 +59,8 @@ void Launcher_EXIT_polar<B,R,Q>
 #endif
 
 	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("SCAN" );
+	this->opt_args[{"dec-implem"   }].push_back("NAIVE");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the SCAN decoder."};

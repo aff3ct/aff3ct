@@ -76,6 +76,7 @@ void Launcher_BFER_polar<B,R,Q>
 		 "disable the systematic encoding."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("SC, SCL, SCAN");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the SCAN decoder."};

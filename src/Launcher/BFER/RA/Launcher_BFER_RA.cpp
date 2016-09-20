@@ -46,6 +46,8 @@ void Launcher_BFER_RA<B,R,Q>
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
 
 	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("RA" );
+	this->opt_args[{"dec-implem"   }].push_back("STD");
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"dec-ite", "i"});
 }
 

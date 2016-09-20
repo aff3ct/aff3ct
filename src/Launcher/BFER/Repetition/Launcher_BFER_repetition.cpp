@@ -27,6 +27,10 @@ void Launcher_BFER_repetition<B,R,Q>
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("REPETITION");
+	this->opt_args[{"dec-implem"   }].push_back("STD");
 }
 
 template <typename B, typename R, typename Q>

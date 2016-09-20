@@ -26,6 +26,8 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 	Launcher_EXIT<B,R,Q>::build_args();
 
 	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("BCJR, BCJR4, LTE, CCSDS"      );
+	this->opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
 	this->opt_args[{"dec-max"}] =
 		{"string",
 		 "the MAX implementation for the nodes.",

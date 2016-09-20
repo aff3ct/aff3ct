@@ -312,7 +312,7 @@ std::vector<std::vector<std::string>> Launcher<B,R,Q>
 	p.push_back({"Type of bits",  type_names[typeid(B)]});
 	p.push_back({"Type of reals", type_names[typeid(R)]});
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
-		p.push_back({"Type of quantified reals", type_names[typeid(Q)]});
+		p.push_back({"Type of quant. reals", type_names[typeid(Q)]});
 
 	return p;
 }

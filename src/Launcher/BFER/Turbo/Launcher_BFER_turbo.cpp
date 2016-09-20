@@ -48,6 +48,8 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("LTE, CCSDS"                   );
+	this->opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};

@@ -22,6 +22,10 @@ void Launcher_BFERI_uncoded<B,R,Q>
 ::build_args()
 {
 	Launcher_BFERI<B,R,Q>::build_args();
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	this->opt_args[{"dec-type", "D"}].push_back("NONE");
+	this->opt_args[{"dec-implem"   }].push_back("NONE");
 }
 
 template <typename B, typename R, typename Q>
