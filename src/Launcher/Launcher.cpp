@@ -515,7 +515,10 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::print_parameters(std::string grp_name, std::vector<std::vector<std::string>> params)
 {
-	stream << "# * " << bold_underlined(grp_name) << std::endl;
+	stream << "# * " << bold_underlined(grp_name) << " ";
+	for (auto i = 0; i < 46 - (int)grp_name.length(); i++) std::cout << "-";
+	stream << std::endl;
+
 	for (auto i = 0; i < (int)params.size(); i++)
 	{
 		assert(params[i].size() >= 2);
