@@ -1,3 +1,10 @@
+/*!
+ * \file    main.cpp
+ * \brief   It all starts here!
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
 #include <cstdlib>
 #include <string>
 #include <iostream>
@@ -32,6 +39,11 @@
 
 #include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
+/**
+ * \fn void print_version(void)
+ *
+ * \brief Print the version of the binary (code version, compiler version, operating system, type of SIMD, ...).
+ */
 void print_version()
 {
 #if defined(_WIN64) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)
@@ -84,6 +96,17 @@ void print_version()
 	exit(EXIT_SUCCESS);
 }
 
+/**
+ * \fn void read_arguments(const int argc, const char** argv, std::string &code_type, std::string &simu_type, int &prec)
+ *
+ * \brief Read arguments from command line and fill code_type, simu_type and prec.
+ *
+ * \param argc     : number of arguments from the command line.
+ * \param argv     : array of arguments from the command line.
+ * \param code_type: the type of the code (POLAR, TURBO, LDPC, etc.).
+ * \param simu_type: the type of the simulation (BFER, BFERI, EXIT, GEN, etc.).
+ * \param prec     : the precision of the simulation to run (8, 16, 32 or 64 bits).
+ */
 #ifdef MULTI_PREC
 void read_arguments(const int argc, const char** argv, std::string &code_type, std::string &simu_type, int &prec)
 #else
@@ -154,6 +177,22 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		std::exit(EXIT_FAILURE);
 }
 
+/**
+ * \fn void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
+ *
+ * \brief Start the simulation by calling a Launcher (the Launcher depends on the code_type and the simu_type).
+ *
+ * \tparam B : Type of the bits in the simulation.
+ * \tparam R : Type of the reals (floating-point representation) in the simulation.
+ * \tparam Q : Type of the quantified reals (fixed-point representation) in the simulation.
+ * \tparam QD: Type of the quantified reals (fixed-point representation) in the decoder (could be used or not
+ *             depending on the code and the simulation type).
+ *
+ * \param argc     : number of arguments from the command line.
+ * \param argv     : array of arguments from the command line.
+ * \param code_type: the type of the code (POLAR, TURBO, LDPC, etc.).
+ * \param simu_type: the type of the simulation (BFER, BFERI, EXIT, GEN, etc.).
+ */
 template <typename B, typename R, typename Q, typename QD>
 void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
 {
@@ -223,6 +262,16 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	delete launcher;
 }
 
+/**
+ * \fn int main(int argc, char **argv)
+ *
+ * \brief The first function called in the program !
+ *
+ * \param argc: number of arguments from the command line.
+ * \param argv: array of arguments from the command line.
+ *
+ * \return EXIT_SUCCESS if no errors.
+ */
 #ifndef SYSTEMC
 int main(int argc, char **argv)
 #else
