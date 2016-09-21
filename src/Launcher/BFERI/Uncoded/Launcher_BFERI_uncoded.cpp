@@ -36,10 +36,10 @@ void Launcher_BFERI_uncoded<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFERI_uncoded<B,R,Q>
+Simulation* Launcher_BFERI_uncoded<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_BFERI_uncoded<B,R,Q>(this->params);
+	return new Simulation_BFERI_uncoded<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

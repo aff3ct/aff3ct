@@ -35,10 +35,10 @@ void Launcher_BFER_uncoded<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_uncoded<B,R,Q>
+Simulation* Launcher_BFER_uncoded<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_BFER_uncoded<B,R,Q>(this->params);
+	return new Simulation_BFER_uncoded<B,R,Q>(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

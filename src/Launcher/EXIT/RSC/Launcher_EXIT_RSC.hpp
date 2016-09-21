@@ -13,9 +13,9 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
-	virtual void build_simu();
+	virtual Simulation* build_simu();
 
-	virtual std::vector<std::vector<std::string>> header_decoder();
+	virtual std::vector<std::pair<std::string,std::string>> header_decoder();
 };
 
 #endif /* LAUNCHER_EXIT_RSC_HPP_ */

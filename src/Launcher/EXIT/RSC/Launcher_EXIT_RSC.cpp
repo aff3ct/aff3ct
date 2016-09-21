@@ -48,19 +48,19 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 }
 
 template <typename B, typename R, typename Q, typename QD>
-void Launcher_EXIT_RSC<B,R,Q,QD>
+Simulation* Launcher_EXIT_RSC<B,R,Q,QD>
 ::build_simu()
 {
-	this->simu = new Simulation_EXIT_RSC<B,R,Q,QD>(this->params);
+	return new Simulation_EXIT_RSC<B,R,Q,QD>(this->params);
 }
 
 template <typename B, typename R, typename Q, typename QD>
-std::vector<std::vector<std::string>> Launcher_EXIT_RSC<B,R,Q,QD>
+std::vector<std::pair<std::string,std::string>> Launcher_EXIT_RSC<B,R,Q,QD>
 ::header_decoder()
 {
 	auto p = Launcher_EXIT<B,R,Q>::header_decoder();
 
-	p.push_back({"Max type", this->params.decoder.max});
+	p.push_back(std::make_pair("Max type", this->params.decoder.max));
 
 	return p;
 }

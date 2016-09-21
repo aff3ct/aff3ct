@@ -97,42 +97,42 @@ void Launcher_EXIT_polar<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_EXIT_polar<B,R,Q>
+Simulation* Launcher_EXIT_polar<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_EXIT_polar<B,R,Q>(this->params);
+	return new Simulation_EXIT_polar<B,R,Q>(this->params);
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_EXIT_polar<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_EXIT_polar<B,R,Q>
 ::header_code()
 {
 	std::string sigma = (this->params.code.sigma == 0.f) ? "adaptative" : std::to_string(this->params.code.sigma);
 
 	auto p = Launcher_EXIT<B,R,Q>::header_code();
 
-	p.push_back({"Sigma for code gen.",     sigma});
-	p.push_back({"Frozen bits gen. method", this->params.code.fb_gen_method});
+	p.push_back(std::make_pair("Sigma for code gen.",     sigma                          ));
+	p.push_back(std::make_pair("Frozen bits gen. method", this->params.code.fb_gen_method));
 	if (!this->params.code.awgn_fb_file.empty())
-		p.push_back({"Path to the channels file", this->params.code.awgn_fb_file});
+		p.push_back(std::make_pair("Path to the channels file", this->params.code.awgn_fb_file));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_EXIT_polar<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_EXIT_polar<B,R,Q>
 ::header_decoder()
 {
 	auto p = Launcher_EXIT<B,R,Q>::header_decoder();
 
 	if (!this->params.decoder.simd_strategy.empty())
-		p.push_back({"SIMD strategy", this->params.decoder.simd_strategy});
+		p.push_back(std::make_pair("SIMD strategy", this->params.decoder.simd_strategy));
 
 	if (this->params.decoder.type == "SCAN")
-		p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+		p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 
 	if (this->params.decoder.type == "SCL")
-		p.push_back({"Num. of lists (L)", std::to_string(this->params.decoder.L)});
+		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
 
 	return p;
 }

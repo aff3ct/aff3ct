@@ -14,9 +14,9 @@ protected:
 	virtual void build_args();
 	virtual void store_args();
 
-	virtual std::vector<std::vector<std::string>> header_simulation();
-	virtual std::vector<std::vector<std::string>> header_encoder   ();
-	virtual std::vector<std::vector<std::string>> header_decoder   ();
+	virtual std::vector<std::pair<std::string,std::string>> header_simulation();
+	virtual std::vector<std::pair<std::string,std::string>> header_encoder   ();
+	virtual std::vector<std::pair<std::string,std::string>> header_decoder   ();
 };
 
 #endif /* LAUNCHER_EXIT_HPP_ */

@@ -54,32 +54,32 @@ void Launcher_BFERI_LDPC<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFERI_LDPC<B,R,Q>
+Simulation* Launcher_BFERI_LDPC<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_BFERI_LDPC<B,R,Q>(this->params);
+	return new Simulation_BFERI_LDPC<B,R,Q>(this->params);
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI_LDPC<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
 ::header_code()
 {
 	std::string coset = this->params.code.coset ? "on" : "off";
 
 	auto p = Launcher_BFERI<B,R,Q>::header_code();
 
-	p.push_back({"Coset approach (c)", coset});
+	p.push_back(std::make_pair("Coset approach (c)", coset));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI_LDPC<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
 ::header_decoder()
 {
-	auto p = Launcher_BFERI<B,R,Q>::header_code();
+	auto p = Launcher_BFERI<B,R,Q>::header_decoder();
 
-	p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+	p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 
 	return p;
 }

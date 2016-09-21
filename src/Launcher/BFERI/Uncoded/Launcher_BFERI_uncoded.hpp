@@ -13,7 +13,7 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
-	virtual void build_simu();
+	virtual Simulation* build_simu();
 };
 
 #endif /* LAUNCHER_BFERI_UNCODED_HPP_ */

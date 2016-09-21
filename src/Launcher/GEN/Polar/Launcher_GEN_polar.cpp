@@ -120,29 +120,29 @@ void Launcher_GEN_polar<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_GEN_polar<B,R,Q>
+Simulation* Launcher_GEN_polar<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Generation_polar(this->params);
+	return new Generation_polar(this->params);
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_GEN_polar<B,R,Q>
 ::header_simulation()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back({"Type", this->params.simulation.type                           });
-	p.push_back({"SNR",  std::to_string(this->params.simulation.snr_min) + " dB"});
+	p.push_back(std::make_pair("Type", this->params.simulation.type                           ));
+	p.push_back(std::make_pair("SNR",  std::to_string(this->params.simulation.snr_min) + " dB"));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_GEN_polar<B,R,Q>
 ::header_code()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
 	if (this->params.code.N != exp2(ceil(log2(this->params.code.N))))
 	{
@@ -150,24 +150,24 @@ std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
 		std::exit(-1);
 	}
 
-	p.push_back({"Type",              this->params.code.type + " codes"  });
-	p.push_back({"Info. bits (K)",    std::to_string(this->params.code.K)});
-	p.push_back({"Codeword size (N)", std::to_string(this->params.code.N)});
+	p.push_back(std::make_pair("Type",              this->params.code.type + " codes"  ));
+	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(this->params.code.K)));
+	p.push_back(std::make_pair("Codeword size (N)", std::to_string(this->params.code.N)));
 	if (!this->params.code.awgn_fb_file.empty())
-		p.push_back({"Path to the channels file", this->params.code.awgn_fb_file});
+		p.push_back(std::make_pair("Path to the channels file", this->params.code.awgn_fb_file));
 
-	p.push_back({"Frozen bits gen. method", this->params.code.fb_gen_method});
+	p.push_back(std::make_pair("Frozen bits gen. method", this->params.code.fb_gen_method));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_GEN_polar<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_GEN_polar<B,R,Q>
 ::header_decoder()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back({"Generated decoder path", this->params.decoder.gen_path});
+	p.push_back(std::make_pair("Generated decoder path", this->params.decoder.gen_path));
 
 	return p;
 }

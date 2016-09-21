@@ -12,7 +12,7 @@
 template <typename B, typename R, typename Q>
 Launcher<B,R,Q>
 ::Launcher(const int argc, const char **argv, std::ostream &stream)
-: max_n_characters(0), ar(argc, argv), simu(nullptr), stream(stream)
+: max_n_chars(0), simu(nullptr), ar(argc, argv), stream(stream)
 {
 	// define type names
 	type_names[typeid(char)]        = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
@@ -300,88 +300,88 @@ void Launcher<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_simulation()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back({"Type",          params.simulation.type});
-	p.push_back({"SNR min (m)",   std::to_string(params.simulation.snr_min)  + " dB"});
-	p.push_back({"SNR max (M)",   std::to_string(params.simulation.snr_max)  + " dB"});
-	p.push_back({"SNR step (s)",  std::to_string(params.simulation.snr_step) + " dB"});
-	p.push_back({"Type of bits",  type_names[typeid(B)]});
-	p.push_back({"Type of reals", type_names[typeid(R)]});
+	p.push_back(std::make_pair("Type",          params.simulation.type));
+	p.push_back(std::make_pair("SNR min (m)",   std::to_string(params.simulation.snr_min)  + " dB"));
+	p.push_back(std::make_pair("SNR max (M)",   std::to_string(params.simulation.snr_max)  + " dB"));
+	p.push_back(std::make_pair("SNR step (s)",  std::to_string(params.simulation.snr_step) + " dB"));
+	p.push_back(std::make_pair("Type of bits",  type_names[typeid(B)]));
+	p.push_back(std::make_pair("Type of reals", type_names[typeid(R)]));
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
-		p.push_back({"Type of quant. reals", type_names[typeid(Q)]});
+		p.push_back(std::make_pair("Type of quant. reals", type_names[typeid(Q)]));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_code()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
 	std::string N = std::to_string(params.code.N);
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
-	p.push_back({"Type",              params.code.type + " codes"  });
-	p.push_back({"Info. bits (K)",    std::to_string(params.code.K)});
-	p.push_back({"Codeword size (N)", N                            });
+	p.push_back(std::make_pair("Type",              params.code.type + " codes"  ));
+	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(params.code.K)));
+	p.push_back(std::make_pair("Codeword size (N)", N                            ));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_source()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back({"Type", params.source.type});
+	p.push_back(std::make_pair("Type", params.source.type));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_crc()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_encoder()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_puncturer()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_interleaver()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_modulator()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
 	std::string modulation = std::to_string((int)(1 << params.modulator.bits_per_symbol)) + "-" + params.modulator.type;
 	if ((params.modulator.type == "BPSK") || (params.modulator.type == "BPSK_FAST")|| (params.modulator.type == "GSM") ||
@@ -390,53 +390,53 @@ std::vector<std::vector<std::string>> Launcher<B,R,Q>
 	if (params.modulator.upsample_factor > 1)
 		modulation += " (" + std::to_string(params.modulator.upsample_factor) + "-UPS)";
 
-	p.push_back({"Type", modulation});
+	p.push_back(std::make_pair("Type", modulation));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_channel()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back({"Type",   params.channel.type  });
-	p.push_back({"Domain", params.channel.domain});
+	p.push_back(std::make_pair("Type",   params.channel.type  ));
+	p.push_back(std::make_pair("Domain", params.channel.domain));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_demodulator()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
 	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
 	std::string demod_max  = (params.modulator.type == "BPSK") ||
 							   (params.modulator.type == "BPSK_FAST") ?
 							   "unused" : params.demodulator.max;
 
-	p.push_back({"Sigma square", demod_sig2});
-	p.push_back({"Max type",     demod_max });
+	p.push_back(std::make_pair("Sigma square", demod_sig2));
+	p.push_back(std::make_pair("Max type",     demod_max ));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_depuncturer()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_quantizer()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
@@ -449,49 +449,46 @@ std::vector<std::vector<std::string>> Launcher<B,R,Q>
 				quantif = "{"+std::to_string(params.quantizer.n_bits)+", "+std::to_string(params.quantizer.n_decimals)+"}";
 		}
 
-		p.push_back({"Type"               , params.quantizer.type});
-		p.push_back({"Fixed-point config.", quantif              });
+		p.push_back(std::make_pair("Type"               , params.quantizer.type));
+		p.push_back(std::make_pair("Fixed-point config.", quantif              ));
 	}
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_decoder()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_monitor()
 {
-	std::vector<std::vector<std::string>> params;
-	return params;
+	std::vector<std::pair<std::string,std::string>> p;
+	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 ::header_terminal()
 {
-	std::vector<std::vector<std::string>> p;
+	std::vector<std::pair<std::string,std::string>> p;
 	return p;
 }
 
 template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
-::compute_max_n_characters()
+::compute_max_n_chars()
 {
-	std::function<void (std::vector<std::vector<std::string>>)> compute_max =
-		[&](std::vector<std::vector<std::string>> params)
+	std::function<void (std::vector<std::pair<std::string,std::string>>)> compute_max =
+		[&](std::vector<std::pair<std::string,std::string>> params)
 	{
 		for (auto i = 0; i < (int)params.size(); i++)
-		{
-			assert(params[i].size() >= 1);
-			this->max_n_characters = std::max(this->max_n_characters, (int)params[i][0].length());
-		}
+			this->max_n_chars = std::max(this->max_n_chars, (int)params[i].first.length());
 	};
 
 	compute_max(header_simulation ());
@@ -513,7 +510,7 @@ void Launcher<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
-::print_parameters(std::string grp_name, std::vector<std::vector<std::string>> params)
+::print_parameters(std::string grp_name, std::vector<std::pair<std::string,std::string>> params)
 {
 	stream << "# * " << bold_underlined(grp_name) << " ";
 	for (auto i = 0; i < 46 - (int)grp_name.length(); i++) std::cout << "-";
@@ -521,11 +518,9 @@ void Launcher<B,R,Q>
 
 	for (auto i = 0; i < (int)params.size(); i++)
 	{
-		assert(params[i].size() >= 2);
-
-		stream << "#    ** " << bold(params[i][0]);
-		for (auto j = 0; j < this->max_n_characters - (int)params[i][0].length(); j++) stream << " ";
-		stream << " = " << params[i][1] << std::endl;
+		stream << "#    ** " << bold(params[i].first);
+		for (auto j = 0; j < this->max_n_chars - (int)params[i].first.length(); j++) stream << " ";
+		stream << " = " << params[i].second << std::endl;
 	}
 }
 
@@ -533,7 +528,7 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::print_header()
 {
-	this->compute_max_n_characters();
+	this->compute_max_n_chars();
 
 	// display configuration and simulation parameters
 	stream << "# " << bold("-------------------------------------------------") << std::endl;
@@ -541,7 +536,7 @@ void Launcher<B,R,Q>
 	stream << "# " << bold("-------------------------------------------------") << std::endl;
 	stream << "# " << bold_underlined("Parameters") << ":" << std::endl;
 
-	std::vector<std::vector<std::string>> params;
+	std::vector<std::pair<std::string,std::string>> params;
 	params = this->header_simulation();  if (params.size()) this->print_parameters("Simulation",  params);
 	params = this->header_code();        if (params.size()) this->print_parameters("Code",        params);
 	params = this->header_source();      if (params.size()) this->print_parameters("Source",      params);
@@ -564,14 +559,24 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::launch()
 {
+	// in case of the user call launch multiple times
+	if (simu != nullptr)
+	{
+		delete simu;
+		simu = nullptr;
+	}
+
 	this->read_arguments();
 	this->print_header();
-	this->build_simu();
+	simu = this->build_simu();
 
-	// launch the simulation
-	stream << "# The simulation is running..." << std::endl;
-	simu->launch();
-	stream << "# End of the simulation." << std::endl;
+	if (simu != nullptr)
+	{
+		// launch the simulation
+		stream << "# The simulation is running..." << std::endl;
+		simu->launch();
+		stream << "# End of the simulation." << std::endl;
+	}
 }
 
 // ==================================================================================== explicit template instantiation 

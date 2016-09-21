@@ -44,21 +44,21 @@ void Launcher_BFER_repetition<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_repetition<B,R,Q>
+Simulation* Launcher_BFER_repetition<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_BFER_repetition<B,R,Q>(this->params);
+	return new Simulation_BFER_repetition<B,R,Q>(this->params);
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFER_repetition<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_repetition<B,R,Q>
 ::header_encoder()
 {
 	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
 
 	auto p = Launcher_BFER<B,R,Q>::header_encoder();
 
-	p.push_back({"Buffered", buff_enc});
+	p.push_back(std::make_pair("Buffered", buff_enc));
 
 	return p;
 }

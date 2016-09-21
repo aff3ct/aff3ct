@@ -52,30 +52,30 @@ void Launcher_BFER_RA<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_RA<B,R,Q>
+Simulation* Launcher_BFER_RA<B,R,Q>
 ::build_simu()
 {
-	this->simu = new Simulation_BFER_RA<B,R,Q>(this->params);
+	return new Simulation_BFER_RA<B,R,Q>(this->params);
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFER_RA<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_RA<B,R,Q>
 ::header_interleaver()
 {
 	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
 
-	p.push_back({"Type", this->params.interleaver.type});
+	p.push_back(std::make_pair("Type", this->params.interleaver.type));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFER_RA<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_RA<B,R,Q>
 ::header_decoder()
 {
 	auto p = Launcher_BFER<B,R,Q>::header_decoder();
 
-	p.push_back({"Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)});
+	p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 
 	return p;
 }

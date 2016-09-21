@@ -105,7 +105,7 @@ void Launcher_BFERI<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_simulation()
 {
 	std::string threads = "unused";
@@ -114,65 +114,65 @@ std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
 
 	auto p = Launcher<B,R,Q>::header_simulation();
 
-	p.push_back({"Multi-threading (t)", threads});
+	p.push_back(std::make_pair("Multi-threading (t)", threads));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_encoder()
 {
 	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
 	auto p = Launcher<B,R,Q>::header_encoder();
 
-	p.push_back({"Systematic", syst_enc});
+	p.push_back(std::make_pair("Systematic", syst_enc));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_interleaver()
 {
 	auto p = Launcher<B,R,Q>::header_interleaver();
 
-	p.push_back({"Type", this->params.interleaver.type});
+	p.push_back(std::make_pair("Type", this->params.interleaver.type));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_demodulator()
 {
 	auto p = Launcher<B,R,Q>::header_demodulator();
 
-	p.push_back({"Turbo demod. iterations", std::to_string(this->params.demodulator.n_ite)});
+	p.push_back(std::make_pair("Turbo demod. iterations", std::to_string(this->params.demodulator.n_ite)));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_decoder()
 {
 	auto p = Launcher<B,R,Q>::header_decoder();
 
-	p.push_back({"Type (D)",       this->params.decoder.type  });
-	p.push_back({"Implementation", this->params.decoder.implem});
+	p.push_back(std::make_pair("Type (D)",       this->params.decoder.type  ));
+	p.push_back(std::make_pair("Implementation", this->params.decoder.implem));
 
 	return p;
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::vector<std::string>> Launcher_BFERI<B,R,Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_monitor()
 {
 	auto p = Launcher<B,R,Q>::header_monitor();
 
-	p.push_back({"Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)});
+	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
 
 	return p;
 }
