@@ -1,6 +1,6 @@
 /*!
  * \file    Launcher.hpp
- * \brief   This class is dedicated to the collect of the parameters and the launch of the simulations.
+ * \brief   This class is dedicated to the collection of the parameters and the launch of the simulation.
  *
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
