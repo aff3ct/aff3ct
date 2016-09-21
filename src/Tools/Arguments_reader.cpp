@@ -1,15 +1,3 @@
-/*!
- * \file    Arguments_reader.cpp
- * \brief   Command line arguments management class.
- * \author  A. Cassagne
- * \date    2014
- *
- * \section LICENSE
- * This file is under CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/legalcode).
- *
- * \section DESCRIPTION
- * This is the traditional entry file for the code execution.
- */
 #include <iostream>
 #include <cassert>
 #include <algorithm>
