@@ -24,9 +24,6 @@
 #include "Tools/MIPP/mipp.h"
 #include "Tools/Arguments_reader.hpp"
 
-#include "test_GA.hpp"
-
-
 void print_version()
 {
 #if defined(_WIN64) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)
@@ -202,8 +199,6 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 int main(int argc, char **argv)
 {
 	srand(0);
-
-	Test_GA test_GA(8, 16, 0.784);
 
 	std::string code_type, simu_type = "BFER";
 
