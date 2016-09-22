@@ -3,11 +3,12 @@
 
 #include "Module/Monitor/Monitor.hpp"
 #include "Tools/params.h"
-
 #include "Tools/Display/Terminal/Terminal.hpp"
 
+#include "Factory.hpp"
+
 template <typename B, typename R>
-struct Factory_terminal
+struct Factory_terminal : public Factory
 {
 	static Terminal* build(const parameters &params,
 	                       const R snr, 

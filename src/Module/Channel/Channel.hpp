@@ -1,6 +1,5 @@
 /*!
- * \file Channel.hpp
- *
+ * \file
  * \brief The Channel is the physical transmission medium.
  *
  * \section LICENSE

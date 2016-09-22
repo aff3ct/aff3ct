@@ -1,12 +1,13 @@
 #ifndef FACTORY_INTERLEAVER_HPP
 #define FACTORY_INTERLEAVER_HPP
 
+#include "Module/Interleaver/Interleaver.hpp"
 #include "Tools/params.h"
 
-#include "Module/Interleaver/Interleaver.hpp"
+#include "Factory.hpp"
 
 template <typename T>
-struct Factory_interleaver
+struct Factory_interleaver : public Factory
 {
 	static Interleaver<T>* build(const parameters &params, const int &size, const int seed = -1);
 };

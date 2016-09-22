@@ -12,9 +12,11 @@
 #include "functions_polar_inter.h"
 #include "functions_polar_inter_8bit_bitpacking.h"
 
+#include "API_polar.hpp"
+
 template <typename B, typename R, 
           proto_f_i <R> FI, proto_g_i <B,R> GI, proto_g0_i<R> G0I, proto_h_i <B,R> HI, proto_xo_i<B> XOI>
-class API_polar_static_inter_8bit_bitpacking
+class API_polar_static_inter_8bit_bitpacking : public API_polar
 {
 private:
 	static int ol    (int off) { return off                     * mipp::nElReg<R>(); }

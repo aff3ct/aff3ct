@@ -1,6 +1,5 @@
 /*!
- * \file Decoder_SISO.hpp
- *
+ * \file
  * \brief A Decoder_SISO is both a "Soft Input Hard Output" decoder and a "Soft Input Soft Output" decoder.
  *
  * \section LICENSE

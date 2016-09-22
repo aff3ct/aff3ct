@@ -4,9 +4,10 @@
 #include "Module/Monitor/Monitor.hpp"
 #include "Tools/params.h"
 
+#include "Factory.hpp"
 
 template <typename B>
-struct Factory_monitor
+struct Factory_monitor : public Factory
 {
 	static Monitor<B>* build(const parameters &params, const int n_frames = 1);
 };

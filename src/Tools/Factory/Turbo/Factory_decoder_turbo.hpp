@@ -3,16 +3,17 @@
 
 #include <string>
 
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
-#include "Tools/params.h"
-
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/CRC/CRC.hpp"
+#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
+#include "Tools/params.h"
+
+#include "../Factory.hpp"
 
 template <typename B, typename R>
-struct Factory_decoder_turbo
+struct Factory_decoder_turbo : public Factory
 {
 	static Decoder<B,R>* build(const parameters          &params,
 	                           const Interleaver<short>  *interleaver,

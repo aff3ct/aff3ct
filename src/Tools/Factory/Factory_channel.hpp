@@ -1,12 +1,13 @@
 #ifndef FACTORY_CHANNEL_HPP
 #define FACTORY_CHANNEL_HPP
 
+#include "Module/Channel/Channel.hpp"
 #include "Tools/params.h"
 
-#include "Module/Channel/Channel.hpp"
+#include "Factory.hpp"
 
 template <typename R>
-struct Factory_channel
+struct Factory_channel : public Factory
 {
 	static Channel<R>* build(const parameters &params, const R& sigma, const int size, const int seed = 0);
 };

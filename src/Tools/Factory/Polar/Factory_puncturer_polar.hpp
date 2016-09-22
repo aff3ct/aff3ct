@@ -1,13 +1,14 @@
 #ifndef FACTORY_PUNCTURER_POLAR_HPP
 #define FACTORY_PUNCTURER_POLAR_HPP
 
+#include "Module/Puncturer/Puncturer.hpp"
 #include "Tools/params.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "Module/Puncturer/Puncturer.hpp"
+#include "../Factory.hpp"
 
 template <typename B, typename Q>
-struct Factory_puncturer_polar
+struct Factory_puncturer_polar : public Factory
 {
 	static Puncturer<B,Q>* build(const parameters &params, const Frozenbits_generator<B> *fb_generator);
 };

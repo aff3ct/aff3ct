@@ -1,5 +1,5 @@
 /*!
- * \file Launcher.hpp
+ * \file
  * \brief This class is dedicated to the collection of the parameters and the launch of the simulation.
  *
  * \section LICENSE

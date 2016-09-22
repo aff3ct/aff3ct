@@ -4,8 +4,10 @@
 #include "Tools/params.h"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
 
+#include "../Factory.hpp"
+
 template <typename R>
-struct Factory_scaling_factor
+struct Factory_scaling_factor : public Factory
 {
 	static Scaling_factor<R>* build(const parameters &params);
 };

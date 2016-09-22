@@ -1,6 +1,5 @@
 /*!
- * \file Module.hpp
- *
+ * \file
  * \brief A Module is an abstract concept. Basically, all the objects used in a Simulation are a Module.
  *
  * \section LICENSE

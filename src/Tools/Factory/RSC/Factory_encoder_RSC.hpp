@@ -2,11 +2,12 @@
 #define FACTORY_ENCODER_RSC_HPP
 
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
-
 #include "Tools/params.h"
 
+#include "../Factory.hpp"
+
 template <typename B>
-struct Factory_encoder_RSC
+struct Factory_encoder_RSC : public Factory
 {
 	static Encoder_RSC_sys<B>* build(const parameters &params, const int n_frames = 1);
 };

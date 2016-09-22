@@ -1,6 +1,5 @@
 /*!
- * \file SISO.hpp
- *
+ * \file
  * \brief A SISO (Soft Input Soft Output) is a type of decoder which take a soft input and return a soft output.
  *
  * \section LICENSE

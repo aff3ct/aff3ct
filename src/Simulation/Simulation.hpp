@@ -1,6 +1,5 @@
 /*!
- * \file Simulation.hpp
- *
+ * \file
  * \brief This class is dedicated to the simulation. The Simulation is an abstract and generic container.
  *
  * \section LICENSE

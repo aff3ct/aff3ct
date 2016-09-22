@@ -1,6 +1,5 @@
 /*!
- * \file Decoder.hpp
- *
+ * \file
  * \brief A decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
  *
  * \section LICENSE

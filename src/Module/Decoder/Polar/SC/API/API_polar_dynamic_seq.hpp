@@ -10,9 +10,11 @@
 
 #include "functions_polar_seq.h"
 
+#include "API_polar.hpp"
+
 template <typename B, typename R, 
           proto_f<R> F, proto_g<B,R> G, proto_g0<R> G0, proto_h<B,R> H, proto_xo<B> XO>
-class API_polar_dynamic_seq
+class API_polar_dynamic_seq : public API_polar
 {
 public:
 	static constexpr int get_n_frames() { return 1; }

@@ -4,8 +4,10 @@
 #include "Tools/params.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
+#include "../Factory.hpp"
+
 template <typename B>
-struct Factory_frozenbits_generator
+struct Factory_frozenbits_generator : public Factory
 {
 	static Frozenbits_generator<B>* build(const parameters &params);
 };

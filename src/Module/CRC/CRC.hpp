@@ -1,6 +1,5 @@
 /*!
- * \file CRC.hpp
- *
+ * \file
  * \brief This class can add/build and check a Cyclic Redundancy Check (CRC) for a set of information bits.
  *
  * \section LICENSE

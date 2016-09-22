@@ -1,5 +1,5 @@
 /*!
- * \file  Arguments_reader.hpp
+ * \file
  * \brief Command line arguments management class.
  * \date  2014
  *
