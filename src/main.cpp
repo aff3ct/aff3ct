@@ -1,6 +1,6 @@
 /*!
- * \file    main.cpp
- * \brief   It all starts here!
+ * \file  main.cpp
+ * \brief It all starts here!
  *
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
@@ -182,11 +182,11 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
  *
  * \brief Start the simulation by calling a Launcher (the Launcher depends on the code_type and the simu_type).
  *
- * \tparam B : Type of the bits in the simulation.
- * \tparam R : Type of the reals (floating-point representation) in the simulation.
- * \tparam Q : Type of the quantified reals (fixed-point representation) in the simulation.
- * \tparam QD: Type of the quantified reals (fixed-point representation) in the decoder (could be used or not
- *             depending on the code and the simulation type).
+ * \tparam B : type of the bits in the simulation.
+ * \tparam R : type of the reals (floating-point representation) in the simulation.
+ * \tparam Q : type of the quantified reals (fixed-point representation) in the simulation.
+ * \tparam QD: type of the quantified reals (fixed-point representation) in the decoder (can be used or not depending
+ *             on the code and the simulation type).
  *
  * \param argc     : number of arguments from the command line.
  * \param argv     : array of arguments from the command line.
@@ -265,7 +265,7 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 /**
  * \fn int main(int argc, char **argv)
  *
- * \brief The first function called in the program !
+ * \brief The first function called in the program!
  *
  * \param argc: number of arguments from the command line.
  * \param argv: array of arguments from the command line.
