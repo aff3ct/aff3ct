@@ -2,16 +2,15 @@
 
 cd ../build
 
-./bin/aff3ct            \
-    --simu-type   BFER  \
-    --code-type   POLAR \
-    -K            2048  \
-    -N            4096  \
-    --snr-min     2.0   \
-    --snr-max     3.01  \
-    --snr-step    0.1   \
-    --max-fe      100   \
-    --dec-algo    SC    \
-    --dec-implem  FAST  \
-    --domain      LLR   \
+./bin/aff3ct                     \
+    --sim-type     BFER          \
+    --cde-type     POLAR         \
+    -K             2048          \
+    -N             4096          \
+    --sim-snr-min  2.0           \
+    --sim-snr-max  3.01          \
+    --sim-snr-step 0.1           \
+    --mnt-max-fe   100           \
+    --dec-type     SC            \
+    --dec-implem   FAST          \
     $1 $2 $3 $4 $5 $6 $7 $8 $9 $10

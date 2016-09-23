@@ -30,7 +30,7 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::build_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	this->opt_args[{"sim-benchs"}] =
+	this->opt_args[{"sim-benchs", "b"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
 	this->opt_args[{"sim-benchs-no-ldst", "B"}] =
@@ -68,8 +68,8 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path     = this->ar.get_arg    ({"sim-trace-path"});
-	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs         = this->ar.get_arg_int({"sim-benchs"    });
+	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path     = this->ar.get_arg    ({"sim-trace-path" });
+	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs         = this->ar.get_arg_int({"sim-benchs", "b"});
 	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.benchs_no_ldst = true;
 	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report    = true;
 	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug          = true;
