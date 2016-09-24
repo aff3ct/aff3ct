@@ -75,8 +75,6 @@ public:
 
 	virtual ~SC_CRC() { if (module != nullptr) { delete module; module = nullptr; } }
 
-	virtual void build(mipp::vector<B>& U_K) = 0;
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		CRC_interface<B>::set_n_frames(n_frames);

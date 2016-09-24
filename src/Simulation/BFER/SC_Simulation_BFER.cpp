@@ -233,10 +233,10 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::bind_sockets()
 {
-	this->source    [0]->module        ->s_out (this->duplicator                  ->s_in );
+	this->source    [0]->module        ->s_out (this->crc      [0]->module        ->s_in );
+	this->crc       [0]->module        ->s_out (this->duplicator                  ->s_in );
 	this->duplicator                   ->s_out1(this->monitor  [0]->module        ->s_in1);
-	this->duplicator                   ->s_out2(this->crc      [0]->module        ->s_in );
-	this->crc       [0]->module        ->s_out (this->encoder  [0]->module        ->s_in );
+	this->duplicator                   ->s_out2(this->encoder  [0]->module        ->s_in );
 	this->encoder   [0]->module        ->s_out (this->puncturer[0]->module_punct  ->s_in );
 	this->puncturer [0]->module_punct  ->s_out (this->modulator[0]->module_mod    ->s_in );
 	this->modulator [0]->module_mod    ->s_out (this->channel  [0]->module        ->s_in );
@@ -252,10 +252,10 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::bind_sockets_debug()
 {
-	this->source    [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator                  ->s_in );
+	this->source    [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc      [0]->module        ->s_in );
+	this->crc       [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator                  ->s_in );
 	this->duplicator                                                                ->s_out1(this->monitor  [0]->module        ->s_in1);
-	this->duplicator                                                                ->s_out2(this->crc      [0]->module        ->s_in );
-	this->crc       [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder  [0]->module        ->s_in );
+	this->duplicator                                                                ->s_out2(this->encoder  [0]->module        ->s_in );
 	this->encoder   [0]->module        ->s_out(this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->puncturer[0]->module_punct  ->s_in );
 	this->puncturer [0]->module_punct  ->s_out(this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator[0]->module_mod    ->s_in );
 	this->modulator [0]->module_mod    ->s_out(this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel  [0]->module        ->s_in );

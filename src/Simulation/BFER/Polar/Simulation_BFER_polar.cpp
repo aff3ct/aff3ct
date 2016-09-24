@@ -36,8 +36,6 @@ Simulation_BFER_polar<B,R,Q>
 	}
 	else
 		assert(this->params.code.N == this->params.code.N_code);
-
-
 }
 
 template <typename B, typename R, typename Q>
@@ -87,7 +85,7 @@ void Simulation_BFER_polar<B,R,Q>
 	if (this->params.simulation.debug)
 	{
 		std::clog << std::endl << "Frozen bits:" << std::endl;
-		Frame_trace<B> ft;
+		Frame_trace<B> ft(this->params.simulation.debug_limit);
 		ft.display_bit_vector(frozen_bits);
 		std::clog << std::endl;
 	}

@@ -131,7 +131,10 @@ Simulation* Launcher_BFER_polar<B,R,Q>
 	if (!this->params.crc.type.empty())
 	{
 		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.type));
+
 		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.type);
+
+		assert(this->params.code.K <= this->params.code.N);
 	}
 
 	return new Simulation_BFER_polar<B,R,Q>(this->params);

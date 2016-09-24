@@ -50,7 +50,7 @@ void Frame_trace<B>
 			stream << std::setw(5) << i << "|";
 
 		if (n_bits < vec.size())
-			stream << " ..." << std::endl;
+			stream << " ...";
 		stream << std::endl;
 	}
 
@@ -63,7 +63,7 @@ void Frame_trace<B>
 				display_value(vec[i], version);
 
 		if (n_bits < vec.size())
-			stream << " ..." << std::endl;
+			stream << " ...";
 		stream << std::endl;
 
 		stride += row_width;
@@ -100,14 +100,14 @@ void Frame_trace<B>
 		case BIT:
 			if (value == 0)
 				if (ref == 0)
-					stream << std::setw(5) << bold_green (std::to_string((int) 0)) << "|";
+					stream << bold_green ("    0") << "|";
 				else
-					stream << std::setw(5) << bold_orange(std::to_string((int) 0)) << "|";
+					stream << bold_orange("    0") << "|";
 			else
 				if (ref == 0)
-					stream << std::setw(5) << bold_orange(std::to_string((int) 1)) << "|";
+					stream << bold_orange("    1") << "|";
 				else	
-					stream << std::setw(5) << bold_green (std::to_string((int) 1)) << "|";
+					stream << bold_green ("    1") << "|";
 			break;
 
 		case REAL:

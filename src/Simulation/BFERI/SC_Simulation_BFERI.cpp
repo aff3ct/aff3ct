@@ -204,7 +204,7 @@ void Simulation_BFERI<B,R,Q>
 	this->interleaver_e  = this->build_interleaver(     ); check_errors(this->interleaver_e , "Interleaver<int>");
 	this->modulator  [0] = this->build_modulator  (     ); check_errors(this->modulator  [0], "Modulator<B,R,Q>");
 
-	assert(this->interleaver[0]->same_lookup_table(*this->interleaver_e));
+	assert(*this->interleaver[0] == *this->interleaver_e);
 	this->interleaver_e->rename("Interleaver_e");
 
 	const auto N     = this->params.code.N;
@@ -258,10 +258,10 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::bind_sockets()
 {
-	this->source     [0]->module        ->s_out (this->duplicator1                   ->s_in );
+	this->source     [0]->module        ->s_out (this->crc        [0]->module        ->s_in );
+	this->crc        [0]->module        ->s_out (this->duplicator1                   ->s_in );
 	this->duplicator1                   ->s_out1(this->monitor    [0]->module        ->s_in1);
-	this->duplicator1                   ->s_out2(this->crc        [0]->module        ->s_in );
-	this->crc        [0]->module        ->s_out (this->encoder    [0]->module        ->s_in );
+	this->duplicator1                   ->s_out2(this->encoder    [0]->module        ->s_in );
 	this->encoder    [0]->module        ->s_out (this->interleaver_e ->module_inter  ->s_in );
 	this->interleaver_e ->module_inter  ->s_out (this->modulator  [0]->module_mod    ->s_in );
 	this->modulator  [0]->module_mod    ->s_out (this->channel    [0]->module        ->s_in );
@@ -283,25 +283,25 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::bind_sockets_debug()
 {
-	this->source     [0]->module        ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator1                   ->s_in );
-	this->duplicator1                                                                 ->s_out1(this->monitor    [0]->module        ->s_in1);
-	this->duplicator1                                                                 ->s_out2(this->crc        [0]->module        ->s_in );
-	this->crc        [0]->module        ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder    [0]->module        ->s_in );
-	this->encoder    [0]->module        ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->interleaver_e ->module_inter  ->s_in );
-	this->interleaver_e ->module_inter  ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->module_mod    ->s_in );
-	this->modulator  [0]->module_mod    ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->module        ->s_in );
-	this->channel    [0]->module        ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->module_filt   ->s_in );
-	this->modulator  [0]->module_filt   ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->module        ->s_in );
-	this->quantizer  [0]->module        ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->module_tdemod ->s_in1);
-	this->modulator  [0]->module_tdemod ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->module_deinter->s_in );
-	this->interleaver[0]->module_deinter->s_out (this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->router                        ->s_in );
-	this->router                                                                      ->s_out1(this->siso       [0]->module_siso   ->s_in );
-	this->router                                                                      ->s_out2(this->decoder    [0]->module        ->s_in );
-	this->siso       [0]->module_siso   ->s_out (this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->interleaver[0]->module_inter  ->s_in );
-	this->interleaver[0]->module_inter  ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->module_tdemod ->s_in2);
-	this->decoder    [0]->module        ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->duplicator2                   ->s_in );
-	this->duplicator2                                                                 ->s_out1(this->monitor    [0]->module        ->s_in2);
-	this->duplicator2                                                                 ->s_out2(this->predicate                     ->s_in );
+	this->source     [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc        [0]->module        ->s_in );
+	this->crc        [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator1                   ->s_in );
+	this->duplicator1                                                                ->s_out1(this->monitor    [0]->module        ->s_in1);
+	this->duplicator1                                                                ->s_out2(this->encoder    [0]->module        ->s_in );
+	this->encoder    [0]->module        ->s_out(this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->interleaver_e ->module_inter  ->s_in );
+	this->interleaver_e ->module_inter  ->s_out(this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->module_mod    ->s_in );
+	this->modulator  [0]->module_mod    ->s_out(this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->module        ->s_in );
+	this->channel    [0]->module        ->s_out(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->module_filt   ->s_in );
+	this->modulator  [0]->module_filt   ->s_out(this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->module        ->s_in );
+	this->quantizer  [0]->module        ->s_out(this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->module_tdemod ->s_in1);
+	this->modulator  [0]->module_tdemod ->s_out(this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->module_deinter->s_in );
+	this->interleaver[0]->module_deinter->s_out(this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->router                        ->s_in );
+	this->router                                                                     ->s_out1(this->siso       [0]->module_siso   ->s_in );
+	this->router                                                                     ->s_out2(this->decoder    [0]->module        ->s_in );
+	this->siso       [0]->module_siso   ->s_out(this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->interleaver[0]->module_inter  ->s_in );
+	this->interleaver[0]->module_inter  ->s_out(this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->module_tdemod ->s_in2);
+	this->decoder    [0]->module        ->s_out(this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->duplicator2                   ->s_in );
+	this->duplicator2                                                                ->s_out1(this->monitor    [0]->module        ->s_in2);
+	this->duplicator2                                                                ->s_out2(this->predicate                     ->s_in );
 }
 
 template <typename B, typename R, typename Q>

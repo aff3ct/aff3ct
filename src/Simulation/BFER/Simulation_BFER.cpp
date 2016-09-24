@@ -612,7 +612,7 @@ void Simulation_BFER<B,R,Q>
 
 		// display V_K
 		std::clog << "V_K:" << std::endl;
-		ft.display_bit_vector(simu->V_K[0]);
+		ft.display_bit_vector(simu->V_K[0], simu->U_K[0]);
 		std::clog << std::endl;
 
 		// check errors in the frame
