@@ -19,7 +19,7 @@
  *
  * \brief The Channel is the physical transmission medium.
  *
- * \tparam R: type of the reals (floating-point representation) in the channel.
+ * \tparam R: type of the reals (floating-point representation) in the Channel.
  *
  * Please use Channel for inheritance (instead of Channel_interface).
  */
@@ -34,8 +34,8 @@ public:
 	 * \brief Constructor.
 	 *
 	 * \param N       : size of one frame.
-	 * \param n_frames: number of frames to process in the channel.
-	 * \param name    : channel name.
+	 * \param n_frames: number of frames to process in the Channel.
+	 * \param name    : Channel's name.
 	 */
 	Channel_interface(const int N, const int n_frames = 1, const std::string name = "Channel_interface")
 	: Module(n_frames, name), N(N) {}
@@ -46,10 +46,10 @@ public:
 	virtual ~Channel_interface() {}
 
 	/*!
-	 * \brief Add the noise to a perfectly clear signal.
+	 * \brief Adds the noise to a perfectly clear signal.
 	 *
-	 * \param X_N: the perfectly clear signal.
-	 * \param Y_N: the noisy signal.
+	 * \param X_N: a perfectly clear message.
+	 * \param Y_N: a noisy signal.
 	 */
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
 };

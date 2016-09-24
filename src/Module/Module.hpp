@@ -19,15 +19,15 @@
 class Module
 {
 protected:
-	int         n_frames; /*!< Number of frames to process in this module */
-	std::string name;     /*!< Name of the module. */
+	int         n_frames; /*!< Number of frames to process in this Module */
+	std::string name;     /*!< Name of the Module. */
 
 public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param n_frames: number of frames to process in this module.
-	 * \param name    : module name.
+	 * \param n_frames: number of frames to process in this Module.
+	 * \param name    : Module's name.
 	 */
 	Module(const int n_frames = 1, const std::string name = "Module") : n_frames(n_frames), name(name)
 	{ assert(n_frames > 0); }
@@ -40,7 +40,7 @@ public:
 	/*!
 	 * \brief Set the number of frames.
 	 *
-	 * \param n_frames: number of frames to process in this module.
+	 * \param n_frames: number of frames to process in this Module.
 	 */
 	virtual void set_n_frames(const int n_frames)
 	{
@@ -51,7 +51,7 @@ public:
 	/*!
 	 * \brief Get the number of frames.
 	 *
-	 * \return the number of frames to process in this module.
+	 * \return the number of frames to process in this Module.
 	 */
 	virtual int get_n_frames() const
 	{
@@ -59,9 +59,9 @@ public:
 	}
 
 	/*!
-	 * \brief Rename the module.
+	 * \brief Rename the Module.
 	 *
-	 * \param name: the new module name.
+	 * \param name: the new Module name.
 	 */
 	void rename(const std::string name)
 	{

@@ -1,3 +1,10 @@
+/*!
+ * \file
+ * \brief Interleaves or deinterleaves a vector.
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 
@@ -8,23 +15,69 @@
 
 #include "Module/Module.hpp"
 
+/*!
+ * \class Interleaver_interface
+ *
+ * \brief Interleaves or deinterleaves a vector.
+ *
+ * \tparam T: type of the integers used in the lookup tables to store indirections.
+ *
+ * Please use Interleaver for inheritance (instead of Interleaver_interface)
+ */
 template <typename T>
-class Interleaver_interface : public Module // please use Interleaver<T> for inheritance (instead of Interleaver_interface<T>)
+class Interleaver_interface : public Module
 {
 protected:
-	mipp::vector<T> pi;     //   interleaver lookup table
-	mipp::vector<T> pi_inv; // deinterleaver lookup table
+	mipp::vector<T> pi;     /*!< lookup table for the interleaving process */
+	mipp::vector<T> pi_inv; /*!< lookup table for the deinterleaving process */
 	
+	/*!
+	 * \brief Generates the interleaving and deinterleaving lookup tables. This method defines the interleaver and have
+	 *        to be called in the constructor.
+	 */
 	virtual void gen_lookup_tables() = 0; // to implement
 
 public:
+	/*!
+	 * \brief Constructor.
+	 *
+	 * \param size    : number of the data to interleave or to deinterleave.
+	 * \param n_frames: number of frames to process in the Interleaver.
+	 * \param name    : Interleaver's name.
+	 */
 	Interleaver_interface(const int size, const int n_frames = 1, const std::string name = "Interleaver_interface") 
 	: Module(n_frames, name), pi(size), pi_inv(size) {}
+
+	/*!
+	 * \brief Destructor.
+	 */
 	virtual ~Interleaver_interface() {}
 
-	mipp::vector<T> get_lookup_table        () const { return pi;     }
+	/*!
+	 * \brief Gets the lookup table required for the interleaving process.
+	 *
+	 * \return a vector of indirections.
+	 */
+	mipp::vector<T> get_lookup_table() const { return pi; }
+
+	/*!
+	 * \brief Gets the lookup table required for the deinterleaving process.
+	 *
+	 * \return a vector of indirections.
+	 */
 	mipp::vector<T> get_lookup_table_inverse() const { return pi_inv; }
 
+	/*!
+	 * \brief Interleaves a vector.
+	 *
+	 * \tparam D: type of data in the input and the output vectors.
+	 *
+	 * \param natural_vec     : an input vector in the natural domain.
+	 * \param interleaved_vec : an output vector in the interleaved domain.
+	 * \param frame_reordering: true means that the frames have been reordered for efficient SIMD computations. In this
+	 *                          case the interleaving process is different (true supposes that there is more than one
+	 *                          frame to interleave).
+	 */
 	template <typename D>
 	inline void interleave(const mipp::vector<D> &natural_vec, 
 	                             mipp::vector<D> &interleaved_vec, 
@@ -33,6 +86,17 @@ public:
 		this->_interleave(natural_vec, interleaved_vec, pi, frame_reordering);
 	}
 
+	/*!
+	 * \brief Deinterleaves a vector.
+	 *
+	 * \tparam D: type of data in the input and the output vectors.
+	 *
+	 * \param interleaved_vec : an input vector in the interleaved domain.
+	 * \param natural_vec     : an output vector in the natural domain.
+	 * \param frame_reordering: true means that the frames have been reordered for efficient SIMD computations. In this
+	 *                          case the deinterleaving process is different (true supposes that there is more than one
+	 *                          frame to deinterleave).
+	 */
 	template <typename D>
 	inline void deinterleave(const mipp::vector<D> &interleaved_vec, 
 	                               mipp::vector<D> &natural_vec, 
@@ -41,13 +105,14 @@ public:
 		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering);
 	}
 
-	virtual void set_n_frames(const int n_frames)
-	{
-		assert(n_frames > 0);
-		this->n_frames = n_frames;
-	}
-
-	bool same_lookup_table(Interleaver_interface<T> &interleaver)
+	/*!
+	 * \brief Compares two interleavers: the comparison only considers the lookup tables.
+	 *
+	 * \param interleaver: an other interleaver.
+	 *
+	 * \return true if the two interleavers are the same (if they have the same lookup tables), false otherwise.
+	 */
+	bool operator==(Interleaver_interface<T> &interleaver) const
 	{
 		if (interleaver.pi.size() != this->pi.size())
 			return false;
@@ -88,7 +153,7 @@ private:
 			}
 			else
 			{
-				if ((n_frames == 4 && typeid(D) == typeid(signed char)) && // partial vectorized interleaving
+				if ((n_frames == 4 && typeid(D) == typeid(signed char)) && // partially vectorized interleaving
 				    (in_vec.size() >= (unsigned)(frame_size * n_frames + mipp::nElReg<D>()))) 
 				{
 					const signed char mask[32] = { 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,

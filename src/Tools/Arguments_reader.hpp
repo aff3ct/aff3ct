@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Command line arguments management class.
+ * \brief Manages the command line arguments.
  * \date  2014
  *
  * \section LICENSE
@@ -15,7 +15,7 @@
 
 /*!
  * \class Arguments_reader
- * \brief This class ease the management of the arguments from the command line.
+ * \brief Eases the management of the arguments from the command line.
  */
 class Arguments_reader
 {
@@ -34,7 +34,7 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * The constructor take the famous "argc" and "argv" arguments from the main function.
+	 * Takes the famous "argc" and "argv" arguments from the main function.
 	 *
 	 * \param argc: number of arguments.
 	 * \param argv: array of arguments
@@ -51,7 +51,7 @@ public:
 	/*!
 	 * \brief Parse "m_argv".
 	 *
-	 * Parse "m_argv" following the given required and optional arguments.
+	 * Parses "m_argv" following the given required and optional arguments.
 	 *
 	 * \param required_args: map of the required arguments,
 	 *                       required_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}.
@@ -64,7 +64,7 @@ public:
 	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args);
 
 	/*!
-	 * \brief Search if the tags exist.
+	 * \brief Searches if the tags exist.
 	 *
 	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
 	 *
@@ -75,14 +75,12 @@ public:
 	/*!
 	 * \brief Alias of the exist_argument method.
 	 *
-	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
-	 *
-	 * \return true if the argument exists (to use after the parse_arguments method).
+	 * \copydoc Arguments_reader::exist_argument
 	 */
 	bool exist_arg(const std::vector<std::string> &tags) { return exist_argument(tags); }
 
 	/*!
-	 * \brief Return the value for an argument.
+	 * \brief Returns the value for an argument.
 	 *
 	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
 	 *
@@ -98,7 +96,7 @@ public:
 	std::string get_arg(const std::vector<std::string> &tags) { return get_argument(tags);  }
 
 	/*!
-	 * \brief Return the value for an argument.
+	 * \brief Returns the value for an argument.
 	 *
 	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}
 	 *
@@ -107,7 +105,7 @@ public:
 	int get_arg_int(const std::vector<std::string> &tags) { return std::stoi(get_argument(tags)); }
 
 	/*!
-	 * \brief Return the value for an argument.
+	 * \brief Returns the value for an argument.
 	 *
 	 * \param tags: list of tags associated to an argument, tags = {"Key1", "Key2", [...]}.
 	 *
@@ -116,12 +114,12 @@ public:
 	float get_arg_float(const std::vector<std::string> &tags) { return std::stof(get_argument(tags)); }
 
 	/*!
-	 * \brief Print the traditional usage.
+	 * \brief Prints the traditional usage.
 	 */
 	void print_usage();
 
 	/*!
-	 * \brief Print the traditional usage and group the arguments.
+	 * \brief Prints the traditional usage and group the arguments.
 	 *
 	 * \param arg_groups: group of argument based on a prefix,
 	 *                    arg_groups = {{"prefix1", "Group name1"}, {"prefix2", "Group name2"}, [...]}.
@@ -129,7 +127,7 @@ public:
 	void print_usage(std::vector<std::vector<std::string>> arg_groups);
 
 	/*!
-	 * \brief Check if the values from the command line respect the criteria given by required_args and optional_args.
+	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args.
 	 *
 	 * \return true if the arguments criteria are respected, false otherwise.
 	 */
@@ -137,7 +135,7 @@ public:
 
 private:
 	/*!
-	 * \brief Return true if the argument "m_argv[pos_arg]" is in args.
+	 * \brief Returns true if the argument "m_argv[pos_arg]" is in args.
 	 *
 	 * \param args   : map of arguments,
 	 *                 args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}.
@@ -149,7 +147,7 @@ private:
 	                         unsigned short pos_arg);
 
 	/*!
-	 * \brief Check if the values from the command line respect the criteria given by required_args and optional_args
+	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args
 	 *        (this is for one argument only).
 	 *
 	 * \param tags: tags of an argument, tags = {"Key1", "Key2", [...]}.
@@ -162,12 +160,12 @@ private:
 	                          std::map<std::vector<std::string>, std::vector<std::string>> &args);
 
 	/*!
-	 * \brief Clear m_required_args, m_optional_args and m_args.
+	 * \brief Clears m_required_args, m_optional_args and m_args.
 	 */
 	void clear_arguments();
 
 	/*!
-	 * \brief Print usage for one argument.
+	 * \brief Prints usage for one argument.
 	 *
 	 * \param tags    : tags of an argument, tags = {"Key1", "Key2", [...]}.
 	 * \param values  : the type, doc and possible choices for an argument,
@@ -178,7 +176,7 @@ private:
 	                 const bool required = false);
 
 	/*!
-	 * \brief Split a string in a vector of string, the delimiter is the comma.
+	 * \brief Splits a string in a vector of string, the delimiter is the comma.
 	 *
 	 * \param str: the string to be split.
 	 *

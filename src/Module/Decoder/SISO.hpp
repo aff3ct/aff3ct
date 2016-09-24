@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief A SISO (Soft Input Soft Output) is a type of decoder which take a soft input and return a soft output.
+ * \brief A SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
  *
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
@@ -17,7 +17,7 @@
 /*!
  * \class SISO_interface
  *
- * \brief A SISO (Soft Input Soft Output) is a type of decoder which take a soft input and return a soft output.
+ * \brief A SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
  *
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the SISO.
  *
@@ -48,25 +48,25 @@ public:
 	virtual ~SISO_interface() {};
 
 	/*!
-	 * \brief Decode a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
+	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
 	 *        used otherwise.
 	 *
-	 * \param sys: the systematic LLRs (original noised information bits) from the channel.
-	 * \param par: the parity LLRs from the channel.
-	 * \param ext: the extrinsic information about the systematic bits.
+	 * \param sys: systematic LLRs (original noised information bits) from the channel.
+	 * \param par: parity LLRs from the channel.
+	 * \param ext: extrinsic information about the systematic bits.
 	 */
 	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 
 	/*!
-	 * \brief Decode a given noisy codeword.
+	 * \brief Decodes a given noisy codeword.
 	 *
-	 * \param Y_N1: the complete noisy codeword from the channel.
-	 * \param Y_N2: the extrinsic information about all the bits in the frame.
+	 * \param Y_N1: a completely noisy codeword from the channel.
+	 * \param Y_N2: an extrinsic information about all the bits in the frame.
 	 */
 	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 	
 	/*!
-	 * \brief Get the number of tail bits.
+	 * \brief Gets the number of tail bits.
 	 *
 	 * \return the number of tail bits.
 	 */

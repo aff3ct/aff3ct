@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief This class is dedicated to the simulation. The Simulation is an abstract and generic container.
+ * \brief The Simulation is an abstract and generic container.
  *
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
@@ -13,7 +13,7 @@
 /*!
  * \class Launcher
  *
- * \brief This class is dedicated to the simulation. The Simulation is an abstract and generic container.
+ * \brief The Simulation is an abstract and generic container.
  */
 class Simulation
 {
@@ -29,13 +29,13 @@ public:
 	virtual ~Simulation() {}
 
 	/*!
-	 *  \brief This method have to be overloaded, this is the start point of the simulation.
+	 *  \brief This method has to be overloaded, this is the start point of the Simulation.
 	 */
 	virtual void launch() = 0;
 
 protected:
 	/*!
-	 * \brief Check if a pointer has been allocated or not, if not the program stop with an error message.
+	 * \brief Checks if a pointer has been allocated or not, if not the program stop with an error message.
 	 *
 	 * \param ptr: a pointer.
 	 * \param str: name of the pointer.

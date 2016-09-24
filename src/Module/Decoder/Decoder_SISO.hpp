@@ -43,7 +43,7 @@ public:
 	virtual ~Decoder_SISO() {}
 
 	/*!
-	 * \brief Get the number of frames.
+	 * \brief Gets the number of frames.
 	 *
 	 * \return the number of frames to process in the decoder.
 	 */
