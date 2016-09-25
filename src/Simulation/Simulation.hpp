@@ -21,12 +21,16 @@ public:
 	/*!
 	 *  \brief Constructor.
 	 */
-	Simulation() {}
+	Simulation()
+	{
+	}
 
 	/*!
 	 *  \brief Destructor.
 	 */
-	virtual ~Simulation() {}
+	virtual ~Simulation()
+	{
+	}
 
 	/*!
 	 *  \brief This method has to be overloaded, this is the start point of the Simulation.

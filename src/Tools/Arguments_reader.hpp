@@ -77,7 +77,10 @@ public:
 	 *
 	 * \copydoc Arguments_reader::exist_argument
 	 */
-	bool exist_arg(const std::vector<std::string> &tags) { return exist_argument(tags); }
+	bool exist_arg(const std::vector<std::string> &tags)
+	{
+		return exist_argument(tags);
+	}
 
 	/*!
 	 * \brief Returns the value for an argument.
@@ -93,7 +96,10 @@ public:
 	 *
 	 * \copydoc Arguments_reader::get_argument
 	 */
-	std::string get_arg(const std::vector<std::string> &tags) { return get_argument(tags);  }
+	std::string get_arg(const std::vector<std::string> &tags)
+	{
+		return get_argument(tags);
+	}
 
 	/*!
 	 * \brief Returns the value for an argument.
@@ -102,7 +108,10 @@ public:
 	 *
 	 * \return the integer value of an argument with its tags (to use after the parse_arguments method).
 	 */
-	int get_arg_int(const std::vector<std::string> &tags) { return std::stoi(get_argument(tags)); }
+	int get_arg_int(const std::vector<std::string> &tags)
+	{
+		return std::stoi(get_argument(tags));
+	}
 
 	/*!
 	 * \brief Returns the value for an argument.
@@ -111,7 +120,10 @@ public:
 	 *
 	 * \return the floating-point value of an argument with its tags (to use after the parse_arguments method).
 	 */
-	float get_arg_float(const std::vector<std::string> &tags) { return std::stof(get_argument(tags)); }
+	float get_arg_float(const std::vector<std::string> &tags)
+	{
+		return std::stof(get_argument(tags));
+	}
 
 	/*!
 	 * \brief Prints the traditional usage.
@@ -137,7 +149,7 @@ private:
 	/*!
 	 * \brief Returns true if the argument "m_argv[pos_arg]" is in args.
 	 *
-	 * \param args   : map of arguments,
+	 * \param args:    map of arguments,
 	 *                 args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}.
 	 * \param pos_arg: the position of the argument we are looking for (in m_argv[pos_arg]).
 	 *
@@ -167,8 +179,8 @@ private:
 	/*!
 	 * \brief Prints usage for one argument.
 	 *
-	 * \param tags    : tags of an argument, tags = {"Key1", "Key2", [...]}.
-	 * \param values  : the type, doc and possible choices for an argument,
+	 * \param tags:     tags of an argument, tags = {"Key1", "Key2", [...]}.
+	 * \param values:   the type, doc and possible choices for an argument,
 	 *                  values = {"type", ["doc"], ["possible choices separated by a comma"]}.
 	 * \param required: true if this is a required parameter.
 	 */

@@ -73,22 +73,22 @@ void Terminal_BFER<B,R>
 	auto ber = 0.f, fer = 0.f;
 	if(monitor.get_n_be() != 0 )
 	{
-		ber = (float)monitor.get_ber_value();
-		fer = (float)monitor.get_fer_value();
+		ber = (float)monitor.get_ber();
+		fer = (float)monitor.get_fer();
 	}
 	else
 	{
-		ber = (1.f) / ((float)monitor.get_n_analyzed_frames()) / monitor.get_K();
-		fer = (1.f) / ((float)monitor.get_n_analyzed_frames());
+		ber = (1.f) / ((float)monitor.get_n_analyzed_fra()) / monitor.get_K();
+		fer = (1.f) / ((float)monitor.get_n_analyzed_fra());
 	}
-	auto fra = monitor.get_n_analyzed_frames();
+	auto fra = monitor.get_n_analyzed_fra();
 	auto be  = monitor.get_n_be();
 	auto fe  = monitor.get_n_fe();
 
 	auto decod_time_ms = (float)d_decod_total.count() * 0.000001f;
 	auto total_time = d_decod_total.count();
 
-	auto dec_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_frames()) /
+	auto dec_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_fra()) /
 		             (total_time * 0.000000001f); // = bps
 	dec_cthr /= 1000.f; // = kbps
 	dec_cthr /= 1000.f; // = mbps
@@ -96,13 +96,13 @@ void Terminal_BFER<B,R>
 	auto dec_ithr = dec_cthr * ((float)monitor.get_K() / (float)monitor.get_N());
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_frames()) /
+	auto simu_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_fra()) /
 		              simu_time ; // = bps
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
 	auto lat = decod_time_ms * 1000.f;
-	lat = (lat / (float) monitor.get_n_analyzed_frames()) * monitor.get_n_frames();
+	lat = (lat / (float) monitor.get_n_analyzed_fra()) * monitor.get_n_frames();
 
 	if (Monitor<B>::is_interrupt()) stream << "\r";
 

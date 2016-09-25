@@ -54,8 +54,8 @@ public:
 	 *
 	 * Takes the famous "argc" and "argv" arguments from the main function.
 	 *
-	 * \param argc  : number of arguments.
-	 * \param argv  : array of arguments
+	 * \param argc:   number of arguments.
+	 * \param argv:   array of arguments
 	 * \param stream: the stream in which the Launcher writes the parameters.
 	 */
 	Launcher(const int argc, const char **argv, std::ostream &stream = std::cout);

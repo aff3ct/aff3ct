@@ -36,18 +36,22 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K       : number of information bits in the frame.
-	 * \param N       : size of one frame.
+	 * \param K:        number of information bits in the frame.
+	 * \param N:        size of one frame.
 	 * \param n_frames: number of frames to process in the Decoder.
-	 * \param name    : Decoder's name.
+	 * \param name:     Decoder's name.
 	 */
 	Decoder_interface(const int K, const int N, const int n_frames = 1, std::string name = "Decoder_interface") 
-	: Module(n_frames, name), K(K), N(N) {}
+	: Module(n_frames, name), K(K), N(N)
+	{
+	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_interface() {}
+	virtual ~Decoder_interface()
+	{
+	}
 
 	/*!
 	 * \brief Loads the noisy frame into the Decoder.

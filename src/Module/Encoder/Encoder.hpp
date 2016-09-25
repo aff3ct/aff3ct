@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Encodes a vector of information bits (a message) and add some redundancy (parity bits).
+ * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
  *
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
@@ -17,7 +17,7 @@
 /*!
  * \class Encoder_interface
  *
- * \brief Encodes a vector of information bits (a message) and add some redundancy (parity bits).
+ * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
  *
  * \tparam B: type of the bits in the encoder.
  *
@@ -34,18 +34,22 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K       : number of information bits in the frame.
-	 * \param N       : size of one frame.
+	 * \param K:        number of information bits in the frame.
+	 * \param N:        size of one frame.
 	 * \param n_frames: number of frames to process in the Encoder.
-	 * \param name    : Encoder's name.
+	 * \param name:     Encoder's name.
 	 */
 	Encoder_interface(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_interface") 
-	: Module(n_frames, name), K(K), N(N) {}
+	: Module(n_frames, name), K(K), N(N)
+	{
+	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Encoder_interface() {};
+	virtual ~Encoder_interface()
+	{
+	}
 
 	/*!
 	 * \brief Encodes a vector of information bits (a message).

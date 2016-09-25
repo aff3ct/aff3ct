@@ -28,8 +28,8 @@ template <typename T>
 class Interleaver_interface : public Module
 {
 protected:
-	mipp::vector<T> pi;     /*!< lookup table for the interleaving process */
-	mipp::vector<T> pi_inv; /*!< lookup table for the deinterleaving process */
+	mipp::vector<T> pi;     /*!< Lookup table for the interleaving process */
+	mipp::vector<T> pi_inv; /*!< Lookup table for the deinterleaving process */
 	
 	/*!
 	 * \brief Generates the interleaving and deinterleaving lookup tables. This method defines the interleaver and have
@@ -41,39 +41,49 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param size    : number of the data to interleave or to deinterleave.
+	 * \param size:     number of the data to interleave or to deinterleave.
 	 * \param n_frames: number of frames to process in the Interleaver.
-	 * \param name    : Interleaver's name.
+	 * \param name:     Interleaver's name.
 	 */
 	Interleaver_interface(const int size, const int n_frames = 1, const std::string name = "Interleaver_interface") 
-	: Module(n_frames, name), pi(size), pi_inv(size) {}
+	: Module(n_frames, name), pi(size), pi_inv(size)
+	{
+	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Interleaver_interface() {}
+	virtual ~Interleaver_interface()
+	{
+	}
 
 	/*!
 	 * \brief Gets the lookup table required for the interleaving process.
 	 *
 	 * \return a vector of indirections.
 	 */
-	mipp::vector<T> get_lookup_table() const { return pi; }
+	mipp::vector<T> get_lookup_table() const
+	{
+		return pi;
+	}
 
 	/*!
 	 * \brief Gets the lookup table required for the deinterleaving process.
 	 *
 	 * \return a vector of indirections.
 	 */
-	mipp::vector<T> get_lookup_table_inverse() const { return pi_inv; }
+	mipp::vector<T> get_lookup_table_inverse() const
+	{
+		return pi_inv;
+	}
 
 	/*!
 	 * \brief Interleaves a vector.
 	 *
 	 * \tparam D: type of data in the input and the output vectors.
 	 *
-	 * \param natural_vec     : an input vector in the natural domain.
-	 * \param interleaved_vec : an output vector in the interleaved domain.
+	 * \param natural_vec:      an input vector in the natural domain.
+	 * \param interleaved_vec:  an output vector in the interleaved domain.
 	 * \param frame_reordering: true means that the frames have been reordered for efficient SIMD computations. In this
 	 *                          case the interleaving process is different (true supposes that there is more than one
 	 *                          frame to interleave).
@@ -91,8 +101,8 @@ public:
 	 *
 	 * \tparam D: type of data in the input and the output vectors.
 	 *
-	 * \param interleaved_vec : an input vector in the interleaved domain.
-	 * \param natural_vec     : an output vector in the natural domain.
+	 * \param interleaved_vec:  an input vector in the interleaved domain.
+	 * \param natural_vec:      an output vector in the natural domain.
 	 * \param frame_reordering: true means that the frames have been reordered for efficient SIMD computations. In this
 	 *                          case the deinterleaving process is different (true supposes that there is more than one
 	 *                          frame to deinterleave).

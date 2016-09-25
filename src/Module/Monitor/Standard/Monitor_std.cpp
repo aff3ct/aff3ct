@@ -66,7 +66,7 @@ int Monitor_std<B>
 
 template <typename B>
 unsigned long long Monitor_std<B>
-::get_n_analyzed_frames() const
+::get_n_analyzed_fra() const
 {
 	return n_analyzed_frames;
 }
@@ -87,17 +87,17 @@ int Monitor_std<B>
 
 template <typename B>
 float Monitor_std<B>
-::get_fer_value() const
+::get_fer() const
 {
-	auto t_fer = (float)get_n_fe() / (float)get_n_analyzed_frames();
+	auto t_fer = (float)get_n_fe() / (float)get_n_analyzed_fra();
 	return t_fer;
 }
 
 template <typename B>
 float Monitor_std<B>
-::get_ber_value() const
+::get_ber() const
 {
-	auto t_ber = (float)get_n_be() / (float)get_n_analyzed_frames() / (float)this->K;
+	auto t_ber = (float)get_n_be() / (float)get_n_analyzed_fra() / (float)this->K;
 	return t_ber;
 }
 

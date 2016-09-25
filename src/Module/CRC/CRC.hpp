@@ -33,17 +33,21 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K       : number of information bits (the CRC bits are included in K).
+	 * \param K:        number of information bits (the CRC bits are included in K).
 	 * \param n_frames: number of frames to process in the CRC.
-	 * \param name    : CRC's name.
+	 * \param name:     CRC's name.
 	 */
 	CRC_interface(const int K, const int n_frames = 1, const std::string name = "CRC_interface") 
-	: Module(n_frames, name), K(K) {}
+	: Module(n_frames, name), K(K)
+	{
+	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~CRC_interface() {}
+	virtual ~CRC_interface()
+	{
+	}
 
 	/*!
 	 * \brief Gets the size of the CRC (the number of bits for the CRC signature).

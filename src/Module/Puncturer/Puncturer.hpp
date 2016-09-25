@@ -1,3 +1,10 @@
+/*!
+ * \file
+ * \brief Punctures a codeword to match a frame size.
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
 #ifndef PUNCTURER_HPP_
 #define PUNCTURER_HPP_
 
@@ -7,21 +14,59 @@
 
 #include "Module/Module.hpp"
 
+/*!
+ * \class Puncturer_interface
+ *
+ * \brief Punctures a codeword to match a frame size.
+ *
+ * \tparam B: type of the bits in the frames.
+ * \tparam Q: type of the reals (floating-point or fixed-point representation) in the Puncturer.
+ *
+ * Please use Puncturer for inheritance (instead of Puncturer_interface)
+ */
 template <typename B, typename Q>
-class Puncturer_interface : public Module // please use Puncturer<B,Q> for inheritance (instead of Puncturer_interface<B,Q>)
+class Puncturer_interface : public Module
 {
 protected:
-	const int K;      // number of information bits
-	const int N;      // frame size
-	const int N_code; // real size of the code (N_code >= N)
+	const int K;      /*!< Number of information bits in one frame */
+	const int N;      /*!< Size of one frame (= number of bits in one frame) */
+	const int N_code; /*!< Real size of the codeword (Puncturer_interface::N_code >= Puncturer_interface::N) */
 
 public:
+	/*!
+	 * \brief Constructor.
+	 *
+	 * \param K:        number of information bits in the frame.
+	 * \param N:        size of one frame.
+	 * \param N_code:   real size of the codeword (Puncturer_interface::N_code >= Puncturer_interface::N).
+	 * \param n_frames: number of frames to process in the Puncturer.
+	 * \param name:     Puncturer's name.
+	 */
 	Puncturer_interface(const int K, const int N, const int N_code, const int n_frames = 1, 
 	                    const std::string name = "Puncturer_interface") 
-	: Module(n_frames, name), K(K), N(N), N_code(N_code) {}
+	: Module(n_frames, name), K(K), N(N), N_code(N_code)
+	{
+	}
+
+	/*!
+	 * \brief Destructor.
+	 */
 	virtual ~Puncturer_interface() {}
 
+	/*!
+	 * \brief Punctures a codeword.
+	 *
+	 * \param X_N1: a complete/valid codeword..
+	 * \param X_N2: a punctured codeword (corresponding to the frame size).
+	 */
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
+
+	/*!
+	 * \brief Depunctures a codeword.
+	 *
+	 * \param Y_N1: a noised and punctured codeword (corresponding to the frame size).
+	 * \param Y_N2: a noised and complete/valid codeword.
+	 */
 	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
 };
 

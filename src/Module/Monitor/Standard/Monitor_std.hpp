@@ -30,12 +30,12 @@ public:
 	bool fe_limit_achieved() const;
 	int get_fe_limit() const;
 
-	unsigned long long get_n_analyzed_frames() const;
+	unsigned long long get_n_analyzed_fra() const;
 	int get_n_fe() const;
 	int get_n_be() const;
 
-	float get_fer_value() const;
-	float get_ber_value() const;
+	float get_fer() const;
+	float get_ber() const;
 
 	bool is_last_frame_error() { return last_frame_error; };
 

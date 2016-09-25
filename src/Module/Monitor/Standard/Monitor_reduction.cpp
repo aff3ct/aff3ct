@@ -30,11 +30,11 @@ void Monitor_reduction<B>
 {
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
 	{
-		if (error_analyzers[i]->get_n_analyzed_frames())
+		if (error_analyzers[i]->get_n_analyzed_fra())
 		{
 			auto cur_n_be              = error_analyzers[i]->get_n_be();
 			auto cur_n_fe              = error_analyzers[i]->get_n_fe();
-			auto cur_n_analyzed_frames = error_analyzers[i]->get_n_analyzed_frames();
+			auto cur_n_analyzed_frames = error_analyzers[i]->get_n_analyzed_fra();
 			
 			this->n_bit_errors      += cur_n_be              - prev_n_be[i];
 			// this is made in "increment_frame_errors" subroutine

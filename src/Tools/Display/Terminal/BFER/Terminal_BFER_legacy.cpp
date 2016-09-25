@@ -37,21 +37,21 @@ void Terminal_BFER_legacy<B,R>::_report(std::ostream &stream)
 	auto ber = 0.f, fer = 0.f, be_fe = 0.f;
 	if (monitor.get_n_be() != 0)
 	{
-		ber   = (float)monitor.get_ber_value();
-		fer   = (float)monitor.get_fer_value();
+		ber   = (float)monitor.get_ber();
+		fer   = (float)monitor.get_fer();
 		be_fe = (float)monitor.get_n_be() / (float)monitor.get_n_fe();
 	}
 	else
 	{
-		ber = (1.f) / ((float)monitor.get_n_analyzed_frames()) / monitor.get_K();
-		fer = (1.f) / ((float)monitor.get_n_analyzed_frames());
+		ber = (1.f) / ((float)monitor.get_n_analyzed_fra()) / monitor.get_K();
+		fer = (1.f) / ((float)monitor.get_n_analyzed_fra());
 	}
 
 	auto rt   = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
-	auto fpmn = (60.f * monitor.get_n_analyzed_frames()) / rt;
+	auto fpmn = (60.f * monitor.get_n_analyzed_fra()) / rt;
 	auto bps  = (fpmn * (float)monitor.get_N()) / 60.f / 1000.f / 1000.f;
 
-	auto fra = monitor.get_n_analyzed_frames();
+	auto fra = monitor.get_n_analyzed_fra();
 	auto fe  = monitor.get_n_fe();
 	auto be  = monitor.get_n_be();
 

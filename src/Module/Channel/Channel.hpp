@@ -33,17 +33,21 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param N       : size of one frame.
+	 * \param N:        size of one frame.
 	 * \param n_frames: number of frames to process in the Channel.
-	 * \param name    : Channel's name.
+	 * \param name:     Channel's name.
 	 */
 	Channel_interface(const int N, const int n_frames = 1, const std::string name = "Channel_interface")
-	: Module(n_frames, name), N(N) {}
+	: Module(n_frames, name), N(N)
+	{
+	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel_interface() {}
+	virtual ~Channel_interface()
+	{
+	}
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.

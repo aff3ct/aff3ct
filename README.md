@@ -63,7 +63,8 @@ Enable the colors and boldfaces in the shell with the `-DENABLE_COOL_BASH` flag:
 This command will use the generated Makefile.
 
 ## Run the code
-Here are some examples of runs.
+Here are some examples of runs. You can skip the computations of the current SNR point with the `ctrl+C` combination on the keyboard.
+If you use `ctrl+C` twice in a small time-step (500ms), the program will stop.
 
 ### Decoding of the Polar codes with the Successive Cancellation decoder
 
