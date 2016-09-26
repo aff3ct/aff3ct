@@ -10,14 +10,16 @@ set(CMAKE_MACOSX_RPATH 1)
 set (EXECUTABLE_OUTPUT_PATH bin/)
 set (LIBRARY_OUTPUT_PATH lib/)
 
-# Génération de la liste des fichiers sources
+# Generate the source files list
 file (GLOB_RECURSE source_files src/*)
 
 # Object
 add_library (aff3ct-obj OBJECT ${source_files})
+
 # Binary
 add_executable (aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
 set_target_properties(aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct)
+
 # Library
 add_library (aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
 set_target_properties(aff3ct-shared-lib PROPERTIES OUTPUT_NAME aff3ct)
@@ -63,7 +65,7 @@ endif (ENABLE_SYSTEMC)
 
 # Enable C++11, pthread and fPIC
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions(-std=c++1y -fPIC)
+    add_definitions(-std=c++1y -fPIC -Wno-overloaded-virtual)
     aff3ct_link_libraries(-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_definitions(-std=c++11 -pthread -fPIC)
@@ -72,3 +74,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
     add_definitions(-std=c++11 -pthread)
     aff3ct_link_libraries(-pthread)
 endif()
+
+# Specific options
+add_definitions(-DENABLE_BIT_PACKING -DMIPP_ALIGNED_LOADS)
