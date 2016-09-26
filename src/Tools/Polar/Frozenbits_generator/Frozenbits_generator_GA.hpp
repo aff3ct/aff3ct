@@ -3,7 +3,7 @@
 
 #include <limits>
 #include <vector>
-#include "../../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 #include "Frozenbits_generator.hpp"
 

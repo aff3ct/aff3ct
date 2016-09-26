@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../bash_tools.h"
+#include "Tools/bash_tools.h"
 
 #ifdef __AVX2__
 #include "transpose_AVX.h"

@@ -1,4 +1,4 @@
-#include "../../../Tools/Math/utils.h"
+#include "Tools/Math/utils.h"
 
 #include "Scaling_factor_constant.hpp"
 
@@ -20,7 +20,7 @@ void Scaling_factor_constant<R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Scaling_factor_constant<Q_8>;
 template class Scaling_factor_constant<Q_16>;

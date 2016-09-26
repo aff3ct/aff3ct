@@ -1,5 +1,5 @@
-#include "../../Terminal/BFER/Terminal_BFER.hpp"
-#include "../../Terminal/BFER/Terminal_BFER_legacy.hpp"
+#include "Terminal/BFER/Terminal_BFER.hpp"
+#include "Terminal/BFER/Terminal_BFER_legacy.hpp"
 
 #include "Factory_terminal.hpp"
 
@@ -23,7 +23,7 @@ Terminal* Factory_terminal<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_terminal<B_8,R_8>;
 template struct Factory_terminal<B_16,R_16>;

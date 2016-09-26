@@ -5,12 +5,6 @@
 #include <atomic>
 #include <condition_variable>
 
-/*#ifdef _WIN32
-// see https://github.com/meganz/mingw-std-threads
-#include <mingw.mutex.h>
-#include <mingw.condition_variable.h>
-#endif*/
-
 class Barrier
 {
 private:

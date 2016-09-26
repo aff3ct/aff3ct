@@ -1,7 +1,7 @@
 #include <string>
 
-#include "../../../Decoder/Repetition/Decoder_repetition_std.hpp"
-#include "../../../Decoder/Repetition/Decoder_repetition_fast.hpp"
+#include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
+#include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
 
 #include "Factory_decoder_repetition.hpp"
 
@@ -25,7 +25,7 @@ Decoder<B,R>* Factory_decoder_repetition<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_decoder_repetition<B_8,Q_8>;
 template struct Factory_decoder_repetition<B_16,Q_16>;

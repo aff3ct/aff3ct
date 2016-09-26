@@ -1,13 +1,15 @@
 #ifndef SIMULATION_TURBO_HPP_
 #define SIMULATION_TURBO_HPP_
 
-#include "../Simulation_BFER.hpp"
+#include "Tools/params.h"
 
-#include "../../../Interleaver/Interleaver.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC_sys.hpp"
-#include "../../../Tools/Turbo/Scaling_factor/Scaling_factor.hpp"
-#include "../../../Decoder/SISO.hpp"
-#include "../../../Tools/params.h"
+#include "Tools/Turbo/Scaling_factor/Scaling_factor.hpp"
+
+#include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
+#include "Module/Decoder/SISO.hpp"
+
+#include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_turbo : public Simulation_BFER<B,R,Q>

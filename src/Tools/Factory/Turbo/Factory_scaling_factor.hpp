@@ -1,9 +1,8 @@
 #ifndef FACTORY_SCALING_FACTOR_HPP
 #define FACTORY_SCALING_FACTOR_HPP
 
-#include "../../Turbo/Scaling_factor/Scaling_factor.hpp"
-
-#include "../../params.h"
+#include "Tools/params.h"
+#include "Tools/Turbo/Scaling_factor/Scaling_factor.hpp"
 
 template <typename R>
 struct Factory_scaling_factor

@@ -1,5 +1,5 @@
-#include "../../../Encoder/LDPC/Encoder_LDPC_fake.hpp"
-#include "../../../Encoder/LDPC/Encoder_LDPC_fake_coset.hpp"
+#include "Module/Encoder/LDPC/Encoder_LDPC_fake.hpp"
+#include "Module/Encoder/LDPC/Encoder_LDPC_fake_coset.hpp"
 
 #include "Factory_encoder_LDPC.hpp"
 
@@ -25,7 +25,7 @@ Encoder_LDPC_sys<B>* Factory_encoder_LDPC<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_encoder_LDPC<B_8>;
 template struct Factory_encoder_LDPC<B_16>;

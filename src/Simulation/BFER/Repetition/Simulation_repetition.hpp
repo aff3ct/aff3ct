@@ -1,9 +1,9 @@
 #ifndef SIMULATION_REPETITION_HPP_
 #define SIMULATION_REPETITION_HPP_
 
-#include "../Simulation_BFER.hpp"
+#include "Tools/params.h"
 
-#include "../../../Tools/params.h"
+#include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_repetition : public Simulation_BFER<B,R,Q>

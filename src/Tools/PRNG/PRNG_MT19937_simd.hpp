@@ -15,7 +15,7 @@ This implementation is inspired by: https://github.com/cslarsen/mersenne-twister
 
 #include <vector>
 
-#include "../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 class PRNG_MT19937_simd
 {

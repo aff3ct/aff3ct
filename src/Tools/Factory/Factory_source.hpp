@@ -1,9 +1,9 @@
 #ifndef FACTORY_SOURCE_HPP
 #define FACTORY_SOURCE_HPP
 
-#include "../../Source/Source.hpp"
+#include "Module/Source/Source.hpp"
 
-#include "../params.h"
+#include "Tools/params.h"
 
 template <typename B>
 struct Factory_source

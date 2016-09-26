@@ -1,9 +1,9 @@
 #ifndef FACTORY_CRC_HPP
 #define FACTORY_CRC_HPP
 
-#include "../../CRC/CRC.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Module/CRC/CRC.hpp"
 
 template <typename B>
 struct Factory_CRC

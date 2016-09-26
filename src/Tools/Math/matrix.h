@@ -1,7 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 // ------------------------------------------------------------------------------------------- special function headers
 

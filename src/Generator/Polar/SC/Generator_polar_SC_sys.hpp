@@ -3,12 +3,14 @@
 
 #include <map>
 #include <vector>
-#include "../../../Tools/MIPP/mipp.h"
+
+#include "Tools/MIPP/mipp.h"
+#include "Tools/Tree/Binary_tree.hpp"
+#include "Tools/Polar/Pattern_parser_polar.hpp"
+
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 
 #include "../../Generator.hpp"
-#include "../../../Tools/Tree/Binary_tree.hpp"
-#include "../../../Tools/Polar/Pattern_parser_polar.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 
 class Generator_polar_SC_sys : public Generator
 {

@@ -3,7 +3,7 @@
 
 #include <chrono>
 #include <vector>
-#include "../../../Tools/MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 #include "../Simulation_EXIT.hpp"
 

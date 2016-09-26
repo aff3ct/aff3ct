@@ -1,9 +1,9 @@
 #ifndef FACTORY_DECODER_POLAR_HPP
 #define FACTORY_DECODER_POLAR_HPP
 
-#include "../../../CRC/CRC.hpp"
-#include "../../../Decoder/SISO.hpp"
-#include "../../../Decoder/Decoder.hpp"
+#include "Module/CRC/CRC.hpp"
+#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder.hpp"
 
 #include "../../MIPP/mipp.h"
 

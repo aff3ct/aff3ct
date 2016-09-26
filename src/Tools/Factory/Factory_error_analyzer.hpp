@@ -1,9 +1,9 @@
 #ifndef FACTORY_ERROR_ANALYZER_HPP
 #define FACTORY_ERROR_ANALYZER_HPP
 
-#include "../../Error/Error_analyzer.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Module/Error/Error_analyzer.hpp"
 
 template <typename B>
 struct Factory_error_analyzer

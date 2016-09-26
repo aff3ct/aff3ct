@@ -1,5 +1,5 @@
-#include "../../../Encoder/RSC/Encoder_RSC3_sys.hpp"
-#include "../../../Encoder/RSC/Encoder_RSC4_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC3_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC4_sys.hpp"
 
 #include "Factory_encoder_RSC.hpp"
 
@@ -28,7 +28,7 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_encoder_RSC<B_8>;
 template struct Factory_encoder_RSC<B_16>;

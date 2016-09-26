@@ -1,7 +1,7 @@
 #ifndef BIT_PACKER_HPP_
 #define BIT_PACKER_HPP_
 
-#include "MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 template <typename B>
 struct Bit_packer

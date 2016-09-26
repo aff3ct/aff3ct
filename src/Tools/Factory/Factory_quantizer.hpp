@@ -1,9 +1,9 @@
 #ifndef FACTORY_QUANTIZER_HPP
 #define FACTORY_QUANTIZER_HPP
 
-#include "../../Quantizer/Quantizer.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Module/Quantizer/Quantizer.hpp"
 
 template <typename R, typename Q>
 struct Factory_quantizer

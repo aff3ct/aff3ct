@@ -2,19 +2,20 @@
 #define SIMULATION_EXIT_HPP_
 
 #include <vector>
-#include "../../Tools/MIPP/mipp.h"
+
+#include "Tools/MIPP/mipp.h"
+#include "Tools/params.h"
+
+#include "Module/Source/Source.hpp"
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Modulator/Modulator.hpp"
+#include "Module/Channel/Channel.hpp"
+#include "Module/Quantizer/Quantizer.hpp"
+#include "Module/Decoder/SISO.hpp"
+
+#include "Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "../Simulation.hpp"
-
-#include "../../Source/Source.hpp"
-#include "../../Encoder/Encoder.hpp"
-#include "../../Modulator/Modulator.hpp"
-#include "../../Channel/Channel.hpp"
-#include "../../Quantizer/Quantizer.hpp"
-#include "../../Decoder/SISO.hpp"
-#include "../../Terminal/EXIT/Terminal_EXIT.hpp"
-
-#include "../../Tools/params.h"
 
 template <typename B, typename R, typename Q>
 class Simulation_EXIT : public Simulation

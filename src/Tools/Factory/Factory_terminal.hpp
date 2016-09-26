@@ -1,10 +1,10 @@
 #ifndef FACTORY_TERMINAL_HPP
 #define FACTORY_TERMINAL_HPP
 
-#include "../../Terminal/Terminal.hpp"
-#include "../../Error/Error_analyzer.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Terminal/Terminal.hpp"
+#include "Module/Error/Error_analyzer.hpp"
 
 template <typename B, typename R>
 struct Factory_terminal

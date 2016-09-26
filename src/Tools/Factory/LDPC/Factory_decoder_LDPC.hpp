@@ -3,10 +3,10 @@
 
 #include <string>
 
-#include "../../../Decoder/Decoder.hpp"
-#include "../../../Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
-#include "../../params.h"
+#include "Tools/params.h"
 
 template <typename B, typename R>
 struct Factory_decoder_LDPC

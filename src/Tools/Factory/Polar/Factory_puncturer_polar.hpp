@@ -1,10 +1,10 @@
 #ifndef FACTORY_PUNCTURER_POLAR_HPP
 #define FACTORY_PUNCTURER_POLAR_HPP
 
-#include "../../../Puncturer/Puncturer.hpp"
-#include "../../Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/params.h"
+#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "../../params.h"
+#include "Module/Puncturer/Puncturer.hpp"
 
 template <typename B, typename Q>
 struct Factory_puncturer_polar

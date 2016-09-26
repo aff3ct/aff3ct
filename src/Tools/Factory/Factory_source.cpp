@@ -1,7 +1,7 @@
-#include "../../Source/AZCW/Source_AZCW.hpp"
-#include "../../Source/Random/Source_random.hpp"
-#include "../../Source/Random/Source_random_fast.hpp"
-#include "../../Source/Fixed/Source_fixed.hpp"
+#include "Module/Source/AZCW/Source_AZCW.hpp"
+#include "Module/Source/Random/Source_random.hpp"
+#include "Module/Source/Random/Source_random_fast.hpp"
+#include "Module/Source/Fixed/Source_fixed.hpp"
 
 #include "Factory_source.hpp"
 
@@ -26,7 +26,7 @@ Source<B>* Factory_source<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_source<B_8>;
 template struct Factory_source<B_16>;

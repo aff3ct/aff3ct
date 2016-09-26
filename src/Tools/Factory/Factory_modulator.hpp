@@ -1,9 +1,9 @@
 #ifndef FACTORY_MODULATOR_HPP
 #define FACTORY_MODULATOR_HPP
 
-#include "../../Modulator/Modulator.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Module/Modulator/Modulator.hpp"
 
 template <typename B, typename R, typename Q>
 struct Factory_modulator

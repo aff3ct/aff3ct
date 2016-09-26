@@ -1,29 +1,29 @@
-#include "../../../Decoder/Polar/decoder_polar_functions.h"
+#include "Module/Decoder/Polar/decoder_polar_functions.h"
 
-#include "../../../Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
-#include "../../../Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp"
-#include "../../../Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp"
-#include "../../../Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
-#include "../../../Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp"
-#include "../../../Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
-#include "../../../Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
-#include "../../../Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
-#include "../../../Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp"
+#include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
+#include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp"
 
 // #define API_POLAR_DYNAMIC 1
 
 #ifdef API_POLAR_DYNAMIC
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
 #else
-#include "../../../Decoder/Polar/SC/API/API_polar_static_seq.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_inter.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_inter_8bit_bitpacking.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_intra_8bit.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_intra_16bit.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_intra_32bit.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_seq.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_inter.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_inter_8bit_bitpacking.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_8bit.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_16bit.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_32bit.hpp"
 #endif
 
 #include "Factory_decoder_polar.hpp"
@@ -188,7 +188,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_decoder_polar<B_8,Q_8>;
 template struct Factory_decoder_polar<B_16,Q_16>;

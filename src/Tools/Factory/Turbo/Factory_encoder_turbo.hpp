@@ -1,11 +1,11 @@
 #ifndef FACTORY_ENCODER_TURBO_HPP
 #define FACTORY_ENCODER_TURBO_HPP
 
-#include "../../../Interleaver/Interleaver.hpp"
-#include "../../../Encoder/Encoder.hpp"
-#include "../../../Encoder/Encoder_sys.hpp"
+#include "Tools/params.h"
 
-#include "../../params.h"
+#include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Encoder/Encoder_sys.hpp"
 
 template <typename B>
 struct Factory_encoder_turbo

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <limits>
 
-#include "../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 template <typename R> inline R           div2(R           val) { return val * (R)0.50; }
 template <>           inline int         div2(int         val) { return val >> 1;      }

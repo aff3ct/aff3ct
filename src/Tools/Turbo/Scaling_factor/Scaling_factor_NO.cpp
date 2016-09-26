@@ -14,7 +14,7 @@ void Scaling_factor_NO<R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Scaling_factor_NO<Q_8>;
 template class Scaling_factor_NO<Q_16>;

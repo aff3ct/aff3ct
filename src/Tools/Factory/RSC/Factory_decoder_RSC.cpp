@@ -1,19 +1,19 @@
-#include "../../../Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hpp"
-#include "../../../Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
-#include "../../../Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hpp"
-#include "../../../Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_very_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_very_fast.hpp"
 
-#include "../../../Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
 
-#include "../../../Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_std.hpp"
-#include "../../../Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_fast.hpp"
-#include "../../../Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_SSE.hpp"
-#include "../../../Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_AVX.hpp"
-#include "../../../Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x4_AVX.hpp"
+#include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_SSE.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_AVX.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x4_AVX.hpp"
 
-#include "../../../Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_std.hpp"
-#include "../../../Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
-#include "../../../Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
+#include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
 
 #include "Factory_decoder_RSC.hpp"
 
@@ -372,7 +372,7 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_decoder_RSC<B_8,Q_8,QD_8>;
 template struct Factory_decoder_RSC<B_16,Q_16,QD_16>;

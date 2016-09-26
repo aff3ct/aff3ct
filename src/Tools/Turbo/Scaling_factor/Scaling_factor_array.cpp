@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "../../../Tools/Math/utils.h"
+#include "Tools/Math/utils.h"
 
 #include "Scaling_factor_array.hpp"
 
@@ -24,7 +24,7 @@ void Scaling_factor_array<R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Scaling_factor_array<Q_8>;
 template class Scaling_factor_array<Q_16>;

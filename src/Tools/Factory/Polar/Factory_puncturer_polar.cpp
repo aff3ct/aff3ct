@@ -1,7 +1,7 @@
-#include "../../../Puncturer/NO/Puncturer_NO.hpp"
-#include "../../../Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+#include "Tools/bash_tools.h"
 
-#include "../../bash_tools.h"
+#include "Module/Puncturer/NO/Puncturer_NO.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "Factory_puncturer_polar.hpp"
 
@@ -21,7 +21,7 @@ Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_puncturer_polar<B_8,Q_8>;
 template struct Factory_puncturer_polar<B_16,Q_16>;

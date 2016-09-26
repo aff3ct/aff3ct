@@ -9,19 +9,19 @@
 #include <iostream>
 #include <fstream>
 
-#include "../../Tools/Factory/Factory_source.hpp"
-#include "../../Tools/Factory/Factory_CRC.hpp"
-#include "../../Tools/Factory/Factory_modulator.hpp"
-#include "../../Tools/Factory/Factory_channel.hpp"
-#include "../../Tools/Factory/Factory_quantizer.hpp"
-#include "../../Tools/Factory/Factory_error_analyzer.hpp"
-#include "../../Tools/Factory/Factory_terminal.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
+#include "Tools/Frame_trace/Frame_trace.hpp"
 
-#include "../../Puncturer/NO/Puncturer_NO.hpp"
+#include "Tools/Factory/Factory_source.hpp"
+#include "Tools/Factory/Factory_CRC.hpp"
+#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_channel.hpp"
+#include "Tools/Factory/Factory_quantizer.hpp"
+#include "Tools/Factory/Factory_error_analyzer.hpp"
+#include "Tools/Factory/Factory_terminal.hpp"
 
-#include "../../Tools/bash_tools.h"
-#include "../../Tools/simu_tools.h"
-#include "../../Tools/Frame_trace/Frame_trace.hpp"
+#include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
 #include "Simulation_BFER.hpp"
 
@@ -969,7 +969,7 @@ Terminal* Simulation_BFER<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_BFER<B_8,R_8,Q_8>;
 template class Simulation_BFER<B_16,R_16,Q_16>;

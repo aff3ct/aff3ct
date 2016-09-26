@@ -1,7 +1,7 @@
-#include "../../Quantizer/Standard/Quantizer_standard.hpp"
-#include "../../Quantizer/Fast/Quantizer_fast.hpp"
-#include "../../Quantizer/Tricky/Quantizer_tricky.hpp"
-#include "../../Quantizer/NO/Quantizer_NO.hpp"
+#include "Module/Quantizer/Standard/Quantizer_standard.hpp"
+#include "Module/Quantizer/Fast/Quantizer_fast.hpp"
+#include "Module/Quantizer/Tricky/Quantizer_tricky.hpp"
+#include "Module/Quantizer/NO/Quantizer_NO.hpp"
 
 #include "Factory_quantizer.hpp"
 
@@ -33,7 +33,7 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_quantizer<R_8,Q_8>;
 template struct Factory_quantizer<R_16,Q_16>;

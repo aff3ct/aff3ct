@@ -1,4 +1,4 @@
-#include "../../../Encoder/Repetition/Encoder_repetition_sys.hpp"
+#include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
 #include "Factory_encoder_repetition.hpp"
 
@@ -18,7 +18,7 @@ Encoder_sys<B>* Factory_encoder_repetition<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_encoder_repetition<B_8>;
 template struct Factory_encoder_repetition<B_16>;

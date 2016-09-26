@@ -1,5 +1,5 @@
-#include "../../../Tools/Math/utils.h"
-#include "../../MIPP/mipp.h"
+#include "Tools/Math/utils.h"
+#include "Tools/MIPP/mipp.h"
 
 #include "Scaling_factor_vec.hpp"
 
@@ -45,7 +45,7 @@ void Scaling_factor_vec<R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Scaling_factor_vec<Q_8>;
 template class Scaling_factor_vec<Q_16>;

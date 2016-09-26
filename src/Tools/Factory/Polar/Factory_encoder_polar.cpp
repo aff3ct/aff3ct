@@ -1,7 +1,7 @@
 #include <cmath>
 
-#include "../../../Encoder/Polar/Encoder_polar.hpp"
-#include "../../../Encoder/Polar/Encoder_polar_sys.hpp"
+#include "Module/Encoder/Polar/Encoder_polar.hpp"
+#include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
 
 #include "Factory_encoder_polar.hpp"
 
@@ -25,7 +25,7 @@ Encoder<B>* Factory_encoder_polar<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_encoder_polar<B_8>;
 template struct Factory_encoder_polar<B_16>;

@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../../Simulation/BFERI/LDPC/Simulation_BFERI_LDPC.hpp"
-#include "../../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
+#include "Simulation/BFERI/LDPC/Simulation_BFERI_LDPC.hpp"
 
 #include "Launcher_BFERI_LDPC.hpp"
 
@@ -70,7 +70,7 @@ void Launcher_BFERI_LDPC<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Launcher_BFERI_LDPC<B_8,R_8,Q_8>;
 template class Launcher_BFERI_LDPC<B_16,R_16,Q_16>;

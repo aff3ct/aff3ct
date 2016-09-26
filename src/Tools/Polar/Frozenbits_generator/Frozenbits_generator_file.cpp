@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "../../bash_tools.h"
+#include "Tools/bash_tools.h"
 
 #include "Frozenbits_generator_file.hpp"
 
@@ -69,7 +69,7 @@ bool Frozenbits_generator_file<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Frozenbits_generator_file<B_8>;
 template class Frozenbits_generator_file<B_16>;

@@ -12,20 +12,19 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include "../../../Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
+#include "Tools/params.h"
+#include "Tools/simu_tools.h"
+#include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_standard.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_rate0.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_rate1.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_rep.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_spc.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_rate0_left.hpp"
-#include "../../../Decoder/Polar/SC/Patterns/Pattern_SC_rep_left.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_standard.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate0.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate1.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rep.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_spc.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate0_left.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rep_left.hpp"
 
-#include "../../../Generator/Polar/SC/Generator_polar_SC_sys.hpp"
-
-#include "../../../Tools/params.h"
-#include "../../../Tools/simu_tools.h"
+#include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 
 #include "Generation_polar.hpp"
 

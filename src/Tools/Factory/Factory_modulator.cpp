@@ -1,12 +1,12 @@
-#include "../Math/max.h"
+#include "Tools/Math/max.h"
 
-#include "../../Modulator/BPSK/Modulator_BPSK.hpp"
-#include "../../Modulator/BPSK/Modulator_BPSK_fast.hpp"
-#include "../../Modulator/PAM/Modulator_PAM.hpp"
-#include "../../Modulator/QAM/Modulator_QAM.hpp"
-#include "../../Modulator/PSK/Modulator_PSK.hpp"
-#include "../../Modulator/GSM/Modulator_GSM.hpp"
-#include "../../Modulator/GSM/Modulator_GSM_TBLess.hpp"
+#include "Module/Modulator/BPSK/Modulator_BPSK.hpp"
+#include "Module/Modulator/BPSK/Modulator_BPSK_fast.hpp"
+#include "Module/Modulator/PAM/Modulator_PAM.hpp"
+#include "Module/Modulator/QAM/Modulator_QAM.hpp"
+#include "Module/Modulator/PSK/Modulator_PSK.hpp"
+#include "Module/Modulator/GSM/Modulator_GSM.hpp"
+#include "Module/Modulator/GSM/Modulator_GSM_TBLess.hpp"
 
 #include "Factory_modulator.hpp"
 
@@ -81,7 +81,7 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_modulator<B_8,R_8,R_8>;
 template struct Factory_modulator<B_8,R_8,Q_8>;

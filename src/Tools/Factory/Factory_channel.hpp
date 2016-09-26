@@ -1,9 +1,9 @@
 #ifndef FACTORY_CHANNEL_HPP
 #define FACTORY_CHANNEL_HPP
 
-#include "../../Channel/Channel.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Module/Channel/Channel.hpp"
 
 template <typename R>
 struct Factory_channel

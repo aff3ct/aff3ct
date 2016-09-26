@@ -80,460 +80,460 @@
 // RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K4_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K4_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K4_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K4_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K4_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K8_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K8_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K8_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K8_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K8_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K16_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K16_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K16_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K16_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K16_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K32_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K32_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K32_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K32_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K32_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K64_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K64_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K64_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K64_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K64_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K128_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K128_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K128_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K128_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K128_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K256_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K256_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K256_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K256_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K256_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K512_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K2048_SNR33
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K4096_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K8192_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR18
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K32768_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K65536_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K131072_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K262144_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K262144_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K262144_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K262144_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K262144_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25.hpp"
 #endif
 #endif
 // RATE 5/6
 #ifdef ENABLE_DECODER_SC_FAST_N4_K3_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K3_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K3_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K3_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K3_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8_K7_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K7_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K7_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K7_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K7_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16_K13_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K13_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K13_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K13_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K13_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32_K27_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K27_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K27_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K27_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K27_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N64_K53_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K53_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K53_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K53_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K53_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N128_K107_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K107_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K107_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K107_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K107_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N256_K213_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K213_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K213_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K213_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K213_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N512_K427_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K427_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K427_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K427_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K427_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1024_K853_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1707_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1707_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1707_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1707_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1707_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N4096_K3413_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K3413_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K3413_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K3413_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K3413_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N8192_K6827_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K6827_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K6827_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K6827_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K6827_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K13653_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K13653_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K13653_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K13653_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K13653_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27307_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27307_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27307_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27307_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27307_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N65536_K54613_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K54613_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K54613_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K54613_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K54613_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N131072_K109227_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K109227_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K109227_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K109227_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K109227_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N262144_K218453_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K218453_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K218453_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K218453_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K218453_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N524288_K436907_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K436907_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K436907_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K436907_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K436907_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N1048576_K873813_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40.hpp"
 #endif
 #endif
 // RATE .84
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K27568_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27568_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27568_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27568_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27568_SNR40.hpp"
 #endif
 #endif
 // RATE 9/10
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR40.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N16384_K14746_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K14746_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K14746_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K14746_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K14746_SNR40.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29492_SNR40
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.hpp"
 #endif
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 2048
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K205_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K205_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K205_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K205_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K205_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K410_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K410_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K410_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K410_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K410_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K614_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K614_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K614_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K614_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K614_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K819_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K819_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K819_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K819_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K819_SNR25.hpp"
 #endif
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N2048_K1024_SNR25
 //#ifdef ENABLE_SHORT_GENERATED_DECODERS
-//#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
+//#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
 //#else
-//#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
+//#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp"
 //#endif
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1229_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1229_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1229_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1229_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1229_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1434_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1434_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1434_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1434_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1434_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1638_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1638_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1638_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1638_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1638_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N2048_K1843_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR25.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR25.hpp"
 #endif
 #endif
 // RATE 1/10, 2/10, ..., 9/10 => N = 32768
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K3277_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K3277_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K3277_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K3277_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K3277_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K6554_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K6554_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K6554_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K6554_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K6554_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K9830_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K9830_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K9830_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K9830_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K13107_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K13107_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K13107_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K13107_SNR25.hpp"
 #endif
 #endif
 //#ifdef ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25
 //#ifdef ENABLE_SHORT_GENERATED_DECODERS
-//#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.short.hpp"
+//#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.short.hpp"
 //#else
-//#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.hpp"
+//#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.hpp"
 //#endif
 //#endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K19661_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K19661_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K19661_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K19661_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K22938_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K22938_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K22938_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K22938_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K26214_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K26214_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K26214_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K26214_SNR25.hpp"
 #endif
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29491_SNR25.short.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29491_SNR25.short.hpp"
 #else
-#include "../../../Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29491_SNR25.hpp"
+#include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29491_SNR25.hpp"
 #endif
 #endif
 
-#include "../../../Decoder/Polar/decoder_polar_functions.h"
+#include "Module/Decoder/Polar/decoder_polar_functions.h"
 
 // #define API_POLAR_DYNAMIC 1
 
 #ifdef API_POLAR_DYNAMIC
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
 #else
-#include "../../../Decoder/Polar/SC/API/API_polar_static_seq.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_inter.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_inter_8bit_bitpacking.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_intra_8bit.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_intra_16bit.hpp"
-#include "../../../Decoder/Polar/SC/API/API_polar_static_intra_32bit.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_seq.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_inter.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_inter_8bit_bitpacking.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_8bit.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_16bit.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_32bit.hpp"
 #endif
 
 #include "Factory_decoder_polar_gen.hpp"
@@ -2001,7 +2001,7 @@ void Factory_decoder_polar_gen<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_decoder_polar_gen<B_8,Q_8>;
 template struct Factory_decoder_polar_gen<B_16,Q_16>;

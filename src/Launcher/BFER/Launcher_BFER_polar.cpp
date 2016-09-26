@@ -2,9 +2,10 @@
 #include <cassert>
 #include <cmath>
 
-#include "../../Simulation/BFER/Polar/Simulation_polar.hpp"
-#include "../../CRC/Polynomial/CRC_polynomial.hpp"
-#include "../../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
+
+#include "Simulation/BFER/Polar/Simulation_polar.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 #include "Launcher_BFER_polar.hpp"
 
@@ -140,7 +141,7 @@ void Launcher_BFER_polar<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Launcher_BFER_polar<B_8,R_8,Q_8>;
 template class Launcher_BFER_polar<B_16,R_16,Q_16>;

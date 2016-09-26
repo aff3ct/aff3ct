@@ -1,7 +1,7 @@
 #ifndef FRAME_TRACE_HPP
 #define FRAME_TRACE_HPP
 
-#include "../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 template <typename B>
 class Frame_trace 

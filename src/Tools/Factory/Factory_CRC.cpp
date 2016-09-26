@@ -1,11 +1,11 @@
 #include <string>
 
-#include "../../CRC/NO/CRC_NO.hpp"
-#include "../../CRC/Polynomial/CRC_polynomial.hpp"
-#include "../../CRC/Polynomial/CRC_polynomial_inter.hpp"
-#include "../../CRC/Polynomial/CRC_polynomial_double.hpp"
+#include "Tools/MIPP/mipp.h"
 
-#include "../MIPP/mipp.h"
+#include "Module/CRC/NO/CRC_NO.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_double.hpp"
 
 #include "Factory_CRC.hpp"
 
@@ -37,7 +37,7 @@ CRC<B>* Factory_CRC<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_CRC<B_8>;
 template struct Factory_CRC<B_16>;

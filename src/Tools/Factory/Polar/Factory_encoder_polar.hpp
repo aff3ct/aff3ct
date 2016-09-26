@@ -1,10 +1,10 @@
 #ifndef FACTORY_ENCODER_POLAR_HPP
 #define FACTORY_ENCODER_POLAR_HPP
 
-#include "../../../Encoder/Encoder.hpp"
+#include "Tools/params.h"
+#include "Tools/MIPP/mipp.h"
 
-#include "../../params.h"
-#include "../../MIPP/mipp.h"
+#include "Module/Encoder/Encoder.hpp"
 
 template <typename B>
 struct Factory_encoder_polar

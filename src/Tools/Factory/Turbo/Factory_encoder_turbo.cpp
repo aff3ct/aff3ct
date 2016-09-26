@@ -1,5 +1,5 @@
-#include "../../../Encoder/Turbo/Encoder_turbo.hpp"
-#include "../../../Encoder/Turbo/Encoder_turbo_legacy.hpp"
+#include "Module/Encoder/Turbo/Encoder_turbo.hpp"
+#include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
 
 #include "Factory_encoder_turbo.hpp"
 
@@ -28,7 +28,7 @@ Encoder<B>* Factory_encoder_turbo<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_encoder_turbo<B_8>;
 template struct Factory_encoder_turbo<B_16>;

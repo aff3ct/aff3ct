@@ -4,7 +4,7 @@
 #include <string>
 #include <chrono>
 
-#include "../../Error/Error_analyzer.hpp"
+#include "Module/Error/Error_analyzer.hpp"
 
 #include "../Terminal.hpp"
 

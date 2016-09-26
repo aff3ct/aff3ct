@@ -8,24 +8,25 @@
 #include <thread>
 #include <chrono>
 #include <vector>
-#include "../../Tools/MIPP/mipp.h"
+
+#include "Tools/MIPP/mipp.h"
+#include "Tools/params.h"
+#include "Tools/Threads/Barrier.hpp"
+
+#include "Module/Source/Source.hpp"
+#include "Module/CRC/CRC.hpp"
+#include "Module/Encoder/Encoder.hpp"
+#include "Module/Puncturer/Puncturer.hpp"
+#include "Module/Modulator/Modulator.hpp"
+#include "Module/Channel/Channel.hpp"
+#include "Module/Quantizer/Quantizer.hpp"
+#include "Module/Decoder/Decoder.hpp"
+#include "Module/Error/Error_analyzer.hpp"
+#include "Module/Error/Standard/Error_analyzer_reduction.hpp"
+
+#include "Terminal/Terminal.hpp"
 
 #include "../Simulation.hpp"
-
-#include "../../Source/Source.hpp"
-#include "../../CRC/CRC.hpp"
-#include "../../Encoder/Encoder.hpp"
-#include "../../Puncturer/Puncturer.hpp"
-#include "../../Modulator/Modulator.hpp"
-#include "../../Channel/Channel.hpp"
-#include "../../Quantizer/Quantizer.hpp"
-#include "../../Decoder/Decoder.hpp"
-#include "../../Error/Error_analyzer.hpp"
-#include "../../Error/Standard/Error_analyzer_reduction.hpp"
-#include "../../Terminal/Terminal.hpp"
-
-#include "../../Tools/params.h"
-#include "../../Tools/Threads/Barrier.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation

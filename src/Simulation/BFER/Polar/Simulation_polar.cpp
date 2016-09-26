@@ -4,17 +4,17 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
-#include "../../../Tools/Factory/Polar/Factory_puncturer_polar.hpp"
-#include "../../../Tools/Factory/Polar/Factory_encoder_polar.hpp"
-#include "../../../Tools/Factory/Polar/Factory_decoder_polar.hpp"
-#include "../../../Tools/Factory/Polar/Factory_decoder_polar_gen.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
+#include "Tools/Frame_trace/Frame_trace.hpp"
 
-#include "../../../Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+#include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
+#include "Tools/Factory/Polar/Factory_puncturer_polar.hpp"
+#include "Tools/Factory/Polar/Factory_encoder_polar.hpp"
+#include "Tools/Factory/Polar/Factory_decoder_polar.hpp"
+#include "Tools/Factory/Polar/Factory_decoder_polar_gen.hpp"
 
-#include "../../../Tools/bash_tools.h"
-#include "../../../Tools/simu_tools.h"
-#include "../../../Tools/Frame_trace/Frame_trace.hpp"
+#include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "Simulation_polar.hpp"
 
@@ -132,7 +132,7 @@ Decoder<B,Q>* Simulation_polar<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_polar<B_8,R_8,Q_8>;
 template class Simulation_polar<B_16,R_16,Q_16>;

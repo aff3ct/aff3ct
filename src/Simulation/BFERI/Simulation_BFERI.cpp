@@ -7,18 +7,18 @@
 #include <cassert>
 #include <algorithm>
 
-#include "../../Tools/Factory/Factory_source.hpp"
-#include "../../Tools/Factory/Factory_CRC.hpp"
-#include "../../Tools/Factory/Factory_modulator.hpp"
-#include "../../Tools/Factory/Factory_channel.hpp"
-#include "../../Tools/Factory/Factory_quantizer.hpp"
-#include "../../Tools/Factory/Factory_interleaver.hpp"
-#include "../../Tools/Factory/Factory_error_analyzer.hpp"
-#include "../../Tools/Factory/Factory_terminal.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
+#include "Tools/Frame_trace/Frame_trace.hpp"
 
-#include "../../Tools/bash_tools.h"
-#include "../../Tools/simu_tools.h"
-#include "../../Tools/Frame_trace/Frame_trace.hpp"
+#include "Tools/Factory/Factory_source.hpp"
+#include "Tools/Factory/Factory_CRC.hpp"
+#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_channel.hpp"
+#include "Tools/Factory/Factory_quantizer.hpp"
+#include "Tools/Factory/Factory_interleaver.hpp"
+#include "Tools/Factory/Factory_error_analyzer.hpp"
+#include "Tools/Factory/Factory_terminal.hpp"
 
 #include "Simulation_BFERI.hpp"
 
@@ -897,7 +897,7 @@ Terminal* Simulation_BFERI<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_BFERI<B_8,R_8,Q_8>;
 template class Simulation_BFERI<B_16,R_16,Q_16>;

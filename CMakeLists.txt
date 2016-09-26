@@ -13,6 +13,9 @@ set (LIBRARY_OUTPUT_PATH lib/)
 # Generate the source files list
 file (GLOB_RECURSE source_files src/*)
 
+# Add includes
+include_directories (src)
+
 # Object
 add_library (aff3ct-obj OBJECT ${source_files})
 

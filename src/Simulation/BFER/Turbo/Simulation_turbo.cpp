@@ -6,15 +6,15 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Tools/Factory/Factory_interleaver.hpp"
-#include "../../../Tools/Factory/RSC/Factory_encoder_RSC.hpp"
-#include "../../../Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
-#include "../../../Tools/Factory/Turbo/Factory_scaling_factor.hpp"
-#include "../../../Tools/Factory/RSC/Factory_decoder_RSC.hpp"
-#include "../../../Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
 
-#include "../../../Tools/bash_tools.h"
-#include "../../../Tools/simu_tools.h"
+#include "Tools/Factory/Factory_interleaver.hpp"
+#include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
+#include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
+#include "Tools/Factory/Turbo/Factory_scaling_factor.hpp"
+#include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
+#include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
 
 #include "Simulation_turbo.hpp"
 
@@ -122,7 +122,7 @@ Decoder<B,Q>* Simulation_turbo<B,R,Q,QD>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_turbo<B_8,R_8,Q_8,QD_8>;
 template class Simulation_turbo<B_16,R_16,Q_16,QD_16>;

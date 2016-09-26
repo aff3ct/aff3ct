@@ -2,7 +2,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
 
 #include "Launcher.hpp"
 
@@ -299,7 +299,7 @@ void Launcher<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Launcher<B_8,R_8,Q_8>;
 template class Launcher<B_16,R_16,Q_16>;

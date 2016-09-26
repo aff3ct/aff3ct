@@ -1,8 +1,9 @@
 #include <string>
 
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP_flooding_min_sum.hpp"
+#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP_flooding_sum_product.hpp"
+
 #include "Factory_decoder_LDPC.hpp"
-#include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_flooding_min_sum.hpp"
-#include "../../../Decoder/LDPC/BP/Decoder_LDPC_BP_flooding_sum_product.hpp"
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
@@ -43,7 +44,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_decoder_LDPC<B_8,Q_8>;
 template struct Factory_decoder_LDPC<B_16,Q_16>;

@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <vector>
-#include "../../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 template <typename B>
 class Frozenbits_generator

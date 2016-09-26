@@ -4,12 +4,12 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Tools/Factory/Factory_interleaver.hpp"
-#include "../../../Encoder/RA/Encoder_RA.hpp"
-#include "../../../Decoder/RA/Decoder_RA.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
 
-#include "../../../Tools/bash_tools.h"
-#include "../../../Tools/simu_tools.h"
+#include "Tools/Factory/Factory_interleaver.hpp"
+#include "Module/Encoder/RA/Encoder_RA.hpp"
+#include "Module/Decoder/RA/Decoder_RA.hpp"
 
 #include "Simulation_RA.hpp"
 
@@ -72,7 +72,7 @@ Decoder<B,Q>* Simulation_RA<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_RA<B_8,R_8,Q_8>;
 template class Simulation_RA<B_16,R_16,Q_16>;

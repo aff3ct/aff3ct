@@ -1,4 +1,4 @@
-#include "../../Error/Standard/Error_analyzer_std.hpp"
+#include "Module/Error/Standard/Error_analyzer_std.hpp"
 
 #include "Factory_error_analyzer.hpp"
 
@@ -17,7 +17,7 @@ Error_analyzer<B>* Factory_error_analyzer<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_error_analyzer<B_8>;
 template struct Factory_error_analyzer<B_16>;

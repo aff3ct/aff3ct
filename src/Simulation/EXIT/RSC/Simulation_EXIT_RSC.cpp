@@ -4,13 +4,12 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../../Tools/Factory/RSC/Factory_encoder_RSC.hpp"
-#include "../../../Tools/Factory/RSC/Factory_decoder_RSC.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
+#include "Tools/Math/utils.h"
 
-#include "../../../Tools/Math/utils.h"
-
-#include "../../../Tools/bash_tools.h"
-#include "../../../Tools/simu_tools.h"
+#include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
+#include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
 #include "Simulation_EXIT_RSC.hpp"
 
@@ -87,7 +86,7 @@ SISO<Q>* Simulation_EXIT_RSC<B,R,Q,QD>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_EXIT_RSC<B_8,R_8,Q_8,QD_8>;
 template class Simulation_EXIT_RSC<B_16,R_16,Q_16,QD_16>;

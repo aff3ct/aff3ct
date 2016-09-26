@@ -7,10 +7,10 @@
 #include <typeindex>
 #include <unordered_map>
 
-#include "../Tools/types.h"
-#include "../Tools/params.h"
-#include "../Tools/Arguments_reader.hpp"
-#include "../Simulation/Simulation.hpp"
+#include "Tools/types.h"
+#include "Tools/params.h"
+#include "Tools/Arguments_reader.hpp"
+#include "Simulation/Simulation.hpp"
 
 template <typename B, typename R, typename Q>
 class Launcher

@@ -1,7 +1,7 @@
 #ifndef BINARY_TREE_METRIC_HPP_
 #define BINARY_TREE_METRIC_HPP_
 
-#include "../../Tree/Binary_tree.hpp"
+#include "Tools/Tree/Binary_tree.hpp"
 
 template <typename T = float, typename R = int>
 class Binary_tree_metric : public Binary_tree<T>

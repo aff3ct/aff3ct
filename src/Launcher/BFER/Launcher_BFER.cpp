@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
 
-#include "../../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
 
 #include "Launcher_BFER.hpp"
 
@@ -89,7 +89,7 @@ void Launcher_BFER<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Launcher_BFER<B_8,R_8,Q_8>;
 template class Launcher_BFER<B_16,R_16,Q_16>;

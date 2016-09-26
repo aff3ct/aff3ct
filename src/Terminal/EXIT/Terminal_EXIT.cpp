@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "../../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
 
 #include "Terminal_EXIT.hpp"
 
@@ -121,7 +121,7 @@ void Terminal_EXIT<B,R>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Terminal_EXIT<B_8,R_8>;
 template class Terminal_EXIT<B_16,R_16>;

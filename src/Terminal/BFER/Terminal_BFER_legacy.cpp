@@ -102,7 +102,7 @@ void Terminal_BFER_legacy<B,R>::final_report(std::ostream &stream)
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Terminal_BFER_legacy<B_8,R_8>;
 template class Terminal_BFER_legacy<B_16,R_16>;

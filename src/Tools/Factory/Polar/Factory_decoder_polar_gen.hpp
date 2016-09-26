@@ -1,11 +1,10 @@
 #ifndef FACTORY_DECODER_POLAR_GEN_HPP
 #define FACTORY_DECODER_POLAR_GEN_HPP
 
-#include "../../../Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder.hpp"
 
-#include "../../MIPP/mipp.h"
-
-#include "../../params.h"
+#include "Tools/MIPP/mipp.h"
+#include "Tools/params.h"
 
 template <typename B, typename R>
 struct Factory_decoder_polar_gen

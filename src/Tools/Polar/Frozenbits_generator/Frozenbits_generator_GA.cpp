@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "../../bash_tools.h"
+#include "Tools/bash_tools.h"
 
 #include "Frozenbits_generator_GA.hpp"
 
@@ -101,7 +101,7 @@ double Frozenbits_generator_GA<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Frozenbits_generator_GA<B_8>;
 template class Frozenbits_generator_GA<B_16>;

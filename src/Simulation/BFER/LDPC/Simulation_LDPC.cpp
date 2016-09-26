@@ -4,11 +4,11 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "../../../Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
-#include "../../../Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
 
-#include "../../../Tools/bash_tools.h"
-#include "../../../Tools/simu_tools.h"
+#include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
+#include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
 
 #include "Simulation_LDPC.hpp"
 
@@ -71,7 +71,7 @@ Decoder<B,Q>* Simulation_LDPC<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_LDPC<B_8,R_8,Q_8>;
 template class Simulation_LDPC<B_16,R_16,Q_16>;

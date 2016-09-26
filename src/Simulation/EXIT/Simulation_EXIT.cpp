@@ -1,13 +1,13 @@
 #include <algorithm>
 
-#include "../../Tools/Factory/Factory_source.hpp"
-#include "../../Tools/Factory/Factory_modulator.hpp"
-#include "../../Tools/Factory/Factory_channel.hpp"
-#include "../../Tools/Factory/Factory_quantizer.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
+#include "Tools/Math/utils.h"
 
-#include "../../Tools/Math/utils.h"
-#include "../../Tools/bash_tools.h"
-#include "../../Tools/simu_tools.h"
+#include "Tools/Factory/Factory_source.hpp"
+#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_channel.hpp"
+#include "Tools/Factory/Factory_quantizer.hpp"
 
 #include "Simulation_EXIT.hpp"
 
@@ -463,7 +463,7 @@ Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_EXIT<B_8,R_8,Q_8>;
 template class Simulation_EXIT<B_16,R_16,Q_16>;

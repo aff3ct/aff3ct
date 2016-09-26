@@ -1,10 +1,10 @@
-#include "../../Interleaver/LTE/Interleaver_LTE.hpp"
-#include "../../Interleaver/CCSDS/Interleaver_CCSDS.hpp"
-#include "../../Interleaver/NO/Interleaver_NO.hpp"
-#include "../../Interleaver/Columns/Interleaver_columns.hpp"
-#include "../../Interleaver/Golden/Interleaver_golden.hpp"
-#include "../../Interleaver/Random/Interleaver_random.hpp"
-#include "../../Interleaver/Random_hard/Interleaver_random_hard.hpp"
+#include "Module/Interleaver/LTE/Interleaver_LTE.hpp"
+#include "Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp"
+#include "Module/Interleaver/NO/Interleaver_NO.hpp"
+#include "Module/Interleaver/Columns/Interleaver_columns.hpp"
+#include "Module/Interleaver/Golden/Interleaver_golden.hpp"
+#include "Module/Interleaver/Random/Interleaver_random.hpp"
+#include "Module/Interleaver/Random_hard/Interleaver_random_hard.hpp"
 
 #include "Factory_interleaver.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef SCALING_FACTOR_HPP
 #define SCALING_FACTOR_HPP
 
-#include "../../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 template <typename R>
 class Scaling_factor

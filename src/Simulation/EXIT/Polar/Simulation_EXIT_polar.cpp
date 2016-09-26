@@ -4,12 +4,12 @@
 #include <algorithm>
 #include <iostream>
 
-#include "../../../Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
-#include "../../../Tools/Factory/Polar/Factory_encoder_polar.hpp"
-#include "../../../Tools/Factory/Polar/Factory_decoder_polar.hpp"
+#include "Tools/bash_tools.h"
+#include "Tools/simu_tools.h"
 
-#include "../../../Tools/bash_tools.h"
-#include "../../../Tools/simu_tools.h"
+#include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
+#include "Tools/Factory/Polar/Factory_encoder_polar.hpp"
+#include "Tools/Factory/Polar/Factory_decoder_polar.hpp"
 
 #include "Simulation_EXIT_polar.hpp"
 
@@ -92,7 +92,7 @@ SISO<Q>* Simulation_EXIT_polar<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Simulation_EXIT_polar<B_8,R_8,Q_8>;
 template class Simulation_EXIT_polar<B_16,R_16,Q_16>;

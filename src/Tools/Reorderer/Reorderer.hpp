@@ -2,7 +2,7 @@
 #define REORDERER_HPP_
 
 #include <vector>
-#include "../MIPP/mipp.h"
+#include "Tools/MIPP/mipp.h"
 
 template <typename T>
 struct Reorderer

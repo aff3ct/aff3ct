@@ -1,9 +1,9 @@
 #ifndef FACTORY_ENCODER_LDPC_HPP
 #define FACTORY_ENCODER_LDPC_HPP
 
-#include "../../../Encoder/LDPC/Encoder_LDPC_sys.hpp"
+#include "Module/Encoder/LDPC/Encoder_LDPC_sys.hpp"
 
-#include "../../params.h"
+#include "Tools/params.h"
 
 template <typename B>
 struct Factory_encoder_LDPC

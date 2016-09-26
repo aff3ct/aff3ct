@@ -1,8 +1,8 @@
 #include <cmath>
 
-#include "../../Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
-#include "../../Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
-#include "../../Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
+#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
+#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
+#include "Tools/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
 
 #include "Factory_frozenbits_generator.hpp"
 
@@ -32,7 +32,7 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_frozenbits_generator<B_8>;
 template struct Factory_frozenbits_generator<B_16>;

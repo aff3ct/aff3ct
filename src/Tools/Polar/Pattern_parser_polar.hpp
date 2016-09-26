@@ -6,8 +6,8 @@
 #include <vector>
 #include "../MIPP/mipp.h"
 
-#include "../Tree/Binary_tree.hpp"
-#include "../../Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
+#include "Tools/Tree/Binary_tree.hpp"
+#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 
 class Pattern_parser_polar
 {

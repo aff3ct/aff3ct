@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../../Simulation/BFERI/Uncoded/Simulation_BFERI_uncoded.hpp"
-#include "../../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
+#include "Simulation/BFERI/Uncoded/Simulation_BFERI_uncoded.hpp"
 
 #include "Launcher_BFERI_uncoded.hpp"
 
@@ -54,7 +54,7 @@ void Launcher_BFERI_uncoded<B,R,Q>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Launcher_BFERI_uncoded<B_8,R_8,Q_8>;
 template class Launcher_BFERI_uncoded<B_16,R_16,Q_16>;

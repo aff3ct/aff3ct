@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../../Simulation/BFER/Turbo/Simulation_turbo.hpp"
-#include "../../Tools/bash_tools.h"
+#include "Tools/bash_tools.h"
+#include "Simulation/BFER/Turbo/Simulation_turbo.hpp"
 
 #include "Launcher_BFER_turbo.hpp"
 
@@ -112,7 +112,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../../Tools/types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Launcher_BFER_turbo<B_8,R_8,Q_8,QD_8>;
 template class Launcher_BFER_turbo<B_16,R_16,Q_16,QD_16>;
