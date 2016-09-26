@@ -26,6 +26,7 @@ set_target_properties(aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct)
 
 # Command line options
 option(ENABLE_SYSTEMC "Enable SystemC support" OFF)
+option(ENABLE_GSL     "Enable GSL support"     OFF)
 
 macro(aff3ct_link_libraries lib)
     target_link_libraries(aff3ct-bin ${lib})
@@ -33,11 +34,16 @@ macro(aff3ct_link_libraries lib)
     target_link_libraries(aff3ct-static-lib ${lib})
 endmacro()
 
-find_package(GSL)
-if (GSL_FOUND)
-    include_directories(${GSL_INCLUDE_DIRS})
-    aff3ct_link_libraries(${GSL_LIBRARIES})
-endif (GSL_FOUND)
+# GSL
+if (ENABLE_GSL)
+    add_definitions("-DCHANNEL_GSL")
+
+    find_package(GSL REQUIRED)
+    if (GSL_FOUND)
+        include_directories(${GSL_INCLUDE_DIRS})
+        aff3ct_link_libraries("${GSL_LIBRARIES}")
+    endif (GSL_FOUND)
+endif (ENABLE_GSL)
 
 # SystemC
 if (ENABLE_SYSTEMC)
@@ -46,7 +52,7 @@ if (ENABLE_SYSTEMC)
     find_package(SystemC REQUIRED)
     if (SystemC_FOUND)
         include_directories(${SystemC_INCLUDE_DIRS})
-        aff3ct_link_libraries(${SystemC_LIBRARIES})
+        aff3ct_link_libraries("${SystemC_LIBRARIES}")
     endif (SystemC_FOUND)
 
     find_package(TLM REQUIRED)
@@ -55,14 +61,14 @@ if (ENABLE_SYSTEMC)
     endif (TLM_FOUND)
 endif (ENABLE_SYSTEMC)
 
-# Enable C++11 and pthread
+# Enable C++11, pthread and fPIC
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  add_definitions(-std=c++1y)
-  aff3ct_link_libraries(-lpthread)
+    add_definitions(-std=c++1y -fPIC)
+    aff3ct_link_libraries(-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  add_definitions(-std=c++11 -pthread)
-  aff3ct_link_libraries(-lpthread)
+    add_definitions(-std=c++11 -pthread -fPIC)
+    aff3ct_link_libraries(-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-  add_definitions(-std=c++11 -pthread)
-  aff3ct_link_libraries(-pthread)
+    add_definitions(-std=c++11 -pthread)
+    aff3ct_link_libraries(-pthread)
 endif()
