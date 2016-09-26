@@ -14,11 +14,27 @@ file (GLOB_RECURSE source_files src/*)
 # Déclaration de l'exécutable
 add_executable (aff3ct ${source_files})
 
+# Command line options
+option(ENABLE_SYSTEMC "Build the SystemC version" OFF)
+
 find_package(GSL)
 if (GSL_FOUND)
     include_directories(${GSL_INCLUDE_DIRS})
     target_link_libraries(aff3ct ${GSL_LIBRARIES})
 endif (GSL_FOUND)
+
+if (ENABLE_SYSTEMC)
+    find_package(SystemC)
+    if (SystemC_FOUND)
+       include_directories(${SystemC_INCLUDE_DIRS})
+        target_link_libraries(aff3ct ${SystemCLIBRARIES})
+    endif (SystemC_FOUND)
+
+    find_package(TLM)
+    if (TLM_FOUND)
+        include_directories(${TLM_INCLUDE_DIRS})
+    endif (TLM_FOUND)
+endif (ENABLE_SYSTEMC)
 
 # Enable C++11 and pthread
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
