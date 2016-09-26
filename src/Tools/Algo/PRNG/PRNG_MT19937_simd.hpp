@@ -1,14 +1,21 @@
-/*
-This is an implementation of the fast pseudo-random number generator (PRNG) MT19937, colloquially called the Mersenne 
-Twister. It was given this name because it has a period of 2^19937 - 1, which is a Mersenne prime.
-
-The Mersenne Twister is highly regarded for its performance and high quality pseudo-random numbers. In spite of this, it 
-is not suited for cryptographic code, because one only needs to observe 624 iterates to predict all future ones. It was 
-designed with statistical simulations in mind, and should therefore be quite good for Monte Carlo simulations, 
-probabilistic algorithms and so on.
-
-This implementation is inspired by: https://github.com/cslarsen/mersenne-twister
-*/
+/*!
+ * \file
+ * \brief The Mersenne Twister pseudo-random number generator (PRNG) with fast SIMD instructions.
+ *
+ * This is an implementation of fast PRNG called MT19937,
+ * meaning it has a period of 2^19937-1, which is a Mersenne
+ * prime.
+ *
+ * This PRNG is fast and suitable for non-cryptographic code.
+ * For instance, it would be perfect for Monte Carlo simulations,
+ * etc.
+ *
+ * This implementation is inspired by: https://github.com/cslarsen/mersenne-twister.
+ * It takes advantage of the fast SIMD instructions of the modern CPUs.
+ *
+ * \section LICENSE
+ * This file is under MIT license.
+ */
 
 #ifndef PRNG_MT19937_SIMD_HPP
 #define PRNG_MT19937_SIMD_HPP
@@ -17,6 +24,10 @@ This implementation is inspired by: https://github.com/cslarsen/mersenne-twister
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+/*!
+ * \class PRNG_MT19937_simd
+ * \brief The Mersenne Twister pseudo-random number generator (PRNG) with fast SIMD instructions.
+ */
 class PRNG_MT19937_simd
 {
 protected:
@@ -28,31 +39,41 @@ public:
 	PRNG_MT19937_simd();
 	virtual ~PRNG_MT19937_simd();
 
-	/*
-	 * Initialize Mersenne Twister with given seed value.
+	/*!
+	 * \brief Initializes Mersenne Twister with given seed value.
+	 *
+	 * \param seed: a vector register of seeds to initialize the PRNG.
 	 */
 	void seed(const mipp::Reg<int> seed);
 
-	/*
-	 * Extract a pseudo-random unsigned 32-bit integer in the range INT32_MIN ... INT32_MAX
+	/*!
+	 * \brief Extracts a pseudo-random signed 32-bit integer in the range INT32_MIN ... INT32_MAX.
+	 *
+	 * \return a vector register of pseudo random numbers.
 	 */
 	mipp::Reg<int> rand_s32();
 
-	/*
-	 * Return a random float in the CLOSED range [0, 1]
-	 * Mnemonic: randf_co = random float 0=closed 1=closed
+	/*!
+	 * \brief Returns a random float in the CLOSED range [0, 1]
+	 * Mnemonic: randf_co = random float 0=closed 1=closed.
+	 *
+	 * \return a vector register of pseudo random numbers.
 	 */
 	mipp::Reg<float> randf_cc();
 
-	/*
-	 * Return a random float in the OPEN range [0, 1>
-	 * Mnemonic: randf_co = random float 0=closed 1=open
+	/*!
+	 * \brief Returns a random float in the OPEN range [0, 1>
+	 * Mnemonic: randf_co = random float 0=closed 1=open.
+	 *
+	 * \return a vector register of pseudo random numbers.
 	 */
 	mipp::Reg<float> randf_co();
 
-	/*
-	 * Return a random float in the OPEN range <0, 1>
-	 * Mnemonic: randf_oo = random float 0=open 1=open
+	/*!
+	 * \brief Returns a random float in the OPEN range <0, 1>
+	 * Mnemonic: randf_oo = random float 0=open 1=open.
+	 *
+	 * \return a vector register of pseudo random numbers.
 	 */
 	mipp::Reg<float> randf_oo();
 

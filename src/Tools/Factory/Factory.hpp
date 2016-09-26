@@ -3,4 +3,4 @@
 
 struct Factory {};
 
-#endif /* FACTORYL_HPP */
+#endif /* FACTORY_HPP */

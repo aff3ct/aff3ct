@@ -327,7 +327,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
-	p.push_back(std::make_pair("Type",              params.code.type + " codes"  ));
+	p.push_back(std::make_pair("Type",              params.code.type             ));
 	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(params.code.K)));
 	p.push_back(std::make_pair("Codeword size (N)", N                            ));
 

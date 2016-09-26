@@ -1,11 +1,30 @@
+/*!
+ * \file
+ * \brief Packs and unpacks bits.
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
 #ifndef BIT_PACKER_HPP_
 #define BIT_PACKER_HPP_
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+/*!
+ * \class Bit_packer
+ *
+ * \brief Packs and unpacks bits.
+ *
+ * \tparam T: type of data to pack/unpack.
+ */
 template <typename B>
 struct Bit_packer
 {
+	/*!
+	 * \brief Packs bits.
+	 *
+	 * \param vec: a vector of unpacked bits (only 1 bit per data is used to transport data).
+	 */
 	static void pack(mipp::vector<B> &vec)
 	{
 		const auto n_elmts = vec.size();
@@ -36,12 +55,17 @@ struct Bit_packer
 		}
 	}
 
+	/*!
+	 * \brief Unpacks bits.
+	 *
+	 * \param vec: a vector of packed bits (all the bits in each element of vec are used to store bits).
+	 */
 	static void unpack(mipp::vector<B> &vec)
 	{
 		auto n_elmts = vec.size();
 		unsigned char* bytes = (unsigned char*)vec.data();
 
-		auto packed_size = (int)ceil((float)n_elmts / 8.f);
+		auto packed_size = (int)std::ceil((float)n_elmts / 8.f);
 		mipp::vector<unsigned char> bytes_cpy(packed_size);
 
 		std::copy(&bytes[0], &bytes[packed_size], bytes_cpy.begin());

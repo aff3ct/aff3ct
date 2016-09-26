@@ -1,5 +1,6 @@
-/* 
- * The Mersenne Twister pseudo-random number generator (PRNG)
+/*!
+ * \file
+ * \brief The Mersenne Twister pseudo-random number generator (PRNG).
  *
  * This is an implementation of fast PRNG called MT19937,
  * meaning it has a period of 2^19937-1, which is a Mersenne
@@ -9,17 +10,17 @@
  * For instance, it would be perfect for Monte Carlo simulations,
  * etc.
  *
- * For all the details on this algorithm, see the original paper:
- * http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/mt.pdf
+ * This code has been designed as a drop-in replacement for libc rand and
+ * srand().
  *
- * Written by Christian Stigen Larsen and modified by Adrien Cassagne after
- * http://csl.name
+ * \author Christian Stigen Larsen
+ * \author Adrien Cassagne
  *
- * Distributed under the modified BSD license.
+ * \date 2015-02-17
  *
- * 2015-02-17
+ * \section LICENSE
+ * This file is under BSD license.
  */
- 
 #include <stdio.h>
 
 #include "PRNG_MT19937.hpp"

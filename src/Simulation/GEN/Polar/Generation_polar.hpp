@@ -10,7 +10,7 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/params.h"
 
-#include "Generator/Generator.hpp"
+#include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 #include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 
 #include "../../Simulation.hpp"
@@ -36,7 +36,7 @@ protected:
 	Frozenbits_generator<int> *fb_generator;
 
 	// generator
-	Generator *generator;
+	Generator_polar_SC_sys *generator;
 
 	// file into generate the decoder
 	std::string  directory;

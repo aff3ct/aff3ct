@@ -47,7 +47,6 @@ protected:
 	std::map<std::vector<std::string>, std::vector<std::string>> opt_args; /*!< List of the optional arguments, syntax is the following:
 	                                                                        *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 
-
 public:
 	/*!
 	 * \brief Constructor.

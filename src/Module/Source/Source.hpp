@@ -46,7 +46,9 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Source_interface() {}
+	virtual ~Source_interface()
+	{
+	}
 
 	/*!
 	 * \brief Fulfills a vector with bits.

@@ -220,7 +220,7 @@ class AdvTreeView(QtGui.QTreeView):
                         line.setFrameShadow(QtGui.QFrame.Sunken)
                         layoutLegend.addRow(line)
                     firstTitle = False
-                    layoutLegend.addRow("<h3>" + entry[0] + "</h3>", QtGui.QLabel(""))
+                    layoutLegend.addRow("<h3><u>" + entry[0] + "<u></h3>", QtGui.QLabel(""))
             wCur = QtGui.QWidget();
             wCur.setLayout(layoutLegend)
 

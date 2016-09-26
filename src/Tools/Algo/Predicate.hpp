@@ -1,14 +1,46 @@
+/*!
+ * \file
+ * \brief A predicate.
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
 #ifndef PREDICATE_HPP
 #define PREDICATE_HPP
 
+/*!
+ * \class Predicate
+ *
+ * \brief A predicate.
+ */
 class Predicate
 {
 public:
-	Predicate() {}
-	virtual ~Predicate() {}
+	/*!
+	 * \brief Constructor.
+	 */
+	Predicate()
+	{
+	}
 
+	/*!
+	 * \brief Destructor.
+	 */
+	virtual ~Predicate()
+	{
+	}
+
+	/*!
+	 * \brief Evaluates the predicate.
+	 *
+	 * \return true if the predicate meets the condition(s).
+	 */
 	virtual bool operator()() = 0;
-	virtual void reset     () = 0;
+
+	/*!
+	 * \brief Resets the predicate state.
+	 */
+	virtual void reset() = 0;
 };
 
 #endif /* PREDICATE_HPP */

@@ -88,11 +88,14 @@ void Launcher_GEN_polar<B,R,Q>
 ::store_args()
 {
 	// ---------------------------------------------------------------------------------------------------- simulation
+	this->params.simulation.snr_min = this->ar.get_arg_float({"dec-snr"});
+
+	if(this->ar.exist_arg({"sim-type"   })) this->params.simulation.type         = this->ar.get_arg({"sim-type"   });
+#ifdef ENABLE_POLAR_BOUNDS
+	if(this->ar.exist_arg({"sim-pb-path"})) this->params.simulation.bin_pb_path  = this->ar.get_arg({"sim-pb-path"});
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
-
-
-	// required parameters
 	this->params.code.K      = this->ar.get_arg_int({"cde-info-bits", "K"});
 	this->params.code.N      = this->ar.get_arg_int({"cde-size",      "N"});
 	this->params.code.N_code = this->ar.get_arg_int({"cde-size",      "N"});
@@ -103,20 +106,14 @@ void Launcher_GEN_polar<B,R,Q>
 		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
 		exit(EXIT_FAILURE);
 	}
-
-	this->params.simulation.snr_min = this->ar.get_arg_float({"dec-snr"});
-
-	// facultative parameters
-	if(this->ar.exist_arg({"sim-type"         })) this->params.simulation.type         = this->ar.get_arg({"sim-type"         });
-	if(this->ar.exist_arg({"dec-gen-path"     })) this->params.decoder.gen_path        = this->ar.get_arg({"dec-gen-path"     });
+	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.code.awgn_fb_file  = this->ar.get_arg({"cde-awgn-fb-file" });
 #ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path       = this->ar.get_arg({"cde-awgn-fb-path" });
-	if(this->ar.exist_arg({"sim-pb-path"      })) this->params.simulation.bin_pb_path  = this->ar.get_arg({"sim-pb-path"      });
+	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path  = this->ar.get_arg({"cde-awgn-fb-path" });
+	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg({"cde-fb-gen-method"});
 #endif
-	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.code.awgn_fb_file       = this->ar.get_arg({"cde-awgn-fb-file" });
-#ifdef ENABLE_POLAR_BOUNDS
-	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method      = this->ar.get_arg({"cde-fb-gen-method"});
-#endif
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(this->ar.exist_arg({"dec-gen-path"})) this->params.decoder.gen_path = this->ar.get_arg({"dec-gen-path"});
 }
 
 template <typename B, typename R, typename Q>
@@ -144,13 +141,13 @@ std::vector<std::pair<std::string,std::string>> Launcher_GEN_polar<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	if (this->params.code.N != exp2(ceil(log2(this->params.code.N))))
+	if (this->params.code.N != std::exp2(std::ceil(std::log2(this->params.code.N))))
 	{
 		std::cerr << bold_red("(EE) N isn't a power of two.")  << std::endl;
 		std::exit(-1);
 	}
 
-	p.push_back(std::make_pair("Type",              this->params.code.type + " codes"  ));
+	p.push_back(std::make_pair("Type",              this->params.code.type             ));
 	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(this->params.code.K)));
 	p.push_back(std::make_pair("Codeword size (N)", std::to_string(this->params.code.N)));
 	if (!this->params.code.awgn_fb_file.empty())
