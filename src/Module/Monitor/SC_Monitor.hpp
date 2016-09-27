@@ -84,19 +84,6 @@ public:
 
 	virtual ~SC_Monitor() {if (module != nullptr) { delete module; module = nullptr; }};
 
-	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
-
-	virtual int get_n_be() const = 0;
-	virtual int get_n_fe() const = 0;
-
-	virtual float get_ber_value() const = 0;
-	virtual float get_fer_value() const = 0;
-
-	virtual unsigned long long get_n_analyzed_frames() const = 0;
-
-	virtual int  get_fe_limit     () const = 0;
-	virtual bool fe_limit_achieved() const = 0;
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		Monitor_interface<B>::set_n_frames(n_frames);
