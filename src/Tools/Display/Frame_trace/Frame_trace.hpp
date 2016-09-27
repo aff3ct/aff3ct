@@ -13,7 +13,7 @@
 /*!
  * \class Frame_trace
  *
- * \brief Re-scales the extrinsic information (used in the turbo decoding process).
+ * \brief Traces a frame.
  *
  * \tparam B: type of bits.
  */
