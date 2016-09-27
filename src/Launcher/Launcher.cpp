@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <functional>
 
 #include "Tools/Display/bash_tools.h"
 
