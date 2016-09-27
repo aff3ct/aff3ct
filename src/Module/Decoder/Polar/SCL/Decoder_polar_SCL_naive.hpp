@@ -4,7 +4,7 @@
 #include <set>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Code/Polar/SCL/Binary_tree_metric.hpp"
+#include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
