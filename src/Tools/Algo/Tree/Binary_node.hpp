@@ -132,7 +132,7 @@ public:
 	/*!
 	 * \brief Set the contents of this node.
 	 *
-	 * \param: a pointer to the contents to set.
+	 * \param contents: a pointer to the contents to set.
 	 */
 	inline void set_contents(T* contents);
 
