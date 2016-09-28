@@ -43,7 +43,7 @@ void Frame_trace<B>
 	assert(!enable_ref || ref.size() == vec.size());
 	assert(this->n_bits >= 0);
 
-	const auto n_bits = this->n_bits ? (this->n_bits <= vec.size() ? this->n_bits : vec.size()) : (int)vec.size();
+	const auto n_bits = this->n_bits ? (this->n_bits <= (int)vec.size() ? this->n_bits : (int)vec.size()) : (int)vec.size();
 	if (row_width == vec.size())
 	{
 		for (auto i = 0; i < n_bits; i++)
