@@ -15,9 +15,8 @@ Terminal_EXIT<B,R>
                 const int& cur_t,
                 const int& trials,
                 double& I_A,
-                double& I_E,
-                const std::string name)
-: Terminal(name.c_str()),
+                double& I_E)
+: Terminal(),
   N(N),
   snr(snr),
   sig_a(sig_a),

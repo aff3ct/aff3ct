@@ -8,9 +8,8 @@ template <typename B, typename R>
 Terminal_BFER_legacy<B,R>
 ::Terminal_BFER_legacy(const R& snr,
                        const Monitor<B> &monitor,
-                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-                       const std::string name)
-: Terminal(name.c_str()), snr(snr), monitor(monitor), t_snr(t_snr), real_time_state(0)
+                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr)
+: Terminal(), snr(snr), monitor(monitor), t_snr(t_snr), real_time_state(0)
 {
 }
 
