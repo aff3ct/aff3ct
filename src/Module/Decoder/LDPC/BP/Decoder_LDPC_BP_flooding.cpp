@@ -60,7 +60,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 {
 	assert(Y_N1.size() == Y_N2.size());
 	assert(Y_N1.size() == this->Y_N.size());
-	assert(!this->coset || (this->coset && this->X_N.size() == this->N));
+	assert(!this->coset || (this->coset && (int)this->X_N.size() == this->N));
 
 	// memory zones initialization
 	if (this->init_flag)
@@ -103,7 +103,7 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::decode()
 {
-	assert(!this->coset || (this->coset && this->X_N.size() == this->N));
+	assert(!this->coset || (this->coset && (int)this->X_N.size() == this->N));
 
 	// memory zones initialization
 	if (this->init_flag)
