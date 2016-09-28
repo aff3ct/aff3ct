@@ -49,7 +49,7 @@ void Frame_trace<B>
 		for (auto i = 0; i < n_bits; i++)
 			stream << std::setw(5) << i << "|";
 
-		if (n_bits < vec.size())
+		if (n_bits < (int)vec.size())
 			stream << " ...";
 		stream << std::endl;
 	}
@@ -62,7 +62,7 @@ void Frame_trace<B>
 			else
 				display_value(vec[i], version);
 
-		if (n_bits < vec.size())
+		if (n_bits < (int)vec.size())
 			stream << " ...";
 		stream << std::endl;
 
