@@ -135,3 +135,50 @@ void Modulator_PAM<B,R,Q,MAX>
 		Y_N2[n] = (L0 - L1) * (Q)inv_sigma2;
 	}
 }
+
+template <typename B,typename R, typename Q, proto_max<Q> MAX>
+void Modulator_PAM<B,R,Q,MAX>
+::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+{
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+
+	auto size       = (int)Y_N3.size();
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto bps = this->bits_per_symbol;
+	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+	{
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
+		auto b  = n % bps; // position du bit dans le symbole
+		auto k  = n / bps; // position du symbole
+
+		for (auto j = 0; j < this->nbr_symbols; j++)
+			if ((j & (1 << b)) == 0)
+			{
+				L0 = MAX(L0, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]));
+				for(auto l=0; l < b ; l++)
+				{
+					L0 = MAX(L0, -(j & (1 << l))*Y_N2[k*bps+l]);
+				}
+				for(auto l=b+1; l < bps ; l++)
+				{
+					L0 = MAX(L0, -(j & (1 << l))*Y_N2[k*bps+l]);
+				}
+			}
+			else
+			{
+				L1 = MAX(L1, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]));
+				for(auto l=0; l < b ; l++)
+				{
+					L1 = MAX(L1, -(j & (1 << l))*Y_N2[k*bps+l]);
+				}
+				for(auto l=b+1; l < bps ; l++)
+				{
+					L1 = MAX(L1, -(j & (1 << l))*Y_N2[k*bps+l]);
+				}
+			}
+
+		Y_N3[n] = (L0 - L1) * inv_sigma2;
+	}
+}
