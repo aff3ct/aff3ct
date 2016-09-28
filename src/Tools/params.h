@@ -68,6 +68,7 @@ struct modulator_parameters
 	std::string type;            // modulation type (PAM, QAM, ...)
 	int         bits_per_symbol; // bits per symbol
 	int         upsample_factor; // samples per symbol
+	std::string const_path;      // PATH to constellation file (CSV file)
 };
 
 struct demodulator_parameters

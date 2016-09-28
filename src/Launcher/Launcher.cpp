@@ -111,13 +111,16 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS, USR"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
 	opt_args[{"mod-ups"}] =
 		{"positive_int",
 		 "select the symbol upsample factor (default is 1)."};
+	opt_args[{"mod-const-path"}] =
+		{"string",
+		 "path to the ordered modulation symbols."};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{"dmod-max"}] =
@@ -216,10 +219,18 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg    ({"mod-type"});
-	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg    ({"mod-type"});
-	if(ar.exist_arg({"mod-bps" })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps" });
-	if(ar.exist_arg({"mod-ups" })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups" });
+	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
+	if (params.modulator.type == "USR" && !(ar.exist_arg({"mod-const-path"})))
+	{
+		std::cerr << bold_red("(EE) When USR modulation type is used, a path to a file containing the constellation") 
+		          << bold_red("symbols must be given.") 
+		          << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	if(ar.exist_arg({"mod-bps" }))        params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
+	if(ar.exist_arg({"mod-ups" }))        params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
+	if(ar.exist_arg({"mod-const-path" })) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
