@@ -128,11 +128,11 @@ void Modulator_PAM<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
-				L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]));
+				L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
 			else
-				L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]));
+				L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
 
-		Y_N2[n] = (L0 - L1) * (Q)inv_sigma2;
+		Y_N2[n] = (L0 - L1);
 	}
 }
 
@@ -153,32 +153,23 @@ void Modulator_PAM<B,R,Q,MAX>
 		auto b  = n % bps; // position du bit dans le symbole
 		auto k  = n / bps; // position du symbole
 
-		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
-			{
-				L0 = MAX(L0, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]));
-				for(auto l=0; l < b ; l++)
-				{
-					L0 = MAX(L0, -(j & (1 << l))*Y_N2[k*bps+l]);
-				}
-				for(auto l=b+1; l < bps ; l++)
-				{
-					L0 = MAX(L0, -(j & (1 << l))*Y_N2[k*bps+l]);
-				}
-			}
-			else
-			{
-				L1 = MAX(L1, -(Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]));
-				for(auto l=0; l < b ; l++)
-				{
-					L1 = MAX(L1, -(j & (1 << l))*Y_N2[k*bps+l]);
-				}
-				for(auto l=b+1; l < bps ; l++)
-				{
-					L1 = MAX(L1, -(j & (1 << l))*Y_N2[k*bps+l]);
-				}
-			}
 
-		Y_N3[n] = (L0 - L1) * inv_sigma2;
+		for (auto j = 0; j < this->nbr_symbols; j++)
+		{
+			auto tempL  = (Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j])* inv_sigma2;
+			for(auto l=0; l < b ; l++)
+			{
+				tempL += (j & (1 << l))*Y_N2[k*bps+l];
+			}
+			for(auto l=b+1; l < bps ; l++)
+			{
+				tempL += (j & (1 << l))*Y_N2[k*bps+l];
+			}
+			if ((j & (1 << b)) == 0)
+				L0 = MAX(L0, -tempL);
+			else
+				L1 = MAX(L1, -tempL);
+		}
+		Y_N3[n] = (L0 - L1);
 	}
 }

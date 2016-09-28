@@ -137,11 +137,59 @@ void Modulator_PSK<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())));
+				                                                     (Q)this->constellation[j].imag()) 
+				                                   * (Q)inv_sigma2));
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())));
+				                                                     (Q)this->constellation[j].imag())
+				                                   * (Q)inv_sigma2));
 
-		Y_N2[n] = (L0 - L1) * (Q)inv_sigma2;
+		Y_N2[n] = (L0 - L1);
 	}
 }
+
+
+/*
+ * Demodulator
+ */
+template <typename B,typename R, typename Q, proto_max<Q> MAX>
+void Modulator_PSK<B,R,Q,MAX>
+::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+{
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	auto bps = this->bits_per_symbol;
+
+	auto size       = (int)Y_N3.size();
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+
+	for (auto n = 0; n < size; n++)// boucle sur les LLRs
+	{
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
+		auto b  = n % bps; // position du bit
+		auto k  = n / bps; // position du symbole
+
+		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
+
+		for (auto j = 0; j < this->nbr_symbols; j++)
+		{
+			auto tempL  = std::norm(complex_Yk - std::complex<Q>(this->constellation[j]))*inv_sigma2;
+			for(auto l=0; l < b ; l++)
+			{
+				tempL += (j & (1 << l))*Y_N2[k*bps+l];
+			}
+			for(auto l=b+1; l < bps ; l++)
+			{
+				tempL += (j & (1 << l))*Y_N2[k*bps+l];
+			}
+			if ((j & (1 << b)) == 0)
+				L0 = MAX(L0, -tempL);
+			else
+				L1 = MAX(L1, -tempL);
+		}
+		Y_N3[n] = (L0 - L1);
+	}
+}
+
+

@@ -139,12 +139,14 @@ void Modulator_QAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())));
+				                                                     (Q)this->constellation[j].imag())
+				                                   * (Q)inv_sigma2));
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())));
+				                                                     (Q)this->constellation[j].imag())
+			                                       * (Q)inv_sigma2));
 
-		Y_N2[n] = (L0 - L1) * (Q)inv_sigma2;
+		Y_N2[n] = (L0 - L1);
 	}
 }
 
@@ -171,7 +173,7 @@ void Modulator_QAM<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL  = std::norm(complex_Yk - std::complex<Q>(this->constellation[j]));
+			auto tempL  = std::norm(complex_Yk - std::complex<Q>(this->constellation[j]))*inv_sigma2;
 			for(auto l=0; l < b ; l++)
 			{
 				tempL += (j & (1 << l))*Y_N2[k*bps+l];
@@ -186,7 +188,7 @@ void Modulator_QAM<B,R,Q,MAX>
 				L1 = MAX(L1, -tempL);
 		}
 
-		Y_N3[n] = (L0 - L1) * inv_sigma2;
+		Y_N3[n] = (L0 - L1);
 	}
 }
 
