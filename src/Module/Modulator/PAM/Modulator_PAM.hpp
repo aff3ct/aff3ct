@@ -23,8 +23,8 @@ public:
 	              const int n_frames = 1, const std::string name = "Modulator_PAM");
 	virtual ~Modulator_PAM();
 
-	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2);
+	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
+	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
 	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
 	int get_buffer_size_after_modulation(const int N);

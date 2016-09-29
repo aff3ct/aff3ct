@@ -219,18 +219,17 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
+	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
 	if (params.modulator.type == "USR" && !(ar.exist_arg({"mod-const-path"})))
 	{
-		std::cerr << bold_red("(EE) When USR modulation type is used, a path to a file containing the constellation") 
-		          << bold_red("symbols must be given.") 
-		          << std::endl;
+		std::cerr << bold_red("(EE) When USR modulation type is used, a path to a file containing the constellation")
+		          << bold_red("symbols must be given.") << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 
-	if(ar.exist_arg({"mod-bps" }))        params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
-	if(ar.exist_arg({"mod-ups" }))        params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
-	if(ar.exist_arg({"mod-const-path" })) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
+	if(ar.exist_arg({"mod-bps"       })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
+	if(ar.exist_arg({"mod-ups"       })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
+	if(ar.exist_arg({"mod-const-path"})) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
@@ -244,7 +243,7 @@ void Launcher<B,R,Q>
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
-	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max        = ar.get_arg({"dmod-max"});
+	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
 	if(ar.exist_arg({"chn-type"})) params.channel.type = ar.get_arg({"chn-type"});
@@ -252,10 +251,10 @@ void Launcher<B,R,Q>
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
-		if(ar.exist_arg({"qnt-type" })) params.quantizer.type = ar.get_arg      ({"qnt-type" });
-		if(ar.exist_arg({"qnt-dec"  })) params.quantizer.n_decimals= ar.get_arg_int  ({"qnt-dec"  });
-		if(ar.exist_arg({"qnt-bits" })) params.quantizer.n_bits   = ar.get_arg_int  ({"qnt-bits" });
-		if(ar.exist_arg({"qnt-range"})) params.quantizer.range  = ar.get_arg_float({"qnt-range"});
+		if(ar.exist_arg({"qnt-type" })) params.quantizer.type       = ar.get_arg      ({"qnt-type" });
+		if(ar.exist_arg({"qnt-dec"  })) params.quantizer.n_decimals = ar.get_arg_int  ({"qnt-dec"  });
+		if(ar.exist_arg({"qnt-bits" })) params.quantizer.n_bits     = ar.get_arg_int  ({"qnt-bits" });
+		if(ar.exist_arg({"qnt-range"})) params.quantizer.range      = ar.get_arg_float({"qnt-range"});
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoder

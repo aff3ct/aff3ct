@@ -21,12 +21,12 @@ private:
 	mipp::vector<std::complex<R>> constellation;
 
 public:
-	Modulator_USR(const int N, const int bits_per_symbol = 2, const std::string const_path ="", const R sigma = 1.0, const bool disable_sig2 = false,
-	              const int n_frames = 1, const std::string name = "Modulator_USR");
+	Modulator_USR(const int N, const int bits_per_symbol = 2, const std::string const_path ="", const R sigma = 1.0,
+	              const bool disable_sig2 = false, const int n_frames = 1, const std::string name = "Modulator_USR");
 	virtual ~Modulator_USR();
 
-	virtual void   modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2);
+	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
+	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
 	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
 	

@@ -16,10 +16,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_PSK<B,R,Q,MAX>
 ::Modulator_PSK(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
                 const std::string name)
-: Modulator<B,R,Q>(N, 
-                   (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
-                   n_frames, 
-                   name),
+: Modulator<B,R,Q>(N, std::ceil((float)N / (float)bits_per_symbol) * 2, n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
@@ -148,7 +145,6 @@ void Modulator_PSK<B,R,Q,MAX>
 	}
 }
 
-
 /*
  * Demodulator
  */
@@ -158,7 +154,6 @@ void Modulator_PSK<B,R,Q,MAX>
 {
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
-	auto bps = this->bits_per_symbol;
 
 	auto size       = (int)Y_N3.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
@@ -167,29 +162,26 @@ void Modulator_PSK<B,R,Q,MAX>
 	{
 		auto L0 = -std::numeric_limits<Q>::infinity();
 		auto L1 = -std::numeric_limits<Q>::infinity();
-		auto b  = n % bps; // position du bit
-		auto k  = n / bps; // position du symbole
+		auto b  = n % this->bits_per_symbol; // position du bit
+		auto k  = n / this->bits_per_symbol; // position du symbole
 
 		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL  = std::norm(complex_Yk - std::complex<Q>(this->constellation[j]))*inv_sigma2;
-			for(auto l=0; l < b ; l++)
-			{
-				tempL += (j & (1 << l))*Y_N2[k*bps+l];
-			}
-			for(auto l=b+1; l < bps ; l++)
-			{
-				tempL += (j & (1 << l))*Y_N2[k*bps+l];
-			}
+			auto tempL = std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2;
+			for (auto l = 0; l < b; l++)
+				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+
+			for (auto l = b +1; l < this->bits_per_symbol; l++)
+				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+
 			if ((j & (1 << b)) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
 		}
+
 		Y_N3[n] = (L0 - L1);
 	}
 }
-
-
