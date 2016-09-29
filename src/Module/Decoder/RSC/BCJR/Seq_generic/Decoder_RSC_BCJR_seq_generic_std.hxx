@@ -236,36 +236,86 @@ template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> 
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::compute_ext_par(const R *par, R *ext_par)
 {
-	// // compute extrinsic values
-	// for (auto i = 0; i < this->K; i++)
-	// {
-	// 	RD max0 = -std::numeric_limits<RD>::max();
-	// 	RD max1 = -std::numeric_limits<RD>::max();
+//	 // compute extrinsic values
+//	 for (auto i = 0; i < this->K; i++)
+//	 {
+//	 	RD max0 = -std::numeric_limits<RD>::max();
+//	 	RD max1 = -std::numeric_limits<RD>::max();
+//
+//	 	for (auto j = 0; j < this->n_states; j++)
+//	 		if ((this->trellis[1][j] == +1 && this->trellis[2][j] == 0) ||
+//	 			(this->trellis[1][j] == -1 && this->trellis[2][j] == 1))
+//	 			max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
+//	 			                  (RD)this->beta [this->trellis[6][j]][i +1] +
+//	 			                  (RD)this->gamma[this->trellis[7][j]][i   ]);
+//	 		else
+//	 			max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
+//	 			                  (RD)this->beta [this->trellis[8][j]][i +1] -
+//	 			                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+//
+//	 	for (auto j = 0; j < this->n_states; j++)
+//	 		if ((this->trellis[4][j] == +1 && this->trellis[5][j] == 0) ||
+//	 			(this->trellis[4][j] == -1 && this->trellis[5][j] == 1))
+//	 			max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
+//	 			                  (RD)this->beta [this->trellis[6][j]][i +1] +
+//	 			                  (RD)this->gamma[this->trellis[7][j]][i   ]);
+//	 		else
+//	 			max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
+//	 			                  (RD)this->beta [this->trellis[8][j]][i +1] -
+//	 			                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+//
+//	 	ext_par[i] = RSC_BCJR_seq_generic_post<R,RD>::compute(max0 - max1) - par[i];
+//	 }
+	// compute extrinsic values
+	for (auto i = 0; i < this->K; i++)
+	{
+		RD max0 = -std::numeric_limits<RD>::max();
+		RD max1 = -std::numeric_limits<RD>::max();
 		
-	// 	for (auto j = 0; j < this->n_states; j++)
-	// 		if ((this->trellis[1][j] == +1 && this->trellis[2][j] == 0) || 
-	// 			(this->trellis[1][j] == -1 && this->trellis[2][j] == 1))
-	// 			max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
-	// 			                  (RD)this->beta [this->trellis[6][j]][i +1] + 
-	// 			                  (RD)this->gamma[this->trellis[7][j]][i   ]);
-	// 		else
-	// 			max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
-	// 			                  (RD)this->beta [this->trellis[8][j]][i +1] - 
-	// 			                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+		for (auto j = 0; j < this->n_states; j++)
+			if      (this->trellis[1][j] == +1 && this->trellis[7][j] == 0 )
+				max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[6][j]][i +1] +
+				                  (RD)this->gamma[this->trellis[7][j]][i   ]);
 
-	// 	for (auto j = 0; j < this->n_states; j++)
-	// 		if ((this->trellis[4][j] == +1 && this->trellis[5][j] == 0) || 
-	// 			(this->trellis[4][j] == -1 && this->trellis[5][j] == 1))
-	// 			max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
-	// 			                  (RD)this->beta [this->trellis[6][j]][i +1] + 
-	// 			                  (RD)this->gamma[this->trellis[7][j]][i   ]);
-	// 		else
-	// 			max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
-	// 			                  (RD)this->beta [this->trellis[8][j]][i +1] - 
-	// 			                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+			else if (this->trellis[1][j] == +1 && this->trellis[7][j] == 1 )
+				max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[6][j]][i +1] +
+				                  (RD)this->gamma[this->trellis[7][j]][i   ]);
 
-	// 	ext_par[i] = RSC_BCJR_seq_generic_post<R,RD>::compute(max0 - max1) - par[i];
-	// }
+			else if (this->trellis[1][j] == -1 && this->trellis[9][j] == 1 )
+				max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[8][j]][i +1] -
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+
+			else if (this->trellis[1][j] == -1  && this->trellis[9][j] == 0 )
+				max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[8][j]][i +1] -
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+
+		for (auto j = 0; j < this->n_states; j++)
+			if      (this->trellis[4][j] == +1 && this->trellis[7][j] == 0 )
+				max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[6][j]][i +1] +
+				                  (RD)this->gamma[this->trellis[7][j]][i   ]);
+
+			else if (this->trellis[4][j] == +1 && this->trellis[7][j] == 1 )
+				max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[6][j]][i +1] +
+				                  (RD)this->gamma[this->trellis[7][j]][i   ]);
+
+			else if (this->trellis[4][j] == -1 && this->trellis[9][j] == 1 )
+				max0 = MAX2(max0, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[8][j]][i +1] -
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+
+			else if (this->trellis[4][j] == -1  && this->trellis[9][j] == 0 )
+				max1 = MAX2(max1, (RD)this->alpha[                 j ][i   ] +
+				                  (RD)this->beta [this->trellis[8][j]][i +1] -
+				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
+
+		ext_par[i] = RSC_BCJR_seq_generic_post<R,RD>::compute(max0 - max1) - par[i];
+	}
 }
 
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
