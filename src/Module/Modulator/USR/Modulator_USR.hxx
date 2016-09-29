@@ -3,6 +3,7 @@
 #include <complex>
 #include <limits>
 #include <fstream>
+#include <iterator>
 
 #include "Modulator_USR.hpp"
 
