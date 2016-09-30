@@ -84,7 +84,7 @@ void Modulator_USR<B,R,Q,MAX>
 	{
 		unsigned idx = 0;
 		for (auto j = 0; j < bps; j++)
-			idx += (1 << j) * X_N1[i * bps +j];
+			idx += (1 << (bps-j-1)) * X_N1[i * bps +j];
 		auto symbol = this->constellation[idx];
 
 		X_N2[2*i   ] = symbol.real();
@@ -96,7 +96,7 @@ void Modulator_USR<B,R,Q,MAX>
 	{
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (main_loop_size * bps); j++)
-			idx += (1 << j) * X_N1[main_loop_size * bps +j];
+			idx += (1 << (bps-j-1)) * X_N1[main_loop_size * bps +j];
 		auto symbol = this->constellation[idx];
 
 		X_N2[size_out -2] = symbol.real();
@@ -116,18 +116,18 @@ void Modulator_USR<B,R,Q,MAX>
 	
 	auto size       = (int)Y_N2.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
-
-	for (auto n = 0; n < size; n++)// boucle sur les LLRs
+	auto bps = this->bits_per_symbol;
+	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
 	{
 		auto L0 = -std::numeric_limits<Q>::infinity();
 		auto L1 = -std::numeric_limits<Q>::infinity();
-		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // position du symbole
+		auto b  = n % bps; // position du bit
+		auto k  = n / bps; // Position du symbole
 
 		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
+			if ((j &(1 << (bps-b-1))) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j]))* inv_sigma2);
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j]))* inv_sigma2);
@@ -145,26 +145,30 @@ void Modulator_USR<B,R,Q,MAX>
 
 	auto size       = (int)Y_N3.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto bps = this->bits_per_symbol;
 
-	for (auto n = 0; n < size; n++) // boucle sur les LLRs
+	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
 	{
 		auto L0 = -std::numeric_limits<Q>::infinity();
 		auto L1 = -std::numeric_limits<Q>::infinity();
-		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // position du symbole
+		auto b  = n % bps; // position du bit
+		auto k  = n / bps; // Position du symbole
 
 		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
+
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL = std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2;
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
-
-			for (auto l = b +1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
-
-			if ((j & (1 << b)) == 0)
+			auto tempL  = std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2;
+			for(auto l=0; l < b ; l++)
+			{
+				tempL += (j & (1 << (bps-l-1)))*Y_N2[k*bps+l];
+			}
+			for(auto l=b+1; l < bps ; l++)
+			{
+				tempL += (j & (1 << (bps-l-1)))*Y_N2[k*bps+l];
+			}
+			if ((j & (1 << (bps-b-1))) == 0)
 				L0 = MAX(L0, -tempL);
 			else
 				L1 = MAX(L1, -tempL);
