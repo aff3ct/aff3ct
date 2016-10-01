@@ -17,6 +17,7 @@ Launcher_BFER<B,R,Q>
 	this->params.simulation .debug_limit    = 0;
 	this->params.simulation .time_report    = false;
 	this->params.simulation .trace_path     = "";
+	this->params.code       .coset          = false;
 	this->params.monitor    .n_frame_errors = 100;
 	this->params.encoder    .systematic     = true;
 	this->params.demodulator.max            = "MAX";
@@ -49,6 +50,11 @@ void Launcher_BFER<B,R,Q>
 		{"",
 		 "display time information about the simulation chain."};
 
+	// ---------------------------------------------------------------------------------------------------------- code
+	this->opt_args[{"cde-coset", "c"}] =
+		{"",
+		 "enable the coset approach."};
+
 	// ------------------------------------------------------------------------------------------------------- monitor
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
@@ -79,6 +85,9 @@ void Launcher_BFER<B,R,Q>
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
 
+	// ---------------------------------------------------------------------------------------------------------- code
+	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
+
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
 
@@ -97,6 +106,19 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_simulation();
 
 	p.push_back(std::make_pair("Multi-threading (t)", threads));
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
+::header_code()
+{
+	std::string coset = this->params.code.coset ? "on" : "off";
+
+	auto p = Launcher<B,R,Q>::header_code();
+
+	p.push_back(std::make_pair("Coset approach (c)", coset));
 
 	return p;
 }

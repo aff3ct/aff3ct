@@ -11,7 +11,6 @@ Launcher_BFERI_LDPC<B,R,Q>
 : Launcher_BFERI<B,R,Q>(argc, argv, stream)
 {
 	this->params.code       .type       = "LDPC";
-	this->params.code       .coset      = false;
 	this->params.interleaver.type       = "RANDOM_HARD";
 	this->params.quantizer  .n_bits     = 6;
 	this->params.quantizer  .n_decimals = 2;
@@ -25,11 +24,6 @@ void Launcher_BFERI_LDPC<B,R,Q>
 ::build_args()
 {
 	Launcher_BFERI<B,R,Q>::build_args();
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	this->opt_args[{"cde-coset", "c"}] =
-		{"",
-		 "enable the coset approach."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING"     );
@@ -45,9 +39,6 @@ void Launcher_BFERI_LDPC<B,R,Q>
 {
 	Launcher_BFERI<B,R,Q>::store_args();
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
-
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"dec-ite", "i"});
 
@@ -58,19 +49,6 @@ Simulation* Launcher_BFERI_LDPC<B,R,Q>
 ::build_simu()
 {
 	return new Simulation_BFERI_LDPC<B,R,Q>(this->params);
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
-::header_code()
-{
-	std::string coset = this->params.code.coset ? "on" : "off";
-
-	auto p = Launcher_BFERI<B,R,Q>::header_code();
-
-	p.push_back(std::make_pair("Coset approach (c)", coset));
-
-	return p;
 }
 
 template <typename B, typename R, typename Q>

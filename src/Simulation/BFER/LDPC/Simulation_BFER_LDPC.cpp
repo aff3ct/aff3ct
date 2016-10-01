@@ -42,6 +42,15 @@ Encoder<B>* Simulation_BFER_LDPC<B,R,Q>
 ::build_encoder(const int tid)
 {
 	auto encoder = Factory_encoder_LDPC<B>::build(this->params, tid);
+
+	if (encoder == nullptr)
+	{
+		std::cerr << bold_red("(EE) The encoder could not be instantiated: try to enable the coset approach or to ")
+		          << bold_red("use All Zero Code Words. Exiting...") << std::endl;
+		std::exit(-1);
+		return nullptr;
+	}
+
 	if (tid == 0)
 	{
 		n_variables_per_parity  = encoder->get_n_variables_per_parity();
@@ -57,8 +66,7 @@ Decoder<B,Q>* Simulation_BFER_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
 	this->barrier(tid);
-	return Factory_decoder_LDPC<B,Q>::build(this->params, n_variables_per_parity, n_parities_per_variable, transpose,
-	                                        this->X_N1[tid]);
+	return Factory_decoder_LDPC<B,Q>::build(this->params, n_variables_per_parity, n_parities_per_variable, transpose);
 }
 
 // ==================================================================================== explicit template instantiation 

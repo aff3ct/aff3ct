@@ -11,7 +11,6 @@ protected:
 	const int  n_V_nodes;  // number of variable nodes (= N)
 	const int  n_C_nodes;  // number of check    nodes (= N - K)
 	const int  n_branches; // number of branched in the bi-partite graph (connexions between the V and C nodes)
-	const bool coset;      // true = coset approach enabled
 
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
@@ -20,9 +19,8 @@ protected:
 	const std::vector<unsigned char> &n_parities_per_variable;
 	const std::vector<unsigned int > &transpose;
 	
-	const mipp::vector<B> &X_N; // codeword (after encoding), used for the coset approach
-	      mipp::vector<R>  Y_N; // input  LLRs
-	      mipp::vector<B>  V_K; // output bits
+	mipp::vector<R>  Y_N; // input  LLRs
+	mipp::vector<B>  V_K; // output bits
 
 	// data structures for iterative decoding
 	mipp::vector<R> Lp_N;   // a posteriori information
@@ -34,8 +32,6 @@ public:
 	                         const std ::vector<unsigned char> &n_variables_per_parity,
 	                         const std ::vector<unsigned char> &n_parities_per_variable,
 	                         const std ::vector<unsigned int > &transpose,
-	                         const mipp::vector<B>             &X_N,
-	                         const bool                        coset = false,
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
 

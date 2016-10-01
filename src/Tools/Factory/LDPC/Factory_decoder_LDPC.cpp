@@ -10,8 +10,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 ::build(const parameters                  &params,
         const std ::vector<unsigned char> &n_variables_per_parity,
         const std ::vector<unsigned char> &n_parities_per_variable,
-        const std ::vector<unsigned int > &transpose,
-        const mipp::vector<B            > &X_N)
+        const std ::vector<unsigned int > &transpose)
 {
 	Decoder_SISO<B,R> *decoder = nullptr;
 
@@ -23,18 +22,14 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                    params.decoder.n_ite,
 			                                                    n_variables_per_parity,
 			                                                    n_parities_per_variable,
-			                                                    transpose,
-			                                                    X_N,
-			                                                    params.code.coset);
+			                                                    transpose);
 		else if (params.decoder.implem == "SUM_PRODUCT")
 			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
 			                                                        params.code.N,
 			                                                        params.decoder.n_ite,
 			                                                        n_variables_per_parity,
 			                                                        n_parities_per_variable,
-			                                                        transpose,
-			                                                        X_N,
-			                                                        params.code.coset);
+			                                                        transpose);
 	}
 
 	return decoder;

@@ -77,11 +77,6 @@ public:
 
 	virtual ~SC_SISO() { if (module_siso != nullptr) { delete module_siso; module_siso = nullptr; } }
 
-	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
-	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
-
-	virtual int tail_length() const { return SISO_interface<R>::tail_length(); }
-
 	void create_sc_module_siso()
 	{
 		this->module_siso = new SC_SISO_module<R>(*this, this->name.c_str());

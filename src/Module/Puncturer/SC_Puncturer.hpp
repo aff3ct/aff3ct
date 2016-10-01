@@ -135,9 +135,6 @@ public:
 		if (module_depunct != nullptr) { delete module_depunct; module_depunct = nullptr; }
 	}
 
-	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
-	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		Puncturer_interface<B,Q>::set_n_frames(n_frames);

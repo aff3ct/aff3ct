@@ -78,8 +78,6 @@ public:
 
 	virtual ~SC_Channel() { if (module != nullptr) { delete module; module = nullptr; } };
 
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		Channel_interface<R>::set_n_frames(n_frames);

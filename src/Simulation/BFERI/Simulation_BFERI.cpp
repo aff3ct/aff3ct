@@ -12,10 +12,14 @@
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
+#include "Tools/Factory/Factory_encoder_coset.hpp"
+#include "Tools/Factory/Factory_encoder_AZCW.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
+#include "Tools/Factory/Coset/Factory_coset_real.hpp"
+#include "Tools/Factory/Coset/Factory_coset_bit.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
@@ -49,18 +53,20 @@ Simulation_BFERI<B,R,Q>
   Y_N7(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
   V_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
 
-  source      (params.simulation.n_threads, nullptr),
-  crc         (params.simulation.n_threads, nullptr),
-  encoder     (params.simulation.n_threads, nullptr),
-  modulator   (params.simulation.n_threads, nullptr),
-  channel     (params.simulation.n_threads, nullptr),
-  quantizer   (params.simulation.n_threads, nullptr),
-  interleaver (params.simulation.n_threads, nullptr),
-  siso        (params.simulation.n_threads, nullptr),
-  decoder     (params.simulation.n_threads, nullptr),
-  monitor     (params.simulation.n_threads, nullptr),
-  monitor_red (                             nullptr),
-  terminal    (                             nullptr),
+  source     (params.simulation.n_threads, nullptr),
+  crc        (params.simulation.n_threads, nullptr),
+  encoder    (params.simulation.n_threads, nullptr),
+  modulator  (params.simulation.n_threads, nullptr),
+  channel    (params.simulation.n_threads, nullptr),
+  quantizer  (params.simulation.n_threads, nullptr),
+  interleaver(params.simulation.n_threads, nullptr),
+  siso       (params.simulation.n_threads, nullptr),
+  coset_real (params.simulation.n_threads, nullptr),
+  decoder    (params.simulation.n_threads, nullptr),
+  coset_bit  (params.simulation.n_threads, nullptr),
+  monitor    (params.simulation.n_threads, nullptr),
+  monitor_red(                             nullptr),
+  terminal   (                             nullptr),
 
   d_sourc_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_crc_total  (params.simulation.n_threads, std::chrono::nanoseconds(0)),
@@ -71,8 +77,10 @@ Simulation_BFERI<B,R,Q>
   d_filte_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_quant_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_demod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_corea_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_decod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_deint_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_cobit_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_check_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
 
   d_sourc_total_sum(std::chrono::nanoseconds(0)),
@@ -84,8 +92,10 @@ Simulation_BFERI<B,R,Q>
   d_filte_total_sum(std::chrono::nanoseconds(0)),
   d_quant_total_sum(std::chrono::nanoseconds(0)),
   d_demod_total_sum(std::chrono::nanoseconds(0)),
+  d_corea_total_sum(std::chrono::nanoseconds(0)),
   d_decod_total_sum(std::chrono::nanoseconds(0)),
   d_deint_total_sum(std::chrono::nanoseconds(0)),
+  d_cobit_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
 	assert(params.simulation.n_threads >= 1);
@@ -178,7 +188,9 @@ void Simulation_BFERI<B,R,Q>
 	simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_deint_total[tid] = std::chrono::nanoseconds(0);
+	simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
+	simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_check_total[tid] = std::chrono::nanoseconds(0);
 
 	simu->barrier(tid);
@@ -207,8 +219,10 @@ void Simulation_BFERI<B,R,Q>
 
 	simu->channel    [tid] = simu->build_channel    (N_mod, tid); check_errors(simu->channel    [tid], "Channel<R>"      );
 	simu->quantizer  [tid] = simu->build_quantizer  (N_fil, tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
+	simu->coset_real [tid] = simu->build_coset_real (       tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
 	simu->siso       [tid] = simu->build_siso       (       tid); check_errors(simu->siso       [tid], "SISO<Q>"         );
 	simu->decoder    [tid] = simu->build_decoder    (       tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
+	simu->coset_bit  [tid] = simu->build_coset_bit  (       tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
 	simu->monitor    [tid] = simu->build_monitor    (       tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
 
 	// get the real number of frames per threads (from the decoder)
@@ -241,6 +255,8 @@ void Simulation_BFERI<B,R,Q>
 	simu->modulator  [tid]->set_n_frames(n_fra);
 	simu->channel    [tid]->set_n_frames(n_fra);
 	simu->quantizer  [tid]->set_n_frames(n_fra);
+	simu->coset_real [tid]->set_n_frames(n_fra);
+	simu->coset_bit  [tid]->set_n_frames(n_fra);
 	simu->monitor    [tid]->set_n_frames(n_fra);
 
 	simu->barrier(tid);
@@ -327,6 +343,8 @@ void Simulation_BFERI<B,R,Q>
 		auto d_demod = nanoseconds(0);
 		auto d_deint = nanoseconds(0);
 		auto d_decod = nanoseconds(0);
+		auto d_corea = nanoseconds(0);
+		auto d_cobit = nanoseconds(0);
 
 		std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
 		for (auto ite = 0; ite <= simu->params.demodulator.n_ite; ite++)
@@ -341,6 +359,14 @@ void Simulation_BFERI<B,R,Q>
 			simu->interleaver[tid]->deinterleave(simu->Y_N4[tid], simu->Y_N5[tid]);
 			d_deint += steady_clock::now() - t_deint;
 
+			// apply the coset: the decoder will believe to a AZCW
+			if (simu->params.code.coset)
+			{
+				auto t_corea = steady_clock::now();
+				simu->coset_real[tid]->apply(simu->X_N1[tid], simu->Y_N5[tid], simu->Y_N5[tid]);
+				d_corea += steady_clock::now() - t_corea;
+			}
+
 			// soft decode
 			if (ite != simu->params.demodulator.n_ite)
 			{
@@ -348,6 +374,14 @@ void Simulation_BFERI<B,R,Q>
 				auto t_decod = steady_clock::now();
 				simu->siso[tid]->decode(simu->Y_N5[tid], simu->Y_N6[tid]);
 				d_decod += steady_clock::now() - t_decod;
+
+				// apply the coset to recover the extrinsic information
+				if (simu->params.code.coset)
+				{
+					auto t_corea = steady_clock::now();
+					simu->coset_real[tid]->apply(simu->X_N1[tid], simu->Y_N6[tid], simu->Y_N6[tid]);
+					d_corea += steady_clock::now() - t_corea;
+				}
 
 				// interleaving
 				auto t_inter = steady_clock::now();
@@ -364,6 +398,14 @@ void Simulation_BFERI<B,R,Q>
 				simu->decoder[tid]->store (simu->V_K [tid]);
 				d_decod += steady_clock::now() - t_decod;
 			}
+		}
+
+		// apply the coset to recover the real bits
+		if (simu->params.code.coset)
+		{
+			auto t_cobit = steady_clock::now();
+			simu->coset_bit[tid]->apply(simu->U_K[tid], simu->V_K[tid], simu->V_K[tid]);
+			d_cobit = steady_clock::now() - t_cobit;
 		}
 
 		// check errors in the frame
@@ -389,7 +431,9 @@ void Simulation_BFERI<B,R,Q>
 		simu->d_quant_total[tid] += d_quant;
 		simu->d_demod_total[tid] += d_demod;
 		simu->d_deint_total[tid] += d_deint;
+		simu->d_corea_total[tid] += d_corea;
 		simu->d_decod_total[tid] += d_decod;
+		simu->d_cobit_total[tid] += d_cobit;
 		simu->d_check_total[tid] += d_check;
 
 		// display statistics in terminal
@@ -539,6 +583,8 @@ void Simulation_BFERI<B,R,Q>
 		auto d_demod = nanoseconds(0);
 		auto d_deint = nanoseconds(0);
 		auto d_decod = nanoseconds(0);
+		auto d_corea = nanoseconds(0);
+		auto d_cobit = nanoseconds(0);
 
 		std::fill(simu->Y_N7[0].begin(), simu->Y_N7[0].end(), 0);
 		for (auto ite = 0; ite <= simu->params.demodulator.n_ite; ite++)
@@ -567,6 +613,20 @@ void Simulation_BFERI<B,R,Q>
 			ft.display_real_vector(simu->Y_N5[0]);
 			std::clog << std::endl;
 
+			// apply the coset: the decoder will believe to a AZCW
+			if (simu->params.code.coset)
+			{
+				std::clog << "Apply the coset approach on Y_N5..." << std::endl;
+				auto t_corea = steady_clock::now();
+				simu->coset_real[0]->apply(simu->X_N1[0], simu->Y_N5[0], simu->Y_N5[0]);
+				d_corea += steady_clock::now() - t_corea;
+
+				// display Y_N5
+				std::clog << "Y_N5:" << std::endl;
+				ft.display_real_vector(simu->Y_N5[0]);
+				std::clog << std::endl;
+			}
+
 			// soft decode
 			if (ite != simu->params.demodulator.n_ite)
 			{
@@ -580,6 +640,20 @@ void Simulation_BFERI<B,R,Q>
 				std::clog << "Y_N6:" << std::endl;
 				ft.display_real_vector(simu->Y_N6[0]);
 				std::clog << std::endl;
+
+				// apply the coset to recover the extrinsic information
+				if (simu->params.code.coset)
+				{
+					std::clog << "Reverse the coset approach on Y_N6..." << std::endl;
+					auto t_corea = steady_clock::now();
+					simu->coset_real[0]->apply(simu->X_N1[0], simu->Y_N6[0], simu->Y_N6[0]);
+					d_corea += steady_clock::now() - t_corea;
+
+					// display Y_N6
+					std::clog << "Y_N6:" << std::endl;
+					ft.display_real_vector(simu->Y_N6[0]);
+					std::clog << std::endl;
+				}
 
 				// interleaving
 				std::clog << "Interleave from Y_N6 to Y_N7..." << std::endl;
@@ -610,6 +684,20 @@ void Simulation_BFERI<B,R,Q>
 			}
 		}
 
+		// apply the coset to recover the real bits
+		if (simu->params.code.coset)
+		{
+			std::clog << "Apply the coset approach on V_K..." << std::endl;
+			auto t_cobit = steady_clock::now();
+			simu->coset_bit[0]->apply(simu->U_K[0], simu->V_K[0], simu->V_K[0]);
+			d_cobit = steady_clock::now() - t_cobit;
+
+			// display V_K
+			std::clog << "V_K:" << std::endl;
+			ft.display_real_vector(simu->V_K[0], simu->U_K[0]);
+			std::clog << std::endl;
+		}
+
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		simu->monitor_red->check_errors(simu->U_K[0], simu->V_K[0]);
@@ -626,7 +714,9 @@ void Simulation_BFERI<B,R,Q>
 		simu->d_quant_total[0] += d_quant;
 		simu->d_demod_total[0] += d_demod;
 		simu->d_deint_total[0] += d_deint;
+		simu->d_corea_total[0] += d_corea;
 		simu->d_decod_total[0] += d_decod;
+		simu->d_cobit_total[0] += d_cobit;
 		simu->d_check_total[0] += d_check;
 
 		// display statistics in terminal
@@ -657,7 +747,9 @@ void Simulation_BFERI<B,R,Q>
 	d_quant_total_red = nanoseconds(0);
 	d_demod_total_red = nanoseconds(0);
 	d_deint_total_red = nanoseconds(0);
+	d_corea_total_red = nanoseconds(0);
 	d_decod_total_red = nanoseconds(0);
+	d_cobit_total_red = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
 	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
@@ -672,7 +764,9 @@ void Simulation_BFERI<B,R,Q>
 		d_quant_total_red += d_quant_total[tid];
 		d_demod_total_red += d_demod_total[tid];
 		d_deint_total_red += d_deint_total[tid];
+		d_corea_total_red += d_corea_total[tid];
 		d_decod_total_red += d_decod_total[tid];
+		d_cobit_total_red += d_cobit_total[tid];
 		d_check_total_red += d_check_total[tid];
 	}
 
@@ -689,7 +783,9 @@ void Simulation_BFERI<B,R,Q>
 			d_quant_total_sum += d_quant_total[tid];
 			d_demod_total_sum += d_demod_total[tid];
 			d_deint_total_sum += d_deint_total[tid];
+			d_corea_total_sum += d_corea_total[tid];
 			d_decod_total_sum += d_decod_total[tid];
+			d_cobit_total_sum += d_cobit_total[tid];
 			d_check_total_sum += d_check_total[tid];
 		}
 }
@@ -709,8 +805,10 @@ void Simulation_BFERI<B,R,Q>
 	               d_filte_total_sum +
 	               d_quant_total_sum + 
 	               d_demod_total_sum +
+	               d_corea_total_sum +
 	               d_decod_total_sum +
 	               d_deint_total_sum +
+	               d_cobit_total_sum +
 	               d_check_total_sum;
 
 	auto sourc_sec = ((float)d_sourc_total_sum.count()) * 0.000000001f;
@@ -722,8 +820,10 @@ void Simulation_BFERI<B,R,Q>
 	auto filte_sec = ((float)d_filte_total_sum.count()) * 0.000000001f;
 	auto quant_sec = ((float)d_quant_total_sum.count()) * 0.000000001f;
 	auto demod_sec = ((float)d_demod_total_sum.count()) * 0.000000001f;
+	auto corea_sec = ((float)d_corea_total_sum.count()) * 0.000000001f;
 	auto decod_sec = ((float)d_decod_total_sum.count()) * 0.000000001f;
 	auto deint_sec = ((float)d_deint_total_sum.count()) * 0.000000001f;
+	auto cobit_sec = ((float)d_cobit_total_sum.count()) * 0.000000001f;
 	auto check_sec = ((float)d_check_total_sum.count()) * 0.000000001f;
 	auto total_sec = ((float)d_total          .count()) * 0.000000001f;
 
@@ -736,8 +836,10 @@ void Simulation_BFERI<B,R,Q>
 	auto filte_pc  = (filte_sec / total_sec) * 100.f;
 	auto quant_pc  = (quant_sec / total_sec) * 100.f;
 	auto demod_pc  = (demod_sec / total_sec) * 100.f;
+	auto corea_pc  = (corea_sec / total_sec) * 100.f;
 	auto decod_pc  = (decod_sec / total_sec) * 100.f;
 	auto deint_pc  = (deint_sec / total_sec) * 100.f;
+	auto cobit_pc  = (cobit_sec / total_sec) * 100.f;
 	auto check_pc  = (check_sec / total_sec) * 100.f;
 
 	stream << "#" << std::endl;
@@ -769,11 +871,19 @@ void Simulation_BFERI<B,R,Q>
 	stream << "# " << bold("* Demodulator") << "  : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << demod_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc << "%)" 
 	       << std::endl;
+	if (this->params.code.coset)
+	stream << "# " << bold("* Coset real") << "   : " << std::setw(9) << std::fixed << std::setprecision(3)
+	       << corea_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << corea_pc << "%)"
+	       << std::endl;
 	stream << "# " << bold("* Decoder") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc << "%)" 
 	       << std::endl;
 	stream << "# " << bold("* Deinterleaver") << ": " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << deint_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << deint_pc << "%)" 
+	       << std::endl;
+	if (this->params.code.coset)
+	stream << "# " << bold("* Coset bit") << "    : " << std::setw(9) << std::fixed << std::setprecision(3)
+	       << cobit_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << cobit_pc << "%)"
 	       << std::endl;
 	stream << "# " << bold("* Check errors") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << check_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc << "%)" 
@@ -800,6 +910,7 @@ void Simulation_BFERI<B,R,Q>
 	for (tid = 0; tid < nthr; tid++) if (modulator  [tid] != nullptr) { delete modulator  [tid]; modulator  [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (channel    [tid] != nullptr) { delete channel    [tid]; channel    [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (quantizer  [tid] != nullptr) { delete quantizer  [tid]; quantizer  [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (coset_real [tid] != nullptr) { delete coset_real [tid]; coset_real [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++)
 		if (siso[tid] != nullptr)
 		{
@@ -809,6 +920,7 @@ void Simulation_BFERI<B,R,Q>
 			siso[tid] = nullptr;
 		}
 	for (tid = 0; tid < nthr; tid++) if (decoder    [tid] != nullptr) { delete decoder    [tid]; decoder    [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (coset_bit  [tid] != nullptr) { delete coset_bit  [tid]; coset_bit  [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (monitor    [tid] != nullptr) { delete monitor    [tid]; monitor    [tid] = nullptr; }
 	
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
@@ -842,6 +954,23 @@ CRC<B>* Simulation_BFERI<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Encoder<B>* Simulation_BFERI<B,R,Q>
+::build_encoder(const int tid)
+{
+	if (this->params.source.type == "AZCW")
+		return Factory_encoder_AZCW<B>::build(params);
+	else if (this->params.code.coset)
+		return Factory_encoder_coset<B>::build(params, tid);
+	else
+	{
+		std::cerr << bold_red("(EE) The encoder could not be instantiated: try to enable the coset approach or to ")
+		          << bold_red("use All Zero Code Words. Exiting...") << std::endl;
+		std::exit(-1);
+		return nullptr;
+	}
+}
+
+template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFERI<B,R,Q>
 ::build_interleaver(const int tid)
 {
@@ -867,6 +996,20 @@ Quantizer<R,Q>* Simulation_BFERI<B,R,Q>
 ::build_quantizer(const int size, const int tid)
 {
 	return Factory_quantizer<R,Q>::build(params, sigma, size);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,Q>* Simulation_BFERI<B,R,Q>
+::build_coset_real(const int tid)
+{
+	return Factory_coset_real<B,Q>::build(params);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,B>* Simulation_BFERI<B,R,Q>
+::build_coset_bit(const int tid)
+{
+	return Factory_coset_bit<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>

@@ -1,4 +1,3 @@
-
 #ifdef SYSTEMC
 #include "SC_Simulation_BFER.hpp"
 #else
@@ -21,6 +20,7 @@
 #include "Module/Modulator/Modulator.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
+#include "Module/Coset/Coset.hpp"
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Monitor/Monitor.hpp"
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
@@ -65,7 +65,9 @@ protected:
 	std::vector<Modulator<B,R,R>*>  modulator;
 	std::vector<Channel<R>*>        channel;
 	std::vector<Quantizer<R,Q>*>    quantizer;
+	std::vector<Coset<B,Q>*>        coset_real;
 	std::vector<Decoder<B,Q>*>      decoder;
+	std::vector<Coset<B,B>*>        coset_bit;
 	std::vector<Monitor<B>*>        monitor;
 	Monitor_reduction<B>           *monitor_red;
 	Terminal                       *terminal;
@@ -85,9 +87,11 @@ protected:
 	std::vector<std::chrono::nanoseconds> d_demod_total;
 	std::vector<std::chrono::nanoseconds> d_quant_total;
 	std::vector<std::chrono::nanoseconds> d_depun_total;
+	std::vector<std::chrono::nanoseconds> d_corea_total;
 	std::vector<std::chrono::nanoseconds> d_load_total;
 	std::vector<std::chrono::nanoseconds> d_decod_total;
 	std::vector<std::chrono::nanoseconds> d_store_total;
+	std::vector<std::chrono::nanoseconds> d_cobit_total;
 	std::vector<std::chrono::nanoseconds> d_check_total;
 
 	std::chrono::nanoseconds d_sourc_total_red;
@@ -100,11 +104,13 @@ protected:
 	std::chrono::nanoseconds d_demod_total_red;
 	std::chrono::nanoseconds d_quant_total_red;
 	std::chrono::nanoseconds d_depun_total_red;
+	std::chrono::nanoseconds d_corea_total_red;
 	std::chrono::nanoseconds d_load_total_red;
 	std::chrono::nanoseconds d_decod_total_red;
 	std::chrono::nanoseconds d_store_total_red;
-	std::chrono::nanoseconds d_check_total_red;
 	std::chrono::nanoseconds d_decod_all_red;
+	std::chrono::nanoseconds d_cobit_total_red;
+	std::chrono::nanoseconds d_check_total_red;
 
 	std::chrono::nanoseconds d_sourc_total_sum;
 	std::chrono::nanoseconds d_crc_total_sum;
@@ -116,9 +122,11 @@ protected:
 	std::chrono::nanoseconds d_demod_total_sum;
 	std::chrono::nanoseconds d_quant_total_sum;
 	std::chrono::nanoseconds d_depun_total_sum;
+	std::chrono::nanoseconds d_corea_total_sum;
 	std::chrono::nanoseconds d_load_total_sum;
 	std::chrono::nanoseconds d_decod_total_sum;
 	std::chrono::nanoseconds d_store_total_sum;
+	std::chrono::nanoseconds d_cobit_total_sum;
 	std::chrono::nanoseconds d_check_total_sum;
 
 public:
@@ -137,6 +145,8 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
+	Encoder<B>* _build_encoder(const int tid = 0);
+
 protected:
 	virtual void              release_objects  ();
 	virtual void              launch_precompute();
@@ -144,12 +154,14 @@ protected:
 
 	virtual Source<B>*        build_source     (                const int tid = 0);
 	virtual CRC<B>*           build_crc        (                const int tid = 0);
-	virtual Encoder<B>*       build_encoder    (                const int tid = 0) = 0;
+	virtual Encoder<B>*       build_encoder    (                const int tid = 0);
 	virtual Puncturer<B,Q>*   build_puncturer  (                const int tid = 0);
 	virtual Modulator<B,R,R>* build_modulator  (                const int tid = 0);
 	virtual Channel<R>*       build_channel    (const int size, const int tid = 0);
 	virtual Quantizer<R,Q>*   build_quantizer  (const int size, const int tid = 0);
+	virtual Coset<B,Q>*       build_coset_real (                const int tid = 0);
 	virtual Decoder<B,Q>*     build_decoder    (                const int tid = 0) = 0;
+	virtual Coset<B,B>*       build_coset_bit  (                const int tid = 0);
 	virtual Monitor<B>*       build_monitor    (                const int tid = 0);
 	        Terminal*         build_terminal   (                const int tid = 0);
 };

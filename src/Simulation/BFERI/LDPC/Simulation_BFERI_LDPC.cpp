@@ -59,7 +59,7 @@ SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 	this->barrier(tid);
 
 	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params, n_variables_per_parity, n_parities_per_variable,
-	                                                     transpose, this->X_N1[tid]);
+	                                                     transpose);
 	return decoder_siso[tid];
 }
 

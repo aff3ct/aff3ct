@@ -11,8 +11,6 @@ public:
 	                                 const std ::vector<unsigned char> &n_variables_per_parity,
 	                                 const std ::vector<unsigned char> &n_parities_per_variable,
 	                                 const std ::vector<unsigned int > &transpose,
-	                                 const mipp::vector<B            > &U_N,
-	                                 const bool                         coset = false,
 	                                 const std::string name = "Decoder_LDPC_BP_flooding_min_sum");
 	virtual ~Decoder_LDPC_BP_flooding_min_sum();
 

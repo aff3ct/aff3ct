@@ -9,7 +9,7 @@
 template <typename B>
 struct Factory_encoder_LDPC : public Factory
 {
-	static Encoder_LDPC_sys<B>* build(const parameters &params, const int coset_seed = 0);
+	static Encoder_LDPC_sys<B>* build(const parameters &params, const int seed = 0);
 };
 
 #endif /* FACTORY_ENCODER_LDPC_HPP */

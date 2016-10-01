@@ -1,11 +1,11 @@
-#include "Module/Encoder/LDPC/Encoder_LDPC_fake.hpp"
-#include "Module/Encoder/LDPC/Encoder_LDPC_fake_coset.hpp"
+#include "Module/Encoder/LDPC/Encoder_LDPC_coset.hpp"
+#include "Module/Encoder/LDPC/Encoder_LDPC_AZCW.hpp"
 
 #include "Factory_encoder_LDPC.hpp"
 
 template <typename B>
 Encoder_LDPC_sys<B>* Factory_encoder_LDPC<B>
-::build(const parameters &params, const int coset_seed)
+::build(const parameters &params, const int seed)
 {
 	Encoder_LDPC_sys<B> *encoder = nullptr;
 
@@ -13,9 +13,9 @@ Encoder_LDPC_sys<B>* Factory_encoder_LDPC<B>
 	if (params.encoder.systematic)
 	{
 		if (params.code.coset)
-			encoder = new Encoder_LDPC_fake_coset<B>(params.code.K, params.code.N, coset_seed);
-		else
-			encoder = new Encoder_LDPC_fake<B>(params.code.K, params.code.N);
+			encoder = new Encoder_LDPC_coset<B>(params.code.K, params.code.N_code, seed);
+		else if (params.source.type == "AZCW")
+			encoder = new Encoder_LDPC_AZCW<B>(params.code.K, params.code.N_code);
 	}
 
 	return encoder;

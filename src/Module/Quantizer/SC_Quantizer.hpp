@@ -78,8 +78,6 @@ public:
 
 	virtual ~SC_Quantizer() { if (module != nullptr) { delete module; module = nullptr; } };
 
-	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		Quantizer_interface<R,Q>::set_n_frames(n_frames);

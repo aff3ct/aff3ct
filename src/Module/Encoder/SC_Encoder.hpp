@@ -78,12 +78,6 @@ public:
 
 	virtual ~SC_Encoder() { if (module != nullptr) { delete module; module = nullptr; } }
 
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N) = 0;
-	virtual int tail_length() const 
-	{
-		return Encoder_interface<B>::tail_length();
-	}
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		Encoder_interface<B>::set_n_frames(n_frames);

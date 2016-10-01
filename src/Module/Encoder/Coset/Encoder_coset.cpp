@@ -2,23 +2,23 @@
 
 #include "Tools/Display/bash_tools.h"
 
-#include "Encoder_LDPC_fake_coset.hpp"
+#include "Encoder_coset.hpp"
 
 template <typename B>
-Encoder_LDPC_fake_coset<B>
-::Encoder_LDPC_fake_coset(const int K, const int N, const int seed, const int n_frames, const std::string name)
-: Encoder_LDPC_fake<B>(K, N, n_frames, name), rd_engine(seed), uniform_dist(0, 1)
+Encoder_coset<B>
+::Encoder_coset(const int K, const int N, const int seed, const int n_frames, const std::string name)
+: Encoder_sys<B>(K, N, n_frames, name), rd_engine(seed + 1024), uniform_dist(0, 1)
 {
 }
 
 template <typename B>
-Encoder_LDPC_fake_coset<B>
-::~Encoder_LDPC_fake_coset()
+Encoder_coset<B>
+::~Encoder_coset()
 {
 }
 
 template <typename B>
-void Encoder_LDPC_fake_coset<B>
+void Encoder_coset<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
 	assert(U_K.size() <= X_N.size());
@@ -32,7 +32,7 @@ void Encoder_LDPC_fake_coset<B>
 }
 
 template <typename B>
-void Encoder_LDPC_fake_coset<B>
+void Encoder_coset<B>
 ::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
 	assert(this->n_frames == 1);
@@ -45,11 +45,11 @@ void Encoder_LDPC_fake_coset<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_LDPC_fake_coset<B_8>;
-template class Encoder_LDPC_fake_coset<B_16>;
-template class Encoder_LDPC_fake_coset<B_32>;
-template class Encoder_LDPC_fake_coset<B_64>;
+template class Encoder_coset<B_8>;
+template class Encoder_coset<B_16>;
+template class Encoder_coset<B_32>;
+template class Encoder_coset<B_64>;
 #else
-template class Encoder_LDPC_fake_coset<B>;
+template class Encoder_coset<B>;
 #endif
 // ==================================================================================== explicit template instantiation

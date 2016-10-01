@@ -17,6 +17,7 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .debug_limit    = 0;
 	this->params.simulation .time_report    = false;
 	this->params.simulation .trace_path     = "";
+	this->params.code       .coset          = false;
 	this->params.encoder    .systematic     = true;
 	this->params.interleaver.type           = "RANDOM";
 	this->params.demodulator.max            = "MAX";
@@ -50,6 +51,11 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	this->opt_args[{"cde-coset", "c"}] =
+		{"",
+		 "enable the coset approach."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
@@ -91,6 +97,9 @@ void Launcher_BFERI<B,R,Q>
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
 
+	// ---------------------------------------------------------------------------------------------------------- code
+	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
+
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
 
@@ -115,6 +124,19 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_simulation();
 
 	p.push_back(std::make_pair("Multi-threading (t)", threads));
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
+::header_code()
+{
+	std::string coset = this->params.code.coset ? "on" : "off";
+
+	auto p = Launcher<B,R,Q>::header_code();
+
+	p.push_back(std::make_pair("Coset approach (c)", coset));
 
 	return p;
 }

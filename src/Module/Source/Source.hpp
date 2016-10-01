@@ -20,7 +20,7 @@
  *
  * \brief Generates a message.
  *
- * \tparam B: type of the bits in the Decoder.
+ * \tparam B: type of the bits in the Source.
  *
  * Please use Source for inheritance (instead of Source_interface).
  */

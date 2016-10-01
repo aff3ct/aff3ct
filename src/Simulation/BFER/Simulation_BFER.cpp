@@ -14,9 +14,13 @@
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
+#include "Tools/Factory/Factory_encoder_coset.hpp"
+#include "Tools/Factory/Factory_encoder_AZCW.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
+#include "Tools/Factory/Coset/Factory_coset_real.hpp"
+#include "Tools/Factory/Coset/Factory_coset_bit.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
@@ -58,7 +62,9 @@ Simulation_BFER<B,R,Q>
   modulator  (params.simulation.n_threads, nullptr),
   channel    (params.simulation.n_threads, nullptr),
   quantizer  (params.simulation.n_threads, nullptr),
+  coset_real (params.simulation.n_threads, nullptr),
   decoder    (params.simulation.n_threads, nullptr),
+  coset_bit  (params.simulation.n_threads, nullptr),
   monitor    (params.simulation.n_threads, nullptr),
   monitor_red(                             nullptr),
   terminal   (                             nullptr),
@@ -73,9 +79,11 @@ Simulation_BFER<B,R,Q>
   d_demod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_quant_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_depun_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_corea_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_load_total (params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_decod_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_store_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_cobit_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_check_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
 
   d_sourc_total_sum(std::chrono::nanoseconds(0)),
@@ -88,9 +96,11 @@ Simulation_BFER<B,R,Q>
   d_demod_total_sum(std::chrono::nanoseconds(0)),
   d_quant_total_sum(std::chrono::nanoseconds(0)),
   d_depun_total_sum(std::chrono::nanoseconds(0)),
+  d_corea_total_sum(std::chrono::nanoseconds(0)),
   d_load_total_sum (std::chrono::nanoseconds(0)),
   d_decod_total_sum(std::chrono::nanoseconds(0)),
   d_store_total_sum(std::chrono::nanoseconds(0)),
+  d_cobit_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
 	assert(params.simulation.n_threads >= 1);
@@ -183,9 +193,11 @@ void Simulation_BFER<B,R,Q>
 	simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_depun_total[tid] = std::chrono::nanoseconds(0);
+	simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_load_total [tid] = std::chrono::nanoseconds(0);
 	simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_store_total[tid] = std::chrono::nanoseconds(0);
+	simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
 	simu->d_check_total[tid] = std::chrono::nanoseconds(0);
 
 	simu->barrier(tid);
@@ -203,20 +215,22 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source   [tid] = simu->build_source   (        tid); check_errors(simu->source   [tid], "Source<B>"     );
-	simu->crc      [tid] = simu->build_crc      (        tid); check_errors(simu->crc      [tid], "CRC<B>"        );
-	simu->encoder  [tid] = simu->build_encoder  (        tid); check_errors(simu->encoder  [tid], "Encoder<B>"    );
-	simu->puncturer[tid] = simu->build_puncturer(        tid); check_errors(simu->puncturer[tid], "Puncturer<B,Q>");
-	simu->modulator[tid] = simu->build_modulator(        tid); check_errors(simu->modulator[tid], "Modulator<B,R>");
+	simu->source    [tid] = simu->build_source    (        tid); check_errors(simu->source    [tid], "Source<B>"     );
+	simu->crc       [tid] = simu->build_crc       (        tid); check_errors(simu->crc       [tid], "CRC<B>"        );
+	simu->encoder   [tid] = simu->build_encoder   (        tid); check_errors(simu->encoder   [tid], "Encoder<B>"    );
+	simu->puncturer [tid] = simu->build_puncturer (        tid); check_errors(simu->puncturer [tid], "Puncturer<B,Q>");
+	simu->modulator [tid] = simu->build_modulator (        tid); check_errors(simu->modulator [tid], "Modulator<B,R>");
 
 	const auto N     = simu->params.code.N;
 	const auto tail  = simu->params.code.tail_length;
 	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
 
-	simu->channel  [tid] = simu->build_channel  (N_mod , tid); check_errors(simu->channel  [tid], "Channel<R>"    );
-	simu->quantizer[tid] = simu->build_quantizer(N+tail, tid); check_errors(simu->quantizer[tid], "Quantizer<R,Q>");
-	simu->decoder  [tid] = simu->build_decoder  (        tid); check_errors(simu->decoder  [tid], "Decoder<B,Q>"  );
-	simu->monitor  [tid] = simu->build_monitor  (        tid); check_errors(simu->monitor  [tid], "Monitor<B>"    );
+	simu->channel   [tid] = simu->build_channel   (N_mod , tid); check_errors(simu->channel   [tid], "Channel<R>"    );
+	simu->quantizer [tid] = simu->build_quantizer (N+tail, tid); check_errors(simu->quantizer [tid], "Quantizer<R,Q>");
+	simu->coset_real[tid] = simu->build_coset_real(        tid); check_errors(simu->coset_real[tid], "Coset<B,Q>"    );
+	simu->decoder   [tid] = simu->build_decoder   (        tid); check_errors(simu->decoder   [tid], "Decoder<B,Q>"  );
+	simu->coset_bit [tid] = simu->build_coset_bit (        tid); check_errors(simu->coset_bit [tid], "Coset<B,B>"    );
+	simu->monitor   [tid] = simu->build_monitor   (        tid); check_errors(simu->monitor   [tid], "Monitor<B>"    );
 
 	// get the real number of frames per threads (from the decoder)
 	auto n_fra = simu->decoder[tid]->get_n_frames();
@@ -238,14 +252,16 @@ void Simulation_BFER<B,R,Q>
 	if (simu->V_N [tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->V_N [tid].resize((N_code + tail) * n_fra);
 
 	// set the real number of frames per thread
-	simu->source   [tid]->set_n_frames(n_fra);
-	simu->crc      [tid]->set_n_frames(n_fra);
-	simu->encoder  [tid]->set_n_frames(n_fra);
-	simu->puncturer[tid]->set_n_frames(n_fra);
-	simu->modulator[tid]->set_n_frames(n_fra);
-	simu->channel  [tid]->set_n_frames(n_fra);
-	simu->quantizer[tid]->set_n_frames(n_fra);
-	simu->monitor  [tid]->set_n_frames(n_fra);
+	simu->source    [tid]->set_n_frames(n_fra);
+	simu->crc       [tid]->set_n_frames(n_fra);
+	simu->encoder   [tid]->set_n_frames(n_fra);
+	simu->puncturer [tid]->set_n_frames(n_fra);
+	simu->modulator [tid]->set_n_frames(n_fra);
+	simu->channel   [tid]->set_n_frames(n_fra);
+	simu->quantizer [tid]->set_n_frames(n_fra);
+	simu->coset_real[tid]->set_n_frames(n_fra);
+	simu->coset_bit [tid]->set_n_frames(n_fra);
+	simu->monitor   [tid]->set_n_frames(n_fra);
 
 	simu->barrier(tid);
 	if (tid == 0)
@@ -285,6 +301,8 @@ void Simulation_BFER<B,R,Q>
 		auto d_encod = nanoseconds(0);
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
+		auto d_corea = nanoseconds(0);
+		auto d_cobit = nanoseconds(0);
 
 		if (simu->params.source.type != "AZCW")
 		{
@@ -339,6 +357,14 @@ void Simulation_BFER<B,R,Q>
 		simu->puncturer[tid]->depuncture(simu->Y_N4[tid], simu->Y_N5[tid]);
 		auto d_depun = steady_clock::now() - t_depun;
 
+		// apply the coset: the decoder will believe to a AZCW
+		if (simu->params.code.coset)
+		{
+			auto t_corea = steady_clock::now();
+			simu->coset_real[tid]->apply(simu->X_N1[tid], simu->Y_N5[tid], simu->Y_N5[tid]);
+			d_corea = steady_clock::now() - t_corea;
+		}
+
 		// load data in the decoder
 		auto t_load = steady_clock::now();
 		simu->decoder[tid]->load(simu->Y_N5[tid]);
@@ -353,6 +379,14 @@ void Simulation_BFER<B,R,Q>
 		auto t_store = steady_clock::now();
 		simu->decoder[tid]->store(simu->V_K[tid]);
 		auto d_store = steady_clock::now() - t_store;
+
+		// apply the coset to recover the real bits
+		if (simu->params.code.coset)
+		{
+			auto t_cobit = steady_clock::now();
+			simu->coset_bit[tid]->apply(simu->U_K[tid], simu->V_K[tid], simu->V_K[tid]);
+			d_cobit = steady_clock::now() - t_cobit;
+		}
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
@@ -377,9 +411,11 @@ void Simulation_BFER<B,R,Q>
 		simu->d_demod_total[tid] += d_demod;
 		simu->d_quant_total[tid] += d_quant;
 		simu->d_depun_total[tid] += d_depun;
+		simu->d_corea_total[tid] += d_corea;
 		simu->d_load_total [tid] += d_load;
 		simu->d_decod_total[tid] += d_decod;
 		simu->d_store_total[tid] += d_store;
+		simu->d_cobit_total[tid] += d_cobit;
 		simu->d_check_total[tid] += d_check;
 
 		// save trace in file
@@ -463,6 +499,8 @@ void Simulation_BFER<B,R,Q>
 		auto d_encod = nanoseconds(0);
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
+		auto d_corea = nanoseconds(0);
+		auto d_cobit = nanoseconds(0);
 
 		if (simu->params.source.type != "AZCW")
 		{
@@ -594,6 +632,20 @@ void Simulation_BFER<B,R,Q>
 		ft.display_real_vector(simu->Y_N5[0]);
 		std::clog << std::endl;
 
+		// apply the coset: the decoder will believe to a AZCW
+		if (simu->params.code.coset)
+		{
+			std::clog << "Apply the coset approach on Y_N5..." << std::endl;
+			auto t_corea = steady_clock::now();
+			simu->coset_real[0]->apply(simu->X_N1[0], simu->Y_N5[0], simu->Y_N5[0]);
+			d_corea = steady_clock::now() - t_corea;
+
+			// display Y_N5
+			std::clog << "Y_N5:" << std::endl;
+			ft.display_real_vector(simu->Y_N5[0]);
+			std::clog << std::endl;
+		}
+
 		// load data in the decoder
 		auto t_load = steady_clock::now();
 		simu->decoder[0]->load(simu->Y_N5[0]);
@@ -612,8 +664,25 @@ void Simulation_BFER<B,R,Q>
 
 		// display V_K
 		std::clog << "V_K:" << std::endl;
-		ft.display_bit_vector(simu->V_K[0], simu->U_K[0]);
+		if (simu->params.code.coset)
+			ft.display_bit_vector(simu->V_K[0]);
+		else
+			ft.display_bit_vector(simu->V_K[0], simu->U_K[0]);
 		std::clog << std::endl;
+
+		// apply the coset to recover the real bits
+		if (simu->params.code.coset)
+		{
+			std::clog << "Apply the coset approach on V_K..." << std::endl;
+			auto t_cobit = steady_clock::now();
+			simu->coset_bit[0]->apply(simu->U_K[0], simu->V_K[0], simu->V_K[0]);
+			d_cobit = steady_clock::now() - t_cobit;
+
+			// display V_K
+			std::clog << "V_K:" << std::endl;
+			ft.display_bit_vector(simu->V_K[0], simu->U_K[0]);
+			std::clog << std::endl;
+		}
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
@@ -631,9 +700,11 @@ void Simulation_BFER<B,R,Q>
 		simu->d_demod_total[0] += d_demod;
 		simu->d_quant_total[0] += d_quant;
 		simu->d_depun_total[0] += d_depun;
+		simu->d_corea_total[0] += d_corea;
 		simu->d_load_total [0] += d_load;
 		simu->d_decod_total[0] += d_decod;
 		simu->d_store_total[0] += d_store;
+		simu->d_cobit_total[0] += d_cobit;
 		simu->d_check_total[0] += d_check;
 
 		// save trace in file
@@ -710,10 +781,12 @@ void Simulation_BFER<B,R,Q>
 	d_filte_total_red = nanoseconds(0);
 	d_quant_total_red = nanoseconds(0);
 	d_depun_total_red = nanoseconds(0);
+	d_corea_total_red = nanoseconds(0);
 	d_load_total_red  = nanoseconds(0);
 	d_decod_total_red = nanoseconds(0);
 	d_store_total_red = nanoseconds(0);
 	d_decod_all_red   = nanoseconds(0);
+	d_cobit_total_red = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
 	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
@@ -728,10 +801,12 @@ void Simulation_BFER<B,R,Q>
 		d_demod_total_red += d_demod_total[tid];
 		d_quant_total_red += d_quant_total[tid];
 		d_depun_total_red += d_depun_total[tid];
+		d_corea_total_red += d_corea_total[tid];
 		d_load_total_red  += d_load_total [tid];
 		d_decod_total_red += d_decod_total[tid];
 		d_store_total_red += d_store_total[tid];
 		d_decod_all_red   += (d_load_total[tid] + d_decod_total[tid] + d_store_total[tid]);
+		d_cobit_total_red += d_cobit_total[tid];
 		d_check_total_red += d_check_total[tid];
 	}
 
@@ -748,9 +823,11 @@ void Simulation_BFER<B,R,Q>
 			d_demod_total_sum += d_demod_total[tid];
 			d_quant_total_sum += d_quant_total[tid];
 			d_depun_total_sum += d_depun_total[tid];
+			d_corea_total_sum += d_corea_total[tid];
 			d_load_total_sum  += d_load_total [tid];
 			d_decod_total_sum += d_decod_total[tid];
 			d_store_total_sum += d_store_total[tid];
+			d_cobit_total_sum += d_cobit_total[tid];
 			d_check_total_sum += d_check_total[tid];
 		}
 }
@@ -771,9 +848,11 @@ void Simulation_BFER<B,R,Q>
 	               d_demod_total_sum +
 	               d_quant_total_sum + 
 	               d_depun_total_sum + 
+	               d_corea_total_sum +
 	               d_load_total_sum  +
 	               d_decod_total_sum +
 	               d_store_total_sum +
+	               d_cobit_total_sum +
 	               d_check_total_sum;
 
 	auto sourc_sec     = ((float)d_sourc_total_sum.count()) * 0.000000001f;
@@ -786,10 +865,12 @@ void Simulation_BFER<B,R,Q>
 	auto demod_sec     = ((float)d_demod_total_sum.count()) * 0.000000001f;
 	auto quant_sec     = ((float)d_quant_total_sum.count()) * 0.000000001f;
 	auto depun_sec     = ((float)d_depun_total_sum.count()) * 0.000000001f;
+	auto corea_sec     = ((float)d_corea_total_sum.count()) * 0.000000001f;
 	auto load_sec      = ((float)d_load_total_sum .count()) * 0.000000001f;
 	auto decod_sec     = ((float)d_decod_total_sum.count()) * 0.000000001f;
 	auto store_sec     = ((float)d_store_total_sum.count()) * 0.000000001f;
 	auto decod_tot_sec = load_sec + decod_sec + store_sec;
+	auto cobit_sec     = ((float)d_cobit_total_sum.count()) * 0.000000001f;
 	auto check_sec     = ((float)d_check_total_sum.count()) * 0.000000001f;
 	auto total_sec     = ((float)d_total          .count()) * 0.000000001f;
 
@@ -803,10 +884,12 @@ void Simulation_BFER<B,R,Q>
 	auto demod_pc     = (demod_sec     / total_sec)     * 100.f;
 	auto quant_pc     = (quant_sec     / total_sec)     * 100.f;
 	auto depun_pc     = (depun_sec     / total_sec)     * 100.f;
+	auto corea_pc     = (corea_sec     / total_sec)     * 100.f;
 	auto decod_tot_pc = (decod_tot_sec / total_sec)     * 100.f;
 	auto load_pc      = (load_sec      / decod_tot_sec) * 100.f;
 	auto decod_pc     = (decod_sec     / decod_tot_sec) * 100.f;
 	auto store_pc     = (store_sec     / decod_tot_sec) * 100.f;
+	auto cobit_pc     = (cobit_sec     / total_sec)     * 100.f;
 	auto check_pc     = (check_sec     / total_sec)     * 100.f;
 
 	stream << "#" << std::endl;
@@ -841,6 +924,10 @@ void Simulation_BFER<B,R,Q>
 	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << depun_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << depun_pc     << "%)" 
 	       << std::endl;
+	if (this->params.code.coset)
+	stream << "# " << bold           ("* Coset real") << "  : " << std::setw(9) << std::fixed << std::setprecision(3)
+	       << corea_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << corea_pc     << "%)"
+	       << std::endl;
 	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_tot_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_tot_pc << "%)" 
 	       << std::endl;
@@ -852,6 +939,10 @@ void Simulation_BFER<B,R,Q>
 	       << std::endl;
 	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << store_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << store_pc     << "%)" 
+	       << std::endl;
+	if (this->params.code.coset)
+	stream << "# " << bold           ("* Coset bit") << "   : " << std::setw(9) << std::fixed << std::setprecision(3)
+	       << cobit_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << cobit_pc     << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Check errors") << ": " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << check_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc     << "%)" 
@@ -871,15 +962,17 @@ void Simulation_BFER<B,R,Q>
 {
 	int tid;
 	const auto nthr = params.simulation.n_threads;
-	for (tid = 0; tid < nthr; tid++) if (source   [tid] != nullptr) { delete source   [tid]; source   [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (crc      [tid] != nullptr) { delete crc      [tid]; crc      [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (encoder  [tid] != nullptr) { delete encoder  [tid]; encoder  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (puncturer[tid] != nullptr) { delete puncturer[tid]; puncturer[tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (modulator[tid] != nullptr) { delete modulator[tid]; modulator[tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (channel  [tid] != nullptr) { delete channel  [tid]; channel  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (quantizer[tid] != nullptr) { delete quantizer[tid]; quantizer[tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (decoder  [tid] != nullptr) { delete decoder  [tid]; decoder  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (monitor  [tid] != nullptr) { delete monitor  [tid]; monitor  [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (source    [tid] != nullptr) { delete source    [tid]; source    [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (crc       [tid] != nullptr) { delete crc       [tid]; crc       [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (encoder   [tid] != nullptr) { delete encoder   [tid]; encoder   [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (puncturer [tid] != nullptr) { delete puncturer [tid]; puncturer [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (modulator [tid] != nullptr) { delete modulator [tid]; modulator [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (channel   [tid] != nullptr) { delete channel   [tid]; channel   [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (quantizer [tid] != nullptr) { delete quantizer [tid]; quantizer [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (coset_real[tid] != nullptr) { delete coset_real[tid]; coset_real[tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (decoder   [tid] != nullptr) { delete decoder   [tid]; decoder   [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (coset_bit [tid] != nullptr) { delete coset_bit [tid]; coset_bit [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (monitor   [tid] != nullptr) { delete monitor   [tid]; monitor   [tid] = nullptr; }
 	
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
 	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
@@ -905,19 +998,36 @@ Source<B>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+CRC<B>* Simulation_BFER<B,R,Q>
+::build_crc(const int tid)
+{
+	return Factory_CRC<B>::build(params);
+}
+
+template <typename B, typename R, typename Q>
+Encoder<B>* Simulation_BFER<B,R,Q>
+::build_encoder(const int tid)
+{
+	if (this->params.source.type == "AZCW")
+		return Factory_encoder_AZCW<B>::build(params);
+	else if (this->params.code.coset)
+		return Factory_encoder_coset<B>::build(params, tid);
+	else
+	{
+		std::cerr << bold_red("(EE) The encoder could not be instantiated: try to enable the coset approach or to ")
+		          << bold_red("use All Zero Code Words. Exiting...") << std::endl;
+		std::exit(-1);
+		return nullptr;
+	}
+}
+
+template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER<B,R,Q>
 ::build_puncturer(const int tid)
 {
 	auto puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N);
 	check_errors(puncturer, "Puncturer<B,Q>");
 	return puncturer;
-}
-
-template <typename B, typename R, typename Q>
-CRC<B>* Simulation_BFER<B,R,Q>
-::build_crc(const int tid)
-{
-	return Factory_CRC<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>
@@ -939,6 +1049,20 @@ Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 ::build_quantizer(const int size, const int tid)
 {
 	return Factory_quantizer<R,Q>::build(params, size, sigma);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,Q>* Simulation_BFER<B,R,Q>
+::build_coset_real(const int tid)
+{
+	return Factory_coset_real<B,Q>::build(params);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,B>* Simulation_BFER<B,R,Q>
+::build_coset_bit(const int tid)
+{
+	return Factory_coset_bit<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>

@@ -74,8 +74,6 @@ public:
 
 	virtual ~SC_Source() { if (module != nullptr) { delete module; module = nullptr; } };
 
-	virtual void generate(mipp::vector<B>& U_K) = 0;
-
 	virtual void set_n_frames(const int n_frames)
 	{
 		Source_interface<B>::set_n_frames(n_frames);

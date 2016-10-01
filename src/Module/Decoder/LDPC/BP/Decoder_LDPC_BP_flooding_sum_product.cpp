@@ -11,11 +11,8 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
                                        const std ::vector<unsigned char> &n_variables_per_parity,
                                        const std ::vector<unsigned char> &n_parities_per_variable,
                                        const std ::vector<unsigned int > &transpose,
-                                       const mipp::vector<B            > &U_N,
-                                       const bool                         coset,
                                        const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, U_N, coset,
-                                name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, name)
 {
 }
 
