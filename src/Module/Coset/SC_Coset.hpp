@@ -63,7 +63,7 @@ private:
 	{
 		assert((trans.get_data_length() / sizeof(D)) == in_data.size());
 
-		const D* buffer_in = (B*)trans.get_data_ptr();
+		const D* buffer_in = (D*)trans.get_data_ptr();
 		std::copy(buffer_in, buffer_in + in_data.size(), in_data.begin());
 
 		coset.apply(ref, in_data, out_data);

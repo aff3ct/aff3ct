@@ -990,6 +990,7 @@ void Simulation_BFER<B,R,Q>
 {
 }
 
+
 template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER<B,R,Q>
 ::build_source(const int tid)
@@ -1025,7 +1026,7 @@ template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER<B,R,Q>
 ::build_puncturer(const int tid)
 {
-	auto puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N);
+	auto puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N + params.code.tail_length);
 	check_errors(puncturer, "Puncturer<B,Q>");
 	return puncturer;
 }
@@ -1048,7 +1049,7 @@ template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER<B,R,Q>
 ::build_quantizer(const int size, const int tid)
 {
-	return Factory_quantizer<R,Q>::build(params, size, sigma);
+	return Factory_quantizer<R,Q>::build(params, sigma, size);
 }
 
 template <typename B, typename R, typename Q>
