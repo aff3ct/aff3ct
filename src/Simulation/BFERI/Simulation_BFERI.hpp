@@ -67,8 +67,8 @@ protected:
 	std::vector<Channel<R>*>        channel;
 	std::vector<Quantizer<R,Q>*>    quantizer;
 	std::vector<Interleaver<int>*>  interleaver;
-	std::vector<SISO<Q>*>           siso;
 	std::vector<Coset<B,Q>*>        coset_real;
+	std::vector<SISO<Q>*>           siso;
 	std::vector<Decoder<B,Q>*>      decoder;
 	std::vector<Coset<B,B>*>        coset_bit;
 	std::vector<Monitor<B>*>        monitor;

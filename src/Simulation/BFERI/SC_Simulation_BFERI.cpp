@@ -12,10 +12,14 @@
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
+#include "Tools/Factory/Factory_encoder_coset.hpp"
+#include "Tools/Factory/Factory_encoder_AZCW.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
+#include "Tools/Factory/Coset/Factory_coset_real.hpp"
+#include "Tools/Factory/Coset/Factory_coset_bit.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
@@ -47,19 +51,21 @@ Simulation_BFERI<B,R,Q>
   channel      (1, nullptr),
   quantizer    (1, nullptr),
   interleaver  (1, nullptr),
+  coset_real   (1, nullptr),
+  coset_real_i (   nullptr),
   siso         (1, nullptr),
   decoder      (1, nullptr),
+  coset_bit    (1, nullptr),
   monitor      (1, nullptr),
   terminal     (   nullptr),
 
-  duplicator1(nullptr),
-  duplicator2(nullptr),
+  duplicator{nullptr, nullptr, nullptr, nullptr, nullptr},
   router     (nullptr),
   predicate  (nullptr),
 
-  dbg_B{nullptr, nullptr, nullptr, nullptr, nullptr},
+  dbg_B{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R{nullptr, nullptr, nullptr},
-  dbg_Q{nullptr, nullptr, nullptr, nullptr, nullptr},
+  dbg_Q{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
 
   d_decod_total_fake(std::chrono::nanoseconds(0))
 {
@@ -72,12 +78,6 @@ Simulation_BFERI<B,R,Q>
 	if (params.simulation.benchs)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
-	if (params.code.coset)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the coset approach... Exiting") << std::endl;
 		std::exit(-1);
 	}
 
@@ -136,10 +136,16 @@ void Simulation_BFERI<B,R,Q>
 
 	Predicate_ite p(this->params.demodulator.n_ite);
 
-	this->duplicator1 = new SC_Duplicator(   "Duplicator1");
-	this->duplicator2 = new SC_Duplicator(   "Duplicator2");
-	this->router      = new SC_Router    (p, "Router"     );
-	this->predicate   = new SC_Predicate (p, "Predicate"  );
+	this->duplicator[0] = new SC_Duplicator(   "Duplicator0");
+	this->duplicator[1] = new SC_Duplicator(   "Duplicator1");
+	if (this->params.code.coset)
+	{
+		this->duplicator[2] = new SC_Duplicator("Duplicator2");
+		this->duplicator[3] = new SC_Duplicator("Duplicator3");
+		this->duplicator[4] = new SC_Duplicator("Duplicator4");
+	}
+	this->router        = new SC_Router    (p, "Router"     );
+	this->predicate     = new SC_Predicate (p, "Predicate"  );
 
 	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
 	{
@@ -159,13 +165,38 @@ void Simulation_BFERI<B,R,Q>
 		this->dbg_Q[4] = new SC_Debug<Q>("Interleave from Y_N6 to Y_N7...           \nY_N7:\n", dl, "Debug_Q4");
 		this->dbg_B[4] = new SC_Debug<B>("Hard decode Y_N5 and generate V_K...      \nV_K: \n", dl, "Debug_B4");
 
+		if (this->params.code.coset)
+		{
+			this->dbg_Q[5] = new SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q5");
+			this->dbg_Q[6] = new SC_Debug<Q>("Reverse the coset on Y_N6...              \nY_N6:\n", dl, "Debug_Q6");
+			this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
+		}
+
 		this->bind_sockets_debug();
+		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 		sc_core::sc_start(); // start simulation
 		this->terminal->legend(std::cout);
 
-		for (auto i = 0; i < 5; i++) { delete this->dbg_B[i]; this->dbg_B[i] = nullptr; }
-		for (auto i = 0; i < 3; i++) { delete this->dbg_R[i]; this->dbg_R[i] = nullptr; }
-		for (auto i = 0; i < 5; i++) { delete this->dbg_Q[i]; this->dbg_Q[i] = nullptr; }
+		for (auto i = 0; i < 6; i++)
+			if (this->dbg_B[i] != nullptr)
+			{
+				delete this->dbg_B[i];
+				this->dbg_B[i] = nullptr;
+			}
+
+		for (auto i = 0; i < 3; i++)
+			if (this->dbg_R[i] != nullptr)
+			{
+				delete this->dbg_R[i];
+				this->dbg_R[i] = nullptr;
+			}
+
+		for (auto i = 0; i < 7; i++)
+			if (this->dbg_Q[i] != nullptr)
+			{
+				delete this->dbg_Q[i];
+				this->dbg_Q[i] = nullptr;
+			}
 	}
 	else
 	{
@@ -180,8 +211,13 @@ void Simulation_BFERI<B,R,Q>
 		thread.join();
 	}
 
-	delete this->duplicator1; this->duplicator1 = nullptr;
-	delete this->duplicator2; this->duplicator2 = nullptr;
+	for (auto i = 0; i < 5; i++)
+		if (this->duplicator[i] != nullptr)
+		{
+			delete this->duplicator[i];
+			this->duplicator[i] = nullptr;
+		}
+
 	delete this->router;      this->router      = nullptr;
 	delete this->predicate;   this->predicate   = nullptr;
 
@@ -214,9 +250,14 @@ void Simulation_BFERI<B,R,Q>
 
 	this->channel    [0] = this->build_channel    (N_mod); check_errors(this->channel    [0], "Channel<R>"      );
 	this->quantizer  [0] = this->build_quantizer  (N_fil); check_errors(this->quantizer  [0], "Quantizer<R,Q>"  );
+	this->coset_real [0] = this->build_coset_real (     ); check_errors(this->coset_real [0], "Coset<B,Q>"      );
+	this->coset_real_i   = this->build_coset_real (     ); check_errors(this->coset_real_i  , "Coset<B,Q>"      );
 	this->siso       [0] = this->build_siso       (     ); check_errors(this->siso       [0], "SISO<Q>"         );
 	this->decoder    [0] = this->build_decoder    (     ); check_errors(this->decoder    [0], "Decoder<B,Q>"    );
+	this->coset_bit  [0] = this->build_coset_bit  (     ); check_errors(this->coset_bit  [0], "Coset<B,B>"      );
 	this->monitor    [0] = this->build_monitor    (     ); check_errors(this->monitor    [0], "Monitor<B>"      );
+
+	this->coset_real_i->rename("Coset_real_i");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source     [0]->create_sc_module              ();
@@ -233,6 +274,12 @@ void Simulation_BFERI<B,R,Q>
 	this->interleaver[0]->create_sc_module_interleaver  ();
 	this->decoder    [0]->create_sc_module              ();
 	this->monitor    [0]->create_sc_module              ();
+	if (this->params.code.coset)
+	{
+		this->coset_real[0]->create_sc_module();
+		this->coset_real_i ->create_sc_module();
+		this->coset_bit [0]->create_sc_module();
+	}
 
 	// get the real number of frames per threads (from the decoder)
 	this->n_frames = this->decoder[0]->get_n_frames();
@@ -247,6 +294,9 @@ void Simulation_BFERI<B,R,Q>
 	this->modulator  [0]->set_n_frames(this->n_frames);
 	this->channel    [0]->set_n_frames(this->n_frames);
 	this->quantizer  [0]->set_n_frames(this->n_frames);
+	this->coset_real [0]->set_n_frames(this->n_frames);
+	this->coset_real_i  ->set_n_frames(this->n_frames);
+	this->coset_bit  [0]->set_n_frames(this->n_frames);
 	this->monitor    [0]->set_n_frames(this->n_frames);
 
 	// build the terminal to display the BER/FER
@@ -258,50 +308,118 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::bind_sockets()
 {
-	this->source     [0]->module        ->s_out (this->crc        [0]->module        ->s_in );
-	this->crc        [0]->module        ->s_out (this->duplicator1                   ->s_in );
-	this->duplicator1                   ->s_out1(this->monitor    [0]->module        ->s_in1);
-	this->duplicator1                   ->s_out2(this->encoder    [0]->module        ->s_in );
-	this->encoder    [0]->module        ->s_out (this->interleaver_e ->module_inter  ->s_in );
-	this->interleaver_e ->module_inter  ->s_out (this->modulator  [0]->module_mod    ->s_in );
-	this->modulator  [0]->module_mod    ->s_out (this->channel    [0]->module        ->s_in );
-	this->channel    [0]->module        ->s_out (this->modulator  [0]->module_filt   ->s_in );
-	this->modulator  [0]->module_filt   ->s_out (this->quantizer  [0]->module        ->s_in );
-	this->quantizer  [0]->module        ->s_out (this->modulator  [0]->module_tdemod ->s_in1);
-	this->modulator  [0]->module_tdemod ->s_out (this->interleaver[0]->module_deinter->s_in );
-	this->interleaver[0]->module_deinter->s_out (this->router                        ->s_in );
-	this->router                        ->s_out1(this->siso       [0]->module_siso   ->s_in );
-	this->router                        ->s_out2(this->decoder    [0]->module        ->s_in );
-	this->siso       [0]->module_siso   ->s_out (this->interleaver[0]->module_inter  ->s_in );
-	this->interleaver[0]->module_inter  ->s_out (this->modulator  [0]->module_tdemod ->s_in2);
-	this->decoder    [0]->module        ->s_out (this->duplicator2                   ->s_in );
-	this->duplicator2                   ->s_out1(this->monitor    [0]->module        ->s_in2);
-	this->duplicator2                   ->s_out2(this->predicate                     ->s_in );
+	if (this->params.code.coset)
+	{
+		this->source     [0]->module        ->s_out (this->crc        [0]->module        ->s_in );
+		this->crc        [0]->module        ->s_out (this->duplicator [0]                ->s_in );
+		this->duplicator [0]                ->s_out1(this->duplicator [2]                ->s_in );
+		this->duplicator [2]                ->s_out1(this->monitor    [0]->module        ->s_in1);
+		this->duplicator [2]                ->s_out2(this->coset_bit  [0]->module        ->s_in1);
+		this->duplicator [0]                ->s_out2(this->encoder    [0]->module        ->s_in );
+		this->encoder    [0]->module        ->s_out (this->duplicator [3]                ->s_in );
+		this->duplicator [3]                ->s_out1(this->duplicator [4]                ->s_in );
+		this->duplicator [4]                ->s_out1(this->coset_real [0]->module        ->s_in1);
+		this->duplicator [4]                ->s_out2(this->coset_real_i  ->module        ->s_in1);
+		this->duplicator [3]                ->s_out2(this->interleaver_e ->module_inter  ->s_in );
+		this->interleaver_e ->module_inter  ->s_out (this->modulator  [0]->module_mod    ->s_in );
+		this->modulator  [0]->module_mod    ->s_out (this->channel    [0]->module        ->s_in );
+		this->channel    [0]->module        ->s_out (this->modulator  [0]->module_filt   ->s_in );
+		this->modulator  [0]->module_filt   ->s_out (this->quantizer  [0]->module        ->s_in );
+		this->quantizer  [0]->module        ->s_out (this->modulator  [0]->module_tdemod ->s_in1);
+		this->modulator  [0]->module_tdemod ->s_out (this->interleaver[0]->module_deinter->s_in );
+		this->interleaver[0]->module_deinter->s_out (this->coset_real [0]->module        ->s_in2);
+		this->coset_real [0]->module        ->s_out (this->router                        ->s_in );
+		this->router                        ->s_out1(this->siso       [0]->module_siso   ->s_in );
+		this->router                        ->s_out2(this->decoder    [0]->module        ->s_in );
+		this->siso       [0]->module_siso   ->s_out (this->coset_real_i  ->module        ->s_in2);
+		this->coset_real_i  ->module        ->s_out (this->interleaver[0]->module_inter  ->s_in );
+		this->interleaver[0]->module_inter  ->s_out (this->modulator  [0]->module_tdemod ->s_in2);
+		this->decoder    [0]->module        ->s_out (this->coset_bit  [0]->module        ->s_in2);
+		this->coset_bit  [0]->module        ->s_out (this->duplicator [1]                ->s_in );
+		this->duplicator [1]                ->s_out1(this->monitor    [0]->module        ->s_in2);
+		this->duplicator [1]                ->s_out2(this->predicate                     ->s_in );
+	}
+	else // standard simulation
+	{
+		this->source     [0]->module        ->s_out (this->crc        [0]->module        ->s_in );
+		this->crc        [0]->module        ->s_out (this->duplicator [0]                ->s_in );
+		this->duplicator [0]                ->s_out1(this->monitor    [0]->module        ->s_in1);
+		this->duplicator [0]                ->s_out2(this->encoder    [0]->module        ->s_in );
+		this->encoder    [0]->module        ->s_out (this->interleaver_e ->module_inter  ->s_in );
+		this->interleaver_e ->module_inter  ->s_out (this->modulator  [0]->module_mod    ->s_in );
+		this->modulator  [0]->module_mod    ->s_out (this->channel    [0]->module        ->s_in );
+		this->channel    [0]->module        ->s_out (this->modulator  [0]->module_filt   ->s_in );
+		this->modulator  [0]->module_filt   ->s_out (this->quantizer  [0]->module        ->s_in );
+		this->quantizer  [0]->module        ->s_out (this->modulator  [0]->module_tdemod ->s_in1);
+		this->modulator  [0]->module_tdemod ->s_out (this->interleaver[0]->module_deinter->s_in );
+		this->interleaver[0]->module_deinter->s_out (this->router                        ->s_in );
+		this->router                        ->s_out1(this->siso       [0]->module_siso   ->s_in );
+		this->router                        ->s_out2(this->decoder    [0]->module        ->s_in );
+		this->siso       [0]->module_siso   ->s_out (this->interleaver[0]->module_inter  ->s_in );
+		this->interleaver[0]->module_inter  ->s_out (this->modulator  [0]->module_tdemod ->s_in2);
+		this->decoder    [0]->module        ->s_out (this->duplicator [1]                ->s_in );
+		this->duplicator [1]                ->s_out1(this->monitor    [0]->module        ->s_in2);
+		this->duplicator [1]                ->s_out2(this->predicate                     ->s_in );
+	}
 }
 
 template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::bind_sockets_debug()
 {
-	this->source     [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc        [0]->module        ->s_in );
-	this->crc        [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator1                   ->s_in );
-	this->duplicator1                                                                ->s_out1(this->monitor    [0]->module        ->s_in1);
-	this->duplicator1                                                                ->s_out2(this->encoder    [0]->module        ->s_in );
-	this->encoder    [0]->module        ->s_out(this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->interleaver_e ->module_inter  ->s_in );
-	this->interleaver_e ->module_inter  ->s_out(this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->module_mod    ->s_in );
-	this->modulator  [0]->module_mod    ->s_out(this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->module        ->s_in );
-	this->channel    [0]->module        ->s_out(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->module_filt   ->s_in );
-	this->modulator  [0]->module_filt   ->s_out(this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->module        ->s_in );
-	this->quantizer  [0]->module        ->s_out(this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->module_tdemod ->s_in1);
-	this->modulator  [0]->module_tdemod ->s_out(this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->module_deinter->s_in );
-	this->interleaver[0]->module_deinter->s_out(this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->router                        ->s_in );
-	this->router                                                                     ->s_out1(this->siso       [0]->module_siso   ->s_in );
-	this->router                                                                     ->s_out2(this->decoder    [0]->module        ->s_in );
-	this->siso       [0]->module_siso   ->s_out(this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->interleaver[0]->module_inter  ->s_in );
-	this->interleaver[0]->module_inter  ->s_out(this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->module_tdemod ->s_in2);
-	this->decoder    [0]->module        ->s_out(this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->duplicator2                   ->s_in );
-	this->duplicator2                                                                ->s_out1(this->monitor    [0]->module        ->s_in2);
-	this->duplicator2                                                                ->s_out2(this->predicate                     ->s_in );
+	if (this->params.code.coset)
+	{
+		this->source     [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc        [0]->module        ->s_in );
+		this->crc        [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator [0]                ->s_in );
+		this->duplicator [0]                                                             ->s_out1(this->duplicator [2]                ->s_in );
+		this->duplicator [2]                                                             ->s_out1(this->monitor    [0]->module        ->s_in1);
+		this->duplicator [2]                                                             ->s_out2(this->coset_bit  [0]->module        ->s_in1);
+		this->duplicator [0]                                                             ->s_out2(this->encoder    [0]->module        ->s_in );
+		this->encoder    [0]->module        ->s_out(this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->duplicator [3]                ->s_in );
+		this->duplicator [3]                                                             ->s_out1(this->duplicator [4]                ->s_in );
+		this->duplicator [4]                                                             ->s_out1(this->coset_real [0]->module        ->s_in1);
+		this->duplicator [4]                                                             ->s_out2(this->coset_real_i  ->module        ->s_in1);
+		this->duplicator [3]                                                             ->s_out2(this->interleaver_e ->module_inter  ->s_in );
+		this->interleaver_e ->module_inter  ->s_out(this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->module_mod    ->s_in );
+		this->modulator  [0]->module_mod    ->s_out(this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->module        ->s_in );
+		this->channel    [0]->module        ->s_out(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->module_filt   ->s_in );
+		this->modulator  [0]->module_filt   ->s_out(this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->module        ->s_in );
+		this->quantizer  [0]->module        ->s_out(this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->module_tdemod ->s_in1);
+		this->modulator  [0]->module_tdemod ->s_out(this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->module_deinter->s_in );
+		this->interleaver[0]->module_deinter->s_out(this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->coset_real [0]->module        ->s_in2);
+		this->coset_real [0]->module        ->s_out(this->dbg_Q[5]->s_in); this->dbg_Q[5]->s_out (this->router                        ->s_in );
+		this->router                                                                     ->s_out1(this->siso       [0]->module_siso   ->s_in );
+		this->router                                                                     ->s_out2(this->decoder    [0]->module        ->s_in );
+		this->siso       [0]->module_siso   ->s_out(this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->coset_real_i  ->module        ->s_in2);
+		this->coset_real_i  ->module        ->s_out(this->dbg_Q[6]->s_in); this->dbg_Q[6]->s_out (this->interleaver[0]->module_inter  ->s_in );
+		this->interleaver[0]->module_inter  ->s_out(this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->module_tdemod ->s_in2);
+		this->decoder    [0]->module        ->s_out(this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->coset_bit  [0]->module        ->s_in2);
+		this->coset_bit  [0]->module        ->s_out(this->dbg_B[5]->s_in); this->dbg_B[5]->s_out (this->duplicator [1]                ->s_in );
+		this->duplicator [1]                                                             ->s_out1(this->monitor    [0]->module        ->s_in2);
+		this->duplicator [1]                                                             ->s_out2(this->predicate                     ->s_in );
+	}
+	else // standard simulation
+	{
+		this->source     [0]->module        ->s_out(this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc        [0]->module        ->s_in );
+		this->crc        [0]->module        ->s_out(this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator [0]                ->s_in );
+		this->duplicator [0]                                                             ->s_out1(this->monitor    [0]->module        ->s_in1);
+		this->duplicator [0]                                                             ->s_out2(this->encoder    [0]->module        ->s_in );
+		this->encoder    [0]->module        ->s_out(this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->interleaver_e ->module_inter  ->s_in );
+		this->interleaver_e ->module_inter  ->s_out(this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->module_mod    ->s_in );
+		this->modulator  [0]->module_mod    ->s_out(this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->module        ->s_in );
+		this->channel    [0]->module        ->s_out(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->module_filt   ->s_in );
+		this->modulator  [0]->module_filt   ->s_out(this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->module        ->s_in );
+		this->quantizer  [0]->module        ->s_out(this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->module_tdemod ->s_in1);
+		this->modulator  [0]->module_tdemod ->s_out(this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->module_deinter->s_in );
+		this->interleaver[0]->module_deinter->s_out(this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->router                        ->s_in );
+		this->router                                                                     ->s_out1(this->siso       [0]->module_siso   ->s_in );
+		this->router                                                                     ->s_out2(this->decoder    [0]->module        ->s_in );
+		this->siso       [0]->module_siso   ->s_out(this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->interleaver[0]->module_inter  ->s_in );
+		this->interleaver[0]->module_inter  ->s_out(this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->module_tdemod ->s_in2);
+		this->decoder    [0]->module        ->s_out(this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->duplicator [1]                ->s_in );
+		this->duplicator [1]                                                             ->s_out1(this->monitor    [0]->module        ->s_in2);
+		this->duplicator [1]                                                             ->s_out2(this->predicate                     ->s_in );
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -335,6 +453,8 @@ void Simulation_BFERI<B,R,Q>
 	if (modulator  [0] != nullptr) { delete modulator  [0]; modulator  [0] = nullptr; }
 	if (channel    [0] != nullptr) { delete channel    [0]; channel    [0] = nullptr; }
 	if (quantizer  [0] != nullptr) { delete quantizer  [0]; quantizer  [0] = nullptr; }
+	if (coset_real [0] != nullptr) { delete coset_real [0]; coset_real [0] = nullptr; }
+	if (coset_real_i   != nullptr) { delete coset_real_i  ; coset_real_i   = nullptr; }
 	if (siso[0] != nullptr)
 	{
 		// do not delete the siso if the decoder and the siso are the same pointers
@@ -343,6 +463,7 @@ void Simulation_BFERI<B,R,Q>
 		siso[0] = nullptr;
 	}
 	if (decoder    [0] != nullptr) { delete decoder    [0]; decoder    [0] = nullptr; }
+	if (coset_bit  [0] != nullptr) { delete coset_bit  [0]; coset_bit  [0] = nullptr; }
 	if (monitor    [0] != nullptr) { delete monitor    [0]; monitor    [0] = nullptr; }
 	if (terminal       != nullptr) { delete terminal;       terminal       = nullptr; }
 }
@@ -374,6 +495,23 @@ CRC<B>* Simulation_BFERI<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Encoder<B>* Simulation_BFERI<B,R,Q>
+::build_encoder(const int tid)
+{
+	if (this->params.source.type == "AZCW")
+		return Factory_encoder_AZCW<B>::build(params);
+	else if (this->params.code.coset)
+		return Factory_encoder_coset<B>::build(params, tid);
+	else
+	{
+		std::cerr << bold_red("(EE) The encoder could not be instantiated: try to enable the coset approach or to ")
+		          << bold_red("use All Zero Code Words. Exiting...") << std::endl;
+		std::exit(-1);
+		return nullptr;
+	}
+}
+
+template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFERI<B,R,Q>
 ::build_interleaver(const int tid)
 {
@@ -399,6 +537,20 @@ Quantizer<R,Q>* Simulation_BFERI<B,R,Q>
 ::build_quantizer(const int size, const int tid)
 {
 	return Factory_quantizer<R,Q>::build(params, sigma, size);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,Q>* Simulation_BFERI<B,R,Q>
+::build_coset_real(const int tid)
+{
+	return Factory_coset_real<B,Q>::build(params);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,B>* Simulation_BFERI<B,R,Q>
+::build_coset_bit(const int tid)
+{
+	return Factory_coset_bit<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>

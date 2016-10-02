@@ -56,9 +56,9 @@ Simulation_BFER<B,R,Q>
   terminal  (   nullptr),
 
   duplicator{nullptr, nullptr, nullptr},
-  dbg_B{nullptr, nullptr, nullptr, nullptr, nullptr},
+  dbg_B{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R{nullptr, nullptr, nullptr},
-  dbg_Q{nullptr, nullptr},
+  dbg_Q{nullptr, nullptr, nullptr},
 
   d_decod_total_fake(std::chrono::nanoseconds(0))
 {
@@ -153,7 +153,7 @@ void Simulation_BFER<B,R,Q>
 		if (this->params.code.coset)
 		{
 			this->dbg_Q[2] = new SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q2");
-			this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nY_N5:\n", dl, "Debug_B5");
+			this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
 		}
 
 		this->bind_sockets_debug();

@@ -102,8 +102,7 @@ public:
 
 	void create_sc_module()
 	{
-		const std::string new_name = this->name + "_punct";
-		this->module = new SC_Coset_module<B,D>(*this, new_name.c_str());
+		this->module = new SC_Coset_module<B,D>(*this, this->name.c_str());
 	}
 };
 
