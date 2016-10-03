@@ -3,6 +3,8 @@
 #include "Tools/Display/bash_tools.h"
 #include "Launcher_BFER_RSC.hpp"
 #include "../../../Simulation/BFER/RSC/Simulation_BFER_RSC.hpp"
+#include <regex>
+#include <string>
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_RSC<B,R,Q,QD>
@@ -12,6 +14,7 @@ Launcher_BFER_RSC<B,R,Q,QD>
 	this->params.code     .tail_length   = 2*3;
 	this->params.code     .type          = "RSC";
 	this->params.encoder  .buffered      = true;
+	this->params.encoder  .poly          = {13,11};
 	this->params.quantizer.n_bits        = 6;
 	this->params.quantizer.n_decimals    = 3;
 	this->params.decoder  .type          = "BCJR";
@@ -32,7 +35,7 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 		 "disable the buffered encoding."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	this->opt_args[{"dec-type", "D"}].push_back("BCJR, BCJR4, LTE, CCSDS"      );
+	this->opt_args[{"dec-type", "D"}].push_back("BCJR, BCJR4, BCJR_G, LTE, CCSDS"      );
 	this->opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
 	this->opt_args[{"dec-simd"}] =
 		{"string",
@@ -42,6 +45,10 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 		{"string",
 		 "the MAX implementation for the nodes.",
 		 "MAX, MAXL, MAXS"};
+
+	this->opt_args[{"enc-poly"}] =
+			{"string",
+			 "the polynomials describing RSC code (Used only with --dec-type set to BCJR_G). Should be of the form (A,B)."};
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -59,6 +66,20 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 
 	if (this->params.decoder.type == "BCJR4" || this->params.decoder.type == "CCSDS")
 		this->params.code.tail_length = 2*4;
+
+	if (this->params.decoder.type == "BCJR_G")
+	{
+		std::string poly_str;
+		if(this->ar.exist_arg({"enc-poly"    }))
+			{
+
+				poly_str           = this->ar.get_arg({"enc-poly" });
+				std::regex pattern {"\\(\\d{1,5},\\d{1,5}\\)"};
+				assert(std::regex_match(poly_str, pattern));
+				std::sscanf (poly_str.c_str(), "(%o,%o)", &this->params.encoder.poly[0] , &this->params.encoder.poly[1]);
+				this->params.code.tail_length = 2*std::floor(std::log2((float)std::max(this->params.encoder.poly[0],this->params.encoder.poly[1])));
+			}
+	}
 }
 
 template <typename B, typename R, typename Q, typename QD>

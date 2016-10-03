@@ -26,10 +26,10 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 	if (params.channel.domain == "LLR")
 	{
 		// build the decoder
-		if ((params.decoder.type == "LTE"   && params.code.type == "TURBO") ||
-			(params.decoder.type == "CCSDS" && params.code.type == "TURBO") ||
-			(params.decoder.type == "BCJR"  && params.code.type == "RSC"  ) ||
-			(params.decoder.type == "BCJR4" && params.code.type == "RSC"  ))
+		if ((params.decoder.type == "LTE"    && params.code.type == "TURBO") ||
+			(params.decoder.type == "CCSDS"  && params.code.type == "TURBO") ||
+			(params.decoder.type == "BCJR"   && params.code.type == "RSC"  ) ||
+			(params.decoder.type == "BCJR4"  && params.code.type == "RSC"  ))
 		{
 			if (params.decoder.implem == "STD")
 			{
@@ -186,6 +186,15 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(params.code.K, trellis, params.encoder.buffered);
 			}
 		}
+		else if (params.decoder.type == "BCJR_G" && params.code.type == "RSC"  )
+		{
+			if (params.decoder.max == "MAX")
+				siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+			else if (params.decoder.max == "MAXS")
+				siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+			else if (params.decoder.max == "MAXL")
+				siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
+		}
 	}
 
 	return siso;
@@ -200,8 +209,8 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 	if (params.channel.domain == "LLR")
 	{
 		// build the decoder
-		if ((params.decoder.type == "BCJR"  && params.code.type == "RSC") ||
-			(params.decoder.type == "BCJR4" && params.code.type == "RSC"))
+		if ((params.decoder.type == "BCJR"  && params.code.type == "RSC" ) ||
+			(params.decoder.type == "BCJR4"  && params.code.type == "RSC"))
 		{
 			if (params.decoder.implem == "STD")
 			{
@@ -357,6 +366,15 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 				else if (params.decoder.simd_strategy.empty() && params.decoder.max == "MAX")
 					siso = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(params.code.K, trellis, params.encoder.buffered);
 			}
+		}
+		else if (params.decoder.type == "BCJR_G" && params.code.type == "RSC"  )
+		{
+			if (params.decoder.max == "MAX")
+				siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.encoder.buffered);
+			else if (params.decoder.max == "MAXS")
+				siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
+			else if (params.decoder.max == "MAXL")
+				siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
 		}
 	}
 

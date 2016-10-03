@@ -53,9 +53,10 @@ struct crc_parameters
 
 struct encoder_parameters
 {
-	std::string type;
-	bool        systematic;
-	bool        buffered;
+	std::string      type;
+	bool             systematic;
+	bool             buffered;
+	std::vector<int> poly;
 };
 
 struct interleaver_parameters
