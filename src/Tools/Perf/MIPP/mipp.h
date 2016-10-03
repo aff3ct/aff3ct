@@ -62,8 +62,9 @@ SOFTWARE.
 #include <smmintrin.h>
 #endif
 #endif
+#else
+#include "mipp_scalar_op.h"
 #endif
-
 #include <unordered_map>
 #include <typeindex>
 #include <typeinfo>
@@ -148,7 +149,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	constexpr int RequiredAlignment = MIPP_REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 0;
 
-	using reg = int;
+	using reg   = int;
+	using reg_2 = short;
 
 	const std::string IntructionsType = "NO INTRINSICS";
 #endif
@@ -159,7 +161,8 @@ namespace mipp // My Intrinsics Plus Plus => mipp
 	constexpr int RequiredAlignment = MIPP_REQUIRED_ALIGNMENT;
 	constexpr int RegisterSizeBit = 0;
 
-	using reg = int;
+	using reg   = int;
+	using reg_2 = short;
 
 	const std::string IntructionsType = "NO INTRINSICS";
 
@@ -187,7 +190,7 @@ T* malloc(int nData)
 {
 	T* ptr = nullptr;
 
-#if defined(__SSE2__) || defined(__AVX__) || defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+#if !defined(MIPP_NO_INTRINSICS) && (defined(__SSE2__) || defined(__AVX__) || defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__))
 	ptr = (T*)_mm_malloc(nData * sizeof(T), mipp::RequiredAlignment);
 #else
 	ptr = new T[nData];
@@ -199,7 +202,7 @@ T* malloc(int nData)
 template <typename T>
 void free(T* ptr)
 {
-#if defined(__SSE2__) || defined(__AVX__) || defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+#if !defined(MIPP_NO_INTRINSICS) && (defined(__SSE2__) || defined(__AVX__) || defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__))
 	_mm_free(ptr);
 #else
 	delete[] ptr;

@@ -37,7 +37,11 @@ Launcher<B,R,Q>
 	params.demodulator.no_sig2         = false;
 	params.channel    .domain          = "LLR";
 	params.channel    .type            = "AWGN";
+#ifdef MIPP_NO_INTRINSICS
+	params.quantizer  .type            = "STD";
+#else
 	params.quantizer  .type            = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
+#endif
 	params.quantizer  .range           = 0.f;
 	params.terminal   .disabled        = false;
 	params.terminal   .frequency       = std::chrono::milliseconds(500);

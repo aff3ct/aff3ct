@@ -207,11 +207,13 @@ public:
 	inline Regx2<T> interleavex2 (const Reg<T> v)                   const { return Regx2<T>(*this, v);                    }
 	inline Reg<T>   interleavex4 ()                                 const { return *this;                                 }
 	inline Reg<T>   interleavex16()                                 const { return *this;                                 }
-	inline Reg<T>   andb         (const Reg<T> v)                   const { return   r  &  v.r;                           }
+//	inline Reg<T>   andb         (const Reg<T> v)                   const { return   r  &  v.r;                           }
+	inline Reg<T>   andb         (const Reg<T> v)                   const { return andb_s<T>(r, v.r);                     }
 	inline Reg<T>   andnb        (const Reg<T> v)                   const { return andb(~r);                              }
 	inline Reg<T>   notb         ()                                 const { return  ~r;                                   }
 	inline Reg<T>   orb          (const Reg<T> v)                   const { return   r  |  v.r;                           }
-	inline Reg<T>   xorb         (const Reg<T> v)                   const { return   r  ^  v.r;                           }
+//	inline Reg<T>   xorb         (const Reg<T> v)                   const { return   r  ^  v.r;                           }
+	inline Reg<T>   xorb         (const Reg<T> v)                   const { return xorb_s<T>(r, v.r);                     }
 	inline Reg<T>   lshift       (const int n)                      const { return   r  << n;                             }
 	inline Reg<T>   rshift       (const int n)                      const { return   r  >> n ;                            }
 	inline Reg<T>   cmpeq        (const Reg<T> v)                   const { return   r  == v.r;                           }
@@ -230,9 +232,9 @@ public:
 	inline Reg<T>   sign         ()                                 const { return (T(0) < r) - (r < T(0));               }
 	inline Reg<T>   sign         (const Reg<T> v)                   const { return sign(Reg<T>(r ^ v.r));                 }
 	inline Reg<T>   neg          (const Reg<T> v)                   const { return v.r >= 0 ? Reg<T>(r) : Reg<T>(-r);     }
-	inline Reg<T>   abs          ()                                 const { return std::abs<T>(r);                        }
-	inline Reg<T>   sqrt         ()                                 const { return std::sqrt<T>(r);                       }
-	inline Reg<T>   rsqrt        ()                                 const { return 1 / std::sqrt<T>(r);                   }
+	inline Reg<T>   abs          ()                                 const { return std::abs(r);                           }
+	inline Reg<T>   sqrt         ()                                 const { return std::sqrt(r);                          }
+	inline Reg<T>   rsqrt        ()                                 const { return 1 / std::sqrt(r);                      }
 	inline Reg<T>   log          ()                                 const { return std::log(r);                           }
 	inline Reg<T>   exp          ()                                 const { return std::exp(r);                           }
 	inline Reg<T>   sin          ()                                 const { return std::sin(r);                           }
@@ -243,8 +245,10 @@ public:
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
 	inline Reg<T>   rot          ()                                 const { return r;                                     }
 	inline Reg<T>   rotr         ()                                 const { return r;                                     }
-	inline Reg<T>   div2         ()                                 const { return r * (T)0.50;                           }
-	inline Reg<T>   div4         ()                                 const { return r * (T)0.25;                           }
+//	inline Reg<T>   div2         ()                                 const { return r * (T)0.50;                           }
+	inline Reg<T>   div2         ()                                 const { return div2_s<T>(r);                          }
+//	inline Reg<T>   div4         ()                                 const { return r * (T)0.25;                           }
+	inline Reg<T>   div4         ()                                 const { return div4_s<T>(r);                          }
 	inline Reg<T>   sat          (T min, T max)                     const { return std::min(std::max(r, min), max);       }
 	inline Reg<T>   round        ()                                 const { return std::round(r);                         }
 #endif
@@ -297,7 +301,6 @@ public:
 	inline Reg<T>  operator>  (      Reg<T>  v) const { return this->cmpgt (v);                 }
 	inline Reg<T>  operator>= (      Reg<T>  v) const { return this->cmpge (v);                 }
 
-
 	// ------------------------------------------------------------------------------------------------------ reduction
 #ifndef MIPP_NO_INTRINSICS
 	inline Reg<T> sum () const { return Reduction<T,mipp::add>::apply(*this); }
@@ -317,6 +320,21 @@ public:
 	inline Reg<T> hmax() const { return *this; }
 #endif
 };
+
+//#ifdef MIPP_NO_INTRINSICS
+//template <> Reg<float      > Reg<float      >::andb(const Reg<float > v) const;
+//template <> Reg<double     > Reg<double     >::andb(const Reg<double> v) const;
+//template <> Reg<float      > Reg<float      >::xorb(const Reg<float > v) const;
+//template <> Reg<double     > Reg<double     >::xorb(const Reg<double> v) const;
+//
+//template <> Reg<int        > Reg<int        >::div2(                   ) const;
+//template <> Reg<short      > Reg<short      >::div2(                   ) const;
+//template <> Reg<signed char> Reg<signed char>::div2(                   ) const;
+//
+//template <> Reg<int>         Reg<int        >::div4(                   ) const;
+//template <> Reg<short>       Reg<short      >::div4(                   ) const;
+//template <> Reg<signed char> Reg<signed char>::div4(                   ) const;
+//#endif
 
 template <typename T>
 class Reg_2
@@ -365,14 +383,6 @@ std::ostream& operator<<(std::ostream& os, const Reg<T>& r)
 	dump<T>(r.r, os); return os;
 }
 #else
-template <> Reg<int>         Reg<int        >::div2() const { return r >> 1; }
-template <> Reg<short>       Reg<short      >::div2() const { return r >> 1; }
-template <> Reg<signed char> Reg<signed char>::div2() const { return r >> 1; }
-
-template <> Reg<int>         Reg<int        >::div4() const { return r >> 2; }
-template <> Reg<short>       Reg<short      >::div4() const { return r >> 2; }
-template <> Reg<signed char> Reg<signed char>::div4() const { return r >> 2; }
-
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Reg<T>& r)
 {
