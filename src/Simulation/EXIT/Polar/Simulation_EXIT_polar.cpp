@@ -36,10 +36,10 @@ Simulation_EXIT_polar<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_EXIT_polar<B,R,Q>
-::extract_sys_par(const mipp::vector<Q> &Lch_N, 
-                  const mipp::vector<Q> &La_K, 
-                        mipp::vector<Q> &sys, 
-                        mipp::vector<Q> &par)
+::extract_sys_par(const mipp::vector<R> &Lch_N, 
+                  const mipp::vector<R> &La_K, 
+                        mipp::vector<R> &sys, 
+                        mipp::vector<R> &par)
 {
 	// extract systematic and parity information
 	auto par_idx = 0, sys_idx = 0;
@@ -75,17 +75,15 @@ Encoder<B>* Simulation_EXIT_polar<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-SISO<Q>* Simulation_EXIT_polar<B,R,Q>
+SISO<R>* Simulation_EXIT_polar<B,R,Q>
 ::build_siso()
 {
-	return Factory_decoder_polar<B,Q>::build_siso(this->params, frozen_bits);
+	return Factory_decoder_polar<B,R>::build_siso(this->params, frozen_bits);
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_EXIT_polar<B_8,R_8,Q_8>;
-template class Simulation_EXIT_polar<B_16,R_16,Q_16>;
 template class Simulation_EXIT_polar<B_32,R_32,Q_32>;
 template class Simulation_EXIT_polar<B_64,R_64,Q_64>;
 #else

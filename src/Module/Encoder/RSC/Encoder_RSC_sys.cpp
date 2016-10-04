@@ -116,7 +116,7 @@ void Encoder_RSC_sys<B>
 			X_N[j] = U_K[i];
 			j += stride; // systematic transmission of the bit
 		}
-		X_N[j] = inner_encode(U_K[i], state); j += stride; // encoding block
+		X_N[j] = inner_encode((int)U_K[i], state); j += stride; // encoding block
 	}
 
 	// tail bits for initialization conditions (state of data "state" have to be 0 0 0)
@@ -132,7 +132,7 @@ void Encoder_RSC_sys<B>
 		else
 			X_N[j+this->n_ff] = bit_sys; // systematic transmission of the bit
 
-		X_N[j] = inner_encode(bit_sys, state); j += stride; // encoding block
+		X_N[j] = inner_encode((int)bit_sys, state); j += stride; // encoding block
 	}
 
 	assert(state == 0);

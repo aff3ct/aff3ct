@@ -92,7 +92,7 @@ void Modulator_PSK<B,R,Q,MAX>
 		// determine the symbol with a lookup table
 		unsigned idx = 0;
 		for (auto j = 0; j < bps; j++)
-			idx += (1 << j) * X_N1[i * bps +j];
+			idx += unsigned(unsigned(1 << j) * X_N1[i * bps +j]);
 		auto symbol = this->constellation[idx];
 
 		X_N2[2*i +0] = symbol.real();
@@ -104,7 +104,7 @@ void Modulator_PSK<B,R,Q,MAX>
 	{
 		unsigned idx = 0;
 		for (auto j = 0; j < size_in - (main_loop_size * bps); j++)
-			idx += (1 << j) * X_N1[main_loop_size * bps +j];
+			idx += unsigned(unsigned(1 << j) * X_N1[main_loop_size * bps +j]);
 		auto symbol = this->constellation[idx];
 
 		X_N2[size_out -2] = symbol.real();
@@ -136,10 +136,12 @@ void Modulator_PSK<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
-				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j])));
+				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+				                                                     (Q)this->constellation[j].imag())));
 			else
-				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j])));
+				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+				                                                     (Q)this->constellation[j].imag())));
 
-		Y_N2[n] = (L0 - L1) * inv_sigma2;
+		Y_N2[n] = (L0 - L1) * (Q)inv_sigma2;
 	}
 }

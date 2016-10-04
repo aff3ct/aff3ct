@@ -231,12 +231,12 @@ public:
 	inline Reg<T>   sign         (const Reg<T> v)                   const { return sign(Reg<T>(r ^ v.r));                 }
 	inline Reg<T>   neg          (const Reg<T> v)                   const { return v.r >= 0 ? Reg<T>(r) : Reg<T>(-r);     }
 	inline Reg<T>   abs          ()                                 const { return std::abs(r);                           }
-	inline Reg<T>   sqrt         ()                                 const { return std::sqrt(r);                          }
-	inline Reg<T>   rsqrt        ()                                 const { return 1 / std::sqrt(r);                      }
-	inline Reg<T>   log          ()                                 const { return std::log(r);                           }
-	inline Reg<T>   exp          ()                                 const { return std::exp(r);                           }
-	inline Reg<T>   sin          ()                                 const { return std::sin(r);                           }
-	inline Reg<T>   cos          ()                                 const { return std::cos(r);                           }
+	inline Reg<T>   sqrt         ()                                 const { return (T)std::sqrt(r);                       }
+	inline Reg<T>   rsqrt        ()                                 const { return (T)(1 / std::sqrt(r));                 }
+	inline Reg<T>   log          ()                                 const { return (T)std::log(r);                        }
+	inline Reg<T>   exp          ()                                 const { return (T)std::exp(r);                        }
+	inline Reg<T>   sin          ()                                 const { return (T)std::sin(r);                        }
+	inline Reg<T>   cos          ()                                 const { return (T)std::cos(r);                        }
 	inline void     sincos       (      Reg<T> &s,       Reg<T> &c) const { s = std::sin(r); c = std::cos(r);             }
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }

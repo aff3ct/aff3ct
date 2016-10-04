@@ -67,6 +67,9 @@ void print_version()
 	std::string compiler = "g++";
 	std::string compiler_version = std::to_string(__GNUC__);
 	compiler_version += "." + std::to_string(__GNUC_MINOR__);
+#elif defined(_MSC_VER)
+	std::string compiler = "MSVC++";
+	std::string compiler_version = std::to_string(_MSC_VER);
 #else
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
@@ -152,6 +155,62 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 }
 
 /**
+ * \brief Allocate an exit simulation.
+ *
+ * \tparam B : type of the bits in the simulation.
+ * \tparam R : type of the reals (floating-point representation) in the simulation.
+ * \tparam Q : type of the quantified reals (fixed-point representation) in the simulation.
+ * \tparam QD: type of the quantified reals (fixed-point representation) in the decoder (can be used or not depending
+ *             on the code and the simulation type).
+ *
+ * \param argc     : number of arguments from the command line.
+ * \param argv     : array of arguments from the command line.
+ * \param code_type: the type of the code (POLAR, TURBO, LDPC, etc.).
+ * \param simu_type: the type of the simulation (BFER, BFERI, EXIT, GEN, etc.).
+ *
+ * \return an Simulation_EXIT object.
+ */
+template <typename B, typename R, typename Q, typename QD>
+Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
+{
+	return nullptr;
+}
+
+template <>
+Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc, 
+                                                                      const char  **argv, 
+                                                                      std::string   code_type, 
+                                                                      std::string   simu_type)
+{
+	if (code_type == "POLAR")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_polar<int,float,float>(argc, argv);
+
+	if (code_type == "RSC")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_RSC<int,float,float,float>(argc, argv);
+
+	return nullptr;
+}
+
+template <>
+Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc, 
+                                                                                       const char  **argv, 
+                                                                                       std::string   code_type, 
+                                                                                       std::string   simu_type)
+{
+	if (code_type == "POLAR")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_polar<long long,double,double>(argc, argv);
+
+	if (code_type == "RSC")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_RSC<long long,double,double,double>(argc, argv);
+
+	return nullptr;
+}
+
+/**
  * \fn void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
  *
  * \brief Start the simulation by calling a Launcher (the Launcher depends on the code_type and the simu_type).
@@ -176,8 +235,6 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	{
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
-		else if (simu_type == "EXIT" && (typeid(Q) == typeid(float) || typeid(Q) == typeid(double)))
-			launcher = new Launcher_EXIT_polar<B,R,Q>(argc, argv);
 		else if (simu_type == "GEN")
 			launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
 	}
@@ -188,8 +245,6 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 			launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
 		else if (simu_type == "BFERI")
 			launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
-		else if (simu_type == "EXIT" && (typeid(Q) == typeid(float) || typeid(Q) == typeid(double)))
-			launcher = new Launcher_EXIT_RSC<B,R,Q,QD>(argc, argv);
 	}
 
 	if (code_type == "TURBO")
@@ -228,8 +283,13 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 
 	if (launcher == nullptr)
 	{
-		std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
-		exit(EXIT_FAILURE);
+		launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
+
+		if (launcher == nullptr)
+		{
+			std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	launcher->launch();

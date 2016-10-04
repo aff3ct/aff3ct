@@ -36,7 +36,7 @@ constexpr std::pair<signed char, signed char> sat_vals() { return std::make_pair
 
 // return the initial value for a bit
 template <typename B>
-constexpr B bit_init() { return (((B)1) << (sizeof(B) * 8 -1)); }
+constexpr B bit_init() { return (B)(((B)1) << (sizeof(B) * 8 -1)); }
 
 // make a saturation on a the value "val"
 template <typename T>

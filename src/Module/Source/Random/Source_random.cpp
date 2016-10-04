@@ -23,7 +23,7 @@ void Source_random<B>
 
 	// generate a random k bits vector U_k
 	for (auto i = 0; i < size; i++)
-		U_K[i] = this->uniform_dist(this->rd_engine);
+		U_K[i] = (B)this->uniform_dist(this->rd_engine);
 }
 
 // ==================================================================================== explicit template instantiation 

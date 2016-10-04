@@ -1,6 +1,8 @@
 #include <cmath>     // min(), fabs(), copysign()...
 #include <algorithm> // min()
 
+#include "Tools/Display/bash_tools.h"
+
 #include "max.h"
 
 template <typename R>
@@ -21,20 +23,43 @@ inline R max_star(const R& a, const R& b)
 {
 	// the two next statements are equivalent !
 	// return std::max(a, b) + std::log((R)1 + std::exp(-std::abs(a - b)));
-	return std::max(a, b) + std::log1p(std::exp(-std::abs(a - b)));
+	return std::max(a, b) + (R)std::log1p(std::exp(-std::abs(a - b)));
 }
 
 template <typename R>
 inline R max_star_safe(const R& a, const R& b) 
 {
-	R d = std::abs(a - b);
+	std::cerr << bold_red("(EE) max_star_safe is not defined in fixed-point arithmetic, exiting.") << std::endl;
+	std::exit(-1);
+	return (R)0;
+}
 
-	if (d >= 37 || std::isnan(d))
-		d = 0.0; // exp(-d);
-	else if (d < 37 && d >=9)
+template <>
+inline float max_star_safe(const float& a, const float& b)
+{
+	float d = std::abs(a - b);
+
+	if (d >= (float)37 || std::isnan(d))
+		d = (float)0.0; // exp(-d);
+	else if (d < (float)37 && d >= 9)
 		d = std::exp(-d);
 	else
-		d = std::log1p(std::exp(-d));
+		d = (float)std::log1p(std::exp(-d));
+
+	return std::max(a, b) + d;
+}
+
+template <>
+inline double max_star_safe(const double& a, const double& b)
+{
+	double d = std::abs(a - b);
+
+	if (d >= (double)37 || std::isnan(d))
+		d = (double)0.0; // exp(-d);
+	else if (d < (double)37 && d >= 9)
+		d = std::exp(-d);
+	else
+		d = (double)std::log1p(std::exp(-d));
 
 	return std::max(a, b) + d;
 }

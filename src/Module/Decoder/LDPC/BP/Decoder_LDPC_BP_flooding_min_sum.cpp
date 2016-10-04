@@ -42,7 +42,7 @@ bool Decoder_LDPC_BP_flooding_min_sum<B,R>
 		for (auto j = 0; j < length; j++)
 		{
 			const auto value  = this->V_to_C[transpose_ptr[j]];
-			const auto c_sign = std::signbit(value) ? -1 : 0;
+			const auto c_sign = std::signbit((float)value) ? -1 : 0;
 			const auto v_abs  = (R)std::abs(value);
 			const auto v_temp = min1;
 
@@ -66,9 +66,9 @@ bool Decoder_LDPC_BP_flooding_min_sum<B,R>
 		{
 			const auto value   = this->V_to_C[transpose_ptr[j]];
 			const auto v_abs   = (R)std::abs(value);
-			const auto v_res   = ((v_abs == min1) ? cste1 : cste2);     // cmov
-			const auto v_sig   = sign ^ (std::signbit(value) ? -1 : 0); // xor bit
-			const auto v_to_st = (R)std::copysign(v_res, v_sig);        // magnitude of v_res, sign of v_sig
+			const auto v_res   = ((v_abs == min1) ? cste1 : cste2);            // cmov
+			const auto v_sig   = sign ^ (std::signbit((float)value) ? -1 : 0); // xor bit
+			const auto v_to_st = (R)std::copysign(v_res, v_sig);               // magnitude of v_res, sign of v_sig
 
 			this->C_to_V[transpose_ptr[j]] = v_to_st;
 		}

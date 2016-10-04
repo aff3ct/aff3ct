@@ -5,7 +5,7 @@
 template <typename R>
 Scaling_factor_constant<R>
 ::Scaling_factor_constant(const int K, const int n_ite, const float alpha) 
-: Scaling_factor<R>(K, n_ite), alpha(alpha)
+: Scaling_factor<R>(K, n_ite), alpha((R)alpha)
 {
 }
 

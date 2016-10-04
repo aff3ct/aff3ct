@@ -83,14 +83,18 @@ endif (ENABLE_SYSTEMC)
 
 # Enable C++11 and pthread
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions (-std=c++1y -Wno-overloaded-virtual -fPIC)
+    add_definitions (-std=c++1y -Wno-overloaded-virtual)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_definitions (-std=c++11 -pthread -fPIC)
+    add_definitions (-std=c++11 -pthread)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    add_definitions (-std=c++11 -pthread -fPIC)
+    add_definitions (-std=c++11 -pthread)
     aff3ct_link_libraries (-pthread)
+endif()
+
+if (UNIX)
+	add_definitions (-fPIC)
 endif()
 
 # Specific options

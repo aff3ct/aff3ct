@@ -126,11 +126,11 @@ void Modulator_BPSK_fast<B,R,Q>
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
-			auto y = mipp::Reg<Q>(&Y_N1[i]) * two_on_square_sigma;
+			auto y = mipp::Reg<Q>(&Y_N1[i]) * (Q)two_on_square_sigma;
 			y.store(&Y_N2[i]);
 		}
 		for (unsigned i = vec_loop_size; i < size; i++)
-			Y_N2[i] = Y_N1[i] * two_on_square_sigma;
+			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
 	}
 }
 
@@ -159,11 +159,11 @@ void Modulator_BPSK_fast<B,R,Q>
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
 			// mipp::fmadd(a, b, c) = a * b + c
-			auto y = mipp::fmadd(mipp::Reg<Q>(&Y_N1[i]), mipp::Reg<Q>(two_on_square_sigma), mipp::Reg<Q>(&Y_N2[i]));
+			auto y = mipp::fmadd(mipp::Reg<Q>(&Y_N1[i]), mipp::Reg<Q>((Q)two_on_square_sigma), mipp::Reg<Q>(&Y_N2[i]));
 			y.store(&Y_N3[i]);
 		}
 		for (unsigned i = vec_loop_size; i < size; i++)
-			Y_N3[i] = (Y_N1[i] * two_on_square_sigma) + Y_N2[i];
+			Y_N3[i] = (Y_N1[i] * (Q)two_on_square_sigma) + Y_N2[i];
 	}
 }
 

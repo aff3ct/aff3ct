@@ -10,7 +10,11 @@ class Encoder_coset : public Encoder_sys<B>
 {
 private:
 	std::mt19937 rd_engine; // Mersenne Twister 19937
+#ifdef _MSC_VER
+	std::uniform_int_distribution<short> uniform_dist;
+#else
 	std::uniform_int_distribution<B> uniform_dist;
+#endif
 
 public:
 	Encoder_coset(const int K, const int N, const int seed = 0, const int n_frames = 1,

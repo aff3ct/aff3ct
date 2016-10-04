@@ -28,7 +28,7 @@ void Encoder_coset<B>
 	std::copy(U_K.begin(), U_K.end(), X_N.begin());
 
 	for (auto i = (int)U_K.size(); i < this->N; i++)
-		X_N[i] = this->uniform_dist(this->rd_engine);
+		X_N[i] = (B)this->uniform_dist(this->rd_engine);
 }
 
 template <typename B>
@@ -39,7 +39,7 @@ void Encoder_coset<B>
 	assert(this->N - this->K == static_cast<int>(par.size()));
 
 	for (auto i = 0; i < this->N - this->K; i++)
-		par[i] = this->uniform_dist(this->rd_engine);
+		par[i] = (B)this->uniform_dist(this->rd_engine);
 }
 
 // ==================================================================================== explicit template instantiation 

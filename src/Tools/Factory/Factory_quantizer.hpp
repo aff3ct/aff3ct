@@ -9,7 +9,7 @@
 template <typename R, typename Q>
 struct Factory_quantizer : public Factory
 {
-	static Quantizer<R,Q>* build(const parameters &params, const R& sigma, const int size);
+	static Quantizer<R,Q>* build(const parameters &params, const float& sigma, const int size);
 };
 
 #endif /* FACTORY_QUANTIZER_HPP */

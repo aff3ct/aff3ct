@@ -20,7 +20,7 @@ void Scaling_factor_array<R>
 	const auto loop_size = (int)ext.size();
 
 	for (auto i = 0; i < loop_size; i++)
-		ext[i] *= alpha_array[ite];
+		ext[i] *= (R)alpha_array[ite];
 }
 
 // ==================================================================================== explicit template instantiation 

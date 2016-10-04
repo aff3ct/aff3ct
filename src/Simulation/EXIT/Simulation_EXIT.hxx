@@ -6,7 +6,6 @@
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
-#include "Tools/Factory/Factory_quantizer.hpp"
 
 #include "Simulation_EXIT.hpp"
 
@@ -29,8 +28,6 @@ Simulation_EXIT<B,R,Q>
   Lch_N1     (params.code.N + params.code.tail_length                      ),
   La_K2      (params.code.K                                                ),
   Lch_N2     (params.code.N + params.code.tail_length                      ),
-  La_K3      (params.code.K                                                ),
-  Lch_N3     (params.code.N + params.code.tail_length                      ),
   Le_K       (params.code.K                                                ),
   sys        (params.code.K                                                ),
   par        ((params.code.N - params.code.K) + (params.code.tail_length/2)),
@@ -55,10 +52,11 @@ Simulation_EXIT<B,R,Q>
   modulator_a(nullptr),
   channel    (nullptr),
   channel_a  (nullptr),
-  quantizer  (nullptr),
   siso       (nullptr),
   terminal   (nullptr)
 {
+	if (typeid(R) != typeid(Q))
+		std::cerr << bold_yellow("(WW) EXIT simulation does not use fixed-point representation!") << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -86,8 +84,7 @@ void Simulation_EXIT<B,R,Q>
 
 	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
 	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
-	quantizer   = build_quantizer  (N+tail); check_errors(quantizer  , "Quantizer<R,Q>"    );
-	siso        = build_siso       (      ); check_errors(siso       , "SISO<Q>"           );
+	siso        = build_siso       (      ); check_errors(siso       , "SISO<R>"           );
 	terminal    = build_terminal   (      ); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames() > 1)
@@ -183,16 +180,14 @@ void Simulation_EXIT<B,R,Q>
 		if (sig_a != 0)
 		{
 			channel_a  ->add_noise (X_K2,  La_K1);
-			modulator_a->demodulate(La_K1, La_K2),
-			quantizer  ->process   (La_K2, La_K3);
+			modulator_a->demodulate(La_K1, La_K2);
 		}
 
 		channel  ->add_noise (X_N2,   Lch_N1);
 		modulator->demodulate(Lch_N1, Lch_N2),
-		quantizer->process   (Lch_N2, Lch_N3);
 
 		// extract systematic and parity information
-		extract_sys_par(Lch_N3, La_K3, sys, par);
+		extract_sys_par(Lch_N2, La_K2, sys, par);
 
 		// decode
 		siso->decode(sys, par, Le_K);
@@ -217,7 +212,7 @@ void Simulation_EXIT<B,R,Q>
 
 template <typename B, typename R, typename Q>
 double Simulation_EXIT<B,R,Q>
-::measure_mutual_info_avg(const mipp::vector<Q>& llrs, const mipp::vector<B>& bits)
+::measure_mutual_info_avg(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
 	double I_A = 0;
 	double symb;
@@ -233,7 +228,7 @@ double Simulation_EXIT<B,R,Q>
 
 template <typename B, typename R, typename Q>
 double Simulation_EXIT<B,R,Q>
-::measure_mutual_info_histo(const mipp::vector<Q>& llrs, const mipp::vector<B>& bits, const int N)
+::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits, const int N)
 {
 	const double Inf = 10000000;
 
@@ -383,7 +378,6 @@ void Simulation_EXIT<B,R,Q>
 	if (modulator_a != nullptr) { delete modulator_a; modulator_a = nullptr; }
 	if (channel     != nullptr) { delete channel;     channel     = nullptr; }
 	if (channel_a   != nullptr) { delete channel_a;   channel_a   = nullptr; }
-	if (quantizer   != nullptr) { delete quantizer;   quantizer   = nullptr; }
 	if (siso        != nullptr) { delete siso;        siso        = nullptr; }
 	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 }
@@ -433,13 +427,6 @@ Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
 	return Factory_channel<R>::build(params, 2.f / sig_a, size, 0);
-}
-
-template <typename B, typename R, typename Q>
-Quantizer<R,Q>* Simulation_EXIT<B,R,Q>
-::build_quantizer(const int size)
-{
-	return Factory_quantizer<R,Q>::build(params, sigma, size);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

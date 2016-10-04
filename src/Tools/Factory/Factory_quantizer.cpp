@@ -7,7 +7,7 @@
 
 template <typename R, typename Q>
 Quantizer<R,Q>* Factory_quantizer<R,Q>
-::build(const parameters &params, const R& sigma, const int size)
+::build(const parameters &params, const float& sigma, const int size)
 {
 	Quantizer<R,Q> *quantizer = nullptr;
 
@@ -25,7 +25,7 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 			if (params.quantizer.range == 0.f)
 				quantizer = new Quantizer_tricky<R,Q>(size, (short)params.quantizer.n_bits, sigma, 1); // auto mode
 			else
-				quantizer = new Quantizer_tricky<R,Q>(size, (R)params.quantizer.range, params.quantizer.n_bits, sigma, 1);
+				quantizer = new Quantizer_tricky<R,Q>(size, params.quantizer.range, params.quantizer.n_bits, sigma, 1);
 		}
 	}
 

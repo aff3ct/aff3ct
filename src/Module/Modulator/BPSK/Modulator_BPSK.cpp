@@ -36,7 +36,7 @@ void Modulator_BPSK<B,R,Q>
 	{
 		auto size = Y_N1.size();
 		for (unsigned i = 0; i < size; i++)
-			Y_N2[i] = Y_N1[i] * two_on_square_sigma;
+			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
 	}
 }
 
@@ -53,7 +53,7 @@ void Modulator_BPSK<B,R,Q>
 			Y_N3[i] = Y_N1[i] + Y_N2[i];
 	else
 		for (unsigned i = 0; i < size; i++)
-			Y_N3[i] = (Y_N1[i] * two_on_square_sigma) + Y_N2[i];
+			Y_N3[i] = (Y_N1[i] * (Q)two_on_square_sigma) + Y_N2[i];
 }
 
 // ==================================================================================== explicit template instantiation 

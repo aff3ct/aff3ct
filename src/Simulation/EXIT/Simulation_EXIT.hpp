@@ -10,7 +10,6 @@
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Modulator/Modulator.hpp"
 #include "Module/Channel/Channel.hpp"
-#include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Decoder/SISO.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
@@ -31,12 +30,10 @@ protected:
 	mipp::vector<R> Lch_N1;
 	mipp::vector<R> La_K2;
 	mipp::vector<R> Lch_N2;
-	mipp::vector<Q> La_K3;
-	mipp::vector<Q> Lch_N3;
-	mipp::vector<Q> Le_K;
-	mipp::vector<Q> sys, par;
+	mipp::vector<R> Le_K;
+	mipp::vector<R> sys, par;
 	mipp::vector<B> B_buff;
-	mipp::vector<Q> Le_buff, La_buff;
+	mipp::vector<R> Le_buff, La_buff;
 
 	// EXIT simu parameters
 	const int n_trials;
@@ -56,8 +53,7 @@ protected:
 	Modulator<B,R,R>   *modulator_a;
 	Channel<R>         *channel;
 	Channel<R>         *channel_a;
-	Quantizer<R,Q>     *quantizer;
-	SISO<Q>            *siso;
+	SISO<R>            *siso;
 	Terminal_EXIT<B,R> *terminal;
 
 	// time points and durations
@@ -73,14 +69,14 @@ private:
 	void build_communication_chain();
 	void simulation_loop          ();
 
-	static double measure_mutual_info_avg  (const mipp::vector<Q>& llrs, const mipp::vector<B>& bits             );
-	static double measure_mutual_info_histo(const mipp::vector<Q>& llrs, const mipp::vector<B>& bits, const int N);
+	static double measure_mutual_info_avg  (const mipp::vector<R>& llrs, const mipp::vector<B>& bits             );
+	static double measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits, const int N);
 
 protected:
-	virtual void extract_sys_par(const mipp::vector<Q> &Lch_N, 
-	                             const mipp::vector<Q> &La_K, 
-	                                   mipp::vector<Q> &sys, 
-	                                   mipp::vector<Q> &par) = 0;
+	virtual void extract_sys_par(const mipp::vector<R> &Lch_N, 
+	                             const mipp::vector<R> &La_K, 
+	                                   mipp::vector<R> &sys, 
+	                                   mipp::vector<R> &par) = 0;
 
 	virtual void                release_objects  ();
 	virtual void                launch_precompute();
@@ -92,8 +88,7 @@ protected:
 	virtual Modulator<B,R,R>*   build_modulator_a(              );
 	virtual Channel<R>*         build_channel    (const int size);
 	virtual Channel<R>*         build_channel_a  (const int size);
-	virtual Quantizer<R,Q>*     build_quantizer  (const int size);
-	virtual SISO<Q>*            build_siso       (              ) = 0;
+	virtual SISO<R>*            build_siso       (              ) = 0;
 	        Terminal_EXIT<B,R>* build_terminal   (              );
 };
 

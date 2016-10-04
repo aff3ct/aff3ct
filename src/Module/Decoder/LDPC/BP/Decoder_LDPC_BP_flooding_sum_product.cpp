@@ -44,7 +44,7 @@ bool Decoder_LDPC_BP_flooding_sum_product<B,R>
 			const auto value  = this->V_to_C[transpose_ptr[j]];
 			const auto v_abs  = (R)std::abs(value);
 			const auto res    = (R)std::log(std::tanh(v_abs * (R)0.5));
-			const auto c_sign = std::signbit(value) ? -1 : 0;
+			const auto c_sign = std::signbit((float)value) ? -1 : 0;
 
 			sign ^= c_sign;
 			sum  += res;
@@ -55,7 +55,7 @@ bool Decoder_LDPC_BP_flooding_sum_product<B,R>
 		for (auto j = 0; j < length; j++)
 		{
 			const auto value   = this->V_to_C[transpose_ptr[j]];
-			const auto v_sig   = sign ^ (std::signbit(value) ? -1 : 0);
+			const auto v_sig   = sign ^ (std::signbit((float)value) ? -1 : 0);
 			const auto v_res   = (R)2.0 * std::atanh(std::exp(sum - values[j]));
 			const auto v_to_st = (R)std::copysign(v_res, v_sig);
 

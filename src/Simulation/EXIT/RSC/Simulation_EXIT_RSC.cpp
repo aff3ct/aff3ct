@@ -27,10 +27,10 @@ Simulation_EXIT_RSC<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 void Simulation_EXIT_RSC<B,R,Q,QD>
-::extract_sys_par(const mipp::vector<Q> &Lch_N, 
-                  const mipp::vector<Q> &La_K, 
-                        mipp::vector<Q> &sys, 
-                        mipp::vector<Q> &par)
+::extract_sys_par(const mipp::vector<R> &Lch_N, 
+                  const mipp::vector<R> &La_K, 
+                        mipp::vector<R> &sys, 
+                        mipp::vector<R> &par)
 {
 	// extract systematic and parity information
 	for (auto i = 0; i < this->params.code.K + this->params.code.tail_length/2; i++)
@@ -66,17 +66,15 @@ Encoder<B>* Simulation_EXIT_RSC<B,R,Q,QD>
 }
 
 template <typename B, typename R, typename Q, typename QD>
-SISO<Q>* Simulation_EXIT_RSC<B,R,Q,QD>
+SISO<R>* Simulation_EXIT_RSC<B,R,Q,QD>
 ::build_siso()
 {
-	return Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis);
+	return Factory_decoder_RSC<B,R,R>::build_siso(this->params, trellis);
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_EXIT_RSC<B_8,R_8,Q_8,QD_8>;
-template class Simulation_EXIT_RSC<B_16,R_16,Q_16,QD_16>;
 template class Simulation_EXIT_RSC<B_32,R_32,Q_32,QD_32>;
 template class Simulation_EXIT_RSC<B_64,R_64,Q_64,QD_64>;
 #else
