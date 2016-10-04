@@ -19,11 +19,11 @@ bool CRC_polynomial_inter<B>
 {
 	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
 
-	auto real_frame_size = V_K.size() / this->n_frames;
+	auto real_frame_size = int(V_K.size() / this->n_frames);
 	this->_generate_INTER(V_K, this->buff_crc, 
 	                      0, 
-	                      this->buff_crc.size() - (this->n_frames * this->size()),
-	                      this->n_frames * (real_frame_size - this->size()));
+	                      int(this->buff_crc.size() - (this->n_frames * this->size())),
+	                      int(this->n_frames * (real_frame_size - this->size())));
 
 	auto i = 0;
 	const auto off1 = this->buff_crc.size() - (this->n_frames * this->size());

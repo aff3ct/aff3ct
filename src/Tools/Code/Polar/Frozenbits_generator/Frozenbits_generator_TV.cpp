@@ -1,4 +1,8 @@
+#ifdef _MSC_VER
+#include <direct.h>
+#else
 #include <sys/stat.h>
+#endif
 #include <dirent.h>
 #include <errno.h>
 
@@ -23,7 +27,7 @@ Frozenbits_generator_TV<B>
                           const std::string awgn_codes_dir,
                           const std::string bin_pb_path,
                           const float sigma)
-: Frozenbits_generator_file<B>(K, N, sigma), m(std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
+: Frozenbits_generator_file<B>(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
 {
 }
 
@@ -58,7 +62,10 @@ void Frozenbits_generator_TV<B>
 		{
 			int ret;
 			// mkdir mod = rwx r.x r.x
-#ifdef _WIN32
+#ifdef _MSC_VER // Windows with MSVC
+			if ((ret = _mkdir(sub_folder.c_str())) != 0)
+			{
+#elif defined(_WIN32) // MinGW on Windows
 			if((ret = mkdir(sub_folder.c_str())) != 0)
 			{
 #else // UNIX like

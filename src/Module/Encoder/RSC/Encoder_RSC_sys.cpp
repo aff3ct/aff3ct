@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#include <iterator>
+#endif
+
 #include "Encoder_RSC_sys.hpp"
 
 template <typename B>
@@ -33,8 +37,14 @@ void Encoder_RSC_sys<B>
 	if (buffered_encoding)
 		for (auto f = 0; f < this->n_frames; f++)
 		{
-			std::copy   (U_K.data() + f*this->K, U_K.data() + f*this->K +this->K, X_N.data() + f*2*(this->K+this->n_ff)); // sys
-			frame_encode(U_K.data() + f*this->K, X_N.data() + f*2*(this->K+this->n_ff) +this->K, 1, true);                // par + tail bits
+#ifdef _MSC_VER
+			std::copy(U_K.data() + f*this->K,
+			          U_K.data() + f*this->K + this->K,
+			          stdext::checked_array_iterator<B*>(X_N.data() + f * 2 * (this->K + this->n_ff), this->K)); // sys
+#else
+			std::copy(U_K.data() + f*this->K, U_K.data() + f*this->K + this->K, X_N.data() + f * 2 * (this->K + this->n_ff)); // sys
+#endif
+			frame_encode(U_K.data() + f*this->K, X_N.data() + f * 2 * (this->K + this->n_ff) + this->K, 1, true);             // par + tail bits
 		}
 	else
 		for (auto f = 0; f < this->n_frames; f++)

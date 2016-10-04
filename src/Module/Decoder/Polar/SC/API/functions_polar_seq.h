@@ -2,6 +2,9 @@
 #define FUNCTIONS_POLAR_SEQ_H_
 
 #include <algorithm>
+#ifdef _MSC_VER
+#include <iterator>
+#endif
 
 #include "Tools/Math/utils.h"
 
@@ -320,7 +323,11 @@ struct xo0_seq
 {
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int n_elmts = 0)
 	{
+#ifdef _MSC_VER
+		std::copy(s_b, s_b + N_ELMTS, stdext::checked_array_iterator<B*>(s_c, N_ELMTS));
+#else
 		std::copy(s_b, s_b + N_ELMTS, s_c);
+#endif
 	}
 };
 
@@ -329,7 +336,11 @@ struct xo0_seq <B, 0>
 {
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int n_elmts = 0)
 	{
+#ifdef _MSC_VER
+		std::copy(s_b, s_b + n_elmts, stdext::checked_array_iterator<B*>(s_c, n_elmts));
+#else
 		std::copy(s_b, s_b + n_elmts, s_c);
+#endif
 	}
 };
 

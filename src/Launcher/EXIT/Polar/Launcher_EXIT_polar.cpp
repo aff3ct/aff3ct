@@ -14,7 +14,7 @@ Launcher_EXIT_polar<B,R,Q>
 	this->params.code      .type          = "POLAR";
 	this->params.code      .awgn_fb_file  = "";
 	this->params.code      .awgn_fb_path  = "../awgn_polar_codes/TV";
-	this->params.code      .sigma         = 0.3;
+	this->params.code      .sigma         = 0.3f;
 #ifdef ENABLE_POLAR_BOUNDS
 	this->params.code      .fb_gen_method = "TV";
 #else

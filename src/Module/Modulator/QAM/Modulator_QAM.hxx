@@ -13,13 +13,13 @@ Modulator_QAM<B,R,Q,MAX>
 ::Modulator_QAM(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
                 const std::string name)
 : Modulator<B,R,Q>(N, 
-                   std::ceil((float)N / (float)bits_per_symbol) * 2,
+                   (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
                    n_frames, 
                    name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
-  sqrt_es        (std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),
+  sqrt_es        ((R)std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
@@ -50,7 +50,7 @@ int Modulator_QAM<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
 	assert(this->bits_per_symbol % 2 == 0);
-	return std::ceil((float)N / (float)this->bits_per_symbol) * 2;
+	return (int)std::ceil((float)N / (float)this->bits_per_symbol) * 2;
 }
 
 /*

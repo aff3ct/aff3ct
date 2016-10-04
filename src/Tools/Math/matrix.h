@@ -5,6 +5,10 @@
 
 // ------------------------------------------------------------------------------------------- special function headers
 
+#ifndef _MSC_VER
+#define __forceinline inline __attribute__((always_inline))
+#endif
+
 // M   - INTEGER.
 //      On entry,  M  specifies  the number  of rows  of the
 //      matrix op( A )  and of the  matrix  C.  M  must  be
@@ -24,17 +28,17 @@
 
 // complex general matrix multiplication: C = A * B, tB is B transposed, tC is C transposed
 template <typename T> 
-inline void cgemm(const int M, const int N, const int K,
-                  const mipp::vector<T> &A, 
-                  const mipp::vector<T> &tB, 
-                        mipp::vector<T> &tC) __attribute__((always_inline));
+__forceinline void cgemm(const int M, const int N, const int K,
+                         const mipp::vector<T> &A, 
+                         const mipp::vector<T> &tB, 
+                               mipp::vector<T> &tC);
 
 // keep only the real part in C
 template <typename T> 
-inline void cgemm_r(const int M, const int N, const int K, 
-                    const mipp::vector<T> &A, 
-                    const mipp::vector<T> &tB, 
-                          mipp::vector<T> &tC) __attribute__((always_inline));
+__forceinline void cgemm_r(const int M, const int N, const int K,
+                           const mipp::vector<T> &A, 
+                           const mipp::vector<T> &tB, 
+                                 mipp::vector<T> &tC);
 
 
 #include "matrix.hxx"

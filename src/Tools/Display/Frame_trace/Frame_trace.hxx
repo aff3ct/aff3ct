@@ -9,14 +9,14 @@ template <typename B> template <typename D>
 void Frame_trace<B>
 ::display_bit_vector(mipp::vector<D> vec, mipp::vector<B> ref)
 {
-	display_bit_vector(vec, vec.size(), ref);
+	display_bit_vector(vec, (int)vec.size(), ref);
 }
 
 template <typename B> template <typename D>
 void Frame_trace<B>
 ::display_real_vector(mipp::vector<D> vec, mipp::vector<B> ref)
 {
-	display_real_vector(vec, vec.size(), ref);
+	display_real_vector(vec, (int)vec.size(), ref);
 }
 
 template <typename B> template <typename D>

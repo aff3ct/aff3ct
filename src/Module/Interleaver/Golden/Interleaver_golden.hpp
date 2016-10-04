@@ -26,15 +26,15 @@ protected:
 
 		std::vector<double> tab;
 
-		for (size_t i=0; i < this->pi.size(); i++)
+		for (auto i = 0; i < (int)this->pi.size(); i++)
 			tab.push_back(fmod(i*c + dist(gen),this->pi.size()));
 
-		for (size_t i = 0; i < this->pi.size(); i++)
+		for (auto i = 0; i < (int)this->pi.size(); i++)
 			this->pi[i] = i;
 
 		std::sort(this->pi.begin(), this->pi.end(),[&tab](size_t i1, size_t i2) { return tab[i1] < tab[i2]; });
 
-		for (size_t i = 0; i < this->pi_inv.size(); i++)
+		for (auto i = 0; i < (int)this->pi_inv.size(); i++)
 			this->pi_inv[this->pi[i]] = i;
 	}
 };

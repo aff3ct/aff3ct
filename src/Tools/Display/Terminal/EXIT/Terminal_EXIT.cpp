@@ -39,7 +39,11 @@ std::string Terminal_EXIT<B,R>
 
 	// TODO: this is not a C++ style code
 	char time_format[256];
+#ifdef _MSC_VER
+	sprintf_s(time_format, 32, "%2.2dh%2.2d'%2.2d", hh, mm, ss);
+#else
 	sprintf(time_format, "%2.2dh%2.2d'%2.2d", hh, mm, ss);
+#endif
 	std::string time_format2(time_format);
 
 	return time_format2;

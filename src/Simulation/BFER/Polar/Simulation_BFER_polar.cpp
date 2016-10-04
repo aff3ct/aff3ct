@@ -22,11 +22,11 @@ template <typename B, typename R, typename Q>
 Simulation_BFER_polar<B,R,Q>
 ::Simulation_BFER_polar(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
-  frozen_bits(std::exp2(this->params.code.m)),
+  frozen_bits((int)std::exp2(this->params.code.m)),
   is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos) && (params.decoder.type == "SC")),
   fb_generator(nullptr)
 {
-	const_cast<code_parameters&>(this->params.code).N_code = std::exp2(this->params.code.m);
+	const_cast<code_parameters&>(this->params.code).N_code = (int)std::exp2(this->params.code.m);
 
 	if (!is_generated_decoder)
 	{

@@ -23,7 +23,7 @@ Generator_polar_SC_sys
                          ostream &short_graph_stream)
 : K(K),
   N(N),
-  m(log2(N)),
+  m((int)log2(N)),
   snr(snr),
   frozen_bits(frozen_bits),
   patterns(patterns),

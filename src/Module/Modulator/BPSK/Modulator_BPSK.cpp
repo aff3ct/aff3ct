@@ -20,7 +20,7 @@ void Modulator_BPSK<B,R,Q>
 {
 	auto size = X_N1.size();
 	for (unsigned i = 0; i < size; i++)
-		X_N2[i] = 1 - (X_N1[i] + X_N1[i]); // (X_N[i] == 1) ? -1 : +1
+		X_N2[i] = (R)((B)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
 
 template <typename B, typename R, typename Q>

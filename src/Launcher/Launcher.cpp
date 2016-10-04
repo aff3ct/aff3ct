@@ -205,7 +205,7 @@ void Launcher<B,R,Q>
 	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
 	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
-	params.code.m      = std::ceil(std::log2(params.code.N));
+	params.code.m      = (int)std::ceil(std::log2(params.code.N));
 	if (params.code.K > params.code.N)
 	{
 		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
@@ -216,10 +216,10 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
-	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg      ({"mod-type"});
-	if(ar.exist_arg({"mod-bps" })) params.modulator.bits_per_symbol = ar.get_arg_float({"mod-bps" });
-	if(ar.exist_arg({"mod-ups" })) params.modulator.upsample_factor = ar.get_arg_int  ({"mod-ups" });
+	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg    ({"mod-type"});
+	if(ar.exist_arg({"mod-type"})) params.modulator.type            = ar.get_arg    ({"mod-type"});
+	if(ar.exist_arg({"mod-bps" })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps" });
+	if(ar.exist_arg({"mod-ups" })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups" });
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")

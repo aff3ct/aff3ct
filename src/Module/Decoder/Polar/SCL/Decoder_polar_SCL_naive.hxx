@@ -14,7 +14,7 @@ Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
                           const std::string name)
 : Decoder<B,R>(K, N, 1, name), 
-  m(log2(N)), 
+  m((int)std::log2(N)), 
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits), 
   L(L)
@@ -108,9 +108,9 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			for (auto path : active_paths)
 			{
 				auto cur_leaf = leaves_array[path][leaf_index];
-				R phi0 = phi<R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0],             0);
-				R phi1 = phi<R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0], bit_init<B>());
-				metrics_vec.push_back(std::make_tuple(path,             0, phi0));
+				R phi0 = phi<B,R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0],          (B)0);
+				R phi1 = phi<B,R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0], bit_init<B>());
+				metrics_vec.push_back(std::make_tuple(path,          (B)0, phi0));
 				metrics_vec.push_back(std::make_tuple(path, bit_init<B>(), phi1));
 
 				min_phi = std::min<R>(min_phi, phi0);
@@ -279,14 +279,14 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 		recursive_duplicate_tree_llr(leaves_array[path][leaf_index + 1], leaves_array[newpath][leaf_index + 1]);	
 
 	leaves_array[newpath][leaf_index]->get_c()->s[0] = bit_init<B>();
-	polar_trees[newpath]->set_path_metric(phi<R>(polar_trees[path]->get_path_metric(),
-	                                             leaves_array[path][leaf_index]->get_c()->lambda[0], 
-	                                             bit_init<B>()));
+	polar_trees[newpath]->set_path_metric(phi<B,R>(polar_trees[path]->get_path_metric(),
+	                                               leaves_array[path][leaf_index]->get_c()->lambda[0], 
+	                                               bit_init<B>()));
 
 	leaves_array[path][leaf_index]->get_c()->s[0] = 0;
-	polar_trees[path]->set_path_metric(phi<R>(polar_trees[path]->get_path_metric(),
-	                                          leaves_array[path][leaf_index]->get_c()->lambda[0], 
-	                                          0));
+	polar_trees[path]->set_path_metric(phi<B,R>(polar_trees[path]->get_path_metric(),
+	                                            leaves_array[path][leaf_index]->get_c()->lambda[0], 
+	                                            0));
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>

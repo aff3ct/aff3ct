@@ -2,6 +2,9 @@
 #define FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_H_
 
 #include <algorithm>
+#ifdef _MSC_VER
+#include <iterator>
+#endif
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
@@ -88,7 +91,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 4>
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
 
-		auto shift = (sizeof(B) * 8 -1) - init_shift;
+		int shift = (sizeof(B) * 8 -1) - init_shift;
 		for (auto i = 0; i < 4; i++)
 		{
 			const auto r_lambda_a   = mipp::load<R>(l_a + i * mipp::nElmtsPerRegister<R>());
@@ -113,7 +116,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 2>
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
 
-		auto shift = (sizeof(B) * 8 -1) - init_shift;
+		int shift = (sizeof(B) * 8 -1) - init_shift;
 		for (auto i = 0; i < 2; i++)
 		{
 			const auto r_lambda_a   = mipp::load<R>(l_a + i * mipp::nElmtsPerRegister<R>());
@@ -540,10 +543,17 @@ struct spc_inter_8bit_bitpacking
 			r_s_a_packed = mipp::set0<B>();
 		}
 
-
+#ifndef _MSC_VER
 		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
+#ifndef _MSC_VER
 		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R prod_sign  [mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
@@ -600,9 +610,17 @@ struct spc_inter_8bit_bitpacking <B, R, HI, 0>
 			r_s_a_packed = mipp::set0<B>();
 		}
 
+#ifndef _MSC_VER
 		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
+#ifndef _MSC_VER
 		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R prod_sign  [mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
@@ -659,9 +677,17 @@ struct spc_inter_8bit_bitpacking <B, R, HI, 4>
 
 		mipp::store<B>(s_a, r_s_a_packed);
 
+#ifndef _MSC_VER
 		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
+#ifndef _MSC_VER
 		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R prod_sign  [mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
@@ -786,7 +812,11 @@ struct xo0_inter_8bit_bitpacking
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int init_shift, const int n_elmts = 0)
 	{
 		constexpr auto _n_elmts = (N_ELMTS * mipp::nElReg<B>()) / (sizeof(B) * 8);
+#ifdef _MSC_VER
+		std::copy(s_b, s_b + _n_elmts, stdext::checked_array_iterator<B*>(s_c, _n_elmts));
+#else
 		std::copy(s_b, s_b + _n_elmts, s_c);
+#endif
 	}
 };
 
@@ -796,7 +826,11 @@ struct xo0_inter_8bit_bitpacking <B, 0>
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int init_shift, const int n_elmts = 0)
 	{
 		const auto _n_elmts = (n_elmts * mipp::nElReg<B>()) / (sizeof(B) * 8);
+#ifdef _MSC_VER
+		std::copy(s_b, s_b + _n_elmts, stdext::checked_array_iterator<B*>(s_c, _n_elmts));
+#else
 		std::copy(s_b, s_b + _n_elmts, s_c);
+#endif
 	}
 };
 

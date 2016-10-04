@@ -15,7 +15,7 @@
 template <typename B>
 Frozenbits_generator_GA<B>
 ::Frozenbits_generator_GA(const int K, const int N, const float sigma)
-: Frozenbits_generator<B>(K, N, sigma), m(std::log2(N)), z(std::exp2(m), 0)
+: Frozenbits_generator<B>(K, N, sigma), m((int)std::log2(N)), z((int)std::exp2(m), 0)
 {
 	std::cerr << bold_yellow("(WW) The GA (Gaussian Approximation) frozen bits generator is inaccurate.") 
 	          << std::endl;
@@ -39,10 +39,10 @@ void Frozenbits_generator_GA<B>
 
 	for (auto l = 1; l <= m; l++)
 	{
-		int o1 = std::exp2(m - l + 1);
-		int o2 = std::exp2(m - l);
+		auto o1 = (int)std::exp2(m - l + 1);
+		auto o2 = (int)std::exp2(m - l);
 
-		for (auto t = 0; t < std::exp2(l - 1); t++)
+		for (auto t = 0; t < (int)std::exp2(l - 1); t++)
 		{
 			double T = z[t * o1];
 			z[t * o1     ] = (T < 140) ? phi_inv(1.0 - std::pow(1.0 - phi(T), 2.0)) : 

@@ -15,6 +15,9 @@ file (GLOB_RECURSE source_files src/*)
 
 # Add includes
 include_directories (src)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+include_directories (src/Tools/MSVC)
+endif()
 
 # Object
 add_library (aff3ct-obj OBJECT ${source_files})
@@ -80,15 +83,15 @@ endif (ENABLE_SYSTEMC)
 
 # Enable C++11 and pthread
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions (-std=c++1y -Wno-overloaded-virtual)
+    add_definitions (-std=c++1y -Wno-overloaded-virtual -fPIC)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_definitions (-std=c++11 -pthread)
+    add_definitions (-std=c++11 -pthread -fPIC)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    add_definitions (-std=c++11 -pthread)
+    add_definitions (-std=c++11 -pthread -fPIC)
     aff3ct_link_libraries (-pthread)
 endif()
 
 # Specific options
-add_definitions (-fPIC -DENABLE_BIT_PACKING -DMIPP_ALIGNED_LOADS)
+add_definitions (-DENABLE_BIT_PACKING -DMIPP_ALIGNED_LOADS)

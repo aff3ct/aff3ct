@@ -99,7 +99,7 @@ void Launcher_GEN_polar<B,R,Q>
 	this->params.code.K      = this->ar.get_arg_int({"cde-info-bits", "K"});
 	this->params.code.N      = this->ar.get_arg_int({"cde-size",      "N"});
 	this->params.code.N_code = this->ar.get_arg_int({"cde-size",      "N"});
-	this->params.code.m      = std::ceil(std::log2(this->params.code.N));
+	this->params.code.m      = (int)std::ceil(std::log2(this->params.code.N));
 
 	if (this->params.code.K > this->params.code.N)
 	{

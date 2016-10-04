@@ -28,7 +28,7 @@ template <>
 void Modulator_BPSK_fast<int, float, float>
 ::modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2)
 {
-	auto size = X_N1.size();
+	auto size = (unsigned int)X_N1.size();
 	
 	const auto vec_loop_size = (size / mipp::nElReg<int>()) * mipp::nElReg<int>();
 	const mipp::Reg<float> one = 1.f;
@@ -41,14 +41,14 @@ void Modulator_BPSK_fast<int, float, float>
 	}
 
 	for (unsigned i = vec_loop_size; i < size; i++)
-		X_N2[i] = 1 - (X_N1[i] + X_N1[i]); // (X_N[i] == 1) ? -1 : +1
+		X_N2[i] = (float)((int)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
 
 template <>
 void Modulator_BPSK_fast<short, float, float>
 ::modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2)
 {
-	auto size = X_N1.size();
+	auto size = (unsigned)X_N1.size();
 	
 	const auto vec_loop_size = size / mipp::nElReg<short>();
 	const mipp::Reg<float> one = 1.f;
@@ -69,14 +69,14 @@ void Modulator_BPSK_fast<short, float, float>
 	}
 
 	for (unsigned i = vec_loop_size * mipp::nElReg<short>(); i < size; i++)
-		X_N2[i] = 1 - (X_N1[i] + X_N1[i]); // (X_N[i] == 1) ? -1 : +1
+		X_N2[i] = (float)((short)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
 
 template <>
 void Modulator_BPSK_fast<signed char, float, float>
 ::modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2)
 {
-	auto size = X_N1.size();
+	auto size = (unsigned)X_N1.size();
 	
 	const auto vec_loop_size = size / mipp::nElReg<signed char>();
 	const mipp::Reg<float> one = 1.f;
@@ -108,7 +108,7 @@ void Modulator_BPSK_fast<signed char, float, float>
 	}
 
 	for (unsigned i = vec_loop_size * mipp::nElReg<signed char>(); i < size; i++)
-		X_N2[i] = 1 - (X_N1[i] + X_N1[i]); // (X_N[i] == 1) ? -1 : +1
+		X_N2[i] = (float)((signed char)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
 
 template <typename B, typename R, typename Q>
@@ -122,7 +122,7 @@ void Modulator_BPSK_fast<B,R,Q>
 		Y_N2 = Y_N1;
 	else
 	{
-		auto size = Y_N1.size();
+		auto size = (unsigned)Y_N1.size();
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
@@ -141,7 +141,7 @@ void Modulator_BPSK_fast<B,R,Q>
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
-	auto size = Y_N1.size();
+	auto size = (unsigned int)Y_N1.size();
 	if (disable_sig2)
 	{
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();

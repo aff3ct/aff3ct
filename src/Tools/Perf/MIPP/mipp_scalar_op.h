@@ -1,5 +1,3 @@
-#ifdef MIPP_NO_INTRINSICS
-
 #ifndef MIPP_SCALAR_OP_H_
 #define MIPP_SCALAR_OP_H_
 
@@ -16,5 +14,3 @@ template <typename T>
 T div4_s(const T val);
 
 #endif /* MIPP_SCALAR_OP_H_ */
-
-#endif /* MIPP_NO_INTRINSICS */

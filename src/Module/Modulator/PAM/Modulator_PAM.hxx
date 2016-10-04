@@ -13,13 +13,13 @@ Modulator_PAM<B,R,Q,MAX>
 ::Modulator_PAM(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
                 const std::string name)
 : Modulator<B,R,Q>(N,
-                   std::ceil((float)N / (float)bits_per_symbol),
+                   (int)std::ceil((float)N / (float)bits_per_symbol),
                    n_frames, 
                    name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
-  sqrt_es        (std::sqrt((this->nbr_symbols * this->nbr_symbols - 1.0) / 3.0)),
+  sqrt_es        ((R)std::sqrt((this->nbr_symbols * this->nbr_symbols - 1.0) / 3.0)),
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
@@ -49,7 +49,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 int Modulator_PAM<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
-	return std::ceil((float)N / (float)this->bits_per_symbol);
+	return (int)std::ceil((float)N / (float)this->bits_per_symbol);
 }
 
 /*
@@ -63,7 +63,7 @@ R Modulator_PAM<B,R,Q,MAX>
 
 	auto symbol = (R)1.0 - ((R)bits[0] + (R)bits[0]);
 	for (auto j = 1; j < bps; j++)
-		symbol = (1.0 - ((R)bits[j] + (R)bits[j])) * ((1 << j) - symbol);
+		symbol = ((R)1.0 - ((R)bits[j] + (R)bits[j])) * ((1 << j) - symbol);
 
 	return symbol / this->sqrt_es;
  }

@@ -29,7 +29,7 @@ void Source_random_fast<B>
 
 	// vectorized loop
 	const auto period = mipp::nElReg<B>() * sizeof(B) * 8; 
-	const auto vec_loop_size = (size / period) * period;
+	const auto vec_loop_size = (unsigned)((size / period) * period);
 	for (unsigned i = 0; i < vec_loop_size; i += period)
 	{
 		mipp::Reg<int> randoms_s32 = mt19937_simd.rand_s32();

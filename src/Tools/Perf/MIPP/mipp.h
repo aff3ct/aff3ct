@@ -61,10 +61,13 @@ SOFTWARE.
 #ifdef __SSE4_1__
 #include <smmintrin.h>
 #endif
+#else
+#include "mipp_scalar_op.h"
 #endif
 #else
 #include "mipp_scalar_op.h"
 #endif
+
 #include <unordered_map>
 #include <typeindex>
 #include <typeinfo>
@@ -76,6 +79,14 @@ SOFTWARE.
 #include <vector>
 #include <cmath>
 #include <map>
+
+#ifdef _MSC_VER
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#undef min
+#undef max
+#endif
 
 namespace mipp // My Intrinsics Plus Plus => mipp
 {

@@ -14,8 +14,8 @@ Decoder_RSC_BCJR<B,R>
                    const int n_frames,
                    const std::string name)
 : Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name),
-  n_states(trellis[0].size()),
-  n_ff(std::log2(n_states)),
+  n_states((int)trellis[0].size()),
+  n_ff((int)std::log2(n_states)),
   buffered_encoding(buffered_encoding),
   trellis(trellis),
   sys((K+n_ff) * n_frames + mipp::nElReg<R>()),
@@ -100,7 +100,11 @@ void Decoder_RSC_BCJR<B,R>
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 
 		// s[i] = post[i] < 0;
-		const auto r_s = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 -1);
+#if defined(MIPP_NO_INTRINSICS) && defined(_MSC_VER) 
+		const auto r_s = mipp::Reg<B>((B)r_post.sign().r) >> (sizeof(B) * 8 -1);
+#else
+		const auto r_s = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 - 1);
+#endif
 		r_s.store(&s[i]);
 	}
 }

@@ -93,9 +93,18 @@ struct spc_inter
 			// mipp::store<R>(l_a +i, r_abs_l_a);
 		}
 
+#ifndef _MSC_VER
 		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
+
+#ifndef _MSC_VER
 		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R prod_sign  [mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC
@@ -138,9 +147,17 @@ struct spc_inter <B, R, HI, 0>
 			// mipp::store<R>(l_a +i, r_abs_l_a);
 		}
 
+#ifndef _MSC_VER
 		R cur_min_abs[mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R cur_min_abs[mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(cur_min_abs, r_cur_min_abs);
+#ifndef _MSC_VER
 		R prod_sign  [mipp::nElmtsPerRegister<R>()] __attribute__((aligned(MIPP_REQUIRED_ALIGNMENT)));
+#else
+		R prod_sign  [mipp::nElmtsPerRegister<R>()];
+#endif
 		mipp::store<R>(prod_sign,   r_prod_sign);
 
 		// sequential part of the SPC

@@ -38,12 +38,12 @@ protected:
 		k_1[7136] = 8; k_2[7136] = 223 * 4;
 		k_1[8920] = 8; k_2[8920] = 223 * 5;
 		
-		int size = this->pi.size();
+		auto size = (int)this->pi.size();
 		if (k_1.find(size) != k_1.end())
 		{
 			for (auto i = 0; i < size; i++)
 			{
-				this->pi[i] = (T)pi_CCSDS(i, k_1[size], k_2[size]);
+				this->pi[i] = (T)pi_CCSDS(i, (int)k_1[size], (int)k_2[size]);
 				assert(this->pi[i] >= 0 && this->pi[i] < size);
 				this->pi_inv[this->pi[i]] = (T)i;
 			}

@@ -44,7 +44,11 @@ void Decoder_NO<B,R>
 		const auto r_Y_N = mipp::Reg<R>(&Y_N[i]);
 
 		// s[i] = Y_N[i] < 0;
-		const auto r_s = mipp::Reg<B>(r_Y_N.sign().r) >> (sizeof(B) * 8 -1);
+#if defined(MIPP_NO_INTRINSICS) && defined(_MSC_VER) 
+		const auto r_s = mipp::Reg<B>((B)r_Y_N.sign().r) >> (sizeof(B) * 8 - 1);
+#else
+		const auto r_s = mipp::Reg<B>(r_Y_N.sign().r) >> (sizeof(B) * 8 - 1);
+#endif
 		r_s.store(&V_K[i]);
 	}
 	for (auto i = vec_loop_size; i < K; i++)

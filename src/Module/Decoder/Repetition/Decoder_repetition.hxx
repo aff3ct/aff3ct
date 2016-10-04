@@ -58,7 +58,11 @@ void Decoder_repetition<B,R>
 		const auto r_ext = mipp::Reg<R>(&ext[i]);
 
 		// s[i] = ext[i] < 0;
-		const auto r_s = mipp::Reg<B>(r_ext.sign().r) >> (sizeof(B) * 8 -1);
+#if defined(MIPP_NO_INTRINSICS) && defined(_MSC_VER) 
+		const auto r_s = mipp::Reg<B>((B)r_ext.sign().r) >> (sizeof(B) * 8 - 1);
+#else
+		const auto r_s = mipp::Reg<B>(r_ext.sign().r) >> (sizeof(B) * 8 - 1);
+#endif
 		r_s.store(&s[i]);
 	}
 	for (auto i = vec_loop_size; i < this->K; i++)

@@ -221,7 +221,7 @@ double Simulation_EXIT<B,R,Q>
 {
 	double I_A = 0;
 	double symb;
-	int size = llrs.size();
+	auto size = (int)llrs.size();
 	for (int j = 0; j < size; j++)
 	{
 		symb = -2 * (double)bits[j] +1;
@@ -314,9 +314,9 @@ double Simulation_EXIT<B,R,Q>
 			            3.49 * std::sqrt(llr_1_variance) * (std::pow(llr_1_noninfinite_count, (-1.0 / 3.0))));
 			if (bin_width > 0.0)
 			{
-				bin_offset = std::floor(std::min(llr_0_min, llr_1_min) / bin_width) - 1;
+				bin_offset = (int)std::floor(std::min(llr_0_min, llr_1_min) / bin_width) - 1;
 				tmp = std::max(llr_0_max, llr_1_max) / bin_width - bin_offset + 1;
-				bin_count = std::ceil(tmp);
+				bin_count = (int)std::ceil(tmp);
 				if (bin_count == tmp)
 					bin_count = bin_count + 1;
 			}
@@ -346,7 +346,7 @@ double Simulation_EXIT<B,R,Q>
 				if (lots_of_bins)
 				{
 					if (bin_width > 0.0)
-						histogram[(int)bits[i]][std::floor((double)llrs[i] / bin_width) - bin_offset] += 1;
+						histogram[(int)bits[i]][(int)(std::floor((double)llrs[i] / bin_width) - bin_offset)] += 1.0;
 					else
 						histogram[(int)bits[i]][1] += 1;
 				}
@@ -418,7 +418,7 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R,R>::build(params, 2.0 / sig_a);
+	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a);
 }
 
 template <typename B, typename R, typename Q>
@@ -432,7 +432,7 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.0 / sig_a, size, 0);
+	return Factory_channel<R>::build(params, 2.f / sig_a, size, 0);
 }
 
 template <typename B, typename R, typename Q>
@@ -450,15 +450,3 @@ Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
 {
 	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class Simulation_EXIT<B_8,R_8,Q_8>;
-template class Simulation_EXIT<B_16,R_16,Q_16>;
-template class Simulation_EXIT<B_32,R_32,Q_32>;
-template class Simulation_EXIT<B_64,R_64,Q_64>;
-#else
-template class Simulation_EXIT<B,R,Q>;
-#endif
-// ==================================================================================== explicit template instantiation

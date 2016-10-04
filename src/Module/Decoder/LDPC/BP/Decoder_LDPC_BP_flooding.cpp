@@ -18,7 +18,7 @@ Decoder_LDPC_BP_flooding<B,R>
   n_ite                  (n_ite                  ),
   n_V_nodes              (N                      ), // same as N but more explicit
   n_C_nodes              (N - K                  ),
-  n_branches             (transpose.size()       ),
+  n_branches             ((int)transpose.size()  ),
   init_flag              (false                  ),
 
   n_variables_per_parity (n_variables_per_parity ),
@@ -60,7 +60,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->C_to_V.begin(), this->C_to_V.end(), 0);
+		std::fill(this->C_to_V.begin(), this->C_to_V.end(), (R)0);
 		this->init_flag = false;
 	}
 
@@ -89,7 +89,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->C_to_V.begin(), this->C_to_V.end(), 0);
+		std::fill(this->C_to_V.begin(), this->C_to_V.end(), (R)0);
 		this->init_flag = false;
 	}
 

@@ -61,9 +61,9 @@ bool Arguments_reader
 		const string delimiter = ", ";
 		unsigned total_length = 0;
 		for (auto i = 0; i < (int)it->first.size() -1; i++)
-			total_length += (it->first[i].length() == 1 ? 1 : 2) + it->first[i].length() + delimiter.length();
+			total_length += unsigned((it->first[i].length() == 1 ? 1 : 2) + it->first[i].length() + delimiter.length());
 		const auto last = it->first.size() -1;
-		total_length += (it->first[last].length() == 1 ? 1 : 2) + it->first[last].length();
+		total_length += unsigned((it->first[last].length() == 1 ? 1 : 2) + it->first[last].length());
 
 		this->max_n_char_arg = max(this->max_n_char_arg, total_length);
 
@@ -242,11 +242,11 @@ void Arguments_reader
 		for (auto i = 0; i < (int)tags.size() -1; i++)
 		{
 			cout << ((tags[i].length() == 1) ? "-" : "--") << tags[i] << delimiter;
-			total_length += (tags[i].length() == 1 ? 1 : 2) + tags[i].length() + delimiter.length();
+			total_length += unsigned((tags[i].length() == 1 ? 1 : 2) + tags[i].length() + delimiter.length());
 		}
 		const auto last = tags.size() -1;
 		cout << ((tags[last].length() == 1) ? "-" : "--") << tags[last];
-		total_length += (tags[last].length() == 1 ? 1 : 2) + tags[last].length();
+		total_length += unsigned((tags[last].length() == 1 ? 1 : 2) + tags[last].length());
 
 		for (unsigned i = 0; i < this->max_n_char_arg - total_length; i++) cout << " ";
 		if (values.size() < 3)

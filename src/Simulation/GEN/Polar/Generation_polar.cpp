@@ -140,7 +140,7 @@ void Generation_polar
 		std::cout << "-----------------------------------" << std::endl;
 		for (auto d = 0; d < params.code.m +1; d++)
 		{
-			n_nodes     = pow(2, d);
+			n_nodes     = (unsigned long)pow(2, d);
 			n_nodes_gen = generator->get_n_generated_nodes(d);
 
 			std::cout << tab        << "* Graph depth = " << d                               << std::endl;

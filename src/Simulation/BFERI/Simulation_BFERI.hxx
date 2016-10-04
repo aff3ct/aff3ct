@@ -245,7 +245,7 @@ void Simulation_BFERI<B,R,Q>
 	if (simu->V_K [tid].size() != (unsigned) ( K             * n_fra)) simu->V_K [tid].resize( K              * n_fra);
 
 	// fill the Y_N7 vector with 0 values
-	std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
+	std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), (Q)0);
 
 	// set the real number of frames per thread
 	simu->source     [tid]->set_n_frames(n_fra);
@@ -346,7 +346,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_corea = nanoseconds(0);
 		auto d_cobit = nanoseconds(0);
 
-		std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), 0);
+		std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), (Q)0);
 		for (auto ite = 0; ite <= simu->params.demodulator.n_ite; ite++)
 		{
 			// demodulation
@@ -586,7 +586,7 @@ void Simulation_BFERI<B,R,Q>
 		auto d_corea = nanoseconds(0);
 		auto d_cobit = nanoseconds(0);
 
-		std::fill(simu->Y_N7[0].begin(), simu->Y_N7[0].end(), 0);
+		std::fill(simu->Y_N7[0].begin(), simu->Y_N7[0].end(), (Q)0);
 		for (auto ite = 0; ite <= simu->params.demodulator.n_ite; ite++)
 		{
 			std::clog << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
@@ -1027,17 +1027,5 @@ Terminal* Simulation_BFERI<B,R,Q>
 {
 	return Factory_terminal<B,R>::build(params, snr, monitor_red, t_snr, d_decod_total_red);
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class Simulation_BFERI<B_8,R_8,Q_8>;
-template class Simulation_BFERI<B_16,R_16,Q_16>;
-template class Simulation_BFERI<B_32,R_32,Q_32>;
-template class Simulation_BFERI<B_64,R_64,Q_64>;
-#else
-template class Simulation_BFERI<B,R,Q>;
-#endif
-// ==================================================================================== explicit template instantiation
 
 #endif /* NOT SYSTEMC */

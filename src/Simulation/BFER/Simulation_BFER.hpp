@@ -145,8 +145,6 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
-	Encoder<B>* _build_encoder(const int tid = 0);
-
 protected:
 	virtual void              release_objects  ();
 	virtual void              launch_precompute();
@@ -165,6 +163,8 @@ protected:
 	virtual Monitor<B>*       build_monitor    (                const int tid = 0);
 	        Terminal*         build_terminal   (                const int tid = 0);
 };
+
+#include "Simulation_BFER.hxx"
 
 #endif /* SIMULATION_BFER_HPP_ */
 

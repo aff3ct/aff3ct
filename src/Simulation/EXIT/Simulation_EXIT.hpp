@@ -97,4 +97,6 @@ protected:
 	        Terminal_EXIT<B,R>* build_terminal   (              );
 };
 
+#include "Simulation_EXIT.hxx"
+
 #endif /* SIMULATION_EXIT_HPP_ */

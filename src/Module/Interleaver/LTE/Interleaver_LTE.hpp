@@ -215,12 +215,12 @@ protected:
 		f_1[6080] =  47; f_2[6080] = 190;
 		f_1[6144] = 263; f_2[6144] = 480;
 
-		int size = this->pi.size();
+		auto size = (int)this->pi.size();
 		if (f_1.find(size) != f_1.end())
 		{
 			for (auto i = 0; i < size; i++)
 			{
-				this->pi[i] = (T)pi_LTE(i, f_1[size], f_2[size], size);
+				this->pi[i] = (T)pi_LTE(i, (int)f_1[size], (int)f_2[size], size);
 				assert(this->pi[i] >= 0 && this->pi[i] < size);
 				this->pi_inv[this->pi[i]] = (T)i;
 			}

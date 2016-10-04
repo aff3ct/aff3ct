@@ -12,12 +12,12 @@ template <typename T>
 void Reorderer<T>
 ::apply(const std::vector<const T*> in_data, T* out_data, const int data_length)
 {
-	const int n_fra   = in_data.size();
+	const int n_fra   = (int)in_data.size();
 	const int n_fra_2 = n_fra / 2;
 
 	int start_seq_loop = 0;
 
-	if (is_power_of_2(in_data.size()) && in_data.size() >= 2 && in_data.size() <= mipp::nElReg<T>())
+	if (is_power_of_2((int)in_data.size()) && (int)in_data.size() >= 2 && (int)in_data.size() <= mipp::nElReg<T>())
 	{
 		mipp::reg regs_inter[mipp::nElReg<T>()];
 
@@ -137,9 +137,13 @@ void Reorderer_static<T,N_FRAMES>
 
 	int start_seq_loop = 0;
 
-	if (is_power_of_2(in_data.size()) && in_data.size() >= 2 && in_data.size() <= mipp::nElReg<T>())
+	if (is_power_of_2((int)in_data.size()) && (int)in_data.size() >= 2 && (int)in_data.size() <= mipp::nElReg<T>())
 	{
+#ifndef _MSC_VER
 		mipp::reg regs_inter[n_fra];
+#else
+		mipp::reg* regs_inter = new mipp::reg[n_fra];
+#endif
 
 		// vectorized reordering
 		const auto loop_size = (int)(data_length/mipp::nElReg<T>());
@@ -167,6 +171,10 @@ void Reorderer_static<T,N_FRAMES>
 		}
 
 		start_seq_loop = loop_size * mipp::nElReg<T>();
+
+#ifdef _MSC_VER
+		delete[] regs_inter;
+#endif
 	}
 
 	// sequential reordering
@@ -179,12 +187,12 @@ template <typename T>
 void Reorderer<T>
 ::apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length)
 {
-	const int n_fra   = out_data.size();
+	const int n_fra   = (int)out_data.size();
 	const int n_fra_2 = n_fra / 2;
 
 	int start_seq_loop = 0;
 
-	if (is_power_of_2(out_data.size()) && out_data.size() >= 2 && out_data.size() <= mipp::nElReg<T>())
+	if (is_power_of_2((int)out_data.size()) && (int)out_data.size() >= 2 && (int)out_data.size() <= mipp::nElReg<T>())
 	{
 		mipp::reg regs_inter[mipp::nElReg<T>()];
 
@@ -358,7 +366,7 @@ void Reorderer_static<T,N_FRAMES>
 
 	int start_seq_loop = 0;
 
-	if (is_power_of_2(out_data.size()) && out_data.size() >= 2 && out_data.size() <= mipp::nElReg<T>())
+	if (is_power_of_2((int)out_data.size()) && (int)out_data.size() >= 2 && (int)out_data.size() <= mipp::nElReg<T>())
 	{
 		mipp::reg regs_inter[mipp::nElReg<T>()];
 

@@ -7,6 +7,10 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
+#ifndef _MSC_VER
+#define __forceinline inline __attribute__((always_inline))
+#endif
+
 // -------------------------------------------------------------------------- special function prototypes for templates
 
 template <typename R>
@@ -51,59 +55,59 @@ using proto_m = R (*)(const B& u_a, const R& lambda_a);
 // ------------------------------------------------------------------------------------------- special function headers
 
 template <typename R>
-inline R f_LR(const R& lambda_a, const R& lambda_b) __attribute__((always_inline));
+__forceinline R f_LR(const R& lambda_a, const R& lambda_b);
 
 template <typename R>
-inline R f_LLR(const R& lambda_a, const R& lambda_b) __attribute__((always_inline));
+__forceinline R f_LLR(const R& lambda_a, const R& lambda_b);
 
 template <typename R>
-inline mipp::reg f_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda_b) __attribute__((always_inline));
+__forceinline mipp::reg f_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda_b);
 
 template <typename B, typename R>
-inline R g_LR(const R& lambda_a, const R& lambda_b, const B& u) __attribute__((always_inline));
+__forceinline R g_LR(const R& lambda_a, const R& lambda_b, const B& u);
 
 template <typename B, typename R>
-inline R g_LLR(const R& lambda_a, const R& lambda_b, const B& u) __attribute__((always_inline));
+__forceinline R g_LLR(const R& lambda_a, const R& lambda_b, const B& u);
 
 template <typename B, typename R>
-inline mipp::reg g_LLR_i(const mipp::reg& r_lambda_a,
-                         const mipp::reg& r_lambda_b,
-                         const mipp::reg& r_u)  __attribute__((always_inline));
+__forceinline mipp::reg g_LLR_i(const mipp::reg& r_lambda_a,
+                                const mipp::reg& r_lambda_b,
+                                const mipp::reg& r_u);
 
 template <typename R>
-inline R g0_LR(const R& lambda_a, const R& lambda_b) __attribute__((always_inline));
+__forceinline R g0_LR(const R& lambda_a, const R& lambda_b);
 
 template <typename R>
-inline R g0_LLR(const R& lambda_a, const R& lambda_b) __attribute__((always_inline));
+__forceinline R g0_LLR(const R& lambda_a, const R& lambda_b);
 
 template <typename R>
-inline mipp::reg g0_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda_b)  __attribute__((always_inline));
+__forceinline mipp::reg g0_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda_b);
 
 template <typename B, typename R>
-inline B h_LR(const R& lambda_a) __attribute__((always_inline));
+__forceinline B h_LR(const R& lambda_a);
 
 template <typename B, typename R>
-inline B h_LLR(const R& lambda_a) __attribute__((always_inline));
+__forceinline B h_LLR(const R& lambda_a);
 
 template <typename B, typename R>
-inline mipp::reg h_LLR_i(const mipp::reg& r_lambda_a) __attribute__((always_inline));
+__forceinline mipp::reg h_LLR_i(const mipp::reg& r_lambda_a);
 
 template <typename R>
-inline R v_LR(const R& a, const R& b) __attribute__((always_inline));
+__forceinline R v_LR(const R& a, const R& b);
 
 template <typename R>
-inline R v_LLR(const R& a, const R& b) __attribute__((always_inline));
+__forceinline R v_LLR(const R& a, const R& b);
 
 template <typename B>
-inline B xo_STD(const B& u_a, const B& u_b) __attribute__((always_inline));
+__forceinline B xo_STD(const B& u_a, const B& u_b);
 
 template <typename B>
-inline mipp::reg xo_STD_i(const mipp::reg& r_u_a, const mipp::reg& r_u_b) __attribute__((always_inline));
+__forceinline mipp::reg xo_STD_i(const mipp::reg& r_u_a, const mipp::reg& r_u_b);
 
 template <typename B, typename R>
-inline R phi(const R& mu, const R& lambda, const B& u);
+__forceinline R phi(const R& mu, const R& lambda, const B& u);
 
-inline int compute_depth(int index, int tree_depth);
+__forceinline int compute_depth(int index, int tree_depth);
 
 #include "decoder_polar_functions.hxx"
 

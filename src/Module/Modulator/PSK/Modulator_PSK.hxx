@@ -17,7 +17,7 @@ Modulator_PSK<B,R,Q,MAX>
 ::Modulator_PSK(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
                 const std::string name)
 : Modulator<B,R,Q>(N, 
-                   std::ceil((float)N / (float)bits_per_symbol) * 2,
+                   (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
                    n_frames, 
                    name),
   bits_per_symbol(bits_per_symbol),
@@ -52,7 +52,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 int Modulator_PSK<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
-	return std::ceil((float)N / (float)this->bits_per_symbol) * 2;
+	return (int)std::ceil((float)N / (float)this->bits_per_symbol) * 2;
 }
 
 /*
@@ -66,10 +66,10 @@ std::complex<R> Modulator_PSK<B,R,Q,MAX>
 
 	auto symbol = (R)1.0 - ((R)bits[0] + (R)bits[0]);
 	for (auto j = 1; j < bps; j++)
-		symbol = (1.0 - ((R)bits[j] + (R)bits[j])) * ((1 << j) - symbol);
+		symbol = ((R)1.0 - ((R)bits[j] + (R)bits[j])) * ((1 << j) - symbol);
 
-	return std::complex<R>(std::cos((symbol +1) * M_PI / this->nbr_symbols), 
-	                       std::sin((symbol +1) * M_PI / this->nbr_symbols));
+	return std::complex<R>((R)std::cos((symbol +1) * M_PI / this->nbr_symbols), 
+	                       (R)std::sin((symbol +1) * M_PI / this->nbr_symbols));
 }
 
 /*

@@ -80,7 +80,7 @@ void Quantizer_fast<float,short>
 {
 	assert(Y_N1.size() == Y_N2.size());
 
-	auto size = Y_N1.size();
+	auto size = (unsigned)Y_N1.size();
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
 
@@ -108,7 +108,7 @@ void Quantizer_fast<float,signed char>
 {
 	assert(Y_N1.size() == Y_N2.size());
 
-	auto size = Y_N1.size();
+	auto size = (unsigned)Y_N1.size();
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;
 

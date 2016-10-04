@@ -32,7 +32,7 @@ int CRC_polynomial<B>
 ::size(std::string poly_key)
 {
 	if (polynomials.find(poly_key) != polynomials.end())
-		return (polynomials.at(poly_key).size() == 0 ? 0 : polynomials.at(poly_key).size() -1); 
+		return (int)(polynomials.at(poly_key).size() == 0 ? 0 : polynomials.at(poly_key).size() -1); 
 	else
 		return 0;
 }
@@ -42,7 +42,7 @@ int CRC_polynomial<B>
 ::size() const
 {
 	// the number of generated crc bits is the size of the polynomial minus 1
-	return (polynomial.size() == 0 ? 0 : polynomial.size() -1);
+	return (int)(polynomial.size() == 0 ? 0 : polynomial.size() -1);
 }
 
 template <typename B>
@@ -85,7 +85,7 @@ bool CRC_polynomial<B>
 {
 	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
 
-	auto real_frame_size = V_K.size() / this->n_frames;
+	auto real_frame_size = (int)(V_K.size() / this->n_frames);
 
 	auto i = 0;
 	auto f = 0;

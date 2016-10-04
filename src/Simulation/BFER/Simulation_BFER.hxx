@@ -1082,16 +1082,4 @@ Terminal* Simulation_BFER<B,R,Q>
 	return Factory_terminal<B,R>::build(params, snr, monitor_red, t_snr, d_decod_all_red);
 }
 
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class Simulation_BFER<B_8,R_8,Q_8>;
-template class Simulation_BFER<B_16,R_16,Q_16>;
-template class Simulation_BFER<B_32,R_32,Q_32>;
-template class Simulation_BFER<B_64,R_64,Q_64>;
-#else
-template class Simulation_BFER<B,R,Q>;
-#endif
-// ==================================================================================== explicit template instantiation
-
 #endif /* NOT SYSTEMC */

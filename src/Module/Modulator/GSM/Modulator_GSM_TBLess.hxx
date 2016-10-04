@@ -72,7 +72,7 @@ void Modulator_GSM_TBLess<B,R,Q,MAX>
 	// Rimoldi phase tilting -> for GSM only consists in transforming -1/+1 in 0/1
 
 	// CPE encoding
-	Encoder_RSC3_CPE_sys<B> enc(X_N1.size(), X_N1.size() * 2, 1, false);
+	Encoder_RSC3_CPE_sys<B> enc((int)X_N1.size(), (int)X_N1.size() * 2, 1, false);
 	enc.encode_sys(X_N1, this->parity_enc);
 
 	// memoryless modulation (attributing complex waveforms to symbols)

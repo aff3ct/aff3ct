@@ -122,12 +122,20 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
 	// compute the first beta values [trellis backward traversal <-]
+#ifndef _MSC_VER
 	R beta_prev[this->n_states];
+#else
+	R beta_prev[128];
+#endif
 	for (auto j = 0; j < this->n_states; j++)
 		beta_prev[j] = this->alpha[j][0];
 	for (auto i = this->K + this->n_ff -1; i >= this->K; i--)
 	{
+#ifdef _MSC_VER
+		R beta_cur[128];
+#else
 		R beta_cur[this->n_states];
+#endif
 		for (auto j = 0; j < this->n_states; j++)
 			beta_cur[j] = MAX1(
 				beta_prev[this->trellis[6][j]] + this->gamma[this->trellis[7][j]][i],
@@ -173,7 +181,11 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 		ext[i] = RSC_BCJR_seq_generic_post<R,RD>::compute(max0 - max1) - sys[i];
 
 		// compute the beta values
+#ifdef _MSC_VER
+		R beta_cur[128];
+#else
 		R beta_cur[this->n_states];
+#endif
 		for (auto j = 0; j < this->n_states; j++)
 			beta_cur[j] = MAX1(
 				beta_prev[this->trellis[6][j]] + this->gamma[this->trellis[7][j]][i],

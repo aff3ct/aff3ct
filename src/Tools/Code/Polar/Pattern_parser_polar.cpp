@@ -15,7 +15,7 @@ Pattern_parser_polar
                        const Pattern_SC_interface &pattern_rate0,
                        const Pattern_SC_interface &pattern_rate1)
 : N(N),
-  m(std::log2(N)),
+  m((int)std::log2(N)),
   frozen_bits(frozen_bits),
   patterns(patterns),
   pattern_rate0(pattern_rate0),
@@ -45,7 +45,11 @@ void Pattern_parser_polar
 
 		// pattern matching
 		int reverse_graph_depth = this->m - node_curr->get_depth();
+#ifdef _MSC_VER
+		int matching_vals[32];
+#else
 		int matching_vals[patterns.size()];
+#endif
 		for (unsigned i = 0; i < patterns.size(); i++)
 			matching_vals[i] = patterns[i]->match(reverse_graph_depth, node_curr);
 

@@ -1,5 +1,3 @@
-#ifdef MIPP_NO_INTRINSICS
-
 #include <cstdlib>
 #include <iostream>
 
@@ -24,7 +22,7 @@ double andb_s(const double val1, const double val2)
 {
 	std::cerr << "andb_s is not available in floating point mode, exiting..." << std::endl;
 	std::exit(-1);
-	return 0.f;
+	return 0.0;
 }
 
 template <typename T>
@@ -46,18 +44,18 @@ double xorb_s(const double val1, const double val2)
 {
 	std::cerr << "xorb_s is not available in floating point mode, exiting..." << std::endl;
 	std::exit(-1);
-	return 0.f;
+	return 0.0;
 }
 
-template <typename T> T           div2_s(const T           val) { return val * 0.5; }
-template <          > int         div2_s(const int         val) { return val >> 1;  }
-template <          > short       div2_s(const short       val) { return val >> 1;  }
-template <          > signed char div2_s(const signed char val) { return val >> 1;  }
+template <typename T> T           div2_s(const T           val) { return val * (T)0.5; }
+template <          > int         div2_s(const int         val) { return val >> 1;     }
+template <          > short       div2_s(const short       val) { return val >> 1;     }
+template <          > signed char div2_s(const signed char val) { return val >> 1;     }
 
-template <typename T> T           div4_s(const T           val) { return val * 0.25; }
-template <          > int         div4_s(const int         val) { return val >> 2;   }
-template <          > short       div4_s(const short       val) { return val >> 2;   }
-template <          > signed char div4_s(const signed char val) { return val >> 2;   }
+template <typename T> T           div4_s(const T           val) { return val * (T)0.25; }
+template <          > int         div4_s(const int         val) { return val >> 2;      }
+template <          > short       div4_s(const short       val) { return val >> 2;      }
+template <          > signed char div4_s(const signed char val) { return val >> 2;      }
 
 // ==================================================================================== explicit template instantiation
 template double      andb_s(const double     , const double     );
@@ -88,5 +86,3 @@ template int         div4_s(const int        );
 template short       div4_s(const short      );
 template signed char div4_s(const signed char);
 // ==================================================================================== explicit template instantiation
-
-#endif /* MIPP_NO_INTRINSICS */

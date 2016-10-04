@@ -101,7 +101,7 @@ template <typename Q, proto_max<Q> MAX>
 void Modulator_GSM_BCJR<Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, mipp::vector<Q> &Le_N)
 {
-	std::fill(this->symb_apriori_prob.begin(), this->symb_apriori_prob.end(), 0);
+	std::fill(this->symb_apriori_prob.begin(), this->symb_apriori_prob.end(), (Q)0);
 
 	compute_alpha_beta_gamma(Lch_N);
 	symboles_probas         (     );
@@ -127,7 +127,7 @@ void Modulator_GSM_BCJR<Q,MAX>
 {
 	assert(Ldec_N.size() <= this->symb_apriori_prob.size() / m_order);
 
-	std::fill(this->symb_apriori_prob.begin(), this->symb_apriori_prob.end(), 0);
+	std::fill(this->symb_apriori_prob.begin(), this->symb_apriori_prob.end(), (Q)0);
 
 	for (auto i = 0; i < (int)Ldec_N.size(); i++)
 		for (auto j = 0; j < this->m_order; j++)
@@ -135,7 +135,7 @@ void Modulator_GSM_BCJR<Q,MAX>
 			{
 				const auto symbol = this->binary_symbols[k * this->m_order +j];
 				const auto sign   = 1 - (symbol + symbol);
-				this->symb_apriori_prob[i * this->m_order +j] += (Q)sign * Ldec_N[i * this->n_bits_per_symb +k] * 0.5;
+				this->symb_apriori_prob[i * this->m_order +j] += (Q)sign * Ldec_N[i * this->n_bits_per_symb +k] * (Q)0.5;
 			}
 }
 

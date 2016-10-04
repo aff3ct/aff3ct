@@ -52,9 +52,9 @@ bool Decoder_LDPC_BP_flooding_min_sum<B,R>
 		}
 
 		// compute CN inter values
-		constexpr float offset     = 0.000; // 0.00 // 0.15
-		constexpr float normalize1 = 0.825; // 1.00 // 1.25 // 0.825
-		constexpr float normalize2 = 0.825; // 1.00 // 1.25 // 0.825
+		constexpr float offset     = 0.000f; // 0.00f // 0.15f
+		constexpr float normalize1 = 0.825f; // 1.00f // 1.25f // 0.825f
+		constexpr float normalize2 = 0.825f; // 1.00f // 1.25f // 0.825f
 
 		auto cste1 = (min2 - offset) * normalize1;
 		auto cste2 = (min1 - offset) * normalize2;

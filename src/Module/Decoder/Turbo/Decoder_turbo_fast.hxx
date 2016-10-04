@@ -189,7 +189,11 @@ void Decoder_turbo_fast<B,R>
 	for (auto i = 0; i < loop_size1; i++)
 	{
 		const auto r_post = mipp::Reg<R>(&this->l_e1n[i * mipp::nElReg<R>()]);
-		const auto r_dec  = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 -1); // s[i] = (l_e1n[i] < 0);
+#if defined(MIPP_NO_INTRINSICS) && defined(_MSC_VER) 
+		const auto r_dec = mipp::Reg<B>((B)r_post.sign().r) >> (sizeof(B) * 8 - 1); // s[i] = (l_e1n[i] < 0);
+#else
+		const auto r_dec = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 - 1); // s[i] = (l_e1n[i] < 0);
+#endif
 		r_dec.store(&this->s[i * mipp::nElReg<R>()]);
 	}
 	const auto loop_size2 = this->K * n_frames;
