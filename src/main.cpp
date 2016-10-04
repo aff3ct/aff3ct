@@ -176,6 +176,7 @@ Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string
 	return nullptr;
 }
 
+#if defined(MULTI_PREC) || defined(PREC_32_BIT)
 template <>
 Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc, 
                                                                       const char  **argv, 
@@ -192,7 +193,9 @@ Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int 
 
 	return nullptr;
 }
+#endif
 
+#if defined(MULTI_PREC) || defined(PREC_64_BIT)
 template <>
 Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc, 
                                                                                        const char  **argv, 
@@ -209,6 +212,7 @@ Launcher<long long,double,double>* create_exit_simu<long long, double, double, d
 
 	return nullptr;
 }
+#endif
 
 /**
  * \fn void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
