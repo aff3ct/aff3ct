@@ -3,6 +3,12 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+#ifndef _MSC_VER
+#ifndef __forceinline
+#define __forceinline inline __attribute__((always_inline))
+#endif
+#endif
+
 // -------------------------------------------------------------------------- special function prototypes for templates
 
 template <typename R>
@@ -14,10 +20,6 @@ using proto_max_i = mipp::Reg<R> (*)(const mipp::Reg<R> a, const mipp::Reg<R> b)
 // ------------------------------------------------------------------------------------------------------ tools headers
 
 // ------------------------------------------------------------------------------------------- special function headers
-
-#ifndef _MSC_VER
-#define __forceinline inline __attribute__((always_inline))
-#endif
 
 template <typename R> __forceinline R max          (const R& a, const R& b);
 template <typename R> __forceinline R max_linear   (const R& a, const R& b);

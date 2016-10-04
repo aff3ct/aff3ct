@@ -8,7 +8,9 @@
 #include "Tools/Math/utils.h"
 
 #ifndef _MSC_VER
+#ifndef __forceinline
 #define __forceinline inline __attribute__((always_inline))
+#endif
 #endif
 
 // -------------------------------------------------------------------------- special function prototypes for templates
