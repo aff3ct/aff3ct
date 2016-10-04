@@ -3,11 +3,13 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-// ------------------------------------------------------------------------------------------- special function headers
-
 #ifndef _MSC_VER
+#ifndef __forceinline
 #define __forceinline inline __attribute__((always_inline))
 #endif
+#endif
+
+// ------------------------------------------------------------------------------------------- special function headers
 
 // M   - INTEGER.
 //      On entry,  M  specifies  the number  of rows  of the
