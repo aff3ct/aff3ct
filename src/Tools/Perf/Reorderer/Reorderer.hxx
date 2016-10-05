@@ -142,7 +142,7 @@ void Reorderer_static<T,N_FRAMES>
 #ifndef _MSC_VER
 		mipp::reg regs_inter[n_fra];
 #else
-		mipp::reg* regs_inter = new mipp::reg[n_fra];
+		mipp::vector<mipp::reg> regs_inter(n_fra);
 #endif
 
 		// vectorized reordering
@@ -154,7 +154,11 @@ void Reorderer_static<T,N_FRAMES>
 				regs_inter[f] = mipp::loadu<T>(in_data[f] + i*mipp::nElReg<T>());
 
 			// auto unrolled reordering
+#ifndef _MSC_VER
 			Reorderer_static_core<T, n_fra, n_fra, 1>::compute(regs_inter);
+#else
+			Reorderer_static_core<T, n_fra, n_fra, 1>::compute(regs_inter.data());
+#endif
 
 #ifdef __AVX__
 			// stores
@@ -171,10 +175,6 @@ void Reorderer_static<T,N_FRAMES>
 		}
 
 		start_seq_loop = loop_size * mipp::nElReg<T>();
-
-#ifdef _MSC_VER
-		delete[] regs_inter;
-#endif
 	}
 
 	// sequential reordering
@@ -284,6 +284,9 @@ struct Reorderer_static_core_rev
 	}
 };
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4717 )
+#endif
 template <typename T, int N_FRAMES, int J, int K>
 struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 {
@@ -296,6 +299,9 @@ struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 		return Reorderer_static_core_rev<T,N_FRAMES,NEXT_J,NEXT_K,NEXT_L>::compute(regs_inter);
 	}
 };
+#ifdef _MSC_VER
+#pragma warning( default : 4717 )
+#endif
 
 // #ifdef __AVX__
 // template <typename T, int N_FRAMES, int K, int L>
