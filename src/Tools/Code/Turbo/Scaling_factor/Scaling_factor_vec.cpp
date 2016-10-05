@@ -21,11 +21,11 @@ void Scaling_factor_vec<R>
 	// {
 	// 	for (auto i = 0; i < loop_size1; i++)
 	// 	{
-	// 		const auto r_e = mipp::load<R>(&ext[i * mipp::nElReg<R>()]);
-	// 		// scaling_factor = 0.5
-	// 		mipp::store<R>(&ext[i * mipp::nElReg<R>()], mipp::div2<R>(r_e));
+	//		const auto r_e = mipp::Reg<R>(&ext[i * mipp::nElReg<R>()]);
+	//		const auto r_e2 = r_e.div2();
+	//		r_e2.store(&ext[i * mipp::nElReg<R>()]);
 	// 	}
-
+	//
 	// 	for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
 	// 		ext[i] = div2<R>(ext[i]); // scaling_factor = 0.5
 	// }
@@ -35,8 +35,9 @@ void Scaling_factor_vec<R>
 	// {
 		for (auto i = 0; i < loop_size1; i++)
 		{
-			const auto r_e = mipp::load<R>(&ext[i * mipp::nElReg<R>()]);
-			mipp::store<R>(&ext[i * mipp::nElReg<R>()], mipp::add<R>(mipp::div2<R>(r_e), mipp::div4<R>(r_e)));
+			const auto r_e = mipp::Reg<R>(&ext[i * mipp::nElReg<R>()]);
+			const auto r_e2 = r_e.div2() + r_e.div4();
+			r_e2.store(&ext[i * mipp::nElReg<R>()]);
 		}
 
 		for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
