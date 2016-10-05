@@ -207,13 +207,13 @@ public:
 	inline Regx2<T> interleavex2 (const Reg<T> v)                   const { return Regx2<T>(*this, v);                    }
 	inline Reg<T>   interleavex4 ()                                 const { return *this;                                 }
 	inline Reg<T>   interleavex16()                                 const { return *this;                                 }
-	inline Reg<T>   andb         (const Reg<T> v)                   const { return andb_s<T>(r, v.r);                     }
+	inline Reg<T>   andb         (const Reg<T> v)                   const { return mipp_scop::andb<T>(r, v.r);            }
 	inline Reg<T>   andnb        (const Reg<T> v)                   const { return andb(~r);                              }
 	inline Reg<T>   notb         ()                                 const { return  ~r;                                   }
 	inline Reg<T>   orb          (const Reg<T> v)                   const { return   r  |  v.r;                           }
-	inline Reg<T>   xorb         (const Reg<T> v)                   const { return xorb_s<T>(r, v.r);                     }
-	inline Reg<T>   lshift       (const int n)                      const { return   r  << n;                             }
-	inline Reg<T>   rshift       (const int n)                      const { return   r  >> n ;                            }
+	inline Reg<T>   xorb         (const Reg<T> v)                   const { return mipp_scop::xorb<T>(r, v.r);            }
+	inline Reg<T>   lshift       (const int n)                      const { return mipp_scop::lshift<T>(r, n);            }
+	inline Reg<T>   rshift       (const int n)                      const { return mipp_scop::rshift<T>(r, n);            }
 	inline Reg<T>   cmpeq        (const Reg<T> v)                   const { return   r  == v.r;                           }
 	inline Reg<T>   cmpneq       (const Reg<T> v)                   const { return   r  != v.r;                           }
 	inline Reg<T>   cmplt        (const Reg<T> v)                   const { return   r  <  v.r;                           }
@@ -243,8 +243,8 @@ public:
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
 	inline Reg<T>   rot          ()                                 const { return r;                                     }
 	inline Reg<T>   rotr         ()                                 const { return r;                                     }
-	inline Reg<T>   div2         ()                                 const { return div2_s<T>(r);                          }
-	inline Reg<T>   div4         ()                                 const { return div4_s<T>(r);                          }
+	inline Reg<T>   div2         ()                                 const { return mipp_scop::div2<T>(r);                 }
+	inline Reg<T>   div4         ()                                 const { return mipp_scop::div4<T>(r);                 }
 	inline Reg<T>   sat          (T min, T max)                     const { return std::min(std::max(r, min), max);       }
 	inline Reg<T>   round        ()                                 const { return std::round(r);                         }
 #endif
