@@ -3,6 +3,10 @@
 
 #include "Reorderer.hpp"
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4717 )
+#endif
+
 constexpr bool is_power_of_2(unsigned x)
 {
 	return (x > 0) && !(x & (x - 1));
@@ -284,9 +288,6 @@ struct Reorderer_static_core_rev
 	}
 };
 
-#ifdef _MSC_VER
-#pragma warning( disable : 4717 )
-#endif
 template <typename T, int N_FRAMES, int J, int K>
 struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 {
@@ -299,9 +300,6 @@ struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 		return Reorderer_static_core_rev<T,N_FRAMES,NEXT_J,NEXT_K,NEXT_L>::compute(regs_inter);
 	}
 };
-#ifdef _MSC_VER
-#pragma warning( default : 4717 )
-#endif
 
 // #ifdef __AVX__
 // template <typename T, int N_FRAMES, int K, int L>
@@ -409,3 +407,7 @@ void Reorderer_static<T,N_FRAMES>
 		for (auto f = 0; f < n_fra; f++)
 			out_data[f][i] = in_data[i*n_fra +f];
 }
+
+#ifdef _MSC_VER
+#pragma warning( default : 4717 )
+#endif

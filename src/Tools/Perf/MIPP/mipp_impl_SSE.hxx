@@ -13,7 +13,7 @@
 #ifdef __SSE2__
 	template <>
 	inline reg load<double>(const double *mem_addr) {
-		return (__m128) _mm_load_pd(mem_addr);
+		return _mm_castpd_ps(_mm_load_pd(mem_addr));
 	}
 #endif
 
@@ -41,7 +41,7 @@
 #ifdef __SSE2__
 	template <>
 	inline reg loadu<double>(const double *mem_addr) {
-		return (__m128) _mm_loadu_pd(mem_addr);
+		return _mm_castpd_ps(_mm_loadu_pd(mem_addr));
 	}
 #endif
 
@@ -69,7 +69,7 @@
 #ifdef __SSE2__
 	template <>
 	inline void store<double>(double *mem_addr, const reg v) {
-		_mm_store_pd(mem_addr, (__m128d) v);
+		_mm_store_pd(mem_addr, _mm_castps_pd(v));
 	}
 #endif
 
@@ -102,7 +102,7 @@
 #ifdef __SSE2__
 	template <>
 	inline void storeu<double>(double *mem_addr, const reg v) {
-		_mm_storeu_pd(mem_addr, (__m128d) v);
+		_mm_storeu_pd(mem_addr, _mm_castps_pd(v));
 	}
 #endif
 
@@ -129,31 +129,31 @@
 	// ------------------------------------------------------------------------------------------------------------ set
 	template <>
 	inline reg set<double>(const double vals[nElReg<double>()]) {
-		return (reg)_mm_set_pd(vals[1], vals[0]);
+		return _mm_castpd_ps(_mm_set_pd(vals[1], vals[0]));
 	}
 
 #ifdef __SSE2__
 	template <>
 	inline reg set<float>(const float vals[nElReg<float>()]) {
-		return (reg)_mm_set_ps(vals[3], vals[2], vals[1], vals[0]);
+		return _mm_set_ps(vals[3], vals[2], vals[1], vals[0]);
 	}
 
 	template <>
 	inline reg set<int>(const int vals[nElReg<int>()]) {
-		return (reg)_mm_set_epi32(vals[3], vals[2], vals[1], vals[0]);
+		return _mm_castsi128_ps(_mm_set_epi32(vals[3], vals[2], vals[1], vals[0]));
 	}
 
 	template <>
 	inline reg set<short>(const short vals[nElReg<short>()]) {
-		return (reg)_mm_set_epi16(vals[7], vals[6], vals[5], vals[4], vals[3], vals[2], vals[1], vals[0]);
+		return _mm_castsi128_ps(_mm_set_epi16(vals[7], vals[6], vals[5], vals[4], vals[3], vals[2], vals[1], vals[0]));
 	}
 
 	template <>
 	inline reg set<signed char>(const signed char vals[nElReg<signed char>()]) {
-		return (reg)_mm_set_epi8((char)vals[15], (char)vals[14], (char)vals[13], (char)vals[12], 
-		                         (char)vals[11], (char)vals[10], (char)vals[ 9], (char)vals[ 8], 
-		                         (char)vals[ 7], (char)vals[ 6], (char)vals[ 5], (char)vals[ 4], 
-		                         (char)vals[ 3], (char)vals[ 2], (char)vals[ 1], (char)vals[ 0]);
+		return _mm_castsi128_ps(_mm_set_epi8((char)vals[15], (char)vals[14], (char)vals[13], (char)vals[12],
+		                                     (char)vals[11], (char)vals[10], (char)vals[ 9], (char)vals[ 8], 
+		                                     (char)vals[ 7], (char)vals[ 6], (char)vals[ 5], (char)vals[ 4], 
+		                                     (char)vals[ 3], (char)vals[ 2], (char)vals[ 1], (char)vals[ 0]));
 	}
 #endif
 
@@ -166,27 +166,27 @@
 #ifdef __SSE2__
 	template <>
 	inline reg set1<double>(const double val) {
-		return (__m128) _mm_set1_pd(val);
+		return _mm_castpd_ps(_mm_set1_pd(val));
 	}
 
 	template <>
 	inline reg set1<int>(const int val) {
-		return (reg) _mm_set1_epi32(val);
+		return _mm_castsi128_ps(_mm_set1_epi32(val));
 	}
 
 	template <>
 	inline reg set1<short>(const short val) {
-		return (reg) _mm_set1_epi16(val);
+		return _mm_castsi128_ps(_mm_set1_epi16(val));
 	}
 
 	template <>
 	inline reg set1<signed char>(const signed char val) {
-		return (reg) _mm_set1_epi8(val);
+		return _mm_castsi128_ps(_mm_set1_epi8(val));
 	}
 
 	template <>
 	inline reg set1<long long>(const long long val) {
-		return (reg) _mm_set1_epi64x(val);
+		return _mm_castsi128_ps(_mm_set1_epi64x(val));
 	}
 #endif
 
@@ -199,85 +199,85 @@
 #ifdef __SSE2__
 	template <>
 	inline reg set0<double>() {
-		return (reg) _mm_setzero_pd();
+		return _mm_castpd_ps(_mm_setzero_pd());
 	}
 
 	template <>
 	inline reg set0<int>() {
-		return (reg) _mm_setzero_si128();
+		return _mm_castsi128_ps(_mm_setzero_si128());
 	}
 
 	template <>
 	inline reg set0<short>() {
-		return (reg) _mm_setzero_si128();
+		return _mm_castsi128_ps(_mm_setzero_si128());
 	}
 
 	template <>
 	inline reg set0<signed char>() {
-		return (reg) _mm_setzero_si128();
+		return _mm_castsi128_ps(_mm_setzero_si128());
 	}
 #endif
 
 	// ------------------------------------------------------------------------------------------------------------ low
 	template <>
 	inline reg_2 low<double>(const reg v) {
-		return (reg_2) v;
+		return _mm_castps_si128(v);
 	}
 
 	template <>
 	inline reg_2 low<float>(const reg v) {
-		return (reg_2) v;
+		return _mm_castps_si128(v);
 	}
 
 	template <>
 	inline reg_2 low<long long>(const reg v) {
-		return (reg_2) v;
+		return _mm_castps_si128(v);
 	}
 
 	template <>
 	inline reg_2 low<int>(const reg v) {
-		return (reg_2) v;
+		return _mm_castps_si128(v);
 	}
 
 	template <>
 	inline reg_2 low<short>(const reg v) {
-		return (reg_2) v;
+		return _mm_castps_si128(v);
 	}
 
 	template <>
 	inline reg_2 low<signed char>(const reg v) {
-		return (reg_2) v;
+		return _mm_castps_si128(v);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------- high
 	template <>
 	inline reg_2 high<double>(const reg v) {
-		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castps_si128(_mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 
 	template <>
 	inline reg_2 high<float>(const reg v) {
-		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castps_si128(_mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 
 	template <>
 	inline reg_2 high<long long>(const reg v) {
-		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castps_si128(_mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 
 	template <>
 	inline reg_2 high<int>(const reg v) {
-		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castps_si128(_mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 
 	template <>
 	inline reg_2 high<short>(const reg v) {
-		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castps_si128(_mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 
 	template <>
 	inline reg_2 high<signed char>(const reg v) {
-		return (reg_2) _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castps_si128(_mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 
 	// ---------------------------------------------------------------------------------------------------------- cmask
@@ -394,22 +394,22 @@
 #ifdef __SSE3__
 	template <>
 	inline reg shuff<float>(const reg v, const reg cm) {
-		return (reg)_mm_shuffle_epi8((__m128i)v, (__m128i)cm);
+		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v), _mm_castps_si128(cm)));
 	}
 
 	template <>
 	inline reg shuff<int>(const reg v, const reg cm) {
-		return (reg)_mm_shuffle_epi8((__m128i)v, (__m128i)cm);
+		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v), _mm_castps_si128(cm)));
 	}
 
 	template <>
 	inline reg shuff<short>(const reg v, const reg cm) {
-		return (reg)_mm_shuffle_epi8((__m128i)v, (__m128i)cm);
+		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v), _mm_castps_si128(cm)));
 	}
 
 	template <>
 	inline reg shuff<signed char>(const reg v, const reg cm) {
-		return (reg)_mm_shuffle_epi8((__m128i)v, (__m128i)cm);
+		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v), _mm_castps_si128(cm)));
 	}
 #endif
 
@@ -440,36 +440,36 @@
 #ifdef __SSE2__
 	template <>
 	inline reg interleavelo<double>(const reg v1, const reg v2) {
-		return (reg)_mm_unpacklo_epi64((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpacklo_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavelo<long long>(const reg v1, const reg v2) {
-		return (reg)_mm_unpacklo_epi64((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpacklo_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavelo<float>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [a0, a1, b0, b1]
-		return (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavelo<int>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [a0, a1, b0, b1]
-		return (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavelo<short>(const reg v1, const reg v2) {
-		return (reg)_mm_unpacklo_epi16((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpacklo_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavelo<signed char>(const reg v1, const reg v2) {
-		return (reg)_mm_unpacklo_epi8((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpacklo_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -477,36 +477,36 @@
 #ifdef __SSE2__
 	template <>
 	inline reg interleavehi<double>(const reg v1, const reg v2) {
-		return (reg)_mm_unpackhi_epi64((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpackhi_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavehi<long long>(const reg v1, const reg v2) {
-		return (reg)_mm_unpackhi_epi64((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpackhi_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavehi<float>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [c0, c1, d0, d1]
-		return (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavehi<int>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [c0, c1, d0, d1]
-		return (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavehi<short>(const reg v1, const reg v2) {
-		return (reg)_mm_unpackhi_epi16((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpackhi_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg interleavehi<signed char>(const reg v1, const reg v2) {
-		return (reg)_mm_unpackhi_epi8((__m128i)v1, (__m128i)v2);
+		return _mm_castsi128_ps(_mm_unpackhi_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -516,26 +516,22 @@
 	inline reg interleavelo2<float>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [a0, a1, c0, c1]
-		auto res_lo     = (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi_shu = (reg)_mm_shuffle_epi32 ((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi_shu = _mm_shuffle_epi32 (res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo, (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo), _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0));
 	}
 
 	template <>
 	inline reg interleavelo2<int>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [a0, a1, c0, c1]
-		auto res_lo     = (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi_shu = (reg)_mm_shuffle_epi32 ((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi_shu = _mm_shuffle_epi32 (res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo, (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo), _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0));
 	}
 
 	template <>
@@ -545,24 +541,20 @@
 
 		// res_lo = [a0, a1, b0, b1,| c0, c1, d0, d1]
 		// res_hi = [e0, e1, f0, f1,| g0, g1, h0, h1]
-		auto res_lo     = (reg)_mm_unpacklo_epi16((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi16((__m128i)v1, (__m128i)v2);
-		auto res_hi_shu = (reg)_mm_shuffle_epi32 ((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi_shu = _mm_shuffle_epi32 (res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo, (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo), _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0));
 	}
 
 	template <>
 	inline reg interleavelo2<signed char>(const reg v1, const reg v2) {
-		auto res_lo     = (reg)_mm_unpacklo_epi8((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi8((__m128i)v1, (__m128i)v2);
-		auto res_hi_shu = (reg)_mm_shuffle_epi32((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi_shu = _mm_shuffle_epi32(res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo, (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo), _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0));
 	}
 #endif
 
@@ -572,26 +564,22 @@
 	inline reg interleavehi2<float>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [b0, b1, d0, d1]
-		auto res_lo     = (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
-		auto res_lo_shu = (reg)_mm_shuffle_epi32 ((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_lo_shu = _mm_shuffle_epi32 (res_lo, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi), _MM_SHUFFLE(0,0,3,0));
 	}
 
 	template <>
 	inline reg interleavehi2<int>(const reg v1, const reg v2) {
 		// v1  = [a0, b0, c0, d0], v2 = [a1, b1, c1, d1]
 		// res = [c0, c1, d0, d1]
-		auto res_lo     = (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
-		auto res_lo_shu = (reg)_mm_shuffle_epi32 ((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_lo_shu = _mm_shuffle_epi32 (res_lo, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi), _MM_SHUFFLE(0,0,3,0));
 	}
 
 	template <>
@@ -601,24 +589,20 @@
 
 		// res_lo = [a0, a1, b0, b1,| c0, c1, d0, d1]
 		// res_hi = [e0, e1, f0, f1,| g0, g1, h0, h1]
-		auto res_lo     = (reg)_mm_unpacklo_epi16((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi16((__m128i)v1, (__m128i)v2);
-		auto res_lo_shu = (reg)_mm_shuffle_epi32 ((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_lo_shu = _mm_shuffle_epi32 (res_lo, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi), _MM_SHUFFLE(0,0,3,0));
 	}
 
 	template <>
 	inline reg interleavehi2<signed char>(const reg v1, const reg v2) {
-		auto res_lo     = (reg)_mm_unpacklo_epi8((__m128i)v1, (__m128i)v2);
-		auto res_hi     = (reg)_mm_unpackhi_epi8((__m128i)v1, (__m128i)v2);
-		auto res_lo_shu = (reg)_mm_shuffle_epi32((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo     = _mm_unpacklo_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi     = _mm_unpackhi_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_lo_shu = _mm_shuffle_epi32(res_lo, _MM_SHUFFLE(1,0,3,2));
 
-		auto res = (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi, _MM_SHUFFLE(0,0,3,0));
-
-		return res;
+		return _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi), _MM_SHUFFLE(0,0,3,0));
 	}
 #endif
 
@@ -626,42 +610,42 @@
 #ifdef __SSE2__
 	template <>
 	inline regx2 interleave<double>(const reg v1, const reg v2) {
-		return {{(reg)_mm_unpacklo_epi64((__m128i)v1, (__m128i)v2),
-		         (reg)_mm_unpackhi_epi64((__m128i)v1, (__m128i)v2)}};
+		return {{_mm_castsi128_ps(_mm_unpacklo_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2))),
+		         _mm_castsi128_ps(_mm_unpackhi_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2)))}};
 	}
 
 	template <>
 	inline regx2 interleave<long long>(const reg v1, const reg v2) {
-		return {{(reg)_mm_unpacklo_epi64((__m128i)v1, (__m128i)v2),
-		         (reg)_mm_unpackhi_epi64((__m128i)v1, (__m128i)v2)}};
+		return {{_mm_castsi128_ps(_mm_unpacklo_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2))),
+		         _mm_castsi128_ps(_mm_unpackhi_epi64(_mm_castps_si128(v1), _mm_castps_si128(v2)))}};
 	}
 
 	template <>
 	inline regx2 interleave<float>(const reg v1, const reg v2) {
 		// v1         = [a0, b0, c0, d0], v2         = [a1, b1, c1, d1]
 		// res.val[0] = [a0, a1, b0, b1], res.val[1] = [c0, c1, d0, d1]
-		return {{(reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2),
-			     (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2)}};
+		return {{_mm_castsi128_ps(_mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2))),
+		         _mm_castsi128_ps(_mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)))}};
 	}
 
 	template <>
 	inline regx2 interleave<int>(const reg v1, const reg v2) {
 		// v1         = [a0, b0, c0, d0], v2         = [a1, b1, c1, d1]
 		// res.val[0] = [a0, a1, b0, b1], res.val[1] = [c0, c1, d0, d1]
-		return {{(reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2),
-		         (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2)}};
+		return {{_mm_castsi128_ps(_mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2))),
+		         _mm_castsi128_ps(_mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)))}};
 	}
 
 	template <>
 	inline regx2 interleave<short>(const reg v1, const reg v2) {
-		return {{(reg)_mm_unpacklo_epi16((__m128i)v1, (__m128i)v2),
-		         (reg)_mm_unpackhi_epi16((__m128i)v1, (__m128i)v2)}};
+		return {{_mm_castsi128_ps(_mm_unpacklo_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2))),
+		         _mm_castsi128_ps(_mm_unpackhi_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)))}};
 	}
 
 	template <>
 	inline regx2 interleave<signed char>(const reg v1, const reg v2) {
-		return {{(reg)_mm_unpacklo_epi8((__m128i)v1, (__m128i)v2),
-			     (reg)_mm_unpackhi_epi8((__m128i)v1, (__m128i)v2)}};
+		return {{_mm_castsi128_ps(_mm_unpacklo_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2))),
+		         _mm_castsi128_ps(_mm_unpackhi_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)))}};
 	}
 #endif
 
@@ -669,43 +653,43 @@
 #ifdef __SSE2__
 	template <>
 	inline reg interleave<double>(const reg v) {
-		auto v_rev = (reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(1,0,3,2));
-		auto res = (reg)_mm_unpacklo_epi64((__m128i)v, (__m128i)v_rev);
+		auto v_rev = _mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(1,0,3,2));
+		auto res = _mm_castsi128_ps(_mm_unpacklo_epi64(_mm_castps_si128(v), v_rev));
 		return res;
 	}
 
 	template <>
 	inline reg interleave<long long>(const reg v) {
-		auto v_rev = (reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(1,0,3,2));
-		auto res = (reg)_mm_unpacklo_epi64((__m128i)v, (__m128i)v_rev);
+		auto v_rev = _mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(1,0,3,2));
+		auto res = _mm_castsi128_ps(_mm_unpacklo_epi64(_mm_castps_si128(v), v_rev));
 		return res;
 	}
 
 	template <>
 	inline reg interleave<float>(const reg v) {
-		auto v_rev = (reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(1,0,3,2));
-		auto res = (reg)_mm_unpacklo_epi32((__m128i)v, (__m128i)v_rev);
+		auto v_rev = _mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(1,0,3,2));
+		auto res = _mm_castsi128_ps(_mm_unpacklo_epi32(_mm_castps_si128(v), v_rev));
 		return res;
 	}
 
 	template <>
 	inline reg interleave<int>(const reg v) {
-		auto v_rev = (reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(1,0,3,2));
-		auto res = (reg)_mm_unpacklo_epi32((__m128i)v, (__m128i)v_rev);
+		auto v_rev = _mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(1,0,3,2));
+		auto res = _mm_castsi128_ps(_mm_unpacklo_epi32(_mm_castps_si128(v), v_rev));
 		return res;
 	}
 
 	template <>
 	inline reg interleave<short>(const reg v) {
-		auto v_rev = (reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(1,0,3,2));
-		auto res = (reg)_mm_unpacklo_epi16((__m128i)v, (__m128i)v_rev);
+		auto v_rev = _mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(1,0,3,2));
+		auto res = _mm_castsi128_ps(_mm_unpacklo_epi16(_mm_castps_si128(v), v_rev));
 		return res;
 	}
 
 	template <>
 	inline reg interleave<signed char>(const reg v) {
-		auto v_rev = (reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(1,0,3,2));
-		auto res   = (reg)_mm_unpacklo_epi8((__m128i)v, (__m128i)v_rev);
+		auto v_rev = _mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(1,0,3,2));
+		auto res   = _mm_castsi128_ps(_mm_unpacklo_epi8(_mm_castps_si128(v), v_rev));
 		return res;
 	}
 #endif
@@ -714,56 +698,56 @@
 #ifdef __SSE4_1__
 	template <>
 	inline regx2 interleave2<float>(const reg v1, const reg v2) {
-		auto res_lo = (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi = (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
+		auto res_lo = _mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi = _mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
 
-		auto res_lo_shu = (reg)_mm_shuffle_epi32((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
-		auto res_hi_shu = (reg)_mm_shuffle_epi32((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo_shu = _mm_shuffle_epi32(res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_hi_shu = _mm_shuffle_epi32(res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		regx2 res = {{(reg)_mm_blend_ps((__m128)res_lo,     (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0)),
-		              (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi,     _MM_SHUFFLE(0,0,3,0))}};
+		regx2 res = {{_mm_blend_ps(_mm_castsi128_ps(res_lo),     _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0)),
+		              _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi),     _MM_SHUFFLE(0,0,3,0))}};
 
 		return res;
 	}
 
 	template <>
 	inline regx2 interleave2<int>(const reg v1, const reg v2) {
-		auto res_lo = (reg)_mm_unpacklo_epi32((__m128i)v1, (__m128i)v2);
-		auto res_hi = (reg)_mm_unpackhi_epi32((__m128i)v1, (__m128i)v2);
+		auto res_lo = _mm_unpacklo_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi = _mm_unpackhi_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2));
 
-		auto res_lo_shu = (reg)_mm_shuffle_epi32((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
-		auto res_hi_shu = (reg)_mm_shuffle_epi32((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo_shu = _mm_shuffle_epi32(res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_hi_shu = _mm_shuffle_epi32(res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		regx2 res = {{(reg)_mm_blend_ps((__m128)res_lo,     (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0)),
-		              (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi,     _MM_SHUFFLE(0,0,3,0))}};
+		regx2 res = {{_mm_blend_ps(_mm_castsi128_ps(res_lo),     _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0)),
+		              _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi),     _MM_SHUFFLE(0,0,3,0))}};
 
 		return res;
 	}
 
 	template <>
 	inline regx2 interleave2<short>(const reg v1, const reg v2) {
-		auto res_lo = (reg)_mm_unpacklo_epi16((__m128i)v1, (__m128i)v2);
-		auto res_hi = (reg)_mm_unpackhi_epi16((__m128i)v1, (__m128i)v2);
+		auto res_lo = _mm_unpacklo_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi = _mm_unpackhi_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2));
 
-		auto res_lo_shu = (reg)_mm_shuffle_epi32((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
-		auto res_hi_shu = (reg)_mm_shuffle_epi32((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo_shu = _mm_shuffle_epi32(res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_hi_shu = _mm_shuffle_epi32(res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		regx2 res = {{(reg)_mm_blend_ps((__m128)res_lo,     (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0)),
-		              (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi,     _MM_SHUFFLE(0,0,3,0))}};
+		regx2 res = {{_mm_blend_ps(_mm_castsi128_ps(res_lo),     _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0)),
+		              _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi),     _MM_SHUFFLE(0,0,3,0))}};
 
 		return res;
 	}
 
 	template <>
 	inline regx2 interleave2<signed char>(const reg v1, const reg v2) {
-		auto res_lo = (reg)_mm_unpacklo_epi8((__m128i)v1, (__m128i)v2);
-		auto res_hi = (reg)_mm_unpackhi_epi8((__m128i)v1, (__m128i)v2);
+		auto res_lo = _mm_unpacklo_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2));
+		auto res_hi = _mm_unpackhi_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2));
 
-		auto res_lo_shu = (reg)_mm_shuffle_epi32((__m128i)res_lo, _MM_SHUFFLE(1,0,3,2));
-		auto res_hi_shu = (reg)_mm_shuffle_epi32((__m128i)res_hi, _MM_SHUFFLE(1,0,3,2));
+		auto res_lo_shu = _mm_shuffle_epi32(res_lo, _MM_SHUFFLE(1,0,3,2));
+		auto res_hi_shu = _mm_shuffle_epi32(res_hi, _MM_SHUFFLE(1,0,3,2));
 
-		regx2 res = {{(reg)_mm_blend_ps((__m128)res_lo,     (__m128)res_hi_shu, _MM_SHUFFLE(0,0,3,0)),
-		              (reg)_mm_blend_ps((__m128)res_lo_shu, (__m128)res_hi,     _MM_SHUFFLE(0,0,3,0))}};
+		regx2 res = {{_mm_blend_ps(_mm_castsi128_ps(res_lo),     _mm_castsi128_ps(res_hi_shu), _MM_SHUFFLE(0,0,3,0)),
+		              _mm_blend_ps(_mm_castsi128_ps(res_lo_shu), _mm_castsi128_ps(res_hi),     _MM_SHUFFLE(0,0,3,0))}};
 
 		return res;
 	}
@@ -776,7 +760,7 @@
 		// [a, b, c, d,| e, f, g, h,| i, j, k, l,| m, n, o, p] 
 		// =>
 		// [a, b, c, d,| i, j, k, l,| e, f, g, h,| m, n, o, p]
-		return (mipp::reg)_mm_shuffle_epi32((__m128i)v, _MM_SHUFFLE(3,1,2,0));
+		return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v), _MM_SHUFFLE(3,1,2,0)));
 	}
 #endif
 
@@ -1013,22 +997,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg andb<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_and_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_and_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg andb<int>(const reg v1, const reg v2) {
-		return (__m128) _mm_and_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_and_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg andb<short>(const reg v1, const reg v2) {
-		return (__m128) _mm_and_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_and_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg andb<signed char>(const reg v1, const reg v2) {
-		return (__m128) _mm_and_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_and_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1041,22 +1025,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg andnb<double>(const reg v1, const reg v2) {
-		return (reg) _mm_andnot_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_andnot_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg andnb<int>(const reg v1, const reg v2) {
-		return (reg) _mm_andnot_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_andnot_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg andnb<short>(const reg v1, const reg v2) {
-		return (reg) _mm_andnot_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_andnot_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg andnb<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_andnot_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_andnot_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1078,12 +1062,24 @@
 
 	template <>
 	inline reg notb<short>(const reg v) {
+#ifdef _MSC_VER
+#pragma warning( disable : 4309 )
+#endif
 		return andnb<short>(v, set1<short>(0xFFFF));
+#ifdef _MSC_VER
+#pragma warning( default : 4309 )
+#endif
 	}
 
 	template <>
 	inline reg notb<signed char>(const reg v) {
+#ifdef _MSC_VER
+#pragma warning( disable : 4309 )
+#endif
 		return andnb<signed char>(v, set1<signed char>(0xFF));
+#ifdef _MSC_VER
+#pragma warning( default : 4309 )
+#endif
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ orb
@@ -1095,22 +1091,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg orb<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_or_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_or_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg orb<int>(const reg v1, const reg v2) {
-		return (reg) _mm_or_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_or_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg orb<short>(const reg v1, const reg v2) {
-		return (reg) _mm_or_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_or_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg orb<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_or_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_or_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1123,22 +1119,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg xorb<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_xor_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_xor_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg xorb<int>(const reg v1, const reg v2) {
-		return (reg) _mm_xor_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_xor_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg xorb<short>(const reg v1, const reg v2) {
-		return (reg) _mm_xor_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_xor_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg xorb<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_xor_si128((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_xor_si128(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1146,17 +1142,17 @@
 #ifdef __SSE2__
 	template <>
 	inline reg lshift<int>(const reg v1, const int n) {
-		return (reg) _mm_slli_epi32 ((__m128i) v1, n);
+		return _mm_castsi128_ps(_mm_slli_epi32(_mm_castps_si128(v1), n));
 	}
 
 	template <>
 	inline reg lshift<short>(const reg v1, const int n) {
-		return (reg) _mm_slli_epi16 ((__m128i) v1, n);
+		return _mm_castsi128_ps(_mm_slli_epi16(_mm_castps_si128(v1), n));
 	}
 
 	template <>
 	inline reg lshift<signed char>(const reg v1, const int n) {
-		return (reg) _mm_slli_epi16 ((__m128i) v1, n); // TODO: Be careful this is not a shift 8 but a shift 16 bits...
+		return _mm_castsi128_ps(_mm_slli_epi16(_mm_castps_si128(v1), n)); // TODO: Be careful this is not a shift 8 but a shift 16 bits...
 	}
 #endif
 
@@ -1164,17 +1160,17 @@
 #ifdef __SSE2__
 	template <>
 	inline reg rshift<int>(const reg v1, const int n) {
-		return (reg) _mm_srli_epi32 ((__m128i) v1, n);
+		return _mm_castsi128_ps(_mm_srli_epi32(_mm_castps_si128(v1), n));
 	}
 
 	template <>
 	inline reg rshift<short>(const reg v1, const int n) {
-		return (reg) _mm_srli_epi16 ((__m128i) v1, n);
+		return _mm_castsi128_ps(_mm_srli_epi16(_mm_castps_si128(v1), n));
 	}
 
 	template <>
 	inline reg rshift<signed char>(const reg v1, const int n) {
-		return (reg) _mm_srli_epi16 ((__m128i) v1, n); // TODO: Be careful this is not a shift 8 but a shift 16 bits...
+		return _mm_castsi128_ps(_mm_srli_epi16(_mm_castps_si128(v1), n)); // TODO: Be careful this is not a shift 8 but a shift 16 bits...
 	}
 #endif
 
@@ -1187,22 +1183,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cmpeq<double>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpeq_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_cmpeq_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg cmpeq<int>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpeq_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg cmpeq<short>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpeq_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmpeq_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg cmpeq<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpeq_epi8((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmpeq_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1215,22 +1211,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cmpneq<double>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpneq_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_cmpneq_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg cmpneq<int>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpneq_ps(v1, v2);
+		return _mm_cmpneq_ps(v1, v2);
 	}
 
 	template <>
 	inline reg cmpneq<short>(const reg v1, const reg v2) {
-		return (reg) andnb<short>(cmpeq<short>(v1, v2), set1<int>(0xFFFFFFFF));
+		return andnb<short>(cmpeq<short>(v1, v2), set1<int>(0xFFFFFFFF));
 	}
 
 	template <>
 	inline reg cmpneq<signed char>(const reg v1, const reg v2) {
-		return (reg) andnb<signed char>(cmpeq<signed char>(v1, v2), set1<int>(0xFFFFFFFF));
+		return andnb<signed char>(cmpeq<signed char>(v1, v2), set1<int>(0xFFFFFFFF));
 	}
 #endif
 
@@ -1243,22 +1239,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cmplt<double>(const reg v1, const reg v2) {
-		return (reg) _mm_cmplt_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_cmplt_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg cmplt<int>(const reg v1, const reg v2) {
-		return (reg) _mm_cmplt_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmplt_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg cmplt<short>(const reg v1, const reg v2) {
-		return (reg) _mm_cmplt_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmplt_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg cmplt<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_cmplt_epi8((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmplt_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1271,7 +1267,7 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cmple<double>(const reg v1, const reg v2) {
-		return (reg) _mm_cmple_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_cmple_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 #endif
 
@@ -1284,22 +1280,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cmpgt<double>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpgt_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_cmpgt_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg cmpgt<int>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpgt_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmpgt_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg cmpgt<short>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpgt_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmpgt_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg cmpgt<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpgt_epi8((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_cmpgt_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1312,7 +1308,7 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cmpge<double>(const reg v1, const reg v2) {
-		return (reg) _mm_cmpge_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_cmpge_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 #endif
 
@@ -1325,22 +1321,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg add<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_add_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_add_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg add<int>(const reg v1, const reg v2) {
-		return (__m128) _mm_add_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_add_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg add<short>(const reg v1, const reg v2) {
-		return (__m128) _mm_adds_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_adds_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg add<signed char>(const reg v1, const reg v2) {
-		return (__m128) _mm_adds_epi8((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_adds_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1353,22 +1349,22 @@
 #ifdef __SSE2__
 	template <>
 	inline reg sub<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_sub_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_sub_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 
 	template <>
 	inline reg sub<int>(const reg v1, const reg v2) {
-		return (reg) _mm_sub_epi32((__m128i) v1,(__m128i) v2);
+		return _mm_castsi128_ps(_mm_sub_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg sub<short>(const reg v1, const reg v2) {
-		return (reg) _mm_subs_epi16((__m128i) v1,(__m128i) v2);
+		return _mm_castsi128_ps(_mm_subs_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg sub<signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_subs_epi8((__m128i) v1,(__m128i) v2);
+		return _mm_castsi128_ps(_mm_subs_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1381,14 +1377,14 @@
 #ifdef __SSE2__
 	template <>
 	inline reg mul<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_mul_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_mul_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 #endif
 
 #ifdef __SSE4_1__
 	template <>
 	inline reg mul<int>(const reg v1, const reg v2) {
-		return (__m128) _mm_mul_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_mul_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1401,7 +1397,7 @@
 #ifdef __SSE2__
 	template <>
 	inline reg div<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_div_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_div_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 #endif
 
@@ -1414,24 +1410,24 @@
 #ifdef __SSE2__
 	template <>
 	inline reg min<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_min_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_min_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 #endif
 
 #ifdef __SSE4_1__
 	template <>
 	inline reg min<int>(const reg v1, const reg v2) {
-		return (__m128) _mm_min_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_min_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg min<short>(const reg v1, const reg v2) {
-		return (__m128) _mm_min_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_min_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg min<signed char>(const reg v1, const reg v2) {
-		return (__m128) _mm_min_epi8((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_min_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1444,24 +1440,24 @@
 #ifdef __SSE2__
 	template <>
 	inline reg max<double>(const reg v1, const reg v2) {
-		return (__m128) _mm_max_pd((__m128d) v1, (__m128d) v2);
+		return _mm_castpd_ps(_mm_max_pd(_mm_castps_pd(v1), _mm_castps_pd(v2)));
 	}
 #endif
 
 #ifdef __SSE4_1__
 	template <>
 	inline reg max<int>(const reg v1, const reg v2) {
-		return (__m128) _mm_max_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_max_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg max<short>(const reg v1, const reg v2) {
-		return (__m128) _mm_max_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_max_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg max<signed char>(const reg v1, const reg v2) {
-		return (__m128) _mm_max_epi8((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_max_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1528,7 +1524,13 @@
 
 	template <>
 	inline reg sign<short>(const reg v1) {
+#ifdef _MSC_VER
+#pragma warning( disable : 4309 )
+#endif
 		const reg sign_mask = set1<short>(0x8000);
+#ifdef _MSC_VER
+#pragma warning( default : 4309 )
+#endif
 		return andb<short>(v1, sign_mask);
 	}
 
@@ -1542,7 +1544,13 @@
 	template <>
 	inline reg sign<signed char>(const reg v1) {
 		// sign_mask = 10000000 // 8 bits
+#ifdef _MSC_VER
+#pragma warning( disable : 4309 )
+#endif
 		const reg sign_mask = set1<signed char>(0x80);
+#ifdef _MSC_VER
+#pragma warning( default : 4309 )
+#endif
 
 		// indices = 7  6  5  4  3  2  1  0
 		// mask    = 1  0  0  0  0  0  0  0
@@ -1576,19 +1584,19 @@
 	template <>
 	inline reg neg<int>(const reg v1, const reg v2) {
 		reg v2_2 = orb<int>(v2, set1<int>(1)); // hack to avoid -0 case
-		return (reg) _mm_sign_epi32((__m128i) v1, (__m128i) v2_2);
+		return _mm_castsi128_ps(_mm_sign_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2_2)));
 	}
 
 	template <>
 	inline reg neg<short>(const reg v1, const reg v2) {
 		reg v2_2 = orb<short>(v2, set1<short>(1)); // hack to avoid -0 case
-		return (reg) _mm_sign_epi16((__m128i) v1, (__m128i) v2_2);
+		return _mm_castsi128_ps(_mm_sign_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2_2)));
 	}
 
 	template <>
 	inline reg neg<signed char>(const reg v1, const reg v2) {
 		reg v2_2 = orb<signed char>(v2, set1<signed char>(1)); // hack to avoid -0 case
-		return (reg) _mm_sign_epi8((__m128i) v1, (__m128i) v2_2);
+		return _mm_castsi128_ps(_mm_sign_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2_2)));
 	}
 #endif
 
@@ -1622,17 +1630,17 @@
 #ifdef __SSSE3__
 	template <>
 	inline reg abs<int>(const reg v1) {
-		return (reg) _mm_abs_epi32((__m128i) v1);
+		return _mm_castsi128_ps(_mm_abs_epi32(_mm_castps_si128(v1)));
 	}
 
 	template <>
 	inline reg abs<short>(const reg v1) {
-		return (reg) _mm_abs_epi16((__m128i) v1);
+		return _mm_castsi128_ps(_mm_abs_epi16(_mm_castps_si128(v1)));
 	}
 
 	template <>
 	inline reg abs<signed char>(const reg v1) {
-		return (reg) _mm_abs_epi8((__m128i) v1);
+		return _mm_castsi128_ps(_mm_abs_epi8(_mm_castps_si128(v1)));
 	}
 #endif
 
@@ -1645,7 +1653,7 @@
 #ifdef __SSE2__
 	template <>
 	inline reg sqrt<double>(const reg v1) {
-		return (__m128) _mm_sqrt_pd((__m128d) v1);
+		return _mm_castpd_ps(_mm_sqrt_pd(_mm_castps_pd(v1)));
 	}
 #endif
 
@@ -1664,18 +1672,18 @@
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 	template <>
 	inline reg log<float>(const reg v) {
-		return (reg) _mm_log_ps(v);
+		return _mm_log_ps(v);
 	}
 
 	template <>
 	inline reg log<double>(const reg v) {
-		return (reg) _mm_log_pd((__m128d) v);
+		return _mm_castpd_ps(_mm_log_pd(_mm_castps_pd(v)));
 	}
 #else
 	template <>
 	inline reg log<float>(const reg v) {
 		auto v_bis = v;
-		return (reg) log_ps(v_bis);
+		return log_ps(v_bis);
 	}
 #endif
 
@@ -1683,18 +1691,18 @@
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 	template <>
 	inline reg exp<float>(const reg v) {
-		return (reg) _mm_exp_ps(v);
+		return _mm_exp_ps(v);
 	}
 
 	template <>
 	inline reg exp<double>(const reg v) {
-		return (reg) _mm_exp_pd((__m128d) v);
+		return _mm_castpd_ps(_mm_exp_pd(_mm_castps_pd(v)));
 	}
 #else
 	template <>
 	inline reg exp<float>(const reg v) {
 		auto v_bis = v;
-		return (reg) exp_ps(v_bis);
+		return exp_ps(v_bis);
 	}
 #endif
 
@@ -1702,18 +1710,18 @@
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 	template <>
 	inline reg sin<float>(const reg v) {
-		return (reg) _mm_sin_ps(v);
+		return _mm_sin_ps(v);
 	}
 
 	template <>
 	inline reg sin<double>(const reg v) {
-		return (reg) _mm_sin_pd((__m128d) v);
+		return _mm_castpd_ps(_mm_sin_pd(_mm_castps_pd(v)));
 	}
 #else
 	template <>
 	inline reg sin<float>(const reg v) {
 		auto v_bis = v;
-		return (reg) sin_ps(v_bis);
+		return sin_ps(v_bis);
 	}
 #endif
 
@@ -1721,18 +1729,18 @@
 #if defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC)
 	template <>
 	inline reg cos<float>(const reg v) {
-		return (reg) _mm_cos_ps(v);
+		return _mm_cos_ps(v);
 	}
 
 	template <>
 	inline reg cos<double>(const reg v) {
-		return (reg) _mm_cos_pd((__m128d) v);
+		return _mm_castpd_ps(_mm_cos_pd(_mm_castps_pd(v)));
 	}
 #else
 	template <>
 	inline reg cos<float>(const reg v) {
 		auto v_bis = v;
-		return (reg) cos_ps(v_bis);
+		return cos_ps(v_bis);
 	}
 #endif
 
@@ -1745,7 +1753,7 @@
 
 	template <>
 	inline void sincos<double>(const reg x, reg &s, reg &c) {
-		s = (reg)_mm_sincos_pd((__m128d*) &c, (__m128d)x);
+		s = _mm_castpd_ps(_mm_sincos_pd((__m128d*) &c, (__m128d)x));
 	}
 #else
 	template <>
@@ -1792,23 +1800,23 @@
 	template <>
 	inline reg rot<float>(const reg v1) {
 		// make a rotation in:[3, 2 , 1, 0] => out:[0, 3, 2, 1]
-		return (__m128) _mm_shuffle_epi32 ((__m128i) v1, _MM_SHUFFLE(0, 3, 2, 1));
+		return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1), _MM_SHUFFLE(0, 3, 2, 1)));
 	}
 
 	template <>
 	inline reg rot<double>(const reg v1) {
 		// make a rotation in:[1, 0] => out:[0, 1]
-		return (__m128) _mm_shuffle_epi32 ((__m128i) v1, _MM_SHUFFLE(1, 0, 3, 2));
+		return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1), _MM_SHUFFLE(1, 0, 3, 2)));
 	}
 #endif
 #ifdef __SSE4_1__
 	template <>
 	inline reg rot<short>(const reg v1) {
 		// make a rotation in:[0, 1, 2, 3, 4, 5, 6, 7] => out:[7, 0, 1, 2, 3, 4, 5, 6]
-		return (__m128) _mm_shuffle_epi8 ((__m128i) v1, _mm_set_epi8(13,12,11,10,9,8,7,6,5,4,3,2,1,0,15,14));
+		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v1), _mm_set_epi8(13,12,11,10,9,8,7,6,5,4,3,2,1,0,15,14)));
 
 		// // make a rotation in:[0, 1, 2, 3, 4, 5, 6, 7] => out:[1, 2, 3, 4, 5, 6, 7, 0]
-		// return (__m128) _mm_shuffle_epi8 ((__m128i) v1, _mm_set_epi8(1,0,15,14,13,12,11,10,9,8,7,6,5,4,3,2));
+		// return (__m128) _mm_shuffle_epi8((__m128i) v1, _mm_set_epi8(1,0,15,14,13,12,11,10,9,8,7,6,5,4,3,2));
 	}
 #endif
 
@@ -1817,7 +1825,7 @@
 	template <>
 	inline reg rotr<short>(const reg v1) {
 		// make a rotation in:[0, 1, 2, 3, 4, 5, 6, 7] => out:[1, 2, 3, 4, 5, 6, 7, 0]
-		return (__m128) _mm_shuffle_epi8 ((__m128i) v1, _mm_set_epi8(1,0,15,14,13,12,11,10,9,8,7,6,5,4,3,2));
+		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v1), _mm_set_epi8(1,0,15,14,13,12,11,10,9,8,7,6,5,4,3,2)));
 	}
 #endif
 
@@ -1835,19 +1843,25 @@
 #ifdef __SSE2__
 	template <>
 	inline reg div2<int>(const reg v1) {
-		return (reg) _mm_srai_epi32 ((__m128i) v1, 1);
+		return _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(v1), 1));
 	}
 
 	template <>
 	inline reg div2<short>(const reg v1) {
-		return (reg) _mm_srai_epi16 ((__m128i) v1, 1);
+		return _mm_castsi128_ps(_mm_srai_epi16(_mm_castps_si128(v1), 1));
 	}
 
 	template <>
 	inline reg div2<signed char>(const reg v1) {
 		reg abs_v1 = abs<signed char>(v1);
 		reg sh16 = rshift<short>(abs_v1, 1);
+#ifdef _MSC_VER
+#pragma warning( disable : 4309 )
+#endif
 		sh16 = andnb<signed char>(set1<signed char>(0x80), sh16);
+#ifdef _MSC_VER
+#pragma warning( default : 4309 )
+#endif
 		reg sh8 = neg<signed char>(sh16, v1);
 		return sh8;
 	}
@@ -1867,19 +1881,25 @@
 #ifdef __SSE2__
 	template <>
 	inline reg div4<int>(const reg v1) {
-		return (reg) _mm_srai_epi32 ((__m128i) v1, 2);
+		return _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(v1), 2));
 	}
 
 	template <>
 	inline reg div4<short>(const reg v1) {
-		return (reg) _mm_srai_epi16 ((__m128i) v1, 2);
+		return _mm_castsi128_ps(_mm_srai_epi16(_mm_castps_si128(v1), 2));
 	}
 
 	template <>
 	inline reg div4<signed char>(const reg v1) {
 		reg abs_v1 = abs<signed char>(v1);
 		reg sh16 = rshift<short>(abs_v1, 2);
+#ifdef _MSC_VER
+#pragma warning( disable : 4309 )
+#endif
 		sh16 = andnb<signed char>(set1<signed char>(0xc0), sh16);
+#ifdef _MSC_VER
+#pragma warning( default : 4309 )
+#endif
 		reg sh8 = neg<signed char>(sh16, v1);
 		return sh8;
 	}
@@ -1915,12 +1935,12 @@
 #ifdef __SSE4_1__
 	template <>
 	inline reg round<float>(const reg v) {
-		return (reg) _mm_round_ps(v, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
+		return _mm_round_ps(v, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 	}
 
 	template <>
 	inline reg round<double>(const reg v) {
-		return (reg) _mm_round_pd((__m128d) v, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
+		return _mm_castpd_ps(_mm_round_pd(_mm_castps_pd(v), _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC));
 	}
 #endif
 
@@ -1928,24 +1948,24 @@
 #ifdef __SSE2__
 	template <>
 	inline reg cvt<float,int>(const reg v) {
-		return (reg) _mm_cvtps_epi32(v);
+		return _mm_castsi128_ps(_mm_cvtps_epi32(v));
 	}
 
 	template <>
 	inline reg cvt<int,float>(const reg v) {
-		return (reg) _mm_cvtepi32_ps((__m128i) v);
+		return _mm_cvtepi32_ps(_mm_castps_si128(v));
 	}
 #endif
 
 #ifdef __SSE4_1__
 	template <>
 	inline reg cvt<signed char,short>(const reg_2 v) {
-		return (reg) _mm_cvtepi8_epi16(v);
+		return _mm_castsi128_ps(_mm_cvtepi8_epi16(v));
 	}
 
 	template <>
 	inline reg cvt<short,int>(const reg_2 v) {
-		return (reg) _mm_cvtepi16_epi32(v);
+		return _mm_castsi128_ps(_mm_cvtepi16_epi32(v));
 	}
 #endif
 
@@ -1953,12 +1973,12 @@
 #ifdef __SSE2__
 	template <>
 	inline reg pack<int,short>(const reg v1, const reg v2) {
-		return (reg) _mm_packs_epi32((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_packs_epi32(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 
 	template <>
 	inline reg pack<short,signed char>(const reg v1, const reg v2) {
-		return (reg) _mm_packs_epi16((__m128i) v1, (__m128i) v2);
+		return _mm_castsi128_ps(_mm_packs_epi16(_mm_castps_si128(v1), _mm_castps_si128(v2)));
 	}
 #endif
 
@@ -1968,7 +1988,7 @@
 	{
 		static reg apply(const reg v1) {
 			auto val = v1; 
-			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, _mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
 			return val;
 		}
 	};
@@ -1978,7 +1998,7 @@
 	{
 		static Reg<double> apply(const Reg<double> v1) {
 			auto val = v1; 
-			val = OP(val, Reg<double>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<double>(_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
 			return val;
 		}
 	};
@@ -1988,8 +2008,8 @@
 	{
 		static reg apply(const reg v1) {
 			auto val = v1; 
-			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
-			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
+			val = OP(val, _mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, _mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
 			return val;
 		}
 	};
@@ -1999,8 +2019,8 @@
 	{
 		static Reg<float> apply(const Reg<float> v1) {
 			auto val = v1; 
-			val = OP(val, Reg<float>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
-			val = OP(val, Reg<float>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(2, 3, 0, 1))));
+			val = OP(val, Reg<float>(_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<float>(_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(2, 3, 0, 1))));
 			return val;
 		}
 	};
@@ -2010,8 +2030,8 @@
 	{
 		static reg apply(const reg v1) {
 			auto val = v1; 
-			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
-			val = OP(val, (reg)_mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
+			val = OP(val, _mm_shuffle_ps(val, val, _MM_SHUFFLE(1, 0, 3, 2)));
+			val = OP(val, _mm_shuffle_ps(val, val, _MM_SHUFFLE(2, 3, 0, 1)));
 			return val;
 		}
 	};
@@ -2021,8 +2041,8 @@
 	{
 		static Reg<int> apply(const Reg<int> v1) {
 			auto val = v1; 
-			val = OP(val, Reg<int>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
-			val = OP(val, Reg<int>((reg)_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(2, 3, 0, 1))));
+			val = OP(val, Reg<int>(_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, Reg<int>(_mm_shuffle_ps(val.r, val.r, _MM_SHUFFLE(2, 3, 0, 1))));
 			return val;
 		}
 	};
@@ -2035,9 +2055,9 @@
 			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
 
 			auto val = v1; 
-			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(1, 0, 3, 2)));
-			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(2, 3, 0, 1)));
-			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_16));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val), _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val), _MM_SHUFFLE(2, 3, 0, 1))));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi8 (_mm_castps_si128(val), mask_16)));
 			return val;
 		}
 	};
@@ -2049,9 +2069,9 @@
 			__m128i mask_16 = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
 
 			auto val = v1; 
-			val = OP(val, Reg<short>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(1, 0, 3, 2))));
-			val = OP(val, Reg<short>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(2, 3, 0, 1))));
-			val = OP(val, Reg<short>((reg)_mm_shuffle_epi8 ((__m128i)val.r, mask_16)));
+			val = OP(val, Reg<short>(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val.r), _MM_SHUFFLE(1, 0, 3, 2)))));
+			val = OP(val, Reg<short>(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val.r), _MM_SHUFFLE(2, 3, 0, 1)))));
+			val = OP(val, Reg<short>(_mm_castsi128_ps(_mm_shuffle_epi8 (_mm_castps_si128(val.r), mask_16))));
 			return val;
 		}
 	};
@@ -2066,10 +2086,10 @@
 			__m128i mask_8  = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
 
 			auto val = v1; 
-			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(1, 0, 3, 2)));
-			val = OP(val, (reg)_mm_shuffle_epi32((__m128i)val, _MM_SHUFFLE(2, 3, 0, 1)));
-			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_16));
-			val = OP(val, (reg)_mm_shuffle_epi8 ((__m128i)val, mask_8));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val), _MM_SHUFFLE(1, 0, 3, 2))));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val), _MM_SHUFFLE(2, 3, 0, 1))));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi8 (_mm_castps_si128(val), mask_16)));
+			val = OP(val, _mm_castsi128_ps(_mm_shuffle_epi8 (_mm_castps_si128(val), mask_8)));
 			return val;
 		}
 	};
@@ -2082,10 +2102,10 @@
 			__m128i mask_8  = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
 
 			auto val = v1; 
-			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(1, 0, 3, 2))));
-			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi32((__m128i)val.r, _MM_SHUFFLE(2, 3, 0, 1))));
-			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi8 ((__m128i)val.r, mask_16)));
-			val = OP(val, Reg<signed char>((reg)_mm_shuffle_epi8 ((__m128i)val.r, mask_8)));
+			val = OP(val, Reg<signed char>(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val.r), _MM_SHUFFLE(1, 0, 3, 2)))));
+			val = OP(val, Reg<signed char>(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(val.r), _MM_SHUFFLE(2, 3, 0, 1)))));
+			val = OP(val, Reg<signed char>(_mm_castsi128_ps(_mm_shuffle_epi8 (_mm_castps_si128(val.r), mask_16))));
+			val = OP(val, Reg<signed char>(_mm_castsi128_ps(_mm_shuffle_epi8 (_mm_castps_si128(val.r), mask_8))));
 			return val;
 		}
 	};
