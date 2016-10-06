@@ -154,22 +154,6 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		std::exit(EXIT_FAILURE);
 }
 
-/**
- * \brief Allocate an exit simulation.
- *
- * \tparam B : type of the bits in the simulation.
- * \tparam R : type of the reals (floating-point representation) in the simulation.
- * \tparam Q : type of the quantified reals (fixed-point representation) in the simulation.
- * \tparam QD: type of the quantified reals (fixed-point representation) in the decoder (can be used or not depending
- *             on the code and the simulation type).
- *
- * \param argc     : number of arguments from the command line.
- * \param argv     : array of arguments from the command line.
- * \param code_type: the type of the code (POLAR, TURBO, LDPC, etc.).
- * \param simu_type: the type of the simulation (BFER, BFERI, EXIT, GEN, etc.).
- *
- * \return an Simulation_EXIT object.
- */
 template <typename B, typename R, typename Q, typename QD>
 Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
 {
@@ -214,22 +198,6 @@ Launcher<long long,double,double>* create_exit_simu<long long, double, double, d
 }
 #endif
 
-/**
- * \fn void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
- *
- * \brief Start the simulation by calling a Launcher (the Launcher depends on the code_type and the simu_type).
- *
- * \tparam B : type of the bits in the simulation.
- * \tparam R : type of the reals (floating-point representation) in the simulation.
- * \tparam Q : type of the quantified reals (fixed-point representation) in the simulation.
- * \tparam QD: type of the quantified reals (fixed-point representation) in the decoder (can be used or not depending
- *             on the code and the simulation type).
- *
- * \param argc     : number of arguments from the command line.
- * \param argv     : array of arguments from the command line.
- * \param code_type: the type of the code (POLAR, TURBO, LDPC, etc.).
- * \param simu_type: the type of the simulation (BFER, BFERI, EXIT, GEN, etc.).
- */
 template <typename B, typename R, typename Q, typename QD>
 void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
 {
@@ -300,16 +268,6 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	delete launcher;
 }
 
-/**
- * \fn int main(int argc, char **argv)
- *
- * \brief The first function called in the program!
- *
- * \param argc: number of arguments from the command line.
- * \param argv: array of arguments from the command line.
- *
- * \return EXIT_SUCCESS if no errors.
- */
 #ifndef SYSTEMC
 int main(int argc, char **argv)
 #else
