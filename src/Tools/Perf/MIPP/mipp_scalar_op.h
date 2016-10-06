@@ -1,25 +1,27 @@
 #ifndef MIPP_SCALAR_OP_H_
 #define MIPP_SCALAR_OP_H_
 
-namespace mipp_scop // My Intrinsics Plus Plus Scalar Operations
+namespace mipp_scop // My Intrinsics Plus Plus SCalar OPerations
 {
 	template <typename T>
-	T andb(const T val1, const T val2);
+	inline T andb(const T val1, const T val2);
 
 	template <typename T>
-	T xorb(const T val1, const T val2);
+	inline T xorb(const T val1, const T val2);
 
 	template <typename T>
-	T div2(const T val);
+	inline T div2(const T val);
 
 	template <typename T>
-	T div4(const T val);
+	inline T div4(const T val);
 
 	template <typename T>
-	T rshift(const T val, const int n);
+	inline T rshift(const T val, const int n);
 
 	template <typename T>
-	T lshift(const T val, const int n);
+	inline T lshift(const T val, const int n);
 }
+
+#include "mipp_scalar_op.hxx"
 
 #endif /* MIPP_SCALAR_OP_H_ */
