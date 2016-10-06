@@ -14,8 +14,8 @@ Decoder_turbo_fast<B,R>
                      SISO<R> &siso_n,
                      SISO<R> &siso_i,
                      Scaling_factor<R> &scaling_factor,
-	                 const bool buffered_encoding,
-	                 const std::string name)
+                     const bool buffered_encoding,
+                     const std::string name)
 : Decoder_turbo<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding, name)
 {
 }
