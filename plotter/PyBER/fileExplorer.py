@@ -30,283 +30,283 @@ from pyqtgraph.dockarea import *
 import numpy as np
 
 class AdvTreeView(QtGui.QTreeView):
-    wBER      = []
-    wFER      = []
-    wBEFE     = []
-    wThr      = []
-    wDeta     = []
-    fsWatcher = []
+	wBER      = []
+	wFER      = []
+	wBEFE     = []
+	wThr      = []
+	wDeta     = []
+	fsWatcher = []
 
-    lBER  = []
-    lFER  = []
-    lBEFE = []
-    lThr  = []
+	lBER  = []
+	lFER  = []
+	lBEFE = []
+	lThr  = []
 
-    dataSNR  = []
-    dataBER  = []
-    dataFER  = []
-    dataBEFE = []
-    dataThr  = []
-    dataDeta = []
-    dataName = [] 
+	dataSNR  = []
+	dataBER  = []
+	dataFER  = []
+	dataBEFE = []
+	dataThr  = []
+	dataDeta = []
+	dataName = [] 
 
-    #               1  2  3  4  5  6  7  8  9  10  11  12  13  14  15, 16
-    colors       = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17]
-    lastSNR      = []
-    paths        = []
-    styles       = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine, QtCore.Qt.DotLine, QtCore.Qt.DashDotLine, QtCore.Qt.DashDotDotLine]
-    dashPatterns = [[1, 3, 4, 3], [2, 3, 4, 3], [1, 3, 1, 3], [4, 3, 4, 3], [3, 3, 2, 3], [4, 3, 1, 3]]
+	#               1  2  3  4  5  6  7  8  9  10  11  12  13  14  15, 16
+	colors       = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17]
+	lastSNR      = []
+	paths        = []
+	styles       = [QtCore.Qt.SolidLine, QtCore.Qt.DashLine, QtCore.Qt.DotLine, QtCore.Qt.DashDotLine, QtCore.Qt.DashDotDotLine]
+	dashPatterns = [[1, 3, 4, 3], [2, 3, 4, 3], [1, 3, 1, 3], [4, 3, 4, 3], [3, 3, 2, 3], [4, 3, 1, 3]]
 
-    def __init__(self, wBER, wFER, wBEFE, wThr, wDeta):
-        super().__init__()
+	def __init__(self, wBER, wFER, wBEFE, wThr, wDeta):
+		super().__init__()
 
-        self.wBER  = wBER
-        self.wFER  = wFER
-        self.wBEFE = wBEFE
-        self.wThr  = wThr
-        self.wDeta = wDeta
+		self.wBER  = wBER
+		self.wFER  = wFER
+		self.wBEFE = wBEFE
+		self.wThr  = wThr
+		self.wDeta = wDeta
 
-        # create a legend on the plots
-        self.lBER  = self.wBER .addLegend()
-        self.lFER  = self.wFER .addLegend()
-        self.lBEFE = self.wBEFE.addLegend()
-        self.lThr  = self.wThr .addLegend()
+		# create a legend on the plots
+		self.lBER  = self.wBER .addLegend()
+		self.lFER  = self.wFER .addLegend()
+		self.lBEFE = self.wBEFE.addLegend()
+		self.lThr  = self.wThr .addLegend()
 
-        self.hideLegend()
+		self.hideLegend()
 
-        self.fsWatcher = QtCore.QFileSystemWatcher()
-        self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
+		self.fsWatcher = QtCore.QFileSystemWatcher()
+		self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
 
-    def hideLegend(self):
-        # hide the legend
-        if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
-        if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
-        # if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
-        # if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
-        if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
-        if self.lThr:  self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
+	def hideLegend(self):
+		# hide the legend
+		if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+		if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+		# if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+		# if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
+		if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
+		if self.lThr:  self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
 
-    def showLegend(self):
-        # display the legend
-        if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
-        if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
-        # if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
-        # if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
-        if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
-        if self.lThr:  self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+	def showLegend(self):
+		# display the legend
+		if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
+		if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( 10,-10))
+		# if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+		# if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+		if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
+		if self.lThr:  self.lThr .anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10, 10))
 
-    def removeLegendItem(self, name):
-        if self.lBER:  self.lBER .removeItem(name)
-        if self.lFER:  self.lFER .removeItem(name)
-        if self.lBEFE: self.lBEFE.removeItem(name)
-        if self.lThr:  self.lThr .removeItem(name)
+	def removeLegendItem(self, name):
+		if self.lBER:  self.lBER .removeItem(name)
+		if self.lFER:  self.lFER .removeItem(name)
+		if self.lBEFE: self.lBEFE.removeItem(name)
+		if self.lThr:  self.lThr .removeItem(name)
 
-    def getPathId(self, path):
-        if path in self.paths:
-            curId = 0
-            for p in self.paths:
-                if p == path:
-                    return curId
-                else:
-                    curId = curId +1
-            return -1
-        else:
-            return -1
+	def getPathId(self, path):
+		if path in self.paths:
+			curId = 0
+			for p in self.paths:
+				if p == path:
+					return curId
+				else:
+					curId = curId +1
+			return -1
+		else:
+			return -1
 
-    def updateData(self, path):
-        if path in self.paths:
-            pathId = self.getPathId(path)
+	def updateData(self, path):
+		if path in self.paths:
+			pathId = self.getPathId(path)
 
-            dataName = []
-            self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = libs.reader.dataReader(path)
+			dataName = []
+			self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = libs.reader.dataReader(path)
 
-            if not self.dataName[pathId]:
-                if not dataName:
-                    self.dataName[pathId] = "Curve " + str(pathId)
-                elif dataName in self.dataName:
-                    self.dataName[pathId] = dataName + "_" + str(pathId)
-                else:
-                    self.dataName[pathId] = dataName
+			if not self.dataName[pathId]:
+				if not dataName:
+					self.dataName[pathId] = "Curve " + str(pathId)
+				elif dataName in self.dataName:
+					self.dataName[pathId] = dataName + "_" + str(pathId)
+				else:
+					self.dataName[pathId] = dataName
 
 
-    def plotCurve(self, pathId, dataSNR, dataBER, dataFER, dataBEFE, dataThr):
-        icolor = self.colors[pathId % len(self.colors)]
-        pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
-        pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
+	def plotCurve(self, pathId, dataSNR, dataBER, dataFER, dataBEFE, dataThr):
+		icolor = self.colors[pathId % len(self.colors)]
+		pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
+		pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
 
-        self.removeLegendItem(self.dataName[pathId])
+		self.removeLegendItem(self.dataName[pathId])
 
-        self.wBER. plot(x=dataSNR, y=dataBER,  pen=pen, symbol='x', name=self.dataName[pathId])
-        self.wFER. plot(x=dataSNR, y=dataFER,  pen=pen, symbol='x', name=self.dataName[pathId])
-        self.wBEFE.plot(x=dataSNR, y=dataBEFE, pen=pen, symbol='x', name=self.dataName[pathId])
-        self.wThr. plot(x=dataSNR, y=dataThr,  pen=pen, symbol='x', name=self.dataName[pathId])
+		self.wBER. plot(x=dataSNR, y=dataBER,  pen=pen, symbol='x', name=self.dataName[pathId])
+		self.wFER. plot(x=dataSNR, y=dataFER,  pen=pen, symbol='x', name=self.dataName[pathId])
+		self.wBEFE.plot(x=dataSNR, y=dataBEFE, pen=pen, symbol='x', name=self.dataName[pathId])
+		self.wThr. plot(x=dataSNR, y=dataThr,  pen=pen, symbol='x', name=self.dataName[pathId])
 
-    def updateCurve(self, path):
-        if path in self.paths:
-            pathId = self.getPathId(path)
-            
-            if self.dataSNR[pathId]:
-                if self.dataSNR[pathId][len(self.dataSNR[pathId]) -1] > self.lastSNR[pathId]:
-                    curDataSNR  = list(self.dataSNR [pathId]) # make a copy
-                    curDataBER  = list(self.dataBER [pathId]) # make a copy
-                    curDataFER  = list(self.dataFER [pathId]) # make a copy
-                    curDataThr  = list(self.dataThr [pathId]) # make a copy
-                    curDataBEFE = list(self.dataBEFE[pathId]) # make a copy
+	def updateCurve(self, path):
+		if path in self.paths:
+			pathId = self.getPathId(path)
 
-                    nPop = 0
-                    for i in range(len(curDataSNR)):
-                        if self.lastSNR[pathId] >= curDataSNR[i]:
-                            nPop = i
+			if self.dataSNR[pathId]:
+				if self.dataSNR[pathId][len(self.dataSNR[pathId]) -1] > self.lastSNR[pathId]:
+					curDataSNR  = list(self.dataSNR [pathId]) # make a copy
+					curDataBER  = list(self.dataBER [pathId]) # make a copy
+					curDataFER  = list(self.dataFER [pathId]) # make a copy
+					curDataThr  = list(self.dataThr [pathId]) # make a copy
+					curDataBEFE = list(self.dataBEFE[pathId]) # make a copy
 
-                    for i in range(nPop):
-                        curDataSNR .pop(0)
-                        curDataBER .pop(0)
-                        curDataFER .pop(0)
-                        curDataBEFE.pop(0)
-                        curDataThr .pop(0)
+					nPop = 0
+					for i in range(len(curDataSNR)):
+						if self.lastSNR[pathId] >= curDataSNR[i]:
+							nPop = i
 
-                    self.plotCurve(pathId, curDataSNR, curDataBER, curDataFER, curDataBEFE, curDataThr)
-                    self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
-                elif self.dataSNR[pathId][len(self.dataSNR[pathId]) -1] < self.lastSNR[pathId]:
-                    self.updateCurves()
-                    self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
-            else:
-                self.updateCurves()
-                self.lastSNR[pathId] = -999.0
+					for i in range(nPop):
+						curDataSNR .pop(0)
+						curDataBER .pop(0)
+						curDataFER .pop(0)
+						curDataBEFE.pop(0)
+						curDataThr .pop(0)
 
-    def updateCurves(self):
-        self.wBER .clearPlots()
-        self.wFER .clearPlots()
-        self.wBEFE.clearPlots()
-        self.wThr .clearPlots()
+					self.plotCurve(pathId, curDataSNR, curDataBER, curDataFER, curDataBEFE, curDataThr)
+					self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
+				elif self.dataSNR[pathId][len(self.dataSNR[pathId]) -1] < self.lastSNR[pathId]:
+					self.updateCurves()
+					self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
+			else:
+				self.updateCurves()
+				self.lastSNR[pathId] = -999.0
 
-        for pathId in range(len(self.paths)):
-            self.plotCurve(pathId, self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId])
+	def updateCurves(self):
+		self.wBER .clearPlots()
+		self.wFER .clearPlots()
+		self.wBEFE.clearPlots()
+		self.wThr .clearPlots()
 
-    def updateDataAndCurve(self, path):
-        self.updateData(path)
-        self.updateCurve(path)
+		for pathId in range(len(self.paths)):
+			self.plotCurve(pathId, self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId])
 
-    def updateDetails(self):
-        self.wDeta.clear()
+	def updateDataAndCurve(self, path):
+		self.updateData(path)
+		self.updateCurve(path)
 
-        for pathId in range(len(self.paths)):
-            icolor = self.colors[pathId % len(self.colors)]
-            path   = self.paths[pathId]
+	def updateDetails(self):
+		self.wDeta.clear()
 
-            # for filename in self.paths:
-            pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
-            pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
+		for pathId in range(len(self.paths)):
+			icolor = self.colors[pathId % len(self.colors)]
+			path   = self.paths[pathId]
 
-            legendArea = DockArea()
-            dInfo      = Dock("", size=(250,900))
+			# for filename in self.paths:
+			pen = pg.mkPen(color=(icolor,8), width=2, style=QtCore.Qt.CustomDashLine)
+			pen.setDashPattern(self.dashPatterns[pathId % len(self.dashPatterns)])
 
-            legendArea.addDock(dInfo, 'bottom')
+			legendArea = DockArea()
+			dInfo      = Dock("", size=(250,900))
 
-            firstTitle   = True;
-            layoutLegend = QtGui.QFormLayout()
-            for entry in self.dataDeta[pathId]:
-                if len(entry) == 2 and entry[1]:
-                    if entry[0] == "Run command":
-                        runCmd = QtGui.QLineEdit(str(entry[1]))
-                        runCmd.setReadOnly(True)
-                        layoutLegend.addRow("<b>" + entry[0] + "</b>: ", runCmd)
-                    else:
-                        layoutLegend.addRow("<b>" + entry[0] + "</b>: ", QtGui.QLabel(entry[1]))
-                elif len(entry) == 1:
-                    if not firstTitle:
-                        line = QtGui.QFrame()
-                        line.setFrameShape(QtGui.QFrame.HLine)
-                        line.setFrameShadow(QtGui.QFrame.Sunken)
-                        layoutLegend.addRow(line)
-                    firstTitle = False
-                    layoutLegend.addRow("<h3><u>" + entry[0] + "<u></h3>", QtGui.QLabel(""))
-            wCur = QtGui.QWidget();
-            wCur.setLayout(layoutLegend)
+			legendArea.addDock(dInfo, 'bottom')
 
-            sCur = QtGui.QScrollArea()
-            sCur.setWidget(wCur)
-            sCur.setWidgetResizable(True)
-            dInfo.addWidget(sCur)
+			firstTitle   = True;
+			layoutLegend = QtGui.QFormLayout()
+			for entry in self.dataDeta[pathId]:
+				if len(entry) == 2 and entry[1]:
+					if entry[0] == "Run command":
+						runCmd = QtGui.QLineEdit(str(entry[1]))
+						runCmd.setReadOnly(True)
+						layoutLegend.addRow("<b>" + entry[0] + "</b>: ", runCmd)
+					else:
+						layoutLegend.addRow("<b>" + entry[0] + "</b>: ", QtGui.QLabel(entry[1]))
+				elif len(entry) == 1:
+					if not firstTitle:
+						line = QtGui.QFrame()
+						line.setFrameShape(QtGui.QFrame.HLine)
+						line.setFrameShadow(QtGui.QFrame.Sunken)
+						layoutLegend.addRow(line)
+					firstTitle = False
+					layoutLegend.addRow("<h3><u>" + entry[0] + "<u></h3>", QtGui.QLabel(""))
+			wCur = QtGui.QWidget();
+			wCur.setLayout(layoutLegend)
 
-            self.wDeta.addTab(legendArea, self.dataName[pathId])
+			sCur = QtGui.QScrollArea()
+			sCur.setWidget(wCur)
+			sCur.setWidgetResizable(True)
+			dInfo.addWidget(sCur)
 
-    def selectionChanged(self, selected, deselected):
-        super().selectionChanged(selected, deselected)
-        newPaths = [ self.model().filePath(index) for index in self.selectedIndexes()
-                        if not self.model().isDir(index)] # TODO: remove this restriction
+			self.wDeta.addTab(legendArea, self.dataName[pathId])
 
-        self.dataSNR  = [0 for x in range(len(newPaths))]
-        self.dataBER  = [0 for x in range(len(newPaths))]
-        self.dataFER  = [0 for x in range(len(newPaths))]
-        self.dataBEFE = [0 for x in range(len(newPaths))]
-        self.dataThr  = [0 for x in range(len(newPaths))]
-        self.dataDeta = [0 for x in range(len(newPaths))]
-        self.lastSNR  = [0 for x in range(len(newPaths))]
+	def selectionChanged(self, selected, deselected):
+		super().selectionChanged(selected, deselected)
+		newPaths = [ self.model().filePath(index) for index in self.selectedIndexes()
+		                if not self.model().isDir(index)] # TODO: remove this restriction
 
-        for name in self.dataName:
-            self.removeLegendItem(name)
-        self.dataName = [0 for x in range(len(newPaths))]
+		self.dataSNR  = [0 for x in range(len(newPaths))]
+		self.dataBER  = [0 for x in range(len(newPaths))]
+		self.dataFER  = [0 for x in range(len(newPaths))]
+		self.dataBEFE = [0 for x in range(len(newPaths))]
+		self.dataThr  = [0 for x in range(len(newPaths))]
+		self.dataDeta = [0 for x in range(len(newPaths))]
+		self.lastSNR  = [0 for x in range(len(newPaths))]
 
-        if not len(newPaths):
-            self.hideLegend()
-        else:
-            self.showLegend()
+		for name in self.dataName:
+			self.removeLegendItem(name)
+		self.dataName = [0 for x in range(len(newPaths))]
 
-        pathsToRemove = []
-        for p in self.paths:
-            if p not in newPaths:
-                pathsToRemove.append(p)
+		if not len(newPaths):
+			self.hideLegend()
+		else:
+			self.showLegend()
 
-        for p in pathsToRemove:
-            pId = self.getPathId(p)
-            self.paths.pop(pId)
+		pathsToRemove = []
+		for p in self.paths:
+			if p not in newPaths:
+				pathsToRemove.append(p)
 
-        pathsToAdd = []
-        for p in newPaths:
-            if p not in self.paths:
-                pathsToAdd.append(p)
-        for p in pathsToAdd:
-            self.paths.append(p)
+		for p in pathsToRemove:
+			pId = self.getPathId(p)
+			self.paths.pop(pId)
 
-        if len(pathsToRemove) > 0:
-            self.fsWatcher.removePaths(pathsToRemove)
-        if len(pathsToAdd) > 0:
-            self.fsWatcher.addPaths(pathsToAdd)
+		pathsToAdd = []
+		for p in newPaths:
+			if p not in self.paths:
+				pathsToAdd.append(p)
+		for p in pathsToAdd:
+			self.paths.append(p)
 
-        for path in self.paths:
-            self.updateData(path)
+		if len(pathsToRemove) > 0:
+			self.fsWatcher.removePaths(pathsToRemove)
+		if len(pathsToAdd) > 0:
+			self.fsWatcher.addPaths(pathsToAdd)
 
-        for pathId in range(len(self.paths)):
-            if len(self.dataSNR[pathId]) > 0:
-                self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
-            else:
-               self.lastSNR[pathId] = -999.0 
+		for path in self.paths:
+			self.updateData(path)
 
-        self.updateCurves()
-        self.updateDetails()
+		for pathId in range(len(self.paths)):
+			if len(self.dataSNR[pathId]) > 0:
+				self.lastSNR[pathId] = self.dataSNR[pathId][len(self.dataSNR[pathId]) -1]
+			else:
+				self.lastSNR[pathId] = -999.0 
+
+		self.updateCurves()
+		self.updateDetails()
 
 def generatePannel(wBER, wFER, wBEFE, wThr, wDeta):
-    if len(sys.argv) >= 2:
-        os.chdir(sys.argv[1])
-    else:
-        os.chdir("data/")
+	if len(sys.argv) >= 2:
+		os.chdir(sys.argv[1])
+	else:
+		os.chdir("data/")
 
-    model = QtGui.QFileSystemModel()
-    model.setReadOnly(True)
-    model.setRootPath(QtCore.QDir.currentPath())
-    model.setNameFilters(['*.perf', '*.dat', '*.txt', '*.data'])
-    model.setNameFilterDisables(False)
+	model = QtGui.QFileSystemModel()
+	model.setReadOnly(True)
+	model.setRootPath(QtCore.QDir.currentPath())
+	model.setNameFilters(['*.perf', '*.dat', '*.txt', '*.data'])
+	model.setNameFilterDisables(False)
 
-    view = AdvTreeView(wBER, wFER, wBEFE, wThr, wDeta)
-    view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-    view.setModel(model)
-    view.hideColumn(1);
-    view.hideColumn(2);
-    view.hideColumn(3);
-    view.setColumnWidth(30, 1)
-    view.setRootIndex(model.index(QtCore.QDir.currentPath(), 0))
-    view.setAnimated(True)
-    view.setIconSize(QtCore.QSize(24,24))
+	view = AdvTreeView(wBER, wFER, wBEFE, wThr, wDeta)
+	view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+	view.setModel(model)
+	view.hideColumn(1);
+	view.hideColumn(2);
+	view.hideColumn(3);
+	view.setColumnWidth(30, 1)
+	view.setRootIndex(model.index(QtCore.QDir.currentPath(), 0))
+	view.setAnimated(True)
+	view.setIconSize(QtCore.QSize(24,24))
 
-    return view
+	return view

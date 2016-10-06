@@ -23,111 +23,111 @@
 import os
 
 def getVal(line, idColumn):
-    # there are two different file formats, classic (lines begni with SNR) and new (lines begin with SNR value directly)
-    # indices of the different parameter change, and the following array is used to convert classic indices to new
-    convert_to_v1 = [0, 4, 5, 10, 0, 3, 2]
-    convert_to_v2 = [0, 4, 5, 7 , 0, 3, 2]
+	# there are two different file formats, classic (lines begni with SNR) and new (lines begin with SNR value directly)
+	# indices of the different parameter change, and the following array is used to convert classic indices to new
+	convert_to_v1 = [0, 4, 5, 10, 0, 3, 2]
+	convert_to_v2 = [0, 4, 5, 7 , 0, 3, 2]
 
-    # classic
-    if line.startswith("SNR = "):
-        line = line.replace("#", "")
-        line = line.replace("=", "")
-        line = line.replace("SNR", "")
-        line = line.replace("BER", "")
-        line = line.replace("FER", "")
-        line = line.replace("BE/FE", "")
-        line = line.replace("BPS", "")
-        line = line.replace("BPS", "")
-        line = line.replace("MATRICES", "")
-        line = line.replace("BE", "")
-        line = line.replace("FE", "")
-        line = line.replace("RUNTIME", "")
-        line = line.replace("ERR", "")
-        line = line.replace(" ", "")
-        line = line.split('|')
+	# classic
+	if line.startswith("SNR = "):
+		line = line.replace("#", "")
+		line = line.replace("=", "")
+		line = line.replace("SNR", "")
+		line = line.replace("BER", "")
+		line = line.replace("FER", "")
+		line = line.replace("BE/FE", "")
+		line = line.replace("BPS", "")
+		line = line.replace("BPS", "")
+		line = line.replace("MATRICES", "")
+		line = line.replace("BE", "")
+		line = line.replace("FE", "")
+		line = line.replace("RUNTIME", "")
+		line = line.replace("ERR", "")
+		line = line.replace(" ", "")
+		line = line.split('|')
 
-        val = float(line[idColumn])
-    # new
-    else:
-        line = line.replace("||", "|")
-        line = line.split('|')
+		val = float(line[idColumn])
+	# new
+	else:
+		line = line.replace("||", "|")
+		line = line.split('|')
 
-        try:
-            float(line[0])  # in cases where the first item of the line is neither "SNR = " nor a float
-        except ValueError:
-            return float(-999.0)
+		try:
+			float(line[0])  # in cases where the first item of the line is neither "SNR = " nor a float
+		except ValueError:
+			return float(-999.0)
 
-        if(len(line) == 14):
-            val = float(line[convert_to_v1[idColumn]])
-        else:
-            val = float(line[convert_to_v2[idColumn]])
+		if(len(line) == 14):
+				val = float(line[convert_to_v1[idColumn]])
+		else:
+			val = float(line[convert_to_v2[idColumn]])
 
-    if "inf" in str(val):
-        val = float(0.0)
+	if "inf" in str(val):
+		val = float(0.0)
 
-    return val
+	return val
 
 def dataReader(filename):
-    # read all the lines from the current file
-    aFile = open(filename, "r")
-    lines = []
-    for line in aFile:
-        lines.append(line)
-    aFile.close()
+	# read all the lines from the current file
+	aFile = open(filename, "r")
+	lines = []
+	for line in aFile:
+		lines.append(line)
+	aFile.close()
 
-    dataSNR  = []
-    dataBER  = []
-    dataFER  = []
-    dataBEFE = []
-    dataThr  = []
-    dataDeta = []
-    dataName = []
+	dataSNR  = []
+	dataBER  = []
+	dataFER  = []
+	dataBEFE = []
+	dataThr  = []
+	dataDeta = []
+	dataName = []
 
-    for line in lines:
-        if line.startswith("#"):
-            if len(line) > 3 and line[0] == '#' and line[2] == '*':
-                entry = line.replace("# * ", "").replace("\n", "").split(" = ")
-                if len(entry) == 1:
-                    entry[0] = entry[0].replace("-", "")
-                dataDeta.append(entry)
-            elif len(line) > 7 and line[0] == '#' and line[5] == '*' and line[6] == '*':
-                entry = line.replace("#    ** ", "").replace("\n", "").split(" = ")
-                dataDeta.append(entry)
-        else:
-            snr = getVal(line, 0)
-            if snr == -999.0:
-                continue # line is ignored
+	for line in lines:
+		if line.startswith("#"):
+			if len(line) > 3 and line[0] == '#' and line[2] == '*':
+				entry = line.replace("# * ", "").replace("\n", "").split(" = ")
+				if len(entry) == 1:
+					entry[0] = entry[0].replace("-", "")
+				dataDeta.append(entry)
+			elif len(line) > 7 and line[0] == '#' and line[5] == '*' and line[6] == '*':
+				entry = line.replace("#    ** ", "").replace("\n", "").split(" = ")
+				dataDeta.append(entry)
+		else:
+			snr = getVal(line, 0)
+			if snr == -999.0:
+				continue # line is ignored
 
-            dataSNR.append(snr)
-            dataBER.append(getVal(line, 1))
-            dataFER.append(getVal(line, 2))
-            dataThr.append(getVal(line, 3))
+			dataSNR.append(snr)
+			dataBER.append(getVal(line, 1))
+			dataFER.append(getVal(line, 2))
+			dataThr.append(getVal(line, 3))
 
-            be = getVal(line, 6)
-            fe = getVal(line, 5)
+			be = getVal(line, 6)
+			fe = getVal(line, 5)
 
-            if fe == 0:
-                dataBEFE.append(0.0)
-            else :
-                dataBEFE.append(be/fe)
+			if fe == 0:
+				dataBEFE.append(0.0)
+			else :
+				dataBEFE.append(be/fe)
 
-    dataDeta.append(["Other"])
-    dataDeta.append(["File name", os.path.basename(filename)])
+	dataDeta.append(["Other"])
+	dataDeta.append(["File name", os.path.basename(filename)])
 
-    # get the command to to run to reproduce this trace
-    if lines and "Run command:" in lines[0]:
-        dataDeta.append(["Run command", str(lines[1].strip())])
-    else:
-        dataDeta.append(["Run command", ""])
-    if lines and "Run command:" in lines[2]:
-        dataDeta.append(["Run command", str(lines[3].strip())])
-    else:
-        dataDeta.append(["Run command", ""])
+	# get the command to to run to reproduce this trace
+	if lines and "Run command:" in lines[0]:
+		dataDeta.append(["Run command", str(lines[1].strip())])
+	else:
+		dataDeta.append(["Run command", ""])
+	if lines and "Run command:" in lines[2]:
+		dataDeta.append(["Run command", str(lines[3].strip())])
+	else:
+		dataDeta.append(["Run command", ""])
 
-    # get the curve name (is there is one)
-    if lines and "Curve name:" in lines[0]:
-        dataName = str(lines[1].strip())
-    if lines and "Curve name:" in lines[2]:
-        dataName = str(lines[3].strip())
+	# get the curve name (is there is one)
+	if lines and "Curve name:" in lines[0]:
+		dataName = str(lines[1].strip())
+	if lines and "Curve name:" in lines[2]:
+		dataName = str(lines[3].strip())
 
-    return dataSNR, dataBER, dataFER, dataBEFE, dataThr, dataDeta, dataName
+	return dataSNR, dataBER, dataFER, dataBEFE, dataThr, dataDeta, dataName
