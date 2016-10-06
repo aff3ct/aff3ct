@@ -1,5 +1,15 @@
 *~
 build
+build_clang
+build_icc
+awgn_polar_codes
+doc/html/
+doc/latex/
+tests/results
+plotter/PyBER/__pycache__/
+plotter/PyBER/libs/__pycache__/
 .gitignore
 .cproject
 .project
+.pydevproject
+.settings/
