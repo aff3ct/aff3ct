@@ -289,7 +289,7 @@ def generatePannel(wBER, wFER, wBEFE, wThr, wDeta):
 	if len(sys.argv) >= 2:
 		os.chdir(sys.argv[1])
 	else:
-		os.chdir("../../Tests/")
+		os.chdir("../../tests/")
 
 	model = QtGui.QFileSystemModel()
 	model.setReadOnly(True)

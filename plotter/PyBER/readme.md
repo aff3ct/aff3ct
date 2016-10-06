@@ -11,4 +11,4 @@ This project use python 3.x and some dependencies : PyQt 4.7+ or PyQt5, NumPy.
 ```bash
 >  ./pyBER
 ```
-The displayed files are the one contained in the `../../Tests/` folder.
+The displayed files are the one contained in the `../../tests/` folder.
