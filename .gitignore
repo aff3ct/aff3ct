@@ -7,7 +7,7 @@ doc/html/
 doc/latex/
 tests/results
 plotter/PyBER/__pycache__/
-plotter/PyBER/libs/__pycache__/
+plotter/PyBER/libs/*
 .gitignore
 .cproject
 .project
