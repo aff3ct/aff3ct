@@ -184,7 +184,7 @@ public:
 	inline Reg<T>   exp          ()                                 const { return mipp::exp          <T>(r);             }
 	inline Reg<T>   sin          ()                                 const { return mipp::sin          <T>(r);             }
 	inline Reg<T>   cos          ()                                 const { return mipp::cos          <T>(r);             }
-	inline void     sincos       (      Reg<T> &s,       Reg<T> &c) const { return mipp::sincos       <T>(r,  s.r,  c.r); }
+	inline void     sincos       (      Reg<T> &s,       Reg<T> &c) const {        mipp::sincos       <T>(r,  s.r,  c.r); }
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmadd        <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return mipp::fnmadd       <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmsub        <T>(r, v1.r, v2.r); }
