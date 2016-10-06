@@ -1,14 +1,14 @@
 # How to run PyBER
-This project use python 3.x and some dependencies : PyQt 4.7+, PySide, or PyQt5, NumPy.
+This project use python 3.x and some dependencies : PyQt 4.7+ or PyQt5, NumPy.
 
 ## Installation (Ubuntu)
 ```bash
-> sudo apt-get install pyqt4
+> sudo apt-get install python3 python3-pip
+> sudo pip install numpy pyqt5
 ```
 
 ## Launch PyBER
 ```bash
 >  ./pyBER
 ```
-The displayed files are the one contained in  the `data` folder.
-By default, there is a symbolic link pointing on the project's `tests` folder.
+The displayed files are the one contained in the `../../Tests/` folder.
