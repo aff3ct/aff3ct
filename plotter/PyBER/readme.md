@@ -1,10 +1,9 @@
 # How to run PyBER
-This project use python3 and some dependencies : pyqt4, pyqtgraph
+This project use python 3.x and some dependencies : PyQt 4.7+, PySide, or PyQt5, NumPy.
 
 ## Installation (Ubuntu)
 ```bash
-> sudo apt-get install pyqt4 python3-pip
-> sudo pip3 install pyqtgraph
+> sudo apt-get install pyqt4
 ```
 
 ## Launch PyBER

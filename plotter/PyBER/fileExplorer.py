@@ -22,11 +22,10 @@
 
 import os
 import sys
-import libs.reader
-import pyqtgraph as pg
-from PyQt4 import QtGui
-from PyQt4 import QtCore
-from pyqtgraph.dockarea import *
+import reader
+import libs.pyqtgraph as pg
+from libs.pyqtgraph.Qt import QtCore, QtGui
+from libs.pyqtgraph.dockarea import *
 import numpy as np
 
 class AdvTreeView(QtGui.QTreeView):
@@ -118,7 +117,7 @@ class AdvTreeView(QtGui.QTreeView):
 			pathId = self.getPathId(path)
 
 			dataName = []
-			self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = libs.reader.dataReader(path)
+			self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = reader.dataReader(path)
 
 			if not self.dataName[pathId]:
 				if not dataName:

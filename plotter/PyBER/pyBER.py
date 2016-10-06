@@ -22,14 +22,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph.console
+import libs.pyqtgraph.console
+import libs.pyqtgraph as pg
+from libs.pyqtgraph.Qt import QtCore, QtGui
+from libs.pyqtgraph.dockarea import *
 import numpy as np
 import fileExplorer
-from pyqtgraph.dockarea import *
 
 # uncomment those next lines to display the plot in black on white instead of white on black
 # pg.setConfigOption('background', 'w')
