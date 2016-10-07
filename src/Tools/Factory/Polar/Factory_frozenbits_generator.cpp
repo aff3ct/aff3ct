@@ -40,5 +40,8 @@ template struct Factory_frozenbits_generator<B_32>;
 template struct Factory_frozenbits_generator<B_64>;
 #else
 template struct Factory_frozenbits_generator<B>;
+#ifndef PREC_32_BIT
+template struct Factory_frozenbits_generator<B_32>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

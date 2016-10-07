@@ -109,5 +109,8 @@ template class Frozenbits_generator_GA<B_32>;
 template class Frozenbits_generator_GA<B_64>;
 #else
 template class Frozenbits_generator_GA<B>;
+#ifndef PREC_32_BIT
+template class Frozenbits_generator_GA<B_32>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

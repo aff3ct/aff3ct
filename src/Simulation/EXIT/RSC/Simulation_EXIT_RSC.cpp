@@ -78,6 +78,8 @@ SISO<R>* Simulation_EXIT_RSC<B,R,Q,QD>
 template class Simulation_EXIT_RSC<B_32,R_32,Q_32,QD_32>;
 template class Simulation_EXIT_RSC<B_64,R_64,Q_64,QD_64>;
 #else
+#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
 template class Simulation_EXIT_RSC<B,R,Q,QD>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

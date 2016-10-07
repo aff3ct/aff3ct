@@ -91,6 +91,8 @@ std::vector<std::pair<std::string,std::string>> Launcher_EXIT<B,R,Q>
 template class Launcher_EXIT<B_32,R_32,Q_32>;
 template class Launcher_EXIT<B_64,R_64,Q_64>;
 #else
+#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
 template class Launcher_EXIT<B,R,Q>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

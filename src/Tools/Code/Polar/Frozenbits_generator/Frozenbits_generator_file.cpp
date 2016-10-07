@@ -77,5 +77,8 @@ template class Frozenbits_generator_file<B_32>;
 template class Frozenbits_generator_file<B_64>;
 #else
 template class Frozenbits_generator_file<B>;
+#ifndef PREC_32_BIT
+template class Frozenbits_generator_file<B_32>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

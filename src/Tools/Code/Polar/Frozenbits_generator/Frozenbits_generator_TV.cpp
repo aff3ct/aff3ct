@@ -122,5 +122,8 @@ template class Frozenbits_generator_TV<B_32>;
 template class Frozenbits_generator_TV<B_64>;
 #else
 template class Frozenbits_generator_TV<B>;
+#ifndef PREC_32_BIT
+template class Frozenbits_generator_TV<B_32>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation

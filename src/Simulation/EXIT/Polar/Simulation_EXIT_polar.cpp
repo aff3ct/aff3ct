@@ -87,6 +87,8 @@ SISO<R>* Simulation_EXIT_polar<B,R,Q>
 template class Simulation_EXIT_polar<B_32,R_32,Q_32>;
 template class Simulation_EXIT_polar<B_64,R_64,Q_64>;
 #else
+#if defined(PREC_32_BIT) || defined(PREC_64_BIT)
 template class Simulation_EXIT_polar<B,R,Q>;
+#endif
 #endif
 // ==================================================================================== explicit template instantiation
