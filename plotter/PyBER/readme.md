@@ -9,6 +9,6 @@ This project use python 3.x and some dependencies : PyQt 4.7+ or PyQt5, NumPy.
 
 ## Launch PyBER
 ```bash
->  python3 pyBER
+>  python3 pyBER.py
 ```
 The displayed files are the one contained in the `../../tests/` folder.
