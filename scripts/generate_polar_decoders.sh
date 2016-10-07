@@ -15,6 +15,7 @@ echo "Generate decoders (rate 1/2)..."
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N    8192 -K   4096 --dec-snr 2.5 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   16384 -K   8192 --dec-snr 2.5 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   32768 -K  16384 --dec-snr 2.5 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.report 2>&1
+../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   32768 -K  16384 --dec-snr 1.8 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   65536 -K  32768 --dec-snr 1.5 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR15.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   65536 -K  32768 --dec-snr 2.5 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N  131072 -K  65536 --dec-snr 2.5 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.report 2>&1
@@ -115,6 +116,7 @@ dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N40
 dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.short.dot -O
 dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.short.dot -O
 dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.short.dot -O
+dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.short.dot -O
 dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR15.short.dot -O
 dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.short.dot -O
 
