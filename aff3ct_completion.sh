@@ -1,4 +1,4 @@
-# bash completion for aff3ct -*- shell-script -*-
+# aff3ct completion                                         -*- shell-script -*-
 
 _aff3ct() {
 	local cur prev opts codetype simutype
@@ -9,47 +9,61 @@ _aff3ct() {
 	# determine code type
 	for ((i = 0 ; i < ${#COMP_WORDS[*]}; ++ i))
 	do
-		if [[ ${COMP_WORDS[$i]} == "--code-type" ]]; then
+		if [[ ${COMP_WORDS[$i]} == "--cde-type" ]]; then
 			codetype=${COMP_WORDS[$i+1]}
 		fi
 	done
 
 	# determine simu type
-	if [[ $COMP_LINE == *"--simu-type EXIT"* ]]; then
-		simutype="EXIT"
-	else 
-		simutype="BFER"
-	fi
+	for ((i = 0 ; i < ${#COMP_WORDS[*]}; ++ i))
+	do
+		if [[ ${COMP_WORDS[$i]} == "--sim-type" ]]; then
+			simutype=${COMP_WORDS[$i+1]}
+		fi
+	done
 
 	# add base opts
-	opts="--code-type --simu-type -v --version -h --help"
+	opts="--cde-type --sim-type -v --version -h --help"
 
 	# add contents of Launcher.cpp
 	if [[ 
-	       ${codetype} == "POLAR"      && ${simutype} == "BFER" || \
-	       ${codetype} == "RSC"        && ${simutype} == "BFER" || \
-	       ${codetype} == "REPETITION" && ${simutype} == "BFER" || \
-	       ${codetype} == "RA"         && ${simutype} == "BFER" || \
-	       ${codetype} == "TURBO"      && ${simutype} == "BFER" || \
-	       ${codetype} == "POLAR"      && ${simutype} == "EXIT" || \
-	       ${codetype} == "RSC"        && ${simutype} == "EXIT"    \
+	       ${codetype} == "POLAR"      && ${simutype} == "EXIT"  || \
+	       ${codetype} == "RSC"        && ${simutype} == "EXIT"  || \
+	       ${codetype} == "POLAR"      && ${simutype} == "BFER"  || \
+	       ${codetype} == "RSC"        && ${simutype} == "BFER"  || \
+	       ${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
+	       ${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
+	       ${codetype} == "RA"         && ${simutype} == "BFER"  || \
+	       ${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
+	       ${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
+	       ${codetype} == "RSC"        && ${simutype} == "BFERI" || \
+	       ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+	       ${codetype} == "UNCODED"    && ${simutype} == "BFERI" || \
+	       ${codetype} == "POLAR"      && ${simutype} == "GEN"      \
 	   ]]
 	then
-		opts="$opts -K -N --snr-min --snr-max --prec --snr-step --disable-display --stop-time --display-freq \
-		      --n-threads --code-gen-method --domain --channel-type --dec-algo --dec-implem --qn-bits        \
-		      --qpoint-pos"
+		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s        \
+		       --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
+		       --cde-info-bits -K --cde-size -N --src-type --mod-type --mod-bps\
+		        --mod-ups --demod-max --demod-no-sig2 --chn-type --qnt-type    \
+		        --qnt-int --qnt-bits --qnt-range --dec-type --dec-implem       \
+		        --term-no"
 	fi
 
 	# add contents of Launcher_BFER.cpp
 	if [[ 
 	       ${codetype} == "POLAR"      && ${simutype} == "BFER" || \
 	       ${codetype} == "RSC"        && ${simutype} == "BFER" || \
+	       ${codetype} == "TURBO"      && ${simutype} == "BFER" || \
 	       ${codetype} == "REPETITION" && ${simutype} == "BFER" || \
 	       ${codetype} == "RA"         && ${simutype} == "BFER" || \
-	       ${codetype} == "TURBO"      && ${simutype} == "BFER"    \
+   	       ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
+   	       ${codetype} == "UNCODED"    && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --max-fe --benchs --enable-leg-term --enable-dec-thr --enable-debug"
+		opts="$opts --sim-benchs -b --sim-benchs-no-ldst -B --sim-debug -d     \
+		--sim-debug-limit --snr-sim-trace-path --sim-time-report --cde-coset -c\
+		--mnt-max-fe -e  --term-type "
 	fi
 
 	# add contents of Launcher_EXIT.cpp
@@ -58,7 +72,27 @@ _aff3ct() {
 	       ${codetype} == "RSC"        && ${simutype} == "EXIT"    \
 	   ]]
 	then
-		opts="$opts --sig-a-max --sig-a-min --sig-a-step"
+		opts="$opts --sim-siga-min -a --sim-siga-max -A --sim-siga-step"
+	fi
+
+	# add contents of Launcher_BFERI.cpp
+	if [[ 
+	       ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+	       ${codetype} == "UNCODED"    && ${simutype} == "BFERI"    \
+	   ]]
+	then
+		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
+		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
+		      --dmod-ite --mnt-max-fe -e --term-type"
+	fi
+
+	# add contents of Launcher_GEN_polar.cpp
+	if [[ 
+	       ${codetype} == "POLAR"      && ${simutype} == "GEN"
+	   ]]
+	then
+		opts="$opts --cde-awgn-fb-file --cde-awgn-fb-path --cde-fb-gen-method  \
+		--dec-snr --dec-gen-path --sim-pb-path"
 	fi
 
 	# add contents of Launcher_BFER_RA.cpp
@@ -66,7 +100,7 @@ _aff3ct() {
 	       ${codetype} == "RA"         && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --max-iter --interleaver"
+		opts="$opts --dec-ite -i --itl-type"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -74,7 +108,8 @@ _aff3ct() {
 	       ${codetype} == "RSC"        && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --disable-buf-enc --dec-simd-strat"
+		opts="$opts --enc-no-buff --dec-type -D --dec-implem --dec-simd        \
+		     --dec-max"
 	fi
 
 	# add contents of Launcher_BFER_polar.cpp
@@ -82,8 +117,9 @@ _aff3ct() {
 	       ${codetype} == "POLAR"      && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --disable-sys-enc --max-iter --awgn-codes-dir --bin-pb-path --awgn-codes-file -L \
-		      --code-sigma --fb-gen-method --crc-type --dec-simd-strat"
+		opts="$opts --sim-pb-path --cde-awgn-fb-file --cde-awgn-fb-path        \
+		      --cde-fb-gen-method --cde-sigma --crc-type --enc-no-sys          \
+		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -91,7 +127,7 @@ _aff3ct() {
            ${codetype} == "REPETITION" && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts"
+		opts="$opts --enc-no-buff --dec-type -D --dec-implem"
 	fi
 
 	# add contents of Launcher_BFER_turbo.cpp
@@ -99,7 +135,8 @@ _aff3ct() {
            ${codetype} == "TURBO"      && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --max-iter --disable-buf-enc --interleaver --crc-type --scaling-factor --dec-simd-strat"
+		opts="$opts --crc-type --enc-no-buff --itl-type --dec-type -D          \
+		      --dec-implem --dec-ite -i --dec-sf --dec-simd --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -107,7 +144,7 @@ _aff3ct() {
            ${codetype} == "RSC"        && ${simutype} == "EXIT"    \
 	   ]]
 	then
-		opts="$opts "
+		opts="$opts --dec-type -D --dec-implem --dec-max"
 	fi
 
 	# add contents of Launcher_EXIT_polar.cpp
@@ -115,7 +152,34 @@ _aff3ct() {
            ${codetype} == "POLAR"      && ${simutype} == "EXIT"    \
 	   ]]
 	then
-		opts="$opts --code-sigma --max-iter --awgn-codes-dir --bin-pb-path --awgn-codes-file -L --fb-gen-method"
+		opts="$opts --sim-pb-path --cde-sigma --cde-awgn-fb-file               \
+		--cde-awgn-fb-path --cde-fb-gen-method --dec-type -D --dec-implem      \
+		--dec-ite -i --dec-lists -L"
+	fi
+
+	# add contents of Launcher_BFER_LDPC.cpp
+	if [[ 
+           ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
+           ${codetype} == "LDPC"       && ${simutype} == "BFERI"   \
+	   ]]
+	then
+		opts="$opts --dec-type -D --dec-implem --dec-ite -i"
+	fi
+
+	# add contents of Launcher_BFER_uncoded.cpp
+	if [[ 
+           ${codetype} == "UNCODED"    && ${simutype} == "BFER"    \
+	   ]]
+	then
+		opts="$opts "
+	fi
+
+	# add contents of Launcher_BFERI_uncoded.cpp
+	if [[ 
+           ${codetype} == "UNCODED"   && ${simutype} == "BFERI"    \
+	   ]]
+	then
+		opts="$opts  "
 	fi
 
 
@@ -127,99 +191,150 @@ _aff3ct() {
 	fi
  
 	case "${prev}" in
-
-		-N | -K  | --qn-bits | --qn-bits | --qpoint-pos | --snr-max | --snr-min | --snr-step | --snr-max | \
-		--max-fe | -L | --n-threads | --qmin-max | --stop-time | --disable-freq | --max-iter | --sig-a-min |       \
-		--sig-a-max | --sig-a-step | --code-sigma )
+		# awaiting random number or strings
+		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m          |\
+		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time            |\
+        --sim-threads | -t | --cde-info-bits | -K | --cde-size | -N | --mod-bps\
+        | --mod-ups | --qnt-int | --qnt-bits | --qnt-range | --qnt-type       |\
+        --dec-type | --dec-implem | --sim-benchs | -b | --sim-debug-limit     |\
+        --sim-trace-path | --mnt-max-fe | -e | --term-type | --sim-siga-min   |\
+        -a | --sim-siga-max | -A | --sim-siga-step | --dmod-ite | --cde-sigma |\
+         --dec-snr | --dec-ite | -i | --dec-lists | -L \
+         )
 			COMPREPLY=()
 			;;
 
-		--prec)
+		# awaiting nothing	
+		-v | --version | -h | --help | --demod-no-sig2 | --term-no |           \
+		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report |     \
+		--cde-coset | -c | enc-no-buff | --enc-no-sys)
+			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+			;;
+
+		# awaiting something special
+		--sim-prec | -p)
 			local params="8 16 32 64"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--code-type)
-			local params="POLAR TURBO REPETITION RA RSC"
+		--cde-type)
+			local params="POLAR TURBO LDPC REPETITION RA RSC UNCODED"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--simu-type)
+		--sim-type)
 			local params
 			case "${codetype}" in
-				POLAR)      params="BFER EXIT" ;;
-				RSC)        params="BFER EXIT" ;;
-				REPETITION) params="BFER"      ;;
-				RA)         params="BFER"      ;;
-				TURBO)      params="BFER"      ;;
+				POLAR)      params="BFER EXIT"       ;;
+				TURBO)      params="BFER"            ;;
+				LDPC)       params="BFER BFERI"      ;;
+				REPETITION) params="BFER"            ;;
+				RA)         params="BFER"            ;;
+				RSC)        params="BFER BFERI EXIT" ;;
+				UNCODED)    params="BFER BFERI"      ;;
+				*)          params="BFER BFERI EXIT" ;;
+				
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--dec-algo)
+		--dec-type | -D)
 			local params
 			case "${codetype}" in
-				POLAR)      params="SC SCL SCAN" ;;
-				RSC)        params="BCJR"        ;;
-				REPETITION) params="STD"         ;;
-				RA)         params="STD"         ;;
-				TURBO)      params="BCJR"        ;;
+				POLAR)      params="SC SCL SCAN"         ;;
+				RSC)        params="BCJR BCJR4 LTE CCSDS";;
+				REPETITION) params="STD"                 ;;
+				RA)         params="STD"                 ;;
+				TURBO)      params="LTE CCSDS"           ;;
+				LDPC)       params="BP BP_FLOODING"      ;;
 			esac
-			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
-			;;
-
-		--dec-simd-strat)
-			local params="INTER INTRA"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
 		--dec-implem)
-			local params="STD NAIVE FAST VERY_FAST"
+			local params="GENERIC STD FAST VERY_FAST"
+			if ["${codetype}" == 'LDPC']; then
+				params="MIN_SUM SUM_PRODUCT"
+			fi
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--awgn-codes-file | --awgn-codes-dir | --bin-pb-path)
+		--dec-simd)
+			local params="INTER INTRA"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path | sim-pb-path)
 			_filedir
 			;;
 		
-		--code-gen-method)
-			local params="RAND LCG AZCW"
+		--src-type)
+			local params="RAND RAND_FAST AZCW"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--domain)
+		--sim-domain)
 			local params="LR LLR"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--interleaver)
-			local params="LTE RANDOM COLUMNS GOLDEN NO"
+		--itl-type)
+			local params
+			case "${simutype}" in
+				BFER)      params="LTE CCSDS RANDOM RANDOM_HARD GOLDEN NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN NO" ;;
+			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--channel-type)
-			local params="AWGN AWGN_GSL AWGN_MKL"
+		--chn-type)
+			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
 		--crc-type)
-			local params="CRC-1-0x1 CRC-2-0x1 CRC-3-0x3 CRC-4-ITU CRC-8-DVB-S2 CRC-16-CCITT CRC-16-IBM \
-			              CRC-16-TIB CRC-24-LTEA CRC-32-GZIP"
+			local params="1-0x1 2-0x1 3-0x3 4-ITU 8-DVB-S2 16-CCITT 16-IBM     \
+			24-LTEA 32-GZIP"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--scaling-factor)
+		--dec-sf)
 			local params="NO LTE LTE_VEC ARRAY"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--version | -v | --help | --h | --disable-sys-enc | --disable-freq | --disable-display | --enable-debug | \
-		--enable-dec-thr | --enable-leg-term)
-			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-		;;
+		--mod-type)
+			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--demod-max)
+			local params="MAX MAXL MAXS MAXSS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--dec-max)
+			local params="MAX MAXL MAXS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--qnt-type)
+			local params="STD STD_FAST TRICKY"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--term-type)
+			local params="STD LEGACY"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--cde-fb-gen-method)
+			local params="GA TV"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
 
 		*)
-			if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] || \
+			if [[ ${cur} == * || ${COMP_CWORD} -eq 1 ]] || \
 	   		   [[ ${prev} == @(-q|--quiet) ]] ; then
 				COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 				return 0
@@ -228,6 +343,5 @@ _aff3ct() {
 			fi
 		;;
 	esac
-}
-
+} &&
 complete -F _aff3ct aff3ct
