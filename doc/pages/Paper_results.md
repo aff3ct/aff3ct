@@ -209,7 +209,7 @@ Go into the `build` folder.
 
 **The 28th International Workshop on Languages and Compilers for Parallel Computing (LCPC 2015), September 2015.**
 
-The results presented in this paper required to enable some features directly in the source code of **AFF3CT**.
+The results presented in this paper require to enable some features directly in the source code of **AFF3CT**.
 Open the `src/Tools/Factory/Polar/Factory_decoder_polar_gen.cpp` file and uncomment the `#define` like this:
 
 	/* // GENERATED DECODERS // */
