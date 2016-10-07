@@ -76,25 +76,25 @@ Go into the `build` folder.
 
 **Code rate R = 1/2**:
 
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K    32 -N    64 --dec-type SC --dec-imlem N64_K32_SNR25       --dec-simd INTRA --sim-benchs 2000000
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K    64 -N   128 --dec-type SC --dec-imlem N128_K64_SNR25      --dec-simd INTRA --sim-benchs 2000000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K    32 -N    64 --dec-type SC --dec-implem N64_K32_SNR25       --dec-simd INTRA --sim-benchs 2000000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K    64 -N   128 --dec-type SC --dec-implem N128_K64_SNR25      --dec-simd INTRA --sim-benchs 2000000
 	$ ...
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K 32768 -N 65536 --dec-type SC --dec-imlem N65536_K32768_SNR25 --dec-simd INTRA --sim-benchs 2000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K 32768 -N 65536 --dec-type SC --dec-implem N65536_K32768_SNR25 --dec-simd INTRA --sim-benchs 2000
 
 **Code rate R = 5/6**:
 
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K    53 -N    64 --dec-type SC --dec-imlem N64_K53_SNR40       --dec-simd INTRA --sim-benchs 2000000
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K   107 -N   128 --dec-type SC --dec-imlem N107_K128_SNR40     --dec-simd INTRA --sim-benchs 2000000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K    53 -N    64 --dec-type SC --dec-implem N64_K53_SNR40       --dec-simd INTRA --sim-benchs 2000000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K   107 -N   128 --dec-type SC --dec-implem N107_K128_SNR40     --dec-simd INTRA --sim-benchs 2000000
 	$ ...
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 54613 -N 65536 --dec-type SC --dec-imlem N65536_K54613_SNR40 --dec-simd INTRA --sim-benchs 2000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 54613 -N 65536 --dec-type SC --dec-implem N65536_K54613_SNR40 --dec-simd INTRA --sim-benchs 2000
 	
 ### Table 2
 
 Go into the `build` folder.
 
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 14746 -N 16384 --dec-type SC --dec-imlem N16384_K14746_SNR40 --dec-simd INTRA --sim-benchs 8000
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 27568 -N 32768 --dec-type SC --dec-imlem N32768_K27568_SNR40 --dec-simd INTRA --sim-benchs 8000
-	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 29492 -N 32768 --dec-type SC --dec-imlem N32768_K29492_SNR40 --dec-simd INTRA --sim-benchs 8000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 14746 -N 16384 --dec-type SC --dec-implem N16384_K14746_SNR40 --dec-simd INTRA --sim-benchs 8000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 27568 -N 32768 --dec-type SC --dec-implem N32768_K27568_SNR40 --dec-simd INTRA --sim-benchs 8000
+	$ ./bin/aff3ct -p 32 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 29492 -N 32768 --dec-type SC --dec-implem N32768_K29492_SNR40 --dec-simd INTRA --sim-benchs 8000
 	
 ### Figure 7
 
@@ -102,15 +102,15 @@ Go into the `build` folder.
 
 **Code rate R = 1/2**:
 
-	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K   128 -N   256 --dec-type SC --dec-imlem N256_K128_SNR25     --dec-simd INTER --sim-benchs 200000
-	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K   256 -N   512 --dec-type SC --dec-imlem N512_K256_SNR25     --dec-simd INTER --sim-benchs 200000
+	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K   128 -N   256 --dec-type SC --dec-implem N256_K128_SNR25     --dec-simd INTER --sim-benchs 200000
+	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K   256 -N   512 --dec-type SC --dec-implem N512_K256_SNR25     --dec-simd INTER --sim-benchs 200000
 	$ ...
-	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K 32768 -N 65536 --dec-type SC --dec-imlem N65536_K32768_SNR25 --dec-simd INTER --sim-benchs 800
+	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 2.5 -M 2.5 -K 32768 -N 65536 --dec-type SC --dec-implem N65536_K32768_SNR25 --dec-simd INTER --sim-benchs 800
 	
 **Code rate R = 5/6**:
 
-	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K   213 -N   256 --dec-type SC --dec-imlem N256_K213_SNR40     --dec-simd INTER --sim-benchs 200000
-	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K   427 -N   512 --dec-type SC --dec-imlem N512_K427_SNR40     --dec-simd INTER --sim-benchs 200000
+	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K   213 -N   256 --dec-type SC --dec-implem N256_K213_SNR40     --dec-simd INTER --sim-benchs 200000
+	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K   427 -N   512 --dec-type SC --dec-implem N512_K427_SNR40     --dec-simd INTER --sim-benchs 200000
 	$ ...
-	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 54613 -N 65536 --dec-type SC --dec-imlem N65536_K54613_SNR40 --dec-simd INTER --sim-benchs 800
+	$ ./bin/aff3ct -p 8 --sim-type BFER --cde-type POLAR -m 4.0 -M 4.0 -K 54613 -N 65536 --dec-type SC --dec-implem N65536_K54613_SNR40 --dec-simd INTER --sim-benchs 800
 
