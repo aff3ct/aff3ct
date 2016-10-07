@@ -25,14 +25,14 @@ The program only shows the file with the following extensions:
 - `*.data`,
 - `*.perf`.
 
-![Screenshot when starting PyBER](../pages/PyBER_start.png)
+![Screenshot when starting PyBER](../images/PyBER_start.png)
 
 ## Display existing simulations
 
 The `tests/data` folder contains a set of simulations pre-ran with **AFF3CT**. You can select the corresponding files in the `data` folder and take a look on the decoding performances.
 You can display more than one curve at a time by selecting a set of files (keep the `ctrl` or `maj` key pressed and select the files you want to compare with the left mousse button).
 
-![Plot some curves with PyBER](../pages/PyBER_plot.png)
+![Plot some curves with PyBER](../images/PyBER_plot.png)
 
 
 ## Run a new simulation and visualize the results
@@ -44,4 +44,4 @@ Lets assume that you have compiled **AFF3CT** and you are in the `build` directo
 You have just created a new file (`../tests/data/turbo_simu.txt`) and you can visualize it.
 Notice than **PyBER** is able to update the curves in real time (no user action is needed to refresh the selected file(s)).
 
-![Plot AFF3CT data with PyBER](../pages/PyBER_plot2.png)
+![Plot AFF3CT data with PyBER](../images/PyBER_plot2.png)

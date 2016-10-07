@@ -5,10 +5,10 @@ Welcome on the official AFF3CT documentation {#mainpage}
 
 You can get the code source from the **GitHub repository**: [https://github.com/aff3ct/aff3ct](https://github.com/aff3ct/aff3ct).
 
-![Communication chain](../pages/bfer.svg)
+![Communication chain](../images/bfer.svg)
 
 If this is your first time in **AFF3CT** you should read [the compiling guide](md__home_adrien_workspace_HPC_aff3ct_README.html).
 
 ----------------------------------------------
 
-![Example of AFF3CT output](../pages/AFF3CT.png)
+![Example of AFF3CT output](../images/AFF3CT.png)
