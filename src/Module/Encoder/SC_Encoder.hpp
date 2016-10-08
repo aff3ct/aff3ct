@@ -65,7 +65,7 @@ private:
 };
 
 template <typename B>
-class SC_Encoder : public Encoder_interface<B>
+class SC_Encoder : public Encoder_i<B>
 {
 	friend SC_Encoder_module<B>;
 
@@ -74,13 +74,13 @@ public:
 
 public:
 	SC_Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Encoder")
-	: Encoder_interface<B>(K, N, n_frames, name), module(nullptr) {}
+	: Encoder_i<B>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Encoder() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Encoder_interface<B>::set_n_frames(n_frames);
+		Encoder_i<B>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -96,7 +96,7 @@ template <typename B>
 using Encoder = SC_Encoder<B>;
 #else
 template <typename B>
-using Encoder = Encoder_interface<B>;
+using Encoder = Encoder_i<B>;
 #endif
 
 #endif /* SC_ENCODER_HPP_ */

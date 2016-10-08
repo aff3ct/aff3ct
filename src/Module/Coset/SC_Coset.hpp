@@ -78,7 +78,7 @@ private:
 };
 
 template <typename B, typename D>
-class SC_Coset : public Coset_interface<B,D>
+class SC_Coset : public Coset_i<B,D>
 {
 	friend SC_Coset_module<B,D>;
 
@@ -87,7 +87,7 @@ public:
 
 public:
 	SC_Coset(const int size, const int n_frames = 1, const std::string name = "SC_Coset")
-	: Coset_interface<B,D>(size, n_frames, name), module(nullptr) {}
+	: Coset_i<B,D>(size, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Coset()
 	{ 
@@ -96,7 +96,7 @@ public:
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Coset_interface<B,D>::set_n_frames(n_frames);
+		Coset_i<B,D>::set_n_frames(n_frames);
 		if (module != nullptr) module->resize_buffers();
 	}
 
@@ -110,7 +110,7 @@ template <typename B, typename D>
 using Coset = SC_Coset<B,D>;
 #else
 template <typename B, typename D>
-using Coset = Coset_interface<B,D>;
+using Coset = Coset_i<B,D>;
 #endif
 
 #endif /* SC_COSET_HPP_ */

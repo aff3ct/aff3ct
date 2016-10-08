@@ -185,7 +185,7 @@ private:
 };
 
 template <typename T>
-class SC_Interleaver : public Interleaver_interface<T>
+class SC_Interleaver : public Interleaver_i<T>
 {
 	friend SC_Interleaver_module_interleaver  <T>;
 	friend SC_Interleaver_module_deinterleaver<T>;
@@ -196,7 +196,7 @@ public:
 
 public:
 	SC_Interleaver(const int size, const int n_frames = 1, const std::string name = "SC_Interleaver")
-	: Interleaver_interface<T>(size, n_frames, name), module_inter(nullptr), module_deinter(nullptr) {}
+	: Interleaver_i<T>(size, n_frames, name), module_inter(nullptr), module_deinter(nullptr) {}
 
 	virtual ~SC_Interleaver() 
 	{
@@ -206,7 +206,7 @@ public:
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Interleaver_interface<T>::set_n_frames(n_frames);
+		Interleaver_i<T>::set_n_frames(n_frames);
 
 		if (module_inter   != nullptr) module_inter  ->resize_buffers();
 		if (module_deinter != nullptr) module_deinter->resize_buffers();
@@ -232,7 +232,7 @@ template <typename T>
 using Interleaver = SC_Interleaver<T>;
 #else
 template <typename T>
-using Interleaver = Interleaver_interface<T>;
+using Interleaver = Interleaver_i<T>;
 #endif
 
 #endif /* SC_INTERLEAVER_HPP_ */

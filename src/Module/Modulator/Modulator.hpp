@@ -15,7 +15,7 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Modulator_interface
+ * \class Modulator_i
  *
  * \brief Modulates, filters and/or demodulates a signal.
  *
@@ -23,10 +23,10 @@
  * \tparam R: type of the reals (floating-point representation) in the modulation and in the filtering process.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the demodulation.
  *
- * Please use Modulator for inheritance (instead of Modulator_interface)
+ * Please use Modulator for inheritance (instead of Modulator_i)
  */
 template <typename B, typename R, typename Q>
-class Modulator_interface : public Module
+class Modulator_i : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
@@ -43,8 +43,8 @@ public:
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_interface(const int N, const int N_mod, const int N_fil, const int n_frames = 1, 
-	                    const std::string name = "Modulator_interface")
+	Modulator_i(const int N, const int N_mod, const int N_fil, const int n_frames = 1, 
+	                    const std::string name = "Modulator_i")
 	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil)
 	{
 	}
@@ -57,8 +57,8 @@ public:
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_interface(const int N, const int N_mod, const int n_frames = 1, 
-	                    const std::string name = "Modulator_interface")
+	Modulator_i(const int N, const int N_mod, const int n_frames = 1, 
+	                    const std::string name = "Modulator_i")
 	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(get_buffer_size_after_filtering(N_mod))
 	{
 	}
@@ -70,7 +70,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_interface(const int N, const int n_frames = 1, const std::string name = "Modulator_interface")
+	Modulator_i(const int N, const int n_frames = 1, const std::string name = "Modulator_i")
 	: Module(n_frames, name), N(N), N_mod(get_buffer_size_after_modulation(N)),
 	  N_fil(get_buffer_size_after_filtering(N))
 	{
@@ -79,7 +79,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modulator_interface()
+	virtual ~Modulator_i()
 	{
 	}
 

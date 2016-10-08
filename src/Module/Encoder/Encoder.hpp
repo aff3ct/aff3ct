@@ -15,16 +15,16 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Encoder_interface
+ * \class Encoder_i
  *
  * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
  *
  * \tparam B: type of the bits in the encoder.
  *
- * Please use Encoder for inheritance (instead of Encoder_interface)
+ * Please use Encoder for inheritance (instead of Encoder_i)
  */
 template <typename B>
-class Encoder_interface : public Module
+class Encoder_i : public Module
 {
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -39,7 +39,7 @@ public:
 	 * \param n_frames: number of frames to process in the Encoder.
 	 * \param name:     Encoder's name.
 	 */
-	Encoder_interface(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_interface") 
+	Encoder_i(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_i")
 	: Module(n_frames, name), K(K), N(N)
 	{
 	}
@@ -47,7 +47,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Encoder_interface()
+	virtual ~Encoder_i()
 	{
 	}
 

@@ -14,18 +14,18 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Quantizer_interface
+ * \class Quantizer_i
  *
  * \brief Quantizes floating-point data to fixed-point representation.
  *
  * \tparam R: type of the reals (floating-point representation) in the Quantizer.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the Quantizer.
  *
- * Please use Quantizer for inheritance (instead of Quantizer_interface).
+ * Please use Quantizer for inheritance (instead of Quantizer_i).
  * If Q is a floating-point representation then the Quantizer does nothing more than a cast.
  */
 template <typename R, typename Q>
-class Quantizer_interface : public Module
+class Quantizer_i : public Module
 {
 protected:
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
@@ -38,7 +38,7 @@ public:
 	 * \param n_frames: number of frames to process in the Decoder.
 	 * \param name:     Quantizer's name.
 	 */
-	Quantizer_interface(const int N, const int n_frames = 1, const std::string name = "Quantizer_interface")
+	Quantizer_i(const int N, const int n_frames = 1, const std::string name = "Quantizer_i")
 	: Module(n_frames, name), N(N)
 	{
 	}
@@ -46,7 +46,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Quantizer_interface()
+	virtual ~Quantizer_i()
 	{
 	}
 

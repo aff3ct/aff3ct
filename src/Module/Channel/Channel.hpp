@@ -15,16 +15,16 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Channel_interface
+ * \class Channel_i
  *
  * \brief The Channel is the physical transmission medium.
  *
  * \tparam R: type of the reals (floating-point representation) in the Channel.
  *
- * Please use Channel for inheritance (instead of Channel_interface).
+ * Please use Channel for inheritance (instead of Channel_i).
  */
 template <typename R>
-class Channel_interface : public Module
+class Channel_i : public Module
 {
 protected:
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
@@ -37,7 +37,7 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel_interface(const int N, const int n_frames = 1, const std::string name = "Channel_interface")
+	Channel_i(const int N, const int n_frames = 1, const std::string name = "Channel_i")
 	: Module(n_frames, name), N(N)
 	{
 	}
@@ -45,7 +45,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel_interface()
+	virtual ~Channel_i()
 	{
 	}
 

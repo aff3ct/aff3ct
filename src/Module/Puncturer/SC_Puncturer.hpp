@@ -114,7 +114,7 @@ private:
 };
 
 template <typename B, typename Q>
-class SC_Puncturer : public Puncturer_interface<B,Q>
+class SC_Puncturer : public Puncturer_i<B,Q>
 {
 	friend SC_Puncturer_module_puncturer  <B,Q>;
 	friend SC_Puncturer_module_depuncturer<B,Q>;
@@ -126,7 +126,7 @@ public:
 public:
 	SC_Puncturer(const int K, const int N, const int N_code, const int n_frames = 1, 
 	             const std::string name = "SC_Puncturer")
-	: Puncturer_interface<B,Q>(K, N, N_code, n_frames, name), 
+	: Puncturer_i<B,Q>(K, N, N_code, n_frames, name),
 	  module_punct(nullptr), module_depunct(nullptr) {}
 
 	virtual ~SC_Puncturer() 
@@ -137,7 +137,7 @@ public:
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Puncturer_interface<B,Q>::set_n_frames(n_frames);
+		Puncturer_i<B,Q>::set_n_frames(n_frames);
 
 		if (module_punct   != nullptr) module_punct  ->resize_buffers();
 		if (module_depunct != nullptr) module_depunct->resize_buffers();
@@ -160,7 +160,7 @@ template <typename B, typename Q>
 using Puncturer = SC_Puncturer<B,Q>;
 #else
 template <typename B, typename Q>
-using Puncturer = Puncturer_interface<B,Q>;
+using Puncturer = Puncturer_i<B,Q>;
 #endif
 
 #endif /* SC_PUNCTURER_HPP_ */

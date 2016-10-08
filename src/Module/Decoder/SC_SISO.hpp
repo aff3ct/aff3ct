@@ -64,7 +64,7 @@ private:
 };
 
 template <typename R>
-class SC_SISO : public SISO_interface<R>
+class SC_SISO : public SISO_i<R>
 {
 	friend SC_SISO_module<R>;
 
@@ -73,7 +73,7 @@ public:
 
 public:
 	SC_SISO(const int K, const int N, const int n_frames, const std::string name = "SC_SISO")
-	: SISO_interface<R>(K, N, n_frames, name), module_siso(nullptr) {}
+	: SISO_i<R>(K, N, n_frames, name), module_siso(nullptr) {}
 
 	virtual ~SC_SISO() { if (module_siso != nullptr) { delete module_siso; module_siso = nullptr; } }
 
@@ -87,7 +87,7 @@ template <typename R>
 using SISO = SC_SISO<R>;
 #else
 template <typename R>
-using SISO = SISO_interface<R>;
+using SISO = SISO_i<R>;
 #endif
 
 #endif /* SC_SISO_HPP_ */

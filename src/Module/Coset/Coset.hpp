@@ -16,17 +16,17 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Coset_interface
+ * \class Coset_i
  *
  * \brief Performs the coset approach (flips the bits or the signs depending on the initial codeword).
  *
  * \tparam B: type of the bits in the ref data.
  * \tparam D: type of the input/output data.
  *
- * Please use Coset for inheritance (instead of Coset_interface).
+ * Please use Coset for inheritance (instead of Coset_i).
  */
 template <typename B, typename D>
-class Coset_interface : public Module
+class Coset_i : public Module
 {
 protected:
 	const int size; /*!< Size of the input data */
@@ -39,7 +39,7 @@ public:
 	 * \param n_frames: number of frames to process in the Source.
 	 * \param name:     Source's name.
 	 */
-	Coset_interface(const int size, const int n_frames = 1, const std::string name = "Coset_interface")
+	Coset_i(const int size, const int n_frames = 1, const std::string name = "Coset_i")
 	: Module(n_frames, name), size(size)
 	{
 	}
@@ -47,7 +47,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Coset_interface()
+	virtual ~Coset_i()
 	{
 	}
 

@@ -16,16 +16,16 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Interleaver_interface
+ * \class Interleaver_i
  *
  * \brief Interleaves or deinterleaves a vector.
  *
  * \tparam T: type of the integers used in the lookup tables to store indirections.
  *
- * Please use Interleaver for inheritance (instead of Interleaver_interface)
+ * Please use Interleaver for inheritance (instead of Interleaver_i)
  */
 template <typename T>
-class Interleaver_interface : public Module
+class Interleaver_i : public Module
 {
 protected:
 	mipp::vector<T> pi;     /*!< Lookup table for the interleaving process */
@@ -45,7 +45,7 @@ public:
 	 * \param n_frames: number of frames to process in the Interleaver.
 	 * \param name:     Interleaver's name.
 	 */
-	Interleaver_interface(const int size, const int n_frames = 1, const std::string name = "Interleaver_interface") 
+	Interleaver_i(const int size, const int n_frames = 1, const std::string name = "Interleaver_i")
 	: Module(n_frames, name), pi(size), pi_inv(size)
 	{
 	}
@@ -53,7 +53,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Interleaver_interface()
+	virtual ~Interleaver_i()
 	{
 	}
 
@@ -122,7 +122,7 @@ public:
 	 *
 	 * \return true if the two interleavers are the same (if they have the same lookup tables), false otherwise.
 	 */
-	bool operator==(Interleaver_interface<T> &interleaver) const
+	bool operator==(Interleaver_i<T> &interleaver) const
 	{
 		if (interleaver.pi.size() != this->pi.size())
 			return false;

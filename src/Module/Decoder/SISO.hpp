@@ -15,16 +15,16 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class SISO_interface
+ * \class SISO_i
  *
  * \brief A SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
  *
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the SISO.
  *
- * Please use SISO for inheritance (instead of SISO_interface).
+ * Please use SISO for inheritance (instead of SISO_i).
  */
 template <typename R>
-class SISO_interface : public Module
+class SISO_i : public Module
 {
 protected:
 	const int K_siso; /*!< Number of information bits in one frame */
@@ -39,13 +39,13 @@ public:
 	 * \param n_frames: number of frames to process in the SISO.
 	 * \param name    : decoder name.
 	 */
-	SISO_interface(const int K, const int N, const int n_frames = 1, std::string name = "SISO_interface") 
+	SISO_i(const int K, const int N, const int n_frames = 1, std::string name = "SISO_i")
 	: Module(n_frames, name), K_siso(K), N_siso(N) {}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~SISO_interface() {};
+	virtual ~SISO_i() {};
 
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be

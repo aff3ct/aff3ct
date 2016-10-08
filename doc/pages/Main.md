@@ -24,17 +24,17 @@ Here is the list of available type of Simulation:
 ![Communication chain](../images/bfer_bferi.png)
 
 Many Module objects can be used in a Simulation:
-- Source_interface,
-- CRC_interface,
-- Encoder_interface,
-- Puncturer_interface,
-- Interleaver_interface,
-- Modulator_interface,
-- Channel_interface,
-- Quantizer_interface,
-- Coset_interface,
-- Decoder_interface,
-- Monitor_interface.
+- Source_i,
+- CRC_i,
+- Encoder_i,
+- Puncturer_i,
+- Interleaver_i,
+- Modulator_i,
+- Channel_i,
+- Quantizer_i,
+- Coset_i,
+- Decoder_i,
+- Monitor_i.
 
 ------------------------------------------------------------------------------------------------------------------------
 

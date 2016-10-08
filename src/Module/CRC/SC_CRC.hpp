@@ -62,7 +62,7 @@ private:
 };
 
 template <typename B>
-class SC_CRC : public CRC_interface<B>
+class SC_CRC : public CRC_i<B>
 {
 	friend SC_CRC_module<B>;
 
@@ -71,13 +71,13 @@ public:
 
 public:
 	SC_CRC(const int K, const int n_frames = 1, const std::string name = "SC_CRC") 
-	: CRC_interface<B>(K, n_frames, name), module(nullptr) {}
+	: CRC_i<B>(K, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_CRC() { if (module != nullptr) { delete module; module = nullptr; } }
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		CRC_interface<B>::set_n_frames(n_frames);
+		CRC_i<B>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -93,7 +93,7 @@ template <typename B>
 using CRC = SC_CRC<B>;
 #else
 template <typename B>
-using CRC = CRC_interface<B>;
+using CRC = CRC_i<B>;
 #endif
 
 #endif /* SC_CRC_HPP_ */

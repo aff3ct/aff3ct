@@ -15,7 +15,7 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class Decoder_interface
+ * \class Decoder_i
  *
  * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
  *
@@ -23,10 +23,10 @@
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_interface).
+ * Please use Decoder for inheritance (instead of Decoder_i).
  */
 template <typename B, typename R>
-class Decoder_interface : public Module
+class Decoder_i : public Module
 {
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -41,7 +41,7 @@ public:
 	 * \param n_frames: number of frames to process in the Decoder.
 	 * \param name:     Decoder's name.
 	 */
-	Decoder_interface(const int K, const int N, const int n_frames = 1, std::string name = "Decoder_interface") 
+	Decoder_i(const int K, const int N, const int n_frames = 1, std::string name = "Decoder_i")
 	: Module(n_frames, name), K(K), N(N)
 	{
 	}
@@ -49,7 +49,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_interface()
+	virtual ~Decoder_i()
 	{
 	}
 

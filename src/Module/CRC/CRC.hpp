@@ -15,16 +15,16 @@
 #include "Module/Module.hpp"
 
 /*!
- * \class CRC_interface
+ * \class CRC_i
  *
  * \brief Adds/builds and checks a Cyclic Redundancy Check (CRC) for a set of information bits.
  *
  * \tparam B: type of the bits in the CRC.
  *
- * Please use CRC for inheritance (instead of CRC_interface).
+ * Please use CRC for inheritance (instead of CRC_i).
  */
 template <typename B>
-class CRC_interface : public Module
+class CRC_i : public Module
 {
 protected:
 	const int K; /*!< Number of information bits (the CRC bits are included in K) */
@@ -37,7 +37,7 @@ public:
 	 * \param n_frames: number of frames to process in the CRC.
 	 * \param name:     CRC's name.
 	 */
-	CRC_interface(const int K, const int n_frames = 1, const std::string name = "CRC_interface") 
+	CRC_i(const int K, const int n_frames = 1, const std::string name = "CRC_i")
 	: Module(n_frames, name), K(K)
 	{
 	}
@@ -45,7 +45,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~CRC_interface()
+	virtual ~CRC_i()
 	{
 	}
 

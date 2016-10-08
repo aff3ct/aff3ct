@@ -71,7 +71,7 @@ private:
 };
 
 template <typename B>
-class SC_Monitor : public Monitor_interface<B>
+class SC_Monitor : public Monitor_i<B>
 {
 	friend SC_Monitor_module<B>;
 
@@ -80,13 +80,13 @@ public:
 
 public:
 	SC_Monitor(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_interface<B>(K, N, n_frames, name), module(nullptr) {}
+	: Monitor_i<B>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (module != nullptr) { delete module; module = nullptr; }};
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Monitor_interface<B>::set_n_frames(n_frames);
+		Monitor_i<B>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -102,7 +102,7 @@ template <typename B>
 using Monitor = SC_Monitor<B>;
 #else
 template <typename B>
-using Monitor = Monitor_interface<B>;
+using Monitor = Monitor_i<B>;
 #endif
 
 #endif /* SC_MONITOR_HPP_ */

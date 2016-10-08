@@ -236,7 +236,7 @@ private:
 };
 
 template <typename B, typename R, typename Q>
-class SC_Modulator : public Modulator_interface<B,R,Q>
+class SC_Modulator : public Modulator_i<B,R,Q>
 {
 	friend SC_Modulator_module_modulator   <B,R,Q>;
 	friend SC_Modulator_module_filterer    <B,R,Q>;
@@ -252,15 +252,15 @@ public:
 public:
 	SC_Modulator(const int N, const int N_mod, const int N_fil, const int n_frames = 1, 
 	             const std::string name = "SC_Modulator")
-	: Modulator_interface<B,R,Q>(N, N_mod, N_fil, n_frames, name), 
+	: Modulator_i<B,R,Q>(N, N_mod, N_fil, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
 	SC_Modulator(const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_interface<B,R,Q>(N, N_mod, n_frames, name),
+	: Modulator_i<B,R,Q>(N, N_mod, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
 	SC_Modulator(const int N, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_interface<B,R,Q>(N, n_frames, name),
+	: Modulator_i<B,R,Q>(N, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
 	virtual ~SC_Modulator() 
@@ -274,26 +274,26 @@ public:
 	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2) = 0;
 	virtual void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2)
 	{
-		Modulator_interface<B,R,Q>::filter(Y_N1, Y_N2);
+		Modulator_i<B,R,Q>::filter(Y_N1, Y_N2);
 	}
 	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2) = 0;
 	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 	{
-		Modulator_interface<B,R,Q>::demodulate(Y_N1, Y_N2, Y_N3);
+		Modulator_i<B,R,Q>::demodulate(Y_N1, Y_N2, Y_N3);
 	}
 
 	virtual int get_buffer_size_after_modulation(const int N) 
 	{
-		return Modulator_interface<B,R,Q>::get_buffer_size_after_modulation(N);
+		return Modulator_i<B,R,Q>::get_buffer_size_after_modulation(N);
 	}
 	virtual int get_buffer_size_after_filtering (const int N)
 	{
-		return Modulator_interface<B,R,Q>::get_buffer_size_after_filtering(N);
+		return Modulator_i<B,R,Q>::get_buffer_size_after_filtering(N);
 	}
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Modulator_interface<B,R,Q>::set_n_frames(n_frames);
+		Modulator_i<B,R,Q>::set_n_frames(n_frames);
 
 		if (module_mod    != nullptr) module_mod   ->resize_buffers();
 		if (module_filt   != nullptr) module_filt  ->resize_buffers();
@@ -330,7 +330,7 @@ template <typename B, typename R, typename Q>
 using Modulator = SC_Modulator<B,R,Q>;
 #else
 template <typename B, typename R, typename Q>
-using Modulator = Modulator_interface<B,R,Q>;
+using Modulator = Modulator_i<B,R,Q>;
 #endif
 
 #endif /* SC_MODULATOR_HPP_ */

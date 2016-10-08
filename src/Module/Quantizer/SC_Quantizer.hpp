@@ -65,7 +65,7 @@ private:
 };
 
 template <typename R, typename Q>
-class SC_Quantizer : public Quantizer_interface<R,Q>
+class SC_Quantizer : public Quantizer_i<R,Q>
 {
 	friend SC_Quantizer_module<R,Q>;
 
@@ -74,13 +74,13 @@ public:
 
 public:
 	SC_Quantizer(const int N, const int n_frames = 1, const std::string name = "SC_Quantizer")
-	: Quantizer_interface<R,Q>(N, n_frames, name), module(nullptr) {}
+	: Quantizer_i<R,Q>(N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Quantizer() { if (module != nullptr) { delete module; module = nullptr; } };
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Quantizer_interface<R,Q>::set_n_frames(n_frames);
+		Quantizer_i<R,Q>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -96,7 +96,7 @@ template <typename R, typename Q>
 using Quantizer = SC_Quantizer<R,Q>;
 #else
 template <typename R, typename Q>
-using Quantizer = Quantizer_interface<R,Q>;
+using Quantizer = Quantizer_i<R,Q>;
 #endif
 
 #endif /* SC_QUANTIZER_HPP_ */

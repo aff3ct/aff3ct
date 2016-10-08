@@ -65,7 +65,7 @@ private:
 };
 
 template <typename R>
-class SC_Channel : public Channel_interface<R>
+class SC_Channel : public Channel_i<R>
 {
 	friend SC_Channel_module<R>;
 
@@ -74,13 +74,13 @@ public:
 
 public:
 	SC_Channel(const int N, const int n_frames = 1, const std::string name = "SC_Channel")
-	: Channel_interface<R>(N, n_frames, name), module(nullptr) {}
+	: Channel_i<R>(N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Channel() { if (module != nullptr) { delete module; module = nullptr; } };
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Channel_interface<R>::set_n_frames(n_frames);
+		Channel_i<R>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -96,7 +96,7 @@ template <typename R>
 using Channel = SC_Channel<R>;
 #else
 template <typename R>
-using Channel = Channel_interface<R>;
+using Channel = Channel_i<R>;
 #endif
 
 #endif /* SC_CHANNELS_HPP_ */

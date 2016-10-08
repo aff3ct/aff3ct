@@ -67,7 +67,7 @@ private:
 };
 
 template <typename B, typename R>
-class SC_Decoder : public Decoder_interface<B,R>
+class SC_Decoder : public Decoder_i<B,R>
 {
 	friend SC_Decoder_module<B,R>;
 
@@ -76,7 +76,7 @@ public:
 
 public:
 	SC_Decoder(const int K, const int N, const int n_frames, const std::string name = "SC_Decoder")
-	: Decoder_interface<B,R>(K, N, n_frames, name), module(nullptr) {}
+	: Decoder_i<B,R>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Decoder() { if (module != nullptr) { delete module; module = nullptr; } }
 
@@ -90,7 +90,7 @@ template <typename B, typename R>
 using Decoder = SC_Decoder<B,R>;
 #else
 template <typename B, typename R>
-using Decoder = Decoder_interface<B,R>;
+using Decoder = Decoder_i<B,R>;
 #endif
 
 #endif /* DECODER_HPP_ */

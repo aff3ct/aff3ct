@@ -61,7 +61,7 @@ private:
 };
 
 template <typename B>
-class SC_Source : public Source_interface<B>
+class SC_Source : public Source_i<B>
 {
 	friend SC_Source_module<B>;
 
@@ -70,13 +70,13 @@ public:
 
 public:
 	SC_Source(const int K, const int n_frames = 1, const std::string name = "Source_SC")
-	: Source_interface<B>(K, n_frames, name), module(nullptr) {}
+	: Source_i<B>(K, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Source() { if (module != nullptr) { delete module; module = nullptr; } };
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Source_interface<B>::set_n_frames(n_frames);
+		Source_i<B>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -92,7 +92,7 @@ template <typename B>
 using Source = SC_Source<B>;
 #else
 template <typename B>
-using Source = Source_interface<B>;
+using Source = Source_i<B>;
 #endif
 
 #endif /* SC_SOURCE_HPP_ */
