@@ -5,7 +5,7 @@ Welcome on the official AFF3CT documentation {#mainpage}
 
 You can get the code source from the **GitHub repository**: [https://github.com/aff3ct/aff3ct](https://github.com/aff3ct/aff3ct).
 
-**AFF3CT** works with many compilers (`g++`, `clang++`, `icpc`, `MSVC++`) and on the most common operating systems (Linux, MacOS X and Windows).
+**AFF3CT** works with many compilers (`g++`, `clang++`, `icpc`, `msvc++`) and on the most common operating systems (Linux, MacOS X and Windows).
 
 ## Related pages
 
@@ -21,8 +21,7 @@ Here is the list of available type of Simulation:
 - Simulation_BFERI: dedicated to the BER/FER performances with turbo-demodulation between the demodulator and the decoder,
 - Simulation_EXIT: dedicated to the EXtrinsic Information Transfer (EXIT) chart.
 
-Illustration of the Simulation_BFER:
-![Communication chain](../images/bfer.svg)
+![Communication chain](../images/bfer_bferi.png)
 
 Many Module objects can be used in a Simulation:
 - Source_interface,
