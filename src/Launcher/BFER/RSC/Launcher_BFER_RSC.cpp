@@ -1,10 +1,12 @@
+#include <cmath>
+#include <regex>
+#include <string>
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
+#include "Simulation/BFER/RSC/Simulation_BFER_RSC.hpp"
+
 #include "Launcher_BFER_RSC.hpp"
-#include "../../../Simulation/BFER/RSC/Simulation_BFER_RSC.hpp"
-#include <regex>
-#include <string>
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_RSC<B,R,Q,QD>
@@ -13,8 +15,9 @@ Launcher_BFER_RSC<B,R,Q,QD>
 {
 	this->params.code     .tail_length   = 2*3;
 	this->params.code     .type          = "RSC";
+	this->params.encoder  .type          = "GENERIC";
 	this->params.encoder  .buffered      = true;
-	this->params.encoder  .poly          = {13,11};
+	this->params.encoder  .poly          = {013, 015};
 	this->params.quantizer.n_bits        = 6;
 	this->params.quantizer.n_decimals    = 3;
 	this->params.decoder  .type          = "BCJR";
@@ -33,9 +36,16 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
+	this->opt_args[{"enc-type"}] =
+		{"string",
+		 "the type of the RSC encoder.",
+		 "GENERIC"};
+	this->opt_args[{"enc-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code (used only with --enc-type set to GENERIC), should be of the form \"{A,B}\"."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	this->opt_args[{"dec-type", "D"}].push_back("BCJR, BCJR4, BCJR_G, LTE, CCSDS"      );
+	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
 	this->opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
 	this->opt_args[{"dec-simd"}] =
 		{"string",
@@ -45,10 +55,6 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 		{"string",
 		 "the MAX implementation for the nodes.",
 		 "MAX, MAXL, MAXS"};
-
-	this->opt_args[{"enc-poly"}] =
-			{"string",
-			 "the polynomials describing RSC code (Used only with --dec-type set to BCJR_G). Should be of the form (A,B)."};
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -58,28 +64,44 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	Launcher_BFER<B,R,Q>::store_args();
 
 	// ------------------------------------------------------------------------------------------------------- encoder
-	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered      = false;
+	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
+	if(this->ar.exist_arg({"enc-type"   })) this->params.encoder.type     = this->ar.get_arg({"enc-type"});
+	if (this->params.encoder.type == "GENERIC")
+	{
+		if (this->ar.exist_arg({"enc-poly"}))
+		{
+			auto poly_str = this->ar.get_arg({"enc-poly"});
+//			std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
+//			assert(std::regex_match(poly_str, pattern));
+			std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+		}
+	}
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-simd"   })) this->params.decoder.simd_strategy = this->ar.get_arg({"dec-simd"});
 	if(this->ar.exist_arg({"dec-max"    })) this->params.decoder.max           = this->ar.get_arg({"dec-max" });
 
-	if (this->params.decoder.type == "BCJR4" || this->params.decoder.type == "CCSDS")
-		this->params.code.tail_length = 2*4;
-
-	if (this->params.decoder.type == "BCJR_G")
+	if (this->params.decoder.type == "LTE")
 	{
-		std::string poly_str;
-		if(this->ar.exist_arg({"enc-poly"    }))
-			{
-
-				poly_str           = this->ar.get_arg({"enc-poly" });
-				std::regex pattern {"\\(\\d{1,5},\\d{1,5}\\)"};
-				assert(std::regex_match(poly_str, pattern));
-				std::sscanf (poly_str.c_str(), "(%o,%o)", &this->params.encoder.poly[0] , &this->params.encoder.poly[1]);
-				this->params.code.tail_length = 2*std::floor(std::log2((float)std::max(this->params.encoder.poly[0],this->params.encoder.poly[1])));
-			}
+		this->params.decoder.type = "BCJR";
+		this->params.encoder.poly = {013, 015};
 	}
+
+	if (this->params.decoder.type == "CCSDS")
+	{
+		this->params.decoder.type = "BCJR";
+		this->params.encoder.poly = {023, 033};
+	}
+
+	if (!(this->params.encoder.poly[0] == 013 && this->params.encoder.poly[1] == 015)) // if not LTE BCJR
+	{
+		this->params.decoder.type          = "BCJR";
+		this->params.decoder.implem        = "GENERIC";
+		this->params.decoder.simd_strategy = "";
+	}
+
+	this->params.code.tail_length = 2 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
+	                                                                         this->params.encoder.poly[1])));
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -95,11 +117,24 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_RSC<B,R,Q,QD>
 {
 	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
 
+	std::stringstream type;
+	type << this->params.encoder.type;
+	if (this->params.encoder.type == "GENERIC")
+		type << " {0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1]
+		     << "}";
+
 	auto p = Launcher_BFER<B,R,Q>::header_encoder();
 
-	p.push_back(std::make_pair(std::string("Buffered"), buff_enc));
+	std::vector<std::pair<std::string,std::string>> p_new;
 
-	return p;
+	p_new.push_back(std::make_pair(std::string("Type"), type.str()));
+
+	for (auto i = 0; i < (int)p.size(); i++)
+		p_new.push_back(p[i]);
+
+	p_new.push_back(std::make_pair(std::string("Buffered"), buff_enc));
+
+	return p_new;
 }
 
 template <typename B, typename R, typename Q, typename QD>

@@ -6,8 +6,9 @@
 
 template <typename B>
 Encoder_RSC3_CPE_sys<B>
-::Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding)
-: Encoder_RSC_sys<B>(K, N, 3, n_frames, buffered_encoding)
+::Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding,
+                       const std::string name)
+: Encoder_RSC_sys<B>(K, N, 3, n_frames, buffered_encoding, name)
 {
 }
 
@@ -20,7 +21,6 @@ int Encoder_RSC3_CPE_sys<B>
 	symbol = (((state >> 2) & 0x1) << 2) | symbol;
 	symbol = (((state >> 1) & 0x1) << 1) | symbol;
 	symbol = (((state >> 0) & 0x1) << 0) | symbol;
-
 
 	auto last_bit = state & 0x1;
 	state = (bit_sys << 2) | ((state >> 1) ^ last_bit);

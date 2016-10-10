@@ -1,7 +1,4 @@
-#include "Module/Encoder/RSC/Encoder_RSC3_sys.hpp"
-#include "Module/Encoder/RSC/Encoder_RSC4_sys.hpp"
-#include "Module/Encoder/RSC/Encoder_RSC_G_sys.hpp"
-
+#include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Factory_encoder_RSC.hpp"
 
 template <typename B>
@@ -15,12 +12,11 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 	// build the encoder
 	if (params.encoder.systematic)
 	{
-		if (params.decoder.type == "BCJR4" || params.decoder.type == "CCSDS")
-			encoder = new Encoder_RSC4_sys<B>(params.code.K, N, n_frames, params.encoder.buffered);
-		else if (params.decoder.type == "BCJR_G")
-			encoder = new Encoder_RSC_G_sys<B>(params.code.K, N, n_frames, params.encoder.buffered, params.encoder.poly);
-		else
-			encoder = new Encoder_RSC3_sys<B>(params.code.K, N, n_frames, params.encoder.buffered);
+		if (params.encoder.type == "GENERIC")
+		{
+			encoder = new Encoder_RSC_generic_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
+			                                         params.encoder.poly);
+		}
 	}
 
 	return encoder;

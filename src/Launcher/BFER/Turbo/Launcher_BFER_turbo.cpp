@@ -1,8 +1,12 @@
+#include <cmath>
+#include <regex>
+#include <string>
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
+#include "Simulation/BFER/Turbo/Simulation_BFER_turbo.hpp"
+
 #include "Launcher_BFER_turbo.hpp"
-#include "../../../Simulation/BFER/Turbo/Simulation_BFER_turbo.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_turbo<B,R,Q,QD>
@@ -12,11 +16,13 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.code       .type           = "TURBO";
 	this->params.code       .tail_length    = 4 * 3;
 	this->params.crc        .type           = "";
+	this->params.encoder    .type           = "GENERIC";
 	this->params.encoder    .buffered       = true;
+	this->params.encoder    .poly           = {013, 015};
 	this->params.interleaver.type           = "LTE";
 	this->params.quantizer  .n_bits         = 6;
 	this->params.quantizer  .n_decimals     = (typeid(Q) == typeid(short)) ? 3 : 2;
-	this->params.decoder    .type           = "LTE";
+	this->params.decoder    .type           = "BCJR";
 	this->params.decoder    .implem         = "FAST";
 	this->params.decoder    .max            = "MAX";
 	this->params.decoder    .n_ite          = 6;
@@ -40,6 +46,13 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
+	this->opt_args[{"enc-type"}] =
+		{"string",
+		 "the type of the turbo encoder.",
+		 "GENERIC"};
+	this->opt_args[{"enc-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code (used only with --enc-type set to GENERIC), should be of the form \"{A,B}\"."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
@@ -48,7 +61,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	this->opt_args[{"dec-type", "D"}].push_back("LTE, CCSDS"                   );
+	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
 	this->opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
@@ -78,6 +91,17 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
+	if(this->ar.exist_arg({"enc-type"   })) this->params.encoder.type     = this->ar.get_arg({"enc-type"});
+	if (this->params.encoder.type == "GENERIC")
+	{
+		if (this->ar.exist_arg({"enc-poly"}))
+		{
+			auto poly_str = this->ar.get_arg({"enc-poly"});
+//			std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
+//			assert(std::regex_match(poly_str, pattern));
+			std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+		}
+	}
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
@@ -88,8 +112,27 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
 	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
 
-	if (this->params.decoder.type == "BCJR4" || this->params.decoder.type == "CCSDS")
-		this->params.code.tail_length = 4*4;
+	if (this->params.decoder.type == "LTE")
+	{
+		this->params.decoder.type = "BCJR";
+		this->params.encoder.poly = {013, 015};
+	}
+
+	if (this->params.decoder.type == "CCSDS")
+	{
+		this->params.decoder.type = "BCJR";
+		this->params.encoder.poly = {023, 033};
+	}
+
+	if (!(this->params.encoder.poly[0] == 013 && this->params.encoder.poly[1] == 015)) // if not LTE BCJR
+	{
+		this->params.decoder.type          = "BCJR";
+		this->params.decoder.implem        = "GENERIC";
+		this->params.decoder.simd_strategy = "";
+	}
+
+	this->params.code.tail_length = 4 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
+	                                                                         this->params.encoder.poly[1])));
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -115,13 +158,26 @@ template <typename B, typename R, typename Q, typename QD>
 std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 ::header_encoder()
 {
-	std::string buff_enc = (this->params.encoder.buffered) ? "on" : "off";
+	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
+
+	std::stringstream type;
+	type << this->params.encoder.type;
+	if (this->params.encoder.type == "GENERIC")
+		type << " {0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1]
+		     << "}";
 
 	auto p = Launcher_BFER<B,R,Q>::header_encoder();
 
-	p.push_back(std::make_pair("Buffered", buff_enc));
+	std::vector<std::pair<std::string,std::string>> p_new;
 
-	return p;
+	p_new.push_back(std::make_pair(std::string("Type"), type.str()));
+
+	for (auto i = 0; i < (int)p.size(); i++)
+		p_new.push_back(p[i]);
+
+	p_new.push_back(std::make_pair(std::string("Buffered"), buff_enc));
+
+	return p_new;
 }
 
 template <typename B, typename R, typename Q, typename QD>
