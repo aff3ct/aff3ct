@@ -45,9 +45,9 @@ _aff3ct() {
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s        \
 		       --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
 		       --cde-info-bits -K --cde-size -N --src-type --mod-type --mod-bps\
-		        --mod-ups --demod-max --demod-no-sig2 --chn-type --qnt-type    \
-		        --qnt-int --qnt-bits --qnt-range --dec-type --dec-implem       \
-		        --term-no"
+		        --mod-ups --mod-const-path --demod-max --demod-no-sig2         \
+		        --chn-type --qnt-type --qnt-int --qnt-bits --qnt-range         \
+		        --dec-type --dec-implem --term-no"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -105,11 +105,12 @@ _aff3ct() {
 
 	# add contents of Launcher_BFER_RSC.cpp
 	if [[ 
-	       ${codetype} == "RSC"        && ${simutype} == "BFER"    \
+           ${codetype} == "RSC"        && ${simutype} == "BFER" || \
+           ${codetype} == "RSC"        && ${simutype} == "BFERI"   \
 	   ]]
 	then
-		opts="$opts --enc-no-buff --dec-type -D --dec-implem --dec-simd        \
-		     --dec-max"
+		opts="$opts --enc-no-buff --enc-type --enc-poly --dec-type -D          \
+		      --dec-implem --dec-simd --dec-max"
 	fi
 
 	# add contents of Launcher_BFER_polar.cpp
@@ -135,8 +136,9 @@ _aff3ct() {
            ${codetype} == "TURBO"      && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --crc-type --enc-no-buff --itl-type --dec-type -D          \
-		      --dec-implem --dec-ite -i --dec-sf --dec-simd --dec-max" 
+		opts="$opts --crc-type --enc-no-buff --enc-type --enc-poly --itl-type  \
+		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd      \
+		      --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -181,8 +183,6 @@ _aff3ct() {
 	then
 		opts="$opts  "
 	fi
-
-
 
 	if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] || \
 	   [[ ${prev} == @(-q|--quiet) ]] ; then
@@ -235,6 +235,11 @@ _aff3ct() {
 				*)          params="BFER BFERI EXIT" ;;
 				
 			esac
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--enc-type)
+			local params="GENERIC"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -304,7 +309,7 @@ _aff3ct() {
 			;;
 
 		--mod-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS"
+			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS USR"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
