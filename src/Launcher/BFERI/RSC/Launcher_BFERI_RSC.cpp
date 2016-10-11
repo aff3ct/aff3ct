@@ -2,6 +2,7 @@
 #include <regex>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include "Tools/Display/bash_tools.h"
 #include "Simulation/BFERI/RSC/Simulation_BFERI_RSC.hpp"
