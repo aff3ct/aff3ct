@@ -74,7 +74,11 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 			auto poly_str = this->ar.get_arg({"enc-poly"});
 //			std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
 //			assert(std::regex_match(poly_str, pattern));
+#ifdef _MSC_VER
+			sscanf_s(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+#else
 			std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+#endif
 		}
 	}
 
@@ -101,8 +105,8 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 		this->params.decoder.simd_strategy = "";
 	}
 
-	this->params.code.tail_length = 2 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
-	                                                                         this->params.encoder.poly[1])));
+	this->params.code.tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
+	                                                                               this->params.encoder.poly[1]))));
 }
 
 template <typename B, typename R, typename Q, typename QD>

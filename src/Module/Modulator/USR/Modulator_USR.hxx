@@ -14,7 +14,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_USR<B,R,Q,MAX>
 ::Modulator_USR(const int N, const int bits_per_symbol, const std::string const_path, const R sigma,
                 const bool disable_sig2, const int n_frames, const std::string name)
-: Modulator<B,R,Q>(N, std::ceil((float)N / (float)bits_per_symbol) * 2, n_frames, name),
+: Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
@@ -65,7 +65,7 @@ int Modulator_USR<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
 	assert(this->bits_per_symbol % 2 == 0);
-	return std::ceil((float)N / (float)this->bits_per_symbol) * 2;
+	return (int)(std::ceil((float)N / (float)this->bits_per_symbol) * 2);
 }
 
 /*
@@ -77,14 +77,13 @@ void Modulator_USR<B,R,Q,MAX>
 {
 	auto size_in  = (int)X_N1.size();
 	auto size_out = (int)X_N2.size();
-	auto bps      = this->bits_per_symbol;
 
-	auto main_loop_size = size_in / bps;
-	for (auto i = 0; i < main_loop_size; i++)
+	auto loop_size = size_in / this->bits_per_symbol;
+	for (auto i = 0; i < loop_size; i++)
 	{
 		unsigned idx = 0;
-		for (auto j = 0; j < bps; j++)
-			idx += (1 << (bps-j-1)) * X_N1[i * bps +j];
+		for (auto j = 0; j < this->bits_per_symbol; j++)
+			idx += unsigned(unsigned(1 << (this->bits_per_symbol -j -1)) * X_N1[i * this->bits_per_symbol +j]);
 		auto symbol = this->constellation[idx];
 
 		X_N2[2*i   ] = symbol.real();
@@ -92,11 +91,11 @@ void Modulator_USR<B,R,Q,MAX>
 	}
 
 	// last elements if "size_in" is not a multiple of the number of bits per symbol
-	if (main_loop_size * bps < size_in)
+	if (loop_size * this->bits_per_symbol < size_in)
 	{
 		unsigned idx = 0;
-		for (auto j = 0; j < size_in - (main_loop_size * bps); j++)
-			idx += (1 << (bps-j-1)) * X_N1[main_loop_size * bps +j];
+		for (auto j = 0; j < size_in - (loop_size * this->bits_per_symbol); j++)
+			idx += unsigned(unsigned(1 << (this->bits_per_symbol -j -1)) * X_N1[loop_size * this->bits_per_symbol +j]);
 		auto symbol = this->constellation[idx];
 
 		X_N2[size_out -2] = symbol.real();
@@ -115,7 +114,7 @@ void Modulator_USR<B,R,Q,MAX>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 	
 	auto size       = (int)Y_N2.size();
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // boucle sur les LLRs
 	{
@@ -129,9 +128,11 @@ void Modulator_USR<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j &(1 << (this->bits_per_symbol -b -1))) == 0)
-				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2);
+				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
 			else
-				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2);
+				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
@@ -158,7 +159,7 @@ void Modulator_USR<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL = std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2;
+			auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2);
 			for (auto l = 0; l < b; l++)
 				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
 

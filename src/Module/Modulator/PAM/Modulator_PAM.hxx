@@ -12,7 +12,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_PAM<B,R,Q,MAX>
 ::Modulator_PAM(const int N, const int bits_per_symbol, const R sigma, const bool disable_sig2, const int n_frames, 
                 const std::string name)
-: Modulator<B,R,Q>(N, std::ceil((float)N / (float)bits_per_symbol), n_frames, name),
+: Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol)), n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),
@@ -114,7 +114,7 @@ void Modulator_PAM<B,R,Q,MAX>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 	
 	auto size       = (int)Y_N2.size();
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
 	{
@@ -151,7 +151,7 @@ void Modulator_PAM<B,R,Q,MAX>
 
 		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto tempL  = (Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]) * inv_sigma2;
+			auto tempL  = (Q)((Y_N1[k] - this->constellation[j]) * (Y_N1[k] - this->constellation[j]) * inv_sigma2);
 			for (auto l = 0; l < b; l++)
 				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
 
