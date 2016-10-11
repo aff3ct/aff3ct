@@ -120,7 +120,7 @@ void Launcher<B,R,Q>
 		 "select the symbol upsample factor (default is 1)."};
 	opt_args[{"mod-const-path"}] =
 		{"string",
-		 "path to the ordered modulation symbols."};
+		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USR\"."};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{"dmod-max"}] =
