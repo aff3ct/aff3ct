@@ -27,7 +27,7 @@ public:
 	void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
 
-	std::vector<std::vector<int>> get_trellis();
+	virtual std::vector<std::vector<int>> get_trellis();
 
 protected:
 	void frame_encode(const B* U_K, B* X_N, const int stride = 1, const bool only_parity = false);

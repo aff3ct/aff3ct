@@ -67,6 +67,7 @@ std::vector<std::vector<int>> Encoder_RSC_sys<B>
 ::get_trellis()
 {
 	std::vector<std::vector<int>> trellis(10, std::vector<int>(this->n_states));
+
 	std::vector<bool> occurrence(this->n_states, false);
 
 	for (auto i = 0; i < this->n_states; i++)
@@ -78,7 +79,7 @@ std::vector<std::vector<int>> Encoder_RSC_sys<B>
 
 		trellis[0 + (occurrence[state] ? 3 : 0)][state] = i;                 // initial state
 		trellis[1 + (occurrence[state] ? 3 : 0)][state] = +1;                // gamma coeff
-		trellis[2 + (occurrence[state] ? 3 : 0)][state] = bit_sys ^ bit_par; // gamma 
+		trellis[2 + (occurrence[state] ? 3 : 0)][state] = bit_sys ^ bit_par; // gamma
 		trellis[6                              ][i    ] = state;             // final state, bit syst = 0
 		trellis[7                              ][i    ] = bit_sys ^ bit_par; // gamma      , bit syst = 1
 
@@ -91,7 +92,7 @@ std::vector<std::vector<int>> Encoder_RSC_sys<B>
 
 		trellis[0 + (occurrence[state] ? 3 : 0)][state] = i;                 // initial state
 		trellis[1 + (occurrence[state] ? 3 : 0)][state] = -1;                // gamma coeff
-		trellis[2 + (occurrence[state] ? 3 : 0)][state] = bit_sys ^ bit_par; // gamma 
+		trellis[2 + (occurrence[state] ? 3 : 0)][state] = bit_sys ^ bit_par; // gamma
 		trellis[8                              ][i    ] = state;             // initial state, bit syst = 0
 		trellis[9                              ][i    ] = bit_sys ^ bit_par; // gamma        , bit syst = 1
 

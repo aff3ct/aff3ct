@@ -11,6 +11,7 @@ struct simulation_parameters
 	std::string          type;
 	std::string          trace_path;
 	std::string          bin_pb_path;
+	std::string          json_path;
 	float                snr_min;
 	float                snr_max;
 	float                snr_step;

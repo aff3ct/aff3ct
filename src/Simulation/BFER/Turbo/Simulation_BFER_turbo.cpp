@@ -32,6 +32,14 @@ Simulation_BFER_turbo<B,R,Q,QD>
 	// build the interleaver for the encoder and the decoder
 	interleaver = Factory_interleaver<short>::build(this->params, this->params.code.K);
 	Simulation::check_errors(interleaver, "Interleaver<short>");
+
+	if (!params.simulation.json_path.empty())
+	{
+		assert(params.simulation.n_threads == 1);
+		json_stream.open(params.simulation.json_path.c_str(), std::ios::out | std::ios::trunc);
+
+		json_stream << "[" << std::endl;
+	}
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -39,6 +47,11 @@ Simulation_BFER_turbo<B,R,Q,QD>
 ::~Simulation_BFER_turbo()
 {
 	release_objects();
+	if (json_stream.is_open())
+	{
+		json_stream << "[{\"stage\": \"end\"}]]" << std::endl;
+		json_stream.close();
+	}
 	delete interleaver;
 }
 
@@ -71,7 +84,7 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_BFER_turbo<B,R,Q,QD>
 ::build_encoder(const int tid)
 {
-	sub_encoder[tid] = Factory_encoder_RSC<B>::build(this->params);
+	sub_encoder[tid] = Factory_encoder_RSC<B>::build(this->params, 1, json_stream);
 	Simulation::check_errors(sub_encoder[tid], "Encoder_RSC_sys<B>");
 
 	if (tid == 0)
@@ -88,7 +101,7 @@ Decoder<B,Q>* Simulation_BFER_turbo<B,R,Q,QD>
 	Simulation::check_errors(sf[tid], "Scaling_factor<Q>");
 
 	this->barrier(tid);
-	siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis);
+	siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis, json_stream);
 	Simulation::check_errors(siso[tid], "SISO<Q>");
 
 	if (tid == 0)

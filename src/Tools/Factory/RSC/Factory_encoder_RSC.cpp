@@ -1,9 +1,10 @@
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
+#include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
 #include "Factory_encoder_RSC.hpp"
 
 template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
-::build(const parameters &params, const int n_frames)
+::build(const parameters &params, const int n_frames, std::ostream &stream)
 {
 	Encoder_RSC_sys<B> *encoder = nullptr;
 
@@ -12,7 +13,12 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 	// build the encoder
 	if (params.encoder.systematic)
 	{
-		if (params.encoder.type == "GENERIC")
+		if (params.encoder.type == "GENERIC_JSON")
+		{
+			encoder = new Encoder_RSC_generic_json_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
+			                                              params.encoder.poly, stream);
+		}
+		else if (params.encoder.type == "GENERIC")
 		{
 			encoder = new Encoder_RSC_generic_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
 			                                         params.encoder.poly);

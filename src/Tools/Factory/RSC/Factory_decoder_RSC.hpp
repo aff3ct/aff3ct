@@ -10,7 +10,8 @@
 template <typename B, typename R, typename RD>
 struct Factory_decoder_RSC : public Factory
 {
-	static SISO<R>* build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis);
+	static SISO<R>* build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis,
+	                           std::ostream &stream = std::cout);
 
 	static Decoder<B,R>* build(const parameters &params, const std::vector<std::vector<int>> &trellis);
 };

@@ -20,8 +20,8 @@ public:
 	virtual ~Encoder_RSC_generic_sys() {}
 
 protected:
-	int inner_encode(const int bit_sys, int &state);
-	int tail_bit_sys(const int &state             );
+	virtual int inner_encode(const int bit_sys, int &state);
+	virtual int tail_bit_sys(const int &state             );
 };
 
 #endif // ENCODER_RSC_GENERIC_SYS_HPP_

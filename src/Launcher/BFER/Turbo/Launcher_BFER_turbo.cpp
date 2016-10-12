@@ -14,6 +14,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 ::Launcher_BFER_turbo(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
+	this->params.simulation .json_path      = "";
 	this->params.code       .type           = "TURBO";
 	this->params.code       .tail_length    = 4 * 3;
 	this->params.crc        .type           = "";
@@ -36,6 +37,11 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 ::build_args()
 {
 	Launcher_BFER<B,R,Q>::build_args();
+
+	// ---------------------------------------------------------------------------------------------------- simulation
+	this->opt_args[{"sim-json-path"}] =
+		{"string",
+		 "path to store the encoder and decoder traces formated in JSON."};
 
 	// ----------------------------------------------------------------------------------------------------------- crc
 	this->opt_args[{"crc-type"}] =
@@ -87,13 +93,20 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	// ---------------------------------------------------------------------------------------------------- simulation
+	if(this->ar.exist_arg({"sim-json-path"})) this->params.simulation.json_path = this->ar.get_arg({"sim-json-path"});
+
 	// ----------------------------------------------------------------------------------------------------------- crc
 	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg({"crc-type"});
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
 	if(this->ar.exist_arg({"enc-type"   })) this->params.encoder.type     = this->ar.get_arg({"enc-type"});
-	if (this->params.encoder.type == "GENERIC")
+
+	if (!this->params.simulation.json_path.empty())
+		this->params.encoder.type = "GENERIC_JSON";
+
+	if (this->params.encoder.type.find("GENERIC") != std::string::npos)
 	{
 		if (this->ar.exist_arg({"enc-poly"}))
 		{
@@ -136,6 +149,13 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		this->params.decoder.simd_strategy = "";
 	}
 
+	if (!this->params.simulation.json_path.empty())
+	{
+		this->params.decoder.type          = "BCJR";
+		this->params.decoder.implem        = "GENERIC_JSON";
+		this->params.decoder.simd_strategy = "";
+	}
+
 	this->params.code.tail_length = (int)(4 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
 }
@@ -146,6 +166,19 @@ Simulation* Launcher_BFER_turbo<B,R,Q,QD>
 {
 	return new Simulation_BFER_turbo<B,R,Q,QD>(this->params);
 }
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_simulation()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_simulation();
+
+	if (!this->params.simulation.json_path.empty())
+		p.push_back(std::make_pair("Path to the JSON file", this->params.simulation.json_path));
+
+	return p;
+}
+
 
 template <typename B, typename R, typename Q, typename QD>
 std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>

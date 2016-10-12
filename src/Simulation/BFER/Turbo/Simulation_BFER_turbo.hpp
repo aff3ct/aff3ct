@@ -1,6 +1,8 @@
 #ifndef SIMULATION_TURBO_HPP_
 #define SIMULATION_TURBO_HPP_
 
+#include <fstream>
+
 #include "Tools/params.h"
 
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
@@ -21,6 +23,7 @@ protected:
 	std::vector<Encoder_RSC_sys<B>*> sub_encoder;
 	std::vector<SISO<Q>*>            siso;
 	std::vector<Scaling_factor<Q>*>  sf;
+	std::ofstream                    json_stream;
 
 public:
 	Simulation_BFER_turbo(const parameters& params);

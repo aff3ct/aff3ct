@@ -4,6 +4,7 @@
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_very_fast.hpp"
 
 #include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp"
+#include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hpp"
 
 #include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_std.hpp"
 #include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_fast.hpp"
@@ -19,7 +20,7 @@
 
 template <typename B, typename R, typename RD>
 SISO<R>* Factory_decoder_RSC<B,R,RD>
-::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis)
+::build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis, std::ostream &stream)
 {
 	SISO<R> *siso = nullptr;
 
@@ -71,6 +72,18 @@ SISO<R>* Factory_decoder_RSC<B,R,RD>
 						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.encoder.buffered);
 					else if (params.decoder.max == "MAXL")
 						siso = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.encoder.buffered);
+				}
+			}
+			else if (params.decoder.implem == "GENERIC_JSON")
+			{
+				if (params.decoder.simd_strategy.empty())
+				{
+					if (params.decoder.max == "MAX")
+						siso = new Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,max<R>,max<RD>>(params.code.K, trellis, params.decoder.n_ite, params.encoder.buffered, stream);
+					else if (params.decoder.max == "MAXS")
+						siso = new Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,max_star<R>,max_star<RD>>(params.code.K, trellis, params.decoder.n_ite, params.encoder.buffered, stream);
+					else if (params.decoder.max == "MAXL")
+						siso = new Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,max_linear<R>,max_linear<RD>>(params.code.K, trellis, params.decoder.n_ite, params.encoder.buffered, stream);
 				}
 			}
 			else if (params.decoder.implem == "FAST")
