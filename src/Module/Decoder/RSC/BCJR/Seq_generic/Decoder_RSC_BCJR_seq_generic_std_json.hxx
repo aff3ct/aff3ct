@@ -26,13 +26,16 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 	// compute extrinsic values
 	for (auto i = 0; i < this->K + this->n_ff; i++)
 	{
-		int transition0 = -1, transition1 = -1, transition = -1;
+		int transition_a0 = -1, transition_b0 = 1, transition_a1 = -1, transition_b1 = -1;
+		int transition_a, transition_b;
 
 		RD max0 = -std::numeric_limits<RD>::max();
 		RD max1 = -std::numeric_limits<RD>::max();
 
-		RD prev_max0 = max0;
-		RD prev_max1 = max1;
+		RD max0_json      = max0;
+		RD max1_json      = max1;
+		RD prev_max0_json = max0;
+		RD prev_max1_json = max1;
 
 		for (auto j = 0; j < this->n_states; j++)
 			if (this->trellis[1][j] == +1)
@@ -41,8 +44,16 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 				                  (RD)this->beta [this->trellis[6][j]][i +1] +
 				                  (RD)this->gamma[this->trellis[7][j]][i   ]);
 
-				transition0 = (prev_max0 != max0) ? this->trellis[6][j] : transition0;
-				prev_max0 = max0;
+				max0_json = std::max(max0_json, (RD)(this->alpha[                 j ][i   ] +
+				                                     this->beta [this->trellis[6][j]][i +1] +
+				                                     this->gamma[this->trellis[7][j]][i   ]));
+
+				if (max0_json > prev_max0_json)
+				{
+					transition_a0 = j;
+					transition_b0 = this->trellis[6][j];
+					prev_max0_json = max0_json;
+				}
 			}
 			else
 			{
@@ -50,8 +61,16 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 				                  (RD)this->beta [this->trellis[8][j]][i +1] -
 				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
 
-				transition1 = (prev_max1 != max1) ? this->trellis[8][j] : transition1;
-				prev_max1 = max1;
+				max1_json = std::max(max1_json, (RD)(this->alpha[                 j ][i   ] +
+				                                     this->beta [this->trellis[8][j]][i +1] -
+				                                     this->gamma[this->trellis[9][j]][i   ]));
+
+				if (max1_json > prev_max1_json)
+				{
+					transition_a1 = j;
+					transition_b1 = this->trellis[8][j];
+					prev_max1_json = max1_json;
+				}
 			}
 
 		for (auto j = 0; j < this->n_states; j++)
@@ -61,8 +80,16 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 				                  (RD)this->beta [this->trellis[6][j]][i +1] +
 				                  (RD)this->gamma[this->trellis[7][j]][i   ]);
 
-				transition0 = (prev_max0 != max0) ? this->trellis[6][j] : transition0;
-				prev_max0 = max0;
+				max0_json = std::max(max0_json, (RD)(this->alpha[                 j ][i   ] +
+				                                     this->beta [this->trellis[6][j]][i +1] +
+				                                     this->gamma[this->trellis[7][j]][i   ]));
+
+				if (max0_json > prev_max0_json)
+				{
+					transition_a0 = j;
+					transition_b0 = this->trellis[6][j];
+					prev_max0_json = max0_json;
+				}
 			}
 			else
 			{
@@ -70,16 +97,25 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 				                  (RD)this->beta [this->trellis[8][j]][i +1] -
 				                  (RD)this->gamma[this->trellis[9][j]][i   ]);
 
-				transition1 = (prev_max1 != max1) ? this->trellis[8][j] : transition1;
-				prev_max1 = max1;
+				max1_json = std::max(max1_json, (RD)(this->alpha[                 j ][i   ] +
+				                                     this->beta [this->trellis[8][j]][i +1] -
+				                                     this->gamma[this->trellis[9][j]][i   ]));
+
+				if (max1_json > prev_max1_json)
+				{
+					transition_a1 = j;
+					transition_b1 = this->trellis[8][j];
+					prev_max1_json = max1_json;
+				}
 			}
 
 		if (i < this->K)
 			ext[i] = RSC_BCJR_seq_generic_post<R,RD>::compute(max0 - max1) - sys[i];
 
-		transition = (max0 > max1) ? transition0 : transition1;
+		transition_a = (max0_json > max1_json) ? transition_a0 : transition_a1;
+		transition_b = (max0_json > max1_json) ? transition_b0 : transition_b1;
 
-		stream << "\t\t\t\t\t\t\t" << std::setw(2) << +transition;
+		stream << "\t\t\t\t\t\t\t" << "["<< std::setw(2) << +transition_a << ", " << +transition_b << "]";
 		if (i != (this->K + this->n_ff -1))
 			stream << "," << std::endl;
 	}

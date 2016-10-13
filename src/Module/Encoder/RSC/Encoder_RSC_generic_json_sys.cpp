@@ -9,7 +9,7 @@ Encoder_RSC_generic_json_sys<B>
 ::Encoder_RSC_generic_json_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding,
                                const std::vector<int> poly, std::ostream &stream, const std::string name)
 : Encoder_RSC_generic_sys<B>(K, N, n_frames, buffered_encoding, poly, name),
-  stream(stream), bit_counter(0), natural_domain(true)
+  stream(stream), bit_counter(0), natural_domain(true), poly(poly)
 {
 }
 
@@ -70,7 +70,9 @@ int Encoder_RSC_generic_json_sys<B>
 
 			stream << "\t\t" << "\"stage\": \"encoder\"," << std::endl
 			       << "\t\t" << "\"K\": " << this->K << "," << std::endl
-			       << "\t\t" << "\"ff\": " << this->n_ff << "," << std::endl
+			       << "\t\t" << "\"poly\": \"{0" << std::oct << poly[0] << ",0" << std::oct << poly[1] << "}\"," << std::endl
+			       << "\t\t" << "\"R\": \"1/3\", " << std::endl
+			       << "\t\t" << "\"ff\": " << std::dec << this->n_ff << "," << std::endl
 			       << "\t\t" << "\"states\": " << this->n_states << "," << std::endl;
 
 			stream << "\t\t" << "\"trellis\": [" << std::endl;

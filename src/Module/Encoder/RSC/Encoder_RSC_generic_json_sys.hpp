@@ -14,6 +14,7 @@ private:
 	std::ostream &stream;
 	int bit_counter;
 	bool natural_domain;
+	std::vector<int> poly;
 
 public:
 	Encoder_RSC_generic_json_sys(const int& K, const int& N, const int& n_frames = 1, 

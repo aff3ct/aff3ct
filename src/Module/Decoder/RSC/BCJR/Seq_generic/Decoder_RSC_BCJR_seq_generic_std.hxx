@@ -76,7 +76,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 	{
 		for (auto j = 0; j < this->n_states; j++)
 			this->beta[j][i] = MAX1(
-				this->beta[this->trellis[6][j]][i +1] + this->gamma[this->trellis[7 ][j]][i],
+				this->beta[this->trellis[6][j]][i +1] + this->gamma[this->trellis[7][j]][i],
 				this->beta[this->trellis[8][j]][i +1] - this->gamma[this->trellis[9][j]][i]);
 
 		RSC_BCJR_seq_generic_normalize<R>::apply(this->beta, i, this->n_states);
