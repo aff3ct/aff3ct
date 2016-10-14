@@ -2,7 +2,6 @@
 #define INTERLEAVER_USER_HPP
 
 #include <fstream>
-#include <algorithm>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -25,15 +24,15 @@ protected:
 
 		if (file.is_open())
 		{
-			long long read;
+			T read;
 
 			file >> read;
-			if (read == (long long)this->pi.size())
+			if (read == (T)this->pi.size())
 			{
 				for (auto i = 0; i < (int)this->pi.size(); i++)
 				{
 					file >> read;
-					if (read >= 0 && read < (long long)this->pi.size())
+					if (read >= 0 && read < (T)this->pi.size())
 					{
 						auto found = false;
 						auto j = 0;

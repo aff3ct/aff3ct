@@ -232,7 +232,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 
 	p.push_back(std::make_pair("Type", this->params.interleaver.type));
 
-	if (!this->params.interleaver.path.empty())
+	if (this->params.interleaver.type == "USER")
 		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
 	return p;

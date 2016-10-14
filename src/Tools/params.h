@@ -45,6 +45,7 @@ struct code_parameters
 struct source_parameters
 {
 	std::string type;
+	std::string path;
 };
 
 struct crc_parameters

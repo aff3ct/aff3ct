@@ -29,6 +29,7 @@ Launcher<B,R,Q>
 	params.simulation .n_threads       = 1;
 	params.simulation .stop_time       = std::chrono::seconds(0);
 	params.source     .type            = "RAND";
+	params.source     .path            = "";
 	params.code       .tail_length     = 0;
 	params.modulator  .type            = "BPSK";
 	params.modulator  .bits_per_symbol = 1;
@@ -105,7 +106,11 @@ void Launcher<B,R,Q>
 	opt_args[{"src-type"}] =
 		{"string",
 		 "method used to generate the codewords.",
-		 "RAND, RAND_FAST, AZCW"};
+		 "RAND, RAND_FAST, AZCW, USER"};
+
+	opt_args[{"src-path"}] =
+		{"string",
+		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER.\""};
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	opt_args[{"mod-type"}] =
@@ -217,6 +222,7 @@ void Launcher<B,R,Q>
 
 	// -------------------------------------------------------------------------------------------------------- source
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
+	if(ar.exist_arg({"src-path"})) params.source.path = ar.get_arg({"src-path"});
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
@@ -356,6 +362,9 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	std::vector<std::pair<std::string,std::string>> p;
 
 	p.push_back(std::make_pair("Type", params.source.type));
+
+	if (params.source.type == "USER")
+		p.push_back(std::make_pair("Path", params.source.path));
 
 	return p;
 }
