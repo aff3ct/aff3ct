@@ -62,7 +62,7 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, RANDOM_HARD, GOLDEN, USER, NO"};
+		 "LTE, CCSDS, RANDOM, GOLDEN, USER, NO"};
 
 	this->opt_args[{"itl-path"}] =
 		{"string",
