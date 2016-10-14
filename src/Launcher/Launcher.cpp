@@ -111,7 +111,7 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS, USR"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS, USER"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
@@ -120,7 +120,7 @@ void Launcher<B,R,Q>
 		 "select the symbol upsample factor (default is 1)."};
 	opt_args[{"mod-const-path"}] =
 		{"string",
-		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USR\"."};
+		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{"dmod-max"}] =

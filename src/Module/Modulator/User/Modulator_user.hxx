@@ -1,3 +1,5 @@
+#include "Modulator_user.hpp"
+
 #include <cassert>
 #include <cmath>
 #include <complex>
@@ -5,15 +7,13 @@
 #include <fstream>
 #include <iterator>
 
-#include "Modulator_USR.hpp"
-
 /*
  * Constructor / Destructor
  */
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-Modulator_USR<B,R,Q,MAX>
-::Modulator_USR(const int N, const int bits_per_symbol, const std::string const_path, const R sigma,
-                const bool disable_sig2, const int n_frames, const std::string name)
+Modulator_user<B,R,Q,MAX>
+::Modulator_user(const int N, const int bits_per_symbol, const std::string const_path, const R sigma,
+                 const bool disable_sig2, const int n_frames, const std::string name)
 : Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
@@ -50,8 +50,8 @@ Modulator_USR<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-Modulator_USR<B,R,Q,MAX>
-::~Modulator_USR()
+Modulator_user<B,R,Q,MAX>
+::~Modulator_user()
 {
 }
 
@@ -61,7 +61,7 @@ Modulator_USR<B,R,Q,MAX>
  * returns number of output symbols
  */
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-int Modulator_USR<B,R,Q,MAX>
+int Modulator_user<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
 	assert(this->bits_per_symbol % 2 == 0);
@@ -72,7 +72,7 @@ int Modulator_USR<B,R,Q,MAX>
  * Modulator
  */
 template <typename B,typename R, typename Q, proto_max<Q> MAX>
-void Modulator_USR<B,R,Q,MAX>
+void Modulator_user<B,R,Q,MAX>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
 	auto size_in  = (int)X_N1.size();
@@ -107,7 +107,7 @@ void Modulator_USR<B,R,Q,MAX>
  * Demodulator
  */
 template <typename B,typename R, typename Q, proto_max<Q> MAX>
-void Modulator_USR<B,R,Q,MAX>
+void Modulator_user<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert(typeid(R) == typeid(Q));
@@ -139,7 +139,7 @@ void Modulator_USR<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
-void Modulator_USR<B,R,Q,MAX>
+void Modulator_user<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
 	assert(typeid(R) == typeid(Q));
@@ -164,7 +164,7 @@ void Modulator_USR<B,R,Q,MAX>
 				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
 
 			for (auto l = b + 1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << (this->bits_per_symbol-l-1))) * Y_N2[k * this->bits_per_symbol +l];
+				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
 
 			if ((j & (1 << (this->bits_per_symbol-b-1))) == 0)
 				L0 = MAX(L0, -tempL);
@@ -175,5 +175,3 @@ void Modulator_USR<B,R,Q,MAX>
 		Y_N3[n] = (L0 - L1) + Y_N2[n];
 	}
 }
-
-
