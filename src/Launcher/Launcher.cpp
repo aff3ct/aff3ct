@@ -110,7 +110,7 @@ void Launcher<B,R,Q>
 
 	opt_args[{"src-path"}] =
 		{"string",
-		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER.\""};
+		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	opt_args[{"mod-type"}] =

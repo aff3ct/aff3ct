@@ -13,7 +13,7 @@ Source_user<B>
 
 	if (file.is_open())
 	{
-		B n_src, src_size;
+		B n_src = 0, src_size = 0;
 
 		file >> n_src;
 		file >> src_size;
