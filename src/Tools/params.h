@@ -63,6 +63,7 @@ struct encoder_parameters
 struct interleaver_parameters
 {
 	std::string type;
+	std::string path;
 };
 
 struct modulator_parameters

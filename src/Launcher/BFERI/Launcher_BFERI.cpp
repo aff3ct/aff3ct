@@ -20,6 +20,7 @@ Launcher_BFERI<B,R,Q>
 	this->params.code       .coset          = false;
 	this->params.encoder    .systematic     = true;
 	this->params.interleaver.type           = "RANDOM";
+	this->params.interleaver.path           = "";
 	this->params.demodulator.max            = "MAX";
 	this->params.demodulator.n_ite          = 30;
 	this->params.monitor    .n_frame_errors = 100;
@@ -61,7 +62,11 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, RANDOM_HARD, GOLDEN, NO"};
+		 "LTE, CCSDS, RANDOM, RANDOM_HARD, GOLDEN, USER, NO"};
+
+	this->opt_args[{"itl-path"}] =
+		{"string",
+		 "specify the path to the interleaver file (to use with \"--itl-type USER\"."};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	this->opt_args[{"dmod-ite"}] =
@@ -102,6 +107,7 @@ void Launcher_BFERI<B,R,Q>
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
+	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path = this->ar.get_arg({"itl-path"});
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(this->ar.exist_arg({"dmod-ite"})) this-> params.demodulator.n_ite = this->ar.get_arg_int({"dmod-ite"});
@@ -161,6 +167,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_interleaver();
 
 	p.push_back(std::make_pair("Type", this->params.interleaver.type));
+
+	if (!this->params.interleaver.path.empty())
+		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
 	return p;
 }

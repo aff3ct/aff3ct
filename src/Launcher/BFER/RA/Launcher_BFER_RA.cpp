@@ -11,6 +11,7 @@ Launcher_BFER_RA<B,R,Q>
 {
 	this->params.code       .type       = "RA";
 	this->params.interleaver.type       = "RANDOM";
+	this->params.interleaver.path       = "";
 	this->params.quantizer  .n_bits     = 7;
 	this->params.quantizer  .n_decimals = 2;
 	this->params.decoder    .type       = "RA";
@@ -28,7 +29,11 @@ void Launcher_BFER_RA<B,R,Q>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
+		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, USER, NO"};
+
+	this->opt_args[{"itl-path"}] =
+		{"string",
+		 "specify the path to the interleaver file (to use with \"--itl-type USER\"."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-ite", "i"}] =
@@ -44,6 +49,7 @@ void Launcher_BFER_RA<B,R,Q>
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
+	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path = this->ar.get_arg({"itl-path"});
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("RA" );
@@ -65,6 +71,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_RA<B,R,Q>
 	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
 
 	p.push_back(std::make_pair("Type", this->params.interleaver.type));
+
+	if (!this->params.interleaver.path.empty())
+		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
 	return p;
 }

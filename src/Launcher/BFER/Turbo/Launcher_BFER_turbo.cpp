@@ -22,6 +22,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.encoder    .buffered       = true;
 	this->params.encoder    .poly           = {013, 015};
 	this->params.interleaver.type           = "LTE";
+	this->params.interleaver.path           = "";
 	this->params.quantizer  .n_bits         = 6;
 	this->params.quantizer  .n_decimals     = (typeid(Q) == typeid(short)) ? 3 : 2;
 	this->params.decoder    .type           = "BCJR";
@@ -65,7 +66,11 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, NO"};
+		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, USER, NO"};
+
+	this->opt_args[{"itl-path"}] =
+		{"string",
+		 "specify the path to the interleaver file (to use with \"--itl-type USER\"."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
@@ -123,6 +128,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
+	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path = this->ar.get_arg({"itl-path"});
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i"});
@@ -225,6 +231,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
 
 	p.push_back(std::make_pair("Type", this->params.interleaver.type));
+
+	if (!this->params.interleaver.path.empty())
+		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
 	return p;
 }
