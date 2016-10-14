@@ -44,10 +44,10 @@ _aff3ct() {
 	then
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s        \
 		       --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
-		       --cde-info-bits -K --cde-size -N --src-type --mod-type --mod-bps\
-		        --mod-ups --mod-const-path --demod-max --demod-no-sig2         \
-		        --chn-type --qnt-type --qnt-int --qnt-bits --qnt-range         \
-		        --dec-type --dec-implem --term-no"
+		       --cde-info-bits -K --cde-size -N --src-type --src-path          \
+		       --mod-type --mod-bps --mod-ups --mod-const-path --demod-max     \
+		       --demod-no-sig2 --chn-type --qnt-type --qnt-int --qnt-bits      \
+		       --qnt-range --dec-type --dec-implem --term-no"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -199,7 +199,7 @@ _aff3ct() {
         --dec-type | --dec-implem | --sim-benchs | -b | --sim-debug-limit     |\
         --sim-trace-path | --mnt-max-fe | -e | --term-type | --sim-siga-min   |\
         -a | --sim-siga-max | -A | --sim-siga-step | --dmod-ite | --cde-sigma |\
-         --dec-snr | --dec-ite | -i | --dec-lists | -L \
+        --dec-snr | --dec-ite | -i | --dec-lists | -L                          \
          )
 			COMPREPLY=()
 			;;
@@ -270,12 +270,12 @@ _aff3ct() {
 			;;
 
 		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |             \
-		--sim-pb-path | --itl-path | --mod-const-path)
+		--sim-pb-path | --itl-path | --mod-const-path | --src-path)
 			_filedir
 			;;
 		
 		--src-type)
-			local params="RAND RAND_FAST AZCW"
+			local params="RAND RAND_FAST AZCW USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
