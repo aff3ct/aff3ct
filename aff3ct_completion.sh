@@ -83,7 +83,7 @@ _aff3ct() {
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --dmod-ite --mnt-max-fe -e --term-type"
+		      --itl-path --dmod-ite --mnt-max-fe -e --term-type"
 	fi
 
 	# add contents of Launcher_GEN_polar.cpp
@@ -100,7 +100,7 @@ _aff3ct() {
 	       ${codetype} == "RA"         && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --dec-ite -i --itl-type"
+		opts="$opts --dec-ite -i --itl-type --itl-path"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -136,9 +136,9 @@ _aff3ct() {
            ${codetype} == "TURBO"      && ${simutype} == "BFER"    \
 	   ]]
 	then
-		opts="$opts --crc-type --enc-no-buff --enc-type --enc-poly --itl-type  \
-		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd      \
-		      --dec-max" 
+		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type        \
+		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem      \
+		      --dec-ite -i --dec-sf --dec-simd --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -269,7 +269,8 @@ _aff3ct() {
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path | sim-pb-path)
+		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |             \
+		--sim-pb-path | --itl-path | --mod-const-path)
 			_filedir
 			;;
 		
@@ -286,8 +287,8 @@ _aff3ct() {
 		--itl-type)
 			local params
 			case "${simutype}" in
-				BFER)      params="LTE CCSDS RANDOM RANDOM_HARD GOLDEN NO" ;;
-				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN NO" ;;
+				BFER)      params="LTE CCSDS RANDOM GOLDEN USER NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -309,7 +310,7 @@ _aff3ct() {
 			;;
 
 		--mod-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS USR"
+			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
