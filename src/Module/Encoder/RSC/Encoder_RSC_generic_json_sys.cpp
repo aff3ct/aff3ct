@@ -32,7 +32,7 @@ std::vector<std::vector<int>> Encoder_RSC_generic_json_sys<B>
 		trellis[1 + (occurrence[state] ? 3 : 0)][state] = +1;                // gamma coeff
 		trellis[2 + (occurrence[state] ? 3 : 0)][state] = bit_sys ^ bit_par; // gamma
 		trellis[6                              ][i    ] = state;             // final state, bit syst = 0
-		trellis[7                              ][i    ] = bit_sys ^ bit_par; // gamma      , bit syst = 1
+		trellis[7                              ][i    ] = bit_sys ^ bit_par; // gamma      , bit syst = 0
 
 		occurrence[state] = true;
 
@@ -44,7 +44,7 @@ std::vector<std::vector<int>> Encoder_RSC_generic_json_sys<B>
 		trellis[0 + (occurrence[state] ? 3 : 0)][state] = i;                 // initial state
 		trellis[1 + (occurrence[state] ? 3 : 0)][state] = -1;                // gamma coeff
 		trellis[2 + (occurrence[state] ? 3 : 0)][state] = bit_sys ^ bit_par; // gamma
-		trellis[8                              ][i    ] = state;             // initial state, bit syst = 0
+		trellis[8                              ][i    ] = state;             // initial state, bit syst = 1
 		trellis[9                              ][i    ] = bit_sys ^ bit_par; // gamma        , bit syst = 1
 
 		occurrence[state] = true;
@@ -107,7 +107,7 @@ int Encoder_RSC_generic_json_sys<B>
 			stream << "]," << std::endl;
 		else
 			stream << "]}"  << std::endl
-                   << "\t" << "},{" << std::endl;
+			       << "\t" << "},{" << std::endl;
 
 		bit_counter = 0;
 		natural_domain = !natural_domain;
