@@ -45,9 +45,10 @@ _aff3ct() {
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s        \
 		       --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
 		       --cde-info-bits -K --cde-size -N --src-type --src-path          \
-		       --mod-type --mod-bps --mod-ups --mod-const-path --demod-max     \
-		       --demod-no-sig2 --chn-type --qnt-type --qnt-int --qnt-bits      \
-		       --qnt-range --dec-type --dec-implem --term-no"
+		       --enc-type --enc-path --mod-type --mod-bps --mod-ups            \
+		       --mod-const-path --demod-max --demod-no-sig2 --chn-type         \
+		       --qnt-type --qnt-int --qnt-bits --qnt-range --dec-type          \
+		       --dec-implem --term-no"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -109,8 +110,8 @@ _aff3ct() {
            ${codetype} == "RSC"        && ${simutype} == "BFERI"   \
 	   ]]
 	then
-		opts="$opts --enc-no-buff --enc-type --enc-poly --dec-type -D          \
-		      --dec-implem --dec-simd --dec-max"
+		opts="$opts --enc-no-buff --enc-poly --dec-type -D --dec-implem        \
+		      --dec-simd --dec-max"
 	fi
 
 	# add contents of Launcher_BFER_polar.cpp
@@ -199,7 +200,7 @@ _aff3ct() {
         --dec-type | --dec-implem | --sim-benchs | -b | --sim-debug-limit     |\
         --sim-trace-path | --mnt-max-fe | -e | --term-type | --sim-siga-min   |\
         -a | --sim-siga-max | -A | --sim-siga-step | --dmod-ite | --cde-sigma |\
-        --dec-snr | --dec-ite | -i | --dec-lists | -L                          \
+        --dec-snr | --dec-ite | -i | --dec-lists | -L | --sim-json-path        \
          )
 			COMPREPLY=()
 			;;
@@ -239,7 +240,15 @@ _aff3ct() {
 			;;
 
 		--enc-type)
-			local params="GENERIC"
+			local params
+			case "${codetype}" in
+				POLAR)      params="AZCW COSET USER POLAR"     ;;
+				RSC)        params="AZCW COSET USER RSC"       ;;
+				REPETITION) params="AZCW COSET USER REPETITION";;
+				RA)         params="AZCW COSET USER RA"        ;;
+				TURBO)      params="AZCW COSET USER TURBO"     ;;
+				LDPC)       params="AZCW COSET USER"           ;;
+			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -270,7 +279,7 @@ _aff3ct() {
 			;;
 
 		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |             \
-		--sim-pb-path | --itl-path | --mod-const-path | --src-path)
+		--sim-pb-path | --itl-path | --mod-const-path | --src-path | --enc-path)
 			_filedir
 			;;
 		
