@@ -40,7 +40,7 @@ void Launcher_BFERI_RSC<B,R,Q,QD>
 		 "disable the buffered encoding."};
 	this->opt_args[{"enc-poly"}] =
 		{"string",
-		 "the polynomials describing RSC code (used only with --enc-type set to RSC), should be of the form {A,B}."};
+		 "the polynomials describing RSC code, should be of the form {A,B}."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );

@@ -57,7 +57,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		 "disable the buffered encoding."};
 	this->opt_args[{"enc-poly"}] =
 		{"string",
-		 "the polynomials describing RSC code (used only with --enc-type set to TURBO), should be of the form \"{A,B}\"."};
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
