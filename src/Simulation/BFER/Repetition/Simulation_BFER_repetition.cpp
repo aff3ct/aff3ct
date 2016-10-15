@@ -42,7 +42,10 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_repetition<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return Factory_encoder_repetition<B>::build(this->params);
+	auto encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
+	if (encoder == nullptr)
+		encoder = Factory_encoder_repetition<B>::build(this->params);
+	return encoder;
 }
 
 template <typename B, typename R, typename Q>

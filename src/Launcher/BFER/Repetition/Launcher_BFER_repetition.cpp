@@ -9,7 +9,8 @@ Launcher_BFER_repetition<B,R,Q>
 ::Launcher_BFER_repetition(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	this->params.code     .type       = "Repetition";
+	this->params.code     .type       = "REPETITION";
+	this->params.encoder  .type       = "REPETITION";
 	this->params.encoder  .buffered   = true;
 	this->params.quantizer.n_bits     = 6;
 	this->params.quantizer.n_decimals = 2;
@@ -24,6 +25,7 @@ void Launcher_BFER_repetition<B,R,Q>
 	Launcher_BFER<B,R,Q>::build_args();
 
 	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", REPETITON";
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};

@@ -18,6 +18,9 @@ Launcher_BFER<B,R,Q>
 	this->params.simulation .time_report    = false;
 	this->params.simulation .trace_path     = "";
 	this->params.code       .coset          = false;
+	this->params.encoder    .type           = "";
+	this->params.encoder    .path           = "";
+	this->params.encoder    .systematic     = true;
 	this->params.monitor    .n_frame_errors = 100;
 	this->params.encoder    .systematic     = true;
 	this->params.demodulator.max            = "MAX";
@@ -55,6 +58,15 @@ void Launcher_BFER<B,R,Q>
 		{"",
 		 "enable the coset approach."};
 
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}] =
+		{"string",
+		 "select the type of encoder you want to use.",
+		 "AZCW, COSET, USER" };
+	this->opt_args[{"enc-path"}] =
+		{"string",
+		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
+
 	// ------------------------------------------------------------------------------------------------------- monitor
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
@@ -87,6 +99,16 @@ void Launcher_BFER<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
+	if (this->params.code.coset)
+		this->params.encoder.type = "COSET";
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
+	if (this->params.encoder.type == "COSET")
+		this->params.code.coset = true;
+	if (this->params.encoder.type == "AZCW")
+		this->params.source.type = "AZCW";
+	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
 
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
@@ -130,6 +152,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
 	auto p = Launcher<B,R,Q>::header_encoder();
+
+	p.push_back(std::make_pair("Type", this->params.encoder.type));
+
+	if (this->params.encoder.type == "USER")
+		p.push_back(std::make_pair("Path", this->params.encoder.path));
 
 	p.push_back(std::make_pair("Systematic encoding", syst_enc));
 

@@ -18,7 +18,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.code       .type           = "TURBO";
 	this->params.code       .tail_length    = 4 * 3;
 	this->params.crc        .type           = "";
-	this->params.encoder    .type           = "GENERIC";
+	this->params.encoder    .type           = "TURBO";
 	this->params.encoder    .buffered       = true;
 	this->params.encoder    .poly           = {013, 015};
 	this->params.interleaver.type           = "LTE";
@@ -51,16 +51,13 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", TURBO";
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
-	this->opt_args[{"enc-type"}] =
-		{"string",
-		 "the type of the turbo encoder.",
-		 "GENERIC"};
 	this->opt_args[{"enc-poly"}] =
 		{"string",
-		 "the polynomials describing RSC code (used only with --enc-type set to GENERIC), should be of the form \"{A,B}\"."};
+		 "the polynomials describing RSC code (used only with --enc-type set to TURBO), should be of the form \"{A,B}\"."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
@@ -109,21 +106,18 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"enc-type"   })) this->params.encoder.type     = this->ar.get_arg({"enc-type"});
 
 	if (!this->params.simulation.json_path.empty())
-		this->params.encoder.type = "GENERIC_JSON";
+		this->params.encoder.type = "TURBO_JSON";
 
-	if (this->params.encoder.type.find("GENERIC") != std::string::npos)
+	if (this->ar.exist_arg({"enc-poly"}))
 	{
-		if (this->ar.exist_arg({"enc-poly"}))
-		{
-			auto poly_str = this->ar.get_arg({"enc-poly"});
-//			std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
-//			assert(std::regex_match(poly_str, pattern));
+		auto poly_str = this->ar.get_arg({"enc-poly"});
+//		std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
+//		assert(std::regex_match(poly_str, pattern));
 #ifdef _MSC_VER
-			sscanf_s(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+		sscanf_s(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
 #else
-			std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
 #endif
-		}
 	}
 
 	// --------------------------------------------------------------------------------------------------- interleaver
@@ -204,24 +198,15 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 {
 	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
 
-	std::stringstream type;
-	type << this->params.encoder.type;
-	if (this->params.encoder.type == "GENERIC")
-		type << " {0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1]
-		     << "}";
+	std::stringstream poly;
+	poly << "{0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1] << "}";
 
 	auto p = Launcher_BFER<B,R,Q>::header_encoder();
 
-	std::vector<std::pair<std::string,std::string>> p_new;
+	p.push_back(std::make_pair(std::string("Poly"), poly.str()));
+	p.push_back(std::make_pair(std::string("Buffered"), buff_enc));
 
-	p_new.push_back(std::make_pair(std::string("Type"), type.str()));
-
-	for (auto i = 0; i < (int)p.size(); i++)
-		p_new.push_back(p[i]);
-
-	p_new.push_back(std::make_pair(std::string("Buffered"), buff_enc));
-
-	return p_new;
+	return p;
 }
 
 template <typename B, typename R, typename Q, typename QD>

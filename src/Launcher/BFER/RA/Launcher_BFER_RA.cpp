@@ -10,6 +10,7 @@ Launcher_BFER_RA<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	this->params.code       .type       = "RA";
+	this->params.encoder    .type       = "RA";
 	this->params.interleaver.type       = "RANDOM";
 	this->params.interleaver.path       = "";
 	this->params.quantizer  .n_bits     = 7;
@@ -24,6 +25,9 @@ void Launcher_BFER_RA<B,R,Q>
 ::build_args()
 {
 	Launcher_BFER<B,R,Q>::build_args();
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", RA";
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =

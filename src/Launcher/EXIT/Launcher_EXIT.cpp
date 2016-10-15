@@ -14,6 +14,8 @@ Launcher_EXIT<B,R,Q>
 	this->params.simulation.sig_a_min  = 0.0f;
 	this->params.simulation.sig_a_max  = 5.0f;
 	this->params.simulation.sig_a_step = 0.5f;
+	this->params.encoder   .type       = "";
+	this->params.encoder   .path       = "";
 	this->params.encoder   .systematic = true;
 }
 
@@ -33,6 +35,15 @@ void Launcher_EXIT<B,R,Q>
 	this->opt_args[{"sim-siga-step"}] =
 		{"positive_float",
 		 "sigma step value used in EXIT charts."};
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}] =
+		{"string",
+		 "select the type of encoder you want to use.",
+		 "AZCW, USER" };
+	this->opt_args[{"enc-path"}] =
+		{"string",
+		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
 }
 
 template <typename B, typename R, typename Q>
@@ -45,6 +56,12 @@ void Launcher_EXIT<B,R,Q>
 	if(this->ar.exist_arg({"sim-siga-min", "a"})) this->params.simulation.sig_a_min  = this->ar.get_arg_float({"sim-siga-min", "a"});
 	if(this->ar.exist_arg({"sim-siga-max", "A"})) this->params.simulation.sig_a_max  = this->ar.get_arg_float({"sim-siga-max", "A"});
 	if(this->ar.exist_arg({"sim-siga-step"    })) this->params.simulation.sig_a_step = this->ar.get_arg_float({"sim-siga-step"    });
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
+	if (this->params.encoder.type == "AZCW")
+		this->params.source.type = "AZCW";
+	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
 }
 
 template <typename B, typename R, typename Q>
@@ -67,6 +84,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_EXIT<B,R,Q>
 	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
 	auto p = Launcher<B,R,Q>::header_encoder();
+
+	p.push_back(std::make_pair("Type", this->params.encoder.type));
+
+	if (this->params.encoder.type == "USER")
+		p.push_back(std::make_pair("Path", this->params.encoder.path));
 
 	p.push_back(std::make_pair("Systematic", syst_enc));
 

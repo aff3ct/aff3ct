@@ -44,9 +44,16 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_BFERI_RSC<B,R,Q,QD>
 ::build_encoder(const int tid)
 {
-	auto encoder = Factory_encoder_RSC<B>::build(this->params);
+	auto encoder_RSC = Factory_encoder_RSC<B>::build(this->params);
+	Simulation::check_errors(encoder_RSC, "Encoder_RSC_sys<B>");
 	if (tid == 0)
-		trellis = encoder->get_trellis();
+		trellis = encoder_RSC->get_trellis();
+
+	auto encoder = Simulation_BFERI<B,R,Q>::build_encoder(tid);
+	if (encoder == nullptr)
+		encoder = encoder_RSC;
+	else
+		delete encoder_RSC;
 	return encoder;
 }
 

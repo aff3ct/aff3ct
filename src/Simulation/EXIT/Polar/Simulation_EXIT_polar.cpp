@@ -71,7 +71,10 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_EXIT_polar<B,R,Q>
 ::build_encoder()
 {
-	return Factory_encoder_polar<B>::build(this->params, frozen_bits);
+	auto encoder = Simulation_EXIT<B,R,Q>::build_encoder();
+	if (encoder == nullptr)
+		encoder = Factory_encoder_polar<B>::build(this->params, frozen_bits);
+	return encoder;
 }
 
 template <typename B, typename R, typename Q>

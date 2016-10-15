@@ -18,6 +18,8 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .time_report    = false;
 	this->params.simulation .trace_path     = "";
 	this->params.code       .coset          = false;
+	this->params.encoder    .type           = "";
+	this->params.encoder    .path           = "";
 	this->params.encoder    .systematic     = true;
 	this->params.interleaver.type           = "RANDOM";
 	this->params.interleaver.path           = "";
@@ -57,6 +59,15 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"cde-coset", "c"}] =
 		{"",
 		 "enable the coset approach."};
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}] =
+		{"string",
+		 "select the type of encoder you want to use.",
+		 "AZCW, COSET, USER" };
+	this->opt_args[{"enc-path"}] =
+		{"string",
+		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
@@ -104,6 +115,16 @@ void Launcher_BFERI<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
+	if (this->params.code.coset)
+		this->params.encoder.type = "COSET";
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
+	if (this->params.encoder.type == "COSET")
+		this->params.code.coset = true;
+	if (this->params.encoder.type == "AZCW")
+			this->params.source.type = "AZCW";
+	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
@@ -154,6 +175,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
 
 	auto p = Launcher<B,R,Q>::header_encoder();
+
+	p.push_back(std::make_pair("Type", this->params.encoder.type));
+
+	if (this->params.encoder.type == "USER")
+		p.push_back(std::make_pair("Path", this->params.encoder.path));
 
 	p.push_back(std::make_pair("Systematic", syst_enc));
 

@@ -22,23 +22,25 @@ void Encoder_coset<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
 	assert(U_K.size() <= X_N.size());
-	assert(this->n_frames == 1);
-	assert(this->N == static_cast<int>(X_N.size()));
+	assert(this->K * this->n_frames == static_cast<int>(U_K.size()));
+	assert(this->N * this->n_frames == static_cast<int>(X_N.size()));
 
-	std::copy(U_K.begin(), U_K.end(), X_N.begin());
+	for (auto f = 0; f < this->n_frames; f++)
+	{
+		std::copy(U_K.begin() + (f+ 0) * this->K, U_K.begin() + (f +1) * this->K, X_N.begin() + f * this->N);
 
-	for (auto i = (int)U_K.size(); i < this->N; i++)
-		X_N[i] = (B)this->uniform_dist(this->rd_engine);
+		for (auto i = this->K; i < this->N; i++)
+			X_N[f * this->N + i] = (B)this->uniform_dist(this->rd_engine);
+	}
 }
 
 template <typename B>
 void Encoder_coset<B>
 ::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
-	assert(this->n_frames == 1);
-	assert(this->N - this->K == static_cast<int>(par.size()));
+	assert((this->N - this->K) * this->n_frames == static_cast<int>(par.size()));
 
-	for (auto i = 0; i < this->N - this->K; i++)
+	for (auto i = 0; i < (int)par.size(); i++)
 		par[i] = (B)this->uniform_dist(this->rd_engine);
 }
 

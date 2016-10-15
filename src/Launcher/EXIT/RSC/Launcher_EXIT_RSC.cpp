@@ -16,7 +16,7 @@ Launcher_EXIT_RSC<B,R,Q,QD>
 {
 	this->params.code     .type          = "RSC";
 	this->params.code     .tail_length   = 2*3;
-	this->params.encoder  .type          = "GENERIC";
+	this->params.encoder  .type          = "RSC";
 	this->params.encoder  .buffered      = false;
 	this->params.encoder  .poly          = {013, 015};
 	this->params.quantizer.n_bits        = 6;
@@ -34,13 +34,10 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 	Launcher_EXIT<B,R,Q>::build_args();
 
 	// ------------------------------------------------------------------------------------------------------- encoder
-	this->opt_args[{"enc-type"}] =
-		{"string",
-		 "the type of the RSC encoder.",
-		 "GENERIC"};
+	this->opt_args[{"enc-type"}][2] += ", RSC";
 	this->opt_args[{"enc-poly"}] =
 		{"string",
-		 "the polynomials describing RSC code (used only with --enc-type set to GENERIC), should be of the form \"{A,B}\"."};
+		 "the polynomials describing RSC code (used only with --enc-type set to RSC), should be of the form \"{A,B}\"."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
@@ -111,22 +108,17 @@ template <typename B, typename R, typename Q, typename QD>
 std::vector<std::pair<std::string,std::string>> Launcher_EXIT_RSC<B,R,Q,QD>
 ::header_encoder()
 {
-	std::stringstream type;
-	type << this->params.encoder.type;
-	if (this->params.encoder.type == "GENERIC")
-		type << " {0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1]
-		     << "}";
+	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
+
+	std::stringstream poly;
+	poly << "{0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1] << "}";
 
 	auto p = Launcher_EXIT<B,R,Q>::header_encoder();
 
-	std::vector<std::pair<std::string,std::string>> p_new;
+	p.push_back(std::make_pair(std::string("Poly"), poly.str()));
+	p.push_back(std::make_pair(std::string("Buffered"), buff_enc));
 
-	p_new.push_back(std::make_pair(std::string("Type"), type.str()));
-
-	for (auto i = 0; i < (int)p.size(); i++)
-		p_new.push_back(p[i]);
-
-	return p_new;
+	return p;
 }
 
 template <typename B, typename R, typename Q, typename QD>

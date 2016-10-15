@@ -60,8 +60,14 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_EXIT_RSC<B,R,Q,QD>
 ::build_encoder()
 {
-	auto encoder = Factory_encoder_RSC<B>::build(this->params);
-	trellis = encoder->get_trellis();
+	auto encoder_RSC = Factory_encoder_RSC<B>::build(this->params);
+	trellis = encoder_RSC->get_trellis();
+
+	auto encoder = Simulation_EXIT<B,R,Q>::build_encoder();
+	if (encoder == nullptr)
+		encoder = encoder_RSC;
+	else
+		delete encoder_RSC;
 	return encoder;
 }
 

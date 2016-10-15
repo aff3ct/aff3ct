@@ -24,31 +24,31 @@ protected:
 
 		if (file.is_open())
 		{
-			T read;
+			T val;
 
-			file >> read;
-			if (read == (T)this->pi.size())
+			file >> val;
+			if (val == (T)this->pi.size())
 			{
 				for (auto i = 0; i < (int)this->pi.size(); i++)
 				{
-					file >> read;
-					if (read >= 0 && read < (T)this->pi.size())
+					file >> val;
+					if (val >= 0 && val < (T)this->pi.size())
 					{
 						auto found = false;
 						auto j = 0;
 						while(j < i && !found)
 						{
-							if (this->pi[j] == read)
+							if (this->pi[j] == val)
 								found = true;
 							j++;
 						}
 
 						if (!found)
-							this->pi[i] = (T)read;
+							this->pi[i] = (T)val;
 						else
 						{
 							std::cerr << bold_red("(EE) The interleaver value is wrong, it already exists elsewhere")
-							          << bold_red(" (read: ") << bold_red(std::to_string(read))
+							          << bold_red(" (read: ") << bold_red(std::to_string(val))
 							          << bold_red("), exiting.") << std::endl;
 							file.close();
 							std::exit(-1);
@@ -57,7 +57,7 @@ protected:
 					else
 					{
 						std::cerr << bold_red("(EE) The interleaver value is wrong (read: ")
-						          << bold_red(std::to_string(read)) << bold_red(", required: < ")
+						          << bold_red(std::to_string(val)) << bold_red(", expected: < ")
 						          << bold_red(std::to_string(this->pi.size())) << bold_red("), exiting.") << std::endl;
 						file.close();
 						std::exit(-1);
@@ -69,8 +69,8 @@ protected:
 			}
 			else
 			{
-				std::cerr << bold_red("(EE) The interleaver size is wrong (read: ") << bold_red(std::to_string(read))
-				          << bold_red(", required: ") << bold_red(std::to_string(this->pi.size()))
+				std::cerr << bold_red("(EE) The interleaver size is wrong (read: ") << bold_red(std::to_string(val))
+				          << bold_red(", expected: ") << bold_red(std::to_string(this->pi.size()))
 				          << bold_red("), exiting.") << std::endl;
 				file.close();
 				std::exit(-1);

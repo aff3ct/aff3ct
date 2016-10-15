@@ -10,6 +10,7 @@ Launcher_BFER_LDPC<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	this->params.code     .type       = "LDPC";
+	this->params.encoder  .type       = "AZCW";
 	this->params.quantizer.n_bits     = 6;
 	this->params.quantizer.n_decimals = 2;
 	this->params.decoder  .type       = "BP_FLOODING";

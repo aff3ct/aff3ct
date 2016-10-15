@@ -83,7 +83,7 @@ protected:
 	virtual void                snr_precompute   ();
 
 	virtual Source<B>*          build_source     (              );
-	virtual Encoder<B>*         build_encoder    (              ) = 0;
+	virtual Encoder<B>*         build_encoder    (              );
 	virtual Modulator<B,R,R>*   build_modulator  (              );
 	virtual Modulator<B,R,R>*   build_modulator_a(              );
 	virtual Channel<R>*         build_channel    (const int size);

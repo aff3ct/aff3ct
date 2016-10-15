@@ -48,7 +48,9 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_RA<B,R,Q>
 ::build_encoder(const int tid)
 {
-	Encoder<B>* encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *interleaver);
+	auto encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
+	if (encoder == nullptr)
+		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *interleaver);
 	return encoder;
 }
 

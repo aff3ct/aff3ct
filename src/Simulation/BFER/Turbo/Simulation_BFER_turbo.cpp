@@ -90,7 +90,13 @@ Encoder<B>* Simulation_BFER_turbo<B,R,Q,QD>
 	if (tid == 0)
 		trellis = sub_encoder[tid]->get_trellis();
 
-	return Factory_encoder_turbo<B>::build(this->params, interleaver, sub_encoder[tid], sub_encoder[tid]);
+	Encoder<B>* encoder = nullptr;
+	if (this->params.simulation.json_path.empty())
+		encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
+	if (encoder == nullptr)
+		encoder = Factory_encoder_turbo<B>::build(this->params, interleaver, sub_encoder[tid], sub_encoder[tid]);
+
+	return encoder;
 }
 
 template <typename B, typename R, typename Q, typename QD>

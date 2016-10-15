@@ -11,6 +11,7 @@ Launcher_BFERI_uncoded<B,R,Q>
 : Launcher_BFERI<B,R,Q>(argc, argv, stream)
 {
 	this->params.code     .type       = "Channel";
+	this->params.encoder  .type       = "NO";
 	this->params.quantizer.n_bits     = 6;
 	this->params.quantizer.n_decimals = 2;
 	this->params.decoder  .type       = "NONE";
@@ -22,6 +23,9 @@ void Launcher_BFERI_uncoded<B,R,Q>
 ::build_args()
 {
 	Launcher_BFERI<B,R,Q>::build_args();
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] = "NO";
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("NONE");

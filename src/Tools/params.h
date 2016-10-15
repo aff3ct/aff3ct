@@ -56,6 +56,7 @@ struct crc_parameters
 struct encoder_parameters
 {
 	std::string      type;
+	std::string      path;
 	bool             systematic;
 	bool             buffered;
 	std::vector<int> poly;

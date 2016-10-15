@@ -10,10 +10,11 @@ Launcher_BFER_uncoded<B,R,Q>
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
 	this->params.code     .type       = "Channel";
+	this->params.encoder  .type       = "NO";
 	this->params.quantizer.n_bits     = 6;
 	this->params.quantizer.n_decimals = 2;
-	this->params.decoder  .type       = "NONE";
-	this->params.decoder  .implem     = "NONE";
+	this->params.decoder  .type       = "NO";
+	this->params.decoder  .implem     = "HARD_DECISION";
 }
 
 template <typename B, typename R, typename Q>
@@ -21,6 +22,9 @@ void Launcher_BFER_uncoded<B,R,Q>
 ::build_args()
 {
 	Launcher_BFER<B,R,Q>::build_args();
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] = "NO";
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("NONE");

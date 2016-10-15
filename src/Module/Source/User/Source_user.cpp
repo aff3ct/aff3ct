@@ -13,7 +13,7 @@ Source_user<B>
 
 	if (file.is_open())
 	{
-		B n_src = 0, src_size = 0;
+		int n_src = 0, src_size = 0;
 
 		file >> n_src;
 		file >> src_size;
@@ -21,25 +21,25 @@ Source_user<B>
 		assert(n_src > 0 && src_size > 0);
 
 		this->source.resize(n_src);
-		for (auto i = 0; i < (int)n_src; i++)
+		for (auto i = 0; i < n_src; i++)
 			this->source[i].resize(src_size);
 
-		if (src_size == (B)this->K)
+		if (src_size == this->K)
 		{
-			for (auto i = 0; i < (int)n_src; i++)
-				for (auto j = 0; j < (int)src_size; j++)
+			for (auto i = 0; i < n_src; i++)
+				for (auto j = 0; j < src_size; j++)
 				{
 					B bit;
 					file >> bit;
 
 					assert(bit == 0 || bit == 1);
-					this->source[i][j] = (B)bit;
+					this->source[i][j] = bit;
 				}
 		}
 		else
 		{
 			std::cerr << bold_red("(EE) The source size is wrong (read: ") << bold_red(std::to_string(src_size))
-			          << bold_red(", required: ") << bold_red(std::to_string(this->K))
+			          << bold_red(", expected: ") << bold_red(std::to_string(this->K))
 			          << bold_red("), exiting.") << std::endl;
 			file.close();
 			std::exit(-1);

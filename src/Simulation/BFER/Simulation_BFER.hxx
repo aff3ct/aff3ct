@@ -14,8 +14,7 @@
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
-#include "Tools/Factory/Factory_encoder_coset.hpp"
-#include "Tools/Factory/Factory_encoder_AZCW.hpp"
+#include "Tools/Factory/Factory_encoder_common.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
@@ -1009,17 +1008,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER<B,R,Q>
 ::build_encoder(const int tid)
 {
-	if (this->params.source.type == "AZCW")
-		return Factory_encoder_AZCW<B>::build(params);
-	else if (this->params.code.coset)
-		return Factory_encoder_coset<B>::build(params, tid);
-	else
-	{
-		std::cerr << bold_red("(EE) The encoder could not be instantiated: try to enable the coset approach or to ")
-		          << bold_red("use All Zero Code Words. Exiting...") << std::endl;
-		std::exit(-1);
-		return nullptr;
-	}
+	return Factory_encoder_common<B>::build(params, tid);
 }
 
 template <typename B, typename R, typename Q>

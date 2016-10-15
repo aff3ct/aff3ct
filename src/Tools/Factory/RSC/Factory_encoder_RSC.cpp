@@ -13,12 +13,12 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 	// build the encoder
 	if (params.encoder.systematic)
 	{
-		if (params.encoder.type == "GENERIC_JSON")
+		if (params.encoder.type == "TURBO_JSON")
 		{
 			encoder = new Encoder_RSC_generic_json_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
 			                                              params.encoder.poly, stream);
 		}
-		else if (params.encoder.type == "GENERIC")
+		else
 		{
 			encoder = new Encoder_RSC_generic_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
 			                                         params.encoder.poly);

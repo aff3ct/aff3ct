@@ -16,7 +16,7 @@ Launcher_BFER_RSC<B,R,Q,QD>
 {
 	this->params.code     .tail_length   = 2*3;
 	this->params.code     .type          = "RSC";
-	this->params.encoder  .type          = "GENERIC";
+	this->params.encoder  .type          = "RSC";
 	this->params.encoder  .buffered      = true;
 	this->params.encoder  .poly          = {013, 015};
 	this->params.quantizer.n_bits        = 6;
@@ -34,16 +34,13 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	Launcher_BFER<B,R,Q>::build_args();
 
 	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", RSC";
 	this->opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
-	this->opt_args[{"enc-type"}] =
-		{"string",
-		 "the type of the RSC encoder.",
-		 "GENERIC"};
 	this->opt_args[{"enc-poly"}] =
 		{"string",
-		 "the polynomials describing RSC code (used only with --enc-type set to GENERIC), should be of the form \"{A,B}\"."};
+		 "the polynomials describing RSC code (used only with --enc-type set to RSC), should be of the form \"{A,B}\"."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
@@ -67,19 +64,17 @@ void Launcher_BFER_RSC<B,R,Q,QD>
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
 	if(this->ar.exist_arg({"enc-type"   })) this->params.encoder.type     = this->ar.get_arg({"enc-type"});
-	if (this->params.encoder.type == "GENERIC")
+
+	if (this->ar.exist_arg({"enc-poly"}))
 	{
-		if (this->ar.exist_arg({"enc-poly"}))
-		{
-			auto poly_str = this->ar.get_arg({"enc-poly"});
-//			std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
-//			assert(std::regex_match(poly_str, pattern));
+		auto poly_str = this->ar.get_arg({"enc-poly"});
+//		std::regex pattern("\\{\\d{1-5}\\,\\d{1-5}\\}");
+//		assert(std::regex_match(poly_str, pattern));
 #ifdef _MSC_VER
-			sscanf_s(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+		sscanf_s(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
 #else
-			std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
 #endif
-		}
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoder
@@ -122,24 +117,15 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_RSC<B,R,Q,QD>
 {
 	std::string buff_enc = ((this->params.encoder.buffered) ? "on" : "off");
 
-	std::stringstream type;
-	type << this->params.encoder.type;
-	if (this->params.encoder.type == "GENERIC")
-		type << " {0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1]
-		     << "}";
+	std::stringstream poly;
+	poly << "{0" << std::oct << this->params.encoder.poly[0] << ",0" << std::oct << this->params.encoder.poly[1] << "}";
 
 	auto p = Launcher_BFER<B,R,Q>::header_encoder();
 
-	std::vector<std::pair<std::string,std::string>> p_new;
+	p.push_back(std::make_pair(std::string("Poly"), poly.str()));
+	p.push_back(std::make_pair(std::string("Buffered"), buff_enc));
 
-	p_new.push_back(std::make_pair(std::string("Type"), type.str()));
-
-	for (auto i = 0; i < (int)p.size(); i++)
-		p_new.push_back(p[i]);
-
-	p_new.push_back(std::make_pair(std::string("Buffered"), buff_enc));
-
-	return p_new;
+	return p;
 }
 
 template <typename B, typename R, typename Q, typename QD>

@@ -25,6 +25,7 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.code      .fb_gen_method = "GA";
 #endif
 	this->params.crc.type                 = "";
+	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 1;
 	this->params.decoder   .type          = "SC";
@@ -71,6 +72,7 @@ void Launcher_BFER_polar<B,R,Q>
 		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", POLAR";
 	this->opt_args[{"enc-no-sys"}] =
 		{"",
 		 "disable the systematic encoding."};

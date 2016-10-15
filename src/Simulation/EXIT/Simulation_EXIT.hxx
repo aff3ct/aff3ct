@@ -4,6 +4,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Tools/Factory/Factory_source.hpp"
+#include "Tools/Factory/Factory_encoder_common.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 
@@ -399,6 +400,13 @@ Source<B>* Simulation_EXIT<B,R,Q>
 ::build_source()
 {
 	return Factory_source<B>::build(params);
+}
+
+template <typename B, typename R, typename Q>
+Encoder<B>* Simulation_EXIT<B,R,Q>
+::build_encoder()
+{
+	return Factory_encoder_common<B>::build(params);
 }
 
 template <typename B, typename R, typename Q>

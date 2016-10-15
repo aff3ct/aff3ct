@@ -20,6 +20,7 @@ Launcher_EXIT_polar<B,R,Q>
 #else
 	this->params.code      .fb_gen_method = "GA";
 #endif
+	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 3;
 	this->params.decoder   .type          = "SCAN";
@@ -57,6 +58,9 @@ void Launcher_EXIT_polar<B,R,Q>
 		 "select the frozen bits generation method.",
 		 "GA, TV"};
 #endif
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", POLAR";
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("SCAN" );

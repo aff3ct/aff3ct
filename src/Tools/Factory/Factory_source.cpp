@@ -1,7 +1,6 @@
 #include "Module/Source/AZCW/Source_AZCW.hpp"
 #include "Module/Source/Random/Source_random.hpp"
 #include "Module/Source/Random/Source_random_fast.hpp"
-#include "Module/Source/Fixed/Source_fixed.hpp"
 #include "Module/Source/User/Source_user.hpp"
 
 #include "Factory_source.hpp"
@@ -19,11 +18,8 @@ Source<B>* Factory_source<B>
 		source = new Source_random<B>(params.code.K, seed);
 	else if (params.source.type == "AZCW")
 		source = new Source_AZCW<B>(params.code.K);
-	else if (params.source.type == "FIXED")
-		source = new Source_fixed<B>(params.code.K);
 	else if (params.source.type == "USER")
 		source = new Source_user<B>(params.code.K, params.source.path);
-
 
 	return source;
 }

@@ -27,10 +27,10 @@ Launcher<B,R,Q>
 	// default parameters
 	params.simulation .snr_step        = 0.1f;
 	params.simulation .n_threads       = 1;
+	params.code       .tail_length     = 0;
 	params.simulation .stop_time       = std::chrono::seconds(0);
 	params.source     .type            = "RAND";
 	params.source     .path            = "";
-	params.code       .tail_length     = 0;
 	params.modulator  .type            = "BPSK";
 	params.modulator  .bits_per_symbol = 1;
 	params.modulator  .upsample_factor = 1;
@@ -107,7 +107,6 @@ void Launcher<B,R,Q>
 		{"string",
 		 "method used to generate the codewords.",
 		 "RAND, RAND_FAST, AZCW, USER"};
-
 	opt_args[{"src-path"}] =
 		{"string",
 		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
@@ -222,6 +221,8 @@ void Launcher<B,R,Q>
 
 	// -------------------------------------------------------------------------------------------------------- source
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
+	if (params.source.type == "AZCW")
+		params.encoder.type = "AZCW";
 	if(ar.exist_arg({"src-path"})) params.source.path = ar.get_arg({"src-path"});
 
 	// ----------------------------------------------------------------------------------------------------- modulator

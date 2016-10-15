@@ -102,7 +102,10 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_polar<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return Factory_encoder_polar<B>::build(this->params, frozen_bits);
+	auto encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
+	if (encoder == nullptr)
+		encoder = Factory_encoder_polar<B>::build(this->params, frozen_bits);
+	return encoder;
 }
 
 template <typename B, typename R, typename Q>
