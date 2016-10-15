@@ -203,7 +203,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 
 	auto p = Launcher_BFER<B,R,Q>::header_encoder();
 
-	p.push_back(std::make_pair(std::string("Poly"), poly.str()));
+	p.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 	p.push_back(std::make_pair(std::string("Buffered"), buff_enc));
 
 	return p;
