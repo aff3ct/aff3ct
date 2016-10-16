@@ -10,6 +10,10 @@
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 class Decoder_RSC_BCJR_seq_generic_std : public Decoder_RSC_BCJR_seq_generic<B,R>
 {
+private:
+	mipp::vector<R> beta_prev;
+	mipp::vector<R> beta_cur;
+	
 public:
 	Decoder_RSC_BCJR_seq_generic_std(const int &K, 
 	                                 const std::vector<std::vector<int>> &trellis, 
