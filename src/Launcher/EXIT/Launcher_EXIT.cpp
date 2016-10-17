@@ -61,6 +61,8 @@ void Launcher_EXIT<B,R,Q>
 	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
 	if (this->params.encoder.type == "AZCW")
 		this->params.source.type = "AZCW";
+	if (this->params.encoder.type == "USER")
+		this->params.source.type = "USER";
 	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
 }
 

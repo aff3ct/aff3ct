@@ -123,7 +123,9 @@ void Launcher_BFERI<B,R,Q>
 	if (this->params.encoder.type == "COSET")
 		this->params.code.coset = true;
 	if (this->params.encoder.type == "AZCW")
-			this->params.source.type = "AZCW";
+		this->params.source.type = "AZCW";
+	if (this->params.encoder.type == "USER")
+		this->params.source.type = "USER";
 	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
 
 	// --------------------------------------------------------------------------------------------------- interleaver
