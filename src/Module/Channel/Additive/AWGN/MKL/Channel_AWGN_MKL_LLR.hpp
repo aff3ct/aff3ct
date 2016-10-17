@@ -5,7 +5,7 @@
 
 #include <mkl_vsl.h>
 
-#include "../../Channel.hpp"
+#include "../../../Channel.hpp"
 
 template <typename R>
 class Channel_AWGN_MKL_LLR : public Channel<R>

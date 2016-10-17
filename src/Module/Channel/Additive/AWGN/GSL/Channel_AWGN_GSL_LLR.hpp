@@ -6,7 +6,7 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
-#include "../../Channel.hpp"
+#include "../../../Channel.hpp"
 
 template <typename R>
 class Channel_AWGN_GSL_LLR : public Channel<R>

@@ -3,7 +3,7 @@
 
 #include <random>
 
-#include "../../Channel.hpp"
+#include "../../../Channel.hpp"
 
 template <typename R>
 class Channel_AWGN_std_LLR : public Channel<R>

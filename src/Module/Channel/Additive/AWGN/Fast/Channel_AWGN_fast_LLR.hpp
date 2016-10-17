@@ -6,7 +6,7 @@
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 #include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
 
-#include "../../Channel.hpp"
+#include "../../../Channel.hpp"
 
 template <typename R>
 class Channel_AWGN_fast_LLR : public Channel<R>

@@ -1,15 +1,16 @@
 #include "Module/Channel/NO/Channel_NO.hpp"
-#include "Module/Channel/AWGN/Standard/Channel_AWGN_std_LR.hpp"
-#include "Module/Channel/AWGN/Standard/Channel_AWGN_std_LLR.hpp"
-#include "Module/Channel/AWGN/Fast/Channel_AWGN_fast_LR.hpp"
-#include "Module/Channel/AWGN/Fast/Channel_AWGN_fast_LLR.hpp"
+#include "Module/Channel/Additive/User/Channel_additive_user.hpp"
+#include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LR.hpp"
+#include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LLR.hpp"
+#include "Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LR.hpp"
+#include "Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LLR.hpp"
 #ifdef CHANNEL_MKL
-#include "Module/Channel/AWGN/MKL/Channel_AWGN_MKL_LR.hpp"
-#include "Module/Channel/AWGN/MKL/Channel_AWGN_MKL_LLR.hpp"
+#include "Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LR.hpp"
+#include "Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LLR.hpp"
 #endif
 #ifdef CHANNEL_GSL
-#include "Module/Channel/AWGN/GSL/Channel_AWGN_GSL_LR.hpp"
-#include "Module/Channel/AWGN/GSL/Channel_AWGN_GSL_LLR.hpp"
+#include "Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LR.hpp"
+#include "Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LLR.hpp"
 #endif
 
 #include "Factory_channel.hpp"
@@ -56,6 +57,10 @@ Channel<R>* Factory_channel<R>
 	else if (params.channel.type == "NO")
 	{
 		channel = new Channel_NO<R>(size);
+	}
+	else if (params.channel.type == "USER")
+	{
+		channel = new Channel_additive_user<R>(size, params.channel.path);
 	}
 
 	return channel;

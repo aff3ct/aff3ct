@@ -87,6 +87,7 @@ struct channel_parameters
 {
 	std::string type;
 	std::string domain;
+	std::string path;
 };
 
 struct quantizer_parameters

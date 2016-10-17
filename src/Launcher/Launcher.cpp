@@ -38,6 +38,7 @@ Launcher<B,R,Q>
 	params.demodulator.no_sig2         = false;
 	params.channel    .domain          = "LLR";
 	params.channel    .type            = "AWGN";
+	params.channel    .path            = "";
 #ifdef MIPP_NO_INTRINSICS
 	params.quantizer  .type            = "STD";
 #else
@@ -136,7 +137,7 @@ void Launcher<B,R,Q>
 		 "turn off the division by sigma square in the demodulation."};
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	std::string chan_avail = "NO, AWGN, AWGN_FAST";
+	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
 #endif 
@@ -147,6 +148,9 @@ void Launcher<B,R,Q>
 		{"string",
 		 "type of the channel to use in the simulation.",
 		 chan_avail};
+	opt_args[{"chn-path"}] =
+		{"string",
+		 "path to a noisy file, to use with \"--chn-type USER\"."};
 
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
@@ -254,6 +258,7 @@ void Launcher<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- channel
 	if(ar.exist_arg({"chn-type"})) params.channel.type = ar.get_arg({"chn-type"});
+	if(ar.exist_arg({"chn-path"})) params.channel.path = ar.get_arg({"chn-path"});
 
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
@@ -428,6 +433,9 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 
 	p.push_back(std::make_pair("Type",   params.channel.type  ));
 	p.push_back(std::make_pair("Domain", params.channel.domain));
+
+	if (params.channel.type == "USER")
+		p.push_back(std::make_pair("Path", params.channel.path));
 
 	return p;
 }
