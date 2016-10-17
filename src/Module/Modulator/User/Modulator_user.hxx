@@ -41,7 +41,7 @@ Modulator_user<B,R,Q,MAX>
 	}
 	sqrt_es = sqrt(sqrt_es/nbr_symbols);
 
-	assert (constellation.size() == nbr_symbols);
+	assert ((int)constellation.size() == nbr_symbols);
 
 	for (auto i = 0; i < nbr_symbols; i++)
 		constellation[i] /= (std::complex<R>)sqrt_es;
