@@ -6,17 +6,17 @@
 
 First install *Python 3* and the Python 3 package manager *PIP*:
 
-> $ sudo apt-get install python3 python3-pip
+	$ sudo apt-get install python3 python3-pip
 
 Next, install the required dependencies to run **PyBER**:
 
-> $ sudo pip numpy pyqt5
+	$ sudo pip numpy pyqt5
 
 ## Run PyBER
 
 From the `plotter/PyBER/` directory: 
 
-> $ python3 pyBER.py
+	$ python3 pyBER.py
 
 By default, **PyBER** shows the folders and files located in the `tests` directory.
 The program only shows the file with the following extensions:
@@ -39,7 +39,7 @@ You can display more than one curve at a time by selecting a set of files (keep 
 
 Lets assume that you have compiled **AFF3CT** and you are in the `build` directory. You can launch a new simulation and redirect the standard output in a file like this:
 
-> $ ./bin/aff3ct --sim-type BFER --cde-type TURBO -K 1024 -N 3072 -m 0.0 -M 1.01 --dec-type LTE --dec-implem FAST -i 6 > ../tests/data/turbo_simu.txt
+	$ ./bin/aff3ct --sim-type BFER --cde-type TURBO -K 1024 -N 3072 -m 0.0 -M 1.01 --dec-type LTE --dec-implem FAST -i 6 > ../tests/data/turbo_simu.txt
 
 You have just created a new file (`../tests/data/turbo_simu.txt`) and you can visualize it.
 Notice than **PyBER** is able to update the curves in real time (no user action is needed to refresh the selected file(s)).

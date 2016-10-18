@@ -3,25 +3,27 @@ This project use `cmake` in order to generate the Makefile.
 
 ## Install cmake
 
-> $ sudo apt-get install cmake
+    $ sudo apt-get install cmake
 
 ## Generate the Makefile
-> $ mkdir build
 
-> $ cd build
-
-> $ cmake ..
+    $ mkdir build
+    $ cd build
+    $ cmake ..
 
 ### Facultative cmake options
 
 Enabling the GNU Scientific Librairy (GSL) (used for the AWGN channel):
-> $ cmake .. -DENABLE_GSL=ON
+
+    $ cmake .. -DENABLE_GSL=ON
 
 Enabling the Intel Math Kernel Librairy (MKL) (used for the AWGN channel):
-> $ cmake .. -DENABLE_MKL=ON
+
+    $ cmake .. -DENABLE_MKL=ON
 
 Enabling the SystemC/TLM standard between the modules:
-> $ cmake .. -DENABLE_SYSTEMC=ON
+
+    $ cmake .. -DENABLE_SYSTEMC=ON
 
 ### Modifying the CMakeCache.txt
 By default the configuration file will generate a debug binary.
@@ -58,7 +60,8 @@ Enable the colors and boldfaces in the shell with the `-DENABLE_COOL_BASH` flag:
     CMAKE_CXX_FLAGS:STRING=-Wall -march=native -funroll-loops -DENABLE_COOL_BASH
 
 ## Compiling with make
-> $ make -j4
+
+    $ make -j4
 
 This command will use the generated Makefile.
 
@@ -68,7 +71,7 @@ If you use `ctrl+C` twice in a small time-step (500ms), the program will stop.
 
 ### Decoding of the Polar codes with the Successive Cancellation decoder
 
-> $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -K 1024 -N 2048 -m 1.5 -M 3.01 --cde-sigma 0.862 --dec-type SC --dec-implem FAST
+    $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -K 1024 -N 2048 -m 1.5 -M 3.01 --cde-sigma 0.862 --dec-type SC --dec-implem FAST
 
 Expected output:
 
@@ -138,7 +141,7 @@ Expected output:
 
 ### Decoding of the Turbo codes with the LTE BCJR decoder (8 states trellis)
 
-> $ ./bin/aff3ct --sim-type BFER --cde-type TURBO -K 1024 -N 3072 -m 0.0 -M 1.01 --dec-type LTE --dec-implem FAST -i 6
+    $ ./bin/aff3ct --sim-type BFER --cde-type TURBO -K 1024 -N 3072 -m 0.0 -M 1.01 --dec-type LTE --dec-implem FAST -i 6
 
 Expected output:
 
