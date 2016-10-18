@@ -1,27 +1,27 @@
-#include "Simulation_BFER_LDPC.hpp"
-
 #include <string>
 #include <vector>
 #include <chrono>
 #include <cstdlib>
 #include <algorithm>
 
+#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
-#include "Tools/Code/LDPC/hard_coded_matrices.h"
+
+#include "Simulation_BFER_LDPC.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_LDPC<B,R,Q>
 ::Simulation_BFER_LDPC(const parameters& params)
 : Simulation_BFER<B,R,Q>(params)
 {
-	assert(this->params.code.N == (int)n_parities_per_variable_4224.size());
-	assert(this->params.code.K == this->params.code.N - (int)n_variables_per_parity_2112.size());
+	AList_reader reader(this->params.code.alist_path);
+	assert(this->params.code.N == (int)reader.get_n_VN());
 
-	n_variables_per_parity  = n_variables_per_parity_2112;
-	n_parities_per_variable = n_parities_per_variable_4224;
-	transpose               = transpose_7392;
+	n_variables_per_parity  = reader.get_n_VN_per_CN();
+	n_parities_per_variable = reader.get_n_CN_per_VN();
+	transpose               = reader.get_branches_transpose();
 }
 
 template <typename B, typename R, typename Q>

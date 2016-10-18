@@ -10,9 +10,9 @@
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
-                           const std ::vector<unsigned char> &n_variables_per_parity,
-                           const std ::vector<unsigned char> &n_parities_per_variable,
-                           const std ::vector<unsigned int > &transpose,
+                           const mipp::vector<unsigned char> &n_variables_per_parity,
+                           const mipp::vector<unsigned char> &n_parities_per_variable,
+                           const mipp::vector<unsigned int > &transpose,
                            const std::string name)
 : Decoder_SISO<B,R>      (K, N, 1, name          ),
   n_ite                  (n_ite                  ),

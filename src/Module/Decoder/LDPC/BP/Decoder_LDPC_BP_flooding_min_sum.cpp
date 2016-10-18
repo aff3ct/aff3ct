@@ -8,9 +8,9 @@
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_min_sum<B,R>
 ::Decoder_LDPC_BP_flooding_min_sum(const int &K, const int &N, const int& n_ite,
-                                   const std ::vector<unsigned char> &n_variables_per_parity,
-                                   const std ::vector<unsigned char> &n_parities_per_variable,
-                                   const std ::vector<unsigned int > &transpose,
+                                   const mipp::vector<unsigned char> &n_variables_per_parity,
+                                   const mipp::vector<unsigned char> &n_parities_per_variable,
+                                   const mipp::vector<unsigned int > &transpose,
                                    const std::string name)
 : Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, name)
 {

@@ -15,9 +15,9 @@ protected:
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
-	const std::vector<unsigned char> &n_variables_per_parity;
-	const std::vector<unsigned char> &n_parities_per_variable;
-	const std::vector<unsigned int > &transpose;
+	const mipp::vector<unsigned char> &n_variables_per_parity;
+	const mipp::vector<unsigned char> &n_parities_per_variable;
+	const mipp::vector<unsigned int > &transpose;
 	
 	mipp::vector<R>  Y_N; // input  LLRs
 	mipp::vector<B>  V_K; // output bits
@@ -29,9 +29,9 @@ protected:
 
 public:
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
-	                         const std ::vector<unsigned char> &n_variables_per_parity,
-	                         const std ::vector<unsigned char> &n_parities_per_variable,
-	                         const std ::vector<unsigned int > &transpose,
+	                         const mipp::vector<unsigned char> &n_variables_per_parity,
+	                         const mipp::vector<unsigned char> &n_parities_per_variable,
+	                         const mipp::vector<unsigned int > &transpose,
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
 

@@ -8,9 +8,9 @@ class Simulation_BFER_LDPC : public Simulation_BFER<B,R,Q>
 {
 protected:
 	// LDPC bi-partite graph representation
-	std::vector<unsigned char> n_variables_per_parity;
-	std::vector<unsigned char> n_parities_per_variable;
-	std::vector<unsigned int > transpose;
+	mipp::vector<unsigned char> n_variables_per_parity;
+	mipp::vector<unsigned char> n_parities_per_variable;
+	mipp::vector<unsigned int > transpose;
 
 public:
 	Simulation_BFER_LDPC(const parameters& params);

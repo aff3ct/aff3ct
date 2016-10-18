@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 2112 -N 4224 -m 0.01 -M 8.01 -s 0.5 -e 100 --dec-type BP_FLOODING --dec-implem SUM_PRODUCT -i 2 -t 4
+./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 2112 -N 4224 -m 0.01 -M 8.01 -s 0.5 -e 100 --dec-type BP_FLOODING --dec-implem SUM_PRODUCT -i 2 -t 4 --cde-alist-path ../conf/dec/LDPC/GSM-LDPC_2112_4224.alist
 Curve name:
 BPF sum-prod 2 ite.
 Trace:
@@ -20,6 +20,7 @@ Trace:
 #    ** Info. bits (K)         = 2112
 #    ** Codeword size (N)      = 4224
 #    ** Coset approach (c)     = off
+#    ** AList file path        = ../conf/dec/LDPC/GSM-LDPC_2112_4224.alist
 # * Source ----------------------------------------
 #    ** Type                   = AZCW
 # * Encoder ---------------------------------------

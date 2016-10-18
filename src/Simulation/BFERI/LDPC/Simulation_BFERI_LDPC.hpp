@@ -12,9 +12,9 @@ class Simulation_BFERI_LDPC : public Simulation_BFERI<B,R,Q>
 {
 protected:
 	// LDPC bi-partite graph representation
-	std::vector<unsigned char> n_variables_per_parity;
-	std::vector<unsigned char> n_parities_per_variable;
-	std::vector<unsigned int > transpose;
+	mipp::vector<unsigned char> n_variables_per_parity;
+	mipp::vector<unsigned char> n_parities_per_variable;
+	mipp::vector<unsigned int > transpose;
 
 	std::vector<Decoder_SISO<B,Q>*> decoder_siso;
 

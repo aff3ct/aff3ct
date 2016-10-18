@@ -26,61 +26,61 @@ _aff3ct() {
 	opts="--cde-type --sim-type -v --version -h --help"
 
 	# add contents of Launcher.cpp
-	if [[ 
-	       ${codetype} == "POLAR"      && ${simutype} == "EXIT"  || \
-	       ${codetype} == "RSC"        && ${simutype} == "EXIT"  || \
-	       ${codetype} == "POLAR"      && ${simutype} == "BFER"  || \
-	       ${codetype} == "RSC"        && ${simutype} == "BFER"  || \
-	       ${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
-	       ${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
-	       ${codetype} == "RA"         && ${simutype} == "BFER"  || \
-	       ${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
-	       ${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
-	       ${codetype} == "RSC"        && ${simutype} == "BFERI" || \
-	       ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
-	       ${codetype} == "UNCODED"    && ${simutype} == "BFERI" || \
-	       ${codetype} == "POLAR"      && ${simutype} == "GEN"      \
-	   ]]
+	if [[
+		${codetype} == "POLAR"      && ${simutype} == "EXIT"  || \
+		${codetype} == "RSC"        && ${simutype} == "EXIT"  || \
+		${codetype} == "POLAR"      && ${simutype} == "BFER"  || \
+		${codetype} == "RSC"        && ${simutype} == "BFER"  || \
+		${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
+		${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
+		${codetype} == "RA"         && ${simutype} == "BFER"  || \
+		${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
+		${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
+		${codetype} == "RSC"        && ${simutype} == "BFERI" || \
+		${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+		${codetype} == "UNCODED"    && ${simutype} == "BFERI" || \
+		${codetype} == "POLAR"      && ${simutype} == "GEN"      \
+		]]
 	then
-		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s        \
-		       --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
-		       --cde-info-bits -K --cde-size -N --src-type --src-path          \
-		       --enc-type --enc-path --mod-type --mod-bps --mod-ups            \
-		       --mod-const-path --demod-max --demod-no-sig2 --chn-type         \
-		       --qnt-type --qnt-int --qnt-bits --qnt-range --dec-type          \
-		       --dec-implem --term-no"
+		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s   \
+		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p \
+		      --cde-info-bits -K --cde-size -N --src-type --src-path      \
+		      --enc-type --enc-path --mod-type --mod-bps --mod-ups        \
+		      --mod-const-path --demod-max --demod-no-sig2 --chn-type     \
+		      --chn-path --qnt-type --qnt-int --qnt-bits --qnt-range      \
+		      --dec-type --dec-implem --term-no"
 	fi
 
 	# add contents of Launcher_BFER.cpp
-	if [[ 
-	       ${codetype} == "POLAR"      && ${simutype} == "BFER" || \
-	       ${codetype} == "RSC"        && ${simutype} == "BFER" || \
-	       ${codetype} == "TURBO"      && ${simutype} == "BFER" || \
-	       ${codetype} == "REPETITION" && ${simutype} == "BFER" || \
-	       ${codetype} == "RA"         && ${simutype} == "BFER" || \
-   	       ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
-   	       ${codetype} == "UNCODED"    && ${simutype} == "BFER"    \
-	   ]]
+	if [[
+		${codetype} == "POLAR"      && ${simutype} == "BFER" || \
+		${codetype} == "RSC"        && ${simutype} == "BFER" || \
+		${codetype} == "TURBO"      && ${simutype} == "BFER" || \
+		${codetype} == "REPETITION" && ${simutype} == "BFER" || \
+		${codetype} == "RA"         && ${simutype} == "BFER" || \
+		${codetype} == "LDPC"       && ${simutype} == "BFER" || \
+		${codetype} == "UNCODED"    && ${simutype} == "BFER"    \
+		]]
 	then
-		opts="$opts --sim-benchs -b --sim-benchs-no-ldst -B --sim-debug -d     \
-		--sim-debug-limit --snr-sim-trace-path --sim-time-report --cde-coset -c\
-		--mnt-max-fe -e  --term-type "
+		opts="$opts --sim-benchs -b --sim-benchs-no-ldst -B --sim-debug -d   \
+		--sim-debug-limit --snr-sim-trace-path --sim-time-report --cde-coset \
+		-c --mnt-max-fe -e  --term-type "
 	fi
 
 	# add contents of Launcher_EXIT.cpp
-	if [[ 
-	       ${codetype} == "POLAR"      && ${simutype} == "EXIT" || \
-	       ${codetype} == "RSC"        && ${simutype} == "EXIT"    \
-	   ]]
+	if [[
+		${codetype} == "POLAR"      && ${simutype} == "EXIT" || \
+		${codetype} == "RSC"        && ${simutype} == "EXIT"    \
+		]]
 	then
 		opts="$opts --sim-siga-min -a --sim-siga-max -A --sim-siga-step"
 	fi
 
 	# add contents of Launcher_BFERI.cpp
-	if [[ 
-	       ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
-	       ${codetype} == "UNCODED"    && ${simutype} == "BFERI"    \
-	   ]]
+	if [[
+		${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+		${codetype} == "UNCODED"    && ${simutype} == "BFERI"    \
+		]]
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
@@ -88,99 +88,99 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_GEN_polar.cpp
-	if [[ 
-	       ${codetype} == "POLAR"      && ${simutype} == "GEN"
-	   ]]
+	if [[
+		${codetype} == "POLAR"      && ${simutype} == "GEN" \
+		]]
 	then
-		opts="$opts --cde-awgn-fb-file --cde-awgn-fb-path --cde-fb-gen-method  \
+		opts="$opts --cde-awgn-fb-file --cde-awgn-fb-path --cde-fb-gen-method \
 		--dec-snr --dec-gen-path --sim-pb-path"
 	fi
 
 	# add contents of Launcher_BFER_RA.cpp
-	if [[ 
-	       ${codetype} == "RA"         && ${simutype} == "BFER"    \
-	   ]]
+	if [[
+		${codetype} == "RA"         && ${simutype} == "BFER" \
+		]]
 	then
 		opts="$opts --dec-ite -i --itl-type --itl-path"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
-	if [[ 
-           ${codetype} == "RSC"        && ${simutype} == "BFER" || \
-           ${codetype} == "RSC"        && ${simutype} == "BFERI"   \
-	   ]]
+	if [[
+		${codetype} == "RSC"        && ${simutype} == "BFER" || \
+		${codetype} == "RSC"        && ${simutype} == "BFERI"   \
+		]]
 	then
-		opts="$opts --enc-no-buff --enc-poly --dec-type -D --dec-implem        \
+		opts="$opts --enc-no-buff --enc-poly --dec-type -D --dec-implem \
 		      --dec-simd --dec-max"
 	fi
 
 	# add contents of Launcher_BFER_polar.cpp
-	if [[ 
-	       ${codetype} == "POLAR"      && ${simutype} == "BFER"    \
-	   ]]
+	if [[
+		${codetype} == "POLAR"      && ${simutype} == "BFER" \
+		]]
 	then
-		opts="$opts --sim-pb-path --cde-awgn-fb-file --cde-awgn-fb-path        \
-		      --cde-fb-gen-method --cde-sigma --crc-type --enc-no-sys          \
+		opts="$opts --sim-pb-path --cde-awgn-fb-file --cde-awgn-fb-path \
+		      --cde-fb-gen-method --cde-sigma --crc-type --enc-no-sys   \
 		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
-	if [[ 
-           ${codetype} == "REPETITION" && ${simutype} == "BFER"    \
-	   ]]
+	if [[
+		${codetype} == "REPETITION" && ${simutype} == "BFER" \
+		]]
 	then
 		opts="$opts --enc-no-buff --dec-type -D --dec-implem"
 	fi
 
 	# add contents of Launcher_BFER_turbo.cpp
-	if [[ 
-           ${codetype} == "TURBO"      && ${simutype} == "BFER"    \
-	   ]]
+	if [[
+		${codetype} == "TURBO"      && ${simutype} == "BFER" \
+		]]
 	then
-		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type        \
-		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem      \
+		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
+		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem \
 		      --dec-ite -i --dec-sf --dec-simd --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
-	if [[ 
-           ${codetype} == "RSC"        && ${simutype} == "EXIT"    \
-	   ]]
+	if [[
+		${codetype} == "RSC"        && ${simutype} == "EXIT" \
+		]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-max"
 	fi
 
 	# add contents of Launcher_EXIT_polar.cpp
-	if [[ 
-           ${codetype} == "POLAR"      && ${simutype} == "EXIT"    \
-	   ]]
+	if [[
+		${codetype} == "POLAR"      && ${simutype} == "EXIT" \
+		]]
 	then
-		opts="$opts --sim-pb-path --cde-sigma --cde-awgn-fb-file               \
-		--cde-awgn-fb-path --cde-fb-gen-method --dec-type -D --dec-implem      \
+		opts="$opts --sim-pb-path --cde-sigma --cde-awgn-fb-file          \
+		--cde-awgn-fb-path --cde-fb-gen-method --dec-type -D --dec-implem \
 		--dec-ite -i --dec-lists -L"
 	fi
 
 	# add contents of Launcher_BFER_LDPC.cpp
-	if [[ 
-           ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
-           ${codetype} == "LDPC"       && ${simutype} == "BFERI"   \
-	   ]]
+	if [[
+		${codetype} == "LDPC"       && ${simutype} == "BFER" || \
+		${codetype} == "LDPC"       && ${simutype} == "BFERI"   \
+		]]
 	then
-		opts="$opts --dec-type -D --dec-implem --dec-ite -i"
+		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
-	if [[ 
-           ${codetype} == "UNCODED"    && ${simutype} == "BFER"    \
-	   ]]
+	if [[
+		${codetype} == "UNCODED"    && ${simutype} == "BFER" \
+		]]
 	then
 		opts="$opts "
 	fi
 
 	# add contents of Launcher_BFERI_uncoded.cpp
-	if [[ 
-           ${codetype} == "UNCODED"   && ${simutype} == "BFERI"    \
-	   ]]
+	if [[
+		${codetype} == "UNCODED"   && ${simutype} == "BFERI" \
+		]]
 	then
 		opts="$opts  "
 	fi
@@ -190,24 +190,24 @@ _aff3ct() {
 		COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 		return 0
 	fi
- 
+
 	case "${prev}" in
 		# awaiting random number or strings
-		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m          |\
-		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time            |\
-        --sim-threads | -t | --cde-info-bits | -K | --cde-size | -N | --mod-bps\
-        | --mod-ups | --qnt-int | --qnt-bits | --qnt-range | --qnt-type       |\
-        --dec-type | --dec-implem | --sim-benchs | -b | --sim-debug-limit     |\
-        --sim-trace-path | --mnt-max-fe | -e | --term-type | --sim-siga-min   |\
-        -a | --sim-siga-max | -A | --sim-siga-step | --dmod-ite | --cde-sigma |\
-        --dec-snr | --dec-ite | -i | --dec-lists | -L | --sim-json-path        \
-         )
+		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |       \
+		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |         \
+		--sim-threads | -t | --cde-info-bits | -K | --cde-size | -N |        \
+		--mod-bps | --mod-ups | --qnt-int | --qnt-bits | --qnt-range |       \
+		--qnt-type | --dec-type | --dec-implem | --sim-benchs | -b |         \
+		--sim-debug-limit | --sim-trace-path | --mnt-max-fe | -e |           \
+		--term-type | --sim-siga-min | -a | --sim-siga-max | -A |            \
+		--sim-siga-step | --dmod-ite | --cde-sigma | --dec-snr | --dec-ite | \
+		-i | --dec-lists | -L | --sim-json-path)
 			COMPREPLY=()
 			;;
 
 		# awaiting nothing	
-		-v | --version | -h | --help | --demod-no-sig2 | --term-no |           \
-		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report |     \
+		-v | --version | -h | --help | --demod-no-sig2 | --term-no |       \
+		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
@@ -278,8 +278,9 @@ _aff3ct() {
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |             \
-		--sim-pb-path | --itl-path | --mod-const-path | --src-path | --enc-path)
+		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |   \
+		--sim-pb-path | --itl-path | --mod-const-path | --src-path | \
+		--enc-path | --chn-path | --cde-alist-path)
 			_filedir
 			;;
 		
@@ -308,7 +309,7 @@ _aff3ct() {
 			;;
 
 		--crc-type)
-			local params="1-0x1 2-0x1 3-0x3 4-ITU 8-DVB-S2 16-CCITT 16-IBM     \
+			local params="1-0x1 2-0x1 3-0x3 4-ITU 8-DVB-S2 16-CCITT 16-IBM \
 			24-LTEA 32-GZIP"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -350,7 +351,7 @@ _aff3ct() {
 
 		*)
 			if [[ ${cur} == * || ${COMP_CWORD} -eq 1 ]] || \
-	   		   [[ ${prev} == @(-q|--quiet) ]] ; then
+				[[ ${prev} == @(-q|--quiet) ]] ; then
 				COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 				return 0
 			else

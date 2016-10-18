@@ -24,6 +24,11 @@ void Launcher_BFER_LDPC<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
+	// ---------------------------------------------------------------------------------------------------------- code
+	this->req_args[{"cde-alist-path"}] =
+		{"string",
+		 "path to the AList formated file."};
+
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING"     );
 	this->opt_args[{"dec-implem"   }].push_back("MIN_SUM, SUM_PRODUCT");
@@ -38,6 +43,9 @@ void Launcher_BFER_LDPC<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	// ---------------------------------------------------------------------------------------------------------- code
+	if(this->ar.exist_arg({"cde-alist-path"})) this->params.code.alist_path = this->ar.get_arg({"cde-alist-path"});
+
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"dec-ite", "i"});
 }
@@ -47,6 +55,17 @@ Simulation* Launcher_BFER_LDPC<B,R,Q>
 ::build_simu()
 {
 	return new Simulation_BFER_LDPC<B,R,Q>(this->params);
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_LDPC<B,R,Q>
+::header_code()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_code();
+
+	p.push_back(std::make_pair("AList file path", this->params.code.alist_path));
+
+	return p;
 }
 
 template <typename B, typename R, typename Q>

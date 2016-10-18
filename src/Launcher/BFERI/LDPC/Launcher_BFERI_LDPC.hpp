@@ -15,6 +15,7 @@ protected:
 	virtual void store_args();
 	virtual Simulation* build_simu();
 
+	virtual std::vector<std::pair<std::string,std::string>> header_code   ();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder();
 };
 
