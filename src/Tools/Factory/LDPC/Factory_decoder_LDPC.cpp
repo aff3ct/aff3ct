@@ -1,7 +1,7 @@
 #include <string>
 
-#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP_flooding_min_sum.hpp"
-#include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP_flooding_sum_product.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_min_sum.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_sum_product.hpp"
 
 #include "Factory_decoder_LDPC.hpp"
 

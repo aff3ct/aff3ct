@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 
-#include "../../Decoder_SISO.hpp"
+#include "../../../Decoder_SISO.hpp"
 
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
