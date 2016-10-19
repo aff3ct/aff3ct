@@ -11,16 +11,13 @@ Decoder_LDPC_BP_layered_sum_product<B,R>
 ::Decoder_LDPC_BP_layered_sum_product(const int &K, const int &N, const int& n_ite,
                                       const AList_reader &alist_data,
                                       const std::string name)
-: Decoder_SISO<B,R>      (K, N, 1, name                   ),
-  n_ite                  (n_ite                           ),
-  n_V_nodes              (N                               ), // same as N but more explicit
-  n_C_nodes              (N - K                           ),
-  n_branches             ((int)alist_data.get_n_branches()),
-  init_flag              (false                           ),
-
-  CN_to_VN               (alist_data.get_CN_to_VN()       ),
-
-  var_nodes              (N,                             0)
+: Decoder_SISO<B,R>(K, N, 1, name                 ),
+  n_ite            (n_ite                         ),
+  n_C_nodes        (N - K                         ),
+  init_flag        (false                         ),
+  CN_to_VN         (alist_data.get_CN_to_VN()     ),
+  var_nodes        (N,                           0),
+  branches         (alist_data.get_n_branches(), 0)
 {
 	assert(N == (int)alist_data.get_n_VN());
 	assert(K == N - (int)alist_data.get_n_CN());
@@ -51,13 +48,11 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->var_nodes.begin(), this->var_nodes.end(), (R)0);
+		std::fill(this->branches.begin(), this->branches.end(), (R)0);
 		this->init_flag = false;
 	}
 
-	auto loop_size = (int)this->var_nodes.size();
-	for (auto i = 0; i < loop_size; i++)
-		this->var_nodes[i] += Y_N1[i];
+	std::copy(Y_N1.begin(), Y_N1.end(), this->var_nodes.begin());
 
 	// actual decoding
 	this->BP_decode();
@@ -76,13 +71,11 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->var_nodes.begin(), this->var_nodes.end(), (R)0);
+		std::fill(this->branches.begin(), this->branches.end(), (R)0);
 		this->init_flag = false;
 	}
 
-	auto loop_size = (int)this->var_nodes.size();
-	for (auto i = 0; i < loop_size; i++)
-		this->var_nodes[i] += Y_N[i];
+	std::copy(Y_N.begin(), Y_N.end(), this->var_nodes.begin());
 }
 
 template <typename B, typename R>
@@ -113,34 +106,39 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered_sum_product<B,R>
 ::BP_decode()
 {
-	R values[32]; // lets suppose that 32 >= length is always true...
+	R contributions[32];
+	R values       [32];
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
+		auto kr = 0;
+		auto kw = 0;
 		for (auto i = 0; i < this->n_C_nodes; i++)
 		{
 			auto sign =    0;
 			auto sum  = (R)0;
 
-			for (int j = 0; j < (int)this->CN_to_VN[i].size(); j++)
+			const auto n_VN = (int)this->CN_to_VN[i].size();
+			for (auto j = 0; j < n_VN; j++)
 			{
-				const auto value  = this->var_nodes[this->CN_to_VN[i][j]];
-				const auto v_abs  = (R)std::abs(value);
+				contributions[j]  = this->var_nodes[this->CN_to_VN[i][j]] - this->branches[kr++];
+				const auto v_abs  = (R)std::abs(contributions[j]);
 				const auto res    = (R)std::log(std::tanh(v_abs * (R)0.5));
-				const auto c_sign = std::signbit((float)value) ? -1 : 0;
+				const auto c_sign = std::signbit((float)contributions[j]) ? -1 : 0;
 
 				sign ^= c_sign;
 				sum  += res;
 				values[j] = res;
 			}
 
-			for (int j = 0; j < (int)this->CN_to_VN[i].size(); j++)
+			for (auto j = 0; j < n_VN; j++)
 			{
-				const auto value   = this->var_nodes[this->CN_to_VN[i][j]];
-				const auto v_sig   = sign ^ (std::signbit((float)value) ? -1 : 0);
-				const auto v_res   = (R)2.0 * std::atanh(std::exp(sum - values[j]));
-				const auto v_to_st = (R)std::copysign(v_res, v_sig);
+				const auto value = contributions[j];
+				const auto v_sig = sign ^ (std::signbit((float)value) ? -1 : 0);
+				      auto v_res = (R)2.0 * std::atanh(std::exp(sum - values[j]));
+				           v_res = (R)std::copysign(v_res, v_sig);
 
-				this->var_nodes[this->CN_to_VN[i][j]] += v_to_st;
+				this->branches[kw++] = v_res;
+				this->var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
 			}
 		}
 	}
