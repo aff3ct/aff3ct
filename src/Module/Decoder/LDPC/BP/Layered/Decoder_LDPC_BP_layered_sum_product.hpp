@@ -1,12 +1,12 @@
-#ifndef DECODER_LDPC_BP_FLOODING_HPP_
-#define DECODER_LDPC_BP_FLOODING_HPP_
+#ifndef DECODER_LDPC_BP_LAYERED_SUM_PRODUCT_HPP_
+#define DECODER_LDPC_BP_LAYERED_SUM_PRODUCT_HPP_
 
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
 #include "../../../Decoder_SISO.hpp"
 
 template <typename B, typename R>
-class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
+class Decoder_LDPC_BP_layered_sum_product : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_ite;      // number of iterations to perform
@@ -17,23 +17,16 @@ protected:
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
-	const mipp::vector<unsigned char> n_variables_per_parity;
-	const mipp::vector<unsigned char> n_parities_per_variable;
-	const mipp::vector<unsigned int > transpose;
-	
-	mipp::vector<R>  Y_N; // input  LLRs
-	mipp::vector<B>  V_K; // output bits
+	const mipp::vector<mipp::vector<unsigned int>> &CN_to_VN;
 
 	// data structures for iterative decoding
-	mipp::vector<R> Lp_N;   // a posteriori information
-	mipp::vector<R> C_to_V; // check    nodes to variable nodes messages
-	mipp::vector<R> V_to_C; // variable nodes to check    nodes messages
+	mipp::vector<R> var_nodes;
 
 public:
-	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
-	                         const AList_reader &alist_data,
-	                         const std::string name = "Decoder_LDPC_BP_flooding");
-	virtual ~Decoder_LDPC_BP_flooding();
+	Decoder_LDPC_BP_layered_sum_product(const int &K, const int &N, const int& n_ite,
+	                                    const AList_reader &alist_data,
+	                                    const std::string name = "Decoder_LDPC_BP_layered_sum_product");
+	virtual ~Decoder_LDPC_BP_layered_sum_product();
 
 	// unsupported prototype
 	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
@@ -50,9 +43,7 @@ public:
 
 protected:
 	// BP functions for decoding
-	bool BP_decode(const mipp::vector<R> &Y_N);
-
-	virtual bool BP_process() = 0;
+	void BP_decode();
 };
 
-#endif /* DECODER_LDPC_BP_FLOODING_HPP_ */
+#endif /* DECODER_LDPC_BP_LAYERED_SUM_PRODUCT_HPP_ */

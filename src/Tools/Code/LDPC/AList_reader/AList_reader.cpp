@@ -90,49 +90,49 @@ AList_reader::
 }
 
 unsigned int AList_reader
-::get_n_VN()
+::get_n_VN() const
 {
 	return this->n_VN;
 }
 
 unsigned int AList_reader
-::get_n_CN()
+::get_n_CN() const
 {
 	return this->n_CN;
 }
 
 unsigned int AList_reader
-::get_VN_max_degree()
+::get_VN_max_degree() const
 {
 	return this->VN_max_degree;
 }
 
 unsigned int AList_reader
-::get_CN_max_degree()
+::get_CN_max_degree() const
 {
 	return this->CN_max_degree;
 }
 
 unsigned int AList_reader
-::get_n_branches()
+::get_n_branches() const
 {
 	return this->n_branches;
 }
 
-mipp::vector<mipp::vector<unsigned int>> AList_reader
-::get_VN_to_CN()
+const mipp::vector<mipp::vector<unsigned int>>& AList_reader
+::get_VN_to_CN() const
 {
 	return this->VN_to_CN;
 }
 
-mipp::vector<mipp::vector<unsigned int>> AList_reader
-::get_CN_to_VN()
+const mipp::vector<mipp::vector<unsigned int>>& AList_reader
+::get_CN_to_VN() const
 {
 	return this->CN_to_VN;
 }
 
 mipp::vector<unsigned char> AList_reader
-::get_n_CN_per_VN()
+::get_n_CN_per_VN() const
 {
 	mipp::vector<unsigned char> n_C_per_V(this->VN_to_CN.size());
 
@@ -143,7 +143,7 @@ mipp::vector<unsigned char> AList_reader
 }
 
 mipp::vector<unsigned char> AList_reader
-::get_n_VN_per_CN()
+::get_n_VN_per_CN() const
 {
 	mipp::vector<unsigned char> n_V_per_C((int)this->CN_to_VN.size());
 
@@ -154,7 +154,7 @@ mipp::vector<unsigned char> AList_reader
 }
 
 mipp::vector<unsigned int> AList_reader
-::get_linear_VN_to_CN()
+::get_linear_VN_to_CN() const
 {
 	mipp::vector<unsigned int> linear_V_to_C(this->n_branches);
 
@@ -167,7 +167,7 @@ mipp::vector<unsigned int> AList_reader
 }
 
 mipp::vector<unsigned int> AList_reader
-::get_linear_CN_to_VN()
+::get_linear_CN_to_VN() const
 {
 	mipp::vector<unsigned int> linear_C_to_V(this->n_branches);
 
@@ -180,7 +180,7 @@ mipp::vector<unsigned int> AList_reader
 }
 
 mipp::vector<unsigned int> AList_reader
-::get_branches_transpose()
+::get_branches_transpose() const
 {
 	mipp::vector<unsigned int> transpose(this->n_branches);
 

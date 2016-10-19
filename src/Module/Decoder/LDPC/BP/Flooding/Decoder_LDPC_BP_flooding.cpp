@@ -10,29 +10,27 @@
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
-                           const mipp::vector<unsigned char> &n_variables_per_parity,
-                           const mipp::vector<unsigned char> &n_parities_per_variable,
-                           const mipp::vector<unsigned int > &transpose,
+                           const AList_reader &alist_data,
                            const std::string name)
-: Decoder_SISO<B,R>      (K, N, 1, name          ),
-  n_ite                  (n_ite                  ),
-  n_V_nodes              (N                      ), // same as N but more explicit
-  n_C_nodes              (N - K                  ),
-  n_branches             ((int)transpose.size()  ),
-  init_flag              (false                  ),
+: Decoder_SISO<B,R>      (K, N, 1, name                      ),
+  n_ite                  (n_ite                              ),
+  n_V_nodes              (N                                  ), // same as N but more explicit
+  n_C_nodes              (N - K                              ),
+  n_branches             ((int)alist_data.get_n_branches()   ),
+  init_flag              (false                              ),
 
-  n_variables_per_parity (n_variables_per_parity ),
-  n_parities_per_variable(n_parities_per_variable),
-  transpose              (transpose              ),
+  n_variables_per_parity (alist_data.get_n_VN_per_CN()       ),
+  n_parities_per_variable(alist_data.get_n_CN_per_VN()       ),
+  transpose              (alist_data.get_branches_transpose()),
 
-  Y_N                    (N                      ),
-  V_K                    (K                      ),
-  Lp_N                   (N,                   -1), // -1 in order to fail when AZCW
-  C_to_V                 (this->n_branches,     0),
-  V_to_C                 (this->n_branches,     0)
+  Y_N                    (N                                  ),
+  V_K                    (K                                  ),
+  Lp_N                   (N,                               -1), // -1 in order to fail when AZCW
+  C_to_V                 (this->n_branches,                 0),
+  V_to_C                 (this->n_branches,                 0)
 {
-	assert(N == (int)n_parities_per_variable.size());
-	assert(K == N - (int) n_variables_per_parity.size());
+	assert(N == (int)alist_data.get_n_VN());
+	assert(K == N - (int)alist_data.get_n_CN());
 	assert(n_ite > 0);
 }
 

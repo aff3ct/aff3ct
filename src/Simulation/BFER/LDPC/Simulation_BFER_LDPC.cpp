@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
@@ -14,14 +13,9 @@
 template <typename B, typename R, typename Q>
 Simulation_BFER_LDPC<B,R,Q>
 ::Simulation_BFER_LDPC(const parameters& params)
-: Simulation_BFER<B,R,Q>(params)
+: Simulation_BFER<B,R,Q>(params), alist_data(params.code.alist_path)
 {
-	AList_reader reader(this->params.code.alist_path);
-	assert(this->params.code.N == (int)reader.get_n_VN());
-
-	n_variables_per_parity  = reader.get_n_VN_per_CN();
-	n_parities_per_variable = reader.get_n_CN_per_VN();
-	transpose               = reader.get_branches_transpose();
+	assert(this->params.code.N == (int)alist_data.get_n_VN());
 }
 
 template <typename B, typename R, typename Q>
@@ -53,7 +47,7 @@ template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFER_LDPC<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return Factory_decoder_LDPC<B,Q>::build(this->params, n_variables_per_parity, n_parities_per_variable, transpose);
+	return Factory_decoder_LDPC<B,Q>::build(this->params, alist_data);
 }
 
 // ==================================================================================== explicit template instantiation 

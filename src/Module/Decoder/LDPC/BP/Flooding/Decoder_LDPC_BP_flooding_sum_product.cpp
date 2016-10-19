@@ -8,11 +8,9 @@
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_sum_product<B,R>
 ::Decoder_LDPC_BP_flooding_sum_product(const int &K, const int &N, const int& n_ite,
-                                       const mipp::vector<unsigned char> &n_variables_per_parity,
-                                       const mipp::vector<unsigned char> &n_parities_per_variable,
-                                       const mipp::vector<unsigned int > &transpose,
+                                       const AList_reader &alist_data,
                                        const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, n_variables_per_parity, n_parities_per_variable, transpose, name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, name)
 {
 }
 

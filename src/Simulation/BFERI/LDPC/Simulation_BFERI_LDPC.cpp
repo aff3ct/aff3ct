@@ -15,14 +15,10 @@ template <typename B, typename R, typename Q>
 Simulation_BFERI_LDPC<B,R,Q>
 ::Simulation_BFERI_LDPC(const parameters& params)
 : Simulation_BFERI<B,R,Q>(params),
+  alist_data(params.code.alist_path),
   decoder_siso(params.simulation.n_threads, nullptr)
 {
-	AList_reader reader(this->params.code.alist_path);
-	assert(this->params.code.N == (int)reader.get_n_VN());
-
-	n_variables_per_parity  = reader.get_n_VN_per_CN();
-	n_parities_per_variable = reader.get_n_CN_per_VN();
-	transpose               = reader.get_branches_transpose();
+	assert(this->params.code.N == (int)alist_data.get_n_VN());
 }
 
 template <typename B, typename R, typename Q>
@@ -54,8 +50,7 @@ template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_siso(const int tid)
 {
-	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params, n_variables_per_parity, n_parities_per_variable,
-	                                                     transpose);
+	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params, alist_data);
 	return decoder_siso[tid];
 }
 

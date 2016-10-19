@@ -2,15 +2,13 @@
 
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_min_sum.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_sum_product.hpp"
+#include "Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered_sum_product.hpp"
 
 #include "Factory_decoder_LDPC.hpp"
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const parameters                  &params,
-        const mipp::vector<unsigned char> &n_variables_per_parity,
-        const mipp::vector<unsigned char> &n_parities_per_variable,
-        const mipp::vector<unsigned int > &transpose)
+::build(const parameters &params, const AList_reader &alist_data)
 {
 	Decoder_SISO<B,R> *decoder = nullptr;
 
@@ -20,16 +18,20 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			decoder = new Decoder_LDPC_BP_flooding_min_sum<B,R>(params.code.K,
 			                                                    params.code.N,
 			                                                    params.decoder.n_ite,
-			                                                    n_variables_per_parity,
-			                                                    n_parities_per_variable,
-			                                                    transpose);
+			                                                    alist_data);
 		else if (params.decoder.implem == "SUM_PRODUCT")
 			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
 			                                                        params.code.N,
 			                                                        params.decoder.n_ite,
-			                                                        n_variables_per_parity,
-			                                                        n_parities_per_variable,
-			                                                        transpose);
+			                                                        alist_data);
+	}
+	else if (params.decoder.type == "BP_LAYERED")
+	{
+		if (params.decoder.implem == "SUM_PRODUCT")
+			decoder = new Decoder_LDPC_BP_layered_sum_product<B,R>(params.code.K,
+			                                                       params.code.N,
+			                                                       params.decoder.n_ite,
+			                                                       alist_data);
 	}
 
 	return decoder;

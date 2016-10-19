@@ -1,16 +1,15 @@
 #ifndef SIMULATION_LDPC_HPP_
 #define SIMULATION_LDPC_HPP_
 
+#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
+
 #include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER_LDPC : public Simulation_BFER<B,R,Q>
 {
 protected:
-	// LDPC bi-partite graph representation
-	mipp::vector<unsigned char> n_variables_per_parity;
-	mipp::vector<unsigned char> n_parities_per_variable;
-	mipp::vector<unsigned int > transpose;
+	AList_reader alist_data;
 
 public:
 	Simulation_BFER_LDPC(const parameters& params);
