@@ -20,7 +20,7 @@ Decoder_LDPC_BP_layered_sum_product<B,R>
   branches         (alist_data.get_n_branches(), 0)
 {
 	assert(N == (int)alist_data.get_n_VN());
-	assert(K == N - (int)alist_data.get_n_CN());
+//	assert(K == N - (int)alist_data.get_n_CN());
 	assert(n_ite > 0);
 }
 
