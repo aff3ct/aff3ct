@@ -96,7 +96,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 	// take the hard decision
 	for (unsigned i = 0; i < this->V_K.size(); i++)
-		this->V_K[i] = this->Lp_N[i] < 0;
+		this->V_K[i] = !(this->Lp_N[i] >= 0);
 
 	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
 	this->init_flag = true;

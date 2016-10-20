@@ -32,7 +32,7 @@ void Launcher_BFERI_LDPC<B,R,Q>
 		 "path to the AList formated file."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING"     );
+	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
 	this->opt_args[{"dec-implem"   }].push_back("MIN_SUM, SUM_PRODUCT");
 	this->opt_args[{"dec-ite", "i"}] =
 			{"positive_int",

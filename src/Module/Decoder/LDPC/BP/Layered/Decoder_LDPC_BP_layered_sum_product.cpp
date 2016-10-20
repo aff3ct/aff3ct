@@ -85,7 +85,7 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 	// actual decoding
 	this->BP_decode();
 
-	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
+	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
 	this->init_flag = true;
 }
 
@@ -98,7 +98,7 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 	// take the hard decision
 	auto loop_size = (int)V_K.size();
 	for (auto i = 0; i < loop_size; i++)
-		V_K[i] = this->var_nodes[i] < 0;
+		V_K[i] = !(this->var_nodes[i] >= 0);
 }
 
 // BP algorithm
@@ -120,10 +120,12 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 			const auto n_VN = (int)this->CN_to_VN[i].size();
 			for (auto j = 0; j < n_VN; j++)
 			{
-				contributions[j]  = this->var_nodes[this->CN_to_VN[i][j]] - this->branches[kr++];
-				const auto v_abs  = (R)std::abs(contributions[j]);
-				const auto res    = (R)std::log(std::tanh(v_abs * (R)0.5));
-				const auto c_sign = std::signbit((float)contributions[j]) ? -1 : 0;
+				contributions[j]     = this->var_nodes[this->CN_to_VN[i][j]] - this->branches[kr++];
+				const auto v_abs     = (R)std::abs(contributions[j]);
+				const auto tan_v_abs = std::tanh(v_abs * (R)0.5);
+				const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) :
+				                                          std::numeric_limits<R>::min();
+				const auto c_sign    = std::signbit((float)contributions[j]) ? -1 : 0;
 
 				sign ^= c_sign;
 				sum  += res;
@@ -134,7 +136,9 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 			{
 				const auto value = contributions[j];
 				const auto v_sig = sign ^ (std::signbit((float)value) ? -1 : 0);
-				      auto v_res = (R)2.0 * std::atanh(std::exp(sum - values[j]));
+				const auto exp   = (sum - values[j] != 0) ? std::exp(sum - values[j]) :
+				                                            (R)1.0 - std::numeric_limits<R>::epsilon();
+				      auto v_res = (R)2.0 * std::atanh(exp);
 				           v_res = (R)std::copysign(v_res, v_sig);
 
 				this->branches[kw++] = v_res;
