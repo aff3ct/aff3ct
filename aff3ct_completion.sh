@@ -46,7 +46,7 @@ _aff3ct() {
 		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p \
 		      --cde-info-bits -K --cde-size -N --src-type --src-path      \
 		      --enc-type --enc-path --mod-type --mod-bps --mod-ups        \
-		      --mod-const-path --demod-max --demod-no-sig2 --chn-type     \
+		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type       \
 		      --chn-path --qnt-type --qnt-int --qnt-bits --qnt-range      \
 		      --dec-type --dec-implem --term-no"
 	fi
@@ -198,15 +198,15 @@ _aff3ct() {
 		--sim-threads | -t | --cde-info-bits | -K | --cde-size | -N |        \
 		--mod-bps | --mod-ups | --qnt-int | --qnt-bits | --qnt-range |       \
 		--qnt-type | --dec-type | --dec-implem | --sim-benchs | -b |         \
-		--sim-debug-limit | --sim-trace-path | --mnt-max-fe | -e |           \
-		--term-type | --sim-siga-min | -a | --sim-siga-max | -A |            \
-		--sim-siga-step | --dmod-ite | --cde-sigma | --dec-snr | --dec-ite | \
-		-i | --dec-lists | -L | --sim-json-path)
+		--sim-debug-limit |  --mnt-max-fe | -e | --term-type |               \
+		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |        \
+		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
+		-L | --sim-json-path)
 			COMPREPLY=()
 			;;
 
 		# awaiting nothing	
-		-v | --version | -h | --help | --demod-no-sig2 | --term-no |       \
+		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
@@ -280,7 +280,7 @@ _aff3ct() {
 
 		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |   \
 		--sim-pb-path | --itl-path | --mod-const-path | --src-path | \
-		--enc-path | --chn-path | --cde-alist-path)
+		--enc-path | --chn-path | --cde-alist-path | --sim-trace-path ) 
 			_filedir
 			;;
 		
@@ -324,7 +324,7 @@ _aff3ct() {
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--demod-max)
+		--dmod-max)
 			local params="MAX MAXL MAXS MAXSS"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
