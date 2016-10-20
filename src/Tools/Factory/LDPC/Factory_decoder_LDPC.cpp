@@ -2,8 +2,9 @@
 
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_min_sum.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_sum_product.hpp"
+#include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered_sum_product.hpp"
-
+#include "Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered_log_sum_product.hpp"
 #include "Factory_decoder_LDPC.hpp"
 
 template <typename B, typename R>
@@ -24,6 +25,11 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                        params.code.N,
 			                                                        params.decoder.n_ite,
 			                                                        alist_data);
+		else if (params.decoder.implem == "LOG_SUM_PRODUCT")
+			decoder = new Decoder_LDPC_BP_flooding_log_sum_product<B,R>(params.code.K,
+			                                                            params.code.N,
+			                                                            params.decoder.n_ite,
+			                                                            alist_data);
 	}
 	else if (params.decoder.type == "BP_LAYERED")
 	{
@@ -32,6 +38,11 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                       params.code.N,
 			                                                       params.decoder.n_ite,
 			                                                       alist_data);
+		else if (params.decoder.implem == "LOG_SUM_PRODUCT")
+			decoder = new Decoder_LDPC_BP_layered_log_sum_product<B,R>(params.code.K,
+			                                                           params.code.N,
+			                                                           params.decoder.n_ite,
+			                                                           alist_data);
 	}
 
 	return decoder;

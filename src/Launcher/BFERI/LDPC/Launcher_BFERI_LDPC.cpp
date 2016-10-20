@@ -33,7 +33,7 @@ void Launcher_BFERI_LDPC<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
-	this->opt_args[{"dec-implem"   }].push_back("MIN_SUM, SUM_PRODUCT");
+	this->opt_args[{"dec-implem"   }].push_back("MIN_SUM, SUM_PRODUCT, LOG_SUM_PRODUCT");
 	this->opt_args[{"dec-ite", "i"}] =
 			{"positive_int",
 			 "maximal number of iterations in the turbo decoder."};
