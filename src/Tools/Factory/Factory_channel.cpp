@@ -4,6 +4,7 @@
 #include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LLR.hpp"
 #include "Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LR.hpp"
 #include "Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LLR.hpp"
+#include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 #ifdef CHANNEL_MKL
 #include "Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LR.hpp"
 #include "Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LLR.hpp"
@@ -54,6 +55,11 @@ Channel<R>* Factory_channel<R>
 			channel = new Channel_AWGN_GSL_LR<R>(size, sigma, seed +1);
 	}
 #endif
+	else if (params.channel.type == "RAYLEIGH")
+	{
+		if (params.channel.domain == "LLR")
+			channel = new Channel_Rayleigh_LLR<R>(size, sigma, seed +1);
+	}
 	else if (params.channel.type == "NO")
 	{
 		channel = new Channel_NO<R>(size);

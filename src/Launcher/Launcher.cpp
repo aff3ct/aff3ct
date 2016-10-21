@@ -141,7 +141,7 @@ void Launcher<B,R,Q>
 		 "turn off the division by sigma square in the demodulation."};
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST";
+	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
 #endif 
