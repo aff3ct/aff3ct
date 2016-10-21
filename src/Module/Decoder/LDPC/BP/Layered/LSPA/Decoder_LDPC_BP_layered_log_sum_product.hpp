@@ -3,7 +3,7 @@
 
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
-#include "Decoder_LDPC_BP_layered.hpp"
+#include "../Decoder_LDPC_BP_layered.hpp"
 
 template <typename B, typename R>
 class Decoder_LDPC_BP_layered_log_sum_product : public Decoder_LDPC_BP_layered<B,R>

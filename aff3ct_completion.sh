@@ -255,12 +255,12 @@ _aff3ct() {
 		--dec-type | -D)
 			local params
 			case "${codetype}" in
-				POLAR)      params="SC SCL SCAN"         ;;
-				RSC)        params="BCJR BCJR4 LTE CCSDS";;
-				REPETITION) params="STD"                 ;;
-				RA)         params="STD"                 ;;
-				TURBO)      params="LTE CCSDS"           ;;
-				LDPC)       params="BP BP_FLOODING"      ;;
+				POLAR)      params="SC SCL SCAN"              ;;
+				RSC)        params="BCJR BCJR4 LTE CCSDS"     ;;
+				REPETITION) params="STD"                      ;;
+				RA)         params="STD"                      ;;
+				TURBO)      params="LTE CCSDS"                ;;
+				LDPC)       params="BP BP_FLOODING BP_LAYERED";;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -268,7 +268,7 @@ _aff3ct() {
 		--dec-implem)
 			local params="GENERIC STD FAST VERY_FAST"
 			if ["${codetype}" == 'LDPC']; then
-				params="MIN_SUM SUM_PRODUCT"
+				params="MSO SPA LSPA"
 			fi
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;

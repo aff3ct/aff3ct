@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_FLOODING_SUM_PRODUCT_HPP_
 #define DECODER_LDPC_BP_FLOODING_SUM_PRODUCT_HPP_
 
-#include "Decoder_LDPC_BP_flooding.hpp"
+#include "../Decoder_LDPC_BP_flooding.hpp"
 
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding_sum_product : public Decoder_LDPC_BP_flooding<B,R>
