@@ -250,17 +250,19 @@ public:
 	SC_Modulator_module_tdemodulator<B,R,Q> *module_tdemod;
 
 public:
-	SC_Modulator(const int N, const int N_mod, const int N_fil, const int n_frames = 1, 
+	SC_Modulator(const int N, const int N_mod, const int N_fil, mipp::vector<R> &H = {}, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, N_fil, n_frames, name),
+	: Modulator_i<B,R,Q>(N, N_mod, N_fil, H, n_frames, name), 
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
-	SC_Modulator(const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, n_frames, name),
+	SC_Modulator(const int N, const int N_mod, mipp::vector<R> &H = {}, const int n_frames = 1,
+	             const std::string name = "SC_Modulator")
+	: Modulator_i<B,R,Q>(N, N_mod, H, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
-	SC_Modulator(const int N, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_i<B,R,Q>(N, n_frames, name),
+	SC_Modulator(const int N, mipp::vector<R> &H = {}, const int n_frames = 1,
+	             const std::string name = "SC_Modulator")
+	: Modulator_i<B,R,Q>(N, H, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
 	virtual ~SC_Modulator() 

@@ -18,7 +18,8 @@
 
 template <typename R>	
 Channel<R>* Factory_channel<R>
-::build(const parameters &params, const R& sigma, const int size, const int seed)
+::build(const parameters &params, const R& sigma, const int size, mipp::vector<R>& H, 
+        const int seed, const bool is_complex)
 {
 	Channel<R> *channel = nullptr;
 
@@ -58,7 +59,14 @@ Channel<R>* Factory_channel<R>
 	else if (params.channel.type == "RAYLEIGH")
 	{
 		if (params.channel.domain == "LLR")
-			channel = new Channel_Rayleigh_LLR<R>(size, sigma, seed +1);
+		{
+			if (params.channel.block_fading == "NO")
+				channel = new Channel_Rayleigh_LLR<R>(size, sigma, is_complex, H, seed +1);
+			else if (params.channel.block_fading == "ONETAP")
+				channel = nullptr;
+			else if (params.channel.block_fading == "FRAME")
+				channel = nullptr;
+		}
 	}
 	else if (params.channel.type == "NO")
 	{

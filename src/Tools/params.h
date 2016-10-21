@@ -90,6 +90,7 @@ struct channel_parameters
 	std::string type;
 	std::string domain;
 	std::string path;
+	std::string block_fading;
 };
 
 struct quantizer_parameters

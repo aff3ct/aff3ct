@@ -22,6 +22,9 @@ class Simulation_EXIT : public Simulation
 protected:
 	const parameters &params; // simulation parameters
 
+	// channel gains
+	mipp::vector<R> H;
+
 	// data vectors
 	mipp::vector<B> B_K, B_N, X_K1, X_N1;
 	mipp::vector<R> X_K2, X_N2;

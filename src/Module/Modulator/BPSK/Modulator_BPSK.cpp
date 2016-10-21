@@ -1,9 +1,12 @@
 #include "Modulator_BPSK.hpp"
 
+#include "Tools/Display/Frame_trace/Frame_trace.hpp"
+
 template <typename B, typename R, typename Q>
 Modulator_BPSK<B,R,Q>
-::Modulator_BPSK(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
-: Modulator<B,R,Q>(N, n_frames, name),
+::Modulator_BPSK(const int N, const R sigma, mipp::vector<R> &H, const bool disable_sig2, const int n_frames,
+                 const std::string name)
+: Modulator<B,R,Q>(N, H, n_frames, name),
   disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
@@ -31,12 +34,20 @@ void Modulator_BPSK<B,R,Q>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
 	if (disable_sig2)
+	{
 		Y_N2 = Y_N1;
-	else
+	}
+	else if(this->H.empty())
 	{
 		auto size = Y_N1.size();
 		for (unsigned i = 0; i < size; i++)
 			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
+	}
+	else if(this->H.size() == Y_N1.size())
+	{
+		auto size = Y_N1.size();
+		for (unsigned i = 0; i < size; i++)
+			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma * this->H[i];
 	}
 }
 

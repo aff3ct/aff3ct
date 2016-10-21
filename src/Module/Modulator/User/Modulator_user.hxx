@@ -12,9 +12,9 @@
  */
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_user<B,R,Q,MAX>
-::Modulator_user(const int N, const int bits_per_symbol, const std::string const_path, const R sigma,
-                 const bool disable_sig2, const int n_frames, const std::string name)
-: Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), n_frames, name),
+::Modulator_user(const int N, mipp::vector<R> &H, const int bits_per_symbol, const std::string const_path, 
+                 const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
+: Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), H, n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sigma          (sigma),

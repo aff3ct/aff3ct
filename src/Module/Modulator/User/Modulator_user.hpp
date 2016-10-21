@@ -21,7 +21,7 @@ private:
 	mipp::vector<std::complex<R>> constellation;
 
 public:
-	Modulator_user(const int N, const int bits_per_symbol = 2, const std::string const_path ="", const R sigma = 1.0,
+	Modulator_user(const int N, mipp::vector<R> &H, const int bits_per_symbol = 2, const std::string const_path ="", const R sigma = 1.0,
 	               const bool disable_sig2 = false, const int n_frames = 1, const std::string name = "Modulator_user");
 	virtual ~Modulator_user();
 

@@ -40,6 +40,7 @@ Launcher<B,R,Q>
 	params.channel    .domain            = "LLR";
 	params.channel    .type              = "AWGN";
 	params.channel    .path              = "";
+	params.channel    .block_fading      = "NO";
 #ifdef MIPP_NO_INTRINSICS
 	params.quantizer  .type              = "STD";
 #else
@@ -156,6 +157,11 @@ void Launcher<B,R,Q>
 		{"string",
 		 "path to a noisy file, to use with \"--chn-type USER\"."};
 
+	opt_args[{"chn-blk-fad"}] =
+		{"string",
+		 "block fading policy.",
+		 "NO, FRAME, ONETAP"};
+
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 	{
@@ -262,8 +268,9 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	if(ar.exist_arg({"chn-type"})) params.channel.type = ar.get_arg({"chn-type"});
-	if(ar.exist_arg({"chn-path"})) params.channel.path = ar.get_arg({"chn-path"});
+	if(ar.exist_arg({"chn-type"}))    params.channel.type         = ar.get_arg({"chn-type"});
+	if(ar.exist_arg({"chn-path"}))    params.channel.path         = ar.get_arg({"chn-path"});
+	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
 
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))

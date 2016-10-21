@@ -9,7 +9,8 @@
 template <typename R>
 struct Factory_channel : public Factory
 {
-	static Channel<R>* build(const parameters &params, const R& sigma, const int size, const int seed = 0);
+	static Channel<R>* build(const parameters &params, const R& sigma, const int size, mipp::vector<R>& H,
+	                         const int seed = 0, const bool is_complex = false);
 };
 
 #endif /* FACTORY_CHANNEL_HPP */

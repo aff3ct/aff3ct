@@ -16,7 +16,7 @@ Simulation_EXIT<B,R,Q>
 : Simulation(),
 
   params(params),
-
+  H          (                                                             ),
   B_K        (params.code.K                                                ),
   B_N        (params.code.N + params.code.tail_length                      ),
   X_K1       (params.code.K                                                ),
@@ -413,28 +413,28 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R,R>::build(params, sigma);
+	return Factory_modulator<B,R,R>::build(params, sigma, H);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a);
+	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a, H);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params, sigma, size, 0);
+	return Factory_channel<R>::build(params, sigma, size, H, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.f / sig_a, size, 0);
+	return Factory_channel<R>::build(params, 2.f / sig_a, size, H, 0);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

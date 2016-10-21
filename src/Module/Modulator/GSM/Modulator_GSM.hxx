@@ -31,11 +31,13 @@ const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_anti_trellis = {
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM<B,R,Q,MAX>
-::Modulator_GSM(const int N, const R sigma, const bool disable_sig2, const std::string name, const bool tbless)
+::Modulator_GSM(const int N, const R sigma, mipp::vector<R> &H, const bool disable_sig2, const std::string name,
+                const bool tbless)
 : Modulator<B,R,Q>(N, 
                    (tbless ? N : (N +6)) *  5 * 2, // up_sample_factor =  5
                    (tbless ? N : (N +6)) * 16,     // n_output_symbs   = 16
-                   1, 
+                   H,
+                   1,
                    name),
   sigma(sigma),
   disable_sig2(disable_sig2),
@@ -49,6 +51,7 @@ Modulator_GSM<B,R,Q,MAX>
        BCJR_trellis,
        BCJR_anti_trellis)
 {
+	assert(H.empty());
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>

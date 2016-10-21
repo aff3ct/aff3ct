@@ -44,6 +44,9 @@ protected:
 	float code_rate;
 	float sigma;
 
+	// code gain for Rayleigh channels
+	std::vector<mipp::vector<R>> H;
+
 	// data vector
 	std::vector<mipp::vector<B>> U_K;  // information bit vector
 	std::vector<mipp::vector<B>> X_N1; // encoded codeword

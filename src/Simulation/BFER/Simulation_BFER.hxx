@@ -42,6 +42,8 @@ Simulation_BFER<B,R,Q>
   code_rate(0.f),
   sigma    (0.f),
 
+  H   (params.simulation.n_threads),
+  
   U_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
   X_N1(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
   X_N2(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
@@ -238,6 +240,7 @@ void Simulation_BFER<B,R,Q>
 	const auto K      = simu->params.code.K;
 	const auto N_code = simu->params.code.N_code;
 	const auto N_fil  = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
+
 	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
 	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
@@ -569,6 +572,11 @@ void Simulation_BFER<B,R,Q>
 		// display Y_N1
 		std::clog << "Y_N1:" << std::endl;
 		ft.display_real_vector(simu->Y_N1[0]);
+		std::clog << std::endl;
+
+		// display channel gains
+		std::clog << "H:" << std::endl;
+		ft.display_real_vector(simu->H[0]);
 		std::clog << std::endl;
 
 		// filtering
@@ -996,14 +1004,21 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(params, sigma);
+	return Factory_modulator<B,R,R>::build(params, sigma, H[tid]);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, size, tid);
+	bool is_channel_complex;
+
+	if(params.modulator.type == "BPSK" || params.modulator.type == "PAM" )
+		is_channel_complex = false;
+	else
+		is_channel_complex = true;
+
+	return Factory_channel<R>::build(params, sigma, size, H[tid], tid, is_channel_complex);
 }
 
 template <typename B, typename R, typename Q>

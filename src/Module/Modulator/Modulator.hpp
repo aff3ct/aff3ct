@@ -32,6 +32,8 @@ protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod; /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
 	const int N_fil; /*!< Number of transmitted elements after the filtering process */
+	      
+	mipp::vector<R> &H; /*!< Channel gains (by default empty which means a constant gain equal to 1) */
 
 public:
 	/*!
@@ -40,12 +42,13 @@ public:
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 * \param N_fil:    number of transmitted elements after the filtering process.
+	 * \param H:        channel gains (by default empty which means a constant gain equal to 1)
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_i(const int N, const int N_mod, const int N_fil, const int n_frames = 1, 
+	Modulator_i(const int N, const int N_mod, const int N_fil, mipp::vector<R> &H, const int n_frames = 1, 
 	                    const std::string name = "Modulator_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil)
+	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil), H(H)
 	{
 	}
 
@@ -54,12 +57,13 @@ public:
 	 *
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
+	 * \param H:        channel gains (by default empty which means a constant gain equal to 1)
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_i(const int N, const int N_mod, const int n_frames = 1, 
+	Modulator_i(const int N, const int N_mod, mipp::vector<R> &H = {}, const int n_frames = 1, 
 	                    const std::string name = "Modulator_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(get_buffer_size_after_filtering(N_mod))
+	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(get_buffer_size_after_filtering(N_mod)), H(H)
 	{
 	}
 
@@ -68,11 +72,13 @@ public:
 	 *
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param n_frames: number of frames to process in the Modulator.
+	 * \param H:        channel gains (by default empty which means a constant gain equal to 1)
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_i(const int N, const int n_frames = 1, const std::string name = "Modulator_i")
+	Modulator_i(const int N, mipp::vector<R> &H = {}, const int n_frames = 1,
+	                    const std::string name = "Modulator_i")
 	: Module(n_frames, name), N(N), N_mod(get_buffer_size_after_modulation(N)),
-	  N_fil(get_buffer_size_after_filtering(N))
+	  N_fil(get_buffer_size_after_filtering(N)), H(H)
 	{
 	}
 
