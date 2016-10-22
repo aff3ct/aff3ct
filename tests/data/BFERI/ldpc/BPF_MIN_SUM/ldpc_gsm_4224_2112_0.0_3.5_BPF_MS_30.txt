@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-prec 32 --sim-type BFERI -m 0.0 -M 3.51 --sim-snr-step 0.25 --sim-threads 12 -K 2112 -N 4224 --cde-type LDPC --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type GSM_TBLESS --mod-bps 1 --mod-ups 5 --chn-type AWGN_FAST --dmod-ite 30 --dec-type BP_FLOODING --dec-implem MIN_SUM --dec-ite 1 --mnt-max-fe 100 --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist
+./bin/aff3ct --sim-prec 32 --sim-type BFERI -m 0.0 -M 3.51 --sim-snr-step 0.25 --sim-threads 12 -K 2112 -N 4224 --cde-type LDPC --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type GSM_TBLESS --mod-bps 1 --mod-ups 5 --chn-type AWGN_FAST --dmod-ite 30 --dec-type BP_FLOODING --dec-implem MSO --dec-ite 1 --mnt-max-fe 100 --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist
 Curve name:
 GSM-BPF min-sum (0.825), 30 glob. ite.
 Trace:
@@ -39,7 +39,7 @@ Trace:
 #    ** Turbo demod. iterations = 30
 # * Decoder ---------------------------------------
 #    ** Type (D)                = BP_FLOODING
-#    ** Implementation          = MIN_SUM
+#    ** Implementation          = MSO
 #    ** Num. of iterations (i)  = 1
 # * Monitor ---------------------------------------
 #    ** Frame error count (e)   = 100
