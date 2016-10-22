@@ -126,26 +126,54 @@ void Modulator_QAM<B,R,Q,MAX>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 	
 	auto size       = (int)Y_N2.size();
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
-
-	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	
+	if(this->H.empty())
 	{
-		auto L0 = -std::numeric_limits<Q>::infinity();
-		auto L1 = -std::numeric_limits<Q>::infinity();
-		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // Position du symbole
+		for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+			auto b  = n % this->bits_per_symbol; // position du bit
+			auto k  = n / this->bits_per_symbol; // Position du symbole
 
-		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
+			auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
-		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
-				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
-			else
-				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+			for (auto j = 0; j < this->nbr_symbols; j++)
+				if ((j & (1 << b)) == 0)
+					L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+					                                                     (Q)this->constellation[j].imag()) * inv_sigma2));
+				else
+					L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+					                                                     (Q)this->constellation[j].imag()) * inv_sigma2));
 
-		Y_N2[n] = (L0 - L1);
+			Y_N2[n] = (L0 - L1);
+		}
+	}
+	else
+	{
+		for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+			auto b  = n % this->bits_per_symbol; // position du bit
+			auto k  = n / this->bits_per_symbol; // Position du symbole
+
+			auto complex_Yk = std::complex<Q>(      Y_N1[2*k], Y_N1[      2*k+1]);
+			auto complex_Hk = std::complex<Q>(this->H   [2*k], this->H   [2*k+1]);
+
+			for (auto j = 0; j < this->nbr_symbols; j++)
+				if ((j & (1 << b)) == 0)
+					L0 = MAX(L0, -std::norm(complex_Yk - 
+						                    complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
+					                                                     (Q)this->constellation[j].imag()) * inv_sigma2));
+				else
+					L1 = MAX(L1, -std::norm(complex_Yk -
+					                        complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
+					                                                     (Q)this->constellation[j].imag()) * inv_sigma2));
+
+			Y_N2[n] = (L0 - L1);
+		}
 	}
 }
 

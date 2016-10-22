@@ -120,20 +120,41 @@ void Modulator_PAM<B,R,Q,MAX>
 	auto size       = (int)Y_N2.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
-	for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+	if(this->H.empty())
 	{
-		auto L0 = -std::numeric_limits<Q>::infinity();
-		auto L1 = -std::numeric_limits<Q>::infinity();
-		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // position du symbole
+		for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+			auto b  = n % this->bits_per_symbol; // position du bit
+			auto k  = n / this->bits_per_symbol; // position du symbole
 
-		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j & (1 << b)) == 0)
-				L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
-			else
-				L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
+			for (auto j = 0; j < this->nbr_symbols; j++)
+				if ((j & (1 << b)) == 0)
+					L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
+				else
+					L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) * (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
 
-		Y_N2[n] = (L0 - L1);
+			Y_N2[n] = (L0 - L1);
+		}
+	}
+	else if(this->H.size() == (unsigned) size / this->bits_per_symbol)
+	{
+		for (auto n = 0; n < size; n++)// Boucle sur les LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+			auto b  = n % this->bits_per_symbol; // position du bit
+			auto k  = n / this->bits_per_symbol; // position du symbole
+
+			for (auto j = 0; j < this->nbr_symbols; j++)
+				if ((j & (1 << b)) == 0)
+					L0 = MAX(L0, -(Y_N1[k] - this->H[k] * (Q)this->constellation[j]) * (Y_N1[k] - this->H[k] * (Q)this->constellation[j]) * inv_sigma2);
+				else
+					L1 = MAX(L1, -(Y_N1[k] - this->H[k] * (Q)this->constellation[j]) * (Y_N1[k] - this->H[k] * (Q)this->constellation[j]) * inv_sigma2);
+
+			Y_N2[n] = (L0 - L1);
+		}		
 	}
 }
 
