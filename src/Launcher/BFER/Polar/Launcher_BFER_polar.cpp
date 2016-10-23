@@ -121,6 +121,9 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"dec-lists", "L"})) this->params.decoder.L             = this->ar.get_arg_int  ({"dec-lists", "L"});
 	if(this->ar.exist_arg({"dec-simd"      })) this->params.decoder.simd_strategy = this->ar.get_arg      ({"dec-simd"      });
 
+	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
+		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
+
 	// force 1 iteration max if not SCAN (and polar code)
 	if (this->params.decoder.type != "SCAN") this->params.decoder.n_ite = 1;
 }
