@@ -22,16 +22,14 @@ protected:
 
 public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
-	                          const std::string name = "Decoder_polar_SC_fast_sys");
+	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
 	virtual ~Decoder_polar_SC_fast_sys();
 
-	        void load      (const mipp::vector<R>& Y_N);
-	virtual void decode    (                          );
-	        void store     (      mipp::vector<B>& V_K) const;
-	        void store_fast(      mipp::vector<B>& V_N) const;
-	        void unpack    (      mipp::vector<B>& V_N) const;
-	        
-	void set_n_frames(const int n_frames);
+	        void load       (const mipp::vector<R>& Y_N);
+	virtual void hard_decode(                          );
+	        void store      (      mipp::vector<B>& V_K) const;
+	        void store_fast (      mipp::vector<B>& V_N) const;
+	        void unpack     (      mipp::vector<B>& V_N) const;
 
 protected:
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);

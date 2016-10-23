@@ -371,7 +371,7 @@ void Simulation_BFERI<B,R,Q>
 			{
 				// decode
 				auto t_decod = steady_clock::now();
-				simu->siso[tid]->decode(simu->Y_N5[tid], simu->Y_N6[tid]);
+				simu->siso[tid]->soft_decode(simu->Y_N5[tid], simu->Y_N6[tid]);
 				d_decod += steady_clock::now() - t_decod;
 
 				// apply the coset to recover the extrinsic information
@@ -392,9 +392,7 @@ void Simulation_BFERI<B,R,Q>
 			{
 				// decode
 				auto t_decod = steady_clock::now();
-				simu->decoder[tid]->load  (simu->Y_N5[tid]);
-				simu->decoder[tid]->decode(               );
-				simu->decoder[tid]->store (simu->V_K [tid]);
+				simu->decoder[tid]->hard_decode(simu->Y_N5[tid], simu->V_K [tid]);
 				d_decod += steady_clock::now() - t_decod;
 			}
 		}
@@ -632,7 +630,7 @@ void Simulation_BFERI<B,R,Q>
 				// decode
 				std::clog << "Soft decode form Y_N5 to Y_N6..." << std::endl;
 				auto t_decod = steady_clock::now();
-				simu->siso[0]->decode(simu->Y_N5[0], simu->Y_N6[0]);
+				simu->siso[0]->soft_decode(simu->Y_N5[0], simu->Y_N6[0]);
 				d_decod += steady_clock::now() - t_decod;
 
 				// display Y_N6
@@ -671,9 +669,7 @@ void Simulation_BFERI<B,R,Q>
 				// decode
 				std::clog << "Hard decode form Y_N5 to V_K..." << std::endl;
 				auto t_decod = steady_clock::now();
-				simu->decoder[0]->load  (simu->Y_N5[0]);
-				simu->decoder[0]->decode(               );
-				simu->decoder[0]->store (simu->V_K [0]);
+				simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K[0]);
 				d_decod += steady_clock::now() - t_decod;
 
 				// display V_K

@@ -12,11 +12,11 @@
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
-                          const std::string name)
-: Decoder<B,R>(K, N, 1, name), 
-  m((int)std::log2(N)), 
+                          const int n_frames, const std::string name)
+: Decoder<B,R>(K, N, n_frames, 1, name),
+  m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
-  frozen_bits(frozen_bits), 
+  frozen_bits(frozen_bits),
   L(L)
 {
 	this->active_paths.insert(0);
@@ -67,7 +67,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::decode()
+::hard_decode()
 {
 	typedef typename std::vector<std::tuple<int,B,R>>::iterator it_type;
 	std::set<int> last_active_paths;
@@ -196,13 +196,6 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 	auto k = 0;
 	this->recursive_store((Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);
-}
-
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
-void Decoder_polar_SCL_naive<B,R,F,G>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>

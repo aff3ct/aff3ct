@@ -9,8 +9,9 @@ Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::Decoder_RSC_BCJR_seq_scan(const int &K,
                             const std::vector<std::vector<int>> &trellis,
                             const bool buffered_encoding,
+                            const int n_frames,
                             const std::string name)
-: Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, name)
+: Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 }
 
@@ -445,7 +446,7 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 
 template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

@@ -10,18 +10,19 @@ template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
 ::Decoder_RSC_BCJR(const int K, 
                    const std::vector<std::vector<int>> &trellis, 
-                   const bool buffered_encoding, 
+                   const bool buffered_encoding,
                    const int n_frames,
+                   const int simd_inter_frame_level,
                    const std::string name)
-: Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, name),
+: Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
   n_states((int)trellis[0].size()),
   n_ff((int)std::log2(n_states)),
   buffered_encoding(buffered_encoding),
   trellis(trellis),
-  sys((K+n_ff) * n_frames + mipp::nElReg<R>()),
-  par((K+n_ff) * n_frames + mipp::nElReg<R>()),
-  ext( K       * n_frames + mipp::nElReg<R>()),
-  s  ( K       * n_frames + mipp::nElReg<R>())
+  sys((K+n_ff) * simd_inter_frame_level + mipp::nElReg<R>()),
+  par((K+n_ff) * simd_inter_frame_level + mipp::nElReg<R>()),
+  ext( K       * simd_inter_frame_level + mipp::nElReg<R>()),
+  s  ( K       * simd_inter_frame_level + mipp::nElReg<B>())
 {
 	assert(is_power_of_2(n_states));
 }
@@ -39,13 +40,13 @@ void Decoder_RSC_BCJR<B,R>
 	if (buffered_encoding)
 	{
 		const auto tail     = this->tail_length();
-		const auto n_frames = Decoder<B,R>::get_n_frames();
+		const auto n_frames = Decoder<B,R>::get_simd_inter_frame_level();
 
 		if (n_frames == 1)
 		{
 			std::copy(Y_N.begin() + 0*this->K, Y_N.begin() + 1*this->K, sys.begin());
 			std::copy(Y_N.begin() + 1*this->K, Y_N.begin() + 2*this->K, par.begin());
-			
+
 			// tails bit
 			std::copy(Y_N.begin() + 2*this->K         , Y_N.begin() + 2*this->K + tail/2, par.begin() +this->K);
 			std::copy(Y_N.begin() + 2*this->K + tail/2, Y_N.begin() + 2*this->K + tail  , sys.begin() +this->K);
@@ -75,8 +76,9 @@ void Decoder_RSC_BCJR<B,R>
 	}
 	else
 	{
+		const auto n_frames = this->get_simd_inter_frame_level();
+
 		// reordering
-		const auto n_frames = this->get_n_frames();
 		for (auto i = 0; i < this->K + n_ff; i++)
 		{
 			for (auto f = 0; f < n_frames; f++)
@@ -90,12 +92,12 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::decode()
+::hard_decode()
 {
-	decode(sys, par, ext);
+	soft_decode(sys, par, ext);
 
 	// take the hard decision
-	for (auto i = 0; i < this->K * SISO<R>::n_frames; i += mipp::nElReg<R>())
+	for (auto i = 0; i < this->K * this->simd_inter_frame_level; i += mipp::nElReg<R>())
 	{
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 
@@ -113,13 +115,13 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	if (this->get_n_frames() == 1)
+	if (this->get_simd_inter_frame_level() == 1)
 	{
 		std::copy(s.begin(), s.begin() + this->K, V_K.begin());
 	}
 	else // inter frame => output reordering
 	{
-		const auto n_frames = this->get_n_frames();
+		const auto n_frames = this->get_simd_inter_frame_level();
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
@@ -130,15 +132,8 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
-}
-
-template <typename B, typename R>
-void Decoder_RSC_BCJR<B,R>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }

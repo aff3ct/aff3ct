@@ -19,26 +19,27 @@ Decoder_turbo<B,R>
                 Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), siso_n.get_n_frames(), name),
+: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
   siso_n(siso_n),
   siso_i(siso_i),
   scaling_factor(scaling_factor),
-  l_sn ((K                  + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_si ((K                  + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_sen((K                  + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_sei((K                  + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_pn (((N_without_tb-K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_pi (((N_without_tb-K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_e1n((K                                              ) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_e2n((K                                              ) * siso_n.get_n_frames() + mipp::nElReg<R>()),
-  l_e1i((K                                              ) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  l_e2i((K                                              ) * siso_i.get_n_frames() + mipp::nElReg<R>()),
-  s    ((K                                              ) * siso_n.get_n_frames()                    )
+  l_sn ((K                  + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_si ((K                  + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_sen((K                  + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_sei((K                  + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_pn (((N_without_tb-K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_pi (((N_without_tb-K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e1n((K                                              ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e2n((K                                              ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e1i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e2i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  s    ((K                                              ) * siso_n.get_simd_inter_frame_level()                    )
 {
-	assert(siso_n.get_n_frames() == siso_i.get_n_frames());
+	assert(siso_n.get_n_frames()               == siso_i.get_n_frames()              );
+	assert(siso_n.get_simd_inter_frame_level() == siso_i.get_simd_inter_frame_level());
 }
 
 template <typename B, typename R>
@@ -67,7 +68,7 @@ void Decoder_turbo<B,R>
 	const auto N_without_tb = this->N - (siso_n.tail_length() + siso_i.tail_length());
 
 	const auto p_size = (N_without_tb - this->K) / 2; // size of the parity
-	if (this->get_n_frames() == 1)
+	if (this->get_simd_inter_frame_level() == 1)
 	{
 		std::copy(Y_N.begin()                     , Y_N.begin() + this->K           , l_sn.begin());
 		std::copy(Y_N.begin() + this->K           , Y_N.begin() + this->K + 1*p_size, l_pn.begin());
@@ -84,7 +85,7 @@ void Decoder_turbo<B,R>
 	}
 	else
 	{
-		const auto n_frames = this->get_n_frames();
+		const auto n_frames = this->get_simd_inter_frame_level();
 		const auto frame_size = this->N;
 
 		std::vector<const R*> frames(n_frames);
@@ -132,7 +133,7 @@ void Decoder_turbo<B,R>
 	const auto tail_n = siso_n.tail_length();
 	const auto tail_i = siso_i.tail_length();
 
-	if (this->get_n_frames() == 1)
+	if (this->get_simd_inter_frame_level() == 1)
 	{
 		for (auto i = 0; i < this->K; i++)
 		{
@@ -158,7 +159,7 @@ void Decoder_turbo<B,R>
 	}
 	else // inter frame => input reordering
 	{
-		const auto n_frames = this->get_n_frames();
+		const auto n_frames = this->get_simd_inter_frame_level();
 
 		for (auto i = 0; i < this->K; i++)
 		{
@@ -199,24 +200,17 @@ template <typename B, typename R>
 void Decoder_turbo<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	if (this->get_n_frames() == 1)
+	if (this->get_simd_inter_frame_level() == 1)
 	{
 		V_K = s;
 	}
 	else // inter frame => output reordering
 	{
-		const auto n_frames = this->get_n_frames();
+		const auto n_frames = this->get_simd_inter_frame_level();
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = V_K.data() + f*this->K;
 		Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
-}
-
-template <typename B, typename R>
-void Decoder_turbo<B,R>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }

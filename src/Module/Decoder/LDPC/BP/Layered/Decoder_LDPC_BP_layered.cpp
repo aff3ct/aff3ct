@@ -10,8 +10,9 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
                           const AList_reader &alist_data,
+                          const int n_frames,
                           const std::string name)
-: Decoder_SISO<B,R>(K, N, 1, name                 ),
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name       ),
   n_ite            (n_ite                         ),
   n_C_nodes        (N - K                         ),
   init_flag        (false                         ),
@@ -32,7 +33,7 @@ Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
@@ -40,7 +41,7 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 	assert(Y_N1.size() == this->var_nodes.size());
@@ -80,7 +81,7 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::decode()
+::hard_decode()
 {
 	// actual decoding
 	this->BP_decode();
@@ -115,13 +116,6 @@ void Decoder_LDPC_BP_layered<B,R>
 //		if (syndrome && ite > 20)
 //			break;
 	}
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_layered<B,R>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -6,8 +6,9 @@
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 Decoder_polar_SC_naive<B,R,F,G,H>
-::Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const std::string name)
-: Decoder<B,R>(K, N, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
+::Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
+                         const std::string name)
+: Decoder<B,R>(K, N, n_frames, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
 	this->recursive_allocate_nodes_contents(this->polar_tree.get_root(), this->N);
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
@@ -32,7 +33,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::decode()
+::hard_decode()
 {
 	this->recursive_decode(this->polar_tree.get_root());
 }
@@ -46,13 +47,6 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 	auto k = 0;
 	this->recursive_store(this->polar_tree.get_root(), V_K, k);
 	assert(k == this->K);
-}
-
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
-void Decoder_polar_SC_naive<B,R,F,G,H>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>

@@ -112,12 +112,13 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const std::string name)
-: Decoder<B,R>(K, N, API_polar::get_n_frames(), name),
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
+                            const std::string name)
+: Decoder<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
   m((int)std::log2(N)),
-  l    (2 * N * this->n_frames + mipp::nElmtsPerRegister<R>()),
-  s    (1 * N * this->n_frames + mipp::nElmtsPerRegister<B>()),
-  s_bis(1 * N * this->n_frames + mipp::nElmtsPerRegister<B>()),
+  l    (2 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<R>()),
+  s    (1 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<B>()),
+  s_bis(1 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<B>()),
   frozen_bits(frozen_bits)
 {
 	static_assert(sizeof(B) == sizeof(R), "");
@@ -158,7 +159,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() == (unsigned) (this->N * this->n_frames));
+	assert(Y_N.size() == (unsigned) (this->N * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -182,7 +183,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::decode()
+::hard_decode()
 {
 	assert(m >= static_level);
 
@@ -266,7 +267,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == (unsigned) (this->K * this->n_frames));
+	assert(V_K.size() == (unsigned) (this->K * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -328,7 +329,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::store_fast(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() == (unsigned) (this->N * this->n_frames));
+	assert(V_N.size() == (unsigned) (this->N * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -366,7 +367,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::unpack(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() == (unsigned) (this->N * this->n_frames));
+	assert(V_N.size() == (unsigned) (this->N * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -392,11 +393,4 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < n_frames; i++)
 			for (auto j = 0; j < this->N; j++)
 				V_N[i * this->N + j] = !frozen_bits[j] && V_N[i * this->N + j];
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }

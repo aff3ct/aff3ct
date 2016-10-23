@@ -7,9 +7,10 @@
 
 template <typename B, typename R>
 Decoder_repetition<B,R>
-::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const std::string name)
- : Decoder<B,R>(K, N, 1, name),
-   SISO   <  R>(K, N, 1, name + "_siso"),
+::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
+                     const std::string name)
+ : Decoder<B,R>(K, N, n_frames, 1, name),
+   SISO   <  R>(K, N, n_frames, 1, name + "_siso"),
    rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
 {
 	assert(N % K == 0);
@@ -47,9 +48,9 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::decode()
+::hard_decode()
 {
-	decode(sys, par, ext);
+	soft_decode(sys, par, ext);
 
 	// take the hard decision
 	auto vec_loop_size = (this->K / mipp::nElReg<R>()) * mipp::nElReg<R>();
@@ -78,15 +79,8 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
-}
-
-template <typename B, typename R>
-void Decoder_repetition<B,R>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }

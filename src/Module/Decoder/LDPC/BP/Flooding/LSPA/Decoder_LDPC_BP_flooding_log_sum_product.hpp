@@ -9,6 +9,7 @@ class Decoder_LDPC_BP_flooding_log_sum_product : public Decoder_LDPC_BP_flooding
 public:
 	Decoder_LDPC_BP_flooding_log_sum_product(const int &K, const int &N, const int& n_ite,
 	                                         const AList_reader &alist_data,
+	                                         const int n_frames = 1,
 	                                         const std::string name = "Decoder_LDPC_BP_flooding_log_sum_product");
 	virtual ~Decoder_LDPC_BP_flooding_log_sum_product();
 

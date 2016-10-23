@@ -7,8 +7,9 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_intra_fast(const int &K,
                               const std::vector<std::vector<int>> &trellis,
                               const bool buffered_encoding,
+                              const int n_frames,
                               const std::string name)
-: Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, name)
+: Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 	assert(mipp::nElReg<R>() == 8);
 	assert(K % 8 == 0);

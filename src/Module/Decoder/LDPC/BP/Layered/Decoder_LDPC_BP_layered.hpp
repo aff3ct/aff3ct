@@ -24,21 +24,20 @@ protected:
 public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
 	                        const AList_reader &alist_data,
+	                        const int n_frames = 1,
 	                        const std::string name = "Decoder_LDPC_BP_layered");
 	virtual ~Decoder_LDPC_BP_layered();
 
 	// unsupported prototype
-	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
 	// soft decode
-	void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 
 	// hard decoder (load -> decode -> store)
-	void load  (const mipp::vector<R>& Y_N);
-	void decode(                          );
-	void store (      mipp::vector<B>& V_K) const;
-
-	void set_n_frames(const int n_frames);
+	void load       (const mipp::vector<R>& Y_N);
+	void hard_decode(                          );
+	void store      (      mipp::vector<B>& V_K) const;
 
 protected:
 	// BP functions for decoding

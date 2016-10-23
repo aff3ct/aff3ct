@@ -30,7 +30,7 @@ template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
 ::load(const mipp::vector<R>& Y_N)
 {
-	if (this->buffered_encoding && this->get_n_frames() > 1)
+	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
 		const auto tail_n       = this->siso_n.tail_length();
 		const auto tail_i       = this->siso_i.tail_length();
@@ -38,7 +38,7 @@ void Decoder_turbo_fast<B,R>
 		const auto N_without_tb = this->N - (this->siso_n.tail_length() + this->siso_i.tail_length());
 		const auto p_size       = (N_without_tb - this->K) / 2; // size of the parity
 
-		if (this->get_n_frames() == mipp::nElReg<B>())
+		if (this->get_simd_inter_frame_level() == mipp::nElReg<B>())
 		{
 			constexpr auto n_frames = mipp::nElReg<R>();
 
@@ -121,9 +121,9 @@ void Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::decode()
+::hard_decode()
 {
-	const auto n_frames = this->get_n_frames();
+	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;
 	const auto tail_i_2 = this->siso_i.tail_length() / 2;
 
@@ -145,7 +145,7 @@ void Decoder_turbo_fast<B,R>
 		}
 
 		// SISO in the natural domain
-		this->siso_n.decode(this->l_sen, this->l_pn, this->l_e2n);
+		this->siso_n.soft_decode(this->l_sen, this->l_pn, this->l_e2n);
 
 		// apply the scaling factor
 		this->scaling_factor(this->l_e2n, 2 * (ite -1));
@@ -167,7 +167,7 @@ void Decoder_turbo_fast<B,R>
 		}
 
 		// SISO in the interleave domain
-		this->siso_i.decode(this->l_sei, this->l_pi, this->l_e2i);
+		this->siso_i.soft_decode(this->l_sei, this->l_pi, this->l_e2i);
 
 		if (ite != this->n_ite)
 			// apply the scaling factor
@@ -205,7 +205,7 @@ template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	if (this->get_n_frames() > 1)
+	if (this->get_simd_inter_frame_level() > 1)
 	{
 		if (this->get_n_frames() == mipp::nElReg<B>())
 		{

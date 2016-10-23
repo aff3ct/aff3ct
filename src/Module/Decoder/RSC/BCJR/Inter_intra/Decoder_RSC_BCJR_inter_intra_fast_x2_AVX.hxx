@@ -58,8 +58,9 @@ Decoder_RSC_BCJR_inter_intra_fast_x2_AVX<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_intra_fast_x2_AVX(const int &K,
                                            const std::vector<std::vector<int>> &trellis,
                                            const bool buffered_encoding,
+                                           const int n_frames,
                                            const std::string name)
-: Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, name)
+: Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 	assert(mipp::nElReg<R>() == 16);
 	assert(K % 8 == 0);

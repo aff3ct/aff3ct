@@ -5,8 +5,9 @@ Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_fast(const int &K,
                             const std::vector<std::vector<int>> &trellis,
                             const bool buffered_encoding,
+                            const int n_frames,
                             const std::string name)
-: Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, name)
+: Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 }
 
@@ -156,7 +157,7 @@ void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

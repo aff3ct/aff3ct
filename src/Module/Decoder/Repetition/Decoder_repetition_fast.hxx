@@ -5,8 +5,9 @@
 
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>
-::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const std::string name)
- : Decoder_repetition<B,R>(K, N, buffered_encoding, name)
+::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
+                          const std::string name)
+ : Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames, name)
 {
 	assert(this->K % mipp::nElReg<R>() == 0);
 }
@@ -19,7 +20,7 @@ Decoder_repetition_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_fast<B,R>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	for (auto i = 0; i < this->K; i += mipp::nElReg<R>())
 	{

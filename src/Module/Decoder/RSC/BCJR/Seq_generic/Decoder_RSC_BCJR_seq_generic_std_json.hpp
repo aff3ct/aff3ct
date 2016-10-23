@@ -22,10 +22,11 @@ public:
 	                                      const int n_ite = 1, 
 	                                      const bool buffered_encoding = true,
 	                                      std::ostream &stream = std::cout,
+	                                      const int n_frames = 1,
 	                                      const std::string name = "Decoder_RSC_BCJR_seq_generic_std_json");
 	virtual ~Decoder_RSC_BCJR_seq_generic_std_json();
 
-	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
 protected:
 	void compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext);

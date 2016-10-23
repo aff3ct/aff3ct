@@ -7,8 +7,9 @@ Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
                                         const int n_ite,
                                         const bool buffered_encoding,
                                         std::ostream &stream,
+                                        const int n_frames,
                                         const std::string name)
-: Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>(K, trellis, buffered_encoding, name),
+: Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>(K, trellis, buffered_encoding, n_frames, name),
   n_ite(n_ite), ite_counter(0), stream(stream)
 {
 }
@@ -123,7 +124,7 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	if (ite_counter == 0)
 	{

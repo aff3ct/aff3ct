@@ -23,9 +23,9 @@ public:
 	                   const std::string name = "Decoder_turbo_fast");
 	virtual ~Decoder_turbo_fast();
 
-	void load  (const mipp::vector<R>& Y_N);
-	void decode(                          );
-	void store (      mipp::vector<B>& V_K) const;
+	void load       (const mipp::vector<R>& Y_N);
+	void hard_decode(                          );
+	void store      (      mipp::vector<B>& V_K) const;
 };
 
 #include "Decoder_turbo_fast.hxx"

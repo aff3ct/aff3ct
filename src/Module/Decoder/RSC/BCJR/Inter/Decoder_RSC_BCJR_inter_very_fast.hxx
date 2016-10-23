@@ -8,8 +8,9 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_very_fast(const int &K,
                                    const std::vector<std::vector<int>> &trellis,
                                    const bool buffered_encoding,
+                                   const int n_frames,
                                    const std::string name)
-: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding, name)
+: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 }
 
@@ -224,7 +225,7 @@ void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 
 template <typename B, typename R, proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	compute_gamma_alpha(sys, par);
 	compute_beta_ext   (sys, ext);

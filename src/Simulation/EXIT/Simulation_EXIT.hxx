@@ -191,7 +191,7 @@ void Simulation_EXIT<B,R,Q>
 		extract_sys_par(Lch_N2, La_K2, sys, par);
 
 		// decode
-		siso->decode(sys, par, Le_K);
+		siso->soft_decode(sys, par, Le_K);
 
 		// store B_K, La_K and Le_K in buffers (add current B and L to the buffers)
 		B_buff .insert(B_buff .end(), B_K  .begin(), B_K  .end());

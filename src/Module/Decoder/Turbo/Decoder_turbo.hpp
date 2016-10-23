@@ -50,8 +50,6 @@ public:
 	virtual void load (const mipp::vector<R>& Y_N);
 	virtual void store(      mipp::vector<B>& V_K) const;
 
-	void set_n_frames(const int n_frames);
-
 private:
 	void buffered_load(const mipp::vector<R>& Y_N);
 	void standard_load(const mipp::vector<R>& Y_N);

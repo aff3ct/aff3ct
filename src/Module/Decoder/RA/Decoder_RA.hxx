@@ -7,22 +7,23 @@
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const std::string name)
- : Decoder<B,R>(K, N, 1, name),
-   rep_count(N/K),
-   max_iter(max_iter),
-   Y_N(N),
-   Fw(N),
-   Bw(N),
-   V_K(K),
-   Tu(N),
-   Td(N),
-   Wu(N),
-   Wd(N),
-   U(K),
-   Xd(2),
-   Xu(2),
-   interleaver(interleaver)
+::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const int n_frames,
+             const std::string name)
+: Decoder<B,R>(K, N, n_frames, 1, name),
+  rep_count(N/K),
+  max_iter(max_iter),
+  Y_N(N),
+  Fw(N),
+  Bw(N),
+  V_K(K),
+  Tu(N),
+  Td(N),
+  Wu(N),
+  Wd(N),
+  U(K),
+  Xd(2),
+  Xu(2),
+  interleaver(interleaver)
 {
 	assert(N % K == 0);
 
@@ -47,7 +48,7 @@ void Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::decode()
+::hard_decode()
 {
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)
@@ -107,13 +108,6 @@ void Decoder_RA<B, R>
 ::store(mipp::vector<B>& V_K) const
 {
 	V_K = this->V_K;
-}
-
-template <typename B, typename R>
-void Decoder_RA<B, R>
-::set_n_frames(const int n_frames)
-{
-	std::clog << bold_yellow("(WW) Modifying the number of frames is not allowed in this decoder.") << std::endl;
 }
 
 template <typename B, typename R>

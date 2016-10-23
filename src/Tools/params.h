@@ -24,6 +24,7 @@ struct simulation_parameters
 	int                  benchs;
 	int                  debug_limit;
 	int                  n_threads;
+	int                  inter_frame_level;
 };
 
 struct code_parameters

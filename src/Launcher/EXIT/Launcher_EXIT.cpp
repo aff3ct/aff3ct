@@ -35,6 +35,7 @@ void Launcher_EXIT<B,R,Q>
 	this->opt_args[{"sim-siga-step"}] =
 		{"positive_float",
 		 "sigma step value used in EXIT charts."};
+	this->opt_args[{"sim-inter-lvl"}].push_back("1");
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}] =

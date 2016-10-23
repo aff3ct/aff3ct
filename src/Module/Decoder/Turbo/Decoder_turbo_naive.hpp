@@ -23,7 +23,7 @@ public:
 	                    const std::string name = "Decoder_turbo_naive");
 	virtual ~Decoder_turbo_naive();
 
-	virtual void decode();
+	virtual void hard_decode();
 };
 
 #include "Decoder_turbo_naive.hxx"

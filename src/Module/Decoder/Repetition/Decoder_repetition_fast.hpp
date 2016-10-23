@@ -11,10 +11,10 @@ class Decoder_repetition_fast : public Decoder_repetition<B,R>
 {
 public:
 	Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding = true,
-	                        const std::string name = "Decoder_repetition_fast");
+	                        const int n_frames = 1, const std::string name = "Decoder_repetition_fast");
 	virtual ~Decoder_repetition_fast();
 
-	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 };
 
 #include "Decoder_repetition_fast.hxx"

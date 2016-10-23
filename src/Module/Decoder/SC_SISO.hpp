@@ -52,7 +52,7 @@ private:
 		const R* buffer_in = (R*)trans.get_data_ptr();
 		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
 
-		siso.decode(Y_N1, Y_N2);
+		siso.soft_decode(Y_N1, Y_N2);
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());

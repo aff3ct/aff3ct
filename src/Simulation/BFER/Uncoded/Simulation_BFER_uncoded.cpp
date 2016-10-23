@@ -49,7 +49,7 @@ template <typename B, typename R, typename Q>
 Decoder<B,Q>* Simulation_BFER_uncoded<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return new Decoder_NO<B,Q>(this->params.code.K, this->params.code.N);
+	return new Decoder_NO<B,Q>(this->params.code.K, this->params.code.N, this->params.simulation.inter_frame_level);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -5,10 +5,10 @@
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
-                               const std::string name)
-: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K, m, max_iter, frozen_bits, name),
-  SISO<R>(K, 1 << m, 1, name + "_siso")
+::Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits,
+                               const int n_frames, const std::string name)
+: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K, m, max_iter, frozen_bits, n_frames, name),
+  SISO<R>(K, 1 << m, n_frames, 1, name + "_siso")
 {
 }
 
@@ -22,7 +22,7 @@ Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	assert(sys.size() + par.size() == (unsigned)this->N);
 
@@ -64,7 +64,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);

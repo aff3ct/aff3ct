@@ -9,8 +9,9 @@ Decoder_RSC_BCJR_inter_intra<B,R>
 ::Decoder_RSC_BCJR_inter_intra(const int &K,
                                const std::vector<std::vector<int>> &trellis, 
                                const bool buffered_encoding,
+                               const int n_frames,
                                const std::string name)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, mipp::nElReg<R>() / 8, name),
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElReg<R>() / 8, name),
   alpha(8 * (K +4) * (mipp::nElReg<R>()/8) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) * (mipp::nElReg<R>()/8) + 2 * mipp::nElReg<R>())
 {
@@ -44,7 +45,7 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
 ::load(const mipp::vector<R>& Y_N)
 {
-	if (this->buffered_encoding && this->get_n_frames() > 1)
+	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
 		const auto tail = this->tail_length();
 
@@ -68,7 +69,6 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N.data() + f*frame_size + 2*this->K;
 		Reorderer_static<R,n_frames>::apply(frames, &this->par[this->K*n_frames], tail/2);
-	
 	}
 	else
 		Decoder_RSC_BCJR<B,R>::load(Y_N);
@@ -76,7 +76,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
-::decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
@@ -87,7 +87,7 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	if (this->get_n_frames() > 1)
+	if (this->get_simd_inter_frame_level() > 1)
 	{
 		constexpr auto n_frames = mipp::nElReg<B>() / 8;
 

@@ -38,14 +38,12 @@ protected:
 
 public:
 	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
-	                        const std::string name = "Decoder_polar_SCL_naive");
+	                        const int n_frames = 1, const std::string name = "Decoder_polar_SCL_naive");
 	virtual ~Decoder_polar_SCL_naive();
 
-	        void load  (const mipp::vector<R>& Y_N);
-	        void decode(                          );
-	virtual void store (mipp::vector<B>& V_K      ) const;
-
-	void set_n_frames(const int n_frames);
+	        void load       (const mipp::vector<R>& Y_N);
+	        void hard_decode(                          );
+	virtual void store      (mipp::vector<B>& V_K      ) const;
 
 private:
 	void recursive_compute_llr        (      Binary_node<Contents_SCL<B,R>>* node_cur, int depth);

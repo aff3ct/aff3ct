@@ -13,7 +13,7 @@ class Decoder_polar_SC_naive_sys : public Decoder_polar_SC_naive<B,R,F,G,H>
 {
 public:
 	Decoder_polar_SC_naive_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
-	                           const std::string name = "Decoder_polar_SC_naive_sys");
+	                           const int n_frames = 1, const std::string name = "Decoder_polar_SC_naive_sys");
 	virtual ~Decoder_polar_SC_naive_sys();
 
 	void store(mipp::vector<B>& V_K) const;

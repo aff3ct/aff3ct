@@ -14,10 +14,11 @@ public:
 	Decoder_RSC_BCJR_seq_very_fast(const int &K,
 	                               const std::vector<std::vector<int>> &trellis,
 	                               const bool buffered_encoding = true,
+	                               const int n_frames = 1,
 	                               const std::string name = "Decoder_RSC_BCJR_seq_very_fast");
 	virtual ~Decoder_RSC_BCJR_seq_very_fast();
 
-	void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
 protected:
 	virtual void compute_gamma   (const mipp::vector<R> &sys, const mipp::vector<R> &par);

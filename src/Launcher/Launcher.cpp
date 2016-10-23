@@ -25,28 +25,29 @@ Launcher<B,R,Q>
 	type_names[typeid(double)]      = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
 
 	// default parameters
-	params.simulation .snr_step        = 0.1f;
-	params.simulation .n_threads       = 1;
-	params.code       .tail_length     = 0;
-	params.simulation .stop_time       = std::chrono::seconds(0);
-	params.source     .type            = "RAND";
-	params.source     .path            = "";
-	params.modulator  .type            = "BPSK";
-	params.modulator  .bits_per_symbol = 1;
-	params.modulator  .upsample_factor = 1;
-	params.demodulator.max             = "MAXSS";
-	params.demodulator.no_sig2         = false;
-	params.channel    .domain          = "LLR";
-	params.channel    .type            = "AWGN";
-	params.channel    .path            = "";
+	params.simulation .snr_step          = 0.1f;
+	params.simulation .n_threads         = 1;
+	params.simulation .stop_time         = std::chrono::seconds(0);
+	params.simulation .inter_frame_level = 1;
+	params.code       .tail_length       = 0;
+	params.source     .type              = "RAND";
+	params.source     .path              = "";
+	params.modulator  .type              = "BPSK";
+	params.modulator  .bits_per_symbol   = 1;
+	params.modulator  .upsample_factor   = 1;
+	params.demodulator.max               = "MAXSS";
+	params.demodulator.no_sig2           = false;
+	params.channel    .domain            = "LLR";
+	params.channel    .type              = "AWGN";
+	params.channel    .path              = "";
 #ifdef MIPP_NO_INTRINSICS
-	params.quantizer  .type            = "STD";
+	params.quantizer  .type              = "STD";
 #else
-	params.quantizer  .type            = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
+	params.quantizer  .type              = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
 #endif
-	params.quantizer  .range           = 0.f;
-	params.terminal   .disabled        = false;
-	params.terminal   .frequency       = std::chrono::milliseconds(500);
+	params.quantizer  .range             = 0.f;
+	params.terminal   .disabled          = false;
+	params.terminal   .frequency         = std::chrono::milliseconds(500);
 }
 
 template <typename B, typename R, typename Q>
@@ -90,6 +91,9 @@ void Launcher<B,R,Q>
 		 "the simulation precision in bit.",
 		 "8, 16, 32, 64"};
 #endif
+	this->opt_args[{"sim-inter-lvl"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process in each modules."};
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-type"}] =
@@ -205,11 +209,12 @@ void Launcher<B,R,Q>
 	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
 	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
 
-	if(ar.exist_arg({"sim-type"         })) params.simulation.type      = ar.get_arg      ({"sim-type"         });
-	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step  = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads = ar.get_arg_int  ({"sim-threads",  "t"});
-	if(ar.exist_arg({"sim-domain"       })) params.channel.domain       = ar.get_arg      ({"sim-domain"       });
-	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int({"sim-stop-time"}));
+	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",  "t"});
+	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"       });
+	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
+	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time         = seconds(ar.get_arg_int({"sim-stop-time"}));
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
@@ -340,6 +345,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	p.push_back(std::make_pair("Type of reals", type_names[typeid(R)]));
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 		p.push_back(std::make_pair("Type of quant. reals", type_names[typeid(Q)]));
+	p.push_back(std::make_pair("Inter frame level", std::to_string(params.simulation.inter_frame_level)));
 
 	return p;
 }

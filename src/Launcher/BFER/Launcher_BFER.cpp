@@ -10,21 +10,21 @@ Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
 : Launcher<B,R,Q>(argc, argv, stream)
 {
-	this->params.simulation .type           = "BFER";
-	this->params.simulation .benchs         = 0;
-	this->params.simulation .benchs_no_ldst = false;
-	this->params.simulation .debug          = false;
-	this->params.simulation .debug_limit    = 0;
-	this->params.simulation .time_report    = false;
-	this->params.simulation .trace_path     = "";
-	this->params.code       .coset          = false;
-	this->params.encoder    .type           = "";
-	this->params.encoder    .path           = "";
-	this->params.encoder    .systematic     = true;
-	this->params.monitor    .n_frame_errors = 100;
-	this->params.encoder    .systematic     = true;
-	this->params.demodulator.max            = "MAX";
-	this->params.terminal   .type           = "STD";
+	this->params.simulation .type              = "BFER";
+	this->params.simulation .benchs            = 0;
+	this->params.simulation .benchs_no_ldst    = false;
+	this->params.simulation .debug             = false;
+	this->params.simulation .debug_limit       = 0;
+	this->params.simulation .time_report       = false;
+	this->params.simulation .trace_path        = "";
+	this->params.code       .coset             = false;
+	this->params.encoder    .type              = "";
+	this->params.encoder    .path              = "";
+	this->params.encoder    .systematic        = true;
+	this->params.monitor    .n_frame_errors    = 100;
+	this->params.encoder    .systematic        = true;
+	this->params.demodulator.max               = "MAX";
+	this->params.terminal   .type              = "STD";
 }
 
 template <typename B, typename R, typename Q>
@@ -86,11 +86,11 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path     = this->ar.get_arg    ({"sim-trace-path" });
-	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs         = this->ar.get_arg_int({"sim-benchs", "b"});
-	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.benchs_no_ldst = true;
-	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report    = true;
-	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug          = true;
+	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path        = this->ar.get_arg    ({"sim-trace-path" });
+	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs            = this->ar.get_arg_int({"sim-benchs", "b"});
+	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.benchs_no_ldst    = true;
+	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report       = true;
+	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug             = true;
 	if(this->ar.exist_arg({"sim-debug-limit"        }))
 	{
 		this->params.simulation.debug = true;

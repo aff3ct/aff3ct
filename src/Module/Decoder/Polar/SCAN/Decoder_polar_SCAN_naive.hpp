@@ -22,18 +22,17 @@ protected:
 
 public:
 	Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits,
-	                         const std::string name = "Decoder_polar_SCAN_naive");
+	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 
 	// functions
-	        void load  (const mipp::vector<R>& Y_N);
-	        void decode(                          );
-	virtual void store (      mipp::vector<B>& V_K) const;
-
-	void set_n_frames(const int n_frames);
+	        void load       (const mipp::vector<R>& Y_N);
+	        void hard_decode(                          );
+	virtual void store      (      mipp::vector<B>& V_K) const;
 
 protected:
 	void load_init();
+	void decode();
 
 private:
 	void set_soft_val_and_propagate(const int l, const int j, const R v);

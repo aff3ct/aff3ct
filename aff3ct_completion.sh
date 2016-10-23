@@ -42,12 +42,12 @@ _aff3ct() {
 		${codetype} == "POLAR"      && ${simutype} == "GEN"      \
 		]]
 	then
-		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s   \
-		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p \
-		      --cde-info-bits -K --cde-size -N --src-type --src-path      \
-		      --enc-type --enc-path --mod-type --mod-bps --mod-ups        \
-		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type       \
-		      --chn-path --qnt-type --qnt-int --qnt-bits --qnt-range      \
+		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s       \
+		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
+		      --sim-inter-lvl --cde-info-bits -K --cde-size -N --src-type     \
+		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
+		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type           \
+		      --chn-path --qnt-type --qnt-int --qnt-bits --qnt-range          \
 		      --dec-type --dec-implem --term-no"
 	fi
 
@@ -193,14 +193,14 @@ _aff3ct() {
 
 	case "${prev}" in
 		# awaiting random number or strings
-		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |       \
-		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |         \
-		--sim-threads | -t | --cde-info-bits | -K | --cde-size | -N |        \
-		--mod-bps | --mod-ups | --qnt-int | --qnt-bits | --qnt-range |       \
-		--qnt-type | --dec-type | --dec-implem | --sim-benchs | -b |         \
-		--sim-debug-limit |  --mnt-max-fe | -e | --term-type |               \
-		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |        \
-		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
+		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |        \
+		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |          \
+		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
+		--cde-size | -N | --mod-bps | --mod-ups | --qnt-int | --qnt-bits |    \
+		--qnt-range | --qnt-type | --dec-type | --dec-implem | --sim-benchs | \
+		-b | --sim-debug-limit |  --mnt-max-fe | -e | --term-type |           \
+		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
+		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path)
 			COMPREPLY=()
 			;;

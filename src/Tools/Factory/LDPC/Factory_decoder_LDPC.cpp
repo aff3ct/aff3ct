@@ -19,17 +19,20 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			decoder = new Decoder_LDPC_BP_flooding_min_sum_offset<B,R>(params.code.K,
 			                                                           params.code.N,
 			                                                           params.decoder.n_ite,
-			                                                           alist_data);
+			                                                           alist_data,
+			                                                           params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "SPA")
 			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
 			                                                        params.code.N,
 			                                                        params.decoder.n_ite,
-			                                                        alist_data);
+			                                                        alist_data,
+			                                                        params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "LSPA")
 			decoder = new Decoder_LDPC_BP_flooding_log_sum_product<B,R>(params.code.K,
 			                                                            params.code.N,
 			                                                            params.decoder.n_ite,
-			                                                            alist_data);
+			                                                            alist_data,
+			                                                            params.simulation.inter_frame_level);
 	}
 	else if (params.decoder.type == "BP_LAYERED")
 	{
@@ -37,12 +40,14 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			decoder = new Decoder_LDPC_BP_layered_sum_product<B,R>(params.code.K,
 			                                                       params.code.N,
 			                                                       params.decoder.n_ite,
-			                                                       alist_data);
+			                                                       alist_data,
+			                                                       params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "LSPA")
 			decoder = new Decoder_LDPC_BP_layered_log_sum_product<B,R>(params.code.K,
 			                                                           params.code.N,
 			                                                           params.decoder.n_ite,
-			                                                           alist_data);
+			                                                           alist_data,
+			                                                           params.simulation.inter_frame_level);
 	}
 
 	return decoder;

@@ -364,20 +364,8 @@ void Simulation_BFER<B,R,Q>
 			d_corea = steady_clock::now() - t_corea;
 		}
 
-		// load data in the decoder
-		auto t_load = steady_clock::now();
-		simu->decoder[tid]->load(simu->Y_N5[tid]);
-		auto d_load = steady_clock::now() - t_load;
-
 		// launch decoder
-		auto t_decod = steady_clock::now();
-		simu->decoder[tid]->decode();
-		auto d_decod = steady_clock::now() - t_decod;
-
-		// store results in V_K
-		auto t_store = steady_clock::now();
-		simu->decoder[tid]->store(simu->V_K[tid]);
-		auto d_store = steady_clock::now() - t_store;
+		simu->decoder[tid]->hard_decode(simu->Y_N5[tid], simu->V_K[tid]);
 
 		// apply the coset to recover the real bits
 		if (simu->params.code.coset)
@@ -411,9 +399,9 @@ void Simulation_BFER<B,R,Q>
 		simu->d_quant_total[tid] += d_quant;
 		simu->d_depun_total[tid] += d_depun;
 		simu->d_corea_total[tid] += d_corea;
-		simu->d_load_total [tid] += d_load;
-		simu->d_decod_total[tid] += d_decod;
-		simu->d_store_total[tid] += d_store;
+		simu->d_load_total [tid] += simu->decoder[tid]->get_load_duration();
+		simu->d_decod_total[tid] += simu->decoder[tid]->get_decode_duration();
+		simu->d_store_total[tid] += simu->decoder[tid]->get_store_duration();
 		simu->d_cobit_total[tid] += d_cobit;
 		simu->d_check_total[tid] += d_check;
 
@@ -444,14 +432,10 @@ void Simulation_BFER<B,R,Q>
 	simu->barrier(tid);
 	if (simu->params.simulation.benchs_no_ldst)
 		for (auto i = 0; i < simu->params.simulation.benchs; i++)
-			simu->decoder[tid]->decode();
+			simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_N[tid], false, false, false, false);
 	else
 		for (auto i = 0; i < simu->params.simulation.benchs; i++)
-		{
-			simu->decoder[tid]->load      (simu->Y_N4[tid]);
-			simu->decoder[tid]->decode    (               );
-			simu->decoder[tid]->store_fast(simu->V_N [tid]);
-		}
+			simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_N[tid], true, true, true, false);
 	simu->barrier(tid);
 	auto t_stop = std::chrono::steady_clock::now(); // stop time
 
@@ -644,22 +628,10 @@ void Simulation_BFER<B,R,Q>
 			ft.display_real_vector(simu->Y_N5[0]);
 			std::clog << std::endl;
 		}
-
-		// load data in the decoder
-		auto t_load = steady_clock::now();
-		simu->decoder[0]->load(simu->Y_N5[0]);
-		auto d_load = steady_clock::now() - t_load;
 		
 		// launch decoder
 		std::clog << "Decode Y_N5 and generate V_K..." << std::endl;
-		auto t_decod = steady_clock::now();
-		simu->decoder[0]->decode();
-		auto d_decod = steady_clock::now() - t_decod;
-
-		// store results in V_K
-		auto t_store = steady_clock::now();
-		simu->decoder[0]->store(simu->V_K[0]);
-		auto d_store = steady_clock::now() - t_store;
+		simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K[0]);
 
 		// display V_K
 		std::clog << "V_K:" << std::endl;
@@ -700,9 +672,9 @@ void Simulation_BFER<B,R,Q>
 		simu->d_quant_total[0] += d_quant;
 		simu->d_depun_total[0] += d_depun;
 		simu->d_corea_total[0] += d_corea;
-		simu->d_load_total [0] += d_load;
-		simu->d_decod_total[0] += d_decod;
-		simu->d_store_total[0] += d_store;
+		simu->d_load_total [0] += simu->decoder[0]->get_load_duration();
+		simu->d_decod_total[0] += simu->decoder[0]->get_decode_duration();
+		simu->d_store_total[0] += simu->decoder[0]->get_store_duration();
 		simu->d_cobit_total[0] += d_cobit;
 		simu->d_check_total[0] += d_check;
 

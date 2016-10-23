@@ -28,14 +28,14 @@ Decoder_turbo_naive_CA<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_naive_CA<B,R>
-::decode()
+::hard_decode()
 {
 	constexpr auto start_check_crc = 3;
 
 	assert(start_check_crc >= 1          );
 	assert(start_check_crc <= this->n_ite);
 
-	const auto n_frames = this->get_n_frames();	
+	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;
 	const auto tail_i_2 = this->siso_i.tail_length() / 2;
 
@@ -52,7 +52,7 @@ void Decoder_turbo_naive_CA<B,R>
 			this->l_sen[i] = this->l_sn[i];
 
 		// SISO in the natural domain
-		this->siso_n.decode(this->l_sen, this->l_pn, this->l_e2n);
+		this->siso_n.soft_decode(this->l_sen, this->l_pn, this->l_e2n);
 
 		// the CRC is here because it is convenient to do not have to make the interleaving process!  
 		if (ite >= start_check_crc)
@@ -80,7 +80,7 @@ void Decoder_turbo_naive_CA<B,R>
 				this->l_sei[i] = this->l_si[i];
 
 			// SISO in the interleave domain
-			this->siso_i.decode(this->l_sei, this->l_pi, this->l_e2i);
+			this->siso_i.soft_decode(this->l_sei, this->l_pi, this->l_e2i);
 
 			if (ite != this->n_ite)
 				// apply the scaling factor

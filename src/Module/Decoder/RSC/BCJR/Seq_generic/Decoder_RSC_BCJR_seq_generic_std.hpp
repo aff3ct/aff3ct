@@ -18,11 +18,12 @@ public:
 	Decoder_RSC_BCJR_seq_generic_std(const int &K, 
 	                                 const std::vector<std::vector<int>> &trellis, 
 	                                 const bool buffered_encoding = true,
+	                                 const int n_frames = 1,
 	                                 const std::string name = "Decoder_RSC_BCJR_seq_generic_std");
 	virtual ~Decoder_RSC_BCJR_seq_generic_std();
 
-	virtual void decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-	virtual void decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	virtual void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 
 protected:
 	virtual void compute_gamma   (const mipp::vector<R> &sys, const mipp::vector<R> &par);

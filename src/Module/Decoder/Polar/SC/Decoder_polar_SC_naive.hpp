@@ -30,15 +30,13 @@ protected:
 	Binary_tree<Contents_SC<B,R>> polar_tree;
 
 public:
-	Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
+	Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames = 1,
  	                       const std::string name = "Decoder_polar_SC_naive");
 	virtual ~Decoder_polar_SC_naive();
 
-	        void load  (const mipp::vector<R>& Y_N);
-	        void decode(                          );
-	virtual void store (      mipp::vector<B>& V_K) const;
-
-	void set_n_frames(const int n_frames);
+	        void load       (const mipp::vector<R>& Y_N);
+	        void hard_decode(                          );
+	virtual void store      (      mipp::vector<B>& V_K) const;
 
 private:
 	void recursive_allocate_nodes_contents  (      Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size                     );

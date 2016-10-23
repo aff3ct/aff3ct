@@ -23,7 +23,7 @@ public:
 	                      const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_fast_CA();
 
-	virtual void decode();
+	virtual void hard_decode();
 };
 
 #include "Decoder_turbo_fast_CA.hxx"

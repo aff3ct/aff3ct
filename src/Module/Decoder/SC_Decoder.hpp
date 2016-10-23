@@ -53,9 +53,7 @@ private:
 		const R* buffer_in = (R*)trans.get_data_ptr();
 		std::copy(buffer_in, buffer_in + Y_N.size(), Y_N.begin());
 
-		decoder.load  (Y_N);
-		decoder.decode(   );
-		decoder.store (V_K);
+		decoder.hard_decode(Y_N, V_K);
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)V_K.data());
