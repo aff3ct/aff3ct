@@ -4107,8 +4107,8 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_SC_fast_sys_N131072_K65536_SNR25 : public Decoder_polar_SC_fast_sys<B, R, API_polar>
 {
 public:
-	Decoder_polar_SC_fast_sys_N131072_K65536_SNR25(const int& K, const int& N, const mipp::vector<B>& frozen_bits)
-	: Decoder_polar_SC_fast_sys<B, R, API_polar>(K, N, frozen_bits)
+	Decoder_polar_SC_fast_sys_N131072_K65536_SNR25(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames = 1)
+	: Decoder_polar_SC_fast_sys<B, R, API_polar>(K, N, frozen_bits, n_frames)
 	{
 		assert(N == 131072);
 		assert(K == 65536);
