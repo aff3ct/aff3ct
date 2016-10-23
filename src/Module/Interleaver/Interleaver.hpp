@@ -87,13 +87,16 @@ public:
 	 * \param frame_reordering: true means that the frames have been reordered for efficient SIMD computations. In this
 	 *                          case the interleaving process is different (true supposes that there is more than one
 	 *                          frame to interleave).
+	 * \param n_frames:         you should not use this parameter unless you know what you are doing, this parameter
+	 *                          redefine the number of frames to interleave specifically in this method.
 	 */
 	template <typename D>
 	inline void interleave(const mipp::vector<D> &natural_vec, 
 	                             mipp::vector<D> &interleaved_vec, 
-	                       const bool             frame_reordering = false) const
+	                       const bool             frame_reordering = false,
+	                       const int              n_frames = -1) const
 	{
-		this->_interleave(natural_vec, interleaved_vec, pi, frame_reordering);
+		this->_interleave(natural_vec, interleaved_vec, pi, frame_reordering, n_frames);
 	}
 
 	/*!
@@ -106,13 +109,16 @@ public:
 	 * \param frame_reordering: true means that the frames have been reordered for efficient SIMD computations. In this
 	 *                          case the deinterleaving process is different (true supposes that there is more than one
 	 *                          frame to deinterleave).
+	 * \param n_frames:         you should not use this parameter unless you know what you are doing, this parameter
+	 *                          redefine the number of frames to deinterleave specifically in this method.
 	 */
 	template <typename D>
 	inline void deinterleave(const mipp::vector<D> &interleaved_vec, 
 	                               mipp::vector<D> &natural_vec, 
-	                         const bool             frame_reordering = false) const
+	                         const bool             frame_reordering = false,
+	                         const int              n_frames = -1) const
 	{ 
-		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering);
+		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering, n_frames);
 	}
 
 	/*!
@@ -146,16 +152,20 @@ private:
 	inline void _interleave(const mipp::vector<D> &in_vec, 
 	                              mipp::vector<D> &out_vec,
 	                        const mipp::vector<T> &lookup_table,
-	                        const bool             frame_reordering = false) const
+	                        const bool             frame_reordering = false,
+	                        const int              n_frames = -1) const
 	{
+		assert(n_frames == -1 || n_frames > 0);
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
 		assert(in_vec.size() == out_vec.size());
-		assert(in_vec.size() >= lookup_table.size() * n_frames);
+		assert(in_vec.size() >= lookup_table.size() * real_n_frames);
 		const auto frame_size = (int)lookup_table.size();
 
 		if (frame_reordering)
 		{
 			// vectorized interleaving
-			if (n_frames == mipp::nElReg<D>())
+			if (real_n_frames == mipp::nElReg<D>())
 			{
 				for (auto i = 0; i < frame_size; i++)
 					mipp::store<D>(&out_vec[i * mipp::nElReg<D>()], 
@@ -163,8 +173,8 @@ private:
 			}
 			else
 			{
-				if ((n_frames == 4 && typeid(D) == typeid(signed char)) && // partially vectorized interleaving
-				    (in_vec.size() >= (unsigned)(frame_size * n_frames + mipp::nElReg<D>()))) 
+				if ((real_n_frames == 4 && typeid(D) == typeid(signed char)) && // partially vectorized interleaving
+				    (in_vec.size() >= (unsigned)(frame_size * real_n_frames + mipp::nElReg<D>())))
 				{
 					const signed char mask[32] = { 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 					                              -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
@@ -172,8 +182,8 @@ private:
 
 					for (auto i = 0; i < frame_size; i++)
 					{
-						const auto off1 =              i  * n_frames;
-						const auto off2 = lookup_table[i] * n_frames;
+						const auto off1 =              i  * real_n_frames;
+						const auto off2 = lookup_table[i] * real_n_frames;
 
 						auto r_ld = mipp::loadu<D>(&in_vec[off2]);
 						auto r_st = mipp::loadu<D>(&in_vec[off1]);
@@ -189,9 +199,9 @@ private:
 				{
 					for (auto i = 0; i < frame_size; i++)
 					{
-						const auto off1 =              i  * n_frames;
-						const auto off2 = lookup_table[i] * n_frames;
-						for (auto f = 0; f < n_frames; f++)
+						const auto off1 =              i  * real_n_frames;
+						const auto off2 = lookup_table[i] * real_n_frames;
+						for (auto f = 0; f < real_n_frames; f++)
 							out_vec[off1 +f] = in_vec[off2 +f];
 					}
 				}
@@ -200,7 +210,7 @@ private:
 		else // sequential interleaving
 		{
 			// TODO: vectorize this code with the new AVX gather instruction
-			for (auto f = 0; f < n_frames; f++)
+			for (auto f = 0; f < real_n_frames; f++)
 			{
 				const auto off = f * frame_size;
 				for (auto i = 0; i < frame_size; i++)

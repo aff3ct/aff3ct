@@ -44,7 +44,7 @@ private:
 protected:
 	const int K; /*!< Number of information bits in one frame */
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level;
+	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
 
 public:
 	/*!
@@ -53,7 +53,7 @@ public:
 	 * \param K:                      number of information bits in the frame.
 	 * \param N:                      size of one frame.
 	 * \param n_frames:               number of frames to process in the Decoder.
-	 * \param simd_inter_frame_level: number of frame absorbed by the SIMD instructions.
+	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
 	Decoder_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
@@ -149,21 +149,41 @@ public:
 		}
 	}
 
+	/*!
+	 * \brief Gets the duration of the data loading in the decoding process.
+	 *
+	 * \return the duration of the data loading in the decoding process.
+	 */
 	std::chrono::nanoseconds get_load_duration() const
 	{
 		return this->d_load_total;
 	}
 
+	/*!
+	 * \brief Gets the duration of the decoding process (without loads and stores).
+	 *
+	 * \return the duration of the decoding process (without loads and stores).
+	 */
 	std::chrono::nanoseconds get_decode_duration() const
 	{
 		return this->d_decod_total;
 	}
 
+	/*!
+	 * \brief Gets the duration of the data storing in the decoding process.
+	 *
+	 * \return the duration of the data storing in the decoding process.
+	 */
 	std::chrono::nanoseconds get_store_duration() const
 	{
 		return this->d_store_total;
 	}
 
+	/*!
+	 * \brief Gets the number of frames absorbed by the SIMD instructions.
+	 *
+	 * \return the number of frames absorbed by the SIMD instructions.
+	 */
 	int get_simd_inter_frame_level() const
 	{
 		return this->simd_inter_frame_level;

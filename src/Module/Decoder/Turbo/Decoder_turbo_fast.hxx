@@ -55,7 +55,7 @@ void Decoder_turbo_fast<B,R>
 				frames[f] = Y_N.data() + f*frame_size +this->K + p_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
-			this->pi.interleave(this->l_sn, this->l_si, true);
+			this->pi.interleave(this->l_sn, this->l_si, true, this->get_simd_inter_frame_level());
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
@@ -92,7 +92,7 @@ void Decoder_turbo_fast<B,R>
 				frames[f] = Y_N.data() + f*frame_size +this->K + p_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
-			this->pi.interleave(this->l_sn, this->l_si, true);
+			this->pi.interleave(this->l_sn, this->l_si, true, this->get_simd_inter_frame_level());
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
@@ -151,7 +151,7 @@ void Decoder_turbo_fast<B,R>
 		this->scaling_factor(this->l_e2n, 2 * (ite -1));
 
 		// make the interleaving
-		this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1);
+		this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, this->get_simd_inter_frame_level());
 
 		// l_se = sys + ext
 		for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
@@ -181,7 +181,7 @@ void Decoder_turbo_fast<B,R>
 			}
 
 		// make the deinterleaving
-		this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1);
+		this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, this->get_simd_inter_frame_level());
 	}
 
 	// take the hard decision
@@ -207,7 +207,7 @@ void Decoder_turbo_fast<B,R>
 {
 	if (this->get_simd_inter_frame_level() > 1)
 	{
-		if (this->get_n_frames() == mipp::nElReg<B>())
+		if (this->get_simd_inter_frame_level() == mipp::nElReg<B>())
 		{
 			constexpr auto n_frames = mipp::nElReg<B>();
 

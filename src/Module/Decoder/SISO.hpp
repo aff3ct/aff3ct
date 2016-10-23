@@ -42,10 +42,11 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K       : number of information bits in the frame.
-	 * \param N       : size of one frame.
-	 * \param n_frames: number of frames to process in the SISO.
-	 * \param name    : decoder name.
+	 * \param K:                      number of information bits in the frame.
+	 * \param N:                      size of one frame.
+	 * \param n_frames:               number of frames to process in the SISO.
+	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
+	 * \param name:                   decoder name.
 	 */
 	SISO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	       std::string name = "SISO_i")
@@ -125,6 +126,11 @@ public:
 		return 0;
 	}
 
+	/*!
+	 * \brief Gets the number of frames absorbed by the SIMD instructions.
+	 *
+	 * \return the number of frames absorbed by the SIMD instructions.
+	 */
 	int get_simd_inter_frame_level() const
 	{
 		return this->simd_inter_frame_level_siso;

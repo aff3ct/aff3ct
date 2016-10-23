@@ -70,7 +70,7 @@ void Decoder_turbo_naive_CA<B,R>
 			this->scaling_factor(this->l_e2n, ite);
 
 			// make the interleaving
-			this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1);
+			this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, this->get_simd_inter_frame_level());
 
 			// sys + ext
 			for (auto i = 0; i < this->K * n_frames; i++)
@@ -91,7 +91,7 @@ void Decoder_turbo_naive_CA<B,R>
 					this->l_e2i[i] += this->l_sei[i];
 
 			// make the deinterleaving
-			this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1);
+			this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, this->get_simd_inter_frame_level());
 
 			// compute the hard decision only if we are in the last iteration
 			if (ite == this->n_ite)

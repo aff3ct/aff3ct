@@ -73,7 +73,7 @@ void Decoder_turbo<B,R>
 		std::copy(Y_N.begin()                     , Y_N.begin() + this->K           , l_sn.begin());
 		std::copy(Y_N.begin() + this->K           , Y_N.begin() + this->K + 1*p_size, l_pn.begin());
 		std::copy(Y_N.begin() + this->K + 1*p_size, Y_N.begin() + this->K + 2*p_size, l_pi.begin());
-		pi.interleave(l_sn, l_si);
+		pi.interleave(l_sn, l_si, false, this->get_simd_inter_frame_level());
 
 		// tails bit in the natural domain
 		std::copy(Y_N.begin() + N_without_tb           , Y_N.begin() + N_without_tb + tail_n/2, l_pn.begin() +p_size);
@@ -101,7 +101,7 @@ void Decoder_turbo<B,R>
 			frames[f] = Y_N.data() + f*frame_size +this->K + p_size;
 		Reorderer<R>::apply(frames, l_pi.data(), p_size);
 
-		pi.interleave(l_sn, l_si, true);
+		pi.interleave(l_sn, l_si, true, this->get_simd_inter_frame_level());
 
 		// tails bit in the natural domain
 		for (auto f = 0; f < n_frames; f++)
@@ -141,7 +141,7 @@ void Decoder_turbo<B,R>
 			l_pn[i] = Y_N[i*3 +1];
 			l_pi[i] = Y_N[i*3 +2];
 		}
-		pi.interleave(l_sn, l_si);
+		pi.interleave(l_sn, l_si, false, this->get_simd_inter_frame_level());
 
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
@@ -170,7 +170,7 @@ void Decoder_turbo<B,R>
 				l_pi[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +2];
 			}
 		}
-		pi.interleave(l_sn, l_si, true);
+		pi.interleave(l_sn, l_si, true, this->get_simd_inter_frame_level());
 
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
