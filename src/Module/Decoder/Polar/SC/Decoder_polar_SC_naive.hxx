@@ -42,7 +42,7 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == (unsigned) this->K);
+	assert(V_K.size() >= (unsigned) this->K);
 
 	auto k = 0;
 	this->recursive_store(this->polar_tree.get_root(), V_K, k);

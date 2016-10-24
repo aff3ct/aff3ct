@@ -192,7 +192,7 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == (unsigned) this->K);
+	assert(V_K.size() >= (unsigned) this->K);
 
 	auto k = 0;
 	this->recursive_store((Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);

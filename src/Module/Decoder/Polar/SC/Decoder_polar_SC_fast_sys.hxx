@@ -159,7 +159,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() == (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	assert(Y_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -267,7 +267,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == (unsigned) (this->K * this->get_simd_inter_frame_level()));
+	assert(V_K.size() >= (unsigned) (this->K * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -329,7 +329,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::store_fast(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() == (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	assert(V_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -367,7 +367,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::unpack(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() == (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	assert(V_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
 
 	constexpr int n_frames = API_polar::get_n_frames();
 

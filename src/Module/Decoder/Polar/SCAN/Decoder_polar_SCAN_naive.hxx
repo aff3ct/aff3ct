@@ -65,7 +65,7 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() == (unsigned) this->N);
+	assert(Y_N.size() >= (unsigned) this->N);
 
 	load_init();
 		
@@ -123,7 +123,7 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == (unsigned) this->K);
+	assert(V_K.size() >= (unsigned) this->K);
 
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)

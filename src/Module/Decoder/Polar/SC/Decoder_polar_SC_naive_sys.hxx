@@ -19,7 +19,7 @@ void Decoder_polar_SC_naive_sys<B,R,F,G,H>
 ::store(mipp::vector<B>& V_K) const
 {
 	auto *contents_root = this->polar_tree.get_root()->get_c();
-	assert(V_K.size() == (unsigned) this->K);
+	assert(V_K.size() >= (unsigned) this->K);
 
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
