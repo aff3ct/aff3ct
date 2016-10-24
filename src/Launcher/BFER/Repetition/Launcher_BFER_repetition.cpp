@@ -32,7 +32,7 @@ void Launcher_BFER_repetition<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("REPETITION");
-	this->opt_args[{"dec-implem"   }].push_back("STD");
+	this->opt_args[{"dec-implem"   }].push_back("STD, FAST");
 }
 
 template <typename B, typename R, typename Q>

@@ -16,41 +16,51 @@ template <typename B>
 void Encoder_repetition_sys<B>
 ::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
-	assert(this->n_frames == 1);
 	assert(buffered_encoding);
 
-	for (auto i = 0; i < rep_count; i++) // parity bits
-		std::copy(U_K.begin(), U_K.end(), par.begin() + i * this->K);
+	for (auto f = 0; f < this->n_frames; f++)
+		for (auto i = 0; i < rep_count; i++) // parity bits
+			std::copy(U_K.begin() + (f +0) * this->K,
+			          U_K.begin() + (f +1) * this->K,
+			          par.begin() + (f +0) * this->N + i * this->K);
 }
 
 template <typename B>
 void Encoder_repetition_sys<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(this->n_frames == 1);
-	
-	// repetition
-	if (!buffered_encoding)
+	for (auto f = 0; f < this->n_frames; f++)
 	{
-		for (auto i = 0; i < this->K; i++)
+		// repetition
+		if (!buffered_encoding)
 		{
-			const auto off1 = i * (rep_count +1);
-			const auto off2 = off1 +1;
+			for (auto i = 0; i < this->K; i++)
+			{
+				const auto off1 = i * (rep_count +1);
+				const auto off2 = off1 +1;
 
-			const auto bit = U_K[i];
+				const auto bit = U_K[f * this->K +i];
 
-			X_N[off1] = bit; // systematic bit
+				X_N[f * this->N + off1] = bit; // systematic bit
+
+				// parity bits
+				for (auto j = 0; j < rep_count; j++)
+					X_N[f * this->N + off2 +j] = bit;
+			}
+		}
+		else
+		{
+			// systematic bits
+			std::copy(U_K.begin() + (f +0) * this->K,
+			          U_K.begin() + (f +1) * this->K,
+			          X_N.begin() + (f +0) * this->N);
 
 			// parity bits
-			for (auto j = 0; j < rep_count; j++)
-				X_N[off2 +j] = bit;
+			for (auto i = 1; i <= rep_count; i++)
+				std::copy(U_K.begin() + (f +0) * this->K,
+				          U_K.begin() + (f +1) * this->K,
+				          X_N.begin() + (f +0) * this->N + i * this->K);
 		}
-	}
-	else
-	{
-		std::copy(U_K.begin(), U_K.end(), X_N.begin()); // systematic bits
-		for (auto i = 1; i <= rep_count; i++) // parity bits
-			std::copy(U_K.begin(), U_K.end(), X_N.begin() + i * this->K);
 	}
 }
 
