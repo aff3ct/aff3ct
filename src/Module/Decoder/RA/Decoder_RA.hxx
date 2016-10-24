@@ -43,7 +43,7 @@ template <typename B, typename R>
 void Decoder_RA<B, R>
 ::load(const mipp::vector<R>& Y_N)
 {
-	this->Y_N = Y_N;
+	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
 }
 
 template <typename B, typename R>
@@ -82,7 +82,7 @@ void Decoder_RA<B, R>
 			Tu[i] = check_node(Fw[i - 1] + Y_N[i - 1], Bw[i] + Y_N[i]);
 
 		// Deinterleave
-		interleaver.deinterleave(Tu, Wu);
+		interleaver.deinterleave(Tu, Wu, false, 1);
 
 		// U computation
 		R tmp;
@@ -97,7 +97,7 @@ void Decoder_RA<B, R>
 		}
 
 		// Interleaving
-		interleaver.interleave(Wd, Td);
+		interleaver.interleave(Wd, Td, false, 1);
 	}
 	for (auto i = 0; i < this->K; i++)
 		V_K[i] = (U[i] > 0) ? 0 : 1;

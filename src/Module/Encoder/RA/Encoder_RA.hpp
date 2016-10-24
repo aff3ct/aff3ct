@@ -12,7 +12,7 @@ class Encoder_RA : public Encoder<B>
 {
 protected:
     const int rep_count; // number of repetitions
-    mipp::vector<B> U;
+    mipp::vector<B> U, tmp_X_N;
 
     Interleaver<int>& interleaver;
 

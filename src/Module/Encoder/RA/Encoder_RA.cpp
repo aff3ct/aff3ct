@@ -7,7 +7,7 @@
 template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const std::string name)
- : Encoder<B>(K, N, 1, name), rep_count(N/K), U(N), interleaver(interleaver)
+ : Encoder<B>(K, N, 1, name), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
 {	
 	assert(N % K == 0); // check if RA count is consistent
 }
@@ -16,18 +16,21 @@ template <typename B>
 void Encoder_RA<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(this->n_frames == 1);
-	
-	// repetition
-	for (auto i = 0; i < this->K; i++)
-		for (auto j = 0; j < rep_count; j++)
-			U[i * rep_count +j] = U_K[i];
+	for (auto f = 0; f < this->n_frames; f++)
+	{
+		// repetition
+		for (auto i = 0; i < this->K; i++)
+			for (auto j = 0; j < rep_count; j++)
+				U[i * rep_count +j] = U_K[f * this->K +i];
 
-	interleaver.interleave(U, X_N);
+		interleaver.interleave(U, tmp_X_N, false, 1);
 
-	// accumulation
-	for (auto i = 1; i < this->N; i++)
-		X_N[i] = X_N[i-1] ^ X_N[i];
+		// accumulation
+		for (auto i = 1; i < this->N; i++)
+			tmp_X_N[i] = tmp_X_N[i-1] ^ tmp_X_N[i];
+
+		std::copy(tmp_X_N.begin(), tmp_X_N.end(), X_N.begin() + f * this->N);
+	}
 }
 
 // ==================================================================================== explicit template instantiation 
