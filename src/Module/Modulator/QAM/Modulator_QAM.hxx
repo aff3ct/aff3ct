@@ -136,10 +136,10 @@ void Modulator_QAM<B,R,Q,MAX>
 		for (auto j = 0; j < this->nbr_symbols; j++)
 			if ((j & (1 << b)) == 0)
 				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag()) * inv_sigma2));
+				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
 			else
 				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag()) * inv_sigma2));
+				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
 
 		Y_N2[n] = (L0 - L1);
 	}
