@@ -73,8 +73,9 @@ public:
 	SC_Decoder_module<B,R> *module;
 
 public:
-	SC_Decoder(const int K, const int N, const int n_frames, const std::string name = "SC_Decoder")
-	: Decoder_i<B,R>(K, N, n_frames, name), module(nullptr) {}
+	SC_Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	           const std::string name = "SC_Decoder")
+	: Decoder_i<B,R>(K, N, n_frames, simd_inter_frame_level, name), module(nullptr) {}
 
 	virtual ~SC_Decoder() { if (module != nullptr) { delete module; module = nullptr; } }
 

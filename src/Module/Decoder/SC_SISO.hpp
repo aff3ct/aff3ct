@@ -72,8 +72,9 @@ public:
 	SC_SISO_module<R> *module_siso;
 
 public:
-	SC_SISO(const int K, const int N, const int n_frames, const std::string name = "SC_SISO")
-	: SISO_i<R>(K, N, n_frames, name), module_siso(nullptr) {}
+	SC_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level = 1,
+	        const std::string name = "SC_SISO")
+	: SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), module_siso(nullptr) {}
 
 	virtual ~SC_SISO() { if (module_siso != nullptr) { delete module_siso; module_siso = nullptr; } }
 
