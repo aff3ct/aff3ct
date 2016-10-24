@@ -67,7 +67,7 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() == this->var_nodes.size());
+	assert(Y_N.size() >= this->var_nodes.size());
 
 	// memory zones initialization
 	if (this->init_flag)
@@ -76,7 +76,7 @@ void Decoder_LDPC_BP_layered<B,R>
 		this->init_flag = false;
 	}
 
-	std::copy(Y_N.begin(), Y_N.end(), this->var_nodes.begin());
+	std::copy(Y_N.begin(), Y_N.begin() + this->var_nodes.size(), this->var_nodes.begin());
 }
 
 template <typename B, typename R>
@@ -94,11 +94,10 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() <= this->var_nodes.size());
+	assert(V_K.size() >= this->K);
 
 	// take the hard decision
-	auto loop_size = (int)V_K.size();
-	for (auto i = 0; i < loop_size; i++)
+	for (auto i = 0; i < this->K; i++)
 		V_K[i] = !(this->var_nodes[i] >= 0);
 }
 

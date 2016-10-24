@@ -77,8 +77,8 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() == this->Y_N.size());
-	this->Y_N = Y_N;
+	assert(Y_N.size() >= this->Y_N.size());
+	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
 }
 
 template <typename B, typename R>
@@ -107,8 +107,8 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() == this->V_K.size());
-	V_K = this->V_K;
+	assert(V_K.size() >= this->V_K.size());
+	std::copy(this->V_K.begin(), this->V_K.end(), V_K.begin());
 }
 
 // BP algorithm
