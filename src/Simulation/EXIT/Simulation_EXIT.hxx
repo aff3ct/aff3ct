@@ -427,14 +427,14 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params, sigma, size, H, 0);
+	return Factory_channel<R>::build(params, sigma, H, size, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.f / sig_a, size, H, 0);
+	return Factory_channel<R>::build(params, 2.f / sig_a, H, size, 0);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

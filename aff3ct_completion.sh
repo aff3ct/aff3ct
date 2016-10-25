@@ -47,8 +47,8 @@ _aff3ct() {
 		      --sim-inter-lvl --cde-info-bits -K --cde-size -N --src-type     \
 		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
 		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type           \
-		      --chn-path --qnt-type --qnt-int --qnt-bits --qnt-range          \
-		      --dec-type --dec-implem --term-no"
+		      --chn-path --chn-blk-fad --qnt-type --qnt-int --qnt-bits        \
+		      --qnt-range --dec-type --dec-implem --term-no"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -304,7 +304,12 @@ _aff3ct() {
 			;;
 
 		--chn-type)
-			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL"
+			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--chn-blk-fad)
+			local params="NO FRAME ONETAP"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

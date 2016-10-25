@@ -14,7 +14,7 @@ private:
 	const R two_on_square_sigma;
 
 public:
-	Modulator_BPSK(const int N, const R sigma, mipp::vector<R> &H, const bool disable_sig2 = false,
+	Modulator_BPSK(const int N, const R sigma, const mipp::vector<R> &H, const bool disable_sig2 = false,
 	               const int n_frames = 1, const std::string name = "Modulator_BPSK");
 	virtual ~Modulator_BPSK();
 

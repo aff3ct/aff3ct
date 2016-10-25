@@ -41,6 +41,8 @@ Simulation_BFER<B,R,Q>
   code_rate(0.f),
   sigma    (0.f),
 
+  H(1),
+
   source    (1, nullptr),
   crc       (1, nullptr),
   encoder   (1, nullptr),
@@ -439,14 +441,14 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(params, sigma);
+	return Factory_modulator<B,R,R>::build(params, sigma, H[tid]);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, size, tid);
+	return Factory_channel<R>::build(params, sigma, H[tid], size, tid);
 }
 
 template <typename B, typename R, typename Q>

@@ -31,7 +31,7 @@ const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_anti_trellis = {
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM<B,R,Q,MAX>
-::Modulator_GSM(const int N, const R sigma, mipp::vector<R> &H, const bool disable_sig2, const std::string name,
+::Modulator_GSM(const int N, const R sigma, const mipp::vector<R> &H, const bool disable_sig2, const std::string name,
                 const bool tbless)
 : Modulator<B,R,Q>(N, 
                    (tbless ? N : (N +6)) *  5 * 2, // up_sample_factor =  5
@@ -51,7 +51,6 @@ Modulator_GSM<B,R,Q,MAX>
        BCJR_trellis,
        BCJR_anti_trellis)
 {
-	assert(H.empty());
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
@@ -312,6 +311,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
+	assert(this->H.empty());
 	assert(Y_N1.size() == (Y_N2.size() + this->n_frames * 6) * n_output_symbs);
 
 	if (this->n_frames == 1)
@@ -340,6 +340,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_GSM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
+	assert(this->H.empty());
 	assert(Y_N1.size() == (Y_N3.size() + this->n_frames * 6) * n_output_symbs);
 	assert(Y_N2.size() == Y_N3.size());
 

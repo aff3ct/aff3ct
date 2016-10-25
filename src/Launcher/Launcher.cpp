@@ -35,6 +35,7 @@ Launcher<B,R,Q>
 	params.modulator  .type              = "BPSK";
 	params.modulator  .bits_per_symbol   = 1;
 	params.modulator  .upsample_factor   = 1;
+	params.modulator  .complex           = true;
 	params.demodulator.max               = "MAXSS";
 	params.demodulator.no_sig2           = false;
 	params.channel    .domain            = "LLR";
@@ -248,6 +249,8 @@ void Launcher<B,R,Q>
 		          << bold_red("symbols must be given.") << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
+	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
+		params.modulator.complex = false;
 
 	if(ar.exist_arg({"mod-bps"       })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
 	if(ar.exist_arg({"mod-ups"       })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
@@ -449,6 +452,9 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 
 	if (params.channel.type == "USER")
 		p.push_back(std::make_pair("Path", params.channel.path));
+
+	if (params.channel.type.find("RAYLEIGH") != std::string::npos)
+		p.push_back(std::make_pair("Block fading policy", params.channel.block_fading));
 
 	return p;
 }

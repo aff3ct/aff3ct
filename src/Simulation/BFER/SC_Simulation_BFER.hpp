@@ -42,6 +42,9 @@ protected:
 	float code_rate;
 	float sigma;
 
+	// code gain for Rayleigh channels (will be empty if Rayleigh channel is not use)
+	std::vector<mipp::vector<R>> H;
+
 	// communication chain
 	std::vector<SC_Source<B>*>         source;
 	std::vector<SC_CRC<B>*>            crc;

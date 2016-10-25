@@ -45,6 +45,9 @@ protected:
 	float code_rate;
 	float sigma;
 
+	// code gain for Rayleigh channels
+	std::vector<mipp::vector<R>> H;
+
 	// data vector
 	std::vector<mipp::vector<B>> X_N1; // fake encoded codeword (required to compile but never used)
 

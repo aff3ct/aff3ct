@@ -19,7 +19,7 @@ private:
 	mipp::vector<R> constellation;
 
 public:
-	Modulator_PAM(const int N, mipp::vector<R> &H, const int bits_per_symbol = 1, const R sigma = 1.0,
+	Modulator_PAM(const int N, const R sigma, const mipp::vector<R> &H, const int bits_per_symbol = 1,
 	              const bool disable_sig2 = false, const int n_frames = 1, const std::string name = "Modulator_PAM");
 	virtual ~Modulator_PAM();
 

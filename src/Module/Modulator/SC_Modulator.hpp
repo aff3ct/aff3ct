@@ -179,7 +179,7 @@ private:
 
 public:
 	SC_Modulator_module_tdemodulator(SC_Modulator<B,R,Q> &modulator, 
-	                                       const sc_core::sc_module_name name = "SC_Modulator_module_tdemodulator")
+	                                 const sc_core::sc_module_name name = "SC_Modulator_module_tdemodulator")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  modulator(modulator),
 	  Y_N1(modulator.N_fil * modulator.n_frames),
@@ -250,17 +250,17 @@ public:
 	SC_Modulator_module_tdemodulator<B,R,Q> *module_tdemod;
 
 public:
-	SC_Modulator(const int N, const int N_mod, const int N_fil, mipp::vector<R> &H = {}, const int n_frames = 1,
+	SC_Modulator(const int N, const int N_mod, const int N_fil, const mipp::vector<R> &H, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
 	: Modulator_i<B,R,Q>(N, N_mod, N_fil, H, n_frames, name), 
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
-	SC_Modulator(const int N, const int N_mod, mipp::vector<R> &H = {}, const int n_frames = 1,
+	SC_Modulator(const int N, const int N_mod, const mipp::vector<R> &H, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
 	: Modulator_i<B,R,Q>(N, N_mod, H, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}
 
-	SC_Modulator(const int N, mipp::vector<R> &H = {}, const int n_frames = 1,
+	SC_Modulator(const int N, const mipp::vector<R> &H, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
 	: Modulator_i<B,R,Q>(N, H, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_tdemod(nullptr) {}

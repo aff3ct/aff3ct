@@ -1,5 +1,3 @@
-#include "Modulator_user.hpp"
-
 #include <cassert>
 #include <cmath>
 #include <complex>
@@ -7,13 +5,15 @@
 #include <fstream>
 #include <iterator>
 
+#include "Modulator_user.hpp"
+
 /*
  * Constructor / Destructor
  */
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_user<B,R,Q,MAX>
-::Modulator_user(const int N, mipp::vector<R> &H, const int bits_per_symbol, const std::string const_path, 
-                 const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
+::Modulator_user(const int N, const R sigma, const mipp::vector<R> &H, const int bits_per_symbol,
+                 const std::string const_path, const bool disable_sig2, const int n_frames, const std::string name)
 : Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), H, n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
@@ -116,25 +116,54 @@ void Modulator_user<B,R,Q,MAX>
 	auto size       = (int)Y_N2.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
-	for (auto n = 0; n < size; n++) // boucle sur les LLRs
+	if (this->H.empty())
 	{
-		auto L0 = -std::numeric_limits<Q>::infinity();
-		auto L1 = -std::numeric_limits<Q>::infinity();
+		for (auto n = 0; n < size; n++) // loop upon the LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
 
-		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // position du symbole
+			auto b  = n % this->bits_per_symbol; // bit position in the symbol
+			auto k  = n / this->bits_per_symbol; // symbol position
 
-		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
+			auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
-		for (auto j = 0; j < this->nbr_symbols; j++)
-			if ((j &(1 << (this->bits_per_symbol -b -1))) == 0)
-				L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
-			else
-				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
-				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+			for (auto j = 0; j < this->nbr_symbols; j++)
+				if ((j &(1 << (this->bits_per_symbol -b -1))) == 0)
+					L0 = MAX(L0, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+																		 (Q)this->constellation[j].imag())) * inv_sigma2);
+				else
+					L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+																		 (Q)this->constellation[j].imag())) * inv_sigma2);
 
-		Y_N2[n] = (L0 - L1);
+			Y_N2[n] = (L0 - L1);
+		}
+	}
+	else
+	{
+		for (auto n = 0; n < size; n++) // loop upon the LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+
+			auto b  = n % this->bits_per_symbol; // bit position in the symbol
+			auto k  = n / this->bits_per_symbol; // symbol position
+
+			auto complex_Yk = std::complex<Q>(         Y_N1[2*k],          Y_N1[2*k+1]);
+			auto complex_Hk = std::complex<Q>((Q)this->H   [2*k], (Q)this->H   [2*k+1]);
+
+			for (auto j = 0; j < this->nbr_symbols; j++)
+				if ((j &(1 << (this->bits_per_symbol -b -1))) == 0)
+					L0 = MAX(L0, -std::norm(complex_Yk -
+					                        complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
+					                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+				else
+					L1 = MAX(L1, -std::norm(complex_Yk -
+					                        complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
+					                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
+
+			Y_N2[n] = (L0 - L1);
+		}
 	}
 }
 
@@ -148,30 +177,68 @@ void Modulator_user<B,R,Q,MAX>
 	auto size       = (int)Y_N3.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
-	for (auto n = 0; n < size; n++) // boucle sur les LLRs
+	if (this->H.empty())
 	{
-		auto L0 = -std::numeric_limits<Q>::infinity();
-		auto L1 = -std::numeric_limits<Q>::infinity();
-		auto b  = n % this->bits_per_symbol; // position du bit
-		auto k  = n / this->bits_per_symbol; // position du symbole
-
-		auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
-
-		for (auto j = 0; j < this->nbr_symbols; j++)
+		for (auto n = 0; n < size; n++) // loop upon the LLRs
 		{
-			auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>(this->constellation[j])) * inv_sigma2);
-			for (auto l = 0; l < b; l++)
-				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+			auto b  = n % this->bits_per_symbol; // bit position in the symbol
+			auto k  = n / this->bits_per_symbol; // symbol position
 
-			for (auto l = b + 1; l < this->bits_per_symbol; l++)
-				tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+			auto complex_Yk = std::complex<Q>(Y_N1[2*k], Y_N1[2*k+1]);
 
-			if ((j & (1 << (this->bits_per_symbol-b-1))) == 0)
-				L0 = MAX(L0, -tempL);
-			else
-				L1 = MAX(L1, -tempL);
+			for (auto j = 0; j < this->nbr_symbols; j++)
+			{
+				auto tempL = (Q)(std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
+				                                                        (Q)this->constellation[j].imag())) * inv_sigma2);
+
+				for (auto l = 0; l < b; l++)
+					tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+
+				for (auto l = b + 1; l < this->bits_per_symbol; l++)
+					tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+
+				if ((j & (1 << (this->bits_per_symbol-b-1))) == 0)
+					L0 = MAX(L0, -tempL);
+				else
+					L1 = MAX(L1, -tempL);
+			}
+
+			Y_N3[n] = (L0 - L1) + Y_N2[n];
 		}
+	}
+	else
+	{
+		for (auto n = 0; n < size; n++) // loop upon the LLRs
+		{
+			auto L0 = -std::numeric_limits<Q>::infinity();
+			auto L1 = -std::numeric_limits<Q>::infinity();
+			auto b  = n % this->bits_per_symbol; // bit position in the symbol
+			auto k  = n / this->bits_per_symbol; // symbol position
 
-		Y_N3[n] = (L0 - L1) + Y_N2[n];
+			auto complex_Yk = std::complex<Q>(         Y_N1[2*k],          Y_N1[2*k+1]);
+			auto complex_Hk = std::complex<Q>((Q)this->H   [2*k], (Q)this->H   [2*k+1]);
+
+			for (auto j = 0; j < this->nbr_symbols; j++)
+			{
+				auto tempL = (Q)(std::norm(complex_Yk -
+				                           complex_Hk * std::complex<Q>((Q)this->constellation[j].real(),
+				                                                        (Q)this->constellation[j].imag())) * inv_sigma2);
+
+				for (auto l = 0; l < b; l++)
+					tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+
+				for (auto l = b + 1; l < this->bits_per_symbol; l++)
+					tempL += (j & (1 << (this->bits_per_symbol -l -1))) * Y_N2[k * this->bits_per_symbol +l];
+
+				if ((j & (1 << (this->bits_per_symbol-b-1))) == 0)
+					L0 = MAX(L0, -tempL);
+				else
+					L1 = MAX(L1, -tempL);
+			}
+
+			Y_N3[n] = (L0 - L1) + Y_N2[n];
+		}
 	}
 }

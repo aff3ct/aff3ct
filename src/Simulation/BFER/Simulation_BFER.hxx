@@ -42,7 +42,7 @@ Simulation_BFER<B,R,Q>
   code_rate(0.f),
   sigma    (0.f),
 
-  H   (params.simulation.n_threads),
+  H(params.simulation.n_threads),
   
   U_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
   X_N1(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
@@ -1011,14 +1011,7 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	bool is_channel_complex;
-
-	if(params.modulator.type == "BPSK" || params.modulator.type == "PAM" )
-		is_channel_complex = false;
-	else
-		is_channel_complex = true;
-
-	return Factory_channel<R>::build(params, sigma, size, H[tid], tid, is_channel_complex);
+	return Factory_channel<R>::build(params, sigma, H[tid], size, tid);
 }
 
 template <typename B, typename R, typename Q>

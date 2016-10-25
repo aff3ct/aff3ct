@@ -41,7 +41,7 @@ protected:
 	Modulator_GSM_BCJR<Q,MAX> BCJR;
 
 public:
-	Modulator_GSM(const int N, const R sigma, mipp::vector<R> &H, const bool disable_sig2 = false,
+	Modulator_GSM(const int N, const R sigma, const mipp::vector<R> &H, const bool disable_sig2 = false,
 	              const std::string name = "Modulator_GSM", const bool tbless = false);
 	virtual ~Modulator_GSM();
 

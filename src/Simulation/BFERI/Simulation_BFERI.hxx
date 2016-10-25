@@ -974,7 +974,7 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFERI<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, size, H[tid], tid);
+	return Factory_channel<R>::build(params, sigma, H[tid], size, tid);
 }
 
 template <typename B, typename R, typename Q>
