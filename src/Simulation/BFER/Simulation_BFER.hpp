@@ -44,8 +44,8 @@ protected:
 	float code_rate;
 	float sigma;
 
-	// code gain for Rayleigh channels (will be empty if Rayleigh channel is not use)
-	std::vector<mipp::vector<R>> H;
+	// code gain for Rayleigh channels
+	std::vector<mipp::vector<R>> H_N;
 
 	// data vector
 	std::vector<mipp::vector<B>> U_K;  // information bit vector

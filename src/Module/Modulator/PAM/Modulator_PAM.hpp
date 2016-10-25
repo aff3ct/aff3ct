@@ -19,13 +19,15 @@ private:
 	mipp::vector<R> constellation;
 
 public:
-	Modulator_PAM(const int N, const R sigma, const mipp::vector<R> &H, const int bits_per_symbol = 1,
-	              const bool disable_sig2 = false, const int n_frames = 1, const std::string name = "Modulator_PAM");
+	Modulator_PAM(const int N, const R sigma, const int bits_per_symbol = 1, const bool disable_sig2 = false,
+	              const int n_frames = 1, const std::string name = "Modulator_PAM");
 	virtual ~Modulator_PAM();
 
-	virtual void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
-	virtual void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
+	void   modulate           (const mipp::vector<B>& X_N1,                                                          mipp::vector<R>& X_N2);
+	void demodulate           (const mipp::vector<Q>& Y_N1,                                                          mipp::vector<Q>& Y_N2);
+	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,                              mipp::vector<Q>& Y_N2);
+	void demodulate           (const mipp::vector<Q>& Y_N1,                             const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
+	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
 	int get_buffer_size_after_modulation(const int N);
 

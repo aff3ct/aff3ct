@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -56,6 +57,19 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
+
+	/*!
+	 * \brief Adds the noise to a perfectly clear signal.
+	 *
+	 * \param X_N: a perfectly clear message.
+	 * \param Y_N: a noisy signal.
+	 * \param H_N: the channel gains.
+	 */
+	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+	{
+		this->add_noise(X_N, Y_N);
+		std::fill(H_N.begin(), H_N.end(), (R)1);
+	}
 };
 
 #include "SC_Channel.hpp"

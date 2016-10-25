@@ -12,7 +12,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_GSM_TBLess : public Modulator_GSM<B,R,Q,MAX>
 {
 public:
-	Modulator_GSM_TBLess(int N, const R sigma, const mipp::vector<R> &H, const bool disable_sig2 = false,
+	Modulator_GSM_TBLess(int N, const R sigma, const bool disable_sig2 = false,
 	                     const std::string name = "Modulator_GSM_TBLess");
 	virtual ~Modulator_GSM_TBLess();
 

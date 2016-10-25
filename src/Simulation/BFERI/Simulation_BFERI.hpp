@@ -46,7 +46,7 @@ protected:
 	float sigma;
 
 	// code gain for Rayleigh channels
-	std::vector<mipp::vector<R>> H;
+	std::vector<mipp::vector<R>> H_N;
 
 	// data vector
 	std::vector<mipp::vector<B>> U_K;  // information bit vector

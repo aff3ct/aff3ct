@@ -41,8 +41,8 @@ protected:
 	Modulator_GSM_BCJR<Q,MAX> BCJR;
 
 public:
-	Modulator_GSM(const int N, const R sigma, const mipp::vector<R> &H, const bool disable_sig2 = false,
-	              const std::string name = "Modulator_GSM", const bool tbless = false);
+	Modulator_GSM(const int N, const R sigma, const bool disable_sig2 = false, const std::string name = "Modulator_GSM",
+	              const bool tbless = false);
 	virtual ~Modulator_GSM();
 
 	int get_buffer_size_after_modulation(const int N);
@@ -52,8 +52,6 @@ public:
 	void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2);
 	void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
 	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
-
-	void set_n_frames(const int n_frames);
 
 protected:
 	void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);

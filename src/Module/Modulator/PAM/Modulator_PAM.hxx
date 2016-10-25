@@ -10,11 +10,10 @@
  */
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_PAM<B,R,Q,MAX>
-::Modulator_PAM(const int N, const R sigma, const mipp::vector<R> &H, const int bits_per_symbol, const bool disable_sig2,
-                const int n_frames, const std::string name)
+::Modulator_PAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames,
+                const std::string name)
 : Modulator<B,R,Q>(N,
                    (int)std::ceil((float)N / (float)bits_per_symbol),
-                   H,
                    n_frames,
                    name),
   bits_per_symbol(bits_per_symbol),
@@ -120,45 +119,54 @@ void Modulator_PAM<B,R,Q,MAX>
 	auto size       = (int)Y_N2.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
-	if (this->H.empty())
+	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
-		for (auto n = 0; n < size; n++) // loop upon the LLRs
-		{
-			auto L0 = -std::numeric_limits<Q>::infinity();
-			auto L1 = -std::numeric_limits<Q>::infinity();
-			auto b  = n % this->bits_per_symbol; // bit position in the symbol
-			auto k  = n / this->bits_per_symbol; // symbol position
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
+		auto b  = n % this->bits_per_symbol; // bit position in the symbol
+		auto k  = n / this->bits_per_symbol; // symbol position
 
-			for (auto j = 0; j < this->nbr_symbols; j++)
-				if ((j & (1 << b)) == 0)
-					L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) *
-					              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
-				else
-					L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) *
-					              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
+		for (auto j = 0; j < this->nbr_symbols; j++)
+			if ((j & (1 << b)) == 0)
+				L0 = MAX(L0, -(Y_N1[k] - (Q)this->constellation[j]) *
+				              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
+			else
+				L1 = MAX(L1, -(Y_N1[k] - (Q)this->constellation[j]) *
+				              (Y_N1[k] - (Q)this->constellation[j]) * inv_sigma2);
 
-			Y_N2[n] = (L0 - L1);
-		}
+		Y_N2[n] = (L0 - L1);
 	}
-	else
+}
+
+/*
+ * Demodulator
+ */
+template <typename B,typename R, typename Q, proto_max<Q> MAX>
+void Modulator_PAM<B,R,Q,MAX>
+::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+{
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+
+	auto size       = (int)Y_N2.size();
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
+
+	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
-		for (auto n = 0; n < size; n++) // loop upon the LLRs
-		{
-			auto L0 = -std::numeric_limits<Q>::infinity();
-			auto L1 = -std::numeric_limits<Q>::infinity();
-			auto b  = n % this->bits_per_symbol; // bit position in the symbol
-			auto k  = n / this->bits_per_symbol; // symbol position
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
+		auto b  = n % this->bits_per_symbol; // bit position in the symbol
+		auto k  = n / this->bits_per_symbol; // symbol position
 
-			for (auto j = 0; j < this->nbr_symbols; j++)
-				if ((j & (1 << b)) == 0)
-					L0 = MAX(L0, -(Y_N1[k] - (Q)this->H[k] * (Q)this->constellation[j]) *
-					              (Y_N1[k] - (Q)this->H[k] * (Q)this->constellation[j]) * inv_sigma2);
-				else
-					L1 = MAX(L1, -(Y_N1[k] - (Q)this->H[k] * (Q)this->constellation[j]) *
-					              (Y_N1[k] - (Q)this->H[k] * (Q)this->constellation[j]) * inv_sigma2);
+		for (auto j = 0; j < this->nbr_symbols; j++)
+			if ((j & (1 << b)) == 0)
+				L0 = MAX(L0, -(Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) *
+				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * inv_sigma2);
+			else
+				L1 = MAX(L1, -(Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) *
+				              (Y_N1[k] - (Q)H_N[k] * (Q)this->constellation[j]) * inv_sigma2);
 
-			Y_N2[n] = (L0 - L1);
-		}
+		Y_N2[n] = (L0 - L1);
 	}
 }
 
@@ -172,62 +180,69 @@ void Modulator_PAM<B,R,Q,MAX>
 	auto size       = (int)Y_N3.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
-	if (this->H.empty())
+	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
-		for (auto n = 0; n < size; n++) // loop upon the LLRs
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
+		auto b  = n % this->bits_per_symbol; // bit position in the symbol
+		auto k  = n / this->bits_per_symbol; // symbol position
+
+		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto L0 = -std::numeric_limits<Q>::infinity();
-			auto L1 = -std::numeric_limits<Q>::infinity();
-			auto b  = n % this->bits_per_symbol; // bit position in the symbol
-			auto k  = n / this->bits_per_symbol; // symbol position
+			auto tempL  = (Q)((Y_N1[k] - this->constellation[j]) *
+			                  (Y_N1[k] - this->constellation[j]) * inv_sigma2);
 
-			for (auto j = 0; j < this->nbr_symbols; j++)
-			{
-				auto tempL  = (Q)((Y_N1[k] - this->constellation[j]) *
-				                  (Y_N1[k] - this->constellation[j]) * inv_sigma2);
+			for (auto l = 0; l < b; l++)
+				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
 
-				for (auto l = 0; l < b; l++)
-					tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = b +1; l < this->bits_per_symbol; l++)
+				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
 
-				for (auto l = b +1; l < this->bits_per_symbol; l++)
-					tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
-
-				if ((j & (1 << b)) == 0)
-					L0 = MAX(L0, -tempL);
-				else
-					L1 = MAX(L1, -tempL);
-			}
-
-			Y_N3[n] = (L0 - L1);
+			if ((j & (1 << b)) == 0)
+				L0 = MAX(L0, -tempL);
+			else
+				L1 = MAX(L1, -tempL);
 		}
+
+		Y_N3[n] = (L0 - L1);
 	}
-	else
+}
+
+template <typename B,typename R, typename Q, proto_max<Q> MAX>
+void Modulator_PAM<B,R,Q,MAX>
+::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
+                              mipp::vector<Q>& Y_N3)
+{
+	assert(typeid(R) == typeid(Q));
+	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+
+	auto size       = (int)Y_N3.size();
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+
+	for (auto n = 0; n < size; n++) // boucle sur les LLRs
 	{
-		for (auto n = 0; n < size; n++) // boucle sur les LLRs
+		auto L0 = -std::numeric_limits<Q>::infinity();
+		auto L1 = -std::numeric_limits<Q>::infinity();
+		auto b  = n % this->bits_per_symbol; // bit position in the symbol
+		auto k  = n / this->bits_per_symbol; // symbol position
+
+		for (auto j = 0; j < this->nbr_symbols; j++)
 		{
-			auto L0 = -std::numeric_limits<Q>::infinity();
-			auto L1 = -std::numeric_limits<Q>::infinity();
-			auto b  = n % this->bits_per_symbol; // bit position in the symbol
-			auto k  = n / this->bits_per_symbol; // symbol position
+			auto tempL = (Q)((Y_N1[k] - (Q)H_N[k] * this->constellation[j]) *
+			                 (Y_N1[k] - (Q)H_N[k] * this->constellation[j]) * inv_sigma2);
 
-			for (auto j = 0; j < this->nbr_symbols; j++)
-			{
-				auto tempL = (Q)((Y_N1[k] - (Q)this->H[k] * this->constellation[j]) *
-				                 (Y_N1[k] - (Q)this->H[k] * this->constellation[j]) * inv_sigma2);
+			for (auto l = 0; l < b; l++)
+				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
 
-				for (auto l = 0; l < b; l++)
-					tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
+			for (auto l = b +1; l < this->bits_per_symbol; l++)
+				tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
 
-				for (auto l = b +1; l < this->bits_per_symbol; l++)
-					tempL += (j & (1 << l)) * Y_N2[k * this->bits_per_symbol +l];
-
-				if ((j & (1 << b)) == 0)
-					L0 = MAX(L0, -tempL);
-				else
-					L1 = MAX(L1, -tempL);
-			}
-
-			Y_N3[n] = (L0 - L1);
+			if ((j & (1 << b)) == 0)
+				L0 = MAX(L0, -tempL);
+			else
+				L1 = MAX(L1, -tempL);
 		}
+
+		Y_N3[n] = (L0 - L1);
 	}
 }

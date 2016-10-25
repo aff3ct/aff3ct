@@ -4,9 +4,8 @@
 
 template <typename B, typename R, typename Q>
 Modulator_BPSK_fast<B,R,Q>
-::Modulator_BPSK_fast(const int N, const R sigma, const mipp::vector<R> &H, const bool disable_sig2, const int n_frames,
-                      const std::string name)
-: Modulator<B,R,Q>(N, H, n_frames, name), 
+::Modulator_BPSK_fast(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
+: Modulator<B,R,Q>(N, n_frames, name),
   disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
@@ -116,12 +115,6 @@ template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	if (!this->H.empty())
-	{
-		std::cerr << bold_red("(EE) The fast modulator does not support channel gain.") << std::endl;
-		std::exit(-1);
-	}
-
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
@@ -145,12 +138,6 @@ template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	if (!this->H.empty())
-	{
-		std::cerr << bold_red("(EE) The fast modulator does not support channel gain.") << std::endl;
-		std::exit(-1);
-	}
-
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 

@@ -16,7 +16,7 @@ Simulation_EXIT<B,R,Q>
 : Simulation(),
 
   params(params),
-  H          (                                                             ),
+  H_N        (params.code.N + params.code.tail_length                      ),
   B_K        (params.code.K                                                ),
   B_N        (params.code.N + params.code.tail_length                      ),
   X_K1       (params.code.K                                                ),
@@ -100,6 +100,7 @@ void Simulation_EXIT<B,R,Q>
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
 	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
 	if (Lch_N1.size() != (unsigned) (N_mod + tail)) Lch_N1.resize(N_mod + tail);
+	if (H_N   .size() != (unsigned) (N_mod + tail)) H_N   .resize(N_mod + tail);
 }
 
 template <typename B, typename R, typename Q>
@@ -180,12 +181,30 @@ void Simulation_EXIT<B,R,Q>
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
 		{
-			channel_a  ->add_noise (X_K2,  La_K1);
-			modulator_a->demodulate(La_K1, La_K2);
+			// Rayleigh channel
+			if (params.channel.type.find("RAYLEIGH") != std::string::npos)
+			{
+				channel_a->add_noise(X_K2, La_K1, H_N);
+				modulator_a->demodulate_with_gains(La_K1, H_N, La_K2);
+			}
+			else // additive channel (AWGN, USER, NO)
+			{
+				channel_a  ->add_noise (X_K2,  La_K1);
+				modulator_a->demodulate(La_K1, La_K2);
+			}
 		}
 
-		channel  ->add_noise (X_N2,   Lch_N1);
-		modulator->demodulate(Lch_N1, Lch_N2),
+		// Rayleigh channel
+		if (params.channel.type.find("RAYLEIGH") != std::string::npos)
+		{
+			channel->add_noise(X_N2, Lch_N1, H_N);
+			modulator->demodulate_with_gains(Lch_N1, H_N, Lch_N2);
+		}
+		else // additive channel (AWGN, USER, NO)
+		{
+			channel  ->add_noise (X_N2,   Lch_N1);
+			modulator->demodulate(Lch_N1, Lch_N2);
+		}
 
 		// extract systematic and parity information
 		extract_sys_par(Lch_N2, La_K2, sys, par);
@@ -413,28 +432,28 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R,R>::build(params, sigma, H);
+	return Factory_modulator<B,R,R>::build(params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a, H);
+	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params, sigma, H, size, 0);
+	return Factory_channel<R>::build(params, sigma, size, 0);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.f / sig_a, H, size, 0);
+	return Factory_channel<R>::build(params, 2.f / sig_a, size, 0);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

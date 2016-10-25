@@ -23,7 +23,7 @@ protected:
 	const parameters &params; // simulation parameters
 
 	// channel gains
-	mipp::vector<R> H;
+	mipp::vector<R> H_N;
 
 	// data vectors
 	mipp::vector<B> B_K, B_N, X_K1, X_N1;

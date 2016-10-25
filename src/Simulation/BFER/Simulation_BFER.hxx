@@ -42,8 +42,7 @@ Simulation_BFER<B,R,Q>
   code_rate(0.f),
   sigma    (0.f),
 
-  H(params.simulation.n_threads),
-  
+  H_N (params.simulation.n_threads, mipp::vector<R>(params.code.N)),
   U_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
   X_N1(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
   X_N2(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
@@ -246,6 +245,7 @@ void Simulation_BFER<B,R,Q>
 	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
 	if (simu->X_N3[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
 	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
+	if (simu->H_N [tid].size() != (unsigned) ( N_mod          * n_fra)) simu->H_N [tid].resize( N_mod          * n_fra);
 	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil          * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
 	if (simu->Y_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N3[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N4[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
@@ -303,6 +303,9 @@ void Simulation_BFER<B,R,Q>
 		auto d_encod = nanoseconds(0);
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
+		auto d_chann = nanoseconds(0);
+		auto d_filte = nanoseconds(0);
+		auto d_demod = nanoseconds(0);
 		auto d_corea = nanoseconds(0);
 		auto d_cobit = nanoseconds(0);
 
@@ -334,20 +337,41 @@ void Simulation_BFER<B,R,Q>
 			d_modul = steady_clock::now() - t_modul;
 		}
 
-		// add noise
-		auto t_chann = steady_clock::now();
-		simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid]);
-		auto d_chann = steady_clock::now() - t_chann;
+		// Rayleigh channel
+		if (simu->params.channel.type.find("RAYLEIGH") != std::string::npos)
+		{
+			// add noise
+			auto t_chann = steady_clock::now();
+			simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid], simu->H_N[tid]);
+			d_chann = steady_clock::now() - t_chann;
 
-		// filtering
-		auto t_filte = steady_clock::now();
-		simu->modulator[tid]->filter(simu->Y_N1[tid], simu->Y_N2[tid]);
-		auto d_filte = steady_clock::now() - t_filte;
+			// filtering
+			auto t_filte = steady_clock::now();
+			simu->modulator[tid]->filter(simu->Y_N1[tid], simu->Y_N2[tid]);
+			d_filte = steady_clock::now() - t_filte;
 
-		// demodulation
-		auto t_demod = steady_clock::now();
-		simu->modulator[tid]->demodulate(simu->Y_N2[tid], simu->Y_N3[tid]);
-		auto d_demod = steady_clock::now() - t_demod;
+			// demodulation
+			auto t_demod = steady_clock::now();
+			simu->modulator[tid]->demodulate_with_gains(simu->Y_N2[tid], simu->H_N[tid], simu->Y_N3[tid]);
+			d_demod = steady_clock::now() - t_demod;
+		}
+		else // additive channel (AWGN, USER, NO)
+		{
+			// add noise
+			auto t_chann = steady_clock::now();
+			simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid]);
+			d_chann = steady_clock::now() - t_chann;
+
+			// filtering
+			auto t_filte = steady_clock::now();
+			simu->modulator[tid]->filter(simu->Y_N1[tid], simu->Y_N2[tid]);
+			d_filte = steady_clock::now() - t_filte;
+
+			// demodulation
+			auto t_demod = steady_clock::now();
+			simu->modulator[tid]->demodulate(simu->Y_N2[tid], simu->Y_N3[tid]);
+			d_demod = steady_clock::now() - t_demod;
+		}
 
 		// make the quantization
 		auto t_quant = steady_clock::now();
@@ -487,6 +511,9 @@ void Simulation_BFER<B,R,Q>
 		auto d_modul = nanoseconds(0);
 		auto d_corea = nanoseconds(0);
 		auto d_cobit = nanoseconds(0);
+		auto d_chann = nanoseconds(0);
+		auto d_filte = nanoseconds(0);
+		auto d_demod = nanoseconds(0);
 
 		if (simu->params.source.type != "AZCW")
 		{
@@ -563,43 +590,82 @@ void Simulation_BFER<B,R,Q>
 			std::clog << std::endl;
 		}
 
-		// add noise
-		std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
-		auto t_chann = steady_clock::now();
-		simu->channel[0]->add_noise(simu->X_N3[0], simu->Y_N1[0]);
-		auto d_chann = steady_clock::now() - t_chann;
+		// Rayleigh channel
+		if (simu->params.channel.type.find("RAYLEIGH") != std::string::npos)
+		{
+			// add noise
+			std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
+			auto t_chann = steady_clock::now();
+			simu->channel[0]->add_noise(simu->X_N3[0], simu->Y_N1[0], simu->H_N[0]);
+			d_chann = steady_clock::now() - t_chann;
 
-		// display Y_N1
-		std::clog << "Y_N1:" << std::endl;
-		ft.display_real_vector(simu->Y_N1[0]);
-		std::clog << std::endl;
+			// display Y_N1
+			std::clog << "Y_N1:" << std::endl;
+			ft.display_real_vector(simu->Y_N1[0]);
+			std::clog << std::endl;
 
-		// display channel gains
-		std::clog << "H:" << std::endl;
-		ft.display_real_vector(simu->H[0]);
-		std::clog << std::endl;
+			// display channel gains
+			std::clog << "H_N:" << std::endl;
+			ft.display_real_vector(simu->H_N[0]);
+			std::clog << std::endl;
 
-		// filtering
-		std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
-		auto t_filte = steady_clock::now();
-		simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
-		auto d_filte = steady_clock::now() - t_filte;
+			// filtering
+			std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
+			auto t_filte = steady_clock::now();
+			simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
+			d_filte = steady_clock::now() - t_filte;
 
-		// display Y_N2
-		std::clog << "Y_N2:" << std::endl;
-		ft.display_real_vector(simu->Y_N2[0]);
-		std::clog << std::endl;
+			// display Y_N2
+			std::clog << "Y_N2:" << std::endl;
+			ft.display_real_vector(simu->Y_N2[0]);
+			std::clog << std::endl;
 
-		// demodulation
-		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
-		auto t_demod = steady_clock::now();
-		simu->modulator[0]->demodulate(simu->Y_N2[0], simu->Y_N3[0]);
-		auto d_demod = steady_clock::now() - t_demod;
+			// demodulation
+			std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
+			auto t_demod = steady_clock::now();
+			simu->modulator[0]->demodulate_with_gains(simu->Y_N2[0], simu->H_N[0], simu->Y_N3[0]);
+			d_demod = steady_clock::now() - t_demod;
 
-		// display Y_N3
-		std::clog << "Y_N3:" << std::endl;
-		ft.display_real_vector(simu->Y_N3[0]);
-		std::clog << std::endl;
+			// display Y_N3
+			std::clog << "Y_N3:" << std::endl;
+			ft.display_real_vector(simu->Y_N3[0]);
+			std::clog << std::endl;
+		}
+		else // additive channel (AWGN, USER, NO)
+		{
+			// add noise
+			std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
+			auto t_chann = steady_clock::now();
+			simu->channel[0]->add_noise(simu->X_N3[0], simu->Y_N1[0]);
+			d_chann = steady_clock::now() - t_chann;
+
+			// display Y_N1
+			std::clog << "Y_N1:" << std::endl;
+			ft.display_real_vector(simu->Y_N1[0]);
+			std::clog << std::endl;
+
+			// filtering
+			std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
+			auto t_filte = steady_clock::now();
+			simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
+			d_filte = steady_clock::now() - t_filte;
+
+			// display Y_N2
+			std::clog << "Y_N2:" << std::endl;
+			ft.display_real_vector(simu->Y_N2[0]);
+			std::clog << std::endl;
+
+			// demodulation
+			std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
+			auto t_demod = steady_clock::now();
+			simu->modulator[0]->demodulate(simu->Y_N2[0], simu->Y_N3[0]);
+			d_demod = steady_clock::now() - t_demod;
+
+			// display Y_N3
+			std::clog << "Y_N3:" << std::endl;
+			ft.display_real_vector(simu->Y_N3[0]);
+			std::clog << std::endl;
+		}
 
 		// make the quantization
 		std::clog << "Make the quantization from Y_N3 to Y_N4..." << std::endl;
@@ -1004,14 +1070,14 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(params, sigma, H[tid]);
+	return Factory_modulator<B,R,R>::build(params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, H[tid], size, tid);
+	return Factory_channel<R>::build(params, sigma, size, tid);
 }
 
 template <typename B, typename R, typename Q>
