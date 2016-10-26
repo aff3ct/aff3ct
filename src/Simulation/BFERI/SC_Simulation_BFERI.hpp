@@ -45,9 +45,6 @@ protected:
 	float code_rate;
 	float sigma;
 
-	// code gain for Rayleigh channels
-	std::vector<mipp::vector<R>> H;
-
 	// data vector
 	std::vector<mipp::vector<B>> X_N1; // fake encoded codeword (required to compile but never used)
 
@@ -73,7 +70,7 @@ protected:
 	SC_Predicate  *predicate;
 
 	SC_Debug<B> *dbg_B[6];
-	SC_Debug<R> *dbg_R[3];
+	SC_Debug<R> *dbg_R[4];
 	SC_Debug<Q> *dbg_Q[7];
 
 	// time points and durations
