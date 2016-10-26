@@ -502,6 +502,7 @@ void Simulation_BFER<B,R,Q>
 	{
 		std::clog << "-------------------------------" << std::endl;
 		std::clog << "New encoding/decoding session !" << std::endl;
+		std::clog << "Frame n°" << simu->monitor_red->get_n_analyzed_fra() << std::endl;
 		std::clog << "-------------------------------" << std::endl;
 
 		auto d_sourc = nanoseconds(0);
