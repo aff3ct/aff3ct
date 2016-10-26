@@ -511,14 +511,14 @@ template <typename B, typename R, typename Q>
 Modulator<B,R,Q>* Simulation_BFERI<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,Q>::build(params, sigma, H[tid]);
+	return Factory_modulator<B,R,Q>::build(params, sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFERI<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, H[tid], size, tid);
+	return Factory_channel<R>::build(params, sigma, size, tid);
 }
 
 template <typename B, typename R, typename Q>

@@ -42,9 +42,6 @@ protected:
 	float code_rate;
 	float sigma;
 
-	// code gain for Rayleigh channels (will be empty if Rayleigh channel is not use)
-	std::vector<mipp::vector<R>> H;
-
 	// communication chain
 	std::vector<SC_Source<B>*>         source;
 	std::vector<SC_CRC<B>*>            crc;
@@ -61,7 +58,7 @@ protected:
 
 	SC_Duplicator *duplicator[3];
 	SC_Debug<B> *dbg_B[6];
-	SC_Debug<R> *dbg_R[4];
+	SC_Debug<R> *dbg_R[5];
 	SC_Debug<Q> *dbg_Q[3];
 
 	// time points and durations
