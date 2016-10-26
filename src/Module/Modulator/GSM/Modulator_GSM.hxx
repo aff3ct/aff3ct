@@ -31,14 +31,13 @@ const std::vector<int> Modulator_GSM<B,R,Q,MAX>::BCJR_anti_trellis = {
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM<B,R,Q,MAX>
-::Modulator_GSM(const int N, const R sigma, const bool disable_sig2, const std::string name, const bool tbless)
+::Modulator_GSM(const int N, const R sigma, const std::string name, const bool tbless)
 : Modulator<B,R,Q>(N, 
                    (tbless ? N : (N +6)) *  5 * 2, // up_sample_factor =  5
                    (tbless ? N : (N +6)) * 16,     // n_output_symbs   = 16
                    1,
                    name),
   sigma(sigma),
-  disable_sig2(disable_sig2),
   parity_enc(N +6),
   BCJR((tbless ? N : N +6),
        BCJR_n_states,
@@ -294,15 +293,6 @@ void Modulator_GSM<B,R,Q,MAX>
 
 	// perform the matrix multiplication: Y_N2 = Y_N1 * projection (keep only the real part of the complexes in Y_N2)
 	cgemm_r(M, N, K, Y_N1, projection, Y_N2);
-
-	if (!disable_sig2)
-	{
-		// channel estimation
-		const auto estimator = (R)2.0 / ((R)this->sigma * (R)this->sigma);
-		const auto loop_size = (int)Y_N2.size();
-		for (auto i = 0; i < loop_size; i++)
-			Y_N2[i] *= estimator;
-	}
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>

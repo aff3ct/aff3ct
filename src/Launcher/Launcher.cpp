@@ -264,6 +264,7 @@ void Launcher<B,R,Q>
 	{
 		params.modulator.bits_per_symbol = 1;
 		params.modulator.upsample_factor = 5;
+		params.demodulator.no_sig2 = true;
 	}
 
 	// --------------------------------------------------------------------------------------------------- demodulator

@@ -58,24 +58,24 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	else if (params.modulator.type == "GSM")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_GSM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_GSM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_GSM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_GSM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma);
 	}
 	else if (params.modulator.type == "GSM_TBLESS")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_GSM_TBLess<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_GSM_TBLess<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_GSM_TBLess<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_GSM_TBLess<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+			modulator = new Modulator_GSM_TBLess<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma);
 	}
 	else if (params.modulator.type == "USER")
 	{

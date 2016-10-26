@@ -9,8 +9,8 @@
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_GSM_TBLess<B,R,Q,MAX>
-::Modulator_GSM_TBLess(int N, const R sigma, const bool disable_sig2,const std::string name)
-: Modulator_GSM<B,R,Q,MAX>(N, sigma, disable_sig2, name, true)
+::Modulator_GSM_TBLess(int N, const R sigma, const std::string name)
+: Modulator_GSM<B,R,Q,MAX>(N, sigma, name, true)
 {
 }
 
