@@ -11,7 +11,8 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
                                        const AList_reader &alist_data,
                                        const int n_frames,
                                        const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, n_frames, name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, n_frames, name),
+  values(alist_data.get_CN_max_degree())
 {
 }
 
@@ -29,7 +30,6 @@ bool Decoder_LDPC_BP_flooding_sum_product<B,R>
 	auto syndrome = 0;
 	auto transpose_ptr = this->transpose.data();
 
-	R values[32]; // lets suppose that 32 >= length is always true...
 	for (auto i = 0; i < this->n_C_nodes; i++)
 	{
 		const auto length = this->n_variables_per_parity[i];

@@ -6,6 +6,9 @@
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding_log_sum_product : public Decoder_LDPC_BP_flooding<B,R>
 {
+private:
+	mipp::vector<R> values;
+
 public:
 	Decoder_LDPC_BP_flooding_log_sum_product(const int &K, const int &N, const int& n_ite,
 	                                         const AList_reader &alist_data,
