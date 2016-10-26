@@ -1,5 +1,5 @@
 Run command: 
-./bin/aff3ct -p 32 --cde-type UNCODED -m 0.0 -M 15.1 -s 1.0 -e 500 -K 4003 -N 4003 --mod-type QAM --demod-max MAX --mod-bps 4 --chn-type AWGN_FAST --src-type RAND_FAST -t 48
+./bin/aff3ct -p 32 --cde-type UNCODED -m 0.0 -M 15.1 -s 1.0 -e 500 -K 4003 -N 4003 --mod-type QAM --dmod-max MAX --mod-bps 4 --chn-type AWGN_FAST --src-type RAND_FAST -t 48
 Curve name:
 16-QAM
 Trace: 
