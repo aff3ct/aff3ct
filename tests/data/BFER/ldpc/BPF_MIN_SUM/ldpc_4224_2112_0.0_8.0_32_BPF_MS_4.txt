@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 2112 -N 4224 -m 0.01 -M 8.01 -s 0.5 -e 500 --dec-type BP_FLOODING --dec-implem ONMS -i 4 -t 4 --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist
+./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 2112 -N 4224 -m 0.01 -M 8.01 -s 0.5 -e 500 --dec-type BP_FLOODING --dec-implem ONMS -i 4 -t 4 --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist --dec-norm 0.825
 Curve name:
 BPF min-sum 4 ite.
 Trace:
@@ -37,6 +37,8 @@ Trace:
 #    ** Type (D)               = BP_FLOODING
 #    ** Implementation         = ONMS
 #    ** Num. of iterations (i) = 4
+#    ** Offset                 = 0.000000
+#    ** Normalize factor       = 0.825000
 # * Monitor ---------------------------------------
 #    ** Frame error count (e)  = 500
 #

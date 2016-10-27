@@ -111,6 +111,8 @@ struct decoder_parameters
 	std::string max;
 	std::string gen_path;
 	bool        enable_syndrome;
+	float       normalize_factor;
+	float       offset;
 	int         n_ite;
 	int         L;
 };

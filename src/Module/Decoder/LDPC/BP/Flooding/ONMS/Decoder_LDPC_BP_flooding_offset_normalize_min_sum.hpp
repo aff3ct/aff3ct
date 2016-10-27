@@ -6,9 +6,15 @@
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding_offset_normalize_min_sum : public Decoder_LDPC_BP_flooding<B,R>
 {
+private:
+	const R normalize_factor;
+	const R offset;
+
 public:
 	Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
 	                                                  const AList_reader &alist_data,
+	                                                  const float normalize_factor = 1.f,
+	                                                  const float offset = 0.f,
 	                                                  const bool enable_syndrome = true,
 	                                                  const int n_frames = 1,
 	                                                  const std::string name = "Decoder_LDPC_BP_flooding_offset_normalize_min_sum");

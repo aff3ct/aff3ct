@@ -9,10 +9,13 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
                                                     const AList_reader &alist_data,
+                                                    const float normalize_factor,
+                                                    const float offset,
                                                     const bool enable_syndrome,
                                                     const int n_frames,
                                                     const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name),
+  normalize_factor((R)normalize_factor), offset((R)offset)
 {
 }
 
@@ -51,12 +54,8 @@ bool Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 			min2  = std::min(min2, std::max(v_abs, v_temp)); // 2nd min
 		}
 
-		// compute CN inter values
-		constexpr float offset    = 0.000f; // 0.00f // 0.15f
-		constexpr float normalize = 0.825f; // 1.00f // 1.25f // 0.825f
-
-		auto cste1 = (min2 - offset) * normalize;
-		auto cste2 = (min1 - offset) * normalize;
+		auto cste1 = (min2 - offset) * normalize_factor;
+		auto cste2 = (min1 - offset) * normalize_factor;
 		cste1 = (cste1 < 0) ? 0 : cste1;
 		cste2 = (cste2 < 0) ? 0 : cste2;
 

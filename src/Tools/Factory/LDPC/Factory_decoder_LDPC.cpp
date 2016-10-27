@@ -21,6 +21,8 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                                     params.code.N,
 			                                                                     params.decoder.n_ite,
 			                                                                     alist_data,
+			                                                                     params.decoder.normalize_factor,
+			                                                                     params.decoder.offset,
 			                                                                     params.decoder.enable_syndrome,
 			                                                                     params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "SPA")
@@ -45,6 +47,8 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                                    params.code.N,
 			                                                                    params.decoder.n_ite,
 			                                                                    alist_data,
+			                                                                    params.decoder.normalize_factor,
+			                                                                    params.decoder.offset,
 			                                                                    params.decoder.enable_syndrome,
 			                                                                    params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "SPA")

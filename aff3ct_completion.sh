@@ -167,7 +167,7 @@ _aff3ct() {
 		]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
-		--dec-no-synd"
+		--dec-no-synd --dec-off --dec-norm"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
@@ -202,7 +202,7 @@ _aff3ct() {
 		-b | --sim-debug-limit |  --mnt-max-fe | -e | --term-type |           \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
-		-L | --sim-json-path)
+		-L | --sim-json-path | --dec-off | --dec-norm)
 			COMPREPLY=()
 			;;
 
