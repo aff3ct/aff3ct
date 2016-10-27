@@ -3,28 +3,28 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_LDPC_BP_flooding_min_sum_offset.hpp"
+#include "Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
 
 template <typename B, typename R>
-Decoder_LDPC_BP_flooding_min_sum_offset<B,R>
-::Decoder_LDPC_BP_flooding_min_sum_offset(const int &K, const int &N, const int& n_ite,
-                                          const AList_reader &alist_data,
-                                          const bool enable_syndrome,
-                                          const int n_frames,
-                                          const std::string name)
+Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
+::Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
+                                                    const AList_reader &alist_data,
+                                                    const bool enable_syndrome,
+                                                    const int n_frames,
+                                                    const std::string name)
 : Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name)
 {
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_flooding_min_sum_offset<B,R>
-::~Decoder_LDPC_BP_flooding_min_sum_offset()
+Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
+::~Decoder_LDPC_BP_flooding_offset_normalize_min_sum()
 {
 }
 
 // normalized offest min-sum implementation
 template <typename B, typename R>
-bool Decoder_LDPC_BP_flooding_min_sum_offset<B,R>
+bool Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 ::BP_process()
 {
 	auto syndrome = 0;	
@@ -82,11 +82,11 @@ bool Decoder_LDPC_BP_flooding_min_sum_offset<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_flooding_min_sum_offset<B_8,Q_8>;
-template class Decoder_LDPC_BP_flooding_min_sum_offset<B_16,Q_16>;
-template class Decoder_LDPC_BP_flooding_min_sum_offset<B_32,Q_32>;
-template class Decoder_LDPC_BP_flooding_min_sum_offset<B_64,Q_64>;
+template class Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B_8,Q_8>;
+template class Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B_16,Q_16>;
+template class Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B_32,Q_32>;
+template class Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_flooding_min_sum_offset<B,Q>;
+template class Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

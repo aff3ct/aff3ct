@@ -17,7 +17,7 @@ Launcher_BFERI_LDPC<B,R,Q>
 	this->params.quantizer  .n_decimals      = 2;
 	this->params.decoder    .n_ite           = 1;
 	this->params.decoder    .type            = "BP_FLOODING";
-	this->params.decoder    .implem          = "MIN_SUM";
+	this->params.decoder    .implem          = "SPA";
 	this->params.decoder    .enable_syndrome = true;
 }
 
@@ -34,7 +34,7 @@ void Launcher_BFERI_LDPC<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
-	this->opt_args[{"dec-implem"   }].push_back("MSO, SPA, LSPA");
+	this->opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA");
 	this->opt_args[{"dec-ite", "i"}] =
 			{"positive_int",
 			 "maximal number of iterations in the turbo decoder."};

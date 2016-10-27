@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 2112 -N 4224 -m 0.01 -M 8.01 -s 0.5 -e 500 --dec-type BP_FLOODING --dec-implem MSO -i 3 -t 4 --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist
+./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 2112 -N 4224 -m 0.01 -M 8.01 -s 0.5 -e 500 --dec-type BP_FLOODING --dec-implem ONMS -i 3 -t 4 --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist
 Curve name:
 BPF min-sum 3 ite.
 Trace:
@@ -35,7 +35,7 @@ Trace:
 #    ** Max type               = unused
 # * Decoder ---------------------------------------
 #    ** Type (D)               = BP_FLOODING
-#    ** Implementation         = MSO
+#    ** Implementation         = ONMS
 #    ** Num. of iterations (i) = 3
 # * Monitor ---------------------------------------
 #    ** Frame error count (e)  = 500
