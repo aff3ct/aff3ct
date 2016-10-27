@@ -34,8 +34,8 @@ private:
 	const int n_dec_waves;
 	const int n_inter_frame_rest;
 
-	mipp::vector<mipp::vector<R>> Y_N;
-	mipp::vector<mipp::vector<B>> V_N;
+	std::vector<mipp::vector<R>> Y_N;
+	std::vector<mipp::vector<B>> V_N;
 
 	std::chrono::nanoseconds d_load_total;
 	std::chrono::nanoseconds d_decod_total;

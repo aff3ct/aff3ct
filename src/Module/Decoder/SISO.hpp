@@ -30,8 +30,8 @@ private:
 	const int n_dec_waves_siso;
 	const int n_inter_frame_rest_siso;
 
-	mipp::vector<mipp::vector<R>> Y_N1;
-	mipp::vector<mipp::vector<R>> Y_N2;
+	std::vector<mipp::vector<R>> Y_N1;
+	std::vector<mipp::vector<R>> Y_N2;
 
 protected:
 	const int K_siso; /*!< Number of information bits in one frame */
