@@ -96,7 +96,7 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= this->K);
+	assert((int)V_K.size() >= this->K);
 
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
