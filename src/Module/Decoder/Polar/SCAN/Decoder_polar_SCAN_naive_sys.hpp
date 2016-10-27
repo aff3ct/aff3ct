@@ -20,7 +20,9 @@ public:
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
-	void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+
+protected:
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 #ifdef __clang__
 #pragma clang diagnostic pop

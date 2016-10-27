@@ -23,6 +23,8 @@ public:
 	virtual ~Decoder_RSC_BCJR_seq_generic();
 
 	virtual void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
+
+protected:
 	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 };
 

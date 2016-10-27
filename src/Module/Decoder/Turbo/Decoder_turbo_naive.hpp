@@ -23,6 +23,7 @@ public:
 	                    const std::string name = "Decoder_turbo_naive");
 	virtual ~Decoder_turbo_naive();
 
+protected:
 	virtual void hard_decode();
 };
 

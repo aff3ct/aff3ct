@@ -26,5 +26,3 @@ void Decoder_polar_SCL_naive_sys<B,R,F,G>
 		if (!this->frozen_bits[i])
 			V_K[k++] = this->polar_trees[*this->active_paths.begin()]->get_root()->get_c()->s[i] ? 1 : 0;
 }
-
-
