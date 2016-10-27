@@ -52,10 +52,6 @@ void Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 			min2  = std::min(min2, std::max(v_abs, v_temp)); // 2nd min
 		}
 
-//		// compute CN inter values
-//		constexpr float offset    = 0.000f; // 0.00f // 0.15f
-//		constexpr float normalize = 0.825f; // 1.00f // 1.25f // 0.825f
-
 		auto cste1 = (min2 - offset) * normalize_factor;
 		auto cste2 = (min1 - offset) * normalize_factor;
 		cste1 = (cste1 < 0) ? 0 : cste1;
