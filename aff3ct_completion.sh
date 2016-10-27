@@ -166,7 +166,8 @@ _aff3ct() {
 		${codetype} == "LDPC"       && ${simutype} == "BFERI"   \
 		]]
 	then
-		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path"
+		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
+		--dec-no-synd"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
@@ -208,7 +209,7 @@ _aff3ct() {
 		# awaiting nothing	
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
-		--cde-coset | -c | enc-no-buff | --enc-no-sys)
+		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 

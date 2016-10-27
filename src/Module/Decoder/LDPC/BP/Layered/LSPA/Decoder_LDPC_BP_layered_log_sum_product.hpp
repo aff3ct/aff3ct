@@ -15,12 +15,13 @@ private:
 public:
 	Decoder_LDPC_BP_layered_log_sum_product(const int &K, const int &N, const int& n_ite,
 	                                        const AList_reader &alist_data,
+	                                        const bool enable_syndrome = true,
 	                                        const int n_frames = 1,
 	                                        const std::string name = "Decoder_LDPC_BP_layered_log_sum_product");
 	virtual ~Decoder_LDPC_BP_layered_log_sum_product();
 
 protected:
-	bool BP_process();
+	void BP_process();
 };
 
 #endif /* DECODER_LDPC_BP_LAYERED_LOG_SUM_PRODUCT_HPP_ */

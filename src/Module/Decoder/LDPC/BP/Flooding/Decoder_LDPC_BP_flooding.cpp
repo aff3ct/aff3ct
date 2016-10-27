@@ -11,6 +11,7 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
                            const AList_reader &alist_data,
+                           const bool enable_syndrome,
                            const int n_frames,
                            const std::string name)
 : Decoder_SISO<B,R>      (K, N, n_frames, 1, name            ),
@@ -18,6 +19,7 @@ Decoder_LDPC_BP_flooding<B,R>
   n_V_nodes              (N                                  ), // same as N but more explicit
   n_C_nodes              (N - K                              ),
   n_branches             ((int)alist_data.get_n_branches()   ),
+  enable_syndrome        (enable_syndrome                    ),
   init_flag              (false                              ),
 
   n_variables_per_parity (alist_data.get_n_VN_per_CN()       ),
@@ -113,11 +115,10 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 // BP algorithm
 template <typename B, typename R>
-bool Decoder_LDPC_BP_flooding<B,R>
+void Decoder_LDPC_BP_flooding<B,R>
 ::BP_decode(const mipp::vector<R> &Y_N)
 {
 	// actual decoding
-	auto syndrome = false;
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// beginning of the iteration upon all the matrix lines
@@ -145,13 +146,13 @@ bool Decoder_LDPC_BP_flooding<B,R>
 		}
 
 		// specific inner code depending on the selected implementation (min-sum or sum-product for example)
-		syndrome = this->BP_process();
+		auto syndrome = this->BP_process();
 		
 		// make a saturation
 		// saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
 
 		// stop criterion
-		if (syndrome)
+		if (this->enable_syndrome && syndrome)
 			break;
 	}
 
@@ -170,8 +171,6 @@ bool Decoder_LDPC_BP_flooding<B,R>
 
 		C_to_V_ptr += length;
 	}
-
-	return syndrome;
 }
 
 // ==================================================================================== explicit template instantiation 

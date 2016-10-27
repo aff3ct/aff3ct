@@ -9,6 +9,7 @@ class Decoder_LDPC_BP_flooding_min_sum_offset : public Decoder_LDPC_BP_flooding<
 public:
 	Decoder_LDPC_BP_flooding_min_sum_offset(const int &K, const int &N, const int& n_ite,
 	                                        const AList_reader &alist_data,
+	                                        const bool enable_syndrome = true,
 	                                        const int n_frames = 1,
 	                                        const std::string name = "Decoder_LDPC_BP_flooding_min_sum_offset");
 	virtual ~Decoder_LDPC_BP_flooding_min_sum_offset();

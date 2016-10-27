@@ -9,9 +9,10 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_min_sum_offset<B,R>
 ::Decoder_LDPC_BP_flooding_min_sum_offset(const int &K, const int &N, const int& n_ite,
                                           const AList_reader &alist_data,
+                                          const bool enable_syndrome,
                                           const int n_frames,
                                           const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, n_frames, name)
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name)
 {
 }
 

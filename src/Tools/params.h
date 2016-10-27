@@ -110,6 +110,7 @@ struct decoder_parameters
 	std::string scaling_factor;
 	std::string max;
 	std::string gen_path;
+	bool        enable_syndrome;
 	int         n_ite;
 	int         L;
 };

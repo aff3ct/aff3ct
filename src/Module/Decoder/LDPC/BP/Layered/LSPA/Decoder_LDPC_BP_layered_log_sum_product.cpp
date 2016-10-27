@@ -10,9 +10,10 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered_log_sum_product<B,R>
 ::Decoder_LDPC_BP_layered_log_sum_product(const int &K, const int &N, const int& n_ite,
                                           const AList_reader &alist_data,
+                                          const bool enable_syndrome,
                                           const int n_frames,
                                           const std::string name)
-: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, n_frames, name),
+: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name),
   contributions(alist_data.get_CN_max_degree()), values(alist_data.get_CN_max_degree())
 {
 }
@@ -25,11 +26,9 @@ Decoder_LDPC_BP_layered_log_sum_product<B,R>
 
 // BP algorithm
 template <typename B, typename R>
-bool Decoder_LDPC_BP_layered_log_sum_product<B,R>
+void Decoder_LDPC_BP_layered_log_sum_product<B,R>
 ::BP_process()
 {
-	auto syndrome = false;
-
 	auto kr = 0;
 	auto kw = 0;
 	for (auto i = 0; i < this->n_C_nodes; i++)
@@ -64,11 +63,7 @@ bool Decoder_LDPC_BP_layered_log_sum_product<B,R>
 			this->branches[kw++] = v_res;
 			this->var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
 		}
-
-		syndrome = syndrome || sign;
 	}
-
-	return syndrome;
 }
 
 // ==================================================================================== explicit template instantiation 

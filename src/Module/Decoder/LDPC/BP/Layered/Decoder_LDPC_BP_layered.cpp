@@ -10,11 +10,13 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
                           const AList_reader &alist_data,
+                          const bool enable_syndrome,
                           const int n_frames,
                           const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name       ),
   n_ite            (n_ite                         ),
   n_C_nodes        (N - K                         ),
+  enable_syndrome  (enable_syndrome                ),
   init_flag        (false                         ),
   CN_to_VN         (alist_data.get_CN_to_VN()     ),
   var_nodes        (N,                           0),
@@ -110,11 +112,35 @@ void Decoder_LDPC_BP_layered<B,R>
 	{
 		this->BP_process();
 
-//		auto syndrome = this->BP_process();
-//		// stop criterion
-//		if (syndrome && ite > 20)
-//			break;
+		// stop criterion
+		if (this->enable_syndrome && this->check_syndrome()) break;
 	}
+}
+
+template <typename B, typename R>
+bool Decoder_LDPC_BP_layered<B,R>
+::check_syndrome()
+{
+	auto syndrome = false;
+
+	auto k = 0;
+	for (auto i = 0; i < this->n_C_nodes; i++)
+	{
+		auto sign = 0;
+
+		const auto n_VN = (int)this->CN_to_VN[i].size();
+		for (auto j = 0; j < n_VN; j++)
+		{
+			const auto value = this->var_nodes[this->CN_to_VN[i][j]] - this->branches[k++];
+			const auto tmp_sign  = std::signbit((float)value) ? -1 : 0;
+
+			sign ^= tmp_sign;
+		}
+
+		syndrome = syndrome || sign;
+	}
+
+	return (syndrome == 0);
 }
 
 // ==================================================================================== explicit template instantiation 

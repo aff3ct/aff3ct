@@ -12,6 +12,8 @@ protected:
 	const int n_ite;     // number of iterations to perform
 	const int n_C_nodes; // number of check    nodes (= N - K)
 
+	const bool enable_syndrome;
+
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
@@ -24,6 +26,7 @@ protected:
 public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
 	                        const AList_reader &alist_data,
+	                        const bool enable_syndrome = true,
 	                        const int n_frames = 1,
 	                        const std::string name = "Decoder_LDPC_BP_layered");
 	virtual ~Decoder_LDPC_BP_layered();
@@ -43,7 +46,9 @@ protected:
 	// BP functions for decoding
 	void BP_decode();
 
-	virtual bool BP_process() = 0;
+	bool check_syndrome();
+
+	virtual void BP_process() = 0;
 };
 
 #endif /* DECODER_LDPC_BP_LAYERED_HPP_ */
