@@ -17,7 +17,7 @@ protected:
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
-	const mipp::vector<mipp::vector<unsigned int>> &CN_to_VN;
+	const std::vector<std::vector<unsigned int>> &CN_to_VN;
 
 	// data structures for iterative decoding
 	mipp::vector<R> var_nodes;

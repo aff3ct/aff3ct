@@ -16,7 +16,7 @@ Decoder_LDPC_BP_layered<B,R>
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name       ),
   n_ite            (n_ite                         ),
   n_C_nodes        (N - K                         ),
-  enable_syndrome  (enable_syndrome                ),
+  enable_syndrome  (enable_syndrome               ),
   init_flag        (false                         ),
   CN_to_VN         (alist_data.get_CN_to_VN()     ),
   var_nodes        (N,                           0),

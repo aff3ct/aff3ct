@@ -119,13 +119,13 @@ unsigned int AList_reader
 	return this->n_branches;
 }
 
-const mipp::vector<mipp::vector<unsigned int>>& AList_reader
+const std::vector<std::vector<unsigned int>>& AList_reader
 ::get_VN_to_CN() const
 {
 	return this->VN_to_CN;
 }
 
-const mipp::vector<mipp::vector<unsigned int>>& AList_reader
+const std::vector<std::vector<unsigned int>>& AList_reader
 ::get_CN_to_VN() const
 {
 	return this->CN_to_VN;
