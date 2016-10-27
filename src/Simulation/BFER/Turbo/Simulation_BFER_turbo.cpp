@@ -22,16 +22,19 @@ template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_turbo<B,R,Q,QD>
 ::Simulation_BFER_turbo(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
-  interleaver(                             nullptr),
+  interleaver(params.simulation.n_threads, nullptr),
   sub_encoder(params.simulation.n_threads, nullptr),
   siso       (params.simulation.n_threads, nullptr),
   sf         (params.simulation.n_threads, nullptr)
 {
 	assert(params.code.N / params.code.K == 3);
 
-	// build the interleaver for the encoder and the decoder
-	interleaver = Factory_interleaver<short>::build(this->params, this->params.code.K);
-	Simulation::check_errors(interleaver, "Interleaver<short>");
+	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+	{
+		// build the interleaver for the encoder and the decoder
+		interleaver[tid] = Factory_interleaver<short>::build(this->params, this->params.code.K, tid);
+		Simulation::check_errors(interleaver[tid], "Interleaver<short>");
+	}
 
 	if (!params.simulation.json_path.empty())
 	{
@@ -52,7 +55,9 @@ Simulation_BFER_turbo<B,R,Q,QD>
 		json_stream << "[{\"stage\": \"end\"}]]" << std::endl;
 		json_stream.close();
 	}
-	delete interleaver;
+	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+		if (interleaver[tid] != nullptr)
+			delete interleaver[tid];
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -94,7 +99,7 @@ Encoder<B>* Simulation_BFER_turbo<B,R,Q,QD>
 	if (this->params.simulation.json_path.empty())
 		encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
 	if (encoder == nullptr)
-		encoder = Factory_encoder_turbo<B>::build(this->params, interleaver, sub_encoder[tid], sub_encoder[tid]);
+		encoder = Factory_encoder_turbo<B>::build(this->params, interleaver[tid], sub_encoder[tid], sub_encoder[tid]);
 
 	return encoder;
 }
@@ -111,9 +116,9 @@ Decoder<B,Q>* Simulation_BFER_turbo<B,R,Q,QD>
 	Simulation::check_errors(siso[tid], "SISO<Q>");
 
 	if (tid == 0)
-		interleaver->set_n_frames(siso[tid]->get_n_frames());
+		interleaver[tid]->set_n_frames(siso[tid]->get_n_frames());
 
-	return Factory_decoder_turbo<B,Q>::build(this->params, interleaver, siso[tid], siso[tid], sf[tid], this->crc[tid]);
+	return Factory_decoder_turbo<B,Q>::build(this->params, interleaver[tid], siso[tid], siso[tid], sf[tid], this->crc[tid]);
 }
 
 // ==================================================================================== explicit template instantiation 

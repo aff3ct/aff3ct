@@ -6,7 +6,7 @@
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N_without_tb, const Interleaver<short> &pi, Encoder_sys<B> &sub_enc, 
+::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<short> &pi, Encoder_sys<B> &sub_enc,
                        const int n_frames, const std::string name)
 : Encoder<B>(K, N_without_tb + 2*sub_enc.tail_length(), n_frames, name.c_str()),
   pi(pi),
@@ -22,6 +22,7 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
+	pi.regen_lookup_tables();
 	const auto N_without_tb = this->N - (sub_enc.tail_length() + sub_enc.tail_length());
 	
 	assert(U_K.size() == (unsigned) (this->K * this->n_frames));

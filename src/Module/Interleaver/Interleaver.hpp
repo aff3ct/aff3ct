@@ -147,6 +147,11 @@ public:
 		return true;
 	}
 
+	virtual void regen_lookup_tables()
+	{
+		//this->gen_lookup_tables();
+	}
+
 private:
 	template <typename D>
 	inline void _interleave(const mipp::vector<D> &in_vec, 

@@ -19,7 +19,7 @@ class Simulation_BFER_turbo : public Simulation_BFER<B,R,Q>
 protected:
 	// the trellis representation
 	std::vector<std::vector<int>>    trellis;
-	Interleaver<short>              *interleaver;
+	std::vector<Interleaver<short>*> interleaver;
 	std::vector<Encoder_RSC_sys<B>*> sub_encoder;
 	std::vector<SISO<Q>*>            siso;
 	std::vector<Scaling_factor<Q>*>  sf;

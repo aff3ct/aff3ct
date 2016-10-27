@@ -8,7 +8,7 @@
 
 template <typename B>
 Encoder_turbo<B>
-::Encoder_turbo(const int& K, const int& N_without_tb, const Interleaver<short> &pi,
+::Encoder_turbo(const int& K, const int& N_without_tb, Interleaver<short> &pi,
                 Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames, const std::string name)
 : Encoder<B>(K, N_without_tb + enco_n.tail_length() + enco_i.tail_length(), n_frames, name),
   pi(pi),
@@ -24,6 +24,7 @@ template <typename B>
 void Encoder_turbo<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
+	pi.regen_lookup_tables();
 	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 

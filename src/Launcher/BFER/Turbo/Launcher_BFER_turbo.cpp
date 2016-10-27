@@ -63,7 +63,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, COLUMNS, GOLDEN, USER, NO"};
+		 "LTE, CCSDS, RANDOM, UNIFORM, COLUMNS, GOLDEN, USER, NO"};
 
 	this->opt_args[{"itl-path"}] =
 		{"string",

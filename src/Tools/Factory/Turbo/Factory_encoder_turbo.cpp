@@ -6,7 +6,7 @@
 template <typename B>
 Encoder<B>* Factory_encoder_turbo<B>
 ::build(const parameters         &params,
-        const Interleaver<short> *interleaver,
+              Interleaver<short> *interleaver,
               Encoder_sys<B>     *sub_encoder_n,
               Encoder_sys<B>     *sub_encoder_i,
         const int                 n_frames)
