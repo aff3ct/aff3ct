@@ -139,12 +139,16 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	{
 		this->params.decoder.type = "BCJR";
 		this->params.encoder.poly = {013, 015};
+		if (!this->ar.exist_arg({"itl-type"}))
+			this->params.interleaver.type = "LTE";
 	}
 
 	if (this->params.decoder.type == "CCSDS")
 	{
 		this->params.decoder.type = "BCJR";
 		this->params.encoder.poly = {023, 033};
+		if (!this->ar.exist_arg({"itl-type"}))
+			this->params.interleaver.type = "CCSDS";
 	}
 
 	if (!(this->params.encoder.poly[0] == 013 && this->params.encoder.poly[1] == 015)) // if not LTE BCJR
