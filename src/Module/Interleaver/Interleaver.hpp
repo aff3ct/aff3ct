@@ -147,9 +147,11 @@ public:
 		return true;
 	}
 
+	/*!
+	 * \brief Regenerates the interleaving and deinterleaving lookup tables. Do nothing by default.
+	 */
 	virtual void regen_lookup_tables()
 	{
-		//this->gen_lookup_tables();
 	}
 
 private:

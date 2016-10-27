@@ -24,10 +24,10 @@ template <typename B>
 void Encoder_turbo<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	pi.regen_lookup_tables();
 	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 
+	pi.regen_lookup_tables();
 	pi.interleave(U_K, U_K_i);
 
 	enco_n.encode_sys(U_K,   par_n);

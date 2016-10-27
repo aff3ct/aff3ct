@@ -7,8 +7,9 @@ template <typename T>
 class Interleaver_uniform : public Interleaver_random<T>
 {
 public:
-	Interleaver_uniform(int size, const int seed = -1, const std::string name = "Interleaver_uniform") 
+	Interleaver_uniform(int size, const int seed = 0, const std::string name = "Interleaver_uniform")
 	: Interleaver_random<T>(size, seed, name) {}
+
 	virtual ~Interleaver_uniform() {}
 
 	void regen_lookup_tables()

@@ -22,13 +22,13 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	pi.regen_lookup_tables();
 	const auto N_without_tb = this->N - (sub_enc.tail_length() + sub_enc.tail_length());
 	
 	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 	assert((N_without_tb / this->K) == 3);
 
+	pi.regen_lookup_tables();
 	pi.interleave (U_K,   U_K_i);
 	sub_enc.encode(U_K,   X_N_n);
 	sub_enc.encode(U_K_i, X_N_i);
