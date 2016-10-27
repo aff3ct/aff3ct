@@ -47,6 +47,7 @@ public:
 	              const std::string name = "Decoder_turbo");
 	virtual ~Decoder_turbo();
 
+protected:
 	virtual void load (const mipp::vector<R>& Y_N);
 	virtual void store(      mipp::vector<B>& V_K) const;
 

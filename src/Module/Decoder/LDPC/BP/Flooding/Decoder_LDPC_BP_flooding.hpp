@@ -42,6 +42,7 @@ public:
 	// unsupported prototype
 	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
+protected:
 	// soft decode
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 
@@ -50,7 +51,6 @@ public:
 	void hard_decode(                          );
 	void store      (      mipp::vector<B>& V_K) const;
 
-protected:
 	// BP functions for decoding
 	void BP_decode(const mipp::vector<R> &Y_N);
 

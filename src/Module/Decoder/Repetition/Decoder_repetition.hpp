@@ -25,12 +25,13 @@ public:
 	                   const int n_frames = 1, const std::string name = "Decoder_repetition");
 	virtual ~Decoder_repetition();
 
-	void load       (const mipp::vector<R>& Y_N);
-	void hard_decode(                          );
-	void store      (      mipp::vector<B>& V_K) const;
-
 	virtual void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
-	        void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+
+protected:
+	void load        (const mipp::vector<R>& Y_N                        );
+	void hard_decode (                                                  );
+	void store       (      mipp::vector<B>& V_K                        ) const;
+	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
 
 #include "Decoder_repetition.hxx"

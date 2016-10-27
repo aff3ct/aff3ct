@@ -109,14 +109,6 @@ public:
 	}
 
 	/*!
-	 * \brief Decodes a given noisy codeword.
-	 *
-	 * \param Y_N1: a completely noisy codeword from the channel.
-	 * \param Y_N2: an extrinsic information about all the bits in the frame.
-	 */
-	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
-	
-	/*!
 	 * \brief Gets the number of tail bits.
 	 *
 	 * \return the number of tail bits.
@@ -135,6 +127,15 @@ public:
 	{
 		return this->simd_inter_frame_level_siso;
 	}
+
+protected:
+	/*!
+	 * \brief Decodes a given noisy codeword.
+	 *
+	 * \param Y_N1: a completely noisy codeword from the channel.
+	 * \param Y_N2: an extrinsic information about all the bits in the frame.
+	 */
+	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 };
 
 #include "SC_SISO.hpp"

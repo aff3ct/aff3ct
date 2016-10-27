@@ -11,14 +11,13 @@ class Decoder_polar_SCL_naive_sys : public Decoder_polar_SCL_naive<B,R,F,G>
 {
 
 public:
-    Decoder_polar_SCL_naive_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
-                                const int n_frames = 1, const std::string name = "Decoder_polar_SCL_naive_sys");
+	Decoder_polar_SCL_naive_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
+	                            const int n_frames = 1, const std::string name = "Decoder_polar_SCL_naive_sys");
 
-    virtual ~Decoder_polar_SCL_naive_sys() {}
-
-    virtual void store(mipp::vector<B>& V_K) const;
+	virtual ~Decoder_polar_SCL_naive_sys() {}
 
 protected:
+	virtual void store(mipp::vector<B>& V_K) const;
 };
 
 #include "Decoder_polar_SCL_naive_sys.hxx"

@@ -23,6 +23,7 @@ public:
 	                      const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_fast_CA();
 
+protected:
 	virtual void hard_decode();
 };
 

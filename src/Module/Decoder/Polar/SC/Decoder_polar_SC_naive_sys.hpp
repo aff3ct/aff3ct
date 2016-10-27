@@ -16,6 +16,7 @@ public:
 	                           const int n_frames = 1, const std::string name = "Decoder_polar_SC_naive_sys");
 	virtual ~Decoder_polar_SC_naive_sys();
 
+protected:
 	void store(mipp::vector<B>& V_K) const;
 };
 

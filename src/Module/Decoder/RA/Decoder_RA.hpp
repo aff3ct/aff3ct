@@ -26,6 +26,7 @@ public:
 	           const int n_frames = 1, const std::string name = "Decoder_RA");
 	virtual ~Decoder_RA();
 
+protected:
 	void load       (const mipp::vector<R>& Y_N);
 	void hard_decode(                          );
 	void store      (      mipp::vector<B>& V_K) const;

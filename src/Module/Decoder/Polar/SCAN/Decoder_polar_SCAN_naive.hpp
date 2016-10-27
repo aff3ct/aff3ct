@@ -25,12 +25,11 @@ public:
 	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 
-	// functions
+protected:
 	        void load       (const mipp::vector<R>& Y_N);
 	        void hard_decode(                          );
 	virtual void store      (      mipp::vector<B>& V_K) const;
 
-protected:
 	void load_init();
 	void decode();
 

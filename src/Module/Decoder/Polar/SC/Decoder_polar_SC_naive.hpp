@@ -34,6 +34,7 @@ public:
  	                       const std::string name = "Decoder_polar_SC_naive");
 	virtual ~Decoder_polar_SC_naive();
 
+protected:
 	        void load       (const mipp::vector<R>& Y_N);
 	        void hard_decode(                          );
 	virtual void store      (      mipp::vector<B>& V_K) const;
