@@ -1,5 +1,3 @@
-#include "Decoder_turbo.hpp"
-
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -7,6 +5,8 @@
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
+
+#include "Decoder_turbo.hpp"
 
 template <typename B, typename R>
 Decoder_turbo<B,R>
@@ -214,3 +214,15 @@ void Decoder_turbo<B,R>
 		Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Decoder_turbo<B_8,Q_8>;
+template class Decoder_turbo<B_16,Q_16>;
+template class Decoder_turbo<B_32,Q_32>;
+template class Decoder_turbo<B_64,Q_64>;
+#else
+template class Decoder_turbo<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

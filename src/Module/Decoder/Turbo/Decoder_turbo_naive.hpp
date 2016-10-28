@@ -27,6 +27,4 @@ protected:
 	virtual void hard_decode();
 };
 
-#include "Decoder_turbo_naive.hxx"
-
 #endif /* DECODER_TURBO_NAIVE_HPP */

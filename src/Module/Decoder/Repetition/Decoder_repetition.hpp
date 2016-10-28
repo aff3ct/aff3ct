@@ -34,6 +34,4 @@ protected:
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
 
-#include "Decoder_repetition.hxx"
-
 #endif /* DECODER_REPETITION */

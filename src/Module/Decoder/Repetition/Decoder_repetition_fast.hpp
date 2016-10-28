@@ -17,6 +17,4 @@ public:
 	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 };
 
-#include "Decoder_repetition_fast.hxx"
-
 #endif /* DECODER_REPETITION_FAST */

@@ -27,6 +27,4 @@ protected:
 	virtual void hard_decode();
 };
 
-#include "Decoder_turbo_fast_CA.hxx"
-
 #endif /* DECODER_TURBO_FAST_CA_HPP_ */

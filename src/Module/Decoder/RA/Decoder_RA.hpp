@@ -36,6 +36,4 @@ private:
 	int sign(R x);
 };
 
-#include "Decoder_RA.hxx"
-
 #endif /* DECODER_RA */

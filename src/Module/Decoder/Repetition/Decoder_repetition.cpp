@@ -84,3 +84,15 @@ void Decoder_repetition<B,R>
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Decoder_repetition<B_8,Q_8>;
+template class Decoder_repetition<B_16,Q_16>;
+template class Decoder_repetition<B_32,Q_32>;
+template class Decoder_repetition<B_64,Q_64>;
+#else
+template class Decoder_repetition<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

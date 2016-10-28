@@ -136,3 +136,15 @@ int Decoder_RA<B, R>
 {
 	return (x > 0) ? 1 : -1;
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Decoder_RA<B_8,Q_8>;
+template class Decoder_RA<B_16,Q_16>;
+template class Decoder_RA<B_32,Q_32>;
+template class Decoder_RA<B_64,Q_64>;
+#else
+template class Decoder_RA<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

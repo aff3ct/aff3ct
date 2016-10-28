@@ -1,9 +1,9 @@
-#include "Decoder_turbo_naive_CA.hpp"
-
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+
+#include "Decoder_turbo_naive_CA.hpp"
 
 template <typename B, typename R>
 Decoder_turbo_naive_CA<B,R>
@@ -103,3 +103,15 @@ void Decoder_turbo_naive_CA<B,R>
 	}
 	while ((ite <= this->n_ite) && !check_crc);
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Decoder_turbo_naive_CA<B_8,Q_8>;
+template class Decoder_turbo_naive_CA<B_16,Q_16>;
+template class Decoder_turbo_naive_CA<B_32,Q_32>;
+template class Decoder_turbo_naive_CA<B_64,Q_64>;
+#else
+template class Decoder_turbo_naive_CA<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

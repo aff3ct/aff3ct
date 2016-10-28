@@ -30,3 +30,15 @@ void Decoder_repetition_fast<B,R>
 		r_ext.store(&ext[i]);
 	}
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Decoder_repetition_fast<B_8,Q_8>;
+template class Decoder_repetition_fast<B_16,Q_16>;
+template class Decoder_repetition_fast<B_32,Q_32>;
+template class Decoder_repetition_fast<B_64,Q_64>;
+#else
+template class Decoder_repetition_fast<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

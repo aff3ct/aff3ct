@@ -29,6 +29,4 @@ protected:
 	void store      (      mipp::vector<B>& V_K) const;
 };
 
-#include "Decoder_turbo_fast.hxx"
-
 #endif /* DECODER_TURBO_FAST_SYS_ */

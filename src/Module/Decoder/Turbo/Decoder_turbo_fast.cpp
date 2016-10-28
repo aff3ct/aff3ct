@@ -1,9 +1,11 @@
-#include "Decoder_turbo_fast.hpp"
-
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
+
+#include "Decoder_turbo_fast.hpp"
 
 template <typename B, typename R>
 Decoder_turbo_fast<B,R>
@@ -229,3 +231,15 @@ void Decoder_turbo_fast<B,R>
 	else
 		Decoder_turbo<B,R>::store(V_K);
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Decoder_turbo_fast<B_8,Q_8>;
+template class Decoder_turbo_fast<B_16,Q_16>;
+template class Decoder_turbo_fast<B_32,Q_32>;
+template class Decoder_turbo_fast<B_64,Q_64>;
+#else
+template class Decoder_turbo_fast<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

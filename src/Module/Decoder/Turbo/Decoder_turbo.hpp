@@ -56,6 +56,4 @@ private:
 	void standard_load(const mipp::vector<R>& Y_N);
 };
 
-#include "Decoder_turbo.hxx"
-
 #endif /* DECODER_TURBO_HPP_ */
