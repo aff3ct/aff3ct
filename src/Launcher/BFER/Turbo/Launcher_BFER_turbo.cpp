@@ -90,7 +90,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		 "MAX, MAXS, MAXL"};
 	this->opt_args[{"dec-sc"}] =
 		{"",
-		 "enables the self corrected decoder (requires CRC)."};
+		 "enables the self corrected decoder (requires \"--crc-type\")."};
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -133,8 +133,10 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"dec-sf"      })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"      });
 	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
 	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
-	if(this->ar.exist_arg({"crc-type"}))
-		if(this->ar.exist_arg({"dec-sc"})) this->params.decoder.self_corrected = true;
+
+	if (this->ar.exist_arg({"crc-type"}))
+		if (this->ar.exist_arg({"dec-sc"}))
+			this->params.decoder.self_corrected = true;
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -252,7 +254,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 	p.push_back(std::make_pair("Scaling factor",         this->params.decoder.scaling_factor       ));
 	p.push_back(std::make_pair("Max type",               this->params.decoder.max                  ));
-	if(this->ar.exist_arg({"crc-type"}))
+	if (this->ar.exist_arg({"crc-type"}))
 		p.push_back(std::make_pair("Self-corrected", sc));
 
 	return p;

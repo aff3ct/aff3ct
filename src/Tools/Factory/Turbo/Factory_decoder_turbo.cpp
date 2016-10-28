@@ -31,8 +31,10 @@ Decoder<B,R>* Factory_decoder_turbo<B,R>
 					                                          *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
 					                                          params.encoder.buffered);
 				else
-					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
+					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N,
+					                                                         params.decoder.n_ite,
+					                                                         *interleaver, *siso_n, *siso_i,
+					                                                         *scaling_factor, *crc,
 					                                                         params.encoder.buffered);
 			}
 			// there is no CRC
@@ -51,8 +53,9 @@ Decoder<B,R>* Factory_decoder_turbo<B,R>
 					                                         *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
 					                                         params.encoder.buffered);
 				else
-					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
+					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N,
+					                                                         params.decoder.n_ite, *interleaver,
+					                                                         *siso_n, *siso_i, *scaling_factor, *crc,
 					                                                         params.encoder.buffered);
 			}
 			// there is no CRC

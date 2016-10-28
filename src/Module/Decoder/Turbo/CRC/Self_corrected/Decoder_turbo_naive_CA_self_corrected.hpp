@@ -35,5 +35,4 @@ private:
 	void correct (const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext);
 };
 
-#include "Decoder_turbo_naive_CA_self_corrected.hxx"
 #endif /*DECODER_TURBO_NAIVE_CA_SELF_CORRECTED*/
