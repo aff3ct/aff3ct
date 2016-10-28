@@ -118,8 +118,7 @@ Decoder<B,Q>* Simulation_BFER_turbo<B,R,Q,QD>
 	siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis, json_stream);
 	Simulation::check_errors(siso[tid], "SISO<Q>");
 
-	if (tid == 0)
-		interleaver[tid]->set_n_frames(siso[tid]->get_n_frames());
+	interleaver[tid]->set_n_frames(siso[tid]->get_n_frames());
 
 	return Factory_decoder_turbo<B,Q>::build(this->params, interleaver[tid], siso[tid], siso[tid], sf[tid], this->crc[tid]);
 }
