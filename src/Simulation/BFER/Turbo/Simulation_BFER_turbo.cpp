@@ -31,8 +31,10 @@ Simulation_BFER_turbo<B,R,Q,QD>
 
 	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 	{
+		const auto seed = (params.interleaver.type == "UNIFORM") ? tid : 0;
+
 		// build the interleaver for the encoder and the decoder
-		interleaver[tid] = Factory_interleaver<short>::build(this->params, this->params.code.K, tid);
+		interleaver[tid] = Factory_interleaver<short>::build(this->params, this->params.code.K, seed);
 		Simulation::check_errors(interleaver[tid], "Interleaver<short>");
 	}
 
