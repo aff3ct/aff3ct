@@ -88,6 +88,6 @@ template class Decoder_turbo_naive<B_16,Q_16>;
 template class Decoder_turbo_naive<B_32,Q_32>;
 template class Decoder_turbo_naive<B_64,Q_64>;
 #else
-template class Decoder_turbo<B,Q>;
+template class Decoder_turbo_naive<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
