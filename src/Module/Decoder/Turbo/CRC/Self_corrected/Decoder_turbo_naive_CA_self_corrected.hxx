@@ -21,10 +21,10 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
 : Decoder_turbo_naive_CA<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
 	ext_nat(n_ite, mipp::vector<R>(K, 0)),
 	ext_int(n_ite, mipp::vector<R>(K, 0)),
-	cur_osc_nat(K, 0),
-	cur_osc_int(K, 0),
-	prev_flip_nat(K, 0),
-	prev_flip_int(K, 0)
+	osc_nat(K, 0),
+	osc_int(K, 0),
+	previously_corrected_nat(K, 0),
+	previously_corrected_int(K, 0)
 {
 }
 
@@ -38,7 +38,7 @@ template <typename B, typename R>
 void Decoder_turbo_naive_CA_self_corrected<B,R>
 ::hard_decode()
 {
-	constexpr auto start_check_crc = 3;
+	constexpr auto start_check_crc = 2;
 
 	assert(start_check_crc >= 1          );
 	assert(start_check_crc <= this->n_ite);
@@ -69,7 +69,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 			for (auto i = 0; i < this->K * n_frames; i++)
 				this->s[i] = (this->l_e2n[i] + this->l_sen[i]) < 0;
 
-			check_crc = crc.check(this->s);
+			check_crc = this->crc.check(this->s);
 		}
 
 		if (!check_crc)
@@ -81,12 +81,12 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 			this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, this->get_simd_inter_frame_level());
 
 			// self corrected
-			this->collect(this->l_e1i, this->ite, this->ext_nat);
-			if (this->ite > 1)
+			this->collect(this->l_e1i, ite, this->ext_nat);
+			if (ite > 1)
 			{
-				this->calc_flips(this->ext_nat,  this->ite, this->cur_osc_nat);
-				if (this->ite > 3)
-					this->correct(this->cur_osc_nat, this->previously_corrected_nat, this->l_e1i);
+				this->calc_osc(this->ext_nat,  ite, this->osc_nat);
+				if (ite > 3)
+					this->correct(this->osc_nat, this->previously_corrected_nat, this->l_e1i);
 			}
 
 			// sys + ext
@@ -97,7 +97,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 				this->l_sei[i] = this->l_si[i];
 
 			// SISO in the interleave domain
-			this->siso_i.soft_decode(this->l_sei, this->ext_nat, this->l_pi, this->l_e2i);
+			this->siso_i.soft_decode(this->l_sei, this->l_pi, this->l_e2i);
 
 			if (ite != this->n_ite)
 				// apply the scaling factor
@@ -116,12 +116,12 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 					this->s[i] = this->l_e1n[i] < 0;
 
 			// self corrected
-			this->collect(this->l_e1n, this->ite, this->ext_int);
-			if (this->ite > 1)
+			this->collect(this->l_e1n, ite, this->ext_int);
+			if (ite > 1)
 			{
-				this->calc_flips(this->ext_int,  this->ite, this->cur_osc_int);
-				if (this->ite > 3)
-					this->correct(this->cur_osc_int, this->previously_corrected_int, this->l_e1n);
+				this->calc_osc(this->ext_int,  ite, this->osc_int);
+				if (ite > 3)
+					this->correct(this->osc_int, this->previously_corrected_int, this->l_e1n);
 			}
 		}
 
@@ -132,7 +132,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 inline void Decoder_turbo_naive_CA_self_corrected<B,R>
-::collect(const mipp::vector<R> cur_ext, const int ite, mipp::vector<mipp::vector<R>> ext_hist)
+::collect(const mipp::vector<R> &cur_ext, const int &ite, mipp::vector<mipp::vector<R>> &ext_hist)
 {
 	// ite starts at 1 in tdec process
 	ext_hist[ite-1] = cur_ext;
@@ -140,7 +140,7 @@ inline void Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 inline void Decoder_turbo_naive_CA_self_corrected<B,R>
-::calc_osc(const mipp::vector<mipp::vector<R>> ext_hist, const int ite, mipp::vector<B> osc)
+::calc_osc(const mipp::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc)
 {
 	B sgn_cur, sgn_prev;
 	for (auto idx = 0; idx < (int)osc.size(); idx++)
@@ -153,7 +153,7 @@ inline void Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 inline void Decoder_turbo_naive_CA_self_corrected<B,R>
-::correct(const mipp::vector<B> osc, mipp::vector<B> prev_corr, mipp::vector<R> ext)
+::correct(const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext)
 {
 	for  (auto idx = 0; idx < (int)ext.size(); idx++)
 	{

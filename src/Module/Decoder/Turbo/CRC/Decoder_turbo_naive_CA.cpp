@@ -30,7 +30,7 @@ template <typename B, typename R>
 void Decoder_turbo_naive_CA<B,R>
 ::hard_decode()
 {
-	constexpr auto start_check_crc = 3;
+	constexpr auto start_check_crc = 2;
 
 	assert(start_check_crc >= 1          );
 	assert(start_check_crc <= this->n_ite);

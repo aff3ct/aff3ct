@@ -116,6 +116,7 @@ struct decoder_parameters
 	float       offset;
 	int         n_ite;
 	int         L;
+	bool        self_corrected;
 };
 
 struct monitor_parameters

@@ -29,9 +29,9 @@ private:
 	mipp::vector<B>  previously_corrected_nat;
 	mipp::vector<B>  previously_corrected_int;
 
-	void collect(const mipp::vector<R> cur_ext, const int ite, mipp::vector<mipp::vector<R>> ext_hist);
-	void calc_osc(const mipp::vector<mipp::vector<R>> ext_hist, const int ite, mipp::vector<B> osc);
-	void correct(const mipp::vector<B> osc, mipp::vector<B> prev_corr, mipp::vector<R> ext);
+	void collect(const mipp::vector<R> &cur_ext, const int &ite, mipp::vector<mipp::vector<R>> &ext_hist);
+	void calc_osc(const mipp::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc);
+	void correct(const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext);
 
 
 };
