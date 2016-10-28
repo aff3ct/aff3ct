@@ -274,8 +274,6 @@ int main(int argc, char **argv)
 int sc_main(int argc, char **argv)
 #endif
 {
-	srand(0);
-
 	std::string code_type, simu_type = "BFER";
 
 #ifdef MULTI_PREC

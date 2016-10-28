@@ -425,7 +425,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_EXIT<B,R,Q>
 ::build_encoder()
 {
-	return Factory_encoder_common<B>::build(params);
+	return Factory_encoder_common<B>::build(params, params.simulation.seed);
 }
 
 template <typename B, typename R, typename Q>
@@ -446,14 +446,14 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params, sigma, size, 0);
+	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.f / sig_a, size, 0);
+	return Factory_channel<R>::build(params, 2.f / sig_a, size, params.simulation.seed);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

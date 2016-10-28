@@ -1041,7 +1041,7 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER<B,R,Q>
 ::build_source(const int tid)
 {
-	return Factory_source<B>::build(params, tid);
+	return Factory_source<B>::build(params, params.simulation.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -1055,7 +1055,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return Factory_encoder_common<B>::build(params, tid);
+	return Factory_encoder_common<B>::build(params, params.simulation.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -1078,7 +1078,7 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER<B,R,Q>
 ::build_channel(const int size, const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, size, tid);
+	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed + tid);
 }
 
 template <typename B, typename R, typename Q>

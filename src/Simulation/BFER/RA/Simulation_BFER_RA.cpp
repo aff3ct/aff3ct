@@ -22,7 +22,7 @@ Simulation_BFER_RA<B,R,Q>
 	assert(params.code.N % params.code.K == 0);
 
 	// build the interleaver for the encoder and the decoder
-	interleaver = Factory_interleaver<int>::build(this->params, this->params.code.N);
+	interleaver = Factory_interleaver<int>::build(this->params, this->params.code.N, this->params.simulation.seed);
 }
 
 template <typename B, typename R, typename Q>

@@ -1,6 +1,7 @@
 #include <cmath>
 #include <chrono>
 #include <cassert>
+#include <cstdlib>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
@@ -29,6 +30,7 @@ Launcher<B,R,Q>
 	params.simulation .n_threads         = 1;
 	params.simulation .stop_time         = std::chrono::seconds(0);
 	params.simulation .inter_frame_level = 1;
+	params.simulation .seed              = 0;
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -96,6 +98,9 @@ void Launcher<B,R,Q>
 	this->opt_args[{"sim-inter-lvl"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process in each modules."};
+	this->opt_args[{"sim-seed"}] =
+		{"positive_int",
+		 "seed used in the simulation to initialize the pseudo random generators in general."};
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-type"}] =
@@ -222,6 +227,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"       });
 	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
 	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time         = seconds(ar.get_arg_int({"sim-stop-time"}));
+	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
@@ -357,6 +363,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
 		p.push_back(std::make_pair("Type of quant. reals", type_names[typeid(Q)]));
 	p.push_back(std::make_pair("Inter frame level", std::to_string(params.simulation.inter_frame_level)));
+	p.push_back(std::make_pair("Seed", std::to_string(params.simulation.seed)));
 
 	return p;
 }
@@ -612,6 +619,8 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::launch()
 {
+	std::srand(params.simulation.seed);
+
 	// in case of the user call launch multiple times
 	if (simu != nullptr)
 	{
