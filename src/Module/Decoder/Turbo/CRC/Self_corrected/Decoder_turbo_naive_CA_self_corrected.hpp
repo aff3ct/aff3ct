@@ -6,6 +6,13 @@
 template <typename B, typename R>
 class Decoder_turbo_naive_CA_self_corrected : public Decoder_turbo_naive_CA<B,R>
 {
+private:
+	std::vector<mipp::vector<R>> ext_nat; // extrinsic coming from the SISO working in the natural domain. Data in the interleaved order
+	std::vector<mipp::vector<R>> ext_int; // extrinsic coming from the SISO working in the interleaved domain. Data in the natural order
+	mipp::vector<B> osc_nat;
+	mipp::vector<B> osc_int;
+	mipp::vector<B> previously_corrected_nat;
+	mipp::vector<B> previously_corrected_int;
 
 public:
 	Decoder_turbo_naive_CA_self_corrected(const int& K,
@@ -19,23 +26,14 @@ public:
 	                       const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_naive_CA_self_corrected();
 
+protected:
 	virtual void hard_decode();
 
 private:
-	mipp::vector<mipp::vector<R>> ext_nat; // extrinsic comming from the SISO working in the natural domain. Data in the interleaved order
-	mipp::vector<mipp::vector<R>> ext_int; // extrinsic comming from the SISO working in the interleaved domain. Data in the natural order
-	mipp::vector<B>  osc_nat;
-	mipp::vector<B>  osc_int;
-	mipp::vector<B>  previously_corrected_nat;
-	mipp::vector<B>  previously_corrected_int;
-
-	void collect(const mipp::vector<R> &cur_ext, const int &ite, mipp::vector<mipp::vector<R>> &ext_hist);
-	void calc_osc(const mipp::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc);
-	void correct(const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext);
-
-
+	void collect (const mipp::vector<R> &cur_ext, const int &ite, std::vector<mipp::vector<R>> &ext_hist);
+	void calc_osc(const std::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc);
+	void correct (const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext);
 };
-
 
 #include "Decoder_turbo_naive_CA_self_corrected.hxx"
 #endif /*DECODER_TURBO_NAIVE_CA_SELF_CORRECTED*/

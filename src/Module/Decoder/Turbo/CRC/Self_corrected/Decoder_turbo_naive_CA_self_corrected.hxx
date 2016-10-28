@@ -1,11 +1,11 @@
-#include "Decoder_turbo_naive_CA_self_corrected.hpp"
-
-#include "Tools/Math/utils.h"
-
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+
+#include "Tools/Math/utils.h"
+
+#include "Decoder_turbo_naive_CA_self_corrected.hpp"
 
 template <typename B, typename R>
 Decoder_turbo_naive_CA_self_corrected<B,R>
@@ -19,12 +19,12 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
                                         CRC<B> &crc,
                                         const bool buffered_encoding)
 : Decoder_turbo_naive_CA<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
-	ext_nat(n_ite, mipp::vector<R>(K, 0)),
-	ext_int(n_ite, mipp::vector<R>(K, 0)),
-	osc_nat(K, 0),
-	osc_int(K, 0),
-	previously_corrected_nat(K, 0),
-	previously_corrected_int(K, 0)
+  ext_nat(n_ite, mipp::vector<R>(K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)),
+  ext_int(n_ite, mipp::vector<R>(K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)),
+  osc_nat                       (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
+  osc_int                       (K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
+  previously_corrected_nat      (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
+  previously_corrected_int      (K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)
 {
 }
 
@@ -132,15 +132,15 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 inline void Decoder_turbo_naive_CA_self_corrected<B,R>
-::collect(const mipp::vector<R> &cur_ext, const int &ite, mipp::vector<mipp::vector<R>> &ext_hist)
+::collect(const mipp::vector<R> &cur_ext, const int &ite, std::vector<mipp::vector<R>> &ext_hist)
 {
 	// ite starts at 1 in tdec process
-	ext_hist[ite-1] = cur_ext;
+	ext_hist[ite -1] = cur_ext;
 }
 
 template <typename B, typename R>
 inline void Decoder_turbo_naive_CA_self_corrected<B,R>
-::calc_osc(const mipp::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc)
+::calc_osc(const std::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc)
 {
 	B sgn_cur, sgn_prev;
 	for (auto idx = 0; idx < (int)osc.size(); idx++)
@@ -155,13 +155,14 @@ template <typename B, typename R>
 inline void Decoder_turbo_naive_CA_self_corrected<B,R>
 ::correct(const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext)
 {
-	for  (auto idx = 0; idx < (int)ext.size(); idx++)
+	for (auto idx = 0; idx < (int)ext.size(); idx++)
 	{
-		if (osc[idx] && !prev_corr[idx]){
-			ext[idx]       = 0.f;
-			prev_corr[idx] = 1;
+		if (osc[idx] && !prev_corr[idx])
+		{
+			ext[idx]       = (R)0;
+			prev_corr[idx] = (B)1;
 		}
 		else
-			prev_corr[idx] = 0;
+			prev_corr[idx] = (B)0;
 	}
 }
