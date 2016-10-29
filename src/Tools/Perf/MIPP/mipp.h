@@ -192,7 +192,14 @@ constexpr int nElmtsPerRegister()
 }
 
 template <typename T>
-constexpr int nElReg() { return mipp::nElmtsPerRegister<T>(); }
+constexpr int nElReg() 
+{ 
+#ifdef MIPP_NO_INTRINSICS
+	return 1;
+#else
+	return RegisterSizeBit / (8 * sizeof(T));
+#endif
+}
 
 // --------------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------- memory allocator

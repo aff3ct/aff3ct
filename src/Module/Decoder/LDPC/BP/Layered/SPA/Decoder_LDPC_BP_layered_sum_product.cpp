@@ -41,7 +41,7 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 		{
 			contributions[j]  = this->var_nodes[this->CN_to_VN[i][j]] - this->branches[kr++];
 			const auto v_abs  = (R)std::abs(contributions[j]);
-			const auto res    = std::tanh(v_abs * (R)0.5);
+			const auto res    = (R)std::tanh(v_abs * (R)0.5);
 			const auto c_sign = std::signbit((float)contributions[j]) ? -1 : 0;
 
 			sign ^= c_sign;
@@ -55,8 +55,8 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 			const auto v_sig = sign ^ (std::signbit((float)value) ? -1 : 0);
 			      auto val   = prod / values[j];
 			           val   = (val < (R)1.0) ? val : (R)1.0 - std::numeric_limits<R>::epsilon();
-			      auto v_res = (R)2.0 * std::atanh(val);
-			           v_res = (R)std::copysign(v_res, v_sig);
+			const auto v_tan = (R)2.0 * std::atanh(val);
+			const auto v_res = (R)std::copysign(v_tan, v_sig);
 
 			this->branches[kw++] = v_res;
 			this->var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;

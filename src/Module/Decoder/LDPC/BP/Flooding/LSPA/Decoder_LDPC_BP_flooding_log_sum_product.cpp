@@ -58,9 +58,9 @@ bool Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 		{
 			const auto value   = this->V_to_C[transpose_ptr[j]];
 			const auto v_sig   = sign ^ (std::signbit((float)value) ? -1 : 0);
-			const auto exp   = (sum - values[j] != 0) ? std::exp(sum - values[j]) :
-			                                            (R)1.0 - std::numeric_limits<R>::epsilon();
-			      auto v_res = (R)2.0 * std::atanh(exp);
+			const auto exp     = (sum - values[j] != 0) ? std::exp(sum - values[j]) :
+			                                              (R)1.0 - std::numeric_limits<R>::epsilon();
+			      auto v_res   = (R)2.0 * std::atanh(exp);
 			const auto v_to_st = (R)std::copysign(v_res, v_sig);
 
 			this->C_to_V[transpose_ptr[j]] = v_to_st;

@@ -57,8 +57,8 @@ void Decoder_LDPC_BP_layered_log_sum_product<B,R>
 			const auto v_sig = sign ^ (std::signbit((float)value) ? -1 : 0);
 			const auto exp   = (sum - values[j] != 0) ? std::exp(sum - values[j]) :
 			                                           (R)1.0 - std::numeric_limits<R>::epsilon();
-			      auto v_res = (R)2.0 * std::atanh(exp);
-			           v_res = (R)std::copysign(v_res, v_sig);
+			const auto v_tan = (R)2.0 * std::atanh(exp);
+			const auto v_res = (R)std::copysign(v_tan, v_sig);
 
 			this->branches[kw++] = v_res;
 			this->var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;

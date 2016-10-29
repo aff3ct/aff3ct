@@ -84,7 +84,7 @@ void Launcher_BFERI_RSC<B,R,Q,QD>
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
 	else if (this->params.decoder.simd_strategy == "INTRA" && !this->ar.exist_arg({"sim-inter-lvl"}))
-		this->params.simulation.inter_frame_level = std::ceil(mipp::nElReg<Q>() / 8.f);
+		this->params.simulation.inter_frame_level = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
 
 	if (this->params.decoder.type == "LTE")
 	{

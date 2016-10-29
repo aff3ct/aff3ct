@@ -21,10 +21,10 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
 : Decoder_turbo_naive_CA<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
   ext_nat(n_ite, mipp::vector<R>(K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)),
   ext_int(n_ite, mipp::vector<R>(K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)),
-  osc_nat                       (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
-  osc_int                       (K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
-  previously_corrected_nat      (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
-  previously_corrected_int      (K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)
+  osc_nat                       (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<B>(), (B)0),
+  osc_int                       (K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<B>(), (B)0),
+  previously_corrected_nat      (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<B>(), (B)0),
+  previously_corrected_int      (K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<B>(), (B)0)
 {
 }
 

@@ -51,10 +51,10 @@ public:
 	SISO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	       std::string name = "SISO_i")
 	: Module(n_frames, name),
-	  n_dec_waves_siso(std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
+	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
-	  Y_N1(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), 0)),
-	  Y_N2(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), 0)),
+	  Y_N1(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), (R)0)),
+	  Y_N2(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), (R)0)),
 	  K_siso(K), N_siso(N), simd_inter_frame_level_siso(simd_inter_frame_level)
 	{
 	}

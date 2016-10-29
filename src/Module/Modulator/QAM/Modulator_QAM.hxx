@@ -125,7 +125,7 @@ void Modulator_QAM<B,R,Q,MAX>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 	
 	auto size       = (int)Y_N2.size();
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
 	
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
@@ -159,7 +159,7 @@ void Modulator_QAM<B,R,Q,MAX>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
 	auto size       = (int)Y_N2.size();
-	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
+	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
 	{
