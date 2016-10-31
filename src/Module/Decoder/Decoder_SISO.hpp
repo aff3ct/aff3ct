@@ -28,10 +28,11 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K       : number of information bits in the frame.
-	 * \param N       : size of one frame.
-	 * \param n_frames: number of frames to process in the decoder.
-	 * \param name    : decoder name.
+	 * \param K:                      number of information bits in the frame.
+	 * \param N:                      size of one frame.
+	 * \param n_frames:               number of frames to process in the decoder.
+	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
+	 * \param name:                   decoder name.
 	 */
 	Decoder_SISO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	             std::string name = "Decoder_SISO")
