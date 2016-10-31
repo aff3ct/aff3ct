@@ -71,7 +71,7 @@ If you use `ctrl+C` twice in a small time-step (500ms), the program will stop.
 
 ### Decoding of the Polar codes with the Successive Cancellation decoder
 
-    $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -K 1024 -N 2048 -m 1.5 -M 3.01 --cde-sigma 0.862 --dec-type SC --dec-implem FAST
+    $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -K 1024 -N 2048 -m 1.5 -M 3.01 --cde-fb-gen-method GA --cde-sigma 0.862 --dec-type SC --dec-implem FAST
 
 Expected output:
 

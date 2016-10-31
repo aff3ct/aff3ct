@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include <cmath>
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
@@ -13,19 +14,26 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 	Frozenbits_generator<B> *fb_generator = nullptr;
 
 	// build the frozen bits generator
-	if (!params.code.awgn_fb_file.empty())
-	{
-		fb_generator = new Frozenbits_generator_file<B>(params.code.K, params.code.N_code, params.code.awgn_fb_file);
-	}
+	if (params.code.fb_gen_method == "GA")
+		fb_generator = new Frozenbits_generator_GA<B>(params.code.K, params.code.N_code, params.code.sigma);
 	else
 	{
-		if (params.code.fb_gen_method == "GA")
-			fb_generator = new Frozenbits_generator_GA<B>(params.code.K, params.code.N_code, params.code.sigma);
-#ifdef ENABLE_POLAR_BOUNDS
+		bool is_file = false;
+		DIR *dp;
+		if (!params.code.awgn_fb_path.empty())
+		{
+			if ((dp = opendir(params.code.awgn_fb_path.c_str())) == nullptr)
+				is_file = true;
+			else
+				closedir(dp);
+		}
+
+		if (!params.code.awgn_fb_path.empty() && is_file)
+			fb_generator = new Frozenbits_generator_file<B>(params.code.K, params.code.N_code,
+			                                                params.code.awgn_fb_path);
 		else if (params.code.fb_gen_method == "TV")
 			fb_generator = new Frozenbits_generator_TV<B>(params.code.K, params.code.N_code, params.code.awgn_fb_path,
 			                                              params.simulation.bin_pb_path, params.code.sigma);
-#endif
 	}
 
 	return fb_generator;

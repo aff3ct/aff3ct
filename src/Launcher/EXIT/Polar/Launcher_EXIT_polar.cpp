@@ -12,14 +12,9 @@ Launcher_EXIT_polar<B,R,Q>
 {
 	this->params.simulation.bin_pb_path   = "../lib/polar_bounds/bin/polar_bounds";
 	this->params.code      .type          = "POLAR";
-	this->params.code      .awgn_fb_file  = "";
-	this->params.code      .awgn_fb_path  = "../awgn_polar_codes/TV";
+	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.3f;
-#ifdef ENABLE_POLAR_BOUNDS
 	this->params.code      .fb_gen_method = "TV";
-#else
-	this->params.code      .fb_gen_method = "GA";
-#endif
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 3;
@@ -46,18 +41,13 @@ void Launcher_EXIT_polar<B,R,Q>
 	this->req_args[{"cde-sigma"}] =
 		{"float",
 		 "sigma value used for the polar codes generation."};
-	this->opt_args[{"cde-awgn-fb-file"}] =
-		{"string",
-		 "set the best channels bits by giving path to file."};
-#ifdef ENABLE_POLAR_BOUNDS
 	this->opt_args[{"cde-awgn-fb-path"}] =
 		{"string",
-		 "directory where are located the best channels to use for information bits."};
+		 "path to a file or a directory containing the best channels to use for information bits."};
 	this->opt_args[{"cde-fb-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
 		 "GA, TV"};
-#endif
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", POLAR";
@@ -86,11 +76,8 @@ void Launcher_EXIT_polar<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-sigma"        })) this->params.code.sigma         = this->ar.get_arg_float({"cde-sigma"});
-	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.code.awgn_fb_file  = this->ar.get_arg      ({"cde-awgn-fb-file"});
-#ifdef ENABLE_POLAR_BOUNDS
 	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path  = this->ar.get_arg      ({"cde-awgn-fb-path"});
 	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg      ({"cde-fb-gen-method"});
-#endif
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.n_ite = this->ar.get_arg_int({"dec-ite",   "i"});
@@ -117,8 +104,8 @@ std::vector<std::pair<std::string,std::string>> Launcher_EXIT_polar<B,R,Q>
 
 	p.push_back(std::make_pair("Sigma for code gen.",     sigma                          ));
 	p.push_back(std::make_pair("Frozen bits gen. method", this->params.code.fb_gen_method));
-	if (!this->params.code.awgn_fb_file.empty())
-		p.push_back(std::make_pair("Path to the channels file", this->params.code.awgn_fb_file));
+	if (this->params.code.fb_gen_method != "GA" && !this->params.code.awgn_fb_path.empty())
+		p.push_back(std::make_pair("Path to the best channels", this->params.code.awgn_fb_path));
 
 	return p;
 }

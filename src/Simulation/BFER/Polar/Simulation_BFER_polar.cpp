@@ -17,7 +17,6 @@
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
-
 template <typename B, typename R, typename Q>
 Simulation_BFER_polar<B,R,Q>
 ::Simulation_BFER_polar(const parameters& params)
@@ -51,7 +50,7 @@ void Simulation_BFER_polar<B,R,Q>
 {
 	if (!is_generated_decoder)
 	{
-		if (!this->params.code.awgn_fb_file.empty() || this->params.code.sigma != 0.f)
+		if (this->params.code.sigma != 0.f)
 		{
 			fb_generator->generate(frozen_bits);
 			if (this->params.code.N != this->params.code.N_code)
@@ -70,7 +69,7 @@ void Simulation_BFER_polar<B,R,Q>
 ::snr_precompute()
 {
 	// adaptative frozen bits generation
-	if (this->params.code.awgn_fb_file.empty() && this->params.code.sigma == 0.f && !is_generated_decoder)
+	if (this->params.code.sigma == 0.f && !is_generated_decoder)
 	{
 		fb_generator->set_sigma(this->sigma);
 		fb_generator->generate(frozen_bits);

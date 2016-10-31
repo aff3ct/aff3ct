@@ -92,8 +92,8 @@ _aff3ct() {
 		${codetype} == "POLAR"      && ${simutype} == "GEN" \
 		]]
 	then
-		opts="$opts --cde-awgn-fb-file --cde-awgn-fb-path --cde-fb-gen-method \
-		--dec-snr --dec-gen-path --sim-pb-path"
+		opts="$opts --cde-awgn-fb-path --cde-fb-gen-method --dec-snr \
+		      --dec-gen-path --sim-pb-path"
 	fi
 
 	# add contents of Launcher_BFER_RA.cpp
@@ -119,9 +119,9 @@ _aff3ct() {
 		${codetype} == "POLAR"      && ${simutype} == "BFER" \
 		]]
 	then
-		opts="$opts --sim-pb-path --cde-awgn-fb-file --cde-awgn-fb-path \
-		      --cde-fb-gen-method --cde-sigma --crc-type --enc-no-sys   \
-		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd"
+		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method  \
+		      --cde-sigma --crc-type --enc-no-sys --dec-type -D --dec-ite \
+		      -i --dec-lists -L --dec-simd"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -155,9 +155,9 @@ _aff3ct() {
 		${codetype} == "POLAR"      && ${simutype} == "EXIT" \
 		]]
 	then
-		opts="$opts --sim-pb-path --cde-sigma --cde-awgn-fb-file          \
-		--cde-awgn-fb-path --cde-fb-gen-method --dec-type -D --dec-implem \
-		--dec-ite -i --dec-lists -L"
+		opts="$opts --sim-pb-path --cde-sigma --cde-awgn-fb-path           \
+		      --cde-fb-gen-method --dec-type -D --dec-implem  --dec-ite -i \
+		      --dec-lists -L"
 	fi
 
 	# add contents of Launcher_BFER_LDPC.cpp
@@ -279,9 +279,9 @@ _aff3ct() {
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
-		--cde-awgn-fb-path | --cde-awgn-fb-file | --dec-gen-path |   \
-		--sim-pb-path | --itl-path | --mod-const-path | --src-path | \
-		--enc-path | --chn-path | --cde-alist-path | --sim-trace-path ) 
+		--cde-awgn-fb-path | --dec-gen-path | --sim-pb-path | --itl-path | \
+		--mod-const-path | --src-path | --enc-path | --chn-path |          \
+		--cde-alist-path | --sim-trace-path ) 
 			_filedir
 			;;
 		

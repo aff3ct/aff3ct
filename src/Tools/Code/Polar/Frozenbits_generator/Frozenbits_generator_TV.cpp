@@ -84,6 +84,7 @@ void Frozenbits_generator_TV<B>
 
 		if (!this->load_channels_file(filename))
 		{
+#ifdef ENABLE_POLAR_BOUNDS
 			auto cmd  = bin_pb_path;
 			cmd      += " --no-print";                             // do not display anything
 			cmd      += " -q " + std::to_string(Mu);               // quality
@@ -99,7 +100,7 @@ void Frozenbits_generator_TV<B>
 			{
 				if (!this->load_channels_file(filename))
 				{
-					std::cerr << bold_red("(EE) File does not exist: ") << bold_red(filename) << bold_red(")") 
+					std::cerr << bold_red("(EE) File does not exist: ") << bold_red(filename)
 					          << std::endl;
 					exit(EXIT_FAILURE);
 				}
@@ -109,6 +110,12 @@ void Frozenbits_generator_TV<B>
 				std::cerr << bold_red("(EE) Following command failed: ") << bold_red(cmd) << std::endl;
 				exit(EXIT_FAILURE);
 			}
+#else
+			std::cerr << bold_red("(EE) File does not exist: ") << bold_red(filename)
+			          << bold_red(", try to use the \"--cde-fb-gen-method GA\" option.")
+			          << std::endl;
+			exit(EXIT_FAILURE);
+#endif
 		}
 	}
 }

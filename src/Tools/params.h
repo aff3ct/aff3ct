@@ -34,7 +34,6 @@ struct code_parameters
 	std::string fb_gen_method;
 	std::string alist_path;
 	std::string awgn_fb_path;
-	std::string awgn_fb_file;
 	float       sigma; // not noise var, used to set a fixed snr value for frozen bits construction (in polar codes)
 	bool        coset; // true = enable coset approach
 	int         K;

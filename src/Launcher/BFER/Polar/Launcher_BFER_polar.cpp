@@ -16,14 +16,9 @@ Launcher_BFER_polar<B,R,Q>
 {
 	this->params.simulation.bin_pb_path   = "../lib/polar_bounds/bin/polar_bounds";
 	this->params.code      .type          = "POLAR";
-	this->params.code      .awgn_fb_path  = "../awgn_polar_codes/TV";
-	this->params.code      .awgn_fb_file  = "";
+	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.f;
-#ifdef ENABLE_POLAR_BOUNDS
 	this->params.code      .fb_gen_method = "TV";
-#else
-	this->params.code      .fb_gen_method = "GA";
-#endif
 	this->params.crc.type                 = "";
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
@@ -49,21 +44,16 @@ void Launcher_BFER_polar<B,R,Q>
 #endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	this->opt_args[{"cde-awgn-fb-file"}] =
-		{"string",
-		 "set the best channels bits by giving path to file."};
 	this->opt_args[{"cde-sigma"}] =
 		{"positive_float",
 		 "sigma value for the polar codes generation (adaptative frozen bits if sigma is not set)."};
-#ifdef ENABLE_POLAR_BOUNDS
 	this->opt_args[{"cde-fb-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
 		 "GA, TV"};
 	this->opt_args[{"cde-awgn-fb-path"}] =
 		{"string",
-		 "directory where are located the best channels to use for information bits."};
-#endif
+		 "path to a file or a directory containing the best channels to use for information bits."};
 
 	// ----------------------------------------------------------------------------------------------------------- crc
 	this->opt_args[{"crc-type"}] =
@@ -104,11 +94,8 @@ void Launcher_BFER_polar<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-sigma"        })) this->params.code.sigma         = this->ar.get_arg_float({"cde-sigma"});
-	if(this->ar.exist_arg({"cde-awgn-fb-file" })) this->params.code.awgn_fb_file  = this->ar.get_arg      ({"cde-awgn-fb-file" });
-#ifdef ENABLE_POLAR_BOUNDS
 	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path  = this->ar.get_arg      ({"cde-awgn-fb-path" });
 	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg      ({"cde-fb-gen-method"});
-#endif
 
 	// ----------------------------------------------------------------------------------------------------------- crc
 	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg({"crc-type"});
@@ -117,9 +104,9 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int  ({"dec-ite",   "i"});
-	if(this->ar.exist_arg({"dec-lists", "L"})) this->params.decoder.L             = this->ar.get_arg_int  ({"dec-lists", "L"});
-	if(this->ar.exist_arg({"dec-simd"      })) this->params.decoder.simd_strategy = this->ar.get_arg      ({"dec-simd"      });
+	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int({"dec-ite",   "i"});
+	if(this->ar.exist_arg({"dec-lists", "L"})) this->params.decoder.L             = this->ar.get_arg_int({"dec-lists", "L"});
+	if(this->ar.exist_arg({"dec-simd"      })) this->params.decoder.simd_strategy = this->ar.get_arg    ({"dec-simd"      });
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -155,8 +142,8 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 
 	p.push_back(std::make_pair("Sigma for code gen.",     sigma                           ));
 	p.push_back(std::make_pair("Frozen bits gen. method", this->params.code.fb_gen_method ));
-	if (!this->params.code.awgn_fb_file.empty())
-		p.push_back(std::make_pair("Path to the channels file", this->params.code.awgn_fb_file));
+	if (this->params.code.fb_gen_method != "GA" && !this->params.code.awgn_fb_path.empty())
+		p.push_back(std::make_pair("Path to the best channels", this->params.code.awgn_fb_path));
 
 	return p;
 }
