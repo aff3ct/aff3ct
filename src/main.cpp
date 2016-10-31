@@ -74,7 +74,7 @@ void print_version()
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
 #endif
-	std::string affect_version = "1.0.0";
+	std::string affect_version = "1.1.0";
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
 	          << mipp::IntructionsType << ") " << affect_version << std::endl;
