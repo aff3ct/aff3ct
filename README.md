@@ -1,3 +1,8 @@
+<a href="https://scan.coverity.com/projects/aff3ct-aff3ct">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/10706/badge.svg"/>
+</a>
+
 # How to compile and run the code
 This project use `cmake` in order to generate the Makefile.
 
