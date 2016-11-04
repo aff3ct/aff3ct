@@ -35,18 +35,18 @@ protected:
 public:
 	Simulation_BFER(const parameters& params);
 	virtual ~Simulation_BFER();
-	void _launch();
+
+protected:
+	        void _launch        ();
+	virtual void release_objects();
 
 private:
-	void launch_simulation        ();
 	void build_communication_chain();
+	void launch_simulation        ();
 	void bind_sockets             ();
 	void bind_sockets_debug       ();
 
 	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
-
-protected:
-	virtual void release_objects();
 
 	Terminal* build_terminal(const int tid = 0);
 };

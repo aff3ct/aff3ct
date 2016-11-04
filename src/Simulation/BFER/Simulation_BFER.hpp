@@ -1,4 +1,3 @@
-
 #ifdef SYSTEMC
 #include "SC_Simulation_BFER.hpp"
 #else
@@ -12,9 +11,9 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
+#include "Tools/Display/Terminal/Terminal.hpp"
 
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
-#include "Tools/Display/Terminal/Terminal.hpp"
 
 #include "Simulation_BFER_i.hpp"
 
@@ -109,8 +108,8 @@ protected:
 	virtual void launch_postcompute();
 
 private:
-	static void Monte_Carlo_method       (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	static void Monte_Carlo_method       (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop          (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_bench    (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_debug    (Simulation_BFER<B,R,Q> *simu);

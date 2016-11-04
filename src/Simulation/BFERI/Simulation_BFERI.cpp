@@ -10,16 +10,6 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
-#include "Tools/Factory/Factory_source.hpp"
-#include "Tools/Factory/Factory_CRC.hpp"
-#include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/Factory_modulator.hpp"
-#include "Tools/Factory/Factory_channel.hpp"
-#include "Tools/Factory/Factory_quantizer.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
-#include "Tools/Factory/Coset/Factory_coset_real.hpp"
-#include "Tools/Factory/Coset/Factory_coset_bit.hpp"
-#include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
 #include "Simulation_BFERI.hpp"
@@ -27,23 +17,15 @@
 template <typename B, typename R, typename Q>
 Simulation_BFERI<B,R,Q>
 ::Simulation_BFERI(const parameters& params)
-: Simulation(),
-  
-  params(params),
+: Simulation_BFERI_i<B,R,Q>(params),
 
   threads(params.simulation.n_threads -1),
-  barrier(params.simulation.n_threads),
-  n_frames(1),
- 
-  snr      (0.f),
-  code_rate(0.f),
-  sigma    (0.f),
 
-  H_N (params.simulation.n_threads, mipp::vector<R>(params.code.N)),
   U_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
   X_N1(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
   X_N2(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
   X_N3(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
+  H_N (params.simulation.n_threads, mipp::vector<R>(params.code.N)),
   Y_N1(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
   Y_N2(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
   Y_N3(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
@@ -53,20 +35,8 @@ Simulation_BFERI<B,R,Q>
   Y_N7(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
   V_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
 
-  source     (params.simulation.n_threads, nullptr),
-  crc        (params.simulation.n_threads, nullptr),
-  encoder    (params.simulation.n_threads, nullptr),
-  modulator  (params.simulation.n_threads, nullptr),
-  channel    (params.simulation.n_threads, nullptr),
-  quantizer  (params.simulation.n_threads, nullptr),
-  interleaver(params.simulation.n_threads, nullptr),
-  coset_real (params.simulation.n_threads, nullptr),
-  siso       (params.simulation.n_threads, nullptr),
-  decoder    (params.simulation.n_threads, nullptr),
-  coset_bit  (params.simulation.n_threads, nullptr),
-  monitor    (params.simulation.n_threads, nullptr),
-  monitor_red(                             nullptr),
-  terminal   (                             nullptr),
+  monitor_red(nullptr),
+  terminal   (nullptr),
 
   d_sourc_total(params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_crc_total  (params.simulation.n_threads, std::chrono::nanoseconds(0)),
@@ -98,8 +68,6 @@ Simulation_BFERI<B,R,Q>
   d_cobit_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
-	assert(params.simulation.n_threads >= 1);
-
 	if (params.simulation.n_threads > 1 && params.simulation.debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
@@ -115,49 +83,89 @@ Simulation_BFERI<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
-::launch()
+::_launch()
 {
-	launch_precompute();
-	
-	// for each SNR to be simulated
-	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
+	// launch a group of slave threads (there is "n_threads -1" slave threads)
+	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+		threads[tid -1] = std::thread(Simulation_BFERI<B,R,Q>::Monte_Carlo_method, this, tid);
+
+	// launch the master thread
+	Simulation_BFERI<B,R,Q>::Monte_Carlo_method(this, 0);
+
+	// join the slave threads with the master thread
+	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+		threads[tid -1].join();
+
+	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
 	{
-		t_snr = std::chrono::steady_clock::now();
-
-		code_rate = (float)(params.code.K / (float)(params.code.N + params.code.tail_length));
-		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
-		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
-
-		snr_precompute();
-
-		// launch a group of slave threads (there is "n_threads -1" slave threads)
-		for (auto tid = 1; tid < params.simulation.n_threads; tid++)
-			threads[tid -1] = std::thread(Simulation_BFERI<B,R,Q>::Monte_Carlo_method, this, tid);
-
-		// launch the master thread
-		Simulation_BFERI<B,R,Q>::Monte_Carlo_method(this, 0);
-
-		// join the slave threads with the master thread
-		for (auto tid = 1; tid < params.simulation.n_threads; tid++)
-			threads[tid -1].join();
-
-		if (!params.terminal.disabled && !params.simulation.benchs)
-		{
-			monitor_red->reduce();
-			time_reduction(true);
-			terminal->final_report(std::cout);
-		}
-
-		// release communication objects
-		release_objects();
-
-		// exit simulation (double [ctrl+c])
-		if (Monitor<B>::is_over())
-			break;
+		monitor_red->reduce();
+		time_reduction(true);
+		terminal->final_report(std::cout);
 	}
+}
 
-	if (params.simulation.time_report && !params.simulation.benchs)
+template <typename B, typename R, typename Q>
+void Simulation_BFERI<B,R,Q>
+::release_objects()
+{
+	Simulation_BFERI_i<B,R,Q>::release_objects();
+
+	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
+	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFERI<B,R,Q>
+::launch_postcompute()
+{
+	if (this->params.simulation.time_report && !this->params.simulation.benchs)
 		time_report();
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFERI<B,R,Q>
+::build_communication_chain(Simulation_BFERI<B,R,Q> *simu, const int tid)
+{
+	Simulation_BFERI_i<B,R,Q>::build_communication_chain(simu, tid);
+
+	// get the real number of frames per threads (from the decoder)
+	const auto n_fra = simu->siso[tid]->get_n_frames();
+	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
+
+	// resize the buffers
+	const auto K     = simu->params.code.K;
+	const auto N     = simu->params.code.N;
+	const auto tail  = simu->params.code.tail_length;
+	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
+	const auto N_fil = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
+
+	if (simu->U_K [tid].size() != (unsigned) ( K             * n_fra)) simu->U_K [tid].resize( K              * n_fra);
+	if (simu->X_N1[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N1[tid].resize((N      + tail) * n_fra);
+	if (simu->X_N2[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
+	if (simu->X_N3[tid].size() != (unsigned) ( N_mod         * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
+	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod         * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
+	if (simu->H_N [tid].size() != (unsigned) ( N_mod         * n_fra)) simu->H_N [tid].resize( N_mod          * n_fra);
+	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil         * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
+	if (simu->Y_N3[tid].size() != (unsigned) ( N_fil         * n_fra)) simu->Y_N3[tid].resize( N_fil          * n_fra);
+	if (simu->Y_N4[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
+	if (simu->Y_N5[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N5[tid].resize((N      + tail) * n_fra);
+	if (simu->Y_N6[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N6[tid].resize((N      + tail) * n_fra);
+	if (simu->Y_N7[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N7[tid].resize((N      + tail) * n_fra);
+	if (simu->V_K [tid].size() != (unsigned) ( K             * n_fra)) simu->V_K [tid].resize( K              * n_fra);
+
+	simu->barrier(tid);
+	if (tid == 0)
+	{
+		// build a monitor to compute BER/FER (reduce the other monitors)
+		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
+		                                             simu->params.code.N,
+		                                             simu->params.monitor.n_frame_errors,
+		                                             simu->monitor,
+		                                             n_fra);
+		// build the terminal to display the BER/FER
+		simu->terminal = simu->build_terminal(tid);
+		Simulation::check_errors(simu->terminal, "Terminal");
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -199,82 +207,6 @@ void Simulation_BFERI<B,R,Q>
 		Simulation_BFERI<B,R,Q>::simulation_loop_debug(simu);
 	else
 		Simulation_BFERI<B,R,Q>::simulation_loop(simu, tid);
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_BFERI<B,R,Q>
-::build_communication_chain(Simulation_BFERI<B,R,Q> *simu, const int tid)
-{
-	// build the objects
-	simu->source     [tid] = simu->build_source     (       tid); check_errors(simu->source     [tid], "Source<B>"       );
-	simu->crc        [tid] = simu->build_crc        (       tid); check_errors(simu->crc        [tid], "CRC<B>"          );
-	simu->encoder    [tid] = simu->build_encoder    (       tid); check_errors(simu->encoder    [tid], "Encoder<B>"      );
-	simu->interleaver[tid] = simu->build_interleaver(       tid); check_errors(simu->interleaver[tid], "Interleaver<int>");
-	simu->modulator  [tid] = simu->build_modulator  (       tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"  );
-	
-	const auto N     = simu->params.code.N;
-	const auto tail  = simu->params.code.tail_length;
-	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
-	const auto N_fil = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
-
-	simu->channel    [tid] = simu->build_channel    (N_mod, tid); check_errors(simu->channel    [tid], "Channel<R>"      );
-	simu->quantizer  [tid] = simu->build_quantizer  (N_fil, tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
-	simu->coset_real [tid] = simu->build_coset_real (       tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
-	simu->siso       [tid] = simu->build_siso       (       tid); check_errors(simu->siso       [tid], "SISO<Q>"         );
-	simu->decoder    [tid] = simu->build_decoder    (       tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
-	simu->coset_bit  [tid] = simu->build_coset_bit  (       tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
-	simu->monitor    [tid] = simu->build_monitor    (       tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
-
-	// get the real number of frames per threads (from the decoder)
-	auto n_fra = simu->siso[tid]->get_n_frames();
-	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
-
-	// resize the buffers
-	const auto K = simu->params.code.K;
-	if (simu->U_K [tid].size() != (unsigned) ( K             * n_fra)) simu->U_K [tid].resize( K              * n_fra);
-	if (simu->X_N1[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N1[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N2[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N3[tid].size() != (unsigned) ( N_mod         * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
-	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod         * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
-	if (simu->H_N [tid].size() != (unsigned) ( N_mod         * n_fra)) simu->H_N [tid].resize( N_mod          * n_fra);
-	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil         * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
-	if (simu->Y_N3[tid].size() != (unsigned) ( N_fil         * n_fra)) simu->Y_N3[tid].resize( N_fil          * n_fra);
-	if (simu->Y_N4[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N5[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N5[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N6[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N6[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N7[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N7[tid].resize((N      + tail) * n_fra);
-	if (simu->V_K [tid].size() != (unsigned) ( K             * n_fra)) simu->V_K [tid].resize( K              * n_fra);
-
-	// fill the Y_N7 vector with 0 values
-	std::fill(simu->Y_N7[tid].begin(), simu->Y_N7[tid].end(), (Q)0);
-
-	// set the real number of frames per thread
-	simu->source     [tid]->set_n_frames(n_fra);
-	simu->crc        [tid]->set_n_frames(n_fra);
-	simu->encoder    [tid]->set_n_frames(n_fra);
-	simu->interleaver[tid]->set_n_frames(n_fra);
-	simu->modulator  [tid]->set_n_frames(n_fra);
-	simu->channel    [tid]->set_n_frames(n_fra);
-	simu->quantizer  [tid]->set_n_frames(n_fra);
-	simu->coset_real [tid]->set_n_frames(n_fra);
-	simu->coset_bit  [tid]->set_n_frames(n_fra);
-	simu->monitor    [tid]->set_n_frames(n_fra);
-
-	simu->barrier(tid);
-	if (tid == 0)
-	{
-		simu->n_frames = n_fra;
-
-		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
-		                                             simu->params.code.N,
-		                                             simu->params.monitor.n_frame_errors,
-		                                             simu->monitor,
-		                                             simu->n_frames);
-		// build the terminal to display the BER/FER
-		simu->terminal = simu->build_terminal(tid);
-		check_errors(simu->terminal, "Terminal");
-	}
 }
 
 template <typename B, typename R, typename Q>
@@ -814,7 +746,7 @@ void Simulation_BFERI<B,R,Q>
 	d_cobit_total_red = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
-	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 	{
 		d_sourc_total_red += d_sourc_total[tid];
 		d_crc_total_red   += d_crc_total  [tid];
@@ -833,7 +765,7 @@ void Simulation_BFERI<B,R,Q>
 	}
 
 	if (is_snr_done)
-		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 		{
 			d_sourc_total_sum += d_sourc_total[tid];
 			d_crc_total_sum   += d_crc_total  [tid];
@@ -957,127 +889,11 @@ void Simulation_BFERI<B,R,Q>
 	stream << "#" << std::endl;
 }
 
-// ---------------------------------------------------------------------------------------------------- virtual methods
-
-template <typename B, typename R, typename Q>
-void Simulation_BFERI<B,R,Q>
-::release_objects()
-{
-	int tid;
-	const auto nthr = params.simulation.n_threads;
-	for (tid = 0; tid < nthr; tid++) if (source     [tid] != nullptr) { delete source     [tid]; source     [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (crc        [tid] != nullptr) { delete crc        [tid]; crc        [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (encoder    [tid] != nullptr) { delete encoder    [tid]; encoder    [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (interleaver[tid] != nullptr) { delete interleaver[tid]; interleaver[tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (modulator  [tid] != nullptr) { delete modulator  [tid]; modulator  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (channel    [tid] != nullptr) { delete channel    [tid]; channel    [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (quantizer  [tid] != nullptr) { delete quantizer  [tid]; quantizer  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (coset_real [tid] != nullptr) { delete coset_real [tid]; coset_real [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++)
-		if (siso[tid] != nullptr)
-		{
-			// do not delete the siso if the decoder and the siso are the same pointers
-			if (decoder[tid] == nullptr || siso[tid] != dynamic_cast<SISO<Q>*>(decoder[tid]))
-				delete siso[tid];
-			siso[tid] = nullptr;
-		}
-	for (tid = 0; tid < nthr; tid++) if (decoder    [tid] != nullptr) { delete decoder    [tid]; decoder    [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (coset_bit  [tid] != nullptr) { delete coset_bit  [tid]; coset_bit  [tid] = nullptr; }
-	for (tid = 0; tid < nthr; tid++) if (monitor    [tid] != nullptr) { delete monitor    [tid]; monitor    [tid] = nullptr; }
-	
-	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_BFERI<B,R,Q>
-::launch_precompute()
-{
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_BFERI<B,R,Q>
-::snr_precompute()
-{
-}
-
-template <typename B, typename R, typename Q>
-Source<B>* Simulation_BFERI<B,R,Q>
-::build_source(const int tid)
-{
-	return Factory_source<B>::build(params, params.simulation.seed + tid);
-}
-
-template <typename B, typename R, typename Q>
-CRC<B>* Simulation_BFERI<B,R,Q>
-::build_crc(const int tid)
-{
-	return Factory_CRC<B>::build(params);
-}
-
-template <typename B, typename R, typename Q>
-Encoder<B>* Simulation_BFERI<B,R,Q>
-::build_encoder(const int tid)
-{
-	return Factory_encoder_common<B>::build(params, params.simulation.seed + tid);
-}
-
-template <typename B, typename R, typename Q>
-Interleaver<int>* Simulation_BFERI<B,R,Q>
-::build_interleaver(const int tid)
-{
-	return Factory_interleaver<int>::build(params, params.code.N + params.code.tail_length, params.simulation.seed);
-}
-
-template <typename B, typename R, typename Q>
-Modulator<B,R,Q>* Simulation_BFERI<B,R,Q>
-::build_modulator(const int tid)
-{
-	return Factory_modulator<B,R,Q>::build(params, sigma);
-}
-
-template <typename B, typename R, typename Q>
-Channel<R>* Simulation_BFERI<B,R,Q>
-::build_channel(const int size, const int tid)
-{
-	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed + tid);
-}
-
-template <typename B, typename R, typename Q>
-Quantizer<R,Q>* Simulation_BFERI<B,R,Q>
-::build_quantizer(const int size, const int tid)
-{
-	return Factory_quantizer<R,Q>::build(params, sigma, size);
-}
-
-template <typename B, typename R, typename Q>
-Coset<B,Q>* Simulation_BFERI<B,R,Q>
-::build_coset_real(const int tid)
-{
-	return Factory_coset_real<B,Q>::build(params);
-}
-
-template <typename B, typename R, typename Q>
-Coset<B,B>* Simulation_BFERI<B,R,Q>
-::build_coset_bit(const int tid)
-{
-	return Factory_coset_bit<B>::build(params);
-}
-
-template <typename B, typename R, typename Q>
-Monitor<B>* Simulation_BFERI<B,R,Q>
-::build_monitor(const int tid)
-{
-	return Factory_monitor<B>::build(params, n_frames);
-}
-
-// ------------------------------------------------------------------------------------------------- non-virtual method
-
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFERI<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(params, snr, monitor_red, t_snr, d_decod_total_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, d_decod_total_red);
 }
 
 // ==================================================================================== explicit template instantiation

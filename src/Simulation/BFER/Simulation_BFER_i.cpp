@@ -104,7 +104,7 @@ void Simulation_BFER_i<B,R,Q>
 	this->launch_precompute();
 
 	// for each SNR to be simulated
-	for (this->snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
+	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
 		t_snr = std::chrono::steady_clock::now();
 
