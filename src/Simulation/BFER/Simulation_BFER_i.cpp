@@ -236,3 +236,15 @@ Monitor<B>* Simulation_BFER_i<B,R,Q>
 {
 	return Factory_monitor<B>::build(params);
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Simulation_BFER_i<B_8,R_8,Q_8>;
+template class Simulation_BFER_i<B_16,R_16,Q_16>;
+template class Simulation_BFER_i<B_32,R_32,Q_32>;
+template class Simulation_BFER_i<B_64,R_64,Q_64>;
+#else
+template class Simulation_BFER_i<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

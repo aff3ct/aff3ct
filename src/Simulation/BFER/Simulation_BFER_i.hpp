@@ -79,6 +79,4 @@ protected:
 	virtual Monitor  <B    >* build_monitor   (                const int tid = 0);
 };
 
-#include "Simulation_BFER_i.hxx"
-
 #endif /* SIMULATION_BFER_I_HPP_ */

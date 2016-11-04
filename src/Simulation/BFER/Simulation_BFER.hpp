@@ -1,3 +1,4 @@
+
 #ifdef SYSTEMC
 #include "SC_Simulation_BFER.hpp"
 #else
@@ -120,8 +121,6 @@ private:
 
 	Terminal* build_terminal(const int tid = 0);
 };
-
-#include "Simulation_BFER.hxx"
 
 #endif /* SIMULATION_BFER_HPP_ */
 

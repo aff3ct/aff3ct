@@ -51,8 +51,6 @@ protected:
 	Terminal* build_terminal(const int tid = 0);
 };
 
-#include "SC_Simulation_BFER.hxx"
-
 #endif /* SIMULATION_SC_BFER_HPP_ */
 
 #endif /* SYSTEMC */

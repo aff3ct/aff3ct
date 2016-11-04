@@ -1,6 +1,8 @@
 #ifndef FACTORY_ENCODER_COMMON_HPP
 #define FACTORY_ENCODER_COMMON_HPP
 
+#include "Module/Encoder/Encoder.hpp"
+
 #include "Tools/params.h"
 
 #include "Factory.hpp"
