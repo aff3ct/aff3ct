@@ -158,6 +158,7 @@ void Generator_polar_SC_sys
 		graph_common1 << "\"" << patterns[p]->name() << "\" -> " << "\"" << patterns[p +1]->name() << "\";" << endl;
 	}
 
+	assert(n_nodes_after_compression != 0);
 	float compression_rate = (float)n_nodes_before_compression / (float)n_nodes_after_compression;
 	graph_common1 << tab << "}" << endl;
 	graph_common1 << tab << "subgraph cluster_1 {" << endl;
