@@ -28,7 +28,7 @@ void CRC_NO<B>
 
 template <typename B>
 bool CRC_NO<B>
-::check(const mipp::vector<B>& V_K)
+::check(const mipp::vector<B>& V_K, const int n_frames)
 { 
 	return false; 
 }

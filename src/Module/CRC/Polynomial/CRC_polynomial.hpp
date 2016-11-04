@@ -18,10 +18,10 @@ public:
 	CRC_polynomial(const int K, std::string poly_key, const int n_frames = 1, const std::string name = "CRC_polynomial");
 	virtual ~CRC_polynomial(){};
 
-	static  int  size (      std::string poly_key);
-	virtual int  size (                          ) const;
-	virtual void build(      mipp::vector<B>& U_K);
-	virtual bool check(const mipp::vector<B>& V_K);
+	static  int  size (      std::string poly_key                         );
+	virtual int  size (                                                   ) const;
+	virtual void build(      mipp::vector<B>& U_K                         );
+	virtual bool check(const mipp::vector<B>& V_K, const int n_frames = -1);
 
 protected:
 	void _generate(const mipp::vector<B>& U_in, 

@@ -61,7 +61,7 @@ void Decoder_turbo_naive_CA<B,R>
 			for (auto i = 0; i < this->K * n_frames; i++)
 				this->s[i] = (this->l_e2n[i] + this->l_sen[i]) < 0;
 
-			check_crc = crc.check(this->s);
+			check_crc = crc.check(this->s, this->get_simd_inter_frame_level());
 		}
 
 		if (!check_crc)

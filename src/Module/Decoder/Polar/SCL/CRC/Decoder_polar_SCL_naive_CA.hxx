@@ -23,7 +23,7 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 			if (!this->frozen_bits[leaf]) 
 				U_test.push_back(this->leaves_array[path][leaf]->get_c()->s[0]);
 
-		bool decode_result = crc.check(U_test);
+		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
 		if (!decode_result)
 			this->active_paths.erase(path);
 	}

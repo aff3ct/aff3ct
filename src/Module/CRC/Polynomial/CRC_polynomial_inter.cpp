@@ -15,8 +15,9 @@ CRC_polynomial_inter<B>
 
 template <typename B>
 bool CRC_polynomial_inter<B>
-::check(const mipp::vector<B>& V_K)
+::check(const mipp::vector<B>& V_K, const int n_frames)
 {
+	assert(n_frames == -1 || n_frames == this->n_frames);
 	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
 
 	auto real_frame_size = int(V_K.size() / this->n_frames);

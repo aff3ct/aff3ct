@@ -81,11 +81,11 @@ void CRC_polynomial<B>
 
 template <typename B>
 bool CRC_polynomial<B>
-::check(const mipp::vector<B>& V_K)
+::check(const mipp::vector<B>& V_K, const int n_frames)
 {
-	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
-
-	auto real_frame_size = (int)(V_K.size() / this->n_frames);
+	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+	assert(V_K.size() > (unsigned)(real_n_frames * this->size()));
+	auto real_frame_size = (int)(V_K.size() / real_n_frames);
 
 	auto i = 0;
 	auto f = 0;
@@ -106,9 +106,9 @@ bool CRC_polynomial<B>
 			i++;
 		f++;
 	}
-	while ((f < this->n_frames) && (i == this->size()));
+	while ((f < real_n_frames) && (i == this->size()));
 
-	return (f == this->n_frames) && (i == this->size());
+	return (f == real_n_frames) && (i == this->size());
 }
 
 // ==================================================================================== explicit template instantiation 

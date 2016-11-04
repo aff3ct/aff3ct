@@ -81,7 +81,7 @@ void Decoder_turbo_fast_CA<B,R>
 			for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
 				this->s[i] = (this->l_e2n[i] < 0);
 
-			check_crc = crc.check(this->s);
+			check_crc = crc.check(this->s, this->get_simd_inter_frame_level());
 		}
 
 		if (!check_crc)
