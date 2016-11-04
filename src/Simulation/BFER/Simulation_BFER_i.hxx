@@ -19,7 +19,6 @@
 #include "Tools/Factory/Coset/Factory_coset_real.hpp"
 #include "Tools/Factory/Coset/Factory_coset_bit.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
-#include "Tools/Factory/Factory_terminal.hpp"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
@@ -29,7 +28,7 @@ template <typename B, typename R, typename Q>
 Simulation_BFER_i<B,R,Q>
 ::Simulation_BFER_i(const parameters& params)
 : Simulation(),
-  
+
   params(params),
 
   barrier(params.simulation.n_threads),
@@ -83,19 +82,19 @@ void Simulation_BFER_i<B,R,Q>
 	simu->monitor   [tid] = simu->build_monitor   (        tid); check_errors(simu->monitor   [tid], "Monitor<B>"    );
 
 	// get the real number of frames per threads (from the decoder)
-	const auto n_fra = simu->decoder[tid]->get_n_frames();
+	const auto n_frames = simu->decoder[tid]->get_n_frames();
 
 	// set the real number of frames per thread
-	simu->source    [tid]->set_n_frames(n_fra);
-	simu->crc       [tid]->set_n_frames(n_fra);
-	simu->encoder   [tid]->set_n_frames(n_fra);
-	simu->puncturer [tid]->set_n_frames(n_fra);
-	simu->modulator [tid]->set_n_frames(n_fra);
-	simu->channel   [tid]->set_n_frames(n_fra);
-	simu->quantizer [tid]->set_n_frames(n_fra);
-	simu->coset_real[tid]->set_n_frames(n_fra);
-	simu->coset_bit [tid]->set_n_frames(n_fra);
-	simu->monitor   [tid]->set_n_frames(n_fra);
+	simu->source    [tid]->set_n_frames(n_frames);
+	simu->crc       [tid]->set_n_frames(n_frames);
+	simu->encoder   [tid]->set_n_frames(n_frames);
+	simu->puncturer [tid]->set_n_frames(n_frames);
+	simu->modulator [tid]->set_n_frames(n_frames);
+	simu->channel   [tid]->set_n_frames(n_frames);
+	simu->quantizer [tid]->set_n_frames(n_frames);
+	simu->coset_real[tid]->set_n_frames(n_frames);
+	simu->coset_bit [tid]->set_n_frames(n_frames);
+	simu->monitor   [tid]->set_n_frames(n_frames);
 }
 
 template <typename B, typename R, typename Q>
