@@ -13,6 +13,21 @@ set (LIBRARY_OUTPUT_PATH lib/)
 # Generate the source files list
 file (GLOB_RECURSE source_files src/*)
 
+# Command line options
+option (ENABLE_GSL     "Enable GSL support"     OFF)
+option (ENABLE_MKL     "Enable MKL support"     OFF)
+option (ENABLE_SYSTEMC "Enable SystemC support" OFF)
+option (ENABLE_STARPU  "Enable StarPU support"  OFF)
+
+# StarPU: set the link dir
+if (ENABLE_STARPU)
+    find_package (PkgConfig REQUIRED)
+    if (PKG_CONFIG_FOUND)
+        pkg_search_module(SPU REQUIRED starpu-1.2)
+        link_directories(${SPU_LIBRARY_DIRS})
+    endif (PKG_CONFIG_FOUND)
+endif (ENABLE_STARPU)
+
 # Add includes
 include_directories (src)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
@@ -31,11 +46,6 @@ add_library           (aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
 set_target_properties (aff3ct-shared-lib PROPERTIES OUTPUT_NAME aff3ct)
 add_library           (aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj>)
 set_target_properties (aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct)
-
-# Command line options
-option (ENABLE_GSL     "Enable GSL support"     OFF)
-option (ENABLE_MKL     "Enable MKL support"     OFF)
-option (ENABLE_SYSTEMC "Enable SystemC support" OFF)
 
 macro (aff3ct_link_libraries lib)
     target_link_libraries (aff3ct-bin ${lib})
@@ -80,6 +90,20 @@ if (ENABLE_SYSTEMC)
         include_directories (${TLM_INCLUDE_DIRS})
     endif (TLM_FOUND)
 endif (ENABLE_SYSTEMC)
+
+# StarPU
+if (ENABLE_STARPU)
+    add_definitions ("-DSTARPU")
+
+    find_package (PkgConfig REQUIRED)
+    if (PKG_CONFIG_FOUND)
+        pkg_search_module(SPU REQUIRED starpu-1.2)
+
+        include_directories (${SPU_INCLUDE_DIRS})
+        aff3ct_link_libraries ("${SPU_LIBRARIES}")
+
+    endif (PKG_CONFIG_FOUND)
+endif (ENABLE_STARPU)
 
 # Enable C++11 and pthread
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
