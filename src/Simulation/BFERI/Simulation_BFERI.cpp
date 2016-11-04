@@ -78,7 +78,6 @@ template <typename B, typename R, typename Q>
 Simulation_BFERI<B,R,Q>
 ::~Simulation_BFERI()
 {
-	release_objects();
 }
 
 template <typename B, typename R, typename Q>
