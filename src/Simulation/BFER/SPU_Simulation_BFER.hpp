@@ -1,11 +1,7 @@
-#ifdef SYSTEMC
-#include "SC_Simulation_BFER.hpp"
-#elif defined(STARPU)
-#include "SPU_Simulation_BFER.hpp"
-#else
+#ifdef STARPU
 
-#ifndef SIMULATION_BFER_HPP_
-#define SIMULATION_BFER_HPP_
+#ifndef SPU_SIMULATION_BFER_HPP_
+#define SPU_SIMULATION_BFER_HPP_
 
 #include <thread>
 #include <chrono>
@@ -123,6 +119,6 @@ private:
 	Terminal* build_terminal(const int tid = 0);
 };
 
-#endif /* SIMULATION_BFER_HPP_ */
+#endif /* SPU_SIMULATION_BFER_HPP_ */
 
-#endif /* SYSTEMC */
+#endif /* STARPU */

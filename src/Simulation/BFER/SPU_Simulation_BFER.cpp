@@ -1,4 +1,4 @@
-#if !defined(SYSTEMC) && !defined(STARPU)
+#ifdef STARPU
 
 #include <string>
 #include <vector>
@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+
+#include <starpu.h>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
@@ -72,6 +74,11 @@ Simulation_BFER<B,R,Q>
   d_cobit_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
+	auto ret = starpu_init(NULL);
+	if (ret == -ENODEV)
+		std::exit(77);
+	STARPU_CHECK_RETURN_VALUE(ret, "starpu_init");
+
 	if (params.simulation.n_threads > 1 && params.simulation.debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
@@ -82,6 +89,7 @@ template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
 ::~Simulation_BFER()
 {
+	starpu_shutdown();
 }
 
 template <typename B, typename R, typename Q>
@@ -956,4 +964,4 @@ template class Simulation_BFER<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
 
-#endif /* NOT SYSTEMC NOT STARPU */
+#endif /* STARPU */
