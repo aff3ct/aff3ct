@@ -114,8 +114,6 @@ protected:
 	        Terminal*         build_terminal   (                const int tid = 0);
 };
 
-#include "SC_Simulation_BFERI.hxx"
-
 #endif /* SC_SIMULATION_BFERI_HPP_ */
 
 #endif /* SYSTEMC */

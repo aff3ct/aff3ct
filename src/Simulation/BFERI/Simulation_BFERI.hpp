@@ -1,3 +1,4 @@
+
 #ifdef SYSTEMC
 #include "SC_Simulation_BFERI.hpp"
 #else
@@ -162,8 +163,6 @@ protected:
 	virtual Monitor<B>*       build_monitor    (                const int tid = 0);
 	        Terminal*         build_terminal   (                const int tid = 0);
 };
-
-#include "Simulation_BFERI.hxx"
 
 #endif /* SIMULATION_BFERI_HPP_ */
 

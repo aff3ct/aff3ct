@@ -464,3 +464,15 @@ Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
 {
 	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class Simulation_EXIT<B_8,R_8,Q_8>;
+template class Simulation_EXIT<B_16,R_16,Q_16>;
+template class Simulation_EXIT<B_32,R_32,Q_32>;
+template class Simulation_EXIT<B_64,R_64,Q_64>;
+#else
+template class Simulation_EXIT<B,R,Q>;
+#endif
+// ==================================================================================== explicit template instantiation
