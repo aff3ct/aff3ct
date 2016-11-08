@@ -18,7 +18,6 @@ private:
 	mipp::vector<D> in_data;
 	mipp::vector<D> out_data;
 
-public:
 	static starpu_codelet spu_cl_apply;
 
 public:
@@ -32,6 +31,25 @@ public:
 		if ((int)ref     .size() != this->size * this->n_frames) ref     .resize(this->size * this->n_frames);
 		if ((int)in_data .size() != this->size * this->n_frames) in_data .resize(this->size * this->n_frames);
 		if ((int)out_data.size() != this->size * this->n_frames) out_data.resize(this->size * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_apply(SPU_Coset<B,D> *coset, starpu_data_handle_t & in_data1,
+	                                                                 starpu_data_handle_t & in_data2,
+	                                                                 starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Coset<B,D>::spu_cl_apply;
+		task->cl_arg      = (void*)(coset);
+		task->cl_arg_size = sizeof(*coset);
+		task->handles[0]  = in_data1;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = in_data2;
+		task->modes  [1]  = STARPU_R;
+		task->handles[2]  = out_data;
+		task->modes  [2]  = STARPU_W;
+
+		return task;
 	}
 
 private:
@@ -60,8 +78,8 @@ private:
 		assert(STARPU_VECTOR_GET_NX(buffers[2]) == coset->out_data.size());
 
 		const B* buff_in1 = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		const D* buff_in2 = (const B*)STARPU_VECTOR_GET_PTR(buffers[1]);
-		      D* buff_out = (      B*)STARPU_VECTOR_GET_PTR(buffers[2]);
+		const D* buff_in2 = (const D*)STARPU_VECTOR_GET_PTR(buffers[1]);
+		      D* buff_out = (      D*)STARPU_VECTOR_GET_PTR(buffers[2]);
 
 		std::copy(buff_in1, buff_in1 + coset->ref    .size(), coset->ref    .begin());
 		std::copy(buff_in2, buff_in2 + coset->in_data.size(), coset->in_data.begin());

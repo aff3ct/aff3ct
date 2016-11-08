@@ -19,7 +19,6 @@ private:
 	mipp::vector<int      > natural_vec_4, interleaved_vec_4;
 	mipp::vector<long long> natural_vec_8, interleaved_vec_8;
 
-public:
 	static starpu_codelet spu_cl_interleave;
 	static starpu_codelet spu_cl_deinterleave;
 
@@ -40,6 +39,38 @@ public:
 		if ((int)interleaved_vec_2.size() != size * this->n_frames) interleaved_vec_2.resize(size * this->n_frames);
 		if ((int)interleaved_vec_4.size() != size * this->n_frames) interleaved_vec_4.resize(size * this->n_frames);
 		if ((int)interleaved_vec_8.size() != size * this->n_frames) interleaved_vec_8.resize(size * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_interleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t & in_data,
+	                                                                                starpu_data_handle_t &out_data)
+	{
+		auto *task = starpu_task_create();
+
+		task->cl          = &SPU_Interleaver<T>::spu_cl_interleave;
+		task->cl_arg      = (void*)(interleaver);
+		task->cl_arg_size = sizeof(*interleaver);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_deinterleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t & in_data,
+	                                                                                  starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Interleaver<T>::spu_cl_deinterleave;
+		task->cl_arg      = (void*)(interleaver);
+		task->cl_arg_size = sizeof(*interleaver);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
 	}
 
 private:

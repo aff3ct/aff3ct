@@ -16,7 +16,6 @@ class SPU_CRC : public CRC_i<B>
 private:
 	mipp::vector<B> U_K;
 
-public:
 	static starpu_codelet spu_cl_build;
 
 public:
@@ -28,6 +27,19 @@ public:
 	void spu_init()
 	{
 		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_build(SPU_CRC<B> *crc, starpu_data_handle_t &in_out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_CRC<B>::spu_cl_build;
+		task->cl_arg      = (void*)(crc);
+		task->cl_arg_size = sizeof(*crc);
+		task->handles[0]  = in_out_data;
+		task->modes  [0]  = STARPU_RW;
+
+		return task;
 	}
 
 private:

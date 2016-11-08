@@ -18,7 +18,6 @@ private:
 	mipp::vector<R> X_N2, H_N, Y_N1f, Y_N2f;
 	mipp::vector<Q> Y_N1, Y_N2, Y_N3;
 
-public:
 	static starpu_codelet spu_cl_modulate;
 	static starpu_codelet spu_cl_filter;
 	static starpu_codelet spu_cl_demodulate;
@@ -49,6 +48,114 @@ public:
 		if ((int)Y_N2 .size() != this->N     * this->n_frames) Y_N2 .resize(this->N     * this->n_frames);
 		if ((int)Y_N3 .size() != this->N     * this->n_frames) Y_N3 .resize(this->N     * this->n_frames);
 		if ((int)H_N  .size() != this->N_fil * this->n_frames) H_N  .resize(this->N_fil * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_modulate(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data,
+	                                                                              starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_modulate;
+		task->cl_arg      = (void*)(modulator);
+		task->cl_arg_size = sizeof(*modulator);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_filter(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data,
+	                                                                            starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_filter;
+		task->cl_arg      = (void*)(modulator);
+		task->cl_arg_size = sizeof(*modulator);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_demodulate(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data,
+	                                                                                starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_demodulate;
+		task->cl_arg      = (void*)(modulator);
+		task->cl_arg_size = sizeof(*modulator);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_demodulate_wg(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data1,
+	                                                                                   starpu_data_handle_t & in_data2,
+	                                                                                   starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_demodulate_wg;
+		task->cl_arg      = (void*)(modulator);
+		task->cl_arg_size = sizeof(*modulator);
+		task->handles[0]  = in_data1;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = in_data2;
+		task->modes  [1]  = STARPU_R;
+		task->handles[2]  = out_data;
+		task->modes  [2]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_tdemodulate(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data1,
+	                                                                                 starpu_data_handle_t & in_data2,
+	                                                                                 starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_tdemodulate;
+		task->cl_arg      = (void*)(modulator);
+		task->cl_arg_size = sizeof(*modulator);
+		task->handles[0]  = in_data1;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = in_data2;
+		task->modes  [1]  = STARPU_R;
+		task->handles[2]  = out_data;
+		task->modes  [2]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_tdemodulate_wg(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data1,
+	                                                                                    starpu_data_handle_t & in_data2,
+	                                                                                    starpu_data_handle_t & in_data3,
+	                                                                                    starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_tdemodulate_wg;
+		task->cl_arg      = (void*)(modulator);
+		task->cl_arg_size = sizeof(*modulator);
+		task->handles[0]  = in_data1;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = in_data2;
+		task->modes  [1]  = STARPU_R;
+		task->handles[2]  = in_data3;
+		task->modes  [2]  = STARPU_R;
+		task->handles[3]  = out_data;
+		task->modes  [3]  = STARPU_W;
+
+		return task;
 	}
 
 private:

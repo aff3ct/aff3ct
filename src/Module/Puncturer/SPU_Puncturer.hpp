@@ -17,7 +17,6 @@ private:
 	mipp::vector<B> X_N1, X_N2;
 	mipp::vector<Q> Y_N1, Y_N2;
 
-public:
 	static starpu_codelet spu_cl_puncture;
 	static starpu_codelet spu_cl_depuncture;
 
@@ -34,6 +33,38 @@ public:
 		if ((int)X_N2.size() != this->N      * this->n_frames) X_N2.resize(this->N      * this->n_frames);
 		if ((int)Y_N1.size() != this->N      * this->n_frames) Y_N1.resize(this->N      * this->n_frames);
 		if ((int)Y_N2.size() != this->N_code * this->n_frames) Y_N2.resize(this->N_code * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_puncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t & in_data,
+	                                                                            starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Puncturer<B,Q>::spu_cl_puncture;
+		task->cl_arg      = (void*)(puncturer);
+		task->cl_arg_size = sizeof(*puncturer);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_depuncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t & in_data,
+	                                                                              starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Puncturer<B,Q>::spu_cl_depuncture;
+		task->cl_arg      = (void*)(puncturer);
+		task->cl_arg_size = sizeof(*puncturer);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
 	}
 
 private:

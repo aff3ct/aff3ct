@@ -16,7 +16,6 @@ class SPU_Channel : public Channel_i<R>
 private:
 	mipp::vector<R> X_N, Y_N, H_N;
 
-public:
 	static starpu_codelet spu_cl_add_noise;
 	static starpu_codelet spu_cl_add_noise_wg;
 
@@ -33,6 +32,41 @@ public:
 		if ((int)X_N.size() != this->N * this->n_frames) X_N.resize(this->N * this->n_frames);
 		if ((int)Y_N.size() != this->N * this->n_frames) Y_N.resize(this->N * this->n_frames);
 		if ((int)H_N.size() != this->N * this->n_frames) H_N.resize(this->N * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_add_noise(SPU_Channel<R> *channel, starpu_data_handle_t & in_data,
+	                                                                       starpu_data_handle_t &out_data)
+	{
+		auto *task = starpu_task_create();
+
+		task->cl          = &SPU_Channel<R>::spu_cl_add_noise;
+		task->cl_arg      = (void*)(channel);
+		task->cl_arg_size = sizeof(*channel);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
+	}
+
+	static inline starpu_task* spu_task_add_noise_wg(SPU_Channel<R> *channel, starpu_data_handle_t & in_data,
+	                                                                          starpu_data_handle_t &out_data1,
+	                                                                          starpu_data_handle_t &out_data2)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Channel<R>::spu_cl_add_noise_wg;
+		task->cl_arg      = (void*)(channel);
+		task->cl_arg_size = sizeof(*channel);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data1;
+		task->modes  [1]  = STARPU_W;
+		task->handles[2]  = out_data2;
+		task->modes  [2]  = STARPU_W;
+
+		return task;
 	}
 
 private:

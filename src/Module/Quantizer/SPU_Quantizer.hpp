@@ -17,7 +17,6 @@ private:
 	mipp::vector<R> Y_N1;
 	mipp::vector<Q> Y_N2;
 
-public:
 	static starpu_codelet spu_cl_process;
 
 public:
@@ -30,6 +29,22 @@ public:
 	{
 		if ((int)Y_N1.size() != this->N * this->n_frames) Y_N1.resize(this->N * this->n_frames);
 		if ((int)Y_N2.size() != this->N * this->n_frames) Y_N2.resize(this->N * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_process(SPU_Quantizer<R,Q> *quantizer, starpu_data_handle_t & in_data,
+	                                                                           starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Quantizer<R,Q>::spu_cl_process;
+		task->cl_arg      = (void*)(quantizer);
+		task->cl_arg_size = sizeof(*quantizer);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
 	}
 
 private:

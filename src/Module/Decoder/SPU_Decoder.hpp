@@ -17,7 +17,6 @@ private:
 	mipp::vector<R> Y_N;
 	mipp::vector<B> V_K;
 
-public:
 	static starpu_codelet spu_cl_hard_decode;
 
 public:
@@ -31,6 +30,22 @@ public:
 	{
 		if ((int)Y_N.size() != this->N * this->n_frames) Y_N.resize(this->N * this->n_frames);
 		if ((int)V_K.size() != this->K * this->n_frames) V_K.resize(this->K * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_hard_decode(SPU_Decoder<B,R> *decoder, starpu_data_handle_t & in_data,
+	                                                                           starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Decoder<B,R>::spu_cl_hard_decode;
+		task->cl_arg      = (void*)(decoder);
+		task->cl_arg_size = sizeof(*decoder);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
 	}
 
 private:

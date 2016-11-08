@@ -16,7 +16,6 @@ class SPU_Monitor : public Monitor_i<B>
 private:
 	mipp::vector<B> U_K, V_K;
 
-public:
 	static starpu_codelet spu_cl_check_errors;
 
 public:
@@ -29,6 +28,22 @@ public:
 	{
 		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
 		if ((int)V_K.size() != this->K * this->n_frames) V_K.resize(this->K * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_check_errors(SPU_Monitor<B> *monitor, starpu_data_handle_t &in_data1,
+	                                                                          starpu_data_handle_t &in_data2)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Monitor<B>::spu_cl_check_errors;
+		task->cl_arg      = (void*)(monitor);
+		task->cl_arg_size = sizeof(*monitor);
+		task->handles[0]  = in_data1;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = in_data2;
+		task->modes  [1]  = STARPU_R;
+
+		return task;
 	}
 
 private:

@@ -63,11 +63,13 @@ protected:
 	virtual void release_objects ();
 
 private:
-	void build_communication_chain(const int tid = 0);
-	void allocate_data            (const int tid = 0);
-	void Monte_Carlo_method       (const int tid = 0);
-	void simulation_loop          (const int tid = 0);
-	void spu_create_tasks         (const int tid = 0);
+	void Monte_Carlo_method       ();
+
+	static void build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	static void allocate_data            (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	       void spu_create_tasks         (                              const int tid = 0);
+
+	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 
 	Terminal* build_terminal(const int tid = 0);
 };

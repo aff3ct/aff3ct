@@ -16,7 +16,6 @@ class SPU_SISO : public SISO_i<R>
 private:
 	mipp::vector<R> Y_N1, Y_N2;
 
-public:
 	static starpu_codelet spu_cl_soft_decode;
 
 public:
@@ -30,6 +29,22 @@ public:
 	{
 		if ((int)Y_N1.size() != this->N_siso * this->n_frames) Y_N1.resize(this->N_siso * this->n_frames);
 		if ((int)Y_N2.size() != this->N_siso * this->n_frames) Y_N2.resize(this->N_siso * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_soft_decode(SPU_SISO<R> *siso, starpu_data_handle_t & in_data,
+	                                                                   starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_SISO<R>::spu_cl_soft_decode;
+		task->cl_arg      = (void*)(siso);
+		task->cl_arg_size = sizeof(*siso);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
 	}
 
 private:

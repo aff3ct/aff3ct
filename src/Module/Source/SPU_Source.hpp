@@ -16,7 +16,6 @@ class SPU_Source : public Source_i<B>
 private:
 	mipp::vector<B> U_K;
 
-public:
 	static starpu_codelet spu_cl_generate;
 
 public:
@@ -28,6 +27,19 @@ public:
 	void spu_init()
 	{
 		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_generate(SPU_Source<B> *source, starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Source<B>::spu_cl_generate;
+		task->cl_arg      = (void*)(source);
+		task->cl_arg_size = sizeof(*source);
+		task->handles[0]  = out_data;
+		task->modes  [0]  = STARPU_W;
+
+		return task;
 	}
 
 private:

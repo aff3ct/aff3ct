@@ -17,7 +17,6 @@ private:
 	mipp::vector<B> U_K;
 	mipp::vector<B> X_N;
 
-public:
 	static starpu_codelet spu_cl_encode;
 
 public:
@@ -30,6 +29,22 @@ public:
 	{
 		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
 		if ((int)X_N.size() != this->N * this->n_frames) X_N.resize(this->N * this->n_frames);
+	}
+
+	static inline starpu_task* spu_task_encode(SPU_Encoder<B> *encoder, starpu_data_handle_t & in_data,
+	                                                                    starpu_data_handle_t &out_data)
+	{
+		auto task = starpu_task_create();
+
+		task->cl          = &SPU_Encoder<B>::spu_cl_encode;
+		task->cl_arg      = (void*)(encoder);
+		task->cl_arg_size = sizeof(*encoder);
+		task->handles[0]  = in_data;
+		task->modes  [0]  = STARPU_R;
+		task->handles[1]  = out_data;
+		task->modes  [1]  = STARPU_W;
+
+		return task;
 	}
 
 private:
