@@ -109,8 +109,7 @@ public:
 template <typename B, typename D>
 using Coset = SC_Coset<B,D>;
 #else
-template <typename B, typename D>
-using Coset = Coset_i<B,D>;
+#include "SPU_Coset.hpp"
 #endif
 
 #endif /* SC_COSET_HPP_ */

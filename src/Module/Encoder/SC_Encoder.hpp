@@ -95,8 +95,7 @@ public:
 template <typename B>
 using Encoder = SC_Encoder<B>;
 #else
-template <typename B>
-using Encoder = Encoder_i<B>;
+#include "SPU_Encoder.hpp"
 #endif
 
 #endif /* SC_ENCODER_HPP_ */

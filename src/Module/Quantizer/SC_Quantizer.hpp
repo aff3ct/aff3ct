@@ -95,8 +95,7 @@ public:
 template <typename R, typename Q>
 using Quantizer = SC_Quantizer<R,Q>;
 #else
-template <typename R, typename Q>
-using Quantizer = Quantizer_i<R,Q>;
+#include "SPU_Quantizer.hpp"
 #endif
 
 #endif /* SC_QUANTIZER_HPP_ */

@@ -87,8 +87,7 @@ public:
 template <typename R>
 using SISO = SC_SISO<R>;
 #else
-template <typename R>
-using SISO = SISO_i<R>;
+#include "SPU_SISO.hpp"
 #endif
 
 #endif /* SC_SISO_HPP_ */

@@ -7,6 +7,8 @@
 #include <chrono>
 #include <vector>
 
+#include <starpu.h>
+
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 #include "Tools/Display/Terminal/Terminal.hpp"
@@ -19,9 +21,6 @@ template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
 protected:
-	// array of threads
-	std::vector<std::thread> threads;
-
 	// data vector
 	std::vector<mipp::vector<B>> U_K;  // information bit vector
 	std::vector<mipp::vector<B>> X_N1; // encoded codeword
@@ -34,7 +33,19 @@ protected:
 	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
 	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
 	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
-	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
+
+	// starpu vector handlers
+	std::vector<starpu_data_handle_t> spu_U_K;
+	std::vector<starpu_data_handle_t> spu_X_N1;
+	std::vector<starpu_data_handle_t> spu_X_N2;
+	std::vector<starpu_data_handle_t> spu_X_N3;
+	std::vector<starpu_data_handle_t> spu_H_N;
+	std::vector<starpu_data_handle_t> spu_Y_N1;
+	std::vector<starpu_data_handle_t> spu_Y_N2;
+	std::vector<starpu_data_handle_t> spu_Y_N3;
+	std::vector<starpu_data_handle_t> spu_Y_N4;
+	std::vector<starpu_data_handle_t> spu_Y_N5;
+	std::vector<starpu_data_handle_t> spu_V_K;
 
 	// objects
 	Monitor_reduction<B> *monitor_red;
@@ -52,9 +63,11 @@ protected:
 	virtual void release_objects ();
 
 private:
-	static void build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid = 0);
-	static void Monte_Carlo_method       (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
-	static void simulation_loop          (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
+	void build_communication_chain(const int tid = 0);
+	void allocate_data            (const int tid = 0);
+	void Monte_Carlo_method       (const int tid = 0);
+	void simulation_loop          (const int tid = 0);
+	void spu_create_tasks         (const int tid = 0);
 
 	Terminal* build_terminal(const int tid = 0);
 };

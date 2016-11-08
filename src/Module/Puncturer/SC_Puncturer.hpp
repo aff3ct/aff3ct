@@ -159,8 +159,7 @@ public:
 template <typename B, typename Q>
 using Puncturer = SC_Puncturer<B,Q>;
 #else
-template <typename B, typename Q>
-using Puncturer = Puncturer_i<B,Q>;
+#include "SPU_Puncturer.hpp"
 #endif
 
 #endif /* SC_PUNCTURER_HPP_ */

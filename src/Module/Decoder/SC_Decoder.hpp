@@ -88,8 +88,7 @@ public:
 template <typename B, typename R>
 using Decoder = SC_Decoder<B,R>;
 #else
-template <typename B, typename R>
-using Decoder = Decoder_i<B,R>;
+#include "SPU_Decoder.hpp"
 #endif
 
 #endif /* DECODER_HPP_ */

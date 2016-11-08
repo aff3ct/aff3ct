@@ -167,8 +167,7 @@ public:
 template <typename R>
 using Channel = SC_Channel<R>;
 #else
-template <typename R>
-using Channel = Channel_i<R>;
+#include "SPU_Channel.hpp"
 #endif
 
 #endif /* SC_CHANNELS_HPP_ */

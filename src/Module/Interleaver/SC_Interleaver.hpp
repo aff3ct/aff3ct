@@ -223,16 +223,12 @@ public:
 		const std::string new_name = this->name + "_deinter";
 		this->module_deinter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
 	}
-
-protected:
-	virtual void gen_lookup_tables() = 0;
 };
 
 template <typename T>
 using Interleaver = SC_Interleaver<T>;
 #else
-template <typename T>
-using Interleaver = Interleaver_i<T>;
+#include "SPU_Interleaver.hpp"
 #endif
 
 #endif /* SC_INTERLEAVER_HPP_ */

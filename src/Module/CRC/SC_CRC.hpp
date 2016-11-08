@@ -92,8 +92,7 @@ public:
 template <typename B>
 using CRC = SC_CRC<B>;
 #else
-template <typename B>
-using CRC = CRC_i<B>;
+#include "SPU_CRC.hpp"
 #endif
 
 #endif /* SC_CRC_HPP_ */

@@ -479,8 +479,7 @@ public:
 template <typename B, typename R, typename Q>
 using Modulator = SC_Modulator<B,R,Q>;
 #else
-template <typename B, typename R, typename Q>
-using Modulator = Modulator_i<B,R,Q>;
+#include "SPU_Modulator.hpp"
 #endif
 
 #endif /* SC_MODULATOR_HPP_ */

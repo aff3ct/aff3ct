@@ -91,8 +91,7 @@ public:
 template <typename B>
 using Source = SC_Source<B>;
 #else
-template <typename B>
-using Source = Source_i<B>;
+#include "SPU_Source.hpp"
 #endif
 
 #endif /* SC_SOURCE_HPP_ */

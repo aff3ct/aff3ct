@@ -101,8 +101,7 @@ public:
 template <typename B>
 using Monitor = SC_Monitor<B>;
 #else
-template <typename B>
-using Monitor = Monitor_i<B>;
+#include "SPU_Monitor.hpp"
 #endif
 
 #endif /* SC_MONITOR_HPP_ */
