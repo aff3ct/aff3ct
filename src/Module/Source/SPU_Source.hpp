@@ -37,7 +37,6 @@ public:
 		task->cl_arg      = (void*)(source);
 		task->cl_arg_size = sizeof(*source);
 		task->handles[0]  = out_data;
-		task->modes  [0]  = STARPU_W;
 
 		return task;
 	}
@@ -64,8 +63,6 @@ private:
 		assert(STARPU_VECTOR_GET_NX(buffers[0]) == source->U_K.size());
 
 		B* buff_in_out = (B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-
-		std::copy(buff_in_out, buff_in_out + source->U_K.size(), source->U_K.begin());
 		source->generate(source->U_K);
 		std::copy(source->U_K.begin(), source->U_K.end(), buff_in_out);
 	}

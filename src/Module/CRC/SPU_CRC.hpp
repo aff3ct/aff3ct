@@ -37,7 +37,6 @@ public:
 		task->cl_arg      = (void*)(crc);
 		task->cl_arg_size = sizeof(*crc);
 		task->handles[0]  = in_out_data;
-		task->modes  [0]  = STARPU_RW;
 
 		return task;
 	}

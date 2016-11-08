@@ -59,9 +59,7 @@ public:
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}
@@ -75,9 +73,7 @@ public:
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}
@@ -91,9 +87,7 @@ public:
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}
@@ -108,11 +102,8 @@ public:
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data1;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = in_data2;
-		task->modes  [1]  = STARPU_R;
 		task->handles[2]  = out_data;
-		task->modes  [2]  = STARPU_W;
 
 		return task;
 	}
@@ -127,11 +118,8 @@ public:
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data1;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = in_data2;
-		task->modes  [1]  = STARPU_R;
 		task->handles[2]  = out_data;
-		task->modes  [2]  = STARPU_W;
 
 		return task;
 	}
@@ -147,13 +135,9 @@ public:
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data1;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = in_data2;
-		task->modes  [1]  = STARPU_R;
 		task->handles[2]  = in_data3;
-		task->modes  [2]  = STARPU_R;
 		task->handles[3]  = out_data;
-		task->modes  [3]  = STARPU_W;
 
 		return task;
 	}

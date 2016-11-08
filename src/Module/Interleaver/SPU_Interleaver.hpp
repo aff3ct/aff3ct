@@ -50,9 +50,7 @@ public:
 		task->cl_arg      = (void*)(interleaver);
 		task->cl_arg_size = sizeof(*interleaver);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}
@@ -66,9 +64,7 @@ public:
 		task->cl_arg      = (void*)(interleaver);
 		task->cl_arg_size = sizeof(*interleaver);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}

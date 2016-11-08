@@ -43,11 +43,8 @@ public:
 		task->cl_arg      = (void*)(coset);
 		task->cl_arg_size = sizeof(*coset);
 		task->handles[0]  = in_data1;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = in_data2;
-		task->modes  [1]  = STARPU_R;
 		task->handles[2]  = out_data;
-		task->modes  [2]  = STARPU_W;
 
 		return task;
 	}

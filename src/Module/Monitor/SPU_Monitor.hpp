@@ -39,9 +39,7 @@ public:
 		task->cl_arg      = (void*)(monitor);
 		task->cl_arg_size = sizeof(*monitor);
 		task->handles[0]  = in_data1;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = in_data2;
-		task->modes  [1]  = STARPU_R;
 
 		return task;
 	}
@@ -56,7 +54,7 @@ private:
 		cl.cpu_funcs_name[0] = "Monitor::check_errors";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
-		cl.modes         [1] = STARPU_W;
+		cl.modes         [1] = STARPU_R;
 
 		return cl;
 	}

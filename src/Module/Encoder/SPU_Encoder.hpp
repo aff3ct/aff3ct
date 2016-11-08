@@ -40,9 +40,7 @@ public:
 		task->cl_arg      = (void*)(encoder);
 		task->cl_arg_size = sizeof(*encoder);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}

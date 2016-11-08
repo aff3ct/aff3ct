@@ -43,9 +43,7 @@ public:
 		task->cl_arg      = (void*)(channel);
 		task->cl_arg_size = sizeof(*channel);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data;
-		task->modes  [1]  = STARPU_W;
 
 		return task;
 	}
@@ -60,11 +58,8 @@ public:
 		task->cl_arg      = (void*)(channel);
 		task->cl_arg_size = sizeof(*channel);
 		task->handles[0]  = in_data;
-		task->modes  [0]  = STARPU_R;
 		task->handles[1]  = out_data1;
-		task->modes  [1]  = STARPU_W;
 		task->handles[2]  = out_data2;
-		task->modes  [2]  = STARPU_W;
 
 		return task;
 	}
