@@ -5,17 +5,8 @@ Monitor_reduction<B>
 ::Monitor_reduction(const int& K, const int& N, const int& max_fe,
                     std::vector<Monitor<B>*>& error_analyzers, const int& n_frames,
                     const std::string name)
-: Monitor_std<B>(K, N, max_fe, n_frames, name),
-  error_analyzers(error_analyzers),
-  prev_n_be(error_analyzers.size()),
-  prev_n_fe(error_analyzers.size()),
-  prev_n_analyzed_frames(error_analyzers.size())
+: Monitor_std<B>(K, N, max_fe, n_frames, name), error_analyzers(error_analyzers)
 {
-	std::fill(prev_n_be             .begin(), prev_n_be             .end(), 0);
-	std::fill(prev_n_fe             .begin(), prev_n_fe             .end(), 0);
-	std::fill(prev_n_analyzed_frames.begin(), prev_n_analyzed_frames.end(), 0);
-
-	this->reduce();
 }
 
 template <typename B>
@@ -25,36 +16,36 @@ Monitor_reduction<B>
 }
 
 template <typename B>
-void Monitor_reduction<B>
-::reduce()
+unsigned long long Monitor_reduction<B>
+::get_n_analyzed_fra() const
 {
+	unsigned long long cur_fra = 0;
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
-	{
-		if (error_analyzers[i]->get_n_analyzed_fra())
-		{
-			auto cur_n_be              = error_analyzers[i]->get_n_be();
-			auto cur_n_fe              = error_analyzers[i]->get_n_fe();
-			auto cur_n_analyzed_frames = error_analyzers[i]->get_n_analyzed_fra();
-			
-			this->n_bit_errors      += cur_n_be              - prev_n_be[i];
-			// this is made in "increment_frame_errors" subroutine
-			// this->n_frame_errors    += cur_n_fe              - prev_n_fe[i];
-			this->n_analyzed_frames += cur_n_analyzed_frames - prev_n_analyzed_frames[i];
+		cur_fra += error_analyzers[i]->get_n_analyzed_fra();
 
-			prev_n_be             [i] = cur_n_be;
-			prev_n_fe             [i] = cur_n_fe;
-			prev_n_analyzed_frames[i] = cur_n_analyzed_frames;
-		}
-	}
+	return cur_fra;
 }
 
 template <typename B>
-void Monitor_reduction<B>
-::increment_frame_errors(const int n_frames)
+int Monitor_reduction<B>
+::get_n_fe() const
 {
-	this->mutex_total_frame_errors.lock();
-	this->n_frame_errors += n_frames;
-	this->mutex_total_frame_errors.unlock();
+	auto cur_fe = 0;
+	for (unsigned i = 0; i < error_analyzers.size(); i++)
+		cur_fe += error_analyzers[i]->get_n_fe();
+
+	return cur_fe;
+}
+
+template <typename B>
+int Monitor_reduction<B>
+::get_n_be() const
+{
+	auto cur_be = 0;
+	for (unsigned i = 0; i < error_analyzers.size(); i++)
+		cur_be += error_analyzers[i]->get_n_be();
+
+	return cur_be;
 }
 
 // ==================================================================================== explicit template instantiation 

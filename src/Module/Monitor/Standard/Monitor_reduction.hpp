@@ -2,7 +2,6 @@
 #define MONITOR_REDUCTION_HPP_
 
 #include <vector>
-#include <mutex>
 
 #include "Monitor_std.hpp"
 
@@ -11,11 +10,6 @@ class Monitor_reduction : public Monitor_std<B>
 {
 private:
 	std::vector<Monitor<B>*>& error_analyzers;
-	std::vector<int> prev_n_be;
-	std::vector<int> prev_n_fe;
-	std::vector<unsigned long long> prev_n_analyzed_frames;
-
-	std::mutex mutex_total_frame_errors;
 
 public:
 	Monitor_reduction(const int& K, const int& N, const int& max_fe,
@@ -23,8 +17,9 @@ public:
 	                  const std::string name = "Monitor_reduction");
 	virtual ~Monitor_reduction();
 
-	void reduce();
-	void increment_frame_errors(const int n_frames);
+	unsigned long long get_n_analyzed_fra() const;
+	int get_n_fe() const;
+	int get_n_be() const;
 };
 
 #endif /* MONITOR_REDUCTION_HPP_ */

@@ -11,8 +11,7 @@ Monitor_std<B>
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
-  n_analyzed_frames(0),
-  last_frame_error(false)
+  n_analyzed_frames(0)
 {
 	assert(n_frames > 0);
 }
@@ -35,7 +34,6 @@ template <typename B>
 void Monitor_std<B>
 ::check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
 {
-	last_frame_error = false;
 	assert(U.size() == V.size());
 	auto n = (int)U.size() / this->n_frames;
 
@@ -44,8 +42,6 @@ void Monitor_std<B>
 		auto bit_errors_count = 0;
 		for (auto j = 0; j < n; j++)
 			bit_errors_count += U[i * n + j] != V[i * n + j];
-
-		last_frame_error = bit_errors_count != 0;
 
 		if (bit_errors_count)
 		{

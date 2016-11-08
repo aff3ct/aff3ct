@@ -101,7 +101,6 @@ void Simulation_BFER<B,R,Q>
 
 	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
 	{
-		monitor_red->reduce();
 		time_reduction(true);
 		terminal->final_report(std::cout);
 	}
@@ -224,8 +223,6 @@ void Simulation_BFER<B,R,Q>
 	if (tid == 0)
 		simu->t_simu = steady_clock::now();
 
-	int prev_n_fe = 0;
-
 	// simulation loop
 	while ((!simu->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
 	        (simu->params.simulation.stop_time == seconds(0) ||
@@ -340,13 +337,6 @@ void Simulation_BFER<B,R,Q>
 		simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
-		// update the total number of frame errors if needed
-		if (simu->monitor[tid]->get_n_fe() > prev_n_fe)
-		{
-			simu->monitor_red->increment_frame_errors(simu->monitor[tid]->get_n_fe() - prev_n_fe);
-			prev_n_fe = simu->monitor[tid]->get_n_fe();
-		}
-
 		// increment total durations for each operations
 		simu->d_sourc_total[tid] += d_sourc;
 		simu->d_crc_total  [tid] += d_crc;
@@ -373,7 +363,6 @@ void Simulation_BFER<B,R,Q>
 		if (tid == 0 && !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
 		    (steady_clock::now() - simu->t_simu) >= simu->params.terminal.frequency)
 		{
-			simu->monitor_red->reduce();
 			simu->time_reduction();
 			simu->terminal->temp_report(std::clog);
 			simu->t_simu = steady_clock::now();
