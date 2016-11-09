@@ -7,7 +7,7 @@ Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int N, const int n_frames, const std::string name)
 : Decoder<B,R>(K, N, n_frames, 1, name          ),
   SISO   <  R>(K, N, n_frames, 1, name + "_siso"),
-  Y_N(N * n_frames)
+  Y_N(N)
 {
 }
 
