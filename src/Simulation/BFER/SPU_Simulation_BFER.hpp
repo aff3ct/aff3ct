@@ -59,19 +59,19 @@ public:
 	virtual ~Simulation_BFER();
 
 protected:
-	        void _launch         ();
-	virtual void release_objects ();
+	        void _launch        ();
+	virtual void release_objects();
 
 private:
-	void Monte_Carlo_method       ();
+	void Monte_Carlo_method();
 
 	static void build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void allocate_data            (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
-	       void spu_create_tasks         (                              const int tid = 0);
+	inline void seq_tasks_submission     (                              const int tid = 0);
 
 	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 
-	Terminal* build_terminal(const int tid = 0);
+	Terminal* build_terminal();
 };
 
 #endif /* SPU_SIMULATION_BFER_HPP_ */

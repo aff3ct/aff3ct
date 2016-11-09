@@ -120,7 +120,7 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
-	Terminal* build_terminal(const int tid = 0);
+	Terminal* build_terminal();
 };
 
 #endif /* SIMULATION_BFER_HPP_ */

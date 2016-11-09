@@ -17,6 +17,11 @@ Launcher_BFER<B,R,Q>
 	this->params.simulation .debug_limit       = 0;
 	this->params.simulation .time_report       = false;
 	this->params.simulation .trace_path        = "";
+#ifdef STARPU
+	this->params.simulation .n_conc_tasks      = 1;
+#else
+	this->params.simulation .n_conc_tasks      = 0;
+#endif
 	this->params.code       .coset             = false;
 	this->params.encoder    .type              = "";
 	this->params.encoder    .path              = "";
@@ -52,6 +57,11 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
+#ifdef STARPU
+	this->opt_args[{"sim-conc-tasks", "t"}] =
+		{"positive_int",
+		 "set the task concurrency level (default is 1, no concurrency)."};
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	this->opt_args[{"cde-coset", "c"}] =
@@ -86,8 +96,11 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path        = this->ar.get_arg    ({"sim-trace-path" });
-	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs            = this->ar.get_arg_int({"sim-benchs", "b"});
+	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path        = this->ar.get_arg    ({"sim-trace-path"     });
+	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs            = this->ar.get_arg_int({"sim-benchs",     "b"});
+#ifdef STARPU
+	if(this->ar.exist_arg({"sim-conc-tasks",     "t"})) this->params.simulation.n_conc_tasks      = this->ar.get_arg_int({"sim-conc-tasks", "t"});
+#endif
 	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.benchs_no_ldst    = true;
 	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report       = true;
 	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug             = true;
@@ -96,6 +109,7 @@ void Launcher_BFER<B,R,Q>
 		this->params.simulation.debug = true;
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
+
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
@@ -129,7 +143,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 
 	auto p = Launcher<B,R,Q>::header_simulation();
 
+#ifdef STARPU
+	p.push_back(std::make_pair("Task concurrency level (t)", std::to_string(this->params.simulation.n_conc_tasks)));
+#else
 	p.push_back(std::make_pair("Multi-threading (t)", threads));
+#endif
 
 	return p;
 }

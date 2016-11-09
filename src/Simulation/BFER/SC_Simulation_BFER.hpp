@@ -48,7 +48,7 @@ private:
 
 	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 
-	Terminal* build_terminal(const int tid = 0);
+	Terminal* build_terminal();
 };
 
 #endif /* SIMULATION_SC_BFER_HPP_ */

@@ -339,7 +339,7 @@ void Simulation_BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
-::build_terminal(const int tid)
+::build_terminal()
 {
 	return Factory_terminal<B,R>::build(this->params, this->snr, this->monitor[0], this->t_snr, d_decod_total_fake);
 }

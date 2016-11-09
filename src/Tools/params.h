@@ -26,6 +26,7 @@ struct simulation_parameters
 	int                  n_threads;
 	int                  inter_frame_level;
 	int                  seed;
+	int                  n_conc_tasks;
 };
 
 struct code_parameters

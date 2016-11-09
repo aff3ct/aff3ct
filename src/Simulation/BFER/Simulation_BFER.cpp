@@ -164,7 +164,7 @@ void Simulation_BFER<B,R,Q>
 		                                             simu->monitor,
 		                                             n_fra);
 		// build the terminal to display the BER/FER
-		simu->terminal = simu->build_terminal(tid);
+		simu->terminal = simu->build_terminal();
 		Simulation::check_errors(simu->terminal, "Terminal");
 	}
 }
@@ -928,7 +928,7 @@ void Simulation_BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
-::build_terminal(const int tid)
+::build_terminal()
 {
 	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, d_decod_all_red);
 }

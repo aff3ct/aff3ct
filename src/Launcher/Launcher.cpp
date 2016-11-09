@@ -82,9 +82,11 @@ void Launcher<B,R,Q>
 	opt_args[{"sim-stop-time"}] =
 		{"positive_int",
 		 "time in sec after what the current SNR iteration should stop."};
+#ifndef STARPU
 	opt_args[{"sim-threads", "t"}] =
 		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
+#endif
 	opt_args[{"sim-domain"}] =
 		{"string",
 		 "choose the domain in which you want to compute.",
@@ -223,11 +225,13 @@ void Launcher<B,R,Q>
 
 	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
 	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",  "t"});
 	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"       });
 	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
-	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time         = seconds(ar.get_arg_int({"sim-stop-time"}));
+	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
 	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
+#ifndef STARPU
+	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",  "t"});
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
