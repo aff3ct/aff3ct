@@ -14,10 +14,6 @@ template <typename B, typename R, typename Q>
 class SPU_Modulator : public Modulator_i<B,R,Q>
 {
 private:
-	mipp::vector<B> X_N1;
-	mipp::vector<R> X_N2, H_N, Y_N1f, Y_N2f;
-	mipp::vector<Q> Y_N1, Y_N2, Y_N3;
-
 	static starpu_codelet spu_cl_modulate;
 	static starpu_codelet spu_cl_filter;
 	static starpu_codelet spu_cl_demodulate;
@@ -37,18 +33,6 @@ public:
 	: Modulator_i<B,R,Q>(N, n_frames, name) {}
 
 	virtual ~SPU_Modulator() {}
-
-	void spu_init()
-	{
-		if ((int)X_N1 .size() != this->N     * this->n_frames) X_N1 .resize(this->N     * this->n_frames);
-		if ((int)X_N2 .size() != this->N_mod * this->n_frames) X_N2 .resize(this->N_mod * this->n_frames);
-		if ((int)Y_N1f.size() != this->N_mod * this->n_frames) Y_N1f.resize(this->N_mod * this->n_frames);
-		if ((int)Y_N2f.size() != this->N_fil * this->n_frames) Y_N2f.resize(this->N_fil * this->n_frames);
-		if ((int)Y_N1 .size() != this->N_fil * this->n_frames) Y_N1 .resize(this->N_fil * this->n_frames);
-		if ((int)Y_N2 .size() != this->N     * this->n_frames) Y_N2 .resize(this->N     * this->n_frames);
-		if ((int)Y_N3 .size() != this->N     * this->n_frames) Y_N3 .resize(this->N     * this->n_frames);
-		if ((int)H_N  .size() != this->N_fil * this->n_frames) H_N  .resize(this->N_fil * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_modulate(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t & in_data,
 	                                                                              starpu_data_handle_t &out_data)
@@ -234,68 +218,42 @@ private:
 	static void spu_kernel_modulate(void *buffers[], void *cl_arg)
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
-		modulator->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == modulator->X_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == modulator->X_N2.size());
+		auto X_N1 = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto X_N2 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const B* buff_in  = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      R* buff_out = (      R*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + modulator->X_N1.size(), modulator->X_N1.begin());
-		modulator->modulate(modulator->X_N1, modulator->X_N2);
-		std::copy(modulator->X_N2.begin(), modulator->X_N2.end(), buff_out);
+		modulator->modulate(*X_N1, *X_N2);
 	}
 
 	static void spu_kernel_filter(void *buffers[], void *cl_arg)
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
-		modulator->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == modulator->Y_N1f.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == modulator->Y_N2f.size());
+		auto Y_N1 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto Y_N2 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const R* buff_in  = (const R*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      R* buff_out = (      R*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + modulator->Y_N1f.size(), modulator->Y_N1f.begin());
-		modulator->filter(modulator->Y_N1f, modulator->Y_N2f);
-		std::copy(modulator->Y_N2f.begin(), modulator->Y_N2f.end(), buff_out);
+		modulator->filter(*Y_N1, *Y_N2);
 	}
 
 	static void spu_kernel_demodulate(void *buffers[], void *cl_arg)
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
-		modulator->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == modulator->Y_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == modulator->Y_N2.size());
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const Q* buff_in  = (const Q*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      Q* buff_out = (      Q*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + modulator->Y_N1.size(), modulator->Y_N1.begin());
-		modulator->demodulate(modulator->Y_N1, modulator->Y_N2);
-		std::copy(modulator->Y_N2.begin(), modulator->Y_N2.end(), buff_out);
+		modulator->demodulate(*Y_N1, *Y_N2);
 	}
 
 	static void spu_kernel_demodulate_wg(void *buffers[], void *cl_arg)
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
-		modulator->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == modulator->Y_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == modulator->H_N .size());
-		assert(STARPU_VECTOR_GET_NX(buffers[2]) == modulator->Y_N2.size());
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		mipp::vector<R>* H_N  = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
 
-		const Q* buff_in1 = (const Q*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		const R* buff_in2 = (const R*)STARPU_VECTOR_GET_PTR(buffers[1]);
-		      Q* buff_out = (      Q*)STARPU_VECTOR_GET_PTR(buffers[2]);
-
-		std::copy(buff_in1, buff_in1 + modulator->Y_N1.size(), modulator->Y_N1.begin());
-		std::copy(buff_in2, buff_in2 + modulator->H_N .size(), modulator->H_N .begin());
-		modulator->demodulate_with_gains(modulator->Y_N1, modulator->H_N, modulator->Y_N2);
-		std::copy(modulator->Y_N2.begin(), modulator->Y_N2.end(), buff_out);
+		modulator->demodulate_with_gains(*Y_N1, *H_N, *Y_N2);
 	}
 
 	static void spu_kernel_tdemodulate(void *buffers[], void *cl_arg)
@@ -303,18 +261,11 @@ private:
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
 		modulator->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == modulator->Y_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == modulator->Y_N2.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[2]) == modulator->Y_N3.size());
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		mipp::vector<Q>* Y_N3 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
 
-		const Q* buff_in1 = (const Q*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		const Q* buff_in2 = (const Q*)STARPU_VECTOR_GET_PTR(buffers[1]);
-		      Q* buff_out = (      Q*)STARPU_VECTOR_GET_PTR(buffers[2]);
-
-		std::copy(buff_in1, buff_in1 + modulator->Y_N1.size(), modulator->Y_N1.begin());
-		std::copy(buff_in2, buff_in2 + modulator->Y_N2.size(), modulator->Y_N2.begin());
-		modulator->tdemodulate(modulator->Y_N1, modulator->Y_N2, modulator->Y_N3);
-		std::copy(modulator->Y_N3.begin(), modulator->Y_N3.end(), buff_out);
+		modulator->tdemodulate(*Y_N1, *Y_N2, *Y_N3);
 	}
 
 	static void spu_kernel_tdemodulate_wg(void *buffers[], void *cl_arg)
@@ -327,16 +278,12 @@ private:
 		assert(STARPU_VECTOR_GET_NX(buffers[2]) == modulator->Y_N2.size());
 		assert(STARPU_VECTOR_GET_NX(buffers[3]) == modulator->Y_N3.size());
 
-		const Q* buff_in1 = (const Q*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		const R* buff_in2 = (const R*)STARPU_VECTOR_GET_PTR(buffers[1]);
-		const Q* buff_in3 = (const Q*)STARPU_VECTOR_GET_PTR(buffers[2]);
-		      Q* buff_out = (      Q*)STARPU_VECTOR_GET_PTR(buffers[3]);
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		mipp::vector<R>* H_N  = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
+		mipp::vector<Q>* Y_N3 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[3]));
 
-		std::copy(buff_in1, buff_in1 + modulator->Y_N1.size(), modulator->Y_N1.begin());
-		std::copy(buff_in2, buff_in2 + modulator->H_N .size(), modulator->H_N .begin());
-		std::copy(buff_in3, buff_in3 + modulator->Y_N2.size(), modulator->Y_N2.begin());
-		modulator->tdemodulate_with_gains(modulator->Y_N1, modulator->H_N, modulator->Y_N2, modulator->Y_N3);
-		std::copy(modulator->Y_N3.begin(), modulator->Y_N3.end(), buff_out);
+		modulator->tdemodulate_with_gains(*Y_N1, *H_N, *Y_N2, *Y_N3);
 	}
 };
 

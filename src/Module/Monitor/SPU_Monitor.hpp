@@ -14,8 +14,6 @@ template <typename B>
 class SPU_Monitor : public Monitor_i<B>
 {
 private:
-	mipp::vector<B> U_K, V_K;
-
 	static starpu_codelet spu_cl_check_errors;
 
 public:
@@ -23,12 +21,6 @@ public:
 	: Monitor_i<B>(K, N, n_frames, name) {}
 
 	virtual ~SPU_Monitor() {}
-
-	void spu_init()
-	{
-		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
-		if ((int)V_K.size() != this->K * this->n_frames) V_K.resize(this->K * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_check_errors(SPU_Monitor<B> *monitor, starpu_data_handle_t &in_data1,
 	                                                                          starpu_data_handle_t &in_data2)
@@ -62,17 +54,11 @@ private:
 	static void spu_kernel_check_errors(void *buffers[], void *cl_arg)
 	{
 		auto monitor = static_cast<SPU_Monitor<B>*>(cl_arg);
-		monitor->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == monitor->U_K.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == monitor->V_K.size());
+		auto U_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto V_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const B* buff_in1 = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		const B* buff_in2 = (      B*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in1, buff_in1 + monitor->U_K.size(), monitor->U_K.begin());
-		std::copy(buff_in2, buff_in2 + monitor->V_K.size(), monitor->V_K.begin());
-		monitor->check_errors(monitor->U_K, monitor->V_K);
+		monitor->check_errors(*U_K, *V_K);
 	}
 };
 

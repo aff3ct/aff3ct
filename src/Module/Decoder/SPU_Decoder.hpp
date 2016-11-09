@@ -14,9 +14,6 @@ template <typename B, typename R>
 class SPU_Decoder : public Decoder_i<B,R>
 {
 private:
-	mipp::vector<R> Y_N;
-	mipp::vector<B> V_K;
-
 	static starpu_codelet spu_cl_hard_decode;
 
 public:
@@ -25,12 +22,6 @@ public:
 	: Decoder_i<B,R>(K, N, n_frames, simd_inter_frame_level, name) {}
 
 	virtual ~SPU_Decoder() {}
-
-	void spu_init()
-	{
-		if ((int)Y_N.size() != this->N * this->n_frames) Y_N.resize(this->N * this->n_frames);
-		if ((int)V_K.size() != this->K * this->n_frames) V_K.resize(this->K * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_hard_decode(SPU_Decoder<B,R> *decoder, starpu_data_handle_t & in_data,
 	                                                                           starpu_data_handle_t &out_data)
@@ -64,17 +55,11 @@ private:
 	static void spu_kernel_hard_decode(void *buffers[], void *cl_arg)
 	{
 		auto decoder = static_cast<SPU_Decoder<B,R>*>(cl_arg);
-		decoder->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == decoder->Y_N.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == decoder->V_K.size());
+		auto Y_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto V_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const R* buff_in  = (const R*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      B* buff_out = (      B*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + decoder->Y_N.size(), decoder->Y_N.begin());
-		decoder->hard_decode(decoder->Y_N, decoder->V_K);
-		std::copy(decoder->V_K.begin(), decoder->V_K.end(), buff_out);
+		decoder->hard_decode(*Y_N, *V_K);
 	}
 };
 

@@ -14,9 +14,6 @@ template <typename B, typename Q>
 class SPU_Puncturer : public Puncturer_i<B,Q>
 {
 private:
-	mipp::vector<B> X_N1, X_N2;
-	mipp::vector<Q> Y_N1, Y_N2;
-
 	static starpu_codelet spu_cl_puncture;
 	static starpu_codelet spu_cl_depuncture;
 
@@ -26,14 +23,6 @@ public:
 	: Puncturer_i<B,Q>(K, N, N_code, n_frames, name) {}
 
 	virtual ~SPU_Puncturer() {}
-
-	void spu_init()
-	{
-		if ((int)X_N1.size() != this->N_code * this->n_frames) X_N1.resize(this->N_code * this->n_frames);
-		if ((int)X_N2.size() != this->N      * this->n_frames) X_N2.resize(this->N      * this->n_frames);
-		if ((int)Y_N1.size() != this->N      * this->n_frames) Y_N1.resize(this->N      * this->n_frames);
-		if ((int)Y_N2.size() != this->N_code * this->n_frames) Y_N2.resize(this->N_code * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_puncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t & in_data,
 	                                                                            starpu_data_handle_t &out_data)
@@ -95,33 +84,21 @@ private:
 	static void spu_kernel_puncture(void *buffers[], void *cl_arg)
 	{
 		auto puncturer = static_cast<SPU_Puncturer<B,Q>*>(cl_arg);
-		puncturer->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == puncturer->X_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == puncturer->X_N2.size());
+		auto X_N1 = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto X_N2 = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const B* buff_in  = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      B* buff_out = (      B*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + puncturer->X_N1.size(), puncturer->X_N1.begin());
-		puncturer->puncture(puncturer->X_N1, puncturer->X_N2);
-		std::copy(puncturer->X_N2.begin(), puncturer->X_N2.end(), buff_out);
+		puncturer->puncture(*X_N1, *X_N2);
 	}
 
 	static void spu_kernel_depuncture(void *buffers[], void *cl_arg)
 	{
 		auto puncturer = static_cast<SPU_Puncturer<B,Q>*>(cl_arg);
-		puncturer->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == puncturer->Y_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == puncturer->Y_N2.size());
+		auto Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const B* buff_in  = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      B* buff_out = (      B*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + puncturer->Y_N1.size(), puncturer->Y_N1.begin());
-		puncturer->depuncture(puncturer->Y_N1, puncturer->Y_N2);
-		std::copy(puncturer->Y_N2.begin(), puncturer->Y_N2.end(), buff_out);
+		puncturer->depuncture(*Y_N1, *Y_N2);
 	}
 };
 

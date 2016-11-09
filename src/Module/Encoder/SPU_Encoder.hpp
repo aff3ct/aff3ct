@@ -14,9 +14,6 @@ template <typename B>
 class SPU_Encoder : public Encoder_i<B>
 {
 private:
-	mipp::vector<B> U_K;
-	mipp::vector<B> X_N;
-
 	static starpu_codelet spu_cl_encode;
 
 public:
@@ -24,12 +21,6 @@ public:
 	: Encoder_i<B>(K, N, n_frames, name) {}
 
 	virtual ~SPU_Encoder() {}
-
-	void spu_init()
-	{
-		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
-		if ((int)X_N.size() != this->N * this->n_frames) X_N.resize(this->N * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_encode(SPU_Encoder<B> *encoder, starpu_data_handle_t & in_data,
 	                                                                    starpu_data_handle_t &out_data)
@@ -63,17 +54,11 @@ private:
 	static void spu_kernel_encode(void *buffers[], void *cl_arg)
 	{
 		auto encoder = static_cast<SPU_Encoder<B>*>(cl_arg);
-		encoder->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == encoder->U_K.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == encoder->X_N.size());
+		auto U_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto X_N = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const B* buff_in  = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      B* buff_out = (      B*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + encoder->U_K.size(), encoder->U_K.begin());
-		encoder->encode(encoder->U_K, encoder->X_N);
-		std::copy(encoder->X_N.begin(), encoder->X_N.end(), buff_out);
+		encoder->encode(*U_K, *X_N);
 	}
 };
 

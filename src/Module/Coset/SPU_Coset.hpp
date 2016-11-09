@@ -14,10 +14,6 @@ template <typename B, typename D>
 class SPU_Coset : public Coset_i<B,D>
 {
 private:
-	mipp::vector<B> ref;
-	mipp::vector<D> in_data;
-	mipp::vector<D> out_data;
-
 	static starpu_codelet spu_cl_apply;
 
 public:
@@ -25,13 +21,6 @@ public:
 	: Coset_i<B,D>(size, n_frames, name) {}
 
 	virtual ~SPU_Coset() {}
-
-	void spu_init()
-	{
-		if ((int)ref     .size() != this->size * this->n_frames) ref     .resize(this->size * this->n_frames);
-		if ((int)in_data .size() != this->size * this->n_frames) in_data .resize(this->size * this->n_frames);
-		if ((int)out_data.size() != this->size * this->n_frames) out_data.resize(this->size * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_apply(SPU_Coset<B,D> *coset, starpu_data_handle_t & in_data1,
 	                                                                 starpu_data_handle_t & in_data2,
@@ -68,20 +57,12 @@ private:
 	static void spu_kernel_apply(void *buffers[], void *cl_arg)
 	{
 		auto coset = static_cast<SPU_Coset<B,D>*>(cl_arg);
-		coset->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == coset->ref     .size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == coset->in_data .size());
-		assert(STARPU_VECTOR_GET_NX(buffers[2]) == coset->out_data.size());
+		auto ref      = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto in_data  = static_cast<mipp::vector<D>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto out_data = static_cast<mipp::vector<D>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
 
-		const B* buff_in1 = (const B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		const D* buff_in2 = (const D*)STARPU_VECTOR_GET_PTR(buffers[1]);
-		      D* buff_out = (      D*)STARPU_VECTOR_GET_PTR(buffers[2]);
-
-		std::copy(buff_in1, buff_in1 + coset->ref    .size(), coset->ref    .begin());
-		std::copy(buff_in2, buff_in2 + coset->in_data.size(), coset->in_data.begin());
-		coset->apply(coset->ref, coset->in_data, coset->out_data);
-		std::copy(coset->out_data.begin(), coset->out_data.end(), buff_out);
+		coset->apply(*ref, *in_data, *out_data);
 	}
 };
 

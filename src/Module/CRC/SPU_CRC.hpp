@@ -14,8 +14,6 @@ template <typename B>
 class SPU_CRC : public CRC_i<B>
 {
 private:
-	mipp::vector<B> U_K;
-
 	static starpu_codelet spu_cl_build;
 
 public:
@@ -23,11 +21,6 @@ public:
 	: CRC_i<B>(K, n_frames, name) {}
 
 	virtual ~SPU_CRC() {}
-
-	void spu_init()
-	{
-		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_build(SPU_CRC<B> *crc, starpu_data_handle_t &in_out_data)
 	{
@@ -58,15 +51,10 @@ private:
 	static void spu_kernel_build(void *buffers[], void *cl_arg)
 	{
 		auto crc = static_cast<SPU_CRC<B>*>(cl_arg);
-		crc->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == crc->U_K.size());
+		auto U_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
 
-		B* buff_in_out = (B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-
-		std::copy(buff_in_out, buff_in_out + crc->U_K.size(), crc->U_K.begin());
-		crc->build(crc->U_K);
-		std::copy(crc->U_K.begin(), crc->U_K.end(), buff_in_out);
+		crc->build(*U_K);
 	}
 };
 

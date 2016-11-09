@@ -14,8 +14,6 @@ template <typename B>
 class SPU_Source : public Source_i<B>
 {
 private:
-	mipp::vector<B> U_K;
-
 	static starpu_codelet spu_cl_generate;
 
 public:
@@ -23,11 +21,6 @@ public:
 	: Source_i<B>(K, n_frames, name) {}
 
 	virtual ~SPU_Source() {}
-
-	void spu_init()
-	{
-		if ((int)U_K.size() != this->K * this->n_frames) U_K.resize(this->K * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_generate(SPU_Source<B> *source, starpu_data_handle_t &out_data)
 	{
@@ -58,13 +51,10 @@ private:
 	static void spu_kernel_generate(void *buffers[], void *cl_arg)
 	{
 		auto source = static_cast<SPU_Source<B>*>(cl_arg);
-		source->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == source->U_K.size());
+		auto U_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
 
-		B* buff_in_out = (B*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		source->generate(source->U_K);
-		std::copy(source->U_K.begin(), source->U_K.end(), buff_in_out);
+		source->generate(*U_K);
 	}
 };
 

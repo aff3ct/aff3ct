@@ -14,8 +14,6 @@ template <typename R>
 class SPU_Channel : public Channel_i<R>
 {
 private:
-	mipp::vector<R> X_N, Y_N, H_N;
-
 	static starpu_codelet spu_cl_add_noise;
 	static starpu_codelet spu_cl_add_noise_wg;
 
@@ -26,13 +24,6 @@ public:
 	virtual ~SPU_Channel()
 	{
 	};
-
-	void spu_init()
-	{
-		if ((int)X_N.size() != this->N * this->n_frames) X_N.resize(this->N * this->n_frames);
-		if ((int)Y_N.size() != this->N * this->n_frames) Y_N.resize(this->N * this->n_frames);
-		if ((int)H_N.size() != this->N * this->n_frames) H_N.resize(this->N * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_add_noise(SPU_Channel<R> *channel, starpu_data_handle_t & in_data,
 	                                                                       starpu_data_handle_t &out_data)
@@ -97,36 +88,22 @@ private:
 	static void spu_kernel_add_noise(void *buffers[], void *cl_arg)
 	{
 		auto channel = static_cast<SPU_Channel<R>*>(cl_arg);
-		channel->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == channel->X_N.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == channel->Y_N.size());
+		auto X_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto Y_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
 
-		const R* buff_in  = (const R*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      R* buff_out = (      R*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-		std::copy(buff_in, buff_in + channel->X_N.size(), channel->X_N.begin());
-		channel->add_noise(channel->X_N, channel->Y_N, channel->H_N);
-		std::copy(channel->Y_N.begin(), channel->Y_N.end(), buff_out);
+		channel->add_noise(*X_N, *Y_N);
 	}
 
 	static void spu_kernel_add_noise_wg(void *buffers[], void *cl_arg)
 	{
 		auto channel = static_cast<SPU_Channel<R>*>(cl_arg);
-		channel->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == channel->X_N.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == channel->Y_N.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[2]) == channel->H_N.size());
+		auto X_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto Y_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto H_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
 
-		const R* buff_in   = (const R*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      R* buff_out1 = (      R*)STARPU_VECTOR_GET_PTR(buffers[1]);
-		      R* buff_out2 = (      R*)STARPU_VECTOR_GET_PTR(buffers[2]);
-
-		std::copy(buff_in, buff_in + channel->X_N.size(), channel->X_N.begin());
-		channel->add_noise(channel->X_N, channel->Y_N, channel->H_N);
-		std::copy(channel->Y_N.begin(), channel->Y_N.end(), buff_out1);
-		std::copy(channel->H_N.begin(), channel->H_N.end(), buff_out2);
+		channel->add_noise(*X_N, *Y_N, *H_N);
 	}
 };
 
