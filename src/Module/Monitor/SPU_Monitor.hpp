@@ -55,8 +55,13 @@ private:
 	{
 		auto monitor = static_cast<SPU_Monitor<B>*>(cl_arg);
 
-		auto U_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto V_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto U_K = static_cast<mipp::vector<B>*>(udata0);
+		auto V_K = static_cast<mipp::vector<B>*>(udata1);
 
 		monitor->check_errors(*U_K, *V_K);
 	}

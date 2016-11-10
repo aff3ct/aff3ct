@@ -219,8 +219,13 @@ private:
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
 
-		auto X_N1 = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto X_N2 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto X_N1 = static_cast<mipp::vector<B>*>(udata0);
+		auto X_N2 = static_cast<mipp::vector<R>*>(udata1);
 
 		modulator->modulate(*X_N1, *X_N2);
 	}
@@ -229,8 +234,13 @@ private:
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
 
-		auto Y_N1 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto Y_N2 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto Y_N1 = static_cast<mipp::vector<R>*>(udata0);
+		auto Y_N2 = static_cast<mipp::vector<R>*>(udata1);
 
 		modulator->filter(*Y_N1, *Y_N2);
 	}
@@ -239,8 +249,13 @@ private:
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
 
-		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>(udata0);
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>(udata1);
 
 		modulator->demodulate(*Y_N1, *Y_N2);
 	}
@@ -249,9 +264,15 @@ private:
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
 
-		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		mipp::vector<R>* H_N  = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
-		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+		auto udata2 = starpu_data_get_user_data(task->handles[2]); assert(udata2);
+
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>(udata0);
+		mipp::vector<R>* H_N  = static_cast<mipp::vector<R>*>(udata1);
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>(udata2);
 
 		modulator->demodulate_with_gains(*Y_N1, *H_N, *Y_N2);
 	}
@@ -259,11 +280,16 @@ private:
 	static void spu_kernel_tdemodulate(void *buffers[], void *cl_arg)
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
-		modulator->spu_init();
 
-		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
-		mipp::vector<Q>* Y_N3 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+		auto udata2 = starpu_data_get_user_data(task->handles[2]); assert(udata2);
+
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>(udata0);
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>(udata1);
+		mipp::vector<Q>* Y_N3 = static_cast<mipp::vector<Q>*>(udata2);
 
 		modulator->tdemodulate(*Y_N1, *Y_N2, *Y_N3);
 	}
@@ -271,17 +297,18 @@ private:
 	static void spu_kernel_tdemodulate_wg(void *buffers[], void *cl_arg)
 	{
 		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
-		modulator->spu_init();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == modulator->Y_N1.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == modulator->H_N .size());
-		assert(STARPU_VECTOR_GET_NX(buffers[2]) == modulator->Y_N2.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[3]) == modulator->Y_N3.size());
+		auto task = starpu_task_get_current();
 
-		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		mipp::vector<R>* H_N  = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
-		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
-		mipp::vector<Q>* Y_N3 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[3]));
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+		auto udata2 = starpu_data_get_user_data(task->handles[2]); assert(udata2);
+		auto udata3 = starpu_data_get_user_data(task->handles[3]); assert(udata3);
+
+		mipp::vector<Q>* Y_N1 = static_cast<mipp::vector<Q>*>(udata0);
+		mipp::vector<R>* H_N  = static_cast<mipp::vector<R>*>(udata1);
+		mipp::vector<Q>* Y_N2 = static_cast<mipp::vector<Q>*>(udata2);
+		mipp::vector<Q>* Y_N3 = static_cast<mipp::vector<Q>*>(udata3);
 
 		modulator->tdemodulate_with_gains(*Y_N1, *H_N, *Y_N2, *Y_N3);
 	}

@@ -58,9 +58,15 @@ private:
 	{
 		auto coset = static_cast<SPU_Coset<B,D>*>(cl_arg);
 
-		auto ref      = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto in_data  = static_cast<mipp::vector<D>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
-		auto out_data = static_cast<mipp::vector<D>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+		auto udata2 = starpu_data_get_user_data(task->handles[2]); assert(udata2);
+
+		auto ref      = static_cast<mipp::vector<B>*>(udata0);
+		auto in_data  = static_cast<mipp::vector<D>*>(udata1);
+		auto out_data = static_cast<mipp::vector<D>*>(udata2);
 
 		coset->apply(*ref, *in_data, *out_data);
 	}

@@ -85,8 +85,13 @@ private:
 	{
 		auto puncturer = static_cast<SPU_Puncturer<B,Q>*>(cl_arg);
 
-		auto X_N1 = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto X_N2 = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto X_N1 = static_cast<mipp::vector<B>*>(udata0);
+		auto X_N2 = static_cast<mipp::vector<B>*>(udata1);
 
 		puncturer->puncture(*X_N1, *X_N2);
 	}
@@ -95,8 +100,13 @@ private:
 	{
 		auto puncturer = static_cast<SPU_Puncturer<B,Q>*>(cl_arg);
 
-		auto Y_N1 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto Y_N1 = static_cast<mipp::vector<Q>*>(udata0);
+		auto Y_N2 = static_cast<mipp::vector<Q>*>(udata1);
 
 		puncturer->depuncture(*Y_N1, *Y_N2);
 	}

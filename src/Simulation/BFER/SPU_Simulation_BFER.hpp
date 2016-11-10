@@ -20,6 +20,10 @@
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
+private:
+	std::mutex mutex_terminal;
+	std::condition_variable cond_terminal;
+
 protected:
 	// data vector
 	std::vector<mipp::vector<B>> U_K;  // information bit vector

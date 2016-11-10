@@ -77,8 +77,6 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
-	Simulation_BFER_i<B,R,Q>::release_objects();
-
 	// this condition avoids the double unregistering...
 	if (monitor_red != nullptr)
 		// StarPU does not need to manipulate the arrays anymore so we can stop monitoring them
@@ -99,6 +97,8 @@ void Simulation_BFER<B,R,Q>
 
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
 	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+
+	Simulation_BFER_i<B,R,Q>::release_objects();
 }
 
 template <typename B, typename R, typename Q>
@@ -165,17 +165,29 @@ void Simulation_BFER<B,R,Q>
 	//  - the third argument is the adress of the vector in RAM
 	//  - the fourth argument is the number of elements in the vector
 	//  - the fifth argument is the size of each element.
-	starpu_vector_data_register(&simu->spu_U_K [tid], STARPU_MAIN_RAM, (uintptr_t)&simu->U_K [tid], 1, sizeof(simu->U_K [tid]));
-	starpu_vector_data_register(&simu->spu_X_N1[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->X_N1[tid], 1, sizeof(simu->X_N1[tid]));
-	starpu_vector_data_register(&simu->spu_X_N2[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->X_N2[tid], 1, sizeof(simu->X_N2[tid]));
-	starpu_vector_data_register(&simu->spu_X_N3[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->X_N3[tid], 1, sizeof(simu->X_N3[tid]));
-	starpu_vector_data_register(&simu->spu_Y_N1[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->Y_N1[tid], 1, sizeof(simu->Y_N1[tid]));
-	starpu_vector_data_register(&simu->spu_H_N [tid], STARPU_MAIN_RAM, (uintptr_t)&simu->H_N [tid], 1, sizeof(simu->H_N [tid]));
-	starpu_vector_data_register(&simu->spu_Y_N2[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->Y_N2[tid], 1, sizeof(simu->Y_N2[tid]));
-	starpu_vector_data_register(&simu->spu_Y_N3[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->Y_N3[tid], 1, sizeof(simu->Y_N3[tid]));
-	starpu_vector_data_register(&simu->spu_Y_N4[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->Y_N4[tid], 1, sizeof(simu->Y_N4[tid]));
-	starpu_vector_data_register(&simu->spu_Y_N5[tid], STARPU_MAIN_RAM, (uintptr_t)&simu->Y_N5[tid], 1, sizeof(simu->Y_N5[tid]));
-	starpu_vector_data_register(&simu->spu_V_K [tid], STARPU_MAIN_RAM, (uintptr_t)&simu->V_K [tid], 1, sizeof(simu->V_K [tid]));
+	starpu_vector_data_register(&simu->spu_U_K [tid], STARPU_MAIN_RAM, (uintptr_t)simu->U_K [tid].data(), simu->U_K [tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_X_N1[tid], STARPU_MAIN_RAM, (uintptr_t)simu->X_N1[tid].data(), simu->X_N1[tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_X_N2[tid], STARPU_MAIN_RAM, (uintptr_t)simu->X_N2[tid].data(), simu->X_N2[tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_X_N3[tid], STARPU_MAIN_RAM, (uintptr_t)simu->X_N3[tid].data(), simu->X_N3[tid].size(), sizeof(R));
+	starpu_vector_data_register(&simu->spu_Y_N1[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N1[tid].data(), simu->Y_N1[tid].size(), sizeof(R));
+	starpu_vector_data_register(&simu->spu_H_N [tid], STARPU_MAIN_RAM, (uintptr_t)simu->H_N [tid].data(), simu->H_N [tid].size(), sizeof(R));
+	starpu_vector_data_register(&simu->spu_Y_N2[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N2[tid].data(), simu->Y_N2[tid].size(), sizeof(R));
+	starpu_vector_data_register(&simu->spu_Y_N3[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N3[tid].data(), simu->Y_N3[tid].size(), sizeof(R));
+	starpu_vector_data_register(&simu->spu_Y_N4[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N4[tid].data(), simu->Y_N4[tid].size(), sizeof(Q));
+	starpu_vector_data_register(&simu->spu_Y_N5[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N5[tid].data(), simu->Y_N5[tid].size(), sizeof(Q));
+	starpu_vector_data_register(&simu->spu_V_K [tid], STARPU_MAIN_RAM, (uintptr_t)simu->V_K [tid].data(), simu->V_K [tid].size(), sizeof(B));
+
+	starpu_data_set_user_data(simu->spu_U_K [tid], (void*)&simu->U_K [tid]);
+	starpu_data_set_user_data(simu->spu_X_N1[tid], (void*)&simu->X_N1[tid]);
+	starpu_data_set_user_data(simu->spu_X_N2[tid], (void*)&simu->X_N2[tid]);
+	starpu_data_set_user_data(simu->spu_X_N3[tid], (void*)&simu->X_N3[tid]);
+	starpu_data_set_user_data(simu->spu_Y_N1[tid], (void*)&simu->Y_N1[tid]);
+	starpu_data_set_user_data(simu->spu_H_N [tid], (void*)&simu->H_N [tid]);
+	starpu_data_set_user_data(simu->spu_Y_N2[tid], (void*)&simu->Y_N2[tid]);
+	starpu_data_set_user_data(simu->spu_Y_N3[tid], (void*)&simu->Y_N3[tid]);
+	starpu_data_set_user_data(simu->spu_Y_N4[tid], (void*)&simu->Y_N4[tid]);
+	starpu_data_set_user_data(simu->spu_Y_N5[tid], (void*)&simu->Y_N5[tid]);
+	starpu_data_set_user_data(simu->spu_V_K [tid], (void*)&simu->V_K [tid]);
 }
 
 template <typename B, typename R, typename Q>
@@ -222,8 +234,11 @@ void Simulation_BFER<B,R,Q>
 	}
 
 	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+	{
+		this->cond_terminal.notify_all();
 		// wait the terminal thread to finish
 		term_thread.join();
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -299,10 +314,10 @@ void Simulation_BFER<B,R,Q>
 	while (!simu->monitor_red->fe_limit_achieved() && !simu->monitor_red->is_interrupt())
 	{
 		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
-		std::this_thread::sleep_for(sleep_time);
 
-		// display statistics in terminal
-		simu->terminal->temp_report(std::clog);
+		std::unique_lock<std::mutex> lock(simu->mutex_terminal);
+		if (simu->cond_terminal.wait_for(lock, sleep_time) != std::cv_status::timeout);
+			simu->terminal->temp_report(std::clog); // display statistics in terminal
 	}
 }
 

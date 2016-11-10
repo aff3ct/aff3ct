@@ -52,7 +52,11 @@ private:
 	{
 		auto crc = static_cast<SPU_CRC<B>*>(cl_arg);
 
-		auto U_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+
+		auto U_K = static_cast<mipp::vector<B>*>(udata0);
 
 		crc->build(*U_K);
 	}

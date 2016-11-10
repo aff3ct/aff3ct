@@ -56,8 +56,13 @@ private:
 	{
 		auto decoder = static_cast<SPU_Decoder<B,R>*>(cl_arg);
 
-		auto Y_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto V_K = static_cast<mipp::vector<B>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto Y_N = static_cast<mipp::vector<R>*>(udata0);
+		auto V_K = static_cast<mipp::vector<B>*>(udata1);
 
 		decoder->hard_decode(*Y_N, *V_K);
 	}

@@ -14,11 +14,6 @@ template <typename T>
 class SPU_Interleaver : public Interleaver_i<T>
 {
 private:
-	mipp::vector<char     > natural_vec_1, interleaved_vec_1;
-	mipp::vector<short    > natural_vec_2, interleaved_vec_2;
-	mipp::vector<int      > natural_vec_4, interleaved_vec_4;
-	mipp::vector<long long> natural_vec_8, interleaved_vec_8;
-
 	static starpu_codelet spu_cl_interleave;
 	static starpu_codelet spu_cl_deinterleave;
 
@@ -27,19 +22,6 @@ public:
 	: Interleaver_i<T>(size, n_frames, name) {}
 
 	virtual ~SPU_Interleaver() {}
-
-	void spu_init()
-	{
-		const int size = this->pi.size();
-		if ((int)natural_vec_1    .size() != size * this->n_frames) natural_vec_1    .resize(size * this->n_frames);
-		if ((int)natural_vec_2    .size() != size * this->n_frames) natural_vec_2    .resize(size * this->n_frames);
-		if ((int)natural_vec_4    .size() != size * this->n_frames) natural_vec_4    .resize(size * this->n_frames);
-		if ((int)natural_vec_8    .size() != size * this->n_frames) natural_vec_8    .resize(size * this->n_frames);
-		if ((int)interleaved_vec_1.size() != size * this->n_frames) interleaved_vec_1.resize(size * this->n_frames);
-		if ((int)interleaved_vec_2.size() != size * this->n_frames) interleaved_vec_2.resize(size * this->n_frames);
-		if ((int)interleaved_vec_4.size() != size * this->n_frames) interleaved_vec_4.resize(size * this->n_frames);
-		if ((int)interleaved_vec_8.size() != size * this->n_frames) interleaved_vec_8.resize(size * this->n_frames);
-	}
 
 	static inline starpu_task* spu_task_interleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t & in_data,
 	                                                                                starpu_data_handle_t &out_data)
@@ -104,10 +86,10 @@ private:
 
 		switch (STARPU_VARIABLE_GET_ELEMSIZE(buffers[0]))
 		{
-			case 1: _spu_kernel_interleave<char     >(buffers, itl, itl->natural_vec_1, itl->interleaved_vec_1); break;
-			case 2: _spu_kernel_interleave<short    >(buffers, itl, itl->natural_vec_2, itl->interleaved_vec_2); break;
-			case 4: _spu_kernel_interleave<int      >(buffers, itl, itl->natural_vec_4, itl->interleaved_vec_4); break;
-			case 8: _spu_kernel_interleave<long long>(buffers, itl, itl->natural_vec_8, itl->interleaved_vec_8); break;
+			case 1: _spu_kernel_interleave<char     >(buffers, itl); break;
+			case 2: _spu_kernel_interleave<short    >(buffers, itl); break;
+			case 4: _spu_kernel_interleave<int      >(buffers, itl); break;
+			case 8: _spu_kernel_interleave<long long>(buffers, itl); break;
 			default:
 				std::cerr << "(EE) Unrecognized type of data, exiting." << std::endl;
 				std::exit(-1);
@@ -121,10 +103,10 @@ private:
 
 		switch (STARPU_VARIABLE_GET_ELEMSIZE(buffers[0]))
 		{
-			case 1: _spu_kernel_deinterleave<char     >(buffers, itl, itl->interleaved_vec_1, itl->natural_vec_1); break;
-			case 2: _spu_kernel_deinterleave<short    >(buffers, itl, itl->interleaved_vec_2, itl->natural_vec_2); break;
-			case 4: _spu_kernel_deinterleave<int      >(buffers, itl, itl->interleaved_vec_4, itl->natural_vec_4); break;
-			case 8: _spu_kernel_deinterleave<long long>(buffers, itl, itl->interleaved_vec_8, itl->natural_vec_8); break;
+			case 1: _spu_kernel_deinterleave<char     >(buffers, itl); break;
+			case 2: _spu_kernel_deinterleave<short    >(buffers, itl); break;
+			case 4: _spu_kernel_deinterleave<int      >(buffers, itl); break;
+			case 8: _spu_kernel_deinterleave<long long>(buffers, itl); break;
 			default:
 				std::cerr << "(EE) Unrecognized type of data, exiting." << std::endl;
 				std::exit(-1);
@@ -134,40 +116,32 @@ private:
 
 	template <typename D>
 	static void _spu_kernel_interleave(void *buffers[],
-	                                   SPU_Interleaver<T>* interleaver,
-	                                   mipp::vector<D> &natural_vec,
-	                                   mipp::vector<D> &interleaved_vec)
+	                                   SPU_Interleaver<T>* interleaver)
 	{
-		interleaver->spu_init();
+		auto task = starpu_task_get_current();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == natural_vec    .size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == interleaved_vec.size());
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
 
-		const D* buff_in  = (const D*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      D* buff_out = (      D*)STARPU_VECTOR_GET_PTR(buffers[1]);
+		auto natural_vec     = static_cast<mipp::vector<D>*>(udata0);
+		auto interleaved_vec = static_cast<mipp::vector<D>*>(udata1);
 
-		std::copy(buff_in, buff_in + natural_vec.size(), natural_vec.begin());
-		interleaver->interleave(natural_vec, interleaved_vec);
-		std::copy(interleaved_vec.begin(), interleaved_vec.end(), buff_out);
+		interleaver->interleave(*natural_vec, *interleaved_vec);
 	}
 
 	template <typename D>
 	static void _spu_kernel_deinterleave(void *buffers[],
-	                                     SPU_Interleaver<T>* interleaver,
-	                                     mipp::vector<D> &interleaved_vec,
-	                                     mipp::vector<D> &natural_vec)
+	                                     SPU_Interleaver<T>* interleaver)
 	{
-		interleaver->spu_init();
+		auto task = starpu_task_get_current();
 
-		assert(STARPU_VECTOR_GET_NX(buffers[0]) == interleaved_vec.size());
-		assert(STARPU_VECTOR_GET_NX(buffers[1]) == natural_vec    .size());
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
 
-		const D* buff_in  = (const D*)STARPU_VECTOR_GET_PTR(buffers[0]);
-		      D* buff_out = (      D*)STARPU_VECTOR_GET_PTR(buffers[1]);
+		auto interleaved_vec = static_cast<mipp::vector<D>*>(udata0);
+		auto natural_vec     = static_cast<mipp::vector<D>*>(udata1);
 
-		std::copy(buff_in, buff_in + interleaved_vec.size(), interleaved_vec.begin());
-		interleaver->deinterleave(interleaved_vec, natural_vec);
-		std::copy(natural_vec.begin(), natural_vec.end(), buff_out);
+		interleaver->deinterleave(*interleaved_vec, *natural_vec);
 	}
 };
 

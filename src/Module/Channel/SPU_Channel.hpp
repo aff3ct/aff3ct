@@ -89,8 +89,13 @@ private:
 	{
 		auto channel = static_cast<SPU_Channel<R>*>(cl_arg);
 
-		auto X_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto Y_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto X_N = static_cast<mipp::vector<R>*>(udata0);
+		auto Y_N = static_cast<mipp::vector<R>*>(udata1);
 
 		channel->add_noise(*X_N, *Y_N);
 	}
@@ -99,9 +104,15 @@ private:
 	{
 		auto channel = static_cast<SPU_Channel<R>*>(cl_arg);
 
-		auto X_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto Y_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
-		auto H_N = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[2]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+		auto udata2 = starpu_data_get_user_data(task->handles[2]); assert(udata2);
+
+		auto X_N = static_cast<mipp::vector<R>*>(udata0);
+		auto Y_N = static_cast<mipp::vector<R>*>(udata1);
+		auto H_N = static_cast<mipp::vector<R>*>(udata2);
 
 		channel->add_noise(*X_N, *Y_N, *H_N);
 	}

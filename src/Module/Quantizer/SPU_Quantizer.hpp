@@ -55,8 +55,13 @@ private:
 	{
 		auto quantizer = static_cast<SPU_Quantizer<R,Q>*>(cl_arg);
 
-		auto Y_N1 = static_cast<mipp::vector<R>*>((void*)STARPU_VECTOR_GET_PTR(buffers[0]));
-		auto Y_N2 = static_cast<mipp::vector<Q>*>((void*)STARPU_VECTOR_GET_PTR(buffers[1]));
+		auto task = starpu_task_get_current();
+
+		auto udata0 = starpu_data_get_user_data(task->handles[0]); assert(udata0);
+		auto udata1 = starpu_data_get_user_data(task->handles[1]); assert(udata1);
+
+		auto Y_N1 = static_cast<mipp::vector<R>*>(udata0);
+		auto Y_N2 = static_cast<mipp::vector<Q>*>(udata1);
 
 		quantizer->process(*Y_N1, *Y_N2);
 	}
