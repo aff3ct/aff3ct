@@ -22,11 +22,12 @@ public:
 
 	virtual ~SPU_Quantizer() {};
 
-	static inline starpu_task* spu_task_process(SPU_Quantizer<R,Q> *quantizer, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_process(SPU_Quantizer<R,Q> *quantizer, starpu_data_handle_t &in_data,
 	                                                                           starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "qnt::process";
 		task->cl          = &SPU_Quantizer<R,Q>::spu_cl_process;
 		task->cl_arg      = (void*)(quantizer);
 		task->cl_arg_size = sizeof(*quantizer);
@@ -43,7 +44,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Quantizer<R,Q>::spu_kernel_process;
-		cl.cpu_funcs_name[0] = "Quantizer::process";
+		cl.cpu_funcs_name[0] = "qnt::process::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;

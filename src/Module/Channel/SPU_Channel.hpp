@@ -25,11 +25,12 @@ public:
 	{
 	};
 
-	static inline starpu_task* spu_task_add_noise(SPU_Channel<R> *channel, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_add_noise(SPU_Channel<R> *channel, starpu_data_handle_t &in_data,
 	                                                                       starpu_data_handle_t &out_data)
 	{
 		auto *task = starpu_task_create();
 
+		task->name        = "chn::add_noise";
 		task->cl          = &SPU_Channel<R>::spu_cl_add_noise;
 		task->cl_arg      = (void*)(channel);
 		task->cl_arg_size = sizeof(*channel);
@@ -39,12 +40,13 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_add_noise_wg(SPU_Channel<R> *channel, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_add_noise_wg(SPU_Channel<R> *channel, starpu_data_handle_t &in_data,
 	                                                                          starpu_data_handle_t &out_data1,
 	                                                                          starpu_data_handle_t &out_data2)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "chn::add_noise_wg";
 		task->cl          = &SPU_Channel<R>::spu_cl_add_noise_wg;
 		task->cl_arg      = (void*)(channel);
 		task->cl_arg_size = sizeof(*channel);
@@ -62,7 +64,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Channel<R>::spu_kernel_add_noise;
-		cl.cpu_funcs_name[0] = "Channel::add_noise";
+		cl.cpu_funcs_name[0] = "chn::add_noise::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;
@@ -76,7 +78,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Channel<R>::spu_kernel_add_noise_wg;
-		cl.cpu_funcs_name[0] = "Channel::add_noise_wg";
+		cl.cpu_funcs_name[0] = "chn::add_noise_wg::cpu";
 		cl.nbuffers          = 3;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;

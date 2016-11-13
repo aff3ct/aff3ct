@@ -27,6 +27,7 @@ public:
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "mnt::check_errors";
 		task->cl          = &SPU_Monitor<B>::spu_cl_check_errors;
 		task->cl_arg      = (void*)(monitor);
 		task->cl_arg_size = sizeof(*monitor);
@@ -43,7 +44,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Monitor<B>::spu_kernel_check_errors;
-		cl.cpu_funcs_name[0] = "Monitor::check_errors";
+		cl.cpu_funcs_name[0] = "mnt::check_errors::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_R;

@@ -26,6 +26,7 @@ public:
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "src::generate";
 		task->cl          = &SPU_Source<B>::spu_cl_generate;
 		task->cl_arg      = (void*)(source);
 		task->cl_arg_size = sizeof(*source);
@@ -41,7 +42,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Source<B>::spu_kernel_generate;
-		cl.cpu_funcs_name[0] = "Source::generate";
+		cl.cpu_funcs_name[0] = "src::generate::cpu";
 		cl.nbuffers          = 1;
 		cl.modes         [0] = STARPU_W;
 

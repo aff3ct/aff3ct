@@ -27,7 +27,7 @@ Simulation_BFER<B,R,Q>
 
   d_decod_total_fake(std::chrono::nanoseconds(0))
 {
-	if (params.simulation.n_threads > 1)
+	if (this->n_obj > 1)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support multi-threading... Exiting.") << std::endl;
 		std::exit(-1);
@@ -114,7 +114,7 @@ void Simulation_BFER<B,R,Q>
 	this->build_communication_chain();
 
 	if ((!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-	    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
+	    !(this->params.simulation.debug && this->n_obj == 1) && !this->params.simulation.benchs))
 		this->terminal->legend(std::cout);
 
 	this->duplicator[0] = new SC_Duplicator("Duplicator0");
@@ -124,7 +124,7 @@ void Simulation_BFER<B,R,Q>
 		this->duplicator[2] = new SC_Duplicator("Duplicator2");
 	}
 
-	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
+	if (this->n_obj == 1 && this->params.simulation.debug)
 	{
 		const auto dl = this->params.simulation.debug_limit;
 

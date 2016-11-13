@@ -22,12 +22,13 @@ public:
 
 	virtual ~SPU_Coset() {}
 
-	static inline starpu_task* spu_task_apply(SPU_Coset<B,D> *coset, starpu_data_handle_t & in_data1,
-	                                                                 starpu_data_handle_t & in_data2,
+	static inline starpu_task* spu_task_apply(SPU_Coset<B,D> *coset, starpu_data_handle_t &in_data1,
+	                                                                 starpu_data_handle_t &in_data2,
 	                                                                 starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "cst::apply";
 		task->cl          = &SPU_Coset<B,D>::spu_cl_apply;
 		task->cl_arg      = (void*)(coset);
 		task->cl_arg_size = sizeof(*coset);
@@ -45,7 +46,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Coset<B,D>::spu_kernel_apply;
-		cl.cpu_funcs_name[0] = "Coset::apply";
+		cl.cpu_funcs_name[0] = "cst::apply::cpu";
 		cl.nbuffers          = 3;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_R;

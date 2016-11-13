@@ -27,6 +27,9 @@ protected:
 	// simulation parameters
 	const parameters &params;
 
+	// number of obj to allocate
+	const int n_obj;
+
 	// a barrier to synchronize the threads
 	Barrier barrier;
 

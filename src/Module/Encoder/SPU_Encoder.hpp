@@ -22,11 +22,12 @@ public:
 
 	virtual ~SPU_Encoder() {}
 
-	static inline starpu_task* spu_task_encode(SPU_Encoder<B> *encoder, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_encode(SPU_Encoder<B> *encoder, starpu_data_handle_t &in_data,
 	                                                                    starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "enc::encode";
 		task->cl          = &SPU_Encoder<B>::spu_cl_encode;
 		task->cl_arg      = (void*)(encoder);
 		task->cl_arg_size = sizeof(*encoder);
@@ -43,7 +44,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Encoder<B>::spu_kernel_encode;
-		cl.cpu_funcs_name[0] = "Encoder::encode";
+		cl.cpu_funcs_name[0] = "enc::encode::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;

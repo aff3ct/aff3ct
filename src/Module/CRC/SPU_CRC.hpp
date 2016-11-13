@@ -26,6 +26,7 @@ public:
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "crc::build";
 		task->cl          = &SPU_CRC<B>::spu_cl_build;
 		task->cl_arg      = (void*)(crc);
 		task->cl_arg_size = sizeof(*crc);
@@ -41,7 +42,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_CRC<B>::spu_kernel_build;
-		cl.cpu_funcs_name[0] = "CRC::build";
+		cl.cpu_funcs_name[0] = "crc::build::cpu";
 		cl.nbuffers          = 1;
 		cl.modes         [0] = STARPU_RW;
 

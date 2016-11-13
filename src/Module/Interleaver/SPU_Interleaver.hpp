@@ -23,11 +23,12 @@ public:
 
 	virtual ~SPU_Interleaver() {}
 
-	static inline starpu_task* spu_task_interleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_interleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t &in_data,
 	                                                                                starpu_data_handle_t &out_data)
 	{
 		auto *task = starpu_task_create();
 
+		task->name        = "itl::interleave";
 		task->cl          = &SPU_Interleaver<T>::spu_cl_interleave;
 		task->cl_arg      = (void*)(interleaver);
 		task->cl_arg_size = sizeof(*interleaver);
@@ -37,11 +38,12 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_deinterleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_deinterleave(SPU_Interleaver<T> *interleaver, starpu_data_handle_t &in_data,
 	                                                                                  starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "itl::deinterleave";
 		task->cl          = &SPU_Interleaver<T>::spu_cl_deinterleave;
 		task->cl_arg      = (void*)(interleaver);
 		task->cl_arg_size = sizeof(*interleaver);
@@ -58,7 +60,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Interleaver<T>::spu_kernel_interleave;
-		cl.cpu_funcs_name[0] = "Interleaver::interleave";
+		cl.cpu_funcs_name[0] = "itl::interleave::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;
@@ -72,7 +74,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Interleaver<T>::spu_kernel_deinterleave;
-		cl.cpu_funcs_name[0] = "Interleaver::interleave";
+		cl.cpu_funcs_name[0] = "itl::interleave::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;

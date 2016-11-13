@@ -20,29 +20,32 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)
 : Simulation_BFER_i<B,R,Q>(params),
 
-  U_K (params.simulation.n_conc_tasks),
-  X_N1(params.simulation.n_conc_tasks),
-  X_N2(params.simulation.n_conc_tasks),
-  X_N3(params.simulation.n_conc_tasks),
-  H_N (params.simulation.n_conc_tasks),
-  Y_N1(params.simulation.n_conc_tasks),
-  Y_N2(params.simulation.n_conc_tasks),
-  Y_N3(params.simulation.n_conc_tasks),
-  Y_N4(params.simulation.n_conc_tasks),
-  Y_N5(params.simulation.n_conc_tasks),
-  V_K (params.simulation.n_conc_tasks),
+  task_names(this->n_obj, std::vector<std::string>(14)),
+  frame_id(0),
 
-  spu_U_K (params.simulation.n_conc_tasks),
-  spu_X_N1(params.simulation.n_conc_tasks),
-  spu_X_N2(params.simulation.n_conc_tasks),
-  spu_X_N3(params.simulation.n_conc_tasks),
-  spu_H_N (params.simulation.n_conc_tasks),
-  spu_Y_N1(params.simulation.n_conc_tasks),
-  spu_Y_N2(params.simulation.n_conc_tasks),
-  spu_Y_N3(params.simulation.n_conc_tasks),
-  spu_Y_N4(params.simulation.n_conc_tasks),
-  spu_Y_N5(params.simulation.n_conc_tasks),
-  spu_V_K (params.simulation.n_conc_tasks),
+  U_K (this->n_obj),
+  X_N1(this->n_obj),
+  X_N2(this->n_obj),
+  X_N3(this->n_obj),
+  H_N (this->n_obj),
+  Y_N1(this->n_obj),
+  Y_N2(this->n_obj),
+  Y_N3(this->n_obj),
+  Y_N4(this->n_obj),
+  Y_N5(this->n_obj),
+  V_K (this->n_obj),
+
+  spu_U_K (this->n_obj),
+  spu_X_N1(this->n_obj),
+  spu_X_N2(this->n_obj),
+  spu_X_N3(this->n_obj),
+  spu_H_N (this->n_obj),
+  spu_Y_N1(this->n_obj),
+  spu_Y_N2(this->n_obj),
+  spu_Y_N3(this->n_obj),
+  spu_Y_N4(this->n_obj),
+  spu_Y_N5(this->n_obj),
+  spu_V_K (this->n_obj),
 
   monitor_red(nullptr),
   terminal   (nullptr),
@@ -80,7 +83,7 @@ void Simulation_BFER<B,R,Q>
 	// this condition avoids the double unregistering...
 	if (monitor_red != nullptr)
 		// StarPU does not need to manipulate the arrays anymore so we can stop monitoring them
-		for (auto tid = 0; tid < this->params.simulation.n_conc_tasks; tid++)
+		for (auto tid = 0; tid < this->n_obj; tid++)
 		{
 			starpu_data_unregister(spu_U_K [tid]);
 			starpu_data_unregister(spu_X_N1[tid]);
@@ -195,23 +198,23 @@ void Simulation_BFER<B,R,Q>
 ::Monte_Carlo_method()
 {
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	std::vector<std::thread> threads(this->params.simulation.n_conc_tasks -1);
-	for (auto tid = 1; tid < this->params.simulation.n_conc_tasks; tid++)
+	std::vector<std::thread> threads(this->n_obj -1);
+	for (auto tid = 1; tid < this->n_obj; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::build_communication_chain, this, tid);
 
 	// build the communication chain
 	Simulation_BFER<B,R,Q>::build_communication_chain(this, 0);
 
 	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->params.simulation.n_conc_tasks; tid++)
+	for (auto tid = 1; tid < this->n_obj; tid++)
 		threads[tid -1].join();
 
 	if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-	    !(this->params.simulation.debug && this->params.simulation.n_conc_tasks == 1) && !this->params.simulation.benchs)
+	    !(this->params.simulation.debug && this->n_obj == 1) && !this->params.simulation.benchs)
 		this->terminal->legend(std::cout);
 
 	if (this->params.source.type == "AZCW")
-		for (auto tid = 0; tid < this->params.simulation.n_conc_tasks; tid++)
+		for (auto tid = 0; tid < this->n_obj; tid++)
 		{
 			std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
 			std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
@@ -227,7 +230,7 @@ void Simulation_BFER<B,R,Q>
 	// Monte Carlo simulation
 	while (!this->monitor_red->fe_limit_achieved())
 	{
-		for (auto tid = 0; tid < this->params.simulation.n_conc_tasks; tid++)
+		for (auto tid = 0; tid < this->n_obj; tid++)
 			this->seq_tasks_submission(tid);
 
 		starpu_task_wait_for_all();
@@ -245,19 +248,33 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::seq_tasks_submission(const int tid)
 {
+	const std::string str_id = std::to_string(frame_id);
+
 	if (this->params.source.type != "AZCW")
 	{
-		auto task_gen_source = Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K [tid]);
-		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K [tid]);
+		auto task_gen_source = Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K [tid]               );
+		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K [tid]               );
 		auto task_encode     = Encoder  <B    >::spu_task_encode  (this->encoder  [tid], spu_U_K [tid], spu_X_N1[tid]);
 		auto task_puncture   = Puncturer<B,  Q>::spu_task_puncture(this->puncturer[tid], spu_X_N1[tid], spu_X_N2[tid]);
 		auto task_modulate   = Modulator<B,R,R>::spu_task_modulate(this->modulator[tid], spu_X_N2[tid], spu_X_N3[tid]);
 
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_gen_source), "starpu_task_insert_gen_source");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_build_crc ), "starpu_task_insert_build_crc");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_encode    ), "starpu_task_insert_encode");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_puncture  ), "starpu_task_insert_puncture");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_modulate  ), "starpu_task_insert_modulate");
+		task_gen_source->priority = STARPU_MIN_PRIO +0;
+		task_build_crc ->priority = STARPU_MIN_PRIO +1;
+		task_encode    ->priority = STARPU_MIN_PRIO +2;
+		task_puncture  ->priority = STARPU_MIN_PRIO +3;
+		task_modulate  ->priority = STARPU_MIN_PRIO +4;
+
+		task_names[tid][0] = "src::generate_" + str_id; task_gen_source->name = task_names[tid][0].c_str();
+		task_names[tid][1] = "crc::build_"    + str_id; task_build_crc ->name = task_names[tid][1].c_str();
+		task_names[tid][2] = "enc::encode_"   + str_id; task_encode    ->name = task_names[tid][2].c_str();
+		task_names[tid][3] = "pct::puncture_" + str_id; task_puncture  ->name = task_names[tid][3].c_str();
+		task_names[tid][4] = "mod::modulate_" + str_id; task_modulate  ->name = task_names[tid][4].c_str();
+
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_gen_source), "task_submit::src::generate");
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_build_crc ), "task_submit::crc::build"   );
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_encode    ), "task_submit::enc::encode"  );
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_puncture  ), "task_submit::pct::puncture");
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_modulate  ), "task_submit::mod::modulate");
 	}
 
 	// Rayleigh channel
@@ -267,9 +284,17 @@ void Simulation_BFER<B,R,Q>
 		auto task_filter        = Modulator<B,R,R>::spu_task_filter       (this->modulator[tid], spu_Y_N1[tid], spu_Y_N2[tid]               );
 		auto task_demodulate_wg = Modulator<B,R,R>::spu_task_demodulate_wg(this->modulator[tid], spu_Y_N2[tid], spu_H_N [tid], spu_Y_N3[tid]);
 
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_add_noise_wg ), "starpu_task_insert_add_noise_wg");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_filter       ), "starpu_task_insert_filter");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_demodulate_wg), "starpu_task_insert_demodulate_wg");
+		task_add_noise_wg ->priority = STARPU_MIN_PRIO +5;
+		task_filter       ->priority = STARPU_MIN_PRIO +6;
+		task_demodulate_wg->priority = STARPU_MIN_PRIO +7;
+
+		task_names[tid][5] = "chn::add_noise_wg_"  + str_id; task_add_noise_wg ->name = task_names[tid][5].c_str();
+		task_names[tid][6] = "mod::filter_"        + str_id; task_filter       ->name = task_names[tid][6].c_str();
+		task_names[tid][7] = "mod::demodulate_wg_" + str_id; task_demodulate_wg->name = task_names[tid][7].c_str();
+
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_add_noise_wg ), "task_submit::chn::add_noise_wg" );
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_filter       ), "task_submit::mod::filter"       );
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_demodulate_wg), "task_submit::mod::demodulate_wg");
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
@@ -277,34 +302,59 @@ void Simulation_BFER<B,R,Q>
 		auto task_filter     = Modulator<B,R,R>::spu_task_filter    (this->modulator[tid], spu_Y_N1[tid], spu_Y_N2[tid]);
 		auto task_demodulate = Modulator<B,R,R>::spu_task_demodulate(this->modulator[tid], spu_Y_N2[tid], spu_Y_N3[tid]);
 
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_add_noise ), "starpu_task_insert_add_noise");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_filter    ), "starpu_task_insert_filter");
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_demodulate), "starpu_task_insert_demodulate");
+		task_add_noise ->priority = STARPU_MIN_PRIO +5;
+		task_filter    ->priority = STARPU_MIN_PRIO +6;
+		task_demodulate->priority = STARPU_MIN_PRIO +7;
+
+		task_names[tid][5] = "chn::add_noise_"  + str_id; task_add_noise ->name = task_names[tid][5].c_str();
+		task_names[tid][6] = "mod::filter_"     + str_id; task_filter    ->name = task_names[tid][6].c_str();
+		task_names[tid][7] = "mod::demodulate_" + str_id; task_demodulate->name = task_names[tid][7].c_str();
+
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_add_noise ), "task_submit::chn::add_noise" );
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_filter    ), "task_submit::mod::filter"    );
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_demodulate), "task_submit::mod::demodulate");
 	}
 
 	auto task_quantize   = Quantizer<  R,Q>::spu_task_process   (this->quantizer[tid], spu_Y_N3[tid], spu_Y_N4[tid]);
 	auto task_depuncture = Puncturer<B,  Q>::spu_task_depuncture(this->puncturer[tid], spu_Y_N4[tid], spu_Y_N5[tid]);
 
-	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_quantize  ), "starpu_task_insert_quantize");
-	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_depuncture), "starpu_task_insert_depuncture");
+	task_quantize  ->priority = STARPU_MIN_PRIO +8;
+	task_depuncture->priority = STARPU_MIN_PRIO +9;
+
+	task_names[tid][8] = "qnt::process_"    + str_id; task_quantize  ->name = task_names[tid][8].c_str();
+	task_names[tid][9] = "pct::depuncture_" + str_id; task_depuncture->name = task_names[tid][9].c_str();
+
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_quantize  ), "task_submit::qnt::process"   );
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_depuncture), "task_submit::pct::depuncture");
 
 	if (this->params.code.coset)
 	{
+
 		auto task_coset_real = Coset<B,Q>::spu_task_apply(this->coset_real[tid], spu_X_N1[tid], spu_Y_N5[tid], spu_Y_N5[tid]);
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_real), "starpu_task_insert_coset_real");
+		task_coset_real->priority = STARPU_MIN_PRIO +10;
+		task_names[tid][10] = "cst::apply_" + str_id; task_coset_real->name = task_names[tid][10].c_str();
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_real), "task_submit::cst::apply");
 	}
 
 	auto task_decode = Decoder<B,Q>::spu_task_hard_decode(this->decoder[tid], spu_Y_N5[tid], spu_V_K[tid]);
-	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "starpu_task_insert_decode");
+	task_decode->priority = STARPU_MIN_PRIO +11;
+	task_names[tid][11] = "dec::hard_decode_" + str_id; task_decode->name = task_names[tid][11].c_str();
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "task_submit::dec::hard_decode");
 
 	if (this->params.code.coset)
 	{
 		auto task_coset_bit = Coset<B,B>::spu_task_apply(this->coset_bit[tid], spu_U_K[tid], spu_V_K[tid], spu_V_K[tid]);
-		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_bit), "starpu_task_insert_coset_bit");
+		task_coset_bit->priority = STARPU_MIN_PRIO +12;
+		task_names[tid][12] = "cst::apply_" + str_id; task_coset_bit->name = task_names[tid][12].c_str();
+		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_bit), "task_submit::cst::apply");
 	}
 
 	auto task_check_err = Monitor<B>::spu_task_check_errors(this->monitor[tid], spu_U_K[tid], spu_V_K[tid]);
-	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_check_err ), "starpu_task_insert_check_err");
+	task_check_err->priority = STARPU_MIN_PRIO +13;
+	task_names[tid][13] = "mnt::check_errors_" + str_id; task_check_err->name = task_names[tid][13].c_str();
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_check_err ), "task_submit::mnt::check_errors");
+
+	frame_id++;
 }
 
 template <typename B, typename R, typename Q>

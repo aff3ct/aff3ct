@@ -24,6 +24,9 @@ private:
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
 
+	std::vector<std::vector<std::string>> task_names;
+	unsigned long long frame_id;
+
 protected:
 	// data vector
 	std::vector<mipp::vector<B>> U_K;  // information bit vector
@@ -36,7 +39,7 @@ protected:
 	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after the demodulation)
 	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
 	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
-	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
+	std::vector<mipp::vector<B>> V_K;  // decoded codeword
 
 	// starpu vector handlers
 	std::vector<starpu_data_handle_t> spu_U_K;

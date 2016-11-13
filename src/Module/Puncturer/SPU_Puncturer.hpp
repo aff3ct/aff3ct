@@ -24,11 +24,12 @@ public:
 
 	virtual ~SPU_Puncturer() {}
 
-	static inline starpu_task* spu_task_puncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_puncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t &in_data,
 	                                                                            starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "pct::puncture";
 		task->cl          = &SPU_Puncturer<B,Q>::spu_cl_puncture;
 		task->cl_arg      = (void*)(puncturer);
 		task->cl_arg_size = sizeof(*puncturer);
@@ -38,11 +39,12 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_depuncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_depuncture(SPU_Puncturer<B,Q> *puncturer, starpu_data_handle_t &in_data,
 	                                                                              starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "pct::depuncture::cpu";
 		task->cl          = &SPU_Puncturer<B,Q>::spu_cl_depuncture;
 		task->cl_arg      = (void*)(puncturer);
 		task->cl_arg_size = sizeof(*puncturer);

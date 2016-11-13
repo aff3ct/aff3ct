@@ -23,11 +23,12 @@ public:
 
 	virtual ~SPU_SISO() {}
 
-	static inline starpu_task* spu_task_soft_decode(SPU_SISO<R> *siso, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_soft_decode(SPU_SISO<R> *siso, starpu_data_handle_t &in_data,
 	                                                                   starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "siso::soft_decode";
 		task->cl          = &SPU_SISO<R>::spu_cl_soft_decode;
 		task->cl_arg      = (void*)(siso);
 		task->cl_arg_size = sizeof(*siso);
@@ -44,7 +45,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_SISO<R>::spu_kernel_soft_decode;
-		cl.cpu_funcs_name[0] = "SISO::soft_decode";
+		cl.cpu_funcs_name[0] = "siso::soft_decode::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;

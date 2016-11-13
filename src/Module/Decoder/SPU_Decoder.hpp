@@ -23,11 +23,12 @@ public:
 
 	virtual ~SPU_Decoder() {}
 
-	static inline starpu_task* spu_task_hard_decode(SPU_Decoder<B,R> *decoder, starpu_data_handle_t & in_data,
+	static inline starpu_task* spu_task_hard_decode(SPU_Decoder<B,R> *decoder, starpu_data_handle_t &in_data,
 	                                                                           starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
+		task->name        = "dec::hard_decode";
 		task->cl          = &SPU_Decoder<B,R>::spu_cl_hard_decode;
 		task->cl_arg      = (void*)(decoder);
 		task->cl_arg_size = sizeof(*decoder);
@@ -44,7 +45,7 @@ private:
 
 		cl.type              = STARPU_SEQ;
 		cl.cpu_funcs     [0] = SPU_Decoder<B,R>::spu_kernel_hard_decode;
-		cl.cpu_funcs_name[0] = "Decoder::hard_decode";
+		cl.cpu_funcs_name[0] = "dec::hard_decode::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
 		cl.modes         [1] = STARPU_W;
