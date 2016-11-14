@@ -49,7 +49,9 @@ Simulation_BFER_i<B,R,Q>
   coset_real (n_obj, nullptr),
   decoder    (n_obj, nullptr),
   coset_bit  (n_obj, nullptr),
-  monitor    (n_obj, nullptr)
+  monitor    (n_obj, nullptr),
+
+  terminal(nullptr)
 {
 	assert(n_obj >= 1);
 }
@@ -98,6 +100,26 @@ void Simulation_BFER_i<B,R,Q>
 	simu->coset_bit [tid]->set_n_frames(n_frames);
 	simu->monitor   [tid]->set_n_frames(n_frames);
 }
+
+template <typename B, typename R, typename Q>
+void Simulation_BFER_i<B,R,Q>
+::terminal_temp_report(Simulation_BFER_i<B,R,Q> *simu, const Monitor<B> *monitor)
+{
+	if (simu->terminal != nullptr)
+	{
+		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
+
+		while (!monitor->fe_limit_achieved() && !monitor->is_interrupt())
+		{
+			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
+			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
+				simu->terminal->temp_report(std::clog); // display statistics in the terminal
+		}
+	}
+	else
+		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
+}
+
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER_i<B,R,Q>

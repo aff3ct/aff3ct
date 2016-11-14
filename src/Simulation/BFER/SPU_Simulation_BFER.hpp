@@ -3,7 +3,6 @@
 #ifndef SPU_SIMULATION_BFER_HPP_
 #define SPU_SIMULATION_BFER_HPP_
 
-#include <thread>
 #include <chrono>
 #include <vector>
 
@@ -21,9 +20,6 @@ template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
 private:
-	std::mutex mutex_terminal;
-	std::condition_variable cond_terminal;
-
 	std::vector<std::vector<std::string>> task_names;
 	unsigned long long frame_id;
 
@@ -56,10 +52,6 @@ protected:
 
 	// objects
 	Monitor_reduction<B> *monitor_red;
-	Terminal             *terminal;
-
-	// time points and durations
-	std::chrono::nanoseconds d_decod_total_fake;
 
 public:
 	Simulation_BFER(const parameters& params);
@@ -75,8 +67,6 @@ private:
 	static void build_communication_chain(Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void allocate_data            (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	inline void seq_tasks_submission     (                              const int tid = 0);
-
-	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 
 	Terminal* build_terminal();
 };

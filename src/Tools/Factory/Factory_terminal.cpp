@@ -9,7 +9,7 @@ Terminal* Factory_terminal<B,R>
         const R snr,
         const Monitor<B> *monitor,
         const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-        const std::chrono::nanoseconds &d_decod_total)
+        const std::chrono::nanoseconds *d_decod_total)
 {
 	Terminal *terminal = nullptr;
 
@@ -17,7 +17,7 @@ Terminal* Factory_terminal<B,R>
 	if(params.terminal.type == "LEGACY")
 		terminal = new Terminal_BFER_legacy<B,R>(snr, *monitor, t_snr);
 	else if (params.terminal.type == "STD")
-		terminal = new Terminal_BFER<B,R>(snr, *monitor, t_snr, d_decod_total, params.simulation.benchs_no_ldst);
+		terminal = new Terminal_BFER<B,R>(snr, *monitor, t_snr, d_decod_total);
 
 	return terminal;
 }

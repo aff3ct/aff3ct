@@ -14,16 +14,15 @@ protected:
 	const R                                                                             snr;
 	const Monitor<B>                                                                   &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
-	const std::chrono::nanoseconds                                                     &d_decod_total;
+	const std::chrono::nanoseconds                                                     *d_decod_total;
 	unsigned short                                                                      real_time_state;
-	const bool                                                                          use_only_decoder_time_thr;
 
 public:
 	Terminal_BFER(const R& snr,
 	              const Monitor<B> &monitor,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-	              const std::chrono::nanoseconds &d_decod_total,
-	              const bool use_only_decoder_time_thr = false);
+	              const std::chrono::nanoseconds *d_decod_total = nullptr);
+
 	virtual ~Terminal_BFER() {}
 
 	void legend      (std::ostream &stream = std::cout);

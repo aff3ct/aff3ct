@@ -23,9 +23,7 @@ Simulation_BFER<B,R,Q>
   duplicator{nullptr, nullptr, nullptr},
   dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R     {nullptr, nullptr, nullptr},
-  dbg_Q     {nullptr, nullptr, nullptr},
-
-  d_decod_total_fake(std::chrono::nanoseconds(0))
+  dbg_Q     {nullptr, nullptr, nullptr}
 {
 	if (this->n_obj > 1)
 	{
@@ -57,7 +55,7 @@ void Simulation_BFER<B,R,Q>
 	this->launch_simulation();
 
 	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
-		terminal->final_report(std::cout);
+		this->terminal->final_report(std::cout);
 }
 
 template <typename B, typename R, typename Q>
@@ -65,7 +63,7 @@ void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
 	Simulation_BFER_i<B,R,Q>::release_objects();
-	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
+	if (this->terminal != nullptr) { delete this->terminal; this->terminal = nullptr; }
 }
 
 
@@ -175,15 +173,21 @@ void Simulation_BFER<B,R,Q>
 	}
 	else
 	{
-		// launch a thread dedicated to the terminal display
-		std::thread thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
+		std::thread term_thread;
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+			// launch a thread dedicated to the terminal display
+			term_thread = std::thread(Simulation_BFER_i<B,R,Q>::terminal_temp_report, this, this->monitor[0]);
 
 		this->bind_sockets();
 		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 		sc_core::sc_start(); // start simulation
 
-		// wait the terminal thread to finish
-		thread.join();
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+		{
+			this->cond_terminal.notify_all();
+			// wait the terminal thread to finish
+			term_thread.join();
+		}
 	}
 
 	for (auto i = 0; i < 3; i++)
@@ -321,27 +325,10 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
-::terminal_temp_report(Simulation_BFER<B,R,Q> *simu)
-{
-	if (!simu->params.terminal.disabled && simu->params.terminal.frequency != std::chrono::nanoseconds(0))
-	{
-		while (!simu->monitor[0]->fe_limit_achieved() && !simu->monitor[0]->is_interrupt())
-		{
-			const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
-			std::this_thread::sleep_for(sleep_time);
-
-			// display statistics in terminal
-			simu->terminal->temp_report(std::clog);
-		}
-	}
-}
-
-template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return Factory_terminal<B,R>::build(this->params, this->snr, this->monitor[0], this->t_snr, d_decod_total_fake);
+	return Factory_terminal<B,R>::build(this->params, this->snr, this->monitor[0], this->t_snr);
 }
 
 // ==================================================================================== explicit template instantiation 

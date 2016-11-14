@@ -36,7 +36,6 @@ Simulation_BFER<B,R,Q>
   V_N (this->n_obj),
 
   monitor_red(nullptr),
-  terminal   (nullptr),
 
   d_sourc_total(this->n_obj, std::chrono::nanoseconds(0)),
   d_crc_total  (this->n_obj, std::chrono::nanoseconds(0)),
@@ -89,20 +88,20 @@ void Simulation_BFER<B,R,Q>
 ::_launch()
 {
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	for (auto tid = 1; tid < this->this->n_obj; tid++)
+	for (auto tid = 1; tid < this->n_obj; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::Monte_Carlo_method, this, tid);
 
 	// launch the master thread
 	Simulation_BFER<B,R,Q>::Monte_Carlo_method(this, 0);
 
 	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->this->n_obj; tid++)
+	for (auto tid = 1; tid < this->n_obj; tid++)
 		threads[tid -1].join();
 
 	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
 	{
 		time_reduction(true);
-		terminal->final_report(std::cout);
+		this->terminal->final_report(std::cout);
 	}
 }
 
@@ -112,8 +111,8 @@ void Simulation_BFER<B,R,Q>
 {
 	Simulation_BFER_i<B,R,Q>::release_objects();
 
-	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+	if (this->monitor_red != nullptr) { delete this->monitor_red; this->monitor_red = nullptr; }
+	if (this->terminal    != nullptr) { delete this->terminal;    this->terminal    = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -176,7 +175,7 @@ void Simulation_BFER<B,R,Q>
 	Simulation_BFER<B,R,Q>::build_communication_chain(simu, tid);
 
 	if (tid == 0 && (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.debug && simu->this->n_obj == 1) && !simu->params.simulation.benchs))
+	    !(simu->params.simulation.debug && simu->n_obj == 1) && !simu->params.simulation.benchs))
 		simu->terminal->legend(std::cout);
 
 	if (simu->params.source.type == "AZCW")
@@ -206,7 +205,7 @@ void Simulation_BFER<B,R,Q>
 
 	simu->barrier(tid);
 
-	if (simu->this->n_obj == 1 && simu->params.simulation.debug)
+	if (simu->n_obj == 1 && simu->params.simulation.debug)
 		Simulation_BFER<B,R,Q>::simulation_loop_debug(simu);
 	else if (simu->params.simulation.benchs)
 		Simulation_BFER<B,R,Q>::simulation_loop_bench(simu, tid);
@@ -390,7 +389,7 @@ void Simulation_BFER<B,R,Q>
 
 	auto frames   = (float)simu->params.simulation.benchs *
 	                (float)simu->params.simulation.inter_frame_level *
-	                (float)simu->this->n_obj;
+	                (float)simu->n_obj;
 	auto bits     = (float)frames * (float)simu->params.code.K;
 	auto duration = t_stop - t_start;
 
@@ -656,7 +655,7 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->monitor_red->check_errors(simu->U_K[0], simu->V_K[0]);
+		simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations
@@ -930,7 +929,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, d_decod_all_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, &d_decod_all_red);
 }
 
 // ==================================================================================== explicit template instantiation

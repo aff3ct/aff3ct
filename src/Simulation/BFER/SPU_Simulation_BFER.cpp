@@ -1,5 +1,6 @@
 #ifdef STARPU
 
+#include <thread>
 #include <string>
 #include <vector>
 #include <chrono>
@@ -47,10 +48,7 @@ Simulation_BFER<B,R,Q>
   spu_Y_N5(this->n_obj),
   spu_V_K (this->n_obj),
 
-  monitor_red(nullptr),
-  terminal   (nullptr),
-
-  d_decod_total_fake(std::chrono::nanoseconds(0))
+  monitor_red(nullptr)
 {
 	// initialize StarPU with default configuration
 	auto ret = starpu_init(NULL);
@@ -73,7 +71,7 @@ void Simulation_BFER<B,R,Q>
 	this->Monte_Carlo_method();
 
 	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
-		terminal->final_report(std::cout);
+		this->terminal->final_report(std::cout);
 }
 
 template <typename B, typename R, typename Q>
@@ -98,8 +96,8 @@ void Simulation_BFER<B,R,Q>
 			starpu_data_unregister(spu_V_K [tid]);
 		}
 
-	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+	if (this->monitor_red != nullptr) { delete this->monitor_red; this->monitor_red = nullptr; }
+	if (this->terminal    != nullptr) { delete this->terminal;    this->terminal    = nullptr; }
 
 	Simulation_BFER_i<B,R,Q>::release_objects();
 }
@@ -225,7 +223,7 @@ void Simulation_BFER<B,R,Q>
 	std::thread term_thread;
 	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
 		// launch a thread dedicated to the terminal display
-		term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
+		term_thread = std::thread(Simulation_BFER_i<B,R,Q>::terminal_temp_report, this, this->monitor_red);
 
 	// Monte Carlo simulation
 	while (!this->monitor_red->fe_limit_achieved())
@@ -358,24 +356,10 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
-::terminal_temp_report(Simulation_BFER<B,R,Q> *simu)
-{
-	while (!simu->monitor_red->fe_limit_achieved() && !simu->monitor_red->is_interrupt())
-	{
-		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
-
-		std::unique_lock<std::mutex> lock(simu->mutex_terminal);
-		if (simu->cond_terminal.wait_for(lock, sleep_time) != std::cv_status::timeout);
-			simu->terminal->temp_report(std::clog); // display statistics in terminal
-	}
-}
-
-template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, d_decod_total_fake);
+	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -19,8 +19,6 @@ template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
 protected:
-	Terminal *terminal;
-
 	SC_Duplicator *duplicator[3];
 	SC_Debug<B>   *dbg_B     [6];
 	SC_Debug<R>   *dbg_R     [5];
@@ -30,7 +28,6 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
-	std::chrono::nanoseconds d_decod_total_fake;
 
 public:
 	Simulation_BFER(const parameters& params);
@@ -45,8 +42,6 @@ private:
 	void launch_simulation        ();
 	void bind_sockets             ();
 	void bind_sockets_debug       ();
-
-	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 
 	Terminal* build_terminal();
 };

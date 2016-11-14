@@ -14,7 +14,7 @@ struct Factory_terminal : public Factory
 	                       const R snr, 
 	                       const Monitor<B> *monitor,
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-	                       const std::chrono::nanoseconds &d_decod_total);
+	                       const std::chrono::nanoseconds *d_decod_total = nullptr);
 };
 
 #endif /* FACTORY_TERMINAL_HPP */

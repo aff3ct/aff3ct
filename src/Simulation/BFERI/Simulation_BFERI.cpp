@@ -881,7 +881,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFERI<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, d_decod_total_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, &d_decod_total_red);
 }
 
 // ==================================================================================== explicit template instantiation
