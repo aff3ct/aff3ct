@@ -1,3 +1,5 @@
+#include <typeinfo>
+
 #include "Tools/Display/bash_tools.h"
 
 #include "Modulator_BPSK_fast.hpp"

@@ -2,6 +2,10 @@
 #include <iostream>
 #include <map>
 
+#ifdef MPI
+#include <mpi.h>
+#endif
+
 #include "Tools/types.h"
 #include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
@@ -274,6 +278,10 @@ int main(int argc, char **argv)
 int sc_main(int argc, char **argv)
 #endif
 {
+#ifdef MPI
+	MPI_Init(NULL, NULL);
+#endif
+
 	std::string code_type, simu_type = "BFER";
 
 #ifdef MULTI_PREC
@@ -300,6 +308,10 @@ int sc_main(int argc, char **argv)
 #else
 	read_arguments(argc, (const char**)argv, code_type, simu_type);
 	start_simu<B,R,Q,QD>(argc, (const char**)argv, code_type, simu_type);
+#endif
+
+#ifdef MPI
+	MPI_Finalize();
 #endif
 
 	return EXIT_SUCCESS;

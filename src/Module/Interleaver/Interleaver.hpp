@@ -8,6 +8,7 @@
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 
+#include <typeinfo>
 #include <string>
 #include <cassert>
 #include <vector>

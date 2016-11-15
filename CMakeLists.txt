@@ -18,6 +18,7 @@ option (ENABLE_GSL     "Enable GSL support"     OFF)
 option (ENABLE_MKL     "Enable MKL support"     OFF)
 option (ENABLE_SYSTEMC "Enable SystemC support" OFF)
 option (ENABLE_STARPU  "Enable StarPU support"  OFF)
+option (ENABLE_MPI     "Enable MPI support"     OFF)
 
 # StarPU: set the link dir
 if (ENABLE_STARPU)
@@ -104,6 +105,29 @@ if (ENABLE_STARPU)
 
     endif (PKG_CONFIG_FOUND)
 endif (ENABLE_STARPU)
+
+# MPI
+if (ENABLE_MPI)
+    # add_definitions ("-DMPI")
+
+    find_package (MPI REQUIRED)
+    if (MPI_CXX_FOUND)
+
+        include_directories (${MPI_CXX_INCLUDE_PATH})
+        aff3ct_link_libraries ("${MPI_CXX_LIBRARIES}")
+
+        if (MPI_CXX_COMPILE_FLAGS)
+            set_target_properties(aff3ct-bin PROPERTIES
+                COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
+        endif (MPI_CXX_COMPILE_FLAGS)
+
+        if (MPI_CXX_LINK_FLAGS)
+            set_target_properties(aff3ct-bin PROPERTIES
+                LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
+        endif (MPI_CXX_LINK_FLAGS)
+
+    endif (MPI_CXX_FOUND)
+endif (ENABLE_MPI)
 
 # Enable C++11 and pthread
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <thread>
 #include <chrono>
 #include <cassert>
 #include <cstdlib>
@@ -27,7 +28,7 @@ Launcher<B,R,Q>
 
 	// default parameters
 	params.simulation .snr_step          = 0.1f;
-	params.simulation .n_threads         = 1;
+	params.simulation .n_threads         = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 	params.simulation .stop_time         = std::chrono::seconds(0);
 	params.simulation .inter_frame_level = 1;
 	params.simulation .seed              = 0;

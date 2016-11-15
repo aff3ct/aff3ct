@@ -1,3 +1,5 @@
+#include <typeinfo>
+
 #include "Module/Quantizer/Standard/Quantizer_standard.hpp"
 #include "Module/Quantizer/Fast/Quantizer_fast.hpp"
 #include "Module/Quantizer/Tricky/Quantizer_tricky.hpp"

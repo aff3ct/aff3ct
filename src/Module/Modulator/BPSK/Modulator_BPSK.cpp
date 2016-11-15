@@ -1,3 +1,5 @@
+#include <typeinfo>
+
 #include "Modulator_BPSK.hpp"
 
 template <typename B, typename R, typename Q>

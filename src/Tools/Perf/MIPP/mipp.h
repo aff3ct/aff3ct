@@ -330,7 +330,7 @@ static void errorMessage(std::string instr)
 	if (RegisterSizeBit == 0)
 		std::cerr << "Undefined type of instructions, try to add -mfpu=neon, -msse4.2, -mavx, -march=native... "
 		          << "at the compile time." << std::endl;
-	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T1)] << "," << type_names[typeid(T2)] << "> (" 
+	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T1)] << "," << type_names[typeid(T2)] << "> ("
 	          << IntructionsType << ") is undefined! Program halting..." << std::endl;
 }
 
