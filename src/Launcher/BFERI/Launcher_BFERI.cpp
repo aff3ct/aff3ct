@@ -41,7 +41,7 @@ void Launcher_BFERI<B,R,Q>
 		 "enable special benchmark mode with a loop around the decoder."};
 	this->opt_args[{"sim-benchs-no-ldst"}] =
 		{"",
-		 "enable the display of the decoder throughput considering only the decoder time."};
+		 "enable the display of the decoder throughput considering only the decoding time."};
 	this->opt_args[{"sim-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};
