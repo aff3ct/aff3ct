@@ -19,7 +19,7 @@ template <typename B>
 unsigned long long Monitor_reduction<B>
 ::get_n_analyzed_fra() const
 {
-	unsigned long long cur_fra = 0;
+	unsigned long long cur_fra = this->n_analyzed_frames;
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
 		cur_fra += error_analyzers[i]->get_n_analyzed_fra();
 
@@ -30,7 +30,7 @@ template <typename B>
 int Monitor_reduction<B>
 ::get_n_fe() const
 {
-	auto cur_fe = 0;
+	auto cur_fe = this->n_frame_errors;
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
 		cur_fe += error_analyzers[i]->get_n_fe();
 
@@ -41,7 +41,7 @@ template <typename B>
 int Monitor_reduction<B>
 ::get_n_be() const
 {
-	auto cur_be = 0;
+	auto cur_be = this->n_bit_errors;
 	for (unsigned i = 0; i < error_analyzers.size(); i++)
 		cur_be += error_analyzers[i]->get_n_be();
 
