@@ -7,28 +7,29 @@
 
 struct simulation_parameters
 {
-	std::chrono::seconds stop_time;
-	std::string          type;
-	std::string          trace_path;
-	std::string          bin_pb_path;
-	std::string          json_path;
-	float                snr_min;
-	float                snr_max;
-	float                snr_step;
-	float                sig_a_min;
-	float                sig_a_max;
-	float                sig_a_step;
-	bool                 debug;
-	bool                 benchs_no_ldst;
-	bool                 time_report;
-	int                  benchs;
-	int                  debug_limit;
-	int                  n_threads;
-	int                  inter_frame_level;
-	int                  seed;
-	int                  n_conc_tasks;
-	int                  mpi_rank;
-	int                  mpi_size;
+	std::chrono::milliseconds mpi_comm_freq;
+	std::chrono::seconds      stop_time;
+	std::string               type;
+	std::string               trace_path;
+	std::string               bin_pb_path;
+	std::string               json_path;
+	float                     snr_min;
+	float                     snr_max;
+	float                     snr_step;
+	float                     sig_a_min;
+	float                     sig_a_max;
+	float                     sig_a_step;
+	bool                      debug;
+	bool                      benchs_no_ldst;
+	bool                      time_report;
+	int                       benchs;
+	int                       debug_limit;
+	int                       n_threads;
+	int                       inter_frame_level;
+	int                       seed;
+	int                       n_conc_tasks;
+	int                       mpi_rank;
+	int                       mpi_size;
 };
 
 struct code_parameters

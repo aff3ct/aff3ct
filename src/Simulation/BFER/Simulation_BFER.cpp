@@ -174,7 +174,7 @@ void Simulation_BFER<B,R,Q>
 		                                                 simu->params.monitor.n_frame_errors,
 		                                                 simu->monitor,
 		                                                 std::this_thread::get_id(),
-		                                                 std::chrono::milliseconds(1000),
+		                                                 simu->params.simulation.mpi_comm_freq,
 		                                                 n_fra);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)

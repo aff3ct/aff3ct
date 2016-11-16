@@ -38,6 +38,7 @@ Launcher<B,R,Q>
 	params.simulation .seed              = 0;
 	params.simulation .mpi_rank          = 0;
 	params.simulation .mpi_size          = 1;
+	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -115,6 +116,11 @@ void Launcher<B,R,Q>
 	this->opt_args[{"sim-seed"}] =
 		{"positive_int",
 		 "seed used in the simulation to initialize the pseudo random generators in general."};
+#ifdef ENABLE_MPI
+	opt_args[{"sim-mpi-comm"}] =
+		{"positive_int",
+		 "MPI communication frequency between the nodes (in millisec)."};
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-type"}] =
@@ -245,6 +251,8 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",  "t"});
 #endif
 #ifdef ENABLE_MPI
+	if(ar.exist_arg({"sim-mpi-comm"     })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
+
 	int max_n_threads_global;
 	int max_n_threads_local = params.simulation.n_threads;
 
@@ -255,6 +263,7 @@ void Launcher<B,R,Q>
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
 	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
 #endif
+
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
@@ -393,6 +402,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	p.push_back(std::make_pair("Seed", std::to_string(params.simulation.seed)));
 
 #ifdef ENABLE_MPI
+	p.push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(params.simulation.mpi_comm_freq.count())));
 	p.push_back(std::make_pair("MPI size", std::to_string(params.simulation.mpi_size)));
 #endif
 

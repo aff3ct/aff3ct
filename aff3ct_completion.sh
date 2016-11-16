@@ -49,7 +49,7 @@ _aff3ct() {
 		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type           \
 		      --chn-path --chn-blk-fad --qnt-type --qnt-int --qnt-bits        \
 		      --qnt-range --dec-type --dec-implem --term-no --term-freq       \
-		      --sim-seed"
+		      --sim-seed --sim-mpi-comm"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -204,7 +204,7 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed)
+		--sim-seed | --sim-mpi-comm)
 			COMPREPLY=()
 			;;
 

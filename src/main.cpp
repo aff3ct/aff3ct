@@ -279,7 +279,7 @@ int sc_main(int argc, char **argv)
 #endif
 {
 #ifdef ENABLE_MPI
-	MPI_Init(NULL, NULL);
+	MPI_Init(nullptr, nullptr);
 #endif
 
 	std::string code_type, simu_type = "BFER";
