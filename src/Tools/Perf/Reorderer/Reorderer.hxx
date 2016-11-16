@@ -120,8 +120,8 @@ struct Reorderer_static_core <T,N_FRAMES,1,K>
 	}
 };
 
-// HACK for clang
-#ifdef __clang__
+// HACK for clang and gcc
+#if defined(__clang__) || defined(__GNUC__)
 template <typename T, int N_FRAMES, int J>
 struct Reorderer_static_core <T,N_FRAMES,J,16384>
 {

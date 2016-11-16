@@ -144,7 +144,7 @@ void Modulator_PSK<B,R,Q,MAX>
 				L1 = MAX(L1, -std::norm(complex_Yk - std::complex<Q>((Q)this->constellation[j].real(),
 				                                                     (Q)this->constellation[j].imag())) * inv_sigma2);
 
-			Y_N2[n] = (L0 - L1);
+		Y_N2[n] = (L0 - L1);
 	}
 }
 
