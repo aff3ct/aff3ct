@@ -97,7 +97,7 @@ bool Monitor_reduction_mpi<B>
 
 		t_last_mpi_comm = std::chrono::steady_clock::now();
 
-		is_fe_limit_achieved = this->get_n_fe() >= this->get_fe_limit();
+		is_fe_limit_achieved = mvals_recv.n_fe >= this->get_fe_limit();
 	}
 
 	return is_fe_limit_achieved;
