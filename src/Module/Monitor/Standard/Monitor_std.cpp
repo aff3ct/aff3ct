@@ -18,7 +18,7 @@ Monitor_std<B>
 
 template <typename B>
 bool Monitor_std<B>
-::fe_limit_achieved() const
+::fe_limit_achieved()
 {
 	return (get_n_fe() >= get_fe_limit()) || Monitor<B>::interrupt;
 }

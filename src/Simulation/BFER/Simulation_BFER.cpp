@@ -9,6 +9,10 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef ENABLE_MPI
+#include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
+#endif
+
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
@@ -75,6 +79,13 @@ Simulation_BFER<B,R,Q>
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
 		          << std::endl;
+#ifdef ENABLE_MPI
+	if (params.simulation.debug || params.simulation.benchs)
+	{
+		std::cerr << bold_red("(EE) Debug and bench modes are unavailable in MPI, exiting.") << std::endl;
+		std::exit(-1);
+	}
+#endif
 }
 
 template <typename B, typename R, typename Q>
@@ -98,7 +109,7 @@ void Simulation_BFER<B,R,Q>
 	for (auto tid = 1; tid < this->n_obj; tid++)
 		threads[tid -1].join();
 
-	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
+	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled && !this->params.simulation.benchs)
 	{
 		time_reduction(true);
 		this->terminal->final_report(std::cout);
@@ -156,12 +167,23 @@ void Simulation_BFER<B,R,Q>
 	simu->barrier(tid);
 	if (tid == 0)
 	{
+#ifdef ENABLE_MPI
+		// build a monitor to compute BER/FER (reduce the other monitors)
+		simu->monitor_red = new Monitor_reduction_mpi<B>(simu->params.code.K,
+		                                                 simu->params.code.N,
+		                                                 simu->params.monitor.n_frame_errors,
+		                                                 simu->monitor,
+		                                                 std::this_thread::get_id(),
+		                                                 std::chrono::milliseconds(1000),
+		                                                 n_fra);
+#else
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
 		                                             simu->params.code.N,
 		                                             simu->params.monitor.n_frame_errors,
 		                                             simu->monitor,
 		                                             n_fra);
+#endif
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal();
 		Simulation::check_errors(simu->terminal, "Terminal");
@@ -174,7 +196,8 @@ void Simulation_BFER<B,R,Q>
 {
 	Simulation_BFER<B,R,Q>::build_communication_chain(simu, tid);
 
-	if (tid == 0 && (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
+	if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
+	    (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
 	    !(simu->params.simulation.debug && simu->n_obj == 1) && !simu->params.simulation.benchs))
 		simu->terminal->legend(std::cout);
 
@@ -359,7 +382,8 @@ void Simulation_BFER<B,R,Q>
 			trace(simu);
 
 		// display statistics in terminal
-		if (tid == 0 && !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
+		if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
+		    !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
 		    (steady_clock::now() - simu->t_simu) >= simu->params.terminal.frequency)
 		{
 			simu->time_reduction();
@@ -670,9 +694,9 @@ void Simulation_BFER<B,R,Q>
 		simu->d_quant_total[0] += d_quant;
 		simu->d_depun_total[0] += d_depun;
 		simu->d_corea_total[0] += d_corea;
-		simu->d_load_total [0] += simu->decoder[0]->get_load_duration();
+		simu->d_load_total [0] += simu->decoder[0]->get_load_duration  ();
 		simu->d_decod_total[0] += simu->decoder[0]->get_decode_duration();
-		simu->d_store_total[0] += simu->decoder[0]->get_store_duration();
+		simu->d_store_total[0] += simu->decoder[0]->get_store_duration ();
 		simu->d_cobit_total[0] += d_cobit;
 		simu->d_check_total[0] += d_check;
 
@@ -703,9 +727,12 @@ void Simulation_BFER<B,R,Q>
 
 	for (unsigned l_idx = 0; l_idx < simu->Y_N2[0].size(); l_idx++)
 	{
-		if (l_idx < simu->U_K [0].size()) myfile << simu->U_K [0][l_idx]; myfile << ", \t ";
-		if (l_idx < simu->X_N1[0].size()) myfile << simu->X_N1[0][l_idx]; myfile << ", \t ";
-		if (l_idx < simu->X_N2[0].size()) myfile << simu->X_N2[0][l_idx]; myfile << ", \t ";
+		if (l_idx < simu->U_K [0].size()) myfile << simu->U_K [0][l_idx];
+		myfile << ", \t ";
+		if (l_idx < simu->X_N1[0].size()) myfile << simu->X_N1[0][l_idx];
+		myfile << ", \t ";
+		if (l_idx < simu->X_N2[0].size()) myfile << simu->X_N2[0][l_idx];
+		myfile << ", \t ";
 		if (simu->params.modulator.type == "PAM"  ||
 		    simu->params.modulator.type == "BPSK" ||
 		    simu->params.modulator.type == "BPSK_FAST")
@@ -728,10 +755,14 @@ void Simulation_BFER<B,R,Q>
 			else myfile << ", \t ";
 			myfile << ", \t ";
 		}
-		if (l_idx < simu->Y_N2[0].size()) myfile << simu->Y_N2[0][l_idx]; myfile << ", \t ";
-		if (l_idx < simu->Y_N3[0].size()) myfile << simu->Y_N3[0][l_idx]; myfile << ", \t ";
-		if (l_idx < simu->Y_N4[0].size()) myfile << simu->Y_N4[0][l_idx]; myfile << ", \t ";
-		if (l_idx < simu->V_K [0].size()) myfile << simu->V_K [0][l_idx]; myfile << std::endl;
+		if (l_idx < simu->Y_N2[0].size()) myfile << simu->Y_N2[0][l_idx];
+		myfile << ", \t ";
+		if (l_idx < simu->Y_N3[0].size()) myfile << simu->Y_N3[0][l_idx];
+		myfile << ", \t ";
+		if (l_idx < simu->Y_N4[0].size()) myfile << simu->Y_N4[0][l_idx];
+		myfile << ", \t ";
+		if (l_idx < simu->V_K [0].size()) myfile << simu->V_K [0][l_idx];
+		myfile << std::endl;
 	}
 	myfile.close();
 }
@@ -809,16 +840,16 @@ void Simulation_BFER<B,R,Q>
 {
 	using namespace std::chrono;
 
-	auto d_total = d_sourc_total_sum + 
-	               d_crc_total_sum   + 
+	auto d_total = d_sourc_total_sum +
+	               d_crc_total_sum   +
 	               d_encod_total_sum +
 	               d_punct_total_sum +
 	               d_modul_total_sum +
 	               d_chann_total_sum +
 	               d_filte_total_sum +
 	               d_demod_total_sum +
-	               d_quant_total_sum + 
-	               d_depun_total_sum + 
+	               d_quant_total_sum +
+	               d_depun_total_sum +
 	               d_corea_total_sum +
 	               d_load_total_sum  +
 	               d_decod_total_sum +
@@ -929,7 +960,11 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
+#ifdef ENABLE_MPI
+	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr);
+#else
 	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, &d_decod_all_red);
+#endif
 }
 
 // ==================================================================================== explicit template instantiation

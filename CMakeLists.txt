@@ -108,7 +108,7 @@ endif (ENABLE_STARPU)
 
 # MPI
 if (ENABLE_MPI)
-    # add_definitions ("-DMPI")
+    add_definitions ("-DENABLE_MPI")
 
     find_package (MPI REQUIRED)
     if (MPI_CXX_FOUND)

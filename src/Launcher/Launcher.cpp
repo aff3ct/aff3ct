@@ -8,6 +8,10 @@
 #include <algorithm>
 #include <functional>
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher.hpp"
@@ -32,6 +36,8 @@ Launcher<B,R,Q>
 	params.simulation .stop_time         = std::chrono::seconds(0);
 	params.simulation .inter_frame_level = 1;
 	params.simulation .seed              = 0;
+	params.simulation .mpi_rank          = 0;
+	params.simulation .mpi_size          = 1;
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -53,6 +59,11 @@ Launcher<B,R,Q>
 	params.quantizer  .range             = 0.f;
 	params.terminal   .disabled          = false;
 	params.terminal   .frequency         = std::chrono::milliseconds(500);
+
+#ifdef ENABLE_MPI
+	MPI_Comm_size(MPI_COMM_WORLD, &params.simulation.mpi_size);
+	MPI_Comm_rank(MPI_COMM_WORLD, &params.simulation.mpi_rank);
+#endif
 }
 
 template <typename B, typename R, typename Q>
@@ -233,6 +244,17 @@ void Launcher<B,R,Q>
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",  "t"});
 #endif
+#ifdef ENABLE_MPI
+	int max_n_threads_global;
+	int max_n_threads_local = params.simulation.n_threads;
+
+	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+
+	assert(max_n_threads_global > 0);
+
+	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
+	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
@@ -369,6 +391,10 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 		p.push_back(std::make_pair("Type of quant. reals", type_names[typeid(Q)]));
 	p.push_back(std::make_pair("Inter frame level", std::to_string(params.simulation.inter_frame_level)));
 	p.push_back(std::make_pair("Seed", std::to_string(params.simulation.seed)));
+
+#ifdef ENABLE_MPI
+	p.push_back(std::make_pair("MPI size", std::to_string(params.simulation.mpi_size)));
+#endif
 
 	return p;
 }
@@ -634,15 +660,18 @@ void Launcher<B,R,Q>
 	}
 
 	this->read_arguments();
-	this->print_header();
+	if (params.simulation.mpi_rank == 0)
+		this->print_header();
 	simu = this->build_simu();
 
 	if (simu != nullptr)
 	{
 		// launch the simulation
-		stream << "# The simulation is running..." << std::endl;
+		if (params.simulation.mpi_rank == 0)
+			stream << "# The simulation is running..." << std::endl;
 		simu->launch();
-		stream << "# End of the simulation." << std::endl;
+		if (params.simulation.mpi_rank == 0)
+			stream << "# End of the simulation." << std::endl;
 	}
 }
 

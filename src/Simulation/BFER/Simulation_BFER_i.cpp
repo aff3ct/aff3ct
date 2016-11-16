@@ -103,7 +103,7 @@ void Simulation_BFER_i<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER_i<B,R,Q>
-::terminal_temp_report(Simulation_BFER_i<B,R,Q> *simu, const Monitor<B> *monitor)
+::terminal_temp_report(Simulation_BFER_i<B,R,Q> *simu, Monitor<B> *monitor)
 {
 	if (simu->terminal != nullptr)
 	{

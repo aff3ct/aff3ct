@@ -72,7 +72,7 @@ public:
 
 protected:
 	static void build_communication_chain(Simulation_BFER_i<B,R,Q> *simu, const int tid = 0        );
-	static void terminal_temp_report     (Simulation_BFER_i<B,R,Q> *simu, const Monitor<B> *monitor);
+	static void terminal_temp_report     (Simulation_BFER_i<B,R,Q> *simu,       Monitor<B> *monitor);
 
 	virtual void launch_precompute ();
 	virtual void snr_precompute    ();

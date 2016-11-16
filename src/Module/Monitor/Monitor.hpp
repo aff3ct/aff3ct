@@ -133,7 +133,7 @@ public:
 	 *
 	 * \return true if the frame errors limit is achieved.
 	 */
-	virtual bool fe_limit_achieved() const = 0;
+	virtual bool fe_limit_achieved() = 0;
 
 	/*!
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.

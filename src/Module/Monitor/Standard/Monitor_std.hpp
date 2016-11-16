@@ -25,7 +25,7 @@ public:
 
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
 
-	bool fe_limit_achieved() const;
+	virtual bool fe_limit_achieved();
 	int get_fe_limit() const;
 
 	virtual unsigned long long get_n_analyzed_fra() const;

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 
-#ifdef MPI
+#ifdef ENABLE_MPI
 #include <mpi.h>
 #endif
 
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
 int sc_main(int argc, char **argv)
 #endif
 {
-#ifdef MPI
+#ifdef ENABLE_MPI
 	MPI_Init(NULL, NULL);
 #endif
 
@@ -310,7 +310,7 @@ int sc_main(int argc, char **argv)
 	start_simu<B,R,Q,QD>(argc, (const char**)argv, code_type, simu_type);
 #endif
 
-#ifdef MPI
+#ifdef ENABLE_MPI
 	MPI_Finalize();
 #endif
 
