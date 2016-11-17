@@ -52,7 +52,7 @@ def recursivelyGetFilenames(currentPath, fileNames):
 def printLine(simuType, codeType, moduType, N, K, snrMin, snrMax, prec, decType, decImplem, decSIMD, testId, state, separator):
 	print(repr(simuType   ).rjust( 9), end="  ",           flush=True)
 	print(repr(codeType   ).rjust(11), end="  ",           flush=True)
-	print(repr(moduType   ).rjust(11), end="  ",           flush=True)
+	print(repr(moduType   ).rjust(19), end="  ",           flush=True)
 	print(repr(N          ).rjust( 6), end="  ",           flush=True)
 	print(repr(K          ).rjust( 6), end="  ",           flush=True)
 	print(repr(snrMin     ).rjust( 7), end="  ",           flush=True)
@@ -91,7 +91,7 @@ for f in fileNamesTmp:
 # print the legend
 print(str("SIMU_TYPE"  ).rjust( 9), end="  ", flush=True)
 print(str("CODE_TYPE"  ).rjust(11), end="  ", flush=True)
-print(str("MODU_TYPE"  ).rjust(11), end="  ", flush=True)
+print(str("MODU_TYPE"  ).rjust(19), end="  ", flush=True)
 print(str("N"          ).rjust( 6), end="  ", flush=True)
 print(str("K"          ).rjust( 6), end="  ", flush=True)
 print(str("SNR-MIN"    ).rjust( 7), end="  ", flush=True)
@@ -105,7 +105,7 @@ print(str("TEST-RESULT").rjust(13), end="\n", flush=True)
 
 print(str("---------"  ).rjust( 9), end="  ", flush=True)
 print(str("---------"  ).rjust(11), end="  ", flush=True)
-print(str("---------"  ).rjust(11), end="  ", flush=True)
+print(str("---------"  ).rjust(19), end="  ", flush=True)
 print(str("-"          ).rjust( 6), end="  ", flush=True)
 print(str("-"          ).rjust( 6), end="  ", flush=True)
 print(str("-------"    ).rjust( 7), end="  ", flush=True)
