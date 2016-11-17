@@ -1,14 +1,11 @@
 #ifndef SIMULATION_BFER_I_HPP_
 #define SIMULATION_BFER_I_HPP_
 
-#include <condition_variable>
-#include <mutex>
 #include <chrono>
 #include <vector>
 
 #include "Tools/params.h"
 #include "Tools/Threads/Barrier.hpp"
-#include "Tools/Display/Terminal/Terminal.hpp"
 
 #include "Module/Source/Source.hpp"
 #include "Module/CRC/CRC.hpp"
@@ -26,17 +23,9 @@
 template <typename B, typename R, typename Q>
 class Simulation_BFER_i : public Simulation
 {
-private:
-	std::mutex mutex_terminal;
-
 protected:
-	std::condition_variable cond_terminal;
-
 	// simulation parameters
 	const parameters &params;
-
-	// number of obj to allocate
-	const int n_obj;
 
 	// a barrier to synchronize the threads
 	Barrier barrier;
@@ -62,17 +51,13 @@ protected:
 	std::vector<Coset    <B,B  >*> coset_bit;
 	std::vector<Monitor  <B    >*> monitor;
 
-	// terminal (for the output of the code)
-	Terminal *terminal;
-
 public:
 	Simulation_BFER_i(const parameters& params);
 	virtual ~Simulation_BFER_i();
 	void launch();
 
 protected:
-	static void build_communication_chain(Simulation_BFER_i<B,R,Q> *simu, const int tid = 0        );
-	static void terminal_temp_report     (Simulation_BFER_i<B,R,Q> *simu,       Monitor<B> *monitor);
+	static void build_communication_chain(Simulation_BFER_i<B,R,Q> *simu, const int tid = 0);
 
 	virtual void launch_precompute ();
 	virtual void snr_precompute    ();

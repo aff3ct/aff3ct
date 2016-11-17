@@ -99,6 +99,10 @@ void Launcher<B,R,Q>
 	opt_args[{"sim-threads", "t"}] =
 		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
+#else
+	this->opt_args[{"sim-conc-tasks", "t"}] =
+		{"positive_int",
+		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
 	opt_args[{"sim-domain"}] =
 		{"string",
@@ -241,14 +245,16 @@ void Launcher<B,R,Q>
 	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
 	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
 
-	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
-	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"       });
-	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
-	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
-	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
+	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
+	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
+	if(ar.exist_arg({"sim-domain"         })) params.channel.domain               = ar.get_arg      ({"sim-domain"         });
+	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
+	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
+	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
 #ifndef STARPU
-	if(ar.exist_arg({"sim-threads",  "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",  "t"});
+	if(ar.exist_arg({"sim-threads",    "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",    "t"});
+#else
+	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
 #endif
 #ifdef ENABLE_MPI
 	if(ar.exist_arg({"sim-mpi-comm"     })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));

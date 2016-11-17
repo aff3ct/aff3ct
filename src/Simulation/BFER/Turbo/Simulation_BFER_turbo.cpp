@@ -22,14 +22,14 @@ template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_turbo<B,R,Q,QD>
 ::Simulation_BFER_turbo(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
-  interleaver(this->n_obj, nullptr),
-  sub_encoder(this->n_obj, nullptr),
-  siso       (this->n_obj, nullptr),
-  sf         (this->n_obj, nullptr)
+  interleaver(this->params.simulation.n_threads, nullptr),
+  sub_encoder(this->params.simulation.n_threads, nullptr),
+  siso       (this->params.simulation.n_threads, nullptr),
+  sf         (this->params.simulation.n_threads, nullptr)
 {
 	assert(params.code.N / params.code.K == 3);
 
-	for (auto tid = 0; tid < this->n_obj; tid++)
+	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 	{
 		auto seed = this->params.simulation.seed;
 		seed += (params.interleaver.type == "UNIFORM") ? tid : 0;
@@ -41,7 +41,7 @@ Simulation_BFER_turbo<B,R,Q,QD>
 
 	if (!params.simulation.json_path.empty())
 	{
-		assert(this->n_obj == 1);
+		assert(this->params.simulation.n_threads == 1);
 		json_stream.open(params.simulation.json_path.c_str(), std::ios::out | std::ios::trunc);
 
 		json_stream << "[" << std::endl;
@@ -58,7 +58,7 @@ Simulation_BFER_turbo<B,R,Q,QD>
 		json_stream << "[{\"stage\": \"end\"}]]" << std::endl;
 		json_stream.close();
 	}
-	for (auto tid = 0; tid < this->n_obj; tid++)
+	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 		if (interleaver[tid] != nullptr)
 			delete interleaver[tid];
 }
@@ -70,10 +70,10 @@ void Simulation_BFER_turbo<B,R,Q,QD>
 	Simulation_BFER<B,R,Q>::release_objects();
 
 	int tid = 0;
-	const int n_obj = this->n_obj;
-	for (tid = 0; tid < n_obj; tid++) if (sub_encoder[tid] != nullptr) { delete sub_encoder[tid]; sub_encoder[tid] = nullptr; }
-	for (tid = 0; tid < n_obj; tid++) if (siso       [tid] != nullptr) { delete siso       [tid]; siso       [tid] = nullptr; }
-	for (tid = 0; tid < n_obj; tid++) if (sf         [tid] != nullptr) { delete sf         [tid]; sf         [tid] = nullptr; }
+	const int nthr = this->params.simulation.n_threads;
+	for (tid = 0; tid < nthr; tid++) if (sub_encoder[tid] != nullptr) { delete sub_encoder[tid]; sub_encoder[tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (siso       [tid] != nullptr) { delete siso       [tid]; siso       [tid] = nullptr; }
+	for (tid = 0; tid < nthr; tid++) if (sf         [tid] != nullptr) { delete sf         [tid]; sf         [tid] = nullptr; }
 }
 
 template <typename B, typename R, typename Q, typename QD>

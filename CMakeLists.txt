@@ -1,5 +1,5 @@
 # CMake entry point
-cmake_minimum_required (VERSION 2.8.8)
+cmake_minimum_required (VERSION 3.0.2)
 
 project (aff3ct)
 

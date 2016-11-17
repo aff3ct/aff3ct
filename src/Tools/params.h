@@ -27,7 +27,6 @@ struct simulation_parameters
 	int                       n_threads;
 	int                       inter_frame_level;
 	int                       seed;
-	int                       n_conc_tasks;
 	int                       mpi_rank;
 	int                       mpi_size;
 };

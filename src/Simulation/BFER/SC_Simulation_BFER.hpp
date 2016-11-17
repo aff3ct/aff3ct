@@ -3,6 +3,8 @@
 #ifndef SC_SIMULATION_BFER_HPP_
 #define SC_SIMULATION_BFER_HPP_
 
+#include <condition_variable>
+#include <mutex>
 #include <chrono>
 #include <vector>
 
@@ -18,6 +20,10 @@
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
+private:
+	std::mutex mutex_terminal;
+	std::condition_variable cond_terminal;
+
 protected:
 	SC_Duplicator *duplicator[3];
 	SC_Debug<B>   *dbg_B     [6];
@@ -28,6 +34,9 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
+
+	// terminal (for the output of the code)
+	Terminal *terminal;
 
 public:
 	Simulation_BFER(const parameters& params);
@@ -44,6 +53,8 @@ private:
 	void bind_sockets_debug       ();
 
 	Terminal* build_terminal();
+
+	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 };
 
 #endif /* SIMULATION_SC_BFER_HPP_ */

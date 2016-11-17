@@ -21,35 +21,51 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)
 : Simulation_BFER_i<B,R,Q>(params),
 
-  task_names(this->n_obj, std::vector<std::string>(14)),
+  task_names(this->params.simulation.n_threads, std::vector<std::string>(14)),
   frame_id(0),
 
-  U_K (this->n_obj),
-  X_N1(this->n_obj),
-  X_N2(this->n_obj),
-  X_N3(this->n_obj),
-  H_N (this->n_obj),
-  Y_N1(this->n_obj),
-  Y_N2(this->n_obj),
-  Y_N3(this->n_obj),
-  Y_N4(this->n_obj),
-  Y_N5(this->n_obj),
-  V_K (this->n_obj),
+  U_K (this->params.simulation.n_threads),
+  X_N1(this->params.simulation.n_threads),
+  X_N2(this->params.simulation.n_threads),
+  X_N3(this->params.simulation.n_threads),
+  H_N (this->params.simulation.n_threads),
+  Y_N1(this->params.simulation.n_threads),
+  Y_N2(this->params.simulation.n_threads),
+  Y_N3(this->params.simulation.n_threads),
+  Y_N4(this->params.simulation.n_threads),
+  Y_N5(this->params.simulation.n_threads),
+  V_K (this->params.simulation.n_threads),
 
-  spu_U_K (this->n_obj),
-  spu_X_N1(this->n_obj),
-  spu_X_N2(this->n_obj),
-  spu_X_N3(this->n_obj),
-  spu_H_N (this->n_obj),
-  spu_Y_N1(this->n_obj),
-  spu_Y_N2(this->n_obj),
-  spu_Y_N3(this->n_obj),
-  spu_Y_N4(this->n_obj),
-  spu_Y_N5(this->n_obj),
-  spu_V_K (this->n_obj),
+  spu_U_K (this->params.simulation.n_threads),
+  spu_X_N1(this->params.simulation.n_threads),
+  spu_X_N2(this->params.simulation.n_threads),
+  spu_X_N3(this->params.simulation.n_threads),
+  spu_H_N (this->params.simulation.n_threads),
+  spu_Y_N1(this->params.simulation.n_threads),
+  spu_Y_N2(this->params.simulation.n_threads),
+  spu_Y_N3(this->params.simulation.n_threads),
+  spu_Y_N4(this->params.simulation.n_threads),
+  spu_Y_N5(this->params.simulation.n_threads),
+  spu_V_K (this->params.simulation.n_threads),
 
-  monitor_red(nullptr)
+  monitor_red(nullptr),
+  terminal   (nullptr)
 {
+	if (params.simulation.debug)
+	{
+		std::cerr << bold_red("(EE) SystemC simulation does not support the debug mode... Exiting") << std::endl;
+		std::exit(-1);
+	}
+
+	if (params.simulation.benchs)
+	{
+		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
+		std::exit(-1);
+	}
+
+	if (params.simulation.time_report)
+		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
+
 	// initialize StarPU with default configuration
 	auto ret = starpu_init(NULL);
 	STARPU_CHECK_RETURN_VALUE(ret, "starpu_init");
@@ -70,8 +86,8 @@ void Simulation_BFER<B,R,Q>
 	// launch the master thread
 	this->Monte_Carlo_method();
 
-	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
-		this->terminal->final_report(std::cout);
+	if (!this->params.terminal.disabled)
+		terminal->final_report(std::cout);
 }
 
 template <typename B, typename R, typename Q>
@@ -81,7 +97,7 @@ void Simulation_BFER<B,R,Q>
 	// this condition avoids the double unregistering...
 	if (monitor_red != nullptr)
 		// StarPU does not need to manipulate the arrays anymore so we can stop monitoring them
-		for (auto tid = 0; tid < this->n_obj; tid++)
+		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 		{
 			starpu_data_unregister(spu_U_K [tid]);
 			starpu_data_unregister(spu_X_N1[tid]);
@@ -96,8 +112,8 @@ void Simulation_BFER<B,R,Q>
 			starpu_data_unregister(spu_V_K [tid]);
 		}
 
-	if (this->monitor_red != nullptr) { delete this->monitor_red; this->monitor_red = nullptr; }
-	if (this->terminal    != nullptr) { delete this->terminal;    this->terminal    = nullptr; }
+	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
+	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 
 	Simulation_BFER_i<B,R,Q>::release_objects();
 }
@@ -196,23 +212,22 @@ void Simulation_BFER<B,R,Q>
 ::Monte_Carlo_method()
 {
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	std::vector<std::thread> threads(this->n_obj -1);
-	for (auto tid = 1; tid < this->n_obj; tid++)
+	std::vector<std::thread> threads(this->params.simulation.n_threads -1);
+	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::build_communication_chain, this, tid);
 
 	// build the communication chain
 	Simulation_BFER<B,R,Q>::build_communication_chain(this, 0);
 
 	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->n_obj; tid++)
+	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1].join();
 
-	if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-	    !(this->params.simulation.debug && this->n_obj == 1) && !this->params.simulation.benchs)
-		this->terminal->legend(std::cout);
+	if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min)
+		terminal->legend(std::cout);
 
 	if (this->params.source.type == "AZCW")
-		for (auto tid = 0; tid < this->n_obj; tid++)
+		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 		{
 			std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
 			std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
@@ -223,12 +238,12 @@ void Simulation_BFER<B,R,Q>
 	std::thread term_thread;
 	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
 		// launch a thread dedicated to the terminal display
-		term_thread = std::thread(Simulation_BFER_i<B,R,Q>::terminal_temp_report, this, this->monitor_red);
+		term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
 
 	// Monte Carlo simulation
 	while (!this->monitor_red->fe_limit_achieved())
 	{
-		for (auto tid = 0; tid < this->n_obj; tid++)
+		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 			this->seq_tasks_submission(tid);
 
 		starpu_task_wait_for_all();
@@ -236,7 +251,7 @@ void Simulation_BFER<B,R,Q>
 
 	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
 	{
-		this->cond_terminal.notify_all();
+		cond_terminal.notify_all();
 		// wait the terminal thread to finish
 		term_thread.join();
 	}
@@ -360,6 +375,25 @@ Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
 	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr);
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFER<B,R,Q>
+::terminal_temp_report(Simulation_BFER<B,R,Q> *simu)
+{
+	if (simu->terminal != nullptr && simu->monitor[0] != nullptr)
+	{
+		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
+
+		while (!simu->monitor_red->fe_limit_achieved() && !simu->monitor_red->is_interrupt())
+		{
+			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
+			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
+				simu->terminal->temp_report(std::clog); // display statistics in the terminal
+		}
+	}
+	else
+		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation

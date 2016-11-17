@@ -42,6 +42,8 @@ protected:
 
 	// objects
 	Monitor_reduction<B> *monitor_red;
+	// terminal (for the output of the code)
+	Terminal *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;

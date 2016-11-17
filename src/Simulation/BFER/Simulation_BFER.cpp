@@ -24,39 +24,40 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)
 : Simulation_BFER_i<B,R,Q>(params),
 
-  threads(this->n_obj -1),
+  threads(this->params.simulation.n_threads -1),
 
-  U_K (this->n_obj),
-  X_N1(this->n_obj),
-  X_N2(this->n_obj),
-  X_N3(this->n_obj),
-  H_N (this->n_obj),
-  Y_N1(this->n_obj),
-  Y_N2(this->n_obj),
-  Y_N3(this->n_obj),
-  Y_N4(this->n_obj),
-  Y_N5(this->n_obj),
-  V_K (this->n_obj),
-  V_N (this->n_obj),
+  U_K (this->params.simulation.n_threads),
+  X_N1(this->params.simulation.n_threads),
+  X_N2(this->params.simulation.n_threads),
+  X_N3(this->params.simulation.n_threads),
+  H_N (this->params.simulation.n_threads),
+  Y_N1(this->params.simulation.n_threads),
+  Y_N2(this->params.simulation.n_threads),
+  Y_N3(this->params.simulation.n_threads),
+  Y_N4(this->params.simulation.n_threads),
+  Y_N5(this->params.simulation.n_threads),
+  V_K (this->params.simulation.n_threads),
+  V_N (this->params.simulation.n_threads),
 
   monitor_red(nullptr),
+  terminal   (nullptr),
 
-  d_sourc_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_crc_total  (this->n_obj, std::chrono::nanoseconds(0)),
-  d_encod_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_punct_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_modul_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_chann_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_filte_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_demod_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_quant_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_depun_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_corea_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_load_total (this->n_obj, std::chrono::nanoseconds(0)),
-  d_decod_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_store_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_cobit_total(this->n_obj, std::chrono::nanoseconds(0)),
-  d_check_total(this->n_obj, std::chrono::nanoseconds(0)),
+  d_sourc_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_crc_total  (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_encod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_punct_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_modul_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_chann_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_filte_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_demod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_quant_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_depun_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_corea_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_load_total (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_decod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_store_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_cobit_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_check_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
 
   d_sourc_total_sum(std::chrono::nanoseconds(0)),
   d_crc_total_sum  (std::chrono::nanoseconds(0)),
@@ -75,7 +76,7 @@ Simulation_BFER<B,R,Q>
   d_cobit_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
-	if (this->n_obj > 1 && params.simulation.debug)
+	if (this->params.simulation.n_threads > 1 && params.simulation.debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
 		          << std::endl;
@@ -99,20 +100,20 @@ void Simulation_BFER<B,R,Q>
 ::_launch()
 {
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	for (auto tid = 1; tid < this->n_obj; tid++)
+	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::Monte_Carlo_method, this, tid);
 
 	// launch the master thread
 	Simulation_BFER<B,R,Q>::Monte_Carlo_method(this, 0);
 
 	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->n_obj; tid++)
+	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1].join();
 
 	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled && !this->params.simulation.benchs)
 	{
 		time_reduction(true);
-		this->terminal->final_report(std::cout);
+		terminal->final_report(std::cout);
 	}
 }
 
@@ -122,8 +123,8 @@ void Simulation_BFER<B,R,Q>
 {
 	Simulation_BFER_i<B,R,Q>::release_objects();
 
-	if (this->monitor_red != nullptr) { delete this->monitor_red; this->monitor_red = nullptr; }
-	if (this->terminal    != nullptr) { delete this->terminal;    this->terminal    = nullptr; }
+	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
+	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -198,7 +199,7 @@ void Simulation_BFER<B,R,Q>
 
 	if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
 	    (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.debug && simu->n_obj == 1) && !simu->params.simulation.benchs))
+	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
 		simu->terminal->legend(std::cout);
 
 	if (simu->params.source.type == "AZCW")
@@ -228,7 +229,7 @@ void Simulation_BFER<B,R,Q>
 
 	simu->barrier(tid);
 
-	if (simu->n_obj == 1 && simu->params.simulation.debug)
+	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
 		Simulation_BFER<B,R,Q>::simulation_loop_debug(simu);
 	else if (simu->params.simulation.benchs)
 		Simulation_BFER<B,R,Q>::simulation_loop_bench(simu, tid);
@@ -413,7 +414,7 @@ void Simulation_BFER<B,R,Q>
 
 	auto frames   = (float)simu->params.simulation.benchs *
 	                (float)simu->params.simulation.inter_frame_level *
-	                (float)simu->n_obj;
+	                (float)simu->params.simulation.n_threads;
 	auto bits     = (float)frames * (float)simu->params.code.K;
 	auto duration = t_stop - t_start;
 
@@ -791,7 +792,7 @@ void Simulation_BFER<B,R,Q>
 	d_cobit_total_red = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
-	for (auto tid = 0; tid < this->n_obj; tid++)
+	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 	{
 		d_sourc_total_red += d_sourc_total[tid];
 		d_crc_total_red   += d_crc_total  [tid];
@@ -813,7 +814,7 @@ void Simulation_BFER<B,R,Q>
 	}
 
 	if (is_snr_done)
-		for (auto tid = 0; tid < this->n_obj; tid++)
+		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 		{
 			d_sourc_total_sum += d_sourc_total[tid];
 			d_crc_total_sum   += d_crc_total  [tid];

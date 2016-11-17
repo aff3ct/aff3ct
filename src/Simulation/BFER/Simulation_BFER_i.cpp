@@ -31,29 +31,25 @@ Simulation_BFER_i<B,R,Q>
 
   params(params),
 
-  n_obj((params.simulation.n_conc_tasks) ? params.simulation.n_conc_tasks : params.simulation.n_threads),
-
-  barrier(n_obj),
+  barrier(params.simulation.n_threads),
 
   snr      (0.f),
   code_rate(0.f),
   sigma    (0.f),
 
-  source     (n_obj, nullptr),
-  crc        (n_obj, nullptr),
-  encoder    (n_obj, nullptr),
-  puncturer  (n_obj, nullptr),
-  modulator  (n_obj, nullptr),
-  channel    (n_obj, nullptr),
-  quantizer  (n_obj, nullptr),
-  coset_real (n_obj, nullptr),
-  decoder    (n_obj, nullptr),
-  coset_bit  (n_obj, nullptr),
-  monitor    (n_obj, nullptr),
-
-  terminal(nullptr)
+  source     (params.simulation.n_threads, nullptr),
+  crc        (params.simulation.n_threads, nullptr),
+  encoder    (params.simulation.n_threads, nullptr),
+  puncturer  (params.simulation.n_threads, nullptr),
+  modulator  (params.simulation.n_threads, nullptr),
+  channel    (params.simulation.n_threads, nullptr),
+  quantizer  (params.simulation.n_threads, nullptr),
+  coset_real (params.simulation.n_threads, nullptr),
+  decoder    (params.simulation.n_threads, nullptr),
+  coset_bit  (params.simulation.n_threads, nullptr),
+  monitor    (params.simulation.n_threads, nullptr)
 {
-	assert(n_obj >= 1);
+	assert(params.simulation.n_threads >= 1);
 }
 
 template <typename B, typename R, typename Q>
@@ -100,26 +96,6 @@ void Simulation_BFER_i<B,R,Q>
 	simu->coset_bit [tid]->set_n_frames(n_frames);
 	simu->monitor   [tid]->set_n_frames(n_frames);
 }
-
-template <typename B, typename R, typename Q>
-void Simulation_BFER_i<B,R,Q>
-::terminal_temp_report(Simulation_BFER_i<B,R,Q> *simu, Monitor<B> *monitor)
-{
-	if (simu->terminal != nullptr)
-	{
-		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
-
-		while (!monitor->fe_limit_achieved() && !monitor->is_interrupt())
-		{
-			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
-			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
-				simu->terminal->temp_report(std::clog); // display statistics in the terminal
-		}
-	}
-	else
-		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
-}
-
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER_i<B,R,Q>
@@ -171,17 +147,18 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_i<B,R,Q>
 ::release_objects()
 {
-	for (auto i = 0; i < n_obj; i++) if (source    [i] != nullptr) { delete source    [i]; source    [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (crc       [i] != nullptr) { delete crc       [i]; crc       [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (encoder   [i] != nullptr) { delete encoder   [i]; encoder   [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (puncturer [i] != nullptr) { delete puncturer [i]; puncturer [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (modulator [i] != nullptr) { delete modulator [i]; modulator [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (channel   [i] != nullptr) { delete channel   [i]; channel   [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (quantizer [i] != nullptr) { delete quantizer [i]; quantizer [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (coset_real[i] != nullptr) { delete coset_real[i]; coset_real[i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (decoder   [i] != nullptr) { delete decoder   [i]; decoder   [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (coset_bit [i] != nullptr) { delete coset_bit [i]; coset_bit [i] = nullptr; }
-	for (auto i = 0; i < n_obj; i++) if (monitor   [i] != nullptr) { delete monitor   [i]; monitor   [i] = nullptr; }
+	const auto nthr = params.simulation.n_threads;
+	for (auto i = 0; i < nthr; i++) if (source    [i] != nullptr) { delete source    [i]; source    [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (crc       [i] != nullptr) { delete crc       [i]; crc       [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (encoder   [i] != nullptr) { delete encoder   [i]; encoder   [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (puncturer [i] != nullptr) { delete puncturer [i]; puncturer [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (modulator [i] != nullptr) { delete modulator [i]; modulator [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (channel   [i] != nullptr) { delete channel   [i]; channel   [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (quantizer [i] != nullptr) { delete quantizer [i]; quantizer [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_real[i] != nullptr) { delete coset_real[i]; coset_real[i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (decoder   [i] != nullptr) { delete decoder   [i]; decoder   [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_bit [i] != nullptr) { delete coset_bit [i]; coset_bit [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (monitor   [i] != nullptr) { delete monitor   [i]; monitor   [i] = nullptr; }
 }
 
 template <typename B, typename R, typename Q>

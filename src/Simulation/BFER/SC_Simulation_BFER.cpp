@@ -23,9 +23,11 @@ Simulation_BFER<B,R,Q>
   duplicator{nullptr, nullptr, nullptr},
   dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R     {nullptr, nullptr, nullptr},
-  dbg_Q     {nullptr, nullptr, nullptr}
+  dbg_Q     {nullptr, nullptr, nullptr},
+
+  terminal(nullptr)
 {
-	if (this->n_obj > 1)
+	if (this->params.simulation.n_threads > 1)
 	{
 		std::cerr << bold_red("(EE) SystemC simulation does not support multi-threading... Exiting.") << std::endl;
 		std::exit(-1);
@@ -63,7 +65,7 @@ void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
 	Simulation_BFER_i<B,R,Q>::release_objects();
-	if (this->terminal != nullptr) { delete this->terminal; this->terminal = nullptr; }
+	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
 }
 
 
@@ -101,7 +103,7 @@ void Simulation_BFER<B,R,Q>
 	}
 
 	// build the terminal to display the BER/FER
-	this->terminal = this->build_terminal();
+	terminal = this->build_terminal();
 	Simulation::check_errors(this->terminal, "Terminal");
 }
 
@@ -112,7 +114,7 @@ void Simulation_BFER<B,R,Q>
 	this->build_communication_chain();
 
 	if ((!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-	    !(this->params.simulation.debug && this->n_obj == 1) && !this->params.simulation.benchs))
+	    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
 		this->terminal->legend(std::cout);
 
 	this->duplicator[0] = new SC_Duplicator("Duplicator0");
@@ -122,7 +124,7 @@ void Simulation_BFER<B,R,Q>
 		this->duplicator[2] = new SC_Duplicator("Duplicator2");
 	}
 
-	if (this->n_obj == 1 && this->params.simulation.debug)
+	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
 	{
 		const auto dl = this->params.simulation.debug_limit;
 
@@ -176,7 +178,7 @@ void Simulation_BFER<B,R,Q>
 		std::thread term_thread;
 		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
 			// launch a thread dedicated to the terminal display
-			term_thread = std::thread(Simulation_BFER_i<B,R,Q>::terminal_temp_report, this, this->monitor[0]);
+			term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
 
 		this->bind_sockets();
 		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
@@ -184,7 +186,7 @@ void Simulation_BFER<B,R,Q>
 
 		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
 		{
-			this->cond_terminal.notify_all();
+			cond_terminal.notify_all();
 			// wait the terminal thread to finish
 			term_thread.join();
 		}
@@ -329,6 +331,25 @@ Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
 	return Factory_terminal<B,R>::build(this->params, this->snr, this->monitor[0], this->t_snr);
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFER<B,R,Q>
+::terminal_temp_report(Simulation_BFER<B,R,Q> *simu)
+{
+	if (simu->terminal != nullptr && simu->monitor[0] != nullptr)
+	{
+		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
+
+		while (!simu->monitor[0]->fe_limit_achieved() && !simu->monitor[0]->is_interrupt())
+		{
+			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
+			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
+				simu->terminal->temp_report(std::clog); // display statistics in the terminal
+		}
+	}
+	else
+		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 
