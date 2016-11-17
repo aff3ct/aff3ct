@@ -42,6 +42,11 @@ Simulation_BFERI<B,R,Q>
 
 	if (params.simulation.time_report)
 		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
+
+#ifdef ENABLE_MPI
+	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
+	          << bold_yellow("on each MPI processes.") << std::endl;
+#endif
 }
 
 template <typename B, typename R, typename Q>

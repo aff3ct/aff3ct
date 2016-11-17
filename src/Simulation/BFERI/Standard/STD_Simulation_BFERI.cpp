@@ -7,9 +7,12 @@
 #include <cassert>
 #include <algorithm>
 
+#ifdef ENABLE_MPI
+#include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
+#endif
+
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
-
 #include "Tools/Factory/Factory_terminal.hpp"
 
 #include "STD_Simulation_BFERI.hpp"
@@ -72,6 +75,20 @@ Simulation_BFERI<B,R,Q>
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
 		          << bold_yellow("because you launched the simulation with more than 1 thread!")
 		          << std::endl;
+
+	if (params.simulation.benchs)
+	{
+		std::cerr << bold_red("(EE) BFERI simulation does not support the bench mode... Exiting") << std::endl;
+		std::exit(-1);
+	}
+
+#ifdef ENABLE_MPI
+	if (params.simulation.debug || params.simulation.benchs)
+	{
+		std::cerr << bold_red("(EE) Debug and bench modes are unavailable in MPI, exiting.") << std::endl;
+		std::exit(-1);
+	}
+#endif
 }
 
 template <typename B, typename R, typename Q>
@@ -95,7 +112,7 @@ void Simulation_BFERI<B,R,Q>
 	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1].join();
 
-	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
+	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled)
 	{
 		time_reduction(true);
 		terminal->final_report(std::cout);
@@ -116,7 +133,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::launch_postcompute()
 {
-	if (this->params.simulation.time_report && !this->params.simulation.benchs)
+	if (this->params.simulation.time_report && this->params.simulation.mpi_rank == 0)
 		time_report();
 }
 
@@ -154,12 +171,23 @@ void Simulation_BFERI<B,R,Q>
 	simu->barrier(tid);
 	if (tid == 0)
 	{
+#ifdef ENABLE_MPI
+		// build a monitor to compute BER/FER (reduce the other monitors)
+		simu->monitor_red = new Monitor_reduction_mpi<B>(simu->params.code.K,
+		                                                 simu->params.code.N,
+		                                                 simu->params.monitor.n_frame_errors,
+		                                                 simu->monitor,
+		                                                 std::this_thread::get_id(),
+		                                                 simu->params.simulation.mpi_comm_freq,
+		                                                 n_fra);
+#else
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
 		                                             simu->params.code.N,
 		                                             simu->params.monitor.n_frame_errors,
 		                                             simu->monitor,
 		                                             n_fra);
+#endif
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal(tid);
 		Simulation::check_errors(simu->terminal, "Terminal");
@@ -172,8 +200,9 @@ void Simulation_BFERI<B,R,Q>
 {
 	Simulation_BFERI<B,R,Q>::build_communication_chain(simu, tid);
 
-	if (tid == 0 && (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1) && !simu->params.simulation.benchs))
+	if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
+	    (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
+	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1)))
 		simu->terminal->legend(std::cout);
 
 	if (simu->params.source.type == "AZCW")
@@ -381,7 +410,8 @@ void Simulation_BFERI<B,R,Q>
 		simu->d_check_total[tid] += d_check;
 
 		// display statistics in terminal
-		if (tid == 0 && !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
+		if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
+		    !simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
 		    (steady_clock::now() - simu->t_simu) >= simu->params.terminal.frequency)
 		{
 			simu->time_reduction();
@@ -881,7 +911,11 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFERI<B,R,Q>
 ::build_terminal(const int tid)
 {
+#ifdef ENABLE_MPI
+	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr);
+#else
 	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, &d_decod_total_red);
+#endif
 }
 
 // ==================================================================================== explicit template instantiation

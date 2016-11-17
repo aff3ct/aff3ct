@@ -131,7 +131,9 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::launch_postcompute()
 {
-	if (this->params.simulation.time_report && !this->params.simulation.benchs)
+	if (this->params.simulation.time_report &&
+	    !this->params.simulation.benchs     &&
+	    this->params.simulation.mpi_rank == 0)
 		time_report();
 }
 

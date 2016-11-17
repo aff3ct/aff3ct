@@ -41,6 +41,11 @@ Generation_polar
   generator(nullptr),
   directory(params.decoder.gen_path)
 {
+#ifdef ENABLE_MPI
+	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
+	          << bold_yellow("on each MPI processes.") << std::endl;
+#endif
+
 	// pattern allocations
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::STANDARD   >());
 	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::RATE_0_LEFT>());
