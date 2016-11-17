@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/EXIT/RSC/Simulation_EXIT_RSC.hpp"
+#include "Simulation/EXIT/Code/RSC/Simulation_EXIT_RSC.hpp"
 
 #include "Launcher_EXIT_RSC.hpp"
 

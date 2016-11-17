@@ -7,7 +7,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "../Simulation_EXIT.hpp"
+#include "Simulation/EXIT/Simulation_EXIT.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_EXIT_polar : public Simulation_EXIT<B,R,Q>

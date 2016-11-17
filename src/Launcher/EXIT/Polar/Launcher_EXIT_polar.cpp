@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/EXIT/Polar/Simulation_EXIT_polar.hpp"
+#include "Simulation/EXIT/Code/Polar/Simulation_EXIT_polar.hpp"
 
 #include "Launcher_EXIT_polar.hpp"
 

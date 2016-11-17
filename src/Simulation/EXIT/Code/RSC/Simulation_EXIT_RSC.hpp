@@ -5,7 +5,7 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
-#include "../Simulation_EXIT.hpp"
+#include "Simulation/EXIT/Simulation_EXIT.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_EXIT_RSC : public Simulation_EXIT<B,R,Q>
