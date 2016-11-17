@@ -41,7 +41,6 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
-	std::chrono::nanoseconds d_decod_total_fake;
 
 public:
 	Simulation_BFERI(const parameters& params);

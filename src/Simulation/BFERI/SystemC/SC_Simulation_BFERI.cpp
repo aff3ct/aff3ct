@@ -26,9 +26,7 @@ Simulation_BFERI<B,R,Q>
   predicate  (nullptr),
   dbg_B      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R      {nullptr, nullptr, nullptr},
-  dbg_Q      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-
-  d_decod_total_fake(std::chrono::nanoseconds(0))
+  dbg_Q      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}
 {
 	if (params.simulation.n_threads > 1)
 	{
