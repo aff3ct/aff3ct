@@ -13,7 +13,7 @@
 #include "Tools/SystemC/SC_Duplicator.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 
-#include "Simulation_BFERI_i.hpp"
+#include "../Simulation_BFERI.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFERI : public Simulation_BFERI_i<B,R,Q>

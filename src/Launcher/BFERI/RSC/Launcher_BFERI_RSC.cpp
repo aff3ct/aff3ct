@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Tools/Display/bash_tools.h"
-#include "Simulation/BFERI/RSC/Simulation_BFERI_RSC.hpp"
+#include "Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp"
 
 #include "Launcher_BFERI_RSC.hpp"
 

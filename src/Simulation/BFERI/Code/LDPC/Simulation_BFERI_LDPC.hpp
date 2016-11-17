@@ -1,12 +1,11 @@
 #ifndef SIMULATION_BFERI_LDPC_HPP_
 #define SIMULATION_BFERI_LDPC_HPP_
 
-#include "Tools/params.h"
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
 #include "Module/Decoder/Decoder_SISO.hpp"
 
-#include "../Simulation_BFERI.hpp"
+#include "Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFERI_LDPC : public Simulation_BFERI<B,R,Q>

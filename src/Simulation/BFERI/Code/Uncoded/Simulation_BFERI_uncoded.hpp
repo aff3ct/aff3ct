@@ -1,9 +1,7 @@
 #ifndef SIMULATION_BFERI_UNCODED_HPP_
 #define SIMULATION_BFERI_UNCODED_HPP_
 
-#include "Tools/params.h"
-
-#include "../Simulation_BFERI.hpp"
+#include "Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFERI_uncoded : public Simulation_BFERI<B,R,Q>

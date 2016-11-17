@@ -1,7 +1,7 @@
 #ifndef SIMULATION_BFERI_RSC_HPP_
 #define SIMULATION_BFERI_RSC_HPP_
 
-#include "../Simulation_BFERI.hpp"
+#include "Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_BFERI_RSC : public Simulation_BFERI<B,R,Q>
