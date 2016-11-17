@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --cde-type LDPC --sim-type BFERI --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist -p 32 -m 0.0 -M 3.51 --sim-snr-step 0.25 --sim-threads 5 -K 2112 -N 4224 -c --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type GSM_TBLESS --mod-bps 1 --mod-ups 5 --chn-type AWGN_FAST --dmod-ite 10 --dec-type BP_FLOODING --dec-implem NMS --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX
+./bin/aff3ct --cde-type LDPC --sim-type BFERI --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist -p 32 -m 0.0 -M 3.51 --sim-snr-step 0.25 -K 2112 -N 4224 -c --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type GSM_TBLESS --mod-bps 1 --mod-ups 5 --chn-type AWGN_FAST --dmod-ite 10 --dec-type BP_FLOODING --dec-implem ONMS  --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX --dec-norm 0.825 -t 64
 Curve name:
 GSM-BPF MAX NMS, 10 glob. ite.
 Trace:
