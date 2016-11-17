@@ -197,15 +197,21 @@ void Simulation_BFERI<B,R,Q>
 	}
 	else
 	{
-		// launch a thread dedicated to the terminal display
-		std::thread thread(Simulation_BFERI<B,R,Q>::terminal_temp_report, this);
+		std::thread term_thread;
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+			// launch a thread dedicated to the terminal display
+			term_thread = std::thread(Simulation_BFERI<B,R,Q>::terminal_temp_report, this);
 
 		this->bind_sockets();
 		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
 		sc_core::sc_start(); // start simulation
 
-		// wait the terminal thread to finish
-		thread.join();
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+		{
+			cond_terminal.notify_all();
+			// wait the terminal thread to finish
+			term_thread.join();
+		}
 	}
 
 	for (auto i = 0; i < 5; i++)
@@ -396,27 +402,29 @@ void Simulation_BFERI<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFERI<B,R,Q>
-::terminal_temp_report(Simulation_BFERI<B,R,Q> *simu)
-{
-	if (!simu->params.terminal.disabled && simu->params.terminal.frequency != std::chrono::nanoseconds(0))
-	{
-		while (!simu->monitor[0]->fe_limit_achieved() && !simu->monitor[0]->is_interrupt())
-		{
-			const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
-			std::this_thread::sleep_for(sleep_time);
-
-			// display statistics in terminal
-			simu->terminal->temp_report(std::clog);
-		}
-	}
-}
-
-template <typename B, typename R, typename Q>
 Terminal* Simulation_BFERI<B,R,Q>
 ::build_terminal(const int tid)
 {
 	return Factory_terminal<B,R>::build(this->params, this->snr, this->monitor[0], this->t_snr);
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFERI<B,R,Q>
+::terminal_temp_report(Simulation_BFERI<B,R,Q> *simu)
+{
+	if (simu->terminal != nullptr && simu->monitor[0] != nullptr)
+	{
+		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
+
+		while (!simu->monitor[0]->fe_limit_achieved() && !simu->monitor[0]->is_interrupt())
+		{
+			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
+			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)
+				simu->terminal->temp_report(std::clog); // display statistics in the terminal
+		}
+	}
+	else
+		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

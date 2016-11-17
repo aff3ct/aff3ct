@@ -3,6 +3,8 @@
 #ifndef SC_SIMULATION_BFERI_HPP_
 #define SC_SIMULATION_BFERI_HPP_
 
+#include <condition_variable>
+#include <mutex>
 #include <chrono>
 #include <vector>
 
@@ -18,6 +20,10 @@
 template <typename B, typename R, typename Q>
 class Simulation_BFERI : public Simulation_BFERI_i<B,R,Q>
 {
+private:
+	std::mutex mutex_terminal;
+	std::condition_variable cond_terminal;
+
 protected:
 	Interleaver<int> *interleaver_e;
 	Coset<B,Q>       *coset_real_i;
@@ -51,9 +57,9 @@ private:
 	void bind_sockets             ();
 	void bind_sockets_debug       ();
 
-	static void terminal_temp_report(Simulation_BFERI<B,R,Q> *simu);
-
 	Terminal* build_terminal(const int tid = 0);
+
+	static void terminal_temp_report(Simulation_BFERI<B,R,Q> *simu);
 };
 
 #endif /* SC_SIMULATION_BFERI_HPP_ */

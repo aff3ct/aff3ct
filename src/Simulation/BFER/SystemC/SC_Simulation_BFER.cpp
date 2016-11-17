@@ -20,12 +20,12 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)
 : Simulation_BFER_i<B,R,Q>(params),
 
+  terminal(nullptr),
+
   duplicator{nullptr, nullptr, nullptr},
   dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R     {nullptr, nullptr, nullptr},
-  dbg_Q     {nullptr, nullptr, nullptr},
-
-  terminal(nullptr)
+  dbg_Q     {nullptr, nullptr, nullptr}
 {
 	if (this->params.simulation.n_threads > 1)
 	{

@@ -25,6 +25,8 @@ private:
 	std::condition_variable cond_terminal;
 
 protected:
+	Terminal *terminal;
+
 	SC_Duplicator *duplicator[3];
 	SC_Debug<B>   *dbg_B     [6];
 	SC_Debug<R>   *dbg_R     [5];
@@ -34,9 +36,6 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
-
-	// terminal (for the output of the code)
-	Terminal *terminal;
 
 public:
 	Simulation_BFER(const parameters& params);
