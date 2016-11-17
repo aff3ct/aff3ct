@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
+#include "Simulation/BFER/Code/Repetition/Simulation_BFER_repetition.hpp"
+
 #include "Launcher_BFER_repetition.hpp"
-#include "../../../Simulation/BFER/Repetition/Simulation_BFER_repetition.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_repetition<B,R,Q>

@@ -1,5 +1,3 @@
-#include "Simulation_BFER_turbo.hpp"
-
 #include <map>
 #include <chrono>
 #include <vector>
@@ -17,6 +15,8 @@
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
 
+
+#include "Simulation_BFER_turbo.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_turbo<B,R,Q,QD>

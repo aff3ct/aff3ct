@@ -3,7 +3,7 @@
 
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
-#include "../Simulation_BFER.hpp"
+#include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER_LDPC : public Simulation_BFER<B,R,Q>

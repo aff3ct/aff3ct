@@ -1,9 +1,7 @@
 #ifndef SIMULATION_UNCODED_HPP_
 #define SIMULATION_UNCODED_HPP_
 
-#include "Tools/params.h"
-
-#include "../Simulation_BFER.hpp"
+#include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER_uncoded : public Simulation_BFER<B,R,Q>

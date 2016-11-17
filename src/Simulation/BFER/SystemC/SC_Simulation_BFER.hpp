@@ -15,7 +15,7 @@
 #include "Tools/SystemC/SC_Duplicator.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 
-#include "Simulation_BFER_i.hpp"
+#include "../Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>

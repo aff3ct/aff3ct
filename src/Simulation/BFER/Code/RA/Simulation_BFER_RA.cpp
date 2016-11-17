@@ -1,5 +1,3 @@
-#include "Simulation_BFER_RA.hpp"
-
 #include <string>
 #include <vector>
 #include <chrono>
@@ -12,6 +10,7 @@
 #include "Module/Encoder/RA/Encoder_RA.hpp"
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
+#include "Simulation_BFER_RA.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_RA<B,R,Q>

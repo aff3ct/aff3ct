@@ -3,15 +3,13 @@
 
 #include <fstream>
 
-#include "Tools/params.h"
-
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
 
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "Module/Decoder/SISO.hpp"
 
-#include "../Simulation_BFER.hpp"
+#include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_BFER_turbo : public Simulation_BFER<B,R,Q>

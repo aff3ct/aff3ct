@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
+#include "Simulation/BFER/Code/RA/Simulation_BFER_RA.hpp"
+
 #include "Launcher_BFER_RA.hpp"
-#include "../../../Simulation/BFER/RA/Simulation_BFER_RA.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_RA<B,R,Q>

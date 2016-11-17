@@ -1,5 +1,3 @@
-#include "Simulation_BFER_RSC.hpp"
-
 #include <map>
 #include <chrono>
 #include <vector>
@@ -14,6 +12,7 @@
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
+#include "Simulation_BFER_RSC.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_RSC<B,R,Q,QD>

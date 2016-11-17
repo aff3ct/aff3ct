@@ -14,7 +14,7 @@
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
-#include "Simulation_BFER.hpp"
+#include "SPU_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>

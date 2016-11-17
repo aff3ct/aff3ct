@@ -1,5 +1,3 @@
-#include "Simulation_BFER_polar.hpp"
-
 #include <string>
 #include <vector>
 #include <chrono>
@@ -16,6 +14,8 @@
 #include "Tools/Factory/Polar/Factory_decoder_polar_gen.hpp"
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
+
+#include "Simulation_BFER_polar.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_polar<B,R,Q>

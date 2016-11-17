@@ -1,11 +1,9 @@
 #ifndef SIMULATION_RA_HPP_
 #define SIMULATION_RA_HPP_
 
-#include "Tools/params.h"
-
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "../Simulation_BFER.hpp"
+#include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER_RA : public Simulation_BFER<B,R,Q>

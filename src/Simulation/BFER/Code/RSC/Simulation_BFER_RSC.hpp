@@ -1,7 +1,7 @@
 #ifndef SIMULATION_RSC_HPP_
 #define SIMULATION_RSC_HPP_
 
-#include "../Simulation_BFER.hpp"
+#include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_BFER_RSC : public Simulation_BFER<B,R,Q>

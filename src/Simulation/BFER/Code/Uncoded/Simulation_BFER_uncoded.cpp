@@ -1,5 +1,3 @@
-#include "Simulation_BFER_uncoded.hpp"
-
 #include <string>
 #include <vector>
 #include <chrono>
@@ -11,6 +9,7 @@
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
+#include "Simulation_BFER_uncoded.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_uncoded<B,R,Q>

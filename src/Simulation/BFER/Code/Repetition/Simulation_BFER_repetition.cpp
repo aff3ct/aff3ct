@@ -1,5 +1,3 @@
-#include "Simulation_BFER_repetition.hpp"
-
 #include <string>
 #include <vector>
 #include <chrono>
@@ -11,6 +9,7 @@
 #include "Tools/Factory/Repetition/Factory_encoder_repetition.hpp"
 #include "Tools/Factory/Repetition/Factory_decoder_repetition.hpp"
 
+#include "Simulation_BFER_repetition.hpp"
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_repetition<B,R,Q>

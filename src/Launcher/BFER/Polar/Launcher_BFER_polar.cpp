@@ -3,11 +3,10 @@
 #include <cmath>
 
 #include "Tools/Display/bash_tools.h"
-
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
+#include "Simulation/BFER/Code/Polar/Simulation_BFER_polar.hpp"
 
 #include "Launcher_BFER_polar.hpp"
-#include "../../../Simulation/BFER/Polar/Simulation_BFER_polar.hpp"
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_polar<B,R,Q>

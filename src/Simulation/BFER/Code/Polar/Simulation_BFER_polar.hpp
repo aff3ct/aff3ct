@@ -1,10 +1,9 @@
 #ifndef SIMULATION_POLAR_HPP_
 #define SIMULATION_POLAR_HPP_
 
-#include "Tools/params.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "../Simulation_BFER.hpp"
+#include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 
 template <typename B, typename R, typename Q>
 class Simulation_BFER_polar : public Simulation_BFER<B,R,Q>
