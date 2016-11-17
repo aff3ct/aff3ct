@@ -55,8 +55,10 @@ public:
 		Monitor_i<B>::interrupt = false;
 		Monitor_i<B>::d_delta_interrupt = std::chrono::nanoseconds(0);
 
+#ifndef ENABLE_MPI
 		// Install a signal handler
 		std::signal(SIGINT, Monitor_i<B>::signal_interrupt_handler);
+#endif
 	}
 
 	/*!
