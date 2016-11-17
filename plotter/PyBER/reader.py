@@ -25,8 +25,9 @@ import os
 def getVal(line, idColumn):
 	# there are two different file formats, classic (lines begni with SNR) and new (lines begin with SNR value directly)
 	# indices of the different parameter change, and the following array is used to convert classic indices to new
-	convert_to_v1 = [0, 4, 5, 10, 0, 3, 2]
-	convert_to_v2 = [0, 4, 5, 7 , 0, 3, 2]
+	convert_to_v1 = [0, 4, 5, 12, 0, 3, 2]
+	convert_to_v2 = [0, 4, 5, 9 , 0, 3, 2]
+	convert_to_v3 = [0, 4, 5, 6 , 0, 3, 2]
 
 	# classic
 	if line.startswith("SNR = "):
@@ -59,8 +60,10 @@ def getVal(line, idColumn):
 
 		if(len(line) == 14):
 				val = float(line[convert_to_v1[idColumn]])
-		else:
+		elif(len(line) == 11):
 			val = float(line[convert_to_v2[idColumn]])
+		elif(len(line) == 8):
+			val = float(line[convert_to_v3[idColumn]])
 
 	if "inf" in str(val):
 		val = float(0.0)
