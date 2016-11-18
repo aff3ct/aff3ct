@@ -21,9 +21,17 @@ Enabling the Intel Math Kernel Librairy (MKL) (used for the AWGN channel):
 
     $ cmake .. -DENABLE_MKL=ON
 
-Enabling the SystemC/TLM standard between the modules:
+Enabling the SystemC/TLM standard between the modules (be careful, you have to disable StarPU with `-DENABLE_STARPU=OFF` when you want to use SystemC):
 
     $ cmake .. -DENABLE_SYSTEMC=ON
+
+Enabling [StarPU](http://starpu.gforge.inria.fr/) for the BFER simulations (be careful, you have to disable SystemC with `-DENABLE_SYSTEMC=OFF` when you want to use StarPU):
+
+    $ cmake .. -DENABLE_STARPU=ON
+
+Enabling MPI (simulations over multiple nodes/computers) for the BFER and BFERI simulations (MPI is not compatible with StarPU and SystemC, be sure to have `-DENABLE_SYSTEMC=OFF` and `-DENABLE_STARPU=OFF`):
+
+    $ cmake .. -DENABLE_MPI=ON
 
 ### Modifying the CMakeCache.txt
 By default the configuration file will generate a debug binary.
