@@ -49,13 +49,7 @@ void Decoder_LDPC_BP_layered<B,R>
 	assert(Y_N1.size() == this->var_nodes.size());
 
 	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->branches.begin(), this->branches.end(), (R)0);
-		this->init_flag = false;
-	}
-
-	std::copy(Y_N1.begin(), Y_N1.end(), this->var_nodes.begin());
+	load(Y_N1);
 
 	// actual decoding
 	this->BP_decode();
@@ -63,6 +57,9 @@ void Decoder_LDPC_BP_layered<B,R>
 	// prepare for next round by processing extrinsic information
 	for (auto i = 0; i < (int)Y_N2.size(); i++)
 		Y_N2[i] = this->var_nodes[i] - Y_N1[i];
+
+	// copy extrinsic information into var_nodes for next TURBO iteration
+	std::copy(Y_N2.begin(), Y_N2.end(), this->var_nodes.begin());
 }
 
 template <typename B, typename R>
@@ -75,10 +72,12 @@ void Decoder_LDPC_BP_layered<B,R>
 	if (this->init_flag)
 	{
 		std::fill(this->branches.begin(), this->branches.end(), (R)0);
+		std::fill(this->var_nodes.begin(), this->var_nodes.end(), (R)0);
 		this->init_flag = false;
 	}
 
-	std::copy(Y_N.begin(), Y_N.begin() + this->var_nodes.size(), this->var_nodes.begin());
+	for (auto i = 0; i < (int)var_nodes.size(); i++)
+		this->var_nodes[i] += Y_N[i]; // var_nodes contain previous extrinsic information
 }
 
 template <typename B, typename R>
