@@ -1,5 +1,4 @@
 #include <cmath>
-#include <thread>
 #include <chrono>
 #include <cassert>
 #include <cstdlib>
