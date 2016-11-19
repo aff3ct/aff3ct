@@ -17,6 +17,9 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .debug_limit    = 0;
 	this->params.simulation .time_report    = false;
 	this->params.simulation .trace_path     = "";
+#if !definded(STARPU) && !defined(SYSTEMC)
+	this->params.simulation .n_threads      = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
+#endif
 	this->params.code       .coset          = false;
 	this->params.encoder    .type           = "";
 	this->params.encoder    .path           = "";
