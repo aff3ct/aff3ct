@@ -105,7 +105,6 @@ private:
 	static void build_communication_chain(Simulation_BFERI<B,R,Q> *simu, const int tid = 0);
 	static void Monte_Carlo_method       (Simulation_BFERI<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop          (Simulation_BFERI<B,R,Q> *simu, const int tid = 0);
-	static void simulation_loop_bench    (Simulation_BFERI<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_debug    (Simulation_BFERI<B,R,Q> *simu);
 
 	void time_reduction(const bool is_snr_done = false  );
