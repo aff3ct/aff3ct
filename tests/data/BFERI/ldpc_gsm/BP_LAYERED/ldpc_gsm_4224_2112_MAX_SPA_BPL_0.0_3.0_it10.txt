@@ -1,0 +1,75 @@
+Run command:
+./bin/aff3ct --cde-type LDPC --sim-type BFERI --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist -p 32 -m 0.0 -M 3.51 --sim-snr-step 0.25 -K 2112 -N 4224 -c --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type GSM_TBLESS --mod-bps 1 --mod-ups 5 --chn-type AWGN_FAST --dmod-ite 10 --dec-type BP_LAYERED --dec-implem SPA  --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX -t 64
+Curve name:
+GSM-BPL MAX SPA, 10 glob. ite.
+Trace:
+# -------------------------------------------------
+# ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
+# -------------------------------------------------
+# Parameters:
+# * Simulation ------------------------------------
+#    ** Type                    = BFERI
+#    ** SNR min (m)             = 0.000000 dB
+#    ** SNR max (M)             = 3.010000 dB
+#    ** SNR step (s)            = 0.250000 dB
+#    ** Type of bits            = int (32 bits)
+#    ** Type of reals           = float (32 bits)
+#    ** Inter frame level       = 1
+#    ** Seed                    = 0
+#    ** MPI comm. freq. (ms)    = 1000
+#    ** MPI size                = 2
+#    ** Multi-threading (t)     = 56 thread(s)
+# * Code ------------------------------------------
+#    ** Type                    = LDPC
+#    ** Info. bits (K)          = 2112
+#    ** Codeword size (N)       = 4224
+#    ** Coset approach (c)      = on
+#    ** AList file path         = ../../conf/dec/LDPC/GSM_2112_4224.alist
+# * Source ----------------------------------------
+#    ** Type                    = RAND_FAST
+# * Encoder ---------------------------------------
+#    ** Type                    = COSET
+#    ** Systematic              = on
+# * Interleaver -----------------------------------
+#    ** Type                    = USER
+#    ** Path                    = ../../conf/itl/GSM-LDPC_4224.itl
+# * Modulator -------------------------------------
+#    ** Type                    = GSM_TBLESS (5-UPS)
+# * Channel ---------------------------------------
+#    ** Type                    = AWGN_FAST
+#    ** Domain                  = LLR
+# * Demodulator -----------------------------------
+#    ** Sigma square            = off
+#    ** Max type                = MAX
+#    ** Turbo demod. iterations = 10
+# * Decoder ---------------------------------------
+#    ** Type (D)                = BP_LAYERED
+#    ** Implementation          = SPA
+#    ** Num. of iterations (i)  = 1
+#    ** Syndrome detection      = on
+# * Monitor ---------------------------------------
+#    ** Frame error count (e)   = 100
+#
+# The simulation is running...
+# -------------------------------------------------------------||---------------------
+#   Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||  Global throughput  
+#             on the Signal Noise Ratio (SNR) Eb/N0            ||  and elapsed time   
+# -------------------------------------------------------------||---------------------
+# ------|----------|----------|----------|----------|----------||----------|----------
+#   SNR |      FRA |       BE |       FE |      BER |      FER || SIM_CTHR |    ET/RT 
+#  (dB) |          |          |          |          |          ||   (Mb/s) | (hhmmss) 
+# ------|----------|----------|----------|----------|----------||----------|----------
+   0.00 |     2465 |  1265353 |     2465 | 2.43e-01 | 1.00e+00 ||     8.80 | 00h00'01  
+   0.25 |     2498 |  1175872 |     2498 | 2.23e-01 | 1.00e+00 ||     9.64 | 00h00'01  
+   0.50 |     2518 |  1059403 |     2518 | 1.99e-01 | 1.00e+00 ||     9.75 | 00h00'01  
+   0.75 |     2503 |   888094 |     2503 | 1.68e-01 | 1.00e+00 ||     9.68 | 00h00'01  
+   1.00 |     2469 |   639274 |     2467 | 1.23e-01 | 9.99e-01 ||     9.54 | 00h00'01  
+   1.25 |     2470 |   320144 |     2372 | 6.14e-02 | 9.60e-01 ||     9.60 | 00h00'01  
+   1.50 |     2466 |    79522 |     1638 | 1.53e-02 | 6.64e-01 ||     9.63 | 00h00'01  
+   1.75 |     2546 |     8866 |      483 | 1.65e-03 | 1.90e-01 ||     9.77 | 00h00'01  
+   2.00 |     5085 |      620 |      108 | 5.77e-05 | 2.12e-02 ||    10.22 | 00h00'02  
+   2.25 |    57021 |      354 |      101 | 2.94e-06 | 1.77e-03 ||    10.64 | 00h00'22  
+   2.50 |   308049 |      434 |      100 | 6.67e-07 | 3.25e-04 ||    10.80 | 00h02'00  
+   2.75 |   676352 |      438 |      100 | 3.07e-07 | 1.48e-04 ||    10.91 | 00h04'21  
+   3.00 |  1516857 |      521 |      100 | 1.63e-07 | 6.59e-05 ||    10.98 | 00h09'43  
+# End of the simulation.
