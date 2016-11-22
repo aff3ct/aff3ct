@@ -13,6 +13,25 @@ set (LIBRARY_OUTPUT_PATH lib/)
 # Generate the source files list
 file (GLOB_RECURSE source_files src/*)
 
+# Filters creation for Microsoft Visual Studio (based on the "source_group" function)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    function(assign_source_group)
+        foreach(_source IN ITEMS ${ARGN})
+            if (IS_ABSOLUTE "${_source}")
+                file(RELATIVE_PATH _source_rel "${CMAKE_CURRENT_SOURCE_DIR}" "${_source}")
+            else()
+                set(source_rel "${_source}")
+            endif()
+            get_filename_component(_source_path "${_source_rel}" PATH)
+            string(REPLACE "/" "\\" _source_path_msvc "${_source_path}")
+            source_group("${_source_path_msvc}" FILES "${_source}")
+        endforeach()
+    endfunction(assign_source_group)
+
+    # Create the filters
+    assign_source_group(${source_files})
+endif()
+
 # Command line options
 option (ENABLE_GSL     "Enable GSL support"     OFF)
 option (ENABLE_MKL     "Enable MKL support"     OFF)
