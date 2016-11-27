@@ -1737,10 +1737,10 @@
 		//         ina[7a, 6a, 5a, 4a, 3a, 2a, 1a, 0a]
 		//         inb[7b, 6b, 5b, 4b, 3b, 2b, 1b, 0b] =>
 		//         out[7b, 6a, 5a, 4a, 3b, 2a, 1a, 0a]
-		reg rTmp = _mm256_permute_ps(v1, _MM_SHUFFLE(0, 3, 2, 1));
+		auto rTmp = _mm256_permute_ps(v1, _MM_SHUFFLE(0, 3, 2, 1));
 		return _mm256_blend_ps(rTmp,
-							   _mm256_permute2f128_ps(rTmp, rTmp, _MM_SHUFFLE(0, 0, 0, 1)),
-							   _MM_SHUFFLE(2, 0, 2, 0));
+		                       _mm256_permute2f128_ps(rTmp, rTmp, _MM_SHUFFLE(0, 0, 0, 1)),
+		                       _MM_SHUFFLE(2, 0, 2, 0));
 	}
 
 	template <>
@@ -1760,8 +1760,8 @@
 		//
 		//   -> _mm256_blend_pd(a, b, _MM_SHUFFLE(0, 0, 2, 2))
 		//      ina[3a, 2a, 1a, 0a] and inb[3b, 2b, 1b, 0b] => out[3b, 2a, 1b, 0a]
-		reg rTmp = _mm256_permute_pd(_mm256_castps_pd(v1), _MM_SHUFFLE(1, 1, 1, 1));
-		return _mm256_castpd_ps(_mm256_blend_pd(_mm256_castps_pd(rTmp),
+		auto rTmp = _mm256_permute_pd(_mm256_castps_pd(v1), _MM_SHUFFLE(1, 1, 1, 1));
+		return _mm256_castpd_ps(_mm256_blend_pd(rTmp,
 		                                        _mm256_permute2f128_pd(rTmp,
 		                                                               rTmp,
 		                                                               _MM_SHUFFLE(0, 0, 0, 1)),
