@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 480 -N 576 -m 2.50 -M 5.51 -s 0.50 -e 100 --dec-type BP_LAYERED --dec-implem SPA -i 40 --cde-alist-path ../conf/dec/LDPC/WIMAX_480_576.alist -t 64 -p 32
+./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 480 -N 576 -m 2.50 -M 5.51 -s 0.50 -e 100 --dec-type BP_LAYERED --dec-implem SPA -i 40 --cde-alist-path ../conf/dec/LDPC/WIMAX_480_576.alist --dec-no-synd -t 64 -p 32
 Curve name:
 LDPC WiMAX (576,480)
 Trace:
@@ -38,6 +38,7 @@ Trace:
 #    ** Type (D)               = BP_LAYERED
 #    ** Implementation         = SPA
 #    ** Num. of iterations (i) = 40
+#    ** Syndrome detection     = off
 # * Monitor ---------------------------------------
 #    ** Frame error count (e)  = 100
 #

@@ -10,7 +10,7 @@ Trace:
 # * Simulation ------------------------------------
 #    ** Type                  = BFER
 #    ** SNR min (m)           = 0.000000 dB
-#    ** SNR max (M)           = 34.099998 dB
+#    ** SNR max (M)           = 34.1 dB
 #    ** SNR step (s)          = 1.000000 dB
 #    ** Type of bits          = int (32 bits)
 #    ** Type of reals         = float (32 bits)
