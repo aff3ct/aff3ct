@@ -80,6 +80,11 @@ SOFTWARE.
 #include <cmath>
 #include <map>
 
+#ifdef __GNUC__
+#include <execinfo.h>
+#include <unistd.h>
+#endif
+
 #ifdef _MSC_VER
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -292,6 +297,17 @@ static void errorMessage(std::string instr)
 		          << "at the compile time." << std::endl;
 	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T)] << "> (" << IntructionsType << ") is undefined! "
 	          << "Program halting..." << std::endl;
+
+#ifdef __GNUC__
+	void *array[5];
+	size_t size;
+
+	// get void*'s for all entries on the stack
+	size = backtrace(array, 5);
+
+	std::cerr << std::endl << "Backtrace:" << std::endl;
+	backtrace_symbols_fd(array, size, STDERR_FILENO);
+#endif
 }
 
 template <typename T1, typename T2>
@@ -332,6 +348,17 @@ static void errorMessage(std::string instr)
 		          << "at the compile time." << std::endl;
 	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T1)] << "," << type_names[typeid(T2)] << "> ("
 	          << IntructionsType << ") is undefined! Program halting..." << std::endl;
+
+#ifdef __GNUC__
+	void *array[5];
+	size_t size;
+
+	// get void*'s for all entries on the stack
+	size = backtrace(array, 5);
+
+	std::cerr << std::endl << "Backtrace:" << std::endl;
+	backtrace_symbols_fd(array, size, STDERR_FILENO);
+#endif
 }
 
 template <typename T> inline reg   load         (const T*)                        { errorMessage<T>("load");          exit(-1); }
