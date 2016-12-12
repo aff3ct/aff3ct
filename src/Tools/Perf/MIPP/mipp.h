@@ -80,7 +80,7 @@ SOFTWARE.
 #include <cmath>
 #include <map>
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && (defined(__linux__) || defined(__linux))
 #include <execinfo.h>
 #include <unistd.h>
 #endif
@@ -298,7 +298,7 @@ static void errorMessage(std::string instr)
 	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T)] << "> (" << IntructionsType << ") is undefined! "
 	          << "Program halting..." << std::endl;
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && (defined(__linux__) || defined(__linux))
 	void *array[5];
 	size_t size;
 
@@ -349,7 +349,7 @@ static void errorMessage(std::string instr)
 	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T1)] << "," << type_names[typeid(T2)] << "> ("
 	          << IntructionsType << ") is undefined! Program halting..." << std::endl;
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && (defined(__linux__) || defined(__linux))
 	void *array[5];
 	size_t size;
 
