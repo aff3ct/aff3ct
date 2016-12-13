@@ -645,7 +645,7 @@ void Simulation_BFERI<B,R,Q>
 			if (ite != simu->params.demodulator.n_ite)
 			{
 				// decode
-				std::clog << "Soft decode form Y_N5 to Y_N6..." << std::endl;
+				std::clog << "Soft decode from Y_N5 to Y_N6..." << std::endl;
 				auto t_decod = steady_clock::now();
 				simu->siso[0]->soft_decode(simu->Y_N5[0], simu->Y_N6[0]);
 				d_decod += steady_clock::now() - t_decod;
