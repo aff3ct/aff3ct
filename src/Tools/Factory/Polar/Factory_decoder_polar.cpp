@@ -13,18 +13,18 @@
 
 // #define API_POLAR_DYNAMIC 1
 
-#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
+#include "Module/Decoder/Polar/API/API_polar_dynamic_seq.hpp"
+#include "Module/Decoder/Polar/API/API_polar_dynamic_intra.hpp"
 #ifdef API_POLAR_DYNAMIC
-#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
+#include "Module/Decoder/Polar/API/API_polar_dynamic_inter.hpp"
+#include "Module/Decoder/Polar/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
 #else
-#include "Module/Decoder/Polar/SC/API/API_polar_static_seq.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_static_inter.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_static_inter_8bit_bitpacking.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_8bit.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_16bit.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_static_intra_32bit.hpp"
+#include "Module/Decoder/Polar/API/API_polar_static_seq.hpp"
+#include "Module/Decoder/Polar/API/API_polar_static_inter.hpp"
+#include "Module/Decoder/Polar/API/API_polar_static_inter_8bit_bitpacking.hpp"
+#include "Module/Decoder/Polar/API/API_polar_static_intra_8bit.hpp"
+#include "Module/Decoder/Polar/API/API_polar_static_intra_16bit.hpp"
+#include "Module/Decoder/Polar/API/API_polar_static_intra_32bit.hpp"
 #endif
 
 #include "Factory_decoder_polar.hpp"
