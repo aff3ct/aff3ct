@@ -24,24 +24,24 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
                              const int n_frames, const std::string name)
-: Decoder<B,R>        (K, N, n_frames, API_polar::get_n_frames(), name),
-  m                   (std::log2(N)),
-  L                   (L),
-  metric_init         (std::numeric_limits<float>::min()),
-  frozen_bits         (frozen_bits),
-  active_paths        (L, false),                                      // active paths
-  metrics             (L       ),                                      // path metrics
-  l                   (L, mipp::vector<R>(2 * N + mipp::nElReg<R>())), // llrs
-  s                   (L, mipp::vector<B>(N     + mipp::nElReg<B>())), // partial sums
-  metrics_vec         (3, std::vector<float>()),                       // list of candidate metrics to be sorted
-  metrics_idx         (3, std::vector<int  >()),                       // indexes tables used to sort the metrics
-  dup_count           (L),                                             // number of duplications of a path, at updating time
-  llr_indexes         (),                                              // indexes used to sort a list of llrs (to fbe flipped)
-  bit_flips           (4 * L),                                         // index of the bits to be flipped
-  last_active_paths   (L),                                             // used to store a former state of active paths
-  is_even             (L),                                             // used to store parity of a spc node
-  leaves_rev_depth    (N),                                             // lut of the reverse depth, function of leaf index
-  depth2offl          (m + 1)                                          // lut of offl, function of depth
+: Decoder<B,R>     (K, N, n_frames, API_polar::get_n_frames(), name),
+  m                (std::log2(N)),
+  L                (L),
+  metric_init      (std::numeric_limits<float>::min()),
+  frozen_bits      (frozen_bits),
+  active_paths     (L, false),
+  metrics          (L),
+  l                (L, mipp::vector<R>(2 * N + mipp::nElReg<R>())),
+  s                (L, mipp::vector<B>(N     + mipp::nElReg<B>())),
+  metrics_vec      (3, std::vector<float>()),
+  metrics_idx      (3, std::vector<int  >()),
+  dup_count        (L),
+  llr_indexes      (),
+  bit_flips        (4 * L),
+  last_active_paths(L),
+  is_even          (L),
+  leaves_rev_depth (N),
+  depth2offl       (m + 1)
 {
 	static_assert(API_polar::get_n_frames() == 1, "Only the intra-frame SIMD are supported!");
 	static_assert(sizeof(B) == sizeof(R), "");
@@ -56,9 +56,14 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		index++;
 	}
 
-	metrics_vec[0].resize(L * 2);                metrics_idx[0].resize(L * 2);
-	metrics_vec[1].resize(L * 4);                metrics_idx[1].resize(L * 4);
-	metrics_vec[2].resize((L <= 2 ? 2 : 8) * L); metrics_idx[2].resize((L <= 2 ? 2 : 8) * L);
+	metrics_vec[0].resize(L * 2);
+	metrics_idx[0].resize(L * 2);
+
+	metrics_vec[1].resize(L * 4);
+	metrics_idx[1].resize(L * 4);
+
+	metrics_vec[2].resize((L <= 2 ? 2 : 8) * L);
+	metrics_idx[2].resize((L <= 2 ? 2 : 8) * L);
 
 	for (auto j = 0 ; j < 3 ; j++)
 		for (size_t i = 0 ; i < metrics_idx[j].size() ; i++)
@@ -127,6 +132,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const int n_elmts = 1 << r_d;
 	const int n_elm_2 = n_elmts >> 1;
 	const auto off_l = depth2offl[m - r_d];
+
 	switch((pattern_SC_type)pattern_types_per_id[id])
 	{
 		case STANDARD:
@@ -150,12 +156,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const int n_elm_2 = n_elmts >> 1;
 	const auto off_l = depth2offl[m - r_d];
 
-//	std::cout << "off_l + n_elm_2 = " << off_l + n_elm_2 << std::endl;
-//	std::cout << "off_l           = " << off_l           << std::endl;
-//	std::cout << "off_l + n_elmts = " << off_l + n_elmts << std::endl;
-//	std::cout << "n_elm_2         = " << n_elm_2         << std::endl;
-//	std::cout << std::endl;
-
 	if (r_d > leaves_rev_depth[off_s])
 	{
 		API_polar::f(l[path], off_l + n_elm_2, off_l, off_l + n_elmts, n_elm_2);
@@ -174,7 +174,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	rec_left(m, 0, id);
 	update_paths(id++);
 	this->recursive_compute_sums(0, 1, 0, sums_id);
-	off_s +=  1 << leaves_rev_depth[0];
+	off_s += 1 << leaves_rev_depth[0];
 
 	// decode all branches, applying g once and f till the leaf
 	while(off_s < this->N)
@@ -207,7 +207,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	this->select_best_path();
 }
 
-
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::store(mipp::vector<B>& V_K) const
@@ -225,7 +224,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::store_fast(mipp::vector<B>& V) const
 {
 	assert(V.size() == (unsigned) this->N);
-	std::copy(s[best_path].begin(), s[best_path].end() - mipp::nElmtsPerRegister<B>(), V.begin());
+	std::copy(s[best_path].begin(), s[best_path].end() - mipp::nElReg<B>(), V.begin());
 }
 
 
@@ -249,7 +248,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		if (active_paths[path])
 			if (best_path == -1 || metrics[path] < metrics[best_path] )
 				best_path = path;
-			
+
 	if (best_path == -1)
 		best_path = 0;
 }
@@ -280,7 +279,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		this->recursive_compute_sums(off_s - n_elm_2, r_d +1, path, ++id);
 	}
 }
-
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
@@ -334,31 +332,29 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	{
 		if (active_paths[path])
 		{
-			std::partial_sort(llr_indexes[r_d].begin(), 
-			                  llr_indexes[r_d].begin() + 2, 
-			                  llr_indexes[r_d].end(),
-			                  [this, path, off_l](int x, int y) 
-			                  { return abs(l[path][off_l + x]) < abs(l[path][off_l + y]); }  );
+			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + 2, llr_indexes[r_d].end(),
+				[this, path, off_l](int x, int y) {
+					return std::abs(l[path][off_l + x]) < std::abs(l[path][off_l + y]);
+				});
 
 			bit_flips[4 * path]    = llr_indexes[r_d][0];
 			bit_flips[4 * path +1] = llr_indexes[r_d][1];
 
 			metrics_vec[1][4 * path   ] = metrics[path];
-			metrics_vec[1][4 * path +1] = metrics[path] + abs(l[path][off_l + bit_flips[4 * path]]);
-			metrics_vec[1][4 * path +2] = metrics[path] + abs(l[path][off_l + bit_flips[4 * path +1]]);
-			metrics_vec[1][4 * path +3] = metrics[path] 
-			                        + abs(l[path][off_l + bit_flips[4 * path +1]])
-			                        + abs(l[path][off_l + bit_flips[4 * path]]);
+			metrics_vec[1][4 * path +1] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path   ]]);
+			metrics_vec[1][4 * path +2] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path +1]]);
+			metrics_vec[1][4 * path +3] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path +1]])
+			                                            + std::abs(l[path][off_l + bit_flips[4 * path   ]]);
 		}
 		else
-		{
 			for (auto i = 0 ; i < 4 ; i++)
 				metrics_vec[1][4 * path +i] = std::numeric_limits<float>::max();
-		}
 	}
 
 	std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].end(),
-	                  [this](int x, int y){return metrics_vec[1][x] < metrics_vec[1][y];});
+		[this](int x, int y) {
+			return metrics_vec[1][x] < metrics_vec[1][y];
+		});
 
 	// L first of the lists are the L best paths
 	for (auto i = 0 ; i < L ; i++)
@@ -388,7 +384,6 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_rep(const int id)
 {
-
 	// update metrics for all paths till last bit 
 	const auto r_d = leaves_rev_depth[off_s];
 	const auto n_elmts = 1 << r_d;
@@ -396,7 +391,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	for (auto path = 0 ; path < L ; path++)
 		if (active_paths[path])
 		{
-			metrics_vec[0][2 * path]    = metrics[path];
+			metrics_vec[0][2 * path   ] = metrics[path];
 			metrics_vec[0][2 * path +1] = metrics[path];
 		}
 	
@@ -406,7 +401,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto path = 0 ; path < L ; path++)
 			if (active_paths[path])
 			{
-					metrics_vec[0][2 * path]    -= std::min(l[path][depth2offl[m - r_d] + i], (R)0);
+					metrics_vec[0][2 * path   ] -= std::min(l[path][depth2offl[m - r_d] + i], (R)0);
 					metrics_vec[0][2 * path +1] += std::max(l[path][depth2offl[m - r_d] + i], (R)0);
 			}
 	}
@@ -422,10 +417,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	{
 		// sort hypothetic metrics
 		std::sort(metrics_idx[0].begin(), metrics_idx[0].end(),
-				[this](int x, int y)
-					{ return metrics_vec[0][x] < metrics_vec[0][y]; }
-		);
-
+			[this](int x, int y) {
+				return metrics_vec[0][x] < metrics_vec[0][y];
+			});
 
 		for (auto i = 0 ; i < L ; i++)
 			dup_count[metrics_idx[0][i] / 2]++;
@@ -453,7 +447,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 						std::fill(s[path].begin() + off_s, 
 					              s[path].begin() + off_s + n_elmts, 
 					              0);
-						metrics[path] = metrics_vec[0][2*path   ];	
+						metrics[path] = metrics_vec[0][2*path];
 					}
 
 					dup_count[path] = 0;
@@ -482,42 +476,59 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	{
 		if (active_paths[path])
 		{
-			std::partial_sort(llr_indexes[r_d].begin(), 
-			                  llr_indexes[r_d].begin() + (L <= 2 ? 2 : 4), 
-			                  llr_indexes[r_d].end(),
-			                  [this, path, off_l](int x, int y) 
-			                  { return abs(l[path][off_l + x]) < abs(l[path][off_l + y]); }  );
+			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + (L <= 2 ? 2 : 4), llr_indexes[r_d].end(),
+				[this, path, off_l](int x, int y){
+					return std::abs(l[path][off_l + x]) < std::abs(l[path][off_l + y]);
+				});
 
 			for (auto i = 0 ; i < 4 ; i++)
-				bit_flips[4 * path +i]    = llr_indexes[r_d][i];
+				bit_flips[4 * path +i] = llr_indexes[r_d][i];
 
 			is_even[path] = !API_polar::spc(s[path], l[path], off_l, off_s, n_elmts);
 
-			metrics_vec[2][n_candidates * path   ] = metrics[path]       + (1 - is_even[path]) * abs(l[path][off_l + bit_flips[4 * path]]);
+			metrics_vec[2][n_candidates * path +0] = metrics[path]       +
+			                                         (1 - is_even[path]) *
+			                                         std::abs(l[path][off_l + bit_flips[4 * path]]);
 
-			metrics_vec[2][n_candidates * path +1] = metrics_vec[2][n_candidates * path] + is_even[path] * abs(l[path][off_l + bit_flips[4 * path]])
-			                                             + abs(l[path][off_l + bit_flips[4 * path +1]]);
+			metrics_vec[2][n_candidates * path +1] = metrics_vec[2][n_candidates * path]            +
+			                                         is_even[path]                                  *
+			                                         std::abs(l[path][off_l + bit_flips[4 * path]]) +
+			                                         std::abs(l[path][off_l + bit_flips[4 * path +1]]);
 			if (L > 2)
 			{
-				metrics_vec[2][n_candidates * path +2] = metrics_vec[2][n_candidates * path] + is_even[path] * abs(l[path][off_l + bit_flips[4 * path]])
-				                                             + abs(l[path][off_l + bit_flips[4 * path +2]]);
-				metrics_vec[2][n_candidates * path +3] = metrics_vec[2][n_candidates * path] + is_even[path] * abs(l[path][off_l + bit_flips[4 * path]])
-				                                             + abs(l[path][off_l + bit_flips[4 * path +3]]);
-		        metrics_vec[2][n_candidates * path +4] = metrics_vec[2][n_candidates * path] + abs(l[path][off_l + bit_flips[4 * path +1]])
-				                                             + abs(l[path][off_l + bit_flips[4 * path +2]]);
-		        metrics_vec[2][n_candidates * path +5] = metrics_vec[2][n_candidates * path] + abs(l[path][off_l + bit_flips[4 * path +1]])
-				                                             + abs(l[path][off_l + bit_flips[4 * path +3]]);
-				metrics_vec[2][n_candidates * path +6] = metrics_vec[2][n_candidates * path] + abs(l[path][off_l + bit_flips[4 * path +2]])
-				                                             + abs(l[path][off_l + bit_flips[4 * path +3]]);
-				metrics_vec[2][n_candidates * path +7] = metrics_vec[2][n_candidates * path +1]
-				                                             + abs(l[path][off_l + bit_flips[4 * path +2]])
-				                                             + abs(l[path][off_l + bit_flips[4 * path +3]]);
+				metrics_vec[2][n_candidates * path +2] = metrics_vec[2][n_candidates * path]               +
+				                                         is_even[path]                                     *
+				                                         std::abs(l[path][off_l + bit_flips[4 * path]])    +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +2]]);
+
+				metrics_vec[2][n_candidates * path +3] = metrics_vec[2][n_candidates * path]               +
+				                                         is_even[path]                                     *
+				                                         std::abs(l[path][off_l + bit_flips[4 * path]])    +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +3]]);
+
+				metrics_vec[2][n_candidates * path +4] = metrics_vec[2][n_candidates * path]               +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +1]]) +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +2]]);
+
+				metrics_vec[2][n_candidates * path +5] = metrics_vec[2][n_candidates * path]               +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +1]]) +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +3]]);
+
+				metrics_vec[2][n_candidates * path +6] = metrics_vec[2][n_candidates * path]               +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +2]]) +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +3]]);
+
+				metrics_vec[2][n_candidates * path +7] = metrics_vec[2][n_candidates * path +1]            +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +2]]) +
+				                                         std::abs(l[path][off_l + bit_flips[4 * path +3]]);
 			}
 		}
 	}
 
 	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + L, metrics_idx[2].end(),
-	                  [this](int x, int y){return metrics_vec[2][x] < metrics_vec[2][y];});
+		[this](int x, int y){
+			return metrics_vec[2][x] < metrics_vec[2][y];
+		});
 
 	// L first of the lists are the L best paths
 	for (auto i = 0 ; i < L ; i++)
@@ -614,20 +625,21 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			else
 			{
 				metrics[new_path] = metrics_vec[1][4 * old_path + dup -1];
-				switch(dup)
+				switch (dup)
 				{
 					case 2:
-						s[new_path][off_s + bit_flips[4 * old_path   ]] = (s[old_path][off_s + bit_flips[4 * old_path]] == 0) ? bit_init<B>() : 0;
+						s[new_path][off_s + bit_flips[4 * old_path   ]] = (s[old_path][off_s + bit_flips[4 * old_path   ]] == 0) ? bit_init<B>() : 0;
 						break;
 					case 3:
 						s[new_path][off_s + bit_flips[4 * old_path +1]] = (s[old_path][off_s + bit_flips[4 * old_path +1]] == 0) ? bit_init<B>() : 0;
 						break;
 					case 4:
-						s[new_path][off_s + bit_flips[4 * old_path   ]] = (s[old_path][off_s + bit_flips[4 * old_path]] == 0) ? bit_init<B>() : 0;
+						s[new_path][off_s + bit_flips[4 * old_path   ]] = (s[old_path][off_s + bit_flips[4 * old_path   ]] == 0) ? bit_init<B>() : 0;
 						s[new_path][off_s + bit_flips[4 * old_path +1]] = (s[old_path][off_s + bit_flips[4 * old_path +1]] == 0) ? bit_init<B>() : 0;
 						break;
 					default:
-						std::cout << "(EE) Flip bits error on rate 1 node."	 << std::endl;
+						std::cout << bold_red("(EE) Flip bits error on rate 1 node.") << std::endl;
+						std::exit(-1);
 						break;
 				}
 				break;
@@ -667,24 +679,21 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 					s[new_path][off_s + bit_flips[4 * old_path +3]] = (s[old_path][off_s + bit_flips[4 * old_path +3]] == 0) ? bit_init<B>() : 0;
 					break;
 				default:
-					std::cout << "(EE) Flip bits error on SPC node."	 << std::endl;
+					std::cout << bold_red("(EE) Flip bits error on SPC node.") << std::endl;
+					std::exit(-1);
 					break;
 			}
 			break;
 		case REP:
-			std::fill(s[new_path].begin() + off_s,
-			          s[new_path].begin() + off_s + n_elmts,
-			          bit_init<B>());
-
-			std::fill(s[old_path].begin() + off_s,
-			          s[old_path].begin() + off_s + n_elmts,
-			          0);
+			std::fill(s[new_path].begin() + off_s, s[new_path].begin() + off_s + n_elmts, bit_init<B>());
+			std::fill(s[old_path].begin() + off_s, s[old_path].begin() + off_s + n_elmts, 0            );
 
 			metrics[new_path] = metrics_vec[0][2 * old_path +1];
 			metrics[old_path] = metrics_vec[0][2 * old_path   ];
 			break;
 		default:
-			std::cout << "(EE) Flip bits error : wrong node type !" << std::endl;
+			std::cout << bold_red("(EE) Flip bits error: wrong node type !") << std::endl;
+			std::exit(-1);
 			break;
 	}
 }
