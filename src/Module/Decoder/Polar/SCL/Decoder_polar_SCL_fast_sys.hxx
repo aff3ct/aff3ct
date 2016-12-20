@@ -47,7 +47,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
 	// initialize depth2offl lut
-	int index = 0;
+	auto index = 0;
 	depth2offl[index++] = 0;
 	for (auto i = N; i > (N >> m); i >>= 1) 
 	{
@@ -128,11 +128,11 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::inte(const int r_d, const int path, int &id)
 {
-	const int n_elmts = 1 << r_d;
-	const int n_elm_2 = n_elmts >> 1;
+	const auto n_elmts = 1 << r_d;
+	const auto n_elm_2 = n_elmts >> 1;
 	const auto off_l = depth2offl[m - r_d];
 
-	switch((pattern_SC_type)pattern_types_per_id[id])
+	switch ((pattern_SC_type)pattern_types_per_id[id])
 	{
 		case STANDARD:
 			API_polar::g (s[path],l[path], off_l, off_l + n_elm_2, off_s - n_elm_2, off_l + n_elmts, n_elm_2); break;
@@ -151,8 +151,8 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::rec_left(const int r_d, const int path, int &id)
 {
-	const int n_elmts = 1 << r_d;
-	const int n_elm_2 = n_elmts >> 1;
+	const auto n_elmts = 1 << r_d;
+	const auto n_elm_2 = n_elmts >> 1;
 	const auto off_l = depth2offl[m - r_d];
 
 	if (r_d > leaves_rev_depth[off_s])
@@ -166,7 +166,8 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::hard_decode()
 {
-	int id = 0, sums_id = 0, tmp_id = 0, tmp_sums_id;
+	auto id = 0, sums_id = 0, tmp_id = 0;
+	int tmp_sums_id;
 	off_s = 0;
 
 	// decode first branch all left (applying f till leaf)
@@ -243,7 +244,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	best_path = -1;
 	for (auto path = 0 ; path < L ; path++)
 		if (active_paths[path])
-			if (best_path == -1 || metrics[path] < metrics[best_path] )
+			if (best_path == -1 || metrics[path] < metrics[best_path])
 				best_path = path;
 
 	if (best_path == -1)
@@ -254,22 +255,19 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::recursive_compute_sums(const int off_s, const int r_d, const int path, int &id)
 {
-	const int n_elm   = 1 << r_d;
-	const int n_elm_2 = n_elm >> 1;
+	const auto n_elm   = 1 << r_d;
+	const auto n_elm_2 = n_elm >> 1;
 
 	if (off_s % n_elm != 0) // must sum 
 	{
 		switch ((pattern_SC_type)pattern_types_per_id_sums[id])
 		{
 			case STANDARD:
-				API_polar::xo (this->s[path], off_s - n_elm_2, off_s, off_s - n_elm_2, n_elm_2);
-				break;
+				API_polar::xo (this->s[path], off_s - n_elm_2, off_s, off_s - n_elm_2, n_elm_2); break;
 			case RATE_0_LEFT:
-				API_polar::xo0(this->s[path],                  off_s, off_s - n_elm_2, n_elm_2);
-				break;
+				API_polar::xo0(this->s[path],                  off_s, off_s - n_elm_2, n_elm_2); break;
 			case REP_LEFT:
-				API_polar::xo (this->s[path], off_s - n_elm_2, off_s, off_s - n_elm_2, n_elm_2);
-				break;
+				API_polar::xo (this->s[path], off_s - n_elm_2, off_s, off_s - n_elm_2, n_elm_2); break;
 			default:
 				break;
 		}
@@ -281,21 +279,13 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths(int id)
 {
-	const pattern_SC_type my_pattern_type = (pattern_SC_type)pattern_types_per_id[id];
+	const auto my_pattern_type = (pattern_SC_type)pattern_types_per_id[id];
 	switch (my_pattern_type)
 	{
-		case RATE_0: 
-			update_paths_r0();
-			break;
-		case REP:
-			update_paths_rep(id);
-			break;
-		case RATE_1: 
-			update_paths_r1(id);
-			break;
-		case SPC: 
-			update_paths_spc(id);
-			break;
+		case RATE_0: update_paths_r0 (  ); break;
+		case REP:    update_paths_rep(id); break;
+		case RATE_1: update_paths_r1 (id); break;
+		case SPC:    update_paths_spc(id); break;
 		default:
 			break;
 	}
@@ -317,9 +307,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int id)
-{	
+{
 	const auto r_d = leaves_rev_depth[off_s];
-	const int off_l = depth2offl[m - r_d];
+	const auto off_l = depth2offl[m - r_d];
 	const auto n_elmts = 1 << r_d;
 
 	for (auto path = 0 ; path < L ; path ++)
@@ -331,7 +321,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 					return std::abs(l[path][off_l + x]) < std::abs(l[path][off_l + y]);
 				});
 
-			bit_flips[4 * path]    = llr_indexes[r_d][0];
+			bit_flips[4 * path   ] = llr_indexes[r_d][0];
 			bit_flips[4 * path +1] = llr_indexes[r_d][1];
 
 			metrics_vec[1][4 * path   ] = metrics[path];
@@ -454,7 +444,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_spc(const int id)
 {
 	const auto r_d = leaves_rev_depth[off_s];
-	const int off_l = depth2offl[m - r_d];
+	const auto off_l = depth2offl[m - r_d];
 	const auto n_elmts = 1 << r_d;
 	const auto n_candidates = (L <= 2 ? 2 : 8);
 
@@ -538,7 +528,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::recursive_get_leaves_depth(Binary_node<Pattern_SC_interface>* node_curr, int &leaf_index)
 {
-	const pattern_SC_type my_pattern_type = node_curr->get_c()->type();
+	const auto my_pattern_type = node_curr->get_c()->type();
 
 	const bool is_terminal_pattern = (my_pattern_type == pattern_SC_type::RATE_0) ||
 	                                 (my_pattern_type == pattern_SC_type::RATE_1) ||
@@ -591,20 +581,17 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::flip_bits(const int old_path, const int new_path, const int id, const int dup)
 {
-	const pattern_SC_type my_pattern_type = (pattern_SC_type)pattern_types_per_id[id];
+	const auto my_pattern_type = (pattern_SC_type)pattern_types_per_id[id];
 	const auto r_d = leaves_rev_depth[off_s];
 	const auto n_elmts = 1 << r_d;
 	switch (my_pattern_type)
 	{
 		case RATE_1: 
-			//TODO use bit flips vector in std
+			//TODO: use bit flips vector in std
 			if (r_d == 0)
 			{
-				s[new_path][off_s] = bit_init<B>();
-				metrics[new_path] = metrics_vec[0][2 * old_path + 1];
-
-				s[old_path   ][off_s] = 0;
-				metrics[old_path] = metrics_vec[0][2 * old_path];
+				s[new_path][off_s] = bit_init<B>(); metrics[new_path] = metrics_vec[0][2 * old_path + 1];
+				s[old_path][off_s] = 0;             metrics[old_path] = metrics_vec[0][2 * old_path    ];
 			}
 			else
 			{
@@ -626,8 +613,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 						std::exit(-1);
 						break;
 				}
-				break;
 			}
+			break;
 		case SPC: 
 			metrics[new_path] = metrics_vec[2][(L <= 2 ? 2 : 8) * old_path + dup -1];
 			switch(dup)
@@ -688,7 +675,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	const auto r_d = leaves_rev_depth[off_s];
 	const auto n_elmts = 1 << r_d;
-	const int off_l = depth2offl[m - r_d];
+	const auto off_l = depth2offl[m - r_d];
 
 	for (new_path = 0 ; new_path < L ; new_path++)
 		if (!active_paths[new_path])
