@@ -43,7 +43,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   leaves_rev_depth (N),
   depth2offl       (m + 1)
 {
-	static_assert(API_polar::get_n_frames() == 1, "Only the intra-frame SIMD are supported.");
+	static_assert(API_polar::get_n_frames() == 1, "Only the intra-frame API_polar is supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
 	// initialize depth2offl lut
@@ -437,7 +437,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			}
 	}
 }
-
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>

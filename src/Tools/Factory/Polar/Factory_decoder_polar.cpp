@@ -13,11 +13,11 @@
 
 // #define API_POLAR_DYNAMIC 1
 
-#ifdef API_POLAR_DYNAMIC
 #include "Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
+#ifdef API_POLAR_DYNAMIC
 #include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp"
 #include "Module/Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp"
-#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp"
 #else
 #include "Module/Decoder/Polar/SC/API/API_polar_static_seq.hpp"
 #include "Module/Decoder/Polar/SC/API/API_polar_static_inter.hpp"
@@ -178,36 +178,20 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 			{
 				if (params.decoder.simd_strategy == "INTRA")
 				{
-					if (typeid(B) == typeid(int))
-					{
-#ifdef API_POLAR_DYNAMIC
-						using API_polar = API_polar_dynamic_intra
-						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
-						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
-#else
-						using API_polar = API_polar_static_intra_32bit
-						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
-						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
-#endif
-						if (params.crc.type.empty())
-							decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
-					}
+					using API_polar = API_polar_dynamic_intra
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+					if (params.crc.type.empty())
+						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
-#ifdef API_POLAR_DYNAMIC
 					using API_polar = API_polar_dynamic_seq
 					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
-#else
-					using API_polar = API_polar_static_seq
-					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
-#endif
 					if (params.crc.type.empty())
 						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
 				}
 			}
-
-
 		}
 	}
 

@@ -163,4 +163,4 @@ if (UNIX)
 endif()
 
 # Specific options
-add_definitions (-DENABLE_BIT_PACKING)
+add_definitions (-DENABLE_BIT_PACKING -DMIPP_ALIGNED_LOADS)
