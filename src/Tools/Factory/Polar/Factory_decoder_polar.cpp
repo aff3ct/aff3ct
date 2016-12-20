@@ -7,6 +7,7 @@
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp"
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
+#include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp"
 
@@ -172,6 +173,41 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
 				}
 			}
+
+			if (params.decoder.type == "SCL" && params.decoder.implem == "FAST")
+			{
+				if (params.decoder.simd_strategy == "INTRA")
+				{
+					if (typeid(B) == typeid(int))
+					{
+#ifdef API_POLAR_DYNAMIC
+						using API_polar = API_polar_dynamic_intra
+						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#else
+						using API_polar = API_polar_static_intra_32bit
+						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#endif
+						if (params.crc.type.empty())
+							decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
+					}
+				}
+				else if (params.decoder.simd_strategy.empty())
+				{
+#ifdef API_POLAR_DYNAMIC
+					using API_polar = API_polar_dynamic_seq
+					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
+#else
+					using API_polar = API_polar_static_seq
+					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
+#endif
+					if (params.crc.type.empty())
+						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
+				}
+			}
+
+
 		}
 	}
 
