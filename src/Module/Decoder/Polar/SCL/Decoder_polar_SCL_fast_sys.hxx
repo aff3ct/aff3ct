@@ -43,12 +43,11 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   leaves_rev_depth (N),
   depth2offl       (m + 1)
 {
-	static_assert(API_polar::get_n_frames() == 1, "Only the intra-frame SIMD are supported!");
-	static_assert(sizeof(B) == sizeof(R), "");
-
-	int index = 0;
+	static_assert(API_polar::get_n_frames() == 1, "Only the intra-frame SIMD are supported.");
+	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
 	// initialize depth2offl lut
+	int index = 0;
 	depth2offl[index++] = 0;
 	for (auto i = N; i > (N >> m); i >>= 1) 
 	{
@@ -71,7 +70,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	for (auto i = 0 ; i <= m ; i ++)
 	{
-		llr_indexes.push_back(std::vector<int>(exp2(i)));
+		llr_indexes.push_back(std::vector<int>(std::exp2(i)));
 		for (size_t j = 0 ; j < llr_indexes[i].size() ; j++)
 			llr_indexes[i][j] = j;
 	}
@@ -177,7 +176,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	off_s += 1 << leaves_rev_depth[0];
 
 	// decode all branches, applying g once and f till the leaf
-	while(off_s < this->N)
+	while (off_s < this->N)
 	{
 		for (auto path = 0 ; path < this->L ; path++)
 			if (active_paths[path])
@@ -201,7 +200,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 		sums_id = tmp_sums_id;
 
-		off_s +=  1 << leaves_rev_depth[off_s];
+		off_s += 1 << leaves_rev_depth[off_s];
 	}
 
 	this->select_best_path();
@@ -227,7 +226,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	std::copy(s[best_path].begin(), s[best_path].end() - mipp::nElReg<B>(), V.begin());
 }
 
-
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::unpack(mipp::vector<B>& V_N) const
@@ -237,7 +235,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	for (unsigned i = 0; i < V_N.size(); i++)
 		V_N[i] = !this->frozen_bits[i] && V_N[i];
 }
-
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
@@ -304,7 +301,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	}
 }
 
-
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_r0()
@@ -313,11 +309,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_elmts = 1 << r_d;
 
 	for (auto i = 0 ; i < n_elmts ; i++)
-	{
 		for (auto path = 0 ; path < L ; path++)
 			if (active_paths[path])
 				metrics[path] -= std::min((float)l[path][depth2offl[m - r_d] + i], 0.f);
-	}
 }
 
 template <typename B, typename R, class API_polar>
@@ -397,14 +391,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	
 	// metrics vec used to store values of hypothetic path metrics
 	for (auto i = 0 ; i < n_elmts ; i++)
-	{
 		for (auto path = 0 ; path < L ; path++)
 			if (active_paths[path])
 			{
-					metrics_vec[0][2 * path   ] -= std::min(l[path][depth2offl[m - r_d] + i], (R)0);
-					metrics_vec[0][2 * path +1] += std::max(l[path][depth2offl[m - r_d] + i], (R)0);
+				metrics_vec[0][2 * path   ] -= std::min(l[path][depth2offl[m - r_d] + i], (R)0);
+				metrics_vec[0][2 * path +1] += std::max(l[path][depth2offl[m - r_d] + i], (R)0);
 			}
-	}
 
 	if (n_active_paths <= L / 2)
 	{
@@ -430,23 +422,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				delete_path(path);
 
 		for (auto path = 0 ; path < L ; path++)
-		{
 			if (dup_count[path])
 			{
 				if (dup_count[path] == 1)
 				{
 					if (metrics_vec[0][2 * path] > metrics_vec[0][2 * path +1])
 					{
-						std::fill(s[path].begin() + off_s, 
-					              s[path].begin() + off_s + n_elmts, 
-					              bit_init<B>());
+						std::fill(s[path].begin() + off_s, s[path].begin() + off_s + n_elmts, bit_init<B>());
 						metrics[path] = metrics_vec[0][2*path +1];	
 					}
 					else
 					{
-						std::fill(s[path].begin() + off_s, 
-					              s[path].begin() + off_s + n_elmts, 
-					              0);
+						std::fill(s[path].begin() + off_s, s[path].begin() + off_s + n_elmts, 0);
 						metrics[path] = metrics_vec[0][2*path];
 					}
 
@@ -458,7 +445,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 					dup_count[path] = 0;
 				}
 			}
-		}
 	}
 }
 
@@ -473,7 +459,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_candidates = (L <= 2 ? 2 : 8);
 
 	for (auto path = 0 ; path < L ; path ++)
-	{
 		if (active_paths[path])
 		{
 			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + (L <= 2 ? 2 : 4), llr_indexes[r_d].end(),
@@ -523,7 +508,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				                                         std::abs(l[path][off_l + bit_flips[4 * path +3]]);
 			}
 		}
-	}
 
 	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + L, metrics_idx[2].end(),
 		[this](int x, int y){
@@ -709,11 +693,10 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	for (new_path = 0 ; new_path < L ; new_path++)
 		if (!active_paths[new_path])
 			break;
-
 	active_paths[new_path] = true;
 
 	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
-	std::copy(l[old_path].begin(), l[old_path].begin() + off_l, l[new_path].begin());
+	std::copy(l[old_path].begin(), l[old_path].begin() + off_l          , l[new_path].begin());
 }
 
 template <typename B, typename R, class API_polar>
