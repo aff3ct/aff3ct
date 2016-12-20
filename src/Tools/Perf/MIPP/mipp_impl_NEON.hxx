@@ -4,27 +4,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
-	// ----------------------------------------------------------------------------------------------------------- load
-	template <>
-	inline reg load<float>(const float *mem_addr) {
-		return vld1q_f32(mem_addr);
-	}
-
-	template <>
-	inline reg load<int>(const int *mem_addr) {
-		return (reg) vld1q_s32(mem_addr);
-	}
-
-	template <>
-	inline reg load<short>(const short *mem_addr) {
-		return (reg) vld1q_s16((int16_t*) mem_addr);
-	}
-
-	template <>
-	inline reg load<signed char>(const signed char *mem_addr) {
-		return (reg) vld1q_s8((int8_t*) mem_addr);
-	}
-
 	// ---------------------------------------------------------------------------------------------------------- loadu
 	template <>
 	inline reg loadu<float>(const float *mem_addr) {
@@ -46,31 +25,48 @@
 		return (reg) vld1q_s8((int8_t*) mem_addr);
 	}
 
-	// ---------------------------------------------------------------------------------------------------------- store
+	// ----------------------------------------------------------------------------------------------------------- load
+#ifdef MIPP_ALIGNED_LOADS
 	template <>
-	inline void store<float>(float *mem_addr, const reg v) {
-		vst1q_f32(mem_addr, v);
+	inline reg load<float>(const float *mem_addr) {
+		return vld1q_f32(mem_addr);
 	}
 
 	template <>
-	inline void store<long long>(long long *mem_addr, const reg v) {
-		vst1q_f32((float*) mem_addr, v);
+	inline reg load<int>(const int *mem_addr) {
+		return (reg) vld1q_s32(mem_addr);
 	}
 
 	template <>
-	inline void store<int>(int *mem_addr, const reg v) {
-		vst1q_f32((float*) mem_addr, v);
+	inline reg load<short>(const short *mem_addr) {
+		return (reg) vld1q_s16((int16_t*) mem_addr);
 	}
 
 	template <>
-	inline void store<short>(short *mem_addr, const reg v) {
-		vst1q_s16((int16_t*) mem_addr, (int16x8_t) v);
+	inline reg load<signed char>(const signed char *mem_addr) {
+		return (reg) vld1q_s8((int8_t*) mem_addr);
+	}
+#else
+	template <>
+	inline reg load<float>(const float *mem_addr) {
+		return mipp::loadu<float>(mem_addr);
 	}
 
 	template <>
-	inline void store<signed char>(signed char *mem_addr, const reg v) {
-		vst1q_s8((int8_t*) mem_addr, (int8x16_t) v);
+	inline reg load<int>(const int *mem_addr) {
+		return mipp::loadu<int>(mem_addr);
 	}
+
+	template <>
+	inline reg load<short>(const short *mem_addr) {
+		return mipp::loadu<short>(mem_addr);
+	}
+
+	template <>
+	inline reg load<signed char>(const signed char *mem_addr) {
+		return mipp::loadu<signed char>(mem_addr);
+	}
+#endif
 
 	// --------------------------------------------------------------------------------------------------------- storeu
 	template <>
@@ -97,6 +93,54 @@
 	inline void storeu<signed char>(signed char *mem_addr, const reg v) {
 		vst1q_s8((int8_t*) mem_addr, (int8x16_t) v);
 	}
+
+	// ---------------------------------------------------------------------------------------------------------- store
+#ifdef MIPP_ALIGNED_LOADS
+	template <>
+	inline void store<float>(float *mem_addr, const reg v) {
+		vst1q_f32(mem_addr, v);
+	}
+
+	template <>
+	inline void store<long long>(long long *mem_addr, const reg v) {
+		vst1q_f32((float*) mem_addr, v);
+	}
+
+	template <>
+	inline void store<int>(int *mem_addr, const reg v) {
+		vst1q_f32((float*) mem_addr, v);
+	}
+
+	template <>
+	inline void store<short>(short *mem_addr, const reg v) {
+		vst1q_s16((int16_t*) mem_addr, (int16x8_t) v);
+	}
+
+	template <>
+	inline void store<signed char>(signed char *mem_addr, const reg v) {
+		vst1q_s8((int8_t*) mem_addr, (int8x16_t) v);
+	}
+#else
+	template <>
+	inline void store<float>(float *mem_addr, const reg v) {
+		mipp::storeu<float>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<int>(int *mem_addr, const reg v) {
+		mipp::storeu<int>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<short>(short *mem_addr, const reg v) {
+		mipp::storeu<short>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<signed char>(signed char *mem_addr, const reg v) {
+		mipp::storeu<signed char>(mem_addr, v);
+	}
+#endif
 
 	// ------------------------------------------------------------------------------------------------------------ set
 	template <>

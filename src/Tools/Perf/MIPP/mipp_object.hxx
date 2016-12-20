@@ -30,12 +30,7 @@ public:
 	Reg(              )                          {}
 	Reg(const reg r   ) : r(r)                   {}
 	Reg(const T   val ) : r(mipp::set1 <T>(val)) {}
-
-#ifdef MIPP_ALIGNED_LOADS
 	Reg(const T  *data) : r(mipp::load <T>(data)){}
-#else
-	Reg(const T  *data) : r(mipp::loadu<T>(data)){}
-#endif
 
 	Reg(const std::initializer_list<T> &l)
 	{

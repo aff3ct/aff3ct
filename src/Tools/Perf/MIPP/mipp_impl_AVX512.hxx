@@ -4,32 +4,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
 
-	// ----------------------------------------------------------------------------------------------------------- load
-	template <>
-	inline reg load<float>(const float *mem_addr) {
-		return _mm512_load_ps(mem_addr);
-	}
-
-	template <>
-	inline reg load<double>(const double *mem_addr) {
-		return (__m512) _mm512_load_pd(mem_addr);
-	}
-
-	template <>
-	inline reg load<int>(const int *mem_addr) {
-		return _mm512_load_ps((const float*) mem_addr);
-	}
-
-	template <>
-	inline reg load<short>(const short *mem_addr) {
-		return _mm512_load_ps((const float*) mem_addr);
-	}
-
-	template <>
-	inline reg load<signed char>(const signed char *mem_addr) {
-		return (__m512) _mm512_load_ps((const float*) mem_addr);
-	}
-
 	// ---------------------------------------------------------------------------------------------------------- loadu
 #if defined(__AVX512F__)
 	template <>
@@ -58,31 +32,63 @@
 	}
 #endif
 
-	// ---------------------------------------------------------------------------------------------------------- store
+	// ----------------------------------------------------------------------------------------------------------- load
+#ifdef MIPP_ALIGNED_LOADS
 	template <>
-	inline void store<float>(float *mem_addr, const reg v) {
-		_mm512_store_ps(mem_addr, v);
+	inline reg load<float>(const float *mem_addr) {
+		return _mm512_load_ps(mem_addr);
 	}
 
 	template <>
-	inline void store<double>(double *mem_addr, const reg v) {
-		_mm512_store_pd(mem_addr, (__m512d) v);
+	inline reg load<double>(const double *mem_addr) {
+		return (__m512) _mm512_load_pd(mem_addr);
 	}
 
 	template <>
-	inline void store<int>(int *mem_addr, const reg v) {
-		_mm512_store_ps((float *)mem_addr, v);
+	inline reg load<int>(const int *mem_addr) {
+		return _mm512_load_ps((const float*) mem_addr);
 	}
 
 	template <>
-	inline void store<short>(short *mem_addr, const reg v) {
-		_mm512_store_ps((float *)mem_addr, v);
+	inline reg load<short>(const short *mem_addr) {
+		return _mm512_load_ps((const float*) mem_addr);
 	}
 
 	template <>
-	inline void store<signed char>(signed char *mem_addr, const reg v) {
-		_mm512_store_ps((float *)mem_addr, v);
+	inline reg load<signed char>(const signed char *mem_addr) {
+		return (__m512) _mm512_load_ps((const float*) mem_addr);
 	}
+#else
+	template <>
+	inline reg load<float>(const float *mem_addr) {
+		return mipp::loadu<float>(mem_addr);
+	}
+
+	template <>
+	inline reg load<double>(const double *mem_addr) {
+		return mipp::loadu<double>(mem_addr);
+	}
+
+	template <>
+	inline reg load<long long>(const long long *mem_addr) {
+		return mipp::loadu<long long>(mem_addr);
+	}
+
+	template <>
+	inline reg load<int>(const int *mem_addr) {
+		return mipp::loadu<int>(mem_addr);
+	}
+
+	template <>
+	inline reg load<short>(const short *mem_addr) {
+		return mipp::loadu<short>(mem_addr);
+	}
+
+	template <>
+	inline reg load<signed char>(const signed char *mem_addr) {
+		return mipp::loadu<signed char>(mem_addr);
+	}
+#endif
 
 	// --------------------------------------------------------------------------------------------------------- storeu
 #if defined(__AVX512F__)
@@ -109,6 +115,64 @@
 	template <>
 	inline void storeu<signed char>(signed char *mem_addr, const reg v) {
 		_mm512_storeu_ps((float *)mem_addr, v);
+	}
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- store
+#ifdef MIPP_ALIGNED_LOADS
+	template <>
+	inline void store<float>(float *mem_addr, const reg v) {
+		_mm512_store_ps(mem_addr, v);
+	}
+
+	template <>
+	inline void store<double>(double *mem_addr, const reg v) {
+		_mm512_store_pd(mem_addr, (__m512d) v);
+	}
+
+	template <>
+	inline void store<int>(int *mem_addr, const reg v) {
+		_mm512_store_ps((float *)mem_addr, v);
+	}
+
+	template <>
+	inline void store<short>(short *mem_addr, const reg v) {
+		_mm512_store_ps((float *)mem_addr, v);
+	}
+
+	template <>
+	inline void store<signed char>(signed char *mem_addr, const reg v) {
+		_mm512_store_ps((float *)mem_addr, v);
+	}
+#else
+	template <>
+	inline void store<float>(float *mem_addr, const reg v) {
+		mipp::storeu<float>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<double>(double *mem_addr, const reg v) {
+		mipp::storeu<double>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<long long>(long long *mem_addr, const reg v) {
+		mipp::storeu<long long>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<int>(int *mem_addr, const reg v) {
+		mipp::storeu<int>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<short>(short *mem_addr, const reg v) {
+		mipp::storeu<short>(mem_addr, v);
+	}
+
+	template <>
+	inline void store<signed char>(signed char *mem_addr, const reg v) {
+		mipp::storeu<signed char>(mem_addr, v);
 	}
 #endif
 
