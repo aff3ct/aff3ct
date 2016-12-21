@@ -63,12 +63,11 @@ private:
 	inline void inte                      (const int reverse_depth, const int path, int &id                   );
 	inline void rec_left                  (const int reverse_depth, const int path, int &id                   );
 	inline void normalize_metrics         (std::vector<R> &vec                                                );
+	inline void recursive_compute_sums    (const int off_s, const int reverse_depth, const int path, int &id  );
 
 protected:
-	inline void delete_path           (int path);
-	inline void select_best_path      (        );
-	inline void recursive_compute_sums(const int off_s, const int reverse_depth, const int path, int &id);
-
+	        inline void delete_path     (int path);
+	virtual inline void select_best_path(        );
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"

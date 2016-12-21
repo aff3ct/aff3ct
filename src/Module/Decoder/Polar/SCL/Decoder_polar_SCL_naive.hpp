@@ -60,7 +60,6 @@ private:
 
 protected:
 	virtual void select_best_path();
-	virtual void intermediate_select_best_path(int leaf_index){};
 
 	void recursive_allocate_nodes_contents  (      Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size             );
 	void recursive_initialize_frozen_bits   (const Binary_node<Contents_SCL<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);

@@ -10,6 +10,7 @@
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp"
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp"
+#include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp"
 
 // #define API_POLAR_DYNAMIC 1
 
@@ -183,6 +184,8 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 					if (params.crc.type.empty())
 						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
+					else
+						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
@@ -190,6 +193,8 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
 					if (params.crc.type.empty())
 						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
+					else
+						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
 				}
 			}
 		}

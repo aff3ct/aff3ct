@@ -176,9 +176,6 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			}
 		}
 
-		// if double CRC aided, intermediate CRC check
-		this->intermediate_select_best_path(leaf_index);
-
 		// propagate sums
 		for (auto path : active_paths)
 			this->propagate_sums(leaves_array[path][leaf_index]);
