@@ -9,6 +9,7 @@ class Decoder_polar_SCL_fast_CA_sys : public Decoder_polar_SCL_fast_sys<B,R,API_
 {
 private:
 	CRC<B>& crc;
+	mipp::vector<B> U_test;
 
 public:
 	Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc,
