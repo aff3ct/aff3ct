@@ -144,7 +144,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			break;
 	}
 
-	rec_left(r_d -1, path, ++id);
+	this->rec_left(r_d -1, path, ++id);
 }
 
 template <typename B, typename R, class API_polar>
@@ -158,7 +158,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	if (r_d > leaves_rev_depth[off_s])
 	{
 		API_polar::f(l[path], off_l + n_elm_2, off_l, off_l + n_elmts, n_elm_2);
-		rec_left(r_d -1, path, ++id);
+		this->rec_left(r_d -1, path, ++id);
 	}
 }
 
@@ -171,8 +171,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	off_s = 0;
 
 	// decode first branch all left (applying f till leaf)
-	rec_left(m, 0, id);
-	update_paths(id++);
+	this->rec_left(m, 0, id);
+	this->update_paths(id++);
 	this->recursive_compute_sums(0, 1, 0, sums_id);
 	off_s += 1 << leaves_rev_depth[0];
 
@@ -183,12 +183,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			if (active_paths[path])
 			{
 				tmp_id = id;
-				inte(compute_depth(off_s, m) + 1, path, tmp_id);
+				this->inte(compute_depth(off_s, m) + 1, path, tmp_id);
 			}
 
 		id = tmp_id;
 
-		update_paths(id);
+		this->update_paths(id);
 
 		id++;
 

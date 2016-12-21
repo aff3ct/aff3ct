@@ -34,7 +34,7 @@ protected:
 	std::set<int> active_paths;
 
 	std::vector<Binary_tree_metric<Contents_SCL<B,R>,R>*> polar_trees;
-    std::vector<std::vector<Binary_node<Contents_SCL<B,R>>*>> leaves_array;
+	std::vector<std::vector<Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
 	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 

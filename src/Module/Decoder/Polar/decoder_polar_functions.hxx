@@ -268,15 +268,15 @@ inline signed char phi(const signed char& mu, const signed char& lambda, const s
 
 inline int compute_depth(int index, int tree_depth)
 {
-	auto res = 0;
 	if (index == 0) return tree_depth - 1;
 	else
 	{
+		auto res = 0;
 		while ((index & 1) != 1 && res <= tree_depth - 1)
 		{
 			index = index >> 1;
 			res++;
 		}
+		return res;
 	}
-	return res;
 }
