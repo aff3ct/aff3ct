@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Algo/Bit_packer.hpp"
 
 #include "CRC_polynomial.hpp"
 
@@ -76,7 +77,8 @@ void CRC_polynomial<B>
 				if (this->polynomial[j])
 					buff_crc[i+j] = !buff_crc[i+j];
 
-	std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out.begin() + off_out);
+	if (U_out.data() != buff_crc.data())
+		std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out.begin() + off_out);
 }
 
 template <typename B>
@@ -91,8 +93,8 @@ bool CRC_polynomial<B>
 	auto f = 0;
 	do
 	{
-		this->_generate(V_K, this->buff_crc, 
-		                real_frame_size * f, 
+		this->_generate(V_K, this->buff_crc,
+		                real_frame_size * f,
 		                real_frame_size * (f +1) - this->size(),
 		                real_frame_size - this->size());
 
@@ -109,6 +111,17 @@ bool CRC_polynomial<B>
 	while ((f < real_n_frames) && (i == this->size()));
 
 	return (f == real_n_frames) && (i == this->size());
+}
+
+template <typename B>
+bool CRC_polynomial<B>
+::check_packed(const mipp::vector<B>& V_K, const int n_frames)
+{
+	assert((n_frames == -1 && this->n_frames == 1) || n_frames == 1);
+
+	mipp::vector<B> V_K_unpack = V_K;
+	Bit_packer<B>::unpack(V_K_unpack);
+	return check(V_K_unpack, n_frames);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -4,6 +4,7 @@
 
 #include "Module/CRC/NO/CRC_NO.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_double.hpp"
 
@@ -28,7 +29,8 @@ CRC<B>* Factory_CRC<B>
 	else
 	{
 		if (!params.crc.type.empty())
-			crc = new CRC_polynomial<B>(params.code.K, params.crc.type);
+//			crc = new CRC_polynomial<B>(params.code.K, params.crc.type);
+			crc = new CRC_polynomial_fast<B>(params.code.K, params.crc.type);
 		else
 			crc = new CRC_NO<B>(params.code.K);
 	}

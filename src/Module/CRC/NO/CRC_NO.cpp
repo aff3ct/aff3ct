@@ -33,6 +33,13 @@ bool CRC_NO<B>
 	return false; 
 }
 
+template <typename B>
+bool CRC_NO<B>
+::check_packed(const mipp::vector<B>& V_K, const int n_frames)
+{
+	return false;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
