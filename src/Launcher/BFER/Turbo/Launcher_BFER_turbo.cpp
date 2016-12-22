@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "Tools/Display/bash_tools.h"
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 #include "Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp"
 
 #include "Launcher_BFER_turbo.hpp"
@@ -17,7 +18,9 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.simulation .json_path      = "";
 	this->params.code       .type           = "TURBO";
 	this->params.code       .tail_length    = 4 * 3;
-	this->params.crc        .type           = "";
+	this->params.crc        .type           = "STD";
+	this->params.crc        .poly           = "";
+	this->params.crc        .size           = 0;
 	this->params.encoder    .type           = "TURBO";
 	this->params.encoder    .buffered       = true;
 	this->params.encoder    .poly           = {013, 015};
@@ -48,8 +51,16 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	// ----------------------------------------------------------------------------------------------------------- crc
 	this->opt_args[{"crc-type"}] =
 		{"string",
-		 "select the crc you want to use.",
-		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
+		 "select the CRC implementation you want to use.",
+		 "STD, FAST"};
+
+	this->opt_args[{"crc-poly"}] =
+		{"string",
+		 "select the CRC polynomial you want to use (ex: \"4-ITU\": 0x3, \"8-DVB-S2\": 0xD5, \"16-CCITT\": 0x1021, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
+
+	this->opt_args[{"crc-size"}] =
+		{"positive_int",
+		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", TURBO";
@@ -103,7 +114,9 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"sim-json-path"})) this->params.simulation.json_path = this->ar.get_arg({"sim-json-path"});
 
 	// ----------------------------------------------------------------------------------------------------------- crc
-	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg({"crc-type"});
+	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg    ({"crc-type"});
+	if(this->ar.exist_arg({"crc-poly"})) this->params.crc.poly = this->ar.get_arg    ({"crc-poly"});
+	if(this->ar.exist_arg({"crc-size"})) this->params.crc.size = this->ar.get_arg_int({"crc-size"});
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
@@ -175,6 +188,18 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	this->params.code.tail_length = (int)(4 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
+
+	// hack for K when there is a CRC
+	if (!this->params.crc.type.empty())
+	{
+		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.poly));
+
+		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.poly) ?
+		                       CRC_polynomial<B>::size(this->params.crc.poly) :
+		                       !this->params.crc.poly.empty() ? this->params.crc.size : 0;
+
+		assert(this->params.code.K <= this->params.code.N);
+	}
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -203,8 +228,19 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 {
 	auto p = Launcher_BFER<B,R,Q>::header_crc();
 
-	if (!this->params.crc.type.empty())
+	if (!this->params.crc.poly.empty())
+	{
+		auto poly_name = CRC_polynomial<B>::name(this->params.crc.poly);
+		std::stringstream poly_val;
+		poly_val << "0x" << std::hex << CRC_polynomial<B>::value(this->params.crc.poly);
+		auto poly_size = CRC_polynomial<B>::size (this->params.crc.poly);
+
 		p.push_back(std::make_pair("Type", this->params.crc.type));
+		if (!poly_name.empty())
+			p.push_back(std::make_pair("Name", poly_name));
+		p.push_back(std::make_pair("Poly (hexadecimal)", poly_val.str()));
+		p.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : this->params.crc.size)));
+	}
 
 	return p;
 }

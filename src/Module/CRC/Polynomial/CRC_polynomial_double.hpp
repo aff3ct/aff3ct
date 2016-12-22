@@ -12,7 +12,7 @@ private:
 	const int cut_index;
 
 public:
-	CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames = 1, 
+	CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int size = 0, const int n_frames = 1,
 	                      const std::string name = "CRC_polynomial_double");
 	virtual ~CRC_polynomial_double(){};
 

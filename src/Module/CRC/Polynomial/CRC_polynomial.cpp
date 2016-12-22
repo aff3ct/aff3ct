@@ -7,23 +7,39 @@
 
 template <typename B>
 CRC_polynomial<B>
-::CRC_polynomial(const int K, std::string poly_key, const int n_frames, const std::string name)
-: CRC<B>(K, n_frames, name), polynomial(0), buff_crc(n_frames * K)
+::CRC_polynomial(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
+: CRC<B>(K, n_frames, name),
+  polynomial       (0                                 ),
+  polynomial_packed(CRC_polynomial<B>::value(poly_key)),
+  poly_size        (CRC_polynomial<B>::size (poly_key)),
+  buff_crc         (n_frames * K                      )
 {
 	if (poly_key.empty())
 	{
 		std::cerr << bold_red("(EE) Please choose a CRC.") << std::endl;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 
-	if (polynomials.find(poly_key) != polynomials.end())
-		polynomial = polynomials.at(poly_key);
-	else
+	if (!polynomial_packed)
 	{
-		std::cerr << bold_red("(EE) CRC \"") << bold_red(poly_key) << bold_red("\" is not supported.") 
-		          << std::endl;
-		exit(EXIT_FAILURE);
+		std::cerr << bold_red("(EE) CRC \"") << bold_red(poly_key) << bold_red("\" is not supported.") << std::endl;
+		std::exit(EXIT_FAILURE);
 	}
+
+	if (!poly_size)
+	{
+		if (size == 0)
+		{
+			std::cerr << bold_red("(EE) You have to specify a size with the \"--crc-size\" option.") << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
+
+		poly_size = size;
+	}
+
+	polynomial.push_back(1);
+	for (auto i = 0; i < poly_size; i++)
+		polynomial.push_back((polynomial_packed >> ((poly_size -1) -i)) & 1);
 
 	assert(K > this->size());
 }
@@ -32,8 +48,30 @@ template <typename B>
 int CRC_polynomial<B>
 ::size(std::string poly_key)
 {
-	if (polynomials.find(poly_key) != polynomials.end())
-		return (int)(polynomials.at(poly_key).size() == 0 ? 0 : polynomials.at(poly_key).size() -1); 
+	if (known_polynomials.find(poly_key) != known_polynomials.end())
+		return std::get<1>(known_polynomials.at(poly_key));
+	else
+		return 0;
+}
+
+template <typename B>
+std::string CRC_polynomial<B>
+::name(std::string poly_key)
+{
+	if (known_polynomials.find(poly_key) != known_polynomials.end())
+		return poly_key;
+	else
+		return "";
+}
+
+template <typename B>
+unsigned CRC_polynomial<B>
+::value(std::string poly_key)
+{
+	if (known_polynomials.find(poly_key) != known_polynomials.end())
+		return std::get<0>(known_polynomials.at(poly_key));
+	else if(poly_key.length() > 2 && poly_key[0] == '0' && poly_key[1] == 'x')
+		return (unsigned)std::stoul(poly_key, 0, 16);
 	else
 		return 0;
 }
@@ -42,8 +80,7 @@ template <typename B>
 int CRC_polynomial<B>
 ::size() const
 {
-	// the number of generated crc bits is the size of the polynomial minus 1
-	return (int)(polynomial.size() == 0 ? 0 : polynomial.size() -1);
+	return this->poly_size;
 }
 
 template <typename B>

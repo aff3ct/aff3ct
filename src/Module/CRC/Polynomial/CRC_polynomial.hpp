@@ -9,15 +9,21 @@ template <typename B>
 class CRC_polynomial : public CRC<B>
 {
 protected:
-	const static std::map<std::string, mipp::vector<B>> polynomials;
+	const static std::map<std::string, std::tuple<unsigned, int>> known_polynomials;
 	mipp::vector<B> polynomial;
+	unsigned        polynomial_packed;
+	int             poly_size;
 	mipp::vector<B> buff_crc;
 
 public:
-	CRC_polynomial(const int K, std::string poly_key, const int n_frames = 1, const std::string name = "CRC_polynomial");
+	CRC_polynomial(const int K, std::string poly_key, const int size = 0, const int n_frames = 1,
+	               const std::string name = "CRC_polynomial");
 	virtual ~CRC_polynomial(){};
 
-	static  int  size        (      std::string poly_key                         );
+	static int         size (std::string poly_key);
+	static std::string name (std::string poly_key);
+	static unsigned    value(std::string poly_key);
+
 	virtual int  size        (                                                   ) const;
 	virtual void build       (      mipp::vector<B>& U_K                         );
 	virtual bool check       (const mipp::vector<B>& V_K, const int n_frames = -1);
@@ -32,15 +38,12 @@ protected:
 };
 
 template<typename B>
-const std::map<std::string, mipp::vector<B>> CRC_polynomial<B>::polynomials = {
-  {"32-GZIP", {1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1}},
-  {"24-LTEA", {                        1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1}},
-  {"16-IBM",  {                                                1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1}},
-  {"16-CCITT",{                                                1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}},
-  {"8-DVB-S2",{                                                                        1, 1, 1, 0, 1, 0, 1, 0, 1}},
-  {"4-ITU",   {                                                                                    1, 0, 0, 1, 1}},
-  {"3-0x3",   {                                                                                       1, 0, 1, 1}},
-  {"2-0x1",   {                                                                                          1, 0, 1}},
-  {"1-0x1",   {                                                                                             1, 1}}};
+const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_polynomials =
+  {{"32-GZIP" , std::make_tuple(0x04C11DB7, 32)},
+   {"24-LTEA" , std::make_tuple(0x864CFB  , 24)},
+   {"16-IBM"  , std::make_tuple(0x8005    , 16)},
+   {"16-CCITT", std::make_tuple(0x1021    , 16)},
+   {"8-DVB-S2", std::make_tuple(0xD5      ,  8)},
+   {"5-ITU"   , std::make_tuple(0x15      ,  5)}};
 
 #endif /* CRC_POLYNOMIAL_HPP_ */

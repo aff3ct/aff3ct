@@ -56,6 +56,8 @@ struct source_parameters
 struct crc_parameters
 {
 	std::string type;
+	std::string poly;
+	int         size;
 };
 
 struct encoder_parameters

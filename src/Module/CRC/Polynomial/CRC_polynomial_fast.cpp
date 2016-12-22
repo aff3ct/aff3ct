@@ -7,25 +7,28 @@
 
 template <typename B>
 CRC_polynomial_fast<B>
-::CRC_polynomial_fast(const int K, std::string poly_key, const int n_frames, const std::string name)
-: CRC_polynomial<B>(K, poly_key, n_frames, name), polybyte(0), polybyte_rev(0)
+::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
+: CRC_polynomial<B>(K, poly_key, size, n_frames, name), polynomial_packed_rev(0)
 {
-	assert(this->polynomial.size() <= 32 +1);
-
-	// bitpack the selected polynomial
-	for (auto i = 1; i < this->polynomial.size(); i++)
-	{
-		polybyte <<= 1;
-		polybyte |= this->polynomial[i];
-	}
+	assert(this->size() <= 32);
 
 	// reverse the order of the bits in the bitpacked polynomial
-	for (auto i = 0; i < sizeof(polybyte) * 8; i++)
+	for (auto i = 0; i < sizeof(this->polynomial_packed) * 8; i++)
 	{
-		polybyte_rev <<= 1;
-		polybyte_rev |= (polybyte >> i) & 1;
+		polynomial_packed_rev <<= 1;
+		polynomial_packed_rev |= (this->polynomial_packed >> i) & 1;
 	}
-	polybyte_rev >>= (sizeof(polybyte) * 8) - (this->polynomial.size() -1);
+	polynomial_packed_rev >>= (sizeof(this->polynomial_packed) * 8) - (this->size());
+}
+
+// Source of inspiration: http://create.stephan-brumme.com/crc32/
+template <typename B>
+bool CRC_polynomial_fast<B>
+::check(const mipp::vector<B>& V_K, const int n_frames)
+{
+	assert(V_K.size() == this->buff_crc.size());
+	Bit_packer<B>::pack(V_K, this->buff_crc);
+	return this->check_packed(this->buff_crc, n_frames);
 }
 
 // Source of inspiration: http://create.stephan-brumme.com/crc32/
@@ -49,7 +52,7 @@ bool CRC_polynomial_fast<B>
 		crc ^= *current++;
 		for (unsigned int j = 0; j < 8; j++)
 //			crc = (crc & 1) ? (crc >> 1) ^ polybyte_rev : crc >> 1;
-			crc = (crc >> 1) ^ (-int(crc & 1) & polybyte_rev);
+			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
 	}
 
 	auto rest = (V_K.size() - this->size()) % 8;
@@ -62,7 +65,7 @@ bool CRC_polynomial_fast<B>
 		crc ^= cur;
 		for (unsigned int j = 0; j < rest; j++)
 //			crc = (crc & 1) ? (crc >> 1) ^ polybyte_rev : crc >> 1;;
-			crc = (crc >> 1) ^ (-int(crc & 1) & polybyte_rev);
+			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
 	}
 
 	unsigned crc_ref = 0;

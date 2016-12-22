@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <sstream>
 #include <cmath>
 
 #include "Tools/Display/bash_tools.h"
@@ -18,7 +19,9 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.f;
 	this->params.code      .fb_gen_method = "TV";
-	this->params.crc.type                 = "";
+	this->params.crc       .type          = "STD";
+	this->params.crc       .poly          = "";
+	this->params.crc       .size          = 0;
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 1;
@@ -57,8 +60,16 @@ void Launcher_BFER_polar<B,R,Q>
 	// ----------------------------------------------------------------------------------------------------------- crc
 	this->opt_args[{"crc-type"}] =
 		{"string",
-		 "select the crc you want to use.",
-		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
+		 "select the CRC implementation you want to use.",
+		 "STD, FAST"};
+
+	this->opt_args[{"crc-poly"}] =
+		{"string",
+		 "select the CRC polynomial you want to use (ex: \"4-ITU\": 0x3, \"8-DVB-S2\": 0xD5, \"16-CCITT\": 0x1021, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
+
+	this->opt_args[{"crc-size"}] =
+		{"positive_int",
+		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", POLAR";
@@ -97,7 +108,9 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg      ({"cde-fb-gen-method"});
 
 	// ----------------------------------------------------------------------------------------------------------- crc
-	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg({"crc-type"});
+	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg    ({"crc-type"});
+	if(this->ar.exist_arg({"crc-poly"})) this->params.crc.poly = this->ar.get_arg    ({"crc-poly"});
+	if(this->ar.exist_arg({"crc-size"})) this->params.crc.size = this->ar.get_arg_int({"crc-size"});
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
@@ -112,22 +125,24 @@ void Launcher_BFER_polar<B,R,Q>
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (this->params.decoder.type != "SCAN") this->params.decoder.n_ite = 1;
+
+	// hack for K when there is a CRC
+	if (!this->params.crc.type.empty())
+	{
+		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.poly));
+
+		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.poly) ?
+		                       CRC_polynomial<B>::size(this->params.crc.poly) :
+		                       !this->params.crc.poly.empty() ? this->params.crc.size : 0;
+
+		assert(this->params.code.K <= this->params.code.N);
+	}
 }
 
 template <typename B, typename R, typename Q>
 Simulation* Launcher_BFER_polar<B,R,Q>
 ::build_simu()
 {
-	// hack for K when there is a CRC
-	if (!this->params.crc.type.empty())
-	{
-		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.type));
-
-		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.type);
-
-		assert(this->params.code.K <= this->params.code.N);
-	}
-
 	return new Simulation_BFER_polar<B,R,Q>(this->params);
 }
 
@@ -153,8 +168,19 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 {
 	auto p = Launcher_BFER<B,R,Q>::header_crc();
 
-	if (!this->params.crc.type.empty())
+	if (!this->params.crc.poly.empty())
+	{
+		auto poly_name = CRC_polynomial<B>::name (this->params.crc.poly);
+		std::stringstream poly_val;
+		poly_val << "0x" << std::hex << CRC_polynomial<B>::value(this->params.crc.poly);
+		auto poly_size = CRC_polynomial<B>::size (this->params.crc.poly);
+
 		p.push_back(std::make_pair("Type", this->params.crc.type));
+		if (!poly_name.empty())
+			p.push_back(std::make_pair("Name", poly_name));
+		p.push_back(std::make_pair("Poly (hexadecimal)", poly_val.str()));
+		p.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : this->params.crc.size)));
+	}
 
 	return p;
 }
