@@ -51,7 +51,7 @@ bool CRC_polynomial_fast<B>
 	{
 		crc ^= *current++;
 		for (unsigned int j = 0; j < 8; j++)
-//			crc = (crc & 1) ? (crc >> 1) ^ polybyte_rev : crc >> 1;
+//			crc = (crc & 1) ? (crc >> 1) ^ polynomial_packed_rev : crc >> 1;
 			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
 	}
 
@@ -64,7 +64,7 @@ bool CRC_polynomial_fast<B>
 
 		crc ^= cur;
 		for (unsigned int j = 0; j < rest; j++)
-//			crc = (crc & 1) ? (crc >> 1) ^ polybyte_rev : crc >> 1;;
+//			crc = (crc & 1) ? (crc >> 1) ^ polynomial_packed_rev : crc >> 1;
 			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
 	}
 

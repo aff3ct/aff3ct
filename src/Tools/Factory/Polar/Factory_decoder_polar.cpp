@@ -64,9 +64,9 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 				decoder = new Decoder_polar_SC_naive <B,R,f_LLR<R>,g_LLR<B,R>,h_LLR<B,R>>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level);
 			if (params.decoder.type == "SCAN" && params.decoder.implem == "NAIVE")
 				decoder = new Decoder_polar_SCAN_naive<B,R,init_LLR<R>,f_LLR<R>,v_LLR<R>,h_LLR<B,R>>(params.code.K, params.code.m, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
-			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.type.empty())
+			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.poly.empty())
 				decoder = new Decoder_polar_SCL_naive<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
-			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && !params.crc.type.empty())
+			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && !params.crc.poly.empty())
 				decoder = new Decoder_polar_SCL_naive_CA<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
 		}
 	}
@@ -85,9 +85,9 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					decoder = new Decoder_polar_SC_naive_sys<B, R, f_LLR<R>, g_LLR<B,R>, h_LLR<B,R>>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level);
 				if (params.decoder.type == "SCAN" && params.decoder.implem == "NAIVE")
 					decoder = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(params.code.K, params.code.m, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
-				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.type.empty())
+				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.poly.empty())
 					decoder = new Decoder_polar_SCL_naive_sys<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
-				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && !params.crc.type.empty())
+				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && !params.crc.poly.empty())
 					decoder = new Decoder_polar_SCL_naive_CA_sys<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
 			}
 		
@@ -182,7 +182,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					using API_polar = API_polar_dynamic_intra
 					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
-					if (params.crc.type.empty())
+					if (params.crc.poly.empty())
 						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
 					else
 						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
@@ -191,7 +191,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 				{
 					using API_polar = API_polar_dynamic_seq
 					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
-					if (params.crc.type.empty())
+					if (params.crc.poly.empty())
 						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
 					else
 						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);

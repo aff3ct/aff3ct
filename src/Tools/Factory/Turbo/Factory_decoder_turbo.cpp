@@ -24,7 +24,7 @@ Decoder<B,R>* Factory_decoder_turbo<B,R>
 		if (typeid(B) == typeid(long long))
 		{
 			// there is a CRC
-			if (crc != nullptr && !params.crc.type.empty())
+			if (crc != nullptr && !params.crc.poly.empty())
 			{
 				if(!params.decoder.self_corrected)
 					decoder = new Decoder_turbo_naive_CA<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
@@ -46,7 +46,7 @@ Decoder<B,R>* Factory_decoder_turbo<B,R>
 		else
 		{
 			// there is a CRC
-			if (crc != nullptr && !params.crc.type.empty())
+			if (crc != nullptr && !params.crc.poly.empty())
 			{
 				if(!params.decoder.self_corrected)
 					decoder = new Decoder_turbo_fast_CA<B,R>(params.code.K, params.code.N, params.decoder.n_ite,
