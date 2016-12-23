@@ -23,11 +23,11 @@ void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 				U_test[k++] = this->s[path][leaf];
 
 		// check the CRC (slower than the next version)
-		bool decode_result = crc.check(U_test);
+		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
 
 //		// check the CRC (faster than previous version)
 //		Bit_packer<B>::pack(U_test);
-//		bool decode_result = crc.check_packed(U_test);
+//		bool decode_result = crc.check_packed(U_test, this->get_simd_inter_frame_level());
 
 		// delete the path if the CRC result is negative
 		if (!decode_result)

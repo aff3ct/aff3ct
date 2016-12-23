@@ -17,6 +17,7 @@ public:
 	                    const std::string name = "CRC_polynomial_fast");
 	virtual ~CRC_polynomial_fast(){};
 
+	virtual void build       (      mipp::vector<B>& U_K                         );
 	virtual bool check       (const mipp::vector<B>& V_K, const int n_frames = -1);
 	virtual bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1);
 

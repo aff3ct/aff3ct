@@ -186,10 +186,10 @@ template <typename B>
 bool CRC_polynomial<B>
 ::check_packed(const mipp::vector<B>& V_K, const int n_frames)
 {
-	assert((n_frames == -1 && this->n_frames == 1) || n_frames == 1);
+	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 	mipp::vector<B> V_K_unpack = V_K;
-	Bit_packer<B>::unpack(V_K_unpack);
+	Bit_packer<B>::unpack(V_K_unpack, real_n_frames);
 	return check(V_K_unpack, n_frames);
 }
 
