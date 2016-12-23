@@ -13,7 +13,7 @@ CRC_polynomial_fast<B>
 	assert(this->size() <= 32);
 
 	// reverse the order of the bits in the bitpacked polynomial
-	for (auto i = 0; i < sizeof(this->polynomial_packed) * 8; i++)
+	for (auto i = 0; i < (int)sizeof(this->polynomial_packed) * 8; i++)
 	{
 		polynomial_packed_rev <<= 1;
 		polynomial_packed_rev |= (this->polynomial_packed >> i) & 1;

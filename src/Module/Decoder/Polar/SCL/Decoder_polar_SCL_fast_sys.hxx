@@ -166,8 +166,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::hard_decode()
 {
-	auto id = 0, sums_id = 0, tmp_id = 0;
-	int tmp_sums_id;
+	auto id = 0, sums_id = 0, tmp_sums_id = 0, tmp_id = 0;
 	off_s = 0;
 
 	// decode first branch all left (applying f till leaf)
