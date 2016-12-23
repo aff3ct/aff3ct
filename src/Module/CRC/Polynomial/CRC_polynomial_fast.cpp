@@ -34,6 +34,11 @@ template <typename B>
 void CRC_polynomial_fast<B>
 ::build(mipp::vector<B>& U_K)
 {
+#if __BYTE_ORDER != __LITTLE_ENDIAN
+	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
+	std::exit(-1);
+#endif
+
 	assert(U_K.size() >  (unsigned)(this->n_frames * this->size()));
 	assert(U_K.size() == (unsigned)(this->n_frames * this->K));
 
@@ -118,6 +123,11 @@ template <typename B>
 unsigned CRC_polynomial_fast<B>
 ::compute_crc_v1(const void* data, const int n_bits)
 {
+#if __BYTE_ORDER != __LITTLE_ENDIAN
+	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
+	std::exit(-1);
+#endif
+
 	unsigned crc = 0;
 
 	auto current = (unsigned char*)data;
@@ -151,6 +161,11 @@ template <typename B>
 unsigned CRC_polynomial_fast<B>
 ::compute_crc_v2(const void* data, const int n_bits)
 {
+#if __BYTE_ORDER != __LITTLE_ENDIAN
+	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
+	std::exit(-1);
+#endif
+
 	unsigned crc = 0;
 
 	auto current = (unsigned char*)data;
