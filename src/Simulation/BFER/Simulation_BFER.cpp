@@ -105,7 +105,9 @@ void Simulation_BFER_i<B,R,Q>
 	{
 		t_snr = std::chrono::steady_clock::now();
 
-		code_rate = (float)(params.code.K / (float)(params.code.N + params.code.tail_length));
+		auto info_bits = this->params.crc.inc_code_rate ? params.code.K : params.code.K - params.crc.size;
+
+		code_rate = (float)(info_bits / (float)(params.code.N + params.code.tail_length));
 		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
 		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 

@@ -57,6 +57,7 @@ struct crc_parameters
 {
 	std::string type;
 	std::string poly;
+	bool        inc_code_rate;
 	int         size;
 };
 

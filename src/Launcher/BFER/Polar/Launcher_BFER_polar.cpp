@@ -20,8 +20,6 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.code      .sigma         = 0.f;
 	this->params.code      .fb_gen_method = "TV";
 	this->params.crc       .type          = "STD";
-	this->params.crc       .poly          = "";
-	this->params.crc       .size          = 0;
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 1;
@@ -71,6 +69,10 @@ void Launcher_BFER_polar<B,R,Q>
 		{"positive_int",
 		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
 
+	this->opt_args[{"crc-rate"}] =
+		{"",
+		 "enable the CRC to be counted in the code rate computation."};
+
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", POLAR";
 	this->opt_args[{"enc-no-sys"}] =
@@ -111,6 +113,7 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg    ({"crc-type"});
 	if(this->ar.exist_arg({"crc-poly"})) this->params.crc.poly = this->ar.get_arg    ({"crc-poly"});
 	if(this->ar.exist_arg({"crc-size"})) this->params.crc.size = this->ar.get_arg_int({"crc-size"});
+	if(this->ar.exist_arg({"crc-rate"})) this->params.crc.inc_code_rate = true;
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
@@ -129,9 +132,11 @@ void Launcher_BFER_polar<B,R,Q>
 	// hack for K when there is a CRC
 	if (!this->params.crc.poly.empty())
 	{
-		auto crc_size = this->params.crc.size ? this->params.crc.size : CRC_polynomial<B>::size(this->params.crc.poly);
-		assert(this->params.code.K > crc_size);
-		this->params.code.K += crc_size;
+		if (!this->params.crc.size)
+			this->params.crc.size = CRC_polynomial<B>::size(this->params.crc.poly);
+
+		assert(this->params.code.K > this->params.crc.size);
+		this->params.code.K += this->params.crc.size;
 		assert(this->params.code.K <= this->params.code.N);
 	}
 }
@@ -167,6 +172,8 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 
 	if (!this->params.crc.poly.empty())
 	{
+		std::string crc_inc_rate = (this->params.crc.inc_code_rate) ? "on" : "off";
+
 		auto poly_name = CRC_polynomial<B>::name (this->params.crc.poly);
 		std::stringstream poly_val;
 		poly_val << "0x" << std::hex << CRC_polynomial<B>::value(this->params.crc.poly);
@@ -175,8 +182,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 		p.push_back(std::make_pair("Type", this->params.crc.type));
 		if (!poly_name.empty())
 			p.push_back(std::make_pair("Name", poly_name));
-		p.push_back(std::make_pair("Poly (hexadecimal)", poly_val.str()));
+		p.push_back(std::make_pair("Polynomial (hexadecimal)", poly_val.str()));
 		p.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : this->params.crc.size)));
+		p.push_back(std::make_pair("Add CRC in the code rate", crc_inc_rate));
 	}
 
 	return p;
