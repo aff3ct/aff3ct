@@ -190,14 +190,11 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	                                                                               this->params.encoder.poly[1]))));
 
 	// hack for K when there is a CRC
-	if (!this->params.crc.type.empty())
+	if (!this->params.crc.poly.empty())
 	{
-		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.poly));
-
-		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.poly) ?
-		                       CRC_polynomial<B>::size(this->params.crc.poly) :
-		                       !this->params.crc.poly.empty() ? this->params.crc.size : 0;
-
+		auto crc_size = this->params.crc.size ? this->params.crc.size : CRC_polynomial<B>::size(this->params.crc.poly);
+		assert(this->params.code.K > crc_size);
+		this->params.code.K += crc_size;
 		assert(this->params.code.K <= this->params.code.N);
 	}
 }

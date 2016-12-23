@@ -11,7 +11,7 @@ CRC_polynomial<B>
 : CRC<B>(K, n_frames, name),
   polynomial       (0                                 ),
   polynomial_packed(CRC_polynomial<B>::value(poly_key)),
-  poly_size        (CRC_polynomial<B>::size (poly_key)),
+  poly_size        (0                                 ),
   buff_crc         (n_frames * K                      )
 {
 	if (poly_key.empty())
@@ -26,15 +26,27 @@ CRC_polynomial<B>
 		std::exit(EXIT_FAILURE);
 	}
 
-	if (!poly_size)
-	{
-		if (size == 0)
-		{
-			std::cerr << bold_red("(EE) You have to specify a size with the \"--crc-size\" option.") << std::endl;
-			std::exit(EXIT_FAILURE);
-		}
 
+	auto crc_name = CRC_polynomial<B>::name(poly_key);
+	if (size == 0 && crc_name.empty())
+	{
+		std::cerr << bold_red("(EE) You have to specify a size with the \"--crc-size\" option.") << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	if (size)
 		poly_size = size;
+	else
+		poly_size = CRC_polynomial<B>::size(crc_name);
+
+	if (!crc_name.empty() && CRC_polynomial<B>::size(crc_name) != poly_size)
+	{
+		std::clog << bold_yellow("(WW) You specified \"")
+				  << bold_yellow(std::to_string(poly_size))
+				  << bold_yellow(" bits\" for your CRC size but the database advise you to use \"")
+				  << bold_yellow(std::to_string(std::get<1>(known_polynomials.at(crc_name))))
+				  << bold_yellow(" bits\", are you sure?")
+				  << std::endl;
 	}
 
 	polynomial.push_back(1);
@@ -51,7 +63,15 @@ int CRC_polynomial<B>
 	if (known_polynomials.find(poly_key) != known_polynomials.end())
 		return std::get<1>(known_polynomials.at(poly_key));
 	else
-		return 0;
+	{
+		auto size = 0;
+		auto name = CRC_polynomial<B>::name(poly_key);
+
+		if (!name.empty())
+			size = CRC_polynomial<B>::size(name);
+
+		return size;
+	}
 }
 
 template <typename B>
@@ -61,7 +81,19 @@ std::string CRC_polynomial<B>
 	if (known_polynomials.find(poly_key) != known_polynomials.end())
 		return poly_key;
 	else
-		return "";
+	{
+		auto value = CRC_polynomial<B>::value(poly_key);
+		std::string name = "";
+
+		for (auto it = known_polynomials.begin(); it != known_polynomials.end(); ++it)
+			if (std::get<0>(it->second) == value)
+			{
+				name = it->first;
+				break;
+			}
+
+		return name;
+	}
 }
 
 template <typename B>
