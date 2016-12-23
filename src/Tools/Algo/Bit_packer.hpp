@@ -23,10 +23,11 @@ struct Bit_packer
 	/*!
 	 * \brief Packs bits.
 	 *
-	 * \param vec_in: an input vector of unpacked bits (only 1 bit per data is used to transport data).
+	 * \param vec_in:  an input vector of unpacked bits (only 1 bit per data is used to transport data).
 	 * \param vec_out: an output vector of packed bits.
+	 * \param rev:     reverse the bitpaking storage order.
 	 */
-	static void pack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, bool rev = false)
+	static void pack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const bool rev = false)
 	{
 		assert(vec_in.size() == vec_out.size());
 
@@ -84,8 +85,9 @@ struct Bit_packer
 	 * \brief Packs bits.
 	 *
 	 * \param vec: a vector of unpacked bits (only 1 bit per data is used to transport data).
+	 * \param rev: reverse the bitpaking storage order.
 	 */
-	static void pack(mipp::vector<B> &vec, bool rev = false)
+	static void pack(mipp::vector<B> &vec, const bool rev = false)
 	{
 		Bit_packer<B>::pack(vec, vec, rev);
 	}
@@ -93,10 +95,11 @@ struct Bit_packer
 	/*!
 	 * \brief Unpacks bits.
 	 *
-	 * \param vec_in: an input vector of packed bits.
+	 * \param vec_in:  an input vector of packed bits.
 	 * \param vec_out: an output vector of unpacked bits.
+	 * \param rev:     reverse the bitpaking storage order.
 	 */
-	static void unpack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, bool rev = false)
+	static void unpack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const bool rev = false)
 	{
 		assert(vec_in.size() == vec_out.size());
 
@@ -110,6 +113,7 @@ struct Bit_packer
 	 * \brief Unpacks bits.
 	 *
 	 * \param vec: a vector of packed bits (all the bits in each element of vec are used to store bits).
+	 * \param rev: reverse the bitpaking storage order.
 	 */
 	static void unpack(mipp::vector<B> &vec, bool rev = false)
 	{
@@ -117,15 +121,15 @@ struct Bit_packer
 		unsigned char* bytes = (unsigned char*)vec.data();
 
 		auto packed_size = (int)std::ceil((float)n_elmts / 8.f);
-		mipp::vector<unsigned char> bytes_cpy(packed_size); //TODO: find a way to avoid this allocation
-
+		mipp::vector<unsigned char> bytes_cpy(packed_size);           //TODO: find a way to avoid this allocation
 		std::copy(&bytes[0], &bytes[packed_size], bytes_cpy.begin()); //TODO: find a way to avoid this copy
 
 		Bit_packer<B>::_unpack(const_cast<const unsigned char*>(bytes_cpy.data()), vec, n_elmts, rev);
 	}
 
 private:
-	static inline void _unpack(const unsigned char *bytes_in, mipp::vector<B> &vec_out, const int n_elmts, bool rev = false)
+	static inline void _unpack(const unsigned char *bytes_in, mipp::vector<B> &vec_out, const int n_elmts,
+	                           const bool rev = false)
 	{
 		if (!rev)
 		{
