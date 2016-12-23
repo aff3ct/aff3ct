@@ -9,6 +9,7 @@ template <typename B>
 class CRC_polynomial_fast : public CRC_polynomial<B>
 {
 protected:
+	mipp::vector<unsigned> lut_crc32;
 	unsigned polynomial_packed_rev;
 
 public:
@@ -21,6 +22,7 @@ public:
 
 private:
 	inline unsigned compute_crc_v1(const void* data, const int n_bits);
+	inline unsigned compute_crc_v2(const void* data, const int n_bits);
 };
 
 #endif /* CRC_POLYNOMIAL_FAST_HPP_ */

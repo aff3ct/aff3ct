@@ -8,7 +8,7 @@
 template <typename B>
 CRC_polynomial_fast<B>
 ::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
-: CRC_polynomial<B>(K, poly_key, size, n_frames, name), polynomial_packed_rev(0)
+: CRC_polynomial<B>(K, poly_key, size, n_frames, name), lut_crc32(256), polynomial_packed_rev(0)
 {
 	assert(this->size() <= 32);
 
@@ -19,6 +19,15 @@ CRC_polynomial_fast<B>
 		polynomial_packed_rev |= (this->polynomial_packed >> i) & 1;
 	}
 	polynomial_packed_rev >>= (sizeof(this->polynomial_packed) * 8) - (this->size());
+
+	// precompute a lookup table pour the v2 implem. of the CRC
+	for (auto i = 0; i < 256; i++)
+	{
+		unsigned crc = i;
+		for (unsigned int j = 0; j < 8; j++)
+			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
+		lut_crc32[i] = crc;
+	}
 }
 
 template <typename B>
@@ -30,7 +39,7 @@ bool CRC_polynomial_fast<B>
 	return this->check_packed(this->buff_crc, n_frames);
 }
 
-// Source of inspiration: http://create.stephan-brumme.com/crc32/
+// Source of inspiration: http://create.stephan-brumme.com/crc32/ (Fastest Bitwise CRC32)
 template <typename B>
 unsigned CRC_polynomial_fast<B>
 ::compute_crc_v1(const void* data, const int n_bits)
@@ -63,6 +72,33 @@ unsigned CRC_polynomial_fast<B>
 	return crc;
 }
 
+// Source of inspiration: http://create.stephan-brumme.com/crc32/ (Standard Implementation)
+template <typename B>
+unsigned CRC_polynomial_fast<B>
+::compute_crc_v2(const void* data, const int n_bits)
+{
+	unsigned crc = 0;
+
+	auto current = (unsigned char*)data;
+	auto length = n_bits / 8;
+	while (length--)
+		crc = (crc >> 8) ^ lut_crc32[(crc & 0xFF) ^ *current++];
+
+	auto rest = n_bits % 8;
+	if (rest != 0)
+	{
+		auto cur = *current;
+		cur <<= 8 - rest;
+		cur >>= 8 - rest;
+
+		crc ^= cur;
+		for (auto j = 0; j < rest; j++)
+			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
+	}
+
+	return crc;
+}
+
 template <typename B>
 bool CRC_polynomial_fast<B>
 ::check_packed(const mipp::vector<B>& V_K, const int n_frames)
@@ -76,7 +112,7 @@ bool CRC_polynomial_fast<B>
 
 	const auto data   = (unsigned char*)V_K.data();
 	const auto n_bits = (int)V_K.size() - this->size();
-	const auto crc    = this->compute_crc_v1((void*)data, n_bits);
+	const auto crc    = this->compute_crc_v2((void*)data, n_bits);
 
 	const auto rest       = n_bits % 8;
 	const auto crc_size   = this->size();
