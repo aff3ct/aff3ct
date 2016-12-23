@@ -120,9 +120,9 @@ _aff3ct() {
 		${codetype} == "POLAR"      && ${simutype} == "BFER" \
 		]]
 	then
-		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method  \
-		      --cde-sigma --crc-type --enc-no-sys --dec-type -D --dec-ite \
-		      -i --dec-lists -L --dec-simd"
+		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method \
+		      --cde-sigma --crc-type --crc-poly --crc-rate --enc-no-sys  \
+		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -138,9 +138,10 @@ _aff3ct() {
 		${codetype} == "TURBO"      && ${simutype} == "BFER" \
 		]]
 	then
-		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
-		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem \
-		      --dec-ite -i --dec-sf --dec-simd --dec-max" 
+		opts="$opts --sim-json-path --crc-type --crc-poly --crc-rate      \
+		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path  \
+		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
+		      --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -204,14 +205,15 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm)
+		--sim-seed | --sim-mpi-comm | --crc-poly)
 			COMPREPLY=()
 			;;
 
 		# awaiting nothing	
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
-		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd)
+		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
+		--crc-rate)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
@@ -317,8 +319,7 @@ _aff3ct() {
 			;;
 
 		--crc-type)
-			local params="1-0x1 2-0x1 3-0x3 4-ITU 8-DVB-S2 16-CCITT 16-IBM \
-			24-LTEA 32-GZIP"
+			local params="STD FAST"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
