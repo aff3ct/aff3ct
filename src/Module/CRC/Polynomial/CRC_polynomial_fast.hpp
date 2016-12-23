@@ -18,6 +18,9 @@ public:
 
 	virtual bool check       (const mipp::vector<B>& V_K, const int n_frames = -1);
 	virtual bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1);
+
+private:
+	inline unsigned compute_crc_v1(const void* data, const int n_bits);
 };
 
 #endif /* CRC_POLYNOMIAL_FAST_HPP_ */
