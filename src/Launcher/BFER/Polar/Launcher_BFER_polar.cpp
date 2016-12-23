@@ -65,7 +65,7 @@ void Launcher_BFER_polar<B,R,Q>
 
 	this->opt_args[{"crc-poly"}] =
 		{"string",
-		 "select the CRC polynomial you want to use (ex: \"4-ITU\": 0x3, \"8-DVB-S2\": 0xD5, \"16-CCITT\": 0x1021, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
+		 "select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
 
 	this->opt_args[{"crc-size"}] =
 		{"positive_int",
