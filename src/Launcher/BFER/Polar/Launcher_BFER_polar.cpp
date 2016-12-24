@@ -115,6 +115,9 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"crc-size"})) this->params.crc.size = this->ar.get_arg_int({"crc-size"});
 	if(this->ar.exist_arg({"crc-rate"})) this->params.crc.inc_code_rate = true;
 
+	if (!this->params.crc.poly.empty() && !this->params.crc.size)
+		this->params.crc.size = CRC_polynomial<B>::size(this->params.crc.poly);
+
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
 
@@ -128,17 +131,6 @@ void Launcher_BFER_polar<B,R,Q>
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (this->params.decoder.type != "SCAN") this->params.decoder.n_ite = 1;
-
-	// hack for K when there is a CRC
-	if (!this->params.crc.poly.empty())
-	{
-		if (!this->params.crc.size)
-			this->params.crc.size = CRC_polynomial<B>::size(this->params.crc.poly);
-
-		assert(this->params.code.K > this->params.crc.size);
-		this->params.code.K += this->params.crc.size;
-		assert(this->params.code.K <= this->params.code.N);
-	}
 }
 
 template <typename B, typename R, typename Q>

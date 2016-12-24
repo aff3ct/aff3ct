@@ -427,11 +427,15 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
-	auto info_bits = this->params.crc.inc_code_rate ? params.code.K : params.code.K - params.crc.size;
+	std::stringstream K;
+	if (!params.crc.poly.empty())
+		K << (params.code.K - params.crc.size) << " + " << params.crc.size << " (CRC)";
+	else
+		K << params.code.K;
 
-	p.push_back(std::make_pair("Type",              params.code.type         ));
-	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(info_bits)));
-	p.push_back(std::make_pair("Codeword size (N)", N                        ));
+	p.push_back(std::make_pair("Type",              params.code.type));
+	p.push_back(std::make_pair("Info. bits (K)",    K.str()         ));
+	p.push_back(std::make_pair("Codeword size (N)", N               ));
 
 	return p;
 }

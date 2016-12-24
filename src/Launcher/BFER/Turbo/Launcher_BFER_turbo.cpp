@@ -121,6 +121,9 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"crc-size"})) this->params.crc.size = this->ar.get_arg_int({"crc-size"});
 	if(this->ar.exist_arg({"crc-rate"})) this->params.crc.inc_code_rate = true;
 
+	if (!this->params.crc.poly.empty() && !this->params.crc.size)
+		this->params.crc.size = CRC_polynomial<B>::size(this->params.crc.poly);
+
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
 	if(this->ar.exist_arg({"enc-type"   })) this->params.encoder.type     = this->ar.get_arg({"enc-type"});
@@ -191,17 +194,6 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	this->params.code.tail_length = (int)(4 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
-
-	// hack for K when there is a CRC
-	if (!this->params.crc.poly.empty())
-	{
-		if (!this->params.crc.size)
-			this->params.crc.size = CRC_polynomial<B>::size(this->params.crc.poly);
-
-		assert(this->params.code.K > this->params.crc.size);
-		this->params.code.K += this->params.crc.size;
-		assert(this->params.code.K <= this->params.code.N);
-	}
 }
 
 template <typename B, typename R, typename Q, typename QD>

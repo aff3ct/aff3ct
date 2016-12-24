@@ -109,7 +109,9 @@ void Simulation_BFERI_i<B,R,Q>
 	{
 		t_snr = std::chrono::steady_clock::now();
 
-		auto info_bits = this->params.crc.inc_code_rate ? params.code.K : params.code.K - params.crc.size;
+		auto info_bits = params.code.K;
+		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
+			info_bits -= params.crc.size;
 
 		code_rate = (float)(info_bits / (float)(params.code.N + params.code.tail_length));
 		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
