@@ -44,7 +44,7 @@ void CRC_polynomial_fast<B>
 
 	Bit_packer<B>::pack(U_K, this->buff_crc, this->n_frames);
 
-	const auto n_bits_per_frame  = this->K;
+	const auto n_bits_per_frame  = this->K; // number of bits with the CRC bits included
 	const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 
 	auto bytes = (unsigned char*)this->buff_crc.data();
@@ -83,7 +83,7 @@ bool CRC_polynomial_fast<B>
 	assert((int)V_K.size() % real_n_frames == 0);
 
 	const auto crc_size          = this->size();
-	const auto n_bits_per_frame  = (int)((int)V_K.size() / real_n_frames) - this->size();
+	const auto n_bits_per_frame  = (int)((int)V_K.size() / real_n_frames); // number of bits with the CRC bits included
 	const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 	const auto rest              = n_bits_per_frame % 8;
 
@@ -93,10 +93,10 @@ bool CRC_polynomial_fast<B>
 	for (auto f = 0; f < real_n_frames && !crc_invalid; f++)
 	{
 		const auto data = bytes + f * n_bytes_per_frame;
-		const auto crc  = this->compute_crc_v2((void*)data, n_bits_per_frame);
+		const auto crc  = this->compute_crc_v2((void*)data, n_bits_per_frame - crc_size);
 
 		auto n_bits_crc = crc_size;
-		auto current = data + (n_bits_per_frame / 8);
+		auto current = data + ((n_bits_per_frame - crc_size) / 8);
 
 		unsigned crc_ref = 0;
 		if (rest)
