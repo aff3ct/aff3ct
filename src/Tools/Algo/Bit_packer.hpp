@@ -32,7 +32,7 @@ struct Bit_packer
 	static inline void pack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const int n_frames = 1,
 	                        const bool rev = false)
 	{
-		assert(vec_out.size() >= static_cast<int>(std::ceil((float)vec_in.size() / (sizeof(B) * 8.f))));
+		assert((int)vec_out.size() >= static_cast<int>(std::ceil((float)vec_in.size() / (sizeof(B) * 8.f))));
 		assert(n_frames > 0);
 		assert(vec_in.size() % n_frames == 0);
 
