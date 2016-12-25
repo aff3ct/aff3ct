@@ -90,7 +90,8 @@ bool CRC_polynomial_fast<B>
 	unsigned char* bytes = (unsigned char*)V_K.data();
 
 	unsigned crc_invalid = 0;
-	for (auto f = 0; f < real_n_frames && !crc_invalid; f++)
+	auto f = 0;
+	do
 	{
 		const auto data = bytes + f * n_bytes_per_frame;
 		const auto crc  = this->compute_crc_v2((void*)data, n_bits_per_frame - crc_size);
@@ -114,6 +115,7 @@ bool CRC_polynomial_fast<B>
 
 		crc_invalid |= crc ^ crc_ref;
 	}
+	while(++f < real_n_frames && !crc_invalid);
 
 	return !crc_invalid;
 }
