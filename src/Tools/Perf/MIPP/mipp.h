@@ -410,6 +410,7 @@ template <typename T> inline reg   max          (const reg, const reg)          
 template <typename T> inline reg   sign         (const reg)                       { errorMessage<T>("sign");          exit(-1); }
 template <typename T> inline reg   sign         (const reg, const reg)            { errorMessage<T>("sign");          exit(-1); }
 template <typename T> inline reg   neg          (const reg, const reg)            { errorMessage<T>("neg");           exit(-1); }
+template <typename T> inline reg   neg          (const reg)                       { errorMessage<T>("neg");           exit(-1); }
 template <typename T> inline reg   abs          (const reg)                       { errorMessage<T>("abs");           exit(-1); }
 template <typename T> inline reg   sqrt         (const reg)                       { errorMessage<T>("sqrt");          exit(-1); }
 template <typename T> inline reg   rsqrt        (const reg)                       { errorMessage<T>("rsqrt");         exit(-1); }

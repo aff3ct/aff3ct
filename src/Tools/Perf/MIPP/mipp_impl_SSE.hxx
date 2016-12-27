@@ -1664,6 +1664,37 @@
 	}
 #endif
 
+	// ------------------------------------------------------------------------------------------------------------ neg
+	template <>
+	inline reg neg<float>(const reg v) {
+		return xorb<int>(v, mipp::set1<int>(0x80000000));
+	}
+
+	template <>
+	inline reg neg<double>(const reg v) {
+		return xorb<long long>(v, mipp::set1<long long>(0x8000000000000000));
+	}
+
+#ifdef __SSSE3__
+	template <>
+	inline reg neg<int>(const reg v) {
+		reg tmp = set1<int>(-1);
+		return _mm_castsi128_ps(_mm_sign_epi32(_mm_castps_si128(v), _mm_castps_si128(tmp)));
+	}
+
+	template <>
+	inline reg neg<short>(const reg v) {
+		reg tmp = set1<short>(-1);
+		return _mm_castsi128_ps(_mm_sign_epi16(_mm_castps_si128(v), _mm_castps_si128(tmp)));
+	}
+
+	template <>
+	inline reg neg<signed char>(const reg v) {
+		reg tmp = set1<signed char>(-1);
+		return _mm_castsi128_ps(_mm_sign_epi8(_mm_castps_si128(v), _mm_castps_si128(tmp)));
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------------ abs
 	template <>
 	inline reg abs<float>(const reg v1) {
