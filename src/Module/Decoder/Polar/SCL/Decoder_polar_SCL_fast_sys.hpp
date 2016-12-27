@@ -50,7 +50,7 @@ public:
 
 private:
 	inline void duplicate_path            (const int path, const int id, const int nb_dup = 2                 );
-	inline void duplicate_tree            (const int old_path, int &new_path                                  );
+	inline int  duplicate_tree            (const int old_path                                                 ); // return the new_path
 	inline void update_paths              (      int id                                                       );
 	inline void update_paths_r0           (                                                                   );
 	inline void update_paths_r1           (const int id                                                       );

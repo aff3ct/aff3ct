@@ -68,7 +68,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (size_t i = 0 ; i < metrics_idx[j].size() ; i++)
 			metrics_idx[j][i] = i;
 
-	for (auto i = 0 ; i <= m ; i ++)
+	for (auto i = 0; i <= m; i ++)
 	{
 		llr_indexes.push_back(std::vector<int>(std::exp2(i)));
 		for (size_t j = 0 ; j < llr_indexes[i].size() ; j++)
@@ -115,7 +115,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	std::fill(metrics.begin(), metrics.end(), metric_init);
 	std::fill(active_paths.begin(), active_paths.end(), false);
 
-	for (auto i = 0 ; i < 3 ; i++)
+	for (auto i = 0; i < 3; i++)
 		std::fill(metrics_vec[i].begin(), metrics_vec[i].end(), std::numeric_limits<float>::max());
 
 	std::copy(Y_N.begin(), Y_N.end(), l[0].begin());
@@ -178,7 +178,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	// decode all branches, applying g once and f till the leaf
 	while (off_s < this->N)
 	{
-		for (auto path = 0 ; path < this->L ; path++)
+		for (auto path = 0; path < this->L; path++)
 			if (active_paths[path])
 			{
 				tmp_id = id;
@@ -191,7 +191,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 		id++;
 
-		for (auto path = 0 ; path < L ; path++)
+		for (auto path = 0; path < L; path++)
 			if (active_paths[path])
 			{
 				tmp_sums_id = sums_id;
@@ -238,10 +238,10 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::select_best_path() 
+::select_best_path()
 {
 	best_path = -1;
-	for (auto path = 0 ; path < L ; path++)
+	for (auto path = 0; path < L; path++)
 		if (active_paths[path])
 			if (best_path == -1 || metrics[path] < metrics[best_path])
 				best_path = path;
@@ -297,8 +297,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto r_d = leaves_rev_depth[off_s];
 	const auto n_elmts = 1 << r_d;
 
-	for (auto i = 0 ; i < n_elmts ; i++)
-		for (auto path = 0 ; path < L ; path++)
+	for (auto i = 0; i < n_elmts; i++)
+		for (auto path = 0; path < L; path++)
 			if (active_paths[path])
 				metrics[path] -= std::min((float)l[path][depth2offl[m - r_d] + i], 0.f);
 }
@@ -311,7 +311,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto off_l = depth2offl[m - r_d];
 	const auto n_elmts = 1 << r_d;
 
-	for (auto path = 0 ; path < L ; path ++)
+	for (auto path = 0; path < L; path ++)
 	{
 		if (active_paths[path])
 		{
@@ -340,16 +340,16 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		});
 
 	// L first of the lists are the L best paths
-	for (auto i = 0 ; i < L ; i++)
+	for (auto i = 0; i < L; i++)
 		dup_count[metrics_idx[1][i] / 4]++;
 
 	// erase paths
-	for (auto path = 0 ; path < L ; path++)
+	for (auto path = 0; path < L; path++)
 		if (dup_count[path] == 0 && active_paths[path])
 			delete_path(path);
 
 	last_active_paths = active_paths;
-	for (auto path = 0 ; path < L ; path++)
+	for (auto path = 0; path < L; path++)
 	{
 		if (dup_count[path])
 		{
@@ -371,7 +371,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto r_d = leaves_rev_depth[off_s];
 	const auto n_elmts = 1 << r_d;
 
-	for (auto path = 0 ; path < L ; path++)
+	for (auto path = 0; path < L; path++)
 		if (active_paths[path])
 		{
 			metrics_vec[0][2 * path   ] = metrics[path];
@@ -379,8 +379,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		}
 	
 	// metrics vec used to store values of hypothetic path metrics
-	for (auto i = 0 ; i < n_elmts ; i++)
-		for (auto path = 0 ; path < L ; path++)
+	for (auto i = 0; i < n_elmts; i++)
+		for (auto path = 0; path < L; path++)
 			if (active_paths[path])
 			{
 				metrics_vec[0][2 * path   ] -= std::min(l[path][depth2offl[m - r_d] + i], (R)0);
@@ -390,7 +390,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	if (n_active_paths <= L / 2)
 	{
 		last_active_paths = active_paths;
-		for (auto path = 0 ; path < L ; path++)
+		for (auto path = 0; path < L; path++)
 			if (last_active_paths[path])
 				this->duplicate_path(path, id);
 	}
@@ -402,15 +402,15 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				return metrics_vec[0][x] < metrics_vec[0][y];
 			});
 
-		for (auto i = 0 ; i < L ; i++)
+		for (auto i = 0; i < L; i++)
 			dup_count[metrics_idx[0][i] / 2]++;
 
 		// erase paths
-		for (auto path = 0 ; path < L ; path++)
+		for (auto path = 0; path < L; path++)
 			if (dup_count[path] == 0 && active_paths[path])
 				delete_path(path);
 
-		for (auto path = 0 ; path < L ; path++)
+		for (auto path = 0; path < L; path++)
 			if (dup_count[path])
 			{
 				if (dup_count[path] == 1)
@@ -446,7 +446,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_elmts = 1 << r_d;
 	const auto n_candidates = (L <= 2 ? 2 : 8);
 
-	for (auto path = 0 ; path < L ; path ++)
+	for (auto path = 0; path < L; path ++)
 		if (active_paths[path])
 		{
 			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + (L <= 2 ? 2 : 4), llr_indexes[r_d].end(),
@@ -454,7 +454,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 					return std::abs(l[path][off_l + x]) < std::abs(l[path][off_l + y]);
 				});
 
-			for (auto i = 0 ; i < 4 ; i++)
+			for (auto i = 0; i < 4; i++)
 				bit_flips[4 * path +i] = llr_indexes[r_d][i];
 
 			is_even[path] = !API_polar::spc(s[path], l[path], off_l, off_s, n_elmts);
@@ -503,15 +503,15 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		});
 
 	// L first of the lists are the L best paths
-	for (auto i = 0 ; i < L ; i++)
+	for (auto i = 0; i < L; i++)
 		dup_count[metrics_idx[2][i] / n_candidates]++;
 
 	// erase paths
-	for (auto path = 0 ; path < L ; path++)
+	for (auto path = 0; path < L; path++)
 		if (dup_count[path] == 0 && active_paths[path])
 			delete_path(path);
 
-	for (auto path = 0 ; path < L ; path++)
+	for (auto path = 0; path < L; path++)
 	{
 		if (dup_count[path])
 		{
@@ -562,17 +562,11 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::duplicate_path(int path, const int id, const int nb_dup )
+::duplicate_path(int path, const int id, const int nb_dup)
 {
-	int new_path;
-
-	n_active_paths += nb_dup -1;
-
-	for (auto dup = 2 ; dup <= nb_dup ; dup++)
-	{
-		duplicate_tree(path, new_path);
-		flip_bits(path, new_path, id, dup);
-	}
+	this->n_active_paths += nb_dup -1;
+	for (auto dup = 2; dup <= nb_dup; dup++)
+		this->flip_bits(path, this->duplicate_tree(path), id, dup);
 }
 
 template <typename B, typename R, class API_polar>
@@ -668,20 +662,21 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::duplicate_tree(const int old_path, int &new_path)
+int Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::duplicate_tree(const int old_path)
 {
+	int new_path = 0;
+	while(this->active_paths[new_path] && new_path++ < L);
+	active_paths[new_path] = true;
+
 	const auto r_d = leaves_rev_depth[off_s];
 	const auto n_elmts = 1 << r_d;
 	const auto off_l = depth2offl[m - r_d];
 
-	for (new_path = 0 ; new_path < L ; new_path++)
-		if (!active_paths[new_path])
-			break;
-	active_paths[new_path] = true;
-
 	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
 	std::copy(l[old_path].begin(), l[old_path].begin() + off_l          , l[new_path].begin());
+
+	return new_path;
 }
 
 template <typename B, typename R, class API_polar>
