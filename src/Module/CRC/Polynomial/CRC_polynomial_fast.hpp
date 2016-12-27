@@ -24,6 +24,7 @@ public:
 private:
 	inline unsigned compute_crc_v1(const void* data, const int n_bits);
 	inline unsigned compute_crc_v2(const void* data, const int n_bits);
+	inline unsigned compute_crc_v3(const void* data, const int n_bits);
 };
 
 #endif /* CRC_POLYNOMIAL_FAST_HPP_ */

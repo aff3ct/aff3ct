@@ -20,7 +20,7 @@ CRC_polynomial_fast<B>
 	}
 	polynomial_packed_rev >>= (sizeof(this->polynomial_packed) * 8) - (this->size());
 
-	// precompute a lookup table pour the v2 implem. of the CRC
+	// precompute a lookup table pour the v3 implem. of the CRC
 	for (auto i = 0; i < 256; i++)
 	{
 		unsigned crc = i;
@@ -51,7 +51,7 @@ void CRC_polynomial_fast<B>
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		auto data = bytes + f * n_bytes_per_frame;
-		const auto crc  = this->compute_crc_v2((void*)data, n_bits_per_frame - this->size());
+		const auto crc  = this->compute_crc_v3((void*)data, n_bits_per_frame - this->size());
 
 		for (auto i = 0; i < this->size(); i++)
 			U_K[this->K * (f +1) - this->size() +i] = (crc >> i) & 1;
@@ -94,7 +94,7 @@ bool CRC_polynomial_fast<B>
 	do
 	{
 		const auto data = bytes + f * n_bytes_per_frame;
-		const auto crc  = this->compute_crc_v2((void*)data, n_bits_per_frame - crc_size);
+		const auto crc  = this->compute_crc_v3((void*)data, n_bits_per_frame - crc_size);
 
 		auto n_bits_crc = crc_size;
 		auto current = data + ((n_bits_per_frame - crc_size) / 8);
@@ -158,10 +158,48 @@ unsigned CRC_polynomial_fast<B>
 	return crc;
 }
 
-// Source of inspiration: http://create.stephan-brumme.com/crc32/ (Standard Implementation)
+// Source of inspiration: http://create.stephan-brumme.com/crc32/ (Fastest Bitwise CRC32)
 template <typename B>
 unsigned CRC_polynomial_fast<B>
 ::compute_crc_v2(const void* data, const int n_bits)
+{
+#if __BYTE_ORDER != __LITTLE_ENDIAN
+	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
+	std::exit(-1);
+#endif
+
+	unsigned crc = 0;
+
+	auto current = (unsigned int*)data;
+	auto length = n_bits / 32;
+	while (length--)
+	{
+		crc ^= *current++;
+		for (auto j = 0; j < 32; j++)
+//			crc = (crc & 1) ? (crc >> 1) ^ polynomial_packed_rev : crc >> 1;
+			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
+	}
+
+	auto rest = n_bits % 32;
+	if (rest != 0)
+	{
+		auto cur = *current;
+		cur <<= 32 - rest;
+		cur >>= 32 - rest;
+
+		crc ^= cur;
+		for (auto j = 0; j < rest; j++)
+//			crc = (crc & 1) ? (crc >> 1) ^ polynomial_packed_rev : crc >> 1;
+			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
+	}
+
+	return crc;
+}
+
+// Source of inspiration: http://create.stephan-brumme.com/crc32/ (Standard Implementation)
+template <typename B>
+unsigned CRC_polynomial_fast<B>
+::compute_crc_v3(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
