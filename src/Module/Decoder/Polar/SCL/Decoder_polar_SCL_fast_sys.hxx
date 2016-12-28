@@ -24,37 +24,36 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
                              const int n_frames, const std::string name)
-: Decoder<B,R>     (K, N, n_frames, API_polar::get_n_frames(), name),
-  m                (std::log2(N)),
-  L                (L),
-  metric_init      (std::numeric_limits<float>::min()),
-  frozen_bits      (frozen_bits),
-  paths            (L),
-  last_paths       (L),
-  metrics          (L),
-  l                (L, mipp::vector<R>(2 * N + mipp::nElReg<R>())),
-  s                (L, mipp::vector<B>(N     + mipp::nElReg<B>())),
-  metrics_vec      (3, std::vector<float>()),
-  metrics_idx      (3, std::vector<int  >()),
-  dup_count        (L, 0),
-  llr_indexes      (),
-  bit_flips        (4 * L),
-  is_even          (L),
-  depth2offl       (m +1),
-  best_path        (0),
-  n_active_paths   (1),
-  off_s            (0),
-  polar_patterns   (N,
-                    frozen_bits,
-                    {new Pattern_SC<pattern_SC_type::STANDARD   >(),
-                     new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
-                     new Pattern_SC<pattern_SC_type::RATE_0     >(),
-                     new Pattern_SC<pattern_SC_type::RATE_1     >(),
-                     new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                     new Pattern_SC<pattern_SC_type::REP        >()/*,
-                     new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
-                    2,
-                    3)
+: Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
+  m             (std::log2(N)),
+  L             (L),
+  frozen_bits   (frozen_bits),
+  polar_patterns(N,
+                 frozen_bits,
+                 {new Pattern_SC<pattern_SC_type::STANDARD   >(),
+                  new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
+                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
+                  new Pattern_SC<pattern_SC_type::RATE_1     >(),
+                  new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
+                  new Pattern_SC<pattern_SC_type::REP        >()/*,
+                  new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
+                 2,
+                 3),
+  paths         (L),
+  last_paths    (L),
+  metrics       (L),
+  l             (L, mipp::vector<R>(2 * N + mipp::nElReg<R>())),
+  s             (L, mipp::vector<B>(N     + mipp::nElReg<B>())),
+  metrics_vec   (3, std::vector<float>()),
+  metrics_idx   (3, std::vector<int  >()),
+  dup_count     (L, 0),
+  llr_indexes   (),
+  bit_flips     (4 * L),
+  is_even       (L),
+  depth2offl    (m +1),
+  best_path     (0),
+  n_active_paths(1),
+  off_s         (0)
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -100,7 +99,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::load(const mipp::vector<R>& Y_N)
 {
-	std::fill(metrics.begin(), metrics.end(), metric_init);
+	std::fill(metrics.begin(), metrics.end(), std::numeric_limits<float>::min());
 	for (auto i = 0; i < L; i++) paths[i] = i;
 	n_active_paths = 1;
 

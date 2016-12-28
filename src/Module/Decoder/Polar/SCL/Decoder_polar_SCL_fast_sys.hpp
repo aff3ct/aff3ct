@@ -14,8 +14,8 @@ class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
 protected:
 	const int                       m;                         // graph depth
 	const int                       L;                         // maximum paths number
-	const float                     metric_init;               // init value of the metrics in the trees
 	const mipp::vector<B>&          frozen_bits;
+	const Pattern_parser_polar<B>   polar_patterns;
 
 	std::vector<int               > paths;                     // active paths
 	std::vector<int               > last_paths;                // active paths
@@ -33,8 +33,6 @@ protected:
 	int                             best_path;
 	int                             n_active_paths;
 	int                             off_s;
-
-	const Pattern_parser_polar<B>   polar_patterns;
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
