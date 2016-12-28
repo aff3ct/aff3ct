@@ -29,7 +29,7 @@ Generator_polar_SC_sys
   patterns(patterns),
   pattern_rate0(pattern_rate0),
   pattern_rate1(pattern_rate1),
-  parser(N, frozen_bits, patterns, pattern_rate0, pattern_rate1),
+  parser(N, frozen_bits, patterns, &pattern_rate0, &pattern_rate1),
   dec_stream(dec_stream),
   short_dec_stream(short_dec_stream),
   graph_stream(graph_stream),

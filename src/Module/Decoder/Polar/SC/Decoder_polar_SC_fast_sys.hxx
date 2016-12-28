@@ -139,8 +139,8 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	for (unsigned i = 0; i < frozen_bits.size(); i++)
 		fb_int32[i] = (int)frozen_bits[i];
 
-	Pattern_parser_polar *parser = new Pattern_parser_polar(N, fb_int32, patterns_SC, *pattern_SC_r0, *pattern_SC_r1);
-	pattern_types_per_id = parser->get_pattern_types_per_id();
+	Pattern_parser_polar<B> *parser = new Pattern_parser_polar<B>(N, fb_int32, patterns_SC, pattern_SC_r0, pattern_SC_r1);
+	pattern_types_per_id = parser->get_pattern_types();
 
 	delete parser;
 	for (unsigned i = 0; i < patterns_SC.size(); i++)

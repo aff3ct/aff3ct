@@ -26,7 +26,7 @@ protected:
 	const Pattern_SC_interface &pattern_rate0;
 	const Pattern_SC_interface &pattern_rate1;
 
-	Pattern_parser_polar parser;
+	Pattern_parser_polar<int> parser;
 
 	std::ostream &dec_stream;
 	std::ostream &short_dec_stream;

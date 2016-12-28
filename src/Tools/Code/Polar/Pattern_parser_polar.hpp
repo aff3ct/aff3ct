@@ -22,22 +22,28 @@
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
  *        cuts when possible.
  */
+template <typename B>
 class Pattern_parser_polar
 {
 protected:
 	const int N; /*!< Codeword size. */
 	const int m; /*!< Tree depth. */
 
-	const mipp::vector<int>& frozen_bits; /*!< Vector of frozen bits (true if frozen, false otherwise). */
+	const mipp::vector<B>& frozen_bits; /*!< Vector of frozen bits (true if frozen, false otherwise). */
 
-	const std::vector<Pattern_SC_interface*> &patterns; /*!< Vector of patterns. */
-	const Pattern_SC_interface &pattern_rate0;          /*!< Terminal pattern when the bit is frozen. */
-	const Pattern_SC_interface &pattern_rate1;          /*!< Terminal pattern when the bit is an information bit. */
+	const std::vector<Pattern_SC_interface*> patterns; /*!< Vector of patterns. */
+	const Pattern_SC_interface *pattern_rate0;         /*!< Terminal pattern when the bit is frozen. */
+	const Pattern_SC_interface *pattern_rate1;         /*!< Terminal pattern when the bit is an information bit. */
 
 	Binary_tree<Pattern_SC_interface> *polar_tree; /*!< Tree of patterns. */
 
 private:
-	std::vector<char> pattern_types_per_id; /*!< Tree of patterns represented with a vector of pattern IDs. */
+	std::vector<char> pattern_types; /*!< Tree of patterns represented with a vector of pattern IDs. */
+	std::vector<char> pattern_types_sums;
+	std::vector<unsigned char> leaves_depth, leaves_rev_depth;
+	std::vector<int> leaf_to_node_id;
+	std::vector<int> leaf_to_node_id_sums;
+	std::vector<int> leaf_to_g_node_id;
 
 public:
 	/*!
@@ -50,10 +56,16 @@ public:
 	 * \param pattern_rate1: terminal pattern when the bit is an information bit.
 	 */
 	Pattern_parser_polar(const int& N,
-	                     const mipp::vector<int>& frozen_bits,
-	                     const std::vector<Pattern_SC_interface*> &patterns,
-	                     const Pattern_SC_interface &pattern_rate0,
-	                     const Pattern_SC_interface &pattern_rate1);
+	                     const mipp::vector<B>& frozen_bits,
+	                     const std::vector<Pattern_SC_interface*> patterns,
+	                     const Pattern_SC_interface *pattern_rate0,
+	                     const Pattern_SC_interface *pattern_rate1);
+
+	Pattern_parser_polar(const int& N,
+	                     const mipp::vector<B>& frozen_bits,
+	                     const std::vector<Pattern_SC_interface*> patterns,
+	                     const int pattern_rate0_id,
+	                     const int pattern_rate1_id);
 
 	/*!
 	 * \brief Destructor.
@@ -75,12 +87,28 @@ public:
 	 *
 	 * \return a vector of pattern IDs.
 	 */
-	std::vector<char> get_pattern_types_per_id() const;
+	std::vector<char> get_pattern_types() const;
+
+	inline pattern_SC_type get_node_type           (const int node_id) const;
+	inline pattern_SC_type get_node_type_sums      (const int node_id) const;
+	inline pattern_SC_type get_leaf_type           (const int leaf_id) const;
+	inline unsigned char   get_leaf_depth          (const int leaf_id) const;
+	inline unsigned char   get_leaf_rev_depth      (const int leaf_id) const;
+	inline int             get_leaf_to_node_id     (const int leaf_id) const;
+	inline int             get_leaf_to_node_id_sums(const int leaf_id) const;
+	inline int             get_leaf_to_g_node_id   (const int leaf_id) const;
+
+	void release_patterns() const;
 
 private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_SC_interface>* node_curr                 );
+	void recursive_compute_leaves_depth     (      Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index);
+	int  recursive_find_g_node_id           (const Binary_node<Pattern_SC_interface>* node_curr                 );
 	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr, int& node_index);
+	void generate_nodes_indexes_sums        (const Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index);
 	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_SC_interface>* node_curr                 );
 };
+
+#include "Pattern_parser_polar.hxx"
 
 #endif /* PATTERN_PARSER_POLAR_HPP */
