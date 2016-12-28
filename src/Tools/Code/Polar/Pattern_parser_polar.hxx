@@ -133,7 +133,7 @@ void Pattern_parser_polar<B>
 ::generate_nodes_indexes(const Binary_node<Pattern_SC_interface>* node_curr, int& node_index)
 {
 	node_curr->get_c()->set_id(pattern_types.size());
-	pattern_types.push_back((char)node_curr->get_c()->type());
+	pattern_types.push_back((unsigned char)node_curr->get_c()->type());
 
 	if (!node_curr->is_leaf()) // stop condition
 	{
@@ -157,7 +157,7 @@ void Pattern_parser_polar<B>
 		leaf_to_node_id_sums[leaf_index] = pattern_types_sums.size();
 		this->generate_nodes_indexes_sums(node_curr->get_right(), leaf_index); // recursive call
 		leaf_to_node_id_sums[leaf_index] = pattern_types_sums.size();
-		pattern_types_sums.push_back((char)node_curr->get_c()->type());
+		pattern_types_sums.push_back((unsigned char)node_curr->get_c()->type());
 	}
 	else
 		leaf_index++;
@@ -215,7 +215,7 @@ void Pattern_parser_polar<B>
 }
 
 template <typename B>
-std::vector<char> Pattern_parser_polar<B>
+std::vector<unsigned char> Pattern_parser_polar<B>
 ::get_pattern_types() const
 {
 	return pattern_types;

@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Code/Polar/Pattern_parser_polar.hpp"
 
 #include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"
@@ -18,7 +19,7 @@ protected:
 	      mipp::vector<B> s_bis;        // bits, partial sums
 	const mipp::vector<B> &frozen_bits; // frozen bits
 
-	std::vector<char> pattern_types_per_id;
+	const Pattern_parser_polar<B> polar_patterns;
 
 public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 

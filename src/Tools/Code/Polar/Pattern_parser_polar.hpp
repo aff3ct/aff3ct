@@ -35,15 +35,16 @@ protected:
 	const Pattern_SC_interface *pattern_rate0;         /*!< Terminal pattern when the bit is frozen. */
 	const Pattern_SC_interface *pattern_rate1;         /*!< Terminal pattern when the bit is an information bit. */
 
-	Binary_tree<Pattern_SC_interface> *polar_tree; /*!< Tree of patterns. */
+	Binary_tree<Pattern_SC_interface> *polar_tree;     /*!< Tree of patterns. */
 
 private:
-	std::vector<char> pattern_types; /*!< Tree of patterns represented with a vector of pattern IDs. */
-	std::vector<char> pattern_types_sums;
-	std::vector<unsigned char> leaves_depth, leaves_rev_depth;
-	std::vector<int> leaf_to_node_id;
-	std::vector<int> leaf_to_node_id_sums;
-	std::vector<int> leaf_to_g_node_id;
+	std::vector<unsigned char> pattern_types;          /*!< Tree of patterns represented with a vector of pattern IDs. */
+	std::vector<unsigned char> pattern_types_sums;
+	std::vector<unsigned char> leaves_depth;
+	std::vector<unsigned char> leaves_rev_depth;
+	std::vector<int          > leaf_to_node_id;
+	std::vector<int          > leaf_to_node_id_sums;
+	std::vector<int          > leaf_to_g_node_id;
 
 public:
 	/*!
@@ -87,7 +88,7 @@ public:
 	 *
 	 * \return a vector of pattern IDs.
 	 */
-	std::vector<char> get_pattern_types() const;
+	std::vector<unsigned char> get_pattern_types() const;
 
 	inline pattern_SC_type get_node_type           (const int node_id) const;
 	inline pattern_SC_type get_node_type_sums      (const int node_id) const;
