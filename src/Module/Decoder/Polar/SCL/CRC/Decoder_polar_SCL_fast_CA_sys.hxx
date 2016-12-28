@@ -14,8 +14,12 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::select_best_path()
 {
-	for (auto path = 0; path < this->L; path++)
+	auto j = 0;
+	auto n_active_paths_cpy = this->n_active_paths;
+	for (auto i = 0; i < n_active_paths_cpy; i++)
 	{
+		const auto path = this->paths[j];
+
 		// extract the info bits from the codeword
 		auto k = 0;
 		for (auto leaf = 0; leaf < this->N; leaf++)
@@ -31,7 +35,9 @@ void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 
 		// delete the path if the CRC result is negative
 		if (!decode_result)
-			this->delete_path(path);
+			this->delete_path(j);
+		else
+			j++;
 	}
 
 	this->Decoder_polar_SCL_fast_sys<B,R,API_polar>::select_best_path();

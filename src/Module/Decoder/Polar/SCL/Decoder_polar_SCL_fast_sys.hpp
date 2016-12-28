@@ -17,7 +17,8 @@ protected:
 	const float                     metric_init;               // init value of the metrics in the trees
 	const mipp::vector<B>&          frozen_bits;
 
-	std::vector<bool              > active_paths;              // active paths
+	std::vector<int               > paths;                     // active paths
+	std::vector<int               > last_paths;                // active paths
 	std::vector<float             > metrics;                   // path metrics
 	std::vector<mipp::vector<R>   > l;                         // llrs
 	std::vector<mipp::vector<B>   > s;                         // partial sums
@@ -26,7 +27,6 @@ protected:
 	std::vector<int               > dup_count;                 // number of duplications of a path, at updating time
 	std::vector<std::vector<int>  > llr_indexes;               // indexes used to sort a list of llrs (to be flipped)
 	std::vector<int               > bit_flips;                 // index of the bits to be flipped
-	std::vector<bool              > last_active_paths;         // used to store a former state of active paths
 	std::vector<bool              > is_even;                   // used to store parity of a spc node
 	std::vector<int               > depth2offl;                // lut of offl, function of depth
 
@@ -60,11 +60,11 @@ private:
 	inline void inte                  (const int reverse_depth, const int path, const int node_id              );
 	inline void rec_left              (const int reverse_depth, const int path                                 );
 	inline void normalize_metrics     (std::vector<R> &vec                                                     );
-	inline void recursive_compute_sums(const int off_s, const int reverse_depth, const int path, int &id       );
+	inline void recursive_compute_sums(const int off_s, const int reverse_depth, const int path, int node_id   );
 
 protected:
-	        inline void delete_path     (int path);
-	virtual inline void select_best_path(        );
+	        inline void delete_path     (int path_id);
+	virtual inline void select_best_path(           );
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"
