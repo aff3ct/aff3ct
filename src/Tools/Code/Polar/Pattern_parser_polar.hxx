@@ -22,20 +22,10 @@ Pattern_parser_polar<B>
   pattern_rate0(pattern_rate0),
   pattern_rate1(pattern_rate1),
   polar_tree(new Binary_tree<Pattern_SC_interface>(m +1)),
-  pattern_types(),
-  pattern_types_sums(),
-  leaves_depth(),
-  leaves_rev_depth(),
-  leaf_to_node_id(),
-  leaf_to_node_id_sums(N, -1),
-  leaf_to_g_node_id()
+  pattern_types()
 {
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
-	int node_index = 0;
-	this->generate_nodes_indexes(this->polar_tree->get_root(), node_index);
-	this->recursive_compute_leaves_depth(this->polar_tree->get_root());
-	int leaf_index = 0;
-	this->generate_nodes_indexes_sums(this->polar_tree->get_root(), leaf_index);
+	this->generate_nodes_indexes           (this->polar_tree->get_root());
 }
 
 template <typename B>
@@ -52,20 +42,10 @@ Pattern_parser_polar<B>
   pattern_rate0(patterns[pattern_rate0_id]),
   pattern_rate1(patterns[pattern_rate1_id]),
   polar_tree(new Binary_tree<Pattern_SC_interface>(m +1)),
-  pattern_types(),
-  pattern_types_sums(),
-  leaves_depth(),
-  leaves_rev_depth(),
-  leaf_to_node_id(),
-  leaf_to_node_id_sums(N, -1),
-  leaf_to_g_node_id()
+  pattern_types()
 {
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
-	int node_index = 0;
-	this->generate_nodes_indexes(this->polar_tree->get_root(), node_index);
-	this->recursive_compute_leaves_depth(this->polar_tree->get_root());
-	int leaf_index = 0;
-	this->generate_nodes_indexes_sums(this->polar_tree->get_root(), leaf_index);
+	this->generate_nodes_indexes           (this->polar_tree->get_root());
 }
 
 template <typename B>
@@ -128,49 +108,16 @@ void Pattern_parser_polar<B>
 
 template <typename B>
 void Pattern_parser_polar<B>
-::generate_nodes_indexes(const Binary_node<Pattern_SC_interface>* node_curr, int& node_index)
+::generate_nodes_indexes(const Binary_node<Pattern_SC_interface>* node_curr)
 {
 	node_curr->get_c()->set_id(pattern_types.size());
 	pattern_types.push_back((unsigned char)node_curr->get_c()->type());
 
 	if (!node_curr->is_leaf()) // stop condition
 	{
-		this->generate_nodes_indexes(node_curr->get_left(),  node_index); // recursive call
-		this->generate_nodes_indexes(node_curr->get_right(), node_index); // recursive call
+		this->generate_nodes_indexes(node_curr->get_left() ); // recursive call
+		this->generate_nodes_indexes(node_curr->get_right()); // recursive call
 	}
-	else
-	{
-		leaf_to_node_id.push_back(node_curr->get_c()->get_id());
-		leaf_to_g_node_id.push_back(this->recursive_find_g_node_id(node_curr));
-	}
-}
-
-template <typename B>
-void Pattern_parser_polar<B>
-::generate_nodes_indexes_sums(const Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index)
-{
-	if (!node_curr->is_leaf()) // stop condition
-	{
-		this->generate_nodes_indexes_sums(node_curr->get_left(),  leaf_index); // recursive call
-		leaf_to_node_id_sums[leaf_index] = pattern_types_sums.size();
-		this->generate_nodes_indexes_sums(node_curr->get_right(), leaf_index); // recursive call
-		leaf_to_node_id_sums[leaf_index] = pattern_types_sums.size();
-		pattern_types_sums.push_back((unsigned char)node_curr->get_c()->type());
-	}
-	else
-		leaf_index++;
-}
-
-template <typename B>
-int Pattern_parser_polar<B>
-::recursive_find_g_node_id(const Binary_node<Pattern_SC_interface>* node_curr)
-{
-	if (node_curr->is_right())
-		return node_curr->get_father()->get_c()->get_id();
-	else if (node_curr->is_left())
-		return recursive_find_g_node_id(node_curr->get_father());
-	else
-		return -1;
 }
 
 template <typename B>
@@ -189,29 +136,6 @@ void Pattern_parser_polar<B>
 }
 
 template <typename B>
-void Pattern_parser_polar<B>
-::recursive_compute_leaves_depth(Binary_node<Pattern_SC_interface>* node_curr)
-{
-	const auto my_pattern_type = node_curr->get_c()->type();
-
-	const bool is_terminal_pattern = (my_pattern_type == pattern_SC_type::RATE_0) ||
-	                                 (my_pattern_type == pattern_SC_type::RATE_1) ||
-	                                 (my_pattern_type == pattern_SC_type::REP)    ||
-	                                 (my_pattern_type == pattern_SC_type::SPC);
-
-	if (!node_curr->is_leaf() && !is_terminal_pattern)
-	{
-		this->recursive_compute_leaves_depth(node_curr->get_left ()); // recursive call
-		this->recursive_compute_leaves_depth(node_curr->get_right()); // recursive call
-	}
-	else
-	{
-		this->leaves_depth    .push_back(    node_curr->get_depth());
-		this->leaves_rev_depth.push_back(m - node_curr->get_depth());
-	}
-}
-
-template <typename B>
 std::vector<unsigned char> Pattern_parser_polar<B>
 ::get_pattern_types() const
 {
@@ -223,62 +147,6 @@ pattern_SC_type Pattern_parser_polar<B>
 ::get_node_type(const int node_id) const
 {
 	return (pattern_SC_type)pattern_types[node_id];
-}
-
-template <typename B>
-pattern_SC_type Pattern_parser_polar<B>
-::get_node_type_sums(const int node_id) const
-{
-	return (pattern_SC_type)pattern_types_sums[node_id];
-}
-
-template <typename B>
-pattern_SC_type Pattern_parser_polar<B>
-::get_leaf_type(const int leaf_id) const
-{
-	return (pattern_SC_type)pattern_types[get_leaf_to_node_id(leaf_id)];
-}
-
-template <typename B>
-unsigned char Pattern_parser_polar<B>
-::get_leaf_depth(const int leaf_id) const
-{
-	return this->leaves_depth[leaf_id];
-}
-
-template <typename B>
-unsigned char Pattern_parser_polar<B>
-::get_leaf_rev_depth(const int leaf_id) const
-{
-	return this->leaves_rev_depth[leaf_id];
-}
-
-template <typename B>
-int Pattern_parser_polar<B>
-::get_leaf_to_node_id(const int leaf_id) const
-{
-	return leaf_to_node_id[leaf_id];
-}
-
-template <typename B>
-int Pattern_parser_polar<B>
-::get_leaf_to_node_id_sums(const int leaf_id) const
-{
-	return leaf_to_node_id_sums[leaf_id];
-}
-
-template <typename B>
-int Pattern_parser_polar<B>
-::get_leaf_to_g_node_id(const int leaf_id) const
-{
-	return leaf_to_g_node_id[leaf_id];
-}
-
-template <typename B>
-int Pattern_parser_polar<B>
-::get_n_leaves() const
-{
-	return (int)this->leaves_depth.size();
 }
 
 template <typename B>

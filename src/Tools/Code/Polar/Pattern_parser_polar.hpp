@@ -39,12 +39,6 @@ protected:
 
 private:
 	std::vector<unsigned char> pattern_types;          /*!< Tree of patterns represented with a vector of pattern IDs. */
-	std::vector<unsigned char> pattern_types_sums;
-	std::vector<unsigned char> leaves_depth;
-	std::vector<unsigned char> leaves_rev_depth;
-	std::vector<int          > leaf_to_node_id;
-	std::vector<int          > leaf_to_node_id_sums;
-	std::vector<int          > leaf_to_g_node_id;
 
 public:
 	/*!
@@ -62,6 +56,15 @@ public:
 	                     const Pattern_SC_interface *pattern_rate0,
 	                     const Pattern_SC_interface *pattern_rate1);
 
+	/*!
+	 * \brief Constructor.
+	 *
+	 * \param N:                codeword size.
+	 * \param frozen_bits:      vector of frozen bits (true if frozen, false otherwise).
+	 * \param patterns:         vector of patterns.
+	 * \param pattern_rate0_id: id of the terminal pattern when the bit is frozen (id in the patterns vector).
+	 * \param pattern_rate1_id: id of the terminal pattern when the bit is an info. bit (id in the patterns vector).
+	 */
 	Pattern_parser_polar(const int& N,
 	                     const mipp::vector<B>& frozen_bits,
 	                     const std::vector<Pattern_SC_interface*> patterns,
@@ -90,25 +93,21 @@ public:
 	 */
 	std::vector<unsigned char> get_pattern_types() const;
 
-	inline pattern_SC_type get_node_type           (const int node_id) const;
-	inline pattern_SC_type get_node_type_sums      (const int node_id) const;
-	inline pattern_SC_type get_leaf_type           (const int leaf_id) const;
-	inline unsigned char   get_leaf_depth          (const int leaf_id) const;
-	inline unsigned char   get_leaf_rev_depth      (const int leaf_id) const;
-	inline int             get_leaf_to_node_id     (const int leaf_id) const;
-	inline int             get_leaf_to_node_id_sums(const int leaf_id) const;
-	inline int             get_leaf_to_g_node_id   (const int leaf_id) const;
-	inline int             get_n_leaves            (                 ) const;
+	/*!
+	 * \brief Gets a node pattern type from the id of the node.
+	 *
+	 * \param node_id: id of the node
+	 *
+	 * \return the type of the node.
+	 */
+	inline pattern_SC_type get_node_type(const int node_id) const;
 
 	void release_patterns() const;
 
 private:
-	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_SC_interface>* node_curr                 );
-	void recursive_compute_leaves_depth     (      Binary_node<Pattern_SC_interface>* node_curr                 );
-	int  recursive_find_g_node_id           (const Binary_node<Pattern_SC_interface>* node_curr                 );
-	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr, int& node_index);
-	void generate_nodes_indexes_sums        (const Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index);
-	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_SC_interface>* node_curr                 );
+	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_SC_interface>* node_curr);
+	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr);
+	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_SC_interface>* node_curr);
 };
 
 #include "Pattern_parser_polar.hxx"
