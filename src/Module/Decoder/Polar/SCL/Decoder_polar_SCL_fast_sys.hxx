@@ -43,8 +43,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   last_paths    (L),
   metrics       (L),
   y             (                   N + mipp::nElReg<R>()    ),
-  l             (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
-  l_bis         (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
+  l         (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>(), 0)),
   metrics_vec   (3, std::vector<float>()),
   metrics_idx   (3, std::vector<int  >()),
@@ -138,21 +137,19 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		switch (node_type)
 		{
 			case STANDARD:
-				API_polar::f(y.data(), y.data() + n_elm_2, l_bis[0].data(), n_elm_2);
-				// assert_vectors(l[0].data(), l_bis[0].data(), n_elm_2);
+				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			case REP_LEFT:
-				API_polar::f(y.data(), y.data() + n_elm_2, l_bis[0].data(), n_elm_2);
+				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			case RATE_0_LEFT:
 				if(n_active_paths > 1)
-					API_polar::f(y.data(), y.data() + n_elm_2, l_bis[0].data(), n_elm_2);
+					API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			default:
 				// TODO: we should not have to do this (for instance when RATE_0_LEFT node we can avoid to compute f...)
 				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
 				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed			
-				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 		}
 
@@ -169,23 +166,21 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					allocate_array(paths[i], rev_depth -1);
-					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l_bis[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				}
-				// for (auto i = 0; i < n_active_paths; i++)
-				// 	assert_vectors(l[paths[i]].data(), l_bis[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					allocate_array(paths[i], rev_depth -1);
-					API_polar::g0(y.data(), y.data() + n_elm_2,                            l_bis[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					API_polar::g0(y.data(), y.data() + n_elm_2,                            l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					allocate_array(paths[i], rev_depth -1);
-					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l_bis[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				}
 				break;
 			default:
@@ -220,18 +215,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l_bis[path_2_array[paths[i]][rev_depth   ]].data();
+					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child  = l_bis[path_2_array[paths[i]][rev_depth -1]].data();
+					child  = l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l_bis[path_2_array[paths[i]][rev_depth   ]].data();
+					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child  = l_bis[path_2_array[paths[i]][rev_depth -1]].data();
+					child  = l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
@@ -239,9 +234,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				if(n_active_paths > 1)
 					for (auto i = 0; i < n_active_paths; i++)
 					{
-						parent = l_bis[path_2_array[paths[i]][rev_depth   ]].data();
+						parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 						allocate_array(paths[i], rev_depth -1);
-						child  = l_bis[path_2_array[paths[i]][rev_depth -1]].data();
+						child  = l[path_2_array[paths[i]][rev_depth -1]].data();
 						API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 					}
 				break;
@@ -249,8 +244,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
 				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
 				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed
-				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
 				break;
 		}
 
@@ -264,27 +257,27 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l_bis[path_2_array[paths[i]][rev_depth   ]].data();
+					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child =  l_bis[path_2_array[paths[i]][rev_depth -1]].data();
+					child =  l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::g (parent + off_l, parent + off_l + n_elm_2, s[paths[i]].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l_bis[path_2_array[paths[i]][rev_depth   ]].data();
+					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child =  l_bis[path_2_array[paths[i]][rev_depth -1]].data();
+					child =  l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::g0(parent + off_l, parent + off_l + n_elm_2,                             child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l_bis[path_2_array[paths[i]][rev_depth   ]].data();
+					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child =  l_bis[path_2_array[paths[i]][rev_depth -1]].data();
+					child =  l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::gr(parent + off_l, parent + off_l + n_elm_2, s[paths[i]].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
@@ -364,7 +357,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		auto metric = 0.f;
 		const auto path = paths[i];
 		for (auto j = 0; j < n_elmts; j++)
-			metric -= std::min((float)l_bis[path_2_array[path][r_d]][off_l +j], 0.f);
+			metric -= std::min((float)l[path_2_array[path][r_d]][off_l +j], 0.f);
 		metrics[path] += metric;
 
 		// TODO: Remove this fill when rate_0 left nodes are in the patterns
@@ -388,17 +381,17 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			const auto array = path_2_array[path][r_d];
 			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + 2, llr_indexes[r_d].end(),
 				[this, array, off_l](int x, int y) {
-					return std::abs(l_bis[array][off_l + x]) < std::abs(l_bis[array][off_l + y]);
+					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
 				});
 
 			bit_flips[4 * path   ] = llr_indexes[r_d][0];
 			bit_flips[4 * path +1] = llr_indexes[r_d][1];
 
 			metrics_vec[1][4 * path   ] = metrics[path];
-			metrics_vec[1][4 * path +1] = metrics[path] + std::abs(l_bis[array][off_l + bit_flips[4 * path   ]]);
-			metrics_vec[1][4 * path +2] = metrics[path] + std::abs(l_bis[array][off_l + bit_flips[4 * path +1]]);
-			metrics_vec[1][4 * path +3] = metrics[path] + std::abs(l_bis[array][off_l + bit_flips[4 * path +1]])
-			                                            + std::abs(l_bis[array][off_l + bit_flips[4 * path   ]]);
+			metrics_vec[1][4 * path +1] = metrics[path] + std::abs(l[array][off_l + bit_flips[4 * path   ]]);
+			metrics_vec[1][4 * path +2] = metrics[path] + std::abs(l[array][off_l + bit_flips[4 * path +1]]);
+			metrics_vec[1][4 * path +3] = metrics[path] + std::abs(l[array][off_l + bit_flips[4 * path +1]])
+			                                            + std::abs(l[array][off_l + bit_flips[4 * path   ]]);
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0 ; j < 4 ; j++)
@@ -436,7 +429,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			const auto array = path_2_array[path][r_d];
 			if (dup_count[path])
 			{
-				API_polar::h(s[path], l_bis[array], off_l, off_s, n_elmts);
+				API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
 				for (auto dup = 2; dup <= dup_count[path]; dup++)
 					flip_bits_r1(path, duplicate_tree(path, off_l, off_s, n_elmts), dup, off_s, n_elmts);
 				dup_count[path] = 0;
@@ -459,8 +452,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		auto metric2 = metrics[path];
 		for (auto j = 0; j < n_elmts; j++)
 		{
-			metric1 -= std::min(l_bis[array][off_l +j], (R)0);
-			metric2 += std::max(l_bis[array][off_l +j], (R)0);
+			metric1 -= std::min(l[array][off_l +j], (R)0);
+			metric2 += std::max(l[array][off_l +j], (R)0);
 		}
 		metrics_vec[0][2 * path   ] = metric1;
 		metrics_vec[0][2 * path +1] = metric2;
@@ -523,49 +516,49 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 		std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + (L <= 2 ? 2 : 4), llr_indexes[r_d].end(),
 			[this, array, off_l](int x, int y){
-				return std::abs(l_bis[array][off_l + x]) < std::abs(l_bis[array][off_l + y]);
+				return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
 			});
 
 		for (auto i = 0; i < 4; i++)
 			bit_flips[4 * path +i] = llr_indexes[r_d][i];
 
-		is_even[path] = !API_polar::spc(s[path], l_bis[array], off_l, off_s, n_elmts);
+		is_even[path] = !API_polar::spc(s[path], l[array], off_l, off_s, n_elmts);
 
 		metrics_vec[2][n_candidates * path +0] = metrics[path]       +
 		                                         (1 - is_even[path]) *
-		                                         std::abs(l_bis[array][off_l + bit_flips[4 * path]]);
+		                                         std::abs(l[array][off_l + bit_flips[4 * path]]);
 
 		metrics_vec[2][n_candidates * path +1] = metrics_vec[2][n_candidates * path]            +
 		                                         is_even[path]                                  *
-		                                         std::abs(l_bis[array][off_l + bit_flips[4 * path]]) +
-		                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +1]]);
+		                                         std::abs(l[array][off_l + bit_flips[4 * path]]) +
+		                                         std::abs(l[array][off_l + bit_flips[4 * path +1]]);
 		if (L > 2)
 		{
 			metrics_vec[2][n_candidates * path +2] = metrics_vec[2][n_candidates * path]               +
 			                                         is_even[path]                                     *
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path]])    +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +2]]);
+			                                         std::abs(l[array][off_l + bit_flips[4 * path]])    +
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +2]]);
 
 			metrics_vec[2][n_candidates * path +3] = metrics_vec[2][n_candidates * path]               +
 			                                         is_even[path]                                     *
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path]])    +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +3]]);
+			                                         std::abs(l[array][off_l + bit_flips[4 * path]])    +
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
 			metrics_vec[2][n_candidates * path +4] = metrics_vec[2][n_candidates * path]               +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +1]]) +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +2]]);
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +1]]) +
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +2]]);
 
 			metrics_vec[2][n_candidates * path +5] = metrics_vec[2][n_candidates * path]               +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +1]]) +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +3]]);
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +1]]) +
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
 			metrics_vec[2][n_candidates * path +6] = metrics_vec[2][n_candidates * path]               +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +2]]) +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +3]]);
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +2]]) +
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
 			metrics_vec[2][n_candidates * path +7] = metrics_vec[2][n_candidates * path +1]            +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +2]]) +
-			                                         std::abs(l_bis[array][off_l + bit_flips[4 * path +3]]);
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +2]]) +
+			                                         std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 		}
 	}
 
@@ -609,33 +602,23 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	constexpr B b = bit_init<B>();
 
-	//TODO: use bit flips vector in std
-	//TODO: the case where n_elmts == 1 doesn't exist when REP nodes and R1 nodes are in the patterns. To be removed in a final version ?
-	if (n_elmts == 1)
+	metrics[new_path] = metrics_vec[1][4 * old_path + dup -1];
+	switch (dup)
 	{
-		s[new_path][off_s] = b; metrics[new_path] = metrics_vec[0][2 * old_path + 1];
-		s[old_path][off_s] = 0; metrics[old_path] = metrics_vec[0][2 * old_path    ];
-	}
-	else
-	{
-		metrics[new_path] = metrics_vec[1][4 * old_path + dup -1];
-		switch (dup)
-		{
-		case 2:
-			s[new_path][off_s + bit_flips[4 * old_path   ]] = !s[old_path][off_s + bit_flips[4 * old_path   ]] ? b : 0;
-			break;
-		case 3:
-			s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
-			break;
-		case 4:
-			s[new_path][off_s + bit_flips[4 * old_path   ]] = !s[old_path][off_s + bit_flips[4 * old_path   ]] ? b : 0;
-			s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
-			break;
-		default:
-			std::cout << bold_red("(EE) Flip bits error on rate 1 node.") << std::endl;
-			std::exit(-1);
-			break;
-		}
+	case 2:
+		s[new_path][off_s + bit_flips[4 * old_path   ]] = !s[old_path][off_s + bit_flips[4 * old_path   ]] ? b : 0;
+		break;
+	case 3:
+		s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
+		break;
+	case 4:
+		s[new_path][off_s + bit_flips[4 * old_path   ]] = !s[old_path][off_s + bit_flips[4 * old_path   ]] ? b : 0;
+		s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
+		break;
+	default:
+		std::cout << bold_red("(EE) Flip bits error on rate 1 node.") << std::endl;
+		std::exit(-1);
+		break;
 	}
 }
 
@@ -710,9 +693,6 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		n_array_ref[path_2_array[new_path][i]][i]++;
 
 	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
-	// std::copy(l[old_path].begin(), l[old_path].begin() + off_l          , l[new_path].begin());
-
-	assert_active_path_array();
 
 	return new_path;
 }
@@ -722,16 +702,11 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::delete_path(int path_id)
 {
 	for (auto i = 0; i < m; i++)
-	{
 		n_array_ref[path_2_array[paths[path_id]][i]][i]--;
-		//TODO: remove, debug only
-		assert(n_array_ref[paths[path_id]][i] >= 0);
-	}
 
 	const auto old_path = paths[path_id];
 	paths[path_id] = paths[--n_active_paths];
 	paths[n_active_paths] = old_path;
-	assert_active_path_array();
 }
 
 template <typename B, typename R, class API_polar>
@@ -758,34 +733,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		auto i = 0;
 		n_array_ref[path_2_array[path][r_d]][r_d]--;
 		while(n_array_ref[i][r_d])
-		{
 			i++;
-			assert(i < L);
-		}
+
 		path_2_array[path][r_d] = i;
 		n_array_ref[i][r_d]++;
-		assert(n_array_ref[i][r_d] == 1);
 	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::assert_active_path_array()
-{
-	auto n_active_arrays = 0;
-	for (auto i = 0; i < m; i++)
-	{
-		n_active_arrays = 0;	
-		for (auto j = 0; j < L; j++)
-			n_active_arrays += n_array_ref[j][i];
-		assert(n_active_arrays == n_active_paths);
-	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::assert_vectors(R* l_a, R* l_b, int n_elmts)
-{
-	for (auto i = 0; i < n_elmts; i++)
-		assert(l_a[i] == l_b[i]);
 }
