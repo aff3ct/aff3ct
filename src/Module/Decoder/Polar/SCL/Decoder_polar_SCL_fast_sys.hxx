@@ -133,8 +133,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case REP_LEFT:
 				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
+			case RATE_0_LEFT:
+				if(n_active_paths > 1)
+					API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
+				break;
 			default:
-				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
+				// TODO: we should not have to do this (for instance when RATE_0_LEFT node we can avoid to compute f...)
 				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
 				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed			
 				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
@@ -192,6 +196,11 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				break;
+			case RATE_0_LEFT:
+				if(n_active_paths > 1)
+					for (auto i = 0; i < n_active_paths; i++)
+						API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
 				break;
 			default:
 				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
