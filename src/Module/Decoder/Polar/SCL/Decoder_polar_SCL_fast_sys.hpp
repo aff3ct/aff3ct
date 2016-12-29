@@ -34,6 +34,10 @@ protected:
 	int                             best_path;
 	int                             n_active_paths;
 
+	// each following 2D vector is of size L * m
+	std::vector<std::vector<int>>   n_array_ref;    // number of times an array is used
+	std::vector<std::vector<int>>   path_2_array;   // give array used by a path
+
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
 	                           const int n_frames = 1, const std::string name = "Decoder_polar_SCL_fast_sys");
@@ -59,6 +63,9 @@ private:
 
 	// return the new_path
 	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts );
+	//TODO: inline ?
+	       void allocate_array  (const int path, const int r_d);
+
 
 protected:
 	        inline void delete_path     (int path_id);

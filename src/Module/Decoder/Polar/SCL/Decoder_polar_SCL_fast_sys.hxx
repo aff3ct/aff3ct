@@ -31,14 +31,14 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   polar_patterns(N,
                  frozen_bits,
                  {new Pattern_SC<pattern_SC_type::STANDARD   >(),
-                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
-                  new Pattern_SC<pattern_SC_type::RATE_1     >(),
-                  new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
-                  new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                  new Pattern_SC<pattern_SC_type::REP        >(),
+                  // new Pattern_SC<pattern_SC_type::RATE_0     >(),
+                  // new Pattern_SC<pattern_SC_type::RATE_1     >(),
+                  // new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
+                  // new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
+                  // new Pattern_SC<pattern_SC_type::REP        >(),
                   /*new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
-                  1,
-                  2),
+                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
+                  new Pattern_SC<pattern_SC_type::RATE_1     >()),
   paths         (L),
   last_paths    (L),
   metrics       (L),
@@ -52,7 +52,9 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   bit_flips     (4 * L),
   is_even       (L),
   best_path     (0),
-  n_active_paths(1)
+  n_active_paths(1),
+  n_array_ref   (L, std::vector<int> (m, 0   )),
+  path_2_array  (L, std::vector<int> (m, 0   ))
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -97,6 +99,13 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		std::fill(metrics_vec[i].begin(), metrics_vec[i].end(), std::numeric_limits<float>::max());
 
 	std::copy(Y_N.begin(), Y_N.end(), y.begin());
+
+	// at the beginning, path 0 points to array 0
+	std::fill(n_array_ref  [0].begin(), n_array_ref  [0].end(), 1    );
+	std::fill(path_2_array [0].begin(), path_2_array [0].end(), 0    );
+
+	for (auto i = 1; i < L; i++)
+		std::fill(n_array_ref[i]  .begin(), n_array_ref[i]  .end(), 0   );
 }
 
 template <typename B, typename R, class API_polar>
@@ -148,19 +157,32 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		recursive_decode(off_l, off_s, rev_depth -1, ++node_id); // recursive call left
 
 		// g
+		// allocate arrays to paths
+		for (auto i = 0; i < n_active_paths; i++)
+
+
 		switch (node_type)
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[paths[i]].data(), n_elm_2);
+				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::g0(y.data(), y.data() + n_elm_2,                            l[paths[i]].data(), n_elm_2);
+				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[paths[i]].data(), n_elm_2);
+				}
 				break;
 			default:
 				break;
@@ -191,23 +213,35 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				}
 				break;
 			case RATE_0_LEFT:
 				if(n_active_paths > 1)
 					for (auto i = 0; i < n_active_paths; i++)
+					{
+						allocate_array(paths[i], rev_depth -1);
 						API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+					}
 				break;
 			default:
 				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
 				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
 				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				}
 				break;
 		}
 
@@ -218,15 +252,24 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::g (s[paths[i]], l[paths[i]], off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2);
+				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::g0(             l[paths[i]], off_l, off_l + n_elm_2,        off_l + n_elmts, n_elm_2);
+				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
+				{
+					allocate_array(paths[i], rev_depth -1);
 					API_polar::gr(s[paths[i]], l[paths[i]], off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2);
+				}
 				break;
 			default:
 				break;
@@ -640,6 +683,11 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	const auto new_path = paths[n_active_paths++];
 
+	std::copy(path_2_array[old_path].begin(), path_2_array[old_path].end(), path_2_array[new_path].begin());
+
+	for (auto i = 0; i < m; i++)
+		n_array_ref[new_path][i]++;
+
 	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
 	std::copy(l[old_path].begin(), l[old_path].begin() + off_l          , l[new_path].begin());
 
@@ -650,6 +698,13 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::delete_path(int path_id)
 {
+	for (auto i = 0; i < m; i++)
+	{
+		n_array_ref[paths[path_id]][i]--;
+		//TODO: remove, debug only
+		assert(n_array_ref[paths[path_id]][i] > 0);
+	}
+
 	const auto old_path = paths[path_id];
 	paths[path_id] = paths[--n_active_paths];
 	paths[n_active_paths] = old_path;
@@ -666,4 +721,21 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	if (best_path == -1)
 		best_path = 0;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::allocate_array(const int path, const int r_d)
+{
+	// if more than 1 path points to the array
+	if (n_array_ref[path][r_d] > 1)
+	{
+		// allocate new array to given path, r_d
+		auto i = 0;
+		n_array_ref[path][r_d]--;
+		while(!n_array_ref[i++][r_d])
+			assert(i < L);
+		path_2_array[path][r_d] = i -1;
+		n_array_ref[i -1][r_d]++;
+	}
 }
