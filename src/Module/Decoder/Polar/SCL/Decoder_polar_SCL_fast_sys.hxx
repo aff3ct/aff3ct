@@ -31,14 +31,14 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   polar_patterns(N,
                  frozen_bits,
                  {new Pattern_SC<pattern_SC_type::STANDARD   >(),
-                  // new Pattern_SC<pattern_SC_type::RATE_0     >(),
-                  // new Pattern_SC<pattern_SC_type::RATE_1     >(),
+                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
+                  new Pattern_SC<pattern_SC_type::RATE_1     >(),
                   // new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
                   // new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
                   // new Pattern_SC<pattern_SC_type::REP        >(),
                   /*new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
-                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
-                  new Pattern_SC<pattern_SC_type::RATE_1     >()),
+                  1,
+                  2),
   paths         (L),
   last_paths    (L),
   metrics       (L),
@@ -388,7 +388,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			const auto array = path_2_array[path][r_d];
 			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + 2, llr_indexes[r_d].end(),
 				[this, array, off_l](int x, int y) {
-					return std::abs(l_bis[array][off_l + x]) < std::abs(l[array][off_l + y]);
+					return std::abs(l_bis[array][off_l + x]) < std::abs(l_bis[array][off_l + y]);
 				});
 
 			bit_flips[4 * path   ] = llr_indexes[r_d][0];
