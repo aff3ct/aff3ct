@@ -1,30 +1,33 @@
-#ifndef API_POLAR_STATIC_SEQ_HPP_
-#define API_POLAR_STATIC_SEQ_HPP_
+#ifndef API_POLAR_STATIC_INTRA_16BIT_HPP_
+#define API_POLAR_STATIC_INTRA_16BIT_HPP_
 
 #include <algorithm>
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
-#include "../decoder_polar_functions.h"
+#include "Module/Decoder/Polar/decoder_polar_functions.h"
 
+#include "functions_polar_inter_intra.h"
+#include "functions_polar_intra_16bit.h"
 #include "functions_polar_seq.h"
 
 #include "API_polar.hpp"
 
 template <typename B, typename R, 
-          proto_f<R> F, proto_g<B,R> G, proto_g0<R> G0, proto_h<B,R> H, proto_xo<B> XO>
-class API_polar_static_seq : public API_polar
+          proto_f   <R> F,  proto_g   <B,R> G,  proto_g0  <R> G0,  proto_h   <B,R> H,  proto_xo  <B> XO,
+          proto_f_i <R> FI, proto_g_i <B,R> GI, proto_g0_i<R> G0I, proto_h_i <B,R> HI, proto_xo_i<B> XOI>
+class API_polar_static_intra_16bit : public API_polar
 {
 public:
 	static constexpr int get_n_frames() { return 1; }
-	
+
 	// -------------------------------------------------------------------------------------------------------------- f
 
 	template <int N_ELMTS = 0>
 	static void f(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
 	{
-		f_seq<R, F, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
+		f_intra_16bit<R, F, FI, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -34,7 +37,7 @@ public:
 		const R *__restrict l_b = l.data() + off_l_b;
 		      R *__restrict l_c = l.data() + off_l_c;
 
-		f_seq<R, F, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
+		f_intra_16bit<R, F, FI, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------- g
@@ -43,7 +46,7 @@ public:
 	static void g(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	              const int n_elmts = 0)
 	{
-		g_seq<B, R, G, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
+		g_intra_16bit<B, R, G, GI, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -55,7 +58,7 @@ public:
 		const B *__restrict s_a = s.data() + off_s_a;
 		      R *__restrict l_c = l.data() + off_l_c;
 
-		g_seq<B, R, G, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
+		g_intra_16bit<B, R, G, GI, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------- g0
@@ -63,7 +66,7 @@ public:
 	template <int N_ELMTS = 0>
 	static void g0(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
 	{
-		g0_seq<R, G0, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
+		g0_intra_16bit<R, G0, G0I, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -73,7 +76,7 @@ public:
 		const R *__restrict l_b = l.data() + off_l_b;
 		      R *__restrict l_c = l.data() + off_l_c;
 
-		g0_seq<R, G0, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
+		g0_intra_16bit<R, G0, G0I, N_ELMTS>::apply(l_a, l_b, l_c, n_elmts);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------- gr
@@ -82,7 +85,7 @@ public:
 	static void gr(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	               const int n_elmts = 0)
 	{
-		gr_seq<B, R, G, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
+		gr_intra_16bit<B, R, G, GI, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -94,7 +97,7 @@ public:
 		const B *__restrict s_a = s.data() + off_s_a;
 		      R *__restrict l_c = l.data() + off_l_c;
 
-		gr_seq<B, R, G, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
+		gr_intra_16bit<B, R, G, GI, N_ELMTS>::apply(l_a, l_b, s_a, l_c, n_elmts);
 	}
 
 	// -------------------------------------------------------------------------------------------------------------- h
@@ -102,7 +105,7 @@ public:
 	template <int N_ELMTS = 0>
 	static void h(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
 	{
-		h_seq<B, R, H, N_ELMTS>::apply(l_a, s_a, n_elmts);
+		h_intra_16bit<B, R, H, HI, N_ELMTS>::apply(l_a, s_a, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -112,31 +115,31 @@ public:
 		const R *__restrict l_a = l.data() + off_l_a;
 		      B *__restrict s_a = s.data() + off_s_a;
 
-		h_seq<B, R, H, N_ELMTS>::apply(l_a, s_a, n_elmts);
+		h_intra_16bit<B, R, H, HI, N_ELMTS>::apply(l_a, s_a, n_elmts);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------- h0
 
-	template <int N_ELMTS = 0>
-	static void h0(B *__restrict s_a, const int n_elmts = 0)
-	{
-		h0_seq<B, N_ELMTS>::apply(s_a, n_elmts);
-	}
+	// template <int N_ELMTS = 0>
+	// static void h0(B *__restrict s_a, const int n_elmts = 0)
+	// {
+	// 	h0_intra_16bit<B, N_ELMTS>::apply(s_a, n_elmts);
+	// }
 
-	template <int N_ELMTS = 0>
-	static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts = 0)
-	{
-		B *__restrict s_a = s.data() + off_s_a;
+	// template <int N_ELMTS = 0>
+	// static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts = 0)
+	// {
+	// 	B *__restrict s_a = s.data() + off_s_a;
 
-		h0_seq<B, N_ELMTS>::apply(s_a, n_elmts);
-	}
+	// 	h0_intra_16bit<B, N_ELMTS>::apply(s_a, n_elmts);
+	// }
 
 	// ------------------------------------------------------------------------------------------------------------ rep
 
 	template <int N_ELMTS = 0>
 	static void rep(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
 	{
-		rep_seq<B, R, H, N_ELMTS>::apply(l_a, s_a, n_elmts);
+		rep_intra_16bit<B, R, H, HI, N_ELMTS>::apply(l_a, s_a, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -146,7 +149,7 @@ public:
 		const R *__restrict l_a = l.data() + off_l_a;
 		      B *__restrict s_a = s.data() + off_s_a;
 
-		rep_seq<B, R, H, N_ELMTS>::apply(l_a, s_a, n_elmts);
+		rep_intra_16bit<B, R, H, HI, N_ELMTS>::apply(l_a, s_a, n_elmts);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ spc
@@ -154,7 +157,7 @@ public:
 	template <int N_ELMTS = 0>
 	static bool spc(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
 	{
-		return spc_seq<B, R, H, N_ELMTS>::apply(l_a, s_a, n_elmts);
+		return spc_intra_16bit<B, R, H, HI, N_ELMTS>::apply(l_a, s_a, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -164,7 +167,7 @@ public:
 		const R *__restrict l_a = l.data() + off_l_a;
 		      B *__restrict s_a = s.data() + off_s_a;
 
-		return spc_seq<B, R, H, N_ELMTS>::apply(l_a, s_a, n_elmts);
+		return spc_intra_16bit<B, R, H, HI, N_ELMTS>::apply(l_a, s_a, n_elmts);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------- xo
@@ -173,7 +176,7 @@ public:
 	static void xo(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
 	               const int n_elmts = 0)
 	{
-		xo_seq<B, XO, N_ELMTS>::apply(s_a, s_b, s_c, n_elmts);
+		xo_intra_16bit<B, XO, XOI, N_ELMTS>::apply(s_a, s_b, s_c, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
@@ -183,7 +186,7 @@ public:
 		const B *__restrict s_b = s.data() + off_s_b;
 		      B *__restrict s_c = s.data() + off_s_c;
 
-		xo_seq<B, XO, N_ELMTS>::apply(s_a, s_b, s_c, n_elmts);
+		xo_intra_16bit<B, XO, XOI, N_ELMTS>::apply(s_a, s_b, s_c, n_elmts);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ xo0
@@ -191,17 +194,17 @@ public:
 	template <int N_ELMTS = 0>
 	static void xo0(const B *__restrict s_b, B *__restrict s_c, const int n_elmts = 0)
 	{
-		xo0_seq<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
+		xo0_intra_16bit<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
 	}
 
 	template <int N_ELMTS = 0>
 	static void xo0(mipp::vector<B> &s, const int off_s_b, const int off_s_c, const int n_elmts = 0)
 	{
 		const B *__restrict s_b = s.data() + off_s_b;
-		      B *__restrict s_c = s.data() + off_s_c;	      
+		      B *__restrict s_c = s.data() + off_s_c;
 
-		xo0_seq<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
+		xo0_intra_16bit<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
 	}
 };
 
-#endif /* API_POLAR_STATIC_INTER_HPP_ */
+#endif /* API_POLAR_STATIC_INTRA_16BIT_HPP_ */

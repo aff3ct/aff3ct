@@ -15,7 +15,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_interface.hpp"
 
 /*!
  * \class Pattern_parser_polar

@@ -10,13 +10,13 @@
 #include "Tools/Perf/Transpose/transpose_selector.h"
 #include "Tools/Display/bash_tools.h"
 
-#include "../SC/Patterns/Pattern_SC_standard.hpp"
-#include "../SC/Patterns/Pattern_SC_rate0.hpp"
-#include "../SC/Patterns/Pattern_SC_rate1.hpp"
-#include "../SC/Patterns/Pattern_SC_rep.hpp"
-#include "../SC/Patterns/Pattern_SC_spc.hpp"
-#include "../SC/Patterns/Pattern_SC_rate0_left.hpp"
-#include "../SC/Patterns/Pattern_SC_rep_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_standard.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rep_left.hpp"
 
 #include "Decoder_polar_SCL_fast_sys.hpp"
 

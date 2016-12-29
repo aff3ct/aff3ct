@@ -6,13 +6,13 @@
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
 
-#include "Patterns/Pattern_SC_standard.hpp"
-#include "Patterns/Pattern_SC_rate0.hpp"
-#include "Patterns/Pattern_SC_rate1.hpp"
-#include "Patterns/Pattern_SC_rep.hpp"
-#include "Patterns/Pattern_SC_spc.hpp"
-#include "Patterns/Pattern_SC_rate0_left.hpp"
-#include "Patterns/Pattern_SC_rep_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_standard.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rep_left.hpp"
 
 #include "Decoder_polar_SC_fast_sys.hpp"
 

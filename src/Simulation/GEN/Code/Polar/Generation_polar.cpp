@@ -15,13 +15,13 @@
 #include "Tools/params.h"
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_standard.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate0.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate1.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rep.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_spc.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate0_left.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_rep_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_standard.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_rep_left.hpp"
 
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 

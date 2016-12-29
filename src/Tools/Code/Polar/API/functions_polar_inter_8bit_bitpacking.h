@@ -9,7 +9,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
-#include "../decoder_polar_functions.h"
+#include "Module/Decoder/Polar/decoder_polar_functions.h"
 
 #include "functions_polar_inter_intra.h"
 #include "functions_polar_inter.h"

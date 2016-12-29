@@ -8,11 +8,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_interface.hpp"
 #include "Tools/params.h"
 
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
-
 #include "Simulation/Simulation.hpp"
 
 class Generation_polar : public Simulation

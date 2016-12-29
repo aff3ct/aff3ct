@@ -8,7 +8,7 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Pattern_parser_polar.hpp"
 
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_SC_interface.hpp"
 
 #include "../../Generator.hpp"
 
