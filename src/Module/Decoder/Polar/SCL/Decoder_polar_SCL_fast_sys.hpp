@@ -17,9 +17,11 @@ protected:
 	const mipp::vector<B>&          frozen_bits;
 	const Pattern_parser_polar<B>   polar_patterns;
 
+
 	std::vector<int               > paths;          // active paths
 	std::vector<int               > last_paths;     // active paths cpy
 	std::vector<float             > metrics;        // path metrics
+	mipp::vector<R>                 y;              // channel llrs
 	std::vector<mipp::vector<R>   > l;              // llrs
 	std::vector<mipp::vector<B>   > s;              // partial sums
 	std::vector<std::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
