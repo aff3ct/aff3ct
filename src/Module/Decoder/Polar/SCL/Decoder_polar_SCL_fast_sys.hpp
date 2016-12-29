@@ -12,27 +12,26 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
 {
 protected:
-	const int                       m;              // graph depth
-	const int                       L;              // maximum paths number
-	const mipp::vector<B>&          frozen_bits;
-	const Pattern_parser_polar<B>   polar_patterns;
+	const int                        m;              // graph depth
+	const int                        L;              // maximum paths number
+	const mipp::vector<B>&           frozen_bits;
+	const Pattern_parser_polar<B>    polar_patterns;
 
+	            std ::vector<int  >  paths;          // active paths
+	            std ::vector<int  >  last_paths;     // active paths cpy
+	            std ::vector<float>  metrics;        // path metrics
+	            mipp::vector<R    >  Y_N;            // channel llrs
+	std::vector<mipp::vector<R    >> l;              // llrs
+	std::vector<mipp::vector<B    >> s;              // partial sums
+	std::vector<std ::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
+	std::vector<std ::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
+	            std ::vector<int  >  dup_count;      // number of duplications of a path, at updating time
+	std::vector<std ::vector<int  >> llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
+	            std ::vector<int  >  bit_flips;      // index of the bits to be flipped
+	            std ::vector<bool >  is_even;        // used to store parity of a spc node
 
-	std::vector<int               > paths;          // active paths
-	std::vector<int               > last_paths;     // active paths cpy
-	std::vector<float             > metrics;        // path metrics
-	mipp::vector<R>                 y;              // channel llrs
-	std::vector<mipp::vector<R>   > l;              // llrs
-	std::vector<mipp::vector<B>   > s;              // partial sums
-	std::vector<std::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
-	std::vector<std::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
-	std::vector<int               > dup_count;      // number of duplications of a path, at updating time
-	std::vector<std::vector<int>  > llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
-	std::vector<int               > bit_flips;      // index of the bits to be flipped
-	std::vector<bool              > is_even;        // used to store parity of a spc node
-
-	int                             best_path;
-	int                             n_active_paths;
+	int                              best_path;
+	int                              n_active_paths;
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,

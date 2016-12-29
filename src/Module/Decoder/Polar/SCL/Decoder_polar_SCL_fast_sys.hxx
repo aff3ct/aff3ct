@@ -42,7 +42,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   paths         (L),
   last_paths    (L),
   metrics       (L),
-  y             (                   N + mipp::nElReg<R>()    ),
+  Y_N           (                   N + mipp::nElReg<R>()    ),
   l             (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>(), 0)),
   metrics_vec   (3, std::vector<float>()),
@@ -96,7 +96,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	for (auto i = 0; i < 3; i++)
 		std::fill(metrics_vec[i].begin(), metrics_vec[i].end(), std::numeric_limits<float>::max());
 
-	std::copy(Y_N.begin(), Y_N.end(), y.begin());
+	std::copy(Y_N.begin(), Y_N.end(), this->Y_N.begin());
 }
 
 template <typename B, typename R, class API_polar>
@@ -121,27 +121,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	                                 (node_type == pattern_SC_type::REP)    ||
 	                                 (node_type == pattern_SC_type::SPC);
 
-	// root node
-	if (/*!is_terminal_pattern &&*/ rev_depth == m)
+	if (rev_depth == m) // root node
 	{
 		// f
 		switch (node_type)
 		{
 			case STANDARD:
-				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
+				API_polar::f(Y_N.data(), Y_N.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			case REP_LEFT:
-				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
-				break;
-			case RATE_0_LEFT:
-				if(n_active_paths > 1)
-					API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
+				API_polar::f(Y_N.data(), Y_N.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			default:
-				// TODO: we should not have to do this (for instance when RATE_0_LEFT node we can avoid to compute f...)
-				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
-				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed			
-				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 		}
 
@@ -152,15 +143,15 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[paths[i]].data(), n_elm_2);
+					API_polar::g (Y_N.data(), Y_N.data() + n_elm_2, s[paths[i]].data() + off_s, l[paths[i]].data(), n_elm_2);
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::g0(y.data(), y.data() + n_elm_2,                            l[paths[i]].data(), n_elm_2);
+					API_polar::g0(Y_N.data(), Y_N.data() + n_elm_2,                             l[paths[i]].data(), n_elm_2);
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[paths[i]].data(), n_elm_2);
+					API_polar::gr(Y_N.data(), Y_N.data() + n_elm_2, s[paths[i]].data() + off_s, l[paths[i]].data(), n_elm_2);
 				break;
 			default:
 				break;
@@ -184,7 +175,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				break;
 		}
 	}
-	else if (!is_terminal_pattern && rev_depth)
+	else if (!is_terminal_pattern && rev_depth) // other node (not root or leaf)
 	{
 		// f
 		switch (node_type)
@@ -203,11 +194,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 						API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
 				break;
 			default:
-				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
-				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
-				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed
-				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
 				break;
 		}
 
@@ -250,7 +236,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				break;
 		}
 	}
-	else
+	else // leaf node
 	{
 		// h
 		switch (node_type)
