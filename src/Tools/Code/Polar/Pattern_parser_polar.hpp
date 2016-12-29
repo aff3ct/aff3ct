@@ -98,12 +98,13 @@ public:
 	inline int             get_leaf_to_node_id     (const int leaf_id) const;
 	inline int             get_leaf_to_node_id_sums(const int leaf_id) const;
 	inline int             get_leaf_to_g_node_id   (const int leaf_id) const;
+	inline int             get_n_leaves            (                 ) const;
 
 	void release_patterns() const;
 
 private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_SC_interface>* node_curr                 );
-	void recursive_compute_leaves_depth     (      Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index);
+	void recursive_compute_leaves_depth     (      Binary_node<Pattern_SC_interface>* node_curr                 );
 	int  recursive_find_g_node_id           (const Binary_node<Pattern_SC_interface>* node_curr                 );
 	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr, int& node_index);
 	void generate_nodes_indexes_sums        (const Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index);

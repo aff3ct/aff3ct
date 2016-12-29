@@ -18,7 +18,7 @@ protected:
 	const Pattern_parser_polar<B>   polar_patterns;
 
 	std::vector<int               > paths;                     // active paths
-	std::vector<int               > last_paths;                // active paths
+	std::vector<int               > last_paths;                // active paths cpy
 	std::vector<float             > metrics;                   // path metrics
 	std::vector<mipp::vector<R>   > l;                         // llrs
 	std::vector<mipp::vector<B>   > s;                         // partial sums
@@ -46,19 +46,23 @@ public:
 	virtual void store_fast (mipp::vector<B>& V        ) const;
 
 private:
-	inline void duplicate_path        (const int path, const int node_id, const int nb_dup = 2                 );
-	inline int  duplicate_tree        (const int old_path                                                      ); // return the new_path
-	inline void update_paths          (      int node_id                                                       );
-	inline void update_paths_r0       (                                                                        );
-	inline void update_paths_r1       (const int node_id                                                       );
-	inline void update_paths_rep      (const int node_id                                                       );
-	inline void update_paths_spc      (const int node_id                                                       );
-	inline void update_paths_std      (const int node_id                                                       );
-	inline void flip_bits             (const int old_path, const int new_path, const int node_id, const int dup);
-	inline void inte                  (const int reverse_depth, const int path, const int node_id              );
-	inline void rec_left              (const int reverse_depth, const int path                                 );
-	inline void normalize_metrics     (std::vector<R> &vec                                                     );
-	inline void recursive_compute_sums(const int off_s, const int reverse_depth, const int path, int node_id   );
+	inline void inte                  (const int path, const int reverse_depth_leaf, const int reverse_depth   );
+	inline void rec_left              (const int path, const int reverse_depth, const int leaf_id              );
+
+	inline void update_paths          (const int leaf_id                                                       );
+	inline void update_paths_r0       (const int reverse_depth                                                 );
+	inline void update_paths_r1       (const int reverse_depth                                                 );
+	inline void update_paths_rep      (const int reverse_depth                                                 );
+	inline void update_paths_spc      (const int reverse_depth                                                 );
+
+	inline void flip_bits_r1          (const int old_path, const int new_path, const int dup, const int n_elmts);
+	inline void flip_bits_rep         (const int old_path, const int new_path,                const int n_elmts);
+	inline void flip_bits_spc         (const int old_path, const int new_path, const int dup, const int n_elmts);
+
+	// return the new_path
+	inline int  duplicate_tree        (const int old_path, const int r_d                                       );
+
+	inline void recursive_compute_sums(const int path, const int off_s, const int reverse_depth, int node_id   );
 
 protected:
 	        inline void delete_path     (int path_id);

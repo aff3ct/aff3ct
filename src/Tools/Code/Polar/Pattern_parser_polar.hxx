@@ -24,8 +24,8 @@ Pattern_parser_polar<B>
   polar_tree(new Binary_tree<Pattern_SC_interface>(m +1)),
   pattern_types(),
   pattern_types_sums(),
-  leaves_depth(N),
-  leaves_rev_depth(N),
+  leaves_depth(),
+  leaves_rev_depth(),
   leaf_to_node_id(),
   leaf_to_node_id_sums(N, -1),
   leaf_to_g_node_id()
@@ -33,9 +33,8 @@ Pattern_parser_polar<B>
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
 	int node_index = 0;
 	this->generate_nodes_indexes(this->polar_tree->get_root(), node_index);
+	this->recursive_compute_leaves_depth(this->polar_tree->get_root());
 	int leaf_index = 0;
-	this->recursive_compute_leaves_depth(this->polar_tree->get_root(), leaf_index);
-	leaf_index = 0;
 	this->generate_nodes_indexes_sums(this->polar_tree->get_root(), leaf_index);
 }
 
@@ -55,8 +54,8 @@ Pattern_parser_polar<B>
   polar_tree(new Binary_tree<Pattern_SC_interface>(m +1)),
   pattern_types(),
   pattern_types_sums(),
-  leaves_depth(N),
-  leaves_rev_depth(N),
+  leaves_depth(),
+  leaves_rev_depth(),
   leaf_to_node_id(),
   leaf_to_node_id_sums(N, -1),
   leaf_to_g_node_id()
@@ -64,9 +63,8 @@ Pattern_parser_polar<B>
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
 	int node_index = 0;
 	this->generate_nodes_indexes(this->polar_tree->get_root(), node_index);
+	this->recursive_compute_leaves_depth(this->polar_tree->get_root());
 	int leaf_index = 0;
-	this->recursive_compute_leaves_depth(this->polar_tree->get_root(), leaf_index);
-	leaf_index = 0;
 	this->generate_nodes_indexes_sums(this->polar_tree->get_root(), leaf_index);
 }
 
@@ -192,7 +190,7 @@ void Pattern_parser_polar<B>
 
 template <typename B>
 void Pattern_parser_polar<B>
-::recursive_compute_leaves_depth(Binary_node<Pattern_SC_interface>* node_curr, int& leaf_index)
+::recursive_compute_leaves_depth(Binary_node<Pattern_SC_interface>* node_curr)
 {
 	const auto my_pattern_type = node_curr->get_c()->type();
 
@@ -203,14 +201,13 @@ void Pattern_parser_polar<B>
 
 	if (!node_curr->is_leaf() && !is_terminal_pattern)
 	{
-		this->recursive_compute_leaves_depth(node_curr->get_left (), leaf_index); // recursive call
-		this->recursive_compute_leaves_depth(node_curr->get_right(), leaf_index); // recursive call
+		this->recursive_compute_leaves_depth(node_curr->get_left ()); // recursive call
+		this->recursive_compute_leaves_depth(node_curr->get_right()); // recursive call
 	}
 	else
 	{
-		this->leaves_depth    [leaf_index] =     node_curr->get_depth();
-		this->leaves_rev_depth[leaf_index] = m - node_curr->get_depth();
-		leaf_index += node_curr->get_c()->get_size();
+		this->leaves_depth    .push_back(    node_curr->get_depth());
+		this->leaves_rev_depth.push_back(m - node_curr->get_depth());
 	}
 }
 
@@ -275,6 +272,13 @@ int Pattern_parser_polar<B>
 ::get_leaf_to_g_node_id(const int leaf_id) const
 {
 	return leaf_to_g_node_id[leaf_id];
+}
+
+template <typename B>
+int Pattern_parser_polar<B>
+::get_n_leaves() const
+{
+	return (int)this->leaves_depth.size();
 }
 
 template <typename B>
