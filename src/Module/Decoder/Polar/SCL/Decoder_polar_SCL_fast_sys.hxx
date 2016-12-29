@@ -31,14 +31,14 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   polar_patterns(N,
                  frozen_bits,
                  {new Pattern_SC<pattern_SC_type::STANDARD   >(),
-                  new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
                   new Pattern_SC<pattern_SC_type::RATE_0     >(),
                   new Pattern_SC<pattern_SC_type::RATE_1     >(),
+                  new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
                   new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                  new Pattern_SC<pattern_SC_type::REP        >()/*,
-                  new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
-                 2,
-                 3),
+                  new Pattern_SC<pattern_SC_type::REP        >(),
+                  /*new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
+                  1,
+                  2),
   paths         (L),
   last_paths    (L),
   metrics       (L),
@@ -135,6 +135,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				break;
 			default:
 				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
+				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
+				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed
 				for (auto i = 0; i < n_active_paths; i++)
 					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
 				break;
@@ -184,7 +186,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		// h
 		switch (node_type)
 		{
-			case RATE_0: update_paths_r0 (           off_l,        n_elmts); break;
+			case RATE_0: update_paths_r0 (           off_l, off_s, n_elmts); break;
 			case REP:    update_paths_rep(           off_l, off_s, n_elmts); break;
 			case RATE_1: update_paths_r1 (rev_depth, off_l, off_s, n_elmts); break;
 			case SPC:    update_paths_spc(rev_depth, off_l, off_s, n_elmts); break;
@@ -226,7 +228,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::update_paths_r0(const int off_l, const int n_elmts)
+::update_paths_r0(const int off_l, const int off_s, const int n_elmts)
 {
 	for (auto i = 0; i < n_active_paths; i++)
 	{
@@ -235,6 +237,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto j = 0; j < n_elmts; j++)
 			metric -= std::min((float)l[path][off_l +j], 0.f);
 		metrics[path] += metric;
+
+		// TODO: Remove this fill when rate_0 left nodes are in the patterns
+		std::fill(s[path].begin() + off_s, s[path].begin() + off_s + n_elmts, 0);
 	}
 }
 
@@ -242,65 +247,72 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
-	for (auto i = 0; i < n_active_paths; i++)
+	if(r_d == 0)
 	{
-		const auto path = paths[i];
-		std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + 2, llr_indexes[r_d].end(),
-			[this, path, off_l](int x, int y) {
-				return std::abs(l[path][off_l + x]) < std::abs(l[path][off_l + y]);
+		update_paths_rep(off_l, off_s, n_elmts);
+	}
+	else
+	{
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path = paths[i];
+			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() + 2, llr_indexes[r_d].end(),
+				[this, path, off_l](int x, int y) {
+					return std::abs(l[path][off_l + x]) < std::abs(l[path][off_l + y]);
+				});
+
+			bit_flips[4 * path   ] = llr_indexes[r_d][0];
+			bit_flips[4 * path +1] = llr_indexes[r_d][1];
+
+			metrics_vec[1][4 * path   ] = metrics[path];
+			metrics_vec[1][4 * path +1] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path   ]]);
+			metrics_vec[1][4 * path +2] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path +1]]);
+			metrics_vec[1][4 * path +3] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path +1]])
+			                                            + std::abs(l[path][off_l + bit_flips[4 * path   ]]);
+		}
+		for (auto i = n_active_paths; i < L; i++)
+			for (auto j = 0 ; j < 4 ; j++)
+				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
+
+		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].end(),
+			[this](int x, int y) {
+				return metrics_vec[1][x] < metrics_vec[1][y];
 			});
 
-		bit_flips[4 * path   ] = llr_indexes[r_d][0];
-		bit_flips[4 * path +1] = llr_indexes[r_d][1];
+		// TODO: disable this code
+		// L first of the lists are the L best paths
+		for (auto i = 0; i < L; i++)
+			dup_count[metrics_idx[1][i] / 4]++;
 
-		metrics_vec[1][4 * path   ] = metrics[path];
-		metrics_vec[1][4 * path +1] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path   ]]);
-		metrics_vec[1][4 * path +2] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path +1]]);
-		metrics_vec[1][4 * path +3] = metrics[path] + std::abs(l[path][off_l + bit_flips[4 * path +1]])
-		                                            + std::abs(l[path][off_l + bit_flips[4 * path   ]]);
-	}
-	for (auto i = n_active_paths; i < L; i++)
-		for (auto j = 0 ; j < 4 ; j++)
-			metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
+	//	// TODO: enable this code
+	//	// L first of the lists are the L best paths
+	//	for (auto i = 0; i < n_active_paths; i++)
+	//		dup_count[metrics_idx[1][paths[i]] / 4]++;
 
-	std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].end(),
-		[this](int x, int y) {
-			return metrics_vec[1][x] < metrics_vec[1][y];
-		});
+		// erase paths
+		auto k = 0;
+		auto n_active_paths_cpy = n_active_paths;
+		for (auto i = 0; i < n_active_paths_cpy; i++)
+			if (dup_count[paths[k]] == 0)
+				delete_path(k);
+			else
+				k++;
 
-	// TODO: disable this code
-	// L first of the lists are the L best paths
-	for (auto i = 0; i < L; i++)
-		dup_count[metrics_idx[1][i] / 4]++;
-
-//	// TODO: enable this code
-//	// L first of the lists are the L best paths
-//	for (auto i = 0; i < n_active_paths; i++)
-//		dup_count[metrics_idx[1][paths[i]] / 4]++;
-
-	// erase paths
-	auto k = 0;
-	auto n_active_paths_cpy = n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
-		if (dup_count[paths[k]] == 0)
-			delete_path(k);
-		else
-			k++;
-
-	// duplicate paths
-	n_active_paths_cpy = n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
-	{
-		const auto path = paths[i];
-		if (dup_count[path])
+		// duplicate paths
+		n_active_paths_cpy = n_active_paths;
+		for (auto i = 0; i < n_active_paths_cpy; i++)
 		{
-			API_polar::h(s[path], l[path], off_l, off_s, n_elmts);
-			for (auto dup = 2; dup <= dup_count[path]; dup++)
-				flip_bits_r1(path, duplicate_tree(path, off_l, off_s, n_elmts), dup, off_s, n_elmts);
-			dup_count[path] = 0;
+			const auto path = paths[i];
+			if (dup_count[path])
+			{
+				API_polar::h(s[path], l[path], off_l, off_s, n_elmts);
+				for (auto dup = 2; dup <= dup_count[path]; dup++)
+					flip_bits_r1(path, duplicate_tree(path, off_l, off_s, n_elmts), dup, off_s, n_elmts);
+				dup_count[path] = 0;
+			}
 		}
+		std::fill(dup_count.begin(), dup_count.end(), 0); // TODO: remove this fill
 	}
-	std::fill(dup_count.begin(), dup_count.end(), 0); // TODO: remove this fill
 }
 
 template <typename B, typename R, class API_polar>
@@ -465,6 +477,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	constexpr B b = bit_init<B>();
 
 	//TODO: use bit flips vector in std
+	//TODO: the case where n_elmts == 1 doesn't exist when REP nodes and R1 nodes are in the patterns. To be removed in a final version ?
 	if (n_elmts == 1)
 	{
 		s[new_path][off_s] = b; metrics[new_path] = metrics_vec[0][2 * old_path + 1];

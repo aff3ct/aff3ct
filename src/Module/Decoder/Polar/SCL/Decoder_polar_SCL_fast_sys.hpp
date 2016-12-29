@@ -46,7 +46,7 @@ public:
 private:
 	inline void recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id     );
 
-	inline void update_paths_r0 (                     const int off_l,                  const int n_elmts);
+	inline void update_paths_r0 (                     const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_r1 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_rep(                     const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_spc(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
