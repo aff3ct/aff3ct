@@ -101,8 +101,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	std::copy(Y_N.begin(), Y_N.end(), y.begin());
 
 	// at the beginning, path 0 points to array 0
-	std::fill(n_array_ref  [0].begin(), n_array_ref  [0].end(), 1    );
-	std::fill(path_2_array [0].begin(), path_2_array [0].end(), 0    );
+	std::fill(n_array_ref [0].begin(), n_array_ref [0].end(), 1);
+	std::fill(path_2_array[0].begin(), path_2_array[0].end(), 0);
 
 	for (auto i = 1; i < L; i++)
 		std::fill(n_array_ref[i]  .begin(), n_array_ref[i]  .end(), 0   );
@@ -686,7 +686,7 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	std::copy(path_2_array[old_path].begin(), path_2_array[old_path].end(), path_2_array[new_path].begin());
 
 	for (auto i = 0; i < m; i++)
-		n_array_ref[new_path][i]++;
+		n_array_ref[path_2_array[new_path][i]][i]++;
 
 	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
 	std::copy(l[old_path].begin(), l[old_path].begin() + off_l          , l[new_path].begin());
@@ -700,9 +700,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	for (auto i = 0; i < m; i++)
 	{
-		n_array_ref[paths[path_id]][i]--;
+		n_array_ref[path_2_array[paths[path_id]][i]][i]--;
 		//TODO: remove, debug only
-		assert(n_array_ref[paths[path_id]][i] > 0);
+		assert(n_array_ref[paths[path_id]][i] >= 0);
 	}
 
 	const auto old_path = paths[path_id];
@@ -728,14 +728,17 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::allocate_array(const int path, const int r_d)
 {
 	// if more than 1 path points to the array
-	if (n_array_ref[path][r_d] > 1)
+	if (n_array_ref[path_2_array[path][r_d]][r_d] > 1)
 	{
 		// allocate new array to given path, r_d
 		auto i = 0;
-		n_array_ref[path][r_d]--;
-		while(!n_array_ref[i++][r_d])
+		n_array_ref[path_2_array[path][r_d]][r_d]--;
+		while(n_array_ref[i][r_d])
+		{
+			i++;
 			assert(i < L);
-		path_2_array[path][r_d] = i -1;
+		}
+		path_2_array[path_2_array[path][r_d]][r_d] = i -1;
 		n_array_ref[i -1][r_d]++;
 	}
 }
