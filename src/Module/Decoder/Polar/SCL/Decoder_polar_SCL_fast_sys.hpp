@@ -28,11 +28,9 @@ protected:
 	std::vector<std::vector<int>  > llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
 	std::vector<int               > bit_flips;      // index of the bits to be flipped
 	std::vector<bool              > is_even;        // used to store parity of a spc node
-	std::vector<int               > depth2offl;     // lut of offl, function of depth
 
 	int                             best_path;
 	int                             n_active_paths;
-	int                             off_s;
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
@@ -46,23 +44,19 @@ public:
 	virtual void store_fast (mipp::vector<B>& V        ) const;
 
 private:
-	inline void inte                  (const int path, const int reverse_depth_leaf, const int reverse_depth   );
-	inline void rec_left              (const int path, const int reverse_depth, const int leaf_id              );
+	inline void recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id     );
 
-	inline void update_paths          (const int leaf_id                                                       );
-	inline void update_paths_r0       (const int reverse_depth                                                 );
-	inline void update_paths_r1       (const int reverse_depth                                                 );
-	inline void update_paths_rep      (const int reverse_depth                                                 );
-	inline void update_paths_spc      (const int reverse_depth                                                 );
+	inline void update_paths_r0 (                     const int off_l,                  const int n_elmts);
+	inline void update_paths_r1 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
+	inline void update_paths_rep(                     const int off_l, const int off_s, const int n_elmts);
+	inline void update_paths_spc(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 
-	inline void flip_bits_r1          (const int old_path, const int new_path, const int dup, const int n_elmts);
-	inline void flip_bits_rep         (const int old_path, const int new_path,                const int n_elmts);
-	inline void flip_bits_spc         (const int old_path, const int new_path, const int dup, const int n_elmts);
+	inline void flip_bits_r1    (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_rep   (const int old_path, const int new_path,                const int off_s, const int n_elmts);
+	inline void flip_bits_spc   (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 
 	// return the new_path
-	inline int  duplicate_tree        (const int old_path, const int r_d                                       );
-
-	inline void recursive_compute_sums(const int path, const int off_s, const int reverse_depth, int node_id   );
+	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts );
 
 protected:
 	        inline void delete_path     (int path_id);

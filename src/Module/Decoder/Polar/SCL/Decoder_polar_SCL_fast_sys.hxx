@@ -42,30 +42,19 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   paths         (L),
   last_paths    (L),
   metrics       (L),
-  l             (L, mipp::vector<R>(2 * N + mipp::nElReg<R>())),
-  s             (L, mipp::vector<B>(N     + mipp::nElReg<B>())),
+  l             (L, mipp::vector<R>(2 * N + mipp::nElReg<R>()   )),
+  s             (L, mipp::vector<B>(N     + mipp::nElReg<B>(), 0)),
   metrics_vec   (3, std::vector<float>()),
   metrics_idx   (3, std::vector<int  >()),
   dup_count     (L, 0),
   llr_indexes   (),
   bit_flips     (4 * L),
   is_even       (L),
-  depth2offl    (m +1),
   best_path     (0),
-  n_active_paths(1),
-  off_s         (0)
+  n_active_paths(1)
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
-
-	// initialize depth2offl lut
-	auto index = 0;
-	depth2offl[index++] = 0;
-	for (auto i = N; i > (N >> m); i >>= 1)
-	{
-		depth2offl[index] = depth2offl[index -1] +i;
-		index++;
-	}
 
 	metrics_vec[0].resize(L * 2);
 	metrics_idx[0].resize(L * 2);
@@ -113,33 +102,96 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::hard_decode()
 {
-	off_s = 0;
-
-	// decode first branch all left (applying f till leaf)
-	rec_left(0, polar_patterns.get_leaf_rev_depth(0), m);
-	update_paths(0);
-	recursive_compute_sums(0, 0, 1, 0);
-
-	off_s += 1 << polar_patterns.get_leaf_rev_depth(0);
-
-	const auto n_leaves = polar_patterns.get_n_leaves();
-	for (auto leaf_id = 1; leaf_id < n_leaves; leaf_id++)
-	{
-		auto r_d = compute_depth(off_s, m) +1;
-		for (auto i = 0; i < n_active_paths; i++)
-			inte(paths[i], r_d, leaf_id);
-
-		update_paths(leaf_id);
-
-		r_d = polar_patterns.get_leaf_rev_depth(leaf_id) +1;
-		auto node_id = polar_patterns.get_leaf_to_node_id_sums(leaf_id);
-		for (auto i = 0; i < n_active_paths; i++)
-			recursive_compute_sums(paths[i], off_s, r_d, node_id);
-
-		off_s += 1 << polar_patterns.get_leaf_rev_depth(leaf_id);
-	}
-
+	int first_node_id = 0, off_l = 0, off_s = 0;
+	recursive_decode(off_l, off_s, m, first_node_id);
 	select_best_path();
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id)
+{
+	const int n_elmts = 1 << rev_depth;
+	const int n_elm_2 = n_elmts >> 1;
+	const pattern_SC_type node_type = polar_patterns.get_node_type(node_id);
+
+	const bool is_terminal_pattern = (node_type == pattern_SC_type::RATE_0) ||
+	                                 (node_type == pattern_SC_type::RATE_1) ||
+	                                 (node_type == pattern_SC_type::REP)    ||
+	                                 (node_type == pattern_SC_type::SPC);
+
+	if (!is_terminal_pattern && rev_depth)
+	{
+		// f
+		switch (node_type)
+		{
+			case STANDARD:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				break;
+			case REP_LEFT:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				break;
+			default:
+				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::f(l[paths[i]], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);
+				break;
+		}
+
+		recursive_decode(off_l + n_elmts, off_s, rev_depth -1, ++node_id); // recursive call left
+
+		// g
+		switch (node_type)
+		{
+			case STANDARD:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::g (s[paths[i]], l[paths[i]], off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2);
+				break;
+			case RATE_0_LEFT:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::g0(             l[paths[i]], off_l, off_l + n_elm_2,        off_l + n_elmts, n_elm_2);
+				break;
+			case REP_LEFT:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::gr(s[paths[i]], l[paths[i]], off_l, off_l + n_elm_2, off_s, off_l + n_elmts, n_elm_2);
+				break;
+			default:
+				break;
+		}
+
+		recursive_decode(off_l + n_elmts, off_s + n_elm_2, rev_depth -1, ++node_id); // recursive call right
+
+		// xor
+		switch (node_type)
+		{
+			case STANDARD:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+			case RATE_0_LEFT:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2); break;
+			case REP_LEFT:
+				for (auto i = 0; i < n_active_paths; i++)
+					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+			default:
+				break;
+		}
+	}
+	else
+	{
+		// h
+		switch (node_type)
+		{
+			case RATE_0: update_paths_r0 (           off_l,        n_elmts); break;
+			case REP:    update_paths_rep(           off_l, off_s, n_elmts); break;
+			case RATE_1: update_paths_r1 (rev_depth, off_l, off_s, n_elmts); break;
+			case SPC:    update_paths_spc(rev_depth, off_l, off_s, n_elmts); break;
+			default:
+				break;
+		}
+	}
 }
 
 template <typename B, typename R, class API_polar>
@@ -174,86 +226,22 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::inte(const int path, const int r_d, const int leaf_id)
+::update_paths_r0(const int off_l, const int n_elmts)
 {
-	const auto n_elmts = 1 << r_d;
-	const auto n_elm_2 = n_elmts >> 1;
-	const auto off_l = depth2offl[m - r_d];
-
-	switch (polar_patterns.get_node_type(polar_patterns.get_leaf_to_g_node_id(leaf_id)))
-	{
-		case STANDARD:
-			API_polar::g (s[path],l[path], off_l, off_l + n_elm_2, off_s - n_elm_2, off_l + n_elmts, n_elm_2); break;
-		case RATE_0_LEFT:
-			API_polar::g0(        l[path], off_l, off_l + n_elm_2, off_l + n_elmts, n_elm_2);                ; break;
-		case REP_LEFT:
-			API_polar::gr(s[path],l[path], off_l, off_l + n_elm_2, off_s - n_elm_2, off_l + n_elmts, n_elm_2); break;
-		default:
-			std::cout << bold_red("(EE) Something went wrong in the \"inte\" method.") << std::endl;
-			std::exit(-1);
-			break;
-	}
-
-	rec_left(path, polar_patterns.get_leaf_rev_depth(leaf_id), r_d -1);
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::rec_left(const int path, const int r_d_leaf, const int r_d)
-{
-	const auto n_elmts = 1 << r_d;
-	const auto n_elm_2 = n_elmts >> 1;
-	const auto off_l = depth2offl[m - r_d];
-
-	if (r_d > r_d_leaf)
-	{
-		API_polar::f(l[path], off_l + n_elm_2, off_l, off_l + n_elmts, n_elm_2);
-		rec_left(path, r_d_leaf, r_d -1);
-	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::update_paths(const int leaf_id)
-{
-	const auto r_d = polar_patterns.get_leaf_rev_depth(leaf_id);
-
-	switch (polar_patterns.get_leaf_type(leaf_id))
-	{
-		case RATE_0: update_paths_r0 (r_d); break;
-		case REP:    update_paths_rep(r_d); break;
-		case RATE_1: update_paths_r1 (r_d); break;
-		case SPC:    update_paths_spc(r_d); break;
-		default:
-			std::cout << bold_red("(EE) Something went wrong in the \"update_paths\" method.") << std::endl;
-			std::exit(-1);
-			break;
-	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::update_paths_r0(const int r_d)
-{
-	const auto n_elmts = 1 << r_d;
-
 	for (auto i = 0; i < n_active_paths; i++)
 	{
 		auto metric = 0.f;
 		const auto path = paths[i];
 		for (auto j = 0; j < n_elmts; j++)
-			metric -= std::min((float)l[path][depth2offl[m - r_d] +j], 0.f);
+			metric -= std::min((float)l[path][off_l +j], 0.f);
 		metrics[path] += metric;
 	}
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::update_paths_r1(const int r_d)
+::update_paths_r1(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
-	const auto off_l = depth2offl[m - r_d];
-	const auto n_elmts = 1 << r_d;
-
 	for (auto i = 0; i < n_active_paths; i++)
 	{
 		const auto path = paths[i];
@@ -308,7 +296,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			API_polar::h(s[path], l[path], off_l, off_s, n_elmts);
 			for (auto dup = 2; dup <= dup_count[path]; dup++)
-				flip_bits_r1(path, duplicate_tree(path, r_d), dup, n_elmts);
+				flip_bits_r1(path, duplicate_tree(path, off_l, off_s, n_elmts), dup, off_s, n_elmts);
 			dup_count[path] = 0;
 		}
 	}
@@ -317,11 +305,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::update_paths_rep(const int r_d)
+::update_paths_rep(const int off_l, const int off_s, const int n_elmts)
 {
-	// update metrics for all paths till last bit
-	const auto n_elmts = 1 << r_d;
-
 	// metrics vec used to store values of hypothetic path metrics
 	for (auto i = 0; i < n_active_paths; i++)
 	{
@@ -330,8 +315,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		auto metric2 = metrics[path];
 		for (auto j = 0; j < n_elmts; j++)
 		{
-			metric1 -= std::min(l[path][depth2offl[m - r_d] +j], (R)0);
-			metric2 += std::max(l[path][depth2offl[m - r_d] +j], (R)0);
+			metric1 -= std::min(l[path][off_l +j], (R)0);
+			metric2 += std::max(l[path][off_l +j], (R)0);
 		}
 		metrics_vec[0][2 * path   ] = metric1;
 		metrics_vec[0][2 * path +1] = metric2;
@@ -341,7 +326,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	{
 		const auto n_active_paths_cpy = n_active_paths;
 		for (auto i = 0; i < n_active_paths_cpy; i++)
-			flip_bits_rep(paths[i], duplicate_tree(paths[i], r_d), n_elmts);
+			flip_bits_rep(paths[i], duplicate_tree(paths[i], off_l, off_s, n_elmts), off_s, n_elmts);
 	}
 	else // n_active_paths = L
 	{
@@ -373,7 +358,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 					metrics[path] = metrics_vec[0][2*path + (comp ? 1 : 0)];
 				}
 				else
-					flip_bits_rep(path, duplicate_tree(path, r_d), n_elmts);
+					flip_bits_rep(path, duplicate_tree(path, off_l, off_s, n_elmts), off_s, n_elmts);
 
 				dup_count[path] = 0;
 			}
@@ -383,10 +368,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::update_paths_spc(const int r_d)
+::update_paths_spc(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
-	const auto off_l = depth2offl[m - r_d];
-	const auto n_elmts = 1 << r_d;
 	const auto n_candidates = (L <= 2 ? 2 : 8);
 
 	for (auto i = 0; i < n_active_paths; i++)
@@ -468,7 +451,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			metrics[path] = metrics_vec[2][n_candidates * path];
 			for (auto dup = 2; dup <= dup_count[path]; dup++)
-				flip_bits_spc(path, duplicate_tree(path, r_d), dup, n_elmts);
+				flip_bits_spc(path, duplicate_tree(path, off_l, off_s, n_elmts), dup, off_s, n_elmts);
 			dup_count[path] = 0;
 		}
 	}
@@ -477,7 +460,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::flip_bits_r1(const int old_path, const int new_path, const int dup, const int n_elmts)
+::flip_bits_r1(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
 
@@ -512,7 +495,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::flip_bits_rep(const int old_path, const int new_path, const int n_elmts)
+::flip_bits_rep(const int old_path, const int new_path, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
 
@@ -525,7 +508,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::flip_bits_spc(const int old_path, const int new_path, const int dup, const int n_elmts)
+::flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
 
@@ -571,12 +554,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::duplicate_tree(const int old_path, const int r_d)
+::duplicate_tree(const int old_path, const int off_l, const int off_s, const int n_elmts)
 {
 	const auto new_path = paths[n_active_paths++];
-
-	const auto n_elmts = 1 << r_d;
-	const auto off_l = depth2offl[m - r_d];
 
 	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
 	std::copy(l[old_path].begin(), l[old_path].begin() + off_l          , l[new_path].begin());
@@ -591,32 +571,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto old_path = paths[path_id];
 	paths[path_id] = paths[--n_active_paths];
 	paths[n_active_paths] = old_path;
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::recursive_compute_sums(const int path, const int off_s, const int r_d, int node_id)
-{
-	const auto n_elm   = 1 << r_d;
-	const auto n_elm_2 = n_elm >> 1;
-
-	if (off_s % n_elm != 0) // must sum
-	{
-		switch (polar_patterns.get_node_type_sums(node_id))
-		{
-			case STANDARD:
-				API_polar::xo (s[path], off_s - n_elm_2, off_s, off_s - n_elm_2, n_elm_2); break;
-			case RATE_0_LEFT:
-				API_polar::xo0(s[path],                  off_s, off_s - n_elm_2, n_elm_2); break;
-			case REP_LEFT:
-				API_polar::xo (s[path], off_s - n_elm_2, off_s, off_s - n_elm_2, n_elm_2); break;
-			default:
-				std::cout << bold_red("(EE) Something went wrong in the \"recursive_compute_sums\" method.") << std::endl;
-				std::exit(-1);
-				break;
-		}
-		recursive_compute_sums(path, off_s - n_elm_2, r_d +1, ++node_id);
-	}
 }
 
 template <typename B, typename R, class API_polar>
