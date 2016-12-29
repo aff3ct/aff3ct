@@ -35,8 +35,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                   new Pattern_SC<pattern_SC_type::RATE_1     >(),
                   new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
                   new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                  new Pattern_SC<pattern_SC_type::REP        >(),
-                  /*new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
+                  new Pattern_SC<pattern_SC_type::REP        >()/*,
+                  new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
                   1,
                   2),
   paths         (L),
@@ -248,9 +248,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
 	if(r_d == 0)
-	{
 		update_paths_rep(off_l, off_s, n_elmts);
-	}
 	else
 	{
 		for (auto i = 0; i < n_active_paths; i++)
@@ -284,10 +282,10 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < L; i++)
 			dup_count[metrics_idx[1][i] / 4]++;
 
-	//	// TODO: enable this code
-	//	// L first of the lists are the L best paths
-	//	for (auto i = 0; i < n_active_paths; i++)
-	//		dup_count[metrics_idx[1][paths[i]] / 4]++;
+//		// TODO: enable this code
+//		// L first of the lists are the L best paths
+//		for (auto i = 0; i < n_active_paths; i++)
+//			dup_count[metrics_idx[1][paths[i]] / 4]++;
 
 		// erase paths
 		auto k = 0;
