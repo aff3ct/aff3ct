@@ -20,18 +20,31 @@ void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 	{
 		const auto path = this->paths[j];
 
-		// extract the info bits from the codeword
-		auto k = 0;
-		for (auto leaf = 0; leaf < this->N; leaf++)
-			if (!this->frozen_bits[leaf])
-				U_test[k++] = this->s[path][leaf];
+//		// extract the info bits from the codeword
+//		auto k = 0;
+//		for (auto leaf = 0; leaf < this->N; leaf++)
+//			if (!this->frozen_bits[leaf])
+//				U_test[k++] = this->s[path][leaf];
+//		// check the CRC
+//		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
 
-		// check the CRC (slower than the next version)
-		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
-
-//		// check the CRC (faster than previous version)
-//		Bit_packer<B>::pack(U_test);
-//		bool decode_result = crc.check_packed(U_test, this->get_simd_inter_frame_level());
+		// extract the info bits (packed) from the codeword
+		auto bytes = (unsigned char*)U_test.data();
+		auto leaf = 0, B_pos = 0;
+		while (leaf < this->N)
+		{
+			unsigned char byte = 0;
+			auto b = 0;
+			while (b < 8 && (leaf < this->N))
+			{
+				if (!this->frozen_bits[leaf])
+					byte |= ((unsigned char)(this->s[path][leaf] != 0)) << b++;
+				leaf++;
+			}
+			bytes[B_pos++] = byte;
+		}
+		// check the CRC
+		bool decode_result = crc.check_packed(U_test, this->get_simd_inter_frame_level());
 
 		// delete the path if the CRC result is negative
 		if (!decode_result)
