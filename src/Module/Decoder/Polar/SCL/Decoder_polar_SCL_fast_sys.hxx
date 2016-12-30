@@ -42,7 +42,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   paths         (L),
   last_paths    (L),
   metrics       (L),
-  y             (                   N + mipp::nElReg<R>()    ),
+  Y_N           (                   N + mipp::nElReg<R>()    ),
   l             (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>(), 0)),
   metrics_vec   (3, std::vector<float>()),
@@ -53,8 +53,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   is_even       (L),
   best_path     (0),
   n_active_paths(1),
-  n_array_ref   (L, std::vector<int> (m, 0)),
-  path_2_array  (L, std::vector<int> (m, 0))
+  n_array_ref   (L, std::vector<int>(m, 0)),
+  path_2_array  (L, std::vector<int>(m, 0))
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -98,14 +98,14 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	for (auto i = 0; i < 3; i++)
 		std::fill(metrics_vec[i].begin(), metrics_vec[i].end(), std::numeric_limits<float>::max());
 
-	std::copy(Y_N.begin(), Y_N.end(), y.begin());
+	std::copy(Y_N.begin(), Y_N.end(), this->Y_N.begin());
 
 	// at the beginning, path 0 points to array 0
 	std::fill(n_array_ref [0].begin(), n_array_ref [0].end(), 1);
 	std::fill(path_2_array[0].begin(), path_2_array[0].end(), 0);
 
 	for (auto i = 1; i < L; i++)
-		std::fill(n_array_ref[i]  .begin(), n_array_ref[i]  .end(), 0   );
+		std::fill(n_array_ref[i].begin(), n_array_ref[i].end(), 0);
 }
 
 template <typename B, typename R, class API_polar>
@@ -137,10 +137,10 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		switch (node_type)
 		{
 			case STANDARD:
-				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
+				API_polar::f(Y_N.data(), Y_N.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			case REP_LEFT:
-				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
+				API_polar::f(Y_N.data(), Y_N.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			default:
 				break;
@@ -154,22 +154,28 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					allocate_array(paths[i], rev_depth -1);
-					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s, l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					const auto path = paths[i];
+					up_ref_array_idx(path, rev_depth -1);
+					auto child = l[path_2_array[path][rev_depth -1]].data();
+					API_polar::g (Y_N.data(), Y_N.data() + n_elm_2, s[path].data() + off_s, child, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					allocate_array(paths[i], rev_depth -1);
-					API_polar::g0(y.data(), y.data() + n_elm_2,                             l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					const auto path = paths[i];
+					up_ref_array_idx(path, rev_depth -1);
+					auto child = l[path_2_array[path][rev_depth -1]].data();
+					API_polar::g0(Y_N.data(), Y_N.data() + n_elm_2,                         child, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					allocate_array(paths[i], rev_depth -1);
-					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s, l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					const auto path = paths[i];
+					up_ref_array_idx(path, rev_depth -1);
+					auto child = l[path_2_array[path][rev_depth -1]].data();
+					API_polar::gr(Y_N.data(), Y_N.data() + n_elm_2, s[path].data() + off_s, child, n_elm_2);
 				}
 				break;
 			default:
@@ -202,30 +208,32 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
-					allocate_array(paths[i], rev_depth -1);
-					auto child  = l[path_2_array[paths[i]][rev_depth -1]].data();
+					const auto path = paths[i];
+					auto parent = l[path_2_array[path][rev_depth   ]].data();
+					up_ref_array_idx(path, rev_depth -1);
+					auto child  = l[path_2_array[path][rev_depth -1]].data();
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
-					allocate_array(paths[i], rev_depth -1);
-					auto child  = l[path_2_array[paths[i]][rev_depth -1]].data();
+					const auto path = paths[i];
+					auto parent = l[path_2_array[path][rev_depth   ]].data();
+					up_ref_array_idx(path, rev_depth -1);
+					auto child  = l[path_2_array[path][rev_depth -1]].data();
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
-				if(n_active_paths > 1)
-					for (auto i = 0; i < n_active_paths; i++)
-					{
-						auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
-						allocate_array(paths[i], rev_depth -1);
-						auto child  = l[path_2_array[paths[i]][rev_depth -1]].data();
-						API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
-					}
+				for (auto i = 0; i < n_active_paths && n_active_paths > 1; i++)
+				{
+					const auto path = paths[i];
+					auto parent = l[path_2_array[path][rev_depth   ]].data();
+					up_ref_array_idx(path, rev_depth -1);
+					auto child  = l[path_2_array[path][rev_depth -1]].data();
+					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
+				}
 				break;
 			default:
 				break;
@@ -239,28 +247,31 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
-					allocate_array(paths[i], rev_depth -1);
-					auto child =  l[path_2_array[paths[i]][rev_depth -1]].data();
-					API_polar::g (parent + off_l, parent + off_l + n_elm_2, s[paths[i]].data() + off_s, child + off_l + n_elmts, n_elm_2);
+					const auto path = paths[i];
+					auto parent = l[path_2_array[path][rev_depth   ]].data();
+					up_ref_array_idx(path, rev_depth -1);
+					auto child =  l[path_2_array[path][rev_depth -1]].data();
+					API_polar::g (parent + off_l, parent + off_l + n_elm_2, s[path].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
-					allocate_array(paths[i], rev_depth -1);
-					auto child =  l[path_2_array[paths[i]][rev_depth -1]].data();
-					API_polar::g0(parent + off_l, parent + off_l + n_elm_2,                             child + off_l + n_elmts, n_elm_2);
+					const auto path = paths[i];
+					auto parent = l[path_2_array[path][rev_depth   ]].data();
+					up_ref_array_idx(path, rev_depth -1);
+					auto child =  l[path_2_array[path][rev_depth -1]].data();
+					API_polar::g0(parent + off_l, parent + off_l + n_elm_2,                         child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
-					allocate_array(paths[i], rev_depth -1);
-					auto child =  l[path_2_array[paths[i]][rev_depth -1]].data();
-					API_polar::gr(parent + off_l, parent + off_l + n_elm_2, s[paths[i]].data() + off_s, child + off_l + n_elmts, n_elm_2);
+					const auto path = paths[i];
+					auto parent = l[path_2_array[path][rev_depth   ]].data();
+					up_ref_array_idx(path, rev_depth -1);
+					auto child =  l[path_2_array[path][rev_depth -1]].data();
+					API_polar::gr(parent + off_l, parent + off_l + n_elm_2, s[path].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			default:
@@ -683,10 +694,10 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::delete_path(int path_id)
 {
-	for (auto i = 0; i < m; i++)
-		n_array_ref[path_2_array[paths[path_id]][i]][i]--;
-
 	const auto old_path = paths[path_id];
+	for (auto i = 0; i < m; i++)
+		n_array_ref[path_2_array[old_path][i]][i]--;
+
 	paths[path_id] = paths[--n_active_paths];
 	paths[n_active_paths] = old_path;
 }
@@ -706,18 +717,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::allocate_array(const int path, const int r_d)
+::up_ref_array_idx(const int path, const int r_d)
 {
 	// if more than 1 path points to the array
 	if (n_array_ref[path_2_array[path][r_d]][r_d] > 1)
 	{
 		// allocate new array to given path, r_d
-		auto i = 0;
 		n_array_ref[path_2_array[path][r_d]][r_d]--;
-		while(n_array_ref[i][r_d])
-			i++;
+
+		auto i = 0;
+		while (n_array_ref[i][r_d]) i++;
 
 		path_2_array[path][r_d] = i;
-		n_array_ref[i][r_d]++;
+		n_array_ref [i   ][r_d]++;
 	}
 }
