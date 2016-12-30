@@ -35,15 +35,15 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                   new Pattern_SC<pattern_SC_type::RATE_1     >(),
                   new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
                   new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                  new Pattern_SC<pattern_SC_type::REP        >(),
-                  /*new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
+                  new Pattern_SC<pattern_SC_type::REP        >()/*,
+                  new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
                   1,
                   2),
   paths         (L),
   last_paths    (L),
   metrics       (L),
   y             (                   N + mipp::nElReg<R>()    ),
-  l         (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
+  l             (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>(), 0)),
   metrics_vec   (3, std::vector<float>()),
   metrics_idx   (3, std::vector<int  >()),
@@ -53,8 +53,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   is_even       (L),
   best_path     (0),
   n_active_paths(1),
-  n_array_ref   (L, std::vector<int> (m, 0   )),
-  path_2_array  (L, std::vector<int> (m, 0   ))
+  n_array_ref   (L, std::vector<int> (m, 0)),
+  path_2_array  (L, std::vector<int> (m, 0))
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -131,7 +131,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	                                 (node_type == pattern_SC_type::SPC);
 
 	// root node
-	if (/*!is_terminal_pattern &&*/ rev_depth == m)
+	if (rev_depth == m)
 	{
 		// f
 		switch (node_type)
@@ -142,45 +142,34 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			case REP_LEFT:
 				API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
 				break;
-			case RATE_0_LEFT:
-				if(n_active_paths > 1)
-					API_polar::f(y.data(), y.data() + n_elm_2, l[0].data(), n_elm_2);
-				break;
 			default:
-				// TODO: we should not have to do this (for instance when RATE_0_LEFT node we can avoid to compute f...)
-				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
-				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed			
 				break;
 		}
 
 		recursive_decode(off_l, off_s, rev_depth -1, ++node_id); // recursive call left
 
 		// g
-		// allocate arrays to paths
-		for (auto i = 0; i < n_active_paths; i++)
-
-
 		switch (node_type)
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					allocate_array(paths[i], rev_depth -1);
-					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					API_polar::g (y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s, l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					allocate_array(paths[i], rev_depth -1);
-					API_polar::g0(y.data(), y.data() + n_elm_2,                            l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					API_polar::g0(y.data(), y.data() + n_elm_2,                             l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
 					allocate_array(paths[i], rev_depth -1);
-					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s,l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
+					API_polar::gr(y.data(), y.data() + n_elm_2, s[paths[i]].data() + off_s, l[path_2_array[paths[i]][rev_depth -1]].data(), n_elm_2);
 				}
 				break;
 			default:
@@ -210,23 +199,21 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		// f
 		switch (node_type)
 		{
-			R* parent;
-			R* child;
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
+					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child  = l[path_2_array[paths[i]][rev_depth -1]].data();
+					auto child  = l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
+					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child  = l[path_2_array[paths[i]][rev_depth -1]].data();
+					auto child  = l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
@@ -234,16 +221,13 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				if(n_active_paths > 1)
 					for (auto i = 0; i < n_active_paths; i++)
 					{
-						parent = l[path_2_array[paths[i]][rev_depth   ]].data();
+						auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 						allocate_array(paths[i], rev_depth -1);
-						child  = l[path_2_array[paths[i]][rev_depth -1]].data();
+						auto child  = l[path_2_array[paths[i]][rev_depth -1]].data();
 						API_polar::f(parent + off_l, parent + off_l + n_elm_2, child + off_l + n_elmts, n_elm_2);
 					}
 				break;
 			default:
-				// TODO: we should not have to do this (for instance when RATE0_LEFT node we can avoid to compute f...)
-				// TODO: yes we should because contrary to SC, llrs are needed to update the path metric
-				// TODO: the only case where we could avoid this is when there is only one path, then the metric doesn't need to be refreshed
 				break;
 		}
 
@@ -252,32 +236,30 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		// g
 		switch (node_type)
 		{
-			R* parent;
-			R* child;
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
+					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child =  l[path_2_array[paths[i]][rev_depth -1]].data();
+					auto child =  l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::g (parent + off_l, parent + off_l + n_elm_2, s[paths[i]].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
+					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child =  l[path_2_array[paths[i]][rev_depth -1]].data();
+					auto child =  l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::g0(parent + off_l, parent + off_l + n_elm_2,                             child + off_l + n_elmts, n_elm_2);
 				}
 				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					parent = l[path_2_array[paths[i]][rev_depth   ]].data();
+					auto parent = l[path_2_array[paths[i]][rev_depth   ]].data();
 					allocate_array(paths[i], rev_depth -1);
-					child =  l[path_2_array[paths[i]][rev_depth -1]].data();
+					auto child =  l[path_2_array[paths[i]][rev_depth -1]].data();
 					API_polar::gr(parent + off_l, parent + off_l + n_elm_2, s[paths[i]].data() + off_s, child + off_l + n_elmts, n_elm_2);
 				}
 				break;

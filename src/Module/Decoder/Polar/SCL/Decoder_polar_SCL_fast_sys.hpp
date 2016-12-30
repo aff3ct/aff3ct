@@ -22,7 +22,7 @@ protected:
 	std::vector<int               > last_paths;     // active paths cpy
 	std::vector<float             > metrics;        // path metrics
 	mipp::vector<R>                 y;              // channel llrs
-	std::vector<mipp::vector<R>   > l;          // llrs
+	std::vector<mipp::vector<R>   > l;              // llrs
 	std::vector<mipp::vector<B>   > s;              // partial sums
 	std::vector<std::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
 	std::vector<std::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
