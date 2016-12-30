@@ -61,9 +61,8 @@ private:
 	inline void flip_bits_rep   (const int old_path, const int new_path,                const int off_s, const int n_elmts);
 	inline void flip_bits_spc   (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 
-	// return the new_path
-	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts );
-	inline void up_ref_array_idx(const int path, const int r_d                                           );
+	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
+	inline int  up_ref_array_idx(const int path, const int r_d                                           ); // return the array
 
 protected:
 	        inline void delete_path     (int path_id);
