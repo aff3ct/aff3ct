@@ -25,6 +25,7 @@ void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 //		for (auto leaf = 0; leaf < this->N; leaf++)
 //			if (!this->frozen_bits[leaf])
 //				U_test[k++] = this->s[path][leaf];
+
 //		// check the CRC
 //		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
 
@@ -37,12 +38,12 @@ void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 			auto b = 0;
 			while (b < 8 && (leaf < this->N))
 			{
-				if (!this->frozen_bits[leaf])
-					byte |= ((unsigned char)(this->s[path][leaf] != 0)) << b++;
+				byte |= !this->frozen_bits[leaf] ? ((unsigned char)(this->s[path][leaf] != 0)) << b++ : 0;
 				leaf++;
 			}
 			bytes[B_pos++] = byte;
 		}
+
 		// check the CRC
 		bool decode_result = crc.check_packed(U_test, this->get_simd_inter_frame_level());
 
