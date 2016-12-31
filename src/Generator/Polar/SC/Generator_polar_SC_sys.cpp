@@ -14,9 +14,9 @@ Generator_polar_SC_sys
                          const int& N,
                          const float& snr,
                          const mipp::vector<int>& frozen_bits,
-                         const std::vector<Pattern_SC_interface*> &patterns,
-                         const Pattern_SC_interface &pattern_rate0,
-                         const Pattern_SC_interface &pattern_rate1,
+                         const std::vector<Pattern_polar_i*> &patterns,
+                         const Pattern_polar_i &pattern_rate0,
+                         const Pattern_polar_i &pattern_rate1,
                          ostream &dec_stream,
                          ostream &short_dec_stream,
                          ostream &graph_stream,
@@ -195,7 +195,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_decoder(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_decoder(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
 {
 	n_nodes_before_compression++;
 
@@ -217,7 +217,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_graph(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_graph(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
 {
 	string key = "";
 
@@ -261,7 +261,7 @@ void Generator_polar_SC_sys
 
 	// statistics
 	int pattern_id = 0;
-	Pattern_SC_interface* pattern = node_curr->get_c();
+	Pattern_polar_i* pattern = node_curr->get_c();
 	for (unsigned i = 0; i < patterns.size(); i++)
 	{
 		auto cur_pattern = patterns[i];
@@ -281,7 +281,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_graph(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_graph(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
 {
 	if (subtree_occurences_cpy[node_curr->get_c()->get_key()])
 	{
@@ -324,7 +324,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_decoder_funcs(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_decoder_funcs(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
 {
 	if (!node_curr->is_leaf()) // stop condition
 	{
@@ -391,7 +391,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_decoder(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_decoder(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
 {
 	if (subtree_occurences_cpy[node_curr->get_c()->get_key()] == 1)
 	{

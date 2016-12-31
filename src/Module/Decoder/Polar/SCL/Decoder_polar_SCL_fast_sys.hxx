@@ -5,20 +5,21 @@
 #include <cmath>
 #include <map>
 
-#include "Tools/Code/Polar/Pattern_parser_polar.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Transpose/transpose_selector.h"
 #include "Tools/Display/bash_tools.h"
 
-#include "Tools/Code/Polar/Patterns/Pattern_SC_standard.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate1.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rep.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_spc.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0_left.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rep_left.hpp"
-
 #include "Decoder_polar_SCL_fast_sys.hpp"
+
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
+
+#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
@@ -30,13 +31,13 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   frozen_bits   (frozen_bits),
   polar_patterns(N,
                  frozen_bits,
-                 {new Pattern_SC<pattern_SC_type::STANDARD   >(),
-                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
-                  new Pattern_SC<pattern_SC_type::RATE_1     >(),
-                  new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
-                  new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                  new Pattern_SC<pattern_SC_type::REP        >()/*,
-                  new Pattern_SC<pattern_SC_type::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
+                 {new Pattern_polar<polar_node_t::STANDARD   >(),
+                  new Pattern_polar<polar_node_t::RATE_0     >(),
+                  new Pattern_polar<polar_node_t::RATE_1     >(),
+                  new Pattern_polar<polar_node_t::RATE_0_LEFT>(),
+                  new Pattern_polar<polar_node_t::REP_LEFT   >(),
+                  new Pattern_polar<polar_node_t::REP        >()/*,
+                  new Pattern_polar<polar_node_t::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
                   1,
                   2),
   paths         (L),
@@ -123,12 +124,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	const int n_elmts = 1 << rev_depth;
 	const int n_elm_2 = n_elmts >> 1;
-	const pattern_SC_type node_type = polar_patterns.get_node_type(node_id);
+	const polar_node_t node_type = polar_patterns.get_node_type(node_id);
 
-	const bool is_terminal_pattern = (node_type == pattern_SC_type::RATE_0) ||
-	                                 (node_type == pattern_SC_type::RATE_1) ||
-	                                 (node_type == pattern_SC_type::REP)    ||
-	                                 (node_type == pattern_SC_type::SPC);
+	const bool is_terminal_pattern = (node_type == polar_node_t::RATE_0) ||
+	                                 (node_type == polar_node_t::RATE_1) ||
+	                                 (node_type == polar_node_t::REP)    ||
+	                                 (node_type == polar_node_t::SPC);
 
 	// root node
 	if (rev_depth == m)

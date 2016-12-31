@@ -15,15 +15,15 @@
 #include "Tools/params.h"
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 
-#include "Tools/Code/Polar/Patterns/Pattern_SC_standard.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate1.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rep.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_spc.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0_left.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rep_left.hpp"
-
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
+
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
 #include "Generation_polar.hpp"
 
@@ -35,8 +35,8 @@ Generation_polar
   code_rate(0.f),
   sigma(0.f),
   patterns_SC(),
-  pattern_SC_rate0(new Pattern_SC<pattern_SC_type::RATE_0>()),
-  pattern_SC_rate1(new Pattern_SC<pattern_SC_type::RATE_1>()),
+  pattern_SC_rate0(new Pattern_polar<polar_node_t::RATE_0>()),
+  pattern_SC_rate1(new Pattern_polar<polar_node_t::RATE_1>()),
   fb_generator(nullptr),
   generator(nullptr),
   directory(params.decoder.gen_path)
@@ -47,13 +47,13 @@ Generation_polar
 #endif
 
 	// pattern allocations
-	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::STANDARD   >());
-	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::RATE_0_LEFT>());
-	patterns_SC.push_back(pattern_SC_rate0                              );
-	patterns_SC.push_back(pattern_SC_rate1                              );
-	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::REP_LEFT   >());
-	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::REP        >());
-	patterns_SC.push_back(new Pattern_SC<pattern_SC_type::SPC        >());
+	patterns_SC.push_back(new Pattern_polar<polar_node_t::STANDARD   >());
+	patterns_SC.push_back(new Pattern_polar<polar_node_t::RATE_0_LEFT>());
+	patterns_SC.push_back(pattern_SC_rate0                           );
+	patterns_SC.push_back(pattern_SC_rate1                           );
+	patterns_SC.push_back(new Pattern_polar<polar_node_t::REP_LEFT   >());
+	patterns_SC.push_back(new Pattern_polar<polar_node_t::REP        >());
+	patterns_SC.push_back(new Pattern_polar<polar_node_t::SPC        >());
 
 	float snr = params.simulation.snr_min;
 

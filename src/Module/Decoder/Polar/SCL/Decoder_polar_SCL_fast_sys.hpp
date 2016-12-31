@@ -15,7 +15,7 @@ protected:
 	const int                        m;              // graph depth
 	const int                        L;              // maximum paths number
 	const mipp::vector<B>&           frozen_bits;
-	const Pattern_parser_polar<B>    polar_patterns;
+	const Pattern_polar_parser<B>    polar_patterns;
 
 	            std ::vector<int  >  paths;          // active paths
 	            std ::vector<int  >  last_paths;     // active paths cpy

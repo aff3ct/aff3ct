@@ -6,34 +6,34 @@
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
 
-#include "Tools/Code/Polar/Patterns/Pattern_SC_standard.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate1.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rep.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_spc.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rate0_left.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_rep_left.hpp"
-
 #include "Decoder_polar_SC_fast_sys.hpp"
+
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep_left.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
 constexpr int static_level = 6; // 2^6 = 64
 
 template <typename B, typename R, class API_polar, int REV_D>
 struct Decoder_polar_SC_fast_sys_static
 {
-	static void decode(const Pattern_parser_polar<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
-	                   const int off_l, const int off_s, int &id)
+	static void decode(const Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
+	                   const int off_l, const int off_s, int &node_id)
 	{
 		constexpr int reverse_depth = REV_D;
 		constexpr int n_elmts = 1 << reverse_depth;
 		constexpr int n_elm_2 = n_elmts >> 1;
 
-		const pattern_SC_type node_type = polar_patterns.get_node_type(id);
+		const polar_node_t node_type = polar_patterns.get_node_type(node_id);
 
-		const bool is_terminal_pattern = (node_type == pattern_SC_type::RATE_0) ||
-		                                 (node_type == pattern_SC_type::RATE_1) ||
-		                                 (node_type == pattern_SC_type::REP)    ||
-		                                 (node_type == pattern_SC_type::SPC);
+		const bool is_terminal_pattern = (node_type == polar_node_t::RATE_0) ||
+		                                 (node_type == polar_node_t::RATE_1) ||
+		                                 (node_type == polar_node_t::REP)    ||
+		                                 (node_type == polar_node_t::SPC);
 
 		if (!is_terminal_pattern && reverse_depth)
 		{
@@ -47,7 +47,7 @@ struct Decoder_polar_SC_fast_sys_static
 			}
 
 			Decoder_polar_SC_fast_sys_static<B,R,API_polar,REV_D-1>
-			::decode(polar_patterns, s, l, off_l + n_elmts, off_s, ++id); // recursive call left
+			::decode(polar_patterns, s, l, off_l + n_elmts, off_s, ++node_id); // recursive call left
 
 			// g
 			switch (node_type)
@@ -60,7 +60,7 @@ struct Decoder_polar_SC_fast_sys_static
 			}
 
 			Decoder_polar_SC_fast_sys_static<B,R,API_polar,REV_D-1>
-			::decode(polar_patterns, s, l, off_l + n_elmts, off_s + n_elm_2, ++id); // recursive call right
+			::decode(polar_patterns, s, l, off_l + n_elmts, off_s + n_elm_2, ++node_id); // recursive call right
 
 			// xor
 			switch (node_type)
@@ -90,15 +90,15 @@ struct Decoder_polar_SC_fast_sys_static
 template <typename B, typename R, class API_polar>
 struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 {
-	static void decode(const Pattern_parser_polar<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
+	static void decode(const Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
 	                   const int off_l, const int off_s, int &id)
 	{
 		constexpr int reverse_depth = 0;
 		constexpr int n_elmts = 1 << reverse_depth;
 
-		const pattern_SC_type node_type = polar_patterns.get_node_type(id);
+		const polar_node_t node_t = polar_patterns.get_node_type(id);
 
-		switch (node_type)
+		switch (node_t)
 		{
 			case RATE_1: API_polar::template h<n_elmts>(s, l, off_l, off_s, n_elmts); break;
 			default:
@@ -119,13 +119,13 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
   frozen_bits   (frozen_bits),
   polar_patterns(N,
                  frozen_bits,
-                 {new Pattern_SC<pattern_SC_type::STANDARD   >(),
-                  new Pattern_SC<pattern_SC_type::RATE_0_LEFT>(),
-                  new Pattern_SC<pattern_SC_type::RATE_0     >(),
-                  new Pattern_SC<pattern_SC_type::RATE_1     >(),
-                  new Pattern_SC<pattern_SC_type::REP_LEFT   >(),
-                  new Pattern_SC<pattern_SC_type::REP        >(),
-                  new Pattern_SC<pattern_SC_type::SPC        >()},
+                 {new Pattern_polar<polar_node_t::STANDARD   >(),
+                  new Pattern_polar<polar_node_t::RATE_0_LEFT>(),
+                  new Pattern_polar<polar_node_t::RATE_0     >(),
+                  new Pattern_polar<polar_node_t::RATE_1     >(),
+                  new Pattern_polar<polar_node_t::REP_LEFT   >(),
+                  new Pattern_polar<polar_node_t::REP        >(),
+                  new Pattern_polar<polar_node_t::SPC        >()},
                  2,
                  3)
 {
@@ -178,24 +178,24 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id)
+::recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id)
 {
 	if (reverse_depth == static_level)
 	{
 		// use the static version of the decoder
 		Decoder_polar_SC_fast_sys_static<B,R,API_polar,static_level>
-		::decode(polar_patterns, this->s, this->l, off_l, off_s, id);
+		::decode(polar_patterns, this->s, this->l, off_l, off_s, node_id);
 	}
 	else
 	{
 		const int n_elmts = 1 << reverse_depth;
 		const int n_elm_2 = n_elmts >> 1;
-		const pattern_SC_type node_type = polar_patterns.get_node_type(id);
+		const polar_node_t node_type = polar_patterns.get_node_type(node_id);
 
-		const bool is_terminal_pattern = (node_type == pattern_SC_type::RATE_0) ||
-		                                 (node_type == pattern_SC_type::RATE_1) ||
-		                                 (node_type == pattern_SC_type::REP)    ||
-		                                 (node_type == pattern_SC_type::SPC);
+		const bool is_terminal_pattern = (node_type == polar_node_t::RATE_0) ||
+		                                 (node_type == polar_node_t::RATE_1) ||
+		                                 (node_type == polar_node_t::REP)    ||
+		                                 (node_type == polar_node_t::SPC);
 
 		if (!is_terminal_pattern && reverse_depth)
 		{
@@ -208,7 +208,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 					break;
 			}
 
-			this->recursive_decode(off_l + n_elmts, off_s, reverse_depth -1, ++id); // recursive call left
+			this->recursive_decode(off_l + n_elmts, off_s, reverse_depth -1, ++node_id); // recursive call left
 
 			// g
 			switch (node_type)
@@ -220,7 +220,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 					break;
 			}
 
-			this->recursive_decode(off_l + n_elmts, off_s + n_elm_2, reverse_depth -1, ++id); // recursive call right
+			this->recursive_decode(off_l + n_elmts, off_s + n_elm_2, reverse_depth -1, ++node_id); // recursive call right
 
 			// xor
 			switch (node_type)

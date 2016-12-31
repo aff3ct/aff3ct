@@ -8,7 +8,7 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_interface.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/params.h"
 
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
@@ -28,9 +28,9 @@ protected:
 	float sigma;
 
 	// patterns
-	std::vector<Pattern_SC_interface*> patterns_SC;
-	Pattern_SC_interface* pattern_SC_rate0;
-	Pattern_SC_interface* pattern_SC_rate1;
+	std::vector<Pattern_polar_i*> patterns_SC;
+	Pattern_polar_i* pattern_SC_rate0;
+	Pattern_polar_i* pattern_SC_rate1;
 
 	Frozenbits_generator<int> *fb_generator;
 

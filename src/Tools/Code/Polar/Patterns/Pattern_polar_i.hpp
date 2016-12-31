@@ -1,5 +1,5 @@
-#ifndef PATTERN_SC_INTERFACE_HPP_
-#define PATTERN_SC_INTERFACE_HPP_
+#ifndef PATTERN_POLAR_INTERFACE_HPP_
+#define PATTERN_POLAR_INTERFACE_HPP_
 
 #include <cmath>
 #include <cassert>
@@ -12,7 +12,7 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Algo/Tree/Binary_node.hpp"
 
-enum pattern_SC_type
+enum polar_node_t
 {
 	STANDARD = 0,
 	RATE_0_LEFT,
@@ -24,13 +24,14 @@ enum pattern_SC_type
 	NB_PATTERNS
 };
 
-class Pattern_SC_interface
+// interface
+class Pattern_polar_i
 {
 protected:
 	const int N;
 	const int size;
 	const int si_2;
-	const Binary_node<Pattern_SC_interface>* node;
+	const Binary_node<Pattern_polar_i>* node;
 	const int off_l;  // offset for lambda buffer (reals)
 	const int off_s;  // offset for s buffer (bits)
 	const int n_dig;  // number of digits in n
@@ -39,8 +40,7 @@ protected:
 	unsigned id;
 	std::string key;
 
-	Pattern_SC_interface(const int &N,
-	                     const Binary_node<Pattern_SC_interface>* node)
+	Pattern_polar_i(const int &N, const Binary_node<Pattern_polar_i>* node)
 	: N(N),
 	  size(N),
 	  si_2(0),
@@ -70,12 +70,11 @@ protected:
 	}
 
 public:
-	Pattern_SC_interface()
-	 : N(0), size(0), si_2(0), node(nullptr), off_l(0), off_s(0), n_dig(0), n2_dig(0), id(0), key("")
+	Pattern_polar_i() : N(0), size(0), si_2(0), node(nullptr), off_l(0), off_s(0), n_dig(0), n2_dig(0), id(0), key("")
 	{
 	}
 
-	virtual ~Pattern_SC_interface() {}
+	virtual ~Pattern_polar_i() {}
 
 	void         set_id   (unsigned id    ) { this->id = id;    }
 	unsigned     get_id   (               ) { return this->id;  }
@@ -86,13 +85,13 @@ public:
 	int          get_off_l(               ) { return off_l;     }
 	int          get_off_s(               ) { return off_s;     }
 
-	virtual Pattern_SC_interface* alloc(const int &n, const Binary_node<Pattern_SC_interface>* node) const = 0;
+	virtual Pattern_polar_i* alloc(const int &n, const Binary_node<Pattern_polar_i>* node) const = 0;
 
-	virtual pattern_SC_type type()   const = 0;
-	virtual std::string name()       const = 0;
-	virtual std::string short_name() const = 0;
-	virtual std::string fill_color() const = 0;
-	virtual std::string font_color() const = 0;
+	virtual polar_node_t type()       const = 0;
+	virtual std::string  name()       const = 0;
+	virtual std::string  short_name() const = 0;
+	virtual std::string  fill_color() const = 0;
+	virtual std::string  font_color() const = 0;
 
 	virtual std::string f() const = 0;
 	virtual std::string g() const = 0;
@@ -102,10 +101,9 @@ public:
 	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const = 0;
 	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const = 0;
 
-	virtual int match(const int &reverse_graph_depth,
-	                  const Binary_node<Pattern_SC_interface>* node_curr) const = 0;
+	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const = 0;
 
 	virtual bool is_terminal() const = 0;
 };
 
-#endif /* PATTERN_SC_INTERFACE_HPP_ */
+#endif /* PATTERN_POLAR_INTERFACE_HPP_ */

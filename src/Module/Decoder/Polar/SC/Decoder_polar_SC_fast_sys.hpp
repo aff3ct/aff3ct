@@ -3,8 +3,9 @@
 
 #include <map>
 #include <vector>
+
 #include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Code/Polar/Pattern_parser_polar.hpp"
+#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
 #include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"
@@ -19,7 +20,7 @@ protected:
 	      mipp::vector<B> s_bis;        // bits, partial sums
 	const mipp::vector<B> &frozen_bits; // frozen bits
 
-	const Pattern_parser_polar<B> polar_patterns;
+	const Pattern_polar_parser<B> polar_patterns;
 
 public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
@@ -33,7 +34,7 @@ protected:
 	        void store_fast (      mipp::vector<B>& V_N) const;
 	        void unpack     (      mipp::vector<B>& V_N) const;
 
-	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);
+	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
 };
 
 #include "Decoder_polar_SC_fast_sys.hxx"

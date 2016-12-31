@@ -1,5 +1,5 @@
-#ifndef PATTERN_SC_STANDARD_HPP_
-#define PATTERN_SC_STANDARD_HPP_
+#ifndef PATTERN_POLAR_STANDARD_HPP_
+#define PATTERN_POLAR_STANDARD_HPP_
 
 #include <cassert>
 #include <iostream>
@@ -9,34 +9,31 @@
 #include <typeinfo>
 #include <algorithm>
 
-#include "Pattern_SC_interface.hpp"
+#include "Pattern_polar_i.hpp"
 
-template <int T = pattern_SC_type::STANDARD>
-class Pattern_SC : public Pattern_SC_interface
+template <int T = polar_node_t::STANDARD>
+class Pattern_polar : public Pattern_polar_i
 {
 protected:
-	Pattern_SC(const int &N,
-	           const Binary_node<Pattern_SC_interface>* node)
-	: Pattern_SC_interface(N, node)
+	Pattern_polar(const int &N, const Binary_node<Pattern_polar_i>* node) : Pattern_polar_i(N, node)
 	{
 	}
 
 public:
-	Pattern_SC() : Pattern_SC_interface() { }
+	Pattern_polar() : Pattern_polar_i() { }
 
-	virtual Pattern_SC_interface* alloc(const int &N,
-	                                    const Binary_node<Pattern_SC_interface>* node) const
+	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
 	{
-		return new Pattern_SC<pattern_SC_type::STANDARD>(N, node);
+		return new Pattern_polar<polar_node_t::STANDARD>(N, node);
 	}
 
-	virtual ~Pattern_SC() {}
+	virtual ~Pattern_polar() {}
 
-	virtual pattern_SC_type type()   const { return STANDARD;   }
-	virtual std::string name()       const { return "Default"; }
-	virtual std::string short_name() const { return "d";       }
-	virtual std::string fill_color() const { return "#7F7F7F"; }
-	virtual std::string font_color() const { return "#FFFFFF"; }
+	virtual polar_node_t type()       const { return STANDARD;   }
+	virtual std::string  name()       const { return "Default"; }
+	virtual std::string  short_name() const { return "d";       }
+	virtual std::string  fill_color() const { return "#7F7F7F"; }
+	virtual std::string  font_color() const { return "#FFFFFF"; }
 
 	virtual std::string f() const { return "f";  }
 	virtual std::string g() const { return "g";  }
@@ -104,8 +101,7 @@ public:
 		return stream.str();
 	}
 
-	virtual int match(const int &reverse_graph_depth,
-	                  const Binary_node<Pattern_SC_interface>* node_curr) const
+	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const
 	{
 		assert(reverse_graph_depth > 0);
 
@@ -117,4 +113,4 @@ public:
 	virtual bool is_terminal() const { return false; }
 };
 
-#endif /* PATTERN_SC_STANDARD_HPP_ */
+#endif /* PATTERN_POLAR_STANDARD_HPP_ */

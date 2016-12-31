@@ -6,16 +6,16 @@
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
  */
-#ifndef PATTERN_PARSER_POLAR_HPP
-#define PATTERN_PARSER_POLAR_HPP
+#ifndef PATTERN_POLAR_PARSER_HPP
+#define PATTERN_POLAR_PARSER_HPP
 
 #include <map>
 #include <vector>
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
 
+#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
-#include "Tools/Code/Polar/Patterns/Pattern_SC_interface.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 /*!
  * \class Pattern_parser_polar
@@ -23,22 +23,17 @@
  *        cuts when possible.
  */
 template <typename B>
-class Pattern_parser_polar
+class Pattern_polar_parser
 {
 protected:
-	const int N; /*!< Codeword size. */
-	const int m; /*!< Tree depth. */
-
-	const mipp::vector<B>& frozen_bits; /*!< Vector of frozen bits (true if frozen, false otherwise). */
-
-	const std::vector<Pattern_SC_interface*> patterns; /*!< Vector of patterns. */
-	const Pattern_SC_interface *pattern_rate0;         /*!< Terminal pattern when the bit is frozen. */
-	const Pattern_SC_interface *pattern_rate1;         /*!< Terminal pattern when the bit is an information bit. */
-
-	Binary_tree<Pattern_SC_interface> *polar_tree;     /*!< Tree of patterns. */
-
-private:
-	std::vector<unsigned char> pattern_types;          /*!< Tree of patterns represented with a vector of pattern IDs. */
+	const int                            N;             /*!< Codeword size. */
+	const int                            m;             /*!< Tree depth. */
+	const mipp::vector<B>               &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
+	const std::vector<Pattern_polar_i*>  patterns;      /*!< Vector of patterns. */
+	const Pattern_polar_i               *pattern_rate0; /*!< Terminal pattern when the bit is frozen. */
+	const Pattern_polar_i               *pattern_rate1; /*!< Terminal pattern when the bit is an information bit. */
+	      Binary_tree<Pattern_polar_i>  *polar_tree;    /*!< Tree of patterns. */
+	      std::vector<unsigned char>     pattern_types; /*!< Tree of patterns represented with a vector of pattern IDs. */
 
 public:
 	/*!
@@ -50,11 +45,11 @@ public:
 	 * \param pattern_rate0: terminal pattern when the bit is frozen.
 	 * \param pattern_rate1: terminal pattern when the bit is an information bit.
 	 */
-	Pattern_parser_polar(const int& N,
+	Pattern_polar_parser(const int& N,
 	                     const mipp::vector<B>& frozen_bits,
-	                     const std::vector<Pattern_SC_interface*> patterns,
-	                     const Pattern_SC_interface *pattern_rate0,
-	                     const Pattern_SC_interface *pattern_rate1);
+	                     const std::vector<Pattern_polar_i*> patterns,
+	                     const Pattern_polar_i *pattern_rate0,
+	                     const Pattern_polar_i *pattern_rate1);
 
 	/*!
 	 * \brief Constructor.
@@ -65,23 +60,23 @@ public:
 	 * \param pattern_rate0_id: id of the terminal pattern when the bit is frozen (id in the patterns vector).
 	 * \param pattern_rate1_id: id of the terminal pattern when the bit is an info. bit (id in the patterns vector).
 	 */
-	Pattern_parser_polar(const int& N,
+	Pattern_polar_parser(const int& N,
 	                     const mipp::vector<B>& frozen_bits,
-	                     const std::vector<Pattern_SC_interface*> patterns,
+	                     const std::vector<Pattern_polar_i*> patterns,
 	                     const int pattern_rate0_id,
 	                     const int pattern_rate1_id);
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Pattern_parser_polar();
+	virtual ~Pattern_polar_parser();
 
 	/*!
 	 * \brief Gets a binary tree of patterns.
 	 *
 	 * \return a binary tree of patterns.
 	 */
-	const Binary_tree<Pattern_SC_interface>* get_polar_tree() const;
+	const Binary_tree<Pattern_polar_i>* get_polar_tree() const;
 
 	/*!
 	 * \brief Gets a vector of pattern IDs.
@@ -100,16 +95,16 @@ public:
 	 *
 	 * \return the type of the node.
 	 */
-	inline pattern_SC_type get_node_type(const int node_id) const;
+	inline polar_node_t get_node_type(const int node_id) const;
 
 	void release_patterns() const;
 
 private:
-	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_SC_interface>* node_curr);
-	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr);
-	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_SC_interface>* node_curr);
+	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_polar_i>* node_curr);
+	void generate_nodes_indexes             (const Binary_node<Pattern_polar_i>* node_curr);
+	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_polar_i>* node_curr);
 };
 
-#include "Pattern_parser_polar.hxx"
+#include "Pattern_polar_parser.hxx"
 
-#endif /* PATTERN_PARSER_POLAR_HPP */
+#endif /* PATTERN_POLAR_PARSER_HPP */
