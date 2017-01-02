@@ -13,7 +13,7 @@ class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
 {
 protected:
 	const int                        m;              // graph depth
-	const int                        L;              // maximum paths number
+	      int                        L;              // maximum paths number
 	const mipp::vector<B>&           frozen_bits;
 	const Pattern_polar_parser<B>    polar_patterns;
 
@@ -42,15 +42,16 @@ public:
 	                           const int n_frames = 1, const std::string name = "Decoder_polar_SCL_fast_sys");
 	virtual ~Decoder_polar_SCL_fast_sys();
 
-	        void load       (const mipp::vector<R>& Y_N);
-	        void hard_decode(                          );
+	virtual void load       (const mipp::vector<R>& Y_N);
+	virtual void hard_decode(                          );
 	virtual void store      (mipp::vector<B>& V_N      ) const;
-	        void unpack     (mipp::vector<B>& V_N      ) const;
+	virtual void unpack     (mipp::vector<B>& V_N      ) const;
 	virtual void store_fast (mipp::vector<B>& V        ) const;
 
-private:
+protected:
 	inline void recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id     );
 
+private:
 	inline void update_paths_r0 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_r1 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_rep(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
@@ -64,8 +65,9 @@ private:
 	inline int  up_ref_array_idx(const int path, const int r_d                                           ); // return the array
 
 protected:
+	        inline void init_buffers    (           );
 	        inline void delete_path     (int path_id);
-	virtual inline void select_best_path(           );
+	virtual inline int  select_best_path(           );
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"

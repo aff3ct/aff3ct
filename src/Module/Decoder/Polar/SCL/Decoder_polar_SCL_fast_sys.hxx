@@ -8,6 +8,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Transpose/transpose_selector.h"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Math/utils.h"
 
 #include "Decoder_polar_SCL_fast_sys.hpp"
 
@@ -38,14 +39,14 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                   new Pattern_polar<polar_node_t::REP_LEFT   >(),
                   new Pattern_polar<polar_node_t::REP        >()/*,
                   new Pattern_polar<polar_node_t::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
-                  1,
-                  2),
+                 1,
+                 2),
   paths         (L),
   last_paths    (L),
   metrics       (L),
-  Y_N           (                   N + mipp::nElReg<R>()    ),
-  l             (L, mipp::vector<R>(N + mipp::nElReg<R>()   )),
-  s             (L, mipp::vector<B>(N + mipp::nElReg<B>(), 0)),
+  Y_N           (                   N + mipp::nElReg<R>() ),
+  l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
+  s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
   metrics_vec   (3, std::vector<float>()),
   metrics_idx   (3, std::vector<int  >()),
   dup_count     (L, 0),
@@ -54,11 +55,13 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   is_even       (L),
   best_path     (0),
   n_active_paths(1),
-  n_array_ref   (L, std::vector<int>(m, 0)),
-  path_2_array  (L, std::vector<int>(m, 0))
+  n_array_ref   (L, std::vector<int>(m)),
+  path_2_array  (L, std::vector<int>(m))
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
+
+	assert(is_power_of_2(L));
 
 	metrics_vec[0].resize(L * 2);
 	metrics_idx[0].resize(L * 2);
@@ -69,14 +72,10 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	metrics_vec[2].resize((L <= 2 ? 2 : 8) * L);
 	metrics_idx[2].resize((L <= 2 ? 2 : 8) * L);
 
-	for (auto j = 0 ; j < 3 ; j++)
-		for (size_t i = 0 ; i < metrics_idx[j].size() ; i++)
-			metrics_idx[j][i] = i;
-
-	for (auto i = 0; i <= m; i ++)
+	for (auto i = 0; i <= m; i++)
 	{
 		llr_indexes.push_back(std::vector<int>(std::exp2(i)));
-		for (size_t j = 0 ; j < llr_indexes[i].size() ; j++)
+		for (auto j = 0 ; j < (int)llr_indexes[i].size() ; j++)
 			llr_indexes[i][j] = j;
 	}
 }
@@ -90,16 +89,11 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::load(const mipp::vector<R>& Y_N)
+::init_buffers()
 {
-	std::fill(metrics.begin(), metrics.end(), std::numeric_limits<float>::min());
+	std::fill(metrics.begin(), metrics.begin() + L, std::numeric_limits<float>::min());
 	for (auto i = 0; i < L; i++) paths[i] = i;
 	n_active_paths = 1;
-
-	for (auto i = 0; i < 3; i++)
-		std::fill(metrics_vec[i].begin(), metrics_vec[i].end(), std::numeric_limits<float>::max());
-
-	std::copy(Y_N.begin(), Y_N.end(), this->Y_N.begin());
 
 	// at the beginning, path 0 points to array 0
 	std::fill(n_array_ref [0].begin(), n_array_ref [0].end(), 1);
@@ -107,6 +101,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	for (auto i = 1; i < L; i++)
 		std::fill(n_array_ref[i].begin(), n_array_ref[i].end(), 0);
+
+	for (auto i = 0 ; i <               2  * L ; i++) metrics_idx[0][i] = i;
+	for (auto i = 0 ; i <               4  * L ; i++) metrics_idx[1][i] = i;
+	for (auto i = 0 ; i < (L <= 2 ? 2 : 8) * L ; i++) metrics_idx[2][i] = i;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::load(const mipp::vector<R>& Y_N)
+{
+	std::copy(Y_N.begin(), Y_N.begin() + this->N, this->Y_N.begin());
+	init_buffers();
 }
 
 template <typename B, typename R, class API_polar>
@@ -383,20 +389,14 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			for (auto j = 0 ; j < 4 ; j++)
 				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
 
-		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].end(),
+		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].begin() + L * 4,
 			[this](int x, int y) {
 				return metrics_vec[1][x] < metrics_vec[1][y];
 			});
 
-		// TODO: disable this code
 		// L first of the lists are the L best paths
 		for (auto i = 0; i < L; i++)
 			dup_count[metrics_idx[1][i] / 4]++;
-
-//		// TODO: enable this code
-//		// L first of the lists are the L best paths
-//		for (auto i = 0; i < n_active_paths; i++)
-//			dup_count[metrics_idx[1][paths[i]] / 4]++;
 
 		// erase paths
 		auto k = 0;
@@ -421,7 +421,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				dup_count[path] = 0;
 			}
 		}
-		std::fill(dup_count.begin(), dup_count.end(), 0); // TODO: remove this fill
+		std::fill(dup_count.begin(), dup_count.begin() + L, 0);
 	}
 }
 
@@ -457,7 +457,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	else // n_active_paths == L
 	{
 		// sort hypothetic metrics
-		std::sort(metrics_idx[0].begin(), metrics_idx[0].end(),
+		std::sort(metrics_idx[0].begin(), metrics_idx[0].begin() + L * 2,
 			[this](int x, int y) {
 				return metrics_vec[0][x] < metrics_vec[0][y];
 			});
@@ -550,7 +550,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		}
 	}
 
-	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + L, metrics_idx[2].end(),
+	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + L, metrics_idx[2].begin() + (L <= 2 ? 2 : 8) * L,
 		[this](int x, int y){
 			return metrics_vec[2][x] < metrics_vec[2][y];
 		});
@@ -581,7 +581,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			dup_count[path] = 0;
 		}
 	}
-	std::fill(dup_count.begin(), dup_count.end(), 0); // TODO: remove this fill
+	std::fill(dup_count.begin(), dup_count.begin() + L, 0);
 }
 
 template <typename B, typename R, class API_polar>
@@ -697,7 +697,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::select_best_path()
 {
 	best_path = -1;
@@ -707,6 +707,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	if (best_path == -1)
 		best_path = 0;
+
+	return n_active_paths;
 }
 
 template <typename B, typename R, class API_polar>

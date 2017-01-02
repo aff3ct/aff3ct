@@ -6,6 +6,7 @@
 #include <map>
 
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Math/utils.h"
 
 #include "Decoder_polar_SCL_naive.hpp"
 
@@ -19,6 +20,8 @@ Decoder_polar_SCL_naive<B,R,F,G>
   frozen_bits(frozen_bits),
   L(L)
 {
+	assert(is_power_of_2(L));
+
 	this->active_paths.insert(0);
 	for (auto i = 0; i < L; i++)
 	{

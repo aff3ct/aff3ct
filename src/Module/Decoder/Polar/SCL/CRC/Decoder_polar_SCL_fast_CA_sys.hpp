@@ -7,7 +7,7 @@
 template <typename B, typename R, class API_polar>
 class Decoder_polar_SCL_fast_CA_sys : public Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
-private:
+protected:
 	CRC<B>& crc;
 	mipp::vector<B> U_test;
 
@@ -17,7 +17,8 @@ public:
 	virtual ~Decoder_polar_SCL_fast_CA_sys(){};
 
 protected:
-	virtual void select_best_path();
+	        bool crc_check       (mipp::vector<B> &s);
+	virtual int  select_best_path(                  );
 };
 
 #include "Decoder_polar_SCL_fast_CA_sys.hxx"

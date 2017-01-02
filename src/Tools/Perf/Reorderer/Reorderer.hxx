@@ -1,16 +1,13 @@
 #include <cmath>
 #include <cassert>
 
+#include "Tools/Math/utils.h"
+
 #include "Reorderer.hpp"
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4717 )
 #endif
-
-constexpr bool is_power_of_2(unsigned x)
-{
-	return (x > 0) && !(x & (x - 1));
-}
 
 template <typename T>
 void Reorderer<T>

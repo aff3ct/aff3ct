@@ -11,8 +11,13 @@
 #include "../../Decoder.hpp"
 
 template <typename B, typename R, class API_polar>
+class Decoder_polar_ASCL_fast_CA_sys;
+
+template <typename B, typename R, class API_polar>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
+	friend Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>;
+
 protected:
 	const int             m;            // graph depth
 	      mipp::vector<R> l;            // lambda, LR or LLR
@@ -28,11 +33,11 @@ public:
 	virtual ~Decoder_polar_SC_fast_sys();
 
 protected:
-	        void load       (const mipp::vector<R>& Y_N);
+	virtual void load       (const mipp::vector<R>& Y_N);
 	virtual void hard_decode(                          );
-	        void store      (      mipp::vector<B>& V_K) const;
-	        void store_fast (      mipp::vector<B>& V_N) const;
-	        void unpack     (      mipp::vector<B>& V_N) const;
+	virtual void store      (      mipp::vector<B>& V_K) const;
+	virtual void store_fast (      mipp::vector<B>& V_N) const;
+	virtual void unpack     (      mipp::vector<B>& V_N) const;
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
 };
