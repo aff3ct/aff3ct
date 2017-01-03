@@ -12,6 +12,7 @@ class Decoder_polar_ASCL_fast_CA_sys : public Decoder_polar_SCL_fast_CA_sys<B,R,
 private:
 	Decoder_polar_SC_fast_sys<B,R,API_polar> sc_decoder;
 	const int L_max;
+	const bool is_full_adaptive;
 
 public:
 	Decoder_polar_ASCL_fast_CA_sys(const int& K, const int& N, const int& max_L, const mipp::vector<B>& frozen_bits,

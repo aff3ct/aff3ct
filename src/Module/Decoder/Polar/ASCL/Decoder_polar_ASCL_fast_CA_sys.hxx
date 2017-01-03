@@ -7,7 +7,7 @@ Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
                                  CRC<B>& crc, const int n_frames, const std::string name)
 : Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc, n_frames, name),
   sc_decoder                                  (K, N       , frozen_bits,      n_frames, name),
-  L_max(L_max)
+  L_max(L_max), is_full_adaptive(true)
 {
 	assert(L_max > 0);
 }
@@ -32,16 +32,26 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)
 	{
-		std::copy(sc_decoder.l.begin(), sc_decoder.l.begin() + this->N, this->Y_N.begin());
-		do
+		if (is_full_adaptive)
 		{
-			int first_node_id = 0, off_l = 0, off_s = 0;
+			std::copy(sc_decoder.l.begin(), sc_decoder.l.begin() + this->N, this->Y_N.begin());
+			do
+			{
+				int first_node_id = 0, off_l = 0, off_s = 0;
 
-			this->L <<= 1;
-			this->init_buffers();
-			this->recursive_decode(off_l, off_s, this->m, first_node_id);
+				this->L <<= 1;
+				this->init_buffers();
+				this->recursive_decode(off_l, off_s, this->m, first_node_id);
+			}
+			while (!this->select_best_path() && this->L < L_max);
+
 		}
-		while (!this->select_best_path() && this->L < L_max);
+		else // pseudo adaptive mode
+		{
+			this->L = this->L_max;
+			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::load(sc_decoder.l);
+			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::hard_decode();
+		}
 	}
 }
 
