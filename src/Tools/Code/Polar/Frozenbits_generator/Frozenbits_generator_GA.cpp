@@ -33,18 +33,18 @@ void Frozenbits_generator_GA<B>
 
 	for (auto l = 1; l <= m; l++)
 	{
-		auto o1 = (int)std::exp2(m - l + 1);
-		auto o2 = (int)std::exp2(m - l);
+		auto o1 = (int)std::exp2(m - l +1);
+		auto o2 = (int)std::exp2(m - l   );
 
-		for (auto t = 0; t < (int)std::exp2(l - 1); t++)
+		for (auto t = 0; t < (int)std::exp2(l -1); t++)
 		{
 			double T = z[t * o1];
 			
-			z[t * o1     ] = phi_inv(1.0 - std::pow(1.0 - phi(T), 2.0));
+			z[t * o1] = phi_inv(1.0 - std::pow(1.0 - phi(T), 2.0));
 			if (z[t * o1] == HUGE_VAL)
 				z[t * o1] = T + M_LN2 / (alpha * gamma);
 
-			z[t * o1 + o2] = 2.0 * T ;
+			z[t * o1 + o2] = 2.0 * T;
 		}
 	}
 
@@ -66,7 +66,7 @@ double Frozenbits_generator_GA<B>
 ::phi_inv(double t)
 {
 	if (t > phi_inv_pivot)	
-		return 4.304964539 * (1 - sqrt(1 + 0.9567131408*std::log(t)));
+		return 4.304964539 * (1 - sqrt(1 + 0.9567131408 * std::log(t)));
 	else
 		return std::pow(a * std::log(t) + b, c);
 }

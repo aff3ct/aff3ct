@@ -25,7 +25,6 @@ private:
 	const double phi_pivot     = 0.867861;
 	const double phi_inv_pivot = 0.6845772418;
 
-	// const double bisection_max = 1000000000;
 	const double bisection_max = std::numeric_limits<double>::max();
 
 	const double epsilon = 0.00000000001;
