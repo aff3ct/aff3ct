@@ -1,36 +1,84 @@
-#include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
 
-#include "AList_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
-AList_reader::
-AList_reader(std::string filename)
+#include "AList_reader.hpp"
+
+std::vector<std::string> split(const std::string &s)
+{
+	std::string buf;                 // have a buffer string
+	std::stringstream ss(s);         // insert the string into a stream
+	std::vector<std::string> tokens; // create vector to hold our words
+
+	while (ss >> buf)
+		tokens.push_back(buf);
+
+	return tokens;
+}
+
+AList_reader
+::AList_reader(std::string filename)
 : n_VN(0), n_CN(0), VN_max_degree(0), CN_max_degree(0), n_branches(0), VN_to_CN(), CN_to_VN()
 {
 	std::ifstream file(filename.c_str(), std::ios::in);
 
 	if (file.is_open())
 	{
-		file >> this->n_VN;
-		file >> this->n_CN;
-		file >> this->VN_max_degree;
-		file >> this->CN_max_degree;
+		auto success = this->read_format1(file);
+		file.close();
 
-		assert(this->n_VN          > 0 &&
-		       this->n_CN          > 0 &&
-		       this->VN_max_degree > 0 &&
-		       this->CN_max_degree > 0);
+		if (!success)
+		{
+			file.open(filename.c_str(), std::ios::in);
+			success = this->read_format2(file);
+			file.close();
 
+			if (!success)
+			{
+				std::cerr << bold_red("(EE) The \"")
+				          << bold_red(filename)
+				          << bold_red("\" file is not supported by ")
+				          << bold_red("the AList reader, exiting.")
+				          << std::endl;
+				std::exit(-1);
+			}
+		}
+	}
+	else
+	{
+		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.") << std::endl;
+		std::exit(-1);
+	}
+}
+
+bool AList_reader
+::read_format1(std::ifstream &file)
+{
+	file >> this->n_VN;
+	file >> this->n_CN;
+	file >> this->VN_max_degree;
+	file >> this->CN_max_degree;
+
+	if (this->n_VN          > 0 &&
+	    this->n_CN          > 0 &&
+	    this->VN_max_degree > 0 &&
+	    this->CN_max_degree > 0)
+	{
 		this->VN_to_CN.resize(this->n_VN);
 		for (auto i = 0; i < (int)this->n_VN; i++)
 		{
 			int n_connections = 0;
 			file >> n_connections;
 
-			assert(n_connections > 0);
-
-			this->VN_to_CN[i].resize(n_connections);
-			this->n_branches += n_connections;
+			if (n_connections > 0)
+			{
+				this->VN_to_CN[i].resize(n_connections);
+				this->n_branches += n_connections;
+			}
+			else
+				return false;
 		}
 
 		this->CN_to_VN.resize(this->n_CN);
@@ -39,9 +87,10 @@ AList_reader(std::string filename)
 			int n_connections = 0;
 			file >> n_connections;
 
-			assert(n_connections > 0);
-
-			this->CN_to_VN[i].resize(n_connections);
+			if (n_connections > 0)
+				this->CN_to_VN[i].resize(n_connections);
+			else
+				return false;
 		}
 
 		for (auto i = 0; i < (int)this->n_VN; i++)
@@ -51,11 +100,14 @@ AList_reader(std::string filename)
 				int C_node_id = 0;
 				file >> C_node_id;
 
-				assert((C_node_id >  0 && j <  (int)this->VN_to_CN[i].size()) ||
-				       (C_node_id <= 0 && j >= (int)this->VN_to_CN[i].size()));
-
-				if (C_node_id)
-					this->VN_to_CN[i][j] = C_node_id -1;
+				if ((C_node_id >  0 && j <  (int)this->VN_to_CN[i].size()) ||
+					(C_node_id <= 0 && j >= (int)this->VN_to_CN[i].size()))
+				{
+					if (C_node_id)
+						this->VN_to_CN[i][j] = C_node_id -1;
+				}
+				else
+					return false;
 			}
 		}
 
@@ -66,26 +118,130 @@ AList_reader(std::string filename)
 				int V_node_id = 0;
 				file >> V_node_id;
 
-				assert((V_node_id >  0 && j <  (int)this->CN_to_VN[i].size()) ||
-				       (V_node_id <= 0 && j >= (int)this->CN_to_VN[i].size()));
+				if ((V_node_id >  0 && j <  (int)this->CN_to_VN[i].size()) ||
+					(V_node_id <= 0 && j >= (int)this->CN_to_VN[i].size()))
+				{
+					if (V_node_id)
+						this->CN_to_VN[i][j] = V_node_id -1;
+				}
+				else
+					return false;
+			}
+		}
+	}
+	else
+		return false;
 
+	return true;
+}
+
+bool AList_reader
+::read_format2(std::ifstream &file)
+{
+	std::string line;
+
+	while (std::getline(file, line)) if (line[0] != '#') break;
+	if (file.eof() || file.fail() || file.bad())  return false;
+	auto values = split(line);
+	if (values.size() < 2) return false;
+
+	this->n_VN = std::stoi(values[0]);
+	this->n_CN = std::stoi(values[1]);
+
+	if (this->n_VN <= 0 || this->n_CN <= 0) return false;
+
+	while (std::getline(file, line)) if (line[0] != '#') break;
+	if (file.eof() || file.fail() || file.bad())  return false;
+	values = split(line);
+	if (values.size() < 2) return false;
+
+	this->VN_max_degree = std::stoi(values[0]);
+	this->CN_max_degree = std::stoi(values[1]);
+
+	if (this->VN_max_degree <= 0 || this->CN_max_degree <= 0) return false;
+
+	while (std::getline(file, line)) if (line[0] != '#') break;
+	if (file.eof() || file.fail() || file.bad())  return false;
+	values = split(line);
+	if (values.size() < this->n_VN) return false;
+
+	this->VN_to_CN.resize(this->n_VN);
+	for (auto i = 0; i < (int)this->n_VN; i++)
+	{
+		auto n_connections = std::stoi(values[i]);
+		if (n_connections > 0)
+		{
+			this->VN_to_CN[i].resize(n_connections);
+			this->n_branches += n_connections;
+		}
+		else
+			return false;
+	}
+
+	while (std::getline(file, line)) if (line[0] != '#') break;
+	if (file.eof() || file.fail() || file.bad())  return false;
+	values = split(line);
+	if (values.size() < this->n_CN) return false;
+
+	this->CN_to_VN.resize(this->n_CN);
+	for (auto i = 0; i < (int)this->n_CN; i++)
+	{
+		auto n_connections = std::stoi(values[i]);
+		if (n_connections > 0)
+			this->CN_to_VN[i].resize(n_connections);
+		else
+			return false;
+	}
+
+	for (auto i = 0; i < (int)this->n_VN; i++)
+	{
+		while (std::getline(file, line)) if (line[0] != '#') break;
+		if (file.eof() || file.fail() || file.bad())  return false;
+		values = split(line);
+
+		if (values.size() < this->VN_to_CN[i].size()) return false;
+
+		for (auto j = 0; j < (int)this->VN_max_degree; j++)
+		{
+			auto C_node_id = (j < (int)values.size()) ? std::stoi(values[j]) : 0;
+			if ((C_node_id >  0 && j <  (int)this->VN_to_CN[i].size()) ||
+				(C_node_id <= 0 && j >= (int)this->VN_to_CN[i].size()))
+			{
+				if (C_node_id)
+					this->VN_to_CN[i][j] = C_node_id -1;
+			}
+			else
+				return false;
+		}
+	}
+
+	for (auto i = 0; i < (int)this->n_CN; i++)
+	{
+		while (std::getline(file, line)) if (line[0] != '#') break;
+		if (file.eof() || file.fail() || file.bad())  return false;
+		values = split(line);
+
+		if (values.size() < this->CN_to_VN[i].size()) return false;
+
+		for (auto j = 0; j < (int)this->CN_max_degree; j++)
+		{
+			auto V_node_id = (j < (int)values.size()) ? std::stoi(values[j]) : 0;
+			if ((V_node_id >  0 && j <  (int)this->CN_to_VN[i].size()) ||
+				(V_node_id <= 0 && j >= (int)this->CN_to_VN[i].size()))
+			{
 				if (V_node_id)
 					this->CN_to_VN[i][j] = V_node_id -1;
 			}
+			else
+				return false;
 		}
+	}
 
-		file.close();
-	}
-	else
-	{
-		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
-		          << std::endl;
-		std::exit(-1);
-	}
+	return true;
 }
 
-AList_reader::
-~AList_reader()
+AList_reader
+::~AList_reader()
 {
 }
 

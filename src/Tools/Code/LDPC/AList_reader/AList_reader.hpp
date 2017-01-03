@@ -1,6 +1,7 @@
 #ifndef ALIST_READER_HPP_
 #define ALIST_READER_HPP_
 
+#include <fstream>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -34,6 +35,10 @@ public:
 	mipp::vector<unsigned int > get_linear_VN_to_CN   () const;
 	mipp::vector<unsigned int > get_linear_CN_to_VN   () const;
 	mipp::vector<unsigned int > get_branches_transpose() const;
+
+private:
+	bool read_format1(std::ifstream &file);
+	bool read_format2(std::ifstream &file);
 };
 
 #endif /* ALIST_READER_HPP_ */
