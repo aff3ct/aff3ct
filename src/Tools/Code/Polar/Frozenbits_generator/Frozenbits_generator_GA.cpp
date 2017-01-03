@@ -8,10 +8,6 @@
 
 #include "Frozenbits_generator_GA.hpp"
 
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
-#endif
-
 template <typename B>
 Frozenbits_generator_GA<B>
 ::Frozenbits_generator_GA(const int K, const int N, const float sigma)
@@ -35,7 +31,7 @@ void Frozenbits_generator_GA<B>
 		this->best_channels[i] = i;
 
 	for (auto i = 0; i < std::exp2(m); i++)
-		z[i] = 4.0 / std::pow((double)this->sigma, 2.0);
+		z[i] = 2.0 / std::pow((double)this->sigma, 2.0);
 
 	for (auto l = 1; l <= m; l++)
 	{
@@ -45,8 +41,11 @@ void Frozenbits_generator_GA<B>
 		for (auto t = 0; t < (int)std::exp2(l - 1); t++)
 		{
 			double T = z[t * o1];
-			z[t * o1     ] = (T < 140) ? phi_inv(1.0 - std::pow(1.0 - phi(T), 2.0)) : 
-			                  T < 2810 ? phi_inv((2.0 - phi(T)) * phi(T)) : (T - 2.77);
+			
+			z[t * o1     ] = phi_inv(1.0 - std::pow(1.0 - phi(T), 2.0));
+			if (z[t * o1] == HUGE_VAL)
+				z[t * o1] = T + M_LN2 / (alpha * gamma);
+
 			z[t * o1 + o2] = 2.0 * T ;
 		}
 	}
@@ -59,45 +58,19 @@ double Frozenbits_generator_GA<B>
 ::phi(double t)
 {
 	if (t < phi_pivot)
-		return std::exp(alpha * std::pow(t, gamma) + beta);
+		return std::exp(0.0564 * t * t - 0.48560 * t);
 	else // if(t >= phi_pivot)
-		return std::sqrt(M_PI / t) * std::exp(- t / 4.0) * (1.0 - 10.0 / (7.0 * t));
+		return std::exp(alpha * std::pow(t, gamma) + beta);
 }
 
 template <typename B>
 double Frozenbits_generator_GA<B>
 ::phi_inv(double t)
 {
-	double x1, x2, phi_m;
-	if (t >= phi_inv_pivot)	
-	{
-		return std::pow(a * std::log(t) + b, c);
-	}
+	if (t > phi_inv_pivot)	
+		return 4.304964539 * (1 - sqrt(1 + 0.9567131408*std::log(t)));
 	else
-	{
-		x1 = 10.0;
-		x2 = bisection_max;
-		while(true)
-		{
-			phi_m = phi((x2 + x1) / 2.0);
-
-			if (phi_m < t)
-			{
-				if ((t - phi_m) / t < epsilon)
-					return (x2 + x1) / 2.0;
-				else
-					x2 = (x2 + x1) / 2.0;
-			}
-			else
-			{
-				if ((phi_m - t) / t < epsilon)
-					return (x2 + x1) / 2.0;
-				else
-					x1 = (x2 + x1) / 2.0;
-			}
-		}
-		return INFINITY;
-	}
+		return std::pow(a * std::log(t) + b, c);
 }
 
 // ==================================================================================== explicit template instantiation 

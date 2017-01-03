@@ -22,8 +22,8 @@ private:
 	const double b = -beta / alpha;
 	const double c =  1.0  / gamma;
 
-	const double phi_pivot     = 10.0;
-	const double phi_inv_pivot = 0.0394;
+	const double phi_pivot     = 0.867861;
+	const double phi_inv_pivot = 0.6845772418;
 
 	// const double bisection_max = 1000000000;
 	const double bisection_max = std::numeric_limits<double>::max();
