@@ -44,7 +44,6 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 				this->recursive_decode(off_l, off_s, this->m, first_node_id);
 			}
 			while (!this->select_best_path() && this->L < L_max);
-
 		}
 		else // pseudo adaptive mode
 		{
