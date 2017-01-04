@@ -39,6 +39,7 @@ public:
 private:
 	bool read_format1(std::ifstream &file);
 	bool read_format2(std::ifstream &file);
+	bool read_format3(std::ifstream &file);
 };
 
 #endif /* ALIST_READER_HPP_ */
