@@ -17,7 +17,7 @@ Decoder_LDPC_BP_flooding<B,R>
 : Decoder_SISO<B,R>      (K, N, n_frames, 1, name            ),
   n_ite                  (n_ite                              ),
   n_V_nodes              (N                                  ), // same as N but more explicit
-  n_C_nodes              (N - K                              ),
+  n_C_nodes              ((int)alist_data.get_n_CN()         ),
   n_branches             ((int)alist_data.get_n_branches()   ),
   enable_syndrome        (enable_syndrome                    ),
   init_flag              (false                              ),
