@@ -47,7 +47,7 @@ _aff3ct() {
 		      --sim-inter-lvl --cde-info-bits -K --cde-size -N --src-type     \
 		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
 		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type           \
-		      --chn-path --chn-blk-fad --qnt-type --qnt-int --qnt-bits        \
+		      --chn-path --chn-blk-fad --qnt-type --qnt-dec --qnt-bits        \
 		      --qnt-range --dec-type --dec-implem --term-no --term-freq       \
 		      --sim-seed --sim-mpi-comm"
 	fi
@@ -198,7 +198,7 @@ _aff3ct() {
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |        \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |          \
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
-		--cde-size | -N | --mod-bps | --mod-ups | --qnt-int | --qnt-bits |    \
+		--cde-size | -N | --mod-bps | --mod-ups | --qnt-dec | --qnt-bits |    \
 		--qnt-range | --qnt-type | --dec-type | --dec-implem | --sim-benchs | \
 		-b | --sim-debug-limit |  --mnt-max-fe | -e | --term-type |           \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
