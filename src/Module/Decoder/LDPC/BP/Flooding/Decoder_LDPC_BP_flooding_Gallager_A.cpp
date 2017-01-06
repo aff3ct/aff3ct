@@ -51,30 +51,30 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::hard_decode()
 {
-	// actual decoding
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
-		// beginning of the iteration upon all the matrix lines
 		auto C_to_V_ptr = this->C_to_V.data();
 		auto V_to_C_ptr = this->V_to_C.data();
 
 		// V -> C
 		for (auto i = 0; i < this->n_V_nodes; i++)
 		{
-			// VN node accumulate all the incoming messages
 			const auto length = this->n_parities_per_variable[i];
-
-			auto cur_state = this->Y_N[i];
-			if (ite > 0)
-			{
-				auto j = 0;
-				while (C_to_V_ptr[j] != cur_state && j++ < length);
-				cur_state = (j == length) ? !cur_state : cur_state;
-			}
-
-			// generate the outcoming messages to the CNs
 			for (auto j = 0; j < length; j++)
+			{
+				auto cur_state = this->Y_N[i];
+				if (ite > 0)
+				{
+					auto count = 0;
+					for (auto k = 0; k < length; k++)
+						if (k != j && C_to_V_ptr[k] != cur_state)
+							count++;
+
+					cur_state = count == (length -1) ? !cur_state : cur_state;
+				}
+
 				V_to_C_ptr[j] = cur_state;
+			}
 
 			C_to_V_ptr += length; // jump to the next node
 			V_to_C_ptr += length; // jump to the next node
@@ -94,10 +94,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 			// regenerate the CN outcoming values
 			for (auto j = 0; j < length; j++)
-			{
-				const auto val = this->V_to_C[transpose_ptr[j]];
-				this->C_to_V[transpose_ptr[j]] = acc ^ val;
-			}
+				this->C_to_V[transpose_ptr[j]] = acc ^ this->V_to_C[transpose_ptr[j]];
 
 			transpose_ptr += length;
 			syndrome = syndrome || acc;
