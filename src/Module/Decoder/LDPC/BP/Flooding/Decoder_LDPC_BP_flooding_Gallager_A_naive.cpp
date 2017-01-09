@@ -7,27 +7,17 @@
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A_naive(const int &K, const int &N, const int& n_ite,
-                                            const AList_reader &alist_data,
-                                            const bool enable_syndrome,
-                                            const int n_frames,
-                                            const std::string name)
-: Decoder_SISO<B,R>      (K, N, n_frames, 1, name            ),
-  n_ite                  (n_ite                              ),
-  n_V_nodes              (N                                  ), // same as N but more explicit
-  n_C_nodes              ((int)alist_data.get_n_CN()         ),
-  n_branches             ((int)alist_data.get_n_branches()   ),
-  enable_syndrome        (enable_syndrome                    ),
-
-  n_variables_per_parity (alist_data.get_n_VN_per_CN()       ),
-  n_parities_per_variable(alist_data.get_n_CN_per_VN()       ),
-  transpose              (alist_data.get_branches_transpose()),
-
-  Y_N                    (N                                  ),
-  C_to_V                 (this->n_branches,                 0),
-  V_to_C                 (this->n_branches,                 0)
+::Decoder_LDPC_BP_flooding_Gallager_A_naive(const int &K, const int &N, const int& n_ite, const AList_reader &H,
+                                            const int n_frames, const std::string name)
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name   ),
+  n_ite            (n_ite                     ),
+  H                (H                         ),
+  transpose        (H.get_branches_transpose()),
+  Y_N              (N                         ),
+  C_to_V           (H.get_n_branches(),      0),
+  V_to_C           (H.get_n_branches(),      0)
 {
-	assert(N == (int)alist_data.get_n_VN());
+	assert(this->N == (int)H.get_n_VN());
 	assert(n_ite > 0);
 }
 
@@ -39,30 +29,30 @@ Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
-::load(const mipp::vector<R>& Y_N)
+::load(const mipp::vector<R>& Y_N_chn)
 {
-	assert(Y_N.size() >= this->Y_N.size());
+	assert(Y_N_chn.size() >= Y_N.size());
 
 	for (auto i = 0; i < this->N; i++)
-		this->Y_N[i] = Y_N[i] < 0;
+		Y_N[i] = Y_N_chn[i] < 0;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 ::hard_decode()
 {
-	for (auto ite = 0; ite < this->n_ite; ite++)
+	for (auto ite = 0; ite < n_ite; ite++)
 	{
-		auto C_to_V_ptr = this->C_to_V.data();
-		auto V_to_C_ptr = this->V_to_C.data();
+		auto C_to_V_ptr = C_to_V.data();
+		auto V_to_C_ptr = V_to_C.data();
 
 		// V -> C
-		for (auto i = 0; i < this->n_V_nodes; i++)
+		for (auto i = 0; i < H.get_n_VN(); i++)
 		{
-			const auto length = this->n_parities_per_variable[i];
+			const auto length = (int)H.get_VN_to_CN()[i].size();
 			for (auto j = 0; j < length; j++)
 			{
-				auto cur_state = this->Y_N[i];
+				auto cur_state = Y_N[i];
 				if (ite > 0)
 				{
 					auto count = 0;
@@ -82,26 +72,26 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 
 		// C -> V
 		auto syndrome = 0;
-		auto transpose_ptr = this->transpose.data();
-		for (auto i = 0; i < this->n_C_nodes; i++)
+		auto transpose_ptr = transpose.data();
+		for (auto i = 0; i < H.get_n_CN(); i++)
 		{
-			const auto length = this->n_variables_per_parity[i];
+			const auto length = (int)H.get_CN_to_VN()[i].size();
 
 			// accumulate the incoming information in CN
 			auto acc = 0;
 			for (auto j = 0; j < length; j++)
-				acc ^= this->V_to_C[transpose_ptr[j]];
+				acc ^= V_to_C[transpose_ptr[j]];
 
 			// regenerate the CN outcoming values
 			for (auto j = 0; j < length; j++)
-				this->C_to_V[transpose_ptr[j]] = acc ^ this->V_to_C[transpose_ptr[j]];
+				C_to_V[transpose_ptr[j]] = acc ^ V_to_C[transpose_ptr[j]];
 
 			transpose_ptr += length;
 			syndrome = syndrome || acc;
 		}
 
 		// stop criterion
-		if (this->enable_syndrome && (syndrome == 0))
+		if (syndrome == 0)
 			break;
 	}
 }
@@ -113,10 +103,10 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 	assert((int)V_K.size() >= this->K);
 
 	// majority vote
-	auto C_to_V_ptr = this->C_to_V.data();
+	auto C_to_V_ptr = C_to_V.data();
 	for (auto i = 0; i < this->K; i++)
 	{
-		const auto length = this->n_parities_per_variable[i];
+		const auto length = (int)H.get_VN_to_CN()[i].size();
 		auto count = 0;
 
 		for (auto j = 0; j < length; j++)
