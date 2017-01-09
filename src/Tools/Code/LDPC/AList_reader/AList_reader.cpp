@@ -31,7 +31,7 @@ bool getline(std::ifstream &file, std::string &line)
 
 AList_reader
 ::AList_reader(std::string filename)
-: n_VN(0), n_CN(0), VN_max_degree(0), CN_max_degree(0), n_branches(0), VN_to_CN(), CN_to_VN()
+: n_VN(0), n_CN(0), VN_max_degree(0), CN_max_degree(0), n_branches(0), VN_to_CN(), CN_to_VN(), branches_transpose()
 {
 	std::ifstream file(filename.c_str(), std::ios::in);
 
@@ -69,6 +69,8 @@ AList_reader
 		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.") << std::endl;
 		std::exit(-1);
 	}
+
+	this->compute_branches_transpose();
 }
 
 // perfect AList format
@@ -408,11 +410,10 @@ mipp::vector<unsigned int> AList_reader
 	return linear_C_to_V;
 }
 
-mipp::vector<unsigned int> AList_reader
-::get_branches_transpose() const
+void AList_reader
+::compute_branches_transpose()
 {
-	mipp::vector<unsigned int> transpose(this->n_branches);
-
+	branches_transpose.resize(this->get_n_branches());
 	mipp::vector<unsigned char> connections(VN_to_CN.size(), 0);
 
 	auto k = 0;
@@ -430,10 +431,14 @@ mipp::vector<unsigned int> AList_reader
 
 			assert(connections[id_V] <= (int)VN_to_CN[id_V].size());
 
-			transpose[k] = branch_id;
+			branches_transpose[k] = branch_id;
 			k++;
 		}
 	}
+}
 
-	return transpose;
+const mipp::vector<unsigned int>& AList_reader
+::get_branches_transpose() const
+{
+	return branches_transpose;
 }

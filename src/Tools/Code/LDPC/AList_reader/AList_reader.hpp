@@ -16,6 +16,7 @@ private:
 
 	std::vector<std::vector<unsigned int>> VN_to_CN;
 	std::vector<std::vector<unsigned int>> CN_to_VN;
+	mipp::vector<unsigned int> branches_transpose;
 
 public:
 	AList_reader(std::string filename);
@@ -30,16 +31,17 @@ public:
 	const std::vector<std::vector<unsigned int>>& get_VN_to_CN() const;
 	const std::vector<std::vector<unsigned int>>& get_CN_to_VN() const;
 
-	mipp::vector<unsigned char> get_n_VN_per_CN       () const;
-	mipp::vector<unsigned char> get_n_CN_per_VN       () const;
-	mipp::vector<unsigned int > get_linear_VN_to_CN   () const;
-	mipp::vector<unsigned int > get_linear_CN_to_VN   () const;
-	mipp::vector<unsigned int > get_branches_transpose() const;
+	      mipp::vector<unsigned char>  get_n_VN_per_CN       () const;
+	      mipp::vector<unsigned char>  get_n_CN_per_VN       () const;
+	      mipp::vector<unsigned int >  get_linear_VN_to_CN   () const;
+	      mipp::vector<unsigned int >  get_linear_CN_to_VN   () const;
+	const mipp::vector<unsigned int >& get_branches_transpose() const;
 
 private:
 	bool read_format1(std::ifstream &file);
 	bool read_format2(std::ifstream &file);
 	bool read_format3(std::ifstream &file);
+	void compute_branches_transpose();
 };
 
 #endif /* ALIST_READER_HPP_ */
