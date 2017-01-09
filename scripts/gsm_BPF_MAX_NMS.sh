@@ -2,7 +2,7 @@
 
 cd ../build
 
-./aff3ct					 \
+./bin/aff3ct					 \
 	--sim-type	   BFERI	 \
     --sim-prec     32        \
 	--sim-snr-min  0.0		 \
