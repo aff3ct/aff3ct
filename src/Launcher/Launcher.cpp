@@ -156,7 +156,7 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, GSM, GSM_TBLESS, USER"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
@@ -327,6 +327,7 @@ void Launcher<B,R,Q>
 	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
 		params.modulator.complex = false;
 
+
 	if(ar.exist_arg({"mod-cpm-std"   })) params.modulator.cpm_std         = ar.get_arg    ({"mod-cpm-std"   });
 	if (params.modulator.type == "CPM")
 	{
@@ -365,14 +366,6 @@ void Launcher<B,R,Q>
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
 		params.modulator.bits_per_symbol = 1;
-
-	if (params.modulator.type == "GSM" || params.modulator.type == "GSM_TBLESS")
-	{
-		params.modulator.bits_per_symbol = 1;
-		params.modulator.upsample_factor = 5;
-		params.demodulator.no_sig2 = true;
-	}
-
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
