@@ -5,6 +5,7 @@
 #include "Module/Modulator/PAM/Modulator_PAM.hpp"
 #include "Module/Modulator/QAM/Modulator_QAM.hpp"
 #include "Module/Modulator/PSK/Modulator_PSK.hpp"
+#include "Module/Modulator/CPM/Modulator_CPM.hpp"
 #include "Module/Modulator/GSM/Modulator_GSM.hpp"
 #include "Module/Modulator/GSM/Modulator_GSM_TBLess.hpp"
 #include "Module/Modulator/User/Modulator_user.hpp"
@@ -65,6 +66,17 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 			modulator = new Modulator_GSM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma);
 		else if (params.demodulator.max == "MAXSS")
 			modulator = new Modulator_GSM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma);
+	}
+	else if (params.modulator.type == "CPM")
+	{
+		if (params.demodulator.max == "MAX")
+			modulator = new Modulator_CPM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+		else if (params.demodulator.max == "MAXL")
+			modulator = new Modulator_CPM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+		else if (params.demodulator.max == "MAXS")
+			modulator = new Modulator_CPM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+		else if (params.demodulator.max == "MAXSS")
+			modulator = new Modulator_CPM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
 	}
 	else if (params.modulator.type == "GSM_TBLESS")
 	{

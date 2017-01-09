@@ -6,61 +6,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Modulator_GSM_BCJR.hpp"
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// BCJR tools //////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-template <typename Q>
-struct negative_inf 
-{
-	static Q get() { return -std::numeric_limits<Q>::max(); } 
-};
-
-template <>
-struct negative_inf <short>
-{
-	static short get() { return -(1 << (sizeof(short) * 8 -2)); }
-};
-
-template <>
-struct negative_inf <signed char>
-{
-	static signed char get() { return -63; }
-};
-
-template <typename Q, proto_max<Q> MAX>
-struct BCJR_normalize
-{
-	// Adrien comment's: I think that the normalisation is useless in floating point arithmetic
-	static void apply(Q *metrics, const int &i, const int &n_states)
-	{
-		// normalization
-		auto norm_val = negative_inf<Q>::get();
-		for (auto j = 0; j < n_states; j++)
-			norm_val = MAX(norm_val, metrics[j]);
-
-		for (auto j = 0; j < n_states; j++)
-			metrics[j] -= norm_val;
-	}
-};
-
-template <proto_max<signed char> MAX>
-struct BCJR_normalize <signed char,MAX>
-{
-	static void apply(signed char *metrics, const int &i, const int &n_states)
-	{
-		// normalization & saturation
-		auto norm_val = negative_inf<signed char>::get();
-		for (auto j = 0; j < n_states; j++)
-			norm_val = MAX(norm_val, metrics[j]);
-
-		for (auto j = 0; j < n_states; j++)
-			metrics[j] = saturate<signed char>(metrics[j] - norm_val, -63, +63);
-	}
-};
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "../../CPM/BCJR/BCJR_tools.hpp"
 
 template <typename Q, proto_max<Q> MAX>
 Modulator_GSM_BCJR<Q,MAX>
@@ -145,8 +91,8 @@ void Modulator_GSM_BCJR<Q,MAX>
 ::compute_alpha_beta_gamma(const mipp::vector<Q> &Lch_N)
 {
 	// alpha and beta initialization
-	std::fill(this->alpha.begin(), this->alpha.end(), negative_inf<Q>::get());
-	std::fill(this->beta .begin(), this->beta .end(), negative_inf<Q>::get());
+	std::fill(this->alpha.begin(), this->alpha.end(), negative_inf<Q>());
+	std::fill(this->beta .begin(), this->beta .end(), negative_inf<Q>());
 	this->alpha[0                                     ] = 0;
 	this->beta [(this->frame_size -1) * this->n_states] = 0;
 
@@ -189,8 +135,8 @@ void Modulator_GSM_BCJR<Q,MAX>
 		}
 
 		// normalize alpha and beta vectors (not impact on the decoding performances)
-		BCJR_normalize<Q,MAX>::apply(&this->alpha[                    (i +0)  * this->n_states], i, this->n_states);
-		BCJR_normalize<Q,MAX>::apply(&this->beta [(this->frame_size - (i +1)) * this->n_states], i, this->n_states);
+		BCJR_normalize<Q,MAX>(&this->alpha[                    (i +0)  * this->n_states], i, this->n_states);
+		BCJR_normalize<Q,MAX>(&this->beta [(this->frame_size - (i +1)) * this->n_states], i, this->n_states);
 	}
 }
 
@@ -202,7 +148,7 @@ void Modulator_GSM_BCJR<Q,MAX>
 	// initialize proba_msg_symb
 	for (auto i = 0; i < this->frame_size; i++)
 		for (auto j = 0; j < this->m_order; j++)
-			proba_msg_symb[i * this->m_order +j] = negative_inf<Q>::get();
+			proba_msg_symb[i * this->m_order +j] = negative_inf<Q>();
 
 	for (auto i = 0; i < this->frame_size; i++)
 		for (auto j = 0; j < this->m_order; j++)
@@ -220,7 +166,7 @@ void Modulator_GSM_BCJR<Q,MAX>
 ::bits_probas()
 {
 	// initialize proba_msg_bits
-	std::fill(proba_msg_bits.begin(), proba_msg_bits.end(), negative_inf<Q>::get());
+	std::fill(proba_msg_bits.begin(), proba_msg_bits.end(), negative_inf<Q>());
 
 	for (auto i = 0; i < this->frame_size; i++)
 	{

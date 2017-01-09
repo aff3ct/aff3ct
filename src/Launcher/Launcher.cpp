@@ -44,6 +44,12 @@ Launcher<B,R,Q>
 	params.modulator  .type              = "BPSK";
 	params.modulator  .bits_per_symbol   = 1;
 	params.modulator  .upsample_factor   = 1;
+	params.modulator  .mapping			 = "NATURAL";
+	params.modulator  .cpm_std			 = "";
+	params.modulator  .cpm_L			 = 2;
+	params.modulator  .cpm_k			 = 1;
+	params.modulator  .cpm_p			 = 2;
+	params.modulator  .wave_shape		 = "GMSK";
 	params.modulator  .complex           = true;
 	params.demodulator.max               = "MAXSS";
 	params.demodulator.no_sig2           = false;
@@ -150,7 +156,7 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS, USER"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, GSM, GSM_TBLESS, USER"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
@@ -160,6 +166,28 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-const-path"}] =
 		{"string",
 		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
+
+	opt_args[{"mod-cpm-std"}] =
+		{"string",
+		 "the selection of a default cpm standard hardly implemented",
+		 "GSM"};
+	opt_args[{"mod-cpm-L"}] =
+		{"positive_int",
+		 "cpm pulse width or cpm memory"};
+	opt_args[{"mod-cpm-k"}] =
+		{"positive_int",
+		 "modulation index numerator"};
+	opt_args[{"mod-cpm-p"}] =
+		{"positive_int",
+		 "modulation index denumerator"};
+	opt_args[{"mod-map"}] =
+		{"string",
+		 "symbols mapping layout",
+		 "NATURAL, GRAY"};
+	opt_args[{"mod-ws"}] =
+		{"string",
+		 "wave shape",
+		 "GMSK, REC, RCOS"};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{"dmod-max"}] =
@@ -256,7 +284,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
 #endif
 #ifdef ENABLE_MPI
-	if(ar.exist_arg({"sim-mpi-comm"     })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
+	if(ar.exist_arg({"sim-mpi-comm"       })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
 
 	int max_n_threads_global;
 	int max_n_threads_local = params.simulation.n_threads;
@@ -299,9 +327,40 @@ void Launcher<B,R,Q>
 	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
 		params.modulator.complex = false;
 
+	if(ar.exist_arg({"mod-cpm-std"   })) params.modulator.cpm_std         = ar.get_arg    ({"mod-cpm-std"   });
+	if (params.modulator.type == "CPM")
+	{
+		if(params.modulator.cpm_std == "GSM")
+		{
+			params.modulator.cpm_L			= 3;
+			params.modulator.cpm_k 			= 1;
+			params.modulator.cpm_p			= 2;
+			params.modulator.bits_per_symbol= 1;
+			params.modulator.upsample_factor= 5;
+			params.modulator.mapping		= "NATURAL";
+			params.modulator.wave_shape		= "GMSK";
+		}
+		else if(params.modulator.cpm_std == "")
+		{
+
+		}
+		else
+		{
+			std::cerr<<bold_red("(EE) Unknown chain standard")<<std::endl;
+			exit(-1);
+		}
+	}
+
 	if(ar.exist_arg({"mod-bps"       })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
 	if(ar.exist_arg({"mod-ups"       })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
 	if(ar.exist_arg({"mod-const-path"})) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
+
+	if(ar.exist_arg({"mod-cpm-L"     })) params.modulator.cpm_L           = ar.get_arg_int({"mod-cpm-L"     });
+	if(ar.exist_arg({"mod-cpm-p"     })) params.modulator.cpm_p           = ar.get_arg_int({"mod-cpm-p"     });
+	if(ar.exist_arg({"mod-cpm-k"     })) params.modulator.cpm_k           = ar.get_arg_int({"mod-cpm-k"     });
+	if(ar.exist_arg({"mod-map"       })) params.modulator.mapping         = ar.get_arg    ({"mod-map"       });
+	if(ar.exist_arg({"mod-ws"        })) params.modulator.wave_shape      = ar.get_arg    ({"mod-ws"        });
+
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
@@ -313,6 +372,7 @@ void Launcher<B,R,Q>
 		params.modulator.upsample_factor = 5;
 		params.demodulator.no_sig2 = true;
 	}
+
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
@@ -483,14 +543,22 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	std::string modulation = std::to_string((int)(1 << params.modulator.bits_per_symbol)) + "-" + params.modulator.type;
-	if ((params.modulator.type == "BPSK") || (params.modulator.type == "BPSK_FAST")|| (params.modulator.type == "GSM") ||
-		(params.modulator.type == "GSM_TBLESS"))
-		modulation = params.modulator.type;
-	if (params.modulator.upsample_factor > 1)
-		modulation += " (" + std::to_string(params.modulator.upsample_factor) + "-UPS)";
+	p.push_back(std::make_pair("Type", this->params.modulator.type));
+	if (params.modulator.type == "CPM")
+	{
+		if(params.modulator.cpm_std.size())
+			p.push_back(std::make_pair("cpm-std", this->params.modulator.cpm_std));
 
-	p.push_back(std::make_pair("Type", modulation));
+		p.push_back(std::make_pair("cpm-L", std::to_string(this->params.modulator.cpm_L)));
+		p.push_back(std::make_pair("cpm-k", std::to_string(this->params.modulator.cpm_k)));
+		p.push_back(std::make_pair("cpm-p", std::to_string(this->params.modulator.cpm_p)));
+	}
+
+	p.push_back(std::make_pair("bps", std::to_string(this->params.modulator.bits_per_symbol)));
+	p.push_back(std::make_pair("ups", std::to_string(this->params.modulator.upsample_factor)));
+	p.push_back(std::make_pair("mapping", this->params.modulator.mapping));
+	p.push_back(std::make_pair("wave shape", this->params.modulator.wave_shape));
+
 
 	return p;
 }

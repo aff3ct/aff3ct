@@ -46,8 +46,9 @@ _aff3ct() {
 		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
 		      --sim-inter-lvl --cde-info-bits -K --cde-size -N --src-type     \
 		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
+		      --mod-ws --mod-map --mod-cpm-L --mod-cpm-p --mod-cpm-k --mod-cpm-std \
 		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type           \
-		      --chn-path --chn-blk-fad --qnt-type --qnt-dec --qnt-bits        \
+		      --chn-path --chn-blk-fad --qnt-type --qnt-int --qnt-bits        \
 		      --qnt-range --dec-type --dec-implem --term-no --term-freq       \
 		      --sim-seed --sim-mpi-comm"
 	fi
@@ -198,9 +199,11 @@ _aff3ct() {
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |        \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |          \
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
-		--cde-size | -N | --mod-bps | --mod-ups | --qnt-dec | --qnt-bits |    \
-		--qnt-range | --qnt-type | --dec-type | --dec-implem | --sim-benchs | \
-		-b | --sim-debug-limit |  --mnt-max-fe | -e | --term-type |           \
+		--cde-size | -N |													  \
+		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
+		--qnt-int | --qnt-bits | --qnt-range | --qnt-type | 				  \
+		--dec-type | --dec-implem | --sim-benchs | -b | --sim-debug-limit |	  \
+		--mnt-max-fe | -e | --term-type |     							      \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
@@ -327,8 +330,23 @@ _aff3ct() {
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
+		--mod-cpm-std)
+			local params="GSM"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--mod-map)
+			local params="NATURAL GRAY"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--mod-ws)
+			local params="GMSK REC RCOS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
 		--mod-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS USER"
+			local params="BPSK BPSK_FAST PSK PAM QAM CPM USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

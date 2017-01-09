@@ -7,6 +7,12 @@ using B_16 = short;
 using B_32 = int;
 using B_64 = long long;
 
+// type for the symbols
+using S_8  = signed char;
+using S_16 = short;
+using S_32 = int;
+using S_64 = long long;
+
 // type for the real numbers (before quantization)
 using R_8  = float;
 using R_16 = float;
