@@ -17,4 +17,4 @@ cd ../build
     --dec-type       SCAN        \
     --dec-implem     NAIVE       \
     --cde-sigma      0.8         \
-    $1 $2 $3 $4 $5 $6 $7 $8 $9 $10
+    $*

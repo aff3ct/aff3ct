@@ -14,4 +14,4 @@ cd ../build
     --dec-ite        6           \
     --dec-type       LTE         \
     --dec-implem     FAST        \
-    $1 $2 $3 $4 $5 $6 $7 $8 $9 $10
+    $*
