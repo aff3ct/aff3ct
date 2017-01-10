@@ -1,7 +1,7 @@
 Run command:
-./aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 30 --dec-type BP_LAYERED --cde-alist-path ../../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem SPA --dec-ite 1 --mnt-max-fe 100 --dmod-max MAXS --mod-cpm-std GSM
+./aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 20 --dec-type BP_FLOODING --cde-alist-path ../../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem ONMS --dec-norm 0.825 --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX --mod-cpm-std GSM
 Curve name:
-GSM-BPL MAXS SPA, 30 glob. ite.
+GSM-BPL MAX NMS, 20 glob. ite.
 Trace:
 # -------------------------------------------------
 # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
@@ -10,19 +10,19 @@ Trace:
 # * Simulation ------------------------------------
 #    ** Type                    = BFERI
 #    ** SNR min (m)             = 0.000000 dB
-#    ** SNR max (M)             = 2.510000 dB
+#    ** SNR max (M)             = 2.500000 dB
 #    ** SNR step (s)            = 0.250000 dB
 #    ** Type of bits            = int (32 bits)
 #    ** Type of reals           = float (32 bits)
 #    ** Inter frame level       = 1
 #    ** Seed                    = 0
-#    ** Multi-threading (t)     = 24 thread(s)
+#    ** Multi-threading (t)     = 48 thread(s)
 # * Code ------------------------------------------
 #    ** Type                    = LDPC
 #    ** Info. bits (K)          = 2112
 #    ** Codeword size (N)       = 4224
 #    ** Coset approach (c)      = on
-#    ** AList file path         = ../../conf/dec/LDPC/GSM_2112_4224.alist
+#    ** AList file path         = ../conf/dec/LDPC/GSM_2112_4224.alist
 # * Source ----------------------------------------
 #    ** Type                    = RAND_FAST
 # * Encoder ---------------------------------------
@@ -30,7 +30,7 @@ Trace:
 #    ** Systematic              = on
 # * Interleaver -----------------------------------
 #    ** Type                    = USER
-#    ** Path                    = ../../conf/itl/GSM-LDPC_4224.itl
+#    ** Path                    = ../conf/itl/GSM-LDPC_4224.itl
 # * Modulator -------------------------------------
 #    ** Type                    = CPM
 #    ** cpm-std                 = GSM
@@ -46,12 +46,14 @@ Trace:
 #    ** Domain                  = LLR
 # * Demodulator -----------------------------------
 #    ** Sigma square            = on
-#    ** Max type                = MAXS
-#    ** Turbo demod. iterations = 30
+#    ** Max type                = MAX
+#    ** Turbo demod. iterations = 20
 # * Decoder ---------------------------------------
-#    ** Type (D)                = BP_LAYERED
-#    ** Implementation          = SPA
+#    ** Type (D)                = BP_FLOODING
+#    ** Implementation          = ONMS
 #    ** Num. of iterations (i)  = 1
+#    ** Offset                  = 0.000000
+#    ** Normalize factor        = 0.825000
 #    ** Syndrome detection      = on
 # * Monitor ---------------------------------------
 #    ** Frame error count (e)   = 100
@@ -65,15 +67,15 @@ Trace:
 #   SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
 #  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
 # ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
-   0.00 |      123 |    59545 |      123 | 2.29e-01 | 1.00e+00 ||     0.14 |     0.07 | 29691.67 ||     0.15 | 00h00'03  
-   0.25 |      123 |    54188 |      123 | 2.09e-01 | 1.00e+00 ||     0.14 |     0.07 | 30337.02 ||     0.15 | 00h00'03  
-   0.50 |      123 |    47497 |      123 | 1.83e-01 | 1.00e+00 ||     0.14 |     0.07 | 30631.37 ||     0.15 | 00h00'03  
-   0.75 |      128 |    36302 |      120 | 1.34e-01 | 9.38e-01 ||     0.14 |     0.07 | 30071.80 ||     0.16 | 00h00'03  
-   1.00 |      234 |    25695 |      114 | 5.20e-02 | 4.87e-01 ||     0.15 |     0.07 | 28778.71 ||     0.18 | 00h00'05  
-   1.25 |      873 |    19351 |      101 | 1.05e-02 | 1.16e-01 ||     0.16 |     0.08 | 25614.55 ||     0.19 | 00h00'19  
-   1.50 |    13469 |    14831 |      100 | 5.21e-04 | 7.42e-03 ||     0.19 |     0.09 | 22720.23 ||     0.20 | 00h04'42  
-   1.75 |   147703 |     2121 |      100 | 6.80e-06 | 6.77e-04 ||     0.20 |     0.10 | 21585.65 ||     0.21 | 00h50'37  
-   2.00 |   249271 |      429 |      100 | 8.15e-07 | 4.01e-04 ||     0.20 |     0.10 | 20907.64 ||     0.21 | 01h24'48  
-   2.25 |   411788 |      430 |      100 | 4.94e-07 | 2.43e-04 ||     0.21 |     0.10 | 20257.53 ||     0.21 | 02h19'39  
-   2.50 |   676334 |      410 |      100 | 2.87e-07 | 1.48e-04 ||     0.21 |     0.11 | 19831.18 ||     0.21 | 03h46'20  
+   0.00 |      147 |    81802 |      147 | 2.63e-01 | 1.00e+00 ||     0.58 |     0.29 |  7290.12 ||     0.80 | 00h00'00  
+   0.25 |      147 |    76528 |      147 | 2.46e-01 | 1.00e+00 ||     0.50 |     0.25 |  8430.57 ||     1.05 | 00h00'00  
+   0.50 |      147 |    69937 |      147 | 2.25e-01 | 1.00e+00 ||     0.55 |     0.27 |  7705.30 ||     1.20 | 00h00'00  
+   0.75 |      147 |    60335 |      147 | 1.94e-01 | 1.00e+00 ||     0.51 |     0.25 |  8296.81 ||     1.19 | 00h00'00  
+   1.00 |      148 |    44388 |      147 | 1.42e-01 | 9.93e-01 ||     0.49 |     0.25 |  8594.86 ||     1.05 | 00h00'00  
+   1.25 |      179 |    24488 |      136 | 6.48e-02 | 7.60e-01 ||     0.51 |     0.25 |  8322.08 ||     1.34 | 00h00'00  
+   1.50 |      507 |     8892 |      107 | 8.30e-03 | 2.11e-01 ||     0.60 |     0.30 |  7044.44 ||     1.84 | 00h00'01  
+   1.75 |     6399 |     5156 |      101 | 3.82e-04 | 1.58e-02 ||     0.62 |     0.31 |  6833.02 ||     2.21 | 00h00'12  
+   2.00 |   203925 |     1264 |      100 | 2.93e-06 | 4.90e-04 ||     0.63 |     0.32 |  6683.46 ||     2.26 | 00h06'21  
+   2.25 |   569025 |      407 |      100 | 3.39e-07 | 1.76e-04 ||     0.64 |     0.32 |  6601.69 ||     2.25 | 00h17'46  
+   2.50 |   960720 |      394 |      100 | 1.94e-07 | 1.04e-04 ||     0.65 |     0.32 |  6505.19 ||     2.26 | 00h29'53  
 # End of the simulation.

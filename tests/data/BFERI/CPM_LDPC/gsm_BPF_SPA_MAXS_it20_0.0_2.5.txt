@@ -1,7 +1,7 @@
 Run command:
-./aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 30 --dec-type BP_LAYERED --cde-alist-path ../../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem SPA --dec-ite 1 --mnt-max-fe 100 --dmod-max MAXS --mod-cpm-std GSM
+./aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 20 --dec-type BP_FLOODING --cde-alist-path ../../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem SPA --dec-ite 1 --mnt-max-fe 100 --dmod-max MAXS --mod-cpm-std GSM
 Curve name:
-GSM-BPL MAXS SPA, 30 glob. ite.
+GSM-BPF MAXS SPA, 20 glob. ite.
 Trace:
 # -------------------------------------------------
 # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
@@ -10,19 +10,19 @@ Trace:
 # * Simulation ------------------------------------
 #    ** Type                    = BFERI
 #    ** SNR min (m)             = 0.000000 dB
-#    ** SNR max (M)             = 2.510000 dB
+#    ** SNR max (M)             = 2.500000 dB
 #    ** SNR step (s)            = 0.250000 dB
 #    ** Type of bits            = int (32 bits)
 #    ** Type of reals           = float (32 bits)
 #    ** Inter frame level       = 1
 #    ** Seed                    = 0
-#    ** Multi-threading (t)     = 24 thread(s)
+#    ** Multi-threading (t)     = 48 thread(s)
 # * Code ------------------------------------------
 #    ** Type                    = LDPC
 #    ** Info. bits (K)          = 2112
 #    ** Codeword size (N)       = 4224
 #    ** Coset approach (c)      = on
-#    ** AList file path         = ../../conf/dec/LDPC/GSM_2112_4224.alist
+#    ** AList file path         = ../conf/dec/LDPC/GSM_2112_4224.alist
 # * Source ----------------------------------------
 #    ** Type                    = RAND_FAST
 # * Encoder ---------------------------------------
@@ -30,7 +30,7 @@ Trace:
 #    ** Systematic              = on
 # * Interleaver -----------------------------------
 #    ** Type                    = USER
-#    ** Path                    = ../../conf/itl/GSM-LDPC_4224.itl
+#    ** Path                    = ../conf/itl/GSM-LDPC_4224.itl
 # * Modulator -------------------------------------
 #    ** Type                    = CPM
 #    ** cpm-std                 = GSM
@@ -47,9 +47,9 @@ Trace:
 # * Demodulator -----------------------------------
 #    ** Sigma square            = on
 #    ** Max type                = MAXS
-#    ** Turbo demod. iterations = 30
+#    ** Turbo demod. iterations = 20
 # * Decoder ---------------------------------------
-#    ** Type (D)                = BP_LAYERED
+#    ** Type (D)                = BP_FLOODING
 #    ** Implementation          = SPA
 #    ** Num. of iterations (i)  = 1
 #    ** Syndrome detection      = on
@@ -65,15 +65,15 @@ Trace:
 #   SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
 #  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
 # ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
-   0.00 |      123 |    59545 |      123 | 2.29e-01 | 1.00e+00 ||     0.14 |     0.07 | 29691.67 ||     0.15 | 00h00'03  
-   0.25 |      123 |    54188 |      123 | 2.09e-01 | 1.00e+00 ||     0.14 |     0.07 | 30337.02 ||     0.15 | 00h00'03  
-   0.50 |      123 |    47497 |      123 | 1.83e-01 | 1.00e+00 ||     0.14 |     0.07 | 30631.37 ||     0.15 | 00h00'03  
-   0.75 |      128 |    36302 |      120 | 1.34e-01 | 9.38e-01 ||     0.14 |     0.07 | 30071.80 ||     0.16 | 00h00'03  
-   1.00 |      234 |    25695 |      114 | 5.20e-02 | 4.87e-01 ||     0.15 |     0.07 | 28778.71 ||     0.18 | 00h00'05  
-   1.25 |      873 |    19351 |      101 | 1.05e-02 | 1.16e-01 ||     0.16 |     0.08 | 25614.55 ||     0.19 | 00h00'19  
-   1.50 |    13469 |    14831 |      100 | 5.21e-04 | 7.42e-03 ||     0.19 |     0.09 | 22720.23 ||     0.20 | 00h04'42  
-   1.75 |   147703 |     2121 |      100 | 6.80e-06 | 6.77e-04 ||     0.20 |     0.10 | 21585.65 ||     0.21 | 00h50'37  
-   2.00 |   249271 |      429 |      100 | 8.15e-07 | 4.01e-04 ||     0.20 |     0.10 | 20907.64 ||     0.21 | 01h24'48  
-   2.25 |   411788 |      430 |      100 | 4.94e-07 | 2.43e-04 ||     0.21 |     0.10 | 20257.53 ||     0.21 | 02h19'39  
-   2.50 |   676334 |      410 |      100 | 2.87e-07 | 1.48e-04 ||     0.21 |     0.11 | 19831.18 ||     0.21 | 03h46'20  
+   0.00 |      147 |    70934 |      147 | 2.28e-01 | 1.00e+00 ||     0.14 |     0.07 | 30203.53 ||     0.27 | 00h00'02  
+   0.25 |      147 |    64610 |      147 | 2.08e-01 | 1.00e+00 ||     0.14 |     0.07 | 29544.13 ||     0.27 | 00h00'02  
+   0.50 |      147 |    56913 |      147 | 1.83e-01 | 1.00e+00 ||     0.15 |     0.07 | 28524.79 ||     0.30 | 00h00'02  
+   0.75 |      147 |    45270 |      147 | 1.46e-01 | 1.00e+00 ||     0.15 |     0.07 | 29026.43 ||     0.30 | 00h00'02  
+   1.00 |      162 |    27612 |      141 | 8.07e-02 | 8.70e-01 ||     0.14 |     0.07 | 30962.42 ||     0.30 | 00h00'02  
+   1.25 |      315 |    11420 |      114 | 1.72e-02 | 3.62e-01 ||     0.15 |     0.07 | 28493.04 ||     0.34 | 00h00'03  
+   1.50 |     1767 |     5163 |      103 | 1.38e-03 | 5.83e-02 ||     0.16 |     0.08 | 27056.85 ||     0.38 | 00h00'19  
+   1.75 |    26069 |     4024 |      101 | 7.31e-05 | 3.87e-03 ||     0.17 |     0.09 | 24664.81 ||     0.39 | 00h04'39  
+   2.00 |   178426 |      478 |      101 | 1.27e-06 | 5.66e-04 ||     0.18 |     0.09 | 23193.23 ||     0.40 | 00h31'10  
+   2.25 |   321183 |      399 |      100 | 5.88e-07 | 3.11e-04 ||     0.19 |     0.09 | 22272.50 ||     0.40 | 00h56'01  
+   2.50 |   526094 |      345 |      100 | 3.11e-07 | 1.90e-04 ||     0.23 |     0.12 | 18262.51 ||     0.48 | 01h17'08  
 # End of the simulation.
