@@ -455,7 +455,7 @@
 #endif
 
 	// ---------------------------------------------------------------------------------------------------------- shuff
-#ifdef __SSE3__
+#ifdef __SSSE3__
 	template <>
 	inline reg shuff<float>(const reg v, const reg cm) {
 		return _mm_castsi128_ps(_mm_shuffle_epi8(_mm_castps_si128(v), _mm_castps_si128(cm)));
@@ -478,7 +478,7 @@
 #endif
 
 	// --------------------------------------------------------------------------------------------------------- shuff2
-#ifdef __SSE3__
+#ifdef __SSSE3__
 	template <>
 	inline reg shuff2<float>(const reg v, const reg cm) {
 		return mipp::shuff<float>(v, cm);
