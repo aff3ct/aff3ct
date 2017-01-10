@@ -169,24 +169,24 @@ void Launcher<B,R,Q>
 
 	opt_args[{"mod-cpm-std"}] =
 		{"string",
-		 "the selection of a default cpm standard hardly implemented",
+		 "the selection of a default cpm standard hardly implemented (any of those parameters is overwritten if the argument is given by the user)",
 		 "GSM"};
 	opt_args[{"mod-cpm-L"}] =
 		{"positive_int",
-		 "cpm pulse width or cpm memory"};
+		 "cpm pulse width or cpm memory (default is 2)"};
 	opt_args[{"mod-cpm-k"}] =
 		{"positive_int",
-		 "modulation index numerator"};
+		 "modulation index numerator (default is 1)"};
 	opt_args[{"mod-cpm-p"}] =
 		{"positive_int",
-		 "modulation index denumerator"};
+		 "modulation index denumerator (default is 2)"};
 	opt_args[{"mod-map"}] =
 		{"string",
-		 "symbols mapping layout",
+		 "symbols mapping layout (default is NATURAL)",
 		 "NATURAL, GRAY"};
 	opt_args[{"mod-ws"}] =
 		{"string",
-		 "wave shape",
+		 "wave shape (default is GMSK)",
 		 "GMSK, REC, RCOS"};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
@@ -347,7 +347,7 @@ void Launcher<B,R,Q>
 		}
 		else
 		{
-			std::cerr<<bold_red("(EE) Unknown chain standard")<<std::endl;
+			std::cerr<<bold_red("(EE) Unknown CPM standard!")<<std::endl;
 			exit(-1);
 		}
 	}

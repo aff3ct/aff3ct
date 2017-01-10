@@ -1,5 +1,5 @@
 Run command:
-./aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 30 --dec-type BP_LAYERED --cde-alist-path ../../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem ONMS --dec-norm 0.825 --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX --mod-cpm-std GSM
+./bin/aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 30 --dec-type BP_LAYERED --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem ONMS --dec-norm 0.825 --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX --mod-cpm-std GSM
 Curve name:
 GSM-BPL MAX NMS, 30 glob. ite.
 Trace:
