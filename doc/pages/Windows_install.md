@@ -39,15 +39,9 @@ Add cmake to the PATH:
 
 ## Install Python 3
 
-> https://www.python.org/ftp/python/3.6.0/python-3.6.0.exe
+> https://repo.continuum.io/archive/Anaconda3-4.2.0-Windows-x86_64.exe
 	
 Next next next... Install!
-	
-	$ echo 'export PATH=$PATH:~/AppData/Local/Programs/Python/Python36-32/' >> ~/.bashrc
-	$ echo 'export PATH=$PATH:~/AppData/Local/Programs/Python/Python36-32/Scripts/' >> ~/.bashrc
-	$ source ~/.bashrc
-	$ pip3.6 install pyqt5
-	$ pip3.6 install numpy
 
 ## Run PyBER
 
