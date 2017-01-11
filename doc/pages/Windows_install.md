@@ -39,7 +39,9 @@ Add cmake to the PATH:
 
 ## Install Python 3
 
-https://www.python.org/ftp/python/3.6.0/python-3.6.0.exe
+> https://www.python.org/ftp/python/3.6.0/python-3.6.0.exe
+	
+Next next next... Install!
 	
 	$ echo 'export PATH=$PATH:~/AppData/Local/Programs/Python/Python36-32/' >> ~/.bashrc
 	$ echo 'export PATH=$PATH:~/AppData/Local/Programs/Python/Python36-32/Scripts/' >> ~/.bashrc
