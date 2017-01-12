@@ -1,17 +1,18 @@
-#include "Decoder_LDPC_BP_flooding_Gallager_A_naive.hpp"
-
 #include <limits>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
+#include "Decoder_LDPC_BP_flooding_Gallager_A.hpp"
+
 template <typename B, typename R>
-Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A_naive(const int &K, const int &N, const int& n_ite, const AList_reader &H,
-                                            const int n_frames, const std::string name)
+Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const AList_reader &H,
+                                      const bool enable_syndrome, const int n_frames, const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
   n_ite            (n_ite                  ),
   H                (H                      ),
+  enable_syndrome  (enable_syndrome        ),
   Y_N              (N                      ),
   C_to_V_messages  (H.get_n_branches(),   0),
   V_to_C_messages  (H.get_n_branches(),   0)
@@ -21,13 +22,13 @@ Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 }
 
 template <typename B, typename R>
-Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
-::~Decoder_LDPC_BP_flooding_Gallager_A_naive()
+Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::~Decoder_LDPC_BP_flooding_Gallager_A()
 {
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::load(const mipp::vector<R>& Y_N_chn)
 {
 	assert(Y_N_chn.size() >= Y_N.size());
@@ -37,7 +38,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::hard_decode()
 {
 	for (auto ite = 0; ite < n_ite; ite++)
@@ -46,7 +47,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 		auto V_to_C_mess_ptr = V_to_C_messages.data();
 
 		// V -> C (for each variable nodes)
-		for (auto i = 0; i < H.get_n_VN(); i++)
+		for (auto i = 0; i < (int)H.get_n_VN(); i++)
 		{
 			const auto node_degree = (int)H.get_VN_to_CN()[i].size();
 
@@ -73,7 +74,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 		// C -> V (for each check nodes)
 		auto syndrome = 0;
 		auto transpose_ptr = H.get_branches_transpose().data();
-		for (auto i = 0; i < H.get_n_CN(); i++)
+		for (auto i = 0; i < (int)H.get_n_CN(); i++)
 		{
 			const auto node_degree = (int)H.get_CN_to_VN()[i].size();
 
@@ -92,13 +93,13 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 		}
 
 		// stop criterion
-		if (syndrome == 0)
+		if (this->enable_syndrome && (syndrome == 0))
 			break;
 	}
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::store(mipp::vector<B>& V_K) const
 {
 	assert((int)V_K.size() >= this->K);
@@ -125,7 +126,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
@@ -133,7 +134,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
@@ -143,11 +144,11 @@ void Decoder_LDPC_BP_flooding_Gallager_A_naive<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_flooding_Gallager_A_naive<B_8,Q_8>;
-template class Decoder_LDPC_BP_flooding_Gallager_A_naive<B_16,Q_16>;
-template class Decoder_LDPC_BP_flooding_Gallager_A_naive<B_32,Q_32>;
-template class Decoder_LDPC_BP_flooding_Gallager_A_naive<B_64,Q_64>;
+template class Decoder_LDPC_BP_flooding_Gallager_A<B_8,Q_8>;
+template class Decoder_LDPC_BP_flooding_Gallager_A<B_16,Q_16>;
+template class Decoder_LDPC_BP_flooding_Gallager_A<B_32,Q_32>;
+template class Decoder_LDPC_BP_flooding_Gallager_A<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_flooding_Gallager_A_naive<B,Q>;
+template class Decoder_LDPC_BP_flooding_Gallager_A<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

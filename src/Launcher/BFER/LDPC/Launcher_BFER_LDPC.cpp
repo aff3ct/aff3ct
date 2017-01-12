@@ -35,7 +35,7 @@ void Launcher_BFER_LDPC<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
-	this->opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA, GALA, GALAN");
+	this->opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA, GALA");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};
