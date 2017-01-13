@@ -55,7 +55,7 @@ void Decoder_LDPC_BP_layered<B,R>
 	this->BP_decode();
 
 	// prepare for next round by processing extrinsic information
-	for (auto i = 0; i < (int)this->N; i++)
+	for (auto i = 0; i < this->N; i++)
 		Y_N2[i] = this->var_nodes[i] - Y_N1[i];
 
 	// copy extrinsic information into var_nodes for next TURBO iteration

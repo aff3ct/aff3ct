@@ -56,7 +56,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
-	assert(Y_N1.size() == this->Y_N.size());
+	assert(Y_N1.size() >= this->Y_N.size());
 
 	// memory zones initialization
 	if (this->init_flag)
@@ -69,7 +69,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	this->BP_decode(Y_N1);
 
 	// prepare for next round by processing extrinsic information
-	for (auto i = 0; i < (int)Y_N2.size(); i++)
+	for (auto i = 0; i < this->N; i++)
 		Y_N2[i] = this->Lp_N[i] - Y_N1[i];
 
 	// saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
