@@ -263,7 +263,8 @@ void Modulator_CPM<B,R,Q,MAX>
 			          Y_N2.begin() + (f +1) * N,
 			          Y_N2_tmp.begin());
 
-			bcjr.decode(Y_N1_tmp, Y_N2_tmp, Y_N3_tmp); // remove tail symb automatically because Y_N3_tmp.size = Y_N1_tmp.size + cpm.tl
+			bcjr.decode(Y_N1_tmp, Y_N2_tmp, Y_N3_tmp); // remove tail symb automatically because
+			                                           // Y_N3_tmp.size = Y_N1_tmp.size + cpm.tl
 
 			std::copy(Y_N3_tmp.begin(), Y_N3_tmp.end(), Y_N3.begin() + f * N);
 		}
@@ -279,10 +280,10 @@ void Modulator_CPM<B,R,Q,MAX>
 
 	// calculate the different phase responses
 	for (auto s = 0; s < cpm.L * cpm.s_factor; s++)
-		phase_response[s] = calculate_phase_response(s*T_samp);
+		phase_response[s] = calculate_phase_response(s * T_samp);
 
-	auto p_mask = (1 << cpm.n_bits_p ) - 1;
-	auto L_mask = (1 << cpm.n_b_per_s) - 1;
+	auto p_mask = (1 << cpm.n_bits_p ) -1;
+	auto L_mask = (1 << cpm.n_b_per_s) -1;
 
 	for (auto wa = 0; wa < cpm.n_wa; wa++)
 	{
@@ -294,27 +295,22 @@ void Modulator_CPM<B,R,Q,MAX>
 
 		for (auto l = 0; l < cpm.L; l++)
 		{
-			auto U_n = (allowed_wa >> ((cpm.L-l-1)*cpm.n_b_per_s+cpm.n_bits_p)) & L_mask;
+			auto U_n = (allowed_wa >> ((cpm.L -l -1) * cpm.n_b_per_s + cpm.n_bits_p)) & L_mask;
 
 			for (auto s = 0; s < cpm.s_factor; s++)
 			{
-				tilted_phase_part2[s] += phase_response[l*cpm.s_factor+s] * U_n;
-				tilted_phase_part3[s] += phase_response[l*cpm.s_factor+s];
+				tilted_phase_part2[s] += phase_response[l * cpm.s_factor +s] * U_n;
+				tilted_phase_part3[s] += phase_response[l * cpm.s_factor +s];
 			}
 		}
 
 		for (auto s = 0; s < cpm.s_factor; s++)
 		{
-			R tilted_phase = tilted_phase_part1
-			               + M_PI*cpm_h*(4*tilted_phase_part2[s]
-			                              + (cpm.m_order-1)*(s*T_samp
-			                                                 + (cpm.L-1)
-			                                                 - 2*tilted_phase_part3[s]
-			                                                )
-			                             );
+			R tilted_phase = tilted_phase_part1 + M_PI * cpm_h * (4 * tilted_phase_part2[s] +
+			                 (cpm.m_order -1) * (s * T_samp + (cpm.L -1) - 2 * tilted_phase_part3[s]));
 
-			baseband[allowed_wa*cpm.s_factor+s                    ] = cos(tilted_phase);
-			baseband[allowed_wa*cpm.s_factor+s + baseband.size()/2] = sin(tilted_phase);
+			baseband[allowed_wa * cpm.s_factor + s                      ] = std::cos(tilted_phase);
+			baseband[allowed_wa * cpm.s_factor + s + baseband.size() / 2] = std::sin(tilted_phase);
 		}
 	}
 }
@@ -333,8 +329,8 @@ public:
 	{
 		R x      = t + off;
 		R factor = (R)2.0 * M_PI * B / sqrt((R)2.0 * std::log((R)2.0));
-		R minus  = (x-(R)0.5)*factor;
-		R plus   = (x+(R)0.5)*factor;
+		R minus  = (x - (R)0.5) * factor;
+		R plus   = (x + (R)0.5) * factor;
 
 		return (std::erf(plus) - std::erf(minus))/(R)4.0;
 	}
