@@ -541,16 +541,16 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 		if(params.modulator.cpm_std.size())
 			p.push_back(std::make_pair("CPM standard", this->params.modulator.cpm_std));
 
-		p.push_back(std::make_pair("CPM L memory", std::to_string(this->params.modulator.cpm_L)));
+		p.push_back(std::make_pair("CPM L memory", std::to_string(this->params.modulator.cpm_L)    ));
 		p.push_back(std::make_pair("CPM h index", (std::to_string(this->params.modulator.cpm_k) +
 		                                           std::string("/")                             +
-		                                           std::to_string(this->params.modulator.cpm_p))));
+		                                           std::to_string(this->params.modulator.cpm_p))   ));
 		p.push_back(std::make_pair("CPM wave shape",              this->params.modulator.wave_shape));
+		p.push_back(std::make_pair("CPM mapping",                 this->params.modulator.mapping   ));
 	}
 
 	p.push_back(std::make_pair("Bits per symbol", std::to_string(this->params.modulator.bits_per_symbol)));
 	p.push_back(std::make_pair("Sampling factor", std::to_string(this->params.modulator.upsample_factor)));
-	p.push_back(std::make_pair("Mapping",                        this->params.modulator.mapping         ));
 
 	return p;
 }
