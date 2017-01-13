@@ -38,7 +38,6 @@ private:
 	Simulation                                     *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
 
 protected:
-
 	Arguments_reader                                             ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
 	parameters                                                   params;   /*!< A structure of parameters to store and pass to the simulation. */
 	std::ostream                                                &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
@@ -46,6 +45,7 @@ protected:
 	                                                                        *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 	std::map<std::vector<std::string>, std::vector<std::string>> opt_args; /*!< List of the optional arguments, syntax is the following:
 	                                                                        *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	std::string                                                  cmd_warn;
 
 public:
 	/*!

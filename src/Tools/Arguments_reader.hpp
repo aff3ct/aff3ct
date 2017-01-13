@@ -61,7 +61,12 @@ public:
 	 * \return true if all the required arguments are in "m_argv", false otherwise.
 	 */
 	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
-	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args);
+	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
+	                     const bool enable_warnings = false);
+
+	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
+	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
+	                           std::string                                                  &warnings);
 
 	/*!
 	 * \brief Searches if the tags exist.

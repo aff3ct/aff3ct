@@ -352,7 +352,7 @@ void Launcher<B,R,Q>
 		 "print this help."};
 
 	auto display_help = true;
-	if (ar.parse_arguments(req_args, opt_args))
+	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
 	{
 		this->store_args();
 
@@ -684,6 +684,9 @@ void Launcher<B,R,Q>
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
 			stream << "# The simulation is running..." << std::endl;
+		// print the warnings
+		if (params.simulation.mpi_rank == 0)
+			stream << cmd_warn;
 		simu->launch();
 		if (params.simulation.mpi_rank == 0)
 			stream << "# End of the simulation." << std::endl;
