@@ -22,7 +22,7 @@ public:
 
 protected:
 	// BP functions for decoding
-	virtual bool BP_process();
+	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
 };
 
 #endif /* DECODER_LDPC_BP_FLOODING_MIN_SUM_OFFSET_HPP_ */

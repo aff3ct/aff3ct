@@ -98,7 +98,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_LDPC<B,R,Q>
 		p.push_back(std::make_pair("Offset", std::to_string(this->params.decoder.offset)));
 		p.push_back(std::make_pair("Normalize factor", std::to_string(this->params.decoder.normalize_factor)));
 	}
-	p.push_back(std::make_pair("Syndrome detection", syndrome));
+	p.push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
 
 	return p;
 }

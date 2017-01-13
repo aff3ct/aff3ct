@@ -8,6 +8,9 @@
 template <typename B, typename R>
 class Decoder_LDPC_BP_layered : public Decoder_SISO<B,R>
 {
+private:
+	int cur_frame;
+
 protected:
 	const int n_ite;     // number of iterations to perform
 	const int n_C_nodes; // number of check    nodes (= N - K)
@@ -20,8 +23,8 @@ protected:
 	const std::vector<std::vector<unsigned int>> &CN_to_VN;
 
 	// data structures for iterative decoding
-	mipp::vector<R> var_nodes;
-	mipp::vector<R> branches;
+	std::vector<mipp::vector<R>> var_nodes;
+	std::vector<mipp::vector<R>> branches;
 
 public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
@@ -48,7 +51,7 @@ protected:
 
 	bool check_syndrome();
 
-	virtual void BP_process() = 0;
+	virtual void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches) = 0;
 };
 
 #endif /* DECODER_LDPC_BP_LAYERED_HPP_ */

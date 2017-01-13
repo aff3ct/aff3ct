@@ -8,6 +8,9 @@
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
 {
+private:
+	int cur_frame;
+
 protected:
 	const int  n_ite;      // number of iterations to perform
 	const int  n_V_nodes;  // number of variable nodes (= N)
@@ -27,9 +30,9 @@ protected:
 	mipp::vector<B>  V_K; // output bits
 
 	// data structures for iterative decoding
-	mipp::vector<R> Lp_N;   // a posteriori information
-	mipp::vector<R> C_to_V; // check    nodes to variable nodes messages
-	mipp::vector<R> V_to_C; // variable nodes to check    nodes messages
+	            mipp::vector<R>  Lp_N;   // a posteriori information
+	std::vector<mipp::vector<R>> C_to_V; // check    nodes to variable nodes messages
+	std::vector<mipp::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
 public:
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
@@ -54,7 +57,7 @@ protected:
 	// BP functions for decoding
 	void BP_decode(const mipp::vector<R> &Y_N);
 
-	virtual bool BP_process() = 0;
+	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
 };
 
 #endif /* DECODER_LDPC_BP_FLOODING_HPP_ */
