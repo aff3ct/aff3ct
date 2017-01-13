@@ -1,58 +1,46 @@
-/*
- * CPM_parameters.hxx
- *
- *  Created on: 14 dec. 2016
- *      Author: ohartmann
- */
-
 #include <cmath>
 #include <ctgmath>
 #include "CPM_parameters.hpp"
 
-template </*typename R, */typename S_in, typename S_out>
-CPM_parameters</*R, */S_in, S_out>
-::CPM_parameters(const std::string& _cpm_standard,
-				 const int _L,
-				 const int _k,
-				 const int _p,
-				 const int _Nb_b_per_s,
-				 const int _Sf,
-				 const std::string& _filters_type,
-				 const std::string& _wave_shape)
-: 	cpm_standard(_cpm_standard             ),
-	L           (_L                        ),
-	k           (_k                        ),
-	p           (_p                        ),
-	Nb_b_per_s  (_Nb_b_per_s               ),
-	Sf          (_Sf                       ),
-	filters_type(_filters_type             ),
-	wave_shape  (_wave_shape               ),
-											 //    gsm		chain 1  chain 2
-	Mo          ((int)1 << Nb_b_per_s      ),// 	2			2		4
-	//h           ((R)k/(R)p                 ),// 	1/2			1/2		1/3
-	//T_samp      ((R)1.0/(R)Sf              ),// 	1/5			1/5		1/5
-	Nb_bits_p   ((int)ceil(log2((double)p))),//		1			1		2
-	tl          (L                         ),// 	3			2		2
+template <typename SIN, typename SOUT>
+CPM_parameters<SIN, SOUT>
+::CPM_parameters(const std::string& cpm_standard,
+                 const int L,
+                 const int k,
+                 const int p,
+                 const int n_b_per_s,
+                 const int s_factor,
+                 const std::string& filters_type,
+                 const std::string& wave_shape)
+: cpm_standard(cpm_standard              ),
+  L           (L                         ),
+  k           (k                         ),
+  p           (p                         ),
+  n_b_per_s   (n_b_per_s                 ),
+  s_factor    (s_factor                  ),
+  filters_type(filters_type              ),
+  wave_shape  (wave_shape                ),
+  m_order     ((int)1 << n_b_per_s       ),
+  n_bits_p    ((int)ceil(log2((double)p))),
+  tl          (L                         ),
 
-/** Olivier : Warning !!! From here parameters are working for Rimoldi decomposition only !!! **/
+/** Warning !!! From here parameters are working for Rimoldi decomposition only !!! **/
 
-	Nb_wa       (p * pow(Mo, L)            ),// 	16			8		48
-	Nb_bits_wa  ((int)ceil(log2(Nb_wa))    ),//		4			3		6
-	max_wa_id   (((int)1 << Nb_bits_wa)    ),//		16		 	8		64
+  n_wa        (p * pow(m_order, L)       ),
+  n_bits_wa   ((int)ceil(log2(n_wa))     ),
+  max_wa_id   (((int)1 << n_bits_wa)     ),
 
-	Nb_st       (p*pow(Mo, L-1)            ),//		8			4		12
-	Nb_bits_st  ((int)ceil(log2(Nb_st))    ),//		3			2		4
-	max_st_id   (((int)1 << Nb_bits_st)    ),//		8			4		16
+  n_st        (p*pow(m_order, L-1)       ),
+  n_bits_st   ((int)ceil(log2(n_st))     ),
+  max_st_id   (((int)1 << n_bits_st)     ),
 
-//	baseband					 (max_wa_id *Sf *2  ,  0),
-//	projection					 (max_wa_id *Sf *2  ,  0),
-	transition_to_binary         (Nb_b_per_s    * Mo, -1),
-	binary_to_transition         (                Mo, -1),
-	allowed_states         		 (Nb_st             , -1),
-	allowed_wave_forms           (Nb_wa             , -1),
-	trellis_next_state           (max_st_id     * Mo, -1),
-	trellis_related_wave_form    (max_st_id     * Mo, -1),
-	anti_trellis_original_state  (max_st_id     * Mo, -1),
-	anti_trellis_input_transition(max_st_id     * Mo, -1)
+  transition_to_binary         (n_b_per_s     * m_order, -1),
+  binary_to_transition         (                m_order, -1),
+  allowed_states               (n_st                   , -1),
+  allowed_wave_forms           (n_wa                   , -1),
+  trellis_next_state           (max_st_id     * m_order, -1),
+  trellis_related_wave_form    (max_st_id     * m_order, -1),
+  anti_trellis_original_state  (max_st_id     * m_order, -1),
+  anti_trellis_input_transition(max_st_id     * m_order, -1)
 {
 }

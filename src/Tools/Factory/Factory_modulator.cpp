@@ -57,13 +57,53 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	else if (params.modulator.type == "CPM")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_CPM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+			modulator = new Modulator_CPM<B,R,Q,max<Q>>          (params.code.N + params.code.tail_length,
+			                                                      params.modulator.bits_per_symbol,
+			                                                      params.modulator.upsample_factor,
+			                                                      params.modulator.cpm_std,
+			                                                      params.modulator.cpm_L,
+			                                                      params.modulator.cpm_k,
+			                                                      params.modulator.cpm_p,
+			                                                      params.modulator.mapping,
+			                                                      params.modulator.wave_shape,
+			                                                      sigma,
+			                                                      params.demodulator.no_sig2);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_CPM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+			modulator = new Modulator_CPM<B,R,Q,max_linear<Q>>   (params.code.N + params.code.tail_length,
+			                                                      params.modulator.bits_per_symbol,
+			                                                      params.modulator.upsample_factor,
+			                                                      params.modulator.cpm_std,
+			                                                      params.modulator.cpm_L,
+			                                                      params.modulator.cpm_k,
+			                                                      params.modulator.cpm_p,
+			                                                      params.modulator.mapping,
+			                                                      params.modulator.wave_shape,
+			                                                      sigma,
+			                                                      params.demodulator.no_sig2);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_CPM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+			modulator = new Modulator_CPM<B,R,Q,max_star<Q>>     (params.code.N + params.code.tail_length,
+			                                                      params.modulator.bits_per_symbol,
+			                                                      params.modulator.upsample_factor,
+			                                                      params.modulator.cpm_std,
+			                                                      params.modulator.cpm_L,
+			                                                      params.modulator.cpm_k,
+			                                                      params.modulator.cpm_p,
+			                                                      params.modulator.mapping,
+			                                                      params.modulator.wave_shape,
+			                                                      sigma,
+			                                                      params.demodulator.no_sig2);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_CPM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, params.modulator, sigma);
+			modulator = new Modulator_CPM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length,
+			                                                      params.modulator.bits_per_symbol,
+			                                                      params.modulator.upsample_factor,
+			                                                      params.modulator.cpm_std,
+			                                                      params.modulator.cpm_L,
+			                                                      params.modulator.cpm_k,
+			                                                      params.modulator.cpm_p,
+			                                                      params.modulator.mapping,
+			                                                      params.modulator.wave_shape,
+			                                                      sigma,
+			                                                      params.demodulator.no_sig2);
 	}
 	else if (params.modulator.type == "USER")
 	{

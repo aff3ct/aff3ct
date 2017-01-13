@@ -7,12 +7,6 @@ using B_16 = short;
 using B_32 = int;
 using B_64 = long long;
 
-// type for the symbols
-using S_8  = signed char;
-using S_16 = short;
-using S_32 = int;
-using S_64 = long long;
-
 // type for the real numbers (before quantization)
 using R_8  = float;
 using R_16 = float;
@@ -36,25 +30,21 @@ using QD_64 = double;
 	using R  = R_8;
 	using Q  = Q_8;
 	using QD = QD_8;
-	using S	 = S_8;
 #elif defined(PREC_16_BIT)
 	using B  = B_16;
 	using R  = R_16;
 	using Q  = Q_16;
 	using QD = QD_16;
-	using S	 = S_16;
 #elif defined(PREC_64_BIT)
 	using B  = B_64;
 	using R  = R_64;
 	using Q  = Q_64;
 	using QD = QD_64;
-	using S	 = S_64;
 #else // PREC_32_BIT
 	using B  = B_32;
 	using R  = R_32;
 	using Q  = Q_32;
 	using QD = QD_32;
-	using S	 = S_32;
 	#ifndef PREC_32_BIT
 	#define PREC_32_BIT
 	#endif

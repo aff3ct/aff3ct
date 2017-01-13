@@ -1,10 +1,3 @@
-/*
- * BCJR_tools.hpp
- *
- *  Created on: 15 déc. 2016
- *      Author: ohartmann
- */
-
 #ifndef BCJR_TOOLS_HPP_
 #define BCJR_TOOLS_HPP_
 
