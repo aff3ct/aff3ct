@@ -26,27 +26,27 @@ Modulator_CPM<B,R,Q,MAX>
                 bool no_sig2,
                 int  n_frames,
                 const std::string name)
-: Modulator<B,R,Q>(N, 0, 0, n_frames, name    ), // TODO: warning: won't work if N_mod and N_fil are used since this
-                                                 // constructor is not completely done
-  N       (N                                  ),
-  sigma   (sigma                              ),
-  no_sig2 (no_sig2                            ),
-  cpm     (cpm_std,
-           cpm_L,
-           cpm_k,
-           cpm_p,
-           bits_per_symbol,
-           sampling_factor,
-           "TOTAL",
-           wave_shape                         ),
-  cpm_h   ((R)cpm.k/(R)cpm.p                  ),
-  T_samp  ((R)1.0  /(R)cpm.s_factor           ),
-  baseband(  cpm.max_wa_id *cpm.s_factor *2, 0),
-  projection(cpm.max_wa_id *cpm.s_factor *2, 0),
-  n_sy   (N/cpm.n_b_per_s                    ),
-  n_sy_tl(n_sy+cpm.tl                       ),
-  cpe     (n_sy, cpm, this->n_frames         ),
-  bcjr    (cpm, n_sy_tl                      )
+: Modulator<B,R,Q>(N, 0, 0, n_frames, name      ), // TODO: warning: won't work if N_mod and N_fil are used since this
+                                                   // constructor is not completely done
+  N         (N                                  ),
+  sigma     (sigma                              ),
+  no_sig2   (no_sig2                            ),
+  cpm       (cpm_std,
+             cpm_L,
+             cpm_k,
+             cpm_p,
+             bits_per_symbol,
+             sampling_factor,
+             "TOTAL",
+             wave_shape                         ),
+  cpm_h     ((R)cpm.k/(R)cpm.p                  ),
+  T_samp    ((R)1.0  /(R)cpm.s_factor           ),
+  baseband  (  cpm.max_wa_id *cpm.s_factor *2, 0),
+  projection(cpm.max_wa_id *cpm.s_factor *2,   0),
+  n_sy      (N/cpm.n_b_per_s                    ),
+  n_sy_tl   (n_sy+cpm.tl                        ),
+  cpe       (n_sy, cpm, this->n_frames          ),
+  bcjr      (cpm, n_sy_tl                       )
 {
 	assert(N%bits_per_symbol == 0);
 
