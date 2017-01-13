@@ -26,9 +26,7 @@ Modulator_CPM<B,R,Q,MAX>
                 bool no_sig2,
                 int  n_frames,
                 const std::string name)
-: Modulator<B,R,Q>(N, 0, 0, n_frames, name      ), // TODO: warning: won't work if N_mod and N_fil are used since this
-                                                   // constructor is not completely done
-  N         (N                                  ),
+: Modulator<B,R,Q>(N, 0, 0, n_frames, name      ), // TODO: hack
   sigma     (sigma                              ),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_std,
@@ -106,19 +104,19 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
-	assert((int)X_N1.size() ==           N*this->n_frames);
-	assert((int)X_N2.size() == this->N_mod*this->n_frames);
+	assert((int)X_N1.size() == this->N     * this->n_frames);
+	assert((int)X_N2.size() == this->N_mod * this->n_frames);
 
 	if (this->n_frames == 1)
 		_modulate(X_N1, X_N2);
 	else // more than 1 frame
 	{
-		mipp::vector<B> X_N1_tmp(N);
+		mipp::vector<B> X_N1_tmp(this->N    );
 		mipp::vector<R> X_N2_tmp(this->N_mod);
 		for (auto f = 0; f < this->n_frames; f++)
 		{
-			std::copy(X_N1.begin() +  f     * N,
-			          X_N1.begin() + (f +1) * N,
+			std::copy(X_N1.begin() +  f     * this->N,
+			          X_N1.begin() + (f +1) * this->N,
 			          X_N1_tmp.begin());
 
 			_modulate(X_N1_tmp, X_N2_tmp);
@@ -132,7 +130,7 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
-	assert((int)X_N1.size() == N          );
+	assert((int)X_N1.size() == this->N    );
 	assert((int)X_N2.size() == this->N_mod);
 
 	// mapper
@@ -215,14 +213,14 @@ void Modulator_CPM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
 	assert((int)Y_N1.size() == this->N_fil * this->n_frames);
-	assert((int)Y_N2.size() ==           N * this->n_frames);
+	assert((int)Y_N2.size() == this->N     * this->n_frames);
 
 	if (this->n_frames == 1)
 		bcjr.decode(Y_N1, Y_N2);
 	else // more than 1 frame
 	{
 		mipp::vector<Q> Y_N1_tmp(this->N_fil);
-		mipp::vector<Q> Y_N2_tmp(N);
+		mipp::vector<Q> Y_N2_tmp(this->N    );
 
 		for (auto f = 0; f < this->n_frames; f++)
 		{
@@ -232,7 +230,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 			bcjr.decode(Y_N1_tmp, Y_N2_tmp);
 
-			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * N);
+			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * this->N);
 		}
 	}
 }
@@ -242,16 +240,16 @@ void Modulator_CPM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
 	assert((int)Y_N1.size() == this->n_frames * this->N_fil);
-	assert((int)Y_N2.size() == this->n_frames * N          );
-	assert((int)Y_N3.size() == this->n_frames * N          );
+	assert((int)Y_N2.size() == this->n_frames * this->N    );
+	assert((int)Y_N3.size() == this->n_frames * this->N    );
 
 	if (this->n_frames == 1)
 		bcjr.decode(Y_N1, Y_N2, Y_N3);
 	else
 	{
 		mipp::vector<Q> Y_N1_tmp(this->N_fil);
-		mipp::vector<Q> Y_N2_tmp(N);
-		mipp::vector<Q> Y_N3_tmp(N);
+		mipp::vector<Q> Y_N2_tmp(this->N    );
+		mipp::vector<Q> Y_N3_tmp(this->N    );
 
 		for (auto f = 0; f < this->n_frames; f++)
 		{
@@ -259,14 +257,14 @@ void Modulator_CPM<B,R,Q,MAX>
 			          Y_N1.begin() + (f +1) * this->N_fil,
 			          Y_N1_tmp.begin());
 
-			std::copy(Y_N2.begin() + (f +0) * N,
-			          Y_N2.begin() + (f +1) * N,
+			std::copy(Y_N2.begin() + (f +0) * this->N,
+			          Y_N2.begin() + (f +1) * this->N,
 			          Y_N2_tmp.begin());
 
 			bcjr.decode(Y_N1_tmp, Y_N2_tmp, Y_N3_tmp); // remove tail symb automatically because
 			                                           // Y_N3_tmp.size = Y_N1_tmp.size + cpm.tl
 
-			std::copy(Y_N3_tmp.begin(), Y_N3_tmp.end(), Y_N3.begin() + f * N);
+			std::copy(Y_N3_tmp.begin(), Y_N3_tmp.end(), Y_N3.begin() + f * this->N);
 		}
 	}
 }
