@@ -62,9 +62,10 @@ inline void cgemm_r(const int M, const int N, const int K,
 		}
 	}
 }
+
 template <typename T>
 inline void complex_transpose(const int M, const int N,
-					          const mipp::vector<T> &A,
+                              const mipp::vector<T> &A,
                                     mipp::vector<T> &B)
 {
 	assert(A.size() == unsigned(M * N * 2));
@@ -83,80 +84,4 @@ inline void complex_transpose(const int M, const int N,
 			B_imag[j*M+i] = -A_imag[i*N+j];
 		}
 	}
-}
-
-template <typename T>
-inline void bipart_transpose_r(const int M, const int N,
-					           const mipp::vector<T> &A,
-                                     mipp::vector<T> &B)
-{
-	assert(A.size() == unsigned(M * N * 2));
-	assert(B.size() == unsigned(N * M * 2));
-
-	const T* A_real = A.data();
-	const T* A_imag = A.data() + ( A.size() >> 1);
-	      T* B_real = B.data();
-	      T* B_imag = B.data() + (B.size() >> 1);
-
-	for (auto i = 0; i < M; i++)
-	{
-		for (auto j = 0; j < N; j++)
-		{
-			B_real[j*M+i] = A_real[i*N+j];
-			B_imag[j*M+i] = A_imag[i*N+j];
-		}
-	}
-}
-
-template <typename T>
-inline void transpose_r(const int M, const int N,
-					  const mipp::vector<T> &A,
-                            mipp::vector<T> &B)
-{
-	assert(A.size() == unsigned(M * N));
-	assert(B.size() == unsigned(N * M));
-
-	const T* A_real = A.data();
-	      T* B_real = B.data();
-
-	for (auto i = 0; i < M; i++)
-	{
-		for (auto j = 0; j < N; j++)
-		{
-			B_real[j*M+i] = A_real[i*N+j];
-		}
-	}
-}
-
-template <typename T>
-inline mipp::vector<T> complex_transpose(const int M, const int N,
-										 const mipp::vector<T> &A)
-{
-	mipp::vector<T> B(A.size());
-
-	complex_transpose(M, N, A, B);
-
-	return B;
-}
-
-template <typename T>
-inline mipp::vector<T> bipart_transpose_r(const int M, const int N,
-										  const mipp::vector<T> &A)
-{
-	mipp::vector<T> B(A.size());
-
-	bipart_transpose_r(M, N, A, B);
-
-	return B;
-}
-
-template <typename T>
-inline mipp::vector<T> transpose_r(const int M, const int N,
-								   const mipp::vector<T> &A)
-{
-	mipp::vector<T> B(A.size());
-
-	transpose_r(M, N, A, B);
-
-	return B;
 }

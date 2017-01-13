@@ -26,7 +26,8 @@ Modulator_CPM<B,R,Q,MAX>
                 bool no_sig2,
                 int  n_frames,
                 const std::string name)
-: Modulator<B,R,Q>(N, 0, 0, n_frames, name    ), // Warning !!! Won't work if N_mod and N_fil are used since this constructor is not completely done
+: Modulator<B,R,Q>(N, 0, 0, n_frames, name    ), // TODO: warning: won't work if N_mod and N_fil are used since this
+                                                 // constructor is not completely done
   N       (N                                  ),
   sigma   (sigma                              ),
   no_sig2 (no_sig2                            ),
@@ -42,10 +43,10 @@ Modulator_CPM<B,R,Q,MAX>
   T_samp  ((R)1.0  /(R)cpm.s_factor           ),
   baseband(  cpm.max_wa_id *cpm.s_factor *2, 0),
   projection(cpm.max_wa_id *cpm.s_factor *2, 0),
-  Nb_sy   (N/cpm.n_b_per_s                    ),
-  Nb_sy_tl(Nb_sy+cpm.tl                       ),
-  cpe     (Nb_sy, cpm, this->n_frames         ),
-  bcjr    (cpm, Nb_sy_tl                      )
+  n_sy   (N/cpm.n_b_per_s                    ),
+  n_sy_tl(n_sy+cpm.tl                       ),
+  cpe     (n_sy, cpm, this->n_frames         ),
+  bcjr    (cpm, n_sy_tl                      )
 {
 	assert(N%bits_per_symbol == 0);
 
@@ -76,7 +77,6 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::~Modulator_CPM()
 {
-
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
@@ -88,7 +88,7 @@ int Modulator_CPM<B,R,Q,MAX>
 	// +cpm.tl: tails symbols
 	// *cpm.s_factor: because work with samples of wave forms
 	// *2: because of complex numbers
-	return (N/cpm.n_b_per_s + cpm.tl) * cpm.s_factor * 2;
+	return (N / cpm.n_b_per_s + cpm.tl) * cpm.s_factor * 2;
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
@@ -99,7 +99,7 @@ int Modulator_CPM<B,R,Q,MAX>
 	// / cpm.n_b_per_s: because buffer contains symbols and not bits
 	// +cpm.tl: tails symbols
 	// *cpm.n_wa: because work with waveforms probability
-	return (N/cpm.n_b_per_s + cpm.tl) * cpm.max_wa_id;
+	return (N / cpm.n_b_per_s + cpm.tl) * cpm.max_wa_id;
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
@@ -110,9 +110,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	assert((int)X_N2.size() == this->N_mod*this->n_frames);
 
 	if (this->n_frames == 1)
-	{
 		_modulate(X_N1, X_N2);
-	}
 	else // more than 1 frame
 	{
 		mipp::vector<B> X_N1_tmp(N);
@@ -121,7 +119,7 @@ void Modulator_CPM<B,R,Q,MAX>
 		{
 			std::copy(X_N1.begin() +  f     * N,
 			          X_N1.begin() + (f +1) * N,
-			          X_N1_tmp.begin()         );
+			          X_N1_tmp.begin());
 
 			_modulate(X_N1_tmp, X_N2_tmp);
 
@@ -138,13 +136,13 @@ void Modulator_CPM<B,R,Q,MAX>
 	assert((int)X_N2.size() == this->N_mod);
 
 	// mapper
-	mipp::vector<SIN> mapped_frame(Nb_sy);
+	mipp::vector<SIN> mapped_frame(n_sy);
 
-	for(int i=0; i < Nb_sy; i++)
+	for (int i=0; i < n_sy; i++)
 		mapped_frame[i] = cpm.binary_to_transition[cpe.merge_bits(X_N1.data()+i*cpm.n_b_per_s, cpm.n_b_per_s, true)];
 
 	// continuous phase encoder
-	mipp::vector<SIN> encoded_frame(Nb_sy_tl);
+	mipp::vector<SIN> encoded_frame(n_sy_tl);
 	cpe.encode(mapped_frame, encoded_frame);
 
 	// memoryless modulation (attributing complex waveforms to symbols)
@@ -153,7 +151,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	const auto off_BB_r = 0;
 	const auto off_BB_i = (int)baseband.size() / 2;
 
-	for (auto i = 0; i < Nb_sy_tl; i++)
+	for (auto i = 0; i < n_sy_tl; i++)
 		for (auto s = 0; s < cpm.s_factor; s++)
 		{
 			X_N2[off_X_r + i * cpm.s_factor + s] = baseband[off_BB_r + encoded_frame[i] * cpm.s_factor + s];
@@ -165,13 +163,11 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 {
-	assert((int)Y_N1.size() == this->N_mod*this->n_frames);
-	assert((int)Y_N2.size() == this->N_fil*this->n_frames);
+	assert((int)Y_N1.size() == this->N_mod * this->n_frames);
+	assert((int)Y_N2.size() == this->N_fil * this->n_frames);
 
 	if (this->n_frames == 1)
-	{
 		_filter(Y_N1, Y_N2);
-	}
 	else // more than 1 frame
 	{
 		mipp::vector<R> Y_N1_tmp(this->N_mod);
@@ -197,38 +193,32 @@ void Modulator_CPM<B,R,Q,MAX>
 	assert((int)Y_N1.size() == this->N_mod);
 	assert((int)Y_N2.size() == this->N_fil);
 
-	const R* Y_real = Y_N1.data();
-	const R* Y_imag = Y_N1.data() + (Y_N1.size() >> 1);
-	const R* p_real = projection.data();
-	const R* p_imag = projection.data() + (projection.size() >> 1);
+	const auto Y_real = Y_N1.data();
+	const auto Y_imag = Y_N1.data() + (Y_N1.size() >> 1);
+	const auto p_real = projection.data();
+	const auto p_imag = projection.data() + (projection.size() >> 1);
 
-	for(auto i = 0; i < Nb_sy_tl; i++)
-	{
+	for (auto i = 0; i < n_sy_tl; i++)
 		for (auto wa = 0; wa < cpm.n_wa; wa++)
 		{
-			R sum_r = 0;
+			R sum_r = (R)0;
 			for (auto s = 0; s < cpm.s_factor; s++)
-			{
 				sum_r += Y_real[i * cpm.s_factor + s] * p_real[s * cpm.max_wa_id + cpm.allowed_wave_forms[wa]]
 				       - Y_imag[i * cpm.s_factor + s] * p_imag[s * cpm.max_wa_id + cpm.allowed_wave_forms[wa]];
-			}
 
 			Y_N2[i * cpm.max_wa_id + cpm.allowed_wave_forms[wa]] = sum_r;
 		}
-	}
 }
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert((int)Y_N1.size() == this->N_fil*this->n_frames);
-	assert((int)Y_N2.size() ==           N*this->n_frames);
+	assert((int)Y_N1.size() == this->N_fil * this->n_frames);
+	assert((int)Y_N2.size() ==           N * this->n_frames);
 
 	if (this->n_frames == 1)
-	{
 		bcjr.decode(Y_N1, Y_N2);
-	}
 	else // more than 1 frame
 	{
 		mipp::vector<Q> Y_N1_tmp(this->N_fil);
@@ -251,14 +241,12 @@ template <typename B, typename R, typename Q, proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	assert((int)Y_N1.size() == this->N_fil);
-	assert((int)Y_N2.size() == N);
-	assert((int)Y_N3.size() == N);
+	assert((int)Y_N1.size() == this->n_frames * this->N_fil);
+	assert((int)Y_N2.size() == this->n_frames * N          );
+	assert((int)Y_N3.size() == this->n_frames * N          );
 
 	if (this->n_frames == 1)
-	{
 		bcjr.decode(Y_N1, Y_N2, Y_N3);
-	}
 	else
 	{
 		mipp::vector<Q> Y_N1_tmp(this->N_fil);
@@ -290,34 +278,32 @@ void Modulator_CPM<B,R,Q,MAX>
 	mipp::vector<R> phase_response(cpm.L*cpm.s_factor);
 
 	// calculate the different phase responses
-	for(int s = 0 ; s < cpm.L*cpm.s_factor ; s++)
-	{
+	for (auto s = 0; s < cpm.L * cpm.s_factor; s++)
 		phase_response[s] = calculate_phase_response(s*T_samp);
-	}
 
-	int p_mask = (1 << cpm.n_bits_p ) - 1;
-	int L_mask = (1 << cpm.n_b_per_s) - 1;
+	auto p_mask = (1 << cpm.n_bits_p ) - 1;
+	auto L_mask = (1 << cpm.n_b_per_s) - 1;
 
-	for(int wa = 0 ; wa < cpm.n_wa ; wa++)
+	for (auto wa = 0; wa < cpm.n_wa; wa++)
 	{
-		int allowed_wa       = cpm.allowed_wave_forms[wa];
-		R tilted_phase_part1 = 2*M_PI*cpm_h*(allowed_wa & p_mask);
+		auto allowed_wa         = cpm.allowed_wave_forms[wa];
+		auto tilted_phase_part1 = (R)(2 * M_PI * cpm_h * (allowed_wa & p_mask));
 
-		mipp::vector<R> tilted_phase_part2(cpm.s_factor, 0);
-		mipp::vector<R> tilted_phase_part3(cpm.s_factor, 0);
+		mipp::vector<R> tilted_phase_part2(cpm.s_factor, (R)0);
+		mipp::vector<R> tilted_phase_part3(cpm.s_factor, (R)0);
 
-		for(int l = 0 ; l < cpm.L ; l++)
+		for (auto l = 0; l < cpm.L; l++)
 		{
-			int U_n = (allowed_wa >> ((cpm.L-l-1)*cpm.n_b_per_s+cpm.n_bits_p)) & L_mask;
+			auto U_n = (allowed_wa >> ((cpm.L-l-1)*cpm.n_b_per_s+cpm.n_bits_p)) & L_mask;
 
-			for(int s = 0 ; s < cpm.s_factor ; s++)
+			for (auto s = 0; s < cpm.s_factor; s++)
 			{
 				tilted_phase_part2[s] += phase_response[l*cpm.s_factor+s] * U_n;
 				tilted_phase_part3[s] += phase_response[l*cpm.s_factor+s];
 			}
 		}
 
-		for(int s = 0 ; s < cpm.s_factor ; s++)
+		for (auto s = 0; s < cpm.s_factor; s++)
 		{
 			R tilted_phase = tilted_phase_part1
 			               + M_PI*cpm_h*(4*tilted_phase_part2[s]
@@ -333,47 +319,43 @@ void Modulator_CPM<B,R,Q,MAX>
 	}
 }
 
-template<typename R>
-class gmsk
+template <typename R>
+class GMSK
 {
+private:
+	const R B;
+	const R off;
+
 public:
-	gmsk(const R b, const R offset) : B(b), off(offset){ }
+	GMSK(const R b, const R offset) : B(b), off(offset){ }
 
 	R operator()(const R& t) const
 	{
-		R x = t + off;
-
-		R factor = (R)2.0*M_PI*B/sqrt((R)2.0*log((R)2.0));
+		R x      = t + off;
+		R factor = (R)2.0 * M_PI * B / sqrt((R)2.0 * std::log((R)2.0));
 		R minus  = (x-(R)0.5)*factor;
 		R plus   = (x+(R)0.5)*factor;
 
-		return (erf(plus)-erf(minus))/(R)4.0;
+		return (std::erf(plus) - std::erf(minus))/(R)4.0;
 	}
-
-private:
-   const R B;
-   const R off;
 };
 
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 R Modulator_CPM<B,R,Q,MAX>
 ::calculate_phase_response(const R t_stamp)
 {
-	if(cpm.wave_shape == "GMSK")
+	if (cpm.wave_shape == "GMSK")
 	{
-		if(t_stamp == (R)0.0)
+		if (t_stamp == (R)0.0)
 			return (R)0.0;
-		gmsk<R> g((R)0.3, -(R)cpm.L/(R)2.0);
-		return integral(g, (R)0.0, t_stamp, t_stamp/(R)1e-4);
+
+		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
+		return integral(g, (R)0.0, t_stamp, t_stamp / (R)1e-4);
 	}
-	else if(cpm.wave_shape == "RCOS")
-	{
-		return t_stamp/((R)2.0*cpm.L) - sin((R)2.0*M_PI*t_stamp/(R)cpm.L)/(R)4.0/M_PI;
-	}
-	else if(cpm.wave_shape == "REC")
-	{
-		return t_stamp/((R)2.0*cpm.L);
-	}
+	else if (cpm.wave_shape == "RCOS")
+		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * M_PI * t_stamp / (R)cpm.L) / (R)4.0 / M_PI;
+	else if (cpm.wave_shape == "REC")
+		return t_stamp / ((R)2.0 * cpm.L);
 	else
 	{
 		std::cerr << bold_red("(EE) Unknown CPM wave shape") << std::endl;
@@ -387,19 +369,17 @@ void Modulator_CPM<B,R,Q,MAX>
 {
 	assert(projection.size() == baseband.size());
 
-	R factor = 1;
+	R factor = (R)1;
 
-	if(!no_sig2)
-		factor = 1/sigma/sigma;
+	if (!no_sig2)
+		factor = (R)1 / (sigma * sigma);
 
-	if(cpm.filters_type == "TOTAL")
+	if (cpm.filters_type == "TOTAL")
 	{
 		complex_transpose(cpm.max_wa_id, cpm.s_factor, baseband, projection);
 
-		for(size_t i = 0; i < projection.size() ; i++)
-		{
+		for (auto i = 0; i < (int)projection.size() ; i++)
 			projection[i] *= factor;
-		}
 	}
 	//else if(filters_type == "ORTHO_NORM")
 	//{

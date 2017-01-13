@@ -169,7 +169,8 @@ void Launcher<B,R,Q>
 
 	opt_args[{"mod-cpm-std"}] =
 		{"string",
-		 "the selection of a default CPM standard hardly implemented (any of those parameters is overwritten if the argument is given by the user)",
+		 std::string("the selection of a default CPM standard hardly implemented (any of those parameters is) ") +
+		 std::string("overwritten if the argument is given by the user"),
 		 "GSM"};
 	opt_args[{"mod-cpm-L"}] =
 		{"positive_int",
@@ -361,7 +362,6 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"mod-cpm-map"   })) params.modulator.mapping         = ar.get_arg    ({"mod-cpm-map"   });
 	if(ar.exist_arg({"mod-cpm-ws"    })) params.modulator.wave_shape      = ar.get_arg    ({"mod-cpm-ws"    });
 
-
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
 		params.modulator.bits_per_symbol = 1;
@@ -550,7 +550,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 
 	p.push_back(std::make_pair("Bits per symbol", std::to_string(this->params.modulator.bits_per_symbol)));
 	p.push_back(std::make_pair("Sampling factor", std::to_string(this->params.modulator.upsample_factor)));
-	p.push_back(std::make_pair("Mapping",            this->params.modulator.mapping));
+	p.push_back(std::make_pair("Mapping",                        this->params.modulator.mapping         ));
 
 	return p;
 }

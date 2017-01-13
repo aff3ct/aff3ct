@@ -42,35 +42,12 @@ __forceinline void cgemm_r(const int M, const int N, const int K,
                            const mipp::vector<T> &tB, 
                                  mipp::vector<T> &tC);
 
-// complex transpose : B_real = tA_real and B_imag = -tA_imag, where A is of size M*N*2 and then B of size N*M*2 (with both complex elements) : B's elements are the conjugates of A's
+// complex transpose : B_real = tA_real and B_imag = -tA_imag, where A is of size M*N*2 and then B of size N*M*2
+// (with both complex elements) : B's elements are the conjugates of A's
 template <typename T>
 __forceinline void complex_transpose(const int M, const int N,
-						      	     const mipp::vector<T> &A,
-									       mipp::vector<T> &B);
-
-template <typename T>
-__forceinline mipp::vector<T> complex_transpose(const int M, const int N,
-												const mipp::vector<T> &A);
-
-// real transpose of real part and complex part of A into B : B_real = tA_real and B_imag = tA_imag, where A is of size M*N*2 and then B of size N*M*2 (with both complex elements) : B's elements are the conjugates of A's
-template <typename T>
-__forceinline void bipart_transpose_r(const int M, const int N,
-						     const mipp::vector<T> &A,
-							       mipp::vector<T> &B);
-
-template <typename T>
-__forceinline mipp::vector<T> bipart_transpose_r(const int M, const int N,
-												const mipp::vector<T> &A);
-
-// transpose : B = tA, where A is of size M*N and then B of size N*M (with both real elements)
-template <typename T>
-__forceinline void transpose_r(const int M, const int N,
-						       const mipp::vector<T> &A,
-							         mipp::vector<T> &B);
-
-template <typename T>
-__forceinline mipp::vector<T> transpose_r(const int M, const int N,
-										  const mipp::vector<T> &A);
+                                     const mipp::vector<T> &A,
+                                           mipp::vector<T> &B);
 
 #include "matrix.hxx"
 

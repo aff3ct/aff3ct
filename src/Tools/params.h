@@ -82,11 +82,11 @@ struct modulator_parameters
 	int         upsample_factor; // samples per symbol
 
 	std::string cpm_std;         // the selection of a default cpm standard hardly implemented (GSM)
+	std::string mapping;         // symbol mapping layout (natural, gray)
+	std::string wave_shape;      // wave shape (gmsk, rcos, rec)
 	int         cpm_L;           // cpm pulse width or cpm memory
 	int         cpm_k;           // modulation index numerator
 	int         cpm_p;           // modulation index denumerator
-	std::string mapping;         // symbol mapping layout (natural, gray)
-	std::string wave_shape;      // wave shape (gmsk, rcos, rec)
 };
 
 struct demodulator_parameters

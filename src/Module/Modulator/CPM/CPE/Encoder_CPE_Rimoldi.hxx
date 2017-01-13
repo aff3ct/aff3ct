@@ -19,24 +19,24 @@ SOUT Encoder_CPE_Rimoldi<SIN, SOUT>
 ::inner_encode(const SIN new_symbol, int &state)
 {
 	//compute new symbol value
-	state |= ((int)new_symbol << (this->cpm.n_bits_p+this->cpm.n_b_per_s*(this->cpm.L-1)));
+	state |= ((int)new_symbol << (this->cpm.n_bits_p + this->cpm.n_b_per_s * (this->cpm.L -1)));
 	SOUT wa_symb = (SOUT)state;
 
 	// extract V_n
-	SIN V_n 	 = state & ((1 << this->cpm.n_bits_p)-1); // because V_n can have p values
+	SIN V_n  = state & ((1 << this->cpm.n_bits_p) -1); // because V_n can have p values
 
 	// extract U_(n-L-1)
-	SIN U_n_L_1 = (state >> this->cpm.n_bits_p) & ((1 << this->cpm.n_b_per_s)-1);
+	SIN U_n_L_1 = (state >> this->cpm.n_bits_p) & ((1 << this->cpm.n_b_per_s) -1);
 
 	// compute V_(n+1)
-	SIN V_n_1   = ((U_n_L_1 + V_n)%this->cpm.p);// because V_n can have p values
+	SIN V_n_1 = ((U_n_L_1 + V_n)%this->cpm.p);// because V_n can have p values
 
 	// remove V_n and U_(n-L-1)
-	state      >>= this->cpm.n_bits_p + this->cpm.n_b_per_s;
+	state >>= this->cpm.n_bits_p + this->cpm.n_b_per_s;
 
 	// add V_(n+1)
-	state      <<= this->cpm.n_bits_p;
-	state       |= V_n_1;
+	state <<= this->cpm.n_bits_p;
+	state  |= V_n_1;
 
 	return wa_symb;
 }
@@ -51,12 +51,10 @@ SIN Encoder_CPE_Rimoldi<SIN, SOUT>
 	int val = state & ((1 << this->cpm.n_bits_p)-1);
 
 	// sum V_n to the U_(n-L-1-i)
-	for(auto i = 0; i < this->cpm.L-1 ; i++)
-	{
+	for (auto i = 0; i < this->cpm.L -1; i++)
 		val += (state >> (i*this->cpm.n_b_per_s+this->cpm.n_bits_p)) & ((1 << this->cpm.n_b_per_s)-1);
-	}
 
-	return (SIN)(this->cpm.p - (val)%this->cpm.p)%this->cpm.p;
+	return (SIN)(this->cpm.p - (val)%this->cpm.p) % this->cpm.p;
 }
 
 template<typename SIN, typename SOUT>
@@ -68,30 +66,31 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 	assert((int)transition_to_binary.size() == (this->cpm.m_order*this->cpm.n_b_per_s));
 	assert((int)binary_to_transition.size() == (this->cpm.m_order                    ));
 
-	if(mapping == "NATURAL")
+	if (mapping == "NATURAL")
 	{
-		for (int tr = 0; tr < this->cpm.m_order; tr++)
-			for (int b = 0; b < this->cpm.n_b_per_s; b++)
+		for (auto tr = 0; tr < this->cpm.m_order; tr++)
+			for (auto b = 0; b < this->cpm.n_b_per_s; b++)
 				transition_to_binary[tr * this->cpm.n_b_per_s + this->cpm.n_b_per_s -1 -b] = (tr & (1 << b)) ? 1 : 0;
 
-		for (int tr = 0; tr < this->cpm.m_order; tr++)
+		for (auto tr = 0; tr < this->cpm.m_order; tr++)
 			binary_to_transition[tr] = tr;
 	}
-	else if(mapping == "GRAY")
+	else if (mapping == "GRAY")
 	{
-		for (int tr = 0; tr < this->cpm.m_order; tr++)
+		for (auto tr = 0; tr < this->cpm.m_order; tr++)
 		{
 			int gray_val = (tr >> 1) ^ tr;
-			for (int b = 0; b < this->cpm.n_b_per_s; b++)
+			for (auto b = 0; b < this->cpm.n_b_per_s; b++)
 				transition_to_binary[tr * this->cpm.n_b_per_s + this->cpm.n_b_per_s -1 -b] = (gray_val & (1 << b)) ? 1 : 0;
 		}
 
-		for (int tr = 0; tr < this->cpm.m_order; tr++)
-			binary_to_transition[this->merge_bits(transition_to_binary.data() + tr * this->cpm.n_b_per_s,  this->cpm.n_b_per_s, true)] = tr;
+		for (auto tr = 0; tr < this->cpm.m_order; tr++)
+			binary_to_transition[this->merge_bits(transition_to_binary.data() + tr * this->cpm.n_b_per_s,
+			                                      this->cpm.n_b_per_s, true)] = tr;
 	}
 	else
 	{
-		std::cerr<<bold_red("(EE) Unknown BCJR mapping scheme!")<<std::endl;
+		std::cerr << bold_red("(EE) Unknown BCJR mapping scheme!") << std::endl;
 		exit(-1);
 	}
 
@@ -104,18 +103,18 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 	assert((int)allowed_states.size() == this->cpm.n_st);
 
 	int state_index = 0;
-	int state_pos = 0;
+	int state_pos   = 0;
 
 	int p_mask = (1 << this->cpm.n_bits_p) - 1;
 
-	while(state_index < this->cpm.max_st_id && state_pos < this->cpm.n_st)
+	while (state_index < this->cpm.max_st_id && state_pos < this->cpm.n_st)
 	{
 		allowed_states[state_pos] = state_index;
 
-		state_pos ++;
-		state_index ++;
+		state_pos++;
+		state_index++;
 
-		if((state_index & p_mask) == this->cpm.p)
+		if ((state_index & p_mask) == this->cpm.p)
 		{
 			state_index |= p_mask;
 			state_index++;
@@ -134,14 +133,14 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 
 	int p_mask = (1 << this->cpm.n_bits_p) - 1;
 
-	while(wa_index < this->cpm.max_wa_id && wa_pos < this->cpm.n_wa)
+	while (wa_index < this->cpm.max_wa_id && wa_pos < this->cpm.n_wa)
 	{
 		allowed_wave_forms[wa_pos] = wa_index;
 
-		wa_pos ++;
-		wa_index ++;
+		wa_pos++;
+		wa_index++;
 
-		if((wa_index & p_mask) == this->cpm.p)
+		if ((wa_index & p_mask) == this->cpm.p)
 		{
 			wa_index |= p_mask;
 			wa_index++;

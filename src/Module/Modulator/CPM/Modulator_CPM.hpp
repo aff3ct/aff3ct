@@ -12,13 +12,30 @@
 #include "CPE/Encoder_CPE_Rimoldi.hpp"
 #include "BCJR/CPM_BCJR.hpp"
 
-/** Olivier : Warning !!! Working for Rimoldi decomposition only !!! **/
-
+// TODO: warning: working for Rimoldi decomposition only!
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_CPM : public Modulator<B,R,Q>
 {
 	using SIN  = B;
 	using SOUT = B;
+
+protected:
+	// inputs:
+	const int                     N;         // number of bits to send for one frame
+	const R                       sigma;     // sigma^2 = noise variance
+	const bool                    no_sig2;   // no computation of sigma^2
+
+	// modulation data:
+	CPM_parameters<SIN,SOUT>      cpm;       // all CPM parameters
+	R                             cpm_h;     // modulation index = k/p
+	R                             T_samp;    // sample duration  = 1/s_factor
+	mipp::vector<R>               baseband;  // translation of base band vectors
+	mipp::vector<R>               projection;// translation of filtering generator family
+	const int                     n_sy;      // number of symbols for one frame after encoding without tail symbols
+	const int                     n_sy_tl;   // number of symbols to send for one frame after encoding with tail symbols
+	Encoder_CPE_Rimoldi<SIN,SOUT> cpe;       // the continuous phase encoder
+
+	CPM_BCJR<SIN,SOUT,Q,MAX>      bcjr;      // demodulator
 
 public:
 	Modulator_CPM(int  N,
@@ -45,24 +62,6 @@ public:
 	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
 protected:
-	// input
-	const int  N;        // number of bits to send for one frame
-	const R    sigma;    // sigma^2 = noise variance
-	const bool no_sig2;  // no computation of sigma^2
-
-	// modulation data
-	CPM_parameters<SIN,SOUT>      cpm;       //all cpm parameters
-	R                             cpm_h;     //modulation index = k/p
-	R                             T_samp;    //sample duration  = 1/Sf
-	mipp::vector<R>               baseband;  //translation of base band vectors           (80 complex elmts)
-	mipp::vector<R>               projection;//translation of filtering generator familly (80 complex elmts)
-	const int                     Nb_sy;     //number of symbols for one frame after encoding without tail symbols
-	const int                     Nb_sy_tl;  //number of symbols to send for one frame after encoding with tail symbols
-	Encoder_CPE_Rimoldi<SIN,SOUT> cpe;       //the continuous phase encoder
-
-	// demodulator
-	CPM_BCJR<SIN,SOUT,Q,MAX> bcjr;
-
 	void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);
 	void   _filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2);
 
@@ -73,7 +72,5 @@ private :
 };
 
 #include "Modulator_CPM.hxx"
-
-
 
 #endif /* MODULATOR_CPM_HPP_ */

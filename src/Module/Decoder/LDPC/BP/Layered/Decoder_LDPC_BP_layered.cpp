@@ -46,7 +46,7 @@ void Decoder_LDPC_BP_layered<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
-	assert(Y_N1.size() == this->var_nodes.size());
+	assert(Y_N1.size() >= this->var_nodes.size());
 
 	// memory zones initialization
 	load(Y_N1);
@@ -55,11 +55,11 @@ void Decoder_LDPC_BP_layered<B,R>
 	this->BP_decode();
 
 	// prepare for next round by processing extrinsic information
-	for (auto i = 0; i < (int)Y_N2.size(); i++)
+	for (auto i = 0; i < (int)this->N; i++)
 		Y_N2[i] = this->var_nodes[i] - Y_N1[i];
 
 	// copy extrinsic information into var_nodes for next TURBO iteration
-	std::copy(Y_N2.begin(), Y_N2.end(), this->var_nodes.begin());
+	std::copy(Y_N2.begin(), Y_N2.begin() + this->N, this->var_nodes.begin());
 }
 
 template <typename B, typename R>

@@ -8,8 +8,48 @@
 #include "Tools/Math/utils.h"
 
 #include "CPM_BCJR.hpp"
-#include "BCJR_tools.hpp"
 
+template<typename Q>
+inline Q negative_inf(){return -std::numeric_limits<Q>::max(); }
+
+template<>
+inline short negative_inf<short>(){return -(1 << (sizeof(short) * 8 -2)); }
+
+template<>
+inline signed char negative_inf<signed char>(){return -63; }
+
+template<typename Q>
+inline Q positive_inf(){return std::numeric_limits<Q>::max(); }
+
+template<>
+inline short positive_inf<short>(){return (1 << (sizeof(short) * 8 -2)); }
+
+template<>
+inline signed char positive_inf<signed char>(){return 63; }
+
+template <typename Q, proto_max<Q> MAX>
+inline void BCJR_normalize(Q *metrics, const int &i, const int &n_states)
+{
+	// normalization
+	auto norm_val = negative_inf<Q>();
+	for (auto j = 0; j < n_states; j++)
+		norm_val = MAX(norm_val, metrics[j]);
+
+	for (auto j = 0; j < n_states; j++)
+		metrics[j] -= norm_val;
+}
+
+template <signed char, proto_max<signed char> MAX>
+inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_states)
+{
+	// normalization
+	auto norm_val = negative_inf<signed char>();
+	for (auto j = 0; j < n_states; j++)
+		norm_val = MAX(norm_val, metrics[j]);
+
+	for (auto j = 0; j < n_states; j++)
+		metrics[j] = saturate<signed char>(metrics[j] - norm_val, -63, +63);
+}
 
 template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 CPM_BCJR<SIN,SOUT,Q,MAX>
@@ -69,7 +109,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 			for (int b = 0; b < cpm.n_b_per_s; b++)
 			{
 				const int bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b]; // transition_to_binary what bit state we should have for the given transition and bit position
-				const int sign        = (bit_state == 0) ? 1 : -1;   //associated coeff
+				const int sign        = (bit_state == 0) ? 1 : -1; //associated coeff
 				symb_apriori_prob[i * cpm.m_order + tr] += (Q)sign*Ldec_N[i * cpm.n_b_per_s + b]/(Q)2; //match -> add prob else remove
 			}
 		}

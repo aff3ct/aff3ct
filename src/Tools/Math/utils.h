@@ -60,13 +60,11 @@ inline R integral(function_type func, const R min, const R max, const int number
 	assert(         max >= min);
 	assert(number_steps != 0  );
 
-	R step = (max - min)/number_steps;   // width of rectangle
-	R area = 0.0;
+	R step = (max - min) / number_steps; // width of rectangle
+	R area = (R)0;
 
-	for(int i = 0; i < number_steps; ++i)
-	{
+	for (auto i = 0; i < number_steps; i++)
 		area += func(min + ((R)i + (R)0.5) * step) * step;
-	}
 
 	return area;
 }
