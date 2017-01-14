@@ -20,6 +20,17 @@ Launcher<B,R,Q>
 ::Launcher(const int argc, const char **argv, std::ostream &stream)
 : max_n_chars(0), simu(nullptr), ar(argc, argv), stream(stream)
 {
+	cmd_line += std::string(argv[0]) + std::string(" ");
+	for (auto i = 1; i < argc; i++)
+	{
+		if (argv[i][0] == '-')
+			cmd_line += std::string(argv[i]);
+		else
+			cmd_line += std::string("\"") + std::string(argv[i]) + std::string("\"");
+
+		cmd_line += std::string(" ");
+	}
+
 	// define type names
 	type_names[typeid(char)]        = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
 	type_names[typeid(signed char)] = "signed char (" + std::to_string(sizeof(signed char)*8) + " bits)";
@@ -38,6 +49,7 @@ Launcher<B,R,Q>
 	params.simulation .mpi_rank          = 0;
 	params.simulation .mpi_size          = 1;
 	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
+	params.simulation .pyber             = "";
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -97,6 +109,9 @@ void Launcher<B,R,Q>
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
 		 "BFER, BFERI, EXIT, GEN"};
+	opt_args[{"sim-pyber"}] =
+		{"string",
+		 "prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER."};
 	opt_args[{"sim-stop-time"}] =
 		{"positive_int",
 		 "time in sec after what the current SNR iteration should stop."};
@@ -274,6 +289,7 @@ void Launcher<B,R,Q>
 	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
 
 	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
+	if(ar.exist_arg({"sim-pyber"          })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"          });
 	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
 	if(ar.exist_arg({"sim-domain"         })) params.channel.domain               = ar.get_arg      ({"sim-domain"         });
 	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
@@ -735,6 +751,16 @@ void Launcher<B,R,Q>
 	}
 
 	this->read_arguments();
+
+	// write the command and he curve name in the PyBER format
+	if (!params.simulation.pyber.empty() && params.simulation.mpi_rank == 0)
+	{
+		stream << "Run command:"          << std::endl;
+		stream << cmd_line                << std::endl;
+		stream << "Curve name:"           << std::endl;
+		stream << params.simulation.pyber << std::endl;
+	}
+
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
 	simu = this->build_simu();

@@ -36,6 +36,8 @@ private:
 	int                                             max_n_chars; /*!< The number of characters of the largest parameter name. */
 	std::unordered_map<std::type_index,std::string> type_names;  /*!< An internal map to store a string associated to a type. */
 	Simulation                                     *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
+	std::string                                     cmd_line;
+	std::string                                     cmd_warn;
 
 protected:
 	Arguments_reader                                             ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
@@ -45,7 +47,6 @@ protected:
 	                                                                        *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 	std::map<std::vector<std::string>, std::vector<std::string>> opt_args; /*!< List of the optional arguments, syntax is the following:
 	                                                                        *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	std::string                                                  cmd_warn;
 
 public:
 	/*!
