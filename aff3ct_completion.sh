@@ -275,7 +275,7 @@ _aff3ct() {
 		--dec-implem)
 			local params="GENERIC STD FAST VERY_FAST"
 			if [ "${codetype}" == 'LDPC' ]; then
-				params="ONMS SPA LSPA"
+				params="ONMS SPA LSPA GALA"
 			fi
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
