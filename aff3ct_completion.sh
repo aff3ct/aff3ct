@@ -15,6 +15,7 @@ _aff3ct() {
 	done
 
 	# determine simu type
+	simutype="BFER" # BFER simu by default
 	for ((i = 0 ; i < ${#COMP_WORDS[*]}; ++ i))
 	do
 		if [[ ${COMP_WORDS[$i]} == "--sim-type" ]]; then
