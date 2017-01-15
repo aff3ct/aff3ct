@@ -28,34 +28,15 @@ Arguments_reader
 bool Arguments_reader
 ::parse_arguments(const map<vector<string>, vector<string>> &required_args,
                   const map<vector<string>, vector<string>> &optional_args,
-                  const bool enable_warnings)
+                  const bool display_warnings)
 {
-	unsigned short int n_req_arg = 0;
+	string warns;
+	const bool result = parse_arguments(required_args, optional_args, warns);
 
-	this->clear_arguments();
+	if (display_warnings)
+		std::cout << bold_yellow(warns);
 
-	this->m_required_args = required_args;
-	this->m_optional_args = optional_args;
-
-	for(unsigned short i = 0; i < this->m_argv.size(); ++i)
-	{
-		bool valid_arg = false;
-		if(this->sub_parse_arguments(this->m_required_args, i))
-		{
-			valid_arg = true;
-			n_req_arg++;
-		}
-		valid_arg = this->sub_parse_arguments(this->m_optional_args, i) || valid_arg;
-		if(!valid_arg && enable_warnings && this->m_argv[i][0] == '-')
-		{
-			std::cout << bold_yellow("(WW) Unknown argument \"")
-			          << bold_yellow(this->m_argv[i])
-			          << bold_yellow("\".")
-			          << std::endl;
-		}
-	}
-
-	return n_req_arg >= required_args.size();
+	return result;
 }
 
 bool Arguments_reader
@@ -81,9 +62,7 @@ bool Arguments_reader
 		valid_arg = this->sub_parse_arguments(this->m_optional_args, i) || valid_arg;
 		if(!valid_arg && this->m_argv[i][0] == '-')
 		{
-			warnings += bold_yellow("(WW) Unknown argument \"");
-			warnings += bold_yellow(this->m_argv[i]);
-			warnings += bold_yellow("\".");
+			warnings += string("(WW) Unknown argument \"") + string(this->m_argv[i]) + string("\".");
 			warnings += "\n";
 		}
 	}

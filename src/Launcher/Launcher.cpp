@@ -314,6 +314,9 @@ void Launcher<B,R,Q>
 	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
 #endif
 
+	// disable the cool bash mode for PyBER
+	if (!params.simulation.pyber.empty())
+		enable_bash_tools = false;
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
@@ -772,7 +775,7 @@ void Launcher<B,R,Q>
 			stream << "# The simulation is running..." << std::endl;
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
-			stream << cmd_warn;
+			stream << bold_yellow(cmd_warn);
 		simu->launch();
 		if (params.simulation.mpi_rank == 0)
 			stream << "# End of the simulation." << std::endl;

@@ -62,7 +62,7 @@ public:
 	 */
 	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
 	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
-	                     const bool enable_warnings = false);
+	                     const bool display_warnings = false);
 
 	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
 	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
