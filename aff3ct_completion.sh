@@ -203,7 +203,7 @@ _aff3ct() {
 		--cde-size | -N |                                                     \
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
 		--qnt-int | --qnt-bits | --qnt-range | --qnt-type |                   \
-		--dec-type | --dec-implem | --sim-benchs | -b | --sim-debug-limit |	  \
+		--sim-benchs | -b | --sim-debug-limit |                               \
 		--mnt-max-fe | -e | --term-type |                                     \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
@@ -274,7 +274,7 @@ _aff3ct() {
 
 		--dec-implem)
 			local params="GENERIC STD FAST VERY_FAST"
-			if ["${codetype}" == 'LDPC']; then
+			if [ "${codetype}" == 'LDPC' ]; then
 				params="ONMS SPA LSPA"
 			fi
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
