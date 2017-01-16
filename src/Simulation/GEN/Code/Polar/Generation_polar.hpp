@@ -28,9 +28,9 @@ protected:
 	float sigma;
 
 	// patterns
-	std::vector<Pattern_polar_i*> patterns_SC;
-	Pattern_polar_i* pattern_SC_rate0;
-	Pattern_polar_i* pattern_SC_rate1;
+	std::vector<Pattern_polar_i*> polar_patterns;
+	Pattern_polar_i* polar_pattern_rate0;
+	Pattern_polar_i* polar_pattern_rate1;
 
 	Frozenbits_generator<int> *fb_generator;
 

@@ -30,16 +30,16 @@
 Generation_polar
 ::Generation_polar(const parameters& params)
 : Simulation(),
-  params(params),
-  frozen_bits(params.code.N),
-  code_rate(0.f),
-  sigma(0.f),
-  patterns_SC(),
-  pattern_SC_rate0(new Pattern_polar<polar_node_t::RATE_0>()),
-  pattern_SC_rate1(new Pattern_polar<polar_node_t::RATE_1>()),
-  fb_generator(nullptr),
-  generator(nullptr),
-  directory(params.decoder.gen_path)
+  params             (params                                   ),
+  frozen_bits        (params.code.N                            ),
+  code_rate          (0.f                                      ),
+  sigma              (0.f                                      ),
+  polar_patterns     (                                         ),
+  polar_pattern_rate0(new Pattern_polar<polar_node_t::RATE_0>()),
+  polar_pattern_rate1(new Pattern_polar<polar_node_t::RATE_1>()),
+  fb_generator       (nullptr                                  ),
+  generator          (nullptr                                  ),
+  directory          (params.decoder.gen_path                  )
 {
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
@@ -47,18 +47,18 @@ Generation_polar
 #endif
 
 	// pattern allocations
-	patterns_SC.push_back(new Pattern_polar<polar_node_t::STANDARD   >());
-	patterns_SC.push_back(new Pattern_polar<polar_node_t::RATE_0_LEFT>());
-	patterns_SC.push_back(pattern_SC_rate0                           );
-	patterns_SC.push_back(pattern_SC_rate1                           );
-	patterns_SC.push_back(new Pattern_polar<polar_node_t::REP_LEFT   >());
-	patterns_SC.push_back(new Pattern_polar<polar_node_t::REP        >());
-	patterns_SC.push_back(new Pattern_polar<polar_node_t::SPC        >());
+	polar_patterns.push_back(new Pattern_polar<polar_node_t::STANDARD   >());
+	polar_patterns.push_back(new Pattern_polar<polar_node_t::RATE_0_LEFT>());
+	polar_patterns.push_back(polar_pattern_rate0                           );
+	polar_patterns.push_back(polar_pattern_rate1                           );
+	polar_patterns.push_back(new Pattern_polar<polar_node_t::REP_LEFT   >());
+	polar_patterns.push_back(new Pattern_polar<polar_node_t::REP        >());
+	polar_patterns.push_back(new Pattern_polar<polar_node_t::SPC        >());
 
 	float snr = params.simulation.snr_min;
 
 	code_rate = (float)params.code.K / (float)params.code.N;
-	sigma     = (float)1.0 / sqrt((float)2.0 * code_rate * pow((float)10.0, (snr / (float)10.0)));
+	sigma     = (float)1.0 / std::sqrt((float)2.0 * code_rate * std::pow((float)10.0, (snr / (float)10.0)));
 
 	// build the frozen bits generator
 	fb_generator = Factory_frozenbits_generator<int>::build(params);
@@ -79,7 +79,7 @@ Generation_polar
 	short_graph_file.open((directory + "/" + fileName + ".short.dot").c_str(), std::ios_base::out);
 
 	generator = new Generator_polar_SC_sys(params.code.K, params.code.N, snr, frozen_bits,
-	                                       patterns_SC, *pattern_SC_rate0, *pattern_SC_rate1,
+	                                       polar_patterns, *polar_pattern_rate0, *polar_pattern_rate1,
 	                                       dec_file, short_dec_file, graph_file, short_graph_file);
 }
 
@@ -94,8 +94,8 @@ Generation_polar
 	if (generator    != nullptr) delete generator;
 	if (fb_generator != nullptr) delete fb_generator;
 
-	for (unsigned i = 0; i < patterns_SC.size(); i++)
-		delete patterns_SC[i]; // memory leak possible with patter_SC_rate0 and 1
+	for (unsigned i = 0; i < polar_patterns.size(); i++)
+		delete polar_patterns[i]; // memory leak possible with patter_SC_rate0 and 1
 }
 
 void Generation_polar
@@ -119,9 +119,9 @@ void Generation_polar
 		std::cout << tab << "Nodes number before pruning = " << n_nodes                                << std::endl;
 		std::cout << tab << "Nodes number  after pruning = " << n_nodes_gen                            << std::endl;
 		std::cout << tab << "Terminal nodes (alias pruning rules):"                                    << std::endl;
-		for (unsigned p = 0; p < patterns_SC.size(); p++)
+		for (unsigned p = 0; p < polar_patterns.size(); p++)
 		{
-			auto cur_pattern_SC = patterns_SC[p];
+			auto cur_pattern_SC = polar_patterns[p];
 			if (cur_pattern_SC->is_terminal())
 				std::cout << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 				          << std::setw(5)
@@ -129,9 +129,9 @@ void Generation_polar
 				          << " / " << n_nodes_gen << std::endl;
 		}
 		std::cout << tab << "Non-terminal nodes (alias specialization rules):" << std::endl;
-		for (unsigned p = 0; p < patterns_SC.size(); p++)
+		for (unsigned p = 0; p < polar_patterns.size(); p++)
 		{
-			auto cur_pattern_SC = patterns_SC[p];
+			auto cur_pattern_SC = polar_patterns[p];
 			if (!cur_pattern_SC->is_terminal())
 				std::cout << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 				          << std::setw(5)
@@ -145,7 +145,7 @@ void Generation_polar
 		std::cout << "-----------------------------------" << std::endl;
 		for (auto d = 0; d < params.code.m +1; d++)
 		{
-			n_nodes     = (unsigned long)pow(2, d);
+			n_nodes     = (unsigned long)std::pow(2, d);
 			n_nodes_gen = generator->get_n_generated_nodes(d);
 
 			std::cout << tab        << "* Graph depth = " << d                               << std::endl;
@@ -153,9 +153,9 @@ void Generation_polar
 			std::cout << tab << tab << "Nodes number before pruning = " << n_nodes           << std::endl;
 			std::cout << tab << tab << "Nodes number  after pruning = " << n_nodes_gen       << std::endl;
 			std::cout << tab << tab << "Terminal nodes (alias pruning rules)"                << std::endl;
-			for (unsigned p = 0; p < patterns_SC.size(); p++)
+			for (unsigned p = 0; p < polar_patterns.size(); p++)
 			{
-				auto cur_pattern_SC = patterns_SC[p];
+				auto cur_pattern_SC = polar_patterns[p];
 				if (cur_pattern_SC->is_terminal())
 					std::cout << tab << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 					          << std::setw(5)
@@ -163,9 +163,9 @@ void Generation_polar
 					          << " / " << n_nodes_gen << std::endl;
 			}
 			std::cout << tab << tab << "Non-terminal nodes (alias specialization rules):" << std::endl;
-			for (unsigned p = 0; p < patterns_SC.size(); p++)
+			for (unsigned p = 0; p < polar_patterns.size(); p++)
 			{
-				auto cur_pattern_SC = patterns_SC[p];
+				auto cur_pattern_SC = polar_patterns[p];
 				if (!cur_pattern_SC->is_terminal())
 					std::cout << tab << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 					          << std::setw(5)

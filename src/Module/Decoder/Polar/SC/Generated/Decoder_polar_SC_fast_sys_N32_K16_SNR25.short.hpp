@@ -5,7 +5,7 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
-static const char Frozen_bits_32_16_25[32] = {
+static const char Decoder_polar_SC_fast_sys_fb_32_16_25[32] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 template <typename B, typename R, class API_polar>
@@ -19,7 +19,7 @@ public:
 		assert(K == 16);
 		
 		auto i = 0;
-		while (i < 32 && Frozen_bits_32_16_25[i] == frozen_bits[i]) i++;
+		while (i < 32 && Decoder_polar_SC_fast_sys_fb_32_16_25[i] == frozen_bits[i]) i++;
 		assert(i == 32);
 	}
 

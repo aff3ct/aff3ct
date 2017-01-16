@@ -5,7 +5,7 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
-static const char Frozen_bits_131072_109227_40[131072] = {
+static const char Decoder_polar_SC_fast_sys_fb_131072_109227_40[131072] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -4114,7 +4114,7 @@ public:
 		assert(K == 109227);
 		
 		auto i = 0;
-		while (i < 131072 && Frozen_bits_131072_109227_40[i] == frozen_bits[i]) i++;
+		while (i < 131072 && Decoder_polar_SC_fast_sys_fb_131072_109227_40[i] == frozen_bits[i]) i++;
 		assert(i == 131072);
 	}
 
