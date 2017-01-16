@@ -193,13 +193,16 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2);
+				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2); break;
+					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2);
+				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2);
+				break;
 			default:
 				break;
 		}
@@ -283,13 +286,16 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			case STANDARD:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2);
+				break;
 			case RATE_0_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2); break;
+					API_polar::xo0(s[paths[i]],        off_s + n_elm_2, off_s, n_elm_2);
+				break;
 			case REP_LEFT:
 				for (auto i = 0; i < n_active_paths; i++)
-					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2); break;
+					API_polar::xo (s[paths[i]], off_s, off_s + n_elm_2, off_s, n_elm_2);
+				break;
 			default:
 				break;
 		}
