@@ -4,7 +4,7 @@ This project use python 3.x and some dependencies : PyQt 4.7+ or PyQt5, NumPy.
 ## Installation (Ubuntu)
 
 	sudo apt-get install python3 python3-pip
-	sudo pip install numpy pyqt5
+	sudo pip3 install numpy pyqt5
 
 ## Launch PyBER
 
