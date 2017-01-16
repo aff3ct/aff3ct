@@ -24,7 +24,7 @@ public:
 	virtual ~Decoder_LDPC_BP_layered_offset_normalize_min_sum();
 
 protected:
-	void BP_process();
+	void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches);
 };
 
 #endif /* DECODER_LDPC_BP_LAYERED_MIN_SUM_OFFSET_HPP_ */

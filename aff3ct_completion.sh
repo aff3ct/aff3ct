@@ -15,6 +15,7 @@ _aff3ct() {
 	done
 
 	# determine simu type
+	simutype="BFER" # BFER simu by default
 	for ((i = 0 ; i < ${#COMP_WORDS[*]}; ++ i))
 	do
 		if [[ ${COMP_WORDS[$i]} == "--sim-type" ]]; then
@@ -46,10 +47,11 @@ _aff3ct() {
 		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
 		      --sim-inter-lvl --cde-info-bits -K --cde-size -N --src-type     \
 		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
-		      --mod-const-path --dmod-max --dmod-no-sig2 --chn-type           \
-		      --chn-path --chn-blk-fad --qnt-type --qnt-int --qnt-bits        \
-		      --qnt-range --dec-type --dec-implem --term-no --term-freq       \
-		      --sim-seed --sim-mpi-comm"
+		      --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p --mod-cpm-k  \
+		      --mod-cpm-std --mod-const-path --dmod-max --dmod-no-sig2        \
+		      --chn-type --chn-path --chn-blk-fad --qnt-type --qnt-int        \
+		      --qnt-bits --qnt-range --dec-type --dec-implem --term-no        \
+		      --term-freq --sim-seed --sim-mpi-comm --sim-pyber"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -199,13 +201,15 @@ _aff3ct() {
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |        \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |          \
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
-		--cde-size | -N | --mod-bps | --mod-ups | --qnt-int | --qnt-bits |    \
-		--qnt-range | --qnt-type | --dec-type | --dec-implem | --sim-benchs | \
-		-b | --sim-debug-limit |  --mnt-max-fe | -e | --term-type |           \
+		--cde-size | -N |                                                     \
+		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
+		--qnt-int | --qnt-bits | --qnt-range | --qnt-type |                   \
+		--sim-benchs | -b | --sim-debug-limit |                               \
+		--mnt-max-fe | -e | --term-type |                                     \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --crc-poly)
+		--sim-seed | --sim-mpi-comm | --sim-pyber)
 			COMPREPLY=()
 			;;
 
@@ -272,8 +276,8 @@ _aff3ct() {
 
 		--dec-implem)
 			local params="GENERIC STD FAST VERY_FAST"
-			if ["${codetype}" == 'LDPC']; then
-				params="ONMS SPA LSPA"
+			if [ "${codetype}" == 'LDPC' ]; then
+				params="ONMS SPA LSPA GALA"
 			fi
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -322,14 +326,40 @@ _aff3ct() {
 			local params="STD FAST"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
+		
+		--crc-poly)
+			local params="1-PAR 4-ITU 5-USB 5-EPC 5-ITU 6-ITU 6-DARC 6-CDMA2000-B 6-CDMA2000-A  \
+			              7-MMC 7-MVB 8-DVB-S2 8-AUTOSAR 8-CCITT 8-DALLAS 8-DARC 8-SAE-J1850    \
+			              8-WCDMA 10-ATM 10-CDMA2000 11-FLEXRAY 12-TELECOM 12-CDMA2000 13-BBC   \
+			              14-DARC 15-CAN 15-MPT1327 16-CHAKRAVARTY 16-ARINC 16-CDMA2000         \
+			              16-DECT 16-T10-DIF 16-DNP 16-OPENSAFETY-A 16-OPENSAFETY-B 16-PROFIBUS \
+			              16-CCITT 16-IBM 17-CAN 21-CAN 24-FLEXRAY 24-RADIX-64 24-LTEA 30-CDMA  \
+			              32-KOOPMAN 32-AIXM 32-CASTAGNOLI 32-GZIP"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
 
 		--dec-sf)
 			local params="NO LTE LTE_VEC ARRAY"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
+		--mod-cpm-std)
+			local params="GSM"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--mod-cpm-map)
+			local params="NATURAL GRAY"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--mod-cpm-ws)
+			local params="GMSK REC RCOS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
 		--mod-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM GSM GSM_TBLESS USER"
+			local params="BPSK BPSK_FAST PSK PAM QAM CPM USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

@@ -36,9 +36,10 @@ private:
 	int                                             max_n_chars; /*!< The number of characters of the largest parameter name. */
 	std::unordered_map<std::type_index,std::string> type_names;  /*!< An internal map to store a string associated to a type. */
 	Simulation                                     *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
+	std::string                                     cmd_line;
+	std::string                                     cmd_warn;
 
 protected:
-
 	Arguments_reader                                             ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
 	parameters                                                   params;   /*!< A structure of parameters to store and pass to the simulation. */
 	std::ostream                                                &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */

@@ -20,6 +20,17 @@ Launcher<B,R,Q>
 ::Launcher(const int argc, const char **argv, std::ostream &stream)
 : max_n_chars(0), simu(nullptr), ar(argc, argv), stream(stream)
 {
+	cmd_line += std::string(argv[0]) + std::string(" ");
+	for (auto i = 1; i < argc; i++)
+	{
+		if (argv[i][0] == '-')
+			cmd_line += std::string(argv[i]);
+		else
+			cmd_line += std::string("\"") + std::string(argv[i]) + std::string("\"");
+
+		cmd_line += std::string(" ");
+	}
+
 	// define type names
 	type_names[typeid(char)]        = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
 	type_names[typeid(signed char)] = "signed char (" + std::to_string(sizeof(signed char)*8) + " bits)";
@@ -38,6 +49,7 @@ Launcher<B,R,Q>
 	params.simulation .mpi_rank          = 0;
 	params.simulation .mpi_size          = 1;
 	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
+	params.simulation .pyber             = "";
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -47,6 +59,12 @@ Launcher<B,R,Q>
 	params.modulator  .type              = "BPSK";
 	params.modulator  .bits_per_symbol   = 1;
 	params.modulator  .upsample_factor   = 1;
+	params.modulator  .mapping           = "NATURAL";
+	params.modulator  .cpm_std           = "";
+	params.modulator  .cpm_L             = 2;
+	params.modulator  .cpm_k             = 1;
+	params.modulator  .cpm_p             = 2;
+	params.modulator  .wave_shape        = "GMSK";
 	params.modulator  .complex           = true;
 	params.demodulator.max               = "MAXSS";
 	params.demodulator.no_sig2           = false;
@@ -94,6 +112,9 @@ void Launcher<B,R,Q>
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
 		 "BFER, BFERI, EXIT, GEN"};
+	opt_args[{"sim-pyber"}] =
+		{"string",
+		 "prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER."};
 	opt_args[{"sim-stop-time"}] =
 		{"positive_int",
 		 "time in sec after what the current SNR iteration should stop."};
@@ -153,16 +174,39 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, GSM, GSM_TBLESS, USER"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
 	opt_args[{"mod-ups"}] =
 		{"positive_int",
-		 "select the symbol upsample factor (default is 1)."};
+		 "select the symbol sampling factor (default is 1)."};
 	opt_args[{"mod-const-path"}] =
 		{"string",
 		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
+
+	opt_args[{"mod-cpm-std"}] =
+		{"string",
+		 std::string("the selection of a default CPM standard hardly implemented (any of those parameters is) ") +
+		 std::string("overwritten if the argument is given by the user"),
+		 "GSM"};
+	opt_args[{"mod-cpm-L"}] =
+		{"positive_int",
+		 "cpm pulse width or cpm memory (default is 2)"};
+	opt_args[{"mod-cpm-k"}] =
+		{"positive_int",
+		 "modulation index numerator (default is 1)"};
+	opt_args[{"mod-cpm-p"}] =
+		{"positive_int",
+		 "modulation index denumerator (default is 2)"};
+	opt_args[{"mod-cpm-map"}] =
+		{"string",
+		 "symbols mapping layout (default is NATURAL)",
+		 "NATURAL, GRAY"};
+	opt_args[{"mod-cpm-ws"}] =
+		{"string",
+		 "wave shape (default is GMSK)",
+		 "GMSK, REC, RCOS"};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{"dmod-max"}] =
@@ -248,6 +292,7 @@ void Launcher<B,R,Q>
 	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
 
 	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
+	if(ar.exist_arg({"sim-pyber"          })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"          });
 	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
 	if(ar.exist_arg({"sim-domain"         })) params.channel.domain               = ar.get_arg      ({"sim-domain"         });
 	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
@@ -259,7 +304,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
 #endif
 #ifdef ENABLE_MPI
-	if(ar.exist_arg({"sim-mpi-comm"     })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
+	if(ar.exist_arg({"sim-mpi-comm"       })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
 
 	int max_n_threads_global;
 	int max_n_threads_local = params.simulation.n_threads;
@@ -272,6 +317,9 @@ void Launcher<B,R,Q>
 	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
 #endif
 
+	// disable the cool bash mode for PyBER
+	if (!params.simulation.pyber.empty())
+		enable_bash_tools = false;
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
@@ -302,20 +350,43 @@ void Launcher<B,R,Q>
 	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
 		params.modulator.complex = false;
 
+
+	if(ar.exist_arg({"mod-cpm-std"})) params.modulator.cpm_std = ar.get_arg({"mod-cpm-std"});
+	if (params.modulator.type == "CPM")
+	{
+		if (!params.modulator.cpm_std.empty())
+		{
+			if (params.modulator.cpm_std == "GSM")
+			{
+				params.modulator.cpm_L          = 3;
+				params.modulator.cpm_k          = 1;
+				params.modulator.cpm_p          = 2;
+				params.modulator.bits_per_symbol= 1;
+				params.modulator.upsample_factor= 5;
+				params.modulator.mapping        = "NATURAL";
+				params.modulator.wave_shape     = "GMSK";
+			}
+			else
+			{
+				std::cerr << bold_red("(EE) Unknown CPM standard!") << std::endl;
+				exit(-1);
+			}
+		}
+	}
+
 	if(ar.exist_arg({"mod-bps"       })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
 	if(ar.exist_arg({"mod-ups"       })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
 	if(ar.exist_arg({"mod-const-path"})) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
 
+	if(ar.exist_arg({"mod-cpm-L"     })) params.modulator.cpm_L           = ar.get_arg_int({"mod-cpm-L"     });
+	if(ar.exist_arg({"mod-cpm-p"     })) params.modulator.cpm_p           = ar.get_arg_int({"mod-cpm-p"     });
+	if(ar.exist_arg({"mod-cpm-k"     })) params.modulator.cpm_k           = ar.get_arg_int({"mod-cpm-k"     });
+	if(ar.exist_arg({"mod-cpm-map"   })) params.modulator.mapping         = ar.get_arg    ({"mod-cpm-map"   });
+	if(ar.exist_arg({"mod-cpm-ws"    })) params.modulator.wave_shape      = ar.get_arg    ({"mod-cpm-ws"    });
+
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
 		params.modulator.bits_per_symbol = 1;
-
-	if (params.modulator.type == "GSM" || params.modulator.type == "GSM_TBLESS")
-	{
-		params.modulator.bits_per_symbol = 1;
-		params.modulator.upsample_factor = 5;
-		params.demodulator.no_sig2 = true;
-	}
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
@@ -355,7 +426,7 @@ void Launcher<B,R,Q>
 		 "print this help."};
 
 	auto display_help = true;
-	if (ar.parse_arguments(req_args, opt_args))
+	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
 	{
 		this->store_args();
 
@@ -492,14 +563,22 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	std::string modulation = std::to_string((int)(1 << params.modulator.bits_per_symbol)) + "-" + params.modulator.type;
-	if ((params.modulator.type == "BPSK") || (params.modulator.type == "BPSK_FAST")|| (params.modulator.type == "GSM") ||
-		(params.modulator.type == "GSM_TBLESS"))
-		modulation = params.modulator.type;
-	if (params.modulator.upsample_factor > 1)
-		modulation += " (" + std::to_string(params.modulator.upsample_factor) + "-UPS)";
+	p.push_back(std::make_pair("Type", this->params.modulator.type));
+	if (params.modulator.type == "CPM")
+	{
+		if(params.modulator.cpm_std.size())
+			p.push_back(std::make_pair("CPM standard", this->params.modulator.cpm_std));
 
-	p.push_back(std::make_pair("Type", modulation));
+		p.push_back(std::make_pair("CPM L memory", std::to_string(this->params.modulator.cpm_L)    ));
+		p.push_back(std::make_pair("CPM h index", (std::to_string(this->params.modulator.cpm_k) +
+		                                           std::string("/")                             +
+		                                           std::to_string(this->params.modulator.cpm_p))   ));
+		p.push_back(std::make_pair("CPM wave shape",              this->params.modulator.wave_shape));
+		p.push_back(std::make_pair("CPM mapping",                 this->params.modulator.mapping   ));
+	}
+
+	p.push_back(std::make_pair("Bits per symbol", std::to_string(this->params.modulator.bits_per_symbol)));
+	p.push_back(std::make_pair("Sampling factor", std::to_string(this->params.modulator.upsample_factor)));
 
 	return p;
 }
@@ -684,6 +763,16 @@ void Launcher<B,R,Q>
 	}
 
 	this->read_arguments();
+
+	// write the command and he curve name in the PyBER format
+	if (!params.simulation.pyber.empty() && params.simulation.mpi_rank == 0)
+	{
+		stream << "Run command:"          << std::endl;
+		stream << cmd_line                << std::endl;
+		stream << "Curve name:"           << std::endl;
+		stream << params.simulation.pyber << std::endl;
+	}
+
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
 	simu = this->build_simu();
@@ -693,6 +782,9 @@ void Launcher<B,R,Q>
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
 			stream << "# The simulation is running..." << std::endl;
+		// print the warnings
+		if (params.simulation.mpi_rank == 0)
+			stream << bold_yellow(cmd_warn);
 		simu->launch();
 		if (params.simulation.mpi_rank == 0)
 			stream << "# End of the simulation." << std::endl;

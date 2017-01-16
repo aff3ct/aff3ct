@@ -3,6 +3,8 @@
 
 #include <string>
 
+extern bool enable_bash_tools;
+
 std::string bold(std::string str);
 
 std::string italic(std::string str);

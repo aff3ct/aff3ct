@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct -p 32 --sim-type BFER --cde-type UNCODED -m 0.0 -M 12.1 -s 1.0 -e 500 -K 4003 -N 4003 -e 500 --mod-type GSM --dmod-max MAX --chn-type AWGN_FAST --src-type RAND_FAST -t 48
+./bin/aff3ct -p 32 --sim-type BFER --cde-type UNCODED -m 0.0 -M 12.1 -s 1.0 -e 500 -K 4003 -N 4003 -e 500 --mod-type CPM --mod-cpm-std GSM --dmod-max MAX --chn-type AWGN_FAST --src-type RAND_FAST -t 48
 Curve name:
 GSM
 Trace:

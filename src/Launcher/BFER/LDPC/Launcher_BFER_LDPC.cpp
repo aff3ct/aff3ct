@@ -35,7 +35,7 @@ void Launcher_BFER_LDPC<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
-	this->opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA");
+	this->opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA, GALA");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};
@@ -98,7 +98,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_LDPC<B,R,Q>
 		p.push_back(std::make_pair("Offset", std::to_string(this->params.decoder.offset)));
 		p.push_back(std::make_pair("Normalize factor", std::to_string(this->params.decoder.normalize_factor)));
 	}
-	p.push_back(std::make_pair("Syndrome detection", syndrome));
+	p.push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
 
 	return p;
 }

@@ -42,6 +42,12 @@ __forceinline void cgemm_r(const int M, const int N, const int K,
                            const mipp::vector<T> &tB, 
                                  mipp::vector<T> &tC);
 
+// complex transpose : B_real = tA_real and B_imag = -tA_imag, where A is of size M*N*2 and then B of size N*M*2
+// (with both complex elements) : B's elements are the conjugates of A's
+template <typename T>
+__forceinline void complex_transpose(const int M, const int N,
+                                     const mipp::vector<T> &A,
+                                           mipp::vector<T> &B);
 
 #include "matrix.hxx"
 

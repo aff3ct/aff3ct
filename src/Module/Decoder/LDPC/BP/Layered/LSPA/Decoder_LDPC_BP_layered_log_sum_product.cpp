@@ -27,7 +27,7 @@ Decoder_LDPC_BP_layered_log_sum_product<B,R>
 // BP algorithm
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_log_sum_product<B,R>
-::BP_process()
+::BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches)
 {
 	auto kr = 0;
 	auto kw = 0;
@@ -39,7 +39,7 @@ void Decoder_LDPC_BP_layered_log_sum_product<B,R>
 		const auto n_VN = (int)this->CN_to_VN[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			contributions[j]     = this->var_nodes[this->CN_to_VN[i][j]] - this->branches[kr++];
+			contributions[j]     = var_nodes[this->CN_to_VN[i][j]] - branches[kr++];
 			const auto v_abs     = (R)std::abs(contributions[j]);
 			const auto tan_v_abs = std::tanh(v_abs * (R)0.5);
 			const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) :
@@ -60,8 +60,8 @@ void Decoder_LDPC_BP_layered_log_sum_product<B,R>
 			const auto v_tan = (R)2.0 * std::atanh(exp);
 			const auto v_res = (R)std::copysign(v_tan, v_sig);
 
-			this->branches[kw++] = v_res;
-			this->var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
+			branches[kw++] = v_res;
+			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
 		}
 	}
 }

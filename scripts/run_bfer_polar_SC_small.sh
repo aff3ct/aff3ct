@@ -13,4 +13,4 @@ cd ../build
     --mnt-max-fe      100        \
     --dec-type        SC         \
     --dec-implem      NAIVE      \
-    $1 $2 $3 $4 $5 $6 $7 $8 $9 $10
+    $*

@@ -26,8 +26,32 @@ Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 // log sum-product implementation
 template <typename B, typename R>
 bool Decoder_LDPC_BP_flooding_log_sum_product<B,R>
-::BP_process()
+::BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V)
 {
+	// beginning of the iteration upon all the matrix lines
+	R *C_to_V_ptr = C_to_V.data();
+	R *V_to_C_ptr = V_to_C.data();
+
+	for (auto i = 0; i < this->n_V_nodes; i++)
+	{
+		// VN node accumulate all the incoming messages
+		const auto length = this->n_parities_per_variable[i];
+
+		auto sum_C_to_V = (R)0;
+		for (auto j = 0; j < length; j++)
+			sum_C_to_V += C_to_V_ptr[j];
+
+		// update the intern values
+		const auto temp = Y_N[i] + sum_C_to_V;
+
+		// generate the outcoming messages to the CNs
+		for (auto j = 0; j < length; j++)
+			V_to_C_ptr[j] = temp - C_to_V_ptr[j];
+
+		C_to_V_ptr += length; // jump to the next node
+		V_to_C_ptr += length; // jump to the next node
+	}
+
 	auto syndrome = 0;
 	auto transpose_ptr = this->transpose.data();
 
@@ -41,7 +65,7 @@ bool Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 		// accumulate the incoming information in CN
 		for (auto j = 0; j < length; j++)
 		{
-			const auto value     = this->V_to_C[transpose_ptr[j]];
+			const auto value     = V_to_C[transpose_ptr[j]];
 			const auto v_abs     = (R)std::abs(value);
 			const auto tan_v_abs = std::tanh(v_abs * (R)0.5);
 			const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) :
@@ -56,14 +80,14 @@ bool Decoder_LDPC_BP_flooding_log_sum_product<B,R>
 		// regenerate the CN outcoming values
 		for (auto j = 0; j < length; j++)
 		{
-			const auto value   = this->V_to_C[transpose_ptr[j]];
+			const auto value   = V_to_C[transpose_ptr[j]];
 			const auto v_sig   = sign ^ (std::signbit((float)value) ? -1 : 0);
 			const auto exp     = (sum - values[j] != 0) ? std::exp(sum - values[j]) :
 			                                              (R)1.0 - std::numeric_limits<R>::epsilon();
 			      auto v_res   = (R)2.0 * std::atanh(exp);
 			const auto v_to_st = (R)std::copysign(v_res, v_sig);
 
-			this->C_to_V[transpose_ptr[j]] = v_to_st;
+			C_to_V[transpose_ptr[j]] = v_to_st;
 		}
 
 		transpose_ptr += length;

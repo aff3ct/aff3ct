@@ -62,3 +62,26 @@ inline void cgemm_r(const int M, const int N, const int K,
 		}
 	}
 }
+
+template <typename T>
+inline void complex_transpose(const int M, const int N,
+                              const mipp::vector<T> &A,
+                                    mipp::vector<T> &B)
+{
+	assert(A.size() == unsigned(M * N * 2));
+	assert(B.size() == unsigned(N * M * 2));
+
+	const T* A_real = A.data();
+	const T* A_imag = A.data() + ( A.size() >> 1);
+	      T* B_real = B.data();
+	      T* B_imag = B.data() + (B.size() >> 1);
+
+	for (auto i = 0; i < M; i++)
+	{
+		for (auto j = 0; j < N; j++)
+		{
+			B_real[j*M+i] =  A_real[i*N+j];
+			B_imag[j*M+i] = -A_imag[i*N+j];
+		}
+	}
+}

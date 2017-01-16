@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -18,9 +19,19 @@ std::vector<std::string> split(const std::string &s)
 	return tokens;
 }
 
+bool getline(std::ifstream &file, std::string &line)
+{
+	while (std::getline(file, line))
+		if (line[0] != '#' && !std::all_of(line.begin(),line.end(),isspace))
+			break;
+	if (file.eof() || file.fail() || file.bad())  return false;
+
+	return true;
+}
+
 AList_reader
 ::AList_reader(std::string filename)
-: n_VN(0), n_CN(0), VN_max_degree(0), CN_max_degree(0), n_branches(0), VN_to_CN(), CN_to_VN()
+: n_VN(0), n_CN(0), VN_max_degree(0), CN_max_degree(0), n_branches(0), VN_to_CN(), CN_to_VN(), branches_transpose()
 {
 	std::ifstream file(filename.c_str(), std::ios::in);
 
@@ -37,12 +48,19 @@ AList_reader
 
 			if (!success)
 			{
-				std::cerr << bold_red("(EE) The \"")
-				          << bold_red(filename)
-				          << bold_red("\" file is not supported by ")
-				          << bold_red("the AList reader, exiting.")
-				          << std::endl;
-				std::exit(-1);
+				file.open(filename.c_str(), std::ios::in);
+				success = this->read_format3(file);
+				file.close();
+
+				if (!success)
+				{
+					std::cerr << bold_red("(EE) The \"")
+					          << bold_red(filename)
+					          << bold_red("\" file is not supported by ")
+					          << bold_red("the AList reader, exiting.")
+					          << std::endl;
+					std::exit(-1);
+				}
 			}
 		}
 	}
@@ -51,8 +69,11 @@ AList_reader
 		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.") << std::endl;
 		std::exit(-1);
 	}
+
+	this->compute_branches_transpose();
 }
 
+// perfect AList format
 bool AList_reader
 ::read_format1(std::ifstream &file)
 {
@@ -135,13 +156,13 @@ bool AList_reader
 	return true;
 }
 
+// format with comments or/and no padding with 0
 bool AList_reader
 ::read_format2(std::ifstream &file)
 {
 	std::string line;
 
-	while (std::getline(file, line)) if (line[0] != '#') break;
-	if (file.eof() || file.fail() || file.bad())  return false;
+	if (!getline(file, line)) return false;
 	auto values = split(line);
 	if (values.size() < 2) return false;
 
@@ -150,8 +171,7 @@ bool AList_reader
 
 	if (this->n_VN <= 0 || this->n_CN <= 0) return false;
 
-	while (std::getline(file, line)) if (line[0] != '#') break;
-	if (file.eof() || file.fail() || file.bad())  return false;
+	if (!getline(file, line)) return false;
 	values = split(line);
 	if (values.size() < 2) return false;
 
@@ -160,8 +180,7 @@ bool AList_reader
 
 	if (this->VN_max_degree <= 0 || this->CN_max_degree <= 0) return false;
 
-	while (std::getline(file, line)) if (line[0] != '#') break;
-	if (file.eof() || file.fail() || file.bad())  return false;
+	if (!getline(file, line)) return false;
 	values = split(line);
 	if (values.size() < this->n_VN) return false;
 
@@ -178,8 +197,7 @@ bool AList_reader
 			return false;
 	}
 
-	while (std::getline(file, line)) if (line[0] != '#') break;
-	if (file.eof() || file.fail() || file.bad())  return false;
+	if (!getline(file, line)) return false;
 	values = split(line);
 	if (values.size() < this->n_CN) return false;
 
@@ -195,8 +213,7 @@ bool AList_reader
 
 	for (auto i = 0; i < (int)this->n_VN; i++)
 	{
-		while (std::getline(file, line)) if (line[0] != '#') break;
-		if (file.eof() || file.fail() || file.bad())  return false;
+		if (!getline(file, line)) return false;
 		values = split(line);
 
 		if (values.size() < this->VN_to_CN[i].size()) return false;
@@ -217,8 +234,7 @@ bool AList_reader
 
 	for (auto i = 0; i < (int)this->n_CN; i++)
 	{
-		while (std::getline(file, line)) if (line[0] != '#') break;
-		if (file.eof() || file.fail() || file.bad())  return false;
+		if (!getline(file, line)) return false;
 		values = split(line);
 
 		if (values.size() < this->CN_to_VN[i].size()) return false;
@@ -236,6 +252,65 @@ bool AList_reader
 				return false;
 		}
 	}
+
+	return true;
+}
+
+// format ANR NAND
+bool AList_reader
+::read_format3(std::ifstream &file)
+{
+	std::string line;
+
+	if (!getline(file, line)) return false;
+	auto values = split(line);
+	if (values.size() < 2) return false;
+
+	this->n_CN = std::stoi(values[0]);
+	this->n_VN = std::stoi(values[1]);
+
+	if (this->n_VN <= 0 || this->n_CN <= 0) return false;
+
+	if (!getline(file, line)) return false;
+	values = split(line);
+	if (values.size() < this->n_CN) return false;
+
+	this->CN_max_degree = 0;
+	this->CN_to_VN.resize(this->n_CN);
+	for (auto i = 0; i < (int)this->n_CN; i++)
+	{
+		auto n_connections = std::stoi(values[i]);
+		this->CN_max_degree = std::max(this->CN_max_degree, (unsigned)n_connections);
+		if (n_connections > 0)
+		{
+			this->CN_to_VN[i].resize(n_connections);
+			this->n_branches += n_connections;
+		}
+		else
+			return false;
+	}
+
+	this->VN_to_CN.resize(this->n_VN);
+	for (auto i = 0; i < (int)this->n_CN; i++)
+	{
+		if (!getline(file, line)) return false;
+		values = split(line);
+
+		if (values.size() < this->CN_to_VN[i].size()) return false;
+
+		for (auto j = 0; j < (int)this->CN_to_VN[i].size(); j++)
+		{
+			auto V_node_id = std::stoi(values[j]);
+			this->CN_to_VN[i][j] = V_node_id;
+
+			this->VN_to_CN[V_node_id].push_back(i);
+		}
+	}
+
+	// find the VN max degree
+	this->VN_max_degree = 0;
+	for (auto i = 0; i < (int)this->n_VN; i++)
+		this->VN_max_degree = std::max(this->VN_max_degree, (unsigned)this->VN_to_CN[i].size());
 
 	return true;
 }
@@ -335,11 +410,10 @@ mipp::vector<unsigned int> AList_reader
 	return linear_C_to_V;
 }
 
-mipp::vector<unsigned int> AList_reader
-::get_branches_transpose() const
+void AList_reader
+::compute_branches_transpose()
 {
-	mipp::vector<unsigned int> transpose(this->n_branches);
-
+	branches_transpose.resize(this->get_n_branches());
 	mipp::vector<unsigned char> connections(VN_to_CN.size(), 0);
 
 	auto k = 0;
@@ -357,10 +431,14 @@ mipp::vector<unsigned int> AList_reader
 
 			assert(connections[id_V] <= (int)VN_to_CN[id_V].size());
 
-			transpose[k] = branch_id;
+			branches_transpose[k] = branch_id;
 			k++;
 		}
 	}
+}
 
-	return transpose;
+const mipp::vector<unsigned int>& AList_reader
+::get_branches_transpose() const
+{
+	return branches_transpose;
 }

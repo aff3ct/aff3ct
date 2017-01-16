@@ -21,7 +21,7 @@ public:
 	virtual ~Decoder_LDPC_BP_layered_log_sum_product();
 
 protected:
-	void BP_process();
+	void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches);
 };
 
 #endif /* DECODER_LDPC_BP_LAYERED_LOG_SUM_PRODUCT_HPP_ */

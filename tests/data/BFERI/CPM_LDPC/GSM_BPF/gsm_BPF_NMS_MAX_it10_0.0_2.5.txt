@@ -1,0 +1,81 @@
+Run command:
+./bin/aff3ct --cde-type LDPC --sim-type BFERI --sim-prec 32 -m 0.0 -M 3.01 --sim-snr-step 0.25 -K 2112 -N 4224 --cde-coset --src-type RAND_FAST --itl-type USER --itl-path ../conf/itl/GSM-LDPC_4224.itl --mod-type CPM --chn-type AWGN_FAST --dmod-ite 10 --dec-type BP_FLOODING --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist --dec-implem ONMS --dec-norm 0.825 --dec-ite 1 --mnt-max-fe 100 --dmod-max MAX --mod-cpm-std GSM
+Curve name:
+GSM-BPF MAX NMS, 10 glob. ite.
+Trace:
+# -------------------------------------------------
+# ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
+# -------------------------------------------------
+# Parameters:
+# * Simulation ------------------------------------
+#    ** Type                    = BFERI
+#    ** SNR min (m)             = 0.000000 dB
+#    ** SNR max (M)             = 2.500000 dB
+#    ** SNR step (s)            = 0.250000 dB
+#    ** Type of bits            = int (32 bits)
+#    ** Type of reals           = float (32 bits)
+#    ** Inter frame level       = 1
+#    ** Seed                    = 0
+#    ** Multi-threading (t)     = 48 thread(s)
+# * Code ------------------------------------------
+#    ** Type                    = LDPC
+#    ** Info. bits (K)          = 2112
+#    ** Codeword size (N)       = 4224
+#    ** Coset approach (c)      = on
+#    ** AList file path         = ../conf/dec/LDPC/GSM_2112_4224.alist
+# * Source ----------------------------------------
+#    ** Type                    = RAND_FAST
+# * Encoder ---------------------------------------
+#    ** Type                    = COSET
+#    ** Systematic              = on
+# * Interleaver -----------------------------------
+#    ** Type                    = USER
+#    ** Path                    = ../conf/itl/GSM-LDPC_4224.itl
+# * Modulator -------------------------------------
+#    ** Type                    = CPM
+#    ** cpm-std                 = GSM
+#    ** cpm-L                   = 3
+#    ** cpm-k                   = 1
+#    ** cpm-p                   = 2
+#    ** bps                     = 1
+#    ** ups                     = 5
+#    ** mapping                 = NATURAL
+#    ** wave shape              = GMSK
+# * Channel ---------------------------------------
+#    ** Type                    = AWGN_FAST
+#    ** Domain                  = LLR
+# * Demodulator -----------------------------------
+#    ** Sigma square            = on
+#    ** Max type                = MAX
+#    ** Turbo demod. iterations = 10
+# * Decoder ---------------------------------------
+#    ** Type (D)                = BP_FLOODING
+#    ** Implementation          = ONMS
+#    ** Num. of iterations (i)  = 1
+#    ** Offset                  = 0.000000
+#    ** Normalize factor        = 0.825000
+#    ** Syndrome detection      = on
+# * Monitor ---------------------------------------
+#    ** Frame error count (e)   = 100
+#
+# The simulation is running...
+# -------------------------------------------------------------||--------------------------------||---------------------
+#   Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||     Decoder throughput and     ||  Global throughput  
+#             on the Signal Noise Ratio (SNR) Eb/N0            ||      latency (per thread)      ||  and elapsed time   
+# -------------------------------------------------------------||--------------------------------||---------------------
+# ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+#   SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
+#  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
+# ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+   0.00 |      147 |    81841 |      147 | 2.64e-01 | 1.00e+00 ||     0.84 |     0.42 |  5028.18 ||     1.32 | 00h00'00  
+   0.25 |      147 |    76619 |      147 | 2.47e-01 | 1.00e+00 ||     1.13 |     0.57 |  3721.72 ||     1.42 | 00h00'00  
+   0.50 |      147 |    69566 |      147 | 2.24e-01 | 1.00e+00 ||     0.87 |     0.43 |  4878.65 ||     1.76 | 00h00'00  
+   0.75 |      147 |    60810 |      147 | 1.96e-01 | 1.00e+00 ||     1.26 |     0.63 |  3347.08 ||     1.70 | 00h00'00  
+   1.00 |      147 |    49414 |      147 | 1.59e-01 | 1.00e+00 ||     1.03 |     0.51 |  4112.47 ||     1.61 | 00h00'00  
+   1.25 |      147 |    32945 |      147 | 1.06e-01 | 1.00e+00 ||     0.85 |     0.42 |  4970.71 ||     1.75 | 00h00'00  
+   1.50 |      151 |    14807 |      147 | 4.64e-02 | 9.74e-01 ||     1.03 |     0.51 |  4118.51 ||     1.75 | 00h00'00  
+   1.75 |      189 |     4486 |      128 | 1.12e-02 | 6.77e-01 ||     1.25 |     0.62 |  3385.84 ||     2.20 | 00h00'00  
+   2.00 |      569 |     1211 |      112 | 1.01e-03 | 1.97e-01 ||     1.10 |     0.55 |  3833.82 ||     3.04 | 00h00'00  
+   2.25 |     4049 |      425 |      100 | 4.97e-05 | 2.47e-02 ||     1.15 |     0.57 |  3675.90 ||     3.93 | 00h00'04  
+   2.50 |    54921 |      275 |      100 | 2.37e-06 | 1.82e-03 ||     1.17 |     0.59 |  3604.62 ||     4.12 | 00h00'56  
+# End of the simulation.
