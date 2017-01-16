@@ -61,6 +61,8 @@ public:
 
 	void generate();
 
+	std::string get_class_name();
+
 	unsigned long get_n_generated_nodes           (                          int graph_depth = -1) const;
 	unsigned long get_n_generated_nodes_by_pattern(std::size_t pattern_hash, int graph_depth = -1) const;
 

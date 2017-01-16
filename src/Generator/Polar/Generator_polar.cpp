@@ -53,6 +53,14 @@ Generator_polar
 {
 }
 
+std::string  Generator_polar
+::get_class_name()
+{
+	return mother_class_name + "_N" + to_string(N) +
+	                           "_K" + to_string(K) +
+	                         "_SNR" + to_string((int)(snr*10));
+}
+
 void Generator_polar
 ::generate()
 {
@@ -61,10 +69,7 @@ void Generator_polar
 	for (unsigned i = 0; i < stats.size(); i++)
 		std::fill(stats[i].begin(), stats[i].end(), 0);
 
-	string class_name = mother_class_name + "_N" + to_string(N) +
-	                                        "_K" + to_string(K) +
-	                                      "_SNR" + to_string((int)(snr*10));
-
+	string class_name = get_class_name();
 	string pragma_name = MOTHER_CLASS_NAME + "_N"   + to_string(N) +
 	                                         "_K"   + to_string(K) +
 	                                       "_SNR" + to_string((int)(snr*10)) + "_HPP_";
@@ -96,7 +101,7 @@ void Generator_polar
 	dec_common1                                                                                               << endl;
 	dec_common1 << "#include <cassert>"                                                                       << endl;
 	dec_common1                                                                                               << endl;
-	dec_common1 << "#include \"../Decoder_polar_SC_fast_sys.hpp\""                                            << endl;
+	dec_common1 << "#include \"../" << mother_class_name << ".hpp\""                                          << endl;
 	dec_common1                                                                                               << endl;
 	dec_common1 << "static const char " << fbits_name << "[" << N << "] = {"                                  << endl;
 	dec_common1 << fbits.str() << "};"                                                                        << endl;

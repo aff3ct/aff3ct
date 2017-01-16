@@ -11,7 +11,8 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/params.h"
 
-#include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
+#include "Generator/Polar/Generator_polar.hpp"
+
 #include "Simulation/Simulation.hpp"
 
 class Generation_polar : public Simulation
@@ -35,7 +36,7 @@ protected:
 	Frozenbits_generator<int> *fb_generator;
 
 	// generator
-	Generator_polar_SC_sys *generator;
+	Generator_polar *generator;
 
 	// file into generate the decoder
 	std::string  directory;
