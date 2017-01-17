@@ -30,8 +30,8 @@ protected:
 
 	// patterns
 	std::vector<Pattern_polar_i*> polar_patterns;
-	Pattern_polar_i* polar_pattern_rate0;
-	Pattern_polar_i* polar_pattern_rate1;
+	Pattern_polar_i* polar_pattern_r0;
+	Pattern_polar_i* polar_pattern_r1;
 
 	Frozenbits_generator<int> *fb_generator;
 

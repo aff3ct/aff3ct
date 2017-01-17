@@ -32,13 +32,13 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   frozen_bits   (frozen_bits),
   polar_patterns(N,
                  frozen_bits,
-                 {new Pattern_polar<polar_node_t::STANDARD   >(),
-                  new Pattern_polar<polar_node_t::RATE_0     >(),
-                  new Pattern_polar<polar_node_t::RATE_1     >(),
-                  new Pattern_polar<polar_node_t::RATE_0_LEFT>(),
-                  new Pattern_polar<polar_node_t::REP_LEFT   >(),
-                  new Pattern_polar<polar_node_t::REP        >()/*,
-                  new Pattern_polar<polar_node_t::SPC        >()*/}, // perf. degradation with SPC nodes length > 4
+                 {new Pattern_polar_std,
+                  new Pattern_polar_r0,
+                  new Pattern_polar_r1,
+                  new Pattern_polar_r0_left,
+                  new Pattern_polar_rep_left,
+                  new Pattern_polar_rep/*,
+                  new Pattern_polar_spc*/}, // perf. degradation with SPC nodes length > 4
                  1,
                  2),
   paths         (L),
@@ -682,7 +682,7 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto new_path = paths[n_active_paths++];
 
 //	std::copy(path_2_array[old_path].begin(), path_2_array[old_path].end(), path_2_array[new_path].begin());
-	const auto loop_size = path_2_array[old_path].size();
+	const auto loop_size = (int)path_2_array[old_path].size();
 	for (auto i = 0; i < loop_size; i++)
 		path_2_array[new_path][i] = path_2_array[old_path][i];
 

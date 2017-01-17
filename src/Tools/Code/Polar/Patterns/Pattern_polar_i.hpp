@@ -97,9 +97,9 @@ public:
 	virtual std::string g() const = 0;
 	virtual std::string h() const = 0;
 
-	virtual std::string apply_f(std::string str_off_l = "", std::string str_off_s = "") const = 0;
-	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const = 0;
-	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const = 0;
+	virtual std::string apply_f(std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
+	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
+	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 
 	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const = 0;
 
