@@ -69,7 +69,7 @@ void Generator_polar_SC_sys
 	stream1 << tab << "}"                                                                                 << endl;
 	stream1                                                                                               << endl;
 
-	stream2 << tab << "void decode()"                                                                     << endl;
+	stream2 << tab << "void hard_decode()"                                                                << endl;
 	stream2 << tab << "{"                                                                                 << endl;
 	stream2 << tab << tab << "auto &l = this->l;"                                                         << endl;
 	stream2 << tab << tab << "auto &s = this->s;"                                                         << endl;

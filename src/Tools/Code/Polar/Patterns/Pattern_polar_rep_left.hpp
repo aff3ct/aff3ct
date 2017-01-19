@@ -49,7 +49,6 @@ public:
 
 		int match_val = 0;
 
-//		if (typeid(*pattern_left) == typeid(Pattern_polar_rep))
 		if (pattern_left->type() == polar_node_t::REP)
 		{
 			match_val = 19;

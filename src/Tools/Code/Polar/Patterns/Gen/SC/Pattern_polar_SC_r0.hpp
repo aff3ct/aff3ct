@@ -21,17 +21,17 @@ public:
 		return new Pattern_polar_SC_r0(N, node);
 	}
 
-	virtual std::string apply_f(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_f(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
 		return "";
 	}
 
-	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_g(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
 		return "";
 	}
 
-	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_h(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
 		return "";
 	}

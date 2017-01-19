@@ -56,6 +56,12 @@ protected:
 	inline void update_paths_rep(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_spc(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 
+	// those methods are used by the generated SCL decoders
+	template <int REV_D, int N_ELMTS> inline void update_paths_r0 (const int off_l, const int off_s);
+	template <int REV_D, int N_ELMTS> inline void update_paths_r1 (const int off_l, const int off_s);
+	template <int REV_D, int N_ELMTS> inline void update_paths_rep(const int off_l, const int off_s);
+	template <int REV_D, int N_ELMTS> inline void update_paths_spc(const int off_l, const int off_s);
+
 	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
 	inline int  up_ref_array_idx(const int path, const int r_d                                           ); // return the array
 

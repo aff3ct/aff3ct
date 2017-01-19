@@ -49,8 +49,6 @@ public:
 
 		int match_val = 0;
 
-//		if (typeid(*pattern_left)  == typeid(Pattern_polar_r1) &&
-//		    typeid(*pattern_right) == typeid(Pattern_polar_r1))
 		if (pattern_left ->type() == polar_node_t::RATE_1 &&
 		    pattern_right->type() == polar_node_t::RATE_1)
 		{

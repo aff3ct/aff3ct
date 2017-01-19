@@ -54,16 +54,12 @@ public:
 
 		if (reverse_graph_depth == 1)
 		{
-//			if (typeid(*pattern_left)  == typeid(Pattern_polar_r0) &&
-//			    typeid(*pattern_right) == typeid(Pattern_polar_r1))
 			if (pattern_left ->type() == polar_node_t::RATE_0 &&
 			    pattern_right->type() == polar_node_t::RATE_1)
 			{
 				match_val = 50;
 			}
 		}
-//		else if (typeid(*pattern_left)  == typeid(Pattern_polar_r0 ) &&
-//		         typeid(*pattern_right) == typeid(Pattern_polar_rep))
 		else if (pattern_left ->type() == polar_node_t::RATE_0 &&
 		         pattern_right->type() == polar_node_t::REP)
 		{

@@ -21,32 +21,26 @@ public:
 		return new Pattern_polar_SCL_rep(N, node);
 	}
 
-	virtual std::string apply_f(std::string str_off_l = "", std::string str_off_s = "") const {
-		return "";
-	}
-
-	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_f(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
 		return "";
 	}
 
-	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_g(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
-		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l);
-		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s);
+		return "";
+	}
 
-		auto apply_rep = h();
-		std::string spaces = ""; for (auto i = 0; i < 2*this->n_dig+1; i++) spaces += " ";
+	virtual std::string apply_h(std::string si = "", std::string str_off_l = "", std::string str_off_s = "") const
+	{
+		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l - this->N);
+		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s          );
 
 		std::stringstream stream;
-		stream << "API_polar::template "  << apply_rep  << "<" << std::setw(this->n2_dig) << this->size << ">("
-		       << "s, "
-		       << "l, "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << spaces                                                                                << "  "
-		       << spaces                                                                                << "  "
-		       << std::setw(this->n_dig ) << str_off_s  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << std::setw(this->n2_dig) << this->size << ");" << std::endl;
+		stream << si << "this->template update_paths_rep<" << this->rev_depth << ", " << this->size << ">("
+		             << str_off_l << ", "
+		             << str_off_s << ");"
+		       << std::endl;
 
 		return stream.str();
 	}

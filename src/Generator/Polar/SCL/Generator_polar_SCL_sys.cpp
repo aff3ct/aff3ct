@@ -55,7 +55,7 @@ void Generator_polar_SCL_sys
 	stream1 << tab << class_name << "(const int& K, const int& N, const int& L,"
 	               <<               " const mipp::vector<B>& frozen_bits, CRC<B>& crc,"
 	               <<               " const int n_frames = 1)"                                            << endl;
-	stream1 << tab << ": " << this->mother_class_name << "<B, R, API_polar>(K, N, L, frozen_bits, crc,"
+	stream1 << tab << ": " << this->mother_class_name << "<B, R, API_polar>(K, N, L, frozen_bits, crc, "
 	               <<                                                      "n_frames)"                    << endl;
 	stream1 << tab << "{"                                                                                 << endl;
 	stream1 << tab << tab << "assert(N == " << N << ");"                                                  << endl;
@@ -71,7 +71,7 @@ void Generator_polar_SCL_sys
 	stream1 << tab << "}"                                                                                 << endl;
 	stream1                                                                                               << endl;
 
-	stream2 << tab << "void decode()"                                                                     << endl;
+	stream2 << tab << "void hard_decode()"                                                                << endl;
 	stream2 << tab << "{"                                                                                 << endl;
 	stream2 << tab << tab << "auto &y = this->Y_N;"                                                       << endl;
 	stream2 << tab << tab << "auto &l = this->l;"                                                         << endl;
@@ -82,8 +82,9 @@ void Generator_polar_SCL_sys
 void Generator_polar_SCL_sys
 ::generate_class_footer(std::ostream &stream)
 {
-	stream << tab << "}" << endl;
-	stream << "};" << "" << endl;
+	stream << tab << tab << "this->select_best_path();" << endl;
+	stream << tab << "}"                                << endl;
+	stream << "};" << ""                                << endl;
 }
 
 void Generator_polar_SCL_sys
@@ -94,41 +95,22 @@ void Generator_polar_SCL_sys
 	if (!node_curr->is_leaf()) // stop condition
 	{
 		if (!node_curr->get_c()->apply_f().empty())
-			stream << tab << tab << node_curr->get_c()->apply_f();
+			stream << node_curr->get_c()->apply_f(tab + tab);
 
 		this->recursive_generate_decoder(node_curr->get_left(), stream); // recursive call
 
 		if (!node_curr->get_c()->apply_g().empty())
-			stream << tab << tab << node_curr->get_c()->apply_g();
+			stream << node_curr->get_c()->apply_g(tab + tab);
 
 		this->recursive_generate_decoder(node_curr->get_right(), stream); // recursive call
 	}
 
 	if (!node_curr->get_c()->apply_h().empty())
-		stream << tab << tab << node_curr->get_c()->apply_h();
+		stream << node_curr->get_c()->apply_h(tab + tab);
 }
 
 void Generator_polar_SCL_sys
 ::recursive_generate_short_decoder(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
 {
-	if (subtree_occurences_cpy[node_curr->get_c()->get_key()] == 1)
-	{
-		if (!node_curr->is_leaf()) // stop condition
-		{
-			if (!node_curr->get_c()->apply_f().empty())
-				stream << tab << tab << node_curr->get_c()->apply_f();
-			this->recursive_generate_short_decoder(node_curr->get_left(), stream); // recursive call
-			if (!node_curr->get_c()->apply_g().empty())
-				stream << tab << tab << node_curr->get_c()->apply_g();
-			this->recursive_generate_short_decoder(node_curr->get_right(), stream); // recursive call
-		}
-		if (!node_curr->get_c()->apply_h().empty())
-			stream << tab << tab << node_curr->get_c()->apply_h();
-	}
-	else
-	{
-		stream << tab << tab;
-		stream << node_curr->get_c()->get_key()
-		       << "(" << node_curr->get_c()->get_off_l() << ", " << node_curr->get_c()->get_off_s() << ");" << endl;
-	}
+	// TODO
 }

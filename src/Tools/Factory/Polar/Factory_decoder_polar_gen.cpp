@@ -80,6 +80,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 // RATE 1/2
+#define ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+
+// RATE ???
+//#define ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+
+// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
+
+// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
 #ifdef ENABLE_SHORT_GENERATED_DECODERS
 #include "Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.hpp"
@@ -520,9 +529,17 @@
 #endif
 #endif
 
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+#include "Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.hpp"
+#endif
+
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+#include "Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp"
+#endif
+
 #include "Module/Decoder/Polar/decoder_polar_functions.h"
 
-// #define API_POLAR_DYNAMIC 1
+//#define API_POLAR_DYNAMIC 1
 
 #ifdef API_POLAR_DYNAMIC
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
@@ -542,7 +559,7 @@
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_polar_gen<B,R>
-::build(const parameters &params, const mipp::vector<B> &frozen_bits)
+::build(const parameters &params, const mipp::vector<B> &frozen_bits, CRC<B> *crc)
 {
 	Decoder<B,R> *decoder = nullptr;
 
@@ -1779,6 +1796,82 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif                               
 			}
 		}
+		else if (params.channel.domain == "LLR" && params.decoder.type == "SCL" && crc != nullptr)
+		{
+			if (params.decoder.simd_strategy == "INTRA")
+			{
+				if (typeid(B) == typeid(signed char))
+				{
+#ifdef API_POLAR_DYNAMIC
+					using API_polar = API_polar_dynamic_intra
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#else
+					using API_polar = API_polar_static_intra_8bit
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+					if (params.decoder.implem == "CA_N4_K2_SNR25"      ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25      <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+				}
+				else if (typeid(B) == typeid(short))
+				{
+#ifdef API_POLAR_DYNAMIC
+					using API_polar = API_polar_dynamic_intra
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#else
+					using API_polar = API_polar_static_intra_16bit
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+					if (params.decoder.implem == "CA_N4_K2_SNR25"      ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25      <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+				}
+				else if (typeid(B) == typeid(int))
+				{
+#ifdef API_POLAR_DYNAMIC
+					using API_polar = API_polar_dynamic_intra
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#else
+					using API_polar = API_polar_static_intra_32bit
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
+					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+					if (params.decoder.implem == "CA_N4_K2_SNR25"      ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25      <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+				}
+			}
+			else if (params.decoder.simd_strategy.empty())
+			{
+#ifdef API_POLAR_DYNAMIC
+				using API_polar = API_polar_dynamic_seq
+				                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
+#else
+				using API_polar = API_polar_static_seq
+				                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+					if (params.decoder.implem == "CA_N4_K2_SNR25"      ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25      <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+			}
+		}
 	}
 
 	return decoder;
@@ -1986,6 +2079,16 @@ void Factory_decoder_polar_gen<B,R>
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
 	if (params.decoder.implem == "N32768_K29491_SNR25"   ) fb_ptr = Decoder_polar_SC_fast_sys_fb_32768_29491_25;
+#endif
+
+	// RATE 1/2
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+	if (params.decoder.implem == "CA_N4_K2_SNR25"        ) fb_ptr = Decoder_polar_SCL_fast_CA_sys_fb_4_2_25;
+#endif
+
+	// RATE ??
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+	if (params.decoder.implem == "CA_N2048_K1755_SNR35"  ) fb_ptr = Decoder_polar_SCL_fast_CA_sys_fb_2048_1755_35;
 #endif
 
 	if (fb_ptr == nullptr)

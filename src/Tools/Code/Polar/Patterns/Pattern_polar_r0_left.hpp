@@ -35,7 +35,7 @@ public:
 	virtual std::string  fill_color() const { return "#dadada";                 }
 	virtual std::string  font_color() const { return "#000000";                 }
 
-	virtual std::string f() const { return "";    }
+	virtual std::string f() const { return "f";   }
 	virtual std::string g() const { return "g0";  }
 	virtual std::string h() const { return "xo0"; }
 
@@ -49,7 +49,6 @@ public:
 
 		int match_val = 0;
 
-//		if (typeid(*pattern_left) == typeid(Pattern_polar_r0))
 		if (pattern_left->type() == polar_node_t::RATE_0)
 		{
 			match_val = 20;

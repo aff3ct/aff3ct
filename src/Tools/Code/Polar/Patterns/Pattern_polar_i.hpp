@@ -29,26 +29,32 @@ class Pattern_polar_i
 {
 protected:
 	const int N;
+	const int m;
 	const int size;
 	const int si_2;
 	const Binary_node<Pattern_polar_i>* node;
 	const int off_l;  // offset for lambda buffer (reals)
 	const int off_s;  // offset for s buffer (bits)
+	const int rev_depth;
 	const int n_dig;  // number of digits in n
 	const int n2_dig; // number of digits in n / 2
+	const std::string tab;
 
 	unsigned id;
 	std::string key;
 
 	Pattern_polar_i(const int &N, const Binary_node<Pattern_polar_i>* node)
 	: N(N),
+	  m((int)std::log2(N)),
 	  size(N),
 	  si_2(0),
 	  node(node),
 	  off_l(0),
 	  off_s(0),
+	  rev_depth(m - node->get_depth()),
 	  n_dig((int) (1 + std::log10(2 * N))),
 	  n2_dig((int) (1 + std::log10(N >> 1))),
+	  tab("\t"),
 	  id(0),
 	  key("")
 	{
@@ -70,7 +76,9 @@ protected:
 	}
 
 public:
-	Pattern_polar_i() : N(0), size(0), si_2(0), node(nullptr), off_l(0), off_s(0), n_dig(0), n2_dig(0), id(0), key("")
+	Pattern_polar_i()
+	: N(0), m(0), size(0), si_2(0), node(nullptr), off_l(0), off_s(0), rev_depth(0), n_dig(0), n2_dig(0), tab("\t"),
+	  id(0), key("")
 	{
 	}
 
@@ -97,9 +105,9 @@ public:
 	virtual std::string g() const = 0;
 	virtual std::string h() const = 0;
 
-	virtual std::string apply_f(std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
-	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
-	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
+	virtual std::string apply_f(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
+	virtual std::string apply_g(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
+	virtual std::string apply_h(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 
 	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const = 0;
 

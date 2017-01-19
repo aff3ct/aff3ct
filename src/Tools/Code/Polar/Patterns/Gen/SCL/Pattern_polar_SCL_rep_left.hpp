@@ -21,65 +21,92 @@ public:
 		return new Pattern_polar_SCL_rep_left(N, node);
 	}
 
-	virtual std::string apply_f(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_f(std::string si = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
-		// using namespace std;
-		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l);
-		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s);
-
-		auto apply_f = f() + "  ";
-		std::string spaces = ""; for (auto i = 0; i < 2*this->n_dig+1; i++) spaces += " ";
+		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l - this->N);
+		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s          );
 
 		std::stringstream stream;
-		stream << "API_polar::template "  << apply_f    << "<" << std::setw(this->n2_dig) << this->si_2 << ">("
-		       << "   "
-		       << "l, "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << this->si_2 << ", "
-		       << spaces                                                                                << "  "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << this->size << ", "
-		       << std::setw(this->n2_dig) << this->si_2 << ");" << std::endl;
+		if (node->get_depth() == 0) // root node
+		{
+			stream << si << "API_polar::template " << this->f() << "<" << this->si_2 << ">("
+			             << "y.data(), "
+			             << "y.data() + " << this->si_2 << ", "
+			             << "l[0].data(), "
+			             << this->si_2 << ");" << std::endl;
+		}
+		else
+		{
+			stream << si << "for (auto i = 0; i < this->n_active_paths; i++) " << std::endl
+			       << si << "{" << std::endl
+			       << si << this->tab << "const auto path   = this->paths[i];" << std::endl
+			       << si << this->tab << "const auto parent = l[this->path_2_array    [path][" << this->rev_depth << "   ]].data();" << std::endl
+			       << si << this->tab << "const auto child  = l[this->up_ref_array_idx(path, " << this->rev_depth << " -1)].data();" << std::endl
+			       << si << this->tab << "API_polar::template " << this->f() << "<" << this->si_2 << ">("
+			                          << "parent + " << str_off_l << ", "
+			                          << "parent + " << str_off_l << " + " << this->si_2 << ", "
+			                          << "child + "  << str_off_l << " + " << this->size << ", "
+			                          << this->si_2 << ");" << std::endl
+			       << si << "}" << std::endl;
+		}
 
 		return stream.str();
 	}
 
-	virtual std::string apply_g(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_g(std::string si = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
-		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l);
-		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s);
-
-		auto apply_gr = g() + " ";
+		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l - this->N);
+		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s          );
 
 		std::stringstream stream;
-		stream << "API_polar::template "  << apply_gr   << "<" << std::setw(this->n2_dig) << this->si_2 << ">("
-		       << "s, "
-		       << "l, "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << this->si_2 << ", "
-		       << std::setw(this->n_dig ) << str_off_s  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << std::setw(this->n_dig ) << str_off_l  << "+" << std::setw(this->n_dig ) << this->size << ", "
-		       << std::setw(this->n2_dig) << this->si_2 << ");" << std::endl;
+		if (node->get_depth() == 0) // root node
+		{
+			stream << si << "for (auto i = 0; i < this->n_active_paths; i++) " << std::endl
+			       << si << "{" << std::endl
+			       << si << this->tab << "const auto path  = this->paths[i];" << std::endl
+			       << si << this->tab << "const auto child = l[this->up_ref_array_idx(path, " << this->rev_depth << " -1)].data();" << std::endl
+			       << si << this->tab << "API_polar::template " << this->g() << "<" << this->si_2 << ">("
+			                          << "y.data(), "
+			                          << "y.data() + " << this->si_2 << ", "
+			                          << "s[path].data() + " << str_off_s << ", "
+			                          << "child, "
+			                          << this->si_2 << ");" << std::endl
+			       << si << "}" << std::endl;
+		}
+		else
+		{
+			stream << si << "for (auto i = 0; i < this->n_active_paths; i++) " << std::endl
+			       << si << "{" << std::endl
+			       << si << this->tab << "const auto path   = this->paths[i];" << std::endl
+			       << si << this->tab << "const auto parent = l[this->path_2_array    [path][" << this->rev_depth << "   ]].data();" << std::endl
+			       << si << this->tab << "const auto child  = l[this->up_ref_array_idx(path, " << this->rev_depth << " -1)].data();" << std::endl
+			       << si << this->tab << "API_polar::template " << this->g() << "<" << this->si_2 << ">("
+			                          << "parent + " << str_off_l << ", "
+			                          << "parent + " << str_off_l << " + " << this->si_2 << ", "
+			                          << "s[path].data() + " << str_off_s << ", "
+			                          << "child + " << str_off_l << " + " << this->size << ", "
+			                          << this->si_2 << ");" << std::endl
+			       << si << "}" << std::endl;
+		}
 
 		return stream.str();
 	}
 
-	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const
+	virtual std::string apply_h(std::string si = "", std::string str_off_l = "", std::string str_off_s = "") const
 	{
-		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l);
-		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s);
-
-		auto apply_xo = h() + " ";
-		std::string spaces = ""; for (auto i = 0; i < 2*this->n_dig+1; i++) spaces += " ";
+		if (str_off_l.empty()) str_off_l = std::to_string(this->off_l - this->N);
+		if (str_off_s.empty()) str_off_s = std::to_string(this->off_s          );
 
 		std::stringstream stream;
-		stream << "API_polar::template "  << apply_xo   << "<" << std::setw(this->n2_dig) << this->si_2 << ">("
-		       << "s, "
-		       << "   "
-		       << std::setw(this->n_dig ) << str_off_s  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << std::setw(this->n_dig ) << str_off_s  << "+" << std::setw(this->n_dig ) << this->si_2 << ", "
-		       << spaces                                                                                << "  "
-		       << std::setw(this->n_dig ) << str_off_s  << "+" << std::setw(this->n_dig ) << 0          << ", "
-		       << std::setw(this->n2_dig) << this->si_2 << ");" << std::endl;
+		stream << si << "for (auto i = 0; i < this->n_active_paths; i++) " << std::endl
+		       << si << "{" << std::endl
+		       << si << this->tab << "API_polar::template " << this->h() << "<" << this->si_2 << ">("
+		                          << "s[this->paths[i]], "
+		                          << str_off_s << ", "
+		                          << str_off_s << " + " << this->si_2 << ", "
+		                          << str_off_s << ", "
+		                          << this->si_2 << ");" << std::endl
+		       << si << "}" << std::endl;
 
 		return stream.str();
 	}
