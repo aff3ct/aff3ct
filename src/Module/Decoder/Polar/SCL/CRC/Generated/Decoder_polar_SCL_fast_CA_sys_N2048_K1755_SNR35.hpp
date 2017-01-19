@@ -242,26 +242,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template g0<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 116);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 116, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 118);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 116, 116 + 2, 116, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 116);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo0<4>(s[this->paths[i]], 112 + 4, 112, 4);
@@ -280,26 +261,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 120);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 120, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 122);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 120, 120 + 2, 120, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 120);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -394,26 +356,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template g0<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 156);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 156, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 158);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 156, 156 + 2, 156, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 156);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo0<4>(s[this->paths[i]], 152 + 4, 152, 4);
@@ -470,26 +413,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 168, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 172);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 172, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 174);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 172, 172 + 2, 172, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 172);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 168, 168 + 4, 168, 4);
@@ -527,26 +451,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 176, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 180);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 180, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 182);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 180, 180 + 2, 180, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 180);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 176, 176 + 4, 176, 4);
@@ -565,26 +470,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 184);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 184, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 186);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 184, 184 + 2, 184, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 184);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -660,26 +546,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 200, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 204);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 204, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 206);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 204, 204 + 2, 204, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 204);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 200, 200 + 4, 200, 4);
@@ -785,26 +652,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 224);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 224, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 226);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 224, 224 + 2, 224, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 224);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -926,26 +774,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 280, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 284);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 284, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 286);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 284, 284 + 2, 284, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 284);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 280, 280 + 4, 280, 4);
@@ -1032,26 +861,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 304);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 304, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 306);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 304, 304 + 2, 304, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 304);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1165,26 +975,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 328);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 328, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 330);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 328, 328 + 2, 328, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 328);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1222,26 +1013,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 336);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 336, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 338);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 336, 336 + 2, 336, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 336);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1298,26 +1070,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 352);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 352, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 354);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 352, 352 + 2, 352, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 352);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1412,26 +1165,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 384, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 388);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 388, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 390);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 388, 388 + 2, 388, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 388);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 384, 384 + 4, 384, 4);
@@ -1450,26 +1184,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 392);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 392, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 394);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 392, 392 + 2, 392, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 392);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1507,26 +1222,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 400);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 400, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 402);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 400, 400 + 2, 400, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 400);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1697,26 +1393,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 536);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 536, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 538);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 536, 536 + 2, 536, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 536);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1773,26 +1450,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template g0<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 548);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 548, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 550);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 548, 548 + 2, 548, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 548);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo0<4>(s[this->paths[i]], 544 + 4, 544, 4);
@@ -1811,26 +1469,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 552);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 552, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 554);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 552, 552 + 2, 552, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 552);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1868,26 +1507,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 560);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 560, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 562);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 560, 560 + 2, 560, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 560);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -1963,26 +1583,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 576, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 580);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 580, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 582);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 580, 580 + 2, 580, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 580);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 576, 576 + 4, 576, 4);
@@ -2001,26 +1602,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 584);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 584, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 586);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 584, 584 + 2, 584, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 584);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -2115,26 +1697,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 640, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 644);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 644, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 646);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 644, 644 + 2, 644, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 644);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 640, 640 + 4, 640, 4);
@@ -2418,26 +1981,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 1032, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1036);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1036, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1038);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1036, 1036 + 2, 1036, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1036);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 1032, 1032 + 4, 1032, 4);
@@ -2475,26 +2019,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 1040, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1044);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1044, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1046);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1044, 1044 + 2, 1044, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1044);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 1040, 1040 + 4, 1040, 4);
@@ -2513,26 +2038,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1048);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1048, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1050);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1048, 1048 + 2, 1048, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1048);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -2589,26 +2095,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template gr<4>(parent + 2032, parent + 2032 + 4, s[path].data() + 1056, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1060);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1060, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1062);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1060, 1060 + 2, 1060, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1060);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo<4>(s[this->paths[i]], 1056, 1056 + 4, 1056, 4);
@@ -2790,26 +2277,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1152);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1152, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1154);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1152, 1152 + 2, 1152, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1152);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -2923,26 +2391,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1280);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1280, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1282);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1280, 1280 + 2, 1280, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1280);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];
@@ -3075,26 +2524,7 @@ public:
 			const auto child  = l[this->up_ref_array_idx(path, 3 -1)].data();
 			API_polar::template f<4>(parent + 2032, parent + 2032 + 4, child + 2032 + 8, 4);
 		}
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template f<2>(parent + 2040, parent + 2040 + 2, child + 2040 + 4, 2);
-		}
-		this->template update_paths_rep<1, 2>(2044, 1536);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			const auto path   = this->paths[i];
-			const auto parent = l[this->path_2_array    [path][2   ]].data();
-			const auto child  = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template gr<2>(parent + 2040, parent + 2040 + 2, s[path].data() + 1536, child + 2040 + 4, 2);
-		}
-		this->template update_paths_r1<1, 2>(2044, 1538);
-		for (auto i = 0; i < this->n_active_paths; i++) 
-		{
-			API_polar::template xo<2>(s[this->paths[i]], 1536, 1536 + 2, 1536, 2);
-		}
+		this->template update_paths_spc<2, 4>(2040, 1536);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path   = this->paths[i];

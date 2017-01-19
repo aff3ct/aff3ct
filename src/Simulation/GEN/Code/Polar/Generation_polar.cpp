@@ -69,7 +69,7 @@ Generation_polar
 		polar_patterns.push_back(    polar_pattern_r1          );
 		polar_patterns.push_back(new Pattern_polar_SCL_rep_left);
 		polar_patterns.push_back(new Pattern_polar_SCL_rep     );
-//		polar_patterns.push_back(new Pattern_polar_SCL_spc(2,2));
+		polar_patterns.push_back(new Pattern_polar_SCL_spc(2,2));
 	}
 	else if (params.decoder.type == "SC")
 	{
