@@ -23,6 +23,7 @@ protected:
 	            mipp::vector<R    >  Y_N;            // channel llrs
 	std::vector<mipp::vector<R    >> l;              // llrs
 	std::vector<mipp::vector<B    >> s;              // partial sums
+	std::vector<mipp::vector<B    >> s2;             // partial sums
 	std::vector<std ::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
 	std::vector<std ::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
 	            std ::vector<int  >  dup_count;      // number of duplications of a path, at updating time
@@ -34,8 +35,11 @@ protected:
 	int                              n_active_paths;
 
 	// each following 2D vector is of size L * m
-	std::vector<std::vector<int>>    n_array_ref;    // number of times an array is used
-	std::vector<std::vector<int>>    path_2_array;   // give array used by a path
+	std::vector<std::vector<int>>    n_array_ref_l;    // number of times an array is used
+	std::vector<std::vector<int>>    path_2_array_l;   // give array used by a path
+
+	// each following 2D vector is of size L * m
+	std::vector<std::vector<int>>    path_2_array_s;   // give array used by a path
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
@@ -62,17 +66,19 @@ protected:
 	template <int REV_D, int N_ELMTS> inline void update_paths_rep(const int off_l, const int off_s);
 	template <int REV_D, int N_ELMTS> inline void update_paths_spc(const int off_l, const int off_s);
 
-	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
-	inline int  up_ref_array_idx(const int path, const int r_d                                           ); // return the array
+	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int r_d); // return the new_path
+	inline int  up_ref_array_idx(const int path, const int r_d                                      ); // return the array
+	inline void copy_left       (const int r_d, const int off_s                                     ); // return the array
 
 	        inline void init_buffers    (           );
 	        inline void delete_path     (int path_id);
 	virtual inline int  select_best_path(           );
 
 private:
-	inline void flip_bits_r1    (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
-	inline void flip_bits_rep   (const int old_path, const int new_path,                const int off_s, const int n_elmts);
-	inline void flip_bits_spc   (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_rep(const int old_path, const int new_path,                const int off_s, const int n_elmts);
+	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline int  compare      (const int path, const int r_d, const int off_s);
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"
