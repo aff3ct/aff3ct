@@ -895,7 +895,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		if (dup_count[path])
 		{
 			const auto array = path_2_array[path][REV_D];
-			API_polar::h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+			API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
 
 			metrics[path] = metrics_vec[2][n_cands * path];
 			for (auto dup = 2; dup <= dup_count[path]; dup++)
