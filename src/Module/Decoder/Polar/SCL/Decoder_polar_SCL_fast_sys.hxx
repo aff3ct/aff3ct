@@ -388,7 +388,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
-	if(r_d == 0)
+	if (r_d == 0)
 		update_paths_rep(r_d, off_l, off_s, n_elmts);
 	else
 	{
@@ -456,7 +456,7 @@ template <int REV_D, int N_ELMTS>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int off_l, const int off_s)
 {
-	if(REV_D == 0)
+	if (REV_D == 0)
 		update_paths_rep<REV_D, N_ELMTS>(off_l, off_s);
 	else
 	{
@@ -710,7 +710,11 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < 4; i++)
 			bit_flips[4 * path +i] = llr_indexes[r_d][i];
 
-		is_even[path] = !API_polar::spc(s[path], l[array], off_l, off_s, n_elmts);
+//		is_even[path] = !API_polar::spc(s[path], l[array], off_l, off_s, n_elmts);
+		auto prod = 1.f;
+		for (auto i = 0; i < n_elmts; i++)
+			prod *= l[array][off_l +i];
+		is_even[path] = prod > 0;
 
 		{
 			metrics_vec[2][n_cands * path +0] = metrics[path] +
@@ -776,9 +780,16 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		const auto path = paths[i];
 		if (dup_count[path])
 		{
+			const auto array = path_2_array[path][r_d];
+			API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
+
 			metrics[path] = metrics_vec[2][n_cands * path];
 			for (auto dup = 2; dup <= dup_count[path]; dup++)
 				flip_bits_spc(path, duplicate_tree(path, off_l, off_s, n_elmts), dup, off_s, n_elmts);
+
+			if (!is_even[path])
+				s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
+
 			dup_count[path] = 0;
 		}
 	}
@@ -805,7 +816,11 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < 4; i++)
 			bit_flips[4 * path +i] = llr_indexes[REV_D][i];
 
-		is_even[path] = !API_polar::template spc<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+//		is_even[path] = !API_polar::template spc<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+		auto prod = 1.f;
+		for (auto i = 0; i < N_ELMTS; i++)
+			prod *= l[array][off_l +i];
+		is_even[path] = prod > 0;
 
 		{
 			metrics_vec[2][n_cands * path +0] = metrics[path] +
@@ -871,9 +886,16 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		const auto path = paths[i];
 		if (dup_count[path])
 		{
+			const auto array = path_2_array[path][REV_D];
+			API_polar::h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+
 			metrics[path] = metrics_vec[2][n_cands * path];
 			for (auto dup = 2; dup <= dup_count[path]; dup++)
 				flip_bits_spc(path, duplicate_tree(path, off_l, off_s, N_ELMTS), dup, off_s, N_ELMTS);
+
+			if (!is_even[path])
+				s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
+
 			dup_count[path] = 0;
 		}
 	}
@@ -889,37 +911,48 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_cands = L <= 2 ? 4 : 8; // number of candidates
 
 	metrics[new_path] = metrics_vec[2][n_cands * old_path + dup -1];
+
 	switch(dup)
 	{
 	case 2 :
-		s[new_path][off_s + bit_flips[4 * old_path +0]] = !s[old_path][off_s + bit_flips[4 * old_path +0]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
+		if (is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
 		break;
 	case 3 :
-		s[new_path][off_s + bit_flips[4 * old_path +0]] = !s[old_path][off_s + bit_flips[4 * old_path +0]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +2]] = !s[old_path][off_s + bit_flips[4 * old_path +2]] ? b : 0;
+		if (is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
 		break;
 	case 4 :
-		s[new_path][off_s + bit_flips[4 * old_path +0]] = !s[old_path][off_s + bit_flips[4 * old_path +0]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +3]] = !s[old_path][off_s + bit_flips[4 * old_path +3]] ? b : 0;
+		if (is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	case 5 :
-		s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +2]] = !s[old_path][off_s + bit_flips[4 * old_path +2]] ? b : 0;
+		if (!is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
 		break;
 	case 6 :
-		s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +3]] = !s[old_path][off_s + bit_flips[4 * old_path +3]] ? b : 0;
+		if (!is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	case 7 :
-		s[new_path][off_s + bit_flips[4 * old_path +2]] = !s[old_path][off_s + bit_flips[4 * old_path +2]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +3]] = !s[old_path][off_s + bit_flips[4 * old_path +3]] ? b : 0;
+		if (!is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	case 8 :
-		s[new_path][off_s + bit_flips[4 * old_path +0]] = !s[old_path][off_s + bit_flips[4 * old_path +0]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +1]] = !s[old_path][off_s + bit_flips[4 * old_path +1]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +2]] = !s[old_path][off_s + bit_flips[4 * old_path +2]] ? b : 0;
-		s[new_path][off_s + bit_flips[4 * old_path +3]] = !s[old_path][off_s + bit_flips[4 * old_path +3]] ? b : 0;
+		if (is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
+		s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	default:
 		std::cout << bold_red("(EE) Flip bits error on SPC node.") << std::endl;
