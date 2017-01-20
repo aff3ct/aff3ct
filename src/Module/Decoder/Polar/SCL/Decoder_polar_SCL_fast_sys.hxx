@@ -707,12 +707,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
 			});
 
-		for (auto i = 0; i < 4; i++)
-			bit_flips[4 * path +i] = llr_indexes[r_d][i];
+		for (auto j = 0; j < 4; j++)
+			bit_flips[4 * path +j] = llr_indexes[r_d][j];
 
 		auto prod = 1.f;
-		for (auto i = 0; i < n_elmts; i++)
-			prod *= l[array][off_l +i];
+		for (auto j = 0; j < n_elmts; j++)
+			prod *= l[array][off_l +j];
 		is_even[path] = prod > 0;
 
 		{
@@ -817,12 +817,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
 			});
 
-		for (auto i = 0; i < 4; i++)
-			bit_flips[4 * path +i] = llr_indexes[REV_D][i];
+		for (auto j = 0; j < 4; j++)
+			bit_flips[4 * path +j] = llr_indexes[REV_D][j];
 
 		auto prod = 1.f;
-		for (auto i = 0; i < N_ELMTS; i++)
-			prod *= l[array][off_l +i];
+		for (auto j = 0; j < N_ELMTS; j++)
+			prod *= l[array][off_l +j];
 		is_even[path] = prod > 0;
 
 		{
