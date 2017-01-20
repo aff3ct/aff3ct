@@ -710,7 +710,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < 4; i++)
 			bit_flips[4 * path +i] = llr_indexes[r_d][i];
 
-//		is_even[path] = !API_polar::spc(s[path], l[array], off_l, off_s, n_elmts);
 		auto prod = 1.f;
 		for (auto i = 0; i < n_elmts; i++)
 			prod *= l[array][off_l +i];
@@ -720,34 +719,39 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			metrics_vec[2][n_cands * path +0] = metrics[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]);
 
-			metrics_vec[2][n_cands * path +1] = metrics_vec[2][n_cands * path +0]                                  +
+			metrics_vec[2][n_cands * path +1] = metrics[path]                                                      +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]]);
 
-			metrics_vec[2][n_cands * path +2] = metrics_vec[2][n_cands * path +0]                                  +
+			metrics_vec[2][n_cands * path +2] = metrics[path]                                                      +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]);
 
-			metrics_vec[2][n_cands * path +3] = metrics_vec[2][n_cands * path +0]                                  +
+			metrics_vec[2][n_cands * path +3] = metrics[path]                                                      +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 		}
 		if (L > 2)
 		{
-			metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0]                  +
-			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]]) +
+			metrics_vec[2][n_cands * path +4] = metrics[path]                                                         +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]) +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]])                    +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]);
 
-			metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0]                  +
+			metrics_vec[2][n_cands * path +5] = metrics[path]                                                         +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
-			metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0]                  +
+			metrics_vec[2][n_cands * path +6] = metrics[path]                                                         +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
-			metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1]                  +
-			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]) +
+			metrics_vec[2][n_cands * path +7] = metrics[path]                                                      +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]])                 +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]])                 +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 		}
 	}
@@ -816,7 +820,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < 4; i++)
 			bit_flips[4 * path +i] = llr_indexes[REV_D][i];
 
-//		is_even[path] = !API_polar::template spc<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
 		auto prod = 1.f;
 		for (auto i = 0; i < N_ELMTS; i++)
 			prod *= l[array][off_l +i];
@@ -826,34 +829,39 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			metrics_vec[2][n_cands * path +0] = metrics[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]);
 
-			metrics_vec[2][n_cands * path +1] = metrics_vec[2][n_cands * path +0]                                  +
+			metrics_vec[2][n_cands * path +1] = metrics[path]                                                      +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]]);
 
-			metrics_vec[2][n_cands * path +2] = metrics_vec[2][n_cands * path +0]                                  +
+			metrics_vec[2][n_cands * path +2] = metrics[path]                                                      +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]);
 
-			metrics_vec[2][n_cands * path +3] = metrics_vec[2][n_cands * path +0]                                  +
+			metrics_vec[2][n_cands * path +3] = metrics[path]                                                      +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 		}
 		if (L > 2)
 		{
-			metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0]                  +
-			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]]) +
+			metrics_vec[2][n_cands * path +4] = metrics[path]                                                         +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]) +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]])                    +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]);
 
-			metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0]                  +
+			metrics_vec[2][n_cands * path +5] = metrics[path]                                                         +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
-			metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0]                  +
+			metrics_vec[2][n_cands * path +6] = metrics[path]                                                         +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * (!is_even[path]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]) +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 
-			metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1]                  +
-			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]]) +
+			metrics_vec[2][n_cands * path +7] = metrics[path]                                                      +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +0]]) * is_even[path] +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +1]])                 +
+			                                    std::abs(l[array][off_l + bit_flips[4 * path +2]])                 +
 			                                    std::abs(l[array][off_l + bit_flips[4 * path +3]]);
 		}
 	}
