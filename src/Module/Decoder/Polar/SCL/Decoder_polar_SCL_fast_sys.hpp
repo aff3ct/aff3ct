@@ -24,7 +24,6 @@ protected:
 	std::vector<mipp::vector<R    >> l;              // llrs
 	std::vector<mipp::vector<B    >> s;              // partial sums
 	std::vector<mipp::vector<B    >> s2;             // partial sums
-	std::vector<mipp::vector<B    >> s3;             // partial sums
 	std::vector<std ::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
 	std::vector<std ::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
 	            std ::vector<int  >  dup_count;      // number of duplications of a path, at updating time
