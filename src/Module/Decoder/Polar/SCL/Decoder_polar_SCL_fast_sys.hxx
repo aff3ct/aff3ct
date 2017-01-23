@@ -204,8 +204,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					const auto& sleft = (path_2_array_s[paths[i]][rev_depth -1] == paths[i]) ? s : s2;
-					API_polar::xo (sleft[paths[i]].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left != paths[i])
+					{
+						const auto& sleft = (path_2_array_s[array_left][rev_depth -1] == array_left) ? s : s2;
+						API_polar::xo (sleft[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					}
+				}
+				for (auto i = 0; i < n_active_paths; i++)
+				{
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left == paths[i])
+						API_polar::xo (s[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
@@ -221,8 +231,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					const auto& sleft = (path_2_array_s[paths[i]][rev_depth -1] == paths[i]) ? s : s2;
-					API_polar::xo (sleft[paths[i]].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left != paths[i])
+					{
+						const auto& sleft = (path_2_array_s[array_left][rev_depth -1] == array_left) ? s : s2;
+						API_polar::xo (sleft[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					}
+				}
+				for (auto i = 0; i < n_active_paths; i++)
+				{
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left == paths[i])
+						API_polar::xo (s[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
 				}
 				break;
 			default:
@@ -311,8 +331,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					const auto& sleft = (path_2_array_s[paths[i]][rev_depth -1] == paths[i]) ? s : s2;
-					API_polar::xo (sleft[paths[i]].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left != paths[i])
+					{
+						const auto& sleft = (path_2_array_s[array_left][rev_depth -1] == array_left) ? s : s2;
+						API_polar::xo (sleft[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					}
+				}
+				for (auto i = 0; i < n_active_paths; i++)
+				{
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left == paths[i])
+						API_polar::xo (s[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
 				}
 				break;
 			case RATE_0_LEFT:
@@ -328,21 +358,34 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				copy_left(rev_depth, off_s);
 				for (auto i = 0; i < n_active_paths; i++)
 				{
-					const auto& sleft = (path_2_array_s[paths[i]][rev_depth -1] == paths[i]) ? s : s2;
-					API_polar::xo (sleft[paths[i]].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left != paths[i])
+					{
+						const auto& sleft = (path_2_array_s[array_left][rev_depth -1] == array_left) ? s : s2;
+						API_polar::xo (sleft[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
+					}
+				}
+				for (auto i = 0; i < n_active_paths; i++)
+				{
+					const auto array_left = path_2_array_s[paths[i]][rev_depth -1];
+					if(array_left == paths[i])
+						API_polar::xo (s[array_left].data() + off_s, s[paths[i]].data() + off_s + n_elm_2, s[paths[i]].data() + off_s, n_elm_2);
 				}
 				break;
 			default:
 				break;
 		}
+
 		const auto is_left = (((off_s / n_elmts) % 2) == 0);
 		if(is_left)
 			for (auto i = 0; i < n_active_paths; i++)
-				n_array_ref_s[paths[i]][rev_depth] = 1;
+			{
+				path_2_array_s[paths[i]][rev_depth] = paths[i];
+				n_array_ref_s [paths[i]][rev_depth] = 1;
+			}
 	}
 	else // leaf node
 	{
-		const auto is_left = (((off_s / n_elmts) % 2) == 0);
 		// h
 		switch (node_type)
 		{
@@ -353,6 +396,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			default:
 				break;
 		}
+
+		const auto is_left = (((off_s / n_elmts) % 2) == 0);
 		if (is_left)
 			for (auto i = 0; i < n_active_paths; i++)
 			{
@@ -1114,15 +1159,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	const auto n_elmts = 1 << r_d;
 	const auto n_elm_2 = n_elmts >> 1;
-	const auto is_left = (((off_s / n_elmts) % 2) == 0);
 	for (auto i = 0; i < n_active_paths; i++)
 	{
 		const auto child_left = path_2_array_s[paths[i]][r_d - 1];
-		if(child_left != paths[i])
+
+		if((child_left != paths[i]) && (n_array_ref_s[paths[i]][r_d -1] > 0))
 			for (auto j = 0; j < n_elm_2; j++)
-				s2[paths[i]][off_s + j] = s[child_left][off_s + j];
+				s2[paths[i]][off_s + j] = s[paths[i]][off_s + j];
 	}
-	for (auto i = 0; i < n_active_paths; i++)
-		if(is_left)
-			path_2_array_s[paths[i]][r_d]     = paths[i];
 }
