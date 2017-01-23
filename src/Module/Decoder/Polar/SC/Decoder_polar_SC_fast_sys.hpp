@@ -14,9 +14,13 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_ASCL_fast_CA_sys;
 
 template <typename B, typename R, class API_polar>
+class Decoder_polar_ASCL_MEM_fast_CA_sys;
+
+template <typename B, typename R, class API_polar>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
 	friend Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>;
+	friend Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>;
 
 protected:
 	const int             m;            // graph depth

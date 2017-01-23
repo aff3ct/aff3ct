@@ -80,7 +80,7 @@ void Launcher_BFER_polar<B,R,Q>
 		 "disable the systematic encoding."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	this->opt_args[{"dec-type", "D"}].push_back("SC, SCL, ASCL, SCAN");
+	this->opt_args[{"dec-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
 	this->opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the SCAN decoder."};
@@ -197,7 +197,13 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 	if (this->params.decoder.type == "SCL")
 		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
 
+	if (this->params.decoder.type == "SCL_MEM")
+		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
+
 	if (this->params.decoder.type == "ASCL")
+		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
+
+	if (this->params.decoder.type == "ASCL_MEM")
 		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
 
 	return p;
