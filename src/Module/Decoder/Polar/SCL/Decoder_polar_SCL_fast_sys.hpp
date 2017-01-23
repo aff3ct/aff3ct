@@ -39,6 +39,7 @@ protected:
 	std::vector<std::vector<int>>    path_2_array_l;   // give array used by a path
 
 	// each following 2D vector is of size L * m
+	std::vector<std::vector<int>>    n_array_ref_s;   // give array used by a path
 	std::vector<std::vector<int>>    path_2_array_s;   // give array used by a path
 
 public:
@@ -70,9 +71,9 @@ protected:
 	inline int  up_ref_array_idx(const int path, const int r_d                                      ); // return the array
 	inline void copy_left       (const int r_d, const int off_s                                     ); // return the array
 
-	        inline void init_buffers    (           );
-	        inline void delete_path     (int path_id);
-	virtual inline int  select_best_path(           );
+	        inline void init_buffers    (                          );
+	        inline void delete_path     (int path_id, const int r_d);
+	virtual inline int  select_best_path(                          );
 
 private:
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);

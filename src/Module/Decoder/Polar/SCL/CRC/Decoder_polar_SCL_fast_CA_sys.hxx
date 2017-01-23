@@ -57,7 +57,7 @@ int Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 
 		// delete the path if the CRC result is negative
 		if (!decode_result)
-			this->delete_path(n_valid_paths);
+			this->delete_path(n_valid_paths, this->m);
 		else
 			n_valid_paths++;
 	}
