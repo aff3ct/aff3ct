@@ -20,11 +20,11 @@
 
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
-#include "Decoder_polar_SCL_fast_sys.hpp"
+#include "Decoder_polar_SCL_MEM_fast_sys.hpp"
 
 template <typename B, typename R, class API_polar>
-Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
+Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
                              const int n_frames, const std::string name)
 : Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
   m             (std::log2(N)),
@@ -84,14 +84,14 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::~Decoder_polar_SCL_fast_sys()
+Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::~Decoder_polar_SCL_MEM_fast_sys()
 {
 	polar_patterns.release_patterns();
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::init_buffers()
 {
 	std::fill(metrics.begin(), metrics.begin() + L, std::numeric_limits<float>::min());
@@ -117,7 +117,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::load(const mipp::vector<R>& Y_N)
 {
 	std::copy(Y_N.begin(), Y_N.begin() + this->N, this->Y_N.begin());
@@ -125,7 +125,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::hard_decode()
 {
 	int first_node_id = 0, off_l = 0, off_s = 0;
@@ -134,7 +134,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id)
 {
 	const int n_elmts = 1 << rev_depth;
@@ -408,7 +408,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::store(mipp::vector<B>& V_K) const
 {
 	assert(V_K.size() >= (unsigned) this->K);
@@ -420,7 +420,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::store_fast(mipp::vector<B>& V) const
 {
 	assert(V.size() == (unsigned) this->N);
@@ -428,7 +428,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::unpack(mipp::vector<B>& V_N) const
 {
 	assert(V_N.size() == frozen_bits.size());
@@ -438,7 +438,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_r0(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
 	for (auto i = 0; i < n_active_paths; i++)
@@ -458,7 +458,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 template <int REV_D, int N_ELMTS>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_r0(const int off_l, const int off_s)
 {
 	for (auto i = 0; i < n_active_paths; i++)
@@ -477,7 +477,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
 	if (r_d == 0)
@@ -545,7 +545,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 template <int REV_D, int N_ELMTS>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_r1(const int off_l, const int off_s)
 {
 	if (REV_D == 0)
@@ -612,7 +612,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::flip_bits_r1(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
@@ -638,7 +638,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_rep(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
@@ -705,7 +705,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 template <int REV_D, int N_ELMTS>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_rep(const int off_l, const int off_s)
 {
 	constexpr B b = bit_init<B>();
@@ -771,7 +771,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::flip_bits_rep(const int old_path, const int new_path, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
@@ -784,7 +784,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_spc(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
 	const auto n_cands = L <= 2 ? 4 : 8; // number of candidates
@@ -896,7 +896,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 template <int REV_D, int N_ELMTS>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_spc(const int off_l, const int off_s)
 {
 	const auto n_cands = L <= 2 ? 4 : 8; // number of candidates
@@ -1007,7 +1007,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts)
 {
 	constexpr B b = bit_init<B>();
@@ -1066,7 +1066,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-int Decoder_polar_SCL_fast_sys<B,R,API_polar>
+int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::duplicate_tree(const int old_path, const int off_l, const int off_s, const int r_d)
 {
 	const auto new_path = paths[n_active_paths++];
@@ -1100,7 +1100,7 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::delete_path(int path_id, const int r_d)
 {
 	const auto old_path = paths[path_id];
@@ -1115,7 +1115,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-int Decoder_polar_SCL_fast_sys<B,R,API_polar>
+int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::select_best_path()
 {
 	best_path = -1;
@@ -1130,7 +1130,7 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-int Decoder_polar_SCL_fast_sys<B,R,API_polar>
+int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::up_ref_array_idx(const int path, const int r_d)
 {
 	auto old_array = path_2_array_l[path][r_d];
@@ -1154,7 +1154,7 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::copy_left(const int r_d, const int off_s)
 {
 	const auto n_elmts = 1 << r_d;

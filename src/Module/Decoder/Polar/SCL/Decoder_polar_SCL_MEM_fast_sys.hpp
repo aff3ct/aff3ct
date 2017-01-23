@@ -1,5 +1,5 @@
-#ifndef DECODER_POLAR_SCL_FAST_SYS
-#define DECODER_POLAR_SCL_FAST_SYS
+#ifndef DECODER_POLAR_SCL_MEM_FAST_SYS
+#define DECODER_POLAR_SCL_MEM_FAST_SYS
 
 #include <set>
 #include <vector>
@@ -9,7 +9,7 @@
 #include "../decoder_polar_functions.h"
 
 template <typename B, typename R, class API_polar>
-class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
+class Decoder_polar_SCL_MEM_fast_sys : public Decoder<B,R>
 {
 protected:
 	const int                        m;              // graph depth
@@ -43,9 +43,9 @@ protected:
 	std::vector<std::vector<int>>    path_2_array_s;   // give array used by a path
 
 public:
-	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
-	                           const int n_frames = 1, const std::string name = "Decoder_polar_SCL_fast_sys");
-	virtual ~Decoder_polar_SCL_fast_sys();
+	Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
+	                           const int n_frames = 1, const std::string name = "Decoder_polar_SCL_MEM_fast_sys");
+	virtual ~Decoder_polar_SCL_MEM_fast_sys();
 
 	virtual void load       (const mipp::vector<R>& Y_N);
 	virtual void hard_decode(                          );
@@ -81,6 +81,6 @@ private:
 	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 };
 
-#include "Decoder_polar_SCL_fast_sys.hxx"
+#include "Decoder_polar_SCL_MEM_fast_sys.hxx"
 
-#endif /* DECODER_POLAR_SCL_FAST_SYS_ */
+#endif /* DECODER_POLAR_SCL_MEM_FAST_SYS_ */
