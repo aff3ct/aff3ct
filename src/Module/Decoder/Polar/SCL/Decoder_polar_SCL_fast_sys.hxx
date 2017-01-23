@@ -341,10 +341,10 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		// h
 		switch (node_type)
 		{
-			case RATE_0: update_paths_r0 (rev_depth, off_l, off_s, n_elmts); /*std::cout << "Update r0"  << std::endl;*/break;
-			case REP:    update_paths_rep(rev_depth, off_l, off_s, n_elmts); /*std::cout << "Update rep" << std::endl;*/break;
-			case RATE_1: update_paths_r1 (rev_depth, off_l, off_s, n_elmts); /*std::cout << "Update r1"  << std::endl;*/break;
-			case SPC:    update_paths_spc(rev_depth, off_l, off_s, n_elmts); /*std::cout << "Update spc" << std::endl;*/break;
+			case RATE_0: update_paths_r0 (rev_depth, off_l, off_s, n_elmts); break;
+			case REP:    update_paths_rep(rev_depth, off_l, off_s, n_elmts); break;
+			case RATE_1: update_paths_r1 (rev_depth, off_l, off_s, n_elmts); break;
+			case SPC:    update_paths_spc(rev_depth, off_l, off_s, n_elmts); break;
 			default:
 				break;
 		}
@@ -1107,22 +1107,3 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		if(is_left)
 			path_2_array_s[paths[i]][r_d]     = paths[i];
 }
-
-
-template <typename B, typename R, class API_polar>
-int Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::compare(const int path, const int r_d, const int off_s)
-{
-	const int n_elmts = 1 << r_d;
-
-	auto ret = 0;
-
-	// for (auto i = 0; i < n_elmts; i++)
-	// 	if(s[path][off_s + i] != s[path][off_s + i])
-	// 		ret = 1;
-
-	if (ret) std::cout << "Bug, r_d = " << r_d << ", off_s = " << off_s << ", path = " << path << std::endl;
-	if (ret) exit (EXIT_FAILURE);
-	return ret;
-}
-
