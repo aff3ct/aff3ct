@@ -1,12 +1,17 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS
 #define DECODER_POLAR_SCL_FAST_SYS
 
-#include <set>
+#include <queue>
+#include <utility>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
+
+auto my_comp = [](const std::pair<float,int>& e1, const std::pair<float,int>& e2) { return e1.first < e2.first; };
+
+//std::priority_queue<std::pair<float,int>, std::vector<std::pair<float,int>>, decltype(my_comp) > metrics_queue(my_comp);
 
 template <typename B, typename R, class API_polar>
 class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
@@ -36,6 +41,8 @@ protected:
 	// each following 2D vector is of size L * m
 	std::vector<std::vector<int>>    n_array_ref;    // number of times an array is used
 	std::vector<std::vector<int>>    path_2_array;   // give array used by a path
+
+	std::priority_queue<std::pair<float,int>, std::vector<std::pair<float,int>>, decltype(my_comp) > metrics_queue;
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
@@ -67,12 +74,13 @@ protected:
 
 	        inline void init_buffers    (           );
 	        inline void delete_path     (int path_id);
+	        inline void delete_path2    (int path   );
 	virtual inline int  select_best_path(           );
 
 private:
-	inline void flip_bits_r1    (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
-	inline void flip_bits_rep   (const int old_path, const int new_path,                const int off_s, const int n_elmts);
-	inline void flip_bits_spc   (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_rep(const int old_path, const int new_path,                const int off_s, const int n_elmts);
+	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"
