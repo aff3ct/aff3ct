@@ -74,7 +74,6 @@ protected:
 
 	        inline void init_buffers    (           );
 	        inline void delete_path     (int path_id);
-	        inline void delete_path2    (int path   );
 	virtual inline int  select_best_path(           );
 
 private:
