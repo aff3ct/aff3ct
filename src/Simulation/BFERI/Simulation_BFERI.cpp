@@ -34,6 +34,8 @@ Simulation_BFERI_i<B,R,Q>
   code_rate(0.f),
   sigma    (0.f),
 
+  rd_engine_seed(params.simulation.n_threads),
+
   source     (params.simulation.n_threads, nullptr),
   crc        (params.simulation.n_threads, nullptr),
   encoder    (params.simulation.n_threads, nullptr),
@@ -48,6 +50,9 @@ Simulation_BFERI_i<B,R,Q>
   monitor    (params.simulation.n_threads, nullptr)
 {
 	assert(params.simulation.n_threads >= 1);
+
+	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+		rd_engine_seed[tid].seed(params.simulation.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -180,7 +185,7 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFERI_i<B,R,Q>
 ::build_source(const int tid)
 {
-	return Factory_source<B>::build(params, params.simulation.seed + tid);
+	return Factory_source<B>::build(params, rd_engine_seed[tid]());
 }
 
 template <typename B, typename R, typename Q>
@@ -194,14 +199,14 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFERI_i<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return Factory_encoder_common<B>::build(params, params.simulation.seed + tid);
+	return Factory_encoder_common<B>::build(params, rd_engine_seed[tid]());
 }
 
 template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFERI_i<B,R,Q>
 ::build_interleaver(const int tid)
 {
-	return Factory_interleaver<int>::build(params, params.code.N + params.code.tail_length, params.simulation.seed);
+	return Factory_interleaver<int>::build(params, params.code.N + params.code.tail_length, rd_engine_seed[tid]());
 }
 
 template <typename B, typename R, typename Q>

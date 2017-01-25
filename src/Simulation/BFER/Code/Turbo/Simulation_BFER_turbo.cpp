@@ -31,7 +31,7 @@ Simulation_BFER_turbo<B,R,Q,QD>
 
 	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 	{
-		auto seed = this->params.simulation.seed;
+		auto seed = this->rd_engine_seed[0]();
 		seed += (params.interleaver.type == "UNIFORM") ? tid : 0;
 
 		// build the interleaver for the encoder and the decoder

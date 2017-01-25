@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <vector>
+#include <random>
 
 #include "Tools/params.h"
 #include "Tools/Threads/Barrier.hpp"
@@ -38,6 +39,9 @@ protected:
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
+
+	// a vector of random generator to generate the seeds
+	std::vector<std::mt19937> rd_engine_seed;
 
 	// communication chain
 	std::vector<Source     <B    >*> source;
