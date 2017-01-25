@@ -97,6 +97,18 @@ public:
 	 */
 	inline polar_node_t get_node_type(const int node_id) const;
 
+	/*!
+	 * \brief Check if a node type exists in the the tree.
+	 *
+	 * \param node_type: the type of the requested node
+	 *
+	 * \return true if the node type exists, false otherwise.
+	 */
+	inline bool exist_node_type(const polar_node_t node_type) const;
+
+	/*!
+	 * \brief Release the polar patterns given in the constructor.
+	 */
 	void release_patterns() const;
 
 private:

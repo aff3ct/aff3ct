@@ -361,9 +361,15 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto j = 0; j < n_elmts; j++)
 			metric -= std::min((float)l[array][off_l +j], 0.f);
 		metrics[path] += metric; // add a penalty to the current path metric
+	}
 
-		// TODO: Remove this fill when rate_0 left nodes are in the patterns
-		std::fill(s[path].begin() + off_s, s[path].begin() + off_s + n_elmts, 0);
+	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT))
+	{
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path = paths[i];
+			std::fill(s[path].begin() + off_s, s[path].begin() + off_s + n_elmts, 0);
+		}
 	}
 }
 
@@ -381,9 +387,15 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto j = 0; j < N_ELMTS; j++)
 			metric -= std::min((float)l[array][off_l +j], 0.f);
 		metrics[path] += metric; // add a penalty to the current path metric
+	}
 
-		// TODO: Remove this fill when rate_0 left nodes are in the patterns
-		std::fill(s[path].begin() + off_s, s[path].begin() + off_s + N_ELMTS, 0);
+	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT))
+	{
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path = paths[i];
+			std::fill(s[path].begin() + off_s, s[path].begin() + off_s + N_ELMTS, 0);
+		}
 	}
 }
 
