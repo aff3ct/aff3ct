@@ -79,7 +79,6 @@ protected:
 
 private:
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
-	inline void flip_bits_rep(const int old_path, const int new_path,                const int off_s, const int n_elmts);
 	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 };
 
