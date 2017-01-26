@@ -23,6 +23,35 @@
 
 #include "Decoder_polar_SCL_fast_sys.hpp"
 
+template <typename R>
+inline void normalize_scl_metrics(std::vector<R> &metrics, const int L)
+{
+}
+
+template <>
+inline void normalize_scl_metrics(std::vector<short> &metrics, const int L)
+{
+	auto min = *std::min_element(metrics.begin(), metrics.begin() + L);
+	if (min > 0) min = 0;
+
+	const auto norm = std::numeric_limits<short>::min() - min;
+
+	for (auto i = 0; i < L; i++)
+		metrics[i] += norm;
+}
+
+template <>
+inline void normalize_scl_metrics(std::vector<signed char> &metrics, const int L)
+{
+	auto min = *std::min_element(metrics.begin(), metrics.begin() + L);
+	if (min > 0) min = 0;
+
+	const auto norm = std::numeric_limits<signed char>::min() - min;
+
+	for (auto i = 0; i < L; i++)
+		metrics[i] += norm;
+}
+
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
@@ -43,13 +72,12 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                  1,
                  2),
   paths         (L),
-  last_paths    (L),
   metrics       (L),
   Y_N           (                   N + mipp::nElReg<R>() ),
   l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
-  metrics_vec   (3, std::vector<float>()),
-  metrics_idx   (3, std::vector<int  >()),
+  metrics_vec   (3, std::vector<R  >()),
+  metrics_idx   (3, std::vector<int>()),
   dup_count     (L, 0),
   llr_indexes   (),
   bit_flips     (4 * L),
@@ -92,7 +120,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::init_buffers()
 {
-	metrics[0] = std::numeric_limits<float>::min();
+	metrics[0] = std::numeric_limits<R>::min();
 	std::iota(paths.begin(), paths.begin() + L, 0);
 
 	n_active_paths = 1;
@@ -314,6 +342,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			default:
 				break;
 		}
+
+		normalize_scl_metrics<R>(this->metrics, this->L);
 	}
 }
 
@@ -358,7 +388,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 		auto metric = 0.f;
 		for (auto j = 0; j < n_elmts; j++)
-			metric -= std::min((float)l[array][off_l +j], 0.f);
+			metric -= std::min((R)l[array][off_l +j], (R)0);
 		metrics[path] += metric; // add a penalty to the current path metric
 	}
 
@@ -379,7 +409,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 		auto metric = 0.f;
 		for (auto j = 0; j < N_ELMTS; j++)
-			metric -= std::min((float)l[array][off_l +j], 0.f);
+			metric -= std::min((R)l[array][off_l +j], (R)0);
 		metrics[path] += metric; // add a penalty to the current path metric
 	}
 
@@ -420,7 +450,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0; j < 4; j++)
-				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
+				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<R>::max();
 
 		// L first of the lists are the L best paths
 		const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
@@ -490,7 +520,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0; j < 4; j++)
-				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
+				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<R>::max();
 
 		// L first of the lists are the L best paths
 		const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
@@ -758,7 +788,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	}
 	for (auto i = n_active_paths; i < L; i++)
 		for (auto j = 0; j < n_cands; j++)
-			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<float>::max();
+			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<R>::max();
 
 	// L first of the lists are the L best paths
 	const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
@@ -845,7 +875,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	}
 	for (auto i = n_active_paths; i < L; i++)
 		for (auto j = 0; j < n_cands; j++)
-			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<float>::max();
+			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<R>::max();
 
 	// L first of the lists are the L best paths
 	const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
