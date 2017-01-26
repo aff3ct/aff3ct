@@ -46,23 +46,15 @@ template <typename B, typename R, class API_polar>
 int Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::select_best_path()
 {
-	auto n_valid_paths = 0;
-	auto n_active_paths_cpy = this->n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
-	{
-		const auto path = this->paths[n_valid_paths];
+	std::sort(this->paths.begin(), this->paths.begin() + this->n_active_paths,
+		[this](int x, int y){
+			return this->metrics[x] < this->metrics[y];
+		});
 
-		// check the CRC
-		auto decode_result = crc_check(this->s[path]);
+	auto i = 0;
+	while (i < this->n_active_paths && !crc_check(this->s[this->paths[i]])) i++;
 
-		// delete the path if the CRC result is negative
-		if (!decode_result)
-			this->delete_path(n_valid_paths);
-		else
-			n_valid_paths++;
-	}
+	this->best_path = (i == this->n_active_paths) ? this->paths[0] : this->paths[i];
 
-	this->Decoder_polar_SCL_fast_sys<B,R,API_polar>::select_best_path();
-
-	return n_valid_paths;
+	return this->n_active_paths -i;
 }

@@ -150,6 +150,16 @@ polar_node_t Pattern_polar_parser<B>
 }
 
 template <typename B>
+bool Pattern_polar_parser<B>
+::exist_node_type(const polar_node_t node_type) const
+{
+	for (auto i = 0; i < (int)patterns.size(); i++)
+		if (patterns[i]->type() == node_type)
+			return true;
+	return false;
+}
+
+template <typename B>
 void Pattern_polar_parser<B>
 ::release_patterns() const
 {

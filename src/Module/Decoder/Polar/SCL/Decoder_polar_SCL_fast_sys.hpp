@@ -1,7 +1,6 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS
 #define DECODER_POLAR_SCL_FAST_SYS
 
-#include <set>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -17,18 +16,17 @@ protected:
 	const mipp::vector<B>&           frozen_bits;
 	const Pattern_polar_parser<B>    polar_patterns;
 
-	            std ::vector<int  >  paths;          // active paths
-	            std ::vector<int  >  last_paths;     // active paths cpy
-	            std ::vector<float>  metrics;        // path metrics
-	            mipp::vector<R    >  Y_N;            // channel llrs
-	std::vector<mipp::vector<R    >> l;              // llrs
-	std::vector<mipp::vector<B    >> s;              // partial sums
-	std::vector<std ::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
-	std::vector<std ::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
-	            std ::vector<int  >  dup_count;      // number of duplications of a path, at updating time
-	std::vector<std ::vector<int  >> llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
-	            std ::vector<int  >  bit_flips;      // index of the bits to be flipped
-	            std ::vector<bool >  is_even;        // used to store parity of a spc node
+	            std ::vector<int >  paths;           // active paths
+	            std ::vector<R   >  metrics;         // path metrics
+	            mipp::vector<R   >  Y_N;             // channel llrs
+	std::vector<mipp::vector<R   >> l;               // llrs
+	std::vector<mipp::vector<B   >> s;               // partial sums
+	std::vector<std ::vector<R   >> metrics_vec;     // list of candidate metrics to be sorted
+	std::vector<std ::vector<int >> metrics_idx;     // indexes tables used to sort the metrics
+	            std ::vector<int >  dup_count;       // number of duplications of a path, at updating time
+	std::vector<std ::vector<int >> llr_indexes;     // indexes used to sort a list of llrs (to be flipped)
+	            std ::vector<int >  bit_flips;       // index of the bits to be flipped
+	            std ::vector<bool>  is_even;         // used to store parity of a spc node
 
 	int                              best_path;
 	int                              n_active_paths;
@@ -62,17 +60,17 @@ protected:
 	template <int REV_D, int N_ELMTS> inline void update_paths_rep(const int off_l, const int off_s);
 	template <int REV_D, int N_ELMTS> inline void update_paths_spc(const int off_l, const int off_s);
 
-	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
-	inline int  up_ref_array_idx(const int path, const int r_d                                           ); // return the array
-
-	        inline void init_buffers    (           );
-	        inline void delete_path     (int path_id);
-	virtual inline int  select_best_path(           );
+	        inline void init_buffers    (                             );
+	        inline void delete_path     (int path_id                  );
+	virtual inline int  select_best_path(                             );
+	        inline int  up_ref_array_idx(const int path, const int r_d); // return the array
 
 private:
-	inline void flip_bits_r1    (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
-	inline void flip_bits_rep   (const int old_path, const int new_path,                const int off_s, const int n_elmts);
-	inline void flip_bits_spc   (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+
+	inline void erase_bad_paths (                                                                        );
+	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"

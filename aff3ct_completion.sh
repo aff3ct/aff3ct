@@ -49,7 +49,7 @@ _aff3ct() {
 		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
 		      --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p --mod-cpm-k  \
 		      --mod-cpm-std --mod-const-path --dmod-max --dmod-no-sig2        \
-		      --chn-type --chn-path --chn-blk-fad --qnt-type --qnt-int        \
+		      --chn-type --chn-path --chn-blk-fad --qnt-type --qnt-dec        \
 		      --qnt-bits --qnt-range --dec-type --dec-implem --term-no        \
 		      --term-freq --sim-seed --sim-mpi-comm --sim-pyber"
 	fi
@@ -203,7 +203,7 @@ _aff3ct() {
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
 		--cde-size | -N |                                                     \
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
-		--qnt-int | --qnt-bits | --qnt-range | --qnt-type |                   \
+		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                   \
 		--sim-benchs | -b | --sim-debug-limit |                               \
 		--mnt-max-fe | -e | --term-type |                                     \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
