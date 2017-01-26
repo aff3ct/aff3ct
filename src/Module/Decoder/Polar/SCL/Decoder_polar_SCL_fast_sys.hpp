@@ -11,29 +11,29 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
 {
 protected:
-	const int                        m;              // graph depth
-	      int                        L;              // maximum paths number
-	const mipp::vector<B>&           frozen_bits;
-	const Pattern_polar_parser<B>    polar_patterns;
+	const int                       m;              // graph depth
+	      int                       L;              // maximum paths number
+	const mipp::vector<B>&          frozen_bits;
+	const Pattern_polar_parser<B>   polar_patterns;
 
-	            std ::vector<int >  paths;           // active paths
-	            std ::vector<R   >  metrics;         // path metrics
-	            mipp::vector<R   >  Y_N;             // channel llrs
-	std::vector<mipp::vector<R   >> l;               // llrs
-	std::vector<mipp::vector<B   >> s;               // partial sums
-	std::vector<std ::vector<R   >> metrics_vec;     // list of candidate metrics to be sorted
-	std::vector<std ::vector<int >> metrics_idx;     // indexes tables used to sort the metrics
-	            std ::vector<int >  dup_count;       // number of duplications of a path, at updating time
-	std::vector<std ::vector<int >> llr_indexes;     // indexes used to sort a list of llrs (to be flipped)
-	            std ::vector<int >  bit_flips;       // index of the bits to be flipped
-	            std ::vector<bool>  is_even;         // used to store parity of a spc node
+	            std ::vector<int >  paths;          // active paths
+	            std ::vector<R   >  metrics;        // path metrics
+	            mipp::vector<R   >  Y_N;            // channel llrs
+	std::vector<mipp::vector<R   >> l;              // llrs
+	std::vector<mipp::vector<B   >> s;              // partial sums
+	std::vector<std ::vector<R   >> metrics_vec;    // list of candidate metrics to be sorted
+	std::vector<std ::vector<int >> metrics_idx;    // indexes tables used to sort the metrics
+	            std ::vector<int >  dup_count;      // number of duplications of a path, at updating time
+	std::vector<std ::vector<int >> llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
+	            std ::vector<int >  bit_flips;      // index of the bits to be flipped
+	            std ::vector<bool>  is_even;        // used to store parity of a spc node
 
-	int                              best_path;
-	int                              n_active_paths;
+	int                             best_path;
+	int                             n_active_paths;
 
 	// each following 2D vector is of size L * m
-	std::vector<std::vector<int>>    n_array_ref;    // number of times an array is used
-	std::vector<std::vector<int>>    path_2_array;   // give array used by a path
+	std::vector<std::vector<int>>    n_array_ref;   // number of times an array is used
+	std::vector<std::vector<int>>    path_2_array   // give array used by a path
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
