@@ -1,17 +1,11 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS
 #define DECODER_POLAR_SCL_FAST_SYS
 
-#include <queue>
-#include <utility>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
-
-auto my_comp = [](const std::pair<float,int>& e1, const std::pair<float,int>& e2) { return e1.first < e2.first; };
-
-//std::priority_queue<std::pair<float,int>, std::vector<std::pair<float,int>>, decltype(my_comp) > metrics_queue(my_comp);
 
 template <typename B, typename R, class API_polar>
 class Decoder_polar_SCL_fast_sys : public Decoder<B,R>
@@ -42,8 +36,6 @@ protected:
 	std::vector<std::vector<int>>    n_array_ref;    // number of times an array is used
 	std::vector<std::vector<int>>    path_2_array;   // give array used by a path
 
-	std::priority_queue<std::pair<float,int>, std::vector<std::pair<float,int>>, decltype(my_comp) > metrics_queue;
-
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
 	                           const int n_frames = 1, const std::string name = "Decoder_polar_SCL_fast_sys");
@@ -69,16 +61,17 @@ protected:
 	template <int REV_D, int N_ELMTS> inline void update_paths_rep(const int off_l, const int off_s);
 	template <int REV_D, int N_ELMTS> inline void update_paths_spc(const int off_l, const int off_s);
 
-	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
-	inline int  up_ref_array_idx(const int path, const int r_d                                           ); // return the array
-
-	        inline void init_buffers    (           );
-	        inline void delete_path     (int path_id);
-	virtual inline int  select_best_path(           );
+	        inline void init_buffers    (                             );
+	        inline void delete_path     (int path_id                  );
+	virtual inline int  select_best_path(                             );
+	        inline int  up_ref_array_idx(const int path, const int r_d); // return the array
 
 private:
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
+
+	inline void erase_bad_paths (                                                                        );
+	inline int  duplicate_tree  (const int old_path, const int off_l, const int off_s, const int n_elmts ); // return the new_path
 };
 
 #include "Decoder_polar_SCL_fast_sys.hxx"
