@@ -427,26 +427,48 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	else
 	{
 		// generate the candidates with the Chase-II algorithm
-		for (auto i = 0; i < n_active_paths; i++)
+		if (n_elmts == 2)
 		{
-			const auto path  = paths[i];
-			const auto array = path_2_array[path][r_d];
+			for (auto i = 0; i < n_active_paths; i++)
+			{
+				const auto path  = paths[i];
+				const auto array = path_2_array[path][r_d];
 
-			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +2, llr_indexes[r_d].end(),
-				[this, array, off_l](int x, int y) {
-					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
-				});
+				bit_flips[2 * path +0] = 0;
+				bit_flips[2 * path +1] = 1;
 
-			bit_flips[2 * path +0] = llr_indexes[r_d][0];
-			bit_flips[2 * path +1] = llr_indexes[r_d][1];
+				const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
+				const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
 
-			const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
-			const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
+				metrics_vec[1][4 * path +0] = metrics       [    path   ];
+				metrics_vec[1][4 * path +1] = metrics       [    path   ] + abs0;
+				metrics_vec[1][4 * path +2] = metrics       [    path   ] + abs1;
+				metrics_vec[1][4 * path +3] = metrics_vec[1][4 * path +1] + abs1;
+			}
+		}
+		else
+		{
+			for (auto i = 0; i < n_active_paths; i++)
+			{
+				const auto path  = paths[i];
+				const auto array = path_2_array[path][r_d];
 
-			metrics_vec[1][4 * path +0] = metrics       [    path   ];
-			metrics_vec[1][4 * path +1] = metrics       [    path   ] + abs0;
-			metrics_vec[1][4 * path +2] = metrics       [    path   ] + abs1;
-			metrics_vec[1][4 * path +3] = metrics_vec[1][4 * path +1] + abs1;
+				std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +2, llr_indexes[r_d].end(),
+					[this, array, off_l](int x, int y) {
+						return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
+					});
+
+				bit_flips[2 * path +0] = llr_indexes[r_d][0];
+				bit_flips[2 * path +1] = llr_indexes[r_d][1];
+
+				const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
+				const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
+
+				metrics_vec[1][4 * path +0] = metrics       [    path   ];
+				metrics_vec[1][4 * path +1] = metrics       [    path   ] + abs0;
+				metrics_vec[1][4 * path +2] = metrics       [    path   ] + abs1;
+				metrics_vec[1][4 * path +3] = metrics_vec[1][4 * path +1] + abs1;
+			}
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0; j < 4; j++)
@@ -466,23 +488,19 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		// erase bad paths
 		erase_bad_paths();
 
-		// duplicate paths and flip the bits
-		const auto n_active_paths_cpy = n_active_paths;
-		for (auto i = 0; i < n_active_paths_cpy; i++)
+		for (auto i = 0; i < n_list; i++)
 		{
-			const auto path  = paths[i];
+			const auto path  = metrics_idx[1][i] / 4;
+			const auto dup   = metrics_idx[1][i] % 4;
 			const auto array = path_2_array[path][r_d];
 
 			API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
 
-			for (auto dup = 2; dup <= dup_count[path]; dup++)
-			{
-				const auto new_path = duplicate_tree(path, off_l, off_s, n_elmts);
-				flip_bits_r1(path, new_path, dup, off_s, n_elmts);
-				metrics[new_path] = metrics_vec[1][4 * path + dup -1];
-			}
+			const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, n_elmts) : path;
+			flip_bits_r1(path, new_path, dup, off_s, n_elmts);
+			metrics[new_path] = metrics_vec[1][metrics_idx[1][i]];
 
-			dup_count[path] = 0;
+			dup_count[path]--;
 		}
 	}
 }
@@ -497,26 +515,48 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	else
 	{
 		// generate the candidates with the Chase-II algorithm
-		for (auto i = 0; i < n_active_paths; i++)
+		if (N_ELMTS == 2)
 		{
-			const auto path  = paths[i];
-			const auto array = path_2_array[path][REV_D];
+			for (auto i = 0; i < n_active_paths; i++)
+			{
+				const auto path  = paths[i];
+				const auto array = path_2_array[path][REV_D];
 
-			std::partial_sort(llr_indexes[REV_D].begin(), llr_indexes[REV_D].begin() +2, llr_indexes[REV_D].end(),
-				[this, array, off_l](int x, int y) {
-					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
-				});
+				bit_flips[2 * path +0] = 0;
+				bit_flips[2 * path +1] = 1;
 
-			bit_flips[2 * path +0] = llr_indexes[REV_D][0];
-			bit_flips[2 * path +1] = llr_indexes[REV_D][1];
+				const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
+				const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
 
-			const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
-			const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
+				metrics_vec[1][4 * path +0] = metrics       [    path   ];
+				metrics_vec[1][4 * path +1] = metrics       [    path   ] + abs0;
+				metrics_vec[1][4 * path +2] = metrics       [    path   ] + abs1;
+				metrics_vec[1][4 * path +3] = metrics_vec[1][4 * path +1] + abs1;
+			}
+		}
+		else
+		{
+			for (auto i = 0; i < n_active_paths; i++)
+			{
+				const auto path  = paths[i];
+				const auto array = path_2_array[path][REV_D];
 
-			metrics_vec[1][4 * path +0] = metrics       [    path   ];
-			metrics_vec[1][4 * path +1] = metrics       [    path   ] + abs0;
-			metrics_vec[1][4 * path +2] = metrics       [    path   ] + abs1;
-			metrics_vec[1][4 * path +3] = metrics_vec[1][4 * path +1] + abs1;
+				std::partial_sort(llr_indexes[REV_D].begin(), llr_indexes[REV_D].begin() +2, llr_indexes[REV_D].end(),
+					[this, array, off_l](int x, int y) {
+						return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
+					});
+
+				bit_flips[2 * path +0] = llr_indexes[REV_D][0];
+				bit_flips[2 * path +1] = llr_indexes[REV_D][1];
+
+				const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
+				const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
+
+				metrics_vec[1][4 * path +0] = metrics       [    path   ];
+				metrics_vec[1][4 * path +1] = metrics       [    path   ] + abs0;
+				metrics_vec[1][4 * path +2] = metrics       [    path   ] + abs1;
+				metrics_vec[1][4 * path +3] = metrics_vec[1][4 * path +1] + abs1;
+			}
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0; j < 4; j++)
@@ -536,23 +576,19 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		// erase bad paths
 		erase_bad_paths();
 
-		// duplicate paths and flip the bits
-		const auto n_active_paths_cpy = n_active_paths;
-		for (auto i = 0; i < n_active_paths_cpy; i++)
+		for (auto i = 0; i < n_list; i++)
 		{
-			const auto path  = paths[i];
+			const auto path  = metrics_idx[1][i] / 4;
+			const auto dup   = metrics_idx[1][i] % 4;
 			const auto array = path_2_array[path][REV_D];
 
-			API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+			API_polar::h(s[path], l[array], off_l, off_s, N_ELMTS);
 
-			for (auto dup = 2; dup <= dup_count[path]; dup++)
-			{
-				const auto new_path = duplicate_tree(path, off_l, off_s, N_ELMTS);
-				flip_bits_r1(path, new_path, dup, off_s, N_ELMTS);
-				metrics[new_path] = metrics_vec[1][4 * path + dup -1];
-			}
+			const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, N_ELMTS) : path;
+			flip_bits_r1(path, new_path, dup, off_s, N_ELMTS);
+			metrics[new_path] = metrics_vec[1][metrics_idx[1][i]];
 
-			dup_count[path] = 0;
+			dup_count[path]--;
 		}
 	}
 }
@@ -565,16 +601,16 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	switch (dup)
 	{
-	case 1:
+	case 0:
 		// nothing to do
 		break;
-	case 2:
+	case 1:
 		s[new_path][off_s + bit_flips[2 * old_path +0]] = !s[old_path][off_s + bit_flips[2 * old_path +0]] ? b : 0;
 		break;
-	case 3:
+	case 2:
 		s[new_path][off_s + bit_flips[2 * old_path +1]] = !s[old_path][off_s + bit_flips[2 * old_path +1]] ? b : 0;
 		break;
-	case 4:
+	case 3:
 		s[new_path][off_s + bit_flips[2 * old_path +0]] = !s[old_path][off_s + bit_flips[2 * old_path +0]] ? b : 0;
 		s[new_path][off_s + bit_flips[2 * old_path +1]] = !s[old_path][off_s + bit_flips[2 * old_path +1]] ? b : 0;
 		break;
@@ -750,40 +786,77 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_cands = L <= 2 ? 4 : 8;
 
 	// generate the candidates with the Chase-II algorithm
-	for (auto i = 0; i < n_active_paths; i++)
+	if (n_elmts == 4)
 	{
-		const auto path  = paths[i];
-		const auto array = path_2_array[paths[i]][r_d];
-
-		std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +4, llr_indexes[r_d].end(),
-			[this, array, off_l](int x, int y){
-				return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
-			});
-
-		for (auto j = 0; j < 4; j++)
-			bit_flips[4 * path +j] = llr_indexes[r_d][j];
-
-		auto sum = 0;
-		for (auto j = 0; j < n_elmts; j++)
-			sum ^= (l[array][off_l +j] < 0);
-		is_even[path] = (sum == 0);
-
-		const auto abs0 = std::abs(l[array][off_l + bit_flips[4 * path +0]]);
-		const auto abs1 = std::abs(l[array][off_l + bit_flips[4 * path +1]]);
-		const auto abs2 = std::abs(l[array][off_l + bit_flips[4 * path +2]]);
-		const auto abs3 = std::abs(l[array][off_l + bit_flips[4 * path +3]]);
-
-		metrics_vec[2][n_cands * path +0] = metrics[path] + (!is_even[path] ? abs0 : 0);
-		metrics_vec[2][n_cands * path +1] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs1;
-		metrics_vec[2][n_cands * path +2] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs2;
-		metrics_vec[2][n_cands * path +3] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs3;
-
-		if (L > 2)
+		for (auto i = 0; i < n_active_paths; i++)
 		{
-			metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0] + abs1 + abs2;
-			metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0] + abs1 + abs3;
-			metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0] + abs2 + abs3;
-			metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1] + abs2 + abs3;
+			const auto path  = paths[i];
+			const auto array = path_2_array[paths[i]][r_d];
+
+			for (auto j = 0; j < 4; j++)
+				bit_flips[4 * path +j] = j;
+
+			auto sum = 0;
+			for (auto j = 0; j < n_elmts; j++)
+				sum ^= (l[array][off_l +j] < 0);
+			is_even[path] = (sum == 0);
+
+			const auto abs0 = std::abs(l[array][off_l + bit_flips[4 * path +0]]);
+			const auto abs1 = std::abs(l[array][off_l + bit_flips[4 * path +1]]);
+			const auto abs2 = std::abs(l[array][off_l + bit_flips[4 * path +2]]);
+			const auto abs3 = std::abs(l[array][off_l + bit_flips[4 * path +3]]);
+
+			metrics_vec[2][n_cands * path +0] = metrics[path] + (!is_even[path] ? abs0 : 0);
+			metrics_vec[2][n_cands * path +1] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs1;
+			metrics_vec[2][n_cands * path +2] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs2;
+			metrics_vec[2][n_cands * path +3] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs3;
+
+			if (L > 2)
+			{
+				metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0] + abs1 + abs2;
+				metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0] + abs1 + abs3;
+				metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0] + abs2 + abs3;
+				metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1] + abs2 + abs3;
+			}
+		}
+	}
+	else
+	{
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path  = paths[i];
+			const auto array = path_2_array[paths[i]][r_d];
+
+			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +4, llr_indexes[r_d].end(),
+				[this, array, off_l](int x, int y){
+					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
+				});
+
+			for (auto j = 0; j < 4; j++)
+				bit_flips[4 * path +j] = llr_indexes[r_d][j];
+
+			auto sum = 0;
+			for (auto j = 0; j < n_elmts; j++)
+				sum ^= (l[array][off_l +j] < 0);
+			is_even[path] = (sum == 0);
+
+			const auto abs0 = std::abs(l[array][off_l + bit_flips[4 * path +0]]);
+			const auto abs1 = std::abs(l[array][off_l + bit_flips[4 * path +1]]);
+			const auto abs2 = std::abs(l[array][off_l + bit_flips[4 * path +2]]);
+			const auto abs3 = std::abs(l[array][off_l + bit_flips[4 * path +3]]);
+
+			metrics_vec[2][n_cands * path +0] = metrics[path] + (!is_even[path] ? abs0 : 0);
+			metrics_vec[2][n_cands * path +1] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs1;
+			metrics_vec[2][n_cands * path +2] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs2;
+			metrics_vec[2][n_cands * path +3] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs3;
+
+			if (L > 2)
+			{
+				metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0] + abs1 + abs2;
+				metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0] + abs1 + abs3;
+				metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0] + abs2 + abs3;
+				metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1] + abs2 + abs3;
+			}
 		}
 	}
 	for (auto i = n_active_paths; i < L; i++)
@@ -804,27 +877,19 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	// erase bad paths
 	erase_bad_paths();
 
-	// duplicate paths and flip the bits
-	const auto n_active_paths_cpy = n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
+	for (auto i = 0; i < n_list; i++)
 	{
-		const auto path  = paths[i];
+		const auto path  = metrics_idx[2][i] / n_cands;
+		const auto dup   = metrics_idx[2][i] % n_cands;
 		const auto array = path_2_array[path][r_d];
 
 		API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
 
-		for (auto dup = 2; dup <= dup_count[path]; dup++)
-		{
-			const auto new_path = duplicate_tree(path, off_l, off_s, n_elmts);
-			flip_bits_spc(path, new_path, dup, off_s, n_elmts);
-			metrics[new_path] = metrics_vec[2][n_cands * path + dup -1];
-		}
+		const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, n_elmts) : path;
+		flip_bits_spc(path, new_path, dup, off_s, n_elmts);
+		metrics[new_path] = metrics_vec[2][metrics_idx[2][i]];
 
-		metrics[path] = metrics_vec[2][n_cands * path];
-		if (!is_even[path])
-			s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
-
-		dup_count[path] = 0;
+		dup_count[path]--;
 	}
 }
 
@@ -837,40 +902,77 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_cands = L <= 2 ? 4 : 8;
 
 	// generate the candidates with the Chase-II algorithm
-	for (auto i = 0; i < n_active_paths; i++)
+	if (N_ELMTS == 4)
 	{
-		const auto path  = paths[i];
-		const auto array = path_2_array[paths[i]][REV_D];
-
-		std::partial_sort(llr_indexes[REV_D].begin(), llr_indexes[REV_D].begin() +4, llr_indexes[REV_D].end(),
-			[this, array, off_l](int x, int y){
-				return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
-			});
-
-		for (auto j = 0; j < 4; j++)
-			bit_flips[4 * path +j] = llr_indexes[REV_D][j];
-
-		auto sum = 0;
-		for (auto j = 0; j < N_ELMTS; j++)
-			sum ^= (l[array][off_l +j] < 0);
-		is_even[path] = (sum == 0);
-
-		const auto abs0 = std::abs(l[array][off_l + bit_flips[4 * path +0]]);
-		const auto abs1 = std::abs(l[array][off_l + bit_flips[4 * path +1]]);
-		const auto abs2 = std::abs(l[array][off_l + bit_flips[4 * path +2]]);
-		const auto abs3 = std::abs(l[array][off_l + bit_flips[4 * path +3]]);
-
-		metrics_vec[2][n_cands * path +0] = metrics[path] + (!is_even[path] ? abs0 : 0);
-		metrics_vec[2][n_cands * path +1] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs1;
-		metrics_vec[2][n_cands * path +2] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs2;
-		metrics_vec[2][n_cands * path +3] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs3;
-
-		if (L > 2)
+		for (auto i = 0; i < n_active_paths; i++)
 		{
-			metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0] + abs1 + abs2;
-			metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0] + abs1 + abs3;
-			metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0] + abs2 + abs3;
-			metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1] + abs2 + abs3;
+			const auto path  = paths[i];
+			const auto array = path_2_array[paths[i]][REV_D];
+
+			for (auto j = 0; j < 4; j++)
+				bit_flips[4 * path +j] = j;
+
+			auto sum = 0;
+			for (auto j = 0; j < N_ELMTS; j++)
+				sum ^= (l[array][off_l +j] < 0);
+			is_even[path] = (sum == 0);
+
+			const auto abs0 = std::abs(l[array][off_l + bit_flips[4 * path +0]]);
+			const auto abs1 = std::abs(l[array][off_l + bit_flips[4 * path +1]]);
+			const auto abs2 = std::abs(l[array][off_l + bit_flips[4 * path +2]]);
+			const auto abs3 = std::abs(l[array][off_l + bit_flips[4 * path +3]]);
+
+			metrics_vec[2][n_cands * path +0] = metrics[path] + (!is_even[path] ? abs0 : 0);
+			metrics_vec[2][n_cands * path +1] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs1;
+			metrics_vec[2][n_cands * path +2] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs2;
+			metrics_vec[2][n_cands * path +3] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs3;
+
+			if (L > 2)
+			{
+				metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0] + abs1 + abs2;
+				metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0] + abs1 + abs3;
+				metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0] + abs2 + abs3;
+				metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1] + abs2 + abs3;
+			}
+		}
+	}
+	else
+	{
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path  = paths[i];
+			const auto array = path_2_array[paths[i]][REV_D];
+
+			std::partial_sort(llr_indexes[REV_D].begin(), llr_indexes[REV_D].begin() +4, llr_indexes[REV_D].end(),
+				[this, array, off_l](int x, int y){
+					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
+				});
+
+			for (auto j = 0; j < 4; j++)
+				bit_flips[4 * path +j] = llr_indexes[REV_D][j];
+
+			auto sum = 0;
+			for (auto j = 0; j < N_ELMTS; j++)
+				sum ^= (l[array][off_l +j] < 0);
+			is_even[path] = (sum == 0);
+
+			const auto abs0 = std::abs(l[array][off_l + bit_flips[4 * path +0]]);
+			const auto abs1 = std::abs(l[array][off_l + bit_flips[4 * path +1]]);
+			const auto abs2 = std::abs(l[array][off_l + bit_flips[4 * path +2]]);
+			const auto abs3 = std::abs(l[array][off_l + bit_flips[4 * path +3]]);
+
+			metrics_vec[2][n_cands * path +0] = metrics[path] + (!is_even[path] ? abs0 : 0);
+			metrics_vec[2][n_cands * path +1] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs1;
+			metrics_vec[2][n_cands * path +2] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs2;
+			metrics_vec[2][n_cands * path +3] = metrics[path] + ( is_even[path] ? abs0 : 0) + abs3;
+
+			if (L > 2)
+			{
+				metrics_vec[2][n_cands * path +4] = metrics_vec[2][n_cands * path +0] + abs1 + abs2;
+				metrics_vec[2][n_cands * path +5] = metrics_vec[2][n_cands * path +0] + abs1 + abs3;
+				metrics_vec[2][n_cands * path +6] = metrics_vec[2][n_cands * path +0] + abs2 + abs3;
+				metrics_vec[2][n_cands * path +7] = metrics_vec[2][n_cands * path +1] + abs2 + abs3;
+			}
 		}
 	}
 	for (auto i = n_active_paths; i < L; i++)
@@ -891,27 +993,19 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	// erase bad paths
 	erase_bad_paths();
 
-	// duplicate paths and flip the bits
-	const auto n_active_paths_cpy = n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
+	for (auto i = 0; i < n_list; i++)
 	{
-		const auto path = paths[i];
+		const auto path  = metrics_idx[2][i] / n_cands;
+		const auto dup   = metrics_idx[2][i] % n_cands;
 		const auto array = path_2_array[path][REV_D];
 
 		API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
 
-		for (auto dup = 2; dup <= dup_count[path]; dup++)
-		{
-			const auto new_path = duplicate_tree(path, off_l, off_s, N_ELMTS);
-			flip_bits_spc(path, new_path, dup, off_s, N_ELMTS);
-			metrics[new_path] = metrics_vec[2][n_cands * path + dup -1];
-		}
+		const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, N_ELMTS) : path;
+		flip_bits_spc(path, new_path, dup, off_s, N_ELMTS);
+		metrics[new_path] = metrics_vec[2][metrics_idx[2][i]];
 
-		metrics[path] = metrics_vec[2][n_cands * path];
-		if (!is_even[path])
-			s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
-
-		dup_count[path] = 0;
+		dup_count[path]--;
 	}
 }
 
@@ -923,49 +1017,49 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	switch(dup)
 	{
-	case 1 :
+	case 0 :
 		if (!is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+		break;
+	case 1 :
+		if (is_even[old_path])
+			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
 		break;
 	case 2 :
 		if (is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
 		break;
 	case 3 :
 		if (is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	case 4 :
-		if (is_even[old_path])
+		if (!is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
 		break;
 	case 5 :
 		if (!is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	case 6 :
 		if (!is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	case 7 :
-		if (!is_even[old_path])
-			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
-		break;
-	case 8 :
 		if (is_even[old_path])
 			s[new_path][off_s + bit_flips[4 * old_path +0]] = s[old_path][off_s + bit_flips[4 * old_path +0]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
-		    s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +1]] = s[old_path][off_s + bit_flips[4 * old_path +1]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +2]] = s[old_path][off_s + bit_flips[4 * old_path +2]] ? 0 : b;
+			s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	default:
 		std::cout << bold_red("(EE) Flip bits error on SPC node.") << std::endl;
