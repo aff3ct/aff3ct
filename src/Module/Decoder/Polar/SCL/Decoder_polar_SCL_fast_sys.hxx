@@ -442,17 +442,17 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			const auto path  = paths[i];
 			const auto array = path_2_array[path][r_d];
-			if (dup_count[path])
+
+			API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
+
+			for (auto dup = 2; dup <= dup_count[path]; dup++)
 			{
-				API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
-				for (auto dup = 2; dup <= dup_count[path]; dup++)
-				{
-					const auto new_path = duplicate_tree(path, off_l, off_s, n_elmts);
-					flip_bits_r1(path, new_path, dup, off_s, n_elmts);
-					metrics[new_path] = metrics_vec[1][4 * path + dup -1];
-				}
-				dup_count[path] = 0;
+				const auto new_path = duplicate_tree(path, off_l, off_s, n_elmts);
+				flip_bits_r1(path, new_path, dup, off_s, n_elmts);
+				metrics[new_path] = metrics_vec[1][4 * path + dup -1];
 			}
+
+			dup_count[path] = 0;
 		}
 	}
 }
@@ -512,17 +512,17 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		{
 			const auto path  = paths[i];
 			const auto array = path_2_array[path][REV_D];
-			if (dup_count[path])
+
+			API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+
+			for (auto dup = 2; dup <= dup_count[path]; dup++)
 			{
-				API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
-				for (auto dup = 2; dup <= dup_count[path]; dup++)
-				{
-					const auto new_path = duplicate_tree(path, off_l, off_s, N_ELMTS);
-					flip_bits_r1(path, new_path, dup, off_s, N_ELMTS);
-					metrics[new_path] = metrics_vec[1][4 * path + dup -1];
-				}
-				dup_count[path] = 0;
+				const auto new_path = duplicate_tree(path, off_l, off_s, N_ELMTS);
+				flip_bits_r1(path, new_path, dup, off_s, N_ELMTS);
+				metrics[new_path] = metrics_vec[1][4 * path + dup -1];
 			}
+
+			dup_count[path] = 0;
 		}
 	}
 }
@@ -627,6 +627,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				metrics[    path] = metrics_vec[0][2 * path +0];
 				metrics[new_path] = metrics_vec[0][2 * path +1];
 			}
+
 			dup_count[path] = 0;
 		}
 	}
@@ -705,6 +706,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				metrics[    path] = metrics_vec[0][2 * path +0];
 				metrics[new_path] = metrics_vec[0][2 * path +1];
 			}
+
 			dup_count[path] = 0;
 		}
 	}
@@ -776,25 +778,23 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	const auto n_active_paths_cpy = n_active_paths;
 	for (auto i = 0; i < n_active_paths_cpy; i++)
 	{
-		const auto path = paths[i];
-		if (dup_count[path])
+		const auto path  = paths[i];
+		const auto array = path_2_array[path][r_d];
+
+		API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
+
+		for (auto dup = 2; dup <= dup_count[path]; dup++)
 		{
-			const auto array = path_2_array[path][r_d];
-			API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
-
-			for (auto dup = 2; dup <= dup_count[path]; dup++)
-			{
-				const auto new_path = duplicate_tree(path, off_l, off_s, n_elmts);
-				flip_bits_spc(path, new_path, dup, off_s, n_elmts);
-				metrics[new_path] = metrics_vec[2][n_cands * path + dup -1];
-			}
-
-			metrics[path] = metrics_vec[2][n_cands * path];
-			if (!is_even[path])
-				s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
-
-			dup_count[path] = 0;
+			const auto new_path = duplicate_tree(path, off_l, off_s, n_elmts);
+			flip_bits_spc(path, new_path, dup, off_s, n_elmts);
+			metrics[new_path] = metrics_vec[2][n_cands * path + dup -1];
 		}
+
+		metrics[path] = metrics_vec[2][n_cands * path];
+		if (!is_even[path])
+			s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
+
+		dup_count[path] = 0;
 	}
 }
 
@@ -866,24 +866,22 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	for (auto i = 0; i < n_active_paths_cpy; i++)
 	{
 		const auto path = paths[i];
-		if (dup_count[path])
+		const auto array = path_2_array[path][REV_D];
+
+		API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
+
+		for (auto dup = 2; dup <= dup_count[path]; dup++)
 		{
-			const auto array = path_2_array[path][REV_D];
-			API_polar::template h<N_ELMTS>(s[path], l[array], off_l, off_s, N_ELMTS);
-
-			for (auto dup = 2; dup <= dup_count[path]; dup++)
-			{
-				const auto new_path = duplicate_tree(path, off_l, off_s, N_ELMTS);
-				flip_bits_spc(path, new_path, dup, off_s, N_ELMTS);
-				metrics[new_path] = metrics_vec[2][n_cands * path + dup -1];
-			}
-
-			metrics[path] = metrics_vec[2][n_cands * path];
-			if (!is_even[path])
-				s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
-
-			dup_count[path] = 0;
+			const auto new_path = duplicate_tree(path, off_l, off_s, N_ELMTS);
+			flip_bits_spc(path, new_path, dup, off_s, N_ELMTS);
+			metrics[new_path] = metrics_vec[2][n_cands * path + dup -1];
 		}
+
+		metrics[path] = metrics_vec[2][n_cands * path];
+		if (!is_even[path])
+			s[path][off_s + bit_flips[4 * path +0]] = s[path][off_s + bit_flips[4 * path +0]] ? 0 : bit_init<B>();
+
+		dup_count[path] = 0;
 	}
 }
 
