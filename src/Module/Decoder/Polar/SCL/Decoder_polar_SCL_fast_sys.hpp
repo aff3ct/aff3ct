@@ -32,8 +32,8 @@ protected:
 	int                             n_active_paths;
 
 	// each following 2D vector is of size L * m
-	std::vector<std::vector<int>>    n_array_ref;   // number of times an array is used
-	std::vector<std::vector<int>>    path_2_array;  // give array used by a path
+	std::vector<std::vector<int>>   n_array_ref;    // number of times an array is used
+	std::vector<std::vector<int>>   path_2_array;   // give array used by a path
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
