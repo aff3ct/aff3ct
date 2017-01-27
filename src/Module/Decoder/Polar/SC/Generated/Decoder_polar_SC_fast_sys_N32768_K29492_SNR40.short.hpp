@@ -2315,7 +2315,7 @@ public:
 		API_polar::template h  <  512>(s, l, off_l+    0,                           off_s+    0,   512);
 	}
 
-	void decode()
+	void hard_decode()
 	{
 		auto &l = this->l;
 		auto &s = this->s;

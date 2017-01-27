@@ -43,6 +43,8 @@ protected:
 	unsigned n_nodes_before_compression;
 	unsigned n_nodes_after_compression;
 
+	const bool enable_short_decoder;
+
 public:
 	Generator_polar(const int& K,
 	                const int& N,
@@ -56,7 +58,8 @@ public:
 	                std::ostream &dec_stream         = std::cout,
 	                std::ostream &short_dec_stream   = std::cout,
 	                std::ostream &graph_stream       = std::cout,
-	                std::ostream &short_graph_stream = std::cout);
+	                std::ostream &short_graph_stream = std::cout,
+	                const bool enable_short_decoder  = true);
 	virtual ~Generator_polar();
 
 	void generate();

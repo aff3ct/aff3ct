@@ -90,7 +90,7 @@ public:
 	{
 	}
 
-	void decode()
+	void hard_decode()
 	{
 		auto &l = this->l;
 		auto &s = this->s;

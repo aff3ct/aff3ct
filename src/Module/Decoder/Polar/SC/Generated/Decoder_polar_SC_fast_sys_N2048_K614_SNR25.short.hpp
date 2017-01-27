@@ -469,7 +469,7 @@ public:
 		API_polar::template h  <  16>(s, l, off_l+   0,                       off_s+   0,   16);
 	}
 
-	void decode()
+	void hard_decode()
 	{
 		auto &l = this->l;
 		auto &s = this->s;

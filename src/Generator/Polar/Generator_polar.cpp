@@ -22,7 +22,8 @@ Generator_polar
                   ostream &dec_stream,
                   ostream &short_dec_stream,
                   ostream &graph_stream,
-                  ostream &short_graph_stream)
+                  ostream &short_graph_stream,
+                  const bool enable_short_decoder)
 : K                         (K                                                       ),
   N                         (N                                                       ),
   m                         ((int)log2(N)                                            ),
@@ -42,7 +43,8 @@ Generator_polar
   inlining_level            (3                                                       ),
   stats                     (m +1                                                    ),
   n_nodes_before_compression(0                                                       ),
-  n_nodes_after_compression (0                                                       )
+  n_nodes_after_compression (0                                                       ),
+  enable_short_decoder      (enable_short_decoder                                    )
 {
 	for (unsigned i = 0; i < stats.size(); i++)
 		stats[i].resize(patterns.size());
@@ -122,7 +124,10 @@ void Generator_polar
 	stringstream graph, short_graph;
 	this->recursive_generate_graph(parser.get_polar_tree()->get_root(), graph);
 	this->subtree_occurences_cpy = this->subtree_occurences;
-	this->recursive_generate_short_graph(parser.get_polar_tree()->get_root(), short_graph);
+
+	if (enable_short_decoder)
+		this->recursive_generate_short_graph(parser.get_polar_tree()->get_root(), short_graph);
+
 	stringstream graph_common1;
 	graph_common1 << "digraph " << class_name << "{" << endl;
 	graph_common1 << tab << "subgraph cluster_0 {" << endl;
@@ -144,8 +149,9 @@ void Generator_polar
 		graph_common1 << "\"" << patterns[p]->name() << "\" -> " << "\"" << patterns[p +1]->name() << "\";" << endl;
 	}
 
-	assert(n_nodes_after_compression != 0);
-	float compression_rate = (float)n_nodes_before_compression / (float)n_nodes_after_compression;
+	float compression_rate = 1.f;
+	if (n_nodes_after_compression != 0)
+		compression_rate = (float)n_nodes_before_compression / (float)n_nodes_after_compression;
 	graph_common1 << tab << "}" << endl;
 	graph_common1 << tab << "subgraph cluster_1 {" << endl;
 	graph_common1 << tab << tab
@@ -164,20 +170,23 @@ void Generator_polar
 	graph_stream << graph.str();
 	graph_stream << graph_common2.str();
 
-	short_graph_stream << graph_common1.str();
-	short_graph_stream << short_graph.str();
-	short_graph_stream << graph_common2.str();
+	if (enable_short_decoder)
+	{
+		short_graph_stream << graph_common1.str();
+		short_graph_stream << short_graph.str();
+		short_graph_stream << graph_common2.str();
 
-	// short decoder generation
-	short_dec_stream << dec_common1.str();
-	this->subtree_occurences_cpy = this->subtree_occurences;
-	this->recursive_generate_short_decoder_funcs(parser.get_polar_tree()->get_root(), short_dec1);
-	short_dec_stream << short_dec1.str();
-	short_dec_stream << dec_common2.str();
-	this->subtree_occurences_cpy = this->subtree_occurences;
-	this->recursive_generate_short_decoder(parser.get_polar_tree()->get_root(), short_dec2);
-	short_dec_stream << short_dec2.str();
-	short_dec_stream << dec_common3.str();
+		// short decoder generation
+		short_dec_stream << dec_common1.str();
+		this->subtree_occurences_cpy = this->subtree_occurences;
+		this->recursive_generate_short_decoder_funcs(parser.get_polar_tree()->get_root(), short_dec1);
+		short_dec_stream << short_dec1.str();
+		short_dec_stream << dec_common2.str();
+		this->subtree_occurences_cpy = this->subtree_occurences;
+		this->recursive_generate_short_decoder(parser.get_polar_tree()->get_root(), short_dec2);
+		short_dec_stream << short_dec2.str();
+		short_dec_stream << dec_common3.str();
+	}
 }
 
 void Generator_polar
@@ -312,7 +321,7 @@ void Generator_polar
 
 		if (node_curr->is_leaf())
 		{
-			std::string h = node_curr->get_c()->apply_h("off_l", "off_s");
+			std::string h = node_curr->get_c()->apply_h("", "off_l", "off_s");
 			if (!h.empty())
 			{
 				stream << tab << tab << "auto &l = this->l;" << endl;
@@ -327,8 +336,8 @@ void Generator_polar
 			stream << tab << tab << "auto &s = this->s;" << endl;
 			stream                                      << endl;
 
-			if (!node_curr->get_c()->apply_f("off_l", "off_s").empty())
-				stream << tab << tab << node_curr->get_c()->apply_f("off_l", "off_s");
+			if (!node_curr->get_c()->apply_f("", "off_l", "off_s").empty())
+				stream << tab << tab << node_curr->get_c()->apply_f("", "off_l", "off_s");
 			if(node_curr->get_left() != nullptr)
 			{
 				stream << tab << tab;
@@ -337,8 +346,8 @@ void Generator_polar
 				       << "off_s" << "+" << 0 << ");" << endl;
 			}
 
-			if (!node_curr->get_c()->apply_g("off_l", "off_s").empty())
-				stream << tab << tab << node_curr->get_c()->apply_g("off_l", "off_s");
+			if (!node_curr->get_c()->apply_g("", "off_l", "off_s").empty())
+				stream << tab << tab << node_curr->get_c()->apply_g("", "off_l", "off_s");
 			if(node_curr->get_right() != nullptr)
 			{
 				stream << tab << tab;
@@ -347,8 +356,8 @@ void Generator_polar
 				       << "off_s" << "+" << node_curr->get_c()->get_si_2() << ");" << endl;
 			}
 
-			if (!node_curr->get_c()->apply_h("off_l", "off_s").empty())
-				stream << tab << tab << node_curr->get_c()->apply_h("off_l", "off_s");
+			if (!node_curr->get_c()->apply_h("", "off_l", "off_s").empty())
+				stream << tab << tab << node_curr->get_c()->apply_h("", "off_l", "off_s");
 		}
 		stream << tab << "}" << endl << endl;
 	}

@@ -18,9 +18,7 @@ Generator_polar_SCL_sys
                           const Pattern_polar_i &pattern_rate0,
                           const Pattern_polar_i &pattern_rate1,
                           ostream &dec_stream,
-                          ostream &short_dec_stream,
-                          ostream &graph_stream,
-                          ostream &short_graph_stream)
+                          ostream &graph_stream)
 : Generator_polar(K,
                   N,
                   snr,
@@ -31,9 +29,10 @@ Generator_polar_SCL_sys
                   "Decoder_polar_SCL_fast_CA_sys",
                   "DECODER_POLAR_SCL_FAST_SYS_CA",
                   dec_stream,
-                  short_dec_stream,
+                  dec_stream,
                   graph_stream,
-                  short_graph_stream)
+                  graph_stream,
+                  false)
 {
 }
 

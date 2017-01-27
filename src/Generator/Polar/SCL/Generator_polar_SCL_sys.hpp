@@ -21,10 +21,8 @@ public:
 	                        const std::vector<Pattern_polar_i*> &patterns,
 	                        const Pattern_polar_i &pattern_rate0,
 	                        const Pattern_polar_i &pattern_rate1,
-	                        std::ostream &dec_stream         = std::cout,
-	                        std::ostream &short_dec_stream   = std::cout,
-	                        std::ostream &graph_stream       = std::cout,
-	                        std::ostream &short_graph_stream = std::cout);
+	                        std::ostream &dec_stream   = std::cout,
+	                        std::ostream &graph_stream = std::cout);
 	virtual ~Generator_polar_SCL_sys();
 
 protected:

@@ -108,19 +108,21 @@ Generation_polar
 		                                     "_K"   + std::to_string(params.code.K) +
 		                                     "_SNR" + std::to_string((int)(snr*10));
 
-	dec_file        .open((directory + "/" + fileName + ".hpp"      ).c_str(), std::ios_base::out);
-	short_dec_file  .open((directory + "/" + fileName + ".short.hpp").c_str(), std::ios_base::out);
-	graph_file      .open((directory + "/" + fileName + ".dot"      ).c_str(), std::ios_base::out);
-	short_graph_file.open((directory + "/" + fileName + ".short.dot").c_str(), std::ios_base::out);
-
+	dec_file  .open((directory + "/" + fileName + ".hpp").c_str(), std::ios_base::out);
+	graph_file.open((directory + "/" + fileName + ".dot").c_str(), std::ios_base::out);
 	if (params.decoder.type == "SCL")
 		generator = new Generator_polar_SCL_sys(params.code.K, params.code.N, snr, frozen_bits,
 		                                        polar_patterns, *polar_pattern_r0, *polar_pattern_r1,
-		                                        dec_file, short_dec_file, graph_file, short_graph_file);
+		                                        dec_file, graph_file);
 	else if (params.decoder.type == "SC")
+	{
+		short_dec_file  .open((directory + "/" + fileName + ".short.hpp").c_str(), std::ios_base::out);
+		short_graph_file.open((directory + "/" + fileName + ".short.dot").c_str(), std::ios_base::out);
+
 		generator = new Generator_polar_SC_sys(params.code.K, params.code.N, snr, frozen_bits,
 		                                       polar_patterns, *polar_pattern_r0, *polar_pattern_r1,
 		                                       dec_file, short_dec_file, graph_file, short_graph_file);
+	}
 	else
 	{
 		std::cerr << bold_red("(EE) Unsupported type of decoder, exiting.") << std::endl;

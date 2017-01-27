@@ -794,7 +794,7 @@ public:
 		API_polar::template spc< 128>(s, l, off_l+   0,                       off_s+   0,  128);
 	}
 
-	void decode()
+	void hard_decode()
 	{
 		auto &l = this->l;
 		auto &s = this->s;

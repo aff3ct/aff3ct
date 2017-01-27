@@ -6636,7 +6636,7 @@ public:
 		API_polar::template xo < 4096>(s,     off_s+     0,  off_s+  4096,                 off_s+     0,  4096);
 	}
 
-	void decode()
+	void hard_decode()
 	{
 		auto &l = this->l;
 		auto &s = this->s;

@@ -22602,7 +22602,7 @@ public:
 		API_polar::template spc<  4096>(s, l,   off_l+      0,                                     off_s+      0,   4096);
 	}
 
-	void decode()
+	void hard_decode()
 	{
 		auto &l = this->l;
 		auto &s = this->s;
