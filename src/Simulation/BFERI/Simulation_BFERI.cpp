@@ -115,8 +115,13 @@ void Simulation_BFERI_i<B,R,Q>
 		t_snr = std::chrono::steady_clock::now();
 
 		code_rate = (float)(params.code.K / (float)(params.code.N + params.code.tail_length));
-		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
-		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+
+		if(params.simulation.snr_type == "eb")
+			sigma = std::sqrt((float)params.modulator.upsample_factor) /
+			        std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		else if(params.simulation.snr_type == "es")
+			sigma = std::sqrt((float)params.modulator.upsample_factor) /
+			        std::sqrt(std::pow(10.f, (snr / 10.f)));
 
 		this->snr_precompute ();
 		this->_launch        ();

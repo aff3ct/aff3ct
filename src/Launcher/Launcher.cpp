@@ -50,6 +50,7 @@ Launcher<B,R,Q>
 	params.simulation .mpi_size          = 1;
 	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
 	params.simulation .pyber             = "";
+	params.simulation .snr_type          = "es";
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
