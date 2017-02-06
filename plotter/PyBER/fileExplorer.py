@@ -23,6 +23,7 @@
 import os
 import sys
 import reader
+import subprocess
 import libs.pyqtgraph as pg
 from libs.pyqtgraph.Qt import QtCore, QtGui
 from libs.pyqtgraph.dockarea import *
@@ -73,8 +74,19 @@ class AdvTreeView(QtGui.QTreeView):
 
 		self.hideLegend()
 
+		self.doubleClicked.connect(self.openFileOrDir)
 		self.fsWatcher = QtCore.QFileSystemWatcher()
 		self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
+
+	def openFileOrDir(self, *args):
+		paths = [ self.model().filePath(index) for index in args ]
+		if len(paths):
+			if sys.platform == "linux" or sys.platform == "linux2":
+				subprocess.call(["xdg-open", paths[0]])
+			elif sys.platform == "darwin":
+				subprocess.call(["open", paths[0]])
+			else:
+				os.startfile(paths[0])
 
 	def hideLegend(self):
 		# hide the legend
