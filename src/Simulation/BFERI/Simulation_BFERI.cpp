@@ -120,7 +120,7 @@ void Simulation_BFERI_i<B,R,Q>
 			sigma = std::sqrt((float)params.modulator.upsample_factor) /
 			        std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 		else if(params.simulation.snr_type == "es")
-			sigma = 1/ //std::sqrt((float)params.modulator.upsample_factor) /
+			sigma = std::sqrt((float)params.modulator.upsample_factor) /
 			        std::sqrt(2.0f * std::pow(10.f, (snr / 10.f)));
 
 		this->snr_precompute ();
