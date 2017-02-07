@@ -85,7 +85,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_path     (0),
   n_active_paths(1),
   n_array_ref   (L, std::vector<int>(m)),
-  path_2_array  (L, std::vector<int>(m))
+  path_2_array  (L, std::vector<int>(m)),
+  sorters       (std::log2(N) +1, nullptr)
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -107,6 +108,13 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto j = 0; j < (int)llr_indexes[i].size(); j++)
 			std::iota(llr_indexes[i].begin(), llr_indexes[i].end(), 0); // 0, 1, 2, 3...
 	}
+
+	auto n_elmts = 1;
+	for (auto i = 0; i <= std::log2(N); i++)
+	{
+		sorters[i] = new LC_sorter(n_elmts);
+		n_elmts <<= 1;
+	}
 }
 
 template <typename B, typename R, class API_polar>
@@ -114,6 +122,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::~Decoder_polar_SCL_fast_sys()
 {
 	polar_patterns.release_patterns();
+	for (auto i = 0; i <= std::log2(this->N); i++)
+		delete sorters[i];
 }
 
 template <typename B, typename R, class API_polar>
@@ -453,13 +463,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				const auto path  = paths[i];
 				const auto array = path_2_array[path][r_d];
 
-				std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +2, llr_indexes[r_d].end(),
-					[this, array, off_l](int x, int y) {
-						return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
-					});
+//				std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +2, llr_indexes[r_d].end(),
+//					[this, array, off_l](int x, int y) {
+//						return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
+//					});
+//
+//				bit_flips[2 * path +0] = llr_indexes[r_d][0];
+//				bit_flips[2 * path +1] = llr_indexes[r_d][1];
 
-				bit_flips[2 * path +0] = llr_indexes[r_d][0];
-				bit_flips[2 * path +1] = llr_indexes[r_d][1];
+				auto bests_idx = sorters[r_d]->sort<R>(l[array].data() + off_l);
+
+				bit_flips[2 * path +0] = bests_idx.first;
+				bit_flips[2 * path +1] = bests_idx.second;
 
 				const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
 				const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
