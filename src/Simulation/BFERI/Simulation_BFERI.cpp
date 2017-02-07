@@ -31,6 +31,8 @@ Simulation_BFERI_i<B,R,Q>
   barrier(params.simulation.n_threads),
  
   snr      (0.f),
+  snr_s    (0.f),
+  snr_b    (0.f),
   code_rate(0.f),
   sigma    (0.f),
 
@@ -116,12 +118,22 @@ void Simulation_BFERI_i<B,R,Q>
 
 		code_rate = (float)(params.code.K / (float)(params.code.N + params.code.tail_length));
 
-		if(params.simulation.snr_type == "eb")
+		if(params.simulation.snr_type == "EB")
+		{
+			snr_b = snr;
+			snr_s = snr + 10.f * std::log10(code_rate * (float)params.modulator.bits_per_symbol);
+
 			sigma = std::sqrt((float)params.modulator.upsample_factor) /
-			        std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
-		else if(params.simulation.snr_type == "es")
+			        std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr_b / 10.f)));
+		}
+		else if(params.simulation.snr_type == "ES")
+		{
+			snr_s = snr;
+			snr_b = snr - 10.f * std::log10(code_rate * (float)params.modulator.bits_per_symbol);
+
 			sigma = std::sqrt((float)params.modulator.upsample_factor) /
-			        std::sqrt(2.0f * std::pow(10.f, (snr / 10.f)));
+			        std::sqrt(2.0f * std::pow(10.f, (snr_s / 10.f)));
+		}
 
 		this->snr_precompute ();
 		this->_launch        ();

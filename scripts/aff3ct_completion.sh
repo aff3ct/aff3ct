@@ -44,14 +44,14 @@ _aff3ct() {
 		]]
 	then
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s       \
-		      --sim-stop-time --sim-threads -t --sim-domain --sim-prec -p     \
-		      --sim-inter-lvl --cde-info-bits -K --cde-size -N --src-type     \
-		      --src-path --enc-type --enc-path --mod-type --mod-bps --mod-ups \
-		      --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p --mod-cpm-k  \
-		      --mod-cpm-std --mod-const-path --dmod-max --dmod-no-sig2        \
-		      --chn-type --chn-path --chn-blk-fad --qnt-type --qnt-int        \
-		      --qnt-bits --qnt-range --dec-type --dec-implem --term-no        \
-		      --term-freq --sim-seed --sim-mpi-comm --sim-pyber"
+		      --sim-snr-type -E --sim-stop-time --sim-threads -t --sim-domain \
+		      --sim-prec -p --sim-inter-lvl --cde-info-bits -K --cde-size -N  \
+		      --src-type --src-path --enc-type --enc-path --mod-type --mod-bps\
+		      --mod-ups --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p    \
+		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max           \
+		      --dmod-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type   \
+		      --qnt-int --qnt-bits --qnt-range --dec-type --dec-implem        \
+		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -222,6 +222,11 @@ _aff3ct() {
 		# awaiting something special
 		--sim-prec | -p)
 			local params="8 16 32 64"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--sim-snr-type | -E)
+			local params="EB ES"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

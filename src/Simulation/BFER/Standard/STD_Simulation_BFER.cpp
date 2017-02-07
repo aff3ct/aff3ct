@@ -964,9 +964,9 @@ Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr);
 #else
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, &d_decod_all_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr, &d_decod_all_red);
 #endif
 }
 
