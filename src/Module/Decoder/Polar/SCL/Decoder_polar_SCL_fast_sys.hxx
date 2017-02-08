@@ -86,7 +86,13 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   n_active_paths(1),
   n_array_ref   (L, std::vector<int>(m)),
   path_2_array  (L, std::vector<int>(m)),
-  sorters       (std::log2(N) +1, nullptr)
+  sorters_llr   (std::log2(N) +1, nullptr),
+  sorters_r1_m  (L * 4),
+  sorters_rep_m (L * 2),
+  sorters_spc_m (L * 8),
+  best_idx_r1   (2),
+  best_idx_spc  (4),
+  best_idx_m    (L)
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -112,7 +118,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	auto n_elmts = 1;
 	for (auto i = 0; i <= std::log2(N); i++)
 	{
-		sorters[i] = new LC_sorter(n_elmts);
+		sorters_llr[i] = new LC_sorter<R>(n_elmts);
 		n_elmts <<= 1;
 	}
 }
@@ -123,7 +129,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	polar_patterns.release_patterns();
 	for (auto i = 0; i <= std::log2(this->N); i++)
-		delete sorters[i];
+		delete sorters_llr[i];
 }
 
 template <typename B, typename R, class API_polar>
@@ -471,10 +477,10 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 //				bit_flips[2 * path +0] = llr_indexes[r_d][0];
 //				bit_flips[2 * path +1] = llr_indexes[r_d][1];
 
-				auto bests_idx = sorters[r_d]->sort<R>(l[array].data() + off_l);
+				sorters_llr[r_d]->sort_simd(l[array].data() + off_l, best_idx_r1);
 
-				bit_flips[2 * path +0] = bests_idx.first;
-				bit_flips[2 * path +1] = bests_idx.second;
+				bit_flips[2 * path +0] = best_idx_r1[0];
+				bit_flips[2 * path +1] = best_idx_r1[1];
 
 				const auto abs0 = std::abs(l[array][off_l + bit_flips[2 * path +0]]);
 				const auto abs1 = std::abs(l[array][off_l + bit_flips[2 * path +1]]);
@@ -489,31 +495,57 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			for (auto j = 0; j < 4; j++)
 				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<R>::max();
 
+//		// L first of the lists are the L best paths
+//		const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
+//		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + n_list, metrics_idx[1].begin() + L * 4,
+//			[this](int x, int y) {
+//				return metrics_vec[1][x] < metrics_vec[1][y];
+//			});
+//
+//		// count the number of duplications per path
+//		for (auto i = 0; i < n_list; i++)
+//			dup_count[metrics_idx[1][i] / 4]++;
+//
+//		// erase bad paths
+//		erase_bad_paths();
+//
+//		for (auto i = 0; i < n_list; i++)
+//		{
+//			const auto path  = metrics_idx[1][i] / 4;
+//			const auto dup   = metrics_idx[1][i] % 4;
+//			const auto array = path_2_array[path][r_d];
+//
+//			API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
+//
+//			const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, n_elmts) : path;
+//			flip_bits_r1(path, new_path, dup, off_s, n_elmts);
+//			metrics[new_path] = metrics_vec[1][metrics_idx[1][i]];
+//
+//			dup_count[path]--;
+//		}
+
 		// L first of the lists are the L best paths
 		const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
-		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + n_list, metrics_idx[1].begin() + L * 4,
-			[this](int x, int y) {
-				return metrics_vec[1][x] < metrics_vec[1][y];
-			});
+		sorters_r1_m.sort(metrics_vec[1].data(), best_idx_m, n_list);
 
 		// count the number of duplications per path
 		for (auto i = 0; i < n_list; i++)
-			dup_count[metrics_idx[1][i] / 4]++;
+			dup_count[best_idx_m[i] / 4]++;
 
 		// erase bad paths
 		erase_bad_paths();
 
 		for (auto i = 0; i < n_list; i++)
 		{
-			const auto path  = metrics_idx[1][i] / 4;
-			const auto dup   = metrics_idx[1][i] % 4;
+			const auto path  = best_idx_m[i] / 4;
+			const auto dup   = best_idx_m[i] % 4;
 			const auto array = path_2_array[path][r_d];
 
 			API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
 
 			const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, n_elmts) : path;
 			flip_bits_r1(path, new_path, dup, off_s, n_elmts);
-			metrics[new_path] = metrics_vec[1][metrics_idx[1][i]];
+			metrics[new_path] = metrics_vec[1][best_idx_m[i]];
 
 			dup_count[path]--;
 		}
@@ -676,15 +708,22 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	}
 	else // n_active_paths == L
 	{
+//		// sort hypothetic metrics
+//		std::sort(metrics_idx[0].begin(), metrics_idx[0].begin() + L * 2,
+//			[this](int x, int y) {
+//				return metrics_vec[0][x] < metrics_vec[0][y];
+//			});
+//
+//		// count the number of duplications per path
+//		for (auto i = 0; i < L; i++)
+//			dup_count[metrics_idx[0][i] / 2]++;
+
 		// sort hypothetic metrics
-		std::sort(metrics_idx[0].begin(), metrics_idx[0].begin() + L * 2,
-			[this](int x, int y) {
-				return metrics_vec[0][x] < metrics_vec[0][y];
-			});
+		sorters_rep_m.sort(metrics_vec[0].data(), best_idx_m, L);
 
 		// count the number of duplications per path
 		for (auto i = 0; i < L; i++)
-			dup_count[metrics_idx[0][i] / 2]++;
+			dup_count[best_idx_m[i] / 2]++;
 
 		// erase bad paths
 		erase_bad_paths();
@@ -842,13 +881,18 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			const auto path  = paths[i];
 			const auto array = path_2_array[paths[i]][r_d];
 
-			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +4, llr_indexes[r_d].end(),
-				[this, array, off_l](int x, int y){
-					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
-				});
+//			std::partial_sort(llr_indexes[r_d].begin(), llr_indexes[r_d].begin() +4, llr_indexes[r_d].end(),
+//				[this, array, off_l](int x, int y){
+//					return std::abs(l[array][off_l + x]) < std::abs(l[array][off_l + y]);
+//				});
+//
+//			for (auto j = 0; j < 4; j++)
+//				bit_flips[4 * path +j] = llr_indexes[r_d][j];
+
+			sorters_llr[r_d]->sort_simd(l[array].data() + off_l, best_idx_spc);
 
 			for (auto j = 0; j < 4; j++)
-				bit_flips[4 * path +j] = llr_indexes[r_d][j];
+				bit_flips[4 * path +j] = best_idx_spc[j];
 
 			auto sum = 0;
 			for (auto j = 0; j < n_elmts; j++)
@@ -878,31 +922,57 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		for (auto j = 0; j < n_cands; j++)
 			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<R>::max();
 
+//	// L first of the lists are the L best paths
+//	const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
+//	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + n_list, metrics_idx[2].begin() + n_cands * L,
+//		[this](int x, int y){
+//			return metrics_vec[2][x] < metrics_vec[2][y];
+//		});
+//
+//	// count the number of duplications per path
+//	for (auto i = 0; i < n_list; i++)
+//		dup_count[metrics_idx[2][i] / n_cands]++;
+//
+//	// erase bad paths
+//	erase_bad_paths();
+//
+//	for (auto i = 0; i < n_list; i++)
+//	{
+//		const auto path  = metrics_idx[2][i] / n_cands;
+//		const auto dup   = metrics_idx[2][i] % n_cands;
+//		const auto array = path_2_array[path][r_d];
+//
+//		API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
+//
+//		const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, n_elmts) : path;
+//		flip_bits_spc(path, new_path, dup, off_s, n_elmts);
+//		metrics[new_path] = metrics_vec[2][metrics_idx[2][i]];
+//
+//		dup_count[path]--;
+//	}
+
 	// L first of the lists are the L best paths
 	const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
-	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + n_list, metrics_idx[2].begin() + n_cands * L,
-		[this](int x, int y){
-			return metrics_vec[2][x] < metrics_vec[2][y];
-		});
+	sorters_spc_m.sort(metrics_vec[2].data(), best_idx_m, n_list);
 
 	// count the number of duplications per path
 	for (auto i = 0; i < n_list; i++)
-		dup_count[metrics_idx[2][i] / n_cands]++;
+		dup_count[best_idx_m[i] / n_cands]++;
 
 	// erase bad paths
 	erase_bad_paths();
 
 	for (auto i = 0; i < n_list; i++)
 	{
-		const auto path  = metrics_idx[2][i] / n_cands;
-		const auto dup   = metrics_idx[2][i] % n_cands;
+		const auto path  = best_idx_m[i] / n_cands;
+		const auto dup   = best_idx_m[i] % n_cands;
 		const auto array = path_2_array[path][r_d];
 
 		API_polar::h(s[path], l[array], off_l, off_s, n_elmts);
 
 		const auto new_path = (dup_count[path] > 1) ? duplicate_tree(path, off_l, off_s, n_elmts) : path;
 		flip_bits_spc(path, new_path, dup, off_s, n_elmts);
-		metrics[new_path] = metrics_vec[2][metrics_idx[2][i]];
+		metrics[new_path] = metrics_vec[2][best_idx_m[i]];
 
 		dup_count[path]--;
 	}

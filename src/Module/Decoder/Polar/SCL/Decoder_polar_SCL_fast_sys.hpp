@@ -36,7 +36,14 @@ protected:
 	std::vector<std::vector<int>>   n_array_ref;    // number of times an array is used
 	std::vector<std::vector<int>>   path_2_array;   // give array used by a path
 
-	std::vector<LC_sorter*>         sorters;
+	std::vector<LC_sorter<R>*>      sorters_llr;
+	            LC_sorter<R>        sorters_r1_m;
+	            LC_sorter<R>        sorters_rep_m;
+	            LC_sorter<R>        sorters_spc_m;
+
+	std::vector<int>                best_idx_r1;
+	std::vector<int>                best_idx_spc;
+	std::vector<int>                best_idx_m;
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
