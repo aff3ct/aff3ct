@@ -184,6 +184,7 @@ public:
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmadd        <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return mipp::fnmadd       <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmsub        <T>(r, v1.r, v2.r); }
+	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return mipp::blend        <T>(r, v1.r,  m.r); }
 	inline Reg<T>   rot          ()                                 const { return mipp::rot          <T>(r);             }
 	inline Reg<T>   rotr         ()                                 const { return mipp::rotr         <T>(r);             }
 	inline Reg<T>   div2         ()                                 const { return mipp::div2         <T>(r);             }
@@ -238,6 +239,7 @@ public:
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
+	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return (m.r) ? v1.r : r;                      }
 	inline Reg<T>   rot          ()                                 const { return r;                                     }
 	inline Reg<T>   rotr         ()                                 const { return r;                                     }
 	inline Reg<T>   div2         ()                                 const { return mipp_scop::div2<T>(r);                 }
@@ -415,6 +417,7 @@ template <typename T> inline void     sincos       (const Reg<T> x,        Reg<T
 template <typename T> inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fmadd(v2, v3);     }
 template <typename T> inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fnmadd(v2, v3);    }
 template <typename T> inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fmsub(v2, v3);     }
+template <typename T> inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> v2, const Reg<T> m ) { return v1.blend(v2, m );     }
 template <typename T> inline Reg<T>   rot          (const Reg<T> v)                                    { return v.rot();              }
 template <typename T> inline Reg<T>   rotr         (const Reg<T> v)                                    { return v.rotr();             }
 template <typename T> inline Reg<T>   div2         (const Reg<T> v)                                    { return v.div2();             }

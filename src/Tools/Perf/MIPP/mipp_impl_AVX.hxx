@@ -1800,6 +1800,38 @@
 	}
 #endif
 
+	// ---------------------------------------------------------------------------------------------------------- blend
+	template <>
+	inline reg blend<double>(const reg v1, const reg v2, const reg m) {
+		return _mm256_castpd_ps(_mm256_blendv_pd(_mm256_castps_pd(v1), _mm256_castps_pd(v2), _mm256_castps_pd(m)));
+	}
+
+	template <>
+	inline reg blend<float>(const reg v1, const reg v2, const reg m) {
+		return _mm256_blendv_ps(v1, v2, m);
+	}
+
+	template <>
+	inline reg blend<int>(const reg v1, const reg v2, const reg m) {
+		return _mm256_blendv_ps(v1, v2, m);
+	}
+
+#ifdef __AVX2__
+	template <>
+	inline reg blend<short>(const reg v1, const reg v2, const reg m) {
+		return _mm256_castsi256_ps(_mm256_blendv_epi8(_mm256_castps_si256(v1),
+		                                              _mm256_castps_si256(v2),
+		                                              _mm256_castps_si256(m )));
+	}
+
+	template <>
+	inline reg blend<signed char>(const reg v1, const reg v2, const reg m) {
+		return _mm256_castsi256_ps(_mm256_blendv_epi8(_mm256_castps_si256(v1),
+		                                              _mm256_castps_si256(v2),
+		                                              _mm256_castps_si256(m )));
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------------ rot
 #ifdef __AVX2__
 	template <>

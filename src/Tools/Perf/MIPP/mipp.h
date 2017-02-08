@@ -422,6 +422,7 @@ template <typename T> inline void  sincos       (const reg, reg&, reg&)         
 template <typename T> inline reg   fmadd        (const reg, const reg, const reg) { errorMessage<T>("fmadd");         exit(-1); }
 template <typename T> inline reg   fnmadd       (const reg, const reg, const reg) { errorMessage<T>("fnmadd");        exit(-1); }
 template <typename T> inline reg   fmsub        (const reg, const reg, const reg) { errorMessage<T>("fmsub");         exit(-1); }
+template <typename T> inline reg   blend        (const reg, const reg, const reg) { errorMessage<T>("blend");         exit(-1); }
 template <typename T> inline reg   rot          (const reg)                       { errorMessage<T>("rot");           exit(-1); }
 template <typename T> inline reg   rotr         (const reg)                       { errorMessage<T>("rotr");          exit(-1); }
 template <typename T> inline reg   div2         (const reg)                       { errorMessage<T>("div2");          exit(-1); }
