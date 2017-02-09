@@ -9,8 +9,13 @@
 #include "Tools/Math/utils.h"
 
 template <typename T>
+class LC_sorter_simd;
+
+template <typename T>
 class LC_sorter
 {
+	friend LC_sorter_simd<T>;
+
 private:
 	int               max_elmts;
 	mipp::vector<int> tree_idx;
@@ -19,15 +24,10 @@ private:
 public:
 	LC_sorter(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
 	{
-		assert(is_power_of_2(max_elmts));
+		// assert(is_power_of_2(max_elmts));
 
 		tree_idx.resize(2 * max_elmts -1);
 		std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);
-	}
-
-	int get_max_elmts()
-	{
-		return this->max_elmts;
 	}
 
 	inline void partial_sort_destructive(T* values, std::vector<int> &pos, int n_elmts = -1, int K = -1)
@@ -35,7 +35,7 @@ public:
 		K       = (K       <= 0) ? (int)pos.size() : K;
 		n_elmts = (n_elmts <= 0) ? max_elmts       : n_elmts;
 
-		assert(is_power_of_2(n_elmts));
+		// assert(is_power_of_2(n_elmts));
 
 		auto depth = (int)std::log2(n_elmts);
 
@@ -47,11 +47,11 @@ public:
 			vals.resize(max_elmts);
 		}
 
-		_partial_sort_step1(values, pos, n_elmts, K, depth);
+		LC_sorter<T>::_partial_sort_step1(values, pos, n_elmts, K, depth, max_elmts, tree_idx);
 		if (K == 2)
-			_partial_sort2_step2(values, pos, depth);
+			LC_sorter<T>::_partial_sort2_step2(values, pos, depth, max_elmts, tree_idx);
 		else
-			_partial_sort_step2(values, pos, K, depth);
+			LC_sorter<T>::_partial_sort_step2(values, pos, K, depth, max_elmts, tree_idx);
 
 	}
 
@@ -60,7 +60,7 @@ public:
 		K       = (K       <= 0) ? (int)pos.size() : K;
 		n_elmts = (n_elmts <= 0) ? max_elmts       : n_elmts;
 
-		assert(is_power_of_2(n_elmts));
+		// assert(is_power_of_2(n_elmts));
 
 		auto depth = (int)std::log2(n_elmts);
 
@@ -72,21 +72,27 @@ public:
 			vals.resize(max_elmts);
 		}
 
-		_partial_sort_step1(values, pos, n_elmts, K, depth);
+		LC_sorter<T>::_partial_sort_step1(values, pos, n_elmts, K, depth, max_elmts, tree_idx);
 		if (K == 2)
-			_partial_sort2_step2(values, pos, depth);
+			LC_sorter<T>::_partial_sort2_step2(values, pos, depth, max_elmts, tree_idx);
 		else
 		{
 			// copy the "values" vector in "vals"
 			for (auto i = 0; i < n_elmts; i++)
 				vals[i] = values[i];
 
-			_partial_sort_step2(vals.data(), pos, K, depth);
+			LC_sorter<T>::_partial_sort_step2(vals.data(), pos, K, depth, max_elmts, tree_idx);
 		}
 	}
 
-private:
-	inline void _partial_sort_step1(const T* values, std::vector<int> &pos, const int n_elmts, const int K, const int depth)
+protected:
+	static void _partial_sort_step1(const T                 *values, 
+	                                      std::vector<int>  &pos,
+	                                const int                n_elmts,
+	                                const int                K,
+	                                const int                depth,
+	                                const int                max_elmts,
+	                                      mipp::vector<int> &tree_idx)
 	{
 		// sort all the tree (1)
 		const auto n_2 = n_elmts >> 1;
@@ -118,12 +124,17 @@ private:
 		pos[0] = tree_idx[offset];
 	}
 
-	inline void _partial_sort_step2(T* values, std::vector<int> &pos, const int K, const int depth)
+	static void _partial_sort_step2(      T                * values,
+	                                      std::vector<int> & pos,
+	                                const int                K,
+	                                const int                depth,
+	                                const int                max_elmts,
+	                                      mipp::vector<int> &tree_idx)
 	{
 		for (auto k = 0; k < K -1; k++)
 		{
 			// replace the min val by +inf (+inf = max)
-			vals[pos[k]] = std::numeric_limits<T>::max();
+			values[pos[k]] = std::numeric_limits<T>::max();
 
 			// compute only 1 branch (1)
 			const auto j = pos[k] / 2;
@@ -154,7 +165,11 @@ private:
 		}
 	}
 
-	inline void _partial_sort2_step2(const T* values, std::vector<int> &pos, const int depth)
+	static void _partial_sort2_step2(const T                 *values,
+	                                       std::vector<int>  &pos,
+	                                 const int                depth,
+	                                 const int                max_elmts,
+	                                       mipp::vector<int> &tree_idx)
 	{
 		// replace the min val by this opponent (rev depth of 1)
 		tree_idx[max_elmts + (pos[0] / 2)] = (pos[0] % 2) ? pos[0] -1 : pos[0] +1;

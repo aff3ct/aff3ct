@@ -85,6 +85,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   n_array_ref   (L, std::vector<int>(m)),
   path_2_array  (L, std::vector<int>(m)),
   sorter        (N),
+  sorter_simd   (N),
   best_idx      (L),
   l_tmp         (N)
 {
@@ -438,8 +439,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				const auto path  = paths[i];
 				const auto array = path_2_array[path][r_d];
 
-				for (auto i = 0; i < n_elmts; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
-				sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 2);
+//				for (auto i = 0; i < n_elmts; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
+//				sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 2);
+				sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, n_elmts, 2);
 
 				bit_flips[2 * path +0] = best_idx[0];
 				bit_flips[2 * path +1] = best_idx[1];
@@ -521,8 +523,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 				const auto path  = paths[i];
 				const auto array = path_2_array[path][REV_D];
 
-				for (auto i = 0; i < N_ELMTS; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
-				sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 2);
+//				for (auto i = 0; i < N_ELMTS; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
+//				sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 2);
+				sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, N_ELMTS, 2);
 
 				bit_flips[2 * path +0] = best_idx[0];
 				bit_flips[2 * path +1] = best_idx[1];
@@ -796,8 +799,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			const auto path  = paths[i];
 			const auto array = path_2_array[paths[i]][r_d];
 
-			for (auto i = 0; i < n_elmts; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
-			sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 4);
+//			for (auto i = 0; i < n_elmts; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
+//			sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 4);
+			sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, n_elmts, 4);
 
 			for (auto j = 0; j < 4; j++)
 				bit_flips[4 * path +j] = best_idx[j];
@@ -907,8 +911,9 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			const auto path  = paths[i];
 			const auto array = path_2_array[paths[i]][REV_D];
 
-			for (auto i = 0; i < N_ELMTS; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
-			sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 4);
+//			for (auto i = 0; i < N_ELMTS; i++) l_tmp[i] = std::abs(l[array][off_l +i]);
+//			sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 4);
+			sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, N_ELMTS, 4);
 
 			for (auto j = 0; j < 4; j++)
 				bit_flips[4 * path +j] = best_idx;
