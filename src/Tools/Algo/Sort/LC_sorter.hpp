@@ -5,259 +5,177 @@
 #include <vector>
 #include <algorithm>
 
-//#include "../mipp.h"
- #include "Tools/Perf/MIPP/mipp.h"
- #include "Tools/Math/utils.h"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Math/utils.h"
 
 template <typename T>
 class LC_sorter
 {
 private:
-	const int         size;
-	const int         depth;
+	int               max_elmts;
 	mipp::vector<int> tree_idx;
 	mipp::vector<T>   vals;
 
 public:
-	LC_sorter(const int size) : size(size), depth(std::log2(size)), vals(2 * size)
+	LC_sorter(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
 	{
-		assert(is_power_of_2(size));
+		assert(is_power_of_2(max_elmts));
 
-		int depth = std::log2(size);
-		auto n_nodes = 0;
-		for (auto i = depth; i >= 0; i--)
-			n_nodes += std::exp2(i);
-		tree_idx.resize(n_nodes);
-
-		std::iota(tree_idx.begin(), tree_idx.begin() + this->size, 0);
+		tree_idx.resize(2 * max_elmts -1);
+		std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);
 	}
 
-	int get_size()
+	int get_max_elmts()
 	{
-		return this->size;
+		return this->max_elmts;
 	}
 
-	void sort(const T* values, std::vector<int> &pos, const int p_sort = -1)
+	inline void partial_sort_destructive(T* values, std::vector<int> &pos, int n_elmts = -1, int K = -1)
 	{
-		const auto K = (p_sort <= 0) ? (int)pos.size() : p_sort;
+		K       = (K       <= 0) ? (int)pos.size() : K;
+		n_elmts = (n_elmts <= 0) ? max_elmts       : n_elmts;
 
-		if (K <= 2)
-			sort2(values, pos, K);
-		else // pos.size() > 2
+		assert(is_power_of_2(n_elmts));
+
+		auto depth = (int)std::log2(n_elmts);
+
+		if (n_elmts > max_elmts)
+		{
+			max_elmts = n_elmts;
+			tree_idx.resize(2 * max_elmts -1);
+			std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);
+			vals.resize(max_elmts);
+		}
+
+		_partial_sort_step1(values, pos, n_elmts, K, depth);
+		if (K == 2)
+			_partial_sort2_step2(values, pos, depth);
+		else
+			_partial_sort_step2(values, pos, K, depth);
+
+	}
+
+	inline void partial_sort(const T* values, std::vector<int> &pos, int n_elmts = -1, int K = -1)
+	{
+		K       = (K       <= 0) ? (int)pos.size() : K;
+		n_elmts = (n_elmts <= 0) ? max_elmts       : n_elmts;
+
+		assert(is_power_of_2(n_elmts));
+
+		auto depth = (int)std::log2(n_elmts);
+
+		if (n_elmts > max_elmts)
+		{
+			max_elmts = n_elmts;
+			tree_idx.resize(2 * max_elmts -1);
+			std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);
+			vals.resize(max_elmts);
+		}
+
+		_partial_sort_step1(values, pos, n_elmts, K, depth);
+		if (K == 2)
+			_partial_sort2_step2(values, pos, depth);
+		else
 		{
 			// copy the "values" vector in "vals"
-			for (auto i = 0; i < size; i++)
+			for (auto i = 0; i < n_elmts; i++)
 				vals[i] = values[i];
 
-			if (K >= 1)
-			{
-				// sort all the tree
-				auto offset = 0;
-				for (auto n_elmts = 1 << depth; n_elmts > 1; n_elmts >>= 1)
-				{
-					const auto n_elm_2 = (n_elmts >> 1);
-					for (auto j = 0; j < n_elm_2; j++)
-					{
-						const auto val0 = vals[tree_idx[offset + 2*j +0]];
-						const auto val1 = vals[tree_idx[offset + 2*j +1]];
-
-						tree_idx[offset + n_elmts +j] = (val0 < val1) ? tree_idx[offset + 2*j +0]:
-						                                                tree_idx[offset + 2*j +1];
-					}
-
-					offset += n_elmts;
-				}
-
-				pos[0] = tree_idx[tree_idx.size() -1];
-			}
-
-			for (auto k = 0; k < K -1; k++)
-			{
-				// replace the min val by +inf (+inf = max)
-				vals[pos[k]] = std::numeric_limits<T>::max();
-
-				// compute only 1 branch
-				auto i = 0;
-				auto offset = 0;
-				for (auto n_elmts = 1 << depth; n_elmts > 1; n_elmts >>= 1)
-				{
-					const auto j = pos[k] / ((1 << i) * 2);
-
-					const auto val0 = vals[tree_idx[offset + 2*j +0]];
-					const auto val1 = vals[tree_idx[offset + 2*j +1]];
-
-					tree_idx[offset + n_elmts +j] = (val0 < val1) ? tree_idx[offset + 2*j +0]:
-					                                                tree_idx[offset + 2*j +1];
-
-					offset += n_elmts;
-					i++;
-				}
-
-				// get an other min
-				pos[k +1] = tree_idx[tree_idx.size() -1];
-			}
-		}
-	}
-
-	void sort_simd(const T* values, std::vector<int> &pos, const int p_sort = -1)
-	{
-		const auto K = (p_sort <= 0) ? (int)pos.size() : p_sort;
-
-		// copy the "values" vector in "vals"
-		for (auto i = 0; i < size; i++)
-			vals[i] = std::abs(values[i]);
-
-		// sort all the tree
-		if (K >= 1)
-		{
-			auto offset = 0;
-
-			// vectorized part
-			for (auto n_elmts = 1 << depth; n_elmts > mipp::nElReg<T>(); n_elmts >>= 1)
-			{
-				const auto n_elm_2 = (n_elmts >> 1);
-				for (auto j = 0; j < n_elm_2; j += mipp::nElReg<T>())
-				{
-					const auto val0 = mipp::Reg<T  >(&vals    [offset + 2*j + 0*mipp::nElReg<T>()]); // load
-					const auto val1 = mipp::Reg<T  >(&vals    [offset + 2*j + 1*mipp::nElReg<T>()]); // load
-					const auto idx0 = mipp::Reg<int>(&tree_idx[offset + 2*j + 0*mipp::nElReg<T>()]); // load
-					const auto idx1 = mipp::Reg<int>(&tree_idx[offset + 2*j + 1*mipp::nElReg<T>()]); // load
-
-					const auto mask1 = val0 < val1;
-					const auto mask2 = mipp::Reg<int>(mask1.r);
-					const auto min   = mipp::min(val0, val1);
-					const auto idx   = mipp::blend(idx0, idx1, mask2);
-
-					min.store(&vals    [offset + n_elmts +j]); // store
-					idx.store(&tree_idx[offset + n_elmts +j]); // store
-				}
-
-				offset += n_elmts;
-			}
-
-			// sequential part (or INTRA part)
-			const auto start = size < mipp::nElReg<T>() ? size : mipp::nElReg<T>();
-			for (auto n_elmts = start; n_elmts > 1; n_elmts >>= 1)
-			{
-				const auto n_elm_2 = (n_elmts >> 1);
-				for (auto j = 0; j < n_elm_2; j++)
-				{
-					const auto val0 = vals[tree_idx[offset + 2*j +0]];
-					const auto val1 = vals[tree_idx[offset + 2*j +1]];
-
-					tree_idx[offset + n_elmts +j] = (val0 < val1) ? tree_idx[offset + 2*j +0]:
-					                                                tree_idx[offset + 2*j +1];
-				}
-
-				offset += n_elmts;
-			}
-
-			pos[0] = tree_idx[tree_idx.size() -1];
-		}
-
-		if (K >= 2)
-		{
-			for (auto k = 0; k < (int)K -1; k++)
-			{
-				// replace the min val by +inf (+inf = max)
-				vals[pos[k]] = std::numeric_limits<T>::max();
-
-				// compute only 1 branch
-				auto i      = 0;
-				auto offset = 0;
-				for (auto n_elmts = 1 << depth; n_elmts > mipp::nElReg<T>(); n_elmts >>= 1)
-				{
-
-					const auto node = pos[k] / (1 << i);
-					const auto j    = (node / (mipp::nElReg<T>() * 2)) * mipp::nElReg<T>();
-
-					const auto val0 = mipp::Reg<T  >(&vals    [offset + 2*j + 0*mipp::nElReg<T>()]); // load
-					const auto val1 = mipp::Reg<T  >(&vals    [offset + 2*j + 1*mipp::nElReg<T>()]); // load
-					const auto idx0 = mipp::Reg<int>(&tree_idx[offset + 2*j + 0*mipp::nElReg<T>()]); // load
-					const auto idx1 = mipp::Reg<int>(&tree_idx[offset + 2*j + 1*mipp::nElReg<T>()]); // load
-
-					const auto mask1 = val0 < val1;
-					const auto mask2 = mipp::Reg<int>(mask1.r);
-					const auto min   = mipp::min(val0, val1);
-					const auto idx   = mipp::blend(idx0, idx1, mask2);
-
-					min.store(&vals    [offset + n_elmts +j]); // store
-					idx.store(&tree_idx[offset + n_elmts +j]); // store
-
-					offset += n_elmts;
-					i++;
-				}
-
-				const auto start = size < mipp::nElReg<T>() ? size : mipp::nElReg<T>();
-				for (auto n_elmts = start; n_elmts > 1; n_elmts >>= 1)
-				{
-					const auto n_elm_2 = (n_elmts >> 1);
-					for (auto j = 0; j < n_elm_2; j++)
-					{
-						const auto val0 = vals[tree_idx[offset + 2*j +0]];
-						const auto val1 = vals[tree_idx[offset + 2*j +1]];
-
-						tree_idx[offset + n_elmts +j] = (val0 < val1) ? tree_idx[offset + 2*j +0]:
-						                                                tree_idx[offset + 2*j +1];
-					}
-
-					offset += n_elmts;
-				}
-
-				// get an other min
-				pos[k +1] = tree_idx[tree_idx.size() -1];
-			}
+			_partial_sort_step2(vals.data(), pos, K, depth);
 		}
 	}
 
 private:
-	void sort2(const T* values, std::vector<int> &pos, const int K)
+	inline void _partial_sort_step1(const T* values, std::vector<int> &pos, const int n_elmts, const int K, const int depth)
 	{
-		// sort all the tree
-		auto offset = 0;
-		for (auto n_elmts = 1 << depth; n_elmts > 1; n_elmts >>= 1)
+		// sort all the tree (1)
+		const auto n_2 = n_elmts >> 1;
+		for (auto j = 0; j < n_2; j++)
 		{
-			const auto n_elm_2 = (n_elmts >> 1);
-			for (auto j = 0; j < n_elm_2; j++)
-			{
-				const auto val0 = values[tree_idx[offset + 2*j +0]];
-				const auto val1 = values[tree_idx[offset + 2*j +1]];
+			const auto val0 = values[tree_idx[2*j +0]];
+			const auto val1 = values[tree_idx[2*j +1]];
 
-				tree_idx[offset + n_elmts +j] = (val0 < val1) ? tree_idx[offset + 2*j +0]:
-				                                                tree_idx[offset + 2*j +1];
-			}
-
-			offset += n_elmts;
+			tree_idx[max_elmts +j] = (val0 < val1) ? tree_idx[2*j +0] : tree_idx[2*j +1];
 		}
 
-		pos[0] = tree_idx[tree_idx.size() -1];
-
-		if (K == 2)
+		// sort all the tree (2)
+		auto offset = max_elmts;
+		for (auto n = 1 << (depth -1); n > 1; n >>= 1)
 		{
-			// replace the min val by this opponent (rev depth of 1)
-			tree_idx[(1 << depth) + (pos[0] / 2)] = (pos[0] % 2) ? pos[0] -1:
-			                                                       pos[0] +1;
-
-			// update only one branch
-			auto i = 2;
-			auto offset = (1 << depth);
-			for (auto n_elmts = 1 << (depth -1); n_elmts > 1; n_elmts >>= 1)
+			const auto n_2 = n >> 1;
+			for (auto j = 0; j < n_2; j++)
 			{
-				const auto j = pos[0] / (1 << i);
+				const auto val0 = values[tree_idx[offset + 2*j +0]];
+				const auto val1 = values[tree_idx[offset + 2*j +1]];
+
+				tree_idx[offset + n +j] = (val0 < val1) ? tree_idx[offset + 2*j +0] : tree_idx[offset + 2*j +1];
+			}
+
+			offset += n;
+		}
+
+		// get the first min
+		pos[0] = tree_idx[offset];
+	}
+
+	inline void _partial_sort_step2(T* values, std::vector<int> &pos, const int K, const int depth)
+	{
+		for (auto k = 0; k < K -1; k++)
+		{
+			// replace the min val by +inf (+inf = max)
+			vals[pos[k]] = std::numeric_limits<T>::max();
+
+			// compute only 1 branch (1)
+			const auto j = pos[k] / 2;
+
+			const auto val0 = values[tree_idx[2*j +0]];
+			const auto val1 = values[tree_idx[2*j +1]];
+
+			tree_idx[max_elmts +j] = (val0 < val1) ? tree_idx[2*j +0] : tree_idx[2*j +1];
+
+			// compute only 1 branch (2)
+			auto i = 1;
+			auto offset = max_elmts;
+			for (auto n = 1 << (depth -1); n > 1; n >>= 1)
+			{
+				const auto j = pos[k] / ((1 << i) * 2);
 
 				const auto val0 = values[tree_idx[offset + 2*j +0]];
 				const auto val1 = values[tree_idx[offset + 2*j +1]];
 
-				tree_idx[offset + n_elmts + j] = (val0 < val1) ? tree_idx[offset + 2*j +0]:
-				                                                 tree_idx[offset + 2*j +1];
+				tree_idx[offset + n +j] = (val0 < val1) ? tree_idx[offset + 2*j +0] : tree_idx[offset + 2*j +1];
 
-				offset += n_elmts;
+				offset += n;
 				i++;
 			}
 
-			// gets the second min
-			pos[1] = tree_idx[tree_idx.size() -1];
+			// get an other min
+			pos[k +1] = tree_idx[offset];
 		}
+	}
+
+	inline void _partial_sort2_step2(const T* values, std::vector<int> &pos, const int depth)
+	{
+		// replace the min val by this opponent (rev depth of 1)
+		tree_idx[max_elmts + (pos[0] / 2)] = (pos[0] % 2) ? pos[0] -1 : pos[0] +1;
+
+		// update only one branch
+		auto i = 2;
+		auto offset = max_elmts;
+		for (auto n = 1 << (depth -1); n > 1; n >>= 1)
+		{
+			const auto j = pos[0] / (1 << i);
+
+			const auto val0 = values[tree_idx[offset + 2*j +0]];
+			const auto val1 = values[tree_idx[offset + 2*j +1]];
+
+			tree_idx[offset + n + j] = (val0 < val1) ? tree_idx[offset + 2*j +0] : tree_idx[offset + 2*j +1];
+
+			offset += n;
+			i++;
+		}
+
+		pos[1] = tree_idx[offset];
 	}
 };
 

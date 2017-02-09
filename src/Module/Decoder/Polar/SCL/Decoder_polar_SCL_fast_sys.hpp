@@ -2,9 +2,9 @@
 #define DECODER_POLAR_SCL_FAST_SYS
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Algo/Sort/LC_sorter.hpp"
 
+#include "../../../../Tools/Algo/Sort/LC_sorter.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
@@ -23,9 +23,7 @@ protected:
 	std::vector<mipp::vector<R   >> l;              // llrs
 	std::vector<mipp::vector<B   >> s;              // partial sums
 	std::vector<std ::vector<R   >> metrics_vec;    // list of candidate metrics to be sorted
-	std::vector<std ::vector<int >> metrics_idx;    // indexes tables used to sort the metrics
 	            std ::vector<int >  dup_count;      // number of duplications of a path, at updating time
-	std::vector<std ::vector<int >> llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
 	            std ::vector<int >  bit_flips;      // index of the bits to be flipped
 	            std ::vector<bool>  is_even;        // used to store parity of a spc node
 
@@ -36,14 +34,9 @@ protected:
 	std::vector<std::vector<int>>   n_array_ref;    // number of times an array is used
 	std::vector<std::vector<int>>   path_2_array;   // give array used by a path
 
-	std::vector<LC_sorter<R>*>      sorters_llr;
-	            LC_sorter<R>        sorters_r1_m;
-	            LC_sorter<R>        sorters_rep_m;
-	            LC_sorter<R>        sorters_spc_m;
-
-	std::vector<int>                best_idx_r1;
-	std::vector<int>                best_idx_spc;
-	std::vector<int>                best_idx_m;
+	LC_sorter<R>                    sorter;
+	std::vector<int>                best_idx;
+	mipp::vector<R>                 l_tmp;
 
 public:
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
