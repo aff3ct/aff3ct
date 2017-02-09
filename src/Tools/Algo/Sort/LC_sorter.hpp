@@ -5,8 +5,9 @@
 #include <vector>
 #include <algorithm>
 
-#include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Math/utils.h"
+//#include "../mipp.h"
+ #include "Tools/Perf/MIPP/mipp.h"
+ #include "Tools/Math/utils.h"
 
 template <typename T>
 class LC_sorter
@@ -109,7 +110,7 @@ public:
 		// sort all the tree
 		if (K >= 1)
 		{
-			auto offset  = 0;
+			auto offset = 0;
 
 			// vectorized part
 			for (auto n_elmts = 1 << depth; n_elmts > mipp::nElReg<T>(); n_elmts >>= 1)
@@ -123,9 +124,9 @@ public:
 					const auto idx1 = mipp::Reg<int>(&tree_idx[offset + 2*j + 1*mipp::nElReg<T>()]); // load
 
 					const auto mask1 = val0 < val1;
-					const auto mask2 = mask1.template cvt<int>();
-					const auto min   = mipp::min  (val0, val1);
-					const auto idx   = mipp::blend(idx1, idx0, mask2);
+					const auto mask2 = mipp::Reg<int>(mask1.r);
+					const auto min   = mipp::min(val0, val1);
+					const auto idx   = mipp::blend(idx0, idx1, mask2);
 
 					min.store(&vals    [offset + n_elmts +j]); // store
 					idx.store(&tree_idx[offset + n_elmts +j]); // store
@@ -176,9 +177,9 @@ public:
 					const auto idx1 = mipp::Reg<int>(&tree_idx[offset + 2*j + 1*mipp::nElReg<T>()]); // load
 
 					const auto mask1 = val0 < val1;
-					const auto mask2 = mask1.template cvt<int>();
-					const auto min   = mipp::min  (val0, val1);
-					const auto idx   = mipp::blend(idx1, idx0, mask2);
+					const auto mask2 = mipp::Reg<int>(mask1.r);
+					const auto min   = mipp::min(val0, val1);
+					const auto idx   = mipp::blend(idx0, idx1, mask2);
 
 					min.store(&vals    [offset + n_elmts +j]); // store
 					idx.store(&tree_idx[offset + n_elmts +j]); // store

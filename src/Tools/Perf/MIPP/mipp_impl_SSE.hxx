@@ -1894,27 +1894,27 @@
 #ifdef __SSE4_1__
 	template <>
 	inline reg blend<double>(const reg v1, const reg v2, const reg m) {
-		return _mm_castpd_ps(_mm_blendv_pd(_mm_castps_pd(v1), _mm_castps_pd(v2), _mm_castps_pd(m)));
+		return _mm_castpd_ps(_mm_blendv_pd(_mm_castps_pd(v2), _mm_castps_pd(v1), _mm_castps_pd(m)));
 	}
 
 	template <>
 	inline reg blend<float>(const reg v1, const reg v2, const reg m) {
-		return _mm_blendv_ps(v1, v2, m);
+		return _mm_blendv_ps(v2, v1, m);
 	}
 
 	template <>
 	inline reg blend<int>(const reg v1, const reg v2, const reg m) {
-		return _mm_blendv_ps(v1, v2, m);
+		return _mm_blendv_ps(v2, v1, m);
 	}
 
 	template <>
 	inline reg blend<short>(const reg v1, const reg v2, const reg m) {
-		return _mm_castsi128_ps(_mm_blendv_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2), _mm_castps_si128(m)));
+		return _mm_castsi128_ps(_mm_blendv_epi8(_mm_castps_si128(v2), _mm_castps_si128(v1), _mm_castps_si128(m)));
 	}
 
 	template <>
 	inline reg blend<signed char>(const reg v1, const reg v2, const reg m) {
-		return _mm_castsi128_ps(_mm_blendv_epi8(_mm_castps_si128(v1), _mm_castps_si128(v2), _mm_castps_si128(m)));
+		return _mm_castsi128_ps(_mm_blendv_epi8(_mm_castps_si128(v2), _mm_castps_si128(v1), _mm_castps_si128(m)));
 	}
 #endif
 
