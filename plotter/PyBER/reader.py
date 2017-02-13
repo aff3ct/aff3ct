@@ -28,6 +28,8 @@ def getVal(line, idColumn):
 	convert_to_v1 = [0, 4, 5, 12, 0, 3, 2]
 	convert_to_v2 = [0, 4, 5, 9 , 0, 3, 2]
 	convert_to_v3 = [0, 4, 5, 6 , 0, 3, 2]
+	convert_to_v4 = [1, 5, 6, 10, 1, 4, 3]
+	convert_to_v5 = [1, 5, 6, 7 , 1, 4, 3]
 
 	# classic
 	if line.startswith("SNR = "):
@@ -59,11 +61,15 @@ def getVal(line, idColumn):
 			return float(-999.0)
 
 		if(len(line) == 14):
-				val = float(line[convert_to_v1[idColumn]])
+			val = float(line[convert_to_v1[idColumn]])
 		elif(len(line) == 11):
 			val = float(line[convert_to_v2[idColumn]])
 		elif(len(line) == 8):
 			val = float(line[convert_to_v3[idColumn]])
+		elif(len(line) == 12):
+			val = float(line[convert_to_v4[idColumn]])
+		elif(len(line) == 9):
+			val = float(line[convert_to_v5[idColumn]])
 
 	if "inf" in str(val):
 		val = float(0.0)
