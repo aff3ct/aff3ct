@@ -27,21 +27,19 @@ _aff3ct() {
 	opts="--cde-type --sim-type -v --version -h --help"
 
 	# add contents of Launcher.cpp
-	if [[
-		${codetype} == "POLAR"      && ${simutype} == "EXIT"  || \
-		${codetype} == "RSC"        && ${simutype} == "EXIT"  || \
-		${codetype} == "POLAR"      && ${simutype} == "BFER"  || \
-		${codetype} == "RSC"        && ${simutype} == "BFER"  || \
-		${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
-		${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
-		${codetype} == "RA"         && ${simutype} == "BFER"  || \
-		${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
-		${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
-		${codetype} == "RSC"        && ${simutype} == "BFERI" || \
-		${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
-		${codetype} == "UNCODED"    && ${simutype} == "BFERI" || \
-		${codetype} == "POLAR"      && ${simutype} == "GEN"      \
-		]]
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "EXIT"  || \
+	      ${codetype} == "RSC"        && ${simutype} == "EXIT"  || \
+	      ${codetype} == "POLAR"      && ${simutype} == "BFER"  || \
+	      ${codetype} == "RSC"        && ${simutype} == "BFER"  || \
+	      ${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
+	      ${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
+	      ${codetype} == "RA"         && ${simutype} == "BFER"  || \
+	      ${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
+	      ${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
+	      ${codetype} == "RSC"        && ${simutype} == "BFERI" || \
+	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+	      ${codetype} == "UNCODED"    && ${simutype} == "BFERI" || \
+	      ${codetype} == "POLAR"      && ${simutype} == "GEN" ]]
 	then
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s       \
 		      --sim-snr-type -E --sim-stop-time --sim-threads -t --sim-domain \
@@ -55,15 +53,13 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFER.cpp
-	if [[
-		${codetype} == "POLAR"      && ${simutype} == "BFER" || \
-		${codetype} == "RSC"        && ${simutype} == "BFER" || \
-		${codetype} == "TURBO"      && ${simutype} == "BFER" || \
-		${codetype} == "REPETITION" && ${simutype} == "BFER" || \
-		${codetype} == "RA"         && ${simutype} == "BFER" || \
-		${codetype} == "LDPC"       && ${simutype} == "BFER" || \
-		${codetype} == "UNCODED"    && ${simutype} == "BFER"    \
-		]]
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFER" || \
+	      ${codetype} == "RSC"        && ${simutype} == "BFER" || \
+	      ${codetype} == "TURBO"      && ${simutype} == "BFER" || \
+	      ${codetype} == "REPETITION" && ${simutype} == "BFER" || \
+	      ${codetype} == "RA"         && ${simutype} == "BFER" || \
+	      ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
+	      ${codetype} == "UNCODED"    && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --sim-benchs -b --sim-benchs-no-ldst -B --sim-debug -d   \
 		--sim-debug-limit --snr-sim-trace-path --sim-time-report --cde-coset \
@@ -71,19 +67,15 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_EXIT.cpp
-	if [[
-		${codetype} == "POLAR"      && ${simutype} == "EXIT" || \
-		${codetype} == "RSC"        && ${simutype} == "EXIT"    \
-		]]
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "EXIT" || \
+	      ${codetype} == "RSC"        && ${simutype} == "EXIT" ]]
 	then
 		opts="$opts --sim-siga-min -a --sim-siga-max -A --sim-siga-step"
 	fi
 
 	# add contents of Launcher_BFERI.cpp
-	if [[
-		${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
-		${codetype} == "UNCODED"    && ${simutype} == "BFERI"    \
-		]]
+	if [[ ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+	      ${codetype} == "UNCODED"    && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
@@ -91,36 +83,28 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_GEN_polar.cpp
-	if [[
-		${codetype} == "POLAR"      && ${simutype} == "GEN" \
-		]]
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "GEN" ]]
 	then
 		opts="$opts --cde-awgn-fb-path --cde-fb-gen-method --dec-snr \
 		      --dec-gen-path --sim-pb-path"
 	fi
 
 	# add contents of Launcher_BFER_RA.cpp
-	if [[
-		${codetype} == "RA"         && ${simutype} == "BFER" \
-		]]
+	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --dec-ite -i --itl-type --itl-path"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
-	if [[
-		${codetype} == "RSC"        && ${simutype} == "BFER" || \
-		${codetype} == "RSC"        && ${simutype} == "BFERI"   \
-		]]
+	if [[ ${codetype} == "RSC"        && ${simutype} == "BFER" || \
+	      ${codetype} == "RSC"        && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --enc-no-buff --enc-poly --dec-type -D --dec-implem \
 		      --dec-simd --dec-max"
 	fi
 
 	# add contents of Launcher_BFER_polar.cpp
-	if [[
-		${codetype} == "POLAR"      && ${simutype} == "BFER" \
-		]]
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method  \
 		      --cde-sigma --crc-type --enc-no-sys --dec-type -D --dec-ite \
@@ -128,17 +112,13 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
-	if [[
-		${codetype} == "REPETITION" && ${simutype} == "BFER" \
-		]]
+	if [[ ${codetype} == "REPETITION" && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --enc-no-buff --dec-type -D --dec-implem"
 	fi
 
 	# add contents of Launcher_BFER_turbo.cpp
-	if [[
-		${codetype} == "TURBO"      && ${simutype} == "BFER" \
-		]]
+	if [[ ${codetype} == "TURBO"      && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
 		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem \
@@ -146,17 +126,13 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
-	if [[
-		${codetype} == "RSC"        && ${simutype} == "EXIT" \
-		]]
+	if [[ ${codetype} == "RSC"        && ${simutype} == "EXIT" ]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-max"
 	fi
 
 	# add contents of Launcher_EXIT_polar.cpp
-	if [[
-		${codetype} == "POLAR"      && ${simutype} == "EXIT" \
-		]]
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "EXIT" ]]
 	then
 		opts="$opts --sim-pb-path --cde-sigma --cde-awgn-fb-path           \
 		      --cde-fb-gen-method --dec-type -D --dec-implem  --dec-ite -i \
@@ -164,27 +140,21 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFER_LDPC.cpp
-	if [[
-		${codetype} == "LDPC"       && ${simutype} == "BFER" || \
-		${codetype} == "LDPC"       && ${simutype} == "BFERI"   \
-		]]
+	if [[ ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
+	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
 		--dec-no-synd --dec-off --dec-norm"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
-	if [[
-		${codetype} == "UNCODED"    && ${simutype} == "BFER" \
-		]]
+	if [[ ${codetype} == "UNCODED"    && ${simutype} == "BFER" ]]
 	then
 		opts="$opts "
 	fi
 
 	# add contents of Launcher_BFERI_uncoded.cpp
-	if [[
-		${codetype} == "UNCODED"   && ${simutype} == "BFERI" \
-		]]
+	if [[ ${codetype} == "UNCODED"   && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts  "
 	fi
