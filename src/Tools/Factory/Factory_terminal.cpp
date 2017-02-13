@@ -16,7 +16,7 @@ Terminal* Factory_terminal<B,R>
 
 	// build a terminal to display the BER/FER
 	if(params.terminal.type == "LEGACY")
-		terminal = new Terminal_BFER_legacy<B,R>(snr_s, *monitor, t_snr);
+		terminal = new Terminal_BFER_legacy<B,R>(snr_b, *monitor, t_snr);
 	else if (params.terminal.type == "STD")
 		terminal = new Terminal_BFER<B,R>(snr_s, snr_b, *monitor, t_snr, d_decod_total);
 

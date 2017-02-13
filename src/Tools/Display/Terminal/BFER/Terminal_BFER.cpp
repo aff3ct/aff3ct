@@ -103,7 +103,7 @@ void Terminal_BFER<B,R>
 	using namespace std;
 
 	auto ber = 0.f, fer = 0.f;
-	if(monitor.get_n_be() != 0 )
+	if (monitor.get_n_be() != 0 )
 	{
 		ber = (float)monitor.get_ber();
 		fer = (float)monitor.get_fer();
@@ -153,8 +153,8 @@ void Terminal_BFER<B,R>
 	auto               l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" |");
-	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_b << bold(" | ");
+	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" | ");
+	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                           snr_b << bold(" | ");
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << bold(" | ");
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << bold(" | ");
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << bold(" | ");
@@ -176,8 +176,8 @@ void Terminal_BFER<B,R>
 	auto               l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" |");
-	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_b << bold(" | ");
+	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" | ");
+	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                           snr_b << bold(" | ");
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << bold(" | ");
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << bold(" | ");
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << bold(" | ");

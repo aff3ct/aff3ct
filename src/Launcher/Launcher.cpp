@@ -50,7 +50,7 @@ Launcher<B,R,Q>
 	params.simulation .mpi_size          = 1;
 	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
 	params.simulation .pyber             = "";
-	params.simulation .snr_type          = "ES";
+	params.simulation .snr_type          = "EB";
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -106,10 +106,6 @@ void Launcher<B,R,Q>
 	opt_args[{"sim-snr-step", "s"}] =
 		{"positive_float",
 		 "signal/noise ratio step between each simulation."};
-	opt_args[{"sim-snr-type", "E"}] =
-		{"string",
-		 "select the type of SNR: symbol energy or information bit energy.",
-		 "ES, EB"};
 	opt_args[{"sim-type"}] =
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
@@ -296,7 +292,6 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
 	if(ar.exist_arg({"sim-pyber"          })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"          });
 	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
-	if(ar.exist_arg({"sim-snr-type", "E"  })) params.simulation.snr_type          = ar.get_arg      ({"sim-snr-type", "E"  });
 	if(ar.exist_arg({"sim-domain"         })) params.channel.domain               = ar.get_arg      ({"sim-domain"         });
 	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
 	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
