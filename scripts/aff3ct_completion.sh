@@ -174,7 +174,7 @@ _aff3ct() {
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
 		--qnt-int | --qnt-bits | --qnt-range | --qnt-type |                   \
 		--sim-benchs | -b | --sim-debug-limit |                               \
-		--mnt-max-fe | -e | --term-type |                                     \
+		--mnt-max-fe | -e |                                                   \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
