@@ -146,6 +146,11 @@ void Launcher<B,R,Q>
 		{"positive_int",
 		 "MPI communication frequency between the nodes (in millisec)."};
 #endif
+#ifdef ENABLE_COOL_BASH
+	opt_args[{"sim-no-colors"}] =
+		{"",
+		 "disable the colors in the shell."};
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-type"}] =
@@ -297,6 +302,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
 	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
 #ifndef STARPU
+	if (ar.get_arg_int({"sim-threads", "t"}) > 0)
 	if(ar.exist_arg({"sim-threads",    "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",    "t"});
 #else
 	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
@@ -318,6 +324,9 @@ void Launcher<B,R,Q>
 	// disable the cool bash mode for PyBER
 	if (!params.simulation.pyber.empty())
 		enable_bash_tools = false;
+#ifdef ENABLE_COOL_BASH
+	if (ar.exist_arg({"sim-no-colors"})) enable_bash_tools = false;
+#endif
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required

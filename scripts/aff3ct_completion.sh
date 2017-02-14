@@ -49,7 +49,8 @@ _aff3ct() {
 		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max           \
 		      --dmod-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type   \
 		      --qnt-int --qnt-bits --qnt-range --dec-type --dec-implem        \
-		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber"
+		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber     \
+		      --sim-no-colors"
 	fi
 
 	# add contents of Launcher_BFER.cpp

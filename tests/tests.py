@@ -7,7 +7,7 @@ PathTests     = "data"     # can be overrided by arg1 from the cmd line
 PathResults   = "results"  # can be overrided by arg2 from the cmd line
 PathBuild     = "../build"
 Sensibility   = 1.0
-Nthreads      = 8
+Nthreads      = 0          # if 0 then AFF3CT takes all the available threads
 RecursiveScan = True
 MaxFE         = 100
 WeakRate      = 0.8        # 0 < WeakRate < 1
@@ -200,7 +200,7 @@ for fn in fileNames:
 
 		# avoid the first lines and the comments
 		if idx > 6 and l.replace(" ", "") != "" and l.replace(" ", "") != "\n" and l[0] != '#':
-			simuRef.append(l.strip().replace("||", "|").replace(" ", "").split("|"))	
+			simuRef.append(l.strip().replace("||", "|").replace(" ", "").split("|"))
 		idx = idx +1
 
 	f.close()
@@ -217,6 +217,7 @@ for fn in fileNames:
 	argsAFFECT.append(str(MaxFE))
 	argsAFFECT.append("--sim-threads")
 	argsAFFECT.append(str(Nthreads))
+	argsAFFECT.append("--sim-no-colors")
 
 	os.chdir(PathBuild)
 	processAFFECT = subprocess.Popen(argsAFFECT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -235,9 +236,10 @@ for fn in fileNames:
 	outputAFFECTLines = []
 	simuCur = []
 	for l in stdOutput:
-		if l != "" and l[0] != '#': # avoid the first lines and the comments
+		if l != "" and l[0] != '#' and l[0] != "(": # avoid the first lines and the comments
 			outputAFFECTLines.append(l)
-			simuCur.append(l.strip().replace("||", "|").replace(" ", "").split("|"))
+			array = l.strip().replace("||", "|").replace(" ", "").split("|")
+			simuCur.append(array)
 		elif l != "" and l[0] == '#' and "# End of the simulation." not in l:
 			fRes.write(l + "\n")
 
@@ -247,11 +249,11 @@ for fn in fileNames:
 	valid = 0;
 	idx = 0
 	for ref in simuRef:
-		numRef = float(ref[5][0:4])
-		powerRef = int(ref[5][6:8])
+		numRef = float(ref[6][0:4])
+		powerRef = int(ref[6][6:8])
 		try:
-			numCur = float(simuCur[idx][5][0:4])
-			powerCur = int(simuCur[idx][5][6:8])	
+			numCur = float(simuCur[idx][6][0:4])
+			powerCur = int(simuCur[idx][6][6:8])	
 		except IndexError: # no such line
 			break
 
@@ -263,7 +265,7 @@ for fn in fileNames:
 
 		absoluteNumDiff = math.fabs(numRef - numCur)
 		if absoluteNumDiff > Sensibility:
-			fRes.write(outputAFFECTLines[idx] + "WRONG! FER=" + ref[5][0:8] + "\n")
+			fRes.write(outputAFFECTLines[idx] + "WRONG! FER=" + ref[6][0:8] + "\n")
 		else:
 			valid = valid + 1
 			fRes.write(outputAFFECTLines[idx] + "\n")
