@@ -31,6 +31,8 @@ Simulation_BFER_i<B,R,Q>
   barrier(params.simulation.n_threads),
 
   snr      (0.f),
+  snr_s    (0.f),
+  snr_b    (0.f),
   code_rate(0.f),
   sigma    (0.f),
 
@@ -115,8 +117,18 @@ void Simulation_BFER_i<B,R,Q>
 			info_bits -= params.crc.size;
 
 		code_rate = (float)(info_bits / (float)(params.code.N + params.code.tail_length));
-		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
-		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+
+		if (params.simulation.snr_type == "EB")
+		{
+			snr_b = snr;
+			snr_s = snr + 10.f * std::log10(code_rate * (float)params.modulator.bits_per_symbol);
+		}
+		else //if(params.simulation.snr_type == "ES")
+		{
+			snr_s = snr;
+			snr_b = snr - 10.f * std::log10(code_rate * (float)params.modulator.bits_per_symbol);
+		}
+		sigma = std::sqrt((float)params.modulator.upsample_factor) / std::sqrt(2.f * std::pow(10.f, (snr_s / 10.f)));
 
 		this->snr_precompute ();
 		this->_launch        ();

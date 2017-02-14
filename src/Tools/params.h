@@ -14,6 +14,7 @@ struct simulation_parameters
 	std::string               bin_pb_path;
 	std::string               json_path;
 	std::string               pyber;
+	std::string               snr_type;
 	float                     snr_min;
 	float                     snr_max;
 	float                     snr_step;

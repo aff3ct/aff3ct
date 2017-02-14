@@ -14,6 +14,7 @@ Launcher_EXIT<B,R,Q>
 	this->params.simulation.sig_a_min  = 0.0f;
 	this->params.simulation.sig_a_max  = 5.0f;
 	this->params.simulation.sig_a_step = 0.5f;
+	this->params.simulation.snr_type   = "ES";
 	this->params.encoder   .type       = "";
 	this->params.encoder   .path       = "";
 	this->params.encoder   .systematic = true;

@@ -42,13 +42,15 @@ class AdvTreeView(QtGui.QTreeView):
 	lBEFE = []
 	lThr  = []
 
+	EsEb = []
+
 	dataSNR  = []
 	dataBER  = []
 	dataFER  = []
 	dataBEFE = []
 	dataThr  = []
 	dataDeta = []
-	dataName = [] 
+	dataName = []
 
 	#               1  2  3  4  5  6  7  8  9  10  11  12  13  14  15, 16
 	colors       = [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17]
@@ -72,11 +74,35 @@ class AdvTreeView(QtGui.QTreeView):
 		self.lBEFE = self.wBEFE.addLegend()
 		self.lThr  = self.wThr .addLegend()
 
+		self.EsEb = "Eb"
+
 		self.hideLegend()
 
 		self.doubleClicked.connect(self.openFileOrDir)
 		self.fsWatcher = QtCore.QFileSystemWatcher()
 		self.fsWatcher.fileChanged.connect(self.updateDataAndCurve)
+
+	def switchEsEb(self):
+		if self.EsEb == "Eb":
+			self.EsEb = "Es"
+		else:
+			self.EsEb = "Eb"
+
+		self.wBER .setLabel('bottom', self.EsEb + "/N0 (dB)")
+		self.wFER .setLabel('bottom', self.EsEb + "/N0 (dB)")
+		self.wBEFE.setLabel('bottom', self.EsEb + "/N0 (dB)")
+		self.wThr .setLabel('bottom', self.EsEb + "/N0 (dB)")
+
+		self.refresh()
+
+	def refresh(self):
+		for path in self.paths:
+			self.updateData(path)
+		for name in self.dataName:
+			self.removeLegendItem(name)
+
+		self.updateCurves()
+		self.updateDetails()
 
 	def openFileOrDir(self, *args):
 		paths = [ self.model().filePath(index) for index in args ]
@@ -90,8 +116,8 @@ class AdvTreeView(QtGui.QTreeView):
 
 	def hideLegend(self):
 		# hide the legend
-		if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
-		if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=( -1000,-10))
+		if self.lBER:  self.lBER .anchor(itemPos=(0,1), parentPos=(0,1), offset=(-1000,-10))
+		if self.lFER:  self.lFER .anchor(itemPos=(0,1), parentPos=(0,1), offset=(-1000,-10))
 		# if self.lBER:  self.lBER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
 		# if self.lFER:  self.lFER .anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000,-10))
 		if self.lBEFE: self.lBEFE.anchor(itemPos=(1,0), parentPos=(1,0), offset=( 1000, 10))
@@ -129,7 +155,7 @@ class AdvTreeView(QtGui.QTreeView):
 			pathId = self.getPathId(path)
 
 			dataName = []
-			self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = reader.dataReader(path)
+			self.dataSNR[pathId], self.dataBER[pathId], self.dataFER[pathId], self.dataBEFE[pathId], self.dataThr[pathId], self.dataDeta[pathId], dataName = reader.dataReader(path, self.EsEb)
 
 			if not self.dataName[pathId]:
 				if not dataName:
@@ -138,7 +164,6 @@ class AdvTreeView(QtGui.QTreeView):
 					self.dataName[pathId] = dataName + "_" + str(pathId)
 				else:
 					self.dataName[pathId] = dataName
-
 
 	def plotCurve(self, pathId, dataSNR, dataBER, dataFER, dataBEFE, dataThr):
 		icolor = self.colors[pathId % len(self.colors)]

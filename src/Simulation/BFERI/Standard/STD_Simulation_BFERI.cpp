@@ -912,9 +912,9 @@ Terminal* Simulation_BFERI<B,R,Q>
 ::build_terminal(const int tid)
 {
 #ifdef ENABLE_MPI
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr);
 #else
-	return Factory_terminal<B,R>::build(this->params, this->snr, monitor_red, this->t_snr, &d_decod_total_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr, &d_decod_total_red);
 #endif
 }
 

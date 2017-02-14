@@ -11,14 +11,16 @@ template <typename B, typename R>
 class Terminal_BFER : public Terminal
 {
 protected:
-	const R                                                                             snr;
+	const R                                                                             snr_s;
+	const R                                                                             snr_b;
 	const Monitor<B>                                                                   &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	const std::chrono::nanoseconds                                                     *d_decod_total;
 	unsigned short                                                                      real_time_state;
 
 public:
-	Terminal_BFER(const R& snr,
+	Terminal_BFER(const R& snr_s,
+	              const R& snr_b,
 	              const Monitor<B> &monitor,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	              const std::chrono::nanoseconds *d_decod_total = nullptr);

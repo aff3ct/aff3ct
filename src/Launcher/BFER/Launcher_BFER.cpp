@@ -56,6 +56,10 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
+	this->opt_args[{"sim-snr-type", "E"}] =
+		{"string",
+		 "select the type of SNR: symbol energy or information bit energy.",
+		 "ES, EB"};
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	this->opt_args[{"cde-coset", "c"}] =
@@ -92,6 +96,7 @@ void Launcher_BFER<B,R,Q>
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path        = this->ar.get_arg    ({"sim-trace-path"     });
 	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs            = this->ar.get_arg_int({"sim-benchs",     "b"});
+	if(this->ar.exist_arg({"sim-snr-type",       "E"})) this->params.simulation.snr_type          = this->ar.get_arg    ({"sim-snr-type",   "E"});
 	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.benchs_no_ldst    = true;
 	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report       = true;
 	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug             = true;
