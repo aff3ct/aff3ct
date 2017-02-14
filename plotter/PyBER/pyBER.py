@@ -24,7 +24,7 @@
 
 import libs.pyqtgraph.console
 import libs.pyqtgraph as pg
-from libs.pyqtgraph.Qt import QtCore, QtGui
+from libs.pyqtgraph.Qt import QtCore, QtGui, QtWidgets
 from libs.pyqtgraph.dockarea import *
 import numpy as np
 import fileExplorer
@@ -33,12 +33,13 @@ import fileExplorer
 # pg.setConfigOption('background', 'w')
 # pg.setConfigOption('foreground', 'k')
 
-app  = QtGui.QApplication([])
+app  = QtGui.QApplication(['PyBER plotter'])
 win  = QtGui.QMainWindow()
 area = DockArea()
 win.setCentralWidget(area)
 win.resize(1280,800)
-win.setWindowTitle('PyBER (deluxe) plotter')
+win.setWindowTitle('PyBER plotter')
+win.setWindowIcon(QtGui.QIcon('woody_ico.png'))
 
 # Create docks, place them into the window one at a time.
 # Note that size arguments are only a suggestion; docks will still have to
@@ -95,6 +96,34 @@ dThr.addWidget(wThr)
 
 wFile = fileExplorer.generatePannel(wBER, wFER, wBEFE, wThr, wDeta)
 dFile.addWidget(wFile)
+
+# -----------------------------------------------------------------------------
+
+exitAction = QtGui.QAction('&Exit', win)
+exitAction.setShortcut('Ctrl+Q')
+exitAction.setStatusTip('Exit application')
+exitAction.triggered.connect(QtWidgets.qApp.quit)
+
+switchEbEsAction = QtGui.QAction('&Switch Es/Eb', win)
+switchEbEsAction.setShortcut('Ctrl+E')
+switchEbEsAction.setStatusTip('Switch between Es/N0 and Eb/N0')
+switchEbEsAction.triggered.connect(lambda: wFile.switchEsEb())
+
+refreshAction = QtGui.QAction('&Refresh', win)
+refreshAction.setShortcut('F5')
+refreshAction.setStatusTip('Refresh the displayed curves')
+refreshAction.triggered.connect(lambda: wFile.refresh())
+
+# win.statusBar()
+
+menubar = win.menuBar()
+fileMenu = menubar.addMenu('&File')
+fileMenu.addAction(exitAction)
+optionMenu = menubar.addMenu('&Display')
+optionMenu.addAction(refreshAction)
+optionMenu.addAction(switchEbEsAction)
+
+# -----------------------------------------------------------------------------
 
 win.show()
 

@@ -22,14 +22,19 @@
 
 import os
 
-def getVal(line, idColumn):
+def getVal(line, idColumn, EsEb):
 	# there are two different file formats, classic (lines begni with SNR) and new (lines begin with SNR value directly)
 	# indices of the different parameter change, and the following array is used to convert classic indices to new
 	convert_to_v1 = [0, 4, 5, 12, 0, 3, 2]
 	convert_to_v2 = [0, 4, 5, 9 , 0, 3, 2]
 	convert_to_v3 = [0, 4, 5, 6 , 0, 3, 2]
-	convert_to_v4 = [1, 5, 6, 10, 1, 4, 3]
-	convert_to_v5 = [1, 5, 6, 7 , 1, 4, 3]
+
+	if (EsEb == "Es"):
+		convert_to_v4 = [0, 5, 6, 10, 1, 4, 3]
+		convert_to_v5 = [0, 5, 6, 7 , 1, 4, 3]
+	else:
+		convert_to_v4 = [1, 5, 6, 10, 1, 4, 3]
+		convert_to_v5 = [1, 5, 6, 7 , 1, 4, 3]
 
 	# classic
 	if line.startswith("SNR = "):
@@ -76,7 +81,7 @@ def getVal(line, idColumn):
 
 	return val
 
-def dataReader(filename):
+def dataReader(filename, EsEb):
 	# read all the lines from the current file
 	aFile = open(filename, "r")
 	lines = []
@@ -103,17 +108,17 @@ def dataReader(filename):
 				entry = line.replace("#    ** ", "").replace("\n", "").split(" = ")
 				dataDeta.append(entry)
 		else:
-			snr = getVal(line, 0)
+			snr = getVal(line, 0, EsEb)
 			if snr == -999.0:
 				continue # line is ignored
 
 			dataSNR.append(snr)
-			dataBER.append(getVal(line, 1))
-			dataFER.append(getVal(line, 2))
-			dataThr.append(getVal(line, 3))
+			dataBER.append(getVal(line, 1, EsEb))
+			dataFER.append(getVal(line, 2, EsEb))
+			dataThr.append(getVal(line, 3, EsEb))
 
-			be = getVal(line, 6)
-			fe = getVal(line, 5)
+			be = getVal(line, 6, EsEb)
+			fe = getVal(line, 5, EsEb)
 
 			if fe == 0:
 				dataBEFE.append(0.0)
