@@ -24,7 +24,7 @@
 
 import libs.pyqtgraph.console
 import libs.pyqtgraph as pg
-from libs.pyqtgraph.Qt import QtCore, QtGui, QtWidgets
+from libs.pyqtgraph.Qt import QtCore, QtGui
 from libs.pyqtgraph.dockarea import *
 import numpy as np
 import fileExplorer
@@ -102,7 +102,7 @@ dFile.addWidget(wFile)
 exitAction = QtGui.QAction('&Exit', win)
 exitAction.setShortcut('Ctrl+Q')
 exitAction.setStatusTip('Exit application')
-exitAction.triggered.connect(QtWidgets.qApp.quit)
+exitAction.triggered.connect(lambda: sys.exit(0))
 
 switchEbEsAction = QtGui.QAction('&Switch Es/Eb', win)
 switchEbEsAction.setShortcut('Ctrl+E')
