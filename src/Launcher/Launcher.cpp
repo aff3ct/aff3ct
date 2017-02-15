@@ -302,7 +302,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
 	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
 #ifndef STARPU
-	if (ar.get_arg_int({"sim-threads", "t"}) > 0)
+	if (ar.exist_arg({"sim-threads", "t"}) && ar.exist_arg({"sim-threads", "t"}) > 0)
 	if(ar.exist_arg({"sim-threads",    "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",    "t"});
 #else
 	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
