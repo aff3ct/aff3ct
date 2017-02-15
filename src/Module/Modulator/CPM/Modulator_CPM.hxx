@@ -304,7 +304,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 		for (auto s = 0; s < cpm.s_factor; s++)
 		{
-			R tilted_phase = tilted_phase_part1 + M_PI * cpm_h * (4 * tilted_phase_part2[s] +
+			R tilted_phase = tilted_phase_part1 + (R)M_PI * cpm_h * (4 * tilted_phase_part2[s] +
 			                 (cpm.m_order -1) * (s * T_samp + (cpm.L -1) - 2 * tilted_phase_part3[s]));
 
 			baseband[allowed_wa * cpm.s_factor + s                      ] = std::cos(tilted_phase);
@@ -326,7 +326,7 @@ public:
 	R operator()(const R& t) const
 	{
 		R x      = t + off;
-		R factor = (R)2.0 * M_PI * B / sqrt((R)2.0 * std::log((R)2.0));
+		R factor = (R)2.0 * (R)M_PI * B / sqrt((R)2.0 * std::log((R)2.0));
 		R minus  = (x - (R)0.5) * factor;
 		R plus   = (x + (R)0.5) * factor;
 
@@ -344,10 +344,10 @@ R Modulator_CPM<B,R,Q,MAX>
 			return (R)0.0;
 
 		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
-		return integral(g, (R)0.0, t_stamp, t_stamp / (R)1e-4);
+		return integral(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
 	}
 	else if (cpm.wave_shape == "RCOS")
-		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * M_PI * t_stamp / (R)cpm.L) / (R)4.0 / M_PI;
+		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm.L) / (R)4.0 / (R)M_PI;
 	else if (cpm.wave_shape == "REC")
 		return t_stamp / ((R)2.0 * cpm.L);
 	else

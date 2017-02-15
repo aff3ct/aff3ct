@@ -25,11 +25,11 @@ CPM_parameters<SIN, SOUT>
   tl          (L                                   ),
 
   // TODO: warning: from here parameters are working for Rimoldi decomposition only!
-  n_wa        (p * std::pow(m_order, L)            ),
+  n_wa        ((int)(p * std::pow(m_order, L))     ),
   n_bits_wa   ((int)std::ceil(std::log2(n_wa))     ),
   max_wa_id   (((int)1 << n_bits_wa)               ),
 
-  n_st        (p*std::pow(m_order, L-1)            ),
+  n_st        ((int)(p * std::pow(m_order, L-1))   ),
   n_bits_st   ((int)std::ceil(std::log2(n_st))     ),
   max_st_id   (((int)1 << n_bits_st)               ),
 
