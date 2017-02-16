@@ -354,7 +354,7 @@ void Simulation_BFER<B,R,Q>
 		}
 	}
 	else
-		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
+		std::clog << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

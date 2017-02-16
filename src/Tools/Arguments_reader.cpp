@@ -34,7 +34,7 @@ bool Arguments_reader
 	const bool result = parse_arguments(required_args, optional_args, warns);
 
 	if (display_warnings)
-		std::cout << bold_yellow(warns);
+		std::clog << bold_yellow(warns);
 
 	return result;
 }

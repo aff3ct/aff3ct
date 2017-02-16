@@ -64,7 +64,7 @@ Simulation_BFER<B,R,Q>
 	}
 
 	if (params.simulation.time_report)
-		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
+		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
 
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
@@ -398,7 +398,7 @@ void Simulation_BFER<B,R,Q>
 		}
 	}
 	else
-		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
+		std::clog << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation

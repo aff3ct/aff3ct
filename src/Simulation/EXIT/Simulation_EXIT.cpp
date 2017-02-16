@@ -57,7 +57,7 @@ Simulation_EXIT<B,R,Q>
   terminal   (nullptr)
 {
 	if (typeid(R) != typeid(Q))
-		std::cerr << bold_yellow("(WW) EXIT simulation does not use fixed-point representation!") << std::endl;
+		std::clog << bold_yellow("(WW) EXIT simulation does not use fixed-point representation!") << std::endl;
 
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
