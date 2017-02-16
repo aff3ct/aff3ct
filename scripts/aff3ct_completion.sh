@@ -230,7 +230,7 @@ _aff3ct() {
 				REPETITION) params="AZCW COSET USER REPETITION";;
 				RA)         params="AZCW COSET USER RA"        ;;
 				TURBO)      params="AZCW COSET USER TURBO"     ;;
-				LDPC)       params="AZCW COSET USER"           ;;
+				LDPC)       params="AZCW COSET USER LDPC"      ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
