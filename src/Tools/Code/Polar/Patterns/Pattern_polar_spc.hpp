@@ -81,6 +81,8 @@ public:
 					return true;
 				else if (pattern_left->type() == polar_node_t::REP && reverse_graph_depth == 2)
 					return true;
+				else if (pattern_left->type() == polar_node_t::RATE_0 && reverse_graph_depth == 1)
+					return true;
 				else
 					return this->recursive_check_spc(reverse_graph_depth -1, node_curr->get_left());
 			}
@@ -105,21 +107,7 @@ public:
 
 		if (min_level == -1 || reverse_graph_depth >= min_level)
 		{
-//			if (reverse_graph_depth == 2)
-//			{
-//				if (pattern_left ->type() == polar_node_t::REP &&
-//				    pattern_right->type() == polar_node_t::RATE_1)
-//				{
-//					match_val = 49;
-//				}
-//			}
-//			else if ((max_level == -1 || reverse_graph_depth <= max_level) &&
-//			         pattern_left ->type() == polar_node_t::SPC &&
-//			         pattern_right->type() == polar_node_t::RATE_1)
-//			{
-//				match_val = 49;
-//			}
-			/*else*/ if (this->recursive_check_spc(reverse_graph_depth, node_curr))
+			if (this->recursive_check_spc(reverse_graph_depth, node_curr))
 			{
 				match_val = 49;
 			}
