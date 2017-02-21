@@ -102,6 +102,44 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
+                             const std::vector<Pattern_polar_i*> polar_patterns, const int idx_r0, const int idx_r1,
+                             const int n_frames, const std::string name)
+: Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
+  m             (std::log2(N)),
+  L             (L),
+  frozen_bits   (frozen_bits),
+  polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1),
+  paths         (L),
+  metrics       (L),
+  Y_N           (                   N + mipp::nElReg<R>() ),
+  l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
+  s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
+  metrics_vec   (3, std::vector<R>()),
+  dup_count     (L, 0),
+  bit_flips     (4 * L),
+  is_even       (L),
+  best_path     (0),
+  n_active_paths(1),
+  n_array_ref   (L, std::vector<int>(m)),
+  path_2_array  (L, std::vector<int>(m)),
+  sorter        (N),
+//sorter_simd   (N),
+  best_idx      (L),
+  l_tmp         (N)
+{
+	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
+	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
+
+	assert(is_power_of_2(L));
+
+	metrics_vec[0].resize(L * 2);
+	metrics_vec[1].resize(L * 4);
+	metrics_vec[2].resize((L <= 2 ? 4 : 8) * L);
+}
+
+template <typename B, typename R, class API_polar>
+Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::~Decoder_polar_SCL_fast_sys()
 {
 	polar_patterns.release_patterns();

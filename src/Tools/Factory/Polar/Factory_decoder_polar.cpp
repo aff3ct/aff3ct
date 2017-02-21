@@ -32,6 +32,8 @@
 #include "Tools/Code/Polar/API/API_polar_static_intra_32bit.hpp"
 #endif
 
+#include "Tools/Code/Polar/nodes_parser.h"
+
 #include "Factory_decoder_polar.hpp"
 
 template <typename B, typename R>
@@ -181,24 +183,27 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 
 			if (params.decoder.type == "SCL" && params.decoder.implem == "FAST")
 			{
+				int idx_r0, idx_r1;
+				auto polar_patterns = nodes_parser(params.decoder.polar_nodes, idx_r0, idx_r1);
+
 				if (params.decoder.simd_strategy == "INTRA")
 				{
 					using API_polar = API_polar_dynamic_intra
 					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 					if (params.crc.poly.empty())
-						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					else
-						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, params.simulation.inter_frame_level);
 				}
 				else if (params.decoder.simd_strategy.empty())
 				{
 					using API_polar = API_polar_dynamic_seq
 					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
 					if (params.crc.poly.empty())
-						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SCL_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					else
-						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SCL_fast_CA_sys<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, params.simulation.inter_frame_level);
 				}
 			}
 

@@ -125,6 +125,7 @@ struct decoder_parameters
 	std::string scaling_factor;
 	std::string max;
 	std::string gen_path;
+	std::string polar_nodes;
 	bool        enable_syndrome;
 	float       normalize_factor;
 	float       offset;

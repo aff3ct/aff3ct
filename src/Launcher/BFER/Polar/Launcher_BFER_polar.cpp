@@ -28,6 +28,7 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.decoder   .n_ite         = 1;
 	this->params.decoder   .L             = 1;
 	this->params.decoder   .simd_strategy = "";
+	this->params.decoder   .polar_nodes   = "{R0,R1,R0L,REP,REPL,SPC4}";
 }
 
 template <typename B, typename R, typename Q>
@@ -91,6 +92,9 @@ void Launcher_BFER_polar<B,R,Q>
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTRA, INTER"};
+	this->opt_args[{"dec-polar-nodes"}] =
+		{"string",
+		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP,REPL,SPC4+})."};
 }
 
 template <typename B, typename R, typename Q>
@@ -122,9 +126,10 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int({"dec-ite",   "i"});
-	if(this->ar.exist_arg({"dec-lists", "L"})) this->params.decoder.L             = this->ar.get_arg_int({"dec-lists", "L"});
-	if(this->ar.exist_arg({"dec-simd"      })) this->params.decoder.simd_strategy = this->ar.get_arg    ({"dec-simd"      });
+	if(this->ar.exist_arg({"dec-ite",    "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int({"dec-ite",    "i"});
+	if(this->ar.exist_arg({"dec-lists",  "L"})) this->params.decoder.L             = this->ar.get_arg_int({"dec-lists",  "L"});
+	if(this->ar.exist_arg({"dec-simd"       })) this->params.decoder.simd_strategy = this->ar.get_arg    ({"dec-simd"       });
+	if(this->ar.exist_arg({"dec-polar-nodes"})) this->params.decoder.polar_nodes   = this->ar.get_arg    ({"dec-polar-nodes"});
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -195,7 +200,10 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 		p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 
 	if (this->params.decoder.type == "SCL")
+	{
 		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
+		p.push_back(std::make_pair("Polar node types", this->params.decoder.polar_nodes));
+	}
 
 	if (this->params.decoder.type == "SCL_MEM")
 		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));

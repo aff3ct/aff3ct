@@ -22,6 +22,7 @@ Launcher_EXIT_polar<B,R,Q>
 	this->params.decoder   .implem        = "NAIVE";
 	this->params.decoder   .n_ite         = 1;
 	this->params.decoder   .L             = 1;
+	this->params.decoder   .polar_nodes   = "{R0,R1,R0L,REP,REPL,SPC4}";
 }
 
 template <typename B, typename R, typename Q>
