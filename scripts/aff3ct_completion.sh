@@ -109,7 +109,8 @@ _aff3ct() {
 	then
 		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method \
 		      --cde-sigma --crc-type --crc-poly --crc-rate --enc-no-sys  \
-		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd"
+		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd       \
+		      --dec-polar-nodes"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -180,7 +181,7 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber)
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes)
 			COMPREPLY=()
 			;;
 
