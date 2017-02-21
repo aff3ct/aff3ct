@@ -6,18 +6,21 @@
 class Pattern_polar_SC_r1 : public Pattern_polar_r1
 {
 protected:
-	Pattern_polar_SC_r1(const int &N, const Binary_node<Pattern_polar_i>* node) : Pattern_polar_r1(N, node)
+	Pattern_polar_SC_r1(const int &N, const Binary_node<Pattern_polar_i>* node,
+	                    const int min_level = -1, const int max_level = -1)
+	: Pattern_polar_r1(N, node, min_level, max_level)
 	{
 	}
 
 public:
-	Pattern_polar_SC_r1() : Pattern_polar_r1() {}
+	Pattern_polar_SC_r1(const int min_level = -1, const int max_level = -1)
+	: Pattern_polar_r1(min_level, max_level) {}
 
 	virtual ~Pattern_polar_SC_r1() {}
 
 	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
 	{
-		return new Pattern_polar_SC_r1(N, node);
+		return new Pattern_polar_SC_r1(N, node, this->min_level, this->max_level);
 	}
 
 	virtual std::string apply_f(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const
