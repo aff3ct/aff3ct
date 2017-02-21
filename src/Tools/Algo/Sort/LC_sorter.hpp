@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <numeric>
 #include <algorithm>
 
 #include "Tools/Perf/MIPP/mipp.h"
