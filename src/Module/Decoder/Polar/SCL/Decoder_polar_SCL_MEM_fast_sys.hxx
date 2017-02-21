@@ -48,7 +48,7 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
   l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
   s2            (L, mipp::vector<B>(N + mipp::nElReg<B>())),
-  metrics_vec   (3, std::vector<float>()),
+  metrics_vec   (3, std::vector<R>()),
   metrics_idx   (3, std::vector<int  >()),
   dup_count     (L, 0),
   llr_indexes   (),
@@ -59,7 +59,11 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
   n_array_ref_l   (L, std::vector<int>(m)),
   path_2_array_l  (L, std::vector<int>(m)),
   n_array_ref_s   (L, std::vector<int>(m)),
-  path_2_array_s  (L, std::vector<int>(m))
+  path_2_array_s  (L, std::vector<int>(m)),
+  sorter        (N),
+//sorter_simd   (N),
+  best_idx      (L),
+  l_tmp         (N)
 {
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -94,7 +98,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::init_buffers()
 {
-	std::fill(metrics.begin(), metrics.begin() + L, std::numeric_limits<float>::min());
+	std::fill(metrics.begin(), metrics.begin() + L, std::numeric_limits<R>::min());
 	for (auto i = 0; i < L; i++) paths[i] = i;
 	n_active_paths = 1;
 
@@ -505,7 +509,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0; j < 4; j++)
-				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
+				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<R>::max();
 
 		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].begin() + L * 4,
 			[this](int x, int y) {
@@ -517,16 +521,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			dup_count[metrics_idx[1][i] / 4]++;
 
 		// erase paths
-		auto k = 0;
-		auto n_active_paths_cpy = n_active_paths;
-		for (auto i = 0; i < n_active_paths_cpy; i++)
-			if (dup_count[paths[k]] == 0)
-				delete_path(k, r_d);
-			else
-				k++;
+		erase_bad_paths(r_d);
 
 		// duplicate paths
-		n_active_paths_cpy = n_active_paths;
+		auto n_active_paths_cpy = n_active_paths;
 		for (auto i = 0; i < n_active_paths_cpy; i++)
 		{
 			const auto path  = paths[i];
@@ -573,7 +571,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		}
 		for (auto i = n_active_paths; i < L; i++)
 			for (auto j = 0; j < 4; j++)
-				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<float>::max();
+				metrics_vec[1][4 * paths[i] +j] = std::numeric_limits<R>::max();
 
 		std::partial_sort(metrics_idx[1].begin(), metrics_idx[1].begin() + L, metrics_idx[1].begin() + L * 4,
 			[this](int x, int y) {
@@ -585,16 +583,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			dup_count[metrics_idx[1][i] / 4]++;
 
 		// erase paths
-		auto k = 0;
-		auto n_active_paths_cpy = n_active_paths;
-		for (auto i = 0; i < n_active_paths_cpy; i++)
-			if (dup_count[paths[k]] == 0)
-				delete_path(k, REV_D);
-			else
-				k++;
+		erase_bad_paths(REV_D);
 
 		// duplicate paths
-		n_active_paths_cpy = n_active_paths;
+		auto n_active_paths_cpy = n_active_paths;
 		for (auto i = 0; i < n_active_paths_cpy; i++)
 		{
 			const auto path  = paths[i];
@@ -678,12 +670,8 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			dup_count[metrics_idx[0][i] / 2]++;
 
 		// erase paths
-		auto k = 0;
-		for (auto i = 0; i < L; i++)
-			if (dup_count[paths[k]] == 0)
-				delete_path(k, r_d);
-			else
-				k++;
+		erase_bad_paths(r_d);
+
 
 		for (auto path = 0; path < L; path++)
 		{
@@ -745,12 +733,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			dup_count[metrics_idx[0][i] / 2]++;
 
 		// erase paths
-		auto k = 0;
-		for (auto i = 0; i < L; i++)
-			if (dup_count[paths[k]] == 0)
-				delete_path(k, REV_D);
-			else
-				k++;
+		erase_bad_paths(REV_D);
 
 		for (auto path = 0; path < L; path++)
 		{
@@ -849,7 +832,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	}
 	for (auto i = n_active_paths; i < L; i++)
 		for (auto j = 0; j < n_cands; j++)
-			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<float>::max();
+			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<R>::max();
 
 	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + L, metrics_idx[2].begin() + n_cands * L,
 		[this](int x, int y){
@@ -861,16 +844,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		dup_count[metrics_idx[2][i] / n_cands]++;
 
 	// erase paths
-	auto k = 0;
-	auto n_active_paths_cpy = n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
-		if (dup_count[paths[k]] == 0)
-			delete_path(k, r_d);
-		else
-			k++;
+	erase_bad_paths(r_d);
 
 	// duplicate paths
-	n_active_paths_cpy = n_active_paths;
+	auto n_active_paths_cpy = n_active_paths;
 	for (auto i = 0; i < n_active_paths_cpy; i++)
 	{
 		const auto path = paths[i];
@@ -961,7 +938,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	}
 	for (auto i = n_active_paths; i < L; i++)
 		for (auto j = 0; j < n_cands; j++)
-			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<float>::max();
+			metrics_vec[2][n_cands * paths[i] +j] = std::numeric_limits<R>::max();
 
 	std::partial_sort(metrics_idx[2].begin(), metrics_idx[2].begin() + L, metrics_idx[2].begin() + n_cands * L,
 		[this](int x, int y){
@@ -973,16 +950,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		dup_count[metrics_idx[2][i] / n_cands]++;
 
 	// erase paths
-	auto k = 0;
-	auto n_active_paths_cpy = n_active_paths;
-	for (auto i = 0; i < n_active_paths_cpy; i++)
-		if (dup_count[paths[k]] == 0)
-			delete_path(k, REV_D);
-		else
-			k++;
+	erase_bad_paths(REV_D);
 
 	// duplicate paths
-	n_active_paths_cpy = n_active_paths;
+	auto n_active_paths_cpy = n_active_paths;
 	for (auto i = 0; i < n_active_paths_cpy; i++)
 	{
 		const auto path = paths[i];
@@ -1167,4 +1138,17 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			for (auto j = 0; j < n_elm_2; j++)
 				s2[paths[i]][off_s + j] = s[paths[i]][off_s + j];
 	}
+}
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::erase_bad_paths(const int r_d)
+{
+	// erase bad paths
+	auto k = 0;
+	auto n_active_paths_cpy = n_active_paths;
+	for (auto i = 0; i < n_active_paths_cpy; i++)
+		if (dup_count[paths[k]] == 0)
+			delete_path(k, r_d);
+		else
+			k++;
 }

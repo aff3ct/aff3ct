@@ -19,12 +19,12 @@ protected:
 
 	            std ::vector<int  >  paths;          // active paths
 	            std ::vector<int  >  last_paths;     // active paths cpy
-	            std ::vector<float>  metrics;        // path metrics
+	            std ::vector<R    >  metrics;        // path metrics
 	            mipp::vector<R    >  Y_N;            // channel llrs
 	std::vector<mipp::vector<R    >> l;              // llrs
 	std::vector<mipp::vector<B    >> s;              // partial sums
 	std::vector<mipp::vector<B    >> s2;             // partial sums
-	std::vector<std ::vector<float>> metrics_vec;    // list of candidate metrics to be sorted
+	std::vector<std ::vector<R    >> metrics_vec;    // list of candidate metrics to be sorted
 	std::vector<std ::vector<int  >> metrics_idx;    // indexes tables used to sort the metrics
 	            std ::vector<int  >  dup_count;      // number of duplications of a path, at updating time
 	std::vector<std ::vector<int  >> llr_indexes;    // indexes used to sort a list of llrs (to be flipped)
@@ -41,6 +41,11 @@ protected:
 	// each following 2D vector is of size L * m
 	std::vector<std::vector<int>>    n_array_ref_s;   // give array used by a path
 	std::vector<std::vector<int>>    path_2_array_s;   // give array used by a path
+
+	LC_sorter<R>                    sorter;
+//	LC_sorter_simd<R>               sorter_simd;
+	std::vector<int>                best_idx;
+	mipp::vector<R>                 l_tmp;
 
 public:
 	Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
@@ -76,6 +81,8 @@ protected:
 	virtual inline int  select_best_path(                          );
 
 private:
+	inline void erase_bad_paths (const int r_d                                                           );
+
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 	inline void flip_bits_rep(const int old_path, const int new_path,                const int off_s, const int n_elmts);
 	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
