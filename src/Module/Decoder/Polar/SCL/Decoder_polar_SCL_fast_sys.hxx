@@ -1144,17 +1144,12 @@ int Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	const auto new_path = paths[n_active_paths++];
 
-//	std::copy(path_2_array[old_path].begin(), path_2_array[old_path].end(), path_2_array[new_path].begin());
-	const auto loop_size = (int)path_2_array[old_path].size();
-	for (auto i = 0; i < loop_size; i++)
-		path_2_array[new_path][i] = path_2_array[old_path][i];
+	std::copy(path_2_array[old_path].begin(), path_2_array[old_path].end(), path_2_array[new_path].begin());
 
 	for (auto i = 0; i < m; i++)
 		n_array_ref[path_2_array[new_path][i]][i]++;
 
-//	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
-	for (auto i = 0; i < off_s + n_elmts; i++)
-		s[new_path][i] = s[old_path][i]; // TODO: this line takes a big part of the decoding time!
+	std::copy(s[old_path].begin(), s[old_path].begin() + off_s + n_elmts, s[new_path].begin());
 
 	return new_path;
 }
