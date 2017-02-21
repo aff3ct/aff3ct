@@ -408,6 +408,8 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 				path_2_array_s[paths[i]][rev_depth] = paths[i];
 				n_array_ref_s [paths[i]][rev_depth] = 1;
 			}
+
+		normalize_scl_metrics<R>(this->metrics, this->L);
 	}
 }
 
@@ -445,19 +447,21 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_r0(const int r_d, const int off_l, const int off_s, const int n_elmts)
 {
-	for (auto i = 0; i < n_active_paths; i++)
-	{
-		const auto path  = paths[i];
-		const auto array = path_2_array_l[path][r_d];
+	if (n_active_paths > 1)
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path  = paths[i];
+			const auto array = path_2_array_l[path][r_d];
 
-		auto metric = 0.f;
-		for (auto j = 0; j < n_elmts; j++)
-			metric -= std::min((float)l[array][off_l +j], 0.f);
-		metrics[path] += metric; // add a penalty to the current path metric
+			auto pen = (R)0;
+			for (auto j = 0; j < n_elmts; j++)
+				pen = sat_m<R>(pen + sat_m<R>(-std::min((R)l[array][off_l +j], (R)0)));
+			metrics[path] = sat_m<R>(metrics[path] + pen); // add a penalty to the current path metric
+		}
 
-		// TODO: Remove this fill when rate_0 left nodes are in the patterns
-		std::fill(s[path].begin() + off_s, s[path].begin() + off_s + n_elmts, 0);
-	}
+	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT))
+		for (auto i = 0; i < n_active_paths; i++)
+			std::fill(s[paths[i]].begin() + off_s, s[paths[i]].begin() + off_s + n_elmts, 0);
 }
 
 template <typename B, typename R, class API_polar>
@@ -465,19 +469,21 @@ template <int REV_D, int N_ELMTS>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::update_paths_r0(const int off_l, const int off_s)
 {
-	for (auto i = 0; i < n_active_paths; i++)
-	{
-		const auto path  = paths[i];
-		const auto array = path_2_array_l[path][REV_D];
+	if (n_active_paths > 1)
+		for (auto i = 0; i < n_active_paths; i++)
+		{
+			const auto path  = paths[i];
+			const auto array = path_2_array_l[path][REV_D];
 
-		auto metric = 0.f;
-		for (auto j = 0; j < N_ELMTS; j++)
-			metric -= std::min((float)l[array][off_l +j], 0.f);
-		metrics[path] += metric; // add a penalty to the current path metric
+			auto pen = (R)0;
+			for (auto j = 0; j < N_ELMTS; j++)
+				pen = sat_m<R>(pen + sat_m<R>(-std::min((R)l[array][off_l +j], (R)0)));
+			metrics[path] = sat_m<R>(metrics[path] + pen); // add a penalty to the current path metric
+		}
 
-		// TODO: Remove this fill when rate_0 left nodes are in the patterns
-		std::fill(s[path].begin() + off_s, s[path].begin() + off_s + N_ELMTS, 0);
-	}
+	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT))
+		for (auto i = 0; i < n_active_paths; i++)
+			std::fill(s[paths[i]].begin() + off_s, s[paths[i]].begin() + off_s + N_ELMTS, 0);
 }
 
 template <typename B, typename R, class API_polar>
