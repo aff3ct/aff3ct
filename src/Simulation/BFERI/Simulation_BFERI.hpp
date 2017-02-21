@@ -57,7 +57,7 @@ protected:
 	std::vector<SISO       <Q    >*> siso;
 	std::vector<Decoder    <B,Q  >*> decoder;
 	std::vector<Coset      <B,B  >*> coset_bit;
-	std::vector<Monitor    <B    >*> monitor;
+	std::vector<Monitor    <B,R  >*> monitor;
 
 public:
 	Simulation_BFERI_i(const parameters& params);
@@ -74,18 +74,18 @@ protected:
 	virtual void release_objects   ();
 	virtual void launch_postcompute();
 
-	virtual Source     <B    >* build_source     (                const int tid = 0);
-	virtual CRC        <B    >* build_crc        (                const int tid = 0);
-	virtual Encoder    <B    >* build_encoder    (                const int tid = 0);
-	virtual Interleaver<int  >* build_interleaver(                const int tid = 0);
-	virtual Modulator  <B,R,Q>* build_modulator  (                const int tid = 0);
-	virtual Channel    <R    >* build_channel    (const int size, const int tid = 0);
-	virtual Quantizer  <R,Q  >* build_quantizer  (const int size, const int tid = 0);
-	virtual SISO       <Q    >* build_siso       (                const int tid = 0) = 0;
-	virtual Coset      <B,Q  >* build_coset_real (                const int tid = 0);
-	virtual Decoder    <B,Q  >* build_decoder    (                const int tid = 0) = 0;
-	virtual Coset      <B,B  >* build_coset_bit  (                const int tid = 0);
-	virtual Monitor    <B    >* build_monitor    (                const int tid = 0);
+	virtual Source     <B    >* build_source     (                  const int tid = 0);
+	virtual CRC        <B    >* build_crc        (                  const int tid = 0);
+	virtual Encoder    <B    >* build_encoder    (                  const int tid = 0);
+	virtual Interleaver<int  >* build_interleaver(                  const int tid = 0);
+	virtual Modulator  <B,R,Q>* build_modulator  (                  const int tid = 0);
+	virtual Channel    <R    >* build_channel    (const int size,   const int tid = 0);
+	virtual Quantizer  <R,Q  >* build_quantizer  (const int size,   const int tid = 0);
+	virtual SISO       <Q    >* build_siso       (                  const int tid = 0) = 0;
+	virtual Coset      <B,Q  >* build_coset_real (                  const int tid = 0);
+	virtual Decoder    <B,Q  >* build_decoder    (                  const int tid = 0) = 0;
+	virtual Coset      <B,B  >* build_coset_bit  (                  const int tid = 0);
+	virtual Monitor    <B,R  >* build_monitor    (const int Y_size, const int tid = 0);
 };
 
 #endif /* SIMULATION_BFERI_I_HPP_ */

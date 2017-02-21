@@ -182,11 +182,15 @@ void Simulation_BFERI<B,R,Q>
 		                                                 n_fra);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
-		                                             simu->params.code.N,
-		                                             simu->params.monitor.n_frame_errors,
-		                                             simu->monitor,
-		                                             n_fra);
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
+		                                               simu->params.code.N,
+		                                               N_mod,
+		                                               simu->params.monitor.n_frame_errors,
+		                                               simu->monitor,
+		                                               simu->snr,
+		                                               simu->params.monitor.err_track_enable,
+		                                               simu->params.monitor.err_track_filename,
+		                                               n_fra);
 #endif
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal(tid);

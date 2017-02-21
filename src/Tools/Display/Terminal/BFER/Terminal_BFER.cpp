@@ -10,7 +10,7 @@ template <typename B, typename R>
 Terminal_BFER<B,R>
 ::Terminal_BFER(const R& snr_s,
                 const R& snr_b,
-                const Monitor<B> &monitor,
+                const Monitor<B,R> &monitor,
                 const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
                 const std::chrono::nanoseconds *d_decod_total)
 : snr_s          (snr_s        ),
@@ -142,7 +142,7 @@ void Terminal_BFER<B,R>
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
-	if (Monitor<B>::is_interrupt()) stream << "\r";
+	if (Monitor<B,R>::is_interrupt()) stream << "\r";
 
 #ifdef _WIN32
 	stringstream str_ber, str_fer;
@@ -235,7 +235,7 @@ void Terminal_BFER<B,R>
 
 	stream << bold(" | ") << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
 
-	if (Monitor<B>::is_interrupt()) stream << " x" << std::endl;
+	if (Monitor<B,R>::is_interrupt()) stream << " x" << std::endl;
 	else                            stream << "  " << std::endl;
 }
 

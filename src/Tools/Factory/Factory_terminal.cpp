@@ -8,7 +8,7 @@ Terminal* Factory_terminal<B,R>
 ::build(const parameters &params,
         const R snr_s,
         const R snr_b,
-        const Monitor<B> *monitor,
+        const Monitor<B,R> *monitor,
         const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
         const std::chrono::nanoseconds *d_decod_total)
 {

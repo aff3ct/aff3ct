@@ -41,7 +41,7 @@ protected:
 	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
 
 	// objects
-	Monitor_reduction<B> *monitor_red;
+	Monitor_reduction<B,R> *monitor_red;
 	// terminal (for the output of the code)
 	Terminal *terminal;
 

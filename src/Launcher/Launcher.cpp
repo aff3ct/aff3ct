@@ -76,6 +76,7 @@ Launcher<B,R,Q>
 	params.quantizer  .type              = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
 #endif
 	params.quantizer  .range             = 0.f;
+	params.monitor    .err_track_enable  = false;
 	params.terminal   .disabled          = false;
 	params.terminal   .frequency         = std::chrono::milliseconds(500);
 
@@ -267,6 +268,14 @@ void Launcher<B,R,Q>
 		{"string",
 		 "select the implementation of the algorithm to decode."};
 
+	// ------------------------------------------------------------------------------------------------------- monitor
+	this->opt_args[{"mnt-err-tracker-enable"}] =
+		{"",
+		 "enable the tracking of the wrong frames."};
+	this->opt_args[{"mnt-err-tracker-filename"}] =
+		{"string",
+		 "header of filenames where will be returned the wrong frames."};
+
 	// ------------------------------------------------------------------------------------------------------ terminal
 	opt_args[{"term-no"}] =
 		{"",
@@ -416,6 +425,10 @@ void Launcher<B,R,Q>
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(ar.exist_arg({"dec-type",  "D"})) params.decoder.type   = ar.get_arg({"dec-type",  "D"});
 	if(ar.exist_arg({"dec-implem"    })) params.decoder.implem = ar.get_arg({"dec-implem"    });
+
+	// ------------------------------------------------------------------------------------------------------- monitor
+	if(this->ar.exist_arg({"mnt-err-tracker-enable"  })) this->params.monitor.err_track_enable   = true;
+	if(this->ar.exist_arg({"mnt-err-tracker-filename"})) this->params.monitor.err_track_filename = ar.get_arg({"mnt-err-tracker-filename"});
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	if(ar.exist_arg({"term-no"  })) params.terminal.disabled = true;

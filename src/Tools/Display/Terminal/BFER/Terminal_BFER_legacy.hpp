@@ -11,14 +11,14 @@ template <typename B, typename R>
 class Terminal_BFER_legacy : public Terminal
 {
 protected:
-	const R                                                                             snr;
-	const Monitor<B>                                                                   &monitor;
+	const R                                                                            snr;
+	const Monitor<B,R>                                                                 &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
-	unsigned short                                                                      real_time_state;
+	unsigned short                                                                     real_time_state;
 
 public:
     Terminal_BFER_legacy(const R& snr,
-	                     const Monitor<B> &monitor,
+	                     const Monitor<B,R> &monitor,
 	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr);
 	virtual ~Terminal_BFER_legacy() {}
 

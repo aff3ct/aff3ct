@@ -12,10 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B>
+template <typename B, typename R>
 class SC_Monitor;
 
-template <typename B>
+template <typename B, typename R>
 class SC_Monitor_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Monitor_module);
@@ -25,12 +25,12 @@ public:
 	tlm_utils::simple_target_socket<SC_Monitor_module> s_in2;
 
 private:
-	SC_Monitor<B> &monitor;
+	SC_Monitor<B,R> &monitor;
 	mipp::vector<B> V_K;
 	mipp::vector<B> U_K;
 
 public:
-	SC_Monitor_module(SC_Monitor<B> &monitor,
+	SC_Monitor_module(SC_Monitor<B,R> &monitor,
 	                  const sc_core::sc_module_name name = "SC_Monitor_module")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"),
 	  monitor(monitor),
@@ -70,8 +70,8 @@ private:
 	}
 };
 
-template <typename B>
-class SC_Monitor : public Monitor_i<B>
+template <typename B, typename R>
+class SC_Monitor : public Monitor_i<B,R>
 {
 	friend SC_Monitor_module<B>;
 
@@ -98,8 +98,8 @@ public:
 	}
 };
 
-template <typename B>
-using Monitor = SC_Monitor<B>;
+template <typename B, typename R>
+using Monitor = SC_Monitor<B,R>;
 #else
 #include "SPU_Monitor.hpp"
 #endif

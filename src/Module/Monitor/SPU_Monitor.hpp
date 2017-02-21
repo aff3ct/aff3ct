@@ -10,8 +10,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B>
-class SPU_Monitor : public Monitor_i<B>
+template <typename B, typename R>
+class SPU_Monitor : public Monitor_i<B,R>
 {
 private:
 	static starpu_codelet spu_cl_check_errors;
@@ -22,13 +22,13 @@ public:
 
 	virtual ~SPU_Monitor() {}
 
-	static inline starpu_task* spu_task_check_errors(SPU_Monitor<B> *monitor, starpu_data_handle_t &in_data1,
+	static inline starpu_task* spu_task_check_errors(SPU_Monitor<B,R> *monitor, starpu_data_handle_t &in_data1,
 	                                                                          starpu_data_handle_t &in_data2)
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mnt::check_errors";
-		task->cl          = &SPU_Monitor<B>::spu_cl_check_errors;
+		task->cl          = &SPU_Monitor<B,R>::spu_cl_check_errors;
 		task->cl_arg      = (void*)(monitor);
 		task->cl_arg_size = sizeof(*monitor);
 		task->handles[0]  = in_data1;
@@ -43,7 +43,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Monitor<B>::spu_kernel_check_errors;
+		cl.cpu_funcs     [0] = SPU_Monitor<B,R>::spu_kernel_check_errors;
 		cl.cpu_funcs_name[0] = "mnt::check_errors::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
@@ -54,7 +54,7 @@ private:
 
 	static void spu_kernel_check_errors(void *buffers[], void *cl_arg)
 	{
-		auto monitor = static_cast<SPU_Monitor<B>*>(cl_arg);
+		auto monitor = static_cast<SPU_Monitor<B,R>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -68,14 +68,14 @@ private:
 	}
 };
 
-template <typename B>
-starpu_codelet SPU_Monitor<B>::spu_cl_check_errors = SPU_Monitor<B>::spu_init_cl_check_errors();
+template <typename B, typename R>
+starpu_codelet SPU_Monitor<B,R>::spu_cl_check_errors = SPU_Monitor<B,R>::spu_init_cl_check_errors();
 
-template <typename B>
-using Monitor = SPU_Monitor<B>;
+template <typename B, typename R>
+using Monitor = SPU_Monitor<B,R>;
 #else
-template <typename B>
-using Monitor = Monitor_i<B>;
+template <typename B, typename R>
+using Monitor = Monitor_i<B,R>;
 #endif
 
 #endif /* SPU_MONITOR_HPP_ */
