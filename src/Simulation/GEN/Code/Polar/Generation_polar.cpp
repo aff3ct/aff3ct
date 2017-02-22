@@ -18,22 +18,6 @@
 
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_r0.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_r0_left.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_r1.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_rep.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_rep_left.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_spc.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_std.hpp"
-
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_r0.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_r0_left.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_r1.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_rep.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_rep_left.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_spc.hpp"
-#include "Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_std.hpp"
-
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 #include "Generator/Polar/SCL/Generator_polar_SCL_sys.hpp"
 
