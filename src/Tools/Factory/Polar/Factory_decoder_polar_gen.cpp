@@ -84,6 +84,7 @@
 
 // RATE ???
 //#define ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
+//#define ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
 
 // --------------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------------
@@ -535,6 +536,10 @@
 
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
 #include "Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp"
+#endif
+
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
+#include "Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp"
 #endif
 
 #include "Module/Decoder/Polar/decoder_polar_functions.h"
@@ -1817,6 +1822,9 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
 					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
 #endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
+					if (params.decoder.implem == "CA_N256_K64_SNR30"   ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30   <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
 				}
 				else if (typeid(B) == typeid(short))
 				{
@@ -1834,6 +1842,9 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
 					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
+					if (params.decoder.implem == "CA_N256_K64_SNR30"   ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30   <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
 #endif
 				}
 				else if (typeid(B) == typeid(int))
@@ -1853,6 +1864,9 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
 					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
 #endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
+					if (params.decoder.implem == "CA_N256_K64_SNR30"   ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30   <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
 				}
 			}
 			else if (params.decoder.simd_strategy.empty())
@@ -1869,6 +1883,9 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
 					if (params.decoder.implem == "CA_N2048_K1755_SNR35") { decoder = new Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35<B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
+					if (params.decoder.implem == "CA_N256_K64_SNR30"   ) { decoder = new Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30   <B, R, API_polar>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level); }
 #endif
 			}
 		}
@@ -2089,6 +2106,9 @@ void Factory_decoder_polar_gen<B,R>
 	// RATE ??
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35
 	if (params.decoder.implem == "CA_N2048_K1755_SNR35"  ) fb_ptr = Decoder_polar_SCL_fast_CA_sys_fb_2048_1755_35;
+#endif
+#ifdef ENABLE_DECODER_SCL_FAST_CA_N256_K64_SNR30
+	if (params.decoder.implem == "CA_N256_K64_SNR30"     ) fb_ptr = Decoder_polar_SCL_fast_CA_sys_fb_256_64_30;
 #endif
 
 	if (fb_ptr == nullptr)
