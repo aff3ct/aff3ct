@@ -1,27 +1,31 @@
 #include "Monitor_reduction.hpp"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sstream>
+#include <fstream>
+#include <exception>
 
 template <typename B, typename R>
 Monitor_reduction<B,R>
 ::Monitor_reduction(const int& K, const int& N, const int& Y_size, const int& max_fe,
                     std::vector<Monitor<B,R>*>& monitors,
                     const float snr,
-                    const bool& error_tracker_enable,
-                    const std::string& error_tracker_head_file_name,
                     const int& n_frames, const std::string name)
-: Monitor_std<B,R>            (K, N, Y_size, max_fe, error_tracker_enable, n_frames, name),
+: Monitor_std<B,R>            (K, N, Y_size, max_fe, n_frames, name),
   monitors                    (monitors                    ),
-  snr                         (snr                         ),
-  error_tracker_head_file_name(error_tracker_head_file_name)
+  snr                         (snr                         )
 {
 	assert(monitors.size() != 0);
+	for (size_t i = 0; i < monitors.size(); ++i)
+	{
+		assert(monitors[i] != nullptr);
+	}
 }
 
 template <typename B, typename R>
 Monitor_reduction<B,R>
 ::~Monitor_reduction()
 {
-	if(this->error_tracker_enable)
-		flush_erroneous_frame();
 }
 
 template <typename B, typename R>
@@ -58,19 +62,71 @@ int Monitor_reduction<B,R>
 }
 
 template <typename B, typename R>
-void Monitor_reduction<B,R>
-::flush_erroneous_frame()
+bool Monitor_reduction<B,R>
+::check_file_name(const std::string& error_tracker_head_file_name)
 {
-	std::string file_name_head  = error_tracker_head_file_name + std::string("_") + std::to_string(snr);
-	std::string file_name_src   = file_name_head + std::string(".src");
-	std::string file_name_enc   = file_name_head + std::string(".enc");
-	std::string file_name_noise = file_name_head + std::string(".cha");
+	size_t pos = error_tracker_head_file_name.find_last_of("/");
+
+	if (pos == std::string::npos)
+		return true;
+
+	std::string pathname = error_tracker_head_file_name.substr(0, pos);
+
+	// TODO : check compatibility on windows. Normally it is good.
+	struct stat info;
+
+	if( stat( pathname.data(), &info ) != 0 )
+		return false;
+	else if( info.st_mode & S_IFDIR )
+		return true;
+	else
+		return false;
+}
+
+template <typename B, typename R>
+void Monitor_reduction<B,R>
+::get_tracker_filenames(const std::string& error_tracker_head_file_name, const float snr,
+                        std::string& file_name_src, std::string& file_name_enc, std::string& file_name_noise)
+{
+	if(!check_file_name(error_tracker_head_file_name))
+	{
+		std::cerr << "(EE) issue while trying to open error tracker log files ; check file name: \""
+		          << error_tracker_head_file_name << "\" and please create yourself the needed directory." << std::endl;
+		exit(-1);
+	}
+
+	std::stringstream snr_stream;
+	snr_stream << std::fixed << std::setprecision(3) << snr;
+
+	std::string file_name_head  = error_tracker_head_file_name + std::string("_") + snr_stream.str();
+
+	file_name_src   = file_name_head + std::string(".src");
+	file_name_enc   = file_name_head + std::string(".enc");
+	file_name_noise = file_name_head + std::string(".cha");
+}
+
+template <typename B, typename R>
+void Monitor_reduction<B,R>
+::flush_erroneous_frame(const std::string& error_tracker_head_file_name, const float snr)
+{
+	std::string file_name_src, file_name_enc, file_name_noise;
+
+	get_tracker_filenames(error_tracker_head_file_name, snr, file_name_src, file_name_enc, file_name_noise);
 
 	std::ofstream file_src  (file_name_src  );
 	std::ofstream file_enc  (file_name_enc  );
-	std::ofstream file_noise(file_name_noise);
+	std::ofstream file_noise(file_name_noise, std::ios_base::binary);
 
-	int n_fe = get_n_fe();
+	if (!file_src.is_open() || !file_enc.is_open() || !file_noise.is_open())
+	{
+		std::cerr << "(EE) issue while trying to open error tracker log files ; check file name: \""
+		          << error_tracker_head_file_name << "\"" << std::endl;
+		exit(-1);
+	}
+
+
+	int n_fe   = get_n_fe();
+	int Y_size = this->get_Y_size();
 
 	// ************* write headers *****************
 	file_src << n_fe          << std::endl << std::endl; // write number frames
@@ -80,14 +136,13 @@ void Monitor_reduction<B,R>
 	file_enc << this->get_K() << std::endl << std::endl; // write length of non coded frames
 	file_enc << this->get_N() << std::endl << std::endl; // write length of coded frames
 
-	file_noise << n_fe               << std::endl << std::endl; // write number frames
-	file_noise << this->get_Y_size() << std::endl << std::endl; // write length of frames
+	file_noise.write((char *)&n_fe  , sizeof(int)); // write number frames
+	file_noise.write((char *)&Y_size, sizeof(int)); // write length of frames
 
 	// ************* write frames ********************
-	Monitor<B,R>* mon = nullptr;
 	for (unsigned i = 0; i <= monitors.size(); i++)
 	{
-		mon = (i == monitors.size()) ? this : monitors[i];
+		auto mon = (i == monitors.size()) ? this : monitors[i];
 
 		// write source
 		auto buff_src = mon->get_buff_src();
@@ -110,16 +165,12 @@ void Monitor_reduction<B,R>
 			file_enc << std::endl << std::endl;
 		}
 
-		// noise encoder
+		// write noise
 		auto buff_noise = mon->get_buff_noise();
 		assert(buff_src.size() == buff_noise.size());
 		for (unsigned f = 0; f < buff_noise.size(); f++)
-		{
 			for (unsigned b = 0; b < buff_noise[f].size(); b++)
-				file_noise << buff_noise[f][b] << " ";
-
-			file_noise << std::endl << std::endl;
-		}
+				file_noise.write((char *)&buff_noise[f][b], sizeof(R));
 	}
 }
 

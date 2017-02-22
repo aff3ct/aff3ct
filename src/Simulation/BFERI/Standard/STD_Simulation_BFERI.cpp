@@ -101,6 +101,29 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::_launch()
 {
+	// check, if the error tracker is enable, if the given file name is good
+	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_inverted)
+	    && !Monitor_reduction<B,R>::check_file_name(this->params.monitor.err_track_filename))
+	{
+		std::cerr << "(EE) issue while trying to open error tracker log files ; check file name: \""
+		          << this->params.monitor.err_track_filename << "\" and please create yourself the needed directory."
+		          << std::endl;
+		exit(-1);
+	}
+
+	if (this->params.monitor.err_track_inverted)
+	{
+		std::string file_name_src, file_name_enc, file_name_noise;
+		Monitor_reduction<B,R>::get_tracker_filenames(this->params.monitor.err_track_filename, this->snr,
+		                                              file_name_src, file_name_enc, file_name_noise);
+
+		parameters *params_writable = const_cast<parameters*>(&this->params);
+
+		params_writable->source. path = file_name_src;
+		params_writable->encoder.path = file_name_enc;
+		params_writable->channel.path = file_name_noise;
+	}
+
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1] = std::thread(Simulation_BFERI<B,R,Q>::Monte_Carlo_method, this, tid);
@@ -117,6 +140,9 @@ void Simulation_BFERI<B,R,Q>
 		time_reduction(true);
 		terminal->final_report(std::cout);
 	}
+
+	if (this->params.monitor.err_track_enable)
+		monitor_red->flush_erroneous_frame(this->params.monitor.err_track_filename, this->snr);
 }
 
 template <typename B, typename R, typename Q>
@@ -187,9 +213,6 @@ void Simulation_BFERI<B,R,Q>
 		                                               N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
-		                                               simu->snr,
-		                                               simu->params.monitor.err_track_enable,
-		                                               simu->params.monitor.err_track_filename,
 		                                               n_fra);
 #endif
 		// build the terminal to display the BER/FER
@@ -394,8 +417,12 @@ void Simulation_BFERI<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
+		if(simu->params.monitor.err_track_enable)
+			simu->monitor[tid]->check_track_errors(simu->U_K[tid], simu->V_K[tid], simu->X_N1[tid], simu->X_N3[tid], simu->Y_N1[tid]);
+		else
+			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
+
 
 		// increment total durations for each operations
 		simu->d_sourc_total[tid] += d_sourc;
@@ -716,7 +743,10 @@ void Simulation_BFERI<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->monitor_red->check_errors(simu->U_K[0], simu->V_K[0]);
+		if(simu->params.monitor.err_track_enable)
+			simu->monitor[0]->check_track_errors(simu->U_K[0], simu->V_K[0], simu->X_N1[0], simu->X_N3[0], simu->Y_N1[0]);
+		else
+			simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations

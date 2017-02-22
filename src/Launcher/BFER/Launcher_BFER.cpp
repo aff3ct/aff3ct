@@ -109,18 +109,21 @@ void Launcher_BFER<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
-	if (this->params.code.coset)
+	if (this->params.code.coset && !this->params.monitor.err_track_inverted) // if err_track_inverted == true then encoder.type = "USER"
 		this->params.encoder.type = "COSET";
 
 	// ------------------------------------------------------------------------------------------------------- encoder
-	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
-	if (this->params.encoder.type == "COSET")
-		this->params.code.coset = true;
-	if (this->params.encoder.type == "AZCW")
-		this->params.source.type = "AZCW";
-	if (this->params.encoder.type == "USER")
-		this->params.source.type = "USER";
-	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
+	if (!this->params.monitor.err_track_inverted) // if err_track_inverted == true then encoder.type = "USER" and encoder.path is set automatically
+	{
+		if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
+		if (this->params.encoder.type == "COSET")
+			this->params.code.coset = true;
+		if (this->params.encoder.type == "AZCW")
+			this->params.source.type = "AZCW";
+		if (this->params.encoder.type == "USER")
+			this->params.source.type = "USER";
+		if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
+	}
 
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});

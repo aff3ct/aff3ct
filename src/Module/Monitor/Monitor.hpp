@@ -39,8 +39,6 @@ protected:
 	const int N; /*!< Size of one encoded frame (= number of bits in one frame) */
 	const int Y_size; /*!< Size of one sent frame through the channel (= number of samples in one frame) */
 
-	const bool error_tracker_enable;
-
 public:
 	/*!
 	 * \brief Constructor.
@@ -52,9 +50,9 @@ public:
 	 * \param n_frames: number of frames to process in the Monitor.
 	 * \param name:     Monitor's name.
 	 */
-	Monitor_i(const int& K, const int& N, const int& Y_size, const bool& error_tracker_enable, const int& n_frames = 1,
+	Monitor_i(const int& K, const int& N, const int& Y_size, const int& n_frames = 1,
 	          const std::string name = "Monitor_i")
-	: Module(n_frames, name), K(K), N(N), Y_size(Y_size), error_tracker_enable(error_tracker_enable)
+	: Module(n_frames, name), K(K), N(N), Y_size(Y_size)
 	{
 		Monitor_i<B,R>::interrupt = false;
 		Monitor_i<B,R>::d_delta_interrupt = std::chrono::nanoseconds(0);

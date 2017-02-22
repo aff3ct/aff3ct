@@ -24,8 +24,7 @@ protected:
 
 public:
 	Monitor_std(const int& K, const int& N, const int& Y_size, const int& max_fe,
-	            const bool& error_tracker_enable = false, const int& n_frames = 1,
-	            const std::string name = "Monitor_std");
+	            const int& n_frames = 1, const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
 	virtual void check_track_errors(const mipp::vector<B>& U,

@@ -10,14 +10,13 @@ Channel_additive_user<R>
 ::Channel_additive_user(const int N, const std::string filename, const int n_frames, const std::string name)
 : Channel<R>(N, n_frames, name), noise(), noise_counter(0)
 {
-	std::ifstream file(filename.c_str(), std::ios::in);
-
+	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.is_open())
 	{
 		int n_fra = 0, fra_size = 0;
 
-		file >> n_fra;
-		file >> fra_size;
+		file.read((char *)&n_fra,    sizeof(int));
+		file.read((char *)&fra_size, sizeof(int));
 
 		assert(n_fra > 0 && fra_size > 0);
 
@@ -31,7 +30,7 @@ Channel_additive_user<R>
 				for (auto j = 0; j < fra_size; j++)
 				{
 					R val;
-					file >> val;
+					file.read((char *)&val, sizeof(float));
 					this->noise[i][j] = val;
 				}
 		}
@@ -52,6 +51,48 @@ Channel_additive_user<R>
 		          << std::endl;
 		std::exit(-1);
 	}
+
+	//std::ifstream file(filename.c_str(), std::ios::in);
+//	if (file.is_open())
+//	{
+//		int n_fra = 0, fra_size = 0;
+//
+//		file >> n_fra;
+//		file >> fra_size;
+//
+//		assert(n_fra > 0 && fra_size > 0);
+//
+//		this->noise.resize(n_fra);
+//		for (auto i = 0; i < n_fra; i++)
+//			this->noise[i].resize(fra_size);
+//
+//		if (fra_size == this->N)
+//		{
+//			for (auto i = 0; i < n_fra; i++)
+//				for (auto j = 0; j < fra_size; j++)
+//				{
+//					R val;
+//					file >> val;
+//					this->noise[i][j] = val;
+//				}
+//		}
+//		else
+//		{
+//			std::cerr << bold_red("(EE) The frame size is wrong (read: ") << bold_red(std::to_string(fra_size))
+//			          << bold_red(", expected: ") << bold_red(std::to_string(this->N))
+//			          << bold_red("), exiting.") << std::endl;
+//			file.close();
+//			std::exit(-1);
+//		}
+//
+//		file.close();
+//	}
+//	else
+//	{
+//		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
+//		          << std::endl;
+//		std::exit(-1);
+//	}
 }
 
 template <typename R>

@@ -77,6 +77,8 @@ Launcher<B,R,Q>
 #endif
 	params.quantizer  .range             = 0.f;
 	params.monitor    .err_track_enable  = false;
+	params.monitor    .err_track_inverted= false;
+	params.monitor    .err_track_filename= "error_tracker";
 	params.terminal   .disabled          = false;
 	params.terminal   .frequency         = std::chrono::milliseconds(500);
 
@@ -122,7 +124,7 @@ void Launcher<B,R,Q>
 		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
 #else
-	this->opt_args[{"sim-conc-tasks", "t"}] =
+	opt_args[{"sim-conc-tasks", "t"}] =
 		{"positive_int",
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
@@ -136,10 +138,10 @@ void Launcher<B,R,Q>
 		 "the simulation precision in bit.",
 		 "8, 16, 32, 64"};
 #endif
-	this->opt_args[{"sim-inter-lvl"}] =
+	opt_args[{"sim-inter-lvl"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process in each modules."};
-	this->opt_args[{"sim-seed"}] =
+	opt_args[{"sim-seed"}] =
 		{"positive_int",
 		 "seed used in the simulation to initialize the pseudo random generators in general."};
 #ifdef ENABLE_MPI
@@ -269,12 +271,17 @@ void Launcher<B,R,Q>
 		 "select the implementation of the algorithm to decode."};
 
 	// ------------------------------------------------------------------------------------------------------- monitor
-	this->opt_args[{"mnt-err-tracker-enable"}] =
+	opt_args[{"mnt-err-tracker-enable"}] =
 		{"",
-		 "enable the tracking of the wrong frames."};
-	this->opt_args[{"mnt-err-tracker-filename"}] =
+		 "enable the tracking of the wrong frames. Automatically disabled by mnt-err-tracker-inverted."};
+	opt_args[{"mnt-err-tracker-inverted"}] =
+		{"",
+		 std::string("automatically reply the saved frames in error tracker files for the source, the encoder and the channel noise.") +
+		 std::string(" Warning! This feature does not set automatically the configuration of all the other modules.")};
+	opt_args[{"mnt-err-tracker-filename"}] =
 		{"string",
-		 "header of filenames where will be returned the wrong frames."};
+		 std::string("header of filenames where will be returned/read the wrong source, encoder and channel noise frames.") +
+		 std::string(" To this name will be automatically added the run SNR and the extension (.src .enc .cha).")};
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	opt_args[{"term-no"}] =
@@ -285,12 +292,12 @@ void Launcher<B,R,Q>
 		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
 
 	// --------------------------------------------------------------------------------------------------------- other
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
 	opt_args[{"help", "h"}] =
 		{"",
 		 "print this help."};
+	opt_args[{"version", "v"}] =
+		{"",
+		 "print informations about the version of the code."};
 }
 
 template <typename B, typename R, typename Q>
@@ -409,8 +416,8 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	if(ar.exist_arg({"chn-type"}))    params.channel.type         = ar.get_arg({"chn-type"});
-	if(ar.exist_arg({"chn-path"}))    params.channel.path         = ar.get_arg({"chn-path"});
+	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"});
+	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"});
 	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
 
 	// ----------------------------------------------------------------------------------------------------- quantizer
@@ -427,8 +434,21 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dec-implem"    })) params.decoder.implem = ar.get_arg({"dec-implem"    });
 
 	// ------------------------------------------------------------------------------------------------------- monitor
+	if(this->ar.exist_arg({"mnt-err-tracker-inverted"})) this->params.monitor.err_track_inverted = true;
 	if(this->ar.exist_arg({"mnt-err-tracker-enable"  })) this->params.monitor.err_track_enable   = true;
 	if(this->ar.exist_arg({"mnt-err-tracker-filename"})) this->params.monitor.err_track_filename = ar.get_arg({"mnt-err-tracker-filename"});
+
+	if(this->params.monitor.err_track_inverted)
+	{
+		this->params.monitor.err_track_enable = false;
+		this->params.source. type = "USER";
+		this->params.encoder.type = "USER";
+		this->params.channel.type = "USER";
+		this->params.source. path = this->params.monitor.err_track_filename + std::string("_SNR.src");
+		this->params.encoder.path = this->params.monitor.err_track_filename + std::string("_SNR.enc");
+		this->params.channel.path = this->params.monitor.err_track_filename + std::string("_SNR.cha");
+		// the paths are set in the Simulation class
+	}
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	if(ar.exist_arg({"term-no"  })) params.terminal.disabled = true;
@@ -436,14 +456,14 @@ void Launcher<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
+int Launcher<B,R,Q>
 ::read_arguments()
 {
 	this->build_args();
 
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
+//	opt_args[{"help", "h"}] =
+//		{"",
+//		 "print this help."};
 
 	auto display_help = true;
 	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
@@ -476,11 +496,15 @@ void Launcher<B,R,Q>
 		arg_grp.push_back({"term", "Terminal parameter(s)"   });
 
 		ar.print_usage(arg_grp);
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
+		//exit(EXIT_FAILURE);
 	}
 
 	if (!ar.check_arguments())
-		std::exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
+		//std::exit(EXIT_FAILURE);
+
+	return 0;
 }
 
 template <typename B, typename R, typename Q>
@@ -776,7 +800,8 @@ void Launcher<B,R,Q>
 		simu = nullptr;
 	}
 
-	this->read_arguments();
+	if(this->read_arguments())
+		return;
 
 	// write the command and he curve name in the PyBER format
 	if (!params.simulation.pyber.empty() && params.simulation.mpi_rank == 0)

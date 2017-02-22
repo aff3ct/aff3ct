@@ -7,8 +7,8 @@
 template <typename B, typename R>
 Monitor_std<B,R>
 ::Monitor_std(const int& K, const int& N, const int& Y_size, const int& max_fe,
-              const bool& error_tracker_enable, const int& n_frames, const std::string name)
-: Monitor<B,R>(K, N, Y_size, error_tracker_enable, n_frames, name.c_str()),
+              const int& n_frames, const std::string name)
+: Monitor<B,R>(K, N, Y_size, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
@@ -39,17 +39,15 @@ void Monitor_std<B,R>
                      const mipp::vector<R>& X_mod,
                      const mipp::vector<R>& Y)
 {
-	assert(this->K * this->n_frames == (int)U.size());
-	assert(this->K * this->n_frames == (int)V.size());
-	assert(this->N * this->n_frames == (int)X.size());
+	assert(this->K      * this->n_frames == (int)U    .size());
+	assert(this->K      * this->n_frames == (int)V    .size());
+	assert(this->N      * this->n_frames == (int)X    .size());
 	assert(this->Y_size * this->n_frames == (int)X_mod.size());
-	assert(this->Y_size * this->n_frames == (int)Y.size());
+	assert(this->Y_size * this->n_frames == (int)Y    .size());
 
 	for (auto i = 0; i < this->n_frames; i++)
 	{
-		bool err = check_errors(U.data()+i*this->K, V.data()+i*this->K, this->K);
-
-		if(this->error_tracker_enable && err)
+		if (check_errors(U.data()+i*this->K, V.data()+i*this->K, this->K))
 			save_erroneous_frame(U    .data()+i*this->K,
 			                     X    .data()+i*this->N,
 			                     X_mod.data()+i*this->Y_size,
@@ -86,7 +84,7 @@ void Monitor_std<B,R>
 	auto n = (int)U.size() / this->n_frames;
 
 	for (auto i = 0; i < this->n_frames; i++)
-		check_errors(U.data()+i*n, V.data()+n, n);
+		check_errors(U.data()+i*n, V.data()+i*n, n);
 
 	this->update_n_analyzed_frames();
 }
@@ -143,13 +141,13 @@ void Monitor_std<B,R>
 	buff_enc.  push_back(mipp::vector<B>(this->N     ));
 	buff_noise.push_back(mipp::vector<R>(this->Y_size));
 
-	for (size_t b = 0 ; b < this->K ; b++)
+	for (int b = 0 ; b < this->K ; b++)
 		buff_src.  back()[b] = U[b];
 
-	for (size_t b = 0 ; b < this->N ; b++)
+	for (int b = 0 ; b < this->N ; b++)
 		buff_enc.  back()[b] = X[b];
 
-	for (size_t b = 0 ; b < this->Y_size ; b++)
+	for (int b = 0 ; b < this->Y_size ; b++)
 		buff_noise.back()[b] = Y[b] - X_mod[b];
 }
 

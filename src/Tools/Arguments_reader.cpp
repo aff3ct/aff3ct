@@ -236,18 +236,18 @@ void Arguments_reader
 	if (!req_args_cpy.empty() || !opt_args_cpy.empty())
 	{
 		cout << "Other parameter(s): " << endl;
-		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); ++it)
+		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); )
 		{
 			// gr->first is a prefix of it->first[0].
 			this->print_usage(it->first, it->second, true);
-			req_args_cpy.erase(it->first);
+			it = req_args_cpy.erase(it);
 		}
 
-		for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end(); ++it)
+		for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end();)
 		{
 			// gr->first is a prefix of it->first[0].
 			this->print_usage(it->first, it->second, false);
-			opt_args_cpy.erase(it->first);
+			it = opt_args_cpy.erase(it);
 		}
 
 		cout << endl;

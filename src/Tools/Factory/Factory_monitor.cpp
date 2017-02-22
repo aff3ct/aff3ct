@@ -9,8 +9,7 @@ Monitor<B,R>* Factory_monitor<B,R>
 	Monitor<B,R> *monitor = nullptr;
 
 	// build the monitor
-	monitor = new Monitor_std<B,R>(params.code.K, params.code.N, Y_size, params.monitor.n_frame_errors,
-	                               params.monitor.err_track_enable, n_frames);
+	monitor = new Monitor_std<B,R>(params.code.K, params.code.N, Y_size, params.monitor.n_frame_errors, n_frames);
 
 	return monitor;
 }
