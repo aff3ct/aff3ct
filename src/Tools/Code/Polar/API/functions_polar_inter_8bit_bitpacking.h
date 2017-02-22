@@ -321,6 +321,72 @@ struct h_inter_8bit_bitpacking <B, R, HI, 1>
 	}
 };
 
+// =============================================================================================================== h0()
+// ====================================================================================================================
+// ====================================================================================================================
+
+template <typename B, int N_ELMTS = 0>
+struct h0_inter_8bit_bitpacking
+{
+	static void apply(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
+	{
+		constexpr auto _n_elmts = (N_ELMTS * mipp::nElmtsPerRegister<B>()) / (sizeof(B) * 8);
+		std::fill(s_a, s_a + _n_elmts, 0);
+	}
+};
+
+template <typename B>
+struct h0_inter_8bit_bitpacking <B, 0>
+{
+	static void apply(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
+	{
+		const auto _n_elmts = (n_elmts  * mipp::nElmtsPerRegister<B>()) / (sizeof(B) * 8);
+		std::fill(s_a, s_a + _n_elmts, 0);
+	}
+};
+
+template <typename B>
+struct h0_inter_8bit_bitpacking <B, 4>
+{
+	static void apply(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
+	{
+		const auto r_init     = mipp::set1  <B>(0x0F);
+		const auto r_mask     = mipp::lshift<B>(r_init, init_shift);
+		      auto r_u_packed = mipp::load  <B>(s_a);
+		           r_u_packed = mipp::andnb <B>(r_mask, r_u_packed);
+
+		mipp::store<B>(s_a, r_u_packed);
+	}
+};
+
+template <typename B>
+struct h0_inter_8bit_bitpacking <B, 2>
+{
+	static void apply(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
+	{
+		const auto r_init     = mipp::set1  <B>(0x03);
+		const auto r_mask     = mipp::lshift<B>(r_init, init_shift);
+		      auto r_u_packed = mipp::load  <B>(s_a);
+		           r_u_packed = mipp::andnb <B>(r_mask, r_u_packed);
+
+		mipp::store<B>(s_a, r_u_packed);
+	}
+};
+
+template <typename B>
+struct h0_inter_8bit_bitpacking <B, 1>
+{
+	static void apply(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
+	{
+		const auto r_init     = mipp::set1  <B>(0x01);
+		const auto r_mask     = mipp::lshift<B>(r_init, init_shift);
+		      auto r_u_packed = mipp::load  <B>(s_a);
+		           r_u_packed = mipp::andnb <B>(r_mask, r_u_packed);
+
+		mipp::store<B>(s_a, r_u_packed);
+	}
+};
+
 // ============================================================================================================== rep()
 // ====================================================================================================================
 // ====================================================================================================================

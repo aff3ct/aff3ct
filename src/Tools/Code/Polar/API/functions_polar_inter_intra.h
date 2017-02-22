@@ -274,7 +274,6 @@ struct h0_inter_intra
 {
 	static void apply(B *__restrict s_a, const int n_elmts = 0)
 	{
-		constexpr auto stride = mipp::nElmtsPerRegister<B>();
 		constexpr auto _n_elmts = N_ELMTS * N_FRAMES;
 		std::fill(s_a, s_a + _n_elmts, 0);
 	}
@@ -285,8 +284,7 @@ struct h0_inter_intra <B,0,N_FRAMES>
 {
 	static void apply(B *__restrict s_a, const int n_elmts = 0)
 	{
-		constexpr auto stride = mipp::nElmtsPerRegister<B>();
-		const     auto _n_elmts = n_elmts * N_FRAMES;
+		const auto _n_elmts = n_elmts * N_FRAMES;
 		std::fill(s_a, s_a + _n_elmts, 0);
 	}
 };

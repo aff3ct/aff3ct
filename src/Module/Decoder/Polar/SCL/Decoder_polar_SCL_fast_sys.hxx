@@ -68,8 +68,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                   new Pattern_polar_r1,
                   new Pattern_polar_r0_left,
                   new Pattern_polar_rep_left,
-                  new Pattern_polar_rep/*(2,3)*/,  // perf. degradation with REP nodes with fixed-point arithmetic
-                  new Pattern_polar_spc(2,2)}, // perf. degradation with SPC nodes length > 4
+                  new Pattern_polar_rep,       // /!\ perf. degradation with REP nodes in fixed-point
+                  new Pattern_polar_spc(2,2)}, // /!\ perf. degradation with SPC nodes length > 4 (when L is big)
                  1,
                  2),
   paths         (L),

@@ -99,6 +99,9 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 		
 			if (params.decoder.type == "SC" && params.decoder.implem == "FAST")
 			{
+				int idx_r0, idx_r1;
+				auto polar_patterns = nodes_parser(params.decoder.polar_nodes, idx_r0, idx_r1);
+
 				if (params.decoder.simd_strategy == "INTER")
 				{
 #if defined(ENABLE_BIT_PACKING)
@@ -111,7 +114,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						using API_polar = API_polar_static_inter_8bit_bitpacking
 						                  <B, R, f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code, frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					}
 #endif
 					if (decoder == nullptr)
@@ -123,7 +126,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						using API_polar = API_polar_static_inter
 						                  <B, R, f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					}
 				}
 				else if (params.decoder.simd_strategy == "INTRA")
@@ -139,7 +142,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
 						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					}
 					else if (typeid(B) == typeid(short))
 					{
@@ -152,7 +155,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
 						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					}
 					else if (typeid(B) == typeid(int))
 					{
@@ -165,7 +168,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 						                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
 						                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
-						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
+						decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 					}
 				}
 				else if (params.decoder.simd_strategy.empty())
@@ -177,7 +180,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 					using API_polar = API_polar_static_seq
 					                  <B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>;
 #endif
-					decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, params.simulation.inter_frame_level);
+					decoder = new Decoder_polar_SC_fast_sys<B, R, API_polar>(params.code.K, params.code.N_code,frozen_bits, polar_patterns, idx_r0, idx_r1, params.simulation.inter_frame_level);
 				}
 			}
 
@@ -230,8 +233,11 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 				}
 			}
 
-			if (params.decoder.type == "ASCL")
+			if (params.decoder.type == "ASCL" && params.decoder.implem == "FAST")
 			{
+				int idx_r0, idx_r1;
+				auto polar_patterns = nodes_parser(params.decoder.polar_nodes, idx_r0, idx_r1);
+
 				if (params.decoder.simd_strategy == "INTRA")
 				{
 					using API_polar = API_polar_dynamic_intra

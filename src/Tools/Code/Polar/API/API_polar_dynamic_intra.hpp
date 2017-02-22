@@ -131,21 +131,19 @@ public:
 
 	// ------------------------------------------------------------------------------------------------------------- h0
 
-	// template <int N_ELMTS = 0>
-	// static void h0(B *__restrict s_a, const int n_elmts)
-	// {
-	// 	if (n_elmts >= mipp::nElReg<B>()) h0_inter_intra    <B>::apply(s_a, n_elmts);
-	// 	else                              h0_intra_unaligned<B>::apply(s_a, n_elmts);
-	// }
+	template <int N_ELMTS = 0>
+	static void h0(B *__restrict s_a, const int n_elmts = 0)
+	{
+		h0_inter_intra<B, N_ELMTS>::apply(s_a, n_elmts);
+	}
 
-	// template <int N_ELMTS = 0>
-	// static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts)
-	// {
-	// 	B *__restrict s_a = s.data() + off_s_a;
+	template <int N_ELMTS = 0>
+	static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts = 0)
+	{
+		B *__restrict s_a = s.data() + off_s_a;
 
-	// 	if (n_elmts >= mipp::nElReg<B>()) h0_inter_intra    <B>::apply(s_a, n_elmts);
-	// 	else                              h0_intra_unaligned<B>::apply(s_a, n_elmts);
-	// }
+		h0_inter_intra<B, N_ELMTS>::apply(s_a, n_elmts);
+	}
 
 	// ------------------------------------------------------------------------------------------------------------ rep
 

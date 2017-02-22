@@ -34,6 +34,11 @@ protected:
 public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
 	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
+
+	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+	                          const std::vector<Pattern_polar_i*> polar_patterns, const int idx_r0, const int idx_r1,
+	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
+
 	virtual ~Decoder_polar_SC_fast_sys();
 
 protected:

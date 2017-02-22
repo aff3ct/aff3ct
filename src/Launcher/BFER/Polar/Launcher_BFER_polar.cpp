@@ -28,7 +28,7 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.decoder   .n_ite         = 1;
 	this->params.decoder   .L             = 1;
 	this->params.decoder   .simd_strategy = "";
-	this->params.decoder   .polar_nodes   = "{R0,R1,R0L,REP,REPL,SPC4}";
+	this->params.decoder   .polar_nodes   = "{R0,R0L,R1,REP,REPL,SPC4+}";
 }
 
 template <typename B, typename R, typename Q>
@@ -199,20 +199,15 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 	if (this->params.decoder.type == "SCAN")
 		p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 
-	if (this->params.decoder.type == "SCL")
-	{
+	if (this->params.decoder.type == "SCL" || this->params.decoder.type == "SCL_MEM")
 		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
+
+	if (this->params.decoder.type == "ASCL" || this->params.decoder.type == "ASCL_MEM")
+		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
+
+	if ((this->params.decoder.type == "SC" || this->params.decoder.type == "SCL" || this->params.decoder.type == "ASCL")
+	    && this->params.decoder.implem == "FAST")
 		p.push_back(std::make_pair("Polar node types", this->params.decoder.polar_nodes));
-	}
-
-	if (this->params.decoder.type == "SCL_MEM")
-		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
-
-	if (this->params.decoder.type == "ASCL")
-		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
-
-	if (this->params.decoder.type == "ASCL_MEM")
-		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
 
 	return p;
 }

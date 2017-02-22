@@ -130,21 +130,21 @@ public:
 
 	// ------------------------------------------------------------------------------------------------------------- h0
 
-	// template <int N_ELMTS = 0>
-	// static void h0(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
-	// {
-	// 	h0_inter_8bit_bitpacking<B, N_ELMTS>::apply(s_a, init_shift, n_elmts);
-	// }
+	template <int N_ELMTS = 0>
+	static void h0(B *__restrict s_a, const int init_shift, const int n_elmts = 0)
+	{
+		h0_inter_8bit_bitpacking<B, N_ELMTS>::apply(s_a, init_shift, n_elmts);
+	}
 
-	// template <int N_ELMTS = 0>
-	// static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts = 0)
-	// {
-	// 	B *__restrict s_a = s.data() + os(off_s_a);
+	template <int N_ELMTS = 0>
+	static void h0(mipp::vector<B> &s, const int off_s_a, const int n_elmts = 0)
+	{
+		B *__restrict s_a = s.data() + os(off_s_a);
 
-	// 	const int init_shift = ishift(off_s_a);
+		const int init_shift = ishift(off_s_a);
 
-	// 	h0_inter_8bit_bitpacking<B, N_ELMTS>::apply(s_a, init_shift, n_elmts);
-	// }
+		h0_inter_8bit_bitpacking<B, N_ELMTS>::apply(s_a, init_shift, n_elmts);
+	}
 
 	// ------------------------------------------------------------------------------------------------------------ rep
 
