@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-type "BFER" --cde-type "POLAR" -m "1.0" -M "4.51" --sim-snr-step "0.25" -K "1755" -N "2048" --src-type "AZCW" --chn-type "AWGN_FAST" --dec-type "ASCL" --dec-simd "INTRA" -L "2" --crc-type "FAST" --crc-poly "32-GZIP" --sim-pyber "Fast-ASCL2+CRC32+SPC4" 
+./bin/aff3ct --sim-type "BFER" --cde-type "POLAR" -m "1.0" -M "4.51" --sim-snr-step "0.25" -K "1755" -N "2048" --src-type "AZCW" --chn-type "AWGN_FAST" --dec-type "ASCL" --dec-simd "INTRA" -L "2" --crc-type "FAST" --crc-poly "32-GZIP" --dec-polar-nodes "{R0,R0L,R1,REP,REPL,SPC4}" --sim-pyber "Fast-ASCL2+CRC32+SPC4" 
 Curve name:
 Fast-ASCL2+CRC32+SPC4
 # -------------------------------------------------
@@ -50,6 +50,7 @@ Fast-ASCL2+CRC32+SPC4
 #    ** Implementation            = FAST
 #    ** SIMD strategy             = INTRA
 #    ** Max num. of lists (L)     = 2
+#    ** Polar node types          = {R0,R0L,R1,REP,REPL,SPC4}
 # * Monitor ---------------------------------------
 #    ** Frame error count (e)     = 100
 #
