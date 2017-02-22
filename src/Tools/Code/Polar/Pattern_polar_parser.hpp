@@ -101,10 +101,11 @@ public:
 	 * \brief Check if a node type exists in the the tree.
 	 *
 	 * \param node_type: the type of the requested node
+	 * \param rev_depth: check for the given reversed depth
 	 *
 	 * \return true if the node type exists, false otherwise.
 	 */
-	inline bool exist_node_type(const polar_node_t node_type) const;
+	inline bool exist_node_type(const polar_node_t node_type, const int rev_depth = -1) const;
 
 	/*!
 	 * \brief Release the polar patterns given in the constructor.

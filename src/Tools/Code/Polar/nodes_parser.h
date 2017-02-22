@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
@@ -26,20 +27,6 @@ std::vector<std::string> string_split(const std::string &s, char delim)
 	return elems;
 }
 
-std::string string_replace(std::string subject, const std::string& search, const std::string& replace)
-{
-	if (search.empty()) return subject;
-
-	size_t pos = 0;
-	while((pos = subject.find(search, pos)) != std::string::npos)
-	{
-		subject.replace(pos, search.length(), replace);
-		pos += replace.length();
-	}
-
-	return subject;
-}
-
 std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar, int &idx_r0, int &idx_r1)
 {
 	idx_r0 = -1;
@@ -59,160 +46,201 @@ std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar, int &id
 	auto v_polar = string_split(str_polar_bis, ',');
 	for (auto i = 0; i < (int)v_polar.size(); i++)
 	{
-		if (v_polar[i].find("R0L") != std::string::npos)
+		auto v_str1 = string_split(v_polar[i], '_');
+
+		if (v_str1.size() >= 1)
 		{
-			polar_patterns.push_back(new Pattern_polar_r0_left);
-		}
-		else if (v_polar[i].find("R0") != std::string::npos)
-		{
-			idx_r0 = (int)polar_patterns.size();
-
-			auto search = "R0";
-			auto replace = "";
-			auto str = string_replace(v_polar[i], search, replace);
-
-			if (str.empty())
+			if (v_str1[0] == "R0L")
 			{
-				polar_patterns.push_back(new Pattern_polar_r0);
-			}
-			else
-			{
-				auto v_str = string_split(str, '-');
-
-				if (v_str.size() > 1)
+				if (v_str1.size() == 1)
 				{
-					auto min = (int)std::log2(std::stoi(v_str[0]));
-					auto max = (int)std::log2(std::stoi(v_str[1]));
-
-					polar_patterns.push_back(new Pattern_polar_r0(min, max));
+					polar_patterns.push_back(new Pattern_polar_r0_left);
 				}
 				else
 				{
-					bool plus = v_str[0].find("+") != std::string::npos;
+					auto v_str2 = string_split(v_str1[1], '-');
 
-					auto min = (int)std::log2(std::stoi(v_str[0]));
+					if (v_str2.size() > 1)
+					{
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-					if (plus)
-						polar_patterns.push_back(new Pattern_polar_r0(min));
+						polar_patterns.push_back(new Pattern_polar_r0_left(min, max));
+					}
 					else
-						polar_patterns.push_back(new Pattern_polar_r0(min, min));
+					{
+						bool plus = v_str2[0].find("+") != std::string::npos;
+
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+
+						if (plus)
+							polar_patterns.push_back(new Pattern_polar_r0_left(min));
+						else
+							polar_patterns.push_back(new Pattern_polar_r0_left(min, min));
+					}
 				}
 			}
-		}
-		else if (v_polar[i].find("R1") != std::string::npos)
-		{
-			idx_r1 = (int)polar_patterns.size();
-
-			auto search = "R1";
-			auto replace = "";
-			auto str = string_replace(v_polar[i], search, replace);
-
-			if (str.empty())
+			else if (v_str1[0] == "R0")
 			{
-				polar_patterns.push_back(new Pattern_polar_r1);
-			}
-			else
-			{
-				auto v_str = string_split(str, '-');
+				idx_r0 = (int)polar_patterns.size();
 
-				if (v_str.size() > 1)
+				if (v_str1.size() == 1)
 				{
-					auto min = (int)std::log2(std::stoi(v_str[0]));
-					auto max = (int)std::log2(std::stoi(v_str[1]));
-
-					polar_patterns.push_back(new Pattern_polar_r1(min, max));
+					polar_patterns.push_back(new Pattern_polar_r0);
 				}
 				else
 				{
-					bool plus = v_str[0].find("+") != std::string::npos;
+					auto v_str2 = string_split(v_str1[1], '-');
 
-					auto min = (int)std::log2(std::stoi(v_str[0]));
+					if (v_str2.size() > 1)
+					{
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-					if (plus)
-						polar_patterns.push_back(new Pattern_polar_r1(min));
+						polar_patterns.push_back(new Pattern_polar_r0(min, max));
+					}
 					else
-						polar_patterns.push_back(new Pattern_polar_r1(min, min));
+					{
+						bool plus = v_str2[0].find("+") != std::string::npos;
+
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+
+						if (plus)
+							polar_patterns.push_back(new Pattern_polar_r0(min));
+						else
+							polar_patterns.push_back(new Pattern_polar_r0(min, min));
+					}
 				}
 			}
-		}
-		else if (v_polar[i].find("REPL") != std::string::npos)
-		{
-			polar_patterns.push_back(new Pattern_polar_rep_left);
-		}
-		else if (v_polar[i].find("REP") != std::string::npos)
-		{
-			auto search = "REP";
-			auto replace = "";
-			auto str = string_replace(v_polar[i], search, replace);
-
-			if (str.empty())
+			else if (v_str1[0] == "R1")
 			{
-				polar_patterns.push_back(new Pattern_polar_rep);
-			}
-			else
-			{
-				auto v_str = string_split(str, '-');
+				idx_r1 = (int)polar_patterns.size();
 
-				if (v_str.size() > 1)
+				if (v_str1.size() == 1)
 				{
-					auto min = (int)std::log2(std::stoi(v_str[0]));
-					auto max = (int)std::log2(std::stoi(v_str[1]));
-
-					polar_patterns.push_back(new Pattern_polar_rep(min, max));
+					polar_patterns.push_back(new Pattern_polar_r1);
 				}
 				else
 				{
-					bool plus = v_str[0].find("+") != std::string::npos;
+					auto v_str2 = string_split(v_str1[1], '-');
 
-					auto min = (int)std::log2(std::stoi(v_str[0]));
+					if (v_str2.size() > 1)
+					{
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-					if (plus)
-						polar_patterns.push_back(new Pattern_polar_rep(min));
+						polar_patterns.push_back(new Pattern_polar_r1(min, max));
+					}
 					else
-						polar_patterns.push_back(new Pattern_polar_rep(min, min));
+					{
+						bool plus = v_str2[0].find("+") != std::string::npos;
+
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+
+						if (plus)
+							polar_patterns.push_back(new Pattern_polar_r1(min));
+						else
+							polar_patterns.push_back(new Pattern_polar_r1(min, min));
+					}
 				}
 			}
-		}
-		else if (v_polar[i].find("SPC") != std::string::npos)
-		{
-			auto search = "SPC";
-			auto replace = "";
-			auto str = string_replace(v_polar[i], search, replace);
-
-			if (str.empty())
+			else if (v_str1[0] == "REPL")
 			{
-				polar_patterns.push_back(new Pattern_polar_spc);
-			}
-			else
-			{
-				auto v_str = string_split(str, '-');
-
-				if (v_str.size() > 1)
+				if (v_str1.size() == 1)
 				{
-					auto min = (int)std::log2(std::stoi(v_str[0]));
-					auto max = (int)std::log2(std::stoi(v_str[1]));
-
-					polar_patterns.push_back(new Pattern_polar_spc(min, max));
+					polar_patterns.push_back(new Pattern_polar_rep_left);
 				}
 				else
 				{
-					bool plus = v_str[0].find("+") != std::string::npos;
+					auto v_str2 = string_split(v_str1[1], '-');
 
-					auto min = (int)std::log2(std::stoi(v_str[0]));
+					if (v_str2.size() > 1)
+					{
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+						auto max = (int)std::log2(std::stoi(v_str2[1]));
 
-					if (plus)
-						polar_patterns.push_back(new Pattern_polar_spc(min));
+						polar_patterns.push_back(new Pattern_polar_rep_left(min, max));
+					}
 					else
-						polar_patterns.push_back(new Pattern_polar_spc(min, min));
+					{
+						bool plus = v_str2[0].find("+") != std::string::npos;
+
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+
+						if (plus)
+							polar_patterns.push_back(new Pattern_polar_rep_left(min));
+						else
+							polar_patterns.push_back(new Pattern_polar_rep_left(min, min));
+					}
 				}
 			}
-		}
-		else
-		{
-			std::clog << bold_yellow("(WW) Unrecognized Polar node type (")
-			          << bold_yellow(v_polar[i])
-			          << bold_yellow(").")
-			          << std::endl;
+			else if (v_str1[0] == "REP")
+			{
+				if (v_str1.size() == 1)
+				{
+					polar_patterns.push_back(new Pattern_polar_rep);
+				}
+				else
+				{
+					auto v_str2 = string_split(v_str1[1], '-');
+
+					if (v_str2.size() > 1)
+					{
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+						auto max = (int)std::log2(std::stoi(v_str2[1]));
+
+						polar_patterns.push_back(new Pattern_polar_rep(min, max));
+					}
+					else
+					{
+						bool plus = v_str2[0].find("+") != std::string::npos;
+
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+
+						if (plus)
+							polar_patterns.push_back(new Pattern_polar_rep(min));
+						else
+							polar_patterns.push_back(new Pattern_polar_rep(min, min));
+					}
+				}
+			}
+			else if (v_str1[0] == "SPC")
+			{
+				if (v_str1.size() == 1)
+				{
+					polar_patterns.push_back(new Pattern_polar_spc);
+				}
+				else
+				{
+					auto v_str2 = string_split(v_str1[1], '-');
+
+					if (v_str2.size() > 1)
+					{
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+						auto max = (int)std::log2(std::stoi(v_str2[1]));
+
+						polar_patterns.push_back(new Pattern_polar_spc(min, max));
+					}
+					else
+					{
+						bool plus = v_str2[0].find("+") != std::string::npos;
+
+						auto min = (int)std::log2(std::stoi(v_str2[0]));
+
+						if (plus)
+							polar_patterns.push_back(new Pattern_polar_spc(min));
+						else
+							polar_patterns.push_back(new Pattern_polar_spc(min, min));
+					}
+				}
+			}
+			else
+			{
+				std::clog << bold_yellow("(WW) Unrecognized Polar node type (")
+				          << bold_yellow(v_polar[i])
+				          << bold_yellow(").")
+				          << std::endl;
+			}
 		}
 	}
 

@@ -38,10 +38,8 @@ public:
 	virtual std::string g() const { return "g";  }
 	virtual std::string h() const { return "xo"; }
 
-	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const
+	virtual int _match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const
 	{
-		assert(reverse_graph_depth > 0);
-
 		int match_val = 1;
 
 		return match_val;

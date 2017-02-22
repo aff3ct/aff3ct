@@ -7,13 +7,13 @@ class Pattern_polar_SCL_spc : public Pattern_polar_spc
 {
 protected:
 	Pattern_polar_SCL_spc(const int &N, const Binary_node<Pattern_polar_i>* node,
-	                      const int min_level = -1, const int max_level = -1)
+	                      const int min_level = 2, const int max_level = -1)
 	: Pattern_polar_spc(N, node, min_level, max_level)
 	{
 	}
 
 public:
-	Pattern_polar_SCL_spc(const int min_level = -1, const int max_level = -1)
+	Pattern_polar_SCL_spc(const int min_level = 2, const int max_level = -1)
 	: Pattern_polar_spc(min_level, max_level) {}
 
 	virtual ~Pattern_polar_SCL_spc() {}

@@ -43,7 +43,11 @@ protected:
 	unsigned id;
 	std::string key;
 
-	Pattern_polar_i(const int &N, const Binary_node<Pattern_polar_i>* node)
+	int min_level;
+	int max_level;
+
+	Pattern_polar_i(const int &N, const Binary_node<Pattern_polar_i>* node,
+	                const int min_level = 0, const int max_level = -1)
 	: N(N),
 	  m((int)std::log2(N)),
 	  size(N),
@@ -56,11 +60,16 @@ protected:
 	  n2_dig((int) (1 + std::log10(N >> 1))),
 	  tab("\t"),
 	  id(0),
-	  key("")
+	  key(""),
+	  min_level(min_level),
+	  max_level(max_level)
 	{
 		assert(N > 0);
 		assert(size > 0);
 		assert(node != nullptr);
+
+		assert(min_level >= 0);
+		assert(max_level == -1 || (max_level >= 0 && max_level >= min_level));
 
 		const int *p_size = &size;
 		for (auto i = 0; i < node->get_depth(); i++) *const_cast<int*>(p_size) >>= 1;
@@ -76,22 +85,27 @@ protected:
 	}
 
 public:
-	Pattern_polar_i()
+	Pattern_polar_i(const int min_level = 0, const int max_level = -1)
 	: N(0), m(0), size(0), si_2(0), node(nullptr), off_l(0), off_s(0), rev_depth(0), n_dig(0), n2_dig(0), tab("\t"),
-	  id(0), key("")
+	  id(0), key(""), min_level(min_level), max_level(max_level)
 	{
+		assert(min_level >= 0);
+		assert(max_level == -1 || (max_level >= 0 && max_level >= min_level));
 	}
 
 	virtual ~Pattern_polar_i() {}
 
-	void         set_id   (unsigned id    ) { this->id = id;    }
-	unsigned     get_id   (               ) { return this->id;  }
-	void         set_key  (std::string key) { this->key = key;  }
-	std::string  get_key  (               ) { return this->key; }
-	int          get_size (               ) { return size;      }
-	int          get_si_2 (               ) { return si_2;      }
-	int          get_off_l(               ) { return off_l;     }
-	int          get_off_s(               ) { return off_s;     }
+	void        set_id   (unsigned id    ) { this->id = id;    }
+	unsigned    get_id   (               ) { return this->id;  }
+	void        set_key  (std::string key) { this->key = key;  }
+	std::string get_key  (               ) { return this->key; }
+	int         get_size (               ) { return size;      }
+	int         get_si_2 (               ) { return si_2;      }
+	int         get_off_l(               ) { return off_l;     }
+	int         get_off_s(               ) { return off_s;     }
+
+	inline int get_min_lvl() { return min_level; }
+	inline int get_max_lvl() { return max_level; }
 
 	virtual Pattern_polar_i* alloc(const int &n, const Binary_node<Pattern_polar_i>* node) const = 0;
 
@@ -109,7 +123,18 @@ public:
 	virtual std::string apply_g(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 	virtual std::string apply_h(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 
-	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const = 0;
+	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr)
+	{
+		assert(reverse_graph_depth > 0);
+		assert(node_curr != nullptr);
+
+		if ((reverse_graph_depth >= min_level) && (max_level == -1 || reverse_graph_depth <= max_level))
+			return _match(reverse_graph_depth, node_curr);
+		else
+			return 0;
+	}
+
+	virtual int _match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const = 0;
 
 	virtual bool is_terminal() const = 0;
 };

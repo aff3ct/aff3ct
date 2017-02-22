@@ -6,19 +6,21 @@
 class Pattern_polar_SCL_rep_left : public Pattern_polar_rep_left
 {
 protected:
-	Pattern_polar_SCL_rep_left(const int &N, const Binary_node<Pattern_polar_i>* node)
-	: Pattern_polar_rep_left(N, node)
+	Pattern_polar_SCL_rep_left(const int &N, const Binary_node<Pattern_polar_i>* node,
+	                           const int min_level = 2, const int max_level = -1)
+	: Pattern_polar_rep_left(N, node, min_level, max_level)
 	{
 	}
 
 public:
-	Pattern_polar_SCL_rep_left() : Pattern_polar_rep_left() { }
+	Pattern_polar_SCL_rep_left(const int min_level = 2, const int max_level = -1)
+	: Pattern_polar_rep_left(min_level, max_level) {}
 
 	virtual ~Pattern_polar_SCL_rep_left() {}
 
 	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
 	{
-		return new Pattern_polar_SCL_rep_left(N, node);
+		return new Pattern_polar_SCL_rep_left(N, node, this->min_level, this->max_level);
 	}
 
 	virtual std::string apply_f(std::string si = "", std::string str_off_l = "", std::string str_off_s = "") const

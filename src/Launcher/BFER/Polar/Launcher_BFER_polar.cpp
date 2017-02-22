@@ -28,7 +28,7 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.decoder   .n_ite         = 1;
 	this->params.decoder   .L             = 1;
 	this->params.decoder   .simd_strategy = "";
-	this->params.decoder   .polar_nodes   = "{R0,R0L,R1,REP,REPL,SPC4+}";
+	this->params.decoder   .polar_nodes   = "{R0,R0L,R1,REP,REPL,SPC}";
 }
 
 template <typename B, typename R, typename Q>
@@ -94,7 +94,7 @@ void Launcher_BFER_polar<B,R,Q>
 		 "INTRA, INTER"};
 	this->opt_args[{"dec-polar-nodes"}] =
 		{"string",
-		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP,REPL,SPC4+})."};
+		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP_2-8,REPL,SPC_4+})."};
 }
 
 template <typename B, typename R, typename Q>

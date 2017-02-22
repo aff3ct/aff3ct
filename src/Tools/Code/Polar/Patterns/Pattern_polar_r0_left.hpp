@@ -15,16 +15,23 @@
 class Pattern_polar_r0_left : public Pattern_polar_i
 {
 protected:
-	Pattern_polar_r0_left(const int &N, const Binary_node<Pattern_polar_i>* node) : Pattern_polar_i(N, node)
+	Pattern_polar_r0_left(const int &N, const Binary_node<Pattern_polar_i>* node,
+	                      const int min_level = 1, const int max_level = -1)
+	: Pattern_polar_i(N, node, min_level, max_level)
 	{
+		assert(min_level >= 1);
 	}
 
 public:
-	Pattern_polar_r0_left() : Pattern_polar_i() { }
+	Pattern_polar_r0_left(const int min_level = 1, const int max_level = -1)
+	: Pattern_polar_i(min_level, max_level)
+	{
+		assert(min_level >= 1);
+	}
 
 	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
 	{
-		return new Pattern_polar_r0_left(N, node);
+		return new Pattern_polar_r0_left(N, node, min_level, max_level);
 	}
 
 	virtual ~Pattern_polar_r0_left() {}
@@ -39,11 +46,9 @@ public:
 	virtual std::string g() const { return "g0";  }
 	virtual std::string h() const { return "xo0"; }
 
-	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const
+	virtual int _match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr) const
 	{
-		assert(reverse_graph_depth > 0);
-
-		const Pattern_polar_i *pattern_left  = node_curr->get_left ()->get_contents();
+		const Pattern_polar_i *pattern_left = node_curr->get_left()->get_contents();
 
 		assert(pattern_left != nullptr);
 
