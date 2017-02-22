@@ -77,7 +77,7 @@ struct Decoder_polar_SC_fast_sys_static
 			// h
 			switch (node_type)
 			{
-				case RATE_0: if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, REV_D+1))
+				case RATE_0: // if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, REV_D+1))
 				             API_polar::template h0 <n_elmts>(s,           off_s, n_elmts); break;
 				case RATE_1: API_polar::template h  <n_elmts>(s, l, off_l, off_s, n_elmts); break;
 				case REP:    API_polar::template rep<n_elmts>(s, l, off_l, off_s, n_elmts); break;
@@ -102,7 +102,7 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 		switch (node_t)
 		{
-			case RATE_0: if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, 1))
+			case RATE_0: // if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, 1))
 			             API_polar::template h0<n_elmts>(s,           off_s, n_elmts); break;
 			case RATE_1: API_polar::template h <n_elmts>(s, l, off_l, off_s, n_elmts); break;
 			default:
@@ -258,7 +258,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			// h
 			switch (node_type)
 			{
-				case RATE_0: if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, reverse_depth +1))
+				case RATE_0: // if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, reverse_depth +1))
 				             API_polar::h0 (s,           off_s, n_elmts); break;
 				case RATE_1: API_polar::h  (s, l, off_l, off_s, n_elmts); break;
 				case REP:    API_polar::rep(s, l, off_l, off_s, n_elmts); break;

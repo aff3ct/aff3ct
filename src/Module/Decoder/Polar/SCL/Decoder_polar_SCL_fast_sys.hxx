@@ -418,7 +418,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			metrics[path] = sat_m<R>(metrics[path] + pen); // add a penalty to the current path metric
 		}
 
-	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, r_d +1))
+//	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, r_d +1))
 		for (auto i = 0; i < n_active_paths; i++)
 			API_polar::h0(s[paths[i]], off_s, n_elmts);
 }
@@ -440,7 +440,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			metrics[path] = sat_m<R>(metrics[path] + pen); // add a penalty to the current path metric
 		}
 
-	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, REV_D +1))
+//	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, REV_D +1))
 		for (auto i = 0; i < n_active_paths; i++)
 			API_polar::template h0<N_ELMTS>(s[paths[i]], off_s, N_ELMTS);
 }
