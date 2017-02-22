@@ -74,8 +74,8 @@ echo "Generate SC decoders (other rates)..."
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N 32768 -K 29492 --dec-snr 4.0 > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.report 2>&1
 
 echo "Generate SCL decoders (all rates)..."
-../build/bin/aff3ct --cde-type POLAR --sim-type GEN --dec-type SCL -N    4 -K    2 --dec-snr 2.5 > ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.report 2>&1
-../build/bin/aff3ct --cde-type POLAR --sim-type GEN --dec-type SCL -N 2048 -K 1755 --dec-snr 3.5 > ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.report 2>&1
+../build/bin/aff3ct --cde-type POLAR --sim-type GEN --dec-type SCL -N    4 -K    2 --dec-snr 2.5 --dec-polar-nodes "{R0,R0L,R1,REP,REPL,SPC_4}" > ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.report 2>&1
+../build/bin/aff3ct --cde-type POLAR --sim-type GEN --dec-type SCL -N 2048 -K 1755 --dec-snr 3.5 --dec-polar-nodes "{R0,R0L,R1,REP,REPL,SPC_4}" > ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.report 2>&1
 
 echo "Generate SC graphs (from *.dot to *.dot.pdf, rate 1/2)..."
 dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.dot -O

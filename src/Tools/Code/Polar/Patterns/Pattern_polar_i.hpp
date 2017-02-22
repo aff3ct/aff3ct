@@ -123,6 +123,18 @@ public:
 	virtual std::string apply_g(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 	virtual std::string apply_h(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 
+	virtual std::string range_name() const
+	{
+		if (min_level == 0 && max_level == -1)
+			return "";
+		else if (min_level > 0 && max_level == -1)
+			return " (" + std::to_string((int)std::exp2(min_level)) + "+)";
+		else if (max_level == min_level)
+			return " (" + std::to_string((int)std::exp2(min_level)) + ")";
+		else
+			return " (" + std::to_string((int)std::exp2(min_level)) + "-" + std::to_string((int)std::exp2(max_level)) + ")";
+	}
+
 	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr)
 	{
 		assert(reverse_graph_depth > 0);

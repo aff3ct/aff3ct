@@ -14,6 +14,7 @@
 
 #include "Tools/params.h"
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
+#include "Tools/Code/Polar/nodes_parser.h"
 
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 
@@ -58,32 +59,11 @@ Generation_polar
 #endif
 
 	// pattern allocations
-	if (params.decoder.type == "SCL")
-	{
-		polar_pattern_r0 = new Pattern_polar_SCL_r0;
-		polar_pattern_r1 = new Pattern_polar_SCL_r1;
-
-		polar_patterns.push_back(new Pattern_polar_SCL_std     );
-		polar_patterns.push_back(new Pattern_polar_SCL_r0_left );
-		polar_patterns.push_back(    polar_pattern_r0          );
-		polar_patterns.push_back(    polar_pattern_r1          );
-		polar_patterns.push_back(new Pattern_polar_SCL_rep_left);
-		polar_patterns.push_back(new Pattern_polar_SCL_rep     );
-		polar_patterns.push_back(new Pattern_polar_SCL_spc(2,2));
-	}
-	else if (params.decoder.type == "SC")
-	{
-		polar_pattern_r0 = new Pattern_polar_SC_r0;
-		polar_pattern_r1 = new Pattern_polar_SC_r1;
-
-		polar_patterns.push_back(new Pattern_polar_SC_std     );
-		polar_patterns.push_back(new Pattern_polar_SC_r0_left );
-		polar_patterns.push_back(    polar_pattern_r0         );
-		polar_patterns.push_back(    polar_pattern_r1         );
-		polar_patterns.push_back(new Pattern_polar_SC_rep_left);
-		polar_patterns.push_back(new Pattern_polar_SC_rep     );
-		polar_patterns.push_back(new Pattern_polar_SC_spc(2)  );
-	}
+	int idx_r0, idx_r1;
+	std::string type = params.decoder.type == "SC" ? "SC" : "SCL";
+	polar_patterns   = nodes_parser(params.decoder.polar_nodes, idx_r0, idx_r1, type);
+	polar_pattern_r0 = polar_patterns[idx_r0];
+	polar_pattern_r1 = polar_patterns[idx_r1];
 
 	float snr = params.simulation.snr_min;
 
@@ -170,7 +150,7 @@ void Generation_polar
 		{
 			auto cur_pattern_SC = polar_patterns[p];
 			if (cur_pattern_SC->is_terminal())
-				std::cout << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
+				std::cout << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
 				          << std::setw(5)
 				          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), -1) 
 				          << " / " << n_nodes_gen << std::endl;
@@ -180,7 +160,7 @@ void Generation_polar
 		{
 			auto cur_pattern_SC = polar_patterns[p];
 			if (!cur_pattern_SC->is_terminal())
-				std::cout << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
+				std::cout << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
 				          << std::setw(5)
 				          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), -1) 
 				          << " / " << n_nodes_gen << std::endl;
@@ -204,7 +184,7 @@ void Generation_polar
 			{
 				auto cur_pattern_SC = polar_patterns[p];
 				if (cur_pattern_SC->is_terminal())
-					std::cout << tab << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
+					std::cout << tab << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
 					          << std::setw(5)
 					          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), d) 
 					          << " / " << n_nodes_gen << std::endl;
@@ -214,7 +194,7 @@ void Generation_polar
 			{
 				auto cur_pattern_SC = polar_patterns[p];
 				if (!cur_pattern_SC->is_terminal())
-					std::cout << tab << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
+					std::cout << tab << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
 					          << std::setw(5)
 					          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), d) 
 					          << " / " << n_nodes_gen << std::endl;

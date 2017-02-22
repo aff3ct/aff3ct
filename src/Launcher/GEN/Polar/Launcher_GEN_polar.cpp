@@ -20,6 +20,7 @@ Launcher_GEN_polar<B,R,Q>
 	this->params.decoder   .simd_strategy = "";
 	this->params.decoder   .type          = "SC";
 	this->params.decoder   .gen_path      = "../src/Module/Decoder/Polar/SC/Generated";
+	this->params.decoder   .polar_nodes   = "{R0,R0L,R1,REP,REPL,SPC}";
 }
 
 template <typename B, typename R, typename Q>
@@ -67,6 +68,9 @@ void Launcher_GEN_polar<B,R,Q>
 		{"string",
 		 "type of the decoder to generate.",
 		 "SC, SCL"};
+	this->opt_args[{"dec-polar-nodes"}] =
+		{"string",
+		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP_2-8,REPL,SPC_4+})."};
 
 	// --------------------------------------------------------------------------------------------------------- other
 #ifdef MULTI_PREC
@@ -104,9 +108,10 @@ void Launcher_GEN_polar<B,R,Q>
 	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg({"cde-fb-gen-method"});
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-type"    })) this->params.decoder.type     = this->ar.get_arg({"dec-type"    });
-	if(this->params.decoder.type == "SCL")   this->params.decoder.gen_path = "../src/Module/Decoder/Polar/SCL/CRC/Generated";
-	if(this->ar.exist_arg({"dec-gen-path"})) this->params.decoder.gen_path = this->ar.get_arg({"dec-gen-path"});
+	if(this->ar.exist_arg({"dec-type"       })) this->params.decoder.type        = this->ar.get_arg({"dec-type"       });
+	if(this->params.decoder.type == "SCL")      this->params.decoder.gen_path    = "../src/Module/Decoder/Polar/SCL/CRC/Generated";
+	if(this->ar.exist_arg({"dec-gen-path"   })) this->params.decoder.gen_path    = this->ar.get_arg({"dec-gen-path"   });
+	if(this->ar.exist_arg({"dec-polar-nodes"})) this->params.decoder.polar_nodes = this->ar.get_arg({"dec-polar-nodes"});
 }
 
 template <typename B, typename R, typename Q>
@@ -157,8 +162,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_GEN_polar<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back(std::make_pair("Generated decoder path", this->params.decoder.gen_path));
-	p.push_back(std::make_pair("Type",                   this->params.decoder.type    ));
+	p.push_back(std::make_pair("Generated decoder path", this->params.decoder.gen_path   ));
+	p.push_back(std::make_pair("Type",                   this->params.decoder.type       ));
+	p.push_back(std::make_pair("Polar node types",       this->params.decoder.polar_nodes));
 
 	return p;
 }

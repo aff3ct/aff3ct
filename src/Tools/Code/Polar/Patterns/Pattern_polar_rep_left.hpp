@@ -36,11 +36,11 @@ public:
 
 	virtual ~Pattern_polar_rep_left() {}
 
-	virtual polar_node_t type()       const { return polar_node_t::REP_LEFT; }
-	virtual std::string  name()       const { return "Rep left";             }
-	virtual std::string  short_name() const { return "rl";                   }
-	virtual std::string  fill_color() const { return "#8e726f";              }
-	virtual std::string  font_color() const { return "#FFFFFF";              }
+	virtual polar_node_t type()       const { return polar_node_t::REP_LEFT;   }
+	virtual std::string  name()       const { return "Rep left" + range_name();}
+	virtual std::string  short_name() const { return "rl";                     }
+	virtual std::string  fill_color() const { return "#8e726f";                }
+	virtual std::string  font_color() const { return "#FFFFFF";                }
 
 	virtual std::string f() const { return "f";  }
 	virtual std::string g() const { return "gr"; }
