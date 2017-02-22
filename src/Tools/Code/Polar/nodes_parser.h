@@ -21,7 +21,7 @@ std::vector<std::string> string_split(const std::string &s, char delim)
 	std::string item;
 	std::vector<std::string> elems;
 	while (std::getline(ss, item, delim))
-		elems.push_back(std::move(item)); // if C++11 (based on comment from @mchiasson)
+		elems.push_back(std::move(item));
 
 	return elems;
 }
@@ -211,7 +211,7 @@ std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar, int &id
 		{
 			std::clog << bold_yellow("(WW) Unrecognized Polar node type (")
 			          << bold_yellow(v_polar[i])
-			          << bold_yellow(")")
+			          << bold_yellow(").")
 			          << std::endl;
 		}
 	}
