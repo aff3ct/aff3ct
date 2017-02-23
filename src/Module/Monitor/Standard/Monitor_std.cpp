@@ -48,10 +48,10 @@ void Monitor_std<B,R>
 	for (auto i = 0; i < this->n_frames; i++)
 	{
 		if (check_errors(U.data()+i*this->K, V.data()+i*this->K, this->K))
-			save_erroneous_frame(U    .data()+i*this->K,
-			                     X    .data()+i*this->N,
-			                     X_mod.data()+i*this->Y_size,
-			                     Y    .data()+i*this->Y_size);
+			save_wrong_frame(U    .data()+i*this->K,
+			                 X    .data()+i*this->N,
+			                 X_mod.data()+i*this->Y_size,
+			                 Y    .data()+i*this->Y_size);
 	}
 
 	this->update_n_analyzed_frames();
@@ -135,7 +135,7 @@ float Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::save_erroneous_frame(const B* U, const B* X, const R* X_mod, const R* Y)
+::save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y)
 {
 	buff_src.  push_back(mipp::vector<B>(this->K     ));
 	buff_enc.  push_back(mipp::vector<B>(this->N     ));

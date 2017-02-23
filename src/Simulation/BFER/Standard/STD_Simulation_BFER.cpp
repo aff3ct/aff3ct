@@ -100,26 +100,26 @@ void Simulation_BFER<B,R,Q>
 ::_launch()
 {
 	// check, if the error tracker is enable, if the given file name is good
-	if((this->params.monitor.err_track_enable || this->params.monitor.err_track_inverted)
-	    && !Monitor_reduction<B,R>::check_file_name(this->params.monitor.err_track_filename))
+	if((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert)
+	    && !Monitor_reduction<B,R>::check_file_name(this->params.monitor.err_track_path))
 	{
-		std::cerr << "(EE) issue while trying to open error tracker log files ; check file name: \""
-		          << this->params.monitor.err_track_filename << "\" and please create yourself the needed directory."
+		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
+		          << bold_red(this->params.monitor.err_track_path) << bold_red("\" and please create yourself the needed directory.")
 		          << std::endl;
 		exit(-1);
 	}
 
-	if(this->params.monitor.err_track_inverted)
+	if(this->params.monitor.err_track_revert)
 	{
-		std::string file_name_src, file_name_enc, file_name_noise;
-		Monitor_reduction<B,R>::get_tracker_filenames(this->params.monitor.err_track_filename, this->snr,
-		                                              file_name_src, file_name_enc, file_name_noise);
+		std::string filename_src, filename_enc, filename_noise;
+		Monitor_reduction<B,R>::get_tracker_filenames(this->params.monitor.err_track_path, this->snr,
+		                                              filename_src, filename_enc, filename_noise);
 
 		parameters *params_writable = const_cast<parameters*>(&this->params);
 
-		params_writable->source. path = file_name_src;
-		params_writable->encoder.path = file_name_enc;
-		params_writable->channel.path = file_name_noise;
+		params_writable->source. path = filename_src;
+		params_writable->encoder.path = filename_enc;
+		params_writable->channel.path = filename_noise;
 	}
 
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
@@ -140,7 +140,7 @@ void Simulation_BFER<B,R,Q>
 	}
 
 	if(this->params.monitor.err_track_enable)
-		monitor_red->flush_erroneous_frame(this->params.monitor.err_track_filename, this->snr);
+		monitor_red->flush_wrong_frame(this->params.monitor.err_track_path, this->snr);
 }
 
 template <typename B, typename R, typename Q>

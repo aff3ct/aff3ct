@@ -109,11 +109,11 @@ void Launcher_BFER<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
-	if (this->params.code.coset && !this->params.monitor.err_track_inverted) // if err_track_inverted == true then encoder.type = "USER"
+	if (this->params.code.coset && !this->params.monitor.err_track_revert) // if err_track_inverted == true then encoder.type = "USER"
 		this->params.encoder.type = "COSET";
 
 	// ------------------------------------------------------------------------------------------------------- encoder
-	if (!this->params.monitor.err_track_inverted) // if err_track_inverted == true then encoder.type = "USER" and encoder.path is set automatically
+	if (!this->params.monitor.err_track_revert) // if err_track_inverted == true then encoder.type = "USER" and encoder.path is set automatically
 	{
 		if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
 		if (this->params.encoder.type == "COSET")

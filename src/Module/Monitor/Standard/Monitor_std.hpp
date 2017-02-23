@@ -52,7 +52,7 @@ public:
 
 private:
 	void update_n_analyzed_frames();
-	void save_erroneous_frame(const B* U, const B* X, const R* X_mod, const R* Y);
+	void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y);
 };
 
 #endif /* MONITOR_STD_HPP_ */

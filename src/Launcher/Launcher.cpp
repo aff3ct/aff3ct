@@ -77,8 +77,8 @@ Launcher<B,R,Q>
 #endif
 	params.quantizer  .range             = 0.f;
 	params.monitor    .err_track_enable  = false;
-	params.monitor    .err_track_inverted= false;
-	params.monitor    .err_track_filename= "error_tracker";
+	params.monitor    .err_track_revert  = false;
+	params.monitor    .err_track_path    = "error_tracker";
 	params.terminal   .disabled          = false;
 	params.terminal   .frequency         = std::chrono::milliseconds(500);
 
@@ -271,14 +271,14 @@ void Launcher<B,R,Q>
 		 "select the implementation of the algorithm to decode."};
 
 	// ------------------------------------------------------------------------------------------------------- monitor
-	opt_args[{"mnt-err-tracker-enable"}] =
+	opt_args[{"mnt-err-trk"}] =
 		{"",
 		 "enable the tracking of the wrong frames. Automatically disabled by mnt-err-tracker-inverted."};
-	opt_args[{"mnt-err-tracker-inverted"}] =
+	opt_args[{"mnt-err-trk-rev"}] =
 		{"",
 		 std::string("automatically reply the saved frames in error tracker files for the source, the encoder and the channel noise.") +
 		 std::string(" Warning! This feature does not set automatically the configuration of all the other modules.")};
-	opt_args[{"mnt-err-tracker-filename"}] =
+	opt_args[{"mnt-err-trk-path"}] =
 		{"string",
 		 std::string("header of filenames where will be returned/read the wrong source, encoder and channel noise frames.") +
 		 std::string(" To this name will be automatically added the run SNR and the extension (.src .enc .cha).")};
@@ -434,19 +434,19 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dec-implem"    })) params.decoder.implem = ar.get_arg({"dec-implem"    });
 
 	// ------------------------------------------------------------------------------------------------------- monitor
-	if(this->ar.exist_arg({"mnt-err-tracker-inverted"})) this->params.monitor.err_track_inverted = true;
-	if(this->ar.exist_arg({"mnt-err-tracker-enable"  })) this->params.monitor.err_track_enable   = true;
-	if(this->ar.exist_arg({"mnt-err-tracker-filename"})) this->params.monitor.err_track_filename = ar.get_arg({"mnt-err-tracker-filename"});
+	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
+	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
+	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = ar.get_arg({"mnt-err-tracker-filename"});
 
-	if(this->params.monitor.err_track_inverted)
+	if(this->params.monitor.err_track_revert)
 	{
 		this->params.monitor.err_track_enable = false;
 		this->params.source. type = "USER";
 		this->params.encoder.type = "USER";
 		this->params.channel.type = "USER";
-		this->params.source. path = this->params.monitor.err_track_filename + std::string("_SNR.src");
-		this->params.encoder.path = this->params.monitor.err_track_filename + std::string("_SNR.enc");
-		this->params.channel.path = this->params.monitor.err_track_filename + std::string("_SNR.cha");
+		this->params.source. path = this->params.monitor.err_track_path + std::string("_SNR.src");
+		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_SNR.enc");
+		this->params.channel.path = this->params.monitor.err_track_path + std::string("_SNR.cha");
 		// the paths are set in the Simulation class
 	}
 
@@ -833,7 +833,7 @@ void Launcher<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Launcher<B_8,R_8,Q_8>;
+template class Launcher<B_8, R_8, Q_8 >;
 template class Launcher<B_16,R_16,Q_16>;
 template class Launcher<B_32,R_32,Q_32>;
 template class Launcher<B_64,R_64,Q_64>;

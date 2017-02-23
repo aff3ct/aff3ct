@@ -26,9 +26,9 @@ public:
 	int get_n_be() const;
 
 	static bool check_file_name(const std::string& error_tracker_head_file_name); // return true if correct
-	static void get_tracker_filenames(const std::string& error_tracker_head_file_name, const float snr,
-	                                  std::string& file_name_src, std::string& file_name_enc, std::string& file_name_noise);
-	void flush_erroneous_frame(const std::string& error_tracker_head_file_name, const float snr);
+	static void get_tracker_filenames(const std::string& error_tracker_head_filename, const float snr,
+	                                  std::string& filename_src, std::string& filename_enc, std::string& filename_noise);
+	void flush_wrong_frame(const std::string& error_tracker_head_file_name, const float snr);
 };
 
 #endif /* MONITOR_REDUCTION_HPP_ */

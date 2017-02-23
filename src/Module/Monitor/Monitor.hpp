@@ -224,7 +224,7 @@ private:
 		Monitor_i<B,R>::interrupt       = true;
 	}
 
-	virtual void save_erroneous_frame(const B* U, const B* X, const R* X_mod, const R* Y) = 0;
+	virtual void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y) = 0;
 };
 
 template <typename B, typename R>

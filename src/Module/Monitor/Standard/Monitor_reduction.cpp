@@ -5,6 +5,8 @@
 #include <fstream>
 #include <exception>
 
+#include "Tools/Display/bash_tools.h"
+
 template <typename B, typename R>
 Monitor_reduction<B,R>
 ::Monitor_reduction(const int& K, const int& N, const int& Y_size, const int& max_fe,
@@ -85,42 +87,42 @@ bool Monitor_reduction<B,R>
 
 template <typename B, typename R>
 void Monitor_reduction<B,R>
-::get_tracker_filenames(const std::string& error_tracker_head_file_name, const float snr,
-                        std::string& file_name_src, std::string& file_name_enc, std::string& file_name_noise)
+::get_tracker_filenames(const std::string& error_tracker_head_filename, const float snr,
+                        std::string& filename_src, std::string& filename_enc, std::string& filename_noise)
 {
-	if(!check_file_name(error_tracker_head_file_name))
+	if(!check_file_name(error_tracker_head_filename))
 	{
-		std::cerr << "(EE) issue while trying to open error tracker log files ; check file name: \""
-		          << error_tracker_head_file_name << "\" and please create yourself the needed directory." << std::endl;
+		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check head of the filename: \"")
+		          << bold_red(error_tracker_head_filename) << bold_red("\" and please create yourself the needed directory.") << std::endl;
 		exit(-1);
 	}
 
 	std::stringstream snr_stream;
 	snr_stream << std::fixed << std::setprecision(3) << snr;
 
-	std::string file_name_head  = error_tracker_head_file_name + std::string("_") + snr_stream.str();
+	std::string filename_head  = error_tracker_head_filename + std::string("_") + snr_stream.str();
 
-	file_name_src   = file_name_head + std::string(".src");
-	file_name_enc   = file_name_head + std::string(".enc");
-	file_name_noise = file_name_head + std::string(".cha");
+	filename_src   = filename_head + std::string(".src");
+	filename_enc   = filename_head + std::string(".enc");
+	filename_noise = filename_head + std::string(".cha");
 }
 
 template <typename B, typename R>
 void Monitor_reduction<B,R>
-::flush_erroneous_frame(const std::string& error_tracker_head_file_name, const float snr)
+::flush_wrong_frame(const std::string& error_tracker_head_filename, const float snr)
 {
-	std::string file_name_src, file_name_enc, file_name_noise;
+	std::string filename_src, filename_enc, filename_noise;
 
-	get_tracker_filenames(error_tracker_head_file_name, snr, file_name_src, file_name_enc, file_name_noise);
+	get_tracker_filenames(error_tracker_head_filename, snr, filename_src, filename_enc, filename_noise);
 
-	std::ofstream file_src  (file_name_src  );
-	std::ofstream file_enc  (file_name_enc  );
-	std::ofstream file_noise(file_name_noise, std::ios_base::binary);
+	std::ofstream file_src  (filename_src  );
+	std::ofstream file_enc  (filename_enc  );
+	std::ofstream file_noise(filename_noise, std::ios_base::binary);
 
 	if (!file_src.is_open() || !file_enc.is_open() || !file_noise.is_open())
 	{
-		std::cerr << "(EE) issue while trying to open error tracker log files ; check file name: \""
-		          << error_tracker_head_file_name << "\"" << std::endl;
+		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
+		          << bold_red(error_tracker_head_filename) << bold_red("\"") << std::endl;
 		exit(-1);
 	}
 

@@ -133,9 +133,9 @@ struct decoder_parameters
 struct monitor_parameters
 {
 	int         n_frame_errors;
-	bool        err_track_inverted;
+	bool        err_track_revert;
 	bool        err_track_enable;
-	std::string err_track_filename;
+	std::string err_track_path;
 };
 
 struct terminal_parameters
