@@ -72,17 +72,17 @@ protected:
 	virtual void release_objects   ();
 	virtual void launch_postcompute();
 
-	virtual Source   <B    >* build_source    (                  const int tid = 0);
-	virtual CRC      <B    >* build_crc       (                  const int tid = 0);
-	virtual Encoder  <B    >* build_encoder   (                  const int tid = 0);
-	virtual Puncturer<B,Q  >* build_puncturer (                  const int tid = 0);
-	virtual Modulator<B,R,R>* build_modulator (                  const int tid = 0);
-	virtual Channel  <R    >* build_channel   (const int size,   const int tid = 0);
-	virtual Quantizer<R,Q  >* build_quantizer (const int size,   const int tid = 0);
-	virtual Coset    <B,Q  >* build_coset_real(                  const int tid = 0);
-	virtual Decoder  <B,Q  >* build_decoder   (                  const int tid = 0) = 0;
-	virtual Coset    <B,B  >* build_coset_bit (                  const int tid = 0);
-	virtual Monitor  <B,R  >* build_monitor   (                  const int tid = 0);
+	virtual Source   <B    >* build_source    (                const int tid = 0);
+	virtual CRC      <B    >* build_crc       (                const int tid = 0);
+	virtual Encoder  <B    >* build_encoder   (                const int tid = 0);
+	virtual Puncturer<B,Q  >* build_puncturer (                const int tid = 0);
+	virtual Modulator<B,R,R>* build_modulator (                const int tid = 0);
+	virtual Channel  <R    >* build_channel   (const int size, const int tid = 0);
+	virtual Quantizer<R,Q  >* build_quantizer (const int size, const int tid = 0);
+	virtual Coset    <B,Q  >* build_coset_real(                const int tid = 0);
+	virtual Decoder  <B,Q  >* build_decoder   (                const int tid = 0) = 0;
+	virtual Coset    <B,B  >* build_coset_bit (                const int tid = 0);
+	virtual Monitor  <B,R  >* build_monitor   (                const int tid = 0);
 };
 
 #endif /* SIMULATION_BFER_I_HPP_ */

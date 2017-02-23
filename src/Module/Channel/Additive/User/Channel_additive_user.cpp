@@ -15,8 +15,8 @@ Channel_additive_user<R>
 	{
 		int n_fra = 0, fra_size = 0;
 
-		file.read((char *)&n_fra,    sizeof(int));
-		file.read((char *)&fra_size, sizeof(int));
+		file.read((char*)&n_fra,    sizeof(int));
+		file.read((char*)&fra_size, sizeof(int));
 
 		assert(n_fra > 0 && fra_size > 0);
 
@@ -30,7 +30,7 @@ Channel_additive_user<R>
 				for (auto j = 0; j < fra_size; j++)
 				{
 					R val;
-					file.read((char *)&val, sizeof(float));
+					file.read((char*)&val, sizeof(float));
 					this->noise[i][j] = val;
 				}
 		}

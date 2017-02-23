@@ -23,8 +23,8 @@ protected:
 	std::vector<mipp::vector<R>> buff_noise;
 
 public:
-	Monitor_std(const int& K, const int& N, const int& max_fe,
-	            const int& n_frames = 1, const std::string name = "Monitor_std");
+	Monitor_std(const int& K, const int& N, const int& max_fe, const int& n_frames = 1,
+	            const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
 	virtual void check_track_errors(const mipp::vector<B>& U,
@@ -45,14 +45,14 @@ public:
 	float get_fer() const;
 	float get_ber() const;
 
-	const std::vector<mipp::vector<B>>& get_buff_src  () const;
-	const std::vector<mipp::vector<B>>& get_buff_enc  () const;
-	const std::vector<mipp::vector<R>>& get_buff_noise() const;
+	const std::vector<mipp::vector<B>> get_buff_src  () const;
+	const std::vector<mipp::vector<B>> get_buff_enc  () const;
+	const std::vector<mipp::vector<R>> get_buff_noise() const;
 
 private:
 	void update_n_analyzed_frames();
 	void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
-	virtual bool check_errors(const B* U, const B* V, const int length);
+	inline bool check_errors(const B* U, const B* V, const int length);
 };
 
 #endif /* MONITOR_STD_HPP_ */

@@ -11,13 +11,10 @@ class Monitor_reduction : public Monitor_std<B,R>
 {
 private:
 	std::vector<Monitor<B,R>*>& monitors;
-	const float                 snr;
 	const std::string           error_tracker_head_file_name;
 
 public:
-	Monitor_reduction(const int& K, const int& N, const int& max_fe,
-	                  std::vector<Monitor<B,R>*>& monitors,
-	                  const float snr,
+	Monitor_reduction(const int& K, const int& N, const int& max_fe, std::vector<Monitor<B,R>*>& monitors,
 	                  const int& n_frames = 1, const std::string name = "Monitor_reduction");
 	virtual ~Monitor_reduction();
 
@@ -25,10 +22,10 @@ public:
 	int get_n_fe() const;
 	int get_n_be() const;
 
-	static bool check_file_name(const std::string& error_tracker_head_file_name); // return true if correct
-	static void get_tracker_filenames(const std::string& error_tracker_head_filename, const float snr,
-	                                  std::string& filename_src, std::string& filename_enc, std::string& filename_noise);
-	void flush_wrong_frame(const std::string& error_tracker_head_file_name, const float snr);
+	static bool check_path(const std::string& error_tracker_head_path); // return true if correct
+	static void get_tracker_paths(const std::string& error_tracker_head_path, const float snr,
+	                              std::string& path_src, std::string& path_enc, std::string& path_noise);
+	void flush_wrong_frames(const std::string& error_tracker_head_path, const float snr);
 };
 
 #endif /* MONITOR_REDUCTION_HPP_ */

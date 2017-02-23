@@ -11,6 +11,7 @@
 #include <csignal>
 #include <chrono>
 #include <vector>
+#include <string>
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -49,8 +50,7 @@ public:
 	 * \param n_frames: number of frames to process in the Monitor.
 	 * \param name:     Monitor's name.
 	 */
-	Monitor_i(const int& K, const int& N, const int& n_frames = 1,
-	          const std::string name = "Monitor_i")
+	Monitor_i(const int& K, const int& N, const int& n_frames = 1, const std::string name = "Monitor_i")
 	: Module(n_frames, name), K(K), N(N)
 	{
 		Monitor_i<B,R>::interrupt = false;
@@ -153,18 +153,24 @@ public:
 	 *
 	 * Typically this method is called at the very end of a communication chain.
 	 *
-	 * \param U: the original message (from the Source or the CRC).
-	 * \param V: the decoded message (from the Decoder).
-	 * \param X: the encoded message (from the Encoder).
+	 * \param U:     the original message (from the Source or the CRC).
+	 * \param V:     the decoded message (from the Decoder).
+	 * \param X:     the encoded message (from the Encoder).
 	 * \param X_mod: the modulated message (from the Modulator, the input of the Channel).
-	 * \param Y: the noised message (the output of the Channel).
+	 * \param Y:     the noised message (the output of the Channel).
 	 */
 	virtual void check_track_errors(const mipp::vector<B>& U,
 	                                const mipp::vector<B>& V,
 	                                const mipp::vector<B>& X,
 	                                const mipp::vector<R>& X_mod,
-	                                const mipp::vector<R>& Y) = 0;
+	                                const mipp::vector<R>& Y)
+	{
+		check_errors(U, V);
+	}
 
+	virtual void flush_wrong_frames(const std::string& error_tracker_head_file_name, const float snr)
+	{
+	}
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
@@ -191,21 +197,30 @@ public:
 	 *
 	 * \return a reference to the buffer recording the wrong frames from the source
 	 */
-	virtual const std::vector<mipp::vector<B>>& get_buff_src  () const = 0;
+	virtual const std::vector<mipp::vector<B>> get_buff_src() const
+	{
+		return std::vector<mipp::vector<B>>(0);
+	}
 
 	/*!
 	 * \brief get the buffer recording the wrong frames from the encoder
 	 *
 	 * \return a reference to the buffer recording the wrong frames from the encoder
 	 */
-	virtual const std::vector<mipp::vector<B>>& get_buff_enc  () const = 0;
+	virtual const std::vector<mipp::vector<B>> get_buff_enc() const
+	{
+		return std::vector<mipp::vector<B>>(0);
+	}
 
 	/*!
 	 * \brief get the buffer recording the noise added to the wrong frames in the channel
 	 *
 	 * \return a reference to the buffer recording the noise added to the wrong frames in the channel
 	 */
-	virtual const std::vector<mipp::vector<R>>& get_buff_noise() const = 0;
+	virtual const std::vector<mipp::vector<R>> get_buff_noise() const
+	{
+		return std::vector<mipp::vector<R>>(0);
+	}
 
 private:
 	static void signal_interrupt_handler(int signal)
@@ -223,18 +238,18 @@ private:
 		Monitor_i<B,R>::interrupt       = true;
 	}
 
-	virtual void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size) = 0;
+//	virtual void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size) = 0;
 
-	/*!
-	 * \brief Compares two messages and counts the number of frame errors and bit errors.
-	 *
-	 * Typically this method is called at the very end of a communication chain.
-	 *
-	 * \param U: a pointer to the original message (from the Source or the CRC).
-	 * \param V: a pointer to the decoded message (from the Decoder).
-	 * \param length: the size of the messages (U and V).
-	 */
-	virtual bool check_errors(const B* U, const B* V, const int length) = 0;
+//	/*!
+//	 * \brief Compares two messages and counts the number of frame errors and bit errors.
+//	 *
+//	 * Typically this method is called at the very end of a communication chain.
+//	 *
+//	 * \param U: a pointer to the original message (from the Source or the CRC).
+//	 * \param V: a pointer to the decoded message (from the Decoder).
+//	 * \param length: the size of the messages (U and V).
+//	 */
+//	virtual bool check_errors(const B* U, const B* V, const int length) = 0;
 };
 
 template <typename B, typename R>

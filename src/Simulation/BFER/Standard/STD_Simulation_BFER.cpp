@@ -100,26 +100,28 @@ void Simulation_BFER<B,R,Q>
 ::_launch()
 {
 	// check, if the error tracker is enable, if the given file name is good
-	if((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert)
-	    && !Monitor_reduction<B,R>::check_file_name(this->params.monitor.err_track_path))
+	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert) &&
+	     !Monitor_reduction<B,R>::check_path(this->params.monitor.err_track_path))
 	{
 		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-		          << bold_red(this->params.monitor.err_track_path) << bold_red("\" and please create yourself the needed directory.")
+		          << bold_red(this->params.monitor.err_track_path)
+		          << bold_red("\" and please create yourself the needed directory.")
 		          << std::endl;
-		exit(-1);
+		std::exit(-1);
 	}
 
-	if(this->params.monitor.err_track_revert)
+	if (this->params.monitor.err_track_revert)
 	{
-		std::string filename_src, filename_enc, filename_noise;
-		Monitor_reduction<B,R>::get_tracker_filenames(this->params.monitor.err_track_path, this->snr,
-		                                              filename_src, filename_enc, filename_noise);
+		std::string path_src, path_enc, path_noise;
+		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
+		                                          path_src, path_enc, path_noise);
 
+		// dirty hack to override simulation params
 		parameters *params_writable = const_cast<parameters*>(&this->params);
 
-		params_writable->source. path = filename_src;
-		params_writable->encoder.path = filename_enc;
-		params_writable->channel.path = filename_noise;
+		params_writable->source. path = path_src;
+		params_writable->encoder.path = path_enc;
+		params_writable->channel.path = path_noise;
 	}
 
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
@@ -139,8 +141,8 @@ void Simulation_BFER<B,R,Q>
 		terminal->final_report(std::cout);
 	}
 
-	if(this->params.monitor.err_track_enable)
-		monitor_red->flush_wrong_frame(this->params.monitor.err_track_path, this->snr);
+	if (this->params.monitor.err_track_enable)
+		monitor_red->flush_wrong_frames(this->params.monitor.err_track_path, this->snr);
 }
 
 template <typename B, typename R, typename Q>
@@ -385,7 +387,7 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		if(simu->params.monitor.err_track_enable)
+		if (simu->params.monitor.err_track_enable)
 			simu->monitor[tid]->check_track_errors(simu->U_K [tid], simu->V_K [tid], simu->X_N1[tid],
 			                                       simu->X_N3[tid], simu->Y_N1[tid]);
 		else
@@ -712,7 +714,7 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		if(simu->params.monitor.err_track_enable)
+		if (simu->params.monitor.err_track_enable)
 			simu->monitor[0]->check_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0],
 			                                     simu->X_N3[0], simu->Y_N1[0]);
 		else

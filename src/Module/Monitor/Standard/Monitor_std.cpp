@@ -6,8 +6,7 @@
 
 template <typename B, typename R>
 Monitor_std<B,R>
-::Monitor_std(const int& K, const int& N, const int& max_fe,
-              const int& n_frames, const std::string name)
+::Monitor_std(const int& K, const int& N, const int& max_fe, const int& n_frames, const std::string name)
 : Monitor<B,R>(K, N, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
@@ -39,20 +38,20 @@ void Monitor_std<B,R>
                      const mipp::vector<R>& X_mod,
                      const mipp::vector<R>& Y)
 {
-	assert(this->K      * this->n_frames == (int)U    .size());
-	assert(this->K      * this->n_frames == (int)V    .size());
-	assert(this->N      * this->n_frames == (int)X    .size());
-	assert(                     Y.size() ==      X_mod.size());
+	assert(this->K * this->n_frames == (int)U    .size());
+	assert(this->K * this->n_frames == (int)V    .size());
+	assert(this->N * this->n_frames == (int)X    .size());
+	assert(Y.size()                 ==      X_mod.size());
 
 	const int Y_size = (int)X_mod.size() / this->n_frames;
 
 	for (auto i = 0; i < this->n_frames; i++)
 	{
-		if (check_errors(U.data()+i*this->K, V.data()+i*this->K, this->K))
-			save_wrong_frame(U    .data()+i*this->K,
-			                 X    .data()+i*this->N,
-			                 X_mod.data()+i*Y_size,
-			                 Y    .data()+i*Y_size,
+		if (check_errors(U.data() + i * this->K, V.data() + i * this->K, this->K))
+			save_wrong_frame(U    .data() + i * this->K,
+			                 X    .data() + i * this->N,
+			                 X_mod.data() + i * Y_size,
+			                 Y    .data() + i * Y_size,
 			                 Y_size);
 	}
 
@@ -86,7 +85,7 @@ void Monitor_std<B,R>
 	auto n = (int)U.size() / this->n_frames;
 
 	for (auto i = 0; i < this->n_frames; i++)
-		check_errors(U.data()+i*n, V.data()+i*n, n);
+		check_errors(U.data() + i * n, V.data() + i * n, n);
 
 	this->update_n_analyzed_frames();
 }
@@ -143,32 +142,32 @@ void Monitor_std<B,R>
 	buff_enc.  push_back(mipp::vector<B>(this->N));
 	buff_noise.push_back(mipp::vector<R>(Y_size ));
 
-	for (int b = 0 ; b < this->K ; b++)
-		buff_src.  back()[b] = U[b];
+	for (int b = 0; b < this->K; b++)
+		buff_src.back()[b] = U[b];
 
-	for (int b = 0 ; b < this->N ; b++)
-		buff_enc.  back()[b] = X[b];
+	for (int b = 0; b < this->N; b++)
+		buff_enc.back()[b] = X[b];
 
-	for (int b = 0 ; b < Y_size ; b++)
+	for (int b = 0; b < Y_size; b++)
 		buff_noise.back()[b] = Y[b] - X_mod[b];
 }
 
 template <typename B, typename R>
-const std::vector<mipp::vector<B>>&  Monitor_std<B,R>
-::get_buff_src  () const
+const std::vector<mipp::vector<B>> Monitor_std<B,R>
+::get_buff_src() const
 {
 	return buff_src;
 };
 
 template <typename B, typename R>
-const std::vector<mipp::vector<B>>&  Monitor_std<B,R>
-::get_buff_enc  () const
+const std::vector<mipp::vector<B>> Monitor_std<B,R>
+::get_buff_enc() const
 {
 	return buff_enc;
 };
 
 template <typename B, typename R>
-const std::vector<mipp::vector<R>>&  Monitor_std<B,R>
+const std::vector<mipp::vector<R>> Monitor_std<B,R>
 ::get_buff_noise() const
 {
 	return buff_noise;

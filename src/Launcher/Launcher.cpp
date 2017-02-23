@@ -460,12 +460,10 @@ int Launcher<B,R,Q>
 
 		ar.print_usage(arg_grp);
 		return EXIT_FAILURE;
-		//exit(EXIT_FAILURE);
 	}
 
 	if (!ar.check_arguments())
 		return EXIT_FAILURE;
-		//std::exit(EXIT_FAILURE);
 
 	return 0;
 }
@@ -763,7 +761,7 @@ void Launcher<B,R,Q>
 		simu = nullptr;
 	}
 
-	if(this->read_arguments())
+	if (this->read_arguments())
 		return;
 
 	// write the command and he curve name in the PyBER format
