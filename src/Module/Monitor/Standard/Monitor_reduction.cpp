@@ -111,11 +111,6 @@ template <typename B, typename R>
 void Monitor_reduction<B,R>
 ::flush_wrong_frame(const std::string& error_tracker_head_filename, const float snr)
 {
-	int n_fe   = get_n_fe();
-
-	if(n_fe == 0)
-		return;
-
 	// ************* get filename and open them ******************
 	std::string filename_src, filename_enc, filename_noise;
 
@@ -132,7 +127,8 @@ void Monitor_reduction<B,R>
 		exit(-1);
 	}
 
-	int Y_size =0;
+	int n_fe   = get_n_fe();
+	int Y_size = 0;
 	// ************* get Y_size *******************
 	for (unsigned i = 0; i <= monitors.size(); i++)
 	{
