@@ -11,24 +11,27 @@ Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
 : Launcher<B,R,Q>(argc, argv, stream)
 {
-	this->params.simulation .type           = "BFER";
-	this->params.simulation .benchs         = 0;
-	this->params.simulation .benchs_no_ldst = false;
-	this->params.simulation .debug          = false;
-	this->params.simulation .debug_limit    = 0;
-	this->params.simulation .time_report    = false;
-	this->params.simulation .trace_path     = "";
+	this->params.simulation .type             = "BFER";
+	this->params.simulation .benchs           = 0;
+	this->params.simulation .benchs_no_ldst   = false;
+	this->params.simulation .debug            = false;
+	this->params.simulation .debug_limit      = 0;
+	this->params.simulation .time_report      = false;
+	this->params.simulation .trace_path       = "";
 #if !defined(STARPU) && !defined(SYSTEMC)
-	this->params.simulation .n_threads      = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
+	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
-	this->params.code       .coset          = false;
-	this->params.encoder    .type           = "";
-	this->params.encoder    .path           = "";
-	this->params.encoder    .systematic     = true;
-	this->params.monitor    .n_frame_errors = 100;
-	this->params.encoder    .systematic     = true;
-	this->params.demodulator.max            = "MAX";
-	this->params.terminal   .type           = "STD";
+	this->params.code       .coset            = false;
+	this->params.encoder    .type             = "";
+	this->params.encoder    .path             = "";
+	this->params.encoder    .systematic       = true;
+	this->params.monitor    .n_frame_errors   = 100;
+	this->params.monitor    .err_track_enable = false;
+	this->params.monitor    .err_track_revert = false;
+	this->params.monitor    .err_track_path   = "error_tracker";
+	this->params.encoder    .systematic       = true;
+	this->params.demodulator.max              = "MAX";
+	this->params.terminal   .type             = "STD";
 }
 
 template <typename B, typename R, typename Q>

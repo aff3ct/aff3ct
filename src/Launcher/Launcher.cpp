@@ -76,9 +76,6 @@ Launcher<B,R,Q>
 	params.quantizer  .type              = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
 #endif
 	params.quantizer  .range             = 0.f;
-	params.monitor    .err_track_enable  = false;
-	params.monitor    .err_track_revert  = false;
-	params.monitor    .err_track_path    = "error_tracker";
 	params.terminal   .disabled          = false;
 	params.terminal   .frequency         = std::chrono::milliseconds(500);
 
@@ -403,8 +400,8 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"});
-	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"});
+	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
+	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"   });
 	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
 
 	// ----------------------------------------------------------------------------------------------------- quantizer
