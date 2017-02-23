@@ -15,7 +15,7 @@ private:
 	const std::string           error_tracker_head_file_name;
 
 public:
-	Monitor_reduction(const int& K, const int& N, const int& Y_size, const int& max_fe,
+	Monitor_reduction(const int& K, const int& N, const int& max_fe,
 	                  std::vector<Monitor<B,R>*>& monitors,
 	                  const float snr,
 	                  const int& n_frames = 1, const std::string name = "Monitor_reduction");

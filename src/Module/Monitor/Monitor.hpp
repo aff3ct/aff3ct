@@ -37,7 +37,6 @@ protected:
 
 	const int K; /*!< Number of information bits in one frame */
 	const int N; /*!< Size of one encoded frame (= number of bits in one frame) */
-	const int Y_size; /*!< Size of one sent frame through the channel (= number of samples in one frame) */
 
 public:
 	/*!
@@ -50,9 +49,9 @@ public:
 	 * \param n_frames: number of frames to process in the Monitor.
 	 * \param name:     Monitor's name.
 	 */
-	Monitor_i(const int& K, const int& N, const int& Y_size, const int& n_frames = 1,
+	Monitor_i(const int& K, const int& N, const int& n_frames = 1,
 	          const std::string name = "Monitor_i")
-	: Module(n_frames, name), K(K), N(N), Y_size(Y_size)
+	: Module(n_frames, name), K(K), N(N)
 	{
 		Monitor_i<B,R>::interrupt = false;
 		Monitor_i<B,R>::d_delta_interrupt = std::chrono::nanoseconds(0);
@@ -88,16 +87,6 @@ public:
 	int get_K() const
 	{
 		return K;
-	}
-
-	/*!
-	 * \brief Gets the number of samples in the frame sent through the channel.
-	 *
-	 * \return the number of samples in the frame sent through the channel.
-	 */
-	int get_Y_size() const
-	{
-		return Y_size;
 	}
 
 	/*!
@@ -158,13 +147,23 @@ public:
 	 * \param V: the decoded message (from the Decoder).
 	 */
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
-	virtual bool check_errors(const B* U, const B* V, const int length) = 0;
 
+	/*!
+	 * \brief Compares two messages and counts the number of frame errors and bit errors.
+	 *
+	 * Typically this method is called at the very end of a communication chain.
+	 *
+	 * \param U: the original message (from the Source or the CRC).
+	 * \param V: the decoded message (from the Decoder).
+	 * \param X: the encoded message (from the Encoder).
+	 * \param X_mod: the modulated message (from the Modulator, the input of the Channel).
+	 * \param Y: the noised message (the output of the Channel).
+	 */
 	virtual void check_track_errors(const mipp::vector<B>& U,
 	                                const mipp::vector<B>& V,
-	                                const mipp::vector<B>& Enc,
-	                                const mipp::vector<R>& Cha_in,
-	                                const mipp::vector<R>& Cha_out) = 0;
+	                                const mipp::vector<B>& X,
+	                                const mipp::vector<R>& X_mod,
+	                                const mipp::vector<R>& Y) = 0;
 
 
 	/*!
@@ -224,7 +223,18 @@ private:
 		Monitor_i<B,R>::interrupt       = true;
 	}
 
-	virtual void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y) = 0;
+	virtual void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size) = 0;
+
+	/*!
+	 * \brief Compares two messages and counts the number of frame errors and bit errors.
+	 *
+	 * Typically this method is called at the very end of a communication chain.
+	 *
+	 * \param U: a pointer to the original message (from the Source or the CRC).
+	 * \param V: a pointer to the decoded message (from the Decoder).
+	 * \param length: the size of the messages (U and V).
+	 */
+	virtual bool check_errors(const B* U, const B* V, const int length) = 0;
 };
 
 template <typename B, typename R>

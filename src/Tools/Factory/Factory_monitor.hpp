@@ -9,7 +9,7 @@
 template <typename B, typename R>
 struct Factory_monitor : public Factory
 {
-	static Monitor<B,R>* build(const parameters &params, const int Y_size, const int n_frames = 1);
+	static Monitor<B,R>* build(const parameters &params, const int n_frames = 1);
 };
 
 #endif /* FACTORY_MONITOR_HPP */

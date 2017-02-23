@@ -6,9 +6,9 @@
 
 template <typename B, typename R>
 Monitor_std<B,R>
-::Monitor_std(const int& K, const int& N, const int& Y_size, const int& max_fe,
+::Monitor_std(const int& K, const int& N, const int& max_fe,
               const int& n_frames, const std::string name)
-: Monitor<B,R>(K, N, Y_size, n_frames, name.c_str()),
+: Monitor<B,R>(K, N, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
@@ -42,16 +42,18 @@ void Monitor_std<B,R>
 	assert(this->K      * this->n_frames == (int)U    .size());
 	assert(this->K      * this->n_frames == (int)V    .size());
 	assert(this->N      * this->n_frames == (int)X    .size());
-	assert(this->Y_size * this->n_frames == (int)X_mod.size());
-	assert(this->Y_size * this->n_frames == (int)Y    .size());
+	assert(                     Y.size() ==      X_mod.size());
+
+	const int Y_size = (int)X_mod.size() / this->n_frames;
 
 	for (auto i = 0; i < this->n_frames; i++)
 	{
 		if (check_errors(U.data()+i*this->K, V.data()+i*this->K, this->K))
 			save_wrong_frame(U    .data()+i*this->K,
 			                 X    .data()+i*this->N,
-			                 X_mod.data()+i*this->Y_size,
-			                 Y    .data()+i*this->Y_size);
+			                 X_mod.data()+i*Y_size,
+			                 Y    .data()+i*Y_size,
+			                 Y_size);
 	}
 
 	this->update_n_analyzed_frames();
@@ -135,11 +137,11 @@ float Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y)
+::save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size)
 {
-	buff_src.  push_back(mipp::vector<B>(this->K     ));
-	buff_enc.  push_back(mipp::vector<B>(this->N     ));
-	buff_noise.push_back(mipp::vector<R>(this->Y_size));
+	buff_src.  push_back(mipp::vector<B>(this->K));
+	buff_enc.  push_back(mipp::vector<B>(this->N));
+	buff_noise.push_back(mipp::vector<R>(Y_size ));
 
 	for (int b = 0 ; b < this->K ; b++)
 		buff_src.  back()[b] = U[b];
@@ -147,7 +149,7 @@ void Monitor_std<B,R>
 	for (int b = 0 ; b < this->N ; b++)
 		buff_enc.  back()[b] = X[b];
 
-	for (int b = 0 ; b < this->Y_size ; b++)
+	for (int b = 0 ; b < Y_size ; b++)
 		buff_noise.back()[b] = Y[b] - X_mod[b];
 }
 

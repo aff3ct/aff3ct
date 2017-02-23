@@ -23,7 +23,7 @@ protected:
 	std::vector<mipp::vector<R>> buff_noise;
 
 public:
-	Monitor_std(const int& K, const int& N, const int& Y_size, const int& max_fe,
+	Monitor_std(const int& K, const int& N, const int& max_fe,
 	            const int& n_frames = 1, const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
@@ -33,7 +33,6 @@ public:
 	                                const mipp::vector<R>& X_mod,
 	                                const mipp::vector<R>& Y);
 
-	virtual bool check_errors(const B* U, const B* V, const int length);
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
 
 	virtual bool fe_limit_achieved();
@@ -52,7 +51,8 @@ public:
 
 private:
 	void update_n_analyzed_frames();
-	void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y);
+	void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
+	virtual bool check_errors(const B* U, const B* V, const int length);
 };
 
 #endif /* MONITOR_STD_HPP_ */

@@ -97,6 +97,18 @@ void Launcher_BFERI<B,R,Q>
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
 
+	this->opt_args[{"mnt-err-trk"}] =
+		{"",
+		 "enable the tracking of the wrong frames. Automatically disabled by mnt-err-trk-rev but enabled by mnt-err-trk-path option."};
+	this->opt_args[{"mnt-err-trk-rev"}] =
+		{"",
+		 std::string("automatically reply the saved frames in error tracker files for the source, the encoder and the channel noise.") +
+		 std::string(" Warning! This feature does not set automatically the configuration of all the other modules.")};
+	this->opt_args[{"mnt-err-trk-path"}] =
+		{"string",
+		 std::string("header of filenames where will be returned/read the wrong source, encoder and channel noise frames.") +
+		 std::string(" To this name will be automatically added the run SNR and the extension (.src .enc .chn).")};
+
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
 		{"string",
@@ -124,21 +136,18 @@ void Launcher_BFERI<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
-	if (this->params.code.coset && !this->params.monitor.err_track_revert) // if err_track_inverted == true then encoder.type = "USER"
+	if (this->params.code.coset)
 		this->params.encoder.type = "COSET";
 
 	// ------------------------------------------------------------------------------------------------------- encoder
-	if (!this->params.monitor.err_track_revert) // if err_track_inverted == true then encoder.type = "USER" and encoder.path is set automatically
-	{
-		if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
-		if (this->params.encoder.type == "COSET")
-			this->params.code.coset = true;
-		if (this->params.encoder.type == "AZCW")
-			this->params.source.type = "AZCW";
-		if (this->params.encoder.type == "USER")
-			this->params.source.type = "USER";
-		if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
-	}
+	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
+	if (this->params.encoder.type == "COSET")
+		this->params.code.coset = true;
+	if (this->params.encoder.type == "AZCW")
+		this->params.source.type = "AZCW";
+	if (this->params.encoder.type == "USER")
+		this->params.source.type = "USER";
+	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
@@ -149,6 +158,22 @@ void Launcher_BFERI<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
+
+	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
+	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
+	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = this->ar.get_arg({"mnt-err-trk-path"});
+
+	if(this->params.monitor.err_track_revert)
+	{
+		this->params.monitor.err_track_enable = false;
+		this->params.source. type = "USER";
+		this->params.encoder.type = "USER";
+		this->params.channel.type = "USER";
+		this->params.source. path = this->params.monitor.err_track_path + std::string("_SNR.src");
+		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_SNR.enc");
+		this->params.channel.path = this->params.monitor.err_track_path + std::string("_SNR.chn");
+		// the paths are set in the Simulation class
+	}
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	if(this->ar.exist_arg({"term-type"})) this->params.terminal.type = this->ar.get_arg({"term-type"});

@@ -51,48 +51,6 @@ Channel_additive_user<R>
 		          << std::endl;
 		std::exit(-1);
 	}
-
-	//std::ifstream file(filename.c_str(), std::ios::in);
-//	if (file.is_open())
-//	{
-//		int n_fra = 0, fra_size = 0;
-//
-//		file >> n_fra;
-//		file >> fra_size;
-//
-//		assert(n_fra > 0 && fra_size > 0);
-//
-//		this->noise.resize(n_fra);
-//		for (auto i = 0; i < n_fra; i++)
-//			this->noise[i].resize(fra_size);
-//
-//		if (fra_size == this->N)
-//		{
-//			for (auto i = 0; i < n_fra; i++)
-//				for (auto j = 0; j < fra_size; j++)
-//				{
-//					R val;
-//					file >> val;
-//					this->noise[i][j] = val;
-//				}
-//		}
-//		else
-//		{
-//			std::cerr << bold_red("(EE) The frame size is wrong (read: ") << bold_red(std::to_string(fra_size))
-//			          << bold_red(", expected: ") << bold_red(std::to_string(this->N))
-//			          << bold_red("), exiting.") << std::endl;
-//			file.close();
-//			std::exit(-1);
-//		}
-//
-//		file.close();
-//	}
-//	else
-//	{
-//		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
-//		          << std::endl;
-//		std::exit(-1);
-//	}
 }
 
 template <typename R>

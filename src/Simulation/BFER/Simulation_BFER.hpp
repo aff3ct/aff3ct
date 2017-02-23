@@ -82,7 +82,7 @@ protected:
 	virtual Coset    <B,Q  >* build_coset_real(                  const int tid = 0);
 	virtual Decoder  <B,Q  >* build_decoder   (                  const int tid = 0) = 0;
 	virtual Coset    <B,B  >* build_coset_bit (                  const int tid = 0);
-	virtual Monitor  <B,R  >* build_monitor   (const int Y_size, const int tid = 0);
+	virtual Monitor  <B,R  >* build_monitor   (                  const int tid = 0);
 };
 
 #endif /* SIMULATION_BFER_I_HPP_ */

@@ -83,7 +83,7 @@ void Simulation_BFER_i<B,R,Q>
 	simu->coset_real[tid] = simu->build_coset_real(        tid); check_errors(simu->coset_real[tid], "Coset<B,Q>"    );
 	simu->decoder   [tid] = simu->build_decoder   (        tid); check_errors(simu->decoder   [tid], "Decoder<B,Q>"  );
 	simu->coset_bit [tid] = simu->build_coset_bit (        tid); check_errors(simu->coset_bit [tid], "Coset<B,B>"    );
-	simu->monitor   [tid] = simu->build_monitor   (N_mod , tid); check_errors(simu->monitor   [tid], "Monitor<B>"    );
+	simu->monitor   [tid] = simu->build_monitor   (        tid); check_errors(simu->monitor   [tid], "Monitor<B>"    );
 
 	// get the real number of frames per threads (from the decoder)
 	const auto n_frames = simu->decoder[tid]->get_n_frames();
@@ -246,9 +246,9 @@ Coset<B,B>* Simulation_BFER_i<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Monitor<B,R>* Simulation_BFER_i<B,R,Q>
-::build_monitor(const int Y_size, const int tid)
+::build_monitor(const int tid)
 {
-	return Factory_monitor<B,R>::build(params, Y_size);
+	return Factory_monitor<B,R>::build(params);
 }
 
 // ==================================================================================== explicit template instantiation

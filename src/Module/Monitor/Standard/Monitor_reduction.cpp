@@ -9,11 +9,11 @@
 
 template <typename B, typename R>
 Monitor_reduction<B,R>
-::Monitor_reduction(const int& K, const int& N, const int& Y_size, const int& max_fe,
+::Monitor_reduction(const int& K, const int& N, const int& max_fe,
                     std::vector<Monitor<B,R>*>& monitors,
                     const float snr,
                     const int& n_frames, const std::string name)
-: Monitor_std<B,R>            (K, N, Y_size, max_fe, n_frames, name),
+: Monitor_std<B,R>            (K, N, max_fe, n_frames, name),
   monitors                    (monitors                    ),
   snr                         (snr                         )
 {
@@ -111,6 +111,12 @@ template <typename B, typename R>
 void Monitor_reduction<B,R>
 ::flush_wrong_frame(const std::string& error_tracker_head_filename, const float snr)
 {
+	int n_fe   = get_n_fe();
+
+	if(n_fe == 0)
+		return;
+
+	// ************* get filename and open them ******************
 	std::string filename_src, filename_enc, filename_noise;
 
 	get_tracker_filenames(error_tracker_head_filename, snr, filename_src, filename_enc, filename_noise);
@@ -126,9 +132,21 @@ void Monitor_reduction<B,R>
 		exit(-1);
 	}
 
+	int Y_size =0;
+	// ************* get Y_size *******************
+	for (unsigned i = 0; i <= monitors.size(); i++)
+	{
+		auto mon = (i == monitors.size()) ? this : monitors[i];
 
-	int n_fe   = get_n_fe();
-	int Y_size = this->get_Y_size();
+		// write noise
+		auto buff_noise = mon->get_buff_noise();
+
+		if(buff_noise.empty())
+			continue;
+
+		Y_size = buff_noise.front().size();
+		break;
+	}
 
 	// ************* write headers *****************
 	file_src << n_fe          << std::endl << std::endl; // write number frames
