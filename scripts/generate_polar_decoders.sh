@@ -145,3 +145,4 @@ dot -Tpdf ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65
 echo "Generate SCL graphs (from *.dot to *.dot.pdf, all rates)..."
 dot -Tpdf ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.dot -O
 dot -Tpdf ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.dot -O
+dot -Tpdf ../src/Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.dot -O
