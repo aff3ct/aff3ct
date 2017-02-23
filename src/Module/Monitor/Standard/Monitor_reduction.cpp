@@ -104,7 +104,7 @@ void Monitor_reduction<B,R>
 
 	filename_src   = filename_head + std::string(".src");
 	filename_enc   = filename_head + std::string(".enc");
-	filename_noise = filename_head + std::string(".cha");
+	filename_noise = filename_head + std::string(".chn");
 }
 
 template <typename B, typename R>

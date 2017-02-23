@@ -436,7 +436,7 @@ void Launcher<B,R,Q>
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
 	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
-	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = ar.get_arg({"mnt-err-tracker-filename"});
+	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = ar.get_arg({"mnt-err-trk-path"});
 
 	if(this->params.monitor.err_track_revert)
 	{
@@ -446,7 +446,7 @@ void Launcher<B,R,Q>
 		this->params.channel.type = "USER";
 		this->params.source. path = this->params.monitor.err_track_path + std::string("_SNR.src");
 		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_SNR.enc");
-		this->params.channel.path = this->params.monitor.err_track_path + std::string("_SNR.cha");
+		this->params.channel.path = this->params.monitor.err_track_path + std::string("_SNR.chn");
 		// the paths are set in the Simulation class
 	}
 
@@ -460,10 +460,6 @@ int Launcher<B,R,Q>
 ::read_arguments()
 {
 	this->build_args();
-
-//	opt_args[{"help", "h"}] =
-//		{"",
-//		 "print this help."};
 
 	auto display_help = true;
 	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
