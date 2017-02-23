@@ -40,6 +40,7 @@ protected:
 	std::vector<std::vector<int>> stats;
 	std::map<std::string, int> subtree_occurences;
 	std::map<std::string, int> subtree_occurences_cpy;
+	std::map<std::string, std::string> subtree_nodes;
 	unsigned n_nodes_before_compression;
 	unsigned n_nodes_after_compression;
 

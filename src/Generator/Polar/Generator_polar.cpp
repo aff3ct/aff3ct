@@ -136,8 +136,9 @@ void Generator_polar
 	graph_common1 << tab << tab << "rank=same;" << endl;
 	for (unsigned p = 0; p < patterns.size(); p++)
 	{
+		std::string rng = patterns[p]->range().empty() ? "" : std::string("\n") + patterns[p]->range();
 		graph_common1 << tab << tab;
-		graph_common1 << "\"" << patterns[p]->name() << "\"["
+		graph_common1 << "\"" << patterns[p]->name() << rng << "\"["
 		                      << "style=filled, "
 		                      << "fillcolor=\"" << patterns[p]->fill_color() << "\","
 		                      << "fontcolor=\"" << patterns[p]->font_color() << "\""
@@ -145,8 +146,11 @@ void Generator_polar
 	}
 	for (unsigned p = 0; p < patterns.size() -1; p++)
 	{
+		std::string rng0 = patterns[p   ]->range().empty() ? "" : std::string("\n") + patterns[p   ]->range();
+		std::string rng1 = patterns[p +1]->range().empty() ? "" : std::string("\n") + patterns[p +1]->range();
 		graph_common1 << tab << tab;
-		graph_common1 << "\"" << patterns[p]->name() << "\" -> " << "\"" << patterns[p +1]->name() << "\";" << endl;
+		graph_common1 << "\"" << patterns[p   ]->name() << rng0 << "\" -> " << "\""
+		                      << patterns[p +1]->name() << rng1 << "\";" << endl;
 	}
 
 	float compression_rate = 1.f;
@@ -190,51 +194,59 @@ void Generator_polar
 }
 
 void Generator_polar
-::recursive_generate_graph(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
+::recursive_generate_graph(const Binary_node<Pattern_polar_i>* n_c, ostream &stream)
 {
 	string key = "";
 
+	string ne_c = string("\n(") + to_string(n_c->get_c()->get_size()) + string(")");
+
 	// generate graphviz tree
 	stream << tab << tab;
-	stream << "N" << node_curr->get_c()->get_id() << "["
+	stream << "\"N" << n_c->get_c()->get_id() << ne_c << "\"["
 	       << "style=filled,"
-	       << "fillcolor=\"" << node_curr->get_c()->fill_color() << "\","
-	       << "fontcolor=\"" << node_curr->get_c()->font_color() << "\""
+	       << "fillcolor=\"" << n_c->get_c()->fill_color() << "\","
+	       << "fontcolor=\"" << n_c->get_c()->font_color() << "\""
 	       << "];" << endl;
 
-	if (!node_curr->is_leaf()) // stop condition
+	if (!n_c->is_leaf()) // stop condition
 	{
-		stream << tab << tab;
-		stream << "N" << node_curr->get_c()->get_id() << " -> N" << node_curr->get_left()->get_c()->get_id()
-		       << "[label=\"" << node_curr->get_c()->f() << ((!node_curr->get_c()->f().empty()) ? "()" : "")
-		       << "\"];" << endl;
-
-		this->recursive_generate_graph(node_curr->get_left(), stream); // recursive call
-		key += node_curr->get_left()->get_c()->get_key();
+		string ne_l = string("\n(") + to_string(n_c->get_left ()->get_c()->get_size()) + string(")");
+		string ne_r = string("\n(") + to_string(n_c->get_right()->get_c()->get_size()) + string(")");
 
 		stream << tab << tab;
-		stream << "N" << node_curr->get_c()->get_id() << " -> N" << node_curr->get_right()->get_c()->get_id()
-		       << "[label=\"" << node_curr->get_c()->g() << ((!node_curr->get_c()->g().empty()) ? "()" : "")
+		stream << "\"N" << n_c            ->get_c()->get_id() << ne_c << "\" -> "
+		       << "\"N" << n_c->get_left()->get_c()->get_id() << ne_l << "\""
+		       << "[label=\"" << n_c->get_c()->f() << ((!n_c->get_c()->f().empty()) ? "()" : "")
 		       << "\"];" << endl;
 
-		this->recursive_generate_graph(node_curr->get_right(), stream); // recursive call
-		key += node_curr->get_right()->get_c()->get_key();
+		this->recursive_generate_graph(n_c->get_left(), stream); // recursive call
+		key += n_c->get_left()->get_c()->get_key();
+
+		stream << tab << tab;
+		stream << "\"N" << n_c             ->get_c()->get_id() << ne_c << "\" -> "
+		       << "\"N" << n_c->get_right()->get_c()->get_id() << ne_r << "\""
+		       << "[label=\"" << n_c->get_c()->g() << ((!n_c->get_c()->g().empty()) ? "()" : "")
+		       << "\"];" << endl;
+
+		this->recursive_generate_graph(n_c->get_right(), stream); // recursive call
+		key += n_c->get_right()->get_c()->get_key();
 	}
 	else
 	{
-		key += node_curr->get_c()->short_name() + to_string(node_curr->get_depth());
+		key += n_c->get_c()->short_name() + to_string(n_c->get_depth());
 	}
 
-	if (!node_curr->get_c()->h().empty())
+	if (!n_c->get_c()->h().empty())
 	{
 		stream << tab << tab;
-		stream << "N" << node_curr->get_c()->get_id() << " -> N" << node_curr->get_c()->get_id()
-		       << "[label=\"" << node_curr->get_c()->h() << "()\"];" << endl;
+		stream << "\"N" << n_c->get_c()->get_id() << ne_c << "\" -> "
+		       << "\"N" << n_c->get_c()->get_id() << ne_c << "\""
+		       << "[label=\"" << n_c->get_c()->h() << "()\"];" << endl;
 	}
 
 	// statistics
 	int pattern_id = 0;
-	Pattern_polar_i* pattern = node_curr->get_c();
+	Pattern_polar_i* pattern = n_c->get_c();
 	for (unsigned i = 0; i < patterns.size(); i++)
 	{
 		auto cur_pattern = patterns[i];
@@ -244,9 +256,9 @@ void Generator_polar
 			break;
 		}
 	}
-	stats[node_curr->get_depth()][pattern_id]++;
+	stats[n_c->get_depth()][pattern_id]++;
 
-	node_curr->get_c()->set_key(key);
+	n_c->get_c()->set_key(key);
 	if (subtree_occurences.find(key) != subtree_occurences.end())
 		subtree_occurences[key]++;
 	else
@@ -254,43 +266,64 @@ void Generator_polar
 }
 
 void Generator_polar
-::recursive_generate_short_graph(const Binary_node<Pattern_polar_i>* node_curr, ostream &stream)
+::recursive_generate_short_graph(const Binary_node<Pattern_polar_i>* n_c, ostream &stream)
 {
-	if (subtree_occurences_cpy[node_curr->get_c()->get_key()])
+	if (subtree_occurences_cpy[n_c->get_c()->get_key()])
 	{
+		string ne_c = string("\n(") + to_string(n_c->get_c()->get_size()) + string(")");
+
 		n_nodes_after_compression++;
-		subtree_occurences_cpy[node_curr->get_c()->get_key()] = 0;
+		subtree_occurences_cpy[n_c->get_c()->get_key()] = 0;
+		subtree_nodes         [n_c->get_c()->get_key()] = string("\"N") + to_string(n_c->get_c()->get_id()) + ne_c +
+		                                                  string("\"");
 
 		// generate graphviz tree
 		stream << tab << tab;
-		stream << "N" << node_curr->get_c()->get_id() << "["
+		stream << "\"N" << n_c->get_c()->get_id() << ne_c << "\"["
 		       << "style=filled,"
-		       << "fillcolor=\"" << node_curr->get_c()->fill_color() << "\","
-		       << "fontcolor=\"" << node_curr->get_c()->font_color() << "\""
+		       << "fillcolor=\"" << n_c->get_c()->fill_color() << "\","
+		       << "fontcolor=\"" << n_c->get_c()->font_color() << "\""
 		       << "];" << endl;
 
-		if (!node_curr->is_leaf()) // stop condition
+		if (!n_c->is_leaf()) // stop condition
 		{
-			auto occurences = subtree_occurences_cpy[node_curr->get_left()->get_c()->get_key()];
+			string ne_l = string("\n(") + to_string(n_c->get_left ()->get_c()->get_size()) + string(")");
+			string ne_r = string("\n(") + to_string(n_c->get_right()->get_c()->get_size()) + string(")");
+
+			auto occurences = subtree_occurences_cpy[n_c->get_left()->get_c()->get_key()];
 			if (occurences)
 			{
 				stream << tab << tab;
-				stream << "N" << node_curr->get_c()->get_id() << " -> "
-				       << "N" << node_curr->get_left()->get_c()->get_id()
-				       << "[label=\"" << occurences << "\"];" << endl;
+				stream << "\"N" << n_c            ->get_c()->get_id() << ne_c << "\" -> "
+				       << "\"N" << n_c->get_left()->get_c()->get_id() << ne_l << "\""
+//				       << "[label=\"" << occurences << "\"];"
+				       << endl;
 
-				this->recursive_generate_short_graph(node_curr->get_left(), stream); // recursive call
+				this->recursive_generate_short_graph(n_c->get_left(), stream); // recursive call
+			}
+			else
+			{
+				auto name = subtree_nodes[n_c->get_left()->get_c()->get_key()];
+				stream << tab << tab;
+				stream << "\"N" << n_c->get_c()->get_id() << ne_c << "\" -> " << name << endl;
 			}
 
-			occurences = subtree_occurences_cpy[node_curr->get_right()->get_c()->get_key()];
+			occurences = subtree_occurences_cpy[n_c->get_right()->get_c()->get_key()];
 			if (occurences)
 			{
 				stream << tab << tab;
-				stream << "N" << node_curr->get_c()->get_id() << " -> "
-				       << "N" << node_curr->get_right()->get_c()->get_id()
-				       << "[label=\"" << occurences << "\"];" << endl;
+				stream << "\"N" << n_c             ->get_c()->get_id() << ne_c << "\" -> "
+				       << "\"N" << n_c->get_right()->get_c()->get_id() << ne_r << "\""
+//				       << "[label=\"" << occurences << "\"];"
+				       << endl;
 
-				this->recursive_generate_short_graph(node_curr->get_right(), stream); // recursive call
+				this->recursive_generate_short_graph(n_c->get_right(), stream); // recursive call
+			}
+			else
+			{
+				auto name = subtree_nodes[n_c->get_right()->get_c()->get_key()];
+				stream << tab << tab;
+				stream << "\"N" << n_c->get_c()->get_id() << ne_c << "\" -> " << name << endl;
 			}
 		}
 	}

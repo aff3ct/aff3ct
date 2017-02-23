@@ -32,11 +32,11 @@ public:
 
 	virtual ~Pattern_polar_r0() {}
 
-	virtual polar_node_t type()       const { return polar_node_t::RATE_0;   }
-	virtual std::string  name()       const { return "Rate 0" + range_name();}
-	virtual std::string  short_name() const { return "r0";                   }
-	virtual std::string  fill_color() const { return "#FFFFFF";              }
-	virtual std::string  font_color() const { return "#000000";              }
+	virtual polar_node_t type()       const { return polar_node_t::RATE_0; }
+	virtual std::string  name()       const { return "Rate 0";             }
+	virtual std::string  short_name() const { return "r0";                 }
+	virtual std::string  fill_color() const { return "#FFFFFF";            }
+	virtual std::string  font_color() const { return "#000000";            }
 
 	virtual std::string f() const { return ""; }
 	virtual std::string g() const { return ""; }

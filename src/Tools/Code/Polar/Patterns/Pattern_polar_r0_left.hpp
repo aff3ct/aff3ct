@@ -36,11 +36,11 @@ public:
 
 	virtual ~Pattern_polar_r0_left() {}
 
-	virtual polar_node_t type()       const { return polar_node_t::RATE_0_LEFT;   }
-	virtual std::string  name()       const { return "Rate 0 left" + range_name();}
-	virtual std::string  short_name() const { return "r0l";                       }
-	virtual std::string  fill_color() const { return "#dadada";                   }
-	virtual std::string  font_color() const { return "#000000";                   }
+	virtual polar_node_t type()       const { return polar_node_t::RATE_0_LEFT; }
+	virtual std::string  name()       const { return "Rate 0 left";             }
+	virtual std::string  short_name() const { return "r0l";                     }
+	virtual std::string  fill_color() const { return "#dadada";                 }
+	virtual std::string  font_color() const { return "#000000";                 }
 
 	virtual std::string f() const { return "f";   }
 	virtual std::string g() const { return "g0";  }

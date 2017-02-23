@@ -134,7 +134,7 @@ void Generation_polar
 		{
 			auto cur_pattern_SC = polar_patterns[p];
 			if (cur_pattern_SC->is_terminal())
-				std::cout << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
+				std::cout << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 				          << std::setw(5)
 				          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), -1) 
 				          << " / " << n_nodes_gen << std::endl;
@@ -144,7 +144,7 @@ void Generation_polar
 		{
 			auto cur_pattern_SC = polar_patterns[p];
 			if (!cur_pattern_SC->is_terminal())
-				std::cout << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
+				std::cout << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 				          << std::setw(5)
 				          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), -1) 
 				          << " / " << n_nodes_gen << std::endl;
@@ -168,7 +168,7 @@ void Generation_polar
 			{
 				auto cur_pattern_SC = polar_patterns[p];
 				if (cur_pattern_SC->is_terminal())
-					std::cout << tab << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
+					std::cout << tab << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 					          << std::setw(5)
 					          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), d) 
 					          << " / " << n_nodes_gen << std::endl;
@@ -178,7 +178,7 @@ void Generation_polar
 			{
 				auto cur_pattern_SC = polar_patterns[p];
 				if (!cur_pattern_SC->is_terminal())
-					std::cout << tab << tab << tab << " - " << std::setw(20) << cur_pattern_SC->name() << ": "
+					std::cout << tab << tab << tab << " - " << std::setw(11) << cur_pattern_SC->name() << ": "
 					          << std::setw(5)
 					          << generator->get_n_generated_nodes_by_pattern(typeid(*cur_pattern_SC).hash_code(), d) 
 					          << " / " << n_nodes_gen << std::endl;

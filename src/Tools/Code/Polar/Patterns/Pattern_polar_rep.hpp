@@ -37,11 +37,11 @@ public:
 
 	virtual ~Pattern_polar_rep() {}
 
-	virtual polar_node_t type()       const { return polar_node_t::REP;   }
-	virtual std::string  name()       const { return "Rep" + range_name();}
-	virtual std::string  short_name() const { return "re";                }
-	virtual std::string  fill_color() const { return "#8F463F";           }
-	virtual std::string  font_color() const { return "#FFFFFF";           }
+	virtual polar_node_t type()       const { return polar_node_t::REP; }
+	virtual std::string  name()       const { return "Rep";             }
+	virtual std::string  short_name() const { return "re";              }
+	virtual std::string  fill_color() const { return "#8F463F";         }
+	virtual std::string  font_color() const { return "#FFFFFF";         }
 
 	virtual std::string f() const { return "";    }
 	virtual std::string g() const { return "";    }

@@ -123,7 +123,7 @@ public:
 	virtual std::string apply_g(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 	virtual std::string apply_h(std::string start_indent = "", std::string str_off_l = "", std::string str_off_s = "") const { return ""; }
 
-	virtual std::string range_name() const
+	virtual std::string range() const
 	{
 		if (min_level == 0 && max_level == -1)
 			return "";

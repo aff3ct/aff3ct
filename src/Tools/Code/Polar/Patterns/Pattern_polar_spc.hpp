@@ -38,11 +38,11 @@ public:
 
 	virtual ~Pattern_polar_spc() {}
 
-	virtual polar_node_t type()       const { return polar_node_t::SPC;   }
-	virtual std::string  name()       const { return "SPC" + range_name();}
-	virtual std::string  short_name() const { return "s";                 }
-	virtual std::string  fill_color() const { return "#2F3F60";           }
-	virtual std::string  font_color() const { return "#FFFFFF";           }
+	virtual polar_node_t type()       const { return polar_node_t::SPC; }
+	virtual std::string  name()       const { return "SPC";             }
+	virtual std::string  short_name() const { return "s";               }
+	virtual std::string  fill_color() const { return "#2F3F60";         }
+	virtual std::string  font_color() const { return "#FFFFFF";         }
 
 	virtual std::string f() const { return "";    }
 	virtual std::string g() const { return "";    }
