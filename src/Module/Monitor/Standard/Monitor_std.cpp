@@ -149,7 +149,7 @@ void Monitor_std<B,R>
 		buff_enc.back()[b] = X[b];
 
 	for (int b = 0; b < Y_size; b++)
-		buff_noise.back()[b] = Y[b] - X_mod[b];
+		buff_noise.back()[b] = Y[b];// - X_mod[b];
 }
 
 template <typename B, typename R>

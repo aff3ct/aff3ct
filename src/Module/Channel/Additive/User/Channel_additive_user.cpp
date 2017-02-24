@@ -63,7 +63,8 @@ void Channel_additive_user<R>
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		for (auto i = 0; i < this->N; i++)
-			Y_N[f * this->N +i] = X_N[f * this->N +i] + this->noise[this->noise_counter][i];
+			//Y_N[f * this->N +i] = X_N[f * this->N +i] + this->noise[this->noise_counter][i];
+			Y_N[f * this->N +i] = this->noise[this->noise_counter][i];
 
 		this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
 	}

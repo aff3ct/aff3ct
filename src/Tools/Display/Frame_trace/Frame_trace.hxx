@@ -47,7 +47,7 @@ void Frame_trace<B>
 	if (row_width == vec.size())
 	{
 		for (auto i = 0; i < n_bits; i++)
-			stream << std::setw(15) << i << "|";
+			stream << std::setw(5) << i << "|";
 
 		if (n_bits < (int)vec.size())
 			stream << " ...";
@@ -81,9 +81,9 @@ void Frame_trace<B>
 			break;
 		case REAL:
 			if (value >= 0)
-				stream << std::setprecision(12) << std::setw(15) << +value << "|";
+				stream << std::setprecision(2) << std::setw(5) << +value << "|";
 			else
-				stream << std::setprecision(11) << std::setw(15) << +value << "|";
+				stream << std::setprecision(1) << std::setw(5) << +value << "|";
 			break;
 	}
 }
