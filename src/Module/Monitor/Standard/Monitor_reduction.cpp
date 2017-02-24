@@ -60,16 +60,16 @@ int Monitor_reduction<B,R>
 
 template <typename B, typename R>
 void Monitor_reduction<B,R>
-::dump_bad_frames(const std::string& base_path, const float snr)
+::dump_bad_frames(const std::string& base_path, const float snr, const mipp::vector<int>& itl_pi)
 {
 	// get path and open them
-	std::string path_src, path_enc, path_noise;
+	std::string path_src, path_enc, path_itl, path_noise;
 
-	get_tracker_paths(base_path, snr, path_src, path_enc, path_noise);
+	get_tracker_paths(base_path, snr, path_src, path_enc, path_noise, path_itl);
 
-	std::ofstream file_src  (path_src);
-	std::ofstream file_enc  (path_enc);
-	std::ofstream file_noise(path_noise, std::ios_base::binary);
+	std::ofstream file_src   (path_src);
+	std::ofstream file_enc   (path_enc);
+	std::ofstream file_noise (path_noise, std::ios_base::binary);
 
 	if (!file_src.is_open() || !file_enc.is_open() || !file_noise.is_open())
 	{
@@ -138,6 +138,25 @@ void Monitor_reduction<B,R>
 		for (unsigned f = 0; f < buff_noise.size(); f++)
 			file_noise.write(reinterpret_cast<char*>(&buff_noise[f][0]), buff_noise[f].size()*sizeof(R));
 	}
+
+	// write interleaver table
+	if (itl_pi.size())
+	{
+		std::ofstream file_itl(path_itl);
+
+		if (!file_itl.is_open())
+		{
+			std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
+			          << bold_red(base_path) << bold_red("\"") << std::endl;
+			std::exit(-1);
+		}
+
+		assert(this->get_N() == (int)itl_pi.size());
+		file_itl << itl_pi.size() << std::endl << std::endl; // write length of coded frames
+
+		for (unsigned b = 0; b < itl_pi.size(); b++)
+			file_itl << itl_pi[b] << " ";
+	}
 }
 
 template <typename B, typename R>
@@ -164,8 +183,8 @@ bool Monitor_reduction<B,R>
 
 template <typename B, typename R>
 void Monitor_reduction<B,R>
-::get_tracker_paths(const std::string& base_path, const float snr,
-                    std::string& path_src, std::string& path_enc, std::string& path_noise)
+::get_tracker_paths(const std::string& base_path, const float snr, std::string& path_src,
+                    std::string& path_enc, std::string& path_noise, std::string& path_itl)
 {
 	if (!check_path(base_path))
 	{
@@ -183,6 +202,7 @@ void Monitor_reduction<B,R>
 
 	path_src   = path_head + std::string(".src");
 	path_enc   = path_head + std::string(".enc");
+	path_itl   = path_head + std::string(".itl");
 	path_noise = path_head + std::string(".chn");
 }
 

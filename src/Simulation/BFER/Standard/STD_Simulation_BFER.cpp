@@ -121,9 +121,9 @@ void Simulation_BFER<B,R,Q>
 			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
 			          << std::endl;
 
-		std::string path_src, path_enc, path_noise;
+		std::string path_src, path_enc, path_noise, path_itl;
 		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
-		                                          path_src, path_enc, path_noise);
+		                                          path_src, path_enc, path_noise, path_itl);
 
 		// dirty hack to override simulation params
 		parameters *params_writable = const_cast<parameters*>(&this->params);

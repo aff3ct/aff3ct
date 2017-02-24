@@ -154,7 +154,7 @@ void Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::dump_bad_frames(const std::string& base_path, const float snr)
+::dump_bad_frames(const std::string& base_path, const float snr, mipp::vector<int> itl_pi)
 {
 	std::cerr << bold_red("\"dump_bad_frames\" is not defined in \"Monitor_std\", please call this method on ")
 	          << bold_red("\"Monitor_reduction\" instead.")

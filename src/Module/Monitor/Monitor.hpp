@@ -178,11 +178,11 @@ public:
 	 *
 	 * Typically this method is called at the very end of a communication chain.
 	 *
-	 * \param U:     the original message (from the Source or the CRC).
-	 * \param V:     the decoded message (from the Decoder).
-	 * \param X:     the encoded message (from the Encoder).
-	 * \param X_mod: the modulated message (from the Modulator, the input of the Channel).
-	 * \param Y:     the noised message (the output of the Channel).
+	 * \param U:      the original message (from the Source or the CRC).
+	 * \param V:      the decoded message (from the Decoder).
+	 * \param X:      the encoded message (from the Encoder).
+	 * \param X_mod:  the modulated message (from the Modulator, the input of the Channel).
+	 * \param Y:      the noised message (the output of the Channel).
 	 */
 	virtual void check_and_track_errors(const mipp::vector<B>& U,
 	                                    const mipp::vector<B>& V,
@@ -199,7 +199,7 @@ public:
 	 * \param base_path: base path for files to write the bad frames.
 	 * \param snr:       the current SNR.
 	 */
-	virtual void dump_bad_frames(const std::string& base_path, const float snr)
+	virtual void dump_bad_frames(const std::string& base_path, const float snr, const mipp::vector<int>& itl_pi = mipp::vector<int>(0))
 	{
 	}
 

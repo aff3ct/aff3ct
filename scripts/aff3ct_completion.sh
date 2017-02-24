@@ -289,7 +289,7 @@ _aff3ct() {
 			;;
 
 		--chn-type)
-			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH"
+			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH USER ADD_USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

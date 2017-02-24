@@ -123,16 +123,17 @@ void Simulation_BFERI<B,R,Q>
 			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
 			          << std::endl;
 
-		std::string path_src, path_enc, path_noise;
+		std::string path_src, path_enc, path_noise, path_itl;
 		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
-		                                          path_src, path_enc, path_noise);
+		                                          path_src, path_enc, path_noise, path_itl);
 
 		// dirty hack to override simulation params
 		parameters *params_writable = const_cast<parameters*>(&this->params);
 
-		params_writable->source. path = path_src;
-		params_writable->encoder.path = path_enc;
-		params_writable->channel.path = path_noise;
+		params_writable->source     .path = path_src;
+		params_writable->encoder    .path = path_enc;
+		params_writable->channel    .path = path_noise;
+		params_writable->interleaver.path = path_itl;
 	}
 
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
@@ -153,7 +154,7 @@ void Simulation_BFERI<B,R,Q>
 	}
 
 	if (this->params.monitor.err_track_enable)
-		monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr);
+		monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr, this->interleaver[0]->get_lookup_table());
 }
 
 template <typename B, typename R, typename Q>

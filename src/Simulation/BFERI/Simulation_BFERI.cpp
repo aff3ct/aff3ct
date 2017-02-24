@@ -218,7 +218,7 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFERI_i<B,R,Q>
 ::build_interleaver(const int tid)
 {
-	return Factory_interleaver<int>::build(params, params.code.N + params.code.tail_length, rd_engine_seed[tid]());
+	return Factory_interleaver<int>::build(params, params.code.N + params.code.tail_length, params.simulation.seed);
 }
 
 template <typename B, typename R, typename Q>

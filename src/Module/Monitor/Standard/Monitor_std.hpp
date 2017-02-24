@@ -45,7 +45,7 @@ public:
 	float get_fer() const;
 	float get_ber() const;
 
-	void dump_bad_frames(const std::string& base_path, const float snr);
+	void dump_bad_frames(const std::string& base_path, const float snr, mipp::vector<int> itl_pi = mipp::vector<int>(0));
 
 	const std::vector<mipp::vector<B>> get_buff_src  () const;
 	const std::vector<mipp::vector<B>> get_buff_enc  () const;

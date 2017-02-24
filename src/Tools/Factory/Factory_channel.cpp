@@ -1,4 +1,5 @@
 #include "Module/Channel/NO/Channel_NO.hpp"
+#include "Module/Channel/User/Channel_user.hpp"
 #include "Module/Channel/Additive/User/Channel_additive_user.hpp"
 #include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LR.hpp"
 #include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LLR.hpp"
@@ -71,9 +72,13 @@ Channel<R>* Factory_channel<R>
 	{
 		channel = new Channel_NO<R>(size);
 	}
-	else if (params.channel.type == "USER")
+	else if (params.channel.type == "ADD_USER")
 	{
 		channel = new Channel_additive_user<R>(size, params.channel.path);
+	}
+	else if (params.channel.type == "USER")
+	{
+		channel = new Channel_user<R>(size, params.channel.path);
 	}
 
 	return channel;

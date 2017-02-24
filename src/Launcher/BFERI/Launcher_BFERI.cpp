@@ -169,12 +169,14 @@ void Launcher_BFERI<B,R,Q>
 	if(this->params.monitor.err_track_revert)
 	{
 		this->params.monitor.err_track_enable = false;
-		this->params.source. type = "USER";
-		this->params.encoder.type = "USER";
-		this->params.channel.type = "USER";
-		this->params.source. path = this->params.monitor.err_track_path + std::string("_$snr.src");
-		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_$snr.enc");
-		this->params.channel.path = this->params.monitor.err_track_path + std::string("_$snr.chn");
+		this->params.source     .type = "USER";
+		this->params.encoder    .type = "USER";
+		this->params.channel    .type = "USER";
+		this->params.interleaver.type = "USER";
+		this->params.source     .path = this->params.monitor.err_track_path + std::string("_$snr.src");
+		this->params.encoder    .path = this->params.monitor.err_track_path + std::string("_$snr.enc");
+		this->params.channel    .path = this->params.monitor.err_track_path + std::string("_$snr.chn");
+		this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
 		// the paths are set in the Simulation class
 	}
 
@@ -282,7 +284,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 
 	if (this->params.monitor.err_track_enable || this->params.monitor.err_track_revert)
 	{
-		std::string path = this->params.monitor.err_track_path + std::string(".$snr.[src,enc,chn]");
+		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,itl,chn]");
 		p.push_back(std::make_pair("Bad frames base path", path));
 	}
 #endif
