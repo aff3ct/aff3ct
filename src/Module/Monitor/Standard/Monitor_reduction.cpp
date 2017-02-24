@@ -136,8 +136,7 @@ void Monitor_reduction<B,R>
 		auto buff_noise = mon->get_buff_noise();
 		assert(buff_src.size() == buff_noise.size());
 		for (unsigned f = 0; f < buff_noise.size(); f++)
-			for (unsigned b = 0; b < buff_noise[f].size(); b++)
-				file_noise.write((char *)&buff_noise[f][b], sizeof(R));
+			file_noise.write(reinterpret_cast<char*>(&buff_noise[f][0]), buff_noise[f].size()*sizeof(R));
 	}
 }
 

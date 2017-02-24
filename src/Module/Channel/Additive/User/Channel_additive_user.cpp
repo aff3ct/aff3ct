@@ -27,12 +27,7 @@ Channel_additive_user<R>
 		if (fra_size == this->N)
 		{
 			for (auto i = 0; i < n_fra; i++)
-				for (auto j = 0; j < fra_size; j++)
-				{
-					R val;
-					file.read((char*)&val, sizeof(float));
-					this->noise[i][j] = val;
-				}
+				file.read(reinterpret_cast<char*>(&this->noise[i][0]), fra_size*sizeof(R));
 		}
 		else
 		{

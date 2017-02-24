@@ -112,6 +112,15 @@ void Simulation_BFER<B,R,Q>
 
 	if (this->params.monitor.err_track_revert)
 	{
+		if(this->params.simulation.n_threads != 1)
+			std::clog << bold_yellow("(WW) Multi-threading detected with error tracking revert feature!")
+			          << bold_yellow(" Each thread will play the same frames. Please run with one thread.")
+			          << std::endl;
+		if(this->params.simulation.inter_frame_level != 1)
+			std::clog << bold_yellow("(WW) Inter frame level different than 1 detected with error tracking revert feature!")
+			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
+			          << std::endl;
+
 		std::string path_src, path_enc, path_noise;
 		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
 		                                          path_src, path_enc, path_noise);
@@ -210,7 +219,7 @@ void Simulation_BFER<B,R,Q>
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
-		                                               simu->params.code.N,
+		                                               simu->params.code.N + tail,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
 		                                               n_fra);
