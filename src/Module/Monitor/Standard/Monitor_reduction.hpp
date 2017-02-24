@@ -22,10 +22,11 @@ public:
 	int get_n_fe() const;
 	int get_n_be() const;
 
-	static bool check_path(const std::string& error_tracker_head_path); // return true if correct
-	static void get_tracker_paths(const std::string& error_tracker_head_path, const float snr,
+	void dump_bad_frames(const std::string& base_path, const float snr);
+
+	static bool check_path(const std::string& base_path); // return true if correct
+	static void get_tracker_paths(const std::string& base_path, const float snr,
 	                              std::string& path_src, std::string& path_enc, std::string& path_noise);
-	void flush_wrong_frames(const std::string& error_tracker_head_path, const float snr);
 };
 
 #endif /* MONITOR_REDUCTION_HPP_ */

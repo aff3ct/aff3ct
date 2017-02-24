@@ -99,18 +99,15 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
-
 	this->opt_args[{"mnt-err-trk"}] =
 		{"",
-		 "enable the tracking of the wrong frames. Automatically disabled by mnt-err-trk-rev but enabled by mnt-err-trk-path option."};
+		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
 	this->opt_args[{"mnt-err-trk-rev"}] =
 		{"",
-		 std::string("automatically reply the saved frames in error tracker files for the source, the encoder and the channel noise.") +
-		 std::string(" Warning! This feature does not set automatically the configuration of all the other modules.")};
+		 "automatically replay the saved frames."};
 	this->opt_args[{"mnt-err-trk-path"}] =
 		{"string",
-		 std::string("header of filenames where will be returned/read the wrong source, encoder and channel noise frames.") +
-		 std::string(" To this name will be automatically added the run SNR and the extension (.src .enc .chn).")};
+		 "base path for the files where the bad frames will be stored or read."};
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =

@@ -59,59 +59,13 @@ int Monitor_reduction<B,R>
 }
 
 template <typename B, typename R>
-bool Monitor_reduction<B,R>
-::check_path(const std::string& error_tracker_head_path)
-{
-	size_t pos = error_tracker_head_path.find_last_of("/");
-
-	if (pos == std::string::npos)
-		return true;
-
-	std::string pathname = error_tracker_head_path.substr(0, pos);
-
-	// TODO : check compatibility on windows. Normally it is good.
-	struct stat info;
-
-	if( stat( pathname.data(), &info ) != 0 )
-		return false;
-	else if( info.st_mode & S_IFDIR )
-		return true;
-	else
-		return false;
-}
-
-template <typename B, typename R>
 void Monitor_reduction<B,R>
-::get_tracker_paths(const std::string& error_tracker_head_path, const float snr,
-                    std::string& path_src, std::string& path_enc, std::string& path_noise)
+::dump_bad_frames(const std::string& base_path, const float snr)
 {
-	if (!check_path(error_tracker_head_path))
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check head of the path: \"")
-		          << bold_red(error_tracker_head_path)
-		          << bold_red("\" and please create yourself the needed directory.")
-		          << std::endl;
-		std::exit(-1);
-	}
-
-	std::stringstream snr_stream;
-	snr_stream << std::fixed << std::setprecision(3) << snr;
-
-	std::string path_head = error_tracker_head_path + std::string("_") + snr_stream.str();
-
-	path_src   = path_head + std::string(".src");
-	path_enc   = path_head + std::string(".enc");
-	path_noise = path_head + std::string(".chn");
-}
-
-template <typename B, typename R>
-void Monitor_reduction<B,R>
-::flush_wrong_frames(const std::string& error_tracker_head_path, const float snr)
-{
-	// ************* get path and open them ******************
+	// get path and open them
 	std::string path_src, path_enc, path_noise;
 
-	get_tracker_paths(error_tracker_head_path, snr, path_src, path_enc, path_noise);
+	get_tracker_paths(base_path, snr, path_src, path_enc, path_noise);
 
 	std::ofstream file_src  (path_src);
 	std::ofstream file_enc  (path_enc);
@@ -120,13 +74,13 @@ void Monitor_reduction<B,R>
 	if (!file_src.is_open() || !file_enc.is_open() || !file_noise.is_open())
 	{
 		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-		          << bold_red(error_tracker_head_path) << bold_red("\"") << std::endl;
+		          << bold_red(base_path) << bold_red("\"") << std::endl;
 		std::exit(-1);
 	}
 
 	int n_fe   = get_n_fe();
 	int Y_size = 0;
-	// ************* get Y_size *******************
+	// get Y_size
 	for (unsigned i = 0; i <= monitors.size(); i++)
 	{
 		auto mon = (i == monitors.size()) ? this : monitors[i];
@@ -141,7 +95,7 @@ void Monitor_reduction<B,R>
 		break;
 	}
 
-	// ************* write headers *****************
+	// write headers
 	file_src << n_fe          << std::endl << std::endl; // write number frames
 	file_src << this->get_K() << std::endl << std::endl; // write length of frames
 
@@ -152,7 +106,7 @@ void Monitor_reduction<B,R>
 	file_noise.write((char *)&n_fe  , sizeof(int)); // write number frames
 	file_noise.write((char *)&Y_size, sizeof(int)); // write length of frames
 
-	// ************* write frames ********************
+	// write frames
 	for (unsigned i = 0; i <= monitors.size(); i++)
 	{
 		auto mon = (i == monitors.size()) ? this : monitors[i];
@@ -185,6 +139,52 @@ void Monitor_reduction<B,R>
 			for (unsigned b = 0; b < buff_noise[f].size(); b++)
 				file_noise.write((char *)&buff_noise[f][b], sizeof(R));
 	}
+}
+
+template <typename B, typename R>
+bool Monitor_reduction<B,R>
+::check_path(const std::string& base_path)
+{
+	size_t pos = base_path.find_last_of("/");
+
+	if (pos == std::string::npos)
+		return true;
+
+	std::string pathname = base_path.substr(0, pos);
+
+	// TODO: check compatibility on windows. Normally it is good.
+	struct stat info;
+
+	if (stat(pathname.data(), &info) != 0)
+		return false;
+	else if (info.st_mode & S_IFDIR)
+		return true;
+	else
+		return false;
+}
+
+template <typename B, typename R>
+void Monitor_reduction<B,R>
+::get_tracker_paths(const std::string& base_path, const float snr,
+                    std::string& path_src, std::string& path_enc, std::string& path_noise)
+{
+	if (!check_path(base_path))
+	{
+		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check head of the path: \"")
+		          << bold_red(base_path)
+		          << bold_red("\" and please create yourself the needed directory.")
+		          << std::endl;
+		std::exit(-1);
+	}
+
+	std::stringstream snr_stream;
+	snr_stream << std::fixed << std::setprecision(3) << snr;
+
+	std::string path_head = base_path + std::string("_") + snr_stream.str();
+
+	path_src   = path_head + std::string(".src");
+	path_enc   = path_head + std::string(".enc");
+	path_noise = path_head + std::string(".chn");
 }
 
 // ==================================================================================== explicit template instantiation 

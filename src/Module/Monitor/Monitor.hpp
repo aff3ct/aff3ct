@@ -149,30 +149,6 @@ public:
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
 
 	/*!
-	 * \brief Compares two messages and counts the number of frame errors and bit errors.
-	 *
-	 * Typically this method is called at the very end of a communication chain.
-	 *
-	 * \param U:     the original message (from the Source or the CRC).
-	 * \param V:     the decoded message (from the Decoder).
-	 * \param X:     the encoded message (from the Encoder).
-	 * \param X_mod: the modulated message (from the Modulator, the input of the Channel).
-	 * \param Y:     the noised message (the output of the Channel).
-	 */
-	virtual void check_track_errors(const mipp::vector<B>& U,
-	                                const mipp::vector<B>& V,
-	                                const mipp::vector<B>& X,
-	                                const mipp::vector<R>& X_mod,
-	                                const mipp::vector<R>& Y)
-	{
-		check_errors(U, V);
-	}
-
-	virtual void flush_wrong_frames(const std::string& error_tracker_head_file_name, const float snr)
-	{
-	}
-
-	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
 	 *
 	 * \return true if the SIGINT (ctrl+c) is called.
@@ -190,6 +166,41 @@ public:
 	static bool is_over()
 	{
 		return Monitor_i<B,R>::over;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// The following public methods are specific to catch the bad frames and to dump them into files. //
+	// The proposed default implementation do nothing.                                                //
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/*!
+	 * \brief Compares two messages and counts the number of frame errors and bit errors.
+	 *
+	 * Typically this method is called at the very end of a communication chain.
+	 *
+	 * \param U:     the original message (from the Source or the CRC).
+	 * \param V:     the decoded message (from the Decoder).
+	 * \param X:     the encoded message (from the Encoder).
+	 * \param X_mod: the modulated message (from the Modulator, the input of the Channel).
+	 * \param Y:     the noised message (the output of the Channel).
+	 */
+	virtual void check_and_track_errors(const mipp::vector<B>& U,
+	                                    const mipp::vector<B>& V,
+	                                    const mipp::vector<B>& X,
+	                                    const mipp::vector<R>& X_mod,
+	                                    const mipp::vector<R>& Y)
+	{
+		check_errors(U, V);
+	}
+
+	/*!
+	 * \brief Write the bad frames into files.
+	 *
+	 * \param base_path: base path for files to write the bad frames.
+	 * \param snr:       the current SNR.
+	 */
+	virtual void dump_bad_frames(const std::string& base_path, const float snr)
+	{
 	}
 
 	/*!
@@ -237,19 +248,6 @@ private:
 		Monitor_i<B,R>::first_interrupt = false;
 		Monitor_i<B,R>::interrupt       = true;
 	}
-
-//	virtual void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size) = 0;
-
-//	/*!
-//	 * \brief Compares two messages and counts the number of frame errors and bit errors.
-//	 *
-//	 * Typically this method is called at the very end of a communication chain.
-//	 *
-//	 * \param U: a pointer to the original message (from the Source or the CRC).
-//	 * \param V: a pointer to the decoded message (from the Decoder).
-//	 * \param length: the size of the messages (U and V).
-//	 */
-//	virtual bool check_errors(const B* U, const B* V, const int length) = 0;
 };
 
 template <typename B, typename R>

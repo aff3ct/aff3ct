@@ -27,13 +27,13 @@ public:
 	            const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
-	virtual void check_track_errors(const mipp::vector<B>& U,
-	                                const mipp::vector<B>& V,
-	                                const mipp::vector<B>& X,
-	                                const mipp::vector<R>& X_mod,
-	                                const mipp::vector<R>& Y);
-
 	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
+
+	virtual void check_and_track_errors(const mipp::vector<B>& U,
+	                                    const mipp::vector<B>& V,
+	                                    const mipp::vector<B>& X,
+	                                    const mipp::vector<R>& X_mod,
+	                                    const mipp::vector<R>& Y);
 
 	virtual bool fe_limit_achieved();
 	int get_fe_limit() const;
@@ -45,13 +45,15 @@ public:
 	float get_fer() const;
 	float get_ber() const;
 
+	void dump_bad_frames(const std::string& base_path, const float snr);
+
 	const std::vector<mipp::vector<B>> get_buff_src  () const;
 	const std::vector<mipp::vector<B>> get_buff_enc  () const;
 	const std::vector<mipp::vector<R>> get_buff_noise() const;
 
 private:
 	void update_n_analyzed_frames();
-	void save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
+	void copy_bad_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
 	inline bool check_errors(const B* U, const B* V, const int length);
 };
 

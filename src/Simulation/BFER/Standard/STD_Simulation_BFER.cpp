@@ -142,7 +142,7 @@ void Simulation_BFER<B,R,Q>
 	}
 
 	if (this->params.monitor.err_track_enable)
-		monitor_red->flush_wrong_frames(this->params.monitor.err_track_path, this->snr);
+		monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr);
 }
 
 template <typename B, typename R, typename Q>
@@ -388,8 +388,8 @@ void Simulation_BFER<B,R,Q>
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		if (simu->params.monitor.err_track_enable)
-			simu->monitor[tid]->check_track_errors(simu->U_K [tid], simu->V_K [tid], simu->X_N1[tid],
-			                                       simu->X_N3[tid], simu->Y_N1[tid]);
+			simu->monitor[tid]->check_and_track_errors(simu->U_K [tid], simu->V_K [tid], simu->X_N1[tid],
+			                                           simu->X_N3[tid], simu->Y_N1[tid]);
 		else
 			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
@@ -715,8 +715,8 @@ void Simulation_BFER<B,R,Q>
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		if (simu->params.monitor.err_track_enable)
-			simu->monitor[0]->check_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0],
-			                                     simu->X_N3[0], simu->Y_N1[0]);
+			simu->monitor[0]->check_and_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0],
+			                                         simu->X_N3[0], simu->Y_N1[0]);
 		else
 			simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;

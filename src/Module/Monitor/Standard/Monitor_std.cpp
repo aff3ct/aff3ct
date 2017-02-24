@@ -2,6 +2,8 @@
 #include <vector>
 #include <cassert>
 
+#include "Tools/Display/bash_tools.h"
+
 #include "Monitor_std.hpp"
 
 template <typename B, typename R>
@@ -32,11 +34,11 @@ void Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::check_track_errors(const mipp::vector<B>& U,
-                     const mipp::vector<B>& V,
-                     const mipp::vector<B>& X,
-                     const mipp::vector<R>& X_mod,
-                     const mipp::vector<R>& Y)
+::check_and_track_errors(const mipp::vector<B>& U,
+                         const mipp::vector<B>& V,
+                         const mipp::vector<B>& X,
+                         const mipp::vector<R>& X_mod,
+                         const mipp::vector<R>& Y)
 {
 	assert(this->K * this->n_frames == (int)U    .size());
 	assert(this->K * this->n_frames == (int)V    .size());
@@ -46,14 +48,12 @@ void Monitor_std<B,R>
 	const int Y_size = (int)X_mod.size() / this->n_frames;
 
 	for (auto i = 0; i < this->n_frames; i++)
-	{
 		if (check_errors(U.data() + i * this->K, V.data() + i * this->K, this->K))
-			save_wrong_frame(U    .data() + i * this->K,
-			                 X    .data() + i * this->N,
-			                 X_mod.data() + i * Y_size,
-			                 Y    .data() + i * Y_size,
-			                 Y_size);
-	}
+			copy_bad_frame(U    .data() + i * this->K,
+			               X    .data() + i * this->N,
+			               X_mod.data() + i * Y_size,
+			               Y    .data() + i * Y_size,
+			               Y_size);
 
 	this->update_n_analyzed_frames();
 }
@@ -136,7 +136,7 @@ float Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::save_wrong_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size)
+::copy_bad_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size)
 {
 	buff_src.  push_back(mipp::vector<B>(this->K));
 	buff_enc.  push_back(mipp::vector<B>(this->N));
@@ -150,6 +150,17 @@ void Monitor_std<B,R>
 
 	for (int b = 0; b < Y_size; b++)
 		buff_noise.back()[b] = Y[b] - X_mod[b];
+}
+
+template <typename B, typename R>
+void Monitor_std<B,R>
+::dump_bad_frames(const std::string& base_path, const float snr)
+{
+	std::cerr << bold_red("\"dump_bad_frames\" is not defined in \"Monitor_std\", please call this method on ")
+	          << bold_red("\"Monitor_reduction\" instead.")
+	          << std::endl;
+
+	std::exit(-1);
 }
 
 template <typename B, typename R>

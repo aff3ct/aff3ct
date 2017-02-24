@@ -23,7 +23,7 @@ public:
 	virtual ~SPU_Monitor() {}
 
 	static inline starpu_task* spu_task_check_errors(SPU_Monitor<B,R> *monitor, starpu_data_handle_t &in_data1,
-	                                                                          starpu_data_handle_t &in_data2)
+	                                                                            starpu_data_handle_t &in_data2)
 	{
 		auto task = starpu_task_create();
 
