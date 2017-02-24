@@ -11,6 +11,8 @@
 #include <string>
 #include <cassert>
 
+namespace aff3ct
+{
 /*!
  * \class Module
  *
@@ -68,5 +70,6 @@ public:
 		this->name = name;
 	}
 };
+}
 
 #endif /* MODULE_HPP_ */
