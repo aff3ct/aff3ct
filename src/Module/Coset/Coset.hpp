@@ -15,6 +15,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Coset_i
  *
@@ -64,5 +66,6 @@ public:
 };
 
 #include "SC_Coset.hpp"
+}
 
 #endif /* COSET_HPP_ */

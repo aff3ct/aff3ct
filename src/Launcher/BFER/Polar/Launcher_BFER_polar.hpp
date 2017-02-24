@@ -3,6 +3,8 @@
 
 #include "../Launcher_BFER.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Launcher_BFER_polar : public Launcher_BFER<B,R,Q>
 {
@@ -19,5 +21,6 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_crc    ();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder();
 };
+}
 
 #endif /* LAUNCHER_BFER_POLAR_HPP_ */

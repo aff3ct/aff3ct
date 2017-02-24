@@ -3,6 +3,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Source_user.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Source_user<B>

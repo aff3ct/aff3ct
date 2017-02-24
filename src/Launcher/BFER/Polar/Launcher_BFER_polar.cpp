@@ -7,6 +7,7 @@
 #include "Simulation/BFER/Code/Polar/Simulation_BFER_polar.hpp"
 
 #include "Launcher_BFER_polar.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_polar<B,R,Q>

@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "Monitor_std.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Monitor_std<B>

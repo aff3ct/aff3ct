@@ -13,6 +13,7 @@
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
 #include "Simulation_BFER_RSC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_RSC<B,R,Q,QD>

@@ -1,6 +1,7 @@
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
 #include "Factory_encoder_repetition.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder_sys<B>* Factory_encoder_repetition<B>

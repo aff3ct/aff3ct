@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Terminal_BFER_legacy.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Terminal_BFER_legacy<B,R>

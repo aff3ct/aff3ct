@@ -18,6 +18,7 @@
 #include "Tools/Factory/Factory_terminal.hpp"
 
 #include "STD_Simulation_BFER.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>

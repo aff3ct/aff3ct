@@ -8,6 +8,7 @@
 #include "Simulation/EXIT/Code/RSC/Simulation_EXIT_RSC.hpp"
 
 #include "Launcher_EXIT_RSC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_EXIT_RSC<B,R,Q,QD>

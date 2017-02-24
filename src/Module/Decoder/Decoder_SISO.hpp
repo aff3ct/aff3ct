@@ -13,6 +13,8 @@
 #include "Decoder.hpp"
 #include "SISO.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Decoder_SISO
  *
@@ -72,5 +74,6 @@ public:
 		return SISO<R>::simd_inter_frame_level_siso;
 	}
 };
+}
 
 #endif /* DECODER_SISO_HPP_ */

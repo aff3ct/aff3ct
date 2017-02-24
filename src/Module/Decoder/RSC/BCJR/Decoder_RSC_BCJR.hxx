@@ -6,6 +6,8 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
 ::Decoder_RSC_BCJR(const int K, 
@@ -136,4 +138,5 @@ void Decoder_RSC_BCJR<B,R>
 {
 	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
+}
 }

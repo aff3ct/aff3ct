@@ -8,6 +8,8 @@
 #include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, class API_polar>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
@@ -34,6 +36,7 @@ protected:
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);
 };
+}
 
 #include "Decoder_polar_SC_fast_sys.hxx"
 

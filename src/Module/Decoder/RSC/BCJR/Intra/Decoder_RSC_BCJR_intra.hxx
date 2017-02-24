@@ -4,6 +4,8 @@
 
 #include "Decoder_RSC_BCJR_intra.hpp"
 
+namespace aff3ct
+{
 template <typename R>
 struct RSC_BCJR_intra_init
 {
@@ -179,3 +181,4 @@ struct RSC_BCJR_intra_normalize <short, 3>
 		return RSC_BCJR_intra_normalize_core<short>::apply(r_metrics, r_cmask_norm);
 	}
 };
+}

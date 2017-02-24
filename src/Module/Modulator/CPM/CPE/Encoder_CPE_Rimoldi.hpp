@@ -4,6 +4,8 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Encoder_CPE.hpp"
 
+namespace aff3ct
+{
 template<typename SIN, typename SOUT>
 class Encoder_CPE_Rimoldi : public Encoder_CPE<SIN, SOUT>
 {
@@ -24,7 +26,6 @@ public:
 	void generate_allowed_states    (mipp::vector<int>& allowed_states     );
 	void generate_allowed_wave_forms(mipp::vector<SOUT>& allowed_wave_forms);
 };
-
-#include "Encoder_CPE_Rimoldi.hxx"
+}
 
 #endif /* ENCODER_CPE_RIMOLDI_HPP_ */

@@ -7,6 +7,8 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 struct Factory_decoder_polar_gen : public Factory
 {
@@ -14,5 +16,6 @@ struct Factory_decoder_polar_gen : public Factory
 
 	static void get_frozen_bits(const parameters &params, mipp::vector<B> &frozen_bits);
 };
+}
 
 #endif /* FACTORY_DECODER_POLAR_GEN_HPP */

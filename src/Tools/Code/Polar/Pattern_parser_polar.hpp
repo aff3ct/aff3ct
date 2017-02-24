@@ -17,6 +17,8 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Pattern_parser_polar
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
@@ -82,5 +84,6 @@ private:
 	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr, int& node_index);
 	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_SC_interface>* node_curr                 );
 };
+}
 
 #endif /* PATTERN_PARSER_POLAR_HPP */

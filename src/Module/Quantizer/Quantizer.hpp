@@ -13,6 +13,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Quantizer_i
  *
@@ -60,5 +62,6 @@ public:
 };
 
 #include "SC_Quantizer.hpp"
+}
 
 #endif /* QUANTIZER_HPP_ */

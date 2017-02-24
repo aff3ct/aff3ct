@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Encoder_turbo_legacy.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder_turbo_legacy<B>

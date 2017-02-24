@@ -5,6 +5,8 @@
 
 #include "../Decoder_LDPC_BP_layered.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_LDPC_BP_layered_log_sum_product : public Decoder_LDPC_BP_layered<B,R>
 {
@@ -23,5 +25,6 @@ public:
 protected:
 	void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches);
 };
+}
 
 #endif /* DECODER_LDPC_BP_LAYERED_LOG_SUM_PRODUCT_HPP_ */

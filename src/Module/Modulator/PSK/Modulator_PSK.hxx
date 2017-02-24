@@ -11,6 +11,8 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
+namespace aff3ct
+{
 /*
  * Constructor / Destructor
  */
@@ -272,4 +274,5 @@ void Modulator_PSK<B,R,Q,MAX>
 
 		Y_N3[n] = (L0 - L1);
 	}
+}
 }

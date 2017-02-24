@@ -7,6 +7,8 @@
 
 #include "decoder_polar_functions.h"
 
+namespace aff3ct
+{
 template <typename R>
 inline R f_LR(const R& lambda_a, const R& lambda_b)
 {
@@ -279,4 +281,5 @@ inline int compute_depth(int index, int tree_depth)
 		}
 	}
 	return res;
+}
 }

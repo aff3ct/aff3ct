@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "Decoder_turbo_naive_CA.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder_turbo_naive_CA<B,R>

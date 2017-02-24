@@ -11,6 +11,8 @@
 #include "Tools/Math/matrix.h"
 #include "Modulator_CPM.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::Modulator_CPM(int  N,
@@ -383,4 +385,5 @@ void Modulator_CPM<B,R,Q,MAX>
 		std::cerr << bold_red("(EE) Unknown CPM filter bank type") << std::endl;
 		exit(-1);
 	}
+}
 }

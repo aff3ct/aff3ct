@@ -7,6 +7,8 @@
 
 #include "../Encoder_sys.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 class Encoder_RSC_sys : public Encoder_sys<B>
 {
@@ -35,5 +37,6 @@ protected:
 	virtual int inner_encode(const int bit_sys, int &state) = 0;
 	virtual int tail_bit_sys(const int &state             ) = 0;
 };
+}
 
 #endif /* ENCODER_RSC_SYS_HPP_ */

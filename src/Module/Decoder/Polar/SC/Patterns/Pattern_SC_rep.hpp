@@ -12,6 +12,8 @@
 #include "Pattern_SC_rate0.hpp"
 #include "Pattern_SC_rate1.hpp"
 
+namespace aff3ct
+{
 template <>
 class Pattern_SC<pattern_SC_type::REP> : public Pattern_SC_interface
 {
@@ -105,5 +107,6 @@ public:
 
 	virtual bool is_terminal() const { return true; }
 };
+}
 
 #endif /* PATTERN_SC_REP_HPP_ */

@@ -2,6 +2,7 @@
 #include "Tools/Display/Terminal/BFER/Terminal_BFER_legacy.hpp"
 
 #include "Factory_terminal.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Terminal* Factory_terminal<B,R>

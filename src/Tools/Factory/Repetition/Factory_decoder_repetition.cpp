@@ -4,6 +4,7 @@
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
 
 #include "Factory_decoder_repetition.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_repetition<B,R>

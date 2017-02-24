@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "Encoder_NO.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder_NO<B>

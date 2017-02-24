@@ -9,6 +9,7 @@
 #include "Tools/Factory/Factory_channel.hpp"
 
 #include "Simulation_EXIT.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_EXIT<B,R,Q>

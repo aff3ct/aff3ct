@@ -4,6 +4,8 @@
 #define WINDOW 32
 #define BLOCK  32
 
+namespace aff3ct
+{
 template <typename B, typename R, typename RD>
 Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::Decoder_RSC_BCJR_seq_scan(const int &K,
@@ -452,4 +454,5 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 	this->compute_alpha(        );
 	this->compute_beta (        );
 	this->compute_ext  (sys, ext);
+}
 }

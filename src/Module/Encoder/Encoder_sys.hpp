@@ -10,6 +10,8 @@
 
 #include "Encoder.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Encoder_sys
  *
@@ -51,5 +53,6 @@ public:
 	 */
 	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par) = 0;
 };
+}
 
 #endif /* ENCODER_SYS_HPP_ */

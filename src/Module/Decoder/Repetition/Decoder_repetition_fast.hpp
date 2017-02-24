@@ -6,6 +6,8 @@
 
 #include "Decoder_repetition.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_repetition_fast : public Decoder_repetition<B,R>
 {
@@ -16,5 +18,6 @@ public:
 
 	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 };
+}
 
 #endif /* DECODER_REPETITION_FAST */

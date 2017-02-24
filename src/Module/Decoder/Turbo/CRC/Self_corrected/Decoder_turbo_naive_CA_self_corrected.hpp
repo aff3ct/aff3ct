@@ -3,6 +3,8 @@
 
 #include "../Decoder_turbo_naive_CA.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_turbo_naive_CA_self_corrected : public Decoder_turbo_naive_CA<B,R>
 {
@@ -34,5 +36,6 @@ private:
 	void calc_osc(const std::vector<mipp::vector<R>> &ext_hist, const int &ite, mipp::vector<B> &osc);
 	void correct (const mipp::vector<B> &osc, mipp::vector<B> &prev_corr, mipp::vector<R> &ext);
 };
+}
 
 #endif /*DECODER_TURBO_NAIVE_CA_SELF_CORRECTED*/

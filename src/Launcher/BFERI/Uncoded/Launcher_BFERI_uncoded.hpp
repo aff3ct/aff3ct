@@ -3,6 +3,8 @@
 
 #include "../Launcher_BFERI.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Launcher_BFERI_uncoded : public Launcher_BFERI<B,R,Q>
 {
@@ -15,5 +17,6 @@ protected:
 	virtual void store_args();
 	virtual Simulation* build_simu();
 };
+}
 
 #endif /* LAUNCHER_BFERI_UNCODED_HPP_ */

@@ -3,6 +3,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Scaling_factor_array.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Scaling_factor_array<R>

@@ -7,6 +7,8 @@
 
 #include "../Interleaver.hpp"
 
+namespace aff3ct
+{
 template <typename T>
 class Interleaver_LTE : public Interleaver<T>
 {
@@ -234,5 +236,6 @@ protected:
 		}
 	}
 };
+}
 
 #endif	/* INTERLEAVER_LTE_HPP */

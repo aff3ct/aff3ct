@@ -9,6 +9,8 @@
 
 #include "CPM_BCJR.hpp"
 
+namespace aff3ct
+{
 template<typename Q>
 inline Q negative_inf(){return -std::numeric_limits<Q>::max(); }
 
@@ -221,4 +223,5 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	for (auto i = 0; i < (int)Le_N.size(); i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
+}
 }

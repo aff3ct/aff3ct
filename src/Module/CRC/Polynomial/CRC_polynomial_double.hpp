@@ -5,6 +5,8 @@
 
 #include "CRC_polynomial.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 class CRC_polynomial_double : public CRC_polynomial<B>
 {
@@ -18,5 +20,6 @@ public:
 
 	virtual void build(mipp::vector<B>& U_K);
 };
+}
 
 #endif /* CRC_POLYNOMIAL_DOUBLE_HPP_ */

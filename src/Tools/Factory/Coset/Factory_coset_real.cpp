@@ -1,6 +1,7 @@
 #include "Module/Coset/Real/Coset_real.hpp"
 
 #include "Factory_coset_real.hpp"
+using namespace aff3ct;
 
 template <typename B, typename Q>
 Coset<B,Q>* Factory_coset_real<B,Q>

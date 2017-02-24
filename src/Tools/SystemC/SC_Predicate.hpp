@@ -9,6 +9,8 @@
 
 #include "Tools/Algo/Predicate.hpp"
 
+namespace aff3ct
+{
 class SC_Predicate : sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Predicate);
@@ -32,6 +34,7 @@ private:
 		p.reset();
 	}
 };
+}
 
 #endif /* SC_PREDICATE_HPP_ */
 

@@ -5,6 +5,8 @@
 
 #include "../Decoder_turbo_fast.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_turbo_fast_CA : public Decoder_turbo_fast<B,R>
 {
@@ -26,5 +28,6 @@ public:
 protected:
 	virtual void hard_decode();
 };
+}
 
 #endif /* DECODER_TURBO_FAST_CA_HPP_ */

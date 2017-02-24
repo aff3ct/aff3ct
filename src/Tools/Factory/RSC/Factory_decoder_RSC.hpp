@@ -7,6 +7,8 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename RD>
 struct Factory_decoder_RSC : public Factory
 {
@@ -15,5 +17,6 @@ struct Factory_decoder_RSC : public Factory
 
 	static Decoder<B,R>* build(const parameters &params, const std::vector<std::vector<int>> &trellis);
 };
+}
 
 #endif /* FACTORY_DECODER_RSC_HPP */

@@ -10,6 +10,8 @@
 #include "../Decoder.hpp"
 #include "../SISO.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_turbo : public Decoder<B,R>
 {
@@ -55,5 +57,6 @@ private:
 	void buffered_load(const mipp::vector<R>& Y_N);
 	void standard_load(const mipp::vector<R>& Y_N);
 };
+}
 
 #endif /* DECODER_TURBO_HPP_ */

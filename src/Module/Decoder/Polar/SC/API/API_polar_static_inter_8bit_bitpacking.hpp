@@ -14,6 +14,8 @@
 
 #include "API_polar.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, 
           proto_f_i <R> FI, proto_g_i <B,R> GI, proto_g0_i<R> G0I, proto_h_i <B,R> HI, proto_xo_i<B> XOI>
 class API_polar_static_inter_8bit_bitpacking : public API_polar
@@ -226,5 +228,6 @@ public:
 		xo0_inter_8bit_bitpacking<B, N_ELMTS>::apply(s_b, s_c, init_shift, n_elmts);
 	}
 };
+}
 
 #endif /* API_POLAR_STATIC_INTER_8BIT_BITPACKING_HPP_ */

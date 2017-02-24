@@ -1,4 +1,5 @@
 #include "Monitor_reduction.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Monitor_reduction<B>

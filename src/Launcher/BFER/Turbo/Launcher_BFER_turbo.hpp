@@ -3,6 +3,8 @@
 
 #include "../Launcher_BFER.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q, typename QD>
 class Launcher_BFER_turbo : public Launcher_BFER<B,R,Q>
 {
@@ -21,5 +23,6 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_interleaver();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder    ();
 };
+}
 
 #endif /* LAUNCHER_BFER_TURBO_HPP_ */

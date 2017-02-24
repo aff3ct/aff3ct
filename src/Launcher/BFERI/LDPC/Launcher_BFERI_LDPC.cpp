@@ -4,6 +4,7 @@
 #include "Simulation/BFERI/Code/LDPC/Simulation_BFERI_LDPC.hpp"
 
 #include "Launcher_BFERI_LDPC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Launcher_BFERI_LDPC<B,R,Q>

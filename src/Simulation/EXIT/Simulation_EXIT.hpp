@@ -16,6 +16,8 @@
 
 #include "../Simulation.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Simulation_EXIT : public Simulation
 {
@@ -94,5 +96,6 @@ protected:
 	virtual SISO<R>*            build_siso       (              ) = 0;
 	        Terminal_EXIT<B,R>* build_terminal   (              );
 };
+}
 
 #endif /* SIMULATION_EXIT_HPP_ */

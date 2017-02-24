@@ -7,6 +7,7 @@
 #include "Module/Decoder/Turbo/CRC/Decoder_turbo_fast_CA.hpp"
 
 #include "Factory_decoder_turbo.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_turbo<B,R>

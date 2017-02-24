@@ -5,6 +5,8 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
 class AList_reader
 {
 private:
@@ -43,5 +45,6 @@ private:
 	bool read_format3(std::ifstream &file);
 	void compute_branches_transpose();
 };
+}
 
 #endif /* ALIST_READER_HPP_ */

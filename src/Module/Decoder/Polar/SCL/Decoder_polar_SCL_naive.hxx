@@ -9,6 +9,8 @@
 
 #include "Decoder_polar_SCL_naive.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
@@ -406,4 +408,5 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 	for (auto i = 0; i < size_2; i++)
 		node_curr->get_c()->s[size_2 +i] = node_right->get_c()->s[i]; // bit eq
+}
 }

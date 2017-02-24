@@ -1,4 +1,5 @@
 #include "Coset_bit.hpp"
+using namespace aff3ct;
 
 template <typename B, typename D>
 Coset_bit<B,D>::Coset_bit(const int size, const int n_frames, const std::string name)

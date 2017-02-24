@@ -5,6 +5,8 @@
 
 #include "Modulator_QAM.hpp"
 
+namespace aff3ct
+{
 /*
  * Constructor / Destructor
  */
@@ -266,4 +268,5 @@ void Modulator_QAM<B,R,Q,MAX>
 
 		Y_N3[n] = (L0 - L1);
 	}
+}
 }

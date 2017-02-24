@@ -6,6 +6,8 @@
 
 #include "../Decoder_RSC_BCJR.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_RSC_BCJR_seq : public Decoder_RSC_BCJR<B,R>
 {
@@ -24,6 +26,7 @@ public:
 
 	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 };
+}
 
 #include "Decoder_RSC_BCJR_seq.hxx"
 

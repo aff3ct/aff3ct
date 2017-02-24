@@ -13,6 +13,8 @@
 #include <vector>
 #include <map>
 
+namespace aff3ct
+{
 /*!
  * \class Arguments_reader
  * \brief Eases the management of the arguments from the command line.
@@ -201,5 +203,6 @@ private:
 	 */
 	std::vector<std::string> split(std::string str);
 };
+}
 
 #endif /* ARGUMENTS_READER_HPP_ */

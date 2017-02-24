@@ -11,6 +11,8 @@
 
 #include "Monitor_reduction.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 class Monitor_reduction_mpi : public Monitor_reduction<B>
 {
@@ -35,6 +37,7 @@ public:
 
 	bool fe_limit_achieved();
 };
+}
 
 #endif /* MONITOR_REDUCTION_MPI_HPP_ */
 

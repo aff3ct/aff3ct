@@ -15,6 +15,7 @@
 #endif
 
 #include "Factory_channel.hpp"
+using namespace aff3ct;
 
 template <typename R>	
 Channel<R>* Factory_channel<R>

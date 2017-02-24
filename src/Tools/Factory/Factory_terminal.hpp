@@ -7,6 +7,8 @@
 
 #include "Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 struct Factory_terminal : public Factory
 {
@@ -17,5 +19,6 @@ struct Factory_terminal : public Factory
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	                       const std::chrono::nanoseconds *d_decod_total = nullptr);
 };
+}
 
 #endif /* FACTORY_TERMINAL_HPP */

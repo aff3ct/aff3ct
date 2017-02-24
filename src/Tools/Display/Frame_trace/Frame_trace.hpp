@@ -10,6 +10,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
 /*!
  * \class Frame_trace
  *
@@ -101,6 +103,7 @@ private:
 	template <typename D>
 	void display_value (D value, debug_version version, B ref                                                  );
 };
+}
 
 #include "Frame_trace.hxx"
 

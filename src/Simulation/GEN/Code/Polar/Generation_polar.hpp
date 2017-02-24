@@ -15,6 +15,8 @@
 
 #include "Simulation/Simulation.hpp"
 
+namespace aff3ct
+{
 class Generation_polar : public Simulation
 {
 protected:
@@ -53,5 +55,6 @@ public:
 
 	void launch();
 };
+}
 
 #endif /* GENERATION_POLAR_HPP_ */

@@ -12,6 +12,8 @@
 
 #include "../../Generator.hpp"
 
+namespace aff3ct
+{
 class Generator_polar_SC_sys : public Generator
 {
 protected:
@@ -68,5 +70,6 @@ private:
 	void recursive_generate_graph              (const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
 	void recursive_generate_short_graph        (const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
 };
+}
 
 #endif /* GENERATOR_POLAR_SC_SYS_ */

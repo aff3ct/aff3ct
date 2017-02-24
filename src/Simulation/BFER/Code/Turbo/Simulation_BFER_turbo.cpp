@@ -15,8 +15,8 @@
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
 
-
 #include "Simulation_BFER_turbo.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_turbo<B,R,Q,QD>

@@ -3,6 +3,8 @@
 
 #include "Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_BFERI_RSC : public Simulation_BFERI<B,R,Q>
 {
@@ -21,5 +23,6 @@ protected:
 	SISO<Q>*      build_siso       (const int tid = 0);
 	Decoder<B,Q>* build_decoder    (const int tid = 0);
 };
+}
 
 #endif /* SIMULATION_BFERI_RSC_HPP_ */

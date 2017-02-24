@@ -8,6 +8,8 @@
 
 #include "Decoder_turbo.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_turbo_naive : public Decoder_turbo<B,R>
 {
@@ -26,5 +28,6 @@ public:
 protected:
 	virtual void hard_decode();
 };
+}
 
 #endif /* DECODER_TURBO_NAIVE_HPP */

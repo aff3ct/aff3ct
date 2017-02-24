@@ -5,6 +5,8 @@
 #include "Tools/Math/max.h"
 #include "../CPM_parameters.hpp"
 
+namespace aff3ct
+{
 template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
 class CPM_BCJR
 {
@@ -37,6 +39,7 @@ private:
 	                                    mipp::vector<Q> &Le_N  ); // extrinsic information processing from bit probabilities
 	                                                              // and CPM a priori LLR
 };
+}
 
 #include "CPM_BCJR.hxx"
 

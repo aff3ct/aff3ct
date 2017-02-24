@@ -8,6 +8,8 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 struct Factory_encoder_turbo : public Factory
 {
@@ -17,5 +19,6 @@ struct Factory_encoder_turbo : public Factory
 	                               Encoder_sys<B>      *sub_encoder_i,
 	                         const int                 n_frames = 1);
 };
+}
 
 #endif /* FACTORY_ENCODER_TURBO_HPP */

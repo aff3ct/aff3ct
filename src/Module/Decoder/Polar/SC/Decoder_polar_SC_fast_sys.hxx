@@ -19,6 +19,8 @@
 
 constexpr int static_level = 6; // 2^6 = 64
 
+namespace aff3ct
+{
 template <typename B, typename R, class API_polar, int REV_D>
 struct Decoder_polar_SC_fast_sys_static
 {
@@ -393,4 +395,5 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < n_frames; i++)
 			for (auto j = 0; j < this->N; j++)
 				V_N[i * this->N + j] = !frozen_bits[j] && V_N[i * this->N + j];
+}
 }

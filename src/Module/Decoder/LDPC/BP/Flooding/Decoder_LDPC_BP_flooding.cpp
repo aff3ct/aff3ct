@@ -4,6 +4,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding.hpp"
+using namespace aff3ct;
 
 // constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
 

@@ -1,12 +1,12 @@
 #include <iostream>
 #include <cassert>
 #include <algorithm>
+using namespace std;
 
 #include "Tools/Display/bash_tools.h"
 
 #include "Arguments_reader.hpp"
-
-using namespace std;
+using namespace aff3ct;
 
 Arguments_reader
 ::Arguments_reader(const int argc, const char** argv)

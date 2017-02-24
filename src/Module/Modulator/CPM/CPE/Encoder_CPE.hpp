@@ -6,6 +6,8 @@
 
 #include "../CPM_parameters.hpp"
 
+namespace aff3ct
+{
 template<typename SIN, typename SOUT>
 class Encoder_CPE
 {
@@ -48,7 +50,6 @@ protected:
 	virtual SOUT inner_encode(const SIN bit_sys, int &state) = 0;
 	virtual SIN  tail_symb   (const int &state             ) = 0;
 };
-
-#include "Encoder_CPE.hxx"
+}
 
 #endif /* ENCODER_CPE_HPP_ */

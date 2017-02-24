@@ -10,6 +10,7 @@
 #include "Tools/Factory/Repetition/Factory_decoder_repetition.hpp"
 
 #include "Simulation_BFER_repetition.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_repetition<B,R,Q>

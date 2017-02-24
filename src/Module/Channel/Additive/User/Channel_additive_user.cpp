@@ -4,6 +4,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Channel_additive_user.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_additive_user<R>

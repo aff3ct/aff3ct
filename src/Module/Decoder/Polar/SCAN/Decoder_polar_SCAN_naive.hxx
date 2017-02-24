@@ -7,6 +7,8 @@
 
 #include "Decoder_polar_SCAN_naive.hpp"
 
+namespace aff3ct
+{
 /********************************************************************/
 /** CONSTRUCTOR **/
 /********************************************************************/
@@ -210,4 +212,5 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 		std::cout << std::endl;
 	}
 	std::cout << std::endl << std::endl;
+}
 }

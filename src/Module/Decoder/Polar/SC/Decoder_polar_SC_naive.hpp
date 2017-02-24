@@ -8,6 +8,8 @@
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Contents_SC
 {
@@ -46,6 +48,7 @@ private:
 	void recursive_store                    (const Binary_node<Contents_SC<B,R>>* node_curr,       mipp::vector<B>& V_K,         int &k) const;
 	void recursive_deallocate_nodes_contents(      Binary_node<Contents_SC<B,R>>* node_curr                                            );
 };
+}
 
 #include "Decoder_polar_SC_naive.hxx"
 

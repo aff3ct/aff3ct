@@ -7,6 +7,8 @@
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
+namespace aff3ct
+{
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 class Decoder_polar_SCAN_naive : public Decoder<B,R>
@@ -38,6 +40,7 @@ private:
 	void fb_compute_soft_output    (const int &i);
 	void display_decoder_graph     ();
 };
+}
 
 #include "Decoder_polar_SCAN_naive.hxx"
 

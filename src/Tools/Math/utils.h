@@ -6,6 +6,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
 template <typename R> inline R           div2(R           val) { return val * (R)0.50; }
 template <>           inline int         div2(int         val) { return val >> 1;      }
 template <>           inline short       div2(short       val) { return val >> 1;      }
@@ -67,6 +69,7 @@ inline R integral(function_type func, const R min, const R max, const int number
 		area += func(min + ((R)i + (R)0.5) * step) * step;
 
 	return area;
+}
 }
 
 #endif /* MATH_UTILS_H */

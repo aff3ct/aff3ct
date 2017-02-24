@@ -2,6 +2,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
 template <typename B, typename R, proto_max_i<R> MAX>
 Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_fast(const int &K, 
@@ -247,4 +249,5 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 	this->compute_alpha(        );
 	this->compute_beta (        );
 	this->compute_ext  (sys, ext);
+}
 }

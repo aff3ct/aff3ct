@@ -6,6 +6,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "AList_reader.hpp"
+using namespace aff3ct;
 
 std::vector<std::string> split(const std::string &s)
 {

@@ -6,10 +6,13 @@
 
 #include "Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 struct Factory_CRC : public Factory
 {
 	static CRC<B>* build(const parameters &params);
 };
+}
 
 #endif /* FACTORY_CRC_HPP */

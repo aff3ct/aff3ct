@@ -6,6 +6,7 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
 
 #include "Factory_frozenbits_generator.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Frozenbits_generator<B>* Factory_frozenbits_generator<B>

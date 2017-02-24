@@ -8,6 +8,7 @@
 #include "Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp"
 
 #include "Launcher_BFER_turbo.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_turbo<B,R,Q,QD>

@@ -2,6 +2,7 @@
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
 
 #include "Factory_encoder_turbo.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder<B>* Factory_encoder_turbo<B>

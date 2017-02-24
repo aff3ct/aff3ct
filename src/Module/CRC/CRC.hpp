@@ -14,6 +14,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class CRC_i
  *
@@ -78,5 +80,6 @@ public:
 };
 
 #include "SC_CRC.hpp"
+}
 
 #endif

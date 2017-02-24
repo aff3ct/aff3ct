@@ -12,6 +12,8 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Algo/Tree/Binary_node.hpp"
 
+namespace aff3ct
+{
 enum pattern_SC_type
 {
 	STANDARD = 0,
@@ -107,5 +109,6 @@ public:
 
 	virtual bool is_terminal() const = 0;
 };
+}
 
 #endif /* PATTERN_SC_INTERFACE_HPP_ */

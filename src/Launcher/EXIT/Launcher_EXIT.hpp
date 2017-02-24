@@ -3,6 +3,8 @@
 
 #include "../Launcher.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Launcher_EXIT : public Launcher<B,R,Q>
 {
@@ -18,5 +20,6 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_encoder   ();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder   ();
 };
+}
 
 #endif /* LAUNCHER_EXIT_HPP_ */

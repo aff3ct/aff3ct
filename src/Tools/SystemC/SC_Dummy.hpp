@@ -7,6 +7,8 @@
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 
+namespace aff3ct
+{
 class SC_Dummy : sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Dummy);
@@ -26,6 +28,7 @@ private:
 	{
 	}
 };
+}
 
 #endif /* SC_DUMMY_HPP_ */
 

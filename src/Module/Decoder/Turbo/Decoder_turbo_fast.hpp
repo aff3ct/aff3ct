@@ -8,6 +8,8 @@
 
 #include "Decoder_turbo.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_turbo_fast : public Decoder_turbo<B,R>
 {
@@ -28,5 +30,6 @@ protected:
 	void hard_decode(                          );
 	void store      (      mipp::vector<B>& V_K) const;
 };
+}
 
 #endif /* DECODER_TURBO_FAST_SYS_ */

@@ -3,6 +3,8 @@
 
 #include "../Random/Interleaver_random.hpp"
 
+namespace aff3ct
+{
 template <typename T>
 class Interleaver_uniform : public Interleaver_random<T>
 {
@@ -17,5 +19,6 @@ public:
 		this->gen_lookup_tables();
 	}
 };
+}
 
 #endif

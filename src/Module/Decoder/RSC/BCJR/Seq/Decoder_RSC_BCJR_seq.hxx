@@ -4,6 +4,8 @@
 
 #include "Decoder_RSC_BCJR_seq.hpp"
 
+namespace aff3ct
+{
 template <typename R>
 struct RSC_BCJR_seq_init
 {
@@ -242,3 +244,4 @@ struct RSC_BCJR_seq_normalize <signed char>
 			metrics[j] = saturate<signed char>(metrics[j] - norm_val, -63, +63);
 	}
 };
+}

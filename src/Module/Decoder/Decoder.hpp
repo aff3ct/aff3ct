@@ -16,6 +16,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Decoder_i
  *
@@ -260,5 +262,6 @@ private:
 };
 
 #include "SC_Decoder.hpp"
+}
 
 #endif /* DECODER_HPP_ */

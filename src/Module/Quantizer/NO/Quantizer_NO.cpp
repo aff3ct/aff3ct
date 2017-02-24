@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Quantizer_NO.hpp"
+using namespace aff3ct;
 
 template <typename R, typename Q>
 Quantizer_NO<R,Q>
@@ -28,6 +29,8 @@ void Quantizer_NO<R,Q>
 		Y_N2[i] = (Q)Y_N1[i];
 }
 
+namespace aff3ct
+{
 template<>
 void Quantizer_NO<float,float>
 ::process(const mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
@@ -35,13 +38,17 @@ void Quantizer_NO<float,float>
 	assert(Y_N1.size() == Y_N2.size());
 	Y_N2 = Y_N1;	
 }
+}
 
+namespace aff3ct
+{
 template<>
 void Quantizer_NO<double,double>
 ::process(const mipp::vector<double>& Y_N1, mipp::vector<double>& Y_N2)
 {
 	assert(Y_N1.size() == Y_N2.size());
 	Y_N2 = Y_N1;	
+}
 }
 
 // ==================================================================================== explicit template instantiation 

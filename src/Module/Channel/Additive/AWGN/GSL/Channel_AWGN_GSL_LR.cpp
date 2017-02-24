@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "Channel_AWGN_GSL_LR.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_AWGN_GSL_LR<R>

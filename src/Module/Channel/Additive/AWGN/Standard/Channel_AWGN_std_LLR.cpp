@@ -1,7 +1,8 @@
-#include "Channel_AWGN_std_LLR.hpp"
-
 #include <algorithm>
 #include <cassert>
+
+#include "Channel_AWGN_std_LLR.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_AWGN_std_LLR<R>

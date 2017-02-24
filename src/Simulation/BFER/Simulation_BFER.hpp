@@ -21,6 +21,8 @@
 
 #include "../Simulation.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER_i : public Simulation
 {
@@ -84,5 +86,6 @@ protected:
 	virtual Coset    <B,B  >* build_coset_bit (                const int tid = 0);
 	virtual Monitor  <B    >* build_monitor   (                const int tid = 0);
 };
+}
 
 #endif /* SIMULATION_BFER_I_HPP_ */

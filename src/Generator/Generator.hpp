@@ -10,6 +10,8 @@
 
 #include <vector>
 
+namespace aff3ct
+{
 /*!
  * \class Generator
  *
@@ -37,5 +39,6 @@ public:
 	 */
 	virtual void generate() = 0;
 };
+}
 
 #endif /* GENERATOR_HPP_ */

@@ -4,6 +4,7 @@
 #include "Module/Source/User/Source_user.hpp"
 
 #include "Factory_source.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Source<B>* Factory_source<B>

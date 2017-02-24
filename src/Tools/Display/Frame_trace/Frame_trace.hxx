@@ -5,6 +5,8 @@
 
 #include "Frame_trace.hpp"
 
+namespace aff3ct
+{
 template <typename B> template <typename D>
 void Frame_trace<B>
 ::display_bit_vector(mipp::vector<D> vec, mipp::vector<B> ref)
@@ -130,4 +132,5 @@ void Frame_trace<B>
 					stream << bold_green (value_string) << "|";
 			break;
 	}
+}
 }

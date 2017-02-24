@@ -8,6 +8,8 @@
 #include "Decoder_polar_SC_naive.hpp"
 #include "../decoder_polar_functions.h"
 
+namespace aff3ct
+{
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 class Decoder_polar_SC_naive_sys : public Decoder_polar_SC_naive<B,R,F,G,H>
 {
@@ -19,6 +21,7 @@ public:
 protected:
 	void store(mipp::vector<B>& V_K) const;
 };
+}
 
 #include "Decoder_polar_SC_naive_sys.hxx"
 

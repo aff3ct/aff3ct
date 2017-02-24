@@ -6,6 +6,8 @@
 
 #include "../Modulator.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Modulator_BPSK_fast : public Modulator<B,R,Q>
 {
@@ -22,5 +24,6 @@ public:
 	void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
 	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 };
+}
 
 #endif /* MODULATOR_BPSK_FAST_HPP_ */

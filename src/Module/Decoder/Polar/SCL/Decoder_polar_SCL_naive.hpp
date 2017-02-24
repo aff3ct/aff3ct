@@ -9,6 +9,8 @@
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Contents_SCL
 {
@@ -71,6 +73,7 @@ protected:
 	void apply_g     (const Binary_node<Contents_SCL<B,R>>* node_curr);
 	void compute_sums(const Binary_node<Contents_SCL<B,R>>* node_curr);
 };
+}
 
 #include "Decoder_polar_SCL_naive.hxx"
 

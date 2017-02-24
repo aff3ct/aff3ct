@@ -17,6 +17,8 @@
 
 #include "../Simulation_BFERI.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFERI : public Simulation_BFERI_i<B,R,Q>
 {
@@ -112,6 +114,7 @@ private:
 
 	Terminal* build_terminal(const int tid = 0);
 };
+}
 
 #endif /* SIMULATION_BFERI_HPP_ */
 

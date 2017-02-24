@@ -1,5 +1,7 @@
 #include "Decoder_polar_SCL_naive_CA.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc,
@@ -29,4 +31,5 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 	}
 
 	this->Decoder_polar_SCL_naive<B,R,F,G>::select_best_path();
+}
 }

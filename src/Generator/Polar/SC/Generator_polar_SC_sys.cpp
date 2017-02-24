@@ -8,6 +8,7 @@
 using namespace std;
 
 #include "Generator_polar_SC_sys.hpp"
+using namespace aff3ct;
 
 Generator_polar_SC_sys
 ::Generator_polar_SC_sys(const int& K,

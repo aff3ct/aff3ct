@@ -4,6 +4,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_Gallager_A.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>

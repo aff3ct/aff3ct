@@ -8,6 +8,8 @@
 
 #include "../../../Channel.hpp"
 
+namespace aff3ct
+{
 template <typename R>
 class Channel_AWGN_fast_LLR : public Channel<R>
 {
@@ -27,5 +29,6 @@ private:
 	inline mipp::Reg<R> get_random_simd();
 	inline R            get_random     ();
 };
+}
 
 #endif /* CHANNEL_AWGN_FAST_LLR_HPP_ */

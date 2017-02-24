@@ -2,6 +2,8 @@
 
 #include "Decoder_RSC_BCJR_seq_very_fast.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_very_fast(const int &K,
@@ -255,4 +257,5 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
 	this->compute_beta_ext(sys, ext);
+}
 }

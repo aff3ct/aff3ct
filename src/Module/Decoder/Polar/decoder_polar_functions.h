@@ -13,6 +13,8 @@
 #endif
 #endif
 
+namespace aff3ct
+{
 // -------------------------------------------------------------------------- special function prototypes for templates
 
 template <typename R>
@@ -110,6 +112,7 @@ template <typename B, typename R>
 __forceinline R phi(const R& mu, const R& lambda, const B& u);
 
 __forceinline int compute_depth(int index, int tree_depth);
+}
 
 #include "decoder_polar_functions.hxx"
 

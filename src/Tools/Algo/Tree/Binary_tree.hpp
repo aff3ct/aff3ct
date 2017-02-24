@@ -10,6 +10,8 @@
 
 #include "Binary_node.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Binary_tree
  *
@@ -61,6 +63,7 @@ private:
 	void delete_nodes        (Binary_node<T>* cur_node                                        );
 	void recursive_get_leaves(Binary_node<T>* cur_node                                        );
 };
+}
 
 #include "Binary_tree.hxx"
 

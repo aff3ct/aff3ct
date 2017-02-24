@@ -10,6 +10,8 @@
 #include "../Encoder.hpp"
 #include "../Encoder_sys.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 class Encoder_turbo : public Encoder<B>
 {
@@ -35,5 +37,6 @@ public:
 
 	void set_n_frames(const int n_frames);
 };
+}
 
 #endif // ENCODER_TURBO_HPP_

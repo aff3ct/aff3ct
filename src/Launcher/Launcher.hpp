@@ -19,6 +19,8 @@
 #include "Tools/Arguments_reader.hpp"
 #include "Simulation/Simulation.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Launcher
  *
@@ -237,5 +239,6 @@ private:
 	void print_parameters(std::string grp_name, std::vector<std::pair<std::string,std::string>> params);
 	void compute_max_n_chars();
 };
+}
 
 #endif /* LAUNCHER_HPP_ */

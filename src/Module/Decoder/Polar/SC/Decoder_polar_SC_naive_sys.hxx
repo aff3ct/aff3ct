@@ -1,5 +1,7 @@
 #include "Decoder_polar_SC_naive_sys.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 Decoder_polar_SC_naive_sys<B,R,F,G,H>
 ::Decoder_polar_SC_naive_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
@@ -25,4 +27,5 @@ void Decoder_polar_SC_naive_sys<B,R,F,G,H>
 	for (auto i = 0; i < this->N; i++)
 		if (!this->frozen_bits[i])
 			V_K[k++] = contents_root->s[i];
+}
 }

@@ -7,6 +7,8 @@
 
 #include "../Interleaver.hpp"
 
+namespace aff3ct
+{
 template <typename T>
 class Interleaver_random : public Interleaver<T>
 {
@@ -34,6 +36,7 @@ protected:
 			this->pi_inv[this->pi[i]] = i;
 	}
 };
+}
 
 #endif	/* INTERLEAVER_RANDOM_HPP */
 

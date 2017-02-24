@@ -4,6 +4,7 @@
 #include "Simulation/BFER/Code/Uncoded/Simulation_BFER_uncoded.hpp"
 
 #include "Launcher_BFER_uncoded.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_uncoded<B,R,Q>

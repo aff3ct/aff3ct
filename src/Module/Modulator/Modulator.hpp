@@ -15,6 +15,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Modulator_i
  *
@@ -187,5 +189,6 @@ public:
 };
 
 #include "SC_Modulator.hpp"
+}
 
 #endif /* MODULATOR_HPP_ */

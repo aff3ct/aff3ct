@@ -1,3 +1,5 @@
+#include <string>
+
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/ONMS/Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
@@ -5,9 +7,9 @@
 #include "Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
-#include "Factory_decoder_LDPC.hpp"
 
-#include <string>
+#include "Factory_decoder_LDPC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>

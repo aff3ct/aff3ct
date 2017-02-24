@@ -4,6 +4,7 @@
 #include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
 
 #include "Factory_encoder_polar.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder<B>* Factory_encoder_polar<B>

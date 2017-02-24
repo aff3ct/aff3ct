@@ -4,6 +4,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "CRC_polynomial_inter.hpp"
+using namespace aff3ct;
 
 template <typename B>
 CRC_polynomial_inter<B>

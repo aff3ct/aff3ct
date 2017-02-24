@@ -7,6 +7,7 @@
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_turbo.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder_turbo<B,R>

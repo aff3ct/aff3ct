@@ -14,6 +14,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class SISO_i
  *
@@ -139,5 +141,6 @@ protected:
 };
 
 #include "SC_SISO.hpp"
+}
 
 #endif /* SISO_HPP_ */

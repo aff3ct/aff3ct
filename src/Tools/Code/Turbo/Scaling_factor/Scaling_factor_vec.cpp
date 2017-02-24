@@ -2,6 +2,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Scaling_factor_vec.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Scaling_factor_vec<R>

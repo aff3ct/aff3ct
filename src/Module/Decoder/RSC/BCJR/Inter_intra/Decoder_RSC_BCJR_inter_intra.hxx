@@ -4,6 +4,8 @@
 
 #include "Decoder_RSC_BCJR_inter_intra.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter_intra<B,R>
 ::Decoder_RSC_BCJR_inter_intra(const int &K,
@@ -199,3 +201,4 @@ struct RSC_BCJR_inter_intra_normalize <signed char, I>
 		return r_metrics;
 	}
 };
+}

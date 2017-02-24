@@ -6,6 +6,8 @@
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
+namespace aff3ct
+{
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 class Decoder_polar_SCL_naive_sys : public Decoder_polar_SCL_naive<B,R,F,G>
 {
@@ -19,6 +21,7 @@ public:
 protected:
 	virtual void store(mipp::vector<B>& V_K) const;
 };
+}
 
 #include "Decoder_polar_SCL_naive_sys.hxx"
 

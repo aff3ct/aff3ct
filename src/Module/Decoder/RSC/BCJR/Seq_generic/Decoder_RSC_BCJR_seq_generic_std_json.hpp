@@ -8,6 +8,8 @@
 
 #include "Decoder_RSC_BCJR_seq_generic_std.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 class Decoder_RSC_BCJR_seq_generic_std_json : public Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 {
@@ -31,6 +33,7 @@ public:
 protected:
 	void compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext);
 };
+}
 
 #include "Decoder_RSC_BCJR_seq_generic_std_json.hxx"
 

@@ -5,6 +5,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered_sum_product.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_sum_product<B,R>

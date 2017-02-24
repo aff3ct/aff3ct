@@ -5,6 +5,8 @@
 
 #include "../../../Decoder_SISO.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_LDPC_BP_layered : public Decoder_SISO<B,R>
 {
@@ -53,5 +55,6 @@ protected:
 
 	virtual void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches) = 0;
 };
+}
 
 #endif /* DECODER_LDPC_BP_LAYERED_HPP_ */

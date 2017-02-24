@@ -11,6 +11,7 @@
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
 #include "Simulation_BFER_RA.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_RA<B,R,Q>

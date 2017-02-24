@@ -12,6 +12,8 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 struct Factory_decoder_turbo : public Factory
 {
@@ -22,5 +24,6 @@ struct Factory_decoder_turbo : public Factory
 	                                 Scaling_factor<R>   *scaling_factor,
 	                                 CRC<B>              *crc = nullptr);
 };
+}
 
 #endif /* FACTORY_DECODER_TURBO_HPP */

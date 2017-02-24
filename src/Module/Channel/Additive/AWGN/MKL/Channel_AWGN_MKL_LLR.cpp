@@ -7,6 +7,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Channel_AWGN_MKL_LLR.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_AWGN_MKL_LLR<R>
@@ -39,6 +40,8 @@ void Channel_AWGN_MKL_LLR<R>
 	exit(-1);
 }
 
+namespace aff3ct
+{
 template <>
 void Channel_AWGN_MKL_LLR<float>
 ::add_noise(const mipp::vector<float>& X_N, mipp::vector<float>& Y_N)
@@ -64,7 +67,10 @@ void Channel_AWGN_MKL_LLR<float>
 	for (unsigned i = 0; i < size; i++)
 		Y_N[i] = X_N[i] + Y_N[i];
 }
+}
 
+namespace aff3ct
+{
 template <>
 void Channel_AWGN_MKL_LLR<double>
 ::add_noise(const mipp::vector<double>& X_N, mipp::vector<double>& Y_N)
@@ -90,7 +96,7 @@ void Channel_AWGN_MKL_LLR<double>
 	for (unsigned i = 0; i < size; i++)
 		Y_N[i] = X_N[i] + Y_N[i];
 }
-
+}
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"

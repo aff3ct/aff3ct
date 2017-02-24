@@ -3,6 +3,8 @@
 
 #include "../Launcher_BFER.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Launcher_BFER_repetition : public Launcher_BFER<B,R,Q>
 {
@@ -17,5 +19,6 @@ protected:
 
 	virtual std::vector<std::pair<std::string,std::string>> header_encoder();
 };
+}
 
 #endif /* LAUNCHER_BFER_REPETITION_HPP_ */

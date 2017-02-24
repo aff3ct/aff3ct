@@ -7,6 +7,8 @@
 
 #include "Simulation/EXIT/Simulation_EXIT.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_EXIT_RSC : public Simulation_EXIT<B,R,Q>
 {
@@ -29,5 +31,6 @@ protected:
 	Encoder<B>* build_encoder    ();
 	SISO<R>*    build_siso       ();
 };
+}
 
 #endif /* SIMULATION_EXIT_RSC_HPP_ */

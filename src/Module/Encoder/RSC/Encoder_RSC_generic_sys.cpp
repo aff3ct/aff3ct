@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Encoder_RSC_generic_sys.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder_RSC_generic_sys<B>

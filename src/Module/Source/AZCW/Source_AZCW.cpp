@@ -1,4 +1,5 @@
 #include "Source_AZCW.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Source_AZCW<B>

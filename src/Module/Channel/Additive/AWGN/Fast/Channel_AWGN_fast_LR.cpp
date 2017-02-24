@@ -1,7 +1,8 @@
-#include "Channel_AWGN_fast_LR.hpp"
-
 #include <cassert>
 #include <cmath>
+
+#include "Channel_AWGN_fast_LR.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_AWGN_fast_LR<R>

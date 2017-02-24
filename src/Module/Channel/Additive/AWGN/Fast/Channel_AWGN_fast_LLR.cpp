@@ -4,6 +4,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Channel_AWGN_fast_LLR.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_AWGN_fast_LLR<R>
@@ -43,6 +44,8 @@ R Channel_AWGN_fast_LLR<R>
 	std::exit(-1);
 }
 
+namespace aff3ct
+{
 template <>
 mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 ::get_random_simd()
@@ -50,13 +53,17 @@ mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 	// return a vector of numbers between ]0,1[
 	return mt19937_simd.randf_oo();
 }
+}
 
+namespace aff3ct
+{
 template <>
 float Channel_AWGN_fast_LLR<float>
 ::get_random()
 {
 	// return a number between ]0,1[
 	return mt19937.randf_oo();
+}
 }
 
 template <typename R>

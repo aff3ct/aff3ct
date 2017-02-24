@@ -539,6 +539,7 @@
 #endif
 
 #include "Factory_decoder_polar_gen.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_polar_gen<B,R>

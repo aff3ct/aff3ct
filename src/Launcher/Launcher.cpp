@@ -14,6 +14,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Launcher<B,R,Q>

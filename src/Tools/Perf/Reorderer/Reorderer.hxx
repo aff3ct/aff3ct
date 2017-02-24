@@ -7,6 +7,8 @@
 #pragma warning( disable : 4717 )
 #endif
 
+namespace aff3ct
+{
 constexpr bool is_power_of_2(unsigned x)
 {
 	return (x > 0) && !(x & (x - 1));
@@ -406,6 +408,7 @@ void Reorderer_static<T,N_FRAMES>
 	for (auto i = start_seq_loop; i < data_length; i++)
 		for (auto f = 0; f < n_fra; f++)
 			out_data[f][i] = in_data[i*n_fra +f];
+}
 }
 
 #ifdef _MSC_VER

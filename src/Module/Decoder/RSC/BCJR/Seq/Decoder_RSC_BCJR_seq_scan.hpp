@@ -5,6 +5,8 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/max.h"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename RD>
 class Decoder_RSC_BCJR_seq_scan : public Decoder_RSC_BCJR_seq<B,R>
 {
@@ -25,6 +27,7 @@ protected:
 	virtual void compute_beta (                                                      );
 	virtual void compute_ext  (const mipp::vector<R> &sys,       mipp::vector<R> &ext);
 };
+}
 
 #include "Decoder_RSC_BCJR_seq_scan.hxx"
 

@@ -4,6 +4,7 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Decoder_repetition.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R>
 Decoder_repetition<B,R>

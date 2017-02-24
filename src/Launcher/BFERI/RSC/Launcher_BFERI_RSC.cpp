@@ -8,6 +8,7 @@
 #include "Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp"
 
 #include "Launcher_BFERI_RSC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFERI_RSC<B,R,Q,QD>

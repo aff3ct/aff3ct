@@ -15,6 +15,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Channel_i
  *
@@ -73,5 +75,6 @@ public:
 };
 
 #include "SC_Channel.hpp"
+}
 
 #endif /* CHANNEL_HPP_ */

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Encoder_polar_sys.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder_polar_sys<B>

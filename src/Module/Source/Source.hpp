@@ -15,6 +15,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Source_i
  *
@@ -59,5 +61,6 @@ public:
 };
 
 #include "SC_Source.hpp"
+}
 
 #endif /* SOURCE_HPP_ */

@@ -3,6 +3,8 @@
 
 #include "../Decoder_LDPC_BP_flooding.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding_offset_normalize_min_sum : public Decoder_LDPC_BP_flooding<B,R>
 {
@@ -24,5 +26,6 @@ protected:
 	// BP functions for decoding
 	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
 };
+}
 
 #endif /* DECODER_LDPC_BP_FLOODING_MIN_SUM_OFFSET_HPP_ */

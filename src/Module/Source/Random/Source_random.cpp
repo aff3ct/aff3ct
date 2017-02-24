@@ -1,4 +1,5 @@
 #include "Source_random.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Source_random<B>

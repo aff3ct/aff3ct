@@ -9,6 +9,8 @@
 #endif
 #endif
 
+namespace aff3ct
+{
 // -------------------------------------------------------------------------- special function prototypes for templates
 
 template <typename R>
@@ -29,6 +31,7 @@ template <typename R> __forceinline R max_star_safe(const R& a, const R& b);
 template <typename R> __forceinline mipp::Reg<R> max_i       (const mipp::Reg<R> a, const mipp::Reg<R> b);
 template <typename R> __forceinline mipp::Reg<R> max_linear_i(const mipp::Reg<R> a, const mipp::Reg<R> b);
 template <typename R> __forceinline mipp::Reg<R> max_star_i  (const mipp::Reg<R> a, const mipp::Reg<R> b);
+}
 
 #include "max.hxx"
 

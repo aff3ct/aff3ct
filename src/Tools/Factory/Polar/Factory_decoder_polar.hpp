@@ -9,6 +9,8 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 struct Factory_decoder_polar : public Factory
 {
@@ -16,5 +18,6 @@ struct Factory_decoder_polar : public Factory
 
 	static Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits, CRC<B> *crc);
 };
+}
 
 #endif /* FACTORY_DECODER_POLAR_HPP */

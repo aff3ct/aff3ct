@@ -19,6 +19,8 @@
 
 #include "../Simulation_BFER.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
@@ -123,6 +125,7 @@ private:
 
 	Terminal* build_terminal();
 };
+}
 
 #endif /* SIMULATION_BFER_HPP_ */
 

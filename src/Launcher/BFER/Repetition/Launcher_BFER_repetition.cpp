@@ -4,6 +4,7 @@
 #include "Simulation/BFER/Code/Repetition/Simulation_BFER_repetition.hpp"
 
 #include "Launcher_BFER_repetition.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Launcher_BFER_repetition<B,R,Q>

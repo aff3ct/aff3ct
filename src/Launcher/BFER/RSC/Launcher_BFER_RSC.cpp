@@ -8,6 +8,7 @@
 #include "Simulation/BFER/Code/RSC/Simulation_BFER_RSC.hpp"
 
 #include "Launcher_BFER_RSC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_RSC<B,R,Q,QD>

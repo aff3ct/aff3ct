@@ -10,6 +10,7 @@
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
 
 #include "Simulation_BFERI_LDPC.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_BFERI_LDPC<B,R,Q>

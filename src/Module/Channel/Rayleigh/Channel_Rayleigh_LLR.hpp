@@ -5,6 +5,8 @@
 
 #include "../Channel.hpp"
 
+namespace aff3ct
+{
 template <typename R>
 class Channel_Rayleigh_LLR : public Channel<R> // flat Rayleigh fading channel
 {
@@ -25,5 +27,6 @@ public:
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R> &H_N);
 };
+}
 
 #endif /* CHANNEL_RAYLEIGH_LLR_HPP_ */

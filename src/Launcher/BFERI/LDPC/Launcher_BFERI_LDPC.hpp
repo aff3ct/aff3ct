@@ -3,6 +3,8 @@
 
 #include "../Launcher_BFERI.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Launcher_BFERI_LDPC : public Launcher_BFERI<B,R,Q>
 {
@@ -18,5 +20,6 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_code   ();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder();
 };
+}
 
 #endif /* LAUNCHER_BFERI_LDPC_HPP_ */

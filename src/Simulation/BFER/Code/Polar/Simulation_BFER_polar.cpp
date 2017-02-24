@@ -16,6 +16,7 @@
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "Simulation_BFER_polar.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_polar<B,R,Q>

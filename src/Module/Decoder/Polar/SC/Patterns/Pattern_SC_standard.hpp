@@ -11,6 +11,8 @@
 
 #include "Pattern_SC_interface.hpp"
 
+namespace aff3ct
+{
 template <int T = pattern_SC_type::STANDARD>
 class Pattern_SC : public Pattern_SC_interface
 {
@@ -116,5 +118,6 @@ public:
 
 	virtual bool is_terminal() const { return false; }
 };
+}
 
 #endif /* PATTERN_SC_STANDARD_HPP_ */

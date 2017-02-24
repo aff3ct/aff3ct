@@ -9,6 +9,8 @@
 
 #include "Simulation/EXIT/Simulation_EXIT.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename Q>
 class Simulation_EXIT_polar : public Simulation_EXIT<B,R,Q>
 {
@@ -32,5 +34,6 @@ protected:
 	Encoder<B>* build_encoder    ();
 	SISO<R>*    build_siso       ();
 };
+}
 
 #endif /* SIMULATION_EXIT_POLAR_HPP_ */

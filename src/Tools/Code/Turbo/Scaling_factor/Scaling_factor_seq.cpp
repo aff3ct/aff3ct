@@ -1,6 +1,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Scaling_factor_seq.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Scaling_factor_seq<R>

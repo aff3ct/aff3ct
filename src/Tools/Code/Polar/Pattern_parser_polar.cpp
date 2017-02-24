@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Pattern_parser_polar.hpp"
+using namespace aff3ct;
 
 Pattern_parser_polar
 ::Pattern_parser_polar(const int& N,

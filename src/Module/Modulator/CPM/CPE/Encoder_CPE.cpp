@@ -1,4 +1,5 @@
 #include "Encoder_CPE.hpp"
+using namespace aff3ct;
 
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>
@@ -113,6 +114,7 @@ SIN Encoder_CPE<SIN, SOUT>
 
 	return res;
 }
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

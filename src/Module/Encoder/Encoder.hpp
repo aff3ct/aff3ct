@@ -14,6 +14,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Encoder_i
  *
@@ -71,5 +73,6 @@ public:
 };
 
 #include "SC_Encoder.hpp"
+}
 
 #endif /* ENCODER_HPP_ */

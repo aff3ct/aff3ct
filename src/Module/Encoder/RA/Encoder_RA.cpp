@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Encoder_RA.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Encoder_RA<B>

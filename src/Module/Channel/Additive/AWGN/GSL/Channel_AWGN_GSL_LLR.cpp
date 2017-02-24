@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include "Channel_AWGN_GSL_LLR.hpp"
+using namespace aff3ct;
 
 template <typename R>
 Channel_AWGN_GSL_LLR<R>

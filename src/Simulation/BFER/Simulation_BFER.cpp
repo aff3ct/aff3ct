@@ -20,6 +20,7 @@
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
 #include "Simulation_BFER.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_i<B,R,Q>

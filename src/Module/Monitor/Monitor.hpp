@@ -15,6 +15,8 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
 /*!
  * \class Monitor_i
  *
@@ -200,5 +202,6 @@ template <typename B>
 std::chrono::nanoseconds Monitor_i<B>::d_delta_interrupt = std::chrono::nanoseconds(0);
 
 #include "SC_Monitor.hpp"
+}
 
 #endif /* MONITOR_HPP_ */

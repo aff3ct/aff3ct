@@ -11,6 +11,7 @@
 #include "Tools/Factory/Polar/Factory_decoder_polar.hpp"
 
 #include "Simulation_EXIT_polar.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Simulation_EXIT_polar<B,R,Q>

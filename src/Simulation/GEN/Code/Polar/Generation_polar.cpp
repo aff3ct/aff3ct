@@ -26,6 +26,7 @@
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 
 #include "Generation_polar.hpp"
+using namespace aff3ct;
 
 Generation_polar
 ::Generation_polar(const parameters& params)

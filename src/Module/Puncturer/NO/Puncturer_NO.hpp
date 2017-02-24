@@ -6,6 +6,8 @@
 
 #include "../Puncturer.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename Q>
 class Puncturer_NO : public Puncturer<B,Q>
 {
@@ -16,5 +18,6 @@ public:
 	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const;
 	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const;
 };
+}
 
 #endif /* PUNCTURER_NO_HPP_ */

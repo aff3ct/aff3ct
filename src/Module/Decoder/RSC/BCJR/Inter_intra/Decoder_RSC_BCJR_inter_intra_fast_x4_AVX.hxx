@@ -2,6 +2,8 @@
 
 #include "Decoder_RSC_BCJR_inter_intra_fast_x4_AVX.hpp"
 
+namespace aff3ct
+{
 template <typename R>
 struct RSC_BCJR_inter_intra_fast_x4_AVX_init
 {
@@ -358,4 +360,5 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 		const auto r_ext = r_post.interleavex16() - &sys[i*n_frames];
 		r_ext.store(&ext[i*n_frames]);
 	}
+}
 }

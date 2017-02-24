@@ -3,6 +3,7 @@
 #include "Tools/Math/utils.h"
 
 #include "Puncturer_polar_wangliu.hpp"
+using namespace aff3ct;
 
 template <typename B, typename Q>
 Puncturer_polar_wangliu<B,Q>

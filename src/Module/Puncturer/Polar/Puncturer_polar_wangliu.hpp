@@ -5,6 +5,8 @@
 
 #include "../Puncturer.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename Q>
 class Puncturer_polar_wangliu : public Puncturer<B,Q>
 {
@@ -24,5 +26,6 @@ public:
 	void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const;
 	void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const;
 };
+}
 
 #endif /* PUNCTURER_POLAR_WANGLIU_HPP_ */

@@ -12,6 +12,8 @@
 
 #include "Tools/Algo/Predicate.hpp"
 
+namespace aff3ct
+{
 class SC_Router : sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Router);
@@ -41,6 +43,7 @@ private:
 			s_out2->b_transport(trans, zero_time);
 	}
 };
+}
 
 #endif /* SC_ROUTER_HPP_ */
 

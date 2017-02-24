@@ -5,6 +5,8 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
+namespace aff3ct
+{
 static const char Frozen_bits_4_3_40[4] = {
 1, 0, 0, 0};
 
@@ -35,4 +37,5 @@ public:
 		API_polar::template spc<4>(s, l, 0+0,           0+0, 4);
 	}
 };
+}
 #endif

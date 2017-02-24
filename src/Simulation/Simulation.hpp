@@ -10,6 +10,8 @@
 
 #include "Tools/Display/bash_tools.h"
 
+namespace aff3ct
+{
 /*!
  * \class Launcher
  *
@@ -60,5 +62,6 @@ protected:
 		}
 	}
 };
+}
 
 #endif /* SIMULATION_HPP_ */

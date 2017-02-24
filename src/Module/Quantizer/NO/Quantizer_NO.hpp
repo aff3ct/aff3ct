@@ -6,6 +6,8 @@
 
 #include "../Quantizer.hpp"
 
+namespace aff3ct
+{
 template <typename R, typename Q>
 class Quantizer_NO : public Quantizer<R,Q>
 {
@@ -15,6 +17,7 @@ public:
 
 	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
+}
 
 #endif /* QUANTIZER_NO_HPP_ */
 

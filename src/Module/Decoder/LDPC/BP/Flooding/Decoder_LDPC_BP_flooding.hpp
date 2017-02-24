@@ -5,6 +5,8 @@
 
 #include "../../../Decoder_SISO.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
 {
@@ -59,5 +61,6 @@ protected:
 
 	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
 };
+}
 
 #endif /* DECODER_LDPC_BP_FLOODING_HPP_ */

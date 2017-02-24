@@ -1,6 +1,7 @@
 #include "Module/Coset/Bit/Coset_bit.hpp"
 
 #include "Factory_coset_bit.hpp"
+using namespace aff3ct;
 
 template <typename B>
 Coset<B,B>* Factory_coset_bit<B>

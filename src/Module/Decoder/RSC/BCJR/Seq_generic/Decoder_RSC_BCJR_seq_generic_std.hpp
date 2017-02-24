@@ -7,6 +7,8 @@
 
 #include "Decoder_RSC_BCJR_seq_generic.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 class Decoder_RSC_BCJR_seq_generic_std : public Decoder_RSC_BCJR_seq_generic<B,R>
 {
@@ -37,6 +39,7 @@ protected:
 	virtual void compute_ext_sys (const R *sys,                                        R *ext_sys );
 	virtual void compute_ext_par (const R *par,                                        R *ext_par );
 };
+}
 
 #include "Decoder_RSC_BCJR_seq_generic_std.hxx"
 

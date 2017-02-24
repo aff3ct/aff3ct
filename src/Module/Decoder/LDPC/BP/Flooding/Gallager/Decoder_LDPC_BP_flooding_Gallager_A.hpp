@@ -5,6 +5,8 @@
 
 #include "Module/Decoder/Decoder_SISO.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SISO<B,R>
 {
@@ -35,5 +37,6 @@ public:
 	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
 };
+}
 
 #endif /* DECODER_LDPC_BP_FLOODING_GALLAGER_A_HPP_ */

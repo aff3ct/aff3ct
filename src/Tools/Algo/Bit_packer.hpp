@@ -10,6 +10,8 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
 /*!
  * \class Bit_packer
  *
@@ -87,5 +89,6 @@ struct Bit_packer
 		}
 	}
 };
+}
 
 #endif

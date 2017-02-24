@@ -13,6 +13,8 @@
 #include "Pattern_SC_rate1.hpp"
 #include "Pattern_SC_rep.hpp"
 
+namespace aff3ct
+{
 constexpr int spc_level = 2;
 
 template <>
@@ -144,5 +146,6 @@ public:
 
 	virtual bool is_terminal() const { return true; }
 };
+}
 
 #endif /* PATTERN_SC_SPC_FINAL_HPP_ */

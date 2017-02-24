@@ -1,6 +1,7 @@
 #include <typeinfo>
 
 #include "Modulator_BPSK.hpp"
+using namespace aff3ct;
 
 template <typename B, typename R, typename Q>
 Modulator_BPSK<B,R,Q>

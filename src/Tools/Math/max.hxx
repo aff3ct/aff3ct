@@ -5,6 +5,8 @@
 
 #include "max.h"
 
+namespace aff3ct
+{
 template <typename R>
 inline R max(const R& a, const R& b)
 {
@@ -82,4 +84,5 @@ inline mipp::Reg<R> max_star_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
 {
 	mipp::Reg<R> zero = (R)0.0, one = (R)1.0;
 	return mipp::max(a, b) + mipp::log(one + mipp::exp(zero - mipp::abs(a - b)));
+}
 }

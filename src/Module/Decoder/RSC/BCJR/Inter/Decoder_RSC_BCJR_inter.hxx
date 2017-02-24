@@ -5,6 +5,8 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
+namespace aff3ct
+{
 template <typename R>
 struct RSC_BCJR_inter_init
 {
@@ -231,3 +233,4 @@ struct RSC_BCJR_inter_post <signed char>
 		return r_post.sat(-63, 63);
 	}
 };
+}

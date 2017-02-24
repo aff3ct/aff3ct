@@ -5,6 +5,8 @@
 
 #include "Monitor_std.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 class Monitor_reduction : public Monitor_std<B>
 {
@@ -21,5 +23,6 @@ public:
 	int get_n_fe() const;
 	int get_n_be() const;
 };
+}
 
 #endif /* MONITOR_REDUCTION_HPP_ */

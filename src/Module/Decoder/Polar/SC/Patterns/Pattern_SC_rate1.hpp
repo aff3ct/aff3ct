@@ -10,6 +10,8 @@
 
 #include "Pattern_SC_interface.hpp"
 
+namespace aff3ct
+{
 template <>
 class Pattern_SC<pattern_SC_type::RATE_1> : public Pattern_SC_interface
 {
@@ -96,5 +98,6 @@ public:
 
 	virtual bool is_terminal() const { return true; }
 };
+}
 
 #endif /* PATTERN_SC_YIELD1_HPP_ */

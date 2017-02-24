@@ -7,6 +7,8 @@
 
 #include "../Source.hpp"
 
+namespace aff3ct
+{
 template <typename B>
 class Source_AZCW : public Source<B>
 {
@@ -17,5 +19,6 @@ public:
 
 	void generate(mipp::vector<B>& U_K);
 };
+}
 
 #endif /* SOURCE_AZCW_HPP_ */

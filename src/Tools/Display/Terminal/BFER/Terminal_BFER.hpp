@@ -7,6 +7,8 @@
 #include "Module/Monitor/Monitor.hpp"
 #include "../Terminal.hpp"
 
+namespace aff3ct
+{
 template <typename B, typename R>
 class Terminal_BFER : public Terminal
 {
@@ -35,5 +37,6 @@ protected:
 	static std::string get_time_format(float secondes);
 	void _report(std::ostream &stream);
 };
+}
 
 #endif /* TERMINAL_BFER_HPP_ */
