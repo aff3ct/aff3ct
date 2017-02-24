@@ -201,13 +201,13 @@ void Simulation_BFERI<B,R,Q>
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction_mpi<B>(simu->params.code.K,
-		                                                 simu->params.code.N,
-		                                                 simu->params.monitor.n_frame_errors,
-		                                                 simu->monitor,
-		                                                 std::this_thread::get_id(),
-		                                                 simu->params.simulation.mpi_comm_freq,
-		                                                 n_fra);
+		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K,
+		                                                   simu->params.code.N,
+		                                                   simu->params.monitor.n_frame_errors,
+		                                                   simu->monitor,
+		                                                   std::this_thread::get_id(),
+		                                                   simu->params.simulation.mpi_comm_freq,
+		                                                   n_fra);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
