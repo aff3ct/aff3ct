@@ -99,6 +99,8 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
+
+#if !defined(STARPU) && !defined(SYSTEMC)
 	this->opt_args[{"mnt-err-trk"}] =
 		{"",
 		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
@@ -108,6 +110,7 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"mnt-err-trk-path"}] =
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
+#endif
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
