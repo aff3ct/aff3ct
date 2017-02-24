@@ -150,9 +150,9 @@ void Launcher_BFER<B,R,Q>
 		this->params.source. type = "USER";
 		this->params.encoder.type = "USER";
 		this->params.channel.type = "USER";
-		this->params.source. path = this->params.monitor.err_track_path + std::string("_SNR.src");
-		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_SNR.enc");
-		this->params.channel.path = this->params.monitor.err_track_path + std::string("_SNR.chn");
+		this->params.source. path = this->params.monitor.err_track_path + std::string("_$snr.src");
+		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_$snr.enc");
+		this->params.channel.path = this->params.monitor.err_track_path + std::string("_$snr.chn");
 		// the paths are set in the Simulation class
 	}
 
@@ -229,6 +229,20 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_monitor();
 
 	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
+
+#if !defined(STARPU) && !defined(SYSTEMC)
+	std::string enable_track = (this->params.monitor.err_track_enable) ? "on" : "off";
+	p.push_back(std::make_pair("Bad frames tracking", enable_track));
+
+	std::string enable_rev_track = (this->params.monitor.err_track_revert) ? "on" : "off";
+	p.push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	if (this->params.monitor.err_track_enable || this->params.monitor.err_track_revert)
+	{
+		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,chn]");
+		p.push_back(std::make_pair("Bad frames base path", path));
+	}
+#endif
 
 	return p;
 }
