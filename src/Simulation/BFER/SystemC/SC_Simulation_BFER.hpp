@@ -29,7 +29,7 @@ private:
 	std::condition_variable cond_terminal;
 
 protected:
-	Terminal *terminal;
+	tools::Terminal *terminal;
 
 	tools::SC_Duplicator *duplicator[3];
 	tools::SC_Debug<B>   *dbg_B     [6];

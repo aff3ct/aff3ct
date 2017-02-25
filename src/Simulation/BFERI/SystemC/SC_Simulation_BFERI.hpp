@@ -29,9 +29,9 @@ private:
 	std::condition_variable cond_terminal;
 
 protected:
-	tools::Interleaver<int> *interleaver_e;
-	module::Coset<B,Q>      *coset_real_i;
-	tools::Terminal         *terminal;
+	module::Interleaver<int> *interleaver_e;
+	module::Coset<B,Q>       *coset_real_i;
+	tools::Terminal          *terminal;
 
 	tools::SC_Duplicator *duplicator[5];
 	tools::SC_Router     *router;
