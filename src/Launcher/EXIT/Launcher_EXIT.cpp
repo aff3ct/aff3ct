@@ -5,6 +5,9 @@
 
 #include "Launcher_EXIT.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::launcher;
+
 template <typename B, typename R, typename Q>
 Launcher_EXIT<B,R,Q>
 ::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)

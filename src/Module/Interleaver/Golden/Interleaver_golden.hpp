@@ -7,6 +7,10 @@
 
 #include "../Interleaver.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename T>
 class Interleaver_golden : public Interleaver<T>
 {
@@ -38,5 +42,7 @@ protected:
 			this->pi_inv[this->pi[i]] = i;
 	}
 };
+}
+}
 
 #endif  /* INTERLEAVER_GOLDEN_HPP */

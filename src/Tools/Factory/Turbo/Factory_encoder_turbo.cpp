@@ -3,6 +3,9 @@
 
 #include "Factory_encoder_turbo.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 Encoder<B>* Factory_encoder_turbo<B>
 ::build(const parameters         &params,

@@ -1,4 +1,3 @@
-#include "Monitor_reduction.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sstream>
@@ -6,6 +5,11 @@
 #include <exception>
 
 #include "Tools/Display/bash_tools.h"
+
+#include "Monitor_reduction.hpp"
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Monitor_reduction<B,R>

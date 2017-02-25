@@ -16,6 +16,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Interleaver_i
  *
@@ -227,6 +231,8 @@ private:
 		}
 	}
 };
+}
+}
 
 #include "SC_Interleaver.hpp"
 

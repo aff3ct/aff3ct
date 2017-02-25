@@ -10,6 +10,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename D>
 class SPU_Coset : public Coset_i<B,D>
 {
@@ -78,9 +82,17 @@ starpu_codelet SPU_Coset<B,D>::spu_cl_apply = SPU_Coset<B,D>::spu_init_cl_apply(
 
 template <typename B, typename D>
 using Coset = SPU_Coset<B,D>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename D>
 using Coset = Coset_i<B,D>;
+}
+}
 #endif
 
 #endif /* SPU_COSET_HPP_ */

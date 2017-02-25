@@ -7,6 +7,10 @@
 
 #include "Decoder_RSC_BCJR_inter.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, proto_max_i<R> MAX>
 class Decoder_RSC_BCJR_inter_std : public Decoder_RSC_BCJR_inter<B,R>
 {
@@ -26,6 +30,8 @@ protected:
 	virtual void compute_beta (                                                      );
 	virtual void compute_ext  (const mipp::vector<R> &sys,       mipp::vector<R> &ext);
 };
+}
+}
 
 #include "Decoder_RSC_BCJR_inter_std.hxx"
 

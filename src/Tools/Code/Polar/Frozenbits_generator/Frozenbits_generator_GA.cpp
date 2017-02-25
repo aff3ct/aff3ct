@@ -12,6 +12,8 @@
 
 #include "Frozenbits_generator_GA.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename B>
 Frozenbits_generator_GA<B>
 ::Frozenbits_generator_GA(const int K, const int N, const float sigma)

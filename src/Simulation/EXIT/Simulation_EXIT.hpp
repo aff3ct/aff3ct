@@ -16,11 +16,15 @@
 
 #include "../Simulation.hpp"
 
+namespace aff3ct
+{
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_EXIT : public Simulation
 {
 protected:
-	const parameters &params; // simulation parameters
+	const tools::parameters &params; // simulation parameters
 
 	// channel gains
 	mipp::vector<R> H_N;
@@ -50,20 +54,20 @@ protected:
 	float snr;
 
 	// communication chain
-	Source<B>          *source;
-	Encoder<B>         *encoder;
-	Modulator<B,R,R>   *modulator;
-	Modulator<B,R,R>   *modulator_a;
-	Channel<R>         *channel;
-	Channel<R>         *channel_a;
-	SISO<R>            *siso;
-	Terminal_EXIT<B,R> *terminal;
+	module::Source<B>         *source;
+	module::Encoder<B>        *encoder;
+	module::Modulator<B,R,R>  *modulator;
+	module::Modulator<B,R,R>  *modulator_a;
+	module::Channel<R>        *channel;
+	module::Channel<R>        *channel_a;
+	module::SISO<R>           *siso;
+	tools::Terminal_EXIT<B,R> *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
 
 public:
-	Simulation_EXIT(const parameters& params);
+	Simulation_EXIT(const tools::parameters& params);
 	virtual ~Simulation_EXIT();
 	
 	void launch();
@@ -81,18 +85,20 @@ protected:
 	                                   mipp::vector<R> &sys, 
 	                                   mipp::vector<R> &par) = 0;
 
-	virtual void                release_objects  ();
-	virtual void                launch_precompute();
-	virtual void                snr_precompute   ();
+	virtual void release_objects  ();
+	virtual void launch_precompute();
+	virtual void snr_precompute   ();
 
-	virtual Source<B>*          build_source     (              );
-	virtual Encoder<B>*         build_encoder    (              );
-	virtual Modulator<B,R,R>*   build_modulator  (              );
-	virtual Modulator<B,R,R>*   build_modulator_a(              );
-	virtual Channel<R>*         build_channel    (const int size);
-	virtual Channel<R>*         build_channel_a  (const int size);
-	virtual SISO<R>*            build_siso       (              ) = 0;
-	        Terminal_EXIT<B,R>* build_terminal   (              );
+	virtual module::Source<B>*         build_source     (              );
+	virtual module::Encoder<B>*        build_encoder    (              );
+	virtual module::Modulator<B,R,R>*  build_modulator  (              );
+	virtual module::Modulator<B,R,R>*  build_modulator_a(              );
+	virtual module::Channel<R>*        build_channel    (const int size);
+	virtual module::Channel<R>*        build_channel_a  (const int size);
+	virtual module::SISO<R>*           build_siso       (              ) = 0;
+	        tools::Terminal_EXIT<B,R>* build_terminal   (              );
 };
+}
+}
 
 #endif /* SIMULATION_EXIT_HPP_ */

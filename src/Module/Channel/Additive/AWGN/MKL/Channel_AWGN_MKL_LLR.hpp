@@ -7,6 +7,10 @@
 
 #include "../../../Channel.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 class Channel_AWGN_MKL_LLR : public Channel<R>
 {
@@ -21,6 +25,8 @@ public:
 
 	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
+}
+}
 
 #endif // CHANNEL_AWGN_MKL_LLR_HPP_
 

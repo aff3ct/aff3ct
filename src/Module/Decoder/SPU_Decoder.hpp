@@ -10,6 +10,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class SPU_Decoder : public Decoder_i<B,R>
 {
@@ -74,9 +78,17 @@ starpu_codelet SPU_Decoder<B,R>::spu_cl_hard_decode = SPU_Decoder<B,R>::spu_init
 
 template <typename B, typename R>
 using Decoder = SPU_Decoder<B,R>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 using Decoder = Decoder_i<B,R>;
+}
+}
 #endif
 
 #endif /* DECODER_HPP_ */

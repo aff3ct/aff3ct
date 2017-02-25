@@ -5,6 +5,9 @@
 
 #include "Factory_encoder_polar.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 Encoder<B>* Factory_encoder_polar<B>
 ::build(const parameters &params, const mipp::vector<B> &frozen_bits, const int n_frames)

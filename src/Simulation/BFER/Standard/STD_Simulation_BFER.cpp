@@ -19,6 +19,10 @@
 
 #include "STD_Simulation_BFER.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)

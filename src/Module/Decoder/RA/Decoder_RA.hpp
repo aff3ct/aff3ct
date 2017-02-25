@@ -7,6 +7,10 @@
 #include "../Decoder.hpp"
 #include "../../Interleaver/Interleaver.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class Decoder_RA : public Decoder<B, R>
 {
@@ -35,5 +39,7 @@ private:
 	R check_node(R a, R b);
 	int sign(R x);
 };
+}
+}
 
 #endif /* DECODER_RA */

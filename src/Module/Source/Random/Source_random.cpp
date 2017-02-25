@@ -1,5 +1,7 @@
 #include "Source_random.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Source_random<B>
 ::Source_random(const int K, const int seed, const int n_frames, const std::string name)

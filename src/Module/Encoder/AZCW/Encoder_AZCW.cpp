@@ -4,6 +4,8 @@
 
 #include "Encoder_AZCW.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_AZCW<B>
 ::Encoder_AZCW(const int K, const int N, const int n_frames, const std::string name)

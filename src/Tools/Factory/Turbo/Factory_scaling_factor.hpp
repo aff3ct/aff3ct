@@ -6,10 +6,16 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename R>
 struct Factory_scaling_factor : public Factory
 {
 	static Scaling_factor<R>* build(const parameters &params);
 };
+}
+}
 
 #endif /* FACTORY_SCALING_FACTOR_HPP */

@@ -4,6 +4,8 @@
 
 #include "Encoder_turbo_legacy.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_turbo_legacy<B>
 ::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<short> &pi, Encoder_sys<B> &sub_enc,

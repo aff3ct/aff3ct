@@ -3,6 +3,10 @@
 
 #include "../Launcher.hpp"
 
+namespace aff3ct
+{
+namespace launcher
+{
 template <typename B, typename R, typename Q>
 class Launcher_BFERI : public Launcher<B,R,Q>
 {
@@ -22,5 +26,7 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder    ();
 	virtual std::vector<std::pair<std::string,std::string>> header_monitor    ();
 };
+}
+}
 
 #endif /* LAUNCHER_BFERI_HPP_ */

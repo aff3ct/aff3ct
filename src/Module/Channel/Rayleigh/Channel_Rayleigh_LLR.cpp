@@ -5,6 +5,9 @@
 
 #include "Channel_Rayleigh_LLR.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N, const R& sigma, const bool complex, const int seed, const int n_frames,

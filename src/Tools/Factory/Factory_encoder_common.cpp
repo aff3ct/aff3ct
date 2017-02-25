@@ -5,6 +5,9 @@
 
 #include "Factory_encoder_common.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 Encoder<B>* Factory_encoder_common<B>
 ::build(const parameters &params, const int seed, const int n_frames)

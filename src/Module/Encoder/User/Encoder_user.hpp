@@ -5,6 +5,10 @@
 
 #include "../Encoder.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class Encoder_user : public Encoder<B>
 {
@@ -19,5 +23,7 @@ public:
 
 	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
+}
+}
 
 #endif /* ENCODER_USER_HPP_ */

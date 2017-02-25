@@ -8,6 +8,10 @@
 
 #include "../Monitor.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class Monitor_std : public Monitor<B,R>
 {
@@ -56,5 +60,7 @@ private:
 	void copy_bad_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
 	inline bool check_errors(const B* U, const B* V, const int length);
 };
+}
+}
 
 #endif /* MONITOR_STD_HPP_ */

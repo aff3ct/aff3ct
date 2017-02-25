@@ -9,10 +9,16 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename B, typename R>
 struct Factory_decoder_repetition : public Factory
 {
-	static Decoder<B,R>* build(const parameters &params);
+	static module::Decoder<B,R>* build(const parameters &params);
 };
+}
+}
 
 #endif /* FACTORY_DECODER_REPETITION_HPP */

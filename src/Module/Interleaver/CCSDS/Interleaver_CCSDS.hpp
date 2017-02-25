@@ -7,6 +7,10 @@
 
 #include "../Interleaver.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename T>
 class Interleaver_CCSDS : public Interleaver<T>
 {
@@ -50,13 +54,15 @@ protected:
 		}
 		else
 		{
-			std::cerr << bold_red("(EE) There is no CCSDS k_1 and k_2 parameters for size = ")
-			          << bold_red(std::to_string(size)) 
-			          << bold_red(" (supported size are K = {1784, 3568, 7136, 8920}. Exiting simulation.") 
+			std::cerr << tools::bold_red("(EE) There is no CCSDS k_1 and k_2 parameters for size = ")
+			          << tools::bold_red(std::to_string(size))
+			          << tools::bold_red(" (supported size are K = {1784, 3568, 7136, 8920}. Exiting simulation.")
 			          << std::endl;
 			exit(-1);
 		}
 	}
 };
+}
+}
 
 #endif	/* INTERLEAVER_CCSDS_HPP */

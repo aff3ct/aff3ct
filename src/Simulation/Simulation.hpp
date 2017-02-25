@@ -10,6 +10,10 @@
 
 #include "Tools/Display/bash_tools.h"
 
+namespace aff3ct
+{
+namespace simulation
+{
 /*!
  * \class Launcher
  *
@@ -49,16 +53,18 @@ protected:
 	{
 		if (ptr == nullptr)
 		{
-			std::cerr << bold_red("(EE) Something went wrong during the \"")
-			          << bold_red(str)
-			          << bold_red("\" instantiation (tid = ")
-			          << bold_red(std::to_string(tid))
-			          << bold_red("), exiting.")
+			std::cerr << tools::bold_red("(EE) Something went wrong during the \"")
+			          << tools::bold_red(str)
+			          << tools::bold_red("\" instantiation (tid = ")
+			          << tools::bold_red(std::to_string(tid))
+			          << tools::bold_red("), exiting.")
 			          << std::endl;
 
 			exit(EXIT_FAILURE);
 		}
 	}
 };
+}
+}
 
 #endif /* SIMULATION_HPP_ */

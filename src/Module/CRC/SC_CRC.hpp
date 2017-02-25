@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class SC_CRC;
 
@@ -91,6 +95,8 @@ public:
 
 template <typename B>
 using CRC = SC_CRC<B>;
+}
+}
 #else
 #include "SPU_CRC.hpp"
 #endif

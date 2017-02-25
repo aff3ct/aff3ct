@@ -5,6 +5,10 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 static const char Frozen_bits_2048_614_25[2048] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -679,4 +683,6 @@ public:
 		API_polar::template xo <1024>(s,       0+   0,    0+1024,               0+   0, 1024);
 	}
 };
+}
+}
 #endif

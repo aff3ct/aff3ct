@@ -7,6 +7,10 @@
 
 #include "Simulation/EXIT/Simulation_EXIT.hpp"
 
+namespace aff3ct
+{
+namespace simulation
+{
 template <typename B, typename R, typename Q, typename QD>
 class Simulation_EXIT_RSC : public Simulation_EXIT<B,R,Q>
 {
@@ -15,7 +19,7 @@ protected:
 	std::vector<std::vector<int>> trellis;
 	
 public:
-	Simulation_EXIT_RSC(const parameters& params);
+	Simulation_EXIT_RSC(const tools::parameters& params);
 	virtual ~Simulation_EXIT_RSC();
 
 protected:
@@ -24,10 +28,12 @@ protected:
 	                           mipp::vector<R> &sys, 
 	                           mipp::vector<R> &par);
 
-	void        launch_precompute();
-	void        snr_precompute   ();
-	Encoder<B>* build_encoder    ();
-	SISO<R>*    build_siso       ();
+	void                launch_precompute();
+	void                snr_precompute   ();
+	module::Encoder<B>* build_encoder    ();
+	module::SISO<R>*    build_siso       ();
 };
+}
+}
 
 #endif /* SIMULATION_EXIT_RSC_HPP_ */

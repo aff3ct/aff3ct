@@ -21,6 +21,10 @@
 
 #include "Simulation_BFERI.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFERI_i<B,R,Q>
 ::Simulation_BFERI_i(const parameters& params)

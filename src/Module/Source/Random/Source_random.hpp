@@ -7,6 +7,10 @@
 
 #include "../Source.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class Source_random : public Source<B>
 {
@@ -26,5 +30,7 @@ public:
 
 	void generate(mipp::vector<B>& U_K);
 };
+}
+}
 
 #endif /* SOURCE_RANDOM_HPP_ */

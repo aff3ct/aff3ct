@@ -6,6 +6,10 @@
 
 #include "../Decoder_RSC_BCJR.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class Decoder_RSC_BCJR_inter : public Decoder_RSC_BCJR<B,R>
 {
@@ -28,6 +32,8 @@ protected:
 	void load (const mipp::vector<R>& Y_N);
 	void store(      mipp::vector<B>& V_K) const;
 };
+}
+}
 
 #include "Decoder_RSC_BCJR_inter.hxx"
 

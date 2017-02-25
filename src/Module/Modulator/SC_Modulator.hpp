@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, typename Q>
 class SC_Modulator;
 
@@ -478,6 +482,8 @@ public:
 
 template <typename B, typename R, typename Q>
 using Modulator = SC_Modulator<B,R,Q>;
+}
+}
 #else
 #include "SPU_Modulator.hpp"
 #endif

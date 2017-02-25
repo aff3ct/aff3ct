@@ -17,6 +17,10 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Pattern_parser_polar
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
@@ -30,11 +34,11 @@ protected:
 
 	const mipp::vector<int>& frozen_bits; /*!< Vector of frozen bits (true if frozen, false otherwise). */
 
-	const std::vector<Pattern_SC_interface*> &patterns; /*!< Vector of patterns. */
-	const Pattern_SC_interface &pattern_rate0;          /*!< Terminal pattern when the bit is frozen. */
-	const Pattern_SC_interface &pattern_rate1;          /*!< Terminal pattern when the bit is an information bit. */
+	const std::vector<module::Pattern_SC_interface*> &patterns; /*!< Vector of patterns. */
+	const module::Pattern_SC_interface &pattern_rate0;          /*!< Terminal pattern when the bit is frozen. */
+	const module::Pattern_SC_interface &pattern_rate1;          /*!< Terminal pattern when the bit is an information bit. */
 
-	Binary_tree<Pattern_SC_interface> *polar_tree; /*!< Tree of patterns. */
+	Binary_tree<module::Pattern_SC_interface> *polar_tree;      /*!< Tree of patterns. */
 
 private:
 	std::vector<char> pattern_types_per_id; /*!< Tree of patterns represented with a vector of pattern IDs. */
@@ -51,9 +55,9 @@ public:
 	 */
 	Pattern_parser_polar(const int& N,
 	                     const mipp::vector<int>& frozen_bits,
-	                     const std::vector<Pattern_SC_interface*> &patterns,
-	                     const Pattern_SC_interface &pattern_rate0,
-	                     const Pattern_SC_interface &pattern_rate1);
+	                     const std::vector<module::Pattern_SC_interface*> &patterns,
+	                     const module::Pattern_SC_interface &pattern_rate0,
+	                     const module::Pattern_SC_interface &pattern_rate1);
 
 	/*!
 	 * \brief Destructor.
@@ -65,7 +69,7 @@ public:
 	 *
 	 * \return a binary tree of patterns.
 	 */
-	const Binary_tree<Pattern_SC_interface>* get_polar_tree() const;
+	const Binary_tree<module::Pattern_SC_interface>* get_polar_tree() const;
 
 	/*!
 	 * \brief Gets a vector of pattern IDs.
@@ -78,9 +82,11 @@ public:
 	std::vector<char> get_pattern_types_per_id() const;
 
 private:
-	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_SC_interface>* node_curr                 );
-	void generate_nodes_indexes             (const Binary_node<Pattern_SC_interface>* node_curr, int& node_index);
-	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_SC_interface>* node_curr                 );
+	void recursive_allocate_nodes_patterns  (      Binary_node<module::Pattern_SC_interface>* node_curr                 );
+	void generate_nodes_indexes             (const Binary_node<module::Pattern_SC_interface>* node_curr, int& node_index);
+	void recursive_deallocate_nodes_patterns(      Binary_node<module::Pattern_SC_interface>* node_curr                 );
 };
+}
+}
 
 #endif /* PATTERN_PARSER_POLAR_HPP */

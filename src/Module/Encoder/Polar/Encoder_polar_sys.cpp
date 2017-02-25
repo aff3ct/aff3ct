@@ -5,6 +5,8 @@
 
 #include "Encoder_polar_sys.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_polar_sys<B>
 ::Encoder_polar_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int& n_frames,

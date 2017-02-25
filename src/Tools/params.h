@@ -5,6 +5,10 @@
 #include <string>
 #include <chrono>
 
+namespace aff3ct
+{
+namespace tools
+{
 struct simulation_parameters
 {
 	std::chrono::milliseconds mpi_comm_freq;
@@ -161,5 +165,7 @@ struct parameters
 	monitor_parameters     monitor;
 	terminal_parameters    terminal;
 };
+}
+}
 
 #endif /* PARAMS_H_ */

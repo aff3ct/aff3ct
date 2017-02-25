@@ -3,6 +3,9 @@
 
 #include "Factory_terminal.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Terminal* Factory_terminal<B,R>
 ::build(const parameters &params,
@@ -15,7 +18,7 @@ Terminal* Factory_terminal<B,R>
 	Terminal *terminal = nullptr;
 
 	// build a terminal to display the BER/FER
-	if(params.terminal.type == "LEGACY")
+	if (params.terminal.type == "LEGACY")
 		terminal = new Terminal_BFER_legacy<B,R>(snr_b, *monitor, t_snr);
 	else if (params.terminal.type == "STD")
 		terminal = new Terminal_BFER<B,R>(snr_s, snr_b, *monitor, t_snr, d_decod_total);

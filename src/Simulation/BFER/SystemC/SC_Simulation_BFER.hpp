@@ -17,6 +17,10 @@
 
 #include "../Simulation_BFER.hpp"
 
+namespace aff3ct
+{
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
@@ -25,12 +29,12 @@ private:
 	std::condition_variable cond_terminal;
 
 protected:
-	Terminal *terminal;
+	tools::Terminal *terminal;
 
-	SC_Duplicator *duplicator[3];
-	SC_Debug<B>   *dbg_B     [6];
-	SC_Debug<R>   *dbg_R     [5];
-	SC_Debug<Q>   *dbg_Q     [3];
+	tools::SC_Duplicator *duplicator[3];
+	tools::SC_Debug<B>   *dbg_B     [6];
+	tools::SC_Debug<R>   *dbg_R     [5];
+	tools::SC_Debug<Q>   *dbg_Q     [3];
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
@@ -38,7 +42,7 @@ protected:
 	std::chrono::nanoseconds d_simu;
 
 public:
-	Simulation_BFER(const parameters& params);
+	Simulation_BFER(const tools::parameters& params);
 	virtual ~Simulation_BFER();
 
 protected:
@@ -51,10 +55,12 @@ private:
 	void bind_sockets             ();
 	void bind_sockets_debug       ();
 
-	Terminal* build_terminal();
+	tools::Terminal* build_terminal();
 
 	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 };
+}
+}
 
 #endif /* SIMULATION_SC_BFER_HPP_ */
 

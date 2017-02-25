@@ -4,6 +4,8 @@
 
 #include "Encoder_coset.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_coset<B>
 ::Encoder_coset(const int K, const int N, const int seed, const int n_frames, const std::string name)

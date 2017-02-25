@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 class SC_SISO;
 
@@ -86,6 +90,8 @@ public:
 
 template <typename R>
 using SISO = SC_SISO<R>;
+}
+}
 #else
 #include "SPU_SISO.hpp"
 #endif

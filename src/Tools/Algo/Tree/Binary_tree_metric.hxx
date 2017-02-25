@@ -1,5 +1,9 @@
 #include "Binary_tree_metric.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename T, typename R>
 Binary_tree_metric<T,R>
 ::Binary_tree_metric(int depth, R path_metric)
@@ -24,4 +28,5 @@ Binary_tree_metric<T,R>
 ::~Binary_tree_metric()
 {
 }
-
+}
+}

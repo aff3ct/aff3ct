@@ -6,6 +6,10 @@
 
 #include "Monitor_std.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class Monitor_reduction : public Monitor_std<B,R>
 {
@@ -28,5 +32,7 @@ public:
 	static void get_tracker_paths(const std::string& base_path, const float snr,
 	                              std::string& path_src, std::string& path_enc, std::string& path_noise);
 };
+}
+}
 
 #endif /* MONITOR_REDUCTION_HPP_ */

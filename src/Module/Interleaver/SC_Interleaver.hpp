@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename T>
 class SC_Interleaver;
 
@@ -227,6 +231,8 @@ public:
 
 template <typename T>
 using Interleaver = SC_Interleaver<T>;
+}
+}
 #else
 #include "SPU_Interleaver.hpp"
 #endif

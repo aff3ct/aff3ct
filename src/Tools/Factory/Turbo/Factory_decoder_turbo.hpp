@@ -12,15 +12,21 @@
 
 #include "../Factory.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename B, typename R>
 struct Factory_decoder_turbo : public Factory
 {
-	static Decoder<B,R>* build(const parameters          &params,
-	                           const Interleaver<short>  *interleaver,
-	                                 SISO<R>             *siso_n, 
-	                                 SISO<R>             *siso_i,
-	                                 Scaling_factor<R>   *scaling_factor,
-	                                 CRC<B>              *crc = nullptr);
+	static module::Decoder<B,R>* build(const parameters                 &params,
+	                                   const module::Interleaver<short> *interleaver,
+	                                         module::SISO<R>            *siso_n,
+	                                         module::SISO<R>            *siso_i,
+	                                         Scaling_factor<R>          *scaling_factor,
+	                                         module::CRC<B>             *crc = nullptr);
 };
+}
+}
 
 #endif /* FACTORY_DECODER_TURBO_HPP */

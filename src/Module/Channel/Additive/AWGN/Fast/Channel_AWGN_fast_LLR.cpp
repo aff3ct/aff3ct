@@ -5,6 +5,9 @@
 
 #include "Channel_AWGN_fast_LLR.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R>
 Channel_AWGN_fast_LLR<R>
 ::Channel_AWGN_fast_LLR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)
@@ -43,6 +46,10 @@ R Channel_AWGN_fast_LLR<R>
 	std::exit(-1);
 }
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 ::get_random_simd()
@@ -50,13 +57,21 @@ mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 	// return a vector of numbers between ]0,1[
 	return mt19937_simd.randf_oo();
 }
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 float Channel_AWGN_fast_LLR<float>
 ::get_random()
 {
 	// return a number between ]0,1[
 	return mt19937.randf_oo();
+}
+}
 }
 
 template <typename R>

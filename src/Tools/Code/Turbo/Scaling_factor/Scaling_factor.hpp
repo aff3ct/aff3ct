@@ -10,6 +10,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Scaling_factor
  * \brief Re-scales the extrinsic information (used in the turbo decoding process).
@@ -48,5 +52,7 @@ public:
 	 */
 	virtual void operator()(mipp::vector<R> &ext, const int ite) = 0;
 };
+}
+}
 
 #endif /* SCALING_FACTOR_HPP */

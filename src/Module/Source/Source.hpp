@@ -15,6 +15,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Source_i
  *
@@ -57,6 +61,8 @@ public:
 	 */
 	virtual void generate(mipp::vector<B>& U_K) = 0;
 };
+}
+}
 
 #include "SC_Source.hpp"
 

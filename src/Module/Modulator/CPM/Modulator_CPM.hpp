@@ -7,11 +7,16 @@
 #include "Tools/params.h"
 #include "Tools/Math/max.h"
 
-#include "CPM_parameters.hpp"
 #include "../Modulator.hpp"
+
+#include "CPM_parameters.hpp"
 #include "CPE/Encoder_CPE_Rimoldi.hpp"
 #include "BCJR/CPM_BCJR.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 // TODO: warning: working for Rimoldi decomposition only!
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_CPM : public Modulator<B,R,Q>
@@ -69,6 +74,8 @@ private :
 	void generate_projection  (               );
 	R calculate_phase_response(const R t_stamp);
 };
+}
+}
 
 #include "Modulator_CPM.hxx"
 

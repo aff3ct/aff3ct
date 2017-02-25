@@ -4,6 +4,9 @@
 
 #include "Source_user.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 Source_user<B>
 ::Source_user(const int K, const std::string filename, const int n_frames, const std::string name)

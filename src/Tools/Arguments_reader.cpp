@@ -1,12 +1,13 @@
 #include <iostream>
 #include <cassert>
 #include <algorithm>
+using namespace std;
 
 #include "Tools/Display/bash_tools.h"
 
 #include "Arguments_reader.hpp"
 
-using namespace std;
+using namespace aff3ct::tools;
 
 Arguments_reader
 ::Arguments_reader(const int argc, const char** argv)
@@ -34,7 +35,7 @@ bool Arguments_reader
 	const bool result = parse_arguments(required_args, optional_args, warns);
 
 	if (display_warnings)
-		std::cout << bold_yellow(warns);
+		std::clog << bold_yellow(warns);
 
 	return result;
 }

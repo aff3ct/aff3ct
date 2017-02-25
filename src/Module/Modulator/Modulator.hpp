@@ -15,6 +15,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Modulator_i
  *
@@ -122,7 +126,7 @@ public:
 	 */
 	virtual void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
 	{
-		std::cerr << bold_red("(EE) Unimplemented demodulate method... exiting.") << std::endl;
+		std::cerr << tools::bold_red("(EE) Unimplemented demodulate method... exiting.") << std::endl;
 		std::exit(-1);
 	}
 
@@ -157,7 +161,7 @@ public:
 	virtual void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
 	                                   const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
 	{
-		std::cerr << bold_red("(EE) Unimplemented demodulate method... exiting.") << std::endl;
+		std::cerr << tools::bold_red("(EE) Unimplemented demodulate method... exiting.") << std::endl;
 		std::exit(-1);
 	}
 
@@ -185,6 +189,8 @@ public:
 		return get_buffer_size_after_modulation(N);
 	}
 };
+}
+}
 
 #include "SC_Modulator.hpp"
 

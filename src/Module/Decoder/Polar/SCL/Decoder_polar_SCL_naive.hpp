@@ -9,6 +9,10 @@
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class Contents_SCL
 {
@@ -33,8 +37,8 @@ protected:
 	const int     L; // maximum paths number
 	std::set<int> active_paths;
 
-	std::vector<Binary_tree_metric<Contents_SCL<B,R>,R>*> polar_trees;
-    std::vector<std::vector<Binary_node<Contents_SCL<B,R>>*>> leaves_array;
+	std::vector<tools::Binary_tree_metric<Contents_SCL<B,R>,R>*> polar_trees;
+	std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
 	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
@@ -47,30 +51,32 @@ protected:
 	virtual void store      (mipp::vector<B>& V_K      ) const;
 
 private:
-	void recursive_compute_llr        (      Binary_node<Contents_SCL<B,R>>* node_cur, int depth);
-	void propagate_sums               (const Binary_node<Contents_SCL<B,R>>* node_cur           );
-	void recursive_duplicate_tree_llr (      Binary_node<Contents_SCL<B,R>>* node_a,
-	                                         Binary_node<Contents_SCL<B,R>>* node_b             );
-	void recursive_duplicate_tree_sums(      Binary_node<Contents_SCL<B,R>>* node_a,
-	                                         Binary_node<Contents_SCL<B,R>>* node_b,
-	                                         Binary_node<Contents_SCL<B,R>>* node_caller        );
+	void recursive_compute_llr        (      tools::Binary_node<Contents_SCL<B,R>>* node_cur, int depth);
+	void propagate_sums               (const tools::Binary_node<Contents_SCL<B,R>>* node_cur           );
+	void recursive_duplicate_tree_llr (      tools::Binary_node<Contents_SCL<B,R>>* node_a,
+	                                         tools::Binary_node<Contents_SCL<B,R>>* node_b             );
+	void recursive_duplicate_tree_sums(      tools::Binary_node<Contents_SCL<B,R>>* node_a,
+	                                         tools::Binary_node<Contents_SCL<B,R>>* node_b,
+	                                         tools::Binary_node<Contents_SCL<B,R>>* node_caller        );
 
 	void duplicate_path(int path, int leaf_index, 
-	                    std::vector<std::vector<Binary_node<Contents_SCL<B,R>>*>> leaves_array);
+	                    std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array);
 
 protected:
 	virtual void select_best_path();
 	virtual void intermediate_select_best_path(int leaf_index){};
 
-	void recursive_allocate_nodes_contents  (      Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size             );
-	void recursive_initialize_frozen_bits   (const Binary_node<Contents_SCL<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);
-	void recursive_store                    (const Binary_node<Contents_SCL<B,R>>* node_curr,       mipp::vector<B>& V_K, int &k) const;
-	void recursive_deallocate_nodes_contents(      Binary_node<Contents_SCL<B,R>>* node_curr                                    );
+	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size             );
+	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SCL<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);
+	void recursive_store                    (const tools::Binary_node<Contents_SCL<B,R>>* node_curr,       mipp::vector<B>& V_K, int &k) const;
+	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_SCL<B,R>>* node_curr                                    );
 
-	void apply_f     (const Binary_node<Contents_SCL<B,R>>* node_curr);
-	void apply_g     (const Binary_node<Contents_SCL<B,R>>* node_curr);
-	void compute_sums(const Binary_node<Contents_SCL<B,R>>* node_curr);
+	void apply_f     (const tools::Binary_node<Contents_SCL<B,R>>* node_curr);
+	void apply_g     (const tools::Binary_node<Contents_SCL<B,R>>* node_curr);
+	void compute_sums(const tools::Binary_node<Contents_SCL<B,R>>* node_curr);
 };
+}
+}
 
 #include "Decoder_polar_SCL_naive.hxx"
 

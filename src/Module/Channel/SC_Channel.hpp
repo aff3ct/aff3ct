@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 class SC_Channel;
 
@@ -166,6 +170,8 @@ public:
 
 template <typename R>
 using Channel = SC_Channel<R>;
+}
+}
 #else
 #include "SPU_Channel.hpp"
 #endif

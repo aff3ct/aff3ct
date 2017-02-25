@@ -11,6 +11,10 @@
 
 #include "Simulation_BFER_uncoded.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFER_uncoded<B,R,Q>
 ::Simulation_BFER_uncoded(const parameters& params)

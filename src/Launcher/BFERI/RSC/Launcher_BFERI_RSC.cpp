@@ -9,6 +9,10 @@
 
 #include "Launcher_BFERI_RSC.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
+
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFERI_RSC<B,R,Q,QD>
 ::Launcher_BFERI_RSC(const int argc, const char **argv, std::ostream &stream)

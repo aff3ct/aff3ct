@@ -8,6 +8,10 @@
 
 #include "Launcher_BFER_polar.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
+
 template <typename B, typename R, typename Q>
 Launcher_BFER_polar<B,R,Q>
 ::Launcher_BFER_polar(const int argc, const char **argv, std::ostream &stream)
@@ -121,9 +125,9 @@ Simulation* Launcher_BFER_polar<B,R,Q>
 	// hack for K when there is a CRC
 	if (!this->params.crc.type.empty())
 	{
-		assert(this->params.code.K > CRC_polynomial<B>::size(this->params.crc.type));
+		assert(this->params.code.K > module::CRC_polynomial<B>::size(this->params.crc.type));
 
-		this->params.code.K += CRC_polynomial<B>::size(this->params.crc.type);
+		this->params.code.K += module::CRC_polynomial<B>::size(this->params.crc.type);
 
 		assert(this->params.code.K <= this->params.code.N);
 	}

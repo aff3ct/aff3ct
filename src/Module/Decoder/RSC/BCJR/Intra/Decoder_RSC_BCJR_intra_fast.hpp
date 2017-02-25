@@ -7,6 +7,10 @@
 
 #include "Decoder_RSC_BCJR_intra.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, proto_max_i<R> MAX>
 class Decoder_RSC_BCJR_intra_fast : public Decoder_RSC_BCJR_intra<B,R>
 {
@@ -23,6 +27,8 @@ protected:
 	void compute_alpha   (                                                      );
 	void compute_beta_ext(const mipp::vector<R> &sys,       mipp::vector<R> &ext);
 };
+}
+}
 
 #include "Decoder_RSC_BCJR_intra_fast.hxx"
 

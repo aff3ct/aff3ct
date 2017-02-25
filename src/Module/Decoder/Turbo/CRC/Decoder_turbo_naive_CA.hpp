@@ -5,6 +5,10 @@
 
 #include "../Decoder_turbo_naive.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class Decoder_turbo_naive_CA : public Decoder_turbo_naive<B,R>
 {
@@ -18,7 +22,7 @@ public:
 	                       const Interleaver<short> &pi,
 	                       SISO<R> &siso_n,
 	                       SISO<R> &siso_i,
-	                       Scaling_factor<R> &scaling_factor,
+	                       tools::Scaling_factor<R> &scaling_factor,
 	                       CRC<B> &crc,
 	                       const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_naive_CA();
@@ -26,5 +30,7 @@ public:
 protected:
 	virtual void hard_decode();
 };
+}
+}
 
 #endif /* DECODER_TURBO_NAIVE_CA_ */

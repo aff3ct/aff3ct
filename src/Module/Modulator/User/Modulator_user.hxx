@@ -7,6 +7,10 @@
 
 #include "Modulator_user.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*
  * Constructor / Destructor
  */
@@ -258,4 +262,6 @@ void Modulator_user<B,R,Q,MAX>
 
 		Y_N3[n] = (L0 - L1) + Y_N2[n];
 	}
+}
+}
 }

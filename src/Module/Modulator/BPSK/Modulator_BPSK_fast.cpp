@@ -4,6 +4,9 @@
 
 #include "Modulator_BPSK_fast.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R, typename Q>
 Modulator_BPSK_fast<B,R,Q>
 ::Modulator_BPSK_fast(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
@@ -26,6 +29,10 @@ void Modulator_BPSK_fast<B,R,Q>
 	std::exit(-1);
 }
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 void Modulator_BPSK_fast<int, float, float>
 ::modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2)
@@ -45,7 +52,13 @@ void Modulator_BPSK_fast<int, float, float>
 	for (unsigned i = vec_loop_size; i < size; i++)
 		X_N2[i] = (float)((int)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 void Modulator_BPSK_fast<short, float, float>
 ::modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2)
@@ -73,7 +86,13 @@ void Modulator_BPSK_fast<short, float, float>
 	for (unsigned i = vec_loop_size * mipp::nElReg<short>(); i < size; i++)
 		X_N2[i] = (float)((short)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
 }
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 void Modulator_BPSK_fast<signed char, float, float>
 ::modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2)
@@ -111,6 +130,8 @@ void Modulator_BPSK_fast<signed char, float, float>
 
 	for (unsigned i = vec_loop_size * mipp::nElReg<signed char>(); i < size; i++)
 		X_N2[i] = (float)((signed char)1 - (X_N1[i] + X_N1[i])); // (X_N[i] == 1) ? -1 : +1
+}
+}
 }
 
 template <typename B, typename R, typename Q>

@@ -6,10 +6,16 @@
 
 #include "Factory.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename T>
 struct Factory_interleaver : public Factory
 {
-	static Interleaver<T>* build(const parameters &params, const int &size, const int seed = -1);
+	static module::Interleaver<T>* build(const parameters &params, const int &size, const int seed = -1);
 };
+}
+}
 
 #endif /* FACTORY_INTERLEAVER_HPP */

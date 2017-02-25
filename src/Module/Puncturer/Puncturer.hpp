@@ -14,6 +14,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Puncturer_i
  *
@@ -69,6 +73,8 @@ public:
 	 */
 	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
 };
+}
+}
 
 #include "SC_Puncturer.hpp"
 
