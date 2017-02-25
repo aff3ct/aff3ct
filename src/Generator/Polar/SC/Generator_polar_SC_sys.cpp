@@ -98,6 +98,10 @@ void Generator_polar_SC_sys
 	dec_common1                                                                                               << endl;
 	dec_common1 << "#include \"../Decoder_polar_SC_fast_sys.hpp\""                                            << endl;
 	dec_common1                                                                                               << endl;
+	dec_common1 << "namespace aff3ct"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
+	dec_common1 << "namespace module"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
 	dec_common1 << "static const char " << fbits_name << "[" << N << "] = {"                                  << endl;
 	dec_common1 << fbits.str() << "};"                                                                        << endl;
 	dec_common1                                                                                               << endl;
@@ -129,6 +133,8 @@ void Generator_polar_SC_sys
 	this->recursive_generate_decoder(parser.get_polar_tree()->get_root(), dec);
 	dec_common3 << tab << "}"                                                                                 << endl;
 	dec_common3 << "};" << ""                                                                                 << endl;
+	dec_common3 << "}"                                                                                        << endl;
+	dec_common3 << "}"                                                                                        << endl;
 	dec_common3 << "#endif"                                                                                   << endl;
 
 	dec_stream << dec_common1.str();
