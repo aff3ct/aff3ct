@@ -3,7 +3,8 @@
 #include <cmath>
 
 #include "Encoder_turbo.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 // [sys | pn | pi | tailn | taili]
 

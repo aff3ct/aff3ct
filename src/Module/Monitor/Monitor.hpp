@@ -17,6 +17,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Monitor_i
  *
@@ -50,8 +52,7 @@ public:
 	 * \param n_frames: number of frames to process in the Monitor.
 	 * \param name:     Monitor's name.
 	 */
-	Monitor_i(const int& K, const int& N, const int& n_frames = 1, 
-	                  const std::string name = "Monitor_i")
+	Monitor_i(const int& K, const int& N, const int& n_frames = 1, const std::string name = "Monitor_i")
 	: Module(n_frames, name), K(K), N(N)
 	{
 		Monitor_i<B>::interrupt = false;
@@ -202,6 +203,7 @@ template <typename B>
 std::chrono::nanoseconds Monitor_i<B>::d_delta_interrupt = std::chrono::nanoseconds(0);
 
 #include "SC_Monitor.hpp"
+}
 }
 
 #endif /* MONITOR_HPP_ */

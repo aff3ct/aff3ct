@@ -11,6 +11,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template<typename Q>
 inline Q negative_inf(){return -std::numeric_limits<Q>::max(); }
 
@@ -50,7 +52,7 @@ inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_stat
 		norm_val = MAX(norm_val, metrics[j]);
 
 	for (auto j = 0; j < n_states; j++)
-		metrics[j] = saturate<signed char>(metrics[j] - norm_val, -63, +63);
+		metrics[j] = tools::saturate<signed char>(metrics[j] - norm_val, -63, +63);
 }
 
 template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
@@ -223,5 +225,6 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	for (auto i = 0; i < (int)Le_N.size(); i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
+}
 }
 }

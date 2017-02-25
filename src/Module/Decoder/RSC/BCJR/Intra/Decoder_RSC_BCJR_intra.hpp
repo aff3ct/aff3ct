@@ -8,6 +8,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 class Decoder_RSC_BCJR_intra : public Decoder_RSC_BCJR<B,R>
 {
@@ -30,6 +32,7 @@ protected:
 	virtual void compute_alpha   (                                                      ) = 0;
 	virtual void compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext      ) = 0;
 };
+}
 }
 
 #include "Decoder_RSC_BCJR_intra.hxx"

@@ -5,7 +5,9 @@
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>

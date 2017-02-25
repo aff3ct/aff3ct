@@ -8,7 +8,9 @@
 #include "Module/CRC/Polynomial/CRC_polynomial_double.hpp"
 
 #include "Factory_CRC.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 CRC<B>* Factory_CRC<B>

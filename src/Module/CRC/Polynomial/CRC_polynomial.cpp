@@ -3,7 +3,9 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "CRC_polynomial.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 CRC_polynomial<B>

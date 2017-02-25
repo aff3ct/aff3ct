@@ -16,6 +16,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class SISO_i
  *
@@ -141,6 +143,7 @@ protected:
 };
 
 #include "SC_SISO.hpp"
+}
 }
 
 #endif /* SISO_HPP_ */

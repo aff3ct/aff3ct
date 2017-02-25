@@ -8,11 +8,14 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename B>
 struct Factory_CRC : public Factory
 {
-	static CRC<B>* build(const parameters &params);
+	static module::CRC<B>* build(const parameters &params);
 };
+}
 }
 
 #endif /* FACTORY_CRC_HPP */

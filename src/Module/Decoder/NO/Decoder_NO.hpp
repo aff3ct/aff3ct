@@ -6,6 +6,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 class Decoder_NO : public Decoder<B,R>, public SISO<R>
 {
@@ -25,6 +27,7 @@ protected:
 
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
+}
 }
 
 #endif /* DECODER_NO_HPP_ */

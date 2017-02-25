@@ -4,7 +4,8 @@
 #include <cmath>
 
 #include "Channel_AWGN_MKL_LR.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename R>
 Channel_AWGN_MKL_LR<R>

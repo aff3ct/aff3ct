@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 class Decoder_repetition : public Decoder<B,R>, public SISO<R>
 {
@@ -35,6 +37,7 @@ protected:
 	void store       (      mipp::vector<B>& V_K                        ) const;
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
+}
 }
 
 #endif /* DECODER_REPETITION */

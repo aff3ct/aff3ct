@@ -12,6 +12,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 /*!
  * \class Frame_trace
  *
@@ -103,6 +105,7 @@ private:
 	template <typename D>
 	void display_value (D value, debug_version version, B ref                                                  );
 };
+}
 }
 
 #include "Frame_trace.hxx"

@@ -13,7 +13,10 @@
 #include "Tools/Algo/Predicate_ite.hpp"
 
 #include "SC_Simulation_BFERI.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFERI<B,R,Q>

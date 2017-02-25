@@ -5,6 +5,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 extern bool enable_bash_tools;
 
 std::string bold(std::string str);
@@ -38,6 +40,7 @@ std::string bold_blue(std::string str);
 std::string orange(std::string str);
 
 std::string bold_orange(std::string str);
+}
 }
 
 #endif /* BASH_TOOLS_H_ */

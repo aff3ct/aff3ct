@@ -16,6 +16,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Encoder_i
  *
@@ -73,6 +75,7 @@ public:
 };
 
 #include "SC_Encoder.hpp"
+}
 }
 
 #endif /* ENCODER_HPP_ */

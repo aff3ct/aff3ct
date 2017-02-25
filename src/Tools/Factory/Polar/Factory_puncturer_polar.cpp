@@ -4,7 +4,9 @@
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "Factory_puncturer_polar.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_polar<B,Q>

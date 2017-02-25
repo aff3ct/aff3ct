@@ -13,6 +13,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*
  * Constructor / Destructor
  */
@@ -274,5 +276,6 @@ void Modulator_PSK<B,R,Q,MAX>
 
 		Y_N3[n] = (L0 - L1);
 	}
+}
 }
 }

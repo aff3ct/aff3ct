@@ -4,7 +4,9 @@
 #include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
 
 #include "Factory_encoder_polar.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_polar<B>

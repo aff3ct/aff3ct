@@ -2,7 +2,9 @@
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
 
 #include "Factory_encoder_RSC.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC<B>

@@ -21,6 +21,8 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
@@ -43,9 +45,9 @@ protected:
 	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
 
 	// objects
-	Monitor_reduction<B> *monitor_red;
+	module::Monitor_reduction<B> *monitor_red;
 	// terminal (for the output of the code)
-	Terminal *terminal;
+	tools::Terminal *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
@@ -104,7 +106,7 @@ protected:
 	std::chrono::nanoseconds d_check_total_sum;
 
 public:
-	Simulation_BFER(const parameters& params);
+	Simulation_BFER(const tools::parameters& params);
 	virtual ~Simulation_BFER();
 
 protected:
@@ -123,8 +125,9 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
-	Terminal* build_terminal();
+	tools::Terminal* build_terminal();
 };
+}
 }
 
 #endif /* SIMULATION_BFER_HPP_ */

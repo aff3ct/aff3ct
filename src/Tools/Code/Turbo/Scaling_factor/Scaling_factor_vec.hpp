@@ -5,6 +5,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename R>
 class Scaling_factor_vec : public Scaling_factor<R>
 {
@@ -12,6 +14,7 @@ public:
 	Scaling_factor_vec(const int K, const int n_ite);
 	void operator() (mipp::vector<R> &ext, const int ite);
 };
+}
 }
 
 #endif

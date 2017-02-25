@@ -16,6 +16,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 // ================================================================================================================ g()
 // ====================================================================================================================
 // ====================================================================================================================
@@ -31,7 +33,7 @@ struct g_inter_8bit_bitpacking
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
 
-		const auto r_mask = mipp::set1<B>(bit_init<B>());
+		const auto r_mask = mipp::set1<B>(tools::bit_init<B>());
 		auto k = 0;
 		for (auto i = 0; i < _n_elmts; i += stride)
 		{
@@ -62,7 +64,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 0>
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
 
-		const auto r_mask = mipp::set1<B>(bit_init<B>());
+		const auto r_mask = mipp::set1<B>(tools::bit_init<B>());
 		auto k = 0;
 		for (auto i = 0; i < _n_elmts; i += stride)
 		{
@@ -88,7 +90,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 4>
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int init_shift, const int n_elmts = 0)
 	{
-		const auto r_mask     = mipp::set1<B>(bit_init<B>());
+		const auto r_mask     = mipp::set1<B>(tools::bit_init<B>());
 		const auto r_u_packed = mipp::load<B>(s_a);
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
@@ -113,7 +115,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 2>
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int init_shift, const int n_elmts = 0)
 	{
-		const auto r_mask     = mipp::set1<B>(bit_init<B>());
+		const auto r_mask     = mipp::set1<B>(tools::bit_init<B>());
 		const auto r_u_packed = mipp::load<B>(s_a);
 
 		const auto r_sat = API_polar_inter_intra_saturate<R>::init();
@@ -138,7 +140,7 @@ struct g_inter_8bit_bitpacking <B, R, GI, 1>
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int init_shift, const int n_elmts = 0)
 	{
-		const auto r_mask        = mipp::set1<B>(bit_init<B>());
+		const auto r_mask        = mipp::set1<B>(tools::bit_init<B>());
 		const auto r_u_packed    = mipp::load<B>(s_a);
 		const auto r_lambda_a0   = mipp::load<R>(l_a + 0 * mipp::nElmtsPerRegister<R>());
 		const auto r_lambda_b0   = mipp::load<R>(l_b + 0 * mipp::nElmtsPerRegister<R>());
@@ -164,7 +166,7 @@ struct gr_inter_8bit_bitpacking
 		constexpr auto stride   = mipp::nElmtsPerRegister<R>();
 		constexpr auto _n_elmts = N_ELMTS * mipp::nElReg<R>();
 
-		const auto mask         = mipp::set1<B>(bit_init<B>());
+		const auto mask         = mipp::set1<B>(tools::bit_init<B>());
 		const auto r_u          = mipp::load<B>(s_a);
 		const auto r_u_unpacked = mipp::andb<B>(mipp::lshift<B>(r_u, (sizeof(B) * 8 -1) - init_shift), mask);
 
@@ -190,7 +192,7 @@ struct gr_inter_8bit_bitpacking <B, R, GI, 0>
 		constexpr auto stride   = mipp::nElmtsPerRegister<R>();
 		const     auto _n_elmts = n_elmts * mipp::nElReg<R>();
 
-		const auto mask         = mipp::set1<B>(bit_init<B>());
+		const auto mask         = mipp::set1<B>(tools::bit_init<B>());
 		const auto r_u          = mipp::load<B>(s_a);
 		const auto r_u_unpacked = mipp::andb<B>(mipp::lshift<B>(r_u, (sizeof(B) * 8 -1) - init_shift), mask);
 
@@ -886,6 +888,7 @@ struct xo0_inter_8bit_bitpacking <B, 1>
 		mipp::store<B>(s_c, r_u_c_packed);
 	}
 };
+}
 }
 
 #endif /* FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_HPP_ */

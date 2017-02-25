@@ -6,6 +6,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 Decoder_RSC_BCJR_inter_intra<B,R>
 ::Decoder_RSC_BCJR_inter_intra(const int &K,
@@ -57,20 +59,20 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N.data() + f*frame_size;
-		Reorderer_static<R,n_frames>::apply(frames, this->sys.data(), this->K);
+		tools::Reorderer_static<R,n_frames>::apply(frames, this->sys.data(), this->K);
 
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N.data() + f*frame_size +this->K;
-		Reorderer_static<R,n_frames>::apply(frames, this->par.data(), this->K);
+		tools::Reorderer_static<R,n_frames>::apply(frames, this->par.data(), this->K);
 
 		// tails bit
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N.data() + f*frame_size + 2*this->K + tail/2;
-		Reorderer_static<R,n_frames>::apply(frames, &this->sys[this->K*n_frames], tail/2);
+		tools::Reorderer_static<R,n_frames>::apply(frames, &this->sys[this->K*n_frames], tail/2);
 
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = Y_N.data() + f*frame_size + 2*this->K;
-		Reorderer_static<R,n_frames>::apply(frames, &this->par[this->K*n_frames], tail/2);
+		tools::Reorderer_static<R,n_frames>::apply(frames, &this->par[this->K*n_frames], tail/2);
 	}
 	else
 		Decoder_RSC_BCJR<B,R>::load(Y_N);
@@ -96,7 +98,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = V_K.data() + f*this->K;
-		Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
+		tools::Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 	}
 	else
 		Decoder_RSC_BCJR<B,R>::store(V_K);
@@ -201,4 +203,5 @@ struct RSC_BCJR_inter_intra_normalize <signed char, I>
 		return r_metrics;
 	}
 };
+}
 }

@@ -21,6 +21,8 @@
 
 namespace aff3ct
 {
+namespace launcher
+{
 /*!
  * \class Launcher
  *
@@ -37,13 +39,13 @@ class Launcher
 private:
 	int                                             max_n_chars; /*!< The number of characters of the largest parameter name. */
 	std::unordered_map<std::type_index,std::string> type_names;  /*!< An internal map to store a string associated to a type. */
-	Simulation                                     *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
+	simulation::Simulation                         *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                                     cmd_line;
 	std::string                                     cmd_warn;
 
 protected:
-	Arguments_reader                                             ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	parameters                                                   params;   /*!< A structure of parameters to store and pass to the simulation. */
+	tools::Arguments_reader                                      ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	tools::parameters                                            params;   /*!< A structure of parameters to store and pass to the simulation. */
 	std::ostream                                                &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
 	std::map<std::vector<std::string>, std::vector<std::string>> req_args; /*!< List of the required arguments, syntax is the following:
 	                                                                        *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
@@ -231,7 +233,7 @@ protected:
 	 *
 	 * \return a new simulation.
 	 */
-	virtual Simulation* build_simu() = 0;
+	virtual simulation::Simulation* build_simu() = 0;
 
 private:
 	void read_arguments();
@@ -239,6 +241,7 @@ private:
 	void print_parameters(std::string grp_name, std::vector<std::pair<std::string,std::string>> params);
 	void compute_max_n_chars();
 };
+}
 }
 
 #endif /* LAUNCHER_HPP_ */

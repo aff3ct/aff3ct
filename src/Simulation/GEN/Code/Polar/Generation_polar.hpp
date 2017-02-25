@@ -17,11 +17,13 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 class Generation_polar : public Simulation
 {
 protected:
 	// simulation parameters
-	const parameters params;
+	const tools::parameters params;
 
 	// data vector
 	mipp::vector<int> frozen_bits; // known bits (alias frozen bits) are set to true
@@ -31,14 +33,14 @@ protected:
 	float sigma;
 
 	// patterns
-	std::vector<Pattern_SC_interface*> patterns_SC;
-	Pattern_SC_interface* pattern_SC_rate0;
-	Pattern_SC_interface* pattern_SC_rate1;
+	std::vector<module::Pattern_SC_interface*> patterns_SC;
+	module::Pattern_SC_interface* pattern_SC_rate0;
+	module::Pattern_SC_interface* pattern_SC_rate1;
 
-	Frozenbits_generator<int> *fb_generator;
+	tools::Frozenbits_generator<int> *fb_generator;
 
 	// generator
-	Generator_polar_SC_sys *generator;
+	generator::Generator_polar_SC_sys *generator;
 
 	// file into generate the decoder
 	std::string  directory;
@@ -49,12 +51,13 @@ protected:
 	std::fstream short_graph_file;
 
 public:
-	Generation_polar(const parameters& params);
+	Generation_polar(const tools::parameters& params);
 
 	virtual ~Generation_polar();
 
 	void launch();
 };
+}
 }
 
 #endif /* GENERATION_POLAR_HPP_ */

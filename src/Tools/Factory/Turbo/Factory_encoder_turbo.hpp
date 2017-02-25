@@ -10,15 +10,18 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename B>
 struct Factory_encoder_turbo : public Factory
 {
-	static Encoder<B>* build(const parameters          &params,
-	                               Interleaver<short>  *interleaver,
-	                               Encoder_sys<B>      *sub_encoder_n,
-	                               Encoder_sys<B>      *sub_encoder_i,
-	                         const int                 n_frames = 1);
+	static module::Encoder<B>* build(const parameters                  &params,
+	                                       module::Interleaver<short>  *interleaver,
+	                                       module::Encoder_sys<B>      *sub_encoder_n,
+	                                       module::Encoder_sys<B>      *sub_encoder_i,
+	                                 const int                          n_frames = 1);
 };
+}
 }
 
 #endif /* FACTORY_ENCODER_TURBO_HPP */

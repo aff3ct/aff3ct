@@ -16,6 +16,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class CRC_i
  *
@@ -80,6 +82,7 @@ public:
 };
 
 #include "SC_CRC.hpp"
+}
 }
 
 #endif

@@ -11,6 +11,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 // ------------------------------------------------------------------------------------------- special function headers
 
 // M   - INTEGER.
@@ -50,6 +52,7 @@ template <typename T>
 __forceinline void complex_transpose(const int M, const int N,
                                      const mipp::vector<T> &A,
                                            mipp::vector<T> &B);
+}
 }
 
 #include "matrix.hxx"

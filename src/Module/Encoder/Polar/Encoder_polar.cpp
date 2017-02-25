@@ -3,7 +3,8 @@
 #include <cmath>
 
 #include "Encoder_polar.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B>
 Encoder_polar<B>

@@ -10,6 +10,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename R>
 class Binary_tree;
 
@@ -162,6 +164,7 @@ public:
 	 */
 	inline void cut_right();
 };
+}
 }
 
 #include "Binary_node.hxx"

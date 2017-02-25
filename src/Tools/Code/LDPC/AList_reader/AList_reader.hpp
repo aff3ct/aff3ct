@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 class AList_reader
 {
 private:
@@ -45,6 +47,7 @@ private:
 	bool read_format3(std::ifstream &file);
 	void compute_branches_transpose();
 };
+}
 }
 
 #endif /* ALIST_READER_HPP_ */

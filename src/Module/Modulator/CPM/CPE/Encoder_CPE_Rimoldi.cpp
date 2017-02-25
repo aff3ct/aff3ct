@@ -5,7 +5,10 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Encoder_CPE_Rimoldi.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 
 template <typename SIN, typename SOUT>
 Encoder_CPE_Rimoldi<SIN, SOUT>

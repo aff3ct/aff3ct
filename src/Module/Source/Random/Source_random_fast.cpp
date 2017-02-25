@@ -1,7 +1,8 @@
 #include <cstdlib>
 
 #include "Source_random_fast.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B>
 Source_random_fast<B>

@@ -17,6 +17,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Source_i
  *
@@ -61,6 +63,7 @@ public:
 };
 
 #include "SC_Source.hpp"
+}
 }
 
 #endif /* SOURCE_HPP_ */

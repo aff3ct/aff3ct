@@ -16,7 +16,10 @@
 #include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
 
 #include "Simulation_BFER_turbo.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_BFER_turbo<B,R,Q,QD>

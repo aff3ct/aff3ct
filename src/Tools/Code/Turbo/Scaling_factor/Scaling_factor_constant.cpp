@@ -1,7 +1,8 @@
 #include "Tools/Math/utils.h"
 
 #include "Scaling_factor_constant.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
 
 template <typename R>
 Scaling_factor_constant<R>

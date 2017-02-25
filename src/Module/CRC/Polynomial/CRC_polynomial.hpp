@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B>
 class CRC_polynomial : public CRC<B>
 {
@@ -44,6 +46,7 @@ const std::map<std::string, mipp::vector<B>> CRC_polynomial<B>::polynomials = {
   {"3-0x3",   {                                                                                       1, 0, 1, 1}},
   {"2-0x1",   {                                                                                          1, 0, 1}},
   {"1-0x1",   {                                                                                             1, 1}}};
+}
 }
 
 #endif /* CRC_POLYNOMIAL_HPP_ */

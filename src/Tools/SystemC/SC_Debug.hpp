@@ -14,6 +14,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename T>
 class SC_Debug : sc_core::sc_module
 {
@@ -60,6 +62,7 @@ private:
 		s_out->b_transport(payload, zero_time);
 	}
 };
+}
 }
 
 #endif /* SC_DEBUG_HPP_ */

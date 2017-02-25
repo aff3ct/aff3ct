@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename T>
 class Interleaver_LTE : public Interleaver<T>
 {
@@ -229,13 +231,14 @@ protected:
 		}
 		else
 		{
-			std::cerr << bold_red("(EE) There is no LTE f_1 and f_2 parameters for size = ")
-			          << bold_red(std::to_string(size)) 
-			          << bold_red(": exiting simulation.") << std::endl;
+			std::cerr << tools::bold_red("(EE) There is no LTE f_1 and f_2 parameters for size = ")
+			          << tools::bold_red(std::to_string(size))
+			          << tools::bold_red(": exiting simulation.") << std::endl;
 			exit(-1);
 		}
 	}
 };
+}
 }
 
 #endif	/* INTERLEAVER_LTE_HPP */

@@ -4,7 +4,10 @@
 #include "Simulation/EXIT/Code/Polar/Simulation_EXIT_polar.hpp"
 
 #include "Launcher_EXIT_polar.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
 
 template <typename B, typename R, typename Q>
 Launcher_EXIT_polar<B,R,Q>

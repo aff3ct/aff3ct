@@ -3,7 +3,8 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Encoder_coset.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B>
 Encoder_coset<B>

@@ -13,7 +13,7 @@
 
 #include "transpose_selector.h"
 
-bool aff3ct::char_transpose(const signed char *src, signed char *dst, int n)
+bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int n)
 {
 	bool is_transposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
@@ -46,7 +46,7 @@ bool aff3ct::char_transpose(const signed char *src, signed char *dst, int n)
 	return is_transposed;
 }
 
-bool aff3ct::char_itranspose(const signed char *src, signed char *dst, int n)
+bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, int n)
 {
 	bool is_itransposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)

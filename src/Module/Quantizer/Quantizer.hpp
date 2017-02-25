@@ -15,6 +15,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Quantizer_i
  *
@@ -62,6 +64,7 @@ public:
 };
 
 #include "SC_Quantizer.hpp"
+}
 }
 
 #endif /* QUANTIZER_HPP_ */

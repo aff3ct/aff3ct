@@ -1,5 +1,6 @@
 #include "Coset_real.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B, typename D>
 Coset_real<B,D>::Coset_real(const int size, const int n_frames, const std::string name)

@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_PAM : public Modulator<B,R,Q>
 {
@@ -36,6 +38,7 @@ public:
 private:
 	inline R bits_to_symbol(const B* bits) const;
 };
+}
 }
 
 #include "Modulator_PAM.hxx"

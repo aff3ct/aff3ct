@@ -6,7 +6,8 @@ using namespace std;
 #include "Tools/Display/bash_tools.h"
 
 #include "Arguments_reader.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
 
 Arguments_reader
 ::Arguments_reader(const int argc, const char** argv)

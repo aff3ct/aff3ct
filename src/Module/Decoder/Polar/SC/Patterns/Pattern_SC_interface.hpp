@@ -14,6 +14,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 enum pattern_SC_type
 {
 	STANDARD = 0,
@@ -32,7 +34,7 @@ protected:
 	const int N;
 	const int size;
 	const int si_2;
-	const Binary_node<Pattern_SC_interface>* node;
+	const tools::Binary_node<Pattern_SC_interface>* node;
 	const int off_l;  // offset for lambda buffer (reals)
 	const int off_s;  // offset for s buffer (bits)
 	const int n_dig;  // number of digits in n
@@ -42,7 +44,7 @@ protected:
 	std::string key;
 
 	Pattern_SC_interface(const int &N,
-	                     const Binary_node<Pattern_SC_interface>* node)
+	                     const tools::Binary_node<Pattern_SC_interface>* node)
 	: N(N),
 	  size(N),
 	  si_2(0),
@@ -88,7 +90,7 @@ public:
 	int          get_off_l(               ) { return off_l;     }
 	int          get_off_s(               ) { return off_s;     }
 
-	virtual Pattern_SC_interface* alloc(const int &n, const Binary_node<Pattern_SC_interface>* node) const = 0;
+	virtual Pattern_SC_interface* alloc(const int &n, const tools::Binary_node<Pattern_SC_interface>* node) const = 0;
 
 	virtual pattern_SC_type type()   const = 0;
 	virtual std::string name()       const = 0;
@@ -105,10 +107,11 @@ public:
 	virtual std::string apply_h(std::string str_off_l = "", std::string str_off_s = "") const = 0;
 
 	virtual int match(const int &reverse_graph_depth,
-	                  const Binary_node<Pattern_SC_interface>* node_curr) const = 0;
+	                  const tools::Binary_node<Pattern_SC_interface>* node_curr) const = 0;
 
 	virtual bool is_terminal() const = 0;
 };
+}
 }
 
 #endif /* PATTERN_SC_INTERFACE_HPP_ */

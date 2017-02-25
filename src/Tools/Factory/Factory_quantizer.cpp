@@ -6,7 +6,9 @@
 #include "Module/Quantizer/NO/Quantizer_NO.hpp"
 
 #include "Factory_quantizer.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename R, typename Q>
 Quantizer<R,Q>* Factory_quantizer<R,Q>

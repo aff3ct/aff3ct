@@ -14,6 +14,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 /*!
  * \class Frozenbits_generator
  * \brief Determines the frozen bit positions in a frame.
@@ -90,6 +92,7 @@ protected:
 	 */
 	virtual void evaluate() = 0;
 };
+}
 }
 
 #endif /* FROZENBITS_GENERATOR_HPP_ */

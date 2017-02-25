@@ -3,7 +3,8 @@
 #include <cmath>
 
 #include "Quantizer_NO.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename R, typename Q>
 Quantizer_NO<R,Q>
@@ -31,6 +32,8 @@ void Quantizer_NO<R,Q>
 
 namespace aff3ct
 {
+namespace module
+{
 template<>
 void Quantizer_NO<float,float>
 ::process(const mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
@@ -39,8 +42,11 @@ void Quantizer_NO<float,float>
 	Y_N2 = Y_N1;	
 }
 }
+}
 
 namespace aff3ct
+{
+namespace module
 {
 template<>
 void Quantizer_NO<double,double>
@@ -48,6 +54,7 @@ void Quantizer_NO<double,double>
 {
 	assert(Y_N1.size() == Y_N2.size());
 	Y_N2 = Y_N1;	
+}
 }
 }
 

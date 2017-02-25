@@ -12,12 +12,14 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <>
 class Pattern_SC<pattern_SC_type::RATE_1> : public Pattern_SC_interface
 {
 protected:
 	Pattern_SC(const int &N,
-	           const Binary_node<Pattern_SC_interface>* node)
+	           const tools::Binary_node<Pattern_SC_interface>* node)
 	 : Pattern_SC_interface(N, node)
 	{
 	}
@@ -26,7 +28,7 @@ public:
 	Pattern_SC() : Pattern_SC_interface() { }
 
 	virtual Pattern_SC_interface* alloc(const int &N,
-	                                    const Binary_node<Pattern_SC_interface>* node) const
+	                                    const tools::Binary_node<Pattern_SC_interface>* node) const
 	{
 		return new Pattern_SC<pattern_SC_type::RATE_1>(N, node);
 	}
@@ -75,7 +77,7 @@ public:
 	}
 
 	virtual int match(const int &reverse_graph_depth,
-	                  const Binary_node<Pattern_SC_interface>* node_curr) const
+	                  const tools::Binary_node<Pattern_SC_interface>* node_curr) const
 	{
 		assert(reverse_graph_depth > 0);
 
@@ -98,6 +100,7 @@ public:
 
 	virtual bool is_terminal() const { return true; }
 };
+}
 }
 
 #endif /* PATTERN_SC_YIELD1_HPP_ */

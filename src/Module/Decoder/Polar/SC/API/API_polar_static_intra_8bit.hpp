@@ -16,6 +16,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, 
           proto_f   <R> F,  proto_g   <B,R> G,  proto_g0  <R> G0,  proto_h   <B,R> H,  proto_xo  <B> XO,
           proto_f_i <R> FI, proto_g_i <B,R> GI, proto_g0_i<R> G0I, proto_h_i <B,R> HI, proto_xo_i<B> XOI>
@@ -208,6 +210,7 @@ public:
 		xo0_intra_8bit<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
 	}
 };
+}
 }
 
 #endif /* API_POLAR_INTRA_STATIC_8BIT_HPP_ */

@@ -8,7 +8,9 @@
 #include "Module/Interleaver/User/Interleaver_user.hpp"
 
 #include "Factory_interleaver.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>

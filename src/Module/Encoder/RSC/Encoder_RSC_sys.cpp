@@ -3,7 +3,8 @@
 #endif
 
 #include "Encoder_RSC_sys.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RSC_sys<B>

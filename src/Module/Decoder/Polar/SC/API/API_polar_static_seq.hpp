@@ -14,6 +14,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, 
           proto_f<R> F, proto_g<B,R> G, proto_g0<R> G0, proto_h<B,R> H, proto_xo<B> XO>
 class API_polar_static_seq : public API_polar
@@ -205,6 +207,7 @@ public:
 		xo0_seq<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
 	}
 };
+}
 }
 
 #endif /* API_POLAR_STATIC_INTER_HPP_ */

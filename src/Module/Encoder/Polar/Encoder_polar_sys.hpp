@@ -8,6 +8,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B>
 class Encoder_polar_sys : public Encoder_polar<B>
 {
@@ -18,6 +20,7 @@ public:
 
 	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
+}
 }
 
 #endif // ENCODER_POLAR_SYS_HPP_

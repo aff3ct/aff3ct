@@ -6,6 +6,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, typename RD>
 Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::Decoder_RSC_BCJR_seq_scan(const int &K,
@@ -107,7 +109,7 @@ struct RSC_BCJR_seq_scan_normalize1 <signed char>
 		const auto norm_val = metrics[0][0];
 		for (auto k = 0; k < 8; k++)
 			for (auto l = 0; l < 8; l++)
-				metrics[l][k] = saturate<signed char>(metrics[l][k] - norm_val, -63, +63);
+				metrics[l][k] = tools::saturate<signed char>(metrics[l][k] - norm_val, -63, +63);
 	}
 };
 
@@ -151,14 +153,14 @@ struct RSC_BCJR_seq_scan_normalize2 <signed char>
 	{
 		// normalization & saturation
 		const auto norm_val = ab0;
-		ab0 = saturate<signed char>(ab0 - norm_val, -63, +63);
-		ab1 = saturate<signed char>(ab1 - norm_val, -63, +63);
-		ab2 = saturate<signed char>(ab2 - norm_val, -63, +63);
-		ab3 = saturate<signed char>(ab3 - norm_val, -63, +63);
-		ab4 = saturate<signed char>(ab4 - norm_val, -63, +63);
-		ab5 = saturate<signed char>(ab5 - norm_val, -63, +63);
-		ab6 = saturate<signed char>(ab6 - norm_val, -63, +63);
-		ab7 = saturate<signed char>(ab7 - norm_val, -63, +63);
+		ab0 = tools::saturate<signed char>(ab0 - norm_val, -63, +63);
+		ab1 = tools::saturate<signed char>(ab1 - norm_val, -63, +63);
+		ab2 = tools::saturate<signed char>(ab2 - norm_val, -63, +63);
+		ab3 = tools::saturate<signed char>(ab3 - norm_val, -63, +63);
+		ab4 = tools::saturate<signed char>(ab4 - norm_val, -63, +63);
+		ab5 = tools::saturate<signed char>(ab5 - norm_val, -63, +63);
+		ab6 = tools::saturate<signed char>(ab6 - norm_val, -63, +63);
+		ab7 = tools::saturate<signed char>(ab7 - norm_val, -63, +63);
 	}
 };
 
@@ -454,5 +456,6 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 	this->compute_alpha(        );
 	this->compute_beta (        );
 	this->compute_ext  (sys, ext);
+}
 }
 }

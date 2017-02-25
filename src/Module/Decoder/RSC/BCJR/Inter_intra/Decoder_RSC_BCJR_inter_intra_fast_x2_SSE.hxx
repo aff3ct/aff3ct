@@ -4,6 +4,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename R>
 struct RSC_BCJR_inter_intra_fast_x2_SSE_init
 {
@@ -321,5 +323,6 @@ void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 		const auto r_ext = r_post - &sys[i*n_frames];
 		r_ext.store(&ext[i*n_frames]);
 	}
+}
 }
 }

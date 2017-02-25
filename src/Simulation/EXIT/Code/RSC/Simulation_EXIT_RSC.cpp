@@ -11,7 +11,10 @@
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
 #include "Simulation_EXIT_RSC.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation_EXIT_RSC<B,R,Q,QD>

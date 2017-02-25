@@ -13,6 +13,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::Modulator_CPM(int  N,
@@ -346,7 +348,7 @@ R Modulator_CPM<B,R,Q,MAX>
 			return (R)0.0;
 
 		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
-		return integral(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
+		return tools::integral(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
 	}
 	else if (cpm.wave_shape == "RCOS")
 		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm.L) / (R)4.0 / (R)M_PI;
@@ -354,7 +356,7 @@ R Modulator_CPM<B,R,Q,MAX>
 		return t_stamp / ((R)2.0 * cpm.L);
 	else
 	{
-		std::cerr << bold_red("(EE) Unknown CPM wave shape") << std::endl;
+		std::cerr << tools::bold_red("(EE) Unknown CPM wave shape") << std::endl;
 		exit(-1);
 	}
 }
@@ -372,7 +374,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 	if (cpm.filters_type == "TOTAL")
 	{
-		complex_transpose(cpm.max_wa_id, cpm.s_factor, baseband, projection);
+		tools::complex_transpose(cpm.max_wa_id, cpm.s_factor, baseband, projection);
 
 		for (auto i = 0; i < (int)projection.size() ; i++)
 			projection[i] *= factor;
@@ -382,8 +384,9 @@ void Modulator_CPM<B,R,Q,MAX>
 	//}
 	else
 	{
-		std::cerr << bold_red("(EE) Unknown CPM filter bank type") << std::endl;
+		std::cerr << tools::bold_red("(EE) Unknown CPM filter bank type") << std::endl;
 		exit(-1);
 	}
+}
 }
 }

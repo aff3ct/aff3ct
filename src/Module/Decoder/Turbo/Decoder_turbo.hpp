@@ -12,6 +12,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 class Decoder_turbo : public Decoder<B,R>
 {
@@ -23,7 +25,7 @@ protected:
 	SISO<R> &siso_n;
 	SISO<R> &siso_i;
 
-	Scaling_factor<R>& scaling_factor;
+	tools::Scaling_factor<R>& scaling_factor;
 
 	mipp::vector<R> l_sn;  // systematic LLRs                  in the natural     domain
 	mipp::vector<R> l_si;  // systematic LLRs                  in the interleaved domain
@@ -44,7 +46,7 @@ public:
 	              const Interleaver<short> &pi,
 	              SISO<R> &siso_n,
 	              SISO<R> &siso_i,
-	              Scaling_factor<R> &scaling_factor,
+	              tools::Scaling_factor<R> &scaling_factor,
 	              const bool buffered_encoding = true,
 	              const std::string name = "Decoder_turbo");
 	virtual ~Decoder_turbo();
@@ -57,6 +59,7 @@ private:
 	void buffered_load(const mipp::vector<R>& Y_N);
 	void standard_load(const mipp::vector<R>& Y_N);
 };
+}
 }
 
 #endif /* DECODER_TURBO_HPP_ */

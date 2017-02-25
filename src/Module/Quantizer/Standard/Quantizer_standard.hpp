@@ -8,6 +8,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename R, typename Q>
 class Quantizer_standard : public Quantizer<R,Q>
 {
@@ -31,6 +33,7 @@ public:
 
 	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
+}
 }
 
 #endif /* QUANTIZER_STANDARD_HPP_ */

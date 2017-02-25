@@ -19,6 +19,8 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFERI : public Simulation_BFERI_i<B,R,Q>
 {
@@ -42,8 +44,8 @@ protected:
 	std::vector<mipp::vector<B>> V_K;  // decoded codeword
 
 	// objects
-	Monitor_reduction<B> *monitor_red;
-	Terminal             *terminal;
+	module::Monitor_reduction<B> *monitor_red;
+	tools::Terminal              *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
@@ -95,7 +97,7 @@ protected:
 	std::chrono::nanoseconds d_check_total_sum;
 
 public:
-	Simulation_BFERI(const parameters& params);
+	Simulation_BFERI(const tools::parameters& params);
 	virtual ~Simulation_BFERI();
 
 protected:
@@ -112,8 +114,9 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
-	Terminal* build_terminal(const int tid = 0);
+	tools::Terminal* build_terminal(const int tid = 0);
 };
+}
 }
 
 #endif /* SIMULATION_BFERI_HPP_ */

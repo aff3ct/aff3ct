@@ -10,7 +10,10 @@
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
 #include "Simulation_BFERI_uncoded.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFERI_uncoded<B,R,Q>

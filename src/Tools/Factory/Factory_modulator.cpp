@@ -9,7 +9,9 @@
 #include "Module/Modulator/User/Modulator_user.hpp"
 
 #include "Factory_modulator.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,Q>* Factory_modulator<B,R,Q>

@@ -2,7 +2,8 @@
 #include <algorithm>
 
 #include "Decoder_repetition_fast.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>

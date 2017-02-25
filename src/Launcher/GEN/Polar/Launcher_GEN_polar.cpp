@@ -6,7 +6,10 @@
 #include "Simulation/GEN/Code/Polar/Generation_polar.hpp"
 
 #include "Launcher_GEN_polar.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
 
 template <typename B, typename R, typename Q>
 Launcher_GEN_polar<B,R,Q>

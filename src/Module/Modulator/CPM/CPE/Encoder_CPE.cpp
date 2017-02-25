@@ -1,5 +1,6 @@
 #include "Encoder_CPE.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>

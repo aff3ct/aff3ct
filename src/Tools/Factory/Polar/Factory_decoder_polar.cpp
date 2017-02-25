@@ -27,7 +27,9 @@
 #endif
 
 #include "Factory_decoder_polar.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 SISO<R>* Factory_decoder_polar<B,R>

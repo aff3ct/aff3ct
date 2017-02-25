@@ -7,22 +7,25 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER_RA : public Simulation_BFER<B,R,Q>
 {
 protected:
-	Interleaver<int> *interleaver;
+	module::Interleaver<int> *interleaver;
 
 public:
-	Simulation_BFER_RA(const parameters& params);
+	Simulation_BFER_RA(const tools::parameters& params);
 	virtual ~Simulation_BFER_RA();
 
 protected:
-	void          launch_precompute();
-	void          snr_precompute   ();
-	Encoder<B>*   build_encoder    (const int tid = 0);
-	Decoder<B,Q>* build_decoder    (const int tid = 0);
+	void                  launch_precompute();
+	void                  snr_precompute   ();
+	module::Encoder<B>*   build_encoder    (const int tid = 0);
+	module::Decoder<B,Q>* build_decoder    (const int tid = 0);
 };
+}
 }
 
 #endif /* SIMULATION_RA_HPP_ */

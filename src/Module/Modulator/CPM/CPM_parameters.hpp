@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename SIN, typename SOUT>
 class CPM_parameters
 {
@@ -98,6 +100,7 @@ public :
 	mipp::vector<SIN>  anti_trellis_input_transition; // from a given state and transition index,
 	                                                  // gives the related transition value
 };
+}
 }
 
 #endif /* CPM_PARAMETERS_HPP_ */

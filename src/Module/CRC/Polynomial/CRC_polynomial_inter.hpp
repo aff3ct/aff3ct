@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B>
 class CRC_polynomial_inter : public CRC_polynomial<B>
 {
@@ -24,6 +26,7 @@ protected:
 	                     const int off_out, 
 	                     const int loop_size);
 };
+}
 }
 
 #endif /* CRC_POLYNOMIAL_INTER_HPP_ */

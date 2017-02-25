@@ -7,23 +7,26 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER_LDPC : public Simulation_BFER<B,R,Q>
 {
 protected:
-	AList_reader alist_data;
+	tools::AList_reader alist_data;
 
 public:
-	Simulation_BFER_LDPC(const parameters& params);
+	Simulation_BFER_LDPC(const tools::parameters& params);
 
 	virtual ~Simulation_BFER_LDPC();
 
 protected:
-	void          launch_precompute();
-	void          snr_precompute   ();
-	Encoder<B>*   build_encoder    (const int tid = 0);
-	Decoder<B,Q>* build_decoder    (const int tid = 0);
+	void                  launch_precompute();
+	void                  snr_precompute   ();
+	module::Encoder<B>*   build_encoder    (const int tid = 0);
+	module::Decoder<B,Q>* build_decoder    (const int tid = 0);
 };
+}
 }
 
 #endif /* SIMULATION_LDPC_HPP_ */

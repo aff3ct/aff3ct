@@ -26,6 +26,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 /*!
  * \class PRNG_MT19937_simd
  * \brief The Mersenne Twister pseudo-random number generator (PRNG) with fast SIMD instructions.
@@ -82,6 +84,7 @@ public:
 private:
 	void generate_numbers();
 };
+}
 }
 
 #endif // PRNG_MT19937_simd_FAST_HPP

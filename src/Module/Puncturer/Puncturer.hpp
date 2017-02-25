@@ -16,6 +16,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Puncturer_i
  *
@@ -73,6 +75,7 @@ public:
 };
 
 #include "SC_Puncturer.hpp"
+}
 }
 
 #endif /* PUNCTURER_HPP_ */

@@ -5,7 +5,8 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Terminal_EXIT.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Terminal_EXIT<B,R>

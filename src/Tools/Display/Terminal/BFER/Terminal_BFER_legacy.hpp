@@ -9,18 +9,20 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename B, typename R>
 class Terminal_BFER_legacy : public Terminal
 {
 protected:
 	const R                                                                             snr;
-	const Monitor<B>                                                                   &monitor;
+	const module::Monitor<B>                                                           &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	unsigned short                                                                      real_time_state;
 
 public:
-    Terminal_BFER_legacy(const R& snr,
-	                     const Monitor<B> &monitor,
+	Terminal_BFER_legacy(const R& snr,
+	                     const module::Monitor<B> &monitor,
 	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr);
 	virtual ~Terminal_BFER_legacy() {}
 
@@ -31,6 +33,7 @@ private:
 	static std::string get_time_format(float secondes);
 	void _report(std::ostream &stream);
 };
+}
 }
 
 #endif /* TERMINAL_BFER_LEGACY_HPP_ */

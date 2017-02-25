@@ -12,6 +12,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 // ================================================================================================================ f()
 // ====================================================================================================================
 // ====================================================================================================================
@@ -189,7 +191,7 @@ struct rep_seq<B, signed char, H, N_ELMTS>
 			sum_l += (int)l_a[i];
 
 		// hardcoded h function
-		B r = ((sum_l <= 0) * bit_init<B>());
+		B r = ((sum_l <= 0) * tools::bit_init<B>());
 		for (auto i = 0; i < N_ELMTS; i++)
 			s_a[i] = r;
 	}
@@ -220,7 +222,7 @@ struct rep_seq <B, signed char, H, 0>
 			sum_l += (int)l_a[i];
 
 		// hardcoded h function
-		B r = ((sum_l <= 0) * bit_init<B>());
+		B r = ((sum_l <= 0) * tools::bit_init<B>());
 		for (auto i = 0; i < n_elmts; i++)
 			s_a[i] = r;
 	}
@@ -254,7 +256,7 @@ struct spc_seq
 		}
 
 		if (prod_sign < 0)
-			s_a[cur_min_pos] = (s_a[cur_min_pos] == 0) ? bit_init<B>() : 0; // correction
+			s_a[cur_min_pos] = (s_a[cur_min_pos] == 0) ? tools::bit_init<B>() : 0; // correction
 
 		return (prod_sign < 0);
 	}
@@ -284,7 +286,7 @@ struct spc_seq <B, R, H, 0>
 		}
 
 		if (prod_sign < 0)
-			s_a[cur_min_pos] = (s_a[cur_min_pos] == 0) ? bit_init<B>() : 0; // correction
+			s_a[cur_min_pos] = (s_a[cur_min_pos] == 0) ? tools::bit_init<B>() : 0; // correction
 
 		return (prod_sign < 0);
 	}
@@ -345,6 +347,7 @@ struct xo0_seq <B, 0>
 #endif
 	}
 };
+}
 }
 
 #endif /* FUNCTIONS_POLAR_SEQ_H_ */

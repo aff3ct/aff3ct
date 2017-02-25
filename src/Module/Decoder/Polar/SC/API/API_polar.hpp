@@ -3,7 +3,10 @@
 
 namespace aff3ct
 {
+namespace module
+{
 class API_polar {};
+}
 }
 
 #endif /* API_POLAR_HPP_ */

@@ -31,9 +31,10 @@
 
 #include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
-using namespace aff3ct;
-
 #include "main.h"
+
+using namespace aff3ct::launcher;
+using namespace aff3ct::tools;
 
 void print_version()
 {

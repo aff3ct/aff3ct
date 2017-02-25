@@ -11,6 +11,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, typename Q, proto_max<Q> MAX>
 class Modulator_user : public Modulator<B,R,Q>
 {
@@ -35,6 +37,7 @@ public:
 
 	int get_buffer_size_after_modulation(const int N);
 };
+}
 }
 
 #include "Modulator_user.hxx"

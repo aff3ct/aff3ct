@@ -5,7 +5,8 @@
 #include <cassert>
 
 #include "Channel_AWGN_GSL_LLR.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename R>
 Channel_AWGN_GSL_LLR<R>

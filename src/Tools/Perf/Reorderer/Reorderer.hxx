@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 constexpr bool is_power_of_2(unsigned x)
 {
 	return (x > 0) && !(x & (x - 1));
@@ -385,7 +387,7 @@ void Reorderer_static<T,N_FRAMES>
 				regs_inter[f] = mipp::loadu<T>(in_data + (i*n_fra +f) * mipp::nElReg<T>());
 
 			// auto unrolled reordering
-			const auto k_size = Reorderer_static_core_rev<T, n_fra, mipp::nElReg<T>(), 1, n_fra_2>::compute(regs_inter);
+			const auto k_size = tools::Reorderer_static_core_rev<T, n_fra, mipp::nElReg<T>(), 1, n_fra_2>::compute(regs_inter);
 			const auto l_size = n_fra_2 / k_size;
 
 			// stores
@@ -408,6 +410,7 @@ void Reorderer_static<T,N_FRAMES>
 	for (auto i = start_seq_loop; i < data_length; i++)
 		for (auto f = 0; f < n_fra; f++)
 			out_data[f][i] = in_data[i*n_fra +f];
+}
 }
 }
 

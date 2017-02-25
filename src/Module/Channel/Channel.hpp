@@ -17,6 +17,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Channel_i
  *
@@ -75,6 +77,7 @@ public:
 };
 
 #include "SC_Channel.hpp"
+}
 }
 
 #endif /* CHANNEL_HPP_ */

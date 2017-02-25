@@ -2,6 +2,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename T>
 Binary_node<T>
 ::Binary_node(Binary_node<T>* father,
@@ -119,5 +121,6 @@ void Binary_node<T>
 {
 	delete this->right;
 	this->right = nullptr;
+}
 }
 }

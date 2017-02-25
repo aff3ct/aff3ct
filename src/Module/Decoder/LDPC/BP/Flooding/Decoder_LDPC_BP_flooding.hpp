@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
 {
@@ -38,7 +40,7 @@ protected:
 
 public:
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
-	                         const AList_reader &alist_data,
+	                         const tools::AList_reader &alist_data,
 	                         const bool enable_syndrome = true,
 	                         const int n_frames = 1,
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
@@ -61,6 +63,7 @@ protected:
 
 	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
 };
+}
 }
 
 #endif /* DECODER_LDPC_BP_FLOODING_HPP_ */

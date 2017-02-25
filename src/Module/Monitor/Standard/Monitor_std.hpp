@@ -10,6 +10,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B>
 class Monitor_std : public Monitor<B>
 {
@@ -40,6 +42,7 @@ public:
 private:
 	void update_n_analyzed_frames();
 };
+}
 }
 
 #endif /* MONITOR_STD_HPP_ */

@@ -1,7 +1,8 @@
 #include <limits>
 
 #include "PRNG_MT19937_simd.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
 
 /*
  * We have an array of 624 32-bit values, and there are

@@ -3,7 +3,8 @@
 #include <cmath>
 
 #include "Encoder_RSC3_CPE_sys.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RSC3_CPE_sys<B>

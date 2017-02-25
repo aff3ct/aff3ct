@@ -8,6 +8,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
 ::Decoder_RSC_BCJR(const int K, 
@@ -26,7 +28,7 @@ Decoder_RSC_BCJR<B,R>
   ext( K       * simd_inter_frame_level + mipp::nElReg<R>()),
   s  ( K       * simd_inter_frame_level + mipp::nElReg<B>())
 {
-	assert(is_power_of_2(n_states));
+	assert(tools::is_power_of_2(n_states));
 }
 
 template <typename B, typename R>
@@ -60,20 +62,20 @@ void Decoder_RSC_BCJR<B,R>
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N.data() + f*frame_size;
-			Reorderer<R>::apply(frames, sys.data(), this->K);
+			tools::Reorderer<R>::apply(frames, sys.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N.data() + f*frame_size +this->K;
-			Reorderer<R>::apply(frames, par.data(), this->K);
+			tools::Reorderer<R>::apply(frames, par.data(), this->K);
 
 			// tails bit
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N.data() + f*frame_size + 2*this->K + tail/2;
-			Reorderer<R>::apply(frames, &sys[this->K*n_frames], tail/2);
+			tools::Reorderer<R>::apply(frames, &sys[this->K*n_frames], tail/2);
 
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N.data() + f*frame_size + 2*this->K;
-			Reorderer<R>::apply(frames, &par[this->K*n_frames], tail/2);
+			tools::Reorderer<R>::apply(frames, &par[this->K*n_frames], tail/2);
 		}
 	}
 	else
@@ -128,7 +130,7 @@ void Decoder_RSC_BCJR<B,R>
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = V_K.data() + f*this->K;
-		Reorderer<B>::apply_rev(s.data(), frames, this->K);
+		tools::Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
 }
 
@@ -136,7 +138,8 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
+	std::cerr << tools::bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
+}
 }
 }

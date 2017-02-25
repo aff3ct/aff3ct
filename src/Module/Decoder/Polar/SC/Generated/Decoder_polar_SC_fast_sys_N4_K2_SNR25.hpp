@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 static const char Frozen_bits_4_2_25[4] = {
 1, 1, 0, 0};
 
@@ -39,5 +41,6 @@ public:
 		API_polar::template xo0<2>(s,    0+2,           0+0, 2);
 	}
 };
+}
 }
 #endif

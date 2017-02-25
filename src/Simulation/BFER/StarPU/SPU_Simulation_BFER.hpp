@@ -20,6 +20,8 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFER : public Simulation_BFER_i<B,R,Q>
 {
@@ -57,12 +59,12 @@ protected:
 	std::vector<starpu_data_handle_t> spu_V_K;
 
 	// objects
-	Monitor_reduction<B> *monitor_red;
+	module::Monitor_reduction<B> *monitor_red;
 	// terminal (for the output of the code)
-	Terminal *terminal;
+	tools::Terminal *terminal;
 
 public:
-	Simulation_BFER(const parameters& params);
+	Simulation_BFER(const tools::parameters& params);
 	virtual ~Simulation_BFER();
 
 protected:
@@ -76,10 +78,11 @@ private:
 	static void allocate_data            (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	inline void seq_tasks_submission     (                              const int tid = 0);
 
-	Terminal* build_terminal();
+	tools::Terminal* build_terminal();
 
 	static void terminal_temp_report(Simulation_BFER<B,R,Q> *simu);
 };
+}
 }
 
 #endif /* SPU_SIMULATION_BFER_HPP_ */

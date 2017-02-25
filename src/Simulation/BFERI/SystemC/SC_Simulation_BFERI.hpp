@@ -19,6 +19,8 @@
 
 namespace aff3ct
 {
+namespace simulation
+{
 template <typename B, typename R, typename Q>
 class Simulation_BFERI : public Simulation_BFERI_i<B,R,Q>
 {
@@ -27,17 +29,17 @@ private:
 	std::condition_variable cond_terminal;
 
 protected:
-	Interleaver<int> *interleaver_e;
-	Coset<B,Q>       *coset_real_i;
-	Terminal         *terminal;
+	tools::Interleaver<int> *interleaver_e;
+	module::Coset<B,Q>      *coset_real_i;
+	tools::Terminal         *terminal;
 
-	SC_Duplicator *duplicator[5];
-	SC_Router     *router;
-	SC_Predicate  *predicate;
+	tools::SC_Duplicator *duplicator[5];
+	tools::SC_Router     *router;
+	tools::SC_Predicate  *predicate;
 
-	SC_Debug<B> *dbg_B[6];
-	SC_Debug<R> *dbg_R[4];
-	SC_Debug<Q> *dbg_Q[7];
+	tools::SC_Debug<B> *dbg_B[6];
+	tools::SC_Debug<R> *dbg_R[4];
+	tools::SC_Debug<Q> *dbg_Q[7];
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
@@ -45,7 +47,7 @@ protected:
 	std::chrono::nanoseconds d_simu;
 
 public:
-	Simulation_BFERI(const parameters& params);
+	Simulation_BFERI(const tools::parameters& params);
 	virtual ~Simulation_BFERI();
 
 protected:
@@ -58,10 +60,11 @@ private:
 	void bind_sockets             ();
 	void bind_sockets_debug       ();
 
-	Terminal* build_terminal(const int tid = 0);
+	tools::Terminal* build_terminal(const int tid = 0);
 
 	static void terminal_temp_report(Simulation_BFERI<B,R,Q> *simu);
 };
+}
 }
 
 #endif /* SC_SIMULATION_BFERI_HPP_ */

@@ -1,5 +1,6 @@
 #include "Scaling_factor_NO.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
 
 template <typename R>
 Scaling_factor_NO<R>

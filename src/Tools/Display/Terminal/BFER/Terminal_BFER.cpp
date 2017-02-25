@@ -5,7 +5,9 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Terminal_BFER.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Terminal_BFER<B,R>

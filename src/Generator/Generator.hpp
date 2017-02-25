@@ -12,6 +12,8 @@
 
 namespace aff3ct
 {
+namespace generator
+{
 /*!
  * \class Generator
  *
@@ -39,6 +41,7 @@ public:
 	 */
 	virtual void generate() = 0;
 };
+}
 }
 
 #endif /* GENERATOR_HPP_ */

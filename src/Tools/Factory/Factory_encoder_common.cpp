@@ -4,7 +4,9 @@
 #include "Module/Encoder/User/Encoder_user.hpp"
 
 #include "Factory_encoder_common.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_common<B>

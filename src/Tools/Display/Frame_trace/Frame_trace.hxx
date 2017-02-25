@@ -7,6 +7,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 template <typename B> template <typename D>
 void Frame_trace<B>
 ::display_bit_vector(mipp::vector<D> vec, mipp::vector<B> ref)
@@ -102,14 +104,14 @@ void Frame_trace<B>
 		case BIT:
 			if (value == 0)
 				if (ref == 0)
-					stream << bold_green ("    0") << "|";
+					stream << tools::bold_green ("    0") << "|";
 				else
-					stream << bold_orange("    0") << "|";
+					stream << tools::bold_orange("    0") << "|";
 			else
 				if (ref == 0)
-					stream << bold_orange("    1") << "|";
+					stream << tools::bold_orange("    1") << "|";
 				else	
-					stream << bold_green ("    1") << "|";
+					stream << tools::bold_green ("    1") << "|";
 			break;
 
 		case REAL:
@@ -122,15 +124,16 @@ void Frame_trace<B>
 
 			if (value >= 0)
 				if (ref == 0)
-					stream << bold_green (value_string) << "|";
+					stream << tools::bold_green (value_string) << "|";
 				else 
-					stream << bold_orange(value_string) << "|";
+					stream << tools::bold_orange(value_string) << "|";
 			else
 				if (ref == 0)
-					stream << bold_orange(value_string) << "|";
+					stream << tools::bold_orange(value_string) << "|";
 				else
-					stream << bold_green (value_string) << "|";
+					stream << tools::bold_green (value_string) << "|";
 			break;
 	}
+}
 }
 }

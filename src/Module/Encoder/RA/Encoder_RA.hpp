@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B>
 class Encoder_RA : public Encoder<B>
 {
@@ -25,6 +27,7 @@ public:
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
+}
 }
 
 #endif // ENCODER_RA_HPP_

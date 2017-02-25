@@ -8,6 +8,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename R>
 class Channel_additive_user : public Channel<R>
 {
@@ -22,6 +24,7 @@ public:
 
 	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
+}
 }
 
 #endif /* CHANNELS_ADDITIVE_USER_HPP_ */

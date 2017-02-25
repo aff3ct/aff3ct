@@ -13,6 +13,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 /*!
  * \class Module
  *
@@ -70,6 +72,7 @@ public:
 		this->name = name;
 	}
 };
+}
 }
 
 #endif /* MODULE_HPP_ */

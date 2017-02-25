@@ -10,6 +10,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 /*!
  * \class Factory
  *
@@ -19,6 +21,7 @@ namespace aff3ct
  * a new allocated object.
  */
 struct Factory {};
+}
 }
 
 #endif /* FACTORY_HPP */

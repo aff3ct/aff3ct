@@ -12,6 +12,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 /*!
  * \class Bit_packer
  *
@@ -89,6 +91,7 @@ struct Bit_packer
 		}
 	}
 };
+}
 }
 
 #endif

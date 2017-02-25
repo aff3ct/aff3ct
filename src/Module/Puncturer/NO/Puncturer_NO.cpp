@@ -1,5 +1,6 @@
 #include "Puncturer_NO.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Puncturer_NO<B,Q>

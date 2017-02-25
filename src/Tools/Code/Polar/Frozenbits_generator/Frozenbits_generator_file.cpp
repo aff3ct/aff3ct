@@ -11,7 +11,8 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Frozenbits_generator_file.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::tools;
 
 template <typename B>
 Frozenbits_generator_file<B>

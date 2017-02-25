@@ -1,7 +1,8 @@
 #include <cassert>
 
 #include "Channel_NO.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
 
 template <typename R>
 Channel_NO<R>

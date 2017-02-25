@@ -4,6 +4,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
@@ -68,7 +70,8 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
+	std::cerr << tools::bold_red("(EE) This decoder does not support this interface.") << std::endl;
 	std::exit(-1);
+}
 }
 }

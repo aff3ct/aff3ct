@@ -13,6 +13,8 @@
 
 namespace aff3ct
 {
+namespace tools
+{
 /*!
  * \class Reorderer
  *
@@ -77,6 +79,7 @@ public:
 	 */
 	static void apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length);
 };
+}
 }
 
 #include "Reorderer.hxx"

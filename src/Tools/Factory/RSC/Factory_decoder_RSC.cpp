@@ -16,8 +16,12 @@
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_very_fast.hpp"
 
+#include "Tools/Math/max.h"
+
 #include "Factory_decoder_RSC.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R, typename RD>
 SISO<R>* Factory_decoder_RSC<B,R,RD>

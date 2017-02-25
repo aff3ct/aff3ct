@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename T>
 class Interleaver_columns : public Interleaver<T>
 {
@@ -49,6 +51,7 @@ protected:
 			this->pi_inv[this->pi[i]] = i;
 	}
 };
+}
 }
 
 #endif	/* INTERLEAVER_COLUMNS_HPP */

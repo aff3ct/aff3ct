@@ -2,6 +2,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
 Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_std(const int &K, 
@@ -152,5 +154,6 @@ void Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>
 	// this->compute_beta (        );
 	// this->compute_ext  (sys, ext);
 	this->compute_beta_ext(sys, ext);
+}
 }
 }

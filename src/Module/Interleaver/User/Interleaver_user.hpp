@@ -9,6 +9,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename T>
 class Interleaver_user : public Interleaver<T>
 {
@@ -49,18 +51,22 @@ protected:
 							this->pi[i] = (T)val;
 						else
 						{
-							std::cerr << bold_red("(EE) The interleaver value is wrong, it already exists elsewhere")
-							          << bold_red(" (read: ") << bold_red(std::to_string(val))
-							          << bold_red("), exiting.") << std::endl;
+							std::cerr << tools::bold_red("(EE) The interleaver value is wrong, it already")
+							          << tools::bold_red(" exists elsewhere (read: ")
+							          << tools::bold_red(std::to_string(val))
+							          << tools::bold_red("), exiting.")
+							          << std::endl;
 							file.close();
 							std::exit(-1);
 						}
 					}
 					else
 					{
-						std::cerr << bold_red("(EE) The interleaver value is wrong (read: ")
-						          << bold_red(std::to_string(val)) << bold_red(", expected: < ")
-						          << bold_red(std::to_string(this->pi.size())) << bold_red("), exiting.") << std::endl;
+						std::cerr << tools::bold_red("(EE) The interleaver value is wrong (read: ")
+						          << tools::bold_red(std::to_string(val)) << tools::bold_red(", expected: < ")
+						          << tools::bold_red(std::to_string(this->pi.size()))
+						          << tools::bold_red("), exiting.")
+						          << std::endl;
 						file.close();
 						std::exit(-1);
 					}
@@ -71,9 +77,10 @@ protected:
 			}
 			else
 			{
-				std::cerr << bold_red("(EE) The interleaver size is wrong (read: ") << bold_red(std::to_string(val))
-				          << bold_red(", expected: ") << bold_red(std::to_string(this->pi.size()))
-				          << bold_red("), exiting.") << std::endl;
+				std::cerr << tools::bold_red("(EE) The interleaver size is wrong (read: ")
+				          << tools::bold_red(std::to_string(val))
+				          << tools::bold_red(", expected: ") << tools::bold_red(std::to_string(this->pi.size()))
+				          << tools::bold_red("), exiting.") << std::endl;
 				file.close();
 				std::exit(-1);
 			}
@@ -82,12 +89,15 @@ protected:
 		}
 		else
 		{
-			std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
+			std::cerr << tools::bold_red("(EE) Can't open \"")
+			          << tools::bold_red(filename)
+			          << tools::bold_red("\" file, exiting.")
 			          << std::endl;
 			std::exit(-1);
 		}
 	}
 };
+}
 }
 
 #endif	/* INTERLEAVER_USER_HPP */

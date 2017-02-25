@@ -4,6 +4,8 @@
 
 namespace aff3ct
 {
+namespace module
+{
 template <typename B, typename R, proto_max_i<R> MAX>
 Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::Decoder_RSC_BCJR_intra_std(const int &K,
@@ -158,5 +160,6 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 		const auto r_ext = r_buffer_post - &sys[i];
 		r_ext.store(&ext[i]);
 	}
+}
 }
 }

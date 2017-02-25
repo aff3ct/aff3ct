@@ -4,7 +4,9 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Channel_AWGN_fast_LLR.hpp"
-using namespace aff3ct;
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename R>
 Channel_AWGN_fast_LLR<R>
@@ -46,6 +48,8 @@ R Channel_AWGN_fast_LLR<R>
 
 namespace aff3ct
 {
+namespace module
+{
 template <>
 mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 ::get_random_simd()
@@ -54,8 +58,11 @@ mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 	return mt19937_simd.randf_oo();
 }
 }
+}
 
 namespace aff3ct
+{
+namespace module
 {
 template <>
 float Channel_AWGN_fast_LLR<float>
@@ -63,6 +70,7 @@ float Channel_AWGN_fast_LLR<float>
 {
 	// return a number between ]0,1[
 	return mt19937.randf_oo();
+}
 }
 }
 
