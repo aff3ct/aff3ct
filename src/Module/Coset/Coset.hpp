@@ -66,9 +66,9 @@ public:
 	 */
 	virtual void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data) = 0;
 };
+}
+}
 
 #include "SC_Coset.hpp"
-}
-}
 
 #endif /* COSET_HPP_ */

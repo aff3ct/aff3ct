@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class SC_Decoder;
 
@@ -87,6 +91,8 @@ public:
 
 template <typename B, typename R>
 using Decoder = SC_Decoder<B,R>;
+}
+}
 #else
 #include "SPU_Decoder.hpp"
 #endif

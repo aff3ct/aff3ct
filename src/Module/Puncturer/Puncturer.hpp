@@ -73,9 +73,9 @@ public:
 	 */
 	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
 };
+}
+}
 
 #include "SC_Puncturer.hpp"
-}
-}
 
 #endif /* PUNCTURER_HPP_ */

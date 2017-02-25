@@ -141,9 +141,9 @@ protected:
 	 */
 	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 };
+}
+}
 
 #include "SC_SISO.hpp"
-}
-}
 
 #endif /* SISO_HPP_ */

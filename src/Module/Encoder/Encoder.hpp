@@ -73,9 +73,9 @@ public:
 	 */
 	virtual int tail_length() const { return 0; }
 };
+}
+}
 
 #include "SC_Encoder.hpp"
-}
-}
 
 #endif /* ENCODER_HPP_ */

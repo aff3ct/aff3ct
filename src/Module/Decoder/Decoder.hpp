@@ -262,9 +262,9 @@ private:
 		this->d_store_total += steady_clock::now() - t_store;
 	}
 };
+}
+}
 
 #include "SC_Decoder.hpp"
-}
-}
 
 #endif /* DECODER_HPP_ */

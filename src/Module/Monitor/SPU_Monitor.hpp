@@ -10,6 +10,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class SPU_Monitor : public Monitor_i<B>
 {
@@ -73,9 +77,17 @@ starpu_codelet SPU_Monitor<B>::spu_cl_check_errors = SPU_Monitor<B>::spu_init_cl
 
 template <typename B>
 using Monitor = SPU_Monitor<B>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 using Monitor = Monitor_i<B>;
+}
+}
 #endif
 
 #endif /* SPU_MONITOR_HPP_ */

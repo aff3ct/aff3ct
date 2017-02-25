@@ -75,9 +75,9 @@ public:
 		std::fill(H_N.begin(), H_N.end(), (R)1);
 	}
 };
+}
+}
 
 #include "SC_Channel.hpp"
-}
-}
 
 #endif /* CHANNEL_HPP_ */

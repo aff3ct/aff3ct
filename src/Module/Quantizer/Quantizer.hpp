@@ -62,9 +62,9 @@ public:
 	 */
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
 };
+}
+}
 
 #include "SC_Quantizer.hpp"
-}
-}
 
 #endif /* QUANTIZER_HPP_ */

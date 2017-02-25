@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R, typename Q>
 class SC_Quantizer;
 
@@ -94,6 +98,8 @@ public:
 
 template <typename R, typename Q>
 using Quantizer = SC_Quantizer<R,Q>;
+}
+}
 #else
 #include "SPU_Quantizer.hpp"
 #endif

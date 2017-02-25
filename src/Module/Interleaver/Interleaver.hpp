@@ -231,9 +231,9 @@ private:
 		}
 	}
 };
+}
+}
 
 #include "SC_Interleaver.hpp"
-}
-}
 
 #endif /* INTERLEAVER_HPP_ */

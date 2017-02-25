@@ -189,9 +189,9 @@ public:
 		return get_buffer_size_after_modulation(N);
 	}
 };
+}
+}
 
 #include "SC_Modulator.hpp"
-}
-}
 
 #endif /* MODULATOR_HPP_ */

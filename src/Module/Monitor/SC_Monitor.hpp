@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class SC_Monitor;
 
@@ -100,6 +104,8 @@ public:
 
 template <typename B>
 using Monitor = SC_Monitor<B>;
+}
+}
 #else
 #include "SPU_Monitor.hpp"
 #endif

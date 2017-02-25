@@ -61,9 +61,9 @@ public:
 	 */
 	virtual void generate(mipp::vector<B>& U_K) = 0;
 };
+}
+}
 
 #include "SC_Source.hpp"
-}
-}
 
 #endif /* SOURCE_HPP_ */

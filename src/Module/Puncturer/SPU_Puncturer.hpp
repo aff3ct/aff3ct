@@ -10,6 +10,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename Q>
 class SPU_Puncturer : public Puncturer_i<B,Q>
 {
@@ -122,9 +126,17 @@ starpu_codelet SPU_Puncturer<B,Q>::spu_cl_depuncture = SPU_Puncturer<B,Q>::spu_i
 
 template <typename B, typename Q>
 using Puncturer = SPU_Puncturer<B,Q>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename Q>
 using Puncturer = Puncturer_i<B,Q>;
+}
+}
 #endif
 
 #endif /* SPU_PUNCTURER_HPP_ */

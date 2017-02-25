@@ -11,6 +11,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class SC_Source;
 
@@ -90,6 +94,8 @@ public:
 
 template <typename B>
 using Source = SC_Source<B>;
+}
+}
 #else
 #include "SPU_Source.hpp"
 #endif

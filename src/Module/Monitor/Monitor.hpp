@@ -201,9 +201,9 @@ std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> Mon
 
 template <typename B>
 std::chrono::nanoseconds Monitor_i<B>::d_delta_interrupt = std::chrono::nanoseconds(0);
+}
+}
 
 #include "SC_Monitor.hpp"
-}
-}
 
 #endif /* MONITOR_HPP_ */

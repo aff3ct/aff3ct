@@ -80,9 +80,9 @@ public:
 	 */
 	virtual bool check(const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
 };
+}
+}
 
 #include "SC_CRC.hpp"
-}
-}
 
 #endif
