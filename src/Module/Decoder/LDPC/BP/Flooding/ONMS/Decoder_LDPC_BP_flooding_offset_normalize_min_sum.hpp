@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_flooding_offset_normalize_min_sum : public Decoder_LDPC_BP_flooding<B,R>
 {
 private:

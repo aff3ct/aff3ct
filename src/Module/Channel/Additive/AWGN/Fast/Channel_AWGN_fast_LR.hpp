@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R>
+template <typename R = float>
 class Channel_AWGN_fast_LR : public Channel_AWGN_fast_LLR<R>
 {
 public:

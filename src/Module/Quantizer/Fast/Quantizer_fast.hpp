@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R, typename Q>
+template <typename R = float, typename Q = short>
 class Quantizer_fast : public Quantizer<R,Q>
 {
 private:

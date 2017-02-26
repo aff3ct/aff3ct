@@ -26,7 +26,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFERI_i : public Simulation
 {
 protected:

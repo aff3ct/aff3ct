@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_max_i<R> MAX>
+template <typename B = int, typename R = float, proto_max_i<R> MAX = tools::max_i>
 class Decoder_RSC_BCJR_inter_intra_fast_x2_SSE : public Decoder_RSC_BCJR_inter_intra<B,R>
 {
 public:

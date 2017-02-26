@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B>
+template <typename B = int>
 class Frozenbits_generator_TV : public Frozenbits_generator_file<B>
 {
 private:

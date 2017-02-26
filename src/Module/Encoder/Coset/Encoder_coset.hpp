@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 class Encoder_coset : public Encoder_sys<B>
 {
 private:

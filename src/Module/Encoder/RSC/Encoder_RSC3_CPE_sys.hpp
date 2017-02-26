@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 class Encoder_RSC3_CPE_sys : public Encoder_RSC_sys<B>
 {
 public:

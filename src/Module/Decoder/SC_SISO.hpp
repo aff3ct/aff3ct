@@ -19,7 +19,7 @@ namespace module
 template <typename R>
 class SC_SISO;
 
-template <typename R>
+template <typename R = float>
 class SC_SISO_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_SISO_module);

@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B = int, typename R = float, proto_f<R> F = f_LLR, proto_g<B,R> G = g_LLR>
 class Decoder_polar_SCL_naive_CA : public Decoder_polar_SCL_naive<B,R,F,G>
 {
 protected:

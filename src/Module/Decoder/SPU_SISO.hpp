@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R>
+template <typename R = float>
 class SPU_SISO : public SISO_i<R>
 {
 private:

@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_turbo_naive_CA_self_corrected : public Decoder_turbo_naive_CA<B,R>
 {
 private:

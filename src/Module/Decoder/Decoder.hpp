@@ -31,7 +31,7 @@ namespace module
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
  * Please use Decoder for inheritance (instead of Decoder_i).
  */
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_i : public Module
 {
 private:

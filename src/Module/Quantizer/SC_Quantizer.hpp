@@ -16,7 +16,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R, typename Q>
+template <typename R = float, typename Q = int>
 class SC_Quantizer;
 
 template <typename R, typename Q>

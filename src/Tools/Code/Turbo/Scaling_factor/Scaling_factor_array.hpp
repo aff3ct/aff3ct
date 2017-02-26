@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R>
+template <typename R = float>
 class Scaling_factor_array : public Scaling_factor<R>
 {
 private:

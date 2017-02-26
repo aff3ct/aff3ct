@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 class Puncturer_NO : public Puncturer<B,Q>
 {
 public:

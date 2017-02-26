@@ -18,7 +18,7 @@ namespace tools
  * \class Scaling_factor
  * \brief Re-scales the extrinsic information (used in the turbo decoding process).
  */
-template <typename R>
+template <typename R = float>
 class Scaling_factor
 {
 protected:

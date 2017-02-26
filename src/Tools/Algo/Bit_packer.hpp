@@ -21,7 +21,7 @@ namespace tools
  *
  * \tparam T: type of data to pack/unpack.
  */
-template <typename B>
+template <typename B = int>
 struct Bit_packer
 {
 	/*!

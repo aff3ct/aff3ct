@@ -19,7 +19,7 @@ namespace module
 template <typename B, typename R>
 class SC_Decoder;
 
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class SC_Decoder_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Decoder_module);

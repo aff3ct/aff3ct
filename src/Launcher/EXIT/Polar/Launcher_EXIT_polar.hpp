@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher_EXIT_polar : public Launcher_EXIT<B,R,Q>
 {
 public:

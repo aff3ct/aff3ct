@@ -12,7 +12,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R>
+template <typename R = float>
 class Channel_AWGN_GSL_LLR : public Channel<R>
 {
 private:

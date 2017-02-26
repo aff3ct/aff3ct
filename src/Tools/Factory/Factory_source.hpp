@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B>
+template <typename B = int>
 struct Factory_source : public Factory
 {
 	static module::Source<B>* build(const parameters &params, const int seed = 0);

@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class SPU_Monitor : public Monitor_i<B,R>
 {
 private:

@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R>
+template <typename R = float>
 struct Factory_scaling_factor : public Factory
 {
 	static Scaling_factor<R>* build(const parameters &params);

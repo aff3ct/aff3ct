@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename T>
+template <typename T = int>
 struct Factory_interleaver : public Factory
 {
 	static module::Interleaver<T>* build(const parameters &params, const int &size, const int seed = -1);

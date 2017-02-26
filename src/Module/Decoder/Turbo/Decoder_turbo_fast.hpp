@@ -12,7 +12,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_turbo_fast : public Decoder_turbo<B,R>
 {
 public:

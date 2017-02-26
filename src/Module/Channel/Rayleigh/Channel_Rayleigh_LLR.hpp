@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R>
+template <typename R = float>
 class Channel_Rayleigh_LLR : public Channel<R> // flat Rayleigh fading channel
 {
 private:

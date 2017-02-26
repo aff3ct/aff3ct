@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R, typename RD>
+template <typename B = int, typename R = float, typename RD = R>
 struct Factory_decoder_RSC : public Factory
 {
 	static module::SISO<R>* build_siso(const parameters &params, const std::vector<std::vector<int>> &trellis,

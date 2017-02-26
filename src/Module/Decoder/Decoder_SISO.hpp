@@ -25,7 +25,7 @@ namespace module
  * \tparam B: type of the bits in the decoder.
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the decoder.
  */
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_SISO : public Decoder<B,R>, public SISO<R>
 {
 public:

@@ -12,7 +12,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename D>
+template <typename B = int, typename D = float>
 class Coset_real : public Coset<B,D>
 {
 public:

@@ -29,7 +29,7 @@ namespace module
  *
  * Please use Interleaver for inheritance (instead of Interleaver_i)
  */
-template <typename T>
+template <typename T = int>
 class Interleaver_i : public Module
 {
 protected:

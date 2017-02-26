@@ -5,6 +5,8 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
+
 #include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"
 
@@ -12,7 +14,8 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, class API_polar>
+template <typename B = int, typename R = float,
+          class API_polar = API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
 protected:

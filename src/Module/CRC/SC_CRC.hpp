@@ -19,7 +19,7 @@ namespace module
 template <typename B>
 class SC_CRC;
 
-template <typename B>
+template <typename B = int>
 class SC_CRC_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_CRC_module);

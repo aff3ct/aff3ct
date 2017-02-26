@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R>
+template <typename R = float>
 struct Factory_channel : public Factory
 {
 	static module::Channel<R>* build(const parameters &params, const R& sigma, const int size, const int seed = 0);

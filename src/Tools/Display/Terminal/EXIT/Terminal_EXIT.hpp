@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Terminal_EXIT : public Terminal
 {
 protected:

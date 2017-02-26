@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Monitor_reduction : public Monitor_std<B,R>
 {
 private:

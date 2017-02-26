@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 struct Factory_coset_real : public Factory
 {
 	static module::Coset<B,Q>* build(const parameters &params);

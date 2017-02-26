@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFERI_uncoded : public Simulation_BFERI<B,R,Q>
 {
 public:

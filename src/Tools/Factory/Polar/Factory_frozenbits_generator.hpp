@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B>
+template <typename B = int>
 struct Factory_frozenbits_generator : public Factory
 {
 	static Frozenbits_generator<B>* build(const parameters &params);

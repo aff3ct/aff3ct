@@ -13,7 +13,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 struct Factory_decoder_polar : public Factory
 {
 	static module::SISO<R>* build_siso(const parameters &params, const mipp::vector<B> &frozen_bits);

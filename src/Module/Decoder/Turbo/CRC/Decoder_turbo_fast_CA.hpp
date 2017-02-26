@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_turbo_fast_CA : public Decoder_turbo_fast<B,R>
 {
 protected:

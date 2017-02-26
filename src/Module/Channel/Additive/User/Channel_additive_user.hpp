@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R>
+template <typename R = float>
 class Channel_additive_user : public Channel<R>
 {
 private:

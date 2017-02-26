@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 struct Factory_modulator : public Factory
 {
 	static module::Modulator<B,R,Q>* build(const parameters &params, const float sigma);

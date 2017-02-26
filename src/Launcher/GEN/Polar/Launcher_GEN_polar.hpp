@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher_GEN_polar : public Launcher_GEN<B,R,Q>
 {
 public:

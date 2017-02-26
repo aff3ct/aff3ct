@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B>
+template <typename B = int>
 struct Factory_encoder_common : public Factory
 {
 	static module::Encoder<B>* build(const parameters &params, const int seed = 0, const int n_frames = 1);

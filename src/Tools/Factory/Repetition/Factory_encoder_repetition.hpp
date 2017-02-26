@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B>
+template <typename B = int>
 struct Factory_encoder_repetition : public Factory
 {
 	static module::Encoder_sys<B>* build(const parameters &params);

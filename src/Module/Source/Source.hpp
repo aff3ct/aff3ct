@@ -28,7 +28,7 @@ namespace module
  *
  * Please use Source for inheritance (instead of Source_i).
  */
-template <typename B>
+template <typename B = int>
 class Source_i : public Module
 {
 protected:

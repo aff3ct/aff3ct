@@ -16,7 +16,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 class SC_Puncturer;
 
 template <typename B, typename Q>

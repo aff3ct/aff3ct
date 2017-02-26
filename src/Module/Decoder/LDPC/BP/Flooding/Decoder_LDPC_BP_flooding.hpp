@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
 {
 private:

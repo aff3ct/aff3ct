@@ -27,7 +27,7 @@ namespace module
  *
  * Please use Encoder for inheritance (instead of Encoder_i)
  */
-template <typename B>
+template <typename B = int>
 class Encoder_i : public Module
 {
 protected:

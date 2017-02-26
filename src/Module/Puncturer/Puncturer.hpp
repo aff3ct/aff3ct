@@ -28,7 +28,7 @@ namespace module
  *
  * Please use Puncturer for inheritance (instead of Puncturer_i)
  */
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 class Puncturer_i : public Module
 {
 protected:

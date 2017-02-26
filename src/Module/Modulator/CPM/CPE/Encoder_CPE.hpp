@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template<typename SIN, typename SOUT>
+template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE
 {
 public:

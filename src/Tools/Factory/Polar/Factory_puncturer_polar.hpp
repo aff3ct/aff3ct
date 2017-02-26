@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 struct Factory_puncturer_polar : public Factory
 {
 	static module::Puncturer<B,Q>* build(const parameters &params, const Frozenbits_generator<B> *fb_generator);

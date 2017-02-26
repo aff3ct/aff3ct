@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_repetition : public Decoder<B,R>, public SISO<R>
 {
 protected:

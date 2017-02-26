@@ -19,7 +19,7 @@ namespace module
 template <typename B, typename R, typename Q>
 class SC_Modulator;
 
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class SC_Modulator_module_modulator : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Modulator_module_modulator);

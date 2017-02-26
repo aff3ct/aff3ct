@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 struct Factory_monitor : public Factory
 {
 	static module::Monitor<B,R>* build(const parameters &params, const int n_frames = 1);

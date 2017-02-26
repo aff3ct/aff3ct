@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 class CRC_polynomial_inter : public CRC_polynomial<B>
 {
 public:

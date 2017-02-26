@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R, typename Q>
+template <typename R = float, typename Q = R>
 struct Factory_quantizer : public Factory
 {
 	static module::Quantizer<R,Q>* build(const parameters &params, const float& sigma, const int size);

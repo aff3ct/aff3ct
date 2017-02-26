@@ -30,7 +30,7 @@ namespace module
  *
  * Please use Monitor for inheritance (instead of Monitor_i).
  */
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Monitor_i : public Module
 {
 protected:

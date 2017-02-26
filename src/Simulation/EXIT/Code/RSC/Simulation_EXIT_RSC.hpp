@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q, typename QD>
+template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
 class Simulation_EXIT_RSC : public Simulation_EXIT<B,R,Q>
 {
 protected:

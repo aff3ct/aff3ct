@@ -27,7 +27,7 @@ namespace module
  *
  * Please use SISO for inheritance (instead of SISO_i).
  */
-template <typename R>
+template <typename R = float>
 class SISO_i : public Module
 {
 private:

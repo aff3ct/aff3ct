@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename T>
+template <typename T = int>
 class SPU_Interleaver : public Interleaver_i<T>
 {
 private:

@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 class SPU_Puncturer : public Puncturer_i<B,Q>
 {
 private:

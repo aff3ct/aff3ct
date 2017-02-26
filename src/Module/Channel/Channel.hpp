@@ -28,7 +28,7 @@ namespace module
  *
  * Please use Channel for inheritance (instead of Channel_i).
  */
-template <typename R>
+template <typename R = float>
 class Channel_i : public Module
 {
 protected:

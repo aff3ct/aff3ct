@@ -22,7 +22,7 @@ namespace module
  *
  * \tparam B: type of the bits in the encoder.
  */
-template <typename B>
+template <typename B = int>
 class Encoder_sys : public Encoder<B>
 {
 public:

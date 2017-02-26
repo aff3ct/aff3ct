@@ -30,7 +30,7 @@ namespace module
  *
  * Please use Modulator for inheritance (instead of Modulator_i)
  */
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Modulator_i : public Module
 {
 protected:

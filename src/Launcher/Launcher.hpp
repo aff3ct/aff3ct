@@ -33,7 +33,7 @@ namespace launcher
  * \tparam R: type of the reals (floating-point representation) in the simulation.
  * \tparam Q: type of the quantified reals (fixed-point representation) in the simulation.
  */
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher
 {
 private:

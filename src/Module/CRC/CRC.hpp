@@ -27,7 +27,7 @@ namespace module
  *
  * Please use CRC for inheritance (instead of CRC_i).
  */
-template <typename B>
+template <typename B = int>
 class CRC_i : public Module
 {
 protected:

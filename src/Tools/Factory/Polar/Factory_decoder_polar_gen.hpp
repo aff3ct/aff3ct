@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 struct Factory_decoder_polar_gen : public Factory
 {
 	static module::Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits);

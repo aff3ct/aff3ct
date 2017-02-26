@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class SPU_Modulator : public Modulator_i<B,R,Q>
 {
 private:

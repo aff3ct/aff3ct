@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename T>
+template <typename T = int>
 class Interleaver_NO : public Interleaver<T>
 {
 public:

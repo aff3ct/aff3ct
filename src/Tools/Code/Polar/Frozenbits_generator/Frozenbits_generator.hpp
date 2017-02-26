@@ -20,7 +20,7 @@ namespace tools
  * \class Frozenbits_generator
  * \brief Determines the frozen bit positions in a frame.
  */
-template <typename B>
+template <typename B = int>
 class Frozenbits_generator
 {
 protected:

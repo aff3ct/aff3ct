@@ -19,7 +19,7 @@ namespace module
 template <typename T>
 class SC_Interleaver;
 
-template <typename T>
+template <typename T = int>
 class SC_Interleaver_module_interleaver : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Interleaver_module_interleaver);

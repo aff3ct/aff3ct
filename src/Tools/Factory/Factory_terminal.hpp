@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 struct Factory_terminal : public Factory
 {
 	static Terminal* build(const parameters &params,

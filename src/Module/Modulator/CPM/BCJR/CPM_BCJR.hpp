@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN = int, typename SOUT = int, typename Q = float, proto_max<Q> MAX = tools::max_star>
 class CPM_BCJR
 {
 protected:

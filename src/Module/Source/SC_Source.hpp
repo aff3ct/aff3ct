@@ -18,7 +18,7 @@ namespace module
 template <typename B>
 class SC_Source;
 
-template <typename B>
+template <typename B = int>
 class SC_Source_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Source_module);

@@ -18,7 +18,7 @@ namespace aff3ct
 namespace module
 {
 // TODO: warning: working for Rimoldi decomposition only!
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B = int, typename R = float, typename Q = R, proto_max<Q> MAX = tools::max_star>
 class Modulator_CPM : public Modulator<B,R,Q>
 {
 	using SIN  = B;

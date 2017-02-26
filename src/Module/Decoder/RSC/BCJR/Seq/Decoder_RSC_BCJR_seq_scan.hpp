@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, typename RD>
+template <typename B = int, typename R = float, typename RD = float>
 class Decoder_RSC_BCJR_seq_scan : public Decoder_RSC_BCJR_seq<B,R>
 {
 

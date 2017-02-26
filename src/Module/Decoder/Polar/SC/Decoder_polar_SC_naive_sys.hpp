@@ -12,7 +12,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B = int, typename R = float, proto_f<R> F = f_LLR, proto_g<B,R> G = g_LLR, proto_h<B,R> H = h_LLR>
 class Decoder_polar_SC_naive_sys : public Decoder_polar_SC_naive<B,R,F,G,H>
 {
 public:

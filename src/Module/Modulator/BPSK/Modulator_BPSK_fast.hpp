@@ -10,7 +10,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class Modulator_BPSK_fast : public Modulator<B,R,Q>
 {
 private:

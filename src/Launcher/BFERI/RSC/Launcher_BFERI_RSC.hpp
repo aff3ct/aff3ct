@@ -7,7 +7,7 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <typename B, typename R, typename Q, typename QD>
+template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
 class Launcher_BFERI_RSC : public Launcher_BFERI<B,R,Q>
 {
 public:

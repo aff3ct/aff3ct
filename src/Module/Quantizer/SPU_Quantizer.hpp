@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R, typename Q>
+template <typename R = float, typename Q = int>
 class SPU_Quantizer : public Quantizer_i<R,Q>
 {
 private:
