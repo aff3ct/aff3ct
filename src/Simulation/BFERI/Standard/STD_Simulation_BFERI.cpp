@@ -93,18 +93,7 @@ Simulation_BFERI<B,R,Q>
 		std::exit(-1);
 	}
 #endif
-}
 
-template <typename B, typename R, typename Q>
-Simulation_BFERI<B,R,Q>
-::~Simulation_BFERI()
-{
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_BFERI<B,R,Q>
-::_launch()
-{
 	// check, if the error tracker is enable, if the given file name is good
 	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert) &&
 	     !Monitor_reduction<B,R>::check_path(this->params.monitor.err_track_path))
@@ -118,15 +107,30 @@ void Simulation_BFERI<B,R,Q>
 
 	if (this->params.monitor.err_track_revert)
 	{
-		if(this->params.simulation.n_threads != 1)
+		if (this->params.simulation.n_threads != 1)
 			std::clog << bold_yellow("(WW) Multi-threading detected with error tracking revert feature!")
 			          << bold_yellow(" Each thread will play the same frames. Please run one thread.")
 			          << std::endl;
-		if(this->params.simulation.inter_frame_level != 1)
+
+		if (this->params.simulation.inter_frame_level != 1)
 			std::clog << bold_yellow("(WW) Inter frame level different than 1 detected with error tracking revert feature!")
 			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
 			          << std::endl;
+	}
+}
 
+template <typename B, typename R, typename Q>
+Simulation_BFERI<B,R,Q>
+::~Simulation_BFERI()
+{
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFERI<B,R,Q>
+::_launch()
+{
+	if (this->params.monitor.err_track_revert)
+	{
 		std::string path_src, path_enc, path_noise;
 		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
 		                                          path_src, path_enc, path_noise);
