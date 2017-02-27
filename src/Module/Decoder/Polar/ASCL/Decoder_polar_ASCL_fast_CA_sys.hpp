@@ -2,10 +2,10 @@
 #define DECODER_POLAR_ASCL_FAST_SYS_CA
 
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../SC/Decoder_polar_SC_fast_sys.hpp"
 #include "../SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp"
-#include "../decoder_polar_functions.h"
 
 #include "Module/CRC/CRC.hpp"
 
@@ -14,7 +14,11 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float,
-          class API_polar = tools::API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
+          class API_polar = tools::API_polar_dynamic_seq<B, R, tools::f_LLR <  R>,
+                                                               tools::g_LLR <B,R>,
+                                                               tools::g0_LLR<  R>,
+                                                               tools::h_LLR <B,R>,
+                                                               tools::xo_STD<B  >>>
 class Decoder_polar_ASCL_fast_CA_sys : public Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 {
 private:

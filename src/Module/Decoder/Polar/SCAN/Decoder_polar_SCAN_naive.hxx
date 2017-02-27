@@ -15,7 +15,7 @@ namespace module
 /** CONSTRUCTOR **/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
                            const int n_frames, const std::string name)
@@ -41,7 +41,7 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** load **/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::load_init()
 {
@@ -65,7 +65,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::load(const mipp::vector<R>& Y_N)
 {
@@ -82,7 +82,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** frame_decode **/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::decode()
 {
@@ -112,7 +112,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::hard_decode()
 {
@@ -123,7 +123,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** frame store **/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::store(mipp::vector<B>& V_K) const
 {
@@ -140,7 +140,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** set the soft information (l,j) to v and propagate the value in feedbackGraph**/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::set_soft_val_and_propagate(const int l, const int j, const R v)
 {
@@ -163,11 +163,11 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** compute_soft_output **/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::fb_compute_soft_output(const int &i)
 {
-	auto l_start = compute_depth(i, this->m);
+	auto l_start = tools::compute_depth(i, this->m);
 
 	for (auto l = l_start; l >= 0; l--) // for each layer
 	{
@@ -193,7 +193,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** Display_decoder_feedbackgraph **/
 /********************************************************************/
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::display_decoder_graph()
 {

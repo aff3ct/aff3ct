@@ -7,8 +7,7 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
-
-#include "../decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../Decoder.hpp"
 
@@ -17,7 +16,11 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float,
-          class API_polar = tools::API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
+          class API_polar = tools::API_polar_dynamic_seq<B, R, tools::f_LLR <  R>,
+                                                               tools::g_LLR <B,R>,
+                                                               tools::g0_LLR<  R>,
+                                                               tools::h_LLR <B,R>,
+                                                               tools::xo_STD<B  >>>
 class Decoder_polar_SCL_MEM_fast_sys : public Decoder<B,R>
 {
 protected:

@@ -4,7 +4,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc,
                              const int n_frames, const std::string name)
@@ -13,7 +13,7 @@ Decoder_polar_SCL_naive_CA<B,R,F,G>
 	assert(crc.size());
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::select_best_path() 
 {

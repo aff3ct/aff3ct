@@ -6,7 +6,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
-#include "Module/Decoder/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "functions_polar_seq.h"
 
@@ -16,12 +16,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B, typename R, 
-          module::proto_f <  R> F,
-          module::proto_g <B,R> G,
-          module::proto_g0<  R> G0,
-          module::proto_h <B,R> H,
-          module::proto_xo<  B> XO>
+template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_g0<R> G0, proto_h<B,R> H, proto_xo<B> XO>
 class API_polar_static_seq : public API_polar
 {
 public:

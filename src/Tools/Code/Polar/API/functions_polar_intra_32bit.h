@@ -6,7 +6,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
-#include "Module/Decoder/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "functions_polar_inter_intra.h"
 #include "functions_polar_intra.h"
@@ -20,7 +20,7 @@ namespace tools
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, module::proto_f<R> F, module::proto_f_i<R> FI, int N_ELMTS = 0>
+template <typename R, proto_f<R> F, proto_f_i<R> FI, int N_ELMTS = 0>
 struct f_intra_32bit
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -30,7 +30,7 @@ struct f_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename R, module::proto_f<R> F, module::proto_f_i<R> FI>
+template <typename R, proto_f<R> F, proto_f_i<R> FI>
 struct f_intra_32bit <R, F, FI, 4>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -40,7 +40,7 @@ struct f_intra_32bit <R, F, FI, 4>
 };
 #endif
 
-template <typename R, module::proto_f<R> F, module::proto_f_i<R> FI>
+template <typename R, proto_f<R> F, proto_f_i<R> FI>
 struct f_intra_32bit <R, F, FI, 2>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -49,7 +49,7 @@ struct f_intra_32bit <R, F, FI, 2>
 	}
 };
 
-template <typename R, module::proto_f<R> F, module::proto_f_i<R> FI>
+template <typename R, proto_f<R> F, proto_f_i<R> FI>
 struct f_intra_32bit <R, F, FI, 1>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -62,7 +62,7 @@ struct f_intra_32bit <R, F, FI, 1>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI, int N_ELMTS = 0>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI, int N_ELMTS = 0>
 struct g_intra_32bit
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -73,7 +73,7 @@ struct g_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct g_intra_32bit <B, R, G, GI, 4>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -84,7 +84,7 @@ struct g_intra_32bit <B, R, G, GI, 4>
 };
 #endif
 
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct g_intra_32bit <B, R, G, GI, 2>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -94,7 +94,7 @@ struct g_intra_32bit <B, R, G, GI, 2>
 	}
 };
 
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct g_intra_32bit <B, R, G, GI, 1>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -108,7 +108,7 @@ struct g_intra_32bit <B, R, G, GI, 1>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, module::proto_g0<R> G0, module::proto_g0_i<R> G0I, int N_ELMTS = 0>
+template <typename R, proto_g0<R> G0, proto_g0_i<R> G0I, int N_ELMTS = 0>
 struct g0_intra_32bit
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -118,7 +118,7 @@ struct g0_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename R, module::proto_g0<R> G0, module::proto_g0_i<R> G0I>
+template <typename R, proto_g0<R> G0, proto_g0_i<R> G0I>
 struct g0_intra_32bit <R, G0, G0I, 4>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -128,7 +128,7 @@ struct g0_intra_32bit <R, G0, G0I, 4>
 };
 #endif
 
-template <typename R, module::proto_g0<R> G0, module::proto_g0_i<R> G0I>
+template <typename R, proto_g0<R> G0, proto_g0_i<R> G0I>
 struct g0_intra_32bit <R, G0, G0I, 2>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -137,7 +137,7 @@ struct g0_intra_32bit <R, G0, G0I, 2>
 	}
 };
 
-template <typename R, module::proto_g0<R> G0, module::proto_g0_i<R> G0I>
+template <typename R, proto_g0<R> G0, proto_g0_i<R> G0I>
 struct g0_intra_32bit <R, G0, G0I, 1>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -150,7 +150,7 @@ struct g0_intra_32bit <R, G0, G0I, 1>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI, int N_ELMTS = 0>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI, int N_ELMTS = 0>
 struct gr_intra_32bit
 {
 	//__attribute__((always_inline))
@@ -162,7 +162,7 @@ struct gr_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct gr_intra_32bit <B, R, G, GI, 4>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -173,7 +173,7 @@ struct gr_intra_32bit <B, R, G, GI, 4>
 };
 #endif
 
-template <typename B, typename R, module::proto_g<B,R> G, module::proto_g_i<B,R> GI>
+template <typename B, typename R, proto_g<B,R> G, proto_g_i<B,R> GI>
 struct gr_intra_32bit <B, R, G, GI, 2>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -187,7 +187,7 @@ struct gr_intra_32bit <B, R, G, GI, 2>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI, int N_ELMTS = 0>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI, int N_ELMTS = 0>
 struct h_intra_32bit
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -197,7 +197,7 @@ struct h_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct h_intra_32bit <B, R, H, HI, 4>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -207,7 +207,7 @@ struct h_intra_32bit <B, R, H, HI, 4>
 };
 #endif
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct h_intra_32bit <B, R, H, HI, 2>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -216,7 +216,7 @@ struct h_intra_32bit <B, R, H, HI, 2>
 	}
 };
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct h_intra_32bit <B, R, H, HI, 1>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -229,7 +229,7 @@ struct h_intra_32bit <B, R, H, HI, 1>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI, int N_ELMTS = 0>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI, int N_ELMTS = 0>
 struct rep_intra_32bit
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -239,7 +239,7 @@ struct rep_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct rep_intra_32bit <B, R, H, HI, 4>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -249,7 +249,7 @@ struct rep_intra_32bit <B, R, H, HI, 4>
 };
 #endif
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct rep_intra_32bit <B, R, H, HI, 2>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -262,7 +262,7 @@ struct rep_intra_32bit <B, R, H, HI, 2>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI, int N_ELMTS = 0>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI, int N_ELMTS = 0>
 struct spc_intra_32bit
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -272,7 +272,7 @@ struct spc_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct spc_intra_32bit <B, R, H, HI, 8>
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -282,7 +282,7 @@ struct spc_intra_32bit <B, R, H, HI, 8>
 };
 #endif
 
-template <typename B, typename R, module::proto_h<B,R> H, module::proto_h_i<B,R> HI>
+template <typename B, typename R, proto_h<B,R> H, proto_h_i<B,R> HI>
 struct spc_intra_32bit <B, R, H, HI, 4>
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -295,7 +295,7 @@ struct spc_intra_32bit <B, R, H, HI, 4>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, module::proto_xo<B> XO, module::proto_xo_i<B> XOI, int N_ELMTS = 0>
+template <typename B, proto_xo<B> XO, proto_xo_i<B> XOI, int N_ELMTS = 0>
 struct xo_intra_32bit
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -306,7 +306,7 @@ struct xo_intra_32bit
 };
 
 #ifdef __AVX__
-template <typename B, module::proto_xo<B> XO, module::proto_xo_i<B> XOI>
+template <typename B, proto_xo<B> XO, proto_xo_i<B> XOI>
 struct xo_intra_32bit <B, XO, XOI, 4>
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -317,7 +317,7 @@ struct xo_intra_32bit <B, XO, XOI, 4>
 };
 #endif
 
-template <typename B, module::proto_xo<B> XO, module::proto_xo_i<B> XOI>
+template <typename B, proto_xo<B> XO, proto_xo_i<B> XOI>
 struct xo_intra_32bit <B, XO, XOI, 2>
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -327,7 +327,7 @@ struct xo_intra_32bit <B, XO, XOI, 2>
 	}
 };
 
-template <typename B, module::proto_xo<B> XO, module::proto_xo_i<B> XOI>
+template <typename B, proto_xo<B> XO, proto_xo_i<B> XOI>
 struct xo_intra_32bit <B, XO, XOI, 1>
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,

@@ -15,7 +15,7 @@
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 // -------------------------------------------------------------------------- special function prototypes for templates
 

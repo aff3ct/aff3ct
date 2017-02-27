@@ -1,4 +1,4 @@
-#include "Module/Decoder/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp"

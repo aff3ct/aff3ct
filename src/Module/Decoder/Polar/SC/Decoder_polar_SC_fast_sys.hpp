@@ -7,8 +7,8 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"
 
 namespace aff3ct
@@ -22,7 +22,11 @@ template <typename B, typename R, class API_polar>
 class Decoder_polar_ASCL_MEM_fast_CA_sys;
 
 template <typename B = int, typename R = float,
-          class API_polar = tools::API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
+          class API_polar = tools::API_polar_dynamic_seq<B, R, tools::f_LLR <  R>,
+                                                               tools::g_LLR <B,R>,
+                                                               tools::g0_LLR<  R>,
+                                                               tools::h_LLR <B,R>,
+                                                               tools::xo_STD<B  >>>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
 	friend Decoder_polar_ASCL_fast_CA_sys    <B,R,API_polar>;

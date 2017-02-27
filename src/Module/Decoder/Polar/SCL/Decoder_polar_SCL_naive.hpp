@@ -5,9 +5,9 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../Decoder.hpp"
-#include "../decoder_polar_functions.h"
 
 namespace aff3ct
 {
@@ -25,7 +25,7 @@ public:
 	virtual ~Contents_SCL() {}
 };
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
 class Decoder_polar_SCL_naive : public Decoder<B,R>
 {
 protected:

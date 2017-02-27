@@ -542,7 +542,7 @@
 #include "Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp"
 #endif
 
-#include "Module/Decoder/Polar/decoder_polar_functions.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 //#define API_POLAR_DYNAMIC 1
 

@@ -4,9 +4,9 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../Decoder.hpp"
-#include "../decoder_polar_functions.h"
 
 namespace aff3ct
 {
@@ -24,7 +24,9 @@ public:
 	virtual ~Contents_SC() {}
 };
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B = int, typename R = float, tools::proto_f<  R> F = tools::f_LLR,
+                                                tools::proto_g<B,R> G = tools::g_LLR,
+                                                tools::proto_h<B,R> H = tools::h_LLR>
 class Decoder_polar_SC_naive : public Decoder<B,R>
 {
 protected:
