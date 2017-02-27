@@ -49,11 +49,11 @@ void Encoder_coset<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_coset<B_8>;
-template class Encoder_coset<B_16>;
-template class Encoder_coset<B_32>;
-template class Encoder_coset<B_64>;
+template class aff3ct::module::Encoder_coset<B_8>;
+template class aff3ct::module::Encoder_coset<B_16>;
+template class aff3ct::module::Encoder_coset<B_32>;
+template class aff3ct::module::Encoder_coset<B_64>;
 #else
-template class Encoder_coset<B>;
+template class aff3ct::module::Encoder_coset<B>;
 #endif
 // ==================================================================================== explicit template instantiation

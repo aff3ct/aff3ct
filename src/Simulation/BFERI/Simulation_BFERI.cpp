@@ -270,11 +270,11 @@ Monitor<B,R>* Simulation_BFERI_i<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_BFERI_i<B_8,R_8,Q_8>;
-template class Simulation_BFERI_i<B_16,R_16,Q_16>;
-template class Simulation_BFERI_i<B_32,R_32,Q_32>;
-template class Simulation_BFERI_i<B_64,R_64,Q_64>;
+template class aff3ct::simulation::Simulation_BFERI_i<B_8,R_8,Q_8>;
+template class aff3ct::simulation::Simulation_BFERI_i<B_16,R_16,Q_16>;
+template class aff3ct::simulation::Simulation_BFERI_i<B_32,R_32,Q_32>;
+template class aff3ct::simulation::Simulation_BFERI_i<B_64,R_64,Q_64>;
 #else
-template class Simulation_BFERI_i<B,R,Q>;
+template class aff3ct::simulation::Simulation_BFERI_i<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

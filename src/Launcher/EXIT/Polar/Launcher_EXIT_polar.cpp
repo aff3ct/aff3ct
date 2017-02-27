@@ -135,11 +135,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_EXIT_polar<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Launcher_EXIT_polar<B_32,R_32,Q_32>;
-template class Launcher_EXIT_polar<B_64,R_64,Q_64>;
+template class aff3ct::launcher::Launcher_EXIT_polar<B_32,R_32,Q_32>;
+template class aff3ct::launcher::Launcher_EXIT_polar<B_64,R_64,Q_64>;
 #else
 #if defined(PREC_32_BIT) || defined(PREC_64_BIT)
-template class Launcher_EXIT_polar<B,R,Q>;
+template class aff3ct::launcher::Launcher_EXIT_polar<B,R,Q>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

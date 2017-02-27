@@ -42,11 +42,11 @@ CRC<B>* Factory_CRC<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_CRC<B_8>;
-template struct Factory_CRC<B_16>;
-template struct Factory_CRC<B_32>;
-template struct Factory_CRC<B_64>;
+template struct aff3ct::tools::Factory_CRC<B_8>;
+template struct aff3ct::tools::Factory_CRC<B_16>;
+template struct aff3ct::tools::Factory_CRC<B_32>;
+template struct aff3ct::tools::Factory_CRC<B_64>;
 #else
-template struct Factory_CRC<B>;
+template struct aff3ct::tools::Factory_CRC<B>;
 #endif
 // ==================================================================================== explicit template instantiation

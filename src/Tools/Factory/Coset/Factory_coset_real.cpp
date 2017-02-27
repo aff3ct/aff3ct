@@ -20,11 +20,11 @@ Coset<B,Q>* Factory_coset_real<B,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_coset_real<B_8,  Q_8>;
-template struct Factory_coset_real<B_16, Q_16>;
-template struct Factory_coset_real<B_32, Q_32>;
-template struct Factory_coset_real<B_64, Q_64>;
+template struct aff3ct::tools::Factory_coset_real<B_8,  Q_8>;
+template struct aff3ct::tools::Factory_coset_real<B_16, Q_16>;
+template struct aff3ct::tools::Factory_coset_real<B_32, Q_32>;
+template struct aff3ct::tools::Factory_coset_real<B_64, Q_64>;
 #else
-template struct Factory_coset_real<B,Q>;
+template struct aff3ct::tools::Factory_coset_real<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

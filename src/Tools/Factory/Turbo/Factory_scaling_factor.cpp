@@ -38,11 +38,11 @@ Scaling_factor<R>* Factory_scaling_factor<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_scaling_factor<Q_8>;
-template struct Factory_scaling_factor<Q_16>;
-template struct Factory_scaling_factor<Q_32>;
-template struct Factory_scaling_factor<Q_64>;
+template struct aff3ct::tools::Factory_scaling_factor<Q_8>;
+template struct aff3ct::tools::Factory_scaling_factor<Q_16>;
+template struct aff3ct::tools::Factory_scaling_factor<Q_32>;
+template struct aff3ct::tools::Factory_scaling_factor<Q_64>;
 #else
-template struct Factory_scaling_factor<Q>;
+template struct aff3ct::tools::Factory_scaling_factor<Q>;
 #endif
 // ==================================================================================== explicit template instantiation

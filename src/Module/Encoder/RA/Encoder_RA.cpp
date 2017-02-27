@@ -38,11 +38,11 @@ void Encoder_RA<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_RA<B_8>;
-template class Encoder_RA<B_16>;
-template class Encoder_RA<B_32>;
-template class Encoder_RA<B_64>;
+template class aff3ct::module::Encoder_RA<B_8>;
+template class aff3ct::module::Encoder_RA<B_16>;
+template class aff3ct::module::Encoder_RA<B_32>;
+template class aff3ct::module::Encoder_RA<B_64>;
 #else
-template class Encoder_RA<B>;
+template class aff3ct::module::Encoder_RA<B>;
 #endif
 // ==================================================================================== explicit template instantiation

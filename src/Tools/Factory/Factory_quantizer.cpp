@@ -40,11 +40,11 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_quantizer<R_8,Q_8>;
-template struct Factory_quantizer<R_16,Q_16>;
-template struct Factory_quantizer<R_32,Q_32>;
-template struct Factory_quantizer<R_64,Q_64>;
+template struct aff3ct::tools::Factory_quantizer<R_8,Q_8>;
+template struct aff3ct::tools::Factory_quantizer<R_16,Q_16>;
+template struct aff3ct::tools::Factory_quantizer<R_32,Q_32>;
+template struct aff3ct::tools::Factory_quantizer<R_64,Q_64>;
 #else
-template struct Factory_quantizer<R,Q>;
+template struct aff3ct::tools::Factory_quantizer<R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

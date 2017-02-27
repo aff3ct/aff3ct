@@ -29,11 +29,11 @@ Terminal* Factory_terminal<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_terminal<B_8,R_8>;
-template struct Factory_terminal<B_16,R_16>;
-template struct Factory_terminal<B_32,R_32>;
-template struct Factory_terminal<B_64,R_64>;
+template struct aff3ct::tools::Factory_terminal<B_8,R_8>;
+template struct aff3ct::tools::Factory_terminal<B_16,R_16>;
+template struct aff3ct::tools::Factory_terminal<B_32,R_32>;
+template struct aff3ct::tools::Factory_terminal<B_64,R_64>;
 #else
-template struct Factory_terminal<B,R>;
+template struct aff3ct::tools::Factory_terminal<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

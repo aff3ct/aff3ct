@@ -50,11 +50,11 @@ void Scaling_factor_vec<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Scaling_factor_vec<Q_8>;
-template class Scaling_factor_vec<Q_16>;
-template class Scaling_factor_vec<Q_32>;
-template class Scaling_factor_vec<Q_64>;
+template class aff3ct::tools::Scaling_factor_vec<Q_8>;
+template class aff3ct::tools::Scaling_factor_vec<Q_16>;
+template class aff3ct::tools::Scaling_factor_vec<Q_32>;
+template class aff3ct::tools::Scaling_factor_vec<Q_64>;
 #else
-template class Scaling_factor_vec<Q>;
+template class aff3ct::tools::Scaling_factor_vec<Q>;
 #endif
 // ==================================================================================== explicit template instantiation

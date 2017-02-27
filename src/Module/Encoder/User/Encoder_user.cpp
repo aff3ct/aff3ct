@@ -88,11 +88,11 @@ void Encoder_user<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_user<B_8>;
-template class Encoder_user<B_16>;
-template class Encoder_user<B_32>;
-template class Encoder_user<B_64>;
+template class aff3ct::module::Encoder_user<B_8>;
+template class aff3ct::module::Encoder_user<B_16>;
+template class aff3ct::module::Encoder_user<B_32>;
+template class aff3ct::module::Encoder_user<B_64>;
 #else
-template class Encoder_user<B>;
+template class aff3ct::module::Encoder_user<B>;
 #endif
 // ==================================================================================== explicit template instantiation

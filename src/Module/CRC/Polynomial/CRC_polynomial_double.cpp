@@ -33,11 +33,11 @@ void CRC_polynomial_double<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class CRC_polynomial_double<B_8>;
-template class CRC_polynomial_double<B_16>;
-template class CRC_polynomial_double<B_32>;
-template class CRC_polynomial_double<B_64>;
+template class aff3ct::module::CRC_polynomial_double<B_8>;
+template class aff3ct::module::CRC_polynomial_double<B_16>;
+template class aff3ct::module::CRC_polynomial_double<B_32>;
+template class aff3ct::module::CRC_polynomial_double<B_64>;
 #else
-template class CRC_polynomial_double<B>;
+template class aff3ct::module::CRC_polynomial_double<B>;
 #endif
 // ==================================================================================== explicit template instantiation

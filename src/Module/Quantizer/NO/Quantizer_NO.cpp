@@ -61,11 +61,11 @@ void Quantizer_NO<double,double>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Quantizer_NO<R_8,Q_8>;
-template class Quantizer_NO<R_16,Q_16>;
-template class Quantizer_NO<R_32,Q_32>;
-template class Quantizer_NO<R_64,Q_64>;
+template class aff3ct::module::Quantizer_NO<R_8,Q_8>;
+template class aff3ct::module::Quantizer_NO<R_16,Q_16>;
+template class aff3ct::module::Quantizer_NO<R_32,Q_32>;
+template class aff3ct::module::Quantizer_NO<R_64,Q_64>;
 #else
-template class Quantizer_NO<R,Q>;
+template class aff3ct::module::Quantizer_NO<R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

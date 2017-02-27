@@ -389,11 +389,11 @@ Decoder<B,R>* Factory_decoder_RSC<B,R,RD>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_decoder_RSC<B_8,Q_8,QD_8>;
-template struct Factory_decoder_RSC<B_16,Q_16,QD_16>;
-template struct Factory_decoder_RSC<B_32,Q_32,QD_32>;
-template struct Factory_decoder_RSC<B_64,Q_64,QD_64>;
+template struct aff3ct::tools::Factory_decoder_RSC<B_8,Q_8,QD_8>;
+template struct aff3ct::tools::Factory_decoder_RSC<B_16,Q_16,QD_16>;
+template struct aff3ct::tools::Factory_decoder_RSC<B_32,Q_32,QD_32>;
+template struct aff3ct::tools::Factory_decoder_RSC<B_64,Q_64,QD_64>;
 #else
-template struct Factory_decoder_RSC<B,Q,QD>;
+template struct aff3ct::tools::Factory_decoder_RSC<B,Q,QD>;
 #endif
 // ==================================================================================== explicit template instantiation

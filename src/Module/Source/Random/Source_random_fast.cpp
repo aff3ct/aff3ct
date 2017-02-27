@@ -63,11 +63,11 @@ void Source_random_fast<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Source_random_fast<B_8>;
-template class Source_random_fast<B_16>;
-template class Source_random_fast<B_32>;
-template class Source_random_fast<B_64>;
+template class aff3ct::module::Source_random_fast<B_8>;
+template class aff3ct::module::Source_random_fast<B_16>;
+template class aff3ct::module::Source_random_fast<B_32>;
+template class aff3ct::module::Source_random_fast<B_64>;
 #else
-template class Source_random_fast<B>;
+template class aff3ct::module::Source_random_fast<B>;
 #endif
 // ==================================================================================== explicit template instantiation

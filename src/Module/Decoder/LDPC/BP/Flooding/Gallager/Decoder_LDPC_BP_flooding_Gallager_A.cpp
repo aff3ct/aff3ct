@@ -147,11 +147,11 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_flooding_Gallager_A<B_8,Q_8>;
-template class Decoder_LDPC_BP_flooding_Gallager_A<B_16,Q_16>;
-template class Decoder_LDPC_BP_flooding_Gallager_A<B_32,Q_32>;
-template class Decoder_LDPC_BP_flooding_Gallager_A<B_64,Q_64>;
+template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B_8,Q_8>;
+template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B_16,Q_16>;
+template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B_32,Q_32>;
+template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_flooding_Gallager_A<B,Q>;
+template class aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -126,16 +126,16 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_modulator<B_8,R_8,R_8>;
-template struct Factory_modulator<B_8,R_8,Q_8>;
-template struct Factory_modulator<B_16,R_16,R_16>;
-template struct Factory_modulator<B_16,R_16,Q_16>;
-template struct Factory_modulator<B_32,R_32,R_32>;
-template struct Factory_modulator<B_64,R_64,R_64>;
+template struct aff3ct::tools::Factory_modulator<B_8,R_8,R_8>;
+template struct aff3ct::tools::Factory_modulator<B_8,R_8,Q_8>;
+template struct aff3ct::tools::Factory_modulator<B_16,R_16,R_16>;
+template struct aff3ct::tools::Factory_modulator<B_16,R_16,Q_16>;
+template struct aff3ct::tools::Factory_modulator<B_32,R_32,R_32>;
+template struct aff3ct::tools::Factory_modulator<B_64,R_64,R_64>;
 #else
-template struct Factory_modulator<B,R,Q>;
+template struct aff3ct::tools::Factory_modulator<B,R,Q>;
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template struct Factory_modulator<B,R,R>;
+template struct aff3ct::tools::Factory_modulator<B,R,R>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation
