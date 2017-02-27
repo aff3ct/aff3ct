@@ -6,7 +6,11 @@
 
 #include "../Channel.hpp"
 
-template <typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float>
 class Channel_user : public Channel<R>
 {
 private:
@@ -20,5 +24,7 @@ public:
 
 	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
+}
+}
 
 #endif /* CHANNELS_USER_HPP_ */

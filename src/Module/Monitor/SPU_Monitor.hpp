@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class SPU_Monitor : public Monitor_i<B,R>
 {
 private:
@@ -18,7 +22,7 @@ private:
 
 public:
 	SPU_Monitor(const int K, const int N, const int n_frames = 1, const std::string name = "SPU_Monitor")
-	: Monitor_i<B>(K, N, n_frames, name) {}
+	: Monitor_i<B,R>(K, N, n_frames, name) {}
 
 	virtual ~SPU_Monitor() {}
 
@@ -73,9 +77,17 @@ starpu_codelet SPU_Monitor<B,R>::spu_cl_check_errors = SPU_Monitor<B,R>::spu_ini
 
 template <typename B, typename R>
 using Monitor = SPU_Monitor<B,R>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 using Monitor = Monitor_i<B,R>;
+}
+}
 #endif
 
 #endif /* SPU_MONITOR_HPP_ */

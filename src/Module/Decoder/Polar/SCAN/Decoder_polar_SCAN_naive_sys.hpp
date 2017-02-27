@@ -7,8 +7,12 @@
 #include "../../SISO.hpp"
 #include "Decoder_polar_SCAN_naive.hpp"
 
-template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float,
+          proto_i<R> I = tools::init_LLR, proto_f<R> F = f_LLR, proto_v<R> V = v_LLR, proto_h<B,R> H = h_LLR>
 class Decoder_polar_SCAN_naive_sys : public Decoder_polar_SCAN_naive<B,R,I,F,V,H>, public SISO<R>
 {
 public:
@@ -30,6 +34,8 @@ protected:
 
 	void store(mipp::vector<B>& V_N) const;
 };
+}
+}
 
 #include "Decoder_polar_SCAN_naive_sys.hxx"
 

@@ -5,6 +5,9 @@
 
 #include "Decoder_turbo_naive.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder_turbo_naive<B,R>
 ::Decoder_turbo_naive(const int& K,

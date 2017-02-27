@@ -6,6 +6,8 @@
 
 #include "Channel_AWGN_GSL_LLR.hpp"
 
+using namespace aff3ct::module;
+
 template <typename R>
 Channel_AWGN_GSL_LLR<R>
 ::Channel_AWGN_GSL_LLR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)

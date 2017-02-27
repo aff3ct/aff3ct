@@ -8,7 +8,11 @@
 
 #include "../Monitor.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Monitor_std : public Monitor<B,R>
 {
 protected:
@@ -56,5 +60,7 @@ private:
 	void copy_bad_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
 	inline bool check_errors(const B* U, const B* V, const int length);
 };
+}
+}
 
 #endif /* MONITOR_STD_HPP_ */

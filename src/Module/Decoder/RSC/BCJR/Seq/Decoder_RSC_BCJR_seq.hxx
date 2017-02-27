@@ -4,6 +4,10 @@
 
 #include "Decoder_RSC_BCJR_seq.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 struct RSC_BCJR_seq_init
 {
@@ -114,7 +118,7 @@ struct RSC_BCJR_seq_div_or_not
 {
 	static R apply(R m)
 	{
-		return div2<R>(m);
+		return tools::div2<R>(m);
 	}
 };
 
@@ -144,7 +148,7 @@ struct RSC_BCJR_seq_post <short, RD>
 	static short compute(const RD &post)
 	{
 		// (WW) work only for max-log-MAP !!!
-		return div2<RD>(post);
+		return tools::div2<RD>(post);
 	}
 };
 
@@ -153,7 +157,7 @@ struct RSC_BCJR_seq_post <signed char, RD>
 {
 	static signed char compute(const RD &post)
 	{
-		return (signed char)saturate<RD>(post, -63, 63);
+		return (signed char)tools::saturate<RD>(post, -63, 63);
 	}
 };
 
@@ -223,7 +227,7 @@ struct RSC_BCJR_seq_normalize <signed char>
 		// normalization & saturation
 		auto norm_val = metrics[0][i];
 		for (auto j = 0; j < 8; j++)
-			metrics[j][i] = saturate<signed char>(metrics[j][i] - norm_val, -63, +63);
+			metrics[j][i] = tools::saturate<signed char>(metrics[j][i] - norm_val, -63, +63);
 	}
 
 	static void apply(signed char metrics[8][mipp::nElReg<signed char>()], const int &i)
@@ -231,7 +235,7 @@ struct RSC_BCJR_seq_normalize <signed char>
 		// normalization & saturation
 		auto norm_val = metrics[0][i];
 		for (auto j = 0; j < 8; j++)
-			metrics[j][i] = saturate<signed char>(metrics[j][i] - norm_val, -63, +63);
+			metrics[j][i] = tools::saturate<signed char>(metrics[j][i] - norm_val, -63, +63);
 	}
 
 	static void apply(signed char metrics[8], const int &i)
@@ -239,6 +243,8 @@ struct RSC_BCJR_seq_normalize <signed char>
 		// normalization & saturation
 		auto norm_val = metrics[0];
 		for (auto j = 0; j < 8; j++)
-			metrics[j] = saturate<signed char>(metrics[j] - norm_val, -63, +63);
+			metrics[j] = tools::saturate<signed char>(metrics[j] - norm_val, -63, +63);
 	}
 };
+}
+}

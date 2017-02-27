@@ -5,7 +5,11 @@
 
 #include "../../../Decoder_SISO.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_layered : public Decoder_SISO<B,R>
 {
 private:
@@ -13,7 +17,7 @@ private:
 
 protected:
 	const int n_ite;     // number of iterations to perform
-	const int n_C_nodes; // number of check    nodes (= N - K)
+	const int n_C_nodes; // number of check nodes (= N - K)
 
 	const bool enable_syndrome;
 
@@ -28,7 +32,7 @@ protected:
 
 public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
-	                        const AList_reader &alist_data,
+	                        const tools::AList_reader &alist_data,
 	                        const bool enable_syndrome = true,
 	                        const int n_frames = 1,
 	                        const std::string name = "Decoder_LDPC_BP_layered");
@@ -53,5 +57,7 @@ protected:
 
 	virtual void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches) = 0;
 };
+}
+}
 
 #endif /* DECODER_LDPC_BP_LAYERED_HPP_ */

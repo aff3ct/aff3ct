@@ -7,6 +7,8 @@
 
 #include "AList_reader.hpp"
 
+using namespace aff3ct::tools;
+
 std::vector<std::string> split(const std::string &s)
 {
 	std::string buf;                 // have a buffer string

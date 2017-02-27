@@ -7,6 +7,8 @@
 
 #include "Factory_frozenbits_generator.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename B>
 Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 ::build(const parameters &params)

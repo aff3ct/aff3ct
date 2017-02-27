@@ -3,7 +3,11 @@
 
 #include "../Launcher_BFERI.hpp"
 
-template <typename B, typename R, typename Q, typename QD>
+namespace aff3ct
+{
+namespace launcher
+{
+template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
 class Launcher_BFERI_RSC : public Launcher_BFERI<B,R,Q>
 {
 public:
@@ -13,10 +17,12 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
-	virtual Simulation* build_simu();
+	virtual simulation::Simulation* build_simu();
 
 	virtual std::vector<std::pair<std::string,std::string>> header_encoder();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder();
 };
+}
+}
 
 #endif /* LAUNCHER_BFERI_RSC_HPP_ */

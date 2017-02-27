@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class SPU_Source : public Source_i<B>
 {
 private:
@@ -68,9 +72,17 @@ starpu_codelet SPU_Source<B>::spu_cl_generate = SPU_Source<B>::spu_init_cl_gener
 
 template <typename B>
 using Source = SPU_Source<B>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 using Source = Source_i<B>;
+}
+}
 #endif
 
 #endif /* SPU_SOURCE_HPP_ */

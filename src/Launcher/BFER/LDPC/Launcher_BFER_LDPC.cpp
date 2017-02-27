@@ -5,6 +5,10 @@
 
 #include "Launcher_BFER_LDPC.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
+
 template <typename B, typename R, typename Q>
 Launcher_BFER_LDPC<B,R,Q>
 ::Launcher_BFER_LDPC(const int argc, const char **argv, std::ostream &stream)

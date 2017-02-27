@@ -12,7 +12,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename Q = float>
 class SC_Puncturer;
 
 template <typename B, typename Q>
@@ -158,6 +162,8 @@ public:
 
 template <typename B, typename Q>
 using Puncturer = SC_Puncturer<B,Q>;
+}
+}
 #else
 #include "SPU_Puncturer.hpp"
 #endif

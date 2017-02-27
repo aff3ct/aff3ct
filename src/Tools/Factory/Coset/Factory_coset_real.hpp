@@ -6,10 +6,16 @@
 
 #include "../Factory.hpp"
 
-template <typename B, typename Q>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename Q = float>
 struct Factory_coset_real : public Factory
 {
-	static Coset<B,Q>* build(const parameters &params);
+	static module::Coset<B,Q>* build(const parameters &params);
 };
+}
+}
 
 #endif /* FACTORY_COSET_REAL_HPP */

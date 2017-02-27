@@ -10,6 +10,9 @@
 
 #include "Factory_modulator.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R, typename Q>
 Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 ::build(const parameters &params, const float sigma)

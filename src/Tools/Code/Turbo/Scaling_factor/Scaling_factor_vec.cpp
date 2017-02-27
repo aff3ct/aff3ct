@@ -3,6 +3,8 @@
 
 #include "Scaling_factor_vec.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename R>
 Scaling_factor_vec<R>
 ::Scaling_factor_vec(const int K, const int n_ite) 

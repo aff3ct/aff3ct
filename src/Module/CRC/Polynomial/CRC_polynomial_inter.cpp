@@ -5,6 +5,8 @@
 
 #include "CRC_polynomial_inter.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 CRC_polynomial_inter<B>
 ::CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames, const std::string name)

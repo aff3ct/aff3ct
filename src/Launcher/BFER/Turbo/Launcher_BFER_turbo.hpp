@@ -3,7 +3,11 @@
 
 #include "../Launcher_BFER.hpp"
 
-template <typename B, typename R, typename Q, typename QD>
+namespace aff3ct
+{
+namespace launcher
+{
+template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
 class Launcher_BFER_turbo : public Launcher_BFER<B,R,Q>
 {
 public:
@@ -13,7 +17,7 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
-	virtual Simulation* build_simu();
+	virtual simulation::Simulation* build_simu();
 
 	virtual std::vector<std::pair<std::string,std::string>> header_simulation ();
 	virtual std::vector<std::pair<std::string,std::string>> header_crc        ();
@@ -21,5 +25,7 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_interleaver();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder    ();
 };
+}
+}
 
 #endif /* LAUNCHER_BFER_TURBO_HPP_ */

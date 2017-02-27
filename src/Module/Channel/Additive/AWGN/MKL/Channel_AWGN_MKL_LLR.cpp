@@ -8,6 +8,9 @@
 
 #include "Channel_AWGN_MKL_LLR.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R>
 Channel_AWGN_MKL_LLR<R>
 ::Channel_AWGN_MKL_LLR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)
@@ -39,6 +42,10 @@ void Channel_AWGN_MKL_LLR<R>
 	exit(-1);
 }
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 void Channel_AWGN_MKL_LLR<float>
 ::add_noise(const mipp::vector<float>& X_N, mipp::vector<float>& Y_N)
@@ -64,7 +71,13 @@ void Channel_AWGN_MKL_LLR<float>
 	for (unsigned i = 0; i < size; i++)
 		Y_N[i] = X_N[i] + Y_N[i];
 }
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 void Channel_AWGN_MKL_LLR<double>
 ::add_noise(const mipp::vector<double>& X_N, mipp::vector<double>& Y_N)
@@ -90,7 +103,8 @@ void Channel_AWGN_MKL_LLR<double>
 	for (unsigned i = 0; i < size; i++)
 		Y_N[i] = X_N[i] + Y_N[i];
 }
-
+}
+}
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"

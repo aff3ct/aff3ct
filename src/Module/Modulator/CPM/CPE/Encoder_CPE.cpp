@@ -1,5 +1,7 @@
 #include "Encoder_CPE.hpp"
 
+using namespace aff3ct::module;
+
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>
 ::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm, const int n_frames,
@@ -113,6 +115,7 @@ SIN Encoder_CPE<SIN, SOUT>
 
 	return res;
 }
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC

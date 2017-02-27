@@ -8,6 +8,10 @@
 #ifndef PREDICATE_HPP
 #define PREDICATE_HPP
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Predicate
  *
@@ -42,5 +46,7 @@ public:
 	 */
 	virtual void reset() = 0;
 };
+}
+}
 
 #endif /* PREDICATE_HPP */

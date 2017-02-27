@@ -11,7 +11,11 @@
 
 #include "Monitor_reduction.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Monitor_reduction_mpi : public Monitor_reduction<B,R>
 {
 private:
@@ -35,6 +39,8 @@ public:
 
 	bool fe_limit_achieved();
 };
+}
+}
 
 #endif /* MONITOR_REDUCTION_MPI_HPP_ */
 

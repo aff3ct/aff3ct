@@ -13,6 +13,10 @@
 
 #include "Predicate.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Predicate_ite
  *
@@ -47,5 +51,7 @@ public:
 		cur_ite = 0;
 	}
 };
+}
+}
 
 #endif /* PREDICATE_ITE_HPP */

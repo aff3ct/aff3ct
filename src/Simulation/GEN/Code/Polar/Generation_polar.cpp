@@ -27,6 +27,11 @@
 
 #include "Generation_polar.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::generator;
+
 Generation_polar
 ::Generation_polar(const parameters& params)
 : Simulation(),

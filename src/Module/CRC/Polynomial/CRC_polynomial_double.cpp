@@ -4,6 +4,8 @@
 
 #include "CRC_polynomial_double.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 CRC_polynomial_double<B>
 ::CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames, 

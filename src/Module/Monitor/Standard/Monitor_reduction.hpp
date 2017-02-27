@@ -7,7 +7,11 @@
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Monitor_std.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Monitor_reduction : public Monitor_std<B,R>
 {
 private:
@@ -29,5 +33,7 @@ public:
 	static void get_tracker_paths(const std::string& base_path, const float snr, std::string& path_src,
 	                              std::string& path_enc, std::string& path_noise, std::string& path_itl);
 };
+}
+}
 
 #endif /* MONITOR_REDUCTION_HPP_ */

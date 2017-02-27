@@ -4,6 +4,9 @@
 
 #include "Terminal_BFER_legacy.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Terminal_BFER_legacy<B,R>
 ::Terminal_BFER_legacy(const R& snr,

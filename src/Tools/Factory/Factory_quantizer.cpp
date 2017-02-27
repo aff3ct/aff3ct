@@ -7,6 +7,9 @@
 
 #include "Factory_quantizer.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R, typename Q>
 Quantizer<R,Q>* Factory_quantizer<R,Q>
 ::build(const parameters &params, const float& sigma, const int size)

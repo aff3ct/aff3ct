@@ -5,6 +5,9 @@
 
 #include "Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,

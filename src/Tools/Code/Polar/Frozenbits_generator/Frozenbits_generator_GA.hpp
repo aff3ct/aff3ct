@@ -7,7 +7,11 @@
 
 #include "Frozenbits_generator.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 class Frozenbits_generator_GA : public Frozenbits_generator<B>
 {
 private:
@@ -39,5 +43,7 @@ protected:
 	double phi    (double t);
 	double phi_inv(double t);
 };
+}
+}
 
 #endif /* FROZENBITS_GENERATOR_GA_HPP_ */

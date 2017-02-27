@@ -540,6 +540,9 @@
 
 #include "Factory_decoder_polar_gen.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 ::build(const parameters &params, const mipp::vector<B> &frozen_bits)

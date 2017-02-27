@@ -17,6 +17,10 @@
 
 #include "Decoder_polar_SC_fast_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 constexpr int static_level = 6; // 2^6 = 64
 
 template <typename B, typename R, class API_polar, int REV_D>
@@ -139,7 +143,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	for (unsigned i = 0; i < frozen_bits.size(); i++)
 		fb_int32[i] = (int)frozen_bits[i];
 
-	Pattern_parser_polar *parser = new Pattern_parser_polar(N, fb_int32, patterns_SC, *pattern_SC_r0, *pattern_SC_r1);
+	auto parser = new tools::Pattern_parser_polar(N, fb_int32, patterns_SC, *pattern_SC_r0, *pattern_SC_r1);
 	pattern_types_per_id = parser->get_pattern_types_per_id();
 
 	delete parser;
@@ -169,14 +173,14 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	{
 		bool fast_interleave = false;
 		if (typeid(B) == typeid(signed char))
-			fast_interleave = char_transpose((signed char*)Y_N.data(), (signed char*)l.data(), (int)this->N);
+			fast_interleave = tools::char_transpose((signed char*)Y_N.data(), (signed char*)l.data(), (int)this->N);
 
 		if (!fast_interleave)
 		{
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N.data() + f*this->N;
-			Reorderer_static<R,n_frames>::apply(frames, l.data(), this->N);
+			tools::Reorderer_static<R,n_frames>::apply(frames, l.data(), this->N);
 		}
 	}
 }
@@ -284,10 +288,12 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 #if defined(ENABLE_BIT_PACKING)
 		if (typeid(B) == typeid(signed char))
 		{
-			if (!(fast_deinterleave = char_itranspose((signed char*)s.data(), (signed char*)s_bis.data(), (int)this->N)))
+			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
+			                                                 (signed char*)s_bis.data(),
+			                                                 (int)this->N)))
 			{
-				std::cerr << bold_red("(EE) Unsupported N value for itransposition ")
-				          << bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
+				std::cerr << tools::bold_red("(EE) Unsupported N value for itransposition ")
+				          << tools::bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
 				          << std::endl;
 				exit(-1);
 			}
@@ -312,7 +318,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			std::vector<B*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = (B*)(s_bis.data() + f*this->N);
-			Reorderer_static<B,n_frames>::apply_rev(s.data(), frames, this->N);
+			tools::Reorderer_static<B,n_frames>::apply_rev(s.data(), frames, this->N);
 
 			for (auto i = 0; i < n_frames; i++)
 			{
@@ -343,10 +349,12 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 #if defined(ENABLE_BIT_PACKING)
 		if (typeid(B) == typeid(signed char))
 		{
-			if (!(fast_deinterleave = char_itranspose((signed char*)s.data(), (signed char*)V_N.data(), (int)this->N)))
+			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
+			                                                 (signed char*)V_N.data(),
+			                                                 (int)this->N)))
 			{
-				std::cerr << bold_red("(EE) Unsupported N value for itransposition ")
-				          << bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
+				std::cerr << tools::bold_red("(EE) Unsupported N value for itransposition ")
+				          << tools::bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
 				          << std::endl;
 				exit(-1);
 			}
@@ -358,7 +366,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			std::vector<B*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = V_N.data() + f*this->N;
-			Reorderer_static<B,n_frames>::apply_rev(s.data(), frames, this->N);
+			tools::Reorderer_static<B,n_frames>::apply_rev(s.data(), frames, this->N);
 		}
 	}
 }
@@ -393,4 +401,6 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 		for (auto i = 0; i < n_frames; i++)
 			for (auto j = 0; j < this->N; j++)
 				V_N[i * this->N + j] = !frozen_bits[j] && V_N[i * this->N + j];
+}
+}
 }

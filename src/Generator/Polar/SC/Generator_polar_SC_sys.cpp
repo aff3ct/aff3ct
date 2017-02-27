@@ -9,6 +9,10 @@ using namespace std;
 
 #include "Generator_polar_SC_sys.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::generator;
+
 Generator_polar_SC_sys
 ::Generator_polar_SC_sys(const int& K,
                          const int& N,
@@ -94,6 +98,10 @@ void Generator_polar_SC_sys
 	dec_common1                                                                                               << endl;
 	dec_common1 << "#include \"../Decoder_polar_SC_fast_sys.hpp\""                                            << endl;
 	dec_common1                                                                                               << endl;
+	dec_common1 << "namespace aff3ct"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
+	dec_common1 << "namespace module"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
 	dec_common1 << "static const char " << fbits_name << "[" << N << "] = {"                                  << endl;
 	dec_common1 << fbits.str() << "};"                                                                        << endl;
 	dec_common1                                                                                               << endl;
@@ -125,6 +133,8 @@ void Generator_polar_SC_sys
 	this->recursive_generate_decoder(parser.get_polar_tree()->get_root(), dec);
 	dec_common3 << tab << "}"                                                                                 << endl;
 	dec_common3 << "};" << ""                                                                                 << endl;
+	dec_common3 << "}"                                                                                        << endl;
+	dec_common3 << "}"                                                                                        << endl;
 	dec_common3 << "#endif"                                                                                   << endl;
 
 	dec_stream << dec_common1.str();
@@ -195,7 +205,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_decoder(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_decoder(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	n_nodes_before_compression++;
 
@@ -217,7 +227,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_graph(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_graph(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	string key = "";
 
@@ -281,7 +291,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_graph(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_graph(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	if (subtree_occurences_cpy[node_curr->get_c()->get_key()])
 	{
@@ -324,7 +334,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_decoder_funcs(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_decoder_funcs(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	if (!node_curr->is_leaf()) // stop condition
 	{

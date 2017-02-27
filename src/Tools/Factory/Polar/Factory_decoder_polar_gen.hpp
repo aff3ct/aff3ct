@@ -7,12 +7,18 @@
 
 #include "../Factory.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename R = float>
 struct Factory_decoder_polar_gen : public Factory
 {
-	static Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits);
+	static module::Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits);
 
 	static void get_frozen_bits(const parameters &params, mipp::vector<B> &frozen_bits);
 };
+}
+}
 
 #endif /* FACTORY_DECODER_POLAR_GEN_HPP */

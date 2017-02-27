@@ -3,6 +3,10 @@
 
 #include "Binary_tree.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename T>
 Binary_tree<T>
 ::Binary_tree(int depth)
@@ -80,4 +84,6 @@ template<typename T>
 std::vector<Binary_node<T>*> Binary_tree<T>
 ::get_leaves() const{
 	return this->leaves;
+}
+}
 }

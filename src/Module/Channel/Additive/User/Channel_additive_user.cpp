@@ -5,6 +5,9 @@
 
 #include "Channel_additive_user.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R>
 Channel_additive_user<R>
 ::Channel_additive_user(const int N, const std::string filename, const int n_frames, const std::string name)

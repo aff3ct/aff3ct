@@ -5,6 +5,9 @@
 
 #include "Decoder_turbo_fast_CA.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder_turbo_fast_CA<B,R>
 ::Decoder_turbo_fast_CA(const int& K,

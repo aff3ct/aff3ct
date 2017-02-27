@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class SC_Monitor;
 
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class SC_Monitor_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Monitor_module);
@@ -73,20 +77,20 @@ private:
 template <typename B, typename R>
 class SC_Monitor : public Monitor_i<B,R>
 {
-	friend SC_Monitor_module<B>;
+	friend SC_Monitor_module<B,R>;
 
 public:
-	SC_Monitor_module<B> *module;
+	SC_Monitor_module<B,R> *module;
 
 public:
 	SC_Monitor(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_i<B>(K, N, n_frames, name), module(nullptr) {}
+	: Monitor_i<B,R>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (module != nullptr) { delete module; module = nullptr; }};
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Monitor_i<B>::set_n_frames(n_frames);
+		Monitor_i<B,R>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -94,12 +98,14 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Monitor_module<B>(*this, this->name.c_str());
+		this->module = new SC_Monitor_module<B,R>(*this, this->name.c_str());
 	}
 };
 
 template <typename B, typename R>
 using Monitor = SC_Monitor<B,R>;
+}
+}
 #else
 #include "SPU_Monitor.hpp"
 #endif

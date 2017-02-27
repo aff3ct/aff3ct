@@ -8,6 +8,10 @@
 #ifndef BINARY_NODE_HPP_
 #define BINARY_NODE_HPP_
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename R>
 class Binary_tree;
 
@@ -160,6 +164,8 @@ public:
 	 */
 	inline void cut_right();
 };
+}
+}
 
 #include "Binary_node.hxx"
 

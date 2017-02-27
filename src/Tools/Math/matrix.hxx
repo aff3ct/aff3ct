@@ -1,5 +1,9 @@
 #include "matrix.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename T> 
 inline void cgemm(const int M, const int N, const int K, 
                   const mipp::vector<T> &A, 
@@ -84,4 +88,6 @@ inline void complex_transpose(const int M, const int N,
 			B_imag[j*M+i] = -A_imag[i*N+j];
 		}
 	}
+}
+}
 }

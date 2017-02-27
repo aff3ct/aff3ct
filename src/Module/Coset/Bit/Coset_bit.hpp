@@ -8,7 +8,11 @@
 
 #include "../Coset.hpp"
 
-template <typename B, typename D>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename D = int>
 class Coset_bit : public Coset<B,D>
 {
 public:
@@ -18,5 +22,7 @@ public:
 
 	virtual void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data);
 };
+}
+}
 
 #endif /* COSET_BIT_HPP_ */

@@ -3,7 +3,11 @@
 
 #include "../Launcher.hpp"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace launcher
+{
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher_EXIT : public Launcher<B,R,Q>
 {
 public:
@@ -18,5 +22,7 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_encoder   ();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder   ();
 };
+}
+}
 
 #endif /* LAUNCHER_EXIT_HPP_ */

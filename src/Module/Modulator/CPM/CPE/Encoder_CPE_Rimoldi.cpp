@@ -2,7 +2,13 @@
 #include <vector>
 #include <cmath>
 
+#include "Tools/Display/bash_tools.h"
+
 #include "Encoder_CPE_Rimoldi.hpp"
+
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 
 template <typename SIN, typename SOUT>
 Encoder_CPE_Rimoldi<SIN, SOUT>
@@ -148,7 +154,7 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 	}
 }
 
-// ================================================== explicit template instantiation
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template class Encoder_CPE_Rimoldi<B_8,  B_8 >;
@@ -158,4 +164,4 @@ template class Encoder_CPE_Rimoldi<B_64, B_64>;
 #else
 template class Encoder_CPE_Rimoldi<B, B>;
 #endif
-// =================================================== explicit template instantiation
+// ==================================================================================== explicit template instantiation

@@ -6,6 +6,9 @@
 
 #include "Monitor_reduction_mpi.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 struct monitor_vals
 {
 	int n_be;

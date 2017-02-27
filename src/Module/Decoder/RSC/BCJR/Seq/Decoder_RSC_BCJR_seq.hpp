@@ -6,7 +6,11 @@
 
 #include "../Decoder_RSC_BCJR.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_RSC_BCJR_seq : public Decoder_RSC_BCJR<B,R>
 {
 protected:
@@ -24,6 +28,8 @@ public:
 
 	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 };
+}
+}
 
 #include "Decoder_RSC_BCJR_seq.hxx"
 

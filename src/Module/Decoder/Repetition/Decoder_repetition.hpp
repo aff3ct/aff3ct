@@ -7,7 +7,11 @@
 #include "../Decoder.hpp"
 #include "../SISO.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_repetition : public Decoder<B,R>, public SISO<R>
 {
 protected:
@@ -33,5 +37,7 @@ protected:
 	void store       (      mipp::vector<B>& V_K                        ) const;
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
+}
+}
 
 #endif /* DECODER_REPETITION */

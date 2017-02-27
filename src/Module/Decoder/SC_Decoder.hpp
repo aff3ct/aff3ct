@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R>
 class SC_Decoder;
 
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class SC_Decoder_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Decoder_module);
@@ -87,6 +91,8 @@ public:
 
 template <typename B, typename R>
 using Decoder = SC_Decoder<B,R>;
+}
+}
 #else
 #include "SPU_Decoder.hpp"
 #endif

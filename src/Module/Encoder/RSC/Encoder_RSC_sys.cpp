@@ -4,6 +4,8 @@
 
 #include "Encoder_RSC_sys.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_RSC_sys<B>
 ::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,

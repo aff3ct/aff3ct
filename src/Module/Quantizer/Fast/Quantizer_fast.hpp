@@ -6,7 +6,11 @@
 
 #include "../Quantizer.hpp"
 
-template <typename R, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float, typename Q = short>
 class Quantizer_fast : public Quantizer<R,Q>
 {
 private:
@@ -24,6 +28,8 @@ public:
 
 	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
+}
+}
 
 #endif /* QUANTIZER_FAST_HPP_ */
 

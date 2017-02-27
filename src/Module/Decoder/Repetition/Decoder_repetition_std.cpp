@@ -3,6 +3,8 @@
 
 #include "Decoder_repetition_std.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B, typename R>
 Decoder_repetition_std<B,R>
 ::Decoder_repetition_std(const int& K, const int& N, const bool buffered_encoding, const int n_frames,

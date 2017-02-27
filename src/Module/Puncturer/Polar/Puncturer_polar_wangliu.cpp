@@ -4,6 +4,9 @@
 
 #include "Puncturer_polar_wangliu.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename Q>
 Puncturer_polar_wangliu<B,Q>
 ::Puncturer_polar_wangliu(const int &K,

@@ -11,10 +11,16 @@
 
 #include "../Factory.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename R = float>
 struct Factory_decoder_LDPC : public Factory
 {
-	static Decoder_SISO<B,R>* build(const parameters &params, const AList_reader &alist_data);
+	static module::Decoder_SISO<B,R>* build(const parameters &params, const AList_reader &alist_data);
 };
+}
+}
 
 #endif /* FACTORY_DECODER_LDPC_HPP */

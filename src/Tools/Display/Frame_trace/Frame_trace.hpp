@@ -10,6 +10,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Frame_trace
  *
@@ -17,7 +21,7 @@
  *
  * \tparam B: type of bits.
  */
-template <typename B>
+template <typename B = int>
 class Frame_trace 
 {
 private:
@@ -101,6 +105,8 @@ private:
 	template <typename D>
 	void display_value (D value, debug_version version, B ref                                                  );
 };
+}
+}
 
 #include "Frame_trace.hxx"
 

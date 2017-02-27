@@ -1,6 +1,9 @@
+#include "Module/Monitor/Standard/Monitor_std.hpp"
+
 #include "Factory_monitor.hpp"
 
-#include "Module/Monitor/Standard/Monitor_std.hpp"
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Monitor<B,R>* Factory_monitor<B,R>

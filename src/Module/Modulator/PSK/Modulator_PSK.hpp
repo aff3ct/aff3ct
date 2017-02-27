@@ -8,7 +8,11 @@
 
 #include "../Modulator.hpp"
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float, typename Q = R, proto_max<Q> MAX = tools::max_star>
 class Modulator_PSK : public Modulator<B,R,Q>
 {
 private:
@@ -34,6 +38,8 @@ public:
 private:
 	inline std::complex<R> bits_to_symbol(const B* bits) const;
 };
+}
+}
 
 #include "Modulator_PSK.hxx"
 

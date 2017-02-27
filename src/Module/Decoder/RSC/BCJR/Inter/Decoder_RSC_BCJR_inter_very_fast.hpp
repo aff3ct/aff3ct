@@ -7,7 +7,11 @@
 
 #include "Decoder_RSC_BCJR_inter.hpp"
 
-template <typename B, typename R, proto_max_i<R> MAX>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float, proto_max_i<R> MAX = tools::max_i>
 class Decoder_RSC_BCJR_inter_very_fast : public Decoder_RSC_BCJR_inter<B,R>
 {
 public:
@@ -24,6 +28,8 @@ protected:
 	virtual void compute_gamma_alpha(const mipp::vector<R> &sys, const mipp::vector<R> &par);
 	virtual void compute_beta_ext   (const mipp::vector<R> &sys,       mipp::vector<R> &ext);
 };
+}
+}
 
 #include "Decoder_RSC_BCJR_inter_very_fast.hxx"
 

@@ -12,7 +12,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename R, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float, typename Q = int>
 class SC_Quantizer;
 
 template <typename R, typename Q>
@@ -94,6 +98,8 @@ public:
 
 template <typename R, typename Q>
 using Quantizer = SC_Quantizer<R,Q>;
+}
+}
 #else
 #include "SPU_Quantizer.hpp"
 #endif

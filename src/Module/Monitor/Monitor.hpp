@@ -16,6 +16,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Monitor_i
  *
@@ -26,7 +30,7 @@
  *
  * Please use Monitor for inheritance (instead of Monitor_i).
  */
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Monitor_i : public Module
 {
 protected:
@@ -264,6 +268,8 @@ std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> Mon
 
 template <typename B, typename R>
 std::chrono::nanoseconds Monitor_i<B,R>::d_delta_interrupt = std::chrono::nanoseconds(0);
+}
+}
 
 #include "SC_Monitor.hpp"
 

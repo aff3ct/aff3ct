@@ -7,21 +7,25 @@
 #include "Module/Monitor/Monitor.hpp"
 #include "../Terminal.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename R = float>
 class Terminal_BFER : public Terminal
 {
 protected:
-	const R                                                                            snr_s;
-	const R                                                                            snr_b;
-	const Monitor<B,R>                                                                 &monitor;
+	const R                                                                             snr_s;
+	const R                                                                             snr_b;
+	const module::Monitor<B,R>                                                         &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	const std::chrono::nanoseconds                                                     *d_decod_total;
-	unsigned short                                                                     real_time_state;
+	unsigned short                                                                      real_time_state;
 
 public:
 	Terminal_BFER(const R& snr_s,
 	              const R& snr_b,
-	              const Monitor<B,R> &monitor,
+	              const module::Monitor<B,R> &monitor,
 	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	              const std::chrono::nanoseconds *d_decod_total = nullptr);
 
@@ -35,5 +39,7 @@ protected:
 	static std::string get_time_format(float secondes);
 	void _report(std::ostream &stream);
 };
+}
+}
 
 #endif /* TERMINAL_BFER_HPP_ */

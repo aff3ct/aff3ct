@@ -1,8 +1,8 @@
 #include "bash_tools.h"
 
-bool enable_bash_tools = true;
+bool aff3ct::tools::enable_bash_tools = true;
 
-std::string bold(std::string str)
+std::string aff3ct::tools::bold(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -14,7 +14,7 @@ std::string bold(std::string str)
 #endif
 }
 
-std::string italic(std::string str)
+std::string aff3ct::tools::italic(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -26,7 +26,7 @@ std::string italic(std::string str)
 #endif
 }
 
-std::string bold_italic(std::string str)
+std::string aff3ct::tools::bold_italic(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -38,7 +38,7 @@ std::string bold_italic(std::string str)
 #endif
 }
 
-std::string underlined(std::string str)
+std::string aff3ct::tools::underlined(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -50,7 +50,7 @@ std::string underlined(std::string str)
 #endif
 }
 
-std::string bold_underlined(std::string str)
+std::string aff3ct::tools::bold_underlined(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -62,7 +62,7 @@ std::string bold_underlined(std::string str)
 #endif
 }
 
-std::string inverted(std::string str)
+std::string aff3ct::tools::inverted(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -74,7 +74,7 @@ std::string inverted(std::string str)
 #endif
 }
 
-std::string red(std::string str)
+std::string aff3ct::tools::red(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -86,7 +86,7 @@ std::string red(std::string str)
 #endif
 }
 
-std::string bold_red(std::string str)
+std::string aff3ct::tools::bold_red(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -98,7 +98,7 @@ std::string bold_red(std::string str)
 #endif
 }
 
-std::string green(std::string str)
+std::string aff3ct::tools::green(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -110,7 +110,7 @@ std::string green(std::string str)
 #endif
 }
 
-std::string bold_green(std::string str)
+std::string aff3ct::tools::bold_green(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -122,7 +122,7 @@ std::string bold_green(std::string str)
 #endif
 }
 
-std::string yellow(std::string str)
+std::string aff3ct::tools::yellow(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -134,7 +134,7 @@ std::string yellow(std::string str)
 #endif
 }
 
-std::string bold_yellow(std::string str)
+std::string aff3ct::tools::bold_yellow(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -146,7 +146,7 @@ std::string bold_yellow(std::string str)
 #endif
 }
 
-std::string blue(std::string str)
+std::string aff3ct::tools::blue(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -158,7 +158,7 @@ std::string blue(std::string str)
 #endif
 }
 
-std::string bold_blue(std::string str)
+std::string aff3ct::tools::bold_blue(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -170,7 +170,7 @@ std::string bold_blue(std::string str)
 #endif
 }
 
-std::string orange(std::string str)
+std::string aff3ct::tools::orange(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
@@ -182,7 +182,7 @@ std::string orange(std::string str)
 #endif
 }
 
-std::string bold_orange(std::string str)
+std::string aff3ct::tools::bold_orange(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;

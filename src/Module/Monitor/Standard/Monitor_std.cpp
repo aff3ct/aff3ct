@@ -6,6 +6,9 @@
 
 #include "Monitor_std.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Monitor_std<B,R>
 ::Monitor_std(const int& K, const int& N, const int& max_fe, const int& n_frames, const std::string name)

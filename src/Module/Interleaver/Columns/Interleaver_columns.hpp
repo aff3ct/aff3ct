@@ -7,7 +7,11 @@
 
 #include "../Interleaver.hpp"
 
-template <typename T>
+namespace aff3ct
+{
+namespace module
+{
+template <typename T = int>
 class Interleaver_columns : public Interleaver<T>
 {
 private:
@@ -47,5 +51,7 @@ protected:
 			this->pi_inv[this->pi[i]] = i;
 	}
 };
+}
+}
 
 #endif	/* INTERLEAVER_COLUMNS_HPP */

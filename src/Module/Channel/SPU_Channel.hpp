@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float>
 class SPU_Channel : public Channel_i<R>
 {
 private:
@@ -128,9 +132,17 @@ starpu_codelet SPU_Channel<R>::spu_cl_add_noise_wg = SPU_Channel<R>::spu_init_cl
 
 template <typename R>
 using Channel = SPU_Channel<R>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 using Channel = Channel_i<R>;
+}
+}
 #endif
 
 #endif /* SPU_CHANNELS_HPP_ */
