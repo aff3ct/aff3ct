@@ -37,7 +37,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::hard_decode()
+::_hard_decode()
 {
 	this->recursive_decode(this->polar_tree.get_root());
 }

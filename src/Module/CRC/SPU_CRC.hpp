@@ -79,7 +79,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 using CRC = CRC_i<B>;
 }
 }

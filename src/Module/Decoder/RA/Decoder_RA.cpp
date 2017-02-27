@@ -50,7 +50,7 @@ void Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::hard_decode()
+::_hard_decode()
 {
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)

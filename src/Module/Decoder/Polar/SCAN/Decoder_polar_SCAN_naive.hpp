@@ -30,9 +30,9 @@ public:
 	virtual ~Decoder_polar_SCAN_naive() {}
 
 protected:
-	        void load       (const mipp::vector<R>& Y_N);
-	        void hard_decode(                          );
-	virtual void store      (      mipp::vector<B>& V_K) const;
+	        void  load       (const mipp::vector<R>& Y_N);
+	        void _hard_decode(                          );
+	virtual void  store      (      mipp::vector<B>& V_K) const;
 
 	void load_init();
 	void decode();

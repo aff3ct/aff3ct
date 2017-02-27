@@ -39,9 +39,9 @@ public:
 	virtual ~Decoder_polar_SC_naive();
 
 protected:
-	        void load       (const mipp::vector<R>& Y_N);
-	        void hard_decode(                          );
-	virtual void store      (      mipp::vector<B>& V_K) const;
+	        void  load       (const mipp::vector<R>& Y_N);
+	        void _hard_decode(                          );
+	virtual void  store      (      mipp::vector<B>& V_K) const;
 
 private:
 	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size                     );

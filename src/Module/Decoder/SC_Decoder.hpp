@@ -89,7 +89,7 @@ public:
 	}
 };
 
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 using Decoder = SC_Decoder<B,R>;
 }
 }

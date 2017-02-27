@@ -125,7 +125,7 @@ void Generator_polar_SC_sys
 	dec_common1 << tab << "{"                                                                                 << endl;
 	dec_common1 << tab << "}"                                                                                 << endl;
 	dec_common1                                                                                               << endl;
-	dec_common2 << tab << "void decode()"                                                                     << endl;
+	dec_common2 << tab << "void _hard_decode()"                                                               << endl;
 	dec_common2 << tab << "{"                                                                                 << endl;
 	dec_common2 << tab << tab << "auto &l = this->l;"                                                         << endl;
 	dec_common2 << tab << tab << "auto &s = this->s;"                                                         << endl;

@@ -96,7 +96,7 @@ public:
 	}
 };
 
-template <typename R, typename Q>
+template <typename R = float, typename Q = int>
 using Quantizer = SC_Quantizer<R,Q>;
 }
 }

@@ -46,9 +46,9 @@ public:
 	virtual ~Decoder_polar_SCL_naive();
 
 protected:
-	        void load       (const mipp::vector<R>& Y_N);
-	        void hard_decode(                          );
-	virtual void store      (mipp::vector<B>& V_K      ) const;
+	        void load        (const mipp::vector<R>& Y_N);
+	        void _hard_decode(                          );
+	virtual void store       (mipp::vector<B>& V_K      ) const;
 
 private:
 	void recursive_compute_llr        (      tools::Binary_node<Contents_SCL<B,R>>* node_cur, int depth);

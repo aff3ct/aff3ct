@@ -28,7 +28,7 @@ public:
 	virtual ~Decoder_turbo_fast_CA();
 
 protected:
-	virtual void hard_decode();
+	virtual void _hard_decode();
 };
 }
 }

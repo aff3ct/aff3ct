@@ -160,7 +160,7 @@ public:
 	}
 };
 
-template <typename B, typename Q>
+template <typename B = int, typename Q = float>
 using Puncturer = SC_Puncturer<B,Q>;
 }
 }
