@@ -13,7 +13,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float, typename Q = R, proto_max<Q> MAX = tools::max_star>
+template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX = tools::max_star>
 class Modulator_user : public Modulator<B,R,Q>
 {
 private:

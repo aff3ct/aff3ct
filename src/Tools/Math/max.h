@@ -11,7 +11,7 @@
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 // -------------------------------------------------------------------------- special function prototypes for templates
 
@@ -20,13 +20,7 @@ using proto_max = R (*)(const R& a, const R& b);
 
 template <typename R>
 using proto_max_i = mipp::Reg<R> (*)(const mipp::Reg<R> a, const mipp::Reg<R> b);
-}
-}
 
-namespace aff3ct
-{
-namespace tools
-{
 // ------------------------------------------------------------------------------------------- special function headers
 
 template <typename R> __forceinline R max          (const R& a, const R& b);

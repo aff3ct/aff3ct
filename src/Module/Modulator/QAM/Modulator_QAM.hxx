@@ -12,7 +12,7 @@ namespace module
 /*
  * Constructor / Destructor
  */
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modulator_QAM<B,R,Q,MAX>
 ::Modulator_QAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames,
                 const std::string name)
@@ -38,7 +38,7 @@ Modulator_QAM<B,R,Q,MAX>
 	}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modulator_QAM<B,R,Q,MAX>
 ::~Modulator_QAM()
 {
@@ -49,7 +49,7 @@ Modulator_QAM<B,R,Q,MAX>
  * N = number of input bits
  * returns number of output symbols
  */
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 int Modulator_QAM<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
@@ -60,7 +60,7 @@ int Modulator_QAM<B,R,Q,MAX>
 /*
  * Mapping function
  */
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 std::complex<R> Modulator_QAM<B,R,Q,MAX>
 ::bits_to_symbol(const B* bits) const
 {
@@ -81,7 +81,7 @@ std::complex<R> Modulator_QAM<B,R,Q,MAX>
 /*
  * Modulator
  */
-template <typename B,typename R, typename Q, proto_max<Q> MAX>
+template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
@@ -121,7 +121,7 @@ void Modulator_QAM<B,R,Q,MAX>
 /*
  * Demodulator
  */
-template <typename B,typename R, typename Q, proto_max<Q> MAX>
+template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
@@ -155,7 +155,7 @@ void Modulator_QAM<B,R,Q,MAX>
 /*
  * Demodulator
  */
-template <typename B,typename R, typename Q, proto_max<Q> MAX>
+template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
 ::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
 {
@@ -189,7 +189,7 @@ void Modulator_QAM<B,R,Q,MAX>
 	}
 }
 
-template <typename B,typename R, typename Q, proto_max<Q> MAX>
+template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
@@ -229,7 +229,7 @@ void Modulator_QAM<B,R,Q,MAX>
 	}
 }
 
-template <typename B,typename R, typename Q, proto_max<Q> MAX>
+template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
 ::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
                               mipp::vector<Q>& Y_N3)
