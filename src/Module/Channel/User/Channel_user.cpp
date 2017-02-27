@@ -75,9 +75,9 @@ void Channel_user<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Channel_user<R_32>;
-template class Channel_user<R_64>;
+template class aff3ct::module::Channel_user<R_32>;
+template class aff3ct::module::Channel_user<R_64>;
 #else
-template class Channel_user<R>;
+template class aff3ct::module::Channel_user<R>;
 #endif
 // ==================================================================================== explicit template instantiation

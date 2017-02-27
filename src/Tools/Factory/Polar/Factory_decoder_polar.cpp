@@ -184,11 +184,11 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_decoder_polar<B_8,Q_8>;
-template struct Factory_decoder_polar<B_16,Q_16>;
-template struct Factory_decoder_polar<B_32,Q_32>;
-template struct Factory_decoder_polar<B_64,Q_64>;
+template struct aff3ct::tools::Factory_decoder_polar<B_8,Q_8>;
+template struct aff3ct::tools::Factory_decoder_polar<B_16,Q_16>;
+template struct aff3ct::tools::Factory_decoder_polar<B_32,Q_32>;
+template struct aff3ct::tools::Factory_decoder_polar<B_64,Q_64>;
 #else
-template struct Factory_decoder_polar<B,Q>;
+template struct aff3ct::tools::Factory_decoder_polar<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

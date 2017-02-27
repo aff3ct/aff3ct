@@ -73,14 +73,14 @@ bool Frozenbits_generator_file<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Frozenbits_generator_file<B_8>;
-template class Frozenbits_generator_file<B_16>;
-template class Frozenbits_generator_file<B_32>;
-template class Frozenbits_generator_file<B_64>;
+template class aff3ct::tools::Frozenbits_generator_file<B_8>;
+template class aff3ct::tools::Frozenbits_generator_file<B_16>;
+template class aff3ct::tools::Frozenbits_generator_file<B_32>;
+template class aff3ct::tools::Frozenbits_generator_file<B_64>;
 #else
-template class Frozenbits_generator_file<B>;
+template class aff3ct::tools::Frozenbits_generator_file<B>;
 #ifndef PREC_32_BIT
-template class Frozenbits_generator_file<B_32>;
+template class aff3ct::tools::Frozenbits_generator_file<B_32>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

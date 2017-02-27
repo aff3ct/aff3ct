@@ -27,11 +27,11 @@ void Coset_real<B,D>::apply(const mipp::vector<B>& ref, const mipp::vector<D> &i
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Coset_real<B_8,  Q_8 >;
-template class Coset_real<B_16, Q_16>;
-template class Coset_real<B_32, Q_32>;
-template class Coset_real<B_64, Q_64>;
+template class aff3ct::module::Coset_real<B_8,  Q_8 >;
+template class aff3ct::module::Coset_real<B_16, Q_16>;
+template class aff3ct::module::Coset_real<B_32, Q_32>;
+template class aff3ct::module::Coset_real<B_64, Q_64>;
 #else
-template class Coset_real<B,Q>;
+template class aff3ct::module::Coset_real<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

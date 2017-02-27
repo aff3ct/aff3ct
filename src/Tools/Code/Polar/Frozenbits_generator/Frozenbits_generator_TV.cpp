@@ -125,14 +125,14 @@ void Frozenbits_generator_TV<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Frozenbits_generator_TV<B_8>;
-template class Frozenbits_generator_TV<B_16>;
-template class Frozenbits_generator_TV<B_32>;
-template class Frozenbits_generator_TV<B_64>;
+template class aff3ct::tools::Frozenbits_generator_TV<B_8>;
+template class aff3ct::tools::Frozenbits_generator_TV<B_16>;
+template class aff3ct::tools::Frozenbits_generator_TV<B_32>;
+template class aff3ct::tools::Frozenbits_generator_TV<B_64>;
 #else
-template class Frozenbits_generator_TV<B>;
+template class aff3ct::tools::Frozenbits_generator_TV<B>;
 #ifndef PREC_32_BIT
-template class Frozenbits_generator_TV<B_32>;
+template class aff3ct::tools::Frozenbits_generator_TV<B_32>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

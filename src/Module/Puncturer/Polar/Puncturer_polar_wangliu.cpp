@@ -77,11 +77,11 @@ void Puncturer_polar_wangliu<B,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Puncturer_polar_wangliu<B_8,Q_8>;
-template class Puncturer_polar_wangliu<B_16,Q_16>;
-template class Puncturer_polar_wangliu<B_32,Q_32>;
-template class Puncturer_polar_wangliu<B_64,Q_64>;
+template class aff3ct::module::Puncturer_polar_wangliu<B_8,Q_8>;
+template class aff3ct::module::Puncturer_polar_wangliu<B_16,Q_16>;
+template class aff3ct::module::Puncturer_polar_wangliu<B_32,Q_32>;
+template class aff3ct::module::Puncturer_polar_wangliu<B_64,Q_64>;
 #else
-template class Puncturer_polar_wangliu<B,Q>;
+template class aff3ct::module::Puncturer_polar_wangliu<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

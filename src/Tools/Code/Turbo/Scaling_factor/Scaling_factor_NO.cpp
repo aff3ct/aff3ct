@@ -18,11 +18,11 @@ void Scaling_factor_NO<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Scaling_factor_NO<Q_8>;
-template class Scaling_factor_NO<Q_16>;
-template class Scaling_factor_NO<Q_32>;
-template class Scaling_factor_NO<Q_64>;
+template class aff3ct::tools::Scaling_factor_NO<Q_8>;
+template class aff3ct::tools::Scaling_factor_NO<Q_16>;
+template class aff3ct::tools::Scaling_factor_NO<Q_32>;
+template class aff3ct::tools::Scaling_factor_NO<Q_64>;
 #else
-template class Scaling_factor_NO<Q>;
+template class aff3ct::tools::Scaling_factor_NO<Q>;
 #endif
 // ==================================================================================== explicit template instantiation

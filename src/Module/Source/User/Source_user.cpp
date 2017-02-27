@@ -83,11 +83,11 @@ void Source_user<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Source_user<B_8>;
-template class Source_user<B_16>;
-template class Source_user<B_32>;
-template class Source_user<B_64>;
+template class aff3ct::module::Source_user<B_8>;
+template class aff3ct::module::Source_user<B_16>;
+template class aff3ct::module::Source_user<B_32>;
+template class aff3ct::module::Source_user<B_64>;
 #else
-template class Source_user<B>;
+template class aff3ct::module::Source_user<B>;
 #endif
 // ==================================================================================== explicit template instantiation

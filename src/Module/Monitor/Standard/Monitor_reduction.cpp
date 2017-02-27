@@ -213,11 +213,11 @@ void Monitor_reduction<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Monitor_reduction<B_8 ,R_8>;
-template class Monitor_reduction<B_16,R_16>;
-template class Monitor_reduction<B_32,R_32>;
-template class Monitor_reduction<B_64,R_64>;
+template class aff3ct::module::Monitor_reduction<B_8 ,R_8>;
+template class aff3ct::module::Monitor_reduction<B_16,R_16>;
+template class aff3ct::module::Monitor_reduction<B_32,R_32>;
+template class aff3ct::module::Monitor_reduction<B_64,R_64>;
 #else
-template class Monitor_reduction<B,R>;
+template class aff3ct::module::Monitor_reduction<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

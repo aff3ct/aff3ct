@@ -20,11 +20,11 @@ Coset<B,B>* Factory_coset_bit<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_coset_bit<B_8 >;
-template struct Factory_coset_bit<B_16>;
-template struct Factory_coset_bit<B_32>;
-template struct Factory_coset_bit<B_64>;
+template struct aff3ct::tools::Factory_coset_bit<B_8 >;
+template struct aff3ct::tools::Factory_coset_bit<B_16>;
+template struct aff3ct::tools::Factory_coset_bit<B_32>;
+template struct aff3ct::tools::Factory_coset_bit<B_64>;
 #else
-template struct Factory_coset_bit<B>;
+template struct aff3ct::tools::Factory_coset_bit<B>;
 #endif
 // ==================================================================================== explicit template instantiation

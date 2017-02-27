@@ -25,11 +25,11 @@ void Source_AZCW<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Source_AZCW<B_8>;
-template class Source_AZCW<B_16>;
-template class Source_AZCW<B_32>;
-template class Source_AZCW<B_64>;
+template class aff3ct::module::Source_AZCW<B_8>;
+template class aff3ct::module::Source_AZCW<B_16>;
+template class aff3ct::module::Source_AZCW<B_32>;
+template class aff3ct::module::Source_AZCW<B_64>;
 #else
-template class Source_AZCW<B>;
+template class aff3ct::module::Source_AZCW<B>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -2004,11 +2004,11 @@ void Factory_decoder_polar_gen<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_decoder_polar_gen<B_8,Q_8>;
-template struct Factory_decoder_polar_gen<B_16,Q_16>;
-template struct Factory_decoder_polar_gen<B_32,Q_32>;
-template struct Factory_decoder_polar_gen<B_64,Q_64>;
+template struct aff3ct::tools::Factory_decoder_polar_gen<B_8,Q_8>;
+template struct aff3ct::tools::Factory_decoder_polar_gen<B_16,Q_16>;
+template struct aff3ct::tools::Factory_decoder_polar_gen<B_32,Q_32>;
+template struct aff3ct::tools::Factory_decoder_polar_gen<B_64,Q_64>;
 #else
-template struct Factory_decoder_polar_gen<B,Q>;
+template struct aff3ct::tools::Factory_decoder_polar_gen<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

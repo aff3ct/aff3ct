@@ -44,14 +44,14 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_frozenbits_generator<B_8>;
-template struct Factory_frozenbits_generator<B_16>;
-template struct Factory_frozenbits_generator<B_32>;
-template struct Factory_frozenbits_generator<B_64>;
+template struct aff3ct::tools::Factory_frozenbits_generator<B_8>;
+template struct aff3ct::tools::Factory_frozenbits_generator<B_16>;
+template struct aff3ct::tools::Factory_frozenbits_generator<B_32>;
+template struct aff3ct::tools::Factory_frozenbits_generator<B_64>;
 #else
-template struct Factory_frozenbits_generator<B>;
+template struct aff3ct::tools::Factory_frozenbits_generator<B>;
 #ifndef PREC_32_BIT
-template struct Factory_frozenbits_generator<B_32>;
+template struct aff3ct::tools::Factory_frozenbits_generator<B_32>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

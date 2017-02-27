@@ -91,11 +91,11 @@ void Decoder_repetition<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_repetition<B_8,Q_8>;
-template class Decoder_repetition<B_16,Q_16>;
-template class Decoder_repetition<B_32,Q_32>;
-template class Decoder_repetition<B_64,Q_64>;
+template class aff3ct::module::Decoder_repetition<B_8,Q_8>;
+template class aff3ct::module::Decoder_repetition<B_16,Q_16>;
+template class aff3ct::module::Decoder_repetition<B_32,Q_32>;
+template class aff3ct::module::Decoder_repetition<B_64,Q_64>;
 #else
-template class Decoder_repetition<B,Q>;
+template class aff3ct::module::Decoder_repetition<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

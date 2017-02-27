@@ -79,11 +79,11 @@ void Encoder_turbo_legacy<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_turbo_legacy<B_8>;
-template class Encoder_turbo_legacy<B_16>;
-template class Encoder_turbo_legacy<B_32>;
-template class Encoder_turbo_legacy<B_64>;
+template class aff3ct::module::Encoder_turbo_legacy<B_8>;
+template class aff3ct::module::Encoder_turbo_legacy<B_16>;
+template class aff3ct::module::Encoder_turbo_legacy<B_32>;
+template class aff3ct::module::Encoder_turbo_legacy<B_64>;
 #else
-template class Encoder_turbo_legacy<B>;
+template class aff3ct::module::Encoder_turbo_legacy<B>;
 #endif
 // ==================================================================================== explicit template instantiation

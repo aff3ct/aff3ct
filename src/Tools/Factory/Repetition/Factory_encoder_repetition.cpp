@@ -21,11 +21,11 @@ Encoder_sys<B>* Factory_encoder_repetition<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_encoder_repetition<B_8>;
-template struct Factory_encoder_repetition<B_16>;
-template struct Factory_encoder_repetition<B_32>;
-template struct Factory_encoder_repetition<B_64>;
+template struct aff3ct::tools::Factory_encoder_repetition<B_8>;
+template struct aff3ct::tools::Factory_encoder_repetition<B_16>;
+template struct aff3ct::tools::Factory_encoder_repetition<B_32>;
+template struct aff3ct::tools::Factory_encoder_repetition<B_64>;
 #else
-template struct Factory_encoder_repetition<B>;
+template struct aff3ct::tools::Factory_encoder_repetition<B>;
 #endif
 // ==================================================================================== explicit template instantiation

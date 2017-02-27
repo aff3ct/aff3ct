@@ -117,11 +117,11 @@ bool CRC_polynomial<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class CRC_polynomial<B_8>;
-template class CRC_polynomial<B_16>;
-template class CRC_polynomial<B_32>;
-template class CRC_polynomial<B_64>;
+template class aff3ct::module::CRC_polynomial<B_8>;
+template class aff3ct::module::CRC_polynomial<B_16>;
+template class aff3ct::module::CRC_polynomial<B_32>;
+template class aff3ct::module::CRC_polynomial<B_64>;
 #else
-template class CRC_polynomial<B>;
+template class aff3ct::module::CRC_polynomial<B>;
 #endif
 // ==================================================================================== explicit template instantiation

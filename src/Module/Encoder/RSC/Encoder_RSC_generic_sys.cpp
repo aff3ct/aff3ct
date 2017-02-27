@@ -55,11 +55,11 @@ int Encoder_RSC_generic_sys<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_RSC_generic_sys<B_8>;
-template class Encoder_RSC_generic_sys<B_16>;
-template class Encoder_RSC_generic_sys<B_32>;
-template class Encoder_RSC_generic_sys<B_64>;
+template class aff3ct::module::Encoder_RSC_generic_sys<B_8>;
+template class aff3ct::module::Encoder_RSC_generic_sys<B_16>;
+template class aff3ct::module::Encoder_RSC_generic_sys<B_32>;
+template class aff3ct::module::Encoder_RSC_generic_sys<B_64>;
 #else
-template class Encoder_RSC_generic_sys<B>;
+template class aff3ct::module::Encoder_RSC_generic_sys<B>;
 #endif
 // ==================================================================================== explicit template instantiation

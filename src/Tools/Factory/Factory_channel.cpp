@@ -90,9 +90,9 @@ Channel<R>* Factory_channel<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_channel<R_32>;
-template struct Factory_channel<R_64>;
+template struct aff3ct::tools::Factory_channel<R_32>;
+template struct aff3ct::tools::Factory_channel<R_64>;
 #else
-template struct Factory_channel<R>;
+template struct aff3ct::tools::Factory_channel<R>;
 #endif
 // ==================================================================================== explicit template instantiation
