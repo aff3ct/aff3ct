@@ -14,6 +14,10 @@
 
 #include "SC_Simulation_BFERI.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFERI<B,R,Q>
 ::Simulation_BFERI(const parameters& params)
@@ -41,7 +45,7 @@ Simulation_BFERI<B,R,Q>
 	}
 
 	if (params.simulation.time_report)
-		std::cerr << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
+		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
 
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
@@ -408,7 +412,7 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFERI<B,R,Q>
 ::build_terminal(const int tid)
 {
-	return Factory_terminal<B,R>::build(this->params, this->snr, this->monitor[0], this->t_snr);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, this->monitor[0], this->t_snr);
 }
 
 template <typename B, typename R, typename Q>
@@ -427,7 +431,7 @@ void Simulation_BFERI<B,R,Q>
 		}
 	}
 	else
-		std::cerr << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
+		std::clog << bold_yellow("(WW) Terminal is not allocated: you can't call the temporal report.") << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

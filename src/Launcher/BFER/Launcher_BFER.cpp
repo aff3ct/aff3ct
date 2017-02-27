@@ -6,29 +6,35 @@
 
 #include "Launcher_BFER.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::launcher;
+
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
 : Launcher<B,R,Q>(argc, argv, stream)
 {
-	this->params.simulation .type           = "BFER";
-	this->params.simulation .benchs         = 0;
-	this->params.simulation .benchs_no_ldst = false;
-	this->params.simulation .debug          = false;
-	this->params.simulation .debug_limit    = 0;
-	this->params.simulation .time_report    = false;
-	this->params.simulation .trace_path     = "";
+	this->params.simulation .type             = "BFER";
+	this->params.simulation .benchs           = 0;
+	this->params.simulation .benchs_no_ldst   = false;
+	this->params.simulation .debug            = false;
+	this->params.simulation .debug_limit      = 0;
+	this->params.simulation .time_report      = false;
+	this->params.simulation .trace_path       = "";
 #if !defined(STARPU) && !defined(SYSTEMC)
-	this->params.simulation .n_threads      = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
+	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
-	this->params.code       .coset          = false;
-	this->params.encoder    .type           = "";
-	this->params.encoder    .path           = "";
-	this->params.encoder    .systematic     = true;
-	this->params.monitor    .n_frame_errors = 100;
-	this->params.encoder    .systematic     = true;
-	this->params.demodulator.max            = "MAX";
-	this->params.terminal   .type           = "STD";
+	this->params.code       .coset            = false;
+	this->params.encoder    .type             = "";
+	this->params.encoder    .path             = "";
+	this->params.encoder    .systematic       = true;
+	this->params.monitor    .n_frame_errors   = 100;
+	this->params.monitor    .err_track_enable = false;
+	this->params.monitor    .err_track_revert = false;
+	this->params.monitor    .err_track_path   = "error_tracker";
+	this->params.encoder    .systematic       = true;
+	this->params.demodulator.max              = "MAX";
+	this->params.terminal   .type             = "STD";
 }
 
 template <typename B, typename R, typename Q>
@@ -80,6 +86,18 @@ void Launcher_BFER<B,R,Q>
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
 
+#if !defined(STARPU) && !defined(SYSTEMC)
+	this->opt_args[{"mnt-err-trk"}] =
+		{"",
+		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
+	this->opt_args[{"mnt-err-trk-rev"}] =
+		{"",
+		 "automatically replay the saved frames."};
+	this->opt_args[{"mnt-err-trk-path"}] =
+		{"string",
+		 "base path for the files where the bad frames will be stored or read."};
+#endif
+
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
 		{"string",
@@ -124,6 +142,22 @@ void Launcher_BFER<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
+
+	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
+	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
+	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = this->ar.get_arg({"mnt-err-trk-path"});
+
+	if(this->params.monitor.err_track_revert)
+	{
+		this->params.monitor.err_track_enable = false;
+		this->params.source. type = "USER";
+		this->params.encoder.type = "USER";
+		this->params.channel.type = "USER";
+		this->params.source. path = this->params.monitor.err_track_path + std::string("_$snr.src");
+		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_$snr.enc");
+		this->params.channel.path = this->params.monitor.err_track_path + std::string("_$snr.chn");
+		// the paths are set in the Simulation class
+	}
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	if(this->ar.exist_arg({"term-type"})) this->params.terminal.type = this->ar.get_arg({"term-type"});
@@ -198,6 +232,20 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_monitor();
 
 	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
+
+#if !defined(STARPU) && !defined(SYSTEMC)
+	std::string enable_track = (this->params.monitor.err_track_enable) ? "on" : "off";
+	p.push_back(std::make_pair("Bad frames tracking", enable_track));
+
+	std::string enable_rev_track = (this->params.monitor.err_track_revert) ? "on" : "off";
+	p.push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	if (this->params.monitor.err_track_enable || this->params.monitor.err_track_revert)
+	{
+		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,chn]");
+		p.push_back(std::make_pair("Bad frames base path", path));
+	}
+#endif
 
 	return p;
 }

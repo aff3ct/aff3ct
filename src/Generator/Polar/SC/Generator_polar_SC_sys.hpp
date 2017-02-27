@@ -12,6 +12,10 @@
 
 #include "../../Generator.hpp"
 
+namespace aff3ct
+{
+namespace generator
+{
 class Generator_polar_SC_sys : public Generator
 {
 protected:
@@ -22,11 +26,11 @@ protected:
 
 	const mipp::vector<int>& frozen_bits;
 
-	const std::vector<Pattern_SC_interface*> &patterns;
-	const Pattern_SC_interface &pattern_rate0;
-	const Pattern_SC_interface &pattern_rate1;
+	const std::vector<module::Pattern_SC_interface*> &patterns;
+	const module::Pattern_SC_interface &pattern_rate0;
+	const module::Pattern_SC_interface &pattern_rate1;
 
-	Pattern_parser_polar parser;
+	tools::Pattern_parser_polar parser;
 
 	std::ostream &dec_stream;
 	std::ostream &short_dec_stream;
@@ -47,9 +51,9 @@ public:
 	                       const int& N,
 	                       const float& snr,
 	                       const mipp::vector<int>& frozen_bits,
-	                       const std::vector<Pattern_SC_interface*> &patterns,
-	                       const Pattern_SC_interface &pattern_rate0,
-	                       const Pattern_SC_interface &pattern_rate1,
+	                       const std::vector<module::Pattern_SC_interface*> &patterns,
+	                       const module::Pattern_SC_interface &pattern_rate0,
+	                       const module::Pattern_SC_interface &pattern_rate1,
 	                       std::ostream &dec_stream = std::cout,
 	                       std::ostream &short_dec_stream = std::cout,
 	                       std::ostream &graph_stream = std::cout,
@@ -62,11 +66,13 @@ public:
 	unsigned long get_n_generated_nodes_by_pattern(std::size_t pattern_hash, int graph_depth = -1) const;
 
 private:
-	void recursive_generate_decoder            (const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
-	void recursive_generate_short_decoder_funcs(const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
-	void recursive_generate_short_decoder      (const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
-	void recursive_generate_graph              (const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
-	void recursive_generate_short_graph        (const Binary_node<Pattern_SC_interface>* node_curr, std::ostream &stream);
+	void recursive_generate_decoder            (const tools::Binary_node<module::Pattern_SC_interface>* node_curr, std::ostream &stream);
+	void recursive_generate_short_decoder_funcs(const tools::Binary_node<module::Pattern_SC_interface>* node_curr, std::ostream &stream);
+	void recursive_generate_short_decoder      (const tools::Binary_node<module::Pattern_SC_interface>* node_curr, std::ostream &stream);
+	void recursive_generate_graph              (const tools::Binary_node<module::Pattern_SC_interface>* node_curr, std::ostream &stream);
+	void recursive_generate_short_graph        (const tools::Binary_node<module::Pattern_SC_interface>* node_curr, std::ostream &stream);
 };
+}
+}
 
 #endif /* GENERATOR_POLAR_SC_SYS_ */

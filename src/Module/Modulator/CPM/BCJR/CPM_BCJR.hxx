@@ -9,6 +9,10 @@
 
 #include "CPM_BCJR.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template<typename Q>
 inline Q negative_inf(){return -std::numeric_limits<Q>::max(); }
 
@@ -48,7 +52,7 @@ inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_stat
 		norm_val = MAX(norm_val, metrics[j]);
 
 	for (auto j = 0; j < n_states; j++)
-		metrics[j] = saturate<signed char>(metrics[j] - norm_val, -63, +63);
+		metrics[j] = tools::saturate<signed char>(metrics[j] - norm_val, -63, +63);
 }
 
 template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
@@ -108,8 +112,8 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		{
 			for (int b = 0; b < cpm.n_b_per_s; b++)
 			{
-				const int bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b]; // transition_to_binary what bit state we should have for the given transition and bit position
-				const int sign        = (bit_state == 0) ? 1 : -1; //associated coeff
+				const auto bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b]; // transition_to_binary what bit state we should have for the given transition and bit position
+				const auto sign      = (bit_state == 0) ? 1 : -1; //associated coeff
 				symb_apriori_prob[i * cpm.m_order + tr] += (Q)sign*Ldec_N[i * cpm.n_b_per_s + b]/(Q)2; //match -> add prob else remove
 			}
 		}
@@ -189,10 +193,10 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		for (auto b = 0; b < cpm.n_b_per_s; b++)
 			for (auto tr = 0; tr < cpm.m_order; tr++)
 			{
-				const int bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b]; // bit_state = 0 or 1 ; bit 0 is msb, bit cpm.n_b_per_s-1 is lsb
+				const auto bit_state = cpm.transition_to_binary[tr * cpm.n_b_per_s + b]; // bit_state = 0 or 1 ; bit 0 is msb, bit cpm.n_b_per_s-1 is lsb
 
 				proba_msg_bits[(i*cpm.n_b_per_s+b)*2 + bit_state] = MAX(proba_msg_bits[(i*cpm.n_b_per_s+b)*2 + bit_state],
-				                                                         proba_msg_symb[i*cpm.m_order +tr]);
+				                                                        proba_msg_symb[i*cpm.m_order +tr]);
 			}
 	}
 }
@@ -221,4 +225,6 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	for (auto i = 0; i < (int)Le_N.size(); i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
+}
+}
 }

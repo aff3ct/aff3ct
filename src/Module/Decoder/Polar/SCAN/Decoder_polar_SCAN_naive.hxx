@@ -7,6 +7,10 @@
 
 #include "Decoder_polar_SCAN_naive.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /********************************************************************/
 /** CONSTRUCTOR **/
 /********************************************************************/
@@ -44,7 +48,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
 		if (frozen_bits[i])// if i is a frozen bit		
-			feedback_graph[0][i] = sat_vals<R>().second;
+			feedback_graph[0][i] = tools::sat_vals<R>().second;
 		else		
 			feedback_graph[0][i] = I();
 
@@ -93,8 +97,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 
 			if (frozen_bits[i])// if i is a frozen bit
 			{
-				feedback_graph[0][i] = sat_vals<R>().second;
-				soft_graph    [0][i] = sat_vals<R>().second;
+				feedback_graph[0][i] = tools::sat_vals<R>().second;
+				soft_graph    [0][i] = tools::sat_vals<R>().second;
 			}
 			else
 				feedback_graph[0][i] = I();
@@ -210,4 +214,6 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 		std::cout << std::endl;
 	}
 	std::cout << std::endl << std::endl;
+}
+}
 }

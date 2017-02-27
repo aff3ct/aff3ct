@@ -4,6 +4,8 @@
 
 #include "Scaling_factor_array.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename R>
 Scaling_factor_array<R>
 ::Scaling_factor_array(const int K, const int n_ite) 

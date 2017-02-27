@@ -8,6 +8,10 @@
 
 #include "../../decoder_polar_functions.h"
 
+namespace aff3ct
+{
+namespace module
+{
 // ================================================================================================================ f()
 // ====================================================================================================================
 // ====================================================================================================================
@@ -203,7 +207,7 @@ struct spc_intra
 			auto i = 0;
 			// while (l_a[i] != s_cur_min_abs) i++;
 			while (std::abs(l_a[i]) != s_cur_min_abs) i++;
-			s_a[i] = (s_a[i] == 0) ? bit_init<B>() : 0;
+			s_a[i] = (s_a[i] == 0) ? tools::bit_init<B>() : 0;
 		}
 
 		return (s_prod_sign < 0);
@@ -261,10 +265,12 @@ struct spc_intra <B, R, HI, 0>
 			auto i = 0;
 			// while (l_a[i] != s_cur_min_abs) i++;
 			while (std::abs(l_a[i]) != s_cur_min_abs) i++;
-			s_a[i] = (s_a[i] == 0) ? bit_init<B>() : 0;
+			s_a[i] = (s_a[i] == 0) ? tools::bit_init<B>() : 0;
 		}
 		return (s_prod_sign < 0);
 	}
 };
+}
+}
 
 #endif /* FUNCTIONS_POLAR_INTRA_H_ */

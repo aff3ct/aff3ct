@@ -3,7 +3,11 @@
 
 #include "../Launcher.hpp"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace launcher
+{
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher_BFER : public Launcher<B,R,Q>
 {
 public:
@@ -20,5 +24,7 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder   ();
 	virtual std::vector<std::pair<std::string,std::string>> header_monitor   ();
 };
+}
+}
 
 #endif /* LAUNCHER_BFER_HPP_ */

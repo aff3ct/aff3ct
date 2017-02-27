@@ -9,12 +9,19 @@
 
 #include "../Factory.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename R = float>
 struct Factory_decoder_polar : public Factory
 {
-	static SISO<R>* build_siso(const parameters &params, const mipp::vector<B> &frozen_bits);
+	static module::SISO<R>* build_siso(const parameters &params, const mipp::vector<B> &frozen_bits);
 
-	static Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits, CRC<B> *crc);
+	static module::Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits,
+	                                   module::CRC<B> *crc);
 };
+}
+}
 
 #endif /* FACTORY_DECODER_POLAR_HPP */

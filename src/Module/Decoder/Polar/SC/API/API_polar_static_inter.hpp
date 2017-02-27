@@ -13,6 +13,10 @@
 
 #include "API_polar.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, 
           proto_f_i <R> FI, proto_g_i <B,R> GI, proto_g0_i<R> G0I, proto_h_i <B,R> HI, proto_xo_i<B> XOI>
 class API_polar_static_inter : public API_polar
@@ -208,5 +212,7 @@ public:
 		xo0_inter_intra<B, N_ELMTS, get_n_frames()>::apply(s_b, s_c, n_elmts);
 	}
 };
+}
+}
 
 #endif /* API_POLAR_STATIC_INTER_HPP_ */

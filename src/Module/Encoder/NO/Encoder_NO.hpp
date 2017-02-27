@@ -3,7 +3,11 @@
 
 #include "../Encoder.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class Encoder_NO : public Encoder<B>
 {
 public:
@@ -12,5 +16,7 @@ public:
 
 	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
+}
+}
 
 #endif /* ENCODER_NO_HPP_ */

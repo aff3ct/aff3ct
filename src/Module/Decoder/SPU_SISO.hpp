@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float>
 class SPU_SISO : public SISO_i<R>
 {
 private:
@@ -74,9 +78,17 @@ starpu_codelet SPU_SISO<R>::spu_cl_soft_decode = SPU_SISO<R>::spu_init_cl_soft_d
 
 template <typename R>
 using SISO = SPU_SISO<R>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 using SISO = SISO_i<R>;
+}
+}
 #endif
 
 #endif /* SPU_SISO_HPP_ */

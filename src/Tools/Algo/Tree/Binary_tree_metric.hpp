@@ -10,6 +10,10 @@
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Binary_tree_metric
  *
@@ -56,6 +60,8 @@ public:
 	 */
 	void set_path_metric(R path_metric);
 };
+}
+}
 
 #include "Binary_tree_metric.hxx"
 

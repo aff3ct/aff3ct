@@ -13,6 +13,10 @@
 #include "Pattern_SC_rate1.hpp"
 #include "Pattern_SC_rep.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 constexpr int spc_level = 2;
 
 template <>
@@ -23,7 +27,7 @@ private:
 
 protected:
 	Pattern_SC(const int &N,
-	           const Binary_node<Pattern_SC_interface>* node)
+	           const tools::Binary_node<Pattern_SC_interface>* node)
 	 : Pattern_SC_interface(N, node), level(spc_level)
 	{
 	}
@@ -32,7 +36,7 @@ public:
 	Pattern_SC() : Pattern_SC_interface(), level(spc_level) { }
 
 	virtual Pattern_SC_interface* alloc(const int &N,
-	                                    const Binary_node<Pattern_SC_interface>* node) const
+	                                    const tools::Binary_node<Pattern_SC_interface>* node) const
 	{
 		return new Pattern_SC<pattern_SC_type::SPC>(N, node);
 	}
@@ -80,7 +84,7 @@ public:
 		return stream.str();
 	}
 
-	bool recursive_check_spc(const int reverse_graph_depth, const Binary_node<Pattern_SC_interface>* node_curr) const
+	bool recursive_check_spc(const int reverse_graph_depth, const tools::Binary_node<Pattern_SC_interface>* node_curr) const
 	{
 		if (!node_curr->is_leaf())
 		{
@@ -106,7 +110,7 @@ public:
 	}
 
 	virtual int match(const int &reverse_graph_depth,
-	                  const Binary_node<Pattern_SC_interface>* node_curr) const
+	                  const tools::Binary_node<Pattern_SC_interface>* node_curr) const
 	{
 		assert(reverse_graph_depth > 0);
 
@@ -144,5 +148,7 @@ public:
 
 	virtual bool is_terminal() const { return true; }
 };
+}
+}
 
 #endif /* PATTERN_SC_SPC_FINAL_HPP_ */

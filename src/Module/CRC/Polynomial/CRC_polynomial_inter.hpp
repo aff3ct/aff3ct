@@ -5,7 +5,11 @@
 
 #include "CRC_polynomial.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class CRC_polynomial_inter : public CRC_polynomial<B>
 {
 public:
@@ -22,5 +26,7 @@ protected:
 	                     const int off_out, 
 	                     const int loop_size);
 };
+}
+}
 
 #endif /* CRC_POLYNOMIAL_INTER_HPP_ */

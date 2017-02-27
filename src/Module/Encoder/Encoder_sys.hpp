@@ -10,6 +10,10 @@
 
 #include "Encoder.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Encoder_sys
  *
@@ -18,7 +22,7 @@
  *
  * \tparam B: type of the bits in the encoder.
  */
-template <typename B>
+template <typename B = int>
 class Encoder_sys : public Encoder<B>
 {
 public:
@@ -51,5 +55,7 @@ public:
 	 */
 	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par) = 0;
 };
+}
+}
 
 #endif /* ENCODER_SYS_HPP_ */

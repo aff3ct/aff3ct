@@ -7,6 +7,9 @@
 
 #include "Decoder_turbo_naive_CA_self_corrected.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder_turbo_naive_CA_self_corrected<B,R>
 ::Decoder_turbo_naive_CA_self_corrected(const int& K,

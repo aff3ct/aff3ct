@@ -3,7 +3,11 @@
 
 #include "Scaling_factor.hpp"
 
-template <typename R>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename R = float>
 class Scaling_factor_array : public Scaling_factor<R>
 {
 private:
@@ -15,5 +19,7 @@ public:
 	Scaling_factor_array(const int K, const int n_ite);
 	void operator()(mipp::vector<R> &ext, const int ite);
 };
+}
+}
 
 #endif

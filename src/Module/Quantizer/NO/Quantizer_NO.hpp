@@ -6,7 +6,11 @@
 
 #include "../Quantizer.hpp"
 
-template <typename R, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float, typename Q = int>
 class Quantizer_NO : public Quantizer<R,Q>
 {
 public:
@@ -15,6 +19,8 @@ public:
 
 	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
+}
+}
 
 #endif /* QUANTIZER_NO_HPP_ */
 

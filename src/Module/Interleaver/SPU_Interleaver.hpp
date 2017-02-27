@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename T>
+namespace aff3ct
+{
+namespace module
+{
+template <typename T = int>
 class SPU_Interleaver : public Interleaver_i<T>
 {
 private:
@@ -155,9 +159,17 @@ starpu_codelet SPU_Interleaver<T>::spu_cl_deinterleave = SPU_Interleaver<T>::spu
 
 template <typename T>
 using Interleaver = SPU_Interleaver<T>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename T>
 using Interleaver = Interleaver_i<T>;
+}
+}
 #endif
 
 #endif /* SPU_INTERLEAVER_HPP_ */

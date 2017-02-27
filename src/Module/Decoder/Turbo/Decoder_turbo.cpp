@@ -8,6 +8,9 @@
 
 #include "Decoder_turbo.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder_turbo<B,R>
 ::Decoder_turbo(const int& K,

@@ -6,10 +6,16 @@
 
 #include "../Factory.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 struct Factory_frozenbits_generator : public Factory
 {
 	static Frozenbits_generator<B>* build(const parameters &params);
 };
+}
+}
 
 #endif /* FACTORY_FROZENBITS_GENERATOR_HPP */

@@ -6,6 +6,9 @@
 
 #include "Quantizer_tricky.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
 ::Quantizer_tricky(const int N, const R& sigma, const int n_frames, const std::string name)
@@ -17,15 +20,27 @@ Quantizer_tricky<R,Q>
 {
 }
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Quantizer_tricky<float,float>
 ::Quantizer_tricky(const int N, const float& sigma, const int n_frames, const std::string name)
 : Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Quantizer_tricky<double,double>
 ::Quantizer_tricky(const int N, const double& sigma, const int n_frames, const std::string name)
 : Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+}
+}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
@@ -39,17 +54,29 @@ Quantizer_tricky<R,Q>
 	assert(sizeof(Q) * 8 >= (unsigned) saturation_pos);
 }
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Quantizer_tricky<float,float>
 ::Quantizer_tricky(const int N, const short& saturation_pos, const float& sigma, const int n_frames, 
                    const std::string name)
 : Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Quantizer_tricky<double,double>
 ::Quantizer_tricky(const int N, const short& saturation_pos, const double& sigma, const int n_frames, 
                    const std::string name)
 : Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+}
+}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
@@ -62,15 +89,27 @@ Quantizer_tricky<R,Q>
 {
 }
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Quantizer_tricky<float,float>
 ::Quantizer_tricky(const int N, const float min_max, const float& sigma, const int n_frames, const std::string name)
 : Quantizer<float,float>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+}
+}
 
+namespace aff3ct
+{
+namespace module
+{
 template <>
 Quantizer_tricky<double,double>
 ::Quantizer_tricky(const int N, const float min_max, const double& sigma, const int n_frames, const std::string name)
 : Quantizer<double,double>(N, n_frames, name), val_max(0), val_min(0), delta_inv(0.f), sigma(sigma) {}
+}
+}
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>

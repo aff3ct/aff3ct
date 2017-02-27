@@ -13,6 +13,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Quantizer_i
  *
@@ -24,7 +28,7 @@
  * Please use Quantizer for inheritance (instead of Quantizer_i).
  * If Q is a floating-point representation then the Quantizer does nothing more than a cast.
  */
-template <typename R, typename Q>
+template <typename R = float, typename Q = int>
 class Quantizer_i : public Module
 {
 protected:
@@ -58,6 +62,8 @@ public:
 	 */
 	virtual void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
 };
+}
+}
 
 #include "SC_Quantizer.hpp"
 

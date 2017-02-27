@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 class SC_SISO;
 
-template <typename R>
+template <typename R = float>
 class SC_SISO_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_SISO_module);
@@ -86,6 +90,8 @@ public:
 
 template <typename R>
 using SISO = SC_SISO<R>;
+}
+}
 #else
 #include "SPU_SISO.hpp"
 #endif

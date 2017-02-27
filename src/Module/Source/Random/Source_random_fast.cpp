@@ -2,6 +2,8 @@
 
 #include "Source_random_fast.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Source_random_fast<B>
 ::Source_random_fast(const int K, const int seed, const int n_frames, const std::string name)

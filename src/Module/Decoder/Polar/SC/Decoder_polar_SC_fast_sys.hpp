@@ -5,10 +5,17 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
+#include "Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp"
+
 #include "../decoder_polar_functions.h"
 #include "../../Decoder.hpp"
 
-template <typename B, typename R, class API_polar>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float,
+          class API_polar = API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
 class Decoder_polar_SC_fast_sys : public Decoder<B,R>
 {
 protected:
@@ -34,6 +41,8 @@ protected:
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);
 };
+}
+}
 
 #include "Decoder_polar_SC_fast_sys.hxx"
 

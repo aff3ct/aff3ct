@@ -6,7 +6,11 @@
 
 #include "Encoder_RSC_sys.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class Encoder_RSC3_CPE_sys : public Encoder_RSC_sys<B>
 {
 public:
@@ -18,5 +22,7 @@ protected:
 	int inner_encode(const int bit_sys, int &state);
 	int tail_bit_sys(const int &state             );
 };
+}
+}
 
 #endif // ENCODER_RSC3_CPE_SYS_HPP_

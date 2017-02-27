@@ -8,6 +8,10 @@
 #ifndef TERMINAL_HPP_
 #define TERMINAL_HPP_
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Terminal
  *
@@ -53,5 +57,7 @@ public:
 	 */
 	virtual void final_report(std::ostream &stream) = 0;
 };
+}
+}
 
 #endif /* TERMINAL_HPP_ */

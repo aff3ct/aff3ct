@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B, typename R>
 class SC_Monitor;
 
-template <typename B>
+template <typename B = int, typename R = float>
 class SC_Monitor_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Monitor_module);
@@ -25,12 +29,12 @@ public:
 	tlm_utils::simple_target_socket<SC_Monitor_module> s_in2;
 
 private:
-	SC_Monitor<B> &monitor;
+	SC_Monitor<B,R> &monitor;
 	mipp::vector<B> V_K;
 	mipp::vector<B> U_K;
 
 public:
-	SC_Monitor_module(SC_Monitor<B> &monitor,
+	SC_Monitor_module(SC_Monitor<B,R> &monitor,
 	                  const sc_core::sc_module_name name = "SC_Monitor_module")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"),
 	  monitor(monitor),
@@ -70,23 +74,23 @@ private:
 	}
 };
 
-template <typename B>
-class SC_Monitor : public Monitor_i<B>
+template <typename B, typename R>
+class SC_Monitor : public Monitor_i<B,R>
 {
-	friend SC_Monitor_module<B>;
+	friend SC_Monitor_module<B,R>;
 
 public:
-	SC_Monitor_module<B> *module;
+	SC_Monitor_module<B,R> *module;
 
 public:
 	SC_Monitor(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_i<B>(K, N, n_frames, name), module(nullptr) {}
+	: Monitor_i<B,R>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (module != nullptr) { delete module; module = nullptr; }};
 
 	virtual void set_n_frames(const int n_frames)
 	{
-		Monitor_i<B>::set_n_frames(n_frames);
+		Monitor_i<B,R>::set_n_frames(n_frames);
 
 		if (module != nullptr)
 			module->resize_buffers();
@@ -94,12 +98,14 @@ public:
 
 	void create_sc_module()
 	{
-		this->module = new SC_Monitor_module<B>(*this, this->name.c_str());
+		this->module = new SC_Monitor_module<B,R>(*this, this->name.c_str());
 	}
 };
 
-template <typename B>
-using Monitor = SC_Monitor<B>;
+template <typename B, typename R>
+using Monitor = SC_Monitor<B,R>;
+}
+}
 #else
 #include "SPU_Monitor.hpp"
 #endif

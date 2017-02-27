@@ -2,6 +2,8 @@
 
 #include "Scaling_factor_seq.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename R>
 Scaling_factor_seq<R>
 ::Scaling_factor_seq(const int K, const int n_ite) 

@@ -2,6 +2,8 @@
 
 #include "Channel_NO.hpp"
 
+using namespace aff3ct::module;
+
 template <typename R>
 Channel_NO<R>
 ::Channel_NO(const int N, const int n_frames, const std::string name)

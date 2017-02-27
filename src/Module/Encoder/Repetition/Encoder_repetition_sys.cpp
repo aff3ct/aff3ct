@@ -4,6 +4,8 @@
 
 #include "Encoder_repetition_sys.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_repetition_sys<B>
 ::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const std::string name)

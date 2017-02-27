@@ -16,6 +16,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Interleaver_i
  *
@@ -25,7 +29,7 @@
  *
  * Please use Interleaver for inheritance (instead of Interleaver_i)
  */
-template <typename T>
+template <typename T = int>
 class Interleaver_i : public Module
 {
 protected:
@@ -227,6 +231,8 @@ private:
 		}
 	}
 };
+}
+}
 
 #include "SC_Interleaver.hpp"
 

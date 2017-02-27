@@ -6,7 +6,11 @@
 
 #include "../../Decoder_SISO.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_RSC_BCJR : public Decoder_SISO<B,R>
 {
 protected:
@@ -39,6 +43,8 @@ protected:
 
 	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };
+}
+}
 
 #include "Decoder_RSC_BCJR.hxx"
 

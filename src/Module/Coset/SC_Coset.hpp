@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename D>
 class SC_Coset;
 
@@ -108,6 +112,8 @@ public:
 
 template <typename B, typename D>
 using Coset = SC_Coset<B,D>;
+}
+}
 #else
 #include "SPU_Coset.hpp"
 #endif

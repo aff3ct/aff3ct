@@ -19,6 +19,10 @@
 
 #include "STD_Simulation_BFER.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)
@@ -87,6 +91,30 @@ Simulation_BFER<B,R,Q>
 		std::exit(-1);
 	}
 #endif
+
+	// check, if the error tracker is enable, if the given file name is good
+	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert) &&
+	     !Monitor_reduction<B,R>::check_path(this->params.monitor.err_track_path))
+	{
+		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
+		          << bold_red(this->params.monitor.err_track_path)
+		          << bold_red("\" and please create yourself the needed directory.")
+		          << std::endl;
+		std::exit(-1);
+	}
+
+	if (this->params.monitor.err_track_revert)
+	{
+		if (this->params.simulation.n_threads != 1)
+			std::clog << bold_yellow("(WW) Multi-threading detected with error tracking revert feature!")
+			          << bold_yellow(" Each thread will play the same frames. Please run with one thread.")
+			          << std::endl;
+
+		if (this->params.simulation.inter_frame_level != 1)
+			std::clog << bold_yellow("(WW) Inter frame level different than 1 detected with error tracking revert feature!")
+			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
+			          << std::endl;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -99,6 +127,20 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::_launch()
 {
+	if (this->params.monitor.err_track_revert)
+	{
+		std::string path_src, path_enc, path_noise, path_itl;
+		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
+		                                          path_src, path_enc, path_noise, path_itl);
+
+		// dirty hack to override simulation params
+		parameters *params_writable = const_cast<parameters*>(&this->params);
+
+		params_writable->source. path = path_src;
+		params_writable->encoder.path = path_enc;
+		params_writable->channel.path = path_noise;
+	}
+
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::Monte_Carlo_method, this, tid);
@@ -115,6 +157,9 @@ void Simulation_BFER<B,R,Q>
 		time_reduction(true);
 		terminal->final_report(std::cout);
 	}
+
+	if (this->params.monitor.err_track_enable)
+		monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr);
 }
 
 template <typename B, typename R, typename Q>
@@ -172,20 +217,20 @@ void Simulation_BFER<B,R,Q>
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction_mpi<B>(simu->params.code.K,
-		                                                 simu->params.code.N,
-		                                                 simu->params.monitor.n_frame_errors,
-		                                                 simu->monitor,
-		                                                 std::this_thread::get_id(),
-		                                                 simu->params.simulation.mpi_comm_freq,
-		                                                 n_fra);
+		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K,
+		                                                   simu->params.code.N,
+		                                                   simu->params.monitor.n_frame_errors,
+		                                                   simu->monitor,
+		                                                   std::this_thread::get_id(),
+		                                                   simu->params.simulation.mpi_comm_freq,
+		                                                   n_fra);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B>(simu->params.code.K,
-		                                             simu->params.code.N,
-		                                             simu->params.monitor.n_frame_errors,
-		                                             simu->monitor,
-		                                             n_fra);
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
+		                                               simu->params.code.N + tail,
+		                                               simu->params.monitor.n_frame_errors,
+		                                               simu->monitor,
+		                                               n_fra);
 #endif
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal();
@@ -359,7 +404,11 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
+		if (simu->params.monitor.err_track_enable)
+			simu->monitor[tid]->check_and_track_errors(simu->U_K [tid], simu->V_K [tid], simu->X_N1[tid],
+			                                           simu->X_N3[tid], simu->Y_N1[tid]);
+		else
+			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations
@@ -682,7 +731,11 @@ void Simulation_BFER<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
+		if (simu->params.monitor.err_track_enable)
+			simu->monitor[0]->check_and_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0],
+			                                         simu->X_N3[0], simu->Y_N1[0]);
+		else
+			simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations

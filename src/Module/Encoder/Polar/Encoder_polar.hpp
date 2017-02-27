@@ -6,7 +6,11 @@
 
 #include "../Encoder.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class Encoder_polar : public Encoder<B>
 {
 protected:
@@ -33,5 +37,7 @@ protected:
 	void frame_encode(const mipp::vector<B>& U_N, mipp::vector<B>& X_N, const int &i_frame = 0);
 	void convert(const mipp::vector<B>& U_K, mipp::vector<B>& U_N);
 };
+}
+}
 
 #endif // ENCODER_POLAR_HPP_

@@ -6,10 +6,16 @@
 
 #include "../Factory.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 struct Factory_coset_bit : public Factory
 {
-	static Coset<B,B>* build(const parameters &params);
+	static module::Coset<B,B>* build(const parameters &params);
 };
+}
+}
 
 #endif /* FACTORY_COSET_BIT_HPP */

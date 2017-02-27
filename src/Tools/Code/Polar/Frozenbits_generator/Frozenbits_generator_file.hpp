@@ -6,7 +6,11 @@
 
 #include "Frozenbits_generator.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 class Frozenbits_generator_file : public Frozenbits_generator<B>
 {
 private:
@@ -23,7 +27,8 @@ public:
 protected:
 	void evaluate();
 	bool load_channels_file(const std::string& filename);
-
 };
+}
+}
 
 #endif /* FROZENBITS_GENERATOR_FILE_HPP_ */

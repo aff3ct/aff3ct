@@ -6,7 +6,11 @@
 
 #include "../Encoder_sys.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class Encoder_repetition_sys : public Encoder_sys<B>
 {
 protected:
@@ -22,5 +26,7 @@ public:
 	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
 	virtual void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
+}
+}
 
 #endif // ENCODER_REPETITION_SYS_HPP_

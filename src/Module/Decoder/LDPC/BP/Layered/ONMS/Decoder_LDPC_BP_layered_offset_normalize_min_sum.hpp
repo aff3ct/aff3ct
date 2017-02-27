@@ -5,7 +5,11 @@
 
 #include "../Decoder_LDPC_BP_layered.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_layered_offset_normalize_min_sum : public Decoder_LDPC_BP_layered<B,R>
 {
 private:
@@ -15,7 +19,7 @@ private:
 
 public:
 	Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
-	                                                 const AList_reader &alist_data,
+	                                                 const tools::AList_reader &alist_data,
 	                                                 const float normalize_factor = 1.f,
 	                                                 const float offset = 0.f,
 	                                                 const bool enable_syndrome = true,
@@ -26,5 +30,7 @@ public:
 protected:
 	void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches);
 };
+}
+}
 
 #endif /* DECODER_LDPC_BP_LAYERED_MIN_SUM_OFFSET_HPP_ */

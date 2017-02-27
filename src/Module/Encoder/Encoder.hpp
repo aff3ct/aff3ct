@@ -14,6 +14,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Encoder_i
  *
@@ -23,7 +27,7 @@
  *
  * Please use Encoder for inheritance (instead of Encoder_i)
  */
-template <typename B>
+template <typename B = int>
 class Encoder_i : public Module
 {
 protected:
@@ -69,6 +73,8 @@ public:
 	 */
 	virtual int tail_length() const { return 0; }
 };
+}
+}
 
 #include "SC_Encoder.hpp"
 

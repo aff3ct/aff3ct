@@ -5,19 +5,21 @@
 
 #include "Channel_additive_user.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R>
 Channel_additive_user<R>
 ::Channel_additive_user(const int N, const std::string filename, const int n_frames, const std::string name)
 : Channel<R>(N, n_frames, name), noise(), noise_counter(0)
 {
-	std::ifstream file(filename.c_str(), std::ios::in);
-
+	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.is_open())
 	{
 		int n_fra = 0, fra_size = 0;
 
-		file >> n_fra;
-		file >> fra_size;
+		file.read((char*)&n_fra,    sizeof(int));
+		file.read((char*)&fra_size, sizeof(int));
 
 		assert(n_fra > 0 && fra_size > 0);
 
@@ -28,12 +30,7 @@ Channel_additive_user<R>
 		if (fra_size == this->N)
 		{
 			for (auto i = 0; i < n_fra; i++)
-				for (auto j = 0; j < fra_size; j++)
-				{
-					R val;
-					file >> val;
-					this->noise[i][j] = val;
-				}
+				file.read(reinterpret_cast<char*>(&this->noise[i][0]), fra_size*sizeof(R));
 		}
 		else
 		{

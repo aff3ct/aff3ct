@@ -15,6 +15,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Coset_i
  *
@@ -62,6 +66,8 @@ public:
 	 */
 	virtual void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data) = 0;
 };
+}
+}
 
 #include "SC_Coset.hpp"
 

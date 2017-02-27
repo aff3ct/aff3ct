@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, typename Q>
 class SC_Modulator;
 
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 class SC_Modulator_module_modulator : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Modulator_module_modulator);
@@ -478,6 +482,8 @@ public:
 
 template <typename B, typename R, typename Q>
 using Modulator = SC_Modulator<B,R,Q>;
+}
+}
 #else
 #include "SPU_Modulator.hpp"
 #endif

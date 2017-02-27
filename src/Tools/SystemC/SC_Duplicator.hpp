@@ -10,6 +10,10 @@
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
+namespace aff3ct
+{
+namespace tools
+{
 class SC_Duplicator : sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Duplicator);
@@ -34,6 +38,8 @@ private:
 		s_out2->b_transport(trans, zero_time);
 	}
 };
+}
+}
 
 #endif /* SC_DUPLICATOR_HPP_ */
 

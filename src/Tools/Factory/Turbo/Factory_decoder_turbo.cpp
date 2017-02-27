@@ -8,6 +8,9 @@
 
 #include "Factory_decoder_turbo.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_turbo<B,R>
 ::build(const parameters          &params,

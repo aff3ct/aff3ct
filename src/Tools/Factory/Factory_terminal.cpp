@@ -3,19 +3,22 @@
 
 #include "Factory_terminal.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Terminal* Factory_terminal<B,R>
 ::build(const parameters &params,
         const R snr_s,
         const R snr_b,
-        const Monitor<B> *monitor,
+        const Monitor<B,R> *monitor,
         const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
         const std::chrono::nanoseconds *d_decod_total)
 {
 	Terminal *terminal = nullptr;
 
 	// build a terminal to display the BER/FER
-	if(params.terminal.type == "LEGACY")
+	if (params.terminal.type == "LEGACY")
 		terminal = new Terminal_BFER_legacy<B,R>(snr_b, *monitor, t_snr);
 	else if (params.terminal.type == "STD")
 		terminal = new Terminal_BFER<B,R>(snr_s, snr_b, *monitor, t_snr, d_decod_total);

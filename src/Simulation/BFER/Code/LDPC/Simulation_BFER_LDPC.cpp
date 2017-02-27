@@ -10,6 +10,10 @@
 
 #include "Simulation_BFER_LDPC.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFER_LDPC<B,R,Q>
 ::Simulation_BFER_LDPC(const parameters& params)

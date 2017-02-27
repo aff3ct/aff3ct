@@ -21,6 +21,10 @@
 
 #include "Simulation_BFER.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+
 template <typename B, typename R, typename Q>
 Simulation_BFER_i<B,R,Q>
 ::Simulation_BFER_i(const parameters& params)
@@ -132,7 +136,7 @@ void Simulation_BFER_i<B,R,Q>
 		this->release_objects();
 
 		// exit simulation (double [ctrl+c])
-		if (Monitor<B>::is_over())
+		if (Monitor<B,R>::is_over())
 			break;
 	}
 
@@ -245,10 +249,10 @@ Coset<B,B>* Simulation_BFER_i<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Monitor<B>* Simulation_BFER_i<B,R,Q>
+Monitor<B,R>* Simulation_BFER_i<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor<B>::build(params);
+	return Factory_monitor<B,R>::build(params);
 }
 
 // ==================================================================================== explicit template instantiation

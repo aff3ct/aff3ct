@@ -8,11 +8,17 @@
 
 #include "../Factory.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 struct Factory_encoder_RSC : public Factory
 {
-	static Encoder_RSC_sys<B>* build(const parameters &params, const int n_frames = 1,
-	                                 std::ostream &stream = std::cout);
+	static module::Encoder_RSC_sys<B>* build(const parameters &params, const int n_frames = 1,
+	                                         std::ostream &stream = std::cout);
 };
+}
+}
 
 #endif /* FACTORY_ENCODER_RSC_HPP */

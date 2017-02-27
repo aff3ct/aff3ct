@@ -15,6 +15,10 @@
 
 #include "Launcher.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
+
 template <typename B, typename R, typename Q>
 Launcher<B,R,Q>
 ::Launcher(const int argc, const char **argv, std::ostream &stream)
@@ -121,7 +125,7 @@ void Launcher<B,R,Q>
 		{"positive_int",
 		 "enable multi-threaded mode and specify the number of threads."};
 #else
-	this->opt_args[{"sim-conc-tasks", "t"}] =
+	opt_args[{"sim-conc-tasks", "t"}] =
 		{"positive_int",
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
@@ -135,10 +139,10 @@ void Launcher<B,R,Q>
 		 "the simulation precision in bit.",
 		 "8, 16, 32, 64"};
 #endif
-	this->opt_args[{"sim-inter-lvl"}] =
+	opt_args[{"sim-inter-lvl"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process in each modules."};
-	this->opt_args[{"sim-seed"}] =
+	opt_args[{"sim-seed"}] =
 		{"positive_int",
 		 "seed used in the simulation to initialize the pseudo random generators in general."};
 #ifdef ENABLE_MPI
@@ -221,7 +225,7 @@ void Launcher<B,R,Q>
 		 "turn off the division by sigma square in the demodulation."};
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH";
+	std::string chan_avail = "NO, USER, ADD_USER, AWGN, AWGN_FAST, RAYLEIGH";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
 #endif 
@@ -276,12 +280,12 @@ void Launcher<B,R,Q>
 		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
 
 	// --------------------------------------------------------------------------------------------------------- other
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
 	opt_args[{"help", "h"}] =
 		{"",
 		 "print this help."};
+	opt_args[{"version", "v"}] =
+		{"",
+		 "print informations about the version of the code."};
 }
 
 template <typename B, typename R, typename Q>
@@ -302,7 +306,7 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
 	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
 #ifndef STARPU
-	if (ar.exist_arg({"sim-threads", "t"}) && ar.exist_arg({"sim-threads", "t"}) > 0)
+	if (ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
 	if(ar.exist_arg({"sim-threads",    "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",    "t"});
 #else
 	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
@@ -400,8 +404,8 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	if(ar.exist_arg({"chn-type"}))    params.channel.type         = ar.get_arg({"chn-type"});
-	if(ar.exist_arg({"chn-path"}))    params.channel.path         = ar.get_arg({"chn-path"});
+	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
+	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"   });
 	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
 
 	// ----------------------------------------------------------------------------------------------------- quantizer
@@ -423,14 +427,10 @@ void Launcher<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
+int Launcher<B,R,Q>
 ::read_arguments()
 {
 	this->build_args();
-
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
 
 	auto display_help = true;
 	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
@@ -463,11 +463,13 @@ void Launcher<B,R,Q>
 		arg_grp.push_back({"term", "Terminal parameter(s)"   });
 
 		ar.print_usage(arg_grp);
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	if (!ar.check_arguments())
-		std::exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
+
+	return 0;
 }
 
 template <typename B, typename R, typename Q>
@@ -763,7 +765,8 @@ void Launcher<B,R,Q>
 		simu = nullptr;
 	}
 
-	this->read_arguments();
+	if (this->read_arguments())
+		return;
 
 	// write the command and he curve name in the PyBER format
 	if (!params.simulation.pyber.empty() && params.simulation.mpi_rank == 0)
@@ -795,7 +798,7 @@ void Launcher<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Launcher<B_8,R_8,Q_8>;
+template class Launcher<B_8, R_8, Q_8 >;
 template class Launcher<B_16,R_16,Q_16>;
 template class Launcher<B_32,R_32,Q_32>;
 template class Launcher<B_64,R_64,Q_64>;

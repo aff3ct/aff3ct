@@ -12,6 +12,10 @@
 #include <atomic>
 #include <condition_variable>
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Barrier
  *
@@ -46,5 +50,7 @@ public:
 	 */
 	void operator()(const int tid = -1);
 };
+}
+}
 
 #endif /* BARRIER_HPP */ 

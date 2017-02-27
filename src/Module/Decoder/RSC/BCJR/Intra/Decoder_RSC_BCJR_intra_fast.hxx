@@ -2,6 +2,10 @@
 
 #include "Decoder_RSC_BCJR_intra_fast.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, proto_max_i<R> MAX>
 Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_intra_fast(const int &K,
@@ -267,4 +271,6 @@ void Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 		const auto r_ext = r_post - &sys[i];
 		r_ext.store(&ext[i]);
 	}
+}
+}
 }

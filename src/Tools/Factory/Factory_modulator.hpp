@@ -6,10 +6,16 @@
 
 #include "Factory.hpp"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename R = float, typename Q = R>
 struct Factory_modulator : public Factory
 {
-	static Modulator<B,R,Q>* build(const parameters &params, const float sigma);
+	static module::Modulator<B,R,Q>* build(const parameters &params, const float sigma);
 };
+}
+}
 
 #endif /* FACTORY_MODULATOR_HPP */
