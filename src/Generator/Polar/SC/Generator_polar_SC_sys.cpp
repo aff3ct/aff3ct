@@ -205,7 +205,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_decoder(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_decoder(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	n_nodes_before_compression++;
 
@@ -227,7 +227,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_graph(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_graph(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	string key = "";
 
@@ -291,7 +291,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_graph(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_graph(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	if (subtree_occurences_cpy[node_curr->get_c()->get_key()])
 	{
@@ -334,7 +334,7 @@ void Generator_polar_SC_sys
 }
 
 void Generator_polar_SC_sys
-::recursive_generate_short_decoder_funcs(const tools::Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
+::recursive_generate_short_decoder_funcs(const Binary_node<Pattern_SC_interface>* node_curr, ostream &stream)
 {
 	if (!node_curr->is_leaf()) // stop condition
 	{
