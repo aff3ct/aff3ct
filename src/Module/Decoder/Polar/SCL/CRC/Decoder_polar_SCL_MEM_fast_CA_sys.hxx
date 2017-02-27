@@ -71,3 +71,4 @@ int Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 	return n_valid_paths;
 }
 }
+}

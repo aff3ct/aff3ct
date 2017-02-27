@@ -24,8 +24,8 @@ private:
 
 public:
 	Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& max_L, const mipp::vector<B>& frozen_bits,
-	                               CRC<B>& crc, const int n_frames = 1,
-	                               const std::string name = "Decoder_polar_ASCL_MEM_fast_CA_sys");
+	                                   CRC<B>& crc, const int n_frames = 1,
+	                                   const std::string name = "Decoder_polar_ASCL_MEM_fast_CA_sys");
 	virtual ~Decoder_polar_ASCL_MEM_fast_CA_sys(){};
 
 	void load       (const mipp::vector<R>& Y_N);

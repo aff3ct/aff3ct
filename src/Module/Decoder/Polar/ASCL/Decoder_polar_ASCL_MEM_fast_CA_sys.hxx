@@ -9,7 +9,7 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L_max, const mipp::vector<B>& frozen_bits,
                                      CRC<B>& crc, const int n_frames, const std::string name)
 : Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc, n_frames, name),
-  sc_decoder                                  (K, N       , frozen_bits,      n_frames, name),
+  sc_decoder                                      (K, N       , frozen_bits,      n_frames, name),
   L_max(L_max), is_full_adaptive(true)
 {
 	assert(L_max > 0);
