@@ -77,11 +77,11 @@ void Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_8,Q_8>;
-template class Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_16,Q_16>;
-template class Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_32,Q_32>;
-template class Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_64,Q_64>;
+template class aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_8,Q_8>;
+template class aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_16,Q_16>;
+template class aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_32,Q_32>;
+template class aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum<B_64,Q_64>;
 #else
-template class Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,Q>;
+template class aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

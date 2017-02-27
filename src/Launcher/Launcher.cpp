@@ -228,7 +228,7 @@ void Launcher<B,R,Q>
 		 "turn off the division by sigma square in the demodulation."};
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH";
+	std::string chan_avail = "NO, USER, ADD_USER, AWGN, AWGN_FAST, RAYLEIGH";
 #ifdef CHANNEL_GSL
 	chan_avail += ", AWGN_GSL";
 #endif 
@@ -807,11 +807,11 @@ void Launcher<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Launcher<B_8, R_8, Q_8 >;
-template class Launcher<B_16,R_16,Q_16>;
-template class Launcher<B_32,R_32,Q_32>;
-template class Launcher<B_64,R_64,Q_64>;
+template class aff3ct::launcher::Launcher<B_8, R_8, Q_8 >;
+template class aff3ct::launcher::Launcher<B_16,R_16,Q_16>;
+template class aff3ct::launcher::Launcher<B_32,R_32,Q_32>;
+template class aff3ct::launcher::Launcher<B_64,R_64,Q_64>;
 #else
-template class Launcher<B,R,Q>;
+template class aff3ct::launcher::Launcher<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

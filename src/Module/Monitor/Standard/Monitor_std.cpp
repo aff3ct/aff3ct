@@ -157,7 +157,7 @@ void Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::dump_bad_frames(const std::string& base_path, const float snr)
+::dump_bad_frames(const std::string& base_path, const float snr, mipp::vector<int> itl_pi)
 {
 	std::cerr << bold_red("\"dump_bad_frames\" is not defined in \"Monitor_std\", please call this method on ")
 	          << bold_red("\"Monitor_reduction\" instead.")
@@ -190,11 +190,11 @@ const std::vector<mipp::vector<R>> Monitor_std<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Monitor_std<B_8 ,R_8>;
-template class Monitor_std<B_16,R_16>;
-template class Monitor_std<B_32,R_32>;
-template class Monitor_std<B_64,R_64>;
+template class aff3ct::module::Monitor_std<B_8 ,R_8>;
+template class aff3ct::module::Monitor_std<B_16,R_16>;
+template class aff3ct::module::Monitor_std<B_32,R_32>;
+template class aff3ct::module::Monitor_std<B_64,R_64>;
 #else
-template class Monitor_std<B,R>;
+template class aff3ct::module::Monitor_std<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

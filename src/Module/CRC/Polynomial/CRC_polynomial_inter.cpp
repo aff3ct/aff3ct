@@ -76,11 +76,11 @@ void CRC_polynomial_inter<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class CRC_polynomial_inter<B_8>;
-template class CRC_polynomial_inter<B_16>;
-template class CRC_polynomial_inter<B_32>;
-template class CRC_polynomial_inter<B_64>;
+template class aff3ct::module::CRC_polynomial_inter<B_8>;
+template class aff3ct::module::CRC_polynomial_inter<B_16>;
+template class aff3ct::module::CRC_polynomial_inter<B_32>;
+template class aff3ct::module::CRC_polynomial_inter<B_64>;
 #else
-template class CRC_polynomial_inter<B>;
+template class aff3ct::module::CRC_polynomial_inter<B>;
 #endif
 // ==================================================================================== explicit template instantiation

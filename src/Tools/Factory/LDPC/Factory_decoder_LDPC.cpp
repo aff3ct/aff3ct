@@ -85,11 +85,11 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_decoder_LDPC<B_8,Q_8>;
-template struct Factory_decoder_LDPC<B_16,Q_16>;
-template struct Factory_decoder_LDPC<B_32,Q_32>;
-template struct Factory_decoder_LDPC<B_64,Q_64>;
+template struct aff3ct::tools::Factory_decoder_LDPC<B_8,Q_8>;
+template struct aff3ct::tools::Factory_decoder_LDPC<B_16,Q_16>;
+template struct aff3ct::tools::Factory_decoder_LDPC<B_32,Q_32>;
+template struct aff3ct::tools::Factory_decoder_LDPC<B_64,Q_64>;
 #else
-template struct Factory_decoder_LDPC<B,Q>;
+template struct aff3ct::tools::Factory_decoder_LDPC<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

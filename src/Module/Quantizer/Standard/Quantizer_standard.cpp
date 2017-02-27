@@ -104,11 +104,11 @@ void Quantizer_standard<R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Quantizer_standard<R_8,Q_8>;
-template class Quantizer_standard<R_16,Q_16>;
-template class Quantizer_standard<R_32,Q_32>;
-template class Quantizer_standard<R_64,Q_64>;
+template class aff3ct::module::Quantizer_standard<R_8,Q_8>;
+template class aff3ct::module::Quantizer_standard<R_16,Q_16>;
+template class aff3ct::module::Quantizer_standard<R_32,Q_32>;
+template class aff3ct::module::Quantizer_standard<R_64,Q_64>;
 #else
-template class Quantizer_standard<R,Q>;
+template class aff3ct::module::Quantizer_standard<R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

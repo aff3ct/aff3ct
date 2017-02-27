@@ -142,11 +142,11 @@ int Decoder_RA<B, R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Decoder_RA<B_8,Q_8>;
-template class Decoder_RA<B_16,Q_16>;
-template class Decoder_RA<B_32,Q_32>;
-template class Decoder_RA<B_64,Q_64>;
+template class aff3ct::module::Decoder_RA<B_8,Q_8>;
+template class aff3ct::module::Decoder_RA<B_16,Q_16>;
+template class aff3ct::module::Decoder_RA<B_32,Q_32>;
+template class aff3ct::module::Decoder_RA<B_64,Q_64>;
 #else
-template class Decoder_RA<B,Q>;
+template class aff3ct::module::Decoder_RA<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

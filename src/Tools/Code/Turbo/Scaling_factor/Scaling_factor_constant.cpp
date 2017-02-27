@@ -24,11 +24,11 @@ void Scaling_factor_constant<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Scaling_factor_constant<Q_8>;
-template class Scaling_factor_constant<Q_16>;
-template class Scaling_factor_constant<Q_32>;
-template class Scaling_factor_constant<Q_64>;
+template class aff3ct::tools::Scaling_factor_constant<Q_8>;
+template class aff3ct::tools::Scaling_factor_constant<Q_16>;
+template class aff3ct::tools::Scaling_factor_constant<Q_32>;
+template class aff3ct::tools::Scaling_factor_constant<Q_64>;
 #else
-template class Scaling_factor_constant<Q>;
+template class aff3ct::tools::Scaling_factor_constant<Q>;
 #endif
 // ==================================================================================== explicit template instantiation

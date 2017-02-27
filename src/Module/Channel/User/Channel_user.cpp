@@ -1,16 +1,16 @@
+
 #include <fstream>
 #include <cassert>
 
 #include "Tools/Display/bash_tools.h"
-
-#include "Channel_additive_user.hpp"
+#include "Channel_user.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename R>
-Channel_additive_user<R>
-::Channel_additive_user(const int N, const std::string filename, const int n_frames, const std::string name)
+Channel_user<R>
+::Channel_user(const int N, const std::string filename, const int n_frames, const std::string name)
 : Channel<R>(N, n_frames, name), noise(), noise_counter(0)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary);
@@ -52,13 +52,13 @@ Channel_additive_user<R>
 }
 
 template <typename R>
-Channel_additive_user<R>
-::~Channel_additive_user()
+Channel_user<R>
+::~Channel_user()
 {
 }
 
 template <typename R>
-void Channel_additive_user<R>
+void Channel_user<R>
 ::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
 	assert((int)X_N.size() == this->N * this->n_frames);
@@ -66,7 +66,7 @@ void Channel_additive_user<R>
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		for (auto i = 0; i < this->N; i++)
-			Y_N[f * this->N +i] = X_N[f * this->N +i] + this->noise[this->noise_counter][i];
+			Y_N[f * this->N +i] = this->noise[this->noise_counter][i];
 
 		this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
 	}
@@ -75,9 +75,9 @@ void Channel_additive_user<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Channel_additive_user<R_32>;
-template class aff3ct::module::Channel_additive_user<R_64>;
+template class aff3ct::module::Channel_user<R_32>;
+template class aff3ct::module::Channel_user<R_64>;
 #else
-template class aff3ct::module::Channel_additive_user<R>;
+template class aff3ct::module::Channel_user<R>;
 #endif
 // ==================================================================================== explicit template instantiation

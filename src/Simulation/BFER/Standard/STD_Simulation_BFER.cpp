@@ -129,9 +129,9 @@ void Simulation_BFER<B,R,Q>
 {
 	if (this->params.monitor.err_track_revert)
 	{
-		std::string path_src, path_enc, path_noise;
+		std::string path_src, path_enc, path_noise, path_itl;
 		Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
-		                                          path_src, path_enc, path_noise);
+		                                          path_src, path_enc, path_noise, path_itl);
 
 		// dirty hack to override simulation params
 		parameters *params_writable = const_cast<parameters*>(&this->params);
@@ -1026,12 +1026,12 @@ Terminal* Simulation_BFER<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Simulation_BFER<B_8,R_8,Q_8>;
-template class Simulation_BFER<B_16,R_16,Q_16>;
-template class Simulation_BFER<B_32,R_32,Q_32>;
-template class Simulation_BFER<B_64,R_64,Q_64>;
+template class aff3ct::simulation::Simulation_BFER<B_8,R_8,Q_8>;
+template class aff3ct::simulation::Simulation_BFER<B_16,R_16,Q_16>;
+template class aff3ct::simulation::Simulation_BFER<B_32,R_32,Q_32>;
+template class aff3ct::simulation::Simulation_BFER<B_64,R_64,Q_64>;
 #else
-template class Simulation_BFER<B,R,Q>;
+template class aff3ct::simulation::Simulation_BFER<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
 

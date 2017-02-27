@@ -245,11 +245,11 @@ void Terminal_BFER<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Terminal_BFER<B_8,R_8>;
-template class Terminal_BFER<B_16,R_16>;
-template class Terminal_BFER<B_32,R_32>;
-template class Terminal_BFER<B_64,R_64>;
+template class aff3ct::tools::Terminal_BFER<B_8,R_8>;
+template class aff3ct::tools::Terminal_BFER<B_16,R_16>;
+template class aff3ct::tools::Terminal_BFER<B_32,R_32>;
+template class aff3ct::tools::Terminal_BFER<B_64,R_64>;
 #else
-template class Terminal_BFER<B,R>;
+template class aff3ct::tools::Terminal_BFER<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

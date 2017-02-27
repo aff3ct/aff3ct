@@ -35,10 +35,10 @@ void Channel_AWGN_MKL_LR<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Channel_AWGN_MKL_LR<R_32>;
-template class Channel_AWGN_MKL_LR<R_64>;
+template class aff3ct::module::Channel_AWGN_MKL_LR<R_32>;
+template class aff3ct::module::Channel_AWGN_MKL_LR<R_64>;
 #else
-template class Channel_AWGN_MKL_LR<R>;
+template class aff3ct::module::Channel_AWGN_MKL_LR<R>;
 #endif
 // ==================================================================================== explicit template instantiation
 

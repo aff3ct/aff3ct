@@ -27,11 +27,11 @@ void Coset_bit<B,D>::apply(const mipp::vector<B>& ref, const mipp::vector<D> &in
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Coset_bit<B_8,  B_8 >;
-template class Coset_bit<B_16, B_16>;
-template class Coset_bit<B_32, B_32>;
-template class Coset_bit<B_64, B_64>;
+template class aff3ct::module::Coset_bit<B_8,  B_8 >;
+template class aff3ct::module::Coset_bit<B_16, B_16>;
+template class aff3ct::module::Coset_bit<B_32, B_32>;
+template class aff3ct::module::Coset_bit<B_64, B_64>;
 #else
-template class Coset_bit<B,B>;
+template class aff3ct::module::Coset_bit<B,B>;
 #endif
 // ==================================================================================== explicit template instantiation

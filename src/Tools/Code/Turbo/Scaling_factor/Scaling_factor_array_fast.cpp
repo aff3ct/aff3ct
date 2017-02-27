@@ -28,11 +28,11 @@ void Scaling_factor_array_fast<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Scaling_factor_array_fast<Q_8>;
-template class Scaling_factor_array_fast<Q_16>;
-template class Scaling_factor_array_fast<Q_32>;
-template class Scaling_factor_array_fast<Q_64>;
+template class aff3ct::tools::Scaling_factor_array_fast<Q_8>;
+template class aff3ct::tools::Scaling_factor_array_fast<Q_16>;
+template class aff3ct::tools::Scaling_factor_array_fast<Q_32>;
+template class aff3ct::tools::Scaling_factor_array_fast<Q_64>;
 #else
-template class Scaling_factor_array_fast<Q>;
+template class aff3ct::tools::Scaling_factor_array_fast<Q>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -178,10 +178,10 @@ void Quantizer_fast<float,signed char>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Quantizer_fast<R_8,Q_8>;
-template class Quantizer_fast<R_16,Q_16>;
-template class Quantizer_fast<R_32,Q_32>;
+template class aff3ct::module::Quantizer_fast<R_8,Q_8>;
+template class aff3ct::module::Quantizer_fast<R_16,Q_16>;
+template class aff3ct::module::Quantizer_fast<R_32,Q_32>;
 #else
-template class Quantizer_fast<R,Q>;
+template class aff3ct::module::Quantizer_fast<R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -70,11 +70,11 @@ void Encoder_polar<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_polar<B_8>;
-template class Encoder_polar<B_16>;
-template class Encoder_polar<B_32>;
-template class Encoder_polar<B_64>;
+template class aff3ct::module::Encoder_polar<B_8>;
+template class aff3ct::module::Encoder_polar<B_16>;
+template class aff3ct::module::Encoder_polar<B_32>;
+template class aff3ct::module::Encoder_polar<B_64>;
 #else
-template class Encoder_polar<B>;
+template class aff3ct::module::Encoder_polar<B>;
 #endif
 // ==================================================================================== explicit template instantiation
