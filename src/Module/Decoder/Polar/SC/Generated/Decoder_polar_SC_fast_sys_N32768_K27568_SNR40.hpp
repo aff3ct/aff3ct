@@ -1054,7 +1054,7 @@ public:
 	{
 	}
 
-	void hard_decode()
+	void _hard_decode()
 	{
 		using namespace tools;
 

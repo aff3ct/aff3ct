@@ -53,11 +53,11 @@ public:
 	virtual ~Decoder_polar_SC_fast_sys();
 
 protected:
-	virtual void load       (const mipp::vector<R>& Y_N);
-	virtual void hard_decode(                          );
-	virtual void store      (      mipp::vector<B>& V_K) const;
-	virtual void store_fast (      mipp::vector<B>& V_N) const;
-	virtual void unpack     (      mipp::vector<B>& V_N) const;
+	virtual void load        (const mipp::vector<R>& Y_N);
+	virtual void _hard_decode(                          );
+	virtual void store       (      mipp::vector<B>& V_K) const;
+	virtual void store_fast  (      mipp::vector<B>& V_N) const;
+	virtual void unpack      (      mipp::vector<B>& V_N) const;
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
 };

@@ -102,7 +102,7 @@ public:
 	}
 };
 
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 using Monitor = SC_Monitor<B,R>;
 }
 }

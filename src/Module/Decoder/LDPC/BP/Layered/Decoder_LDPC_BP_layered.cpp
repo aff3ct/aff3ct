@@ -89,7 +89,7 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::hard_decode()
+::_hard_decode()
 {
 	// actual decoding
 	this->BP_decode();

@@ -229,7 +229,7 @@ public:
 	}
 };
 
-template <typename T>
+template <typename T = int>
 using Interleaver = SC_Interleaver<T>;
 }
 }

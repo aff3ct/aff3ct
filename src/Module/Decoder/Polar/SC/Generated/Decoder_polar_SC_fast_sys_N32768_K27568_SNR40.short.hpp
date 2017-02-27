@@ -2769,7 +2769,7 @@ public:
 		API_polar::template spc< 2048>(s, l, off_l+    0,                           off_s+    0,  2048);
 	}
 
-	void hard_decode()
+	void _hard_decode()
 	{
 		using namespace tools;
 

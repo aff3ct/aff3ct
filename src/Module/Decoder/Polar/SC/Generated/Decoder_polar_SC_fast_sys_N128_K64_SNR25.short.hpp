@@ -125,7 +125,7 @@ public:
 		API_polar::template h  < 8>(s, l, off_l+  0,                   off_s+  0,  8);
 	}
 
-	void hard_decode()
+	void _hard_decode()
 	{
 		using namespace tools;
 

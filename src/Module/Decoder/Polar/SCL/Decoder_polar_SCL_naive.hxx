@@ -74,7 +74,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::hard_decode()
+::_hard_decode()
 {
 	std::set<int> last_active_paths;
 	int cur_path;

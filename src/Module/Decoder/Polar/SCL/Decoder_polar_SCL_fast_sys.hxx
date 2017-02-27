@@ -176,7 +176,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::hard_decode()
+::_hard_decode()
 {
 	int first_node_id = 0, off_l = 0, off_s = 0;
 	recursive_decode(off_l, off_s, m, first_node_id);

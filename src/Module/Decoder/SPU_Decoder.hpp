@@ -85,7 +85,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 using Decoder = Decoder_i<B,R>;
 }
 }

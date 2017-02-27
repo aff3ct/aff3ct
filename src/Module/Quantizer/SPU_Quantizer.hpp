@@ -84,7 +84,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R, typename Q>
+template <typename R = float, typename Q = int>
 using Quantizer = Quantizer_i<R,Q>;
 }
 }

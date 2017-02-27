@@ -28,7 +28,7 @@ public:
 	virtual ~Decoder_turbo_naive();
 
 protected:
-	virtual void hard_decode();
+	virtual void _hard_decode();
 };
 }
 }

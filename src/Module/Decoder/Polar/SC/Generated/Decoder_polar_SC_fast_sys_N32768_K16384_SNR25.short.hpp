@@ -2897,7 +2897,7 @@ public:
 		API_polar::template xo <  512>(s,    off_s+    0, off_s+  512,              off_s+    0,   512);
 	}
 
-	void hard_decode()
+	void _hard_decode()
 	{
 		using namespace tools;
 

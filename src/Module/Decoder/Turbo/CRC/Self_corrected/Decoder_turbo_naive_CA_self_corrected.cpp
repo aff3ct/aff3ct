@@ -39,7 +39,7 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_naive_CA_self_corrected<B,R>
-::hard_decode()
+::_hard_decode()
 {
 	constexpr auto start_check_crc = 2;
 

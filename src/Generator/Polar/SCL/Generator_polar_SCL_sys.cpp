@@ -73,7 +73,7 @@ void Generator_polar_SCL_sys
 	stream1 << tab << "}"                                                                                 << endl;
 	stream1                                                                                               << endl;
 
-	stream2 << tab << "void hard_decode()"                                                                << endl;
+	stream2 << tab << "void _hard_decode()"                                                               << endl;
 	stream2 << tab << "{"                                                                                 << endl;
 	stream2 << tab << tab << "using namespace tools;"                                                     << endl;
 	stream2                                                                                               << endl;

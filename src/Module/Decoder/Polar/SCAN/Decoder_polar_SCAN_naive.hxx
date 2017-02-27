@@ -114,7 +114,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::hard_decode()
+::_hard_decode()
 {
 	this->decode();
 }

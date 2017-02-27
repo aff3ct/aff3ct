@@ -37,10 +37,10 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::hard_decode()
+::_hard_decode()
 {
 	this->L = 1;
-	sc_decoder.hard_decode();
+	sc_decoder._hard_decode();
 
 	// check the CRC
 	auto crc_decode_result = this->crc_check(sc_decoder.s);
@@ -65,7 +65,7 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 		{
 			this->L = this->L_max;
 			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::load(sc_decoder.l);
-			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::hard_decode();
+			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_hard_decode();
 		}
 	}
 }

@@ -39,11 +39,11 @@ public:
 
 	virtual ~Decoder_polar_ASCL_fast_CA_sys(){};
 
-	void load       (const mipp::vector<R>& Y_N);
-	void hard_decode(                          );
-	void store      (mipp::vector<B>& V_N      ) const;
-	void unpack     (mipp::vector<B>& V_N      ) const;
-	void store_fast (mipp::vector<B>& V        ) const;
+	void load        (const mipp::vector<R>& Y_N);
+	void _hard_decode(                          );
+	void store       (mipp::vector<B>& V_N      ) const;
+	void unpack      (mipp::vector<B>& V_N      ) const;
+	void store_fast  (mipp::vector<B>& V        ) const;
 };
 }
 }

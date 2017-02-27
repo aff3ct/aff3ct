@@ -168,7 +168,7 @@ public:
 	}
 };
 
-template <typename R>
+template <typename R = float>
 using Channel = SC_Channel<R>;
 }
 }

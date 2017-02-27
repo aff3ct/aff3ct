@@ -2017,7 +2017,7 @@ public:
 		API_polar::template h  < 256>(s, l, off_l+    0,                           off_s+    0,  256);
 	}
 
-	void hard_decode()
+	void _hard_decode()
 	{
 		using namespace tools;
 

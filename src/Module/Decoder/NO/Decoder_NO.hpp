@@ -1,15 +1,14 @@
 #ifndef DECODER_NO_HPP_
 #define DECODER_NO_HPP_
 
-#include "../Decoder.hpp"
-#include "../SISO.hpp"
+#include "../Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_NO : public Decoder<B,R>, public SISO<R>
+class Decoder_NO : public Decoder_SISO<B,R>
 {
 private:
 	mipp::vector<R> Y_N;
@@ -21,9 +20,9 @@ public:
 	void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
 protected:
-	void load       (const mipp::vector<R>& Y_N);
-	void hard_decode(                          );
-	void store      (      mipp::vector<B>& V_K) const;
+	void load        (const mipp::vector<R>& Y_N);
+	void _hard_decode(                          );
+	void store       (      mipp::vector<B>& V_K) const;
 
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };

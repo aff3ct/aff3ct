@@ -468,7 +468,7 @@ public:
 		API_polar::template spc<  32>(s, l, off_l+   0,                       off_s+   0,   32);
 	}
 
-	void hard_decode()
+	void _hard_decode()
 	{
 		using namespace tools;
 

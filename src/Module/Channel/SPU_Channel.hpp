@@ -139,7 +139,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename R>
+template <typename R = float>
 using Channel = Channel_i<R>;
 }
 }

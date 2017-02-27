@@ -93,7 +93,7 @@ public:
 	}
 };
 
-template <typename B>
+template <typename B = int>
 using CRC = SC_CRC<B>;
 }
 }
