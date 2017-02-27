@@ -6,7 +6,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_max_i<R> MAX>
+template <typename B, typename R, tools::proto_max_i<R> MAX>
 Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::Decoder_RSC_BCJR_intra_std(const int &K,
                              const std::vector<std::vector<int>> &trellis,
@@ -19,13 +19,13 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
 	assert(K % 8 == 0);
 }
 
-template <typename B, typename R, proto_max_i<R> MAX>
+template <typename B, typename R, tools::proto_max_i<R> MAX>
 Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::~Decoder_RSC_BCJR_intra_std()
 {
 }
 
-template <typename B, typename R, proto_max_i<R> MAX>
+template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
 {
@@ -47,7 +47,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 	}
 }
 
-template <typename B, typename R, proto_max_i<R> MAX>
+template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::compute_alpha()
 {
@@ -89,7 +89,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 	}
 }
 
-template <typename B, typename R, proto_max_i<R> MAX>
+template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {

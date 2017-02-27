@@ -4,7 +4,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_generic_std_json(const int &K, 
                                         const std::vector<std::vector<int>> &trellis,
@@ -18,13 +18,13 @@ Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 {
 }
 
-template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 ::~Decoder_RSC_BCJR_seq_generic_std_json()
 {
 }
 
-template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 ::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
 {
@@ -126,7 +126,7 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 	}
 }
 
-template <typename B, typename R, typename RD, proto_max<R> MAX1, proto_max<RD> MAX2>
+template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {

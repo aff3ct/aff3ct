@@ -13,7 +13,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, typename RD = float,
-          proto_max<R> MAX1 = tools::max, proto_max<RD> MAX2 = tools::max>
+          tools::proto_max<R> MAX1 = tools::max, tools::proto_max<RD> MAX2 = tools::max>
 class Decoder_RSC_BCJR_seq_generic_std_json : public Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 {
 private:
