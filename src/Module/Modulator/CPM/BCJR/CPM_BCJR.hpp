@@ -5,7 +5,11 @@
 #include "Tools/Math/max.h"
 #include "../CPM_parameters.hpp"
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+namespace aff3ct
+{
+namespace module
+{
+template <typename SIN = int, typename SOUT = int, typename Q = float, proto_max<Q> MAX = tools::max_star>
 class CPM_BCJR
 {
 protected:
@@ -37,6 +41,8 @@ private:
 	                                    mipp::vector<Q> &Le_N  ); // extrinsic information processing from bit probabilities
 	                                                              // and CPM a priori LLR
 };
+}
+}
 
 #include "CPM_BCJR.hxx"
 

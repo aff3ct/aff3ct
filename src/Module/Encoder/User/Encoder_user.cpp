@@ -1,10 +1,12 @@
+#include <cassert>
 #include <fstream>
 
 #include "Tools/Display/bash_tools.h"
 
 #include "Encoder_user.hpp"
 
-#include <cassert>
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_user<B>

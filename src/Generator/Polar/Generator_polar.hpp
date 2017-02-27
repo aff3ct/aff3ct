@@ -11,6 +11,10 @@
 
 #include "../Generator.hpp"
 
+namespace aff3ct
+{
+namespace generator
+{
 class Generator_polar : public Generator
 {
 protected:
@@ -21,11 +25,11 @@ protected:
 
 	const mipp::vector<int>& frozen_bits;
 
-	const std::vector<Pattern_polar_i*> &patterns;
-	const Pattern_polar_i &pattern_rate0;
-	const Pattern_polar_i &pattern_rate1;
+	const std::vector<tools::Pattern_polar_i*> &patterns;
+	const tools::Pattern_polar_i &pattern_rate0;
+	const tools::Pattern_polar_i &pattern_rate1;
 
-	Pattern_polar_parser<int> parser;
+	tools::Pattern_polar_parser<int> parser;
 
 	std::string mother_class_name;
 	std::string MOTHER_CLASS_NAME;
@@ -51,9 +55,9 @@ public:
 	                const int& N,
 	                const float& snr,
 	                const mipp::vector<int>& frozen_bits,
-	                const std::vector<Pattern_polar_i*> &patterns,
-	                const Pattern_polar_i &pattern_rate0,
-	                const Pattern_polar_i &pattern_rate1,
+	                const std::vector<tools::Pattern_polar_i*> &patterns,
+	                const tools::Pattern_polar_i &pattern_rate0,
+	                const tools::Pattern_polar_i &pattern_rate1,
 	                std::string mother_class_name,
 	                std::string MOTHER_CLASS_NAME,
 	                std::ostream &dec_stream         = std::cout,
@@ -77,13 +81,15 @@ protected:
 	                                         std::ostream &stream2) = 0;
 	virtual void generate_class_footer(      std::ostream &stream)  = 0;
 
-	virtual void recursive_generate_decoder      (const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream) = 0;
-	virtual void recursive_generate_short_decoder(const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream) = 0;
+	virtual void recursive_generate_decoder      (const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream) = 0;
+	virtual void recursive_generate_short_decoder(const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream) = 0;
 
 private:
-	void recursive_generate_short_decoder_funcs(const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream);
-	void recursive_generate_graph              (const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream);
-	void recursive_generate_short_graph        (const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream);
+	void recursive_generate_short_decoder_funcs(const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream);
+	void recursive_generate_graph              (const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream);
+	void recursive_generate_short_graph        (const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream);
 };
+}
+}
 
 #endif /* GENERATOR_POLAR_SYS_ */

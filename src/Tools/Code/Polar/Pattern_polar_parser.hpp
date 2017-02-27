@@ -17,12 +17,16 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Pattern_parser_polar
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
  *        cuts when possible.
  */
-template <typename B>
+template <typename B = int>
 class Pattern_polar_parser
 {
 protected:
@@ -117,6 +121,8 @@ private:
 	void generate_nodes_indexes             (const Binary_node<Pattern_polar_i>* node_curr);
 	void recursive_deallocate_nodes_patterns(      Binary_node<Pattern_polar_i>* node_curr);
 };
+}
+}
 
 #include "Pattern_polar_parser.hxx"
 

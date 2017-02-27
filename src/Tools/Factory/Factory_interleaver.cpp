@@ -9,6 +9,9 @@
 
 #include "Factory_interleaver.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>
 ::build(const parameters &params, const int &size, const int seed)

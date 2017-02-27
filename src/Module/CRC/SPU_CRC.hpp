@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class SPU_CRC : public CRC_i<B>
 {
 private:
@@ -68,9 +72,17 @@ starpu_codelet SPU_CRC<B>::spu_cl_build = SPU_CRC<B>::spu_init_cl_build();
 
 template <typename B>
 using CRC = SPU_CRC<B>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 using CRC = CRC_i<B>;
+}
+}
 #endif
 
 #endif /* SPU_CRC_HPP_ */

@@ -9,7 +9,11 @@
 
 #include "../Modulator.hpp"
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float, typename Q = R, proto_max<Q> MAX = tools::max_star>
 class Modulator_user : public Modulator<B,R,Q>
 {
 private:
@@ -33,6 +37,8 @@ public:
 
 	int get_buffer_size_after_modulation(const int N);
 };
+}
+}
 
 #include "Modulator_user.hxx"
 

@@ -5,7 +5,11 @@
 
 #include "../Decoder_turbo_fast.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_turbo_fast_CA : public Decoder_turbo_fast<B,R>
 {
 protected:
@@ -18,7 +22,7 @@ public:
 	                      const Interleaver<short> &pi,
 	                      SISO<R> &siso_n,
 	                      SISO<R> &siso_i,
-	                      Scaling_factor<R> &scaling_factor,
+	                      tools::Scaling_factor<R> &scaling_factor,
 	                      CRC<B> &crc,
 	                      const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_fast_CA();
@@ -26,5 +30,7 @@ public:
 protected:
 	virtual void hard_decode();
 };
+}
+}
 
 #endif /* DECODER_TURBO_FAST_CA_HPP_ */

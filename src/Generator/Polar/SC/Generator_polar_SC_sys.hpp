@@ -11,6 +11,10 @@
 
 #include "../Generator_polar.hpp"
 
+namespace aff3ct
+{
+namespace generator
+{
 class Generator_polar_SC_sys : public Generator_polar
 {
 public:
@@ -18,9 +22,9 @@ public:
 	                       const int& N,
 	                       const float& snr,
 	                       const mipp::vector<int>& frozen_bits,
-	                       const std::vector<Pattern_polar_i*> &patterns,
-	                       const Pattern_polar_i &pattern_rate0,
-	                       const Pattern_polar_i &pattern_rate1,
+	                       const std::vector<tools::Pattern_polar_i*> &patterns,
+	                       const tools::Pattern_polar_i &pattern_rate0,
+	                       const tools::Pattern_polar_i &pattern_rate1,
 	                       std::ostream &dec_stream         = std::cout,
 	                       std::ostream &short_dec_stream   = std::cout,
 	                       std::ostream &graph_stream       = std::cout,
@@ -34,8 +38,10 @@ protected:
 	                                 std::ostream &stream2);
 	void generate_class_footer(      std::ostream &stream);
 
-	void recursive_generate_decoder      (const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream);
-	void recursive_generate_short_decoder(const Binary_node<Pattern_polar_i>* node_curr, std::ostream &stream);
+	void recursive_generate_decoder      (const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream);
+	void recursive_generate_short_decoder(const tools::Binary_node<tools::Pattern_polar_i>* node_curr, std::ostream &stream);
 };
+}
+}
 
 #endif /* GENERATOR_POLAR_SC_SYS_ */

@@ -50,7 +50,8 @@ _aff3ct() {
 		      --dmod-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type   \
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber     \
-		      --sim-no-colors"
+		      --sim-no-colors --mnt-err-trk --mnt-err-trk-rev                 \
+		      --mnt-err-trk-path"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -189,7 +190,7 @@ _aff3ct() {
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-		--crc-rate)
+		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
@@ -266,7 +267,7 @@ _aff3ct() {
 
 		--cde-awgn-fb-path | --dec-gen-path | --sim-pb-path | --itl-path | \
 		--mod-const-path | --src-path | --enc-path | --chn-path |          \
-		--cde-alist-path | --sim-trace-path ) 
+		--cde-alist-path | --sim-trace-path | --mnt-err-trk-path) 
 			_filedir
 			;;
 		

@@ -3,7 +3,11 @@
 
 #include "../Interleaver.hpp"
 
-template <typename T>
+namespace aff3ct
+{
+namespace module
+{
+template <typename T = int>
 class Interleaver_NO : public Interleaver<T>
 {
 public:
@@ -17,5 +21,7 @@ protected:
 			this->pi_inv[i] = this->pi[i] = i;
 	}
 };
+}
+}
 
 #endif	/* INTERLEAVER_NO_HPP */

@@ -2,6 +2,8 @@
 
 #include "Encoder_NO.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_NO<B>
 ::Encoder_NO(const int K, const int N, const int n_frames, const std::string name)

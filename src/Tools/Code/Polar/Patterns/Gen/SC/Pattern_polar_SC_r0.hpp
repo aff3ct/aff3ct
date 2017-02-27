@@ -3,6 +3,10 @@
 
 #include "../../Pattern_polar_r0.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 class Pattern_polar_SC_r0 : public Pattern_polar_r0
 {
 protected:
@@ -38,5 +42,7 @@ public:
 		return "";
 	}
 };
+}
+}
 
 #endif /* PATTERN_POLAR_SC_RATE_0_HPP_ */

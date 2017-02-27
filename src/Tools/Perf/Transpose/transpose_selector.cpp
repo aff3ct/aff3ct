@@ -1,5 +1,3 @@
-#include "transpose_selector.h"
-
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
@@ -13,7 +11,9 @@
 #include "transpose_NEON.h"
 #endif
 
-bool char_transpose(const signed char *src, signed char *dst, int n)
+#include "transpose_selector.h"
+
+bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int n)
 {
 	bool is_transposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
@@ -46,7 +46,7 @@ bool char_transpose(const signed char *src, signed char *dst, int n)
 	return is_transposed;
 }
 
-bool char_itranspose(const signed char *src, signed char *dst, int n)
+bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, int n)
 {
 	bool is_itransposed = false;
 #if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)

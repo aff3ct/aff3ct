@@ -5,7 +5,11 @@
 
 #include "Channel_AWGN_MKL_LLR.hpp"
 
-template <typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float>
 class Channel_AWGN_MKL_LR : public Channel_AWGN_MKL_LLR<R>
 {
 public:
@@ -15,6 +19,8 @@ public:
 
 	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
+}
+}
 
 #endif // CHANNEL_AWGN_MKL_LR_HPP_
 

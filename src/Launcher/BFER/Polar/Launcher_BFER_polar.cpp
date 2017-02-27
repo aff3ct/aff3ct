@@ -9,6 +9,11 @@
 
 #include "Launcher_BFER_polar.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::simulation;
+using namespace aff3ct::launcher;
+using namespace aff3ct::module;
+
 template <typename B, typename R, typename Q>
 Launcher_BFER_polar<B,R,Q>
 ::Launcher_BFER_polar(const int argc, const char **argv, std::ostream &stream)

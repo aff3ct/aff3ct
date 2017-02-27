@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename T>
 class SC_Interleaver;
 
-template <typename T>
+template <typename T = int>
 class SC_Interleaver_module_interleaver : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Interleaver_module_interleaver);
@@ -227,6 +231,8 @@ public:
 
 template <typename T>
 using Interleaver = SC_Interleaver<T>;
+}
+}
 #else
 #include "SPU_Interleaver.hpp"
 #endif

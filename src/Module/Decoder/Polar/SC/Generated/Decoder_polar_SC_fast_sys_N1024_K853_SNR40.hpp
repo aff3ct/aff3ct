@@ -5,6 +5,10 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 static const char Decoder_polar_SC_fast_sys_fb_1024_853_40[1024] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 
@@ -60,6 +64,8 @@ public:
 
 	void hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -272,4 +278,6 @@ public:
 		API_polar::template xo <512>(s,       0+   0,    0+ 512,               0+   0, 512);
 	}
 };
+}
+}
 #endif

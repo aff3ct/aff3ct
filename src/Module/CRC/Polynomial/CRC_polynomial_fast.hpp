@@ -5,7 +5,11 @@
 
 #include "CRC_polynomial.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class CRC_polynomial_fast : public CRC_polynomial<B>
 {
 protected:
@@ -26,5 +30,7 @@ private:
 	inline unsigned compute_crc_v2(const void* data, const int n_bits);
 	inline unsigned compute_crc_v3(const void* data, const int n_bits);
 };
+}
+}
 
 #endif /* CRC_POLYNOMIAL_FAST_HPP_ */

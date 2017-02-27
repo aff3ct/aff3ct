@@ -3,7 +3,11 @@
 
 #include "../Launcher_BFER.hpp"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace launcher
+{
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher_BFER_uncoded : public Launcher_BFER<B,R,Q>
 {
 public:
@@ -13,7 +17,9 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
-	virtual Simulation* build_simu();
+	virtual simulation::Simulation* build_simu();
 };
+}
+}
 
 #endif /* LAUNCHER_BFER_UNCODED_HPP_ */

@@ -2,6 +2,9 @@
 
 #include "Factory_encoder_repetition.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 Encoder_sys<B>* Factory_encoder_repetition<B>
 ::build(const parameters &params)

@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class SPU_Encoder : public Encoder_i<B>
 {
 private:
@@ -73,9 +77,17 @@ starpu_codelet SPU_Encoder<B>::spu_cl_encode = SPU_Encoder<B>::spu_init_cl_encod
 
 template <typename B>
 using Encoder = SPU_Encoder<B>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 using Encoder = Encoder_i<B>;
+}
+}
 #endif
 
 #endif /* SPU_ENCODER_HPP_ */

@@ -4,6 +4,8 @@
 
 #include "Encoder_RA.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const std::string name)

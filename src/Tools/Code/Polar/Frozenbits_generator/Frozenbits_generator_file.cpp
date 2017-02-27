@@ -12,6 +12,8 @@
 
 #include "Frozenbits_generator_file.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename B>
 Frozenbits_generator_file<B>
 ::Frozenbits_generator_file(const int K, const int N, const std::string filename)

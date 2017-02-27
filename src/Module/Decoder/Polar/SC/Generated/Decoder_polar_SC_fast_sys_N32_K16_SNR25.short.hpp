@@ -5,6 +5,10 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 static const char Decoder_polar_SC_fast_sys_fb_32_16_25[32] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -31,6 +35,8 @@ public:
 	__attribute__((always_inline))
 	inline void re3(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -41,6 +47,8 @@ public:
 	__attribute__((always_inline))
 	inline void s3(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -51,6 +59,8 @@ public:
 	__attribute__((always_inline))
 	inline void re3s3(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -63,6 +73,8 @@ public:
 
 	void hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -79,4 +91,6 @@ public:
 		API_polar::template xo <16>(s,     0+ 0,  0+16,         0+ 0, 16);
 	}
 };
+}
+}
 #endif

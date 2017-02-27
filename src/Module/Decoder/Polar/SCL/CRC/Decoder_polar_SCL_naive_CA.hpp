@@ -1,11 +1,15 @@
 #ifndef DECODER_POLAR_SCL_NAIVE_CA_
 #define DECODER_POLAR_SCL_NAIVE_CA_
 
-#include "../../../../CRC/CRC.hpp"
+#include "Module/CRC/CRC.hpp"
 
 #include "../Decoder_polar_SCL_naive.hpp"
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float, proto_f<R> F = f_LLR, proto_g<B,R> G = g_LLR>
 class Decoder_polar_SCL_naive_CA : public Decoder_polar_SCL_naive<B,R,F,G>
 {
 protected:
@@ -21,6 +25,8 @@ public:
 protected:
 	virtual void select_best_path();
 };
+}
+}
 
 #include "Decoder_polar_SCL_naive_CA.hxx"
 

@@ -8,7 +8,11 @@
 #include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Contents_SC
 {
 public:
@@ -27,7 +31,7 @@ protected:
 	const int m; // graph depth
 
 	const mipp::vector<B> &frozen_bits;
-	Binary_tree<Contents_SC<B,R>> polar_tree;
+	tools::Binary_tree<Contents_SC<B,R>> polar_tree;
 
 public:
 	Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames = 1,
@@ -40,12 +44,14 @@ protected:
 	virtual void store      (      mipp::vector<B>& V_K) const;
 
 private:
-	void recursive_allocate_nodes_contents  (      Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size                     );
-	void recursive_initialize_frozen_bits   (const Binary_node<Contents_SC<B,R>>* node_curr, const mipp::vector<B>& frozen_bits        );
-	void recursive_decode                   (const Binary_node<Contents_SC<B,R>>* node_curr                                            );
-	void recursive_store                    (const Binary_node<Contents_SC<B,R>>* node_curr,       mipp::vector<B>& V_K,         int &k) const;
-	void recursive_deallocate_nodes_contents(      Binary_node<Contents_SC<B,R>>* node_curr                                            );
+	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size                     );
+	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SC<B,R>>* node_curr, const mipp::vector<B>& frozen_bits        );
+	void recursive_decode                   (const tools::Binary_node<Contents_SC<B,R>>* node_curr                                            );
+	void recursive_store                    (const tools::Binary_node<Contents_SC<B,R>>* node_curr,       mipp::vector<B>& V_K,         int &k) const;
+	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_SC<B,R>>* node_curr                                            );
 };
+}
+}
 
 #include "Decoder_polar_SC_naive.hxx"
 

@@ -5,6 +5,8 @@
 
 #include "Decoder_RA.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B, typename R>
 Decoder_RA<B, R>
 ::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const int n_frames,

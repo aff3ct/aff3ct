@@ -9,6 +9,9 @@ using namespace std;
 
 #include "Generator_polar.hpp"
 
+using namespace aff3ct::generator;
+using namespace aff3ct::tools;
+
 Generator_polar
 ::Generator_polar(const int& K,
                   const int& N,
@@ -105,6 +108,10 @@ void Generator_polar
 	dec_common1                                                                                               << endl;
 	dec_common1 << "#include \"../" << mother_class_name << ".hpp\""                                          << endl;
 	dec_common1                                                                                               << endl;
+	dec_common1 << "namespace aff3ct"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
+	dec_common1 << "namespace module"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
 	dec_common1 << "static const char " << fbits_name << "[" << N << "] = {"                                  << endl;
 	dec_common1 << fbits.str() << "};"                                                                        << endl;
 	dec_common1                                                                                               << endl;
@@ -113,6 +120,8 @@ void Generator_polar
 	this->recursive_generate_decoder(parser.get_polar_tree()->get_root(), dec        );
 	this->generate_class_footer     (dec_common3                                     );
 
+	dec_common3 << "}"      << endl;
+	dec_common3 << "}"      << endl;
 	dec_common3 << "#endif" << endl;
 
 	dec_stream << dec_common1.str();
@@ -357,17 +366,21 @@ void Generator_polar
 			std::string h = node_curr->get_c()->apply_h("", "off_l", "off_s");
 			if (!h.empty())
 			{
-				stream << tab << tab << "auto &l = this->l;" << endl;
-				stream << tab << tab << "auto &s = this->s;" << endl;
-				stream                                      << endl;
+				stream << tab << tab << "using namespace tools;" << endl;
+				stream                                           << endl;
+				stream << tab << tab << "auto &l = this->l;"     << endl;
+				stream << tab << tab << "auto &s = this->s;"     << endl;
+				stream                                           << endl;
 				stream << tab << tab << h;
 			}
 		}
 		else
 		{
-			stream << tab << tab << "auto &l = this->l;" << endl;
-			stream << tab << tab << "auto &s = this->s;" << endl;
-			stream                                      << endl;
+			stream << tab << tab << "using namespace tools;" << endl;
+			stream                                           << endl;
+			stream << tab << tab << "auto &l = this->l;"     << endl;
+			stream << tab << tab << "auto &s = this->s;"     << endl;
+			stream                                           << endl;
 
 			if (!node_curr->get_c()->apply_f("", "off_l", "off_s").empty())
 				stream << tab << tab << node_curr->get_c()->apply_f("", "off_l", "off_s");

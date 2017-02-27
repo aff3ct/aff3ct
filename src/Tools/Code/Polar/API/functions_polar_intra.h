@@ -8,11 +8,15 @@
 
 #include "Module/Decoder/Polar/decoder_polar_functions.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 // ================================================================================================================ f()
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_f_i<R> FI>
+template <typename R, module::proto_f_i<R> FI>
 struct f_intra_unaligned
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -28,7 +32,7 @@ struct f_intra_unaligned
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g_i<B,R> GI>
+template <typename B, typename R, module::proto_g_i<B,R> GI>
 struct g_intra_unaligned
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -49,7 +53,7 @@ struct g_intra_unaligned
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_g0_i<R> G0I, int N_ELMTS = 0>
+template <typename R, module::proto_g0_i<R> G0I, int N_ELMTS = 0>
 struct g0_intra_unaligned
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -68,7 +72,7 @@ struct g0_intra_unaligned
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g_i<B,R> GI>
+template <typename B, typename R, module::proto_g_i<B,R> GI>
 struct gr_intra_unaligned
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -89,7 +93,7 @@ struct gr_intra_unaligned
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h_i<B,R> HI>
+template <typename B, typename R, module::proto_h_i<B,R> HI>
 struct h_intra_unaligned
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -104,7 +108,7 @@ struct h_intra_unaligned
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h_i<B,R> HI, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_h_i<B,R> HI, int N_ELMTS = 0>
 struct rep_intra
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -126,7 +130,7 @@ struct rep_intra
 	}
 };
 
-template <typename B, typename R, proto_h_i<B,R> HI>
+template <typename B, typename R, module::proto_h_i<B,R> HI>
 struct rep_intra <B, R, HI, 0>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -152,7 +156,7 @@ struct rep_intra <B, R, HI, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h_i<B,R> HI, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_h_i<B,R> HI, int N_ELMTS = 0>
 struct spc_intra
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -210,7 +214,7 @@ struct spc_intra
 	}
 };
 
-template <typename B, typename R, proto_h_i<B,R> HI>
+template <typename B, typename R, module::proto_h_i<B,R> HI>
 struct spc_intra <B, R, HI, 0>
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -266,5 +270,7 @@ struct spc_intra <B, R, HI, 0>
 		return (s_prod_sign < 0);
 	}
 };
+}
+}
 
 #endif /* FUNCTIONS_POLAR_INTRA_H_ */

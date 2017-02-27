@@ -1,5 +1,3 @@
-#include "Factory_scaling_factor.hpp"
-
 #include "Tools/params.h"
 
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp"
@@ -8,6 +6,10 @@
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_array.hpp"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_array_fast.hpp"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_constant.hpp"
+
+#include "Factory_scaling_factor.hpp"
+
+using namespace aff3ct::tools;
 
 template<typename R>
 Scaling_factor<R>* Factory_scaling_factor<R>

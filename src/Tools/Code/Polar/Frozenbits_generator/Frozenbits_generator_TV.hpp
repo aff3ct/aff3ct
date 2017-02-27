@@ -6,7 +6,11 @@
 
 #include "Frozenbits_generator_file.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 class Frozenbits_generator_TV : public Frozenbits_generator_file<B>
 {
 private:
@@ -27,5 +31,7 @@ public:
 protected:
 	void evaluate();
 };
+}
+}
 
 #endif /* FROZENBITS_GENERATOR_TV_HPP_ */

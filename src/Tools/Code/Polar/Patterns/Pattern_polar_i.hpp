@@ -12,6 +12,10 @@
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Algo/Tree/Binary_node.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 enum polar_node_t
 {
 	STANDARD = 0,
@@ -150,5 +154,7 @@ public:
 
 	virtual bool is_terminal() const = 0;
 };
+}
+}
 
 #endif /* PATTERN_POLAR_INTERFACE_HPP_ */

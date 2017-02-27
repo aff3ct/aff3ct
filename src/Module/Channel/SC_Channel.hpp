@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename R>
 class SC_Channel;
 
-template <typename R>
+template <typename R = float>
 class SC_Channel_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Channel_module);
@@ -166,6 +170,8 @@ public:
 
 template <typename R>
 using Channel = SC_Channel<R>;
+}
+}
 #else
 #include "SPU_Channel.hpp"
 #endif

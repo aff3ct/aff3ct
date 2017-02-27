@@ -3,6 +3,10 @@
 
 #include "../../Pattern_polar_std.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 class Pattern_polar_SCL_std : public Pattern_polar_std
 {
 protected:
@@ -111,5 +115,7 @@ public:
 		return stream.str();
 	}
 };
+}
+}
 
 #endif /* PATTERN_POLAR_SCL_STANDARD_HPP_ */

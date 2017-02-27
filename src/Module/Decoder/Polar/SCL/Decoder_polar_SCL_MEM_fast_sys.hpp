@@ -3,52 +3,62 @@
 
 #include <set>
 #include <vector>
+
+#include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
+#include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
-#include "../../Decoder.hpp"
 #include "../decoder_polar_functions.h"
 
-template <typename B, typename R, class API_polar>
+#include "../../Decoder.hpp"
+
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float,
+          class API_polar = tools::API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
 class Decoder_polar_SCL_MEM_fast_sys : public Decoder<B,R>
 {
 protected:
-	const int                        m;              // graph depth
-	      int                        L;              // maximum paths number
-	const mipp::vector<B>&           frozen_bits;
-	const Pattern_polar_parser<B>    polar_patterns;
+	const int                            m;              // graph depth
+	      int                            L;              // maximum paths number
+	const mipp::vector<B>&               frozen_bits;
+	const tools::Pattern_polar_parser<B> polar_patterns;
 
-	            std ::vector<int  >  paths;          // active paths
-	            std ::vector<R    >  metrics;        // path metrics
-	            mipp::vector<R    >  Y_N;            // channel llrs
-	std::vector<mipp::vector<R    >> l;              // llrs
-	std::vector<mipp::vector<B    >> s;              // partial sums
-	std::vector<mipp::vector<B    >> s2;             // partial sums
-	std::vector<std ::vector<R    >> metrics_vec;    // list of candidate metrics to be sorted
-	            std ::vector<int  >  dup_count;      // number of duplications of a path, at updating time
-	            std ::vector<int  >  bit_flips;      // index of the bits to be flipped
-	            std ::vector<bool >  is_even;        // used to store parity of a spc node
+	            std ::vector<int  >      paths;          // active paths
+	            std ::vector<R    >      metrics;        // path metrics
+	            mipp::vector<R    >      Y_N;            // channel llrs
+	std::vector<mipp::vector<R    >>     l;              // llrs
+	std::vector<mipp::vector<B    >>     s;              // partial sums
+	std::vector<mipp::vector<B    >>     s2;             // partial sums
+	std::vector<std ::vector<R    >>     metrics_vec;    // list of candidate metrics to be sorted
+	            std ::vector<int  >      dup_count;      // number of duplications of a path, at updating time
+	            std ::vector<int  >      bit_flips;      // index of the bits to be flipped
+	            std ::vector<bool >      is_even;        // used to store parity of a spc node
 
-	int                              best_path;
-	int                              n_active_paths;
-
-	// each following 2D vector is of size L * m
-	std::vector<std::vector<int>>    n_array_ref_l;    // number of times an array is used
-	std::vector<std::vector<int>>    path_2_array_l;   // give array used by a path
+	int                                  best_path;
+	int                                  n_active_paths;
 
 	// each following 2D vector is of size L * m
-	std::vector<std::vector<int>>    n_array_ref_s;   // give array used by a path
-	std::vector<std::vector<int>>    path_2_array_s;   // give array used by a path
+	std::vector<std::vector<int>>        n_array_ref_l;    // number of times an array is used
+	std::vector<std::vector<int>>        path_2_array_l;   // give array used by a path
 
-	LC_sorter<R>                    sorter;
-//	LC_sorter_simd<R>               sorter_simd;
-	std::vector<int>                best_idx;
-	mipp::vector<R>                 l_tmp;
+	// each following 2D vector is of size L * m
+	std::vector<std::vector<int>>        n_array_ref_s;   // give array used by a path
+	std::vector<std::vector<int>>        path_2_array_s;   // give array used by a path
+
+	LC_sorter<R>                         sorter;
+//	LC_sorter_simd<R>                    sorter_simd;
+	std::vector<int>                     best_idx;
+	mipp::vector<R>                      l_tmp;
 
 public:
 	Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
 	                               const int n_frames = 1, const std::string name = "Decoder_polar_SCL_MEM_fast_sys");
 	Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
-	                               const std::vector<Pattern_polar_i*> polar_patterns, const int idx_r0, const int idx_r1,
+	                               const std::vector<tools::Pattern_polar_i*> polar_patterns,
+	                               const int idx_r0, const int idx_r1,
 	                               const int n_frames = 1, const std::string name = "Decoder_polar_SCL_fast_sys");
 	virtual ~Decoder_polar_SCL_MEM_fast_sys();
 
@@ -81,12 +91,14 @@ protected:
 	virtual inline int  select_best_path(                          );
 
 private:
-	inline void erase_bad_paths (const int r_d                                                           );
+	inline void erase_bad_paths(const int r_d);
 
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 	inline void flip_bits_rep(const int old_path, const int new_path,                const int off_s, const int n_elmts);
 	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 };
+}
+}
 
 #include "Decoder_polar_SCL_MEM_fast_sys.hxx"
 

@@ -4,6 +4,8 @@
 
 #include "Encoder_RSC3_CPE_sys.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 Encoder_RSC3_CPE_sys<B>
 ::Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding,

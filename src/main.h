@@ -51,7 +51,8 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
  * \return an Simulation_EXIT object.
  */
 template <typename B, typename R, typename Q, typename QD>
-Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type);
+aff3ct::launcher::Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv,
+                                                    std::string code_type, std::string simu_type);
 
 /*!
  * \brief Start the simulation by calling a Launcher (the Launcher depends on the code_type and the simu_type).

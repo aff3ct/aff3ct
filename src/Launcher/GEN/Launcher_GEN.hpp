@@ -3,7 +3,11 @@
 
 #include "../Launcher.hpp"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace launcher
+{
+template <typename B = int, typename R = float, typename Q = R>
 class Launcher_GEN : public Launcher<B,R,Q>
 {
 public:
@@ -14,5 +18,7 @@ protected:
 	virtual void build_args();
 	virtual void store_args();
 };
+}
+}
 
 #endif /* LAUNCHER_GEN_HPP_ */

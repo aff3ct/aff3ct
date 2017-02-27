@@ -10,11 +10,15 @@
 
 #include "Module/Decoder/Polar/decoder_polar_functions.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 // ================================================================================================================ f()
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_f<R> F, int N_ELMTS = 0>
+template <typename R, module::proto_f<R> F, int N_ELMTS = 0>
 struct f_seq
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -24,7 +28,7 @@ struct f_seq
 	}
 };
 
-template <typename R, proto_f<R> F>
+template <typename R, module::proto_f<R> F>
 struct f_seq <R, F, 0>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -38,7 +42,7 @@ struct f_seq <R, F, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g<B,R> G, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_g<B,R> G, int N_ELMTS = 0>
 struct g_seq
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -49,7 +53,7 @@ struct g_seq
 	}
 };
 
-template <typename B, typename R, proto_g<B,R> G>
+template <typename B, typename R, module::proto_g<B,R> G>
 struct g_seq <B, R, G, 0>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -64,7 +68,7 @@ struct g_seq <B, R, G, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_g0<R> G0, int N_ELMTS = 0>
+template <typename R, module::proto_g0<R> G0, int N_ELMTS = 0>
 struct g0_seq
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -74,7 +78,7 @@ struct g0_seq
 	}
 };
 
-template <typename R, proto_g0<R> G0>
+template <typename R, module::proto_g0<R> G0>
 struct g0_seq <R, G0, 0>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -88,7 +92,7 @@ struct g0_seq <R, G0, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g<B,R> G, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_g<B,R> G, int N_ELMTS = 0>
 struct gr_seq
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -100,7 +104,7 @@ struct gr_seq
 	}
 };
 
-template <typename B, typename R, proto_g<B,R> G>
+template <typename B, typename R, module::proto_g<B,R> G>
 struct gr_seq <B, R, G, 0>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -116,7 +120,7 @@ struct gr_seq <B, R, G, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h<B,R> H, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_h<B,R> H, int N_ELMTS = 0>
 struct h_seq
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -126,7 +130,7 @@ struct h_seq
 	}
 };
 
-template <typename B, typename R, proto_h<B,R> H>
+template <typename B, typename R, module::proto_h<B,R> H>
 struct h_seq <B, R, H, 0>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -162,7 +166,7 @@ struct h0_seq <B, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h<B,R> H, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_h<B,R> H, int N_ELMTS = 0>
 struct rep_seq
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -177,7 +181,7 @@ struct rep_seq
 	}
 };
 
-template <typename B, proto_h<B,signed char> H, int N_ELMTS>
+template <typename B, module::proto_h<B,signed char> H, int N_ELMTS>
 struct rep_seq<B, signed char, H, N_ELMTS>
 {
 	static void apply(const signed char *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -193,7 +197,7 @@ struct rep_seq<B, signed char, H, N_ELMTS>
 	}
 };
 
-template <typename B, typename R, proto_h<B,R> H>
+template <typename B, typename R, module::proto_h<B,R> H>
 struct rep_seq <B, R, H, 0>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -208,7 +212,7 @@ struct rep_seq <B, R, H, 0>
 	}
 };
 
-template <typename B, proto_h<B,signed char> H>
+template <typename B, module::proto_h<B,signed char> H>
 struct rep_seq <B, signed char, H, 0>
 {
 	static void apply(const signed char *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -228,7 +232,7 @@ struct rep_seq <B, signed char, H, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h<B,R> H, int N_ELMTS = 0>
+template <typename B, typename R, module::proto_h<B,R> H, int N_ELMTS = 0>
 struct spc_seq
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -258,7 +262,7 @@ struct spc_seq
 	}
 };
 
-template <typename B, typename R, proto_h<B,R> H>
+template <typename B, typename R, module::proto_h<B,R> H>
 struct spc_seq <B, R, H, 0>
 {
 	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -292,7 +296,7 @@ struct spc_seq <B, R, H, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, proto_xo<B> X, int N_ELMTS = 0>
+template <typename B, module::proto_xo<B> X, int N_ELMTS = 0>
 struct xo_seq
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -303,7 +307,7 @@ struct xo_seq
 	}
 };
 
-template <typename B, proto_xo<B> X>
+template <typename B, module::proto_xo<B> X>
 struct xo_seq <B, X, 0>
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -343,5 +347,7 @@ struct xo0_seq <B, 0>
 #endif
 	}
 };
+}
+}
 
 #endif /* FUNCTIONS_POLAR_SEQ_H_ */

@@ -3,6 +3,10 @@
 
 #include "../../Pattern_polar_rep_left.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 class Pattern_polar_SC_rep_left : public Pattern_polar_rep_left
 {
 protected:
@@ -86,5 +90,7 @@ public:
 		return stream.str();
 	}
 };
+}
+}
 
 #endif /* PATTERN_POLAR_SC_REP_LEFT_HPP_ */

@@ -11,6 +11,10 @@
 
 #include "Pattern_polar_i.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 class Pattern_polar_std : public Pattern_polar_i
 {
 protected:
@@ -47,5 +51,7 @@ public:
 
 	virtual bool is_terminal() const { return false; }
 };
+}
+}
 
 #endif /* PATTERN_POLAR_STANDARD_HPP_ */

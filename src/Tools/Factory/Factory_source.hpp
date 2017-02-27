@@ -6,10 +6,16 @@
 
 #include "Factory.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int>
 struct Factory_source : public Factory
 {
-	static Source<B>* build(const parameters &params, const int seed = 0);
+	static module::Source<B>* build(const parameters &params, const int seed = 0);
 };
+}
+}
 
 #endif /* FACTORY_SOURCE_HPP */

@@ -8,13 +8,17 @@
 
 #include "../../../Channel.hpp"
 
-template <typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename R = float>
 class Channel_AWGN_fast_LLR : public Channel<R>
 {
 private:
-	const R           sigma;
-	PRNG_MT19937      mt19937;      // Mersenne Twister 19937 (scalar)
-	PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
+	const R                  sigma;
+	tools::PRNG_MT19937      mt19937;      // Mersenne Twister 19937 (scalar)
+	tools::PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
 
 public:
 	Channel_AWGN_fast_LLR(const int N, const R& sigma, const int seed = 0, const int n_frames = 1, 
@@ -27,5 +31,7 @@ private:
 	inline mipp::Reg<R> get_random_simd();
 	inline R            get_random     ();
 };
+}
+}
 
 #endif /* CHANNEL_AWGN_FAST_LLR_HPP_ */

@@ -2,6 +2,8 @@
 
 #include "Modulator_BPSK.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B, typename R, typename Q>
 Modulator_BPSK<B,R,Q>
 ::Modulator_BPSK(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)

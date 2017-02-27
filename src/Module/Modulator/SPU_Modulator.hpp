@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float, typename Q = R>
 class SPU_Modulator : public Modulator_i<B,R,Q>
 {
 private:
@@ -343,9 +347,17 @@ starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_tdemodulate_wg = SPU_Modulator<B,R,Q
 
 template <typename B, typename R, typename Q>
 using Modulator = SPU_Modulator<B,R,Q>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, typename Q>
 using Modulator = Modulator_i<B,R,Q>;
+}
+}
 #endif
 
 #endif /* SPU_MODULATOR_HPP_ */

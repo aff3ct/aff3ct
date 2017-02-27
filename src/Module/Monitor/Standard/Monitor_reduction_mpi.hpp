@@ -11,8 +11,12 @@
 
 #include "Monitor_reduction.hpp"
 
-template <typename B>
-class Monitor_reduction_mpi : public Monitor_reduction<B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
+class Monitor_reduction_mpi : public Monitor_reduction<B,R>
 {
 private:
 	const std::thread::id master_thread_id;
@@ -26,7 +30,7 @@ private:
 
 public:
 	Monitor_reduction_mpi(const int& K, const int& N, const int& max_fe,
-	                      std::vector<Monitor<B>*>& error_analyzers,
+	                      std::vector<Monitor<B,R>*>& monitors,
 	                      const std::thread::id master_thread_id,
 	                      const std::chrono::nanoseconds d_mpi_comm_frequency = std::chrono::milliseconds(1000),
 	                      const int& n_frames = 1,
@@ -35,6 +39,8 @@ public:
 
 	bool fe_limit_achieved();
 };
+}
+}
 
 #endif /* MONITOR_REDUCTION_MPI_HPP_ */
 

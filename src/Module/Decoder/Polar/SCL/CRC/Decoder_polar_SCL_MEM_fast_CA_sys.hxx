@@ -2,10 +2,14 @@
 
 #include "Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_SCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, CRC<B>& crc,
-                                const int n_frames, const std::string name)
+                                    const int n_frames, const std::string name)
 : Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames, name), crc(crc), U_test(K)
 {
 }
@@ -65,4 +69,5 @@ int Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 	this->Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>::select_best_path();
 
 	return n_valid_paths;
+}
 }

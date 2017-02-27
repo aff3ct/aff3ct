@@ -12,10 +12,14 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace module
+{
 template <typename B>
 class SC_Encoder;
 
-template <typename B>
+template <typename B = int>
 class SC_Encoder_module : public sc_core::sc_module
 {
 	SC_HAS_PROCESS(SC_Encoder_module);
@@ -94,6 +98,8 @@ public:
 
 template <typename B>
 using Encoder = SC_Encoder<B>;
+}
+}
 #else
 #include "SPU_Encoder.hpp"
 #endif

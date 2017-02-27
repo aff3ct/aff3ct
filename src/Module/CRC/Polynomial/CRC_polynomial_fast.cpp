@@ -5,6 +5,9 @@
 
 #include "CRC_polynomial_fast.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 CRC_polynomial_fast<B>
 ::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)

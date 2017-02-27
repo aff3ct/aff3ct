@@ -15,11 +15,15 @@
 
 #include "Simulation/Simulation.hpp"
 
+namespace aff3ct
+{
+namespace simulation
+{
 class Generation_polar : public Simulation
 {
 protected:
 	// simulation parameters
-	const parameters params;
+	const tools::parameters params;
 
 	// data vector
 	mipp::vector<int> frozen_bits; // known bits (alias frozen bits) are set to true
@@ -29,14 +33,13 @@ protected:
 	float sigma;
 
 	// patterns
-	std::vector<Pattern_polar_i*> polar_patterns;
-	Pattern_polar_i* polar_pattern_r0;
-	Pattern_polar_i* polar_pattern_r1;
-
-	Frozenbits_generator<int> *fb_generator;
+	std::vector<tools::Pattern_polar_i*> polar_patterns;
+	tools::Pattern_polar_i* polar_pattern_r0;
+	tools::Pattern_polar_i* polar_pattern_r1;
+	tools::Frozenbits_generator<int> *fb_generator;
 
 	// generator
-	Generator_polar *generator;
+	generator::Generator_polar *generator;
 
 	// file into generate the decoder
 	std::string  directory;
@@ -47,11 +50,13 @@ protected:
 	std::fstream short_graph_file;
 
 public:
-	Generation_polar(const parameters& params);
+	Generation_polar(const tools::parameters& params);
 
 	virtual ~Generation_polar();
 
 	void launch();
 };
+}
+}
 
 #endif /* GENERATION_POLAR_HPP_ */

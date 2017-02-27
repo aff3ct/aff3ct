@@ -10,7 +10,11 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
-template <typename B, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename Q = float>
 class SPU_Puncturer : public Puncturer_i<B,Q>
 {
 private:
@@ -122,9 +126,17 @@ starpu_codelet SPU_Puncturer<B,Q>::spu_cl_depuncture = SPU_Puncturer<B,Q>::spu_i
 
 template <typename B, typename Q>
 using Puncturer = SPU_Puncturer<B,Q>;
+}
+}
 #else
+namespace aff3ct
+{
+namespace module
+{
 template <typename B, typename Q>
 using Puncturer = Puncturer_i<B,Q>;
+}
+}
 #endif
 
 #endif /* SPU_PUNCTURER_HPP_ */

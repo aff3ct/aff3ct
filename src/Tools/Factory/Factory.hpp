@@ -8,6 +8,10 @@
 #ifndef FACTORY_HPP
 #define FACTORY_HPP
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Factory
  *
@@ -17,5 +21,7 @@
  * a new allocated object.
  */
 struct Factory {};
+}
+}
 
 #endif /* FACTORY_HPP */

@@ -12,6 +12,10 @@
 
 #include "Pattern_polar_r0.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 class Pattern_polar_r0_left : public Pattern_polar_i
 {
 protected:
@@ -64,5 +68,7 @@ public:
 
 	virtual bool is_terminal() const { return false; }
 };
+}
+}
 
 #endif /* PATTERN_POLAR_RATE_0_LEFT_HPP_ */

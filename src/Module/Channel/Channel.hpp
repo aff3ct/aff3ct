@@ -15,6 +15,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Channel_i
  *
@@ -24,7 +28,7 @@
  *
  * Please use Channel for inheritance (instead of Channel_i).
  */
-template <typename R>
+template <typename R = float>
 class Channel_i : public Module
 {
 protected:
@@ -71,6 +75,8 @@ public:
 		std::fill(H_N.begin(), H_N.end(), (R)1);
 	}
 };
+}
+}
 
 #include "SC_Channel.hpp"
 

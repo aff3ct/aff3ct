@@ -5,7 +5,11 @@
 
 #include "../CRC.hpp"
 
-template <typename B>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int>
 class CRC_polynomial : public CRC<B>
 {
 protected:
@@ -38,7 +42,7 @@ protected:
 };
 
 // database from here: https://en.wikipedia.org/wiki/Cyclic_redundancy_check#Commonly_used_and_standardized_CRCs
-template<typename B>
+template <typename B>
 const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_polynomials =
   {{"32-GZIP"        , std::make_tuple(0x04C11DB7, 32)},
    {"32-CASTAGNOLI"  , std::make_tuple(0x1EDC6F41, 32)},
@@ -88,5 +92,7 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
    {"5-USB"          , std::make_tuple(0x05      ,  5)},
    {"4-ITU"          , std::make_tuple(0x3       ,  4)},
    {"1-PAR"          , std::make_tuple(0x1       ,  4)}};
+}
+}
 
 #endif /* CRC_POLYNOMIAL_HPP_ */

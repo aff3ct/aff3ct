@@ -3,6 +3,10 @@
 
 #include "../../Pattern_polar_r0_left.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 class Pattern_polar_SCL_r0_left : public Pattern_polar_r0_left
 {
 protected:
@@ -106,5 +110,7 @@ public:
 		return stream.str();
 	}
 };
+}
+}
 
 #endif /* PATTERN_POLAR_SCL_RATE_0_LEFT_HPP_ */

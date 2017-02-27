@@ -5,6 +5,9 @@
 
 #include "Factory_source.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 Source<B>* Factory_source<B>
 ::build(const parameters &params, const int seed)

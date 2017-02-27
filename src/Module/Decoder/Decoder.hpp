@@ -16,6 +16,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Decoder_i
  *
@@ -27,7 +31,7 @@
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
  * Please use Decoder for inheritance (instead of Decoder_i).
  */
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_i : public Module
 {
 private:
@@ -139,7 +143,7 @@ public:
 					}
 					else
 					{
-						std::cerr << bold_red("(EE) This should never happen, V_K is not a multiple of K or of N.")
+						std::cerr << tools::bold_red("(EE) This should never happen, V_K is not a multiple of K or of N.")
 						          << std::endl;
 						std::exit(-1);
 					}
@@ -258,6 +262,8 @@ private:
 		this->d_store_total += steady_clock::now() - t_store;
 	}
 };
+}
+}
 
 #include "SC_Decoder.hpp"
 

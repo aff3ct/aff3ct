@@ -13,6 +13,10 @@
 #include "Decoder.hpp"
 #include "SISO.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class Decoder_SISO
  *
@@ -21,7 +25,7 @@
  * \tparam B: type of the bits in the decoder.
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the decoder.
  */
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_SISO : public Decoder<B,R>, public SISO<R>
 {
 public:
@@ -72,5 +76,7 @@ public:
 		return SISO<R>::simd_inter_frame_level_siso;
 	}
 };
+}
+}
 
 #endif /* DECODER_SISO_HPP_ */

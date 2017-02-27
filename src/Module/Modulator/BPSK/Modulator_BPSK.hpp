@@ -6,7 +6,11 @@
 
 #include "../Modulator.hpp"
 
-template <typename B, typename R, typename Q>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float, typename Q = R>
 class Modulator_BPSK : public Modulator<B,R,Q>
 {
 private:
@@ -24,5 +28,7 @@ public:
 	void demodulate           (const mipp::vector<Q>& Y_N1,                             const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 };
+}
+}
 
 #endif /* MODULATOR_BPSK_HPP_ */

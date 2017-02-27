@@ -1,12 +1,13 @@
 #include <iostream>
 #include <cassert>
 #include <algorithm>
+using namespace std;
 
 #include "Tools/Display/bash_tools.h"
 
 #include "Arguments_reader.hpp"
 
-using namespace std;
+using namespace aff3ct::tools;
 
 Arguments_reader
 ::Arguments_reader(const int argc, const char** argv)
@@ -34,7 +35,7 @@ bool Arguments_reader
 	const bool result = parse_arguments(required_args, optional_args, warns);
 
 	if (display_warnings)
-		std::cout << bold_yellow(warns);
+		std::clog << bold_yellow(warns);
 
 	return result;
 }
@@ -236,18 +237,18 @@ void Arguments_reader
 	if (!req_args_cpy.empty() || !opt_args_cpy.empty())
 	{
 		cout << "Other parameter(s): " << endl;
-		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); ++it)
+		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); )
 		{
 			// gr->first is a prefix of it->first[0].
 			this->print_usage(it->first, it->second, true);
-			req_args_cpy.erase(it->first);
+			it = req_args_cpy.erase(it);
 		}
 
-		for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end(); ++it)
+		for (auto it = opt_args_cpy.begin(); it != opt_args_cpy.end();)
 		{
 			// gr->first is a prefix of it->first[0].
 			this->print_usage(it->first, it->second, false);
-			opt_args_cpy.erase(it->first);
+			it = opt_args_cpy.erase(it);
 		}
 
 		cout << endl;

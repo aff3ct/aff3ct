@@ -11,6 +11,10 @@
 
 #include "Module/Decoder/Polar/decoder_polar_functions.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 // ========================================================================================================= saturate()
 // ====================================================================================================================
 // ====================================================================================================================
@@ -47,7 +51,7 @@ struct API_polar_inter_intra_saturate<signed char>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_f_i<R> FI, int N_ELMTS = 0, int N_FRAMES = 1>
+template <typename R, module::proto_f_i<R> FI, int N_ELMTS = 0, int N_FRAMES = 1>
 struct f_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -65,7 +69,7 @@ struct f_inter_intra
 	}
 };
 
-template <typename R, proto_f_i<R> FI, int N_FRAMES>
+template <typename R, module::proto_f_i<R> FI, int N_FRAMES>
 struct f_inter_intra <R, FI, 0, N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -87,7 +91,7 @@ struct f_inter_intra <R, FI, 0, N_FRAMES>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g_i<B,R> GI, int N_ELMTS = 0, int N_FRAMES = 1>
+template <typename B, typename R, module::proto_g_i<B,R> GI, int N_ELMTS = 0, int N_FRAMES = 1>
 struct g_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -110,7 +114,7 @@ struct g_inter_intra
 	}
 };
 
-template <typename B, typename R, proto_g_i<B,R> GI, int N_FRAMES>
+template <typename B, typename R, module::proto_g_i<B,R> GI, int N_FRAMES>
 struct g_inter_intra <B, R, GI, 0, N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -137,7 +141,7 @@ struct g_inter_intra <B, R, GI, 0, N_FRAMES>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_g0_i<R> G0I, int N_ELMTS = 0, int N_FRAMES = 1>
+template <typename R, module::proto_g0_i<R> G0I, int N_ELMTS = 0, int N_FRAMES = 1>
 struct g0_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -158,7 +162,7 @@ struct g0_inter_intra
 	}
 };
 
-template <typename R, proto_g0_i<R> G0I, int N_FRAMES>
+template <typename R, module::proto_g0_i<R> G0I, int N_FRAMES>
 struct g0_inter_intra <R,G0I,0,N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0)
@@ -183,7 +187,7 @@ struct g0_inter_intra <R,G0I,0,N_FRAMES>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g_i<B,R> GI, int N_ELMTS = 0, int N_FRAMES = 1>
+template <typename B, typename R, module::proto_g_i<B,R> GI, int N_ELMTS = 0, int N_FRAMES = 1>
 struct gr_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -206,7 +210,7 @@ struct gr_inter_intra
 	}
 };
 
-template <typename B, typename R, proto_g_i<B,R> GI, int N_FRAMES>
+template <typename B, typename R, module::proto_g_i<B,R> GI, int N_FRAMES>
 struct gr_inter_intra <B,R,GI,0,N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
@@ -233,7 +237,7 @@ struct gr_inter_intra <B,R,GI,0,N_FRAMES>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h_i<B,R> HI, int N_ELMTS = 0, int N_FRAMES = 1>
+template <typename B, typename R, module::proto_h_i<B,R> HI, int N_ELMTS = 0, int N_FRAMES = 1>
 struct h_inter_intra
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -249,7 +253,7 @@ struct h_inter_intra
 	}
 };
 
-template <typename B, typename R, proto_h_i<B,R> HI, int N_FRAMES>
+template <typename B, typename R, module::proto_h_i<B,R> HI, int N_FRAMES>
 struct h_inter_intra <B,R,HI,0,N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0)
@@ -293,7 +297,7 @@ struct h0_inter_intra <B,0,N_FRAMES>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, proto_xo_i<B> XOI, int N_ELMTS = 0, int N_FRAMES = 1>
+template <typename B, module::proto_xo_i<B> XOI, int N_ELMTS = 0, int N_FRAMES = 1>
 struct xo_inter_intra
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -312,7 +316,7 @@ struct xo_inter_intra
 	}
 };
 
-template <typename B, proto_xo_i<B> XOI, int N_FRAMES>
+template <typename B, module::proto_xo_i<B> XOI, int N_FRAMES>
 struct xo_inter_intra <B,XOI,0,N_FRAMES>
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
@@ -362,6 +366,7 @@ struct xo0_inter_intra <B,0,N_FRAMES>
 #endif
 	}
 };
-
+}
+}
 
 #endif /* FUNCTIONS_POLAR_INTER_INTRA_H_ */

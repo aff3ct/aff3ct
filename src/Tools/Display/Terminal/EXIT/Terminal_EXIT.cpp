@@ -6,6 +6,8 @@
 
 #include "Terminal_EXIT.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Terminal_EXIT<B,R>
 ::Terminal_EXIT(const int& N,

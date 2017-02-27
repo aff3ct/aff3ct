@@ -16,6 +16,9 @@
 
 #include "Factory_channel.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename R>	
 Channel<R>* Factory_channel<R>
 ::build(const parameters &params, const R& sigma, const int size, const int seed)

@@ -2,6 +2,8 @@
 
 #include "PRNG_MT19937_simd.hpp"
 
+using namespace aff3ct::tools;
+
 /*
  * We have an array of 624 32-bit values, and there are
  * 31 unused bits, so we have a seed value of

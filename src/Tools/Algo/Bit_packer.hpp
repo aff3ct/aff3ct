@@ -12,6 +12,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 
+namespace aff3ct
+{
+namespace tools
+{
 /*!
  * \class Bit_packer
  *
@@ -19,7 +23,7 @@
  *
  * \tparam T: type of data to pack/unpack.
  */
-template <typename B>
+template <typename B = int>
 struct Bit_packer
 {
 	/*!
@@ -215,5 +219,7 @@ private:
 		}
 	}
 };
+}
+}
 
 #endif

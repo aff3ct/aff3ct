@@ -18,6 +18,8 @@
 
 #include "Frozenbits_generator_TV.hpp"
 
+using namespace aff3ct::tools;
+
 template <typename B>
 const int Frozenbits_generator_TV<B>::Mu = 100;
 

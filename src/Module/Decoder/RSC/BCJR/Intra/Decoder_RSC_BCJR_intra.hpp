@@ -6,7 +6,11 @@
 
 #include "../Decoder_RSC_BCJR.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float>
 class Decoder_RSC_BCJR_intra : public Decoder_RSC_BCJR<B,R>
 {
 protected:
@@ -28,6 +32,8 @@ protected:
 	virtual void compute_alpha   (                                                      ) = 0;
 	virtual void compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext      ) = 0;
 };
+}
+}
 
 #include "Decoder_RSC_BCJR_intra.hxx"
 

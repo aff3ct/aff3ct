@@ -42,10 +42,10 @@ std::vector<std::string> string_split(const std::string &s, char delim)
 	return elems;
 }
 
-std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar,
-                                                 int         &idx_r0,
-                                                 int         &idx_r1,
-                                           const std::string  type)
+std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools::nodes_parser(const std::string &str_polar,
+                                                                               int         &idx_r0,
+                                                                               int         &idx_r1,
+                                                                         const std::string  type)
 {
 	idx_r0 = -1;
 	idx_r1 = -1;
@@ -58,7 +58,7 @@ std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar,
 	str_polar_bis.erase(std::remove(str_polar_bis.begin(), str_polar_bis.end(), '('), str_polar_bis.end());
 	str_polar_bis.erase(std::remove(str_polar_bis.begin(), str_polar_bis.end(), ')'), str_polar_bis.end());
 
-	std::vector<Pattern_polar_i*> polar_patterns;
+	std::vector<aff3ct::tools::Pattern_polar_i*> polar_patterns;
 
 	if      (type == "SC" ) polar_patterns.push_back(new Pattern_polar_SC_std );
 	else if (type == "SCL") polar_patterns.push_back(new Pattern_polar_SCL_std);
@@ -331,9 +331,9 @@ std::vector<Pattern_polar_i*> nodes_parser(const std::string &str_polar,
 			}
 			else
 			{
-				std::clog << bold_yellow("(WW) Unrecognized Polar node type (")
-				          << bold_yellow(v_polar[i])
-				          << bold_yellow(").")
+				std::clog << aff3ct::tools::bold_yellow("(WW) Unrecognized Polar node type (")
+				          << aff3ct::tools::bold_yellow(v_polar[i])
+				          << aff3ct::tools::bold_yellow(").")
 				          << std::endl;
 			}
 		}

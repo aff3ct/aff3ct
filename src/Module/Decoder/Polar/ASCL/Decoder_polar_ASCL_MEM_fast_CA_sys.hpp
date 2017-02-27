@@ -1,12 +1,20 @@
 #ifndef DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 #define DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 
+#include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
+
 #include "../SC/Decoder_polar_SC_fast_sys.hpp"
 #include "../SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
+#include "../decoder_polar_functions.h"
 
 #include "Module/CRC/CRC.hpp"
 
-template <typename B, typename R, class API_polar>
+namespace aff3ct
+{
+namespace module
+{
+template <typename B = int, typename R = float,
+          class API_polar = tools::API_polar_dynamic_seq<B, R, f_LLR<R>, g_LLR<B,R>, g0_LLR<R>, h_LLR<B,R>, xo_STD<B>>>
 class Decoder_polar_ASCL_MEM_fast_CA_sys : public Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 {
 private:
@@ -26,6 +34,8 @@ public:
 	void unpack     (mipp::vector<B>& V_N      ) const;
 	void store_fast (mipp::vector<B>& V        ) const;
 };
+}
+}
 
 #include "Decoder_polar_ASCL_MEM_fast_CA_sys.hxx"
 

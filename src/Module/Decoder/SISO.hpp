@@ -14,6 +14,10 @@
 
 #include "Module/Module.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 /*!
  * \class SISO_i
  *
@@ -23,7 +27,7 @@
  *
  * Please use SISO for inheritance (instead of SISO_i).
  */
-template <typename R>
+template <typename R = float>
 class SISO_i : public Module
 {
 private:
@@ -137,6 +141,8 @@ protected:
 	 */
 	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
 };
+}
+}
 
 #include "SC_SISO.hpp"
 

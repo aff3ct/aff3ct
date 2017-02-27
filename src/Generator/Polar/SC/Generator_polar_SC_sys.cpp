@@ -9,6 +9,9 @@ using namespace std;
 
 #include "Generator_polar_SC_sys.hpp"
 
+using namespace aff3ct::tools;
+using namespace aff3ct::generator;
+
 Generator_polar_SC_sys
 ::Generator_polar_SC_sys(const int& K,
                          const int& N,
@@ -71,6 +74,8 @@ void Generator_polar_SC_sys
 
 	stream2 << tab << "void hard_decode()"                                                                << endl;
 	stream2 << tab << "{"                                                                                 << endl;
+	stream2 << tab << tab << "using namespace tools;"                                                     << endl;
+	stream2                                                                                               << endl;
 	stream2 << tab << tab << "auto &l = this->l;"                                                         << endl;
 	stream2 << tab << tab << "auto &s = this->s;"                                                         << endl;
 	stream2                                                                                               << endl;

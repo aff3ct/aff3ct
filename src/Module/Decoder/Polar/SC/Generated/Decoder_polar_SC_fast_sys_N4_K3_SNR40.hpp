@@ -5,6 +5,10 @@
 
 #include "../Decoder_polar_SC_fast_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 static const char Decoder_polar_SC_fast_sys_fb_4_3_40[4] = {
 1, 0, 0, 0};
 
@@ -29,10 +33,14 @@ public:
 
 	void hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
 		API_polar::template spc<4>(s, l, 0+0,           0+0, 4);
 	}
 };
+}
+}
 #endif

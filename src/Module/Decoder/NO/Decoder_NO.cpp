@@ -2,6 +2,8 @@
 
 #include "Decoder_NO.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B, typename R>
 Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int N, const int n_frames, const std::string name)

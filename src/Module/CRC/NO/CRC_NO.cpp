@@ -1,5 +1,7 @@
 #include "CRC_NO.hpp"
 
+using namespace aff3ct::module;
+
 template <typename B>
 CRC_NO<B>
 ::CRC_NO(const int K, const int n_frames, const std::string name)

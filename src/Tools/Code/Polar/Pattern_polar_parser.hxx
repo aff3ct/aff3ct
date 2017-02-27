@@ -8,6 +8,10 @@
 
 #include "Pattern_polar_parser.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename B>
 Pattern_polar_parser<B>
 ::Pattern_polar_parser(const int& N,
@@ -198,4 +202,6 @@ const Binary_tree<Pattern_polar_i>* Pattern_polar_parser<B>
 ::get_polar_tree() const
 {
 	return polar_tree;
+}
+}
 }

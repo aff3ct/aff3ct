@@ -6,7 +6,11 @@
 
 #include "../Terminal.hpp"
 
-template <typename B, typename R>
+namespace aff3ct
+{
+namespace tools
+{
+template <typename B = int, typename R = float>
 class Terminal_EXIT : public Terminal
 {
 protected:
@@ -40,5 +44,7 @@ protected:
 	static std::string get_time_format(float secondes);
 	void _report(std::ostream &stream);
 };
+}
+}
 
 #endif /* TERMINAL_EXIT_HPP_ */

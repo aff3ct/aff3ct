@@ -14,9 +14,21 @@
 
 #include "API_polar.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename B, typename R, 
-          proto_f   <R> F,  proto_g   <B,R> G,  proto_g0  <R> G0,  proto_h   <B,R> H,  proto_xo  <B> XO,
-          proto_f_i <R> FI, proto_g_i <B,R> GI, proto_g0_i<R> G0I, proto_h_i <B,R> HI, proto_xo_i<B> XOI>
+          module::proto_f   <  R> F,
+          module::proto_g   <B,R> G,
+          module::proto_g0  <  R> G0,
+          module::proto_h   <B,R> H,
+          module::proto_xo  <B  > XO,
+          module::proto_f_i <  R> FI,
+          module::proto_g_i <B,R> GI,
+          module::proto_g0_i<  R> G0I,
+          module::proto_h_i <B,R> HI,
+          module::proto_xo_i<B  > XOI>
 class API_polar_static_intra_8bit : public API_polar
 {
 public:
@@ -206,5 +218,7 @@ public:
 		xo0_intra_8bit<B, N_ELMTS>::apply(s_b, s_c, n_elmts);
 	}
 };
+}
+}
 
 #endif /* API_POLAR_INTRA_STATIC_8BIT_HPP_ */

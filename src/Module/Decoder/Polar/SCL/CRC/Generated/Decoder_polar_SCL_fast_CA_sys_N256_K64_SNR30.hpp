@@ -5,6 +5,10 @@
 
 #include "../Decoder_polar_SCL_fast_CA_sys.hpp"
 
+namespace aff3ct
+{
+namespace module
+{
 static const char Decoder_polar_SCL_fast_CA_sys_fb_256_64_30[256] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -36,6 +40,8 @@ public:
 
 	void hard_decode()
 	{
+		using namespace tools;
+
 		auto &y = this->Y_N;
 		auto &l = this->l;
 		auto &s = this->s;
@@ -493,4 +499,6 @@ public:
 		this->select_best_path();
 	}
 };
+}
+}
 #endif

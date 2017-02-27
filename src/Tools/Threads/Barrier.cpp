@@ -6,6 +6,8 @@
 
 #include "Barrier.hpp"
 
+using namespace aff3ct::tools;
+
 Barrier
 ::Barrier(const int n_threads)
 : n_threads(n_threads), counter_barrier(n_threads), generation(0)

@@ -33,6 +33,9 @@
 
 #include "main.h"
 
+using namespace aff3ct::launcher;
+using namespace aff3ct::tools;
+
 void print_version()
 {
 #if defined(_WIN64) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)

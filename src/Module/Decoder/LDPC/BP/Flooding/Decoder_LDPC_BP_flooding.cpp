@@ -5,6 +5,9 @@
 
 #include "Decoder_LDPC_BP_flooding.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 // constexpr int C_to_V_max = 15; // saturation value for the LLRs/extrinsics
 
 template <typename B, typename R>

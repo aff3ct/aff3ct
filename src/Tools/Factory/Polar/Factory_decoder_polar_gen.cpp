@@ -71,9 +71,9 @@
 // #define ENABLE_DECODER_SC_FAST_N32768_K9830_SNR25  // R = 3/10
 // #define ENABLE_DECODER_SC_FAST_N32768_K13107_SNR25 // R = 4/10
 // #define ENABLE_DECODER_SC_FAST_N32768_K16384_SNR25 // R = 5/10
-// #define ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25 // R = 6/10 
+// #define ENABLE_DECODER_SC_FAST_N32768_K19661_SNR25 // R = 6/10
 // #define ENABLE_DECODER_SC_FAST_N32768_K22938_SNR25 // R = 7/10
-// #define ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25 // R = 8/10 
+// #define ENABLE_DECODER_SC_FAST_N32768_K26214_SNR25 // R = 8/10
 // #define ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25 // R = 9/10
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -562,6 +562,9 @@
 
 #include "Factory_decoder_polar_gen.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 ::build(const parameters &params, const mipp::vector<B> &frozen_bits, CRC<B> *crc)
@@ -989,11 +992,11 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 				{
 #ifdef API_POLAR_DYNAMIC
 					using API_polar = API_polar_dynamic_intra
-					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #else
 					using API_polar = API_polar_static_intra_8bit
-					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
 					// RATE 1/2
@@ -1193,11 +1196,11 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 				{
 #ifdef API_POLAR_DYNAMIC
 					using API_polar = API_polar_dynamic_intra
-					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #else
 					using API_polar = API_polar_static_intra_16bit
-					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
 					// RATE 1/2
@@ -1397,11 +1400,11 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 				{
 #ifdef API_POLAR_DYNAMIC
 					using API_polar = API_polar_dynamic_intra
-					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #else
 					using API_polar = API_polar_static_intra_32bit
-					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>, 
+					                  <B, R, f_LLR  <R>, g_LLR  <B,R>, g0_LLR  <R>, h_LLR  <B,R>, xo_STD  <B>,
 					                         f_LLR_i<R>, g_LLR_i<B,R>, g0_LLR_i<R>, h_LLR_i<B,R>, xo_STD_i<B>>;
 #endif
 					// RATE 1/2
@@ -1798,7 +1801,7 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 #ifdef ENABLE_DECODER_SC_FAST_N32768_K29491_SNR25
 					if (params.decoder.implem == "N32768_K29491_SNR25"   ) { decoder = new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, R, API_polar>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level); }
-#endif                               
+#endif
 			}
 		}
 		else if (params.channel.domain == "LLR" && params.decoder.type == "SCL" && crc != nullptr)
@@ -2115,13 +2118,13 @@ void Factory_decoder_polar_gen<B,R>
 	{
 		std::cerr << bold_red("(EE) Generated frozen bits does not exist, exiting.") << std::endl;
 		exit(EXIT_FAILURE);
-	}	
+	}
 
 	for (auto i = 0; i < params.code.N; i++)
 		frozen_bits[i] = (B)fb_ptr[i];
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
 template struct Factory_decoder_polar_gen<B_8,Q_8>;
