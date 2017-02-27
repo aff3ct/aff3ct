@@ -234,11 +234,11 @@ unsigned CRC_polynomial_fast<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class CRC_polynomial_fast<B_8>;
-template class CRC_polynomial_fast<B_16>;
-template class CRC_polynomial_fast<B_32>;
-template class CRC_polynomial_fast<B_64>;
+template class aff3ct::module::CRC_polynomial_fast<B_8>;
+template class aff3ct::module::CRC_polynomial_fast<B_16>;
+template class aff3ct::module::CRC_polynomial_fast<B_32>;
+template class aff3ct::module::CRC_polynomial_fast<B_64>;
 #else
-template class CRC_polynomial_fast<B>;
+template class aff3ct::module::CRC_polynomial_fast<B>;
 #endif
 // ==================================================================================== explicit template instantiation
