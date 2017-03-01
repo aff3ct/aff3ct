@@ -210,8 +210,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 	if (this->params.decoder.type == "ASCL" || this->params.decoder.type == "ASCL_MEM")
 		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
 
-	if ((this->params.decoder.type == "SC" || this->params.decoder.type == "SCL" || this->params.decoder.type == "ASCL")
-	    && this->params.decoder.implem == "FAST")
+	if ((this->params.decoder.type == "SC"      ||
+	     this->params.decoder.type == "SCL"     ||
+	     this->params.decoder.type == "ASCL"    ||
+	     this->params.decoder.type == "SCL_MEM" ||
+	     this->params.decoder.type == "ASCL_MEM") && this->params.decoder.implem == "FAST")
 		p.push_back(std::make_pair("Polar node types", this->params.decoder.polar_nodes));
 
 	return p;
