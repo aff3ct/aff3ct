@@ -1148,27 +1148,26 @@ int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	const auto n_elmts = 1 << r_d;
 	const auto is_left = (((off_s / n_elmts) % 2) == 0);
 
-	const auto loop_size = (int)path_2_array_l[old_path].size();
-	for (auto i = 0; i < loop_size; i++)
-		path_2_array_l[new_path][i] = path_2_array_l[old_path][i];
+	std::copy(path_2_array_l[old_path].begin(), path_2_array_l[old_path].end(), path_2_array_l[new_path].begin());
 
 	for (auto i = 0; i < m; i++)
 		n_array_ref_l[path_2_array_l[new_path][i]][i]++;
 
-	for (auto i = r_d + 1; i < m; i++)
-	{
-		path_2_array_s[new_path][i] = path_2_array_s[old_path][i];
-		n_array_ref_s [path_2_array_s[old_path][i]][i] ++;
-	}
+	std::copy(path_2_array_s[old_path].begin() + r_d +1,
+	          path_2_array_s[old_path].begin() + m,
+	          path_2_array_s[new_path].begin() + r_d +1);
+	for (auto i = r_d +1; i < m; i++)
+		n_array_ref_s[path_2_array_s[old_path][i]][i]++;
 
-	if(!is_left)
+	if (!is_left)
 	{
 		path_2_array_s[new_path][r_d] = path_2_array_s[old_path][r_d];
 		n_array_ref_s [path_2_array_s[old_path][r_d]][r_d] ++;
 	}
 
-	for (auto i = off_s; i < off_s + n_elmts; i++)
-		s[new_path][i] = s[old_path][i];
+	std::copy(s[old_path].begin() + off_s,
+	          s[old_path].begin() + off_s + n_elmts,
+	          s[new_path].begin() + off_s);
 
 	return new_path;
 }
@@ -1237,9 +1236,10 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	{
 		const auto child_left = path_2_array_s[paths[i]][r_d - 1];
 
-		if((child_left != paths[i]) && (n_array_ref_s[paths[i]][r_d -1] > 0))
-			for (auto j = 0; j < n_elm_2; j++)
-				s2[paths[i]][off_s + j] = s[paths[i]][off_s + j];
+		if ((child_left != paths[i]) && (n_array_ref_s[paths[i]][r_d -1] > 0))
+			std::copy(s [paths[i]].begin() + off_s,
+			          s [paths[i]].begin() + off_s + n_elm_2,
+			          s2[paths[i]].begin() + off_s);
 	}
 }
 template <typename B, typename R, class API_polar>
