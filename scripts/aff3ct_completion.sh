@@ -227,12 +227,12 @@ _aff3ct() {
 		--enc-type)
 			local params
 			case "${codetype}" in
-				POLAR)      params="AZCW COSET USER POLAR"     ;;
-				RSC)        params="AZCW COSET USER RSC"       ;;
-				REPETITION) params="AZCW COSET USER REPETITION";;
-				RA)         params="AZCW COSET USER RA"        ;;
-				TURBO)      params="AZCW COSET USER TURBO"     ;;
-				LDPC)       params="AZCW COSET USER LDPC"      ;;
+				POLAR)      params="AZCW COSET USER POLAR"           ;;
+				RSC)        params="AZCW COSET USER RSC"             ;;
+				REPETITION) params="AZCW COSET USER REPETITION"      ;;
+				RA)         params="AZCW COSET USER RA"              ;;
+				TURBO)      params="AZCW COSET USER TURBO"           ;;
+				LDPC)       params="AZCW COSET USER LDPC LDPC_DVBS2" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -283,7 +283,7 @@ _aff3ct() {
 			local params
 			case "${simutype}" in
 				BFER)      params="LTE CCSDS RANDOM GOLDEN USER NO" ;;
-				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO UNIFORM" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;

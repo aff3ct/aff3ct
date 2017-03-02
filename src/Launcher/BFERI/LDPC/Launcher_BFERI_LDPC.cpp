@@ -40,7 +40,7 @@ void Launcher_BFERI_LDPC<B,R,Q>
 		 "path to the AList formated file."};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
-	this->opt_args[{"enc-type"}][2] += ", LDPC";
+	this->opt_args[{"enc-type"}][2] += ", LDPC, LDPC_DVBS2";
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");

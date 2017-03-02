@@ -737,7 +737,7 @@ void Simulation_BFERI<B,R,Q>
 			else
 			{
 				// decode
-				std::clog << "Hard decode form Y_N5 to V_K..." << std::endl;
+				std::clog << "Hard decode from Y_N5 to V_K..." << std::endl;
 				auto t_decod = steady_clock::now();
 				simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K[0]);
 				d_decod += steady_clock::now() - t_decod;
