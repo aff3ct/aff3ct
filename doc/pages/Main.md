@@ -17,18 +17,18 @@ Here is the list of available type of Simulation:
 
 	<img title="Communication chain" src="../images/bfer_bferi_prod.svg" style="width:95%"/>
 
-Many Module objects can be used in a Simulation:
-- Source_i,
-- CRC_i,
-- Encoder_i,
-- Puncturer_i,
-- Interleaver_i,
-- Modulator_i,
-- Channel_i,
-- Quantizer_i,
-- Coset_i,
-- Decoder_i,
-- Monitor_i.
+Many Module objects can be used in a Simulation (aff3ct::simulation::Simulation):
+- aff3ct::module::Source_i,
+- aff3ct::module::CRC_i,
+- aff3ct::module::Encoder_i,
+- aff3ct::module::Puncturer_i,
+- aff3ct::module::Interleaver_i,
+- aff3ct::module::Modulator_i,
+- aff3ct::module::Channel_i,
+- aff3ct::module::Quantizer_i,
+- aff3ct::module::Coset_i,
+- aff3ct::module::Decoder_i,
+- aff3ct::module::Monitor_i.
 
 ## Related pages
 
