@@ -76,7 +76,7 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"enc-type"}] =
 		{"string",
 		 "select the type of encoder you want to use.",
-		 "AZCW, COSET, USER, LDPC" };
+		 "AZCW, COSET, USER" };
 	this->opt_args[{"enc-path"}] =
 		{"string",
 		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};

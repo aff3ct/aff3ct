@@ -5,6 +5,27 @@ namespace aff3ct
 namespace tools
 {
 template <typename T> 
+inline void rgemm(const int M, const int N, const int K,
+                  const mipp::vector<T> &A,
+                  const mipp::vector<T> &tB,
+                        mipp::vector<T> &tC)
+{
+	assert( A.size() == unsigned(M * K));
+	assert(tB.size() == unsigned(K * N));
+	assert(tC.size() == unsigned(M * N));
+
+	for (auto i = 0; i < M; i++)
+		for (auto j = 0; j < N; j++)
+		{
+			T sum_r = 0;
+			for (auto k = 0; k < K; k++)
+				sum_r += A[i * K + k] * tB[j * K + k];
+
+			tC[j * M + i] = sum_r;
+		}
+}
+
+template <typename T>
 inline void cgemm(const int M, const int N, const int K, 
                   const mipp::vector<T> &A, 
                   const mipp::vector<T> &tB, 
@@ -65,6 +86,19 @@ inline void cgemm_r(const int M, const int N, const int K,
 			tC_real[j * M + i] = sum_r;
 		}
 	}
+}
+
+template <typename T>
+inline void real_transpose(const int M, const int N,
+                           const mipp::vector<T> &A,
+                                 mipp::vector<T> &B)
+{
+	assert(A.size() == unsigned(M * N));
+	assert(B.size() == unsigned(N * M));
+
+	for (auto i = 0; i < M; i++)
+		for (auto j = 0; j < N; j++)
+			B[j*M+i] =  A[i*N+j];
 }
 
 template <typename T>

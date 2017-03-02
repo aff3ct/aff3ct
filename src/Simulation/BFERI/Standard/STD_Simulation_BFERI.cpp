@@ -443,6 +443,8 @@ void Simulation_BFERI<B,R,Q>
 			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
+		// useful for the uniform random interleaver
+		simu->interleaver[tid]->regen_lookup_tables();
 
 		// increment total durations for each operations
 		simu->d_sourc_total[tid] += d_sourc;
@@ -769,6 +771,9 @@ void Simulation_BFERI<B,R,Q>
 		else
 			simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;
+
+		// useful for the uniform random interleaver
+		simu->interleaver[0]->regen_lookup_tables();
 
 		// increment total durations for each operations
 		simu->d_sourc_total[0] += d_sourc;

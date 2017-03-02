@@ -16,6 +16,7 @@ Launcher_BFER_LDPC<B,R,Q>
 {
 	this->params.code     .type             = "LDPC";
 	this->params.encoder  .type             = "AZCW";
+	this->params.encoder  .systematic       = false;
 	this->params.quantizer.n_bits           = 6;
 	this->params.quantizer.n_decimals       = 2;
 	this->params.decoder  .type             = "BP_FLOODING";
@@ -36,6 +37,9 @@ void Launcher_BFER_LDPC<B,R,Q>
 	this->req_args[{"cde-alist-path"}] =
 		{"string",
 		 "path to the AList formated file."};
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", LDPC";
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
@@ -107,6 +111,17 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_LDPC<B,R,Q>
 	return p;
 }
 
+template <typename B, typename R, typename Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_LDPC<B,R,Q>
+::header_encoder()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_encoder();
+
+	if (this->params.encoder.type == "LDPC")
+		p.push_back(std::make_pair("Path", this->params.encoder.path));
+
+	return p;
+}
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

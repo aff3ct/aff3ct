@@ -7,6 +7,7 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
+#include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
 
 #include "Simulation_BFERI_LDPC.hpp"
@@ -47,7 +48,10 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return Simulation_BFERI<B,R,Q>::build_encoder(tid);
+	auto encoder = Simulation_BFERI<B,R,Q>::build_encoder(tid);
+	if (encoder == nullptr)
+		encoder = Factory_encoder_LDPC<B>::build(this->params);
+	return encoder;
 }
 
 template <typename B, typename R, typename Q>

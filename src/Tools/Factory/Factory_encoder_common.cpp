@@ -2,7 +2,6 @@
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 #include "Module/Encoder/Coset/Encoder_coset.hpp"
 #include "Module/Encoder/User/Encoder_user.hpp"
-#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 #include "Factory_encoder_common.hpp"
 
@@ -22,8 +21,6 @@ Encoder<B>* Factory_encoder_common<B>
 		encoder = new Encoder_AZCW<B>(params.code.K, params.code.N + params.code.tail_length, n_frames);
 	else if (params.encoder.type == "COSET")
 		encoder = new Encoder_coset<B>(params.code.K, params.code.N + params.code.tail_length, seed, n_frames);
-	else if (params.encoder.type == "LDPC")
-		encoder = new Encoder_LDPC<B>(params.code.K, params.code.N + params.code.tail_length, n_frames);
 	else if (params.encoder.type == "USER")
 		encoder = new Encoder_user<B>(params.code.K, params.code.N + params.code.tail_length, params.encoder.path, n_frames);
 
