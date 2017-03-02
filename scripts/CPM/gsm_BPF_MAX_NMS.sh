@@ -22,6 +22,7 @@ cd ../build
     --dec-type     BP_FLOODING                            \
     --dec-implem   ONMS                                   \
     --dec-norm     0.825                                  \
+	--dec-no-synd                                         \
     --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist \
     --mod-cpm-std  GSM                                    \
     $*

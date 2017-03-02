@@ -21,6 +21,7 @@ cd ../build
     --chn-type     AWGN_FAST                              \
     --dec-type     BP_LAYERED                             \
     --dec-implem   SPA                                    \
+	--dec-no-synd                                         \
     --cde-alist-path ../conf/dec/LDPC/GSM_2112_4224.alist \
     --mod-cpm-std  GSM                                    \
     $*
