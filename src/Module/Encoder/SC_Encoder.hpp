@@ -96,7 +96,7 @@ public:
 	}
 };
 
-template <typename B>
+template <typename B = int>
 using Encoder = SC_Encoder<B>;
 }
 }

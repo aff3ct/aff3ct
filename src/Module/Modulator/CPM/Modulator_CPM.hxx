@@ -15,7 +15,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::Modulator_CPM(int  N,
                 int  bits_per_symbol,
@@ -75,13 +75,13 @@ Modulator_CPM<B,R,Q,MAX>
 	generate_projection            (                                 );
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::~Modulator_CPM()
 {
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 int Modulator_CPM<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
@@ -93,7 +93,7 @@ int Modulator_CPM<B,R,Q,MAX>
 	return (N / cpm.n_b_per_s + cpm.tl) * cpm.s_factor * 2;
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 int Modulator_CPM<B,R,Q,MAX>
 ::get_buffer_size_after_filtering(const int N)
 {
@@ -104,7 +104,7 @@ int Modulator_CPM<B,R,Q,MAX>
 	return (N / cpm.n_b_per_s + cpm.tl) * cpm.max_wa_id;
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
@@ -130,7 +130,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
@@ -161,7 +161,7 @@ void Modulator_CPM<B,R,Q,MAX>
 		}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 {
@@ -188,7 +188,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::_filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 {
@@ -212,7 +212,7 @@ void Modulator_CPM<B,R,Q,MAX>
 		}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
@@ -239,7 +239,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
@@ -273,7 +273,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::generate_baseband()
 {
@@ -338,7 +338,7 @@ public:
 	}
 };
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 R Modulator_CPM<B,R,Q,MAX>
 ::calculate_phase_response(const R t_stamp)
 {
@@ -361,7 +361,7 @@ R Modulator_CPM<B,R,Q,MAX>
 	}
 }
 
-template <typename B, typename R, typename Q, proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::generate_projection()
 {

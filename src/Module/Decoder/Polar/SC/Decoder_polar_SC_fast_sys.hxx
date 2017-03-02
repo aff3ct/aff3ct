@@ -187,7 +187,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::hard_decode()
+::_hard_decode()
 {
 	assert(m >= static_level);
 

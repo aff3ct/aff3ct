@@ -480,7 +480,7 @@ public:
 	}
 };
 
-template <typename B, typename R, typename Q>
+template <typename B = int, typename R = float, typename Q = R>
 using Modulator = SC_Modulator<B,R,Q>;
 }
 }

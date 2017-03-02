@@ -71,7 +71,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::hard_decode()
+::_hard_decode()
 {
 	typedef typename std::vector<std::tuple<int,B,R>>::iterator it_type;
 	std::set<int> last_active_paths;

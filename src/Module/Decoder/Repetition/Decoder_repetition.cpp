@@ -51,7 +51,7 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::hard_decode()
+::_hard_decode()
 {
 	soft_decode(sys, par, ext);
 

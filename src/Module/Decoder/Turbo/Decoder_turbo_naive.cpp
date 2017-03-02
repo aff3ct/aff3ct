@@ -31,7 +31,7 @@ Decoder_turbo_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_naive<B,R>
-::hard_decode()
+::_hard_decode()
 {
 	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;

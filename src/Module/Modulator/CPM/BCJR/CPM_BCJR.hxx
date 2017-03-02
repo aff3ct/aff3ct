@@ -31,7 +31,7 @@ inline short positive_inf<short>(){return (1 << (sizeof(short) * 8 -2)); }
 template<>
 inline signed char positive_inf<signed char>(){return 63; }
 
-template <typename Q, proto_max<Q> MAX>
+template <typename Q, tools::proto_max<Q> MAX>
 inline void BCJR_normalize(Q *metrics, const int &i, const int &n_states)
 {
 	// normalization
@@ -43,7 +43,7 @@ inline void BCJR_normalize(Q *metrics, const int &i, const int &n_states)
 		metrics[j] -= norm_val;
 }
 
-template <signed char, proto_max<signed char> MAX>
+template <signed char, tools::proto_max<signed char> MAX>
 inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_states)
 {
 	// normalization
@@ -55,7 +55,7 @@ inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_stat
 		metrics[j] = tools::saturate<signed char>(metrics[j] - norm_val, -63, +63);
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 CPM_BCJR<SIN,SOUT,Q,MAX>
 ::CPM_BCJR(const CPM_parameters<SIN,SOUT>& _cpm, const int _frame_size)
 : cpm              (_cpm                                    ),
@@ -70,13 +70,13 @@ CPM_BCJR<SIN,SOUT,Q,MAX>
 {
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 CPM_BCJR<SIN,SOUT,Q,MAX>
 ::~CPM_BCJR()
 {
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, mipp::vector<Q> &Le_N)
 {
@@ -88,7 +88,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	compute_ext             (Le_N );
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, const mipp::vector<Q> &Ldec_N, mipp::vector<Q> &Le_N)
 {
@@ -99,7 +99,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	compute_ext             (Ldec_N, Le_N);
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::LLR_to_logsymb_proba(const mipp::vector<Q> &Ldec_N)
 {
@@ -119,7 +119,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		}
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_alpha_beta_gamma(const mipp::vector<Q> &Lch_N)
 {
@@ -165,7 +165,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	}
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::symboles_probas()
 {
@@ -181,7 +181,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 				        gamma   [(i * cpm.max_st_id + cpm.allowed_states[st]) * cpm.m_order + tr]);
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::bits_probas()
 {
@@ -201,7 +201,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	}
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(mipp::vector<Q> &Le_N)
 {
@@ -213,7 +213,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		Le_N[i] = proba_msg_bits[i*2] - proba_msg_bits[i*2 +1];
 }
 
-template <typename SIN, typename SOUT,  typename Q, proto_max<Q> MAX>
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(const mipp::vector<Q> &Ldec_N,
                     mipp::vector<Q> &Le_N)

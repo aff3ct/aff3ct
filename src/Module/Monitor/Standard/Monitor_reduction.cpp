@@ -95,7 +95,7 @@ void Monitor_reduction<B,R>
 		if(buff_noise.empty())
 			continue;
 
-		Y_size = buff_noise.front().size();
+		Y_size = (int)buff_noise.front().size();
 		break;
 	}
 

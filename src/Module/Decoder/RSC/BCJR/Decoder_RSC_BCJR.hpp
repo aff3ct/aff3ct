@@ -37,9 +37,9 @@ public:
 	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
 
 protected:
-	virtual void load       (const mipp::vector<R>& Y_N);
-	        void hard_decode(                          );
-	virtual void store      (      mipp::vector<B>& V_K) const;
+	virtual void load        (const mipp::vector<R>& Y_N);
+	        void _hard_decode(                          );
+	virtual void store       (      mipp::vector<B>& V_K) const;
 
 	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 };

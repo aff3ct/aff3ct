@@ -42,7 +42,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::hard_decode()
+::_hard_decode()
 {
 	for (auto ite = 0; ite < n_ite; ite++)
 	{

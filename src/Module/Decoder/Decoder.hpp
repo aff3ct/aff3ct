@@ -102,7 +102,7 @@ public:
 
 		if (this->n_dec_waves == 1 && this->n_inter_frame_rest == 0)
 		{
-			_hard_decode(Y_N, V_K, load, store, store_fast, unpack);
+			__hard_decode(Y_N, V_K, load, store, store_fast, unpack);
 		}
 		else
 		{
@@ -122,7 +122,7 @@ public:
 				}
 				this->d_load_total += steady_clock::now() - t_load;
 
-				_hard_decode(this->Y_N[w], this->V_N[w], load, store, store_fast, unpack);
+				__hard_decode(this->Y_N[w], this->V_N[w], load, store, store_fast, unpack);
 
 				auto t_store = steady_clock::now();
 				if (store)
@@ -204,7 +204,7 @@ protected:
 	/*!
 	 * \brief Decodes the noisy frame (have to be called after the load method).
 	 */
-	virtual void hard_decode() = 0;
+	virtual void _hard_decode() = 0;
 
 	/*!
 	 * \brief Stores the decoded information bits (have to be called after the decode method).
@@ -230,11 +230,11 @@ protected:
 	virtual void unpack(mipp::vector<B>& V) const {}
 
 private:
-	inline void _hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K,
-	                         const bool load       = true,
-	                         const bool store      = true,
-	                         const bool store_fast = false,
-	                         const bool unpack     = false)
+	inline void __hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K,
+	                          const bool load       = true,
+	                          const bool store      = true,
+	                          const bool store_fast = false,
+	                          const bool unpack     = false)
 	{
 		using namespace std::chrono;
 
@@ -244,7 +244,7 @@ private:
 		this->d_load_total += steady_clock::now() - t_load;
 
 		auto t_decod = steady_clock::now();
-		this->hard_decode();
+		this->_hard_decode();
 		this->d_decod_total += steady_clock::now() - t_decod;
 
 		auto t_store = steady_clock::now();

@@ -92,7 +92,7 @@ public:
 	}
 };
 
-template <typename B>
+template <typename B = int>
 using Source = SC_Source<B>;
 }
 }

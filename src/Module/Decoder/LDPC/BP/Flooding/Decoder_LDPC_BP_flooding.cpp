@@ -93,7 +93,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::hard_decode()
+::_hard_decode()
 {
 	// memory zones initialization
 	if (this->init_flag)
