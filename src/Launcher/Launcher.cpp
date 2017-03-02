@@ -788,7 +788,7 @@ void Launcher<B,R,Q>
 			stream << "# The simulation is running..." << std::endl;
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
-			stream << bold_yellow(cmd_warn);
+			std::clog << bold_yellow(cmd_warn);
 		simu->launch();
 		if (params.simulation.mpi_rank == 0)
 			stream << "# End of the simulation." << std::endl;
