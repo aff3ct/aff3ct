@@ -131,6 +131,7 @@ struct decoder_parameters
 	std::string gen_path;
 	std::string polar_nodes;
 	bool        enable_syndrome;
+	bool        full_adaptive;
 	float       normalize_factor;
 	float       offset;
 	int         n_ite;
