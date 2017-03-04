@@ -34,6 +34,7 @@ Launcher_BFER_polar<B,R,Q>
 	this->params.decoder   .L             = 1;
 	this->params.decoder   .simd_strategy = "";
 	this->params.decoder   .polar_nodes   = "{R0,R0L,R1,REP,REPL,SPC}";
+	this->params.decoder   .full_adaptive = true;
 }
 
 template <typename B, typename R, typename Q>
@@ -100,6 +101,9 @@ void Launcher_BFER_polar<B,R,Q>
 	this->opt_args[{"dec-polar-nodes"}] =
 		{"string",
 		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP_2-8,REPL,SPC_4+})."};
+	this->opt_args[{"dec-partial-adaptive"}] =
+		{"",
+		 "enable the partial adaptative mode for the ASCL decoder (by default full adaptative is selected)."};
 }
 
 template <typename B, typename R, typename Q>
@@ -131,10 +135,11 @@ void Launcher_BFER_polar<B,R,Q>
 	if(this->ar.exist_arg({"enc-no-sys"})) this->params.encoder.systematic = false;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite",    "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int({"dec-ite",    "i"});
-	if(this->ar.exist_arg({"dec-lists",  "L"})) this->params.decoder.L             = this->ar.get_arg_int({"dec-lists",  "L"});
-	if(this->ar.exist_arg({"dec-simd"       })) this->params.decoder.simd_strategy = this->ar.get_arg    ({"dec-simd"       });
-	if(this->ar.exist_arg({"dec-polar-nodes"})) this->params.decoder.polar_nodes   = this->ar.get_arg    ({"dec-polar-nodes"});
+	if(this->ar.exist_arg({"dec-ite",         "i"})) this->params.decoder.n_ite         = this->ar.get_arg_int({"dec-ite",    "i"});
+	if(this->ar.exist_arg({"dec-lists",       "L"})) this->params.decoder.L             = this->ar.get_arg_int({"dec-lists",  "L"});
+	if(this->ar.exist_arg({"dec-simd"            })) this->params.decoder.simd_strategy = this->ar.get_arg    ({"dec-simd"       });
+	if(this->ar.exist_arg({"dec-polar-nodes"     })) this->params.decoder.polar_nodes   = this->ar.get_arg    ({"dec-polar-nodes"});
+	if(this->ar.exist_arg({"dec-partial-adaptive"})) this->params.decoder.full_adaptive = false;
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -208,7 +213,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_polar<B,R,Q>
 		p.push_back(std::make_pair("Num. of lists (L)", std::to_string(this->params.decoder.L)));
 
 	if (this->params.decoder.type == "ASCL" || this->params.decoder.type == "ASCL_MEM")
+	{
+		auto adaptative_mode = this->params.decoder.full_adaptive ? "full" : "partial";
 		p.push_back(std::make_pair("Max num. of lists (L)", std::to_string(this->params.decoder.L)));
+		p.push_back(std::make_pair("Adaptative mode", adaptative_mode));
+	}
 
 	if ((this->params.decoder.type == "SC"      ||
 	     this->params.decoder.type == "SCL"     ||

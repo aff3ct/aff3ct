@@ -111,7 +111,7 @@ _aff3ct() {
 		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method \
 		      --cde-sigma --crc-type --crc-poly --crc-rate --enc-no-sys  \
 		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd       \
-		      --dec-polar-nodes"
+		      --dec-polar-nodes --dec-partial-adaptive"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -190,7 +190,8 @@ _aff3ct() {
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev)
+		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev |                   \
+		--dec-partial-adaptive)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
