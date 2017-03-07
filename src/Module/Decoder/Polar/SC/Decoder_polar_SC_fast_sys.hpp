@@ -36,8 +36,11 @@ protected:
 	const int             m;            // graph depth
 	      mipp::vector<R> l;            // lambda, LR or LLR
 	      mipp::vector<B> s;            // bits, partial sums
+	      mipp::vector<B> ss;           // bits, partial sums
 	      mipp::vector<B> s_bis;        // bits, partial sums
 	const mipp::vector<B> &frozen_bits; // frozen bits
+
+	int cur_bit;
 
 	const tools::Pattern_polar_parser<B> polar_patterns;
 

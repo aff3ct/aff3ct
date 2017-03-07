@@ -42,8 +42,11 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 	this->L = 1;
 	sc_decoder._hard_decode();
 
+//	// check the CRC
+//	auto crc_decode_result = this->crc_check(sc_decoder.s);
+
 	// check the CRC
-	auto crc_decode_result = this->crc_check(sc_decoder.s);
+	auto crc_decode_result = this->crc.check(sc_decoder.ss, this->get_simd_inter_frame_level());
 
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)

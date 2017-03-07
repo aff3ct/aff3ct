@@ -25,8 +25,8 @@ constexpr int static_level = 6; // 2^6 = 64
 template <typename B, typename R, class API_polar, int REV_D>
 struct Decoder_polar_SC_fast_sys_static
 {
-	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
-	                   const int off_l, const int off_s, int &node_id)
+	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<B> &ss, mipp::vector<R> &l,
+	                   const int off_l, const int off_s, int &node_id, int &cur_bit)
 	{
 		constexpr int reverse_depth = REV_D;
 		constexpr int n_elmts = 1 << reverse_depth;
@@ -51,7 +51,7 @@ struct Decoder_polar_SC_fast_sys_static
 			}
 
 			Decoder_polar_SC_fast_sys_static<B,R,API_polar,REV_D-1>
-			::decode(polar_patterns, s, l, off_l + n_elmts, off_s, ++node_id); // recursive call left
+			::decode(polar_patterns, s, ss, l, off_l + n_elmts, off_s, ++node_id, cur_bit); // recursive call left
 
 			// g
 			switch (node_type)
@@ -64,7 +64,7 @@ struct Decoder_polar_SC_fast_sys_static
 			}
 
 			Decoder_polar_SC_fast_sys_static<B,R,API_polar,REV_D-1>
-			::decode(polar_patterns, s, l, off_l + n_elmts, off_s + n_elm_2, ++node_id); // recursive call right
+			::decode(polar_patterns, s, ss, l, off_l + n_elmts, off_s + n_elm_2, ++node_id, cur_bit); // recursive call right
 
 			// xor
 			switch (node_type)
@@ -81,11 +81,32 @@ struct Decoder_polar_SC_fast_sys_static
 			// h
 			switch (node_type)
 			{
-				case tools::RATE_0: // if (!polar_patterns.exist_node_type(tools::polar_node_t::RATE_0_LEFT, REV_D+1))
-				                    API_polar::template h0 <n_elmts>(s,           off_s, n_elmts); break;
-				case tools::RATE_1: API_polar::template h  <n_elmts>(s, l, off_l, off_s, n_elmts); break;
-				case tools::REP:    API_polar::template rep<n_elmts>(s, l, off_l, off_s, n_elmts); break;
-				case tools::SPC:    API_polar::template spc<n_elmts>(s, l, off_l, off_s, n_elmts); break;
+//				case tools::RATE_0: // if (!polar_patterns.exist_node_type(tools::polar_node_t::RATE_0_LEFT, REV_D+1))
+//				                    API_polar::template h0 <n_elmts>(s,           off_s, n_elmts); break;
+//				case tools::RATE_1: API_polar::template h  <n_elmts>(s, l, off_l, off_s, n_elmts); break;
+//				case tools::REP:    API_polar::template rep<n_elmts>(s, l, off_l, off_s, n_elmts); break;
+//				case tools::SPC:    API_polar::template spc<n_elmts>(s, l, off_l, off_s, n_elmts); break;
+//				default:
+//					break;
+				case tools::RATE_0:
+					// if (!polar_patterns.exist_node_type(tools::polar_node_t::RATE_0_LEFT, REV_D+1))
+					API_polar::template h0 <n_elmts>(s,           off_s, n_elmts);
+					break;
+				case tools::RATE_1:
+					API_polar::template h  <n_elmts>(s, l, off_l, off_s, n_elmts);
+					std::copy(s.begin() + off_s, s.begin() + off_s + n_elmts, ss.begin() + cur_bit);
+					cur_bit += n_elmts;
+					break;
+				case tools::REP:
+					API_polar::template rep<n_elmts>(s, l, off_l, off_s, n_elmts);
+					ss[cur_bit] = s[off_s + n_elmts -2];
+					cur_bit++;
+					break;
+				case tools::SPC:
+					API_polar::template spc<n_elmts>(s, l, off_l, off_s, n_elmts);
+					std::copy(s.begin() + off_s +1, s.begin() + off_s + n_elmts, ss.begin() + cur_bit);
+					cur_bit += n_elmts -1;
+					break;
 				default:
 					break;
 			}
@@ -96,8 +117,8 @@ struct Decoder_polar_SC_fast_sys_static
 template <typename B, typename R, class API_polar>
 struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 {
-	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
-	                   const int off_l, const int off_s, int &id)
+	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<B> &ss, mipp::vector<R> &l,
+	                   const int off_l, const int off_s, int &id, int &cur_bit)
 	{
 		constexpr int reverse_depth = 0;
 		constexpr int n_elmts = 1 << reverse_depth;
@@ -123,8 +144,10 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
   m             ((int)std::log2(N)),
   l             (2 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<R>()),
   s             (1 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<B>()),
+  ss            (    K                                                              ),
   s_bis         (1 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<B>()),
   frozen_bits   (frozen_bits),
+  cur_bit       (0),
   polar_patterns(N,
                  frozen_bits,
                  {new tools::Pattern_polar_std,
@@ -153,6 +176,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
   s             (1 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<B>()),
   s_bis         (1 * N * this->simd_inter_frame_level + mipp::nElmtsPerRegister<B>()),
   frozen_bits   (frozen_bits),
+  cur_bit       (0),
   polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1)
 {
 	static_assert(sizeof(B) == sizeof(R), "");
@@ -191,6 +215,8 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			tools::Reorderer_static<R,n_frames>::apply(frames, l.data(), this->N);
 		}
 	}
+
+	cur_bit = 0;
 }
 
 template <typename B, typename R, class API_polar>
@@ -211,7 +237,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	{
 		// use the static version of the decoder
 		Decoder_polar_SC_fast_sys_static<B,R,API_polar,static_level>
-		::decode(polar_patterns, this->s, this->l, off_l, off_s, node_id);
+		::decode(polar_patterns, this->s, this->ss, this->l, off_l, off_s, node_id, cur_bit);
 	}
 	else
 	{
@@ -264,11 +290,25 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			// h
 			switch (node_type)
 			{
-				case tools::RATE_0: // if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, reverse_depth +1))
-				                    API_polar::h0 (s,           off_s, n_elmts); break;
-				case tools::RATE_1: API_polar::h  (s, l, off_l, off_s, n_elmts); break;
-				case tools::REP:    API_polar::rep(s, l, off_l, off_s, n_elmts); break;
-				case tools::SPC:    API_polar::spc(s, l, off_l, off_s, n_elmts); break;
+				case tools::RATE_0:
+					// if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, reverse_depth +1))
+					API_polar::h0 (s,           off_s, n_elmts);
+					break;
+				case tools::RATE_1:
+					API_polar::h  (s, l, off_l, off_s, n_elmts);
+					std::copy(s.begin() + off_s, s.begin() + off_s + n_elmts, ss.begin() + cur_bit);
+					cur_bit += n_elmts;
+					break;
+				case tools::REP:
+					API_polar::rep(s, l, off_l, off_s, n_elmts);
+					ss[cur_bit] = s[off_s + n_elmts -2];
+					cur_bit++;
+					break;
+				case tools::SPC:
+					API_polar::spc(s, l, off_l, off_s, n_elmts);
+					std::copy(s.begin() + off_s +1, s.begin() + off_s + n_elmts, ss.begin() + cur_bit);
+					cur_bit += n_elmts -1;
+					break;
 				default:
 					break;
 			}
@@ -286,10 +326,11 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 	if (n_frames == 1)
 	{
-		auto k = 0;
-		for (auto j = 0; j < this->N; j++)
-			if (!frozen_bits[j])
-				V_K[k++] =  s[j] ? 1 : 0;
+//		auto k = 0;
+//		for (auto j = 0; j < this->N; j++)
+//			if (!frozen_bits[j])
+//				V_K[k++] =  s[j] ? 1 : 0;
+		V_K = ss;
 	}
 	else
 	{
