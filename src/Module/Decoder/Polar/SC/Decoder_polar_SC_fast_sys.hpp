@@ -36,22 +36,24 @@ protected:
 	const int             m;            // graph depth
 	      mipp::vector<R> l;            // lambda, LR or LLR
 	      mipp::vector<B> s;            // bits, partial sums
-	      mipp::vector<B> ss;           // bits, partial sums
 	      mipp::vector<B> s_bis;        // bits, partial sums
 	const mipp::vector<B> &frozen_bits; // frozen bits
-
-	int cur_bit;
+	const bool            k_extract;
+	      mipp::vector<B> sk;          // K decoded bits
+	      int             sk_idx;
 
 	const tools::Pattern_polar_parser<B> polar_patterns;
 
 public:
-	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, 
-	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
+	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+	                          const int n_frames = 1, const bool k_extract = false,
+	                          const std::string name = "Decoder_polar_SC_fast_sys");
 
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
 	                          const std::vector<tools::Pattern_polar_i*> polar_patterns,
 	                          const int idx_r0, const int idx_r1,
-	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
+	                          const int n_frames = 1, const bool k_extract = false,
+	                          const std::string name = "Decoder_polar_SC_fast_sys");
 
 	virtual ~Decoder_polar_SC_fast_sys();
 
