@@ -19,7 +19,7 @@ Encoder_LDPC_DVBS2<B>
 
 	if(!dvbs2)
 	{
-		std::cerr << tools::bold_red("(EE) The given format does not match any know generator matrix!") << std::endl;
+		std::cerr << tools::bold_red("(EE) The given format does not match any known generator matrix!") << std::endl;
 		std::exit(-1);
 	}
 
@@ -67,8 +67,20 @@ void Encoder_LDPC_DVBS2<B>
 				case 7200 :
 					dvbs2 = new dvbs2_values_64800_7200();
 					break;
+				case 16200 :
+					dvbs2 = new dvbs2_values_64800_16200();
+					break;
+				case 21600 :
+					dvbs2 = new dvbs2_values_64800_21600();
+					break;
 				case 32400 :
 					dvbs2 = new dvbs2_values_64800_32400();
+					break;
+				case 43200 :
+					dvbs2 = new dvbs2_values_64800_43200();
+					break;
+				case 48600 :
+					dvbs2 = new dvbs2_values_64800_48600();
 					break;
 				default :
 					break;
