@@ -36,6 +36,11 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.decoder    .scaling_factor = "LTE_VEC";
 	this->params.decoder    .simd_strategy  = "";
 	this->params.decoder    .self_corrected = false;
+	this->params.decoder    .fnc            = false;
+	this->params.decoder    .fnc_q          = 10;
+	this->params.decoder    .fnc_ite_min    = 3;
+	this->params.decoder    .fnc_ite_max    = this->params.decoder.n_ite;
+	this->params.decoder    .fnc_ite_step   = 1;
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -95,6 +100,22 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"dec-sc"}] =
 		{"",
 		 "enables the self corrected decoder (requires \"--crc-type\")."};
+	this->opt_args[{"dec-fnc"}] =
+		{"",
+		 "enables the flip and check decoder (requires \"--crc-type\")."};
+	this->opt_args[{"dec-fnc-q"}] =
+		{"positive_int",
+		 "set the search's space for the fnc algorithm."};
+	this->opt_args[{"dec-fnc-ite-m"}] =
+		{"positive_int",
+		 "set first iteration at which the fnc is used."};
+	this->opt_args[{"dec-fnc-ite-M"}] =
+		{"positive_int",
+		 "set last iteration at which the fnc is used."};
+	this->opt_args[{"dec-fnc-ite-s"}] =
+		{"positive_int",
+		 "set iteration step for the fnc algorithm."};
+
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -139,8 +160,22 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
 
 	if (this->ar.exist_arg({"crc-type"}))
+	{
 		if (this->ar.exist_arg({"dec-sc"}))
 			this->params.decoder.self_corrected = true;
+		else if (this->ar.exist_arg({"dec-fnc"}))
+		{
+			this->params.decoder.fnc = true;
+			if (this->ar.exist_arg({"dec-fnc-q"}))
+				this->params.decoder.fnc_q = this->ar.get_arg_int({"dec-fnc-q"});
+			if (this->ar.exist_arg({"dec-fnc-ite-m"}))
+				this->params.decoder.fnc_ite_min = this->ar.get_arg_int({"dec-fnc-ite-m"});
+			if (this->ar.exist_arg({"dec-fnc-ite-M"}))
+				this->params.decoder.fnc_ite_max = this->ar.get_arg_int({"dec-fnc-ite-M"});
+			if (this->ar.exist_arg({"dec-fnc-ite-s"}))
+				this->params.decoder.fnc_ite_step = this->ar.get_arg_int({"dec-fnc-ite-s"});
+		}
+	}
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -250,7 +285,8 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 {
 	auto p = Launcher_BFER<B,R,Q>::header_decoder();
 
-	std::string sc = ((this->params.decoder.self_corrected) ? "on" : "off");
+	std::string sc  = ((this->params.decoder.self_corrected) ? "on" : "off");
+	std::string fnc = ((this->params.decoder.fnc) ? "on" : "off");
 
 	if (!this->params.decoder.simd_strategy.empty())
 		p.push_back(std::make_pair("SIMD strategy", this->params.decoder.simd_strategy));
@@ -259,8 +295,17 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	p.push_back(std::make_pair("Scaling factor",         this->params.decoder.scaling_factor       ));
 	p.push_back(std::make_pair("Max type",               this->params.decoder.max                  ));
 	if (this->ar.exist_arg({"crc-type"}))
+	{
 		p.push_back(std::make_pair("Self-corrected", sc));
-
+		p.push_back(std::make_pair("Flip aNd Check (FNC)", fnc));
+		if (this->params.decoder.fnc)
+		{
+			p.push_back(std::make_pair("FNC q"       ,  std::to_string(this->params.decoder.fnc_q)));
+			p.push_back(std::make_pair("FNC ite min" ,  std::to_string(this->params.decoder.fnc_ite_min)));
+			p.push_back(std::make_pair("FNC ite max" ,  std::to_string(this->params.decoder.fnc_ite_max)));
+			p.push_back(std::make_pair("FNC ite step",  std::to_string(this->params.decoder.fnc_ite_step)));
+		}
+	}
 	return p;
 }
 

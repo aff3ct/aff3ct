@@ -132,6 +132,12 @@ struct decoder_parameters
 	int         n_ite;
 	int         L;
 	bool        self_corrected;
+	bool        fnc;
+	int         fnc_q;
+	int         fnc_ite_min;
+	int         fnc_ite_max;
+	int         fnc_ite_step;
+
 };
 
 struct monitor_parameters
