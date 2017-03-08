@@ -58,6 +58,9 @@ Launcher<B,R,Q>
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
+	params.crc        .poly              = "";
+	params.crc        .size              = 0;
+	params.crc        .inc_code_rate     = false;
 	params.modulator  .type              = "BPSK";
 	params.modulator  .bits_per_symbol   = 1;
 	params.modulator  .upsample_factor   = 1;
@@ -507,9 +510,15 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
-	p.push_back(std::make_pair("Type",              params.code.type             ));
-	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(params.code.K)));
-	p.push_back(std::make_pair("Codeword size (N)", N                            ));
+	std::stringstream K;
+	if (!params.crc.poly.empty())
+		K << (params.code.K - params.crc.size) << " + " << params.crc.size << " (CRC)";
+	else
+		K << params.code.K;
+
+	p.push_back(std::make_pair("Type",              params.code.type));
+	p.push_back(std::make_pair("Info. bits (K)",    K.str()         ));
+	p.push_back(std::make_pair("Codeword size (N)", N               ));
 
 	return p;
 }
@@ -613,7 +622,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
 	std::string demod_max  = (params.modulator.type == "BPSK") ||
 	                         (params.modulator.type == "BPSK_FAST") ?
-	                           "unused" : params.demodulator.max;
+	                         "unused" : params.demodulator.max;
 
 	p.push_back(std::make_pair("Sigma square", demod_sig2));
 	p.push_back(std::make_pair("Max type",     demod_max ));
@@ -785,13 +794,13 @@ void Launcher<B,R,Q>
 	{
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
-			stream << "# The simulation is running..." << std::endl;
+			stream << "# " << bold_blue("The simulation is running...") << std::endl;
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
 			std::clog << bold_yellow(cmd_warn);
 		simu->launch();
 		if (params.simulation.mpi_rank == 0)
-			stream << "# End of the simulation." << std::endl;
+			stream << "# " << bold_blue("End of the simulation.") << std::endl;
 	}
 }
 

@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_512_256_25[512] = {
+static const char Decoder_polar_SC_fast_sys_fb_512_256_25[512] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 
@@ -38,7 +38,7 @@ public:
 		assert(K == 256);
 		
 		auto i = 0;
-		while (i < 512 && Frozen_bits_512_256_25[i] == frozen_bits[i]) i++;
+		while (i < 512 && Decoder_polar_SC_fast_sys_fb_512_256_25[i] == frozen_bits[i]) i++;
 		assert(i == 512);
 	}
 
@@ -49,6 +49,8 @@ public:
 	// depth = 4, reverse depth = 5, size = 32, calls = 2
 	inline void re4(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -59,6 +61,8 @@ public:
 	__attribute__((always_inline))
 	inline void re6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -75,6 +79,8 @@ public:
 	__attribute__((always_inline))
 	inline void r18(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -85,6 +91,8 @@ public:
 	__attribute__((always_inline))
 	inline void r08r18(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -98,6 +106,8 @@ public:
 	__attribute__((always_inline))
 	inline void r17(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -108,6 +118,8 @@ public:
 	__attribute__((always_inline))
 	inline void r08r18r17(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -134,6 +146,8 @@ public:
 	__attribute__((always_inline))
 	inline void r07r08r18(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -147,6 +161,8 @@ public:
 	__attribute__((always_inline))
 	inline void re7(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -157,6 +173,8 @@ public:
 	__attribute__((always_inline))
 	inline void s7(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -167,6 +185,8 @@ public:
 	__attribute__((always_inline))
 	inline void re7s7(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -181,6 +201,8 @@ public:
 	__attribute__((always_inline))
 	inline void s6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -190,6 +212,8 @@ public:
 	// depth = 5, reverse depth = 4, size = 16, calls = 2
 	inline void re7s7s6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -203,6 +227,8 @@ public:
 	// depth = 5, reverse depth = 4, size = 16, calls = 2
 	inline void r06re7s7(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -216,6 +242,8 @@ public:
 	__attribute__((always_inline))
 	inline void r16(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -225,6 +253,8 @@ public:
 	// depth = 5, reverse depth = 4, size = 16, calls = 2
 	inline void re7s7r16(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -238,14 +268,18 @@ public:
 	// depth = 4, reverse depth = 5, size = 32, calls = 2
 	inline void s4(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
 		API_polar::template spc< 32>(s, l, off_l+   0,                       off_s+   0,  32);
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 

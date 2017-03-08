@@ -751,6 +751,17 @@
 		return xorb<double>(v1, v2);
 	}
 
+	// ------------------------------------------------------------------------------------------------------------ neg
+	template <>
+	inline reg neg<float>(const reg v) {
+		return xorb<int>(v, mipp::set1<int>(0x80000000));
+	}
+
+	template <>
+	inline reg neg<double>(const reg v) {
+		return xorb<long long>(v, mipp::set1<long long>(0x8000000000000000));
+	}
+
 	// ------------------------------------------------------------------------------------------------------------ abs
 	template <>
 	inline reg abs<float>(const reg v1) {

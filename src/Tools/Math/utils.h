@@ -58,7 +58,14 @@ inline void saturate(mipp::vector<T> &array, const T min, const T max)
 template <typename B, typename R>
 B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }
 
-template<typename R, typename function_type>
+
+template <typename T>
+constexpr bool is_power_of_2(T x)
+{
+	return (x > 0) && !(x & (x - 1));
+}
+
+template <typename R, typename function_type>
 inline R integral(function_type func, const R min, const R max, const int number_steps)
 {
 	assert(         max >= min);

@@ -48,7 +48,7 @@ _aff3ct() {
 		      --mod-ups --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p    \
 		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max           \
 		      --dmod-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type   \
-		      --qnt-int --qnt-bits --qnt-range --dec-type --dec-implem        \
+		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber     \
 		      --sim-no-colors --mnt-err-trk --mnt-err-trk-rev                 \
 		      --mnt-err-trk-path"
@@ -108,9 +108,10 @@ _aff3ct() {
 	# add contents of Launcher_BFER_polar.cpp
 	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method  \
-		      --cde-sigma --crc-type --enc-no-sys --dec-type -D --dec-ite \
-		      -i --dec-lists -L --dec-simd"
+		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method \
+		      --cde-sigma --crc-type --crc-poly --crc-rate --enc-no-sys  \
+		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd       \
+		      --dec-polar-nodes --dec-partial-adaptive"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -122,9 +123,10 @@ _aff3ct() {
 	# add contents of Launcher_BFER_turbo.cpp
 	if [[ ${codetype} == "TURBO"      && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
-		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem \
-		      --dec-ite -i --dec-sf --dec-simd --dec-max" 
+		opts="$opts --sim-json-path --crc-type --crc-poly --crc-rate      \
+		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path  \
+		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
+		      --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -174,13 +176,13 @@ _aff3ct() {
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
 		--cde-size | -N |                                                     \
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
-		--qnt-int | --qnt-bits | --qnt-range | --qnt-type |                   \
+		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                   \
 		--sim-benchs | -b | --sim-debug-limit |                               \
 		--mnt-max-fe | -e |                                                   \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber)
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes)
 			COMPREPLY=()
 			;;
 
@@ -188,7 +190,8 @@ _aff3ct() {
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-		--mnt-err-trk | --mnt-err-trk-rev)
+		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev |                   \
+		--dec-partial-adaptive)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
@@ -299,8 +302,18 @@ _aff3ct() {
 			;;
 
 		--crc-type)
-			local params="1-0x1 2-0x1 3-0x3 4-ITU 8-DVB-S2 16-CCITT 16-IBM \
-			24-LTEA 32-GZIP"
+			local params="STD FAST"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+		
+		--crc-poly)
+			local params="1-PAR 4-ITU 5-USB 5-EPC 5-ITU 6-ITU 6-DARC 6-CDMA2000-B 6-CDMA2000-A  \
+			              7-MMC 7-MVB 8-DVB-S2 8-AUTOSAR 8-CCITT 8-DALLAS 8-DARC 8-SAE-J1850    \
+			              8-WCDMA 10-ATM 10-CDMA2000 11-FLEXRAY 12-TELECOM 12-CDMA2000 13-BBC   \
+			              14-DARC 15-CAN 15-MPT1327 16-CHAKRAVARTY 16-ARINC 16-CDMA2000         \
+			              16-DECT 16-T10-DIF 16-DNP 16-OPENSAFETY-A 16-OPENSAFETY-B 16-PROFIBUS \
+			              16-CCITT 16-IBM 17-CAN 21-CAN 24-FLEXRAY 24-RADIX-64 24-LTEA 30-CDMA  \
+			              32-KOOPMAN 32-AIXM 32-CASTAGNOLI 32-GZIP"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

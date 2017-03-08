@@ -79,6 +79,17 @@ public:
 	 * \return true if the CRC is verified, false otherwise.
 	 */
 	virtual bool check(const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
+
+	/*!
+	 * \brief Checks if the CRC is verified or not (works on packed bits).
+	 *
+	 * \param V_K:      a vector of packed bits containing information bits plus the CRC bits.
+	 * \param n_frames: you should not use this parameter unless you know what you are doing, this parameter
+	 *                  redefine the number of frames to check specifically in this method.
+	 *
+	 * \return true if the CRC is verified, false otherwise.
+	 */
+	virtual bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
 };
 }
 }

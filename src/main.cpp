@@ -104,9 +104,9 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	// ---------------------------------------------------------------------------------------------------- simulation
 	opt_args[{"sim-type"}] =
-			{"string",
-			 "the type of simulation to run.",
-			 "BFER, BFERI, EXIT, GEN"};
+		{"string",
+		 "the type of simulation to run.",
+		 "BFER, BFERI, EXIT, GEN"};
 #ifdef MULTI_PREC
 	opt_args[{"sim-prec", "p"}] =
 		{"positive_int",

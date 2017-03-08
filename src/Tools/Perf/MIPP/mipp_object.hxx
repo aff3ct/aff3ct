@@ -172,6 +172,7 @@ public:
 	inline Reg<T>   sign         ()                                 const { return mipp::sign         <T>(r);             }
 	inline Reg<T>   sign         (const Reg<T> v)                   const { return mipp::sign         <T>(r, v.r);        }
 	inline Reg<T>   neg          (const Reg<T> v)                   const { return mipp::neg          <T>(r, v.r);        }
+	inline Reg<T>   neg          ()                                 const { return mipp::neg          <T>(r);             }
 	inline Reg<T>   abs          ()                                 const { return mipp::abs          <T>(r);             }
 	inline Reg<T>   sqrt         ()                                 const { return mipp::sqrt         <T>(r);             }
 	inline Reg<T>   rsqrt        ()                                 const { return mipp::rsqrt        <T>(r);             }
@@ -183,6 +184,7 @@ public:
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmadd        <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return mipp::fnmadd       <T>(r, v1.r, v2.r); }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return mipp::fmsub        <T>(r, v1.r, v2.r); }
+	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return mipp::blend        <T>(r, v1.r,  m.r); }
 	inline Reg<T>   rot          ()                                 const { return mipp::rot          <T>(r);             }
 	inline Reg<T>   rotr         ()                                 const { return mipp::rotr         <T>(r);             }
 	inline Reg<T>   div2         ()                                 const { return mipp::div2         <T>(r);             }
@@ -225,6 +227,7 @@ public:
 	inline Reg<T>   sign         ()                                 const { return (T)((T(0) < r) - (r < T(0)));          }
 	inline Reg<T>   sign         (const Reg<T> v)                   const { return sign(Reg<T>(r ^ v.r));                 }
 	inline Reg<T>   neg          (const Reg<T> v)                   const { return v.r >= 0 ? Reg<T>(r) : Reg<T>(-r);     }
+	inline Reg<T>   neg          ()                                 const { return -r;                                    }
 	inline Reg<T>   abs          ()                                 const { return std::abs(r);                           }
 	inline Reg<T>   sqrt         ()                                 const { return (T)std::sqrt(r);                       }
 	inline Reg<T>   rsqrt        ()                                 const { return (T)(1 / std::sqrt(r));                 }
@@ -236,6 +239,7 @@ public:
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
+	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return (m.r) ? v1.r : r;                      }
 	inline Reg<T>   rot          ()                                 const { return r;                                     }
 	inline Reg<T>   rotr         ()                                 const { return r;                                     }
 	inline Reg<T>   div2         ()                                 const { return mipp_scop::div2<T>(r);                 }
@@ -400,7 +404,8 @@ template <typename T> inline Reg<T>   min          (const Reg<T> v1, const Reg<T
 template <typename T> inline Reg<T>   max          (const Reg<T> v1, const Reg<T> v2)                  { return v1.max(v2);           }
 template <typename T> inline Reg<T>   sign         (const Reg<T> v)                                    { return v.sign();             }
 template <typename T> inline Reg<T>   sign         (const Reg<T> v1, const Reg<T> v2)                  { return v1.sign(v2);          }
-template <typename T> inline Reg<T>   neg          (const Reg<T> v1, const Reg<T> v2)                  { return v1.andb(v2);          }
+template <typename T> inline Reg<T>   neg          (const Reg<T> v1, const Reg<T> v2)                  { return v1.neg(v2);           }
+template <typename T> inline Reg<T>   neg          (const Reg<T> v)                                    { return v.neg();              }
 template <typename T> inline Reg<T>   abs          (const Reg<T> v)                                    { return v.abs();              }
 template <typename T> inline Reg<T>   sqrt         (const Reg<T> v)                                    { return v.sqrt();             }
 template <typename T> inline Reg<T>   rsqrt        (const Reg<T> v)                                    { return v.rsqrt();            }
@@ -412,6 +417,7 @@ template <typename T> inline void     sincos       (const Reg<T> x,        Reg<T
 template <typename T> inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fmadd(v2, v3);     }
 template <typename T> inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fnmadd(v2, v3);    }
 template <typename T> inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2, const Reg<T> v3) { return v1.fmsub(v2, v3);     }
+template <typename T> inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> v2, const Reg<T> m ) { return v1.blend(v2, m );     }
 template <typename T> inline Reg<T>   rot          (const Reg<T> v)                                    { return v.rot();              }
 template <typename T> inline Reg<T>   rotr         (const Reg<T> v)                                    { return v.rotr();             }
 template <typename T> inline Reg<T>   div2         (const Reg<T> v)                                    { return v.div2();             }

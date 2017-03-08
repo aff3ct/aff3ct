@@ -26,7 +26,7 @@ Simulation_BFER_polar<B,R,Q>
 ::Simulation_BFER_polar(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
   frozen_bits((int)std::exp2(this->params.code.m)),
-  is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos) && (params.decoder.type == "SC")),
+  is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos)),
   fb_generator(nullptr)
 {
 	const_cast<code_parameters&>(this->params.code).N_code = (int)std::exp2(this->params.code.m);
@@ -116,7 +116,7 @@ Decoder<B,Q>* Simulation_BFER_polar<B,R,Q>
 ::build_decoder(const int tid)
 {
 	if (is_generated_decoder)
-		return Factory_decoder_polar_gen<B,Q>::build(this->params, frozen_bits);
+		return Factory_decoder_polar_gen<B,Q>::build(this->params, frozen_bits, this->crc[tid]);
 	else
 		return Factory_decoder_polar<B,Q>::build(this->params, frozen_bits, this->crc[tid]);
 }

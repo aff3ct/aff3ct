@@ -62,6 +62,9 @@ struct source_parameters
 struct crc_parameters
 {
 	std::string type;
+	std::string poly;
+	bool        inc_code_rate;
+	int         size;
 };
 
 struct encoder_parameters
@@ -126,7 +129,9 @@ struct decoder_parameters
 	std::string scaling_factor;
 	std::string max;
 	std::string gen_path;
+	std::string polar_nodes;
 	bool        enable_syndrome;
+	bool        full_adaptive;
 	float       normalize_factor;
 	float       offset;
 	int         n_ite;

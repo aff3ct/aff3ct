@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Algo/Bit_packer.hpp"
 
 #include "CRC_polynomial.hpp"
 
@@ -9,23 +10,51 @@ using namespace aff3ct::tools;
 
 template <typename B>
 CRC_polynomial<B>
-::CRC_polynomial(const int K, std::string poly_key, const int n_frames, const std::string name)
-: CRC<B>(K, n_frames, name), polynomial(0), buff_crc(n_frames * K)
+::CRC_polynomial(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
+: CRC<B>(K, n_frames, name),
+  polynomial       (0                                 ),
+  polynomial_packed(CRC_polynomial<B>::value(poly_key)),
+  poly_size        (0                                 ),
+  buff_crc         (n_frames * K                      )
 {
 	if (poly_key.empty())
 	{
 		std::cerr << bold_red("(EE) Please choose a CRC.") << std::endl;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 
-	if (polynomials.find(poly_key) != polynomials.end())
-		polynomial = polynomials.at(poly_key);
-	else
+	if (!polynomial_packed)
 	{
-		std::cerr << bold_red("(EE) CRC \"") << bold_red(poly_key) << bold_red("\" is not supported.") 
-		          << std::endl;
-		exit(EXIT_FAILURE);
+		std::cerr << bold_red("(EE) CRC \"") << bold_red(poly_key) << bold_red("\" is not supported.") << std::endl;
+		std::exit(EXIT_FAILURE);
 	}
+
+
+	auto crc_name = CRC_polynomial<B>::name(poly_key);
+	if (size == 0 && crc_name.empty())
+	{
+		std::cerr << bold_red("(EE) You have to specify a size with the \"--crc-size\" option.") << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	if (size)
+		poly_size = size;
+	else
+		poly_size = CRC_polynomial<B>::size(crc_name);
+
+	if (!crc_name.empty() && CRC_polynomial<B>::size(crc_name) != poly_size)
+	{
+		std::clog << bold_yellow("(WW) You specified \"")
+				  << bold_yellow(std::to_string(poly_size))
+				  << bold_yellow(" bits\" for your CRC size but the database advise you to use \"")
+				  << bold_yellow(std::to_string(std::get<1>(known_polynomials.at(crc_name))))
+				  << bold_yellow(" bits\", are you sure?")
+				  << std::endl;
+	}
+
+	polynomial.push_back(1);
+	for (auto i = 0; i < poly_size; i++)
+		polynomial.push_back((polynomial_packed >> ((poly_size -1) -i)) & 1);
 
 	assert(K > this->size());
 }
@@ -34,8 +63,50 @@ template <typename B>
 int CRC_polynomial<B>
 ::size(std::string poly_key)
 {
-	if (polynomials.find(poly_key) != polynomials.end())
-		return (int)(polynomials.at(poly_key).size() == 0 ? 0 : polynomials.at(poly_key).size() -1); 
+	if (known_polynomials.find(poly_key) != known_polynomials.end())
+		return std::get<1>(known_polynomials.at(poly_key));
+	else
+	{
+		auto size = 0;
+		auto name = CRC_polynomial<B>::name(poly_key);
+
+		if (!name.empty())
+			size = CRC_polynomial<B>::size(name);
+
+		return size;
+	}
+}
+
+template <typename B>
+std::string CRC_polynomial<B>
+::name(std::string poly_key)
+{
+	if (known_polynomials.find(poly_key) != known_polynomials.end())
+		return poly_key;
+	else
+	{
+		auto value = CRC_polynomial<B>::value(poly_key);
+		std::string name = "";
+
+		for (auto it = known_polynomials.begin(); it != known_polynomials.end(); ++it)
+			if (std::get<0>(it->second) == value)
+			{
+				name = it->first;
+				break;
+			}
+
+		return name;
+	}
+}
+
+template <typename B>
+unsigned CRC_polynomial<B>
+::value(std::string poly_key)
+{
+	if (known_polynomials.find(poly_key) != known_polynomials.end())
+		return std::get<0>(known_polynomials.at(poly_key));
+	else if(poly_key.length() > 2 && poly_key[0] == '0' && poly_key[1] == 'x')
+		return (unsigned)std::stoul(poly_key, 0, 16);
 	else
 		return 0;
 }
@@ -44,8 +115,7 @@ template <typename B>
 int CRC_polynomial<B>
 ::size() const
 {
-	// the number of generated crc bits is the size of the polynomial minus 1
-	return (int)(polynomial.size() == 0 ? 0 : polynomial.size() -1);
+	return this->poly_size;
 }
 
 template <typename B>
@@ -79,7 +149,8 @@ void CRC_polynomial<B>
 				if (this->polynomial[j])
 					buff_crc[i+j] = !buff_crc[i+j];
 
-	std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out.begin() + off_out);
+	if (U_out.data() != buff_crc.data())
+		std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out.begin() + off_out);
 }
 
 template <typename B>
@@ -94,8 +165,8 @@ bool CRC_polynomial<B>
 	auto f = 0;
 	do
 	{
-		this->_generate(V_K, this->buff_crc, 
-		                real_frame_size * f, 
+		this->_generate(V_K, this->buff_crc,
+		                real_frame_size * f,
 		                real_frame_size * (f +1) - this->size(),
 		                real_frame_size - this->size());
 
@@ -112,6 +183,17 @@ bool CRC_polynomial<B>
 	while ((f < real_n_frames) && (i == this->size()));
 
 	return (f == real_n_frames) && (i == this->size());
+}
+
+template <typename B>
+bool CRC_polynomial<B>
+::check_packed(const mipp::vector<B>& V_K, const int n_frames)
+{
+	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+	mipp::vector<B> V_K_unpack = V_K;
+	Bit_packer<B>::unpack(V_K_unpack, real_n_frames);
+	return check(V_K_unpack, n_frames);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_32768_29491_25[32768] = {
+static const char Decoder_polar_SC_fast_sys_fb_32768_29491_25[32768] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -1046,7 +1046,7 @@ public:
 		assert(K == 29491);
 		
 		auto i = 0;
-		while (i < 32768 && Frozen_bits_32768_29491_25[i] == frozen_bits[i]) i++;
+		while (i < 32768 && Decoder_polar_SC_fast_sys_fb_32768_29491_25[i] == frozen_bits[i]) i++;
 		assert(i == 32768);
 	}
 
@@ -1054,8 +1054,10 @@ public:
 	{
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 

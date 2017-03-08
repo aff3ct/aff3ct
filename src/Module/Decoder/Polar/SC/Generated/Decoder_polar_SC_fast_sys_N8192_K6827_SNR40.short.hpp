@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_8192_6827_40[8192] = {
+static const char Decoder_polar_SC_fast_sys_fb_8192_6827_40[8192] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -278,7 +278,7 @@ public:
 		assert(K == 6827);
 		
 		auto i = 0;
-		while (i < 8192 && Frozen_bits_8192_6827_40[i] == frozen_bits[i]) i++;
+		while (i < 8192 && Decoder_polar_SC_fast_sys_fb_8192_6827_40[i] == frozen_bits[i]) i++;
 		assert(i == 8192);
 	}
 
@@ -323,6 +323,8 @@ public:
 	__attribute__((always_inline))
 	inline void r112(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -333,6 +335,8 @@ public:
 	__attribute__((always_inline))
 	inline void r012r112(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -346,6 +350,8 @@ public:
 	__attribute__((always_inline))
 	inline void r011r012r112(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -359,6 +365,8 @@ public:
 	__attribute__((always_inline))
 	inline void re10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -369,6 +377,8 @@ public:
 	__attribute__((always_inline))
 	inline void re11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -379,6 +389,8 @@ public:
 	__attribute__((always_inline))
 	inline void s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -389,6 +401,8 @@ public:
 	__attribute__((always_inline))
 	inline void re11s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -402,6 +416,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 15
 	inline void re10re11s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -415,6 +431,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 3
 	inline void r09re10re11s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -427,6 +445,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 2
 	inline void r08r09re10re11s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -439,6 +459,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 4
 	inline void re8(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -448,6 +470,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 8
 	inline void re9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -457,6 +481,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 3
 	inline void re9re10re11s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -471,6 +497,8 @@ public:
 	__attribute__((always_inline))
 	inline void s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -480,6 +508,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 2
 	inline void r011r012r112s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -493,6 +523,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 24
 	inline void re11s11s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -506,6 +538,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 19
 	inline void s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -515,6 +549,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 12
 	inline void re11s11s10s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -529,6 +565,8 @@ public:
 	__attribute__((always_inline))
 	inline void r111(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -539,6 +577,8 @@ public:
 	__attribute__((always_inline))
 	inline void r012r112r111(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -552,6 +592,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 3
 	inline void re10r012r112r111(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -566,6 +608,8 @@ public:
 	__attribute__((always_inline))
 	inline void r011s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -578,6 +622,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 4
 	inline void r010r011s11(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -590,6 +636,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 3
 	inline void r010r011s11re11s11s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -603,6 +651,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 6
 	inline void re10re11s11re11s11s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -616,6 +666,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 2
 	inline void re10re11s11re11s11s10re11s11s10s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -630,6 +682,8 @@ public:
 	__attribute__((always_inline))
 	inline void re11r111(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -644,6 +698,8 @@ public:
 	__attribute__((always_inline))
 	inline void r110(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -653,6 +709,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 2
 	inline void re11r111r110(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -666,6 +724,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 4
 	inline void r012r112r111r110(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -679,6 +739,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 9
 	inline void r19(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -688,6 +750,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 3
 	inline void r012r112r111r110r19(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -701,6 +765,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 2
 	inline void re10r012r112r111s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -714,6 +780,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 10
 	inline void s8(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -723,6 +791,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 7
 	inline void s7(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -732,6 +802,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 4
 	inline void re11s11r110(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -745,6 +817,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 2
 	inline void re10re11s11re11s11r110(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -758,6 +832,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 3
 	inline void re10re11r111(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -771,6 +847,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 2
 	inline void re10re11r111s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -784,6 +862,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 3
 	inline void r011s11s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -797,6 +877,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 2
 	inline void r011s11s10s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -810,6 +892,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 5
 	inline void re11s11s10s9s8(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -823,6 +907,8 @@ public:
 	// depth = 6, reverse depth = 7, size = 128, calls = 2
 	inline void re11s11s10s9s8s7(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -836,6 +922,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 6
 	inline void r18(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -845,6 +933,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 4
 	inline void r17(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -854,6 +944,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 3
 	inline void re11s11s10r19(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -867,6 +959,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 2
 	inline void re11s11s10r19r18(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -880,6 +974,8 @@ public:
 	// depth = 6, reverse depth = 7, size = 128, calls = 2
 	inline void re11s11s10r19r18r17(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -893,6 +989,8 @@ public:
 	// depth = 9, reverse depth = 4, size = 16, calls = 2
 	inline void re10s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -906,6 +1004,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 2
 	inline void re9re10s10(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -919,6 +1019,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 2
 	inline void r010r011s11re11s11s10re11s11s10s9(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -932,6 +1034,8 @@ public:
 	// depth = 8, reverse depth = 5, size = 32, calls = 2
 	inline void re11s11r110r19(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -945,6 +1049,8 @@ public:
 	// depth = 7, reverse depth = 6, size = 64, calls = 2
 	inline void re11s11r110r19r18(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -958,6 +1064,8 @@ public:
 	// depth = 5, reverse depth = 8, size = 256, calls = 5
 	inline void s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -967,6 +1075,8 @@ public:
 	// depth = 6, reverse depth = 7, size = 128, calls = 5
 	inline void s6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -976,14 +1086,18 @@ public:
 	// depth = 4, reverse depth = 9, size = 512, calls = 2
 	inline void s4(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
 		API_polar::template spc< 512>(s, l, off_l+    0,                           off_s+    0,  512);
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 

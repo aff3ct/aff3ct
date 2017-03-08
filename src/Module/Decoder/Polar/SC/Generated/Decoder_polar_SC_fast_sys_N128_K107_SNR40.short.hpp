@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_128_107_40[128] = {
+static const char Decoder_polar_SC_fast_sys_fb_128_107_40[128] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -26,7 +26,7 @@ public:
 		assert(K == 107);
 		
 		auto i = 0;
-		while (i < 128 && Frozen_bits_128_107_40[i] == frozen_bits[i]) i++;
+		while (i < 128 && Decoder_polar_SC_fast_sys_fb_128_107_40[i] == frozen_bits[i]) i++;
 		assert(i == 128);
 	}
 
@@ -38,6 +38,8 @@ public:
 	__attribute__((always_inline))
 	inline void re5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -48,6 +50,8 @@ public:
 	__attribute__((always_inline))
 	inline void s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -58,6 +62,8 @@ public:
 	__attribute__((always_inline))
 	inline void re5s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -68,8 +74,10 @@ public:
 		API_polar::template xo < 4>(s,    off_s+  0, off_s+  4,          off_s+  0,  4);
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 

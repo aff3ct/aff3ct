@@ -1,5 +1,3 @@
-#include "../decoder_polar_functions.h"
-
 #include "Decoder_polar_SCAN_naive_sys.hpp"
 
 namespace aff3ct
@@ -7,7 +5,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits,
                                const int n_frames, const std::string name)
@@ -17,14 +15,14 @@ Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::~Decoder_polar_SCAN_naive_sys()
 {
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
@@ -52,7 +50,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::store(mipp::vector<B>& V_N) const
 {
@@ -66,7 +64,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {

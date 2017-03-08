@@ -8,7 +8,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SC_naive<B,R,F,G,H>
 ::Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
                          const std::string name)
@@ -18,14 +18,14 @@ Decoder_polar_SC_naive<B,R,F,G,H>
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SC_naive<B,R,F,G,H>
 ::~Decoder_polar_SC_naive()
 {
 	this->recursive_deallocate_nodes_contents(this->polar_tree.get_root());
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::load(const mipp::vector<R>& Y_N)
 {
@@ -35,14 +35,14 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 		contents->lambda[i] = Y_N[i];
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::_hard_decode()
 {
 	this->recursive_decode(this->polar_tree.get_root());
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::store(mipp::vector<B>& V_K) const
 {
@@ -53,7 +53,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 	assert(k == this->K);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::recursive_allocate_nodes_contents(tools::Binary_node<Contents_SC<B,R>>* node_curr,
                                     const int vector_size)
@@ -67,7 +67,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 	}
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::recursive_initialize_frozen_bits(const tools::Binary_node<Contents_SC<B,R>>* node_curr,
                                    const mipp::vector<B>& frozen_bits)
@@ -83,7 +83,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 		contents->is_frozen_bit = frozen_bits[node_curr->get_lane_id()];
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::recursive_decode(const tools::Binary_node<Contents_SC<B,R>>* node_curr)
 {
@@ -121,7 +121,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 	}
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::recursive_store(const tools::Binary_node<Contents_SC<B,R>>* node_curr, mipp::vector<B>& V_K, int &k) const
 {
@@ -137,7 +137,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 			V_K[k++] = contents->s[0];
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::recursive_deallocate_nodes_contents(tools::Binary_node<Contents_SC<B,R>>* node_curr)
 {

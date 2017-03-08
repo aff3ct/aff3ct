@@ -1545,6 +1545,37 @@
 	}
 #endif
 
+	// ------------------------------------------------------------------------------------------------------------ neg
+	template <>
+	inline reg neg<float>(const reg v) {
+		return xorb<int>(v, mipp::set1<int>(0x80000000));
+	}
+
+	template <>
+	inline reg neg<double>(const reg v) {
+		return xorb<long long>(v, mipp::set1<long long>(0x8000000000000000));
+	}
+
+#ifdef __AVX2__
+	template <>
+	inline reg neg<int>(const reg v) {
+		reg tmp = set1<int>(-1);
+		return _mm256_castsi256_ps(_mm256_sign_epi32(_mm256_castps_si256(v), _mm256_castps_si256(tmp)));
+	}
+
+	template <>
+	inline reg neg<short>(const reg v) {
+		reg tmp = set1<short>(-1);
+		return _mm256_castsi256_ps(_mm256_sign_epi16(_mm256_castps_si256(v), _mm256_castps_si256(tmp)));
+	}
+
+	template <>
+	inline reg neg<signed char>(const reg v) {
+		reg tmp = set1<signed char>(-1);
+		return _mm256_castsi256_ps(_mm256_sign_epi8(_mm256_castps_si256(v), _mm256_castps_si256(tmp)));
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------------ abs
 	template <>
 	inline reg abs<float>(const reg v1) {
@@ -1766,6 +1797,38 @@
 	template <>
 	inline reg fmsub<double>(const reg v1, const reg v2, const reg v3) {
 		return sub<double>(mul<double>(v1, v2), v3);
+	}
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- blend
+	template <>
+	inline reg blend<double>(const reg v1, const reg v2, const reg m) {
+		return _mm256_castpd_ps(_mm256_blendv_pd(_mm256_castps_pd(v2), _mm256_castps_pd(v1), _mm256_castps_pd(m)));
+	}
+
+	template <>
+	inline reg blend<float>(const reg v1, const reg v2, const reg m) {
+		return _mm256_blendv_ps(v2, v1, m);
+	}
+
+	template <>
+	inline reg blend<int>(const reg v1, const reg v2, const reg m) {
+		return _mm256_blendv_ps(v2, v1, m);
+	}
+
+#ifdef __AVX2__
+	template <>
+	inline reg blend<short>(const reg v1, const reg v2, const reg m) {
+		return _mm256_castsi256_ps(_mm256_blendv_epi8(_mm256_castps_si256(v2),
+		                                              _mm256_castps_si256(v1),
+		                                              _mm256_castps_si256(m )));
+	}
+
+	template <>
+	inline reg blend<signed char>(const reg v1, const reg v2, const reg m) {
+		return _mm256_castsi256_ps(_mm256_blendv_epi8(_mm256_castps_si256(v2),
+		                                              _mm256_castps_si256(v1),
+		                                              _mm256_castps_si256(m )));
 	}
 #endif
 

@@ -3,16 +3,20 @@
 
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../SISO.hpp"
+
 #include "Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float,
-          proto_i<R> I = tools::init_LLR, proto_f<R> F = f_LLR, proto_v<R> V = v_LLR, proto_h<B,R> H = h_LLR>
+template <typename B = int, typename R = float, tools::proto_i<  R> I = tools::init_LLR,
+                                                tools::proto_f<  R> F = tools::f_LLR,
+                                                tools::proto_v<  R> V = tools::v_LLR,
+                                                tools::proto_h<B,R> H = tools::h_LLR>
 class Decoder_polar_SCAN_naive_sys : public Decoder_polar_SCAN_naive<B,R,I,F,V,H>, public SISO<R>
 {
 public:

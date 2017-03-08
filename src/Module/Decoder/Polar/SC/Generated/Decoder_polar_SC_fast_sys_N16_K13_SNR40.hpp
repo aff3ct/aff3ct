@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_16_13_40[16] = {
+static const char Decoder_polar_SC_fast_sys_fb_16_13_40[16] = {
 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 template <typename B, typename R, class API_polar>
@@ -23,7 +23,7 @@ public:
 		assert(K == 13);
 		
 		auto i = 0;
-		while (i < 16 && Frozen_bits_16_13_40[i] == frozen_bits[i]) i++;
+		while (i < 16 && Decoder_polar_SC_fast_sys_fb_16_13_40[i] == frozen_bits[i]) i++;
 		assert(i == 16);
 	}
 
@@ -31,8 +31,10 @@ public:
 	{
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 

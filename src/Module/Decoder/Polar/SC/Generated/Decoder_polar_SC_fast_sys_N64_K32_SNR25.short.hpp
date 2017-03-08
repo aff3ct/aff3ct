@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_64_32_25[64] = {
+static const char Decoder_polar_SC_fast_sys_fb_64_32_25[64] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -24,7 +24,7 @@ public:
 		assert(K == 32);
 		
 		auto i = 0;
-		while (i < 64 && Frozen_bits_64_32_25[i] == frozen_bits[i]) i++;
+		while (i < 64 && Decoder_polar_SC_fast_sys_fb_64_32_25[i] == frozen_bits[i]) i++;
 		assert(i == 64);
 	}
 
@@ -42,6 +42,8 @@ public:
 	__attribute__((always_inline))
 	inline void r15(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -52,6 +54,8 @@ public:
 	__attribute__((always_inline))
 	inline void r05r15(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -61,8 +65,10 @@ public:
 		API_polar::template xo0< 2>(s,    off_s+  2,                   off_s+  0,  2);
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 

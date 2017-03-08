@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_256_213_40[256] = {
+static const char Decoder_polar_SC_fast_sys_fb_256_213_40[256] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -30,7 +30,7 @@ public:
 		assert(K == 213);
 		
 		auto i = 0;
-		while (i < 256 && Frozen_bits_256_213_40[i] == frozen_bits[i]) i++;
+		while (i < 256 && Decoder_polar_SC_fast_sys_fb_256_213_40[i] == frozen_bits[i]) i++;
 		assert(i == 256);
 	}
 
@@ -48,6 +48,8 @@ public:
 	__attribute__((always_inline))
 	inline void r17(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -58,6 +60,8 @@ public:
 	__attribute__((always_inline))
 	inline void r07r17(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -71,6 +75,8 @@ public:
 	__attribute__((always_inline))
 	inline void s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -80,6 +86,8 @@ public:
 	// depth = 4, reverse depth = 4, size = 16, calls = 2
 	inline void s4(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -90,6 +98,8 @@ public:
 	__attribute__((always_inline))
 	inline void re6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -100,6 +110,8 @@ public:
 	__attribute__((always_inline))
 	inline void s6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -110,6 +122,8 @@ public:
 	__attribute__((always_inline))
 	inline void re6s6(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -123,6 +137,8 @@ public:
 	// depth = 4, reverse depth = 4, size = 16, calls = 2
 	inline void re6s6s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -136,14 +152,18 @@ public:
 	// depth = 3, reverse depth = 5, size = 32, calls = 2
 	inline void r13(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
 		API_polar::template h  < 32>(s, l, off_l+  0,                   off_s+  0,  32);
 	}
 
-	void decode()
+	void _hard_decode()
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
