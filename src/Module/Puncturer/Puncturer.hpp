@@ -47,9 +47,11 @@ public:
 	 * \param name:     Puncturer's name.
 	 */
 	Puncturer_i(const int K, const int N, const int N_code, const int n_frames = 1, 
-	                    const std::string name = "Puncturer_i")
+	            const std::string name = "Puncturer_i")
 	: Module(n_frames, name), K(K), N(N), N_code(N_code)
 	{
+		assert(K <= N);
+		assert(N_code >= N);
 	}
 
 	/*!
@@ -63,7 +65,7 @@ public:
 	 * \param X_N1: a complete/valid codeword..
 	 * \param X_N2: a punctured codeword (corresponding to the frame size).
 	 */
-	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
+	virtual void puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
 
 	/*!
 	 * \brief Depunctures a codeword.
