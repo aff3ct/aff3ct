@@ -13,7 +13,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Monitor_reduction<B,R>
-::Monitor_reduction(const int& K, const int& N, const int& max_fe, std::vector<Monitor<B,R>*>& monitors,
+::Monitor_reduction(const int& K, const int& N, const unsigned& max_fe, std::vector<Monitor<B,R>*>& monitors,
                     const int& n_frames, const std::string name)
 : Monitor_std<B,R>(K, N, max_fe, n_frames, name),
   monitors        (monitors                    )
@@ -41,7 +41,7 @@ unsigned long long Monitor_reduction<B,R>
 }
 
 template <typename B, typename R>
-int Monitor_reduction<B,R>
+unsigned long long Monitor_reduction<B,R>
 ::get_n_fe() const
 {
 	auto cur_fe = this->n_frame_errors;
@@ -52,7 +52,7 @@ int Monitor_reduction<B,R>
 }
 
 template <typename B, typename R>
-int Monitor_reduction<B,R>
+unsigned long long Monitor_reduction<B,R>
 ::get_n_be() const
 {
 	auto cur_be = this->n_bit_errors;
@@ -82,7 +82,7 @@ void Monitor_reduction<B,R>
 		std::exit(-1);
 	}
 
-	int n_fe   = get_n_fe();
+	auto n_fe = get_n_fe();
 	int Y_size = 0;
 	// get Y_size
 	for (unsigned i = 0; i <= monitors.size(); i++)
@@ -92,7 +92,7 @@ void Monitor_reduction<B,R>
 		// write noise
 		auto buff_noise = mon->get_buff_noise();
 
-		if(buff_noise.empty())
+		if (buff_noise.empty())
 			continue;
 
 		Y_size = (int)buff_noise.front().size();
@@ -107,8 +107,8 @@ void Monitor_reduction<B,R>
 	file_enc << this->get_K() << std::endl << std::endl; // write length of non coded frames
 	file_enc << this->get_N() << std::endl << std::endl; // write length of coded frames
 
-	file_noise.write((char *)&n_fe  , sizeof(int)); // write number frames
-	file_noise.write((char *)&Y_size, sizeof(int)); // write length of frames
+	file_noise.write((char *)&n_fe  , sizeof(n_fe  )); // write number frames
+	file_noise.write((char *)&Y_size, sizeof(Y_size)); // write length of frames
 
 	// write frames
 	for (unsigned i = 0; i <= monitors.size(); i++)

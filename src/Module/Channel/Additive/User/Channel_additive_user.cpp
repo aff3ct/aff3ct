@@ -16,20 +16,21 @@ Channel_additive_user<R>
 	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.is_open())
 	{
-		int n_fra = 0, fra_size = 0;
+		unsigned long long n_fra = 0;
+		int fra_size = 0;
 
-		file.read((char*)&n_fra,    sizeof(int));
-		file.read((char*)&fra_size, sizeof(int));
+		file.read((char*)&n_fra,    sizeof(n_fra));
+		file.read((char*)&fra_size, sizeof(fra_size));
 
 		assert(n_fra > 0 && fra_size > 0);
 
 		this->noise.resize(n_fra);
-		for (auto i = 0; i < n_fra; i++)
+		for (unsigned i = 0; i < (unsigned)n_fra; i++)
 			this->noise[i].resize(fra_size);
 
 		if (fra_size == this->N)
 		{
-			for (auto i = 0; i < n_fra; i++)
+			for (unsigned i = 0; i < (unsigned)n_fra; i++)
 				file.read(reinterpret_cast<char*>(&this->noise[i][0]), fra_size*sizeof(R));
 		}
 		else

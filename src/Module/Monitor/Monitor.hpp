@@ -98,14 +98,14 @@ public:
 	 *
 	 * \return the number of bit errors.
 	 */
-	virtual int get_n_be() const = 0;
+	virtual unsigned long long get_n_be() const = 0;
 
 	/*!
 	 * \brief Gets the number of frame errors.
 	 *
 	 * \return the number of frame errors.
 	 */
-	virtual int get_n_fe() const = 0;
+	virtual unsigned long long get_n_fe() const = 0;
 
 	/*!
 	 * \brief Gets the bit error rate.
@@ -133,7 +133,7 @@ public:
 	 *
 	 * \return the frame errors limit.
 	 */
-	virtual int get_fe_limit() const = 0;
+	virtual unsigned get_fe_limit() const = 0;
 
 	/*!
 	 * \brief Tells if the frame errors limit is achieved (in this case the current computations should stop).
