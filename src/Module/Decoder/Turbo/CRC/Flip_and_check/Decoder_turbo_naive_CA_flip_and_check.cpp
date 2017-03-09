@@ -41,6 +41,8 @@ Decoder_turbo_naive_CA_flip_and_check<B,R>
   tab_flips(nb_patterns, mipp::vector<B>(q, (B)0)),
   s_tmp((K) * siso_n.get_simd_inter_frame_level())
 {
+	// generation of the array that will be used to flip the bits
+	// it contains: 1000, 0100, 1100, 0010, ...
 	int b10, l;
 	for (int i=1; i<=nb_patterns; i++)
 	{
@@ -54,6 +56,7 @@ Decoder_turbo_naive_CA_flip_and_check<B,R>
 		}
 	}
 
+	// fnc_ite contains the iterations for which the FNC will be performed
 	int ite = fnc_m;
 	do
 	{
@@ -152,11 +155,11 @@ void Decoder_turbo_naive_CA_flip_and_check<B,R>
 
 template <typename B, typename R>
 bool Decoder_turbo_naive_CA_flip_and_check<B,R>
-::apply_flip_and_check(const mipp::vector<R>& l_e2n, const mipp::vector<R>& l_sen, mipp::vector<B>& s)
+::apply_flip_and_check(const mipp::vector<R>& l_en, const mipp::vector<R>& l_sen, mipp::vector<B>& s)
 {
 	// reconstruct the a posteriori information and calculate the metric associated
 	for (auto i = 0; i < this->K; i++)
-		metric[i] = std::fabs((l_e2n[i] + l_sen[i]));
+		metric[i] = std::fabs((l_en[i] + l_sen[i]));
 
 	// get the least reliable positions
 	mipp::vector<unsigned int> positions = partial_sort_indexes(metric);

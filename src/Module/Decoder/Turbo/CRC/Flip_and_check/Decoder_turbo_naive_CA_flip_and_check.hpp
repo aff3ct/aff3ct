@@ -36,7 +36,7 @@ public:
 
 protected:
 	virtual void _hard_decode();
-	bool apply_flip_and_check(const mipp::vector<R>& l_e2n, const mipp::vector<R>& l_sen, mipp::vector<B>& s);
+	bool apply_flip_and_check(const mipp::vector<R>& l_en, const mipp::vector<R>& l_sen, mipp::vector<B>& s);
 
 private:
 
