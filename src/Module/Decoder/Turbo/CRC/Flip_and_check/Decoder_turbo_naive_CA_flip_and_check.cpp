@@ -37,13 +37,22 @@ Decoder_turbo_naive_CA_flip_and_check<B,R>
                                         const bool buffered_encoding)
 : Decoder_turbo_naive_CA<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
   q(fnc_q), nb_patterns((1<<q)-1),
-  metric(K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0),
+  metric(K, (R)0),
   tab_flips(nb_patterns, mipp::vector<B>(q, (B)0)),
   s_tmp((K) * siso_n.get_simd_inter_frame_level())
 {
-	for (auto i=0; i<nb_patterns; i++)
-		for (auto j=0; j<q; j++)
-			tab_flips[i][j] = ((i +1) >> (q -j -1)) & 1;
+	int b10, l;
+	for (int i=1; i<=nb_patterns; i++)
+	{
+		b10 = i; // number in base 10
+		l   = 0;
+		while (b10 > 0)
+		{
+			tab_flips[i-1][l] = (b10 % 2);
+			b10 /=2;
+			l++;
+		}
+	}
 
 	int ite = fnc_m;
 	do
@@ -99,7 +108,7 @@ void Decoder_turbo_naive_CA_flip_and_check<B,R>
 		}
 
 		if (!check_crc && std::binary_search(fnc_ite.begin(), fnc_ite.end(), ite))
-			apply_flip_and_check(check_crc);
+			check_crc = apply_flip_and_check(this->l_e2n, this->l_sen, this->s);
 
 		if (!check_crc)
 		{
@@ -142,27 +151,34 @@ void Decoder_turbo_naive_CA_flip_and_check<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_turbo_naive_CA_flip_and_check<B,R>
-::apply_flip_and_check(bool& check_crc)
+bool Decoder_turbo_naive_CA_flip_and_check<B,R>
+::apply_flip_and_check(const mipp::vector<R>& l_e2n, const mipp::vector<R>& l_sen, mipp::vector<B>& s)
 {
-	for (auto i = 0; i < this->K * this->n_frames; i++)
-		metric[i] = std::fabs((this->l_e2n[i] + this->l_sen[i]));
+	// reconstruct the a posteriori information and calculate the metric associated
+	for (auto i = 0; i < this->K; i++)
+		metric[i] = std::fabs((l_e2n[i] + l_sen[i]));
 
+	// get the least reliable positions
 	mipp::vector<unsigned int> positions = partial_sort_indexes(metric);
 
+	// test all patterns by xoring with tab_flib
+	bool check_crc = false;
 	auto pattern = 0;
 	do
 	{
-		std::copy(this->s.begin(), this->s.end(), s_tmp.begin());
+		std::copy(s.begin(), s.end(), s_tmp.begin());
 		for (auto depth = 0; depth < q; depth++)
 			s_tmp[positions[depth]] ^= tab_flips[pattern][depth];
-		check_crc = this->crc.check(this->s_tmp, this->get_simd_inter_frame_level());
+		check_crc = this->crc.check(s_tmp, this->get_simd_inter_frame_level());
 		pattern++;
 	}
 	while ((pattern < nb_patterns) && !check_crc );
 
+	// if the crc is verified, replace the decoder's output
 	if (check_crc)
-		std::copy(s_tmp.begin(), s_tmp.end(), this->s.begin());
+		std::copy(s_tmp.begin(), s_tmp.end(), s.begin());
+
+	return check_crc;
 }
 
 

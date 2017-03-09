@@ -192,6 +192,8 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 				this->params.decoder.fnc_ite_min = this->ar.get_arg_int({"dec-fnc-ite-m"});
 			if (this->ar.exist_arg({"dec-fnc-ite-M"}))
 				this->params.decoder.fnc_ite_max = this->ar.get_arg_int({"dec-fnc-ite-M"});
+			else
+				this->params.decoder.fnc_ite_max = this->params.decoder.n_ite;
 			if (this->ar.exist_arg({"dec-fnc-ite-s"}))
 				this->params.decoder.fnc_ite_step = this->ar.get_arg_int({"dec-fnc-ite-s"});
 		}

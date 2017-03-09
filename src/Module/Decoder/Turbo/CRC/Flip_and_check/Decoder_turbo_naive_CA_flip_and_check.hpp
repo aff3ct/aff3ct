@@ -20,23 +20,23 @@ private:
 
 public:
 	Decoder_turbo_naive_CA_flip_and_check(const int& K,
-	                       const int& N_without_tb,
-	                       const int& n_ite,
-	                       const Interleaver<short> &pi,
-	                       SISO<R> &siso_n,
-	                       SISO<R> &siso_i,
-	                       tools::Scaling_factor<R> &scaling_factor,
-	                       CRC<B> &crc,
-	                       int fnc_q,
-	                       int fnc_m,
-	                       int fnc_M,
-	                       int fnc_s,
-	                       const bool buffered_encoding = true);
+	                                      const int& N_without_tb,
+	                                      const int& n_ite,
+	                                      const Interleaver<short> &pi,
+	                                      SISO<R> &siso_n,
+	                                      SISO<R> &siso_i,
+	                                      tools::Scaling_factor<R> &scaling_factor,
+	                                      CRC<B> &crc,
+	                                      int fnc_q,
+	                                      int fnc_m,
+	                                      int fnc_M,
+	                                      int fnc_s,
+	                                      const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_naive_CA_flip_and_check();
 
 protected:
 	virtual void _hard_decode();
-	void apply_flip_and_check(bool& check_crc);
+	bool apply_flip_and_check(const mipp::vector<R>& l_e2n, const mipp::vector<R>& l_sen, mipp::vector<B>& s);
 
 private:
 
