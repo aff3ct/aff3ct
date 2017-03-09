@@ -19,13 +19,13 @@ private:
 	const std::string           error_tracker_head_file_name;
 
 public:
-	Monitor_reduction(const int& K, const int& N, const int& max_fe, std::vector<Monitor<B,R>*>& monitors,
+	Monitor_reduction(const int& K, const int& N, const unsigned& max_fe, std::vector<Monitor<B,R>*>& monitors,
 	                  const int& n_frames = 1, const std::string name = "Monitor_reduction");
 	virtual ~Monitor_reduction();
 
 	unsigned long long get_n_analyzed_fra() const;
-	int get_n_fe() const;
-	int get_n_be() const;
+	unsigned long long get_n_fe          () const;
+	unsigned long long get_n_be          () const;
 
 	void dump_bad_frames(const std::string& base_path, const float snr, const mipp::vector<int>& itl_pi = mipp::vector<int>(0));
 

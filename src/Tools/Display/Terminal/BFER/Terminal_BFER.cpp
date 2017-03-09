@@ -176,7 +176,7 @@ void Terminal_BFER<B,R>
 	str_fer << setprecision(2) << scientific << setw(8) << fer;
 
 	unsigned long long l0 = 99999999;  // limit 0
-	auto               l1 = 99999999;  // limit 1
+	unsigned long long l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
 	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" | ");

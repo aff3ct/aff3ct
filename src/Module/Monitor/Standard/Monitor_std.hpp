@@ -16,10 +16,10 @@ template <typename B = int, typename R = float>
 class Monitor_std : public Monitor<B,R>
 {
 protected:
-	const int max_fe;
+	const unsigned max_fe;
 
-	int n_bit_errors;
-	int n_frame_errors;
+	unsigned long long n_bit_errors;
+	unsigned long long n_frame_errors;
 	unsigned long long n_analyzed_frames;
 
 	std::vector<mipp::vector<B>> buff_src;
@@ -27,7 +27,7 @@ protected:
 	std::vector<mipp::vector<R>> buff_noise;
 
 public:
-	Monitor_std(const int& K, const int& N, const int& max_fe, const int& n_frames = 1,
+	Monitor_std(const int& K, const int& N, const unsigned& max_fe, const int& n_frames = 1,
 	            const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
@@ -40,11 +40,11 @@ public:
 	                                    const mipp::vector<R>& Y);
 
 	virtual bool fe_limit_achieved();
-	int get_fe_limit() const;
+	unsigned get_fe_limit() const;
 
 	virtual unsigned long long get_n_analyzed_fra() const;
-	virtual int get_n_fe() const;
-	virtual int get_n_be() const;
+	virtual unsigned long long get_n_fe          () const;
+	virtual unsigned long long get_n_be          () const;
 
 	float get_fer() const;
 	float get_ber() const;
