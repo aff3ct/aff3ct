@@ -126,7 +126,8 @@ _aff3ct() {
 		opts="$opts --sim-json-path --crc-type --crc-poly --crc-rate      \
 		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path  \
 		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
-		      --dec-max" 
+		      --dec-max --dec-sc --dec-fnc --dec-fnc-q --dec-fnc-ite-m    \
+		      --dec-fnc-ite-M --dec-fnc-ite-s" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -182,7 +183,8 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes)
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |       \
+		--dec-fnc-q | --dec-fnc-ite-m | --dec-fnc-ite-M | --dec-fnc-ite-s     )
 			COMPREPLY=()
 			;;
 
@@ -191,7 +193,7 @@ _aff3ct() {
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
 		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev |                   \
-		--dec-partial-adaptive)
+		--dec-partial-adaptive | --dec-fnc | --dec-sc)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
