@@ -1,5 +1,6 @@
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
 #include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
 
 
@@ -15,7 +16,8 @@ Encoder<B>* Factory_encoder_LDPC<B>
 	// build the encoder
 	if (params.encoder.type == "LDPC")
 		encoder = new Encoder_LDPC<B>(params.code.K, params.code.N + params.code.tail_length, AList_reader(params.encoder.path), n_frames);
-
+	else if (params.encoder.type == "LDPC_H")
+		encoder = new Encoder_LDPC_from_H<B>(params.code.K, params.code.N + params.code.tail_length, AList_reader(params.code.alist_path), n_frames);
 	else if (params.encoder.type == "LDPC_DVBS2")
 		encoder = new Encoder_LDPC_DVBS2<B>(params.code.K, params.code.N + params.code.tail_length, n_frames);
 
