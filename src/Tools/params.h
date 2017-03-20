@@ -49,7 +49,6 @@ struct code_parameters
 	int         N;
 	int         N_code;
 	int         m;
-	int         M;
 	int         tail_length;
 };
 
@@ -77,6 +76,8 @@ struct interleaver_parameters
 {
 	std::string type;
 	std::string path;
+	int         nbr_columns;    // number of columns of then columns interleaver
+	bool        is_uniform;     // set at true to regenerate the interleaver for each new frame
 };
 
 struct modulator_parameters

@@ -18,7 +18,6 @@ public:
 	Interleaver_golden(int size, const std::string name = "Interleaver_columns") 
 	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
 
-protected:
 	void gen_lookup_tables()
 	{
 		double g  = (sqrt(5)-1)/2.0;

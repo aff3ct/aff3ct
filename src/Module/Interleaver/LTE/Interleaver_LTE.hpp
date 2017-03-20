@@ -18,14 +18,6 @@ public:
 	Interleaver_LTE(int size, const std::string name = "Interleaver_LTE") 
 	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
 
-protected:
-	static inline int pi_LTE(const int &i, const int &f_1, const int &f_2, const int &K)
-	{
-		// ((f_1 * i) + (f_2 * i * i)) % K <=> (((f_1 + f_2 * i) % K) * i) % K;
-		// the second expression can be calculated on int if i and K are big (6144 for example)
-		return (((f_1 + f_2 * i) % K) * i) % K;
-	}
-
 	void gen_lookup_tables()
 	{
 		std::map<T,T> f_1;
@@ -237,6 +229,15 @@ protected:
 			exit(-1);
 		}
 	}
+
+protected:
+	static inline int pi_LTE(const int &i, const int &f_1, const int &f_2, const int &K)
+	{
+		// ((f_1 * i) + (f_2 * i * i)) % K <=> (((f_1 + f_2 * i) % K) * i) % K;
+		// the second expression can be calculated on int if i and K are big (6144 for example)
+		return (((f_1 + f_2 * i) % K) * i) % K;
+	}
+
 };
 }
 }

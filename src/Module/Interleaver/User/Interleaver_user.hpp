@@ -21,7 +21,6 @@ public:
 	Interleaver_user(int size, const std::string filename, const std::string name = "Interleaver_user")
 	: Interleaver<T>(size, 1, name), filename(filename) { gen_lookup_tables(); }
 
-protected:
 	void gen_lookup_tables()
 	{
 		std::ifstream file(filename.c_str(), std::ios::in);

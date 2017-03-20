@@ -28,7 +28,6 @@ void Encoder_turbo_legacy<B>
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 	assert(((this->N - (sub_enc.tail_length() + sub_enc.tail_length())) / this->K) == 3);
 
-	pi.regen_lookup_tables();
 	pi.interleave (U_K,   U_K_i);
 	sub_enc.encode(U_K,   X_N_n);
 	sub_enc.encode(U_K_i, X_N_i);

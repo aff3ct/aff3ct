@@ -26,7 +26,6 @@ public:
 		gen_lookup_tables();
 	}
 
-protected:
 	void gen_lookup_tables()
 	{
 		for (auto i = 0; i < (int)this->pi.size(); i++)
