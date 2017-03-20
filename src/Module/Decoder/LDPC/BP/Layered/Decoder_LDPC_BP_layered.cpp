@@ -13,6 +13,7 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
                           const AList_reader &alist_data,
+                          const mipp::vector<B> &info_bits_pos,
                           const bool enable_syndrome,
                           const int n_frames,
                           const std::string name)
@@ -22,6 +23,7 @@ Decoder_LDPC_BP_layered<B,R>
   n_C_nodes        ((int)alist_data.get_n_CN()                               ),
   enable_syndrome  (enable_syndrome                                          ),
   init_flag        (false                                                    ),
+  info_bits_pos    (info_bits_pos                                            ),
   CN_to_VN         (alist_data.get_CN_to_VN()                                ),
   var_nodes        (n_frames, mipp::vector<R>(N,                           0)),
   branches         (n_frames, mipp::vector<R>(alist_data.get_n_branches(), 0))
@@ -110,8 +112,13 @@ void Decoder_LDPC_BP_layered<B,R>
 	const auto past_frame = (cur_frame -1) < 0 ? Decoder<B,R>::n_frames -1 : cur_frame -1;
 
 	// take the hard decision
+//	for (auto i = 0; i < this->K; i++)
+//		V_K[i] = !(this->var_nodes[past_frame][i] >= 0);
 	for (auto i = 0; i < this->K; i++)
-		V_K[i] = !(this->var_nodes[past_frame][i] >= 0);
+	{
+		const auto k = this->info_bits_pos[i];
+		V_K[i] = !(this->var_nodes[past_frame][k] >= 0);
+	}
 }
 
 // BP algorithm

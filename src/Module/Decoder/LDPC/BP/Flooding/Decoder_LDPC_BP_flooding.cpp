@@ -14,6 +14,7 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
                            const AList_reader &alist_data,
+                           const mipp::vector<B> &info_bits_pos,
                            const bool enable_syndrome,
                            const int n_frames,
                            const std::string name)
@@ -26,6 +27,7 @@ Decoder_LDPC_BP_flooding<B,R>
   enable_syndrome        (enable_syndrome                              ),
   init_flag              (false                                        ),
 
+  info_bits_pos          (info_bits_pos                                ),
   n_variables_per_parity (alist_data.get_n_VN_per_CN()                 ),
   n_parities_per_variable(alist_data.get_n_CN_per_VN()                 ),
   transpose              (alist_data.get_branches_transpose()          ),
@@ -108,8 +110,13 @@ void Decoder_LDPC_BP_flooding<B,R>
 	this->BP_decode(this->Y_N);
 
 	// take the hard decision
-	for (unsigned i = 0; i < this->V_K.size(); i++)
-		this->V_K[i] = !(this->Lp_N[i] >= 0);
+//	for (unsigned i = 0; i < this->V_K.size(); i++)
+//		this->V_K[i] = !(this->Lp_N[i] >= 0);
+	for (auto i = 0; i < this->K; i++)
+	{
+		const auto k = this->info_bits_pos[i];
+		this->V_K[i] = !(this->Lp_N[k] >= 0);
+	}
 
 	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
 	if (cur_frame == Decoder<B,R>::n_frames -1)

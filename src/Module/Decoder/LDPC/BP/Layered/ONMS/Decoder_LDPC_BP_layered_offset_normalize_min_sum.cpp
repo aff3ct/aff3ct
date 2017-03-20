@@ -13,12 +13,13 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
                                                    const AList_reader &alist_data,
+                                                   const mipp::vector<B> &info_bits_pos,
                                                    const float normalize_factor,
                                                    const float offset,
                                                    const bool enable_syndrome,
                                                    const int n_frames,
                                                    const std::string name)
-: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name),
+: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, n_frames, name),
   normalize_factor((R)normalize_factor), offset((R)offset), contributions(alist_data.get_CN_max_degree())
 {
 }

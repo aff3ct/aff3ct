@@ -16,6 +16,7 @@ private:
 public:
 	Decoder_LDPC_BP_flooding_sum_product(const int &K, const int &N, const int& n_ite, 
 	                                     const tools::AList_reader &alist_data,
+	                                     const mipp::vector<B> &info_bits_pos,
 	                                     const bool enable_syndrome = true,
 	                                     const int n_frames = 1,
 	                                     const std::string name = "Decoder_LDPC_BP_flooding_sum_product");

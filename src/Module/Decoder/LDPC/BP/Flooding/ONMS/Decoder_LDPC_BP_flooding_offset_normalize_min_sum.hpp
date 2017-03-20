@@ -17,6 +17,7 @@ private:
 public:
 	Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
 	                                                  const tools::AList_reader &alist_data,
+	                                                  const mipp::vector<B> &info_bits_pos,
 	                                                  const float normalize_factor = 1.f,
 	                                                  const float offset = 0.f,
 	                                                  const bool enable_syndrome = true,

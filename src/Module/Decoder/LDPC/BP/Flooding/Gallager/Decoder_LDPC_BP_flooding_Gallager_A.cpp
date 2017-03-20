@@ -11,11 +11,13 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const AList_reader &H,
-                                      const bool enable_syndrome, const int n_frames, const std::string name)
+                                      const mipp::vector<B> &info_bits_pos, const bool enable_syndrome,
+                                      const int n_frames, const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
   n_ite            (n_ite                  ),
   H                (H                      ),
   enable_syndrome  (enable_syndrome        ),
+  info_bits_pos    (info_bits_pos          ),
   Y_N              (N                      ),
   C_to_V_messages  (H.get_n_branches(),   0),
   V_to_C_messages  (H.get_n_branches(),   0)
@@ -109,20 +111,21 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 	auto C_to_V_ptr = C_to_V_messages.data();
 
-	// for the K first variable nodes (make a majority vote with the entering messages)
+	// for the K variable nodes (make a majority vote with the entering messages)
 	for (auto i = 0; i < this->K; i++)
 	{
-		const auto node_degree = (int)H.get_VN_to_CN()[i].size();
+		const auto k = this->info_bits_pos[i];
+		const auto node_degree = (int)H.get_VN_to_CN()[k].size();
 		auto count = 0;
 
 		for (auto j = 0; j < node_degree; j++)
 			count += C_to_V_ptr[j] ? 1 : -1;
 
 		if (node_degree % 2 == 0)
-			count += Y_N[i] ? 1 : -1;
+			count += Y_N[k] ? 1 : -1;
 
 		// take the hard decision
-		V_K[i] = count > 0 ? 1 : 0;
+		V_K[k] = count > 0 ? 1 : 0;
 
 		C_to_V_ptr += node_degree; // jump to the next node
 	}

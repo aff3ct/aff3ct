@@ -26,6 +26,8 @@ protected:
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
+	const mipp::vector<B> &info_bits_pos;
+
 	const mipp::vector<unsigned char> n_variables_per_parity;
 	const mipp::vector<unsigned char> n_parities_per_variable;
 	const mipp::vector<unsigned int > transpose;
@@ -41,6 +43,7 @@ protected:
 public:
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
 	                         const tools::AList_reader &alist_data,
+	                         const mipp::vector<B> &info_bits_pos,
 	                         const bool enable_syndrome = true,
 	                         const int n_frames = 1,
 	                         const std::string name = "Decoder_LDPC_BP_flooding");

@@ -21,7 +21,7 @@ Simulation_BFER_LDPC<B,R,Q>
 ::Simulation_BFER_LDPC(const parameters& params)
 : Simulation_BFER<B,R,Q>(params),
   alist_data   (params.code.alist_path),
-  info_bits_pos(this->params.code.K   )
+  info_bits_pos(this->params.code.K, 0)
 {
 	assert(this->params.code.N == (int)alist_data.get_n_VN());
 
