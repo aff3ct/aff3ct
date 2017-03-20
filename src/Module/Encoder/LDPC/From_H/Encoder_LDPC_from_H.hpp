@@ -16,7 +16,8 @@ namespace module
 template <typename B>
 class Encoder_LDPC_from_H : public Encoder<B>
 {
-	mipp::vector<B> tG; // the generator matrix
+private:
+	mipp::vector<B> tG;
 
 public:
 	Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames = 1,
