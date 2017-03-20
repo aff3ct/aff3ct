@@ -2,6 +2,7 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
+#include <numeric>
 #include <algorithm>
 
 #include "Tools/Display/bash_tools.h"
@@ -21,9 +22,12 @@ Simulation_BFERI_LDPC<B,R,Q>
 ::Simulation_BFERI_LDPC(const parameters& params)
 : Simulation_BFERI<B,R,Q>(params),
   alist_data(params.code.alist_path),
+  info_bits_pos(this->params.code.K),
   decoder_siso(params.simulation.n_threads, nullptr)
 {
 	assert(this->params.code.N == (int)alist_data.get_n_VN());
+
+	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 }
 
 template <typename B, typename R, typename Q>
@@ -50,15 +54,23 @@ Encoder<B>* Simulation_BFERI_LDPC<B,R,Q>
 {
 	auto encoder = Simulation_BFERI<B,R,Q>::build_encoder(tid);
 	if (encoder == nullptr)
-		encoder = Factory_encoder_LDPC<B>::build(this->params);
-	return encoder;
+	{
+		auto encoder_LDPC = Factory_encoder_LDPC<B>::build(this->params);
+
+		if (tid == 0)
+			encoder_LDPC->get_info_bits_pos(info_bits_pos);
+
+		return encoder_LDPC;
+	}
+	else
+		return encoder;
 }
 
 template <typename B, typename R, typename Q>
 SISO<Q>* Simulation_BFERI_LDPC<B,R,Q>
 ::build_siso(const int tid)
 {
-	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params, alist_data);
+	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params, alist_data, info_bits_pos);
 	return decoder_siso[tid];
 }
 

@@ -8,10 +8,10 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
-Encoder<B>* Factory_encoder_LDPC<B>
+Encoder_LDPC<B>* Factory_encoder_LDPC<B>
 ::build(const parameters &params, const int seed, const int n_frames)
 {
-	Encoder<B> *encoder = nullptr;
+	Encoder_LDPC<B> *encoder = nullptr;
 
 	// build the encoder
 	if (params.encoder.type == "LDPC")

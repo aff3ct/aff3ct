@@ -16,6 +16,7 @@ class Simulation_BFERI_LDPC : public Simulation_BFERI<B,R,Q>
 {
 protected:
 	tools::AList_reader alist_data;
+	mipp::vector<B> info_bits_pos;
 
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 

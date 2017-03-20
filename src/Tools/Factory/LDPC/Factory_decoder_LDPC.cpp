@@ -15,7 +15,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const parameters &params, const AList_reader &alist_data)
+::build(const parameters &params, const AList_reader &alist_data, const mipp::vector<B> &info_bits_pos)
 {
 	Decoder_SISO<B,R> *decoder = nullptr;
 

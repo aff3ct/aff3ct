@@ -1,6 +1,8 @@
 #ifndef SIMULATION_LDPC_HPP_
 #define SIMULATION_LDPC_HPP_
 
+#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
+
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
 #include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
@@ -14,6 +16,7 @@ class Simulation_BFER_LDPC : public Simulation_BFER<B,R,Q>
 {
 protected:
 	tools::AList_reader alist_data;
+	mipp::vector<B> info_bits_pos;
 
 public:
 	Simulation_BFER_LDPC(const tools::parameters& params);
