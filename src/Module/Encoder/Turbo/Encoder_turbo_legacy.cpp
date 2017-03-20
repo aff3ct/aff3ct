@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<short> &pi, Encoder_sys<B> &sub_enc,
+::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<int> &pi, Encoder_sys<B> &sub_enc,
                        const int n_frames, const std::string name)
 : Encoder<B>(K, N_without_tb + 2*sub_enc.tail_length(), n_frames, name.c_str()),
   pi(pi),

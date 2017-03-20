@@ -200,7 +200,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	return p;
 }
 
-
 template <typename B, typename R, typename Q, typename QD>
 std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 ::header_crc()
@@ -232,20 +231,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
-::header_interleaver()
-{
-	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
-
-	p.push_back(std::make_pair("Type", this->params.interleaver.type));
-
-	if (this->params.interleaver.type == "USER")
-		p.push_back(std::make_pair("Path", this->params.interleaver.path));
-
-	return p;
-}
-
-template <typename B, typename R, typename Q, typename QD>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 ::header_decoder()
 {
 	auto p = Launcher_BFER<B,R,Q>::header_decoder();
@@ -264,6 +249,19 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	return p;
 }
 
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_interleaver()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_interleaver();
+
+	p.push_back(std::make_pair("Type", this->params.interleaver.type));
+
+	if (this->params.interleaver.type == "USER")
+		p.push_back(std::make_pair("Path", this->params.interleaver.path));
+
+	return p;
+}
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

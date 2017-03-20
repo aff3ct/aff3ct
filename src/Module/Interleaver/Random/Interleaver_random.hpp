@@ -20,7 +20,7 @@ private:
 
 public:
 	Interleaver_random(int size, const int seed = 0, const std::string name = "Interleaver_random")
-	: Interleaver<T>(size, 1, name), rd(), rd_engine(this->rd())
+	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd())
 	{
 		rd_engine.seed(seed);
 		gen_lookup_tables();
