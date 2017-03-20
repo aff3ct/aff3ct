@@ -6,7 +6,7 @@
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
-#include "../../Encoder.hpp"
+#include "../Encoder_LDPC.hpp"
 
 namespace aff3ct
 {
@@ -14,17 +14,14 @@ namespace module
 {
 
 template <typename B>
-class Encoder_LDPC_from_H : public Encoder<B>
+class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
-private:
-	mipp::vector<B> tG;
-
 public:
 	Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames = 1,
 	                    const std::string name = "Encoder_LDPC_from_H");
 	virtual ~Encoder_LDPC_from_H();
 
-	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	virtual void get_info_bits_pos(mipp::vector<B>& info_bits_pos);
 };
 
 }

@@ -16,14 +16,20 @@ namespace module
 template <typename B>
 class Encoder_LDPC : public Encoder<B>
 {
+protected:
 	mipp::vector<B> tG; // the generator matrix
+
+protected:
+	Encoder_LDPC(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC");
 
 public:
 	Encoder_LDPC(const int K, const int N, const tools::AList_reader &alist_G, const int n_frames = 1,
 	             const std::string name = "Encoder_LDPC");
 	virtual ~Encoder_LDPC();
 
-	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	virtual void get_info_bits_pos(mipp::vector<B>& info_bits_pos);
+
+	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
 
 }

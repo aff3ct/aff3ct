@@ -1,4 +1,5 @@
 #include <cassert>
+#include <numeric>
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
@@ -8,6 +9,13 @@
 
 using namespace aff3ct;
 using namespace module;
+
+template <typename B>
+Encoder_LDPC<B>
+::Encoder_LDPC(const int K, const int N, const int n_frames, const std::string name)
+: Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
+{
+}
 
 template <typename B>
 Encoder_LDPC<B>
@@ -32,6 +40,14 @@ template <typename B>
 Encoder_LDPC<B>
 ::~Encoder_LDPC()
 {
+}
+
+template <typename B>
+void Encoder_LDPC<B>
+::get_info_bits_pos(mipp::vector<B>& info_bits_pos)
+{
+	assert(this->K <= (int)info_bits_pos.size());
+	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);
 }
 
 template <typename B>

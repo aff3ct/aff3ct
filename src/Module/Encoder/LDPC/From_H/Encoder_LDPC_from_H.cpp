@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <numeric>
 #include <algorithm>
 #include <functional>
 
@@ -17,7 +18,7 @@ template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames,
                       const std::string name)
-: Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
+: Encoder_LDPC<B>(K, N, n_frames, name)
 {
 // I) take H
     // Take some information about H
@@ -147,7 +148,7 @@ Encoder_LDPC_from_H<B>
     {
       for(int j = 0; j < K; j++)
       {
-        tG[ K*i + j ] = H[i][j];
+        this->tG[ K*i + j ] = H[i][j];
       }
     }
 //    for(unsigned int i = 0; i< tG.size(); i++)
@@ -164,16 +165,10 @@ Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::get_info_bits_pos(mipp::vector<B>& info_bits_pos)
 {
-	assert(this->K == (int)U_K.size());
-	assert(this->N == (int)X_N.size());
-
-	// Real General Matrix Multiplication
-	tools::rgemm(1, this->N, this->K, U_K, tG, X_N);
-
-	for (auto j = 0; j < this->N; ++j)
-		X_N[j] %= 2;
+	assert(this->K <= (int)info_bits_pos.size());
+	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);
 }
 
 
