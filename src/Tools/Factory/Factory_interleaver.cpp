@@ -27,7 +27,7 @@ Interleaver<T>* Factory_interleaver<T>
 	else if (params.interleaver.type == "COLUMNS")
 		interleaver = new Interleaver_columns<T>(size, params.interleaver.n_cols, seed);
 	else if (params.interleaver.type == "GOLDEN")
-		interleaver = new Interleaver_golden<T>(size);
+		interleaver = new Interleaver_golden<T>(size, seed);
 	else if (params.interleaver.type == "USER")
 		interleaver = new Interleaver_user<T>(size, params.interleaver.path);
 	else if (params.interleaver.type == "NO")
