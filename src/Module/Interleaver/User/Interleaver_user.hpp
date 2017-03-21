@@ -16,14 +16,22 @@ class Interleaver_user : public Interleaver<T>
 {
 private:
 	const std::string filename;
+	int call_counter;
 
 public:
 	Interleaver_user(int size, const std::string filename, const std::string name = "Interleaver_user")
-	: Interleaver<T>(size, 1, name), filename(filename) { gen_lookup_tables(); }
+	: Interleaver<T>(size, 1, name), filename(filename), call_counter(0) { gen_lookup_tables(); }
 
-protected:
 	void gen_lookup_tables()
 	{
+		if (call_counter)
+		{
+			std::clog << tools::bold_yellow("(WW) It is useless to call the generation of the lookup table multiple ")
+			          << tools::bold_yellow("times on the USER interleaver.")
+			          << std::endl;
+		}
+		call_counter++;
+
 		std::ifstream file(filename.c_str(), std::ios::in);
 
 		if (file.is_open())

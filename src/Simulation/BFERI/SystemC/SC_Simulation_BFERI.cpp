@@ -44,6 +44,13 @@ Simulation_BFERI<B,R,Q>
 		std::exit(-1);
 	}
 
+	if (params.interleaver.uniform)
+	{
+		std::cerr << bold_red("(EE) SystemC simulation does not support the uniform interleaver mode... Exiting")
+		          << std::endl;
+		std::exit(-1);
+	}
+
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
 

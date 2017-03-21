@@ -81,7 +81,8 @@ _aff3ct() {
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --dmod-ite --mnt-max-fe -e --term-type"
+		      --itl-path --itl-col --itl-uni --dmod-ite --mnt-max-fe -e        \
+		      --term-type"
 	fi
 
 	# add contents of Launcher_GEN_polar.cpp
@@ -94,7 +95,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_RA.cpp
 	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --dec-ite -i --itl-type --itl-path"
+		opts="$opts --dec-ite -i --itl-type --itl-path --itl-col --itl-uni"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -125,8 +126,8 @@ _aff3ct() {
 	then
 		opts="$opts --sim-json-path --crc-type --crc-poly --crc-rate      \
 		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path  \
-		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
-		      --dec-max" 
+		      --itl-col --itl-uni --dec-type -D --dec-implem --dec-ite -i \
+		      --dec-sf --dec-simd --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -171,18 +172,19 @@ _aff3ct() {
 
 	case "${prev}" in
 		# awaiting random number or strings
-		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |        \
-		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |          \
-		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
-		--cde-size | -N |                                                     \
-		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
-		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                   \
-		--sim-benchs | -b | --sim-debug-limit |                               \
-		--mnt-max-fe | -e |                                                   \
-		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
-		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
-		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes)
+		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |       \
+		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |         \
+		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |        \
+		--cde-size | -N |                                                    \
+		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |    \
+		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                  \
+		--sim-benchs | -b | --sim-debug-limit |                              \
+		--mnt-max-fe | -e |                                                  \
+		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |        \
+		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
+		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
+		--itl-col)
 			COMPREPLY=()
 			;;
 
@@ -190,7 +192,7 @@ _aff3ct() {
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev |                   \
+		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev | --itl-uni |       \
 		--dec-partial-adaptive)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
@@ -285,7 +287,7 @@ _aff3ct() {
 		--itl-type)
 			local params
 			case "${simutype}" in
-				BFER)      params="LTE CCSDS RANDOM GOLDEN USER NO" ;;
+				BFER)      params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
 				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )

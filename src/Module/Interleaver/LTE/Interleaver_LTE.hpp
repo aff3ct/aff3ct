@@ -14,20 +14,23 @@ namespace module
 template <typename T = int>
 class Interleaver_LTE : public Interleaver<T>
 {
+private:
+	int call_counter;
+
 public:
 	Interleaver_LTE(int size, const std::string name = "Interleaver_LTE") 
-	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
-
-protected:
-	static inline int pi_LTE(const int &i, const int &f_1, const int &f_2, const int &K)
-	{
-		// ((f_1 * i) + (f_2 * i * i)) % K <=> (((f_1 + f_2 * i) % K) * i) % K;
-		// the second expression can be calculated on int if i and K are big (6144 for example)
-		return (((f_1 + f_2 * i) % K) * i) % K;
-	}
+	: Interleaver<T>(size, 1, name), call_counter(0) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{
+		if (call_counter)
+		{
+			std::clog << tools::bold_yellow("(WW) It is useless to call the generation of the lookup table multiple ")
+			          << tools::bold_yellow("times on the LTE interleaver.")
+			          << std::endl;
+		}
+		call_counter++;
+
 		std::map<T,T> f_1;
 		std::map<T,T> f_2;
 		f_1[  40] =   3; f_2[  40] =  10;
@@ -237,6 +240,15 @@ protected:
 			exit(-1);
 		}
 	}
+
+protected:
+	static inline int pi_LTE(const int &i, const int &f_1, const int &f_2, const int &K)
+	{
+		// ((f_1 * i) + (f_2 * i * i)) % K <=> (((f_1 + f_2 * i) % K) * i) % K;
+		// the second expression can be calculated on int if i and K are big (6144 for example)
+		return (((f_1 + f_2 * i) % K) * i) % K;
+	}
+
 };
 }
 }
