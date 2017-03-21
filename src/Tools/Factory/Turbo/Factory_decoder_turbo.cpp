@@ -14,7 +14,7 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_turbo<B,R>
 ::build(const parameters          &params,
-        const Interleaver<short>  *interleaver,
+        const Interleaver<int>    *interleaver,
               SISO<R>             *siso_n, 
               SISO<R>             *siso_i,
               Scaling_factor<R>   *scaling_factor,

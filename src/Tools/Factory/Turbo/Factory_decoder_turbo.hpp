@@ -20,7 +20,7 @@ template <typename B = int, typename R = float>
 struct Factory_decoder_turbo : public Factory
 {
 	static module::Decoder<B,R>* build(const parameters                 &params,
-	                                   const module::Interleaver<short> *interleaver,
+	                                   const module::Interleaver<int>   *interleaver,
 	                                         module::SISO<R>            *siso_n,
 	                                         module::SISO<R>            *siso_i,
 	                                         Scaling_factor<R>          *scaling_factor,

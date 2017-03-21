@@ -52,7 +52,8 @@ Simulation_BFER_i<B,R,Q>
   coset_real (params.simulation.n_threads, nullptr),
   decoder    (params.simulation.n_threads, nullptr),
   coset_bit  (params.simulation.n_threads, nullptr),
-  monitor    (params.simulation.n_threads, nullptr)
+  monitor    (params.simulation.n_threads, nullptr),
+  interleaver(params.simulation.n_threads, nullptr)
 {
 	assert(params.simulation.n_threads >= 1);
 
@@ -72,22 +73,23 @@ void Simulation_BFER_i<B,R,Q>
 ::build_communication_chain(Simulation_BFER_i<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source    [tid] = simu->build_source    (        tid); check_errors(simu->source    [tid], "Source<B>"     );
-	simu->crc       [tid] = simu->build_crc       (        tid); check_errors(simu->crc       [tid], "CRC<B>"        );
-	simu->encoder   [tid] = simu->build_encoder   (        tid); check_errors(simu->encoder   [tid], "Encoder<B>"    );
-	simu->puncturer [tid] = simu->build_puncturer (        tid); check_errors(simu->puncturer [tid], "Puncturer<B,Q>");
-	simu->modulator [tid] = simu->build_modulator (        tid); check_errors(simu->modulator [tid], "Modulator<B,R>");
+	simu->source     [tid] = simu->build_source     (        tid); check_errors(simu->source     [tid], "Source<B>"       );
+	simu->crc        [tid] = simu->build_crc        (        tid); check_errors(simu->crc        [tid], "CRC<B>"          );
+	simu->interleaver[tid] = simu->build_interleaver(        tid);
+	simu->encoder    [tid] = simu->build_encoder    (        tid); check_errors(simu->encoder    [tid], "Encoder<B>"      );
+	simu->puncturer  [tid] = simu->build_puncturer  (        tid); check_errors(simu->puncturer  [tid], "Puncturer<B,Q>"  );
+	simu->modulator  [tid] = simu->build_modulator  (        tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"  );
 
 	const auto N     = simu->params.code.N;
 	const auto tail  = simu->params.code.tail_length;
 	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
 
-	simu->channel   [tid] = simu->build_channel   (N_mod , tid); check_errors(simu->channel   [tid], "Channel<R>"    );
-	simu->quantizer [tid] = simu->build_quantizer (N+tail, tid); check_errors(simu->quantizer [tid], "Quantizer<R,Q>");
-	simu->coset_real[tid] = simu->build_coset_real(        tid); check_errors(simu->coset_real[tid], "Coset<B,Q>"    );
-	simu->decoder   [tid] = simu->build_decoder   (        tid); check_errors(simu->decoder   [tid], "Decoder<B,Q>"  );
-	simu->coset_bit [tid] = simu->build_coset_bit (        tid); check_errors(simu->coset_bit [tid], "Coset<B,B>"    );
-	simu->monitor   [tid] = simu->build_monitor   (        tid); check_errors(simu->monitor   [tid], "Monitor<B>"    );
+	simu->channel    [tid] = simu->build_channel    (N_mod , tid); check_errors(simu->channel    [tid], "Channel<R>"      );
+	simu->quantizer  [tid] = simu->build_quantizer  (N+tail, tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
+	simu->coset_real [tid] = simu->build_coset_real (        tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
+	simu->decoder    [tid] = simu->build_decoder    (        tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
+	simu->coset_bit  [tid] = simu->build_coset_bit  (        tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
+	simu->monitor    [tid] = simu->build_monitor    (        tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
 
 	// get the real number of frames per threads (from the decoder)
 	const auto n_frames = simu->decoder[tid]->get_n_frames();
@@ -103,6 +105,8 @@ void Simulation_BFER_i<B,R,Q>
 	simu->coset_real[tid]->set_n_frames(n_frames);
 	simu->coset_bit [tid]->set_n_frames(n_frames);
 	simu->monitor   [tid]->set_n_frames(n_frames);
+	if (simu->interleaver[tid] != nullptr)
+		simu->interleaver[tid]->set_n_frames(n_frames);
 }
 
 template <typename B, typename R, typename Q>
@@ -166,17 +170,18 @@ void Simulation_BFER_i<B,R,Q>
 ::release_objects()
 {
 	const auto nthr = params.simulation.n_threads;
-	for (auto i = 0; i < nthr; i++) if (source    [i] != nullptr) { delete source    [i]; source    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (crc       [i] != nullptr) { delete crc       [i]; crc       [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (encoder   [i] != nullptr) { delete encoder   [i]; encoder   [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (puncturer [i] != nullptr) { delete puncturer [i]; puncturer [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (modulator [i] != nullptr) { delete modulator [i]; modulator [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (channel   [i] != nullptr) { delete channel   [i]; channel   [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (quantizer [i] != nullptr) { delete quantizer [i]; quantizer [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_real[i] != nullptr) { delete coset_real[i]; coset_real[i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (decoder   [i] != nullptr) { delete decoder   [i]; decoder   [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_bit [i] != nullptr) { delete coset_bit [i]; coset_bit [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (monitor   [i] != nullptr) { delete monitor   [i]; monitor   [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (source     [i] != nullptr) { delete source     [i]; source     [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (puncturer  [i] != nullptr) { delete puncturer  [i]; puncturer  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (modulator  [i] != nullptr) { delete modulator  [i]; modulator  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (channel    [i] != nullptr) { delete channel    [i]; channel    [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (quantizer  [i] != nullptr) { delete quantizer  [i]; quantizer  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_real [i] != nullptr) { delete coset_real [i]; coset_real [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (decoder    [i] != nullptr) { delete decoder    [i]; decoder    [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_bit  [i] != nullptr) { delete coset_bit  [i]; coset_bit  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (monitor    [i] != nullptr) { delete monitor    [i]; monitor    [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver[i] != nullptr) { delete interleaver[i]; interleaver[i] = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -211,6 +216,13 @@ Puncturer<B,Q>* Simulation_BFER_i<B,R,Q>
 ::build_puncturer(const int tid)
 {
 	return new Puncturer_NO<B,Q>(params.code.K, params.code.N + params.code.tail_length);
+}
+
+template <typename B, typename R, typename Q>
+Interleaver<int>* Simulation_BFER_i<B,R,Q>
+::build_interleaver(const int tid)
+{
+	return nullptr;
 }
 
 template <typename B, typename R, typename Q>

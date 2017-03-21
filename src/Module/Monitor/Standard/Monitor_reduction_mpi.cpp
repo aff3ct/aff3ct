@@ -11,8 +11,8 @@ using namespace aff3ct::tools;
 
 struct monitor_vals
 {
-	int n_be;
-	int n_fe;
+	unsigned long long n_be;
+	unsigned long long n_fe;
 	unsigned long long n_fra;
 };
 
@@ -47,8 +47,8 @@ Monitor_reduction_mpi<B,R>
 	MPI_Aint displacements[3];
 	MPI_Datatype oldtypes[3];
 
-	blen[0] = 1; displacements[0] = offsetof(monitor_vals, n_be);  oldtypes[0] = MPI_INT;
-	blen[1] = 1; displacements[1] = offsetof(monitor_vals, n_fe);  oldtypes[1] = MPI_INT;
+	blen[0] = 1; displacements[0] = offsetof(monitor_vals, n_be);  oldtypes[0] = MPI_UNSIGNED_LONG_LONG;
+	blen[1] = 1; displacements[1] = offsetof(monitor_vals, n_fe);  oldtypes[1] = MPI_UNSIGNED_LONG_LONG;
 	blen[2] = 1; displacements[2] = offsetof(monitor_vals, n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
 
 	if (auto ret = MPI_Type_create_struct(3, blen, displacements, oldtypes, &MPI_monitor_vals))
