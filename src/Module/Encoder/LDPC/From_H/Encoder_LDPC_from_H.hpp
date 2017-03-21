@@ -16,6 +16,9 @@ namespace module
 template <typename B>
 class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
+protected:
+	mipp::vector<int> positions_information_bits; // the position of each information bits
+
 public:
 	Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames = 1,
 	                    const std::string name = "Encoder_LDPC_from_H");

@@ -18,7 +18,7 @@ template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames,
                       const std::string name)
-: Encoder_LDPC<B>(K, N, n_frames, name)
+: Encoder_LDPC<B>(K, N, n_frames, name), positions_information_bits(N)
 {
 // I) take H
     // Take some information about H
@@ -151,10 +151,15 @@ Encoder_LDPC_from_H<B>
         this->tG[ K*i + j ] = H[i][j];
       }
     }
-//    for(unsigned int i = 0; i< tG.size(); i++)
-//    {
-//      cout << tG[i];
-//    }
+// IV) Identify information bits
+    std::iota(positions_information_bits.begin(), positions_information_bits.begin() + N, 0);
+    int tmp4;
+    for(unsigned int l = 1; l <= (swapped.size() / 2); l++ )
+    {
+        tmp4 = positions_information_bits[swapped[l*2-1]];
+        positions_information_bits[swapped[l*2-1]] = positions_information_bits[swapped[(l-1)*2]];
+        positions_information_bits[swapped[(l-1)*2]] = tmp4;
+    }
 }
 
 template <typename B>
@@ -168,7 +173,7 @@ void Encoder_LDPC_from_H<B>
 ::get_info_bits_pos(mipp::vector<B>& info_bits_pos)
 {
 	assert(this->K <= (int)info_bits_pos.size());
-	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);
+    std::copy(positions_information_bits.begin() + this->N - this->K, positions_information_bits.begin() + this->N, info_bits_pos.begin());
 }
 
 
