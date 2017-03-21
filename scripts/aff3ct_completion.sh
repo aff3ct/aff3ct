@@ -81,7 +81,8 @@ _aff3ct() {
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --dmod-ite --mnt-max-fe -e --term-type"
+		      --itl-path --itl-col --itl-uni --dmod-ite --mnt-max-fe -e        \
+		      --term-type"
 	fi
 
 	# add contents of Launcher_GEN_polar.cpp
@@ -94,7 +95,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_RA.cpp
 	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --dec-ite -i --itl-type --itl-path"
+		opts="$opts --dec-ite -i --itl-type --itl-path --itl-col --itl-uni"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -123,8 +124,9 @@ _aff3ct() {
 	if [[ ${codetype} == "TURBO"      && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
-		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem \
-		      --dec-ite -i --dec-sf --dec-simd --dec-max" 
+		      --enc-poly --itl-type --itl-path --itl-col --itl-uni        \
+		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
+		      --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -180,7 +182,7 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber)
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --itl-col)
 			COMPREPLY=()
 			;;
 
@@ -188,7 +190,7 @@ _aff3ct() {
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-		--mnt-err-trk | --mnt-err-trk-rev)
+		--mnt-err-trk | --mnt-err-trk-rev | --itl-uni)
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
@@ -282,8 +284,8 @@ _aff3ct() {
 		--itl-type)
 			local params
 			case "${simutype}" in
-				BFER)      params="LTE CCSDS RANDOM GOLDEN USER NO" ;;
-				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO UNIFORM" ;;
+				BFER)      params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;

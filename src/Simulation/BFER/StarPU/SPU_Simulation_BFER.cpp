@@ -57,18 +57,25 @@ Simulation_BFER<B,R,Q>
 {
 	if (params.simulation.debug)
 	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the debug mode... Exiting") << std::endl;
+		std::cerr << bold_red("(EE) StarPU simulation does not support the debug mode... Exiting") << std::endl;
 		std::exit(-1);
 	}
 
 	if (params.simulation.benchs)
 	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
+		std::cerr << bold_red("(EE) StarPU simulation does not support the bench mode... Exiting") << std::endl;
+		std::exit(-1);
+	}
+
+	if (params.interleaver.uniform)
+	{
+		std::cerr << bold_red("(EE) StarPU simulation does not support the uniform interleaver mode... Exiting")
+		          << std::endl;
 		std::exit(-1);
 	}
 
 	if (params.simulation.time_report)
-		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
+		std::clog << bold_yellow("(WW) The time report is not available in the StarPU simulation.") << std::endl;
 
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
@@ -351,7 +358,6 @@ void Simulation_BFER<B,R,Q>
 
 	if (this->params.code.coset)
 	{
-
 		auto task_coset_real = Coset<B,Q>::spu_task_apply(this->coset_real[tid], spu_X_N1[tid], spu_Y_N5[tid], spu_Y_N5[tid]);
 		task_coset_real->priority = STARPU_MIN_PRIO +10;
 		task_names[tid][10] = "cst::apply_" + str_id; task_coset_real->name = task_names[tid][10].c_str();

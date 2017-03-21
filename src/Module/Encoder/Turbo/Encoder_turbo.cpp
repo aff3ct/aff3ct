@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo<B>
-::Encoder_turbo(const int& K, const int& N_without_tb, Interleaver<short> &pi,
+::Encoder_turbo(const int& K, const int& N_without_tb, Interleaver<int> &pi,
                 Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames, const std::string name)
 : Encoder<B>(K, N_without_tb + enco_n.tail_length() + enco_i.tail_length(), n_frames, name),
   pi(pi),
@@ -29,7 +29,6 @@ void Encoder_turbo<B>
 	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 
-	pi.regen_lookup_tables();
 	pi.interleave(U_K, U_K_i);
 
 	enco_n.encode_sys(U_K,   par_n);

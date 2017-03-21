@@ -11,7 +11,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Monitor_std<B,R>
-::Monitor_std(const int& K, const int& N, const int& max_fe, const int& n_frames, const std::string name)
+::Monitor_std(const int& K, const int& N, const unsigned& max_fe, const int& n_frames, const std::string name)
 : Monitor<B,R>(K, N, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
@@ -94,7 +94,7 @@ void Monitor_std<B,R>
 }
 
 template <typename B, typename R>
-int Monitor_std<B,R>
+unsigned Monitor_std<B,R>
 ::get_fe_limit() const
 {
 	return max_fe;
@@ -108,14 +108,14 @@ unsigned long long Monitor_std<B,R>
 }
 
 template <typename B, typename R>
-int Monitor_std<B,R>
+unsigned long long Monitor_std<B,R>
 ::get_n_fe() const
 {
 	return n_frame_errors;
 }
 
 template <typename B, typename R>
-int Monitor_std<B,R>
+unsigned long long Monitor_std<B,R>
 ::get_n_be() const
 {
 	return n_bit_errors;

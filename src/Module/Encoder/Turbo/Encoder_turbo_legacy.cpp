@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<short> &pi, Encoder_sys<B> &sub_enc,
+::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<int> &pi, Encoder_sys<B> &sub_enc,
                        const int n_frames, const std::string name)
 : Encoder<B>(K, N_without_tb + 2*sub_enc.tail_length(), n_frames, name.c_str()),
   pi(pi),
@@ -28,7 +28,6 @@ void Encoder_turbo_legacy<B>
 	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
 	assert(((this->N - (sub_enc.tail_length() + sub_enc.tail_length())) / this->K) == 3);
 
-	pi.regen_lookup_tables();
 	pi.interleave (U_K,   U_K_i);
 	sub_enc.encode(U_K,   X_N_n);
 	sub_enc.encode(U_K_i, X_N_i);

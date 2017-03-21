@@ -36,12 +36,6 @@ protected:
 	mipp::vector<T> pi;     /*!< Lookup table for the interleaving process */
 	mipp::vector<T> pi_inv; /*!< Lookup table for the deinterleaving process */
 	
-	/*!
-	 * \brief Generates the interleaving and deinterleaving lookup tables. This method defines the interleaver and have
-	 *        to be called in the constructor.
-	 */
-	virtual void gen_lookup_tables() = 0; // to implement
-
 public:
 	/*!
 	 * \brief Constructor.
@@ -153,11 +147,10 @@ public:
 	}
 
 	/*!
-	 * \brief Regenerates the interleaving and deinterleaving lookup tables. Do nothing by default.
+	 * \brief Generates the interleaving and deinterleaving lookup tables. This method defines the interleaver and have
+	 *        to be called in the constructor.
 	 */
-	virtual void regen_lookup_tables()
-	{
-	}
+	virtual void gen_lookup_tables() = 0; // to implement
 
 private:
 	template <typename D>

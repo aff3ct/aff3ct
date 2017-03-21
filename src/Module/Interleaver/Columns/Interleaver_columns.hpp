@@ -15,36 +15,36 @@ template <typename T = int>
 class Interleaver_columns : public Interleaver<T>
 {
 private:
-	const int& K;
-	const int& M;
+	std::random_device rd;
+	std::mt19937       rd_engine;
+
+	const int n_cols;
+	int col_size;
 
 public:
-	Interleaver_columns(const int& K, const int& M, const std::string name = "Interleaver_columns") 
-	: Interleaver<T>(K, 1, name), K(K), M(M) 
-	{ 
-		assert(K % M == 0);
-		gen_lookup_tables(); 
+	Interleaver_columns(const int size, const int n_cols, const int seed = 0,
+	                    const std::string name = "Interleaver_columns")
+	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd()), n_cols(n_cols)
+	{
+		col_size = (size / n_cols);
+		assert(col_size * n_cols == size);
+		rd_engine.seed(seed);
+		gen_lookup_tables();
 	}
 
-protected:
 	void gen_lookup_tables()
 	{
-		std::random_device rd;
-		std::mt19937 g(rd());
+		mipp::vector<T> pi_temp(col_size); // interleaver lookup table for a column
 
-		auto column_number = K / M;
-
-		mipp::vector<T> pi_temp(M);  // interleaver lookup table
-
-		for (auto column = 0; column < column_number; column++)
+		for (auto column = 0; column < n_cols; column++)
 		{
-			for (auto row = 0; row < M; row++)
-				pi_temp[row] = column + column_number * row;
+			for (auto c = 0; c < col_size; c++)
+				pi_temp[c] = c + column * col_size;
 
-			std::shuffle(pi_temp.begin(), pi_temp.end(), g);
+			std::shuffle(pi_temp.begin(), pi_temp.end(), rd_engine);
 
-			for (auto row = 0; row < M; row++)
-				this->pi[column + column_number * row] = pi_temp[row];
+			for (auto c = 0; c < col_size; c++)
+				this->pi[c + column * col_size] = pi_temp[c];
 		}
 
 		for (auto i = 0; i < (int)this->pi_inv.size(); i++)
