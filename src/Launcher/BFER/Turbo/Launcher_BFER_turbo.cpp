@@ -27,6 +27,8 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.encoder    .poly           = {013, 015};
 	this->params.interleaver.type           = "LTE";
 	this->params.interleaver.path           = "";
+	this->params.interleaver.nbr_columns    = 4;
+	this->params.interleaver.is_uniform     = false;
 	this->params.quantizer  .n_bits         = 6;
 	this->params.quantizer  .n_decimals     = (typeid(Q) == typeid(short)) ? 3 : 2;
 	this->params.decoder    .type           = "BCJR";
@@ -68,11 +70,19 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, UNIFORM, COLUMNS, GOLDEN, USER, NO"};
+		 "LTE, CCSDS, RANDOM, GOLDEN, USER, COLUMNS, NO"};
 
 	this->opt_args[{"itl-path"}] =
 		{"string",
 		 "specify the path to the interleaver file (to use with \"--itl-type USER\"."};
+
+	this->opt_args[{"itl-col"}] =
+		{"positive_int",
+		 "specify the number of columns used for the COLUMNS interleaver."};
+
+	this->opt_args[{"itl-uni"}] =
+		{"",
+		 "enable the regeneration of the interleaver for each new frame"};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
@@ -129,8 +139,10 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	}
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type = this->ar.get_arg({"itl-type"});
-	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path = this->ar.get_arg({"itl-path"});
+	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type        = this->ar.get_arg    ({"itl-type"});
+	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path        = this->ar.get_arg    ({"itl-path"});
+	if(this->ar.exist_arg({"itl-col" })) this->params.interleaver.nbr_columns = this->ar.get_arg_int({"itl-col" });
+	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.is_uniform  = true;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i"});
@@ -259,6 +271,11 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 
 	if (this->params.interleaver.type == "USER")
 		p.push_back(std::make_pair("Path", this->params.interleaver.path));
+
+	if (this->params.interleaver.type == "COLUMNS")
+		p.push_back(std::make_pair("Nbr columns", std::to_string(this->params.interleaver.nbr_columns)));
+
+	p.push_back(std::make_pair("Uniform", (this->params.interleaver.is_uniform ? "on" : "off")));
 
 	return p;
 }
