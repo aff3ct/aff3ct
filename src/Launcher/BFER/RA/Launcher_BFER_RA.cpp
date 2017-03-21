@@ -18,8 +18,8 @@ Launcher_BFER_RA<B,R,Q>
 	this->params.encoder    .type       = "RA";
 	this->params.interleaver.type       = "RANDOM";
 	this->params.interleaver.path       = "";
-	this->params.interleaver.nbr_columns= 4;
-	this->params.interleaver.is_uniform = false;
+	this->params.interleaver.n_cols     = 4;
+	this->params.interleaver.uniform    = false;
 	this->params.quantizer  .n_bits     = 7;
 	this->params.quantizer  .n_decimals = 2;
 	this->params.decoder    .type       = "RA";
@@ -46,13 +46,13 @@ void Launcher_BFER_RA<B,R,Q>
 		{"string",
 		 "specify the path to the interleaver file (to use with \"--itl-type USER\"."};
 
-	this->opt_args[{"itl-col"}] =
+	this->opt_args[{"itl-cols"}] =
 		{"positive_int",
 		 "specify the number of columns used for the COLUMNS interleaver."};
 
 	this->opt_args[{"itl-uni"}] =
 		{"",
-		 "enable the regeneration of the interleaver for each new frame"};
+		 "enable the regeneration of the interleaver for each new frame."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-ite", "i"}] =
@@ -67,10 +67,10 @@ void Launcher_BFER_RA<B,R,Q>
 	Launcher_BFER<B,R,Q>::store_args();
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type        = this->ar.get_arg    ({"itl-type"});
-	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path        = this->ar.get_arg    ({"itl-path"});
-	if(this->ar.exist_arg({"itl-col" })) this->params.interleaver.nbr_columns = this->ar.get_arg_int({"itl-col" });
-	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.is_uniform  = true;
+	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type    = this->ar.get_arg    ({"itl-type"});
+	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path    = this->ar.get_arg    ({"itl-path"});
+	if(this->ar.exist_arg({"itl-cols"})) this->params.interleaver.n_cols  = this->ar.get_arg_int({"itl-cols"});
+	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.uniform = true;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("RA" );
@@ -97,9 +97,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_RA<B,R,Q>
 		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
 	if (this->params.interleaver.type == "COLUMNS")
-		p.push_back(std::make_pair("Nbr columns", std::to_string(this->params.interleaver.nbr_columns)));
+		p.push_back(std::make_pair("Number of columns", std::to_string(this->params.interleaver.n_cols)));
 
-	p.push_back(std::make_pair("Uniform", (this->params.interleaver.is_uniform ? "on" : "off")));
+	p.push_back(std::make_pair("Uniform", (this->params.interleaver.uniform ? "on" : "off")));
 
 	return p;
 }

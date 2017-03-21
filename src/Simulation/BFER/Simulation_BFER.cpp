@@ -95,16 +95,16 @@ void Simulation_BFER_i<B,R,Q>
 	const auto n_frames = simu->decoder[tid]->get_n_frames();
 
 	// set the real number of frames per thread
-	simu->source     [tid]->set_n_frames(n_frames);
-	simu->crc        [tid]->set_n_frames(n_frames);
-	simu->encoder    [tid]->set_n_frames(n_frames);
-	simu->puncturer  [tid]->set_n_frames(n_frames);
-	simu->modulator  [tid]->set_n_frames(n_frames);
-	simu->channel    [tid]->set_n_frames(n_frames);
-	simu->quantizer  [tid]->set_n_frames(n_frames);
-	simu->coset_real [tid]->set_n_frames(n_frames);
-	simu->coset_bit  [tid]->set_n_frames(n_frames);
-	simu->monitor    [tid]->set_n_frames(n_frames);
+	simu->source    [tid]->set_n_frames(n_frames);
+	simu->crc       [tid]->set_n_frames(n_frames);
+	simu->encoder   [tid]->set_n_frames(n_frames);
+	simu->puncturer [tid]->set_n_frames(n_frames);
+	simu->modulator [tid]->set_n_frames(n_frames);
+	simu->channel   [tid]->set_n_frames(n_frames);
+	simu->quantizer [tid]->set_n_frames(n_frames);
+	simu->coset_real[tid]->set_n_frames(n_frames);
+	simu->coset_bit [tid]->set_n_frames(n_frames);
+	simu->monitor   [tid]->set_n_frames(n_frames);
 	if (simu->interleaver[tid] != nullptr)
 		simu->interleaver[tid]->set_n_frames(n_frames);
 }

@@ -470,7 +470,7 @@ void Simulation_BFERI<B,R,Q>
 			simu->t_simu = steady_clock::now();
 		}
 
-		if (simu->interleaver[tid] != nullptr && simu->params.interleaver.is_uniform)
+		if (simu->interleaver[tid] != nullptr && simu->params.interleaver.uniform)
 			simu->interleaver[tid]->gen_lookup_tables();
 	}
 }
@@ -797,7 +797,7 @@ void Simulation_BFERI<B,R,Q>
 			t_simu = steady_clock::now();
 		}
 
-		if (simu->interleaver[0] != nullptr && simu->params.interleaver.is_uniform)
+		if (simu->interleaver[0] != nullptr && simu->params.interleaver.uniform)
 			simu->interleaver[0]->gen_lookup_tables();
 	}
 

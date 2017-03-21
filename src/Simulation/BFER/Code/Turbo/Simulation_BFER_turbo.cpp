@@ -116,7 +116,7 @@ template <typename B, typename R, typename Q, typename QD>
 Interleaver<int>* Simulation_BFER_turbo<B,R,Q,QD>
 ::build_interleaver(const int tid)
 {
-	auto seed = (this->params.interleaver.is_uniform) ? this->rd_engine_seed[tid]() : this->params.simulation.seed;
+	auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.simulation.seed;
 	Interleaver<int>* itl = Factory_interleaver<int>::build(this->params, this->params.code.K, seed);
 	this->check_errors(itl, "Interleaver<int>");
 	return itl;
