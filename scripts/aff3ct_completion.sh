@@ -95,7 +95,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_RA.cpp
 	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --dec-ite -i --itl-type --itl-path"
+		opts="$opts --dec-ite -i --itl-type --itl-path --itl-col --itl-uni"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -124,8 +124,9 @@ _aff3ct() {
 	if [[ ${codetype} == "TURBO"      && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
-		      --enc-poly --itl-type --itl-path --dec-type -D --dec-implem \
-		      --dec-ite -i --dec-sf --dec-simd --dec-max" 
+		      --enc-poly --itl-type --itl-path --itl-col --itl-uni        \
+		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
+		      --dec-max" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
