@@ -76,6 +76,7 @@ struct interleaver_parameters
 {
 	std::string type;
 	std::string path;
+	int         seed;
 	int         n_cols;  // number of columns of then columns interleaver
 	bool        uniform; // set at true to regenerate the interleaver for each new frame
 };
