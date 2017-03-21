@@ -14,12 +14,23 @@ namespace module
 template <typename T = int>
 class Interleaver_CCSDS : public Interleaver<T>
 {
+private:
+	int call_counter;
+
 public:
 	Interleaver_CCSDS(int size, const std::string name = "Interleaver_CCSDS") 
-	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
+	: Interleaver<T>(size, 1, name), call_counter(0) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{
+		if (call_counter)
+		{
+			std::clog << tools::bold_yellow("(WW) It is useless to call the generation of the lookup table multiple ")
+			          << tools::bold_yellow("times on the CCSDS interleaver.")
+			          << std::endl;
+		}
+		call_counter++;
+
 		std::map<T,T> k_1;
 		std::map<T,T> k_2;
 		k_1[1784] = 8; k_2[1784] = 223 * 1;
