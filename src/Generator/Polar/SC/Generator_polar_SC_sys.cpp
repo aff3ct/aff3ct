@@ -9,6 +9,10 @@ using namespace std;
 
 #include "Generator_polar_SC_sys.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+using namespace aff3ct::generator;
+
 Generator_polar_SC_sys
 ::Generator_polar_SC_sys(const int& K,
                          const int& N,
@@ -23,7 +27,7 @@ Generator_polar_SC_sys
                          ostream &short_graph_stream)
 : K(K),
   N(N),
-  m(log2(N)),
+  m((int)log2(N)),
   snr(snr),
   frozen_bits(frozen_bits),
   patterns(patterns),
@@ -94,6 +98,10 @@ void Generator_polar_SC_sys
 	dec_common1                                                                                               << endl;
 	dec_common1 << "#include \"../Decoder_polar_SC_fast_sys.hpp\""                                            << endl;
 	dec_common1                                                                                               << endl;
+	dec_common1 << "namespace aff3ct"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
+	dec_common1 << "namespace module"                                                                         << endl;
+	dec_common1 << "{"                                                                                        << endl;
 	dec_common1 << "static const char " << fbits_name << "[" << N << "] = {"                                  << endl;
 	dec_common1 << fbits.str() << "};"                                                                        << endl;
 	dec_common1                                                                                               << endl;
@@ -101,10 +109,12 @@ void Generator_polar_SC_sys
 	dec_common1 << "class " << class_name << " : public Decoder_polar_SC_fast_sys<B, R, API_polar>"           << endl;
 	dec_common1 << "{"                                                                                        << endl;
 	dec_common1 << "public:"                                                                                  << endl;
-	dec_common1 << tab << class_name << "(const int& N, const mipp::vector<B>& frozen_bits)"                  << endl;
-	dec_common1 << tab << ": Decoder_polar_SC_fast_sys<B, R, API_polar>(N, frozen_bits)"                      << endl;
+	dec_common1 << tab << class_name << "(const int& K, const int& N, const mipp::vector<B>& frozen_bits, "
+	                   << "const int n_frames = 1)"                                                           << endl;
+	dec_common1 << tab << ": Decoder_polar_SC_fast_sys<B, R, API_polar>(K, N, frozen_bits, n_frames)"         << endl;
 	dec_common1 << tab << "{"                                                                                 << endl;
 	dec_common1 << tab << tab << "assert(N == " << N << ");"                                                  << endl;
+	dec_common1 << tab << tab << "assert(K == " << K << ");"                                                  << endl;
 	dec_common1 << tab << tab                                                                                 << endl;
 	dec_common1 << tab << tab << "auto i = 0;"                                                                << endl;
 	dec_common1 << tab << tab << "while (i < " << N << " && " << fbits_name << "[i] == frozen_bits[i]) i++;"  << endl;
@@ -115,7 +125,7 @@ void Generator_polar_SC_sys
 	dec_common1 << tab << "{"                                                                                 << endl;
 	dec_common1 << tab << "}"                                                                                 << endl;
 	dec_common1                                                                                               << endl;
-	dec_common2 << tab << "void decode()"                                                                     << endl;
+	dec_common2 << tab << "void _hard_decode()"                                                               << endl;
 	dec_common2 << tab << "{"                                                                                 << endl;
 	dec_common2 << tab << tab << "auto &l = this->l;"                                                         << endl;
 	dec_common2 << tab << tab << "auto &s = this->s;"                                                         << endl;
@@ -123,6 +133,8 @@ void Generator_polar_SC_sys
 	this->recursive_generate_decoder(parser.get_polar_tree()->get_root(), dec);
 	dec_common3 << tab << "}"                                                                                 << endl;
 	dec_common3 << "};" << ""                                                                                 << endl;
+	dec_common3 << "}"                                                                                        << endl;
+	dec_common3 << "}"                                                                                        << endl;
 	dec_common3 << "#endif"                                                                                   << endl;
 
 	dec_stream << dec_common1.str();
@@ -156,6 +168,7 @@ void Generator_polar_SC_sys
 		graph_common1 << "\"" << patterns[p]->name() << "\" -> " << "\"" << patterns[p +1]->name() << "\";" << endl;
 	}
 
+	assert(n_nodes_after_compression != 0);
 	float compression_rate = (float)n_nodes_before_compression / (float)n_nodes_after_compression;
 	graph_common1 << tab << "}" << endl;
 	graph_common1 << tab << "subgraph cluster_1 {" << endl;

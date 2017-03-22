@@ -1,21 +1,27 @@
 #ifndef FACTORY_TERMINAL_HPP
 #define FACTORY_TERMINAL_HPP
 
-#include "../../Terminal/Terminal.hpp"
-#include "../../Error/Error_analyzer.hpp"
+#include "Module/Monitor/Monitor.hpp"
+#include "Tools/params.h"
+#include "Tools/Display/Terminal/Terminal.hpp"
 
-#include "../params.h"
+#include "Factory.hpp"
 
-template <typename B, typename R>
-struct Factory_terminal
+namespace aff3ct
 {
-	static Terminal* build(const t_simulation_param &simu_params,
-	                       const R snr, 
-	                       const Error_analyzer<B,R> *analyzer, 
+namespace tools
+{
+template <typename B = int, typename R = float>
+struct Factory_terminal : public Factory
+{
+	static Terminal* build(const parameters &params,
+	                       const R snr_s,
+	                       const R snr_b,
+	                       const module::Monitor<B,R> *monitor,
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-	                       const std::chrono::nanoseconds &d_load_total,
-	                       const std::chrono::nanoseconds &d_decod_total,
-	                       const std::chrono::nanoseconds &d_store_total);
+	                       const std::chrono::nanoseconds *d_decod_total = nullptr);
 };
+}
+}
 
 #endif /* FACTORY_TERMINAL_HPP */

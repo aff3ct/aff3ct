@@ -1,46 +1,52 @@
 #include <string>
 
-#include "../../CRC/CRC_NO.hpp"
-#include "../../CRC/CRC_polynomial.hpp"
-#include "../../CRC/CRC_polynomial_inter.hpp"
-#include "../../CRC/CRC_polynomial_double.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
 
-#include "../MIPP/mipp.h"
+#include "Module/CRC/NO/CRC_NO.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_double.hpp"
 
 #include "Factory_CRC.hpp"
 
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
+
 template <typename B>
 CRC<B>* Factory_CRC<B>
-::build(const t_code_param &code_params, const t_decoder_param &deco_params)
+::build(const parameters &params)
 {
 	CRC<B> *crc = nullptr;
 
 	// build the crc
-#ifdef INTER_SIMD
-	if (!code_params.crc.empty() && deco_params.algo.find("LTE") != std::string::npos)
-		crc = new CRC_polynomial_inter<B>(code_params.K, code_params.crc, mipp::nElmtsPerRegister<B>());
-	else if (!code_params.crc.empty())
-		crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
+	if(params.decoder.simd_strategy == "INTER")
+	{
+		if (!params.crc.type.empty() && params.decoder.type.find("LTE") != std::string::npos)
+			crc = new CRC_polynomial_inter<B>(params.code.K, params.crc.type, mipp::nElmtsPerRegister<B>());
+		else if (!params.crc.type.empty())
+			crc = new CRC_polynomial<B>(params.code.K, params.crc.type);
+		else
+			crc = new CRC_NO<B>(params.code.K);
+	}
 	else
-		crc = new CRC_NO<B>();
-#else
-	if (!code_params.crc.empty())
-		crc = new CRC_polynomial<B>(code_params.K, code_params.crc);
-	else
-		crc = new CRC_NO<B>();
-#endif
+	{
+		if (!params.crc.type.empty())
+			crc = new CRC_polynomial<B>(params.code.K, params.crc.type);
+		else
+			crc = new CRC_NO<B>(params.code.K);
+	}
 
 	return crc;
 }
 
 // ==================================================================================== explicit template instantiation 
-#include "../types.h"
+#include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct Factory_CRC<B_8>;
-template struct Factory_CRC<B_16>;
-template struct Factory_CRC<B_32>;
-template struct Factory_CRC<B_64>;
+template struct aff3ct::tools::Factory_CRC<B_8>;
+template struct aff3ct::tools::Factory_CRC<B_16>;
+template struct aff3ct::tools::Factory_CRC<B_32>;
+template struct aff3ct::tools::Factory_CRC<B_64>;
 #else
-template struct Factory_CRC<B>;
+template struct aff3ct::tools::Factory_CRC<B>;
 #endif
 // ==================================================================================== explicit template instantiation

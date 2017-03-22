@@ -1,16 +1,70 @@
+/*!
+ * \file
+ * \brief The Simulation is an abstract and generic container.
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
 #ifndef SIMULATION_HPP_
 #define SIMULATION_HPP_
 
+#include "Tools/Display/bash_tools.h"
+
+namespace aff3ct
+{
+namespace simulation
+{
+/*!
+ * \class Launcher
+ *
+ * \brief The Simulation is an abstract and generic container.
+ */
 class Simulation
 {
 public:
-	Simulation() {}
-	virtual ~Simulation() {}
+	/*!
+	 *  \brief Constructor.
+	 */
+	Simulation()
+	{
+	}
 
-	virtual void launch()          = 0;
-//protected:
-//	virtual void snr_loop()        = 0;
-//	virtual void simulation_loop() = 0;
+	/*!
+	 *  \brief Destructor.
+	 */
+	virtual ~Simulation()
+	{
+	}
+
+	/*!
+	 *  \brief This method has to be overloaded, this is the start point of the Simulation.
+	 */
+	virtual void launch() = 0;
+
+protected:
+	/*!
+	 * \brief Checks if a pointer has been allocated or not, if not the program stop with an error message.
+	 *
+	 * \param ptr: a pointer.
+	 * \param str: name of the pointer.
+	 * \param tid: thread identifier.
+	 */
+	static void check_errors(void *ptr, std::string str, const int tid = 0)
+	{
+		if (ptr == nullptr)
+		{
+			std::cerr << tools::bold_red("(EE) Something went wrong during the \"")
+			          << tools::bold_red(str)
+			          << tools::bold_red("\" instantiation (tid = ")
+			          << tools::bold_red(std::to_string(tid))
+			          << tools::bold_red("), exiting.")
+			          << std::endl;
+
+			exit(EXIT_FAILURE);
+		}
+	}
 };
+}
+}
 
 #endif /* SIMULATION_HPP_ */

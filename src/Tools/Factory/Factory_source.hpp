@@ -1,14 +1,21 @@
 #ifndef FACTORY_SOURCE_HPP
 #define FACTORY_SOURCE_HPP
 
-#include "../../Source/Source.hpp"
+#include "Module/Source/Source.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Factory.hpp"
 
-template <typename B>
-struct Factory_source
+namespace aff3ct
 {
-	static Source<B>* build(const t_code_param &code_params);
+namespace tools
+{
+template <typename B = int>
+struct Factory_source : public Factory
+{
+	static module::Source<B>* build(const parameters &params, const int seed = 0);
 };
+}
+}
 
 #endif /* FACTORY_SOURCE_HPP */

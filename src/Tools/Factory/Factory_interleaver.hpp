@@ -1,20 +1,21 @@
 #ifndef FACTORY_INTERLEAVER_HPP
 #define FACTORY_INTERLEAVER_HPP
 
-#include "../../Interleaver/Interleaver.hpp"
-#include "../../Interleaver/Interleaver_LTE.hpp"
-#include "../../Interleaver/Interleaver_NO.hpp"
-#include "../../Interleaver/Interleaver_columns.hpp"
-#include "../../Interleaver/Interleaver_golden.hpp"
-#include "../../Interleaver/Interleaver_random.hpp"
+#include "Module/Interleaver/Interleaver.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Factory.hpp"
 
-template <typename T>
-struct Factory_interleaver
+namespace aff3ct
 {
-	static Interleaver<T>* build(const t_code_param &code_params,
-	                             const int          &size);
+namespace tools
+{
+template <typename T = int>
+struct Factory_interleaver : public Factory
+{
+	static module::Interleaver<T>* build(const parameters &params, const int &size, const int seed = -1);
 };
+}
+}
 
 #endif /* FACTORY_INTERLEAVER_HPP */

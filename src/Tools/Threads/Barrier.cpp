@@ -2,9 +2,11 @@
 #include <cassert>
 #include <iostream>
 
-#include "../bash_tools.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Barrier.hpp"
+
+using namespace aff3ct::tools;
 
 Barrier
 ::Barrier(const int n_threads)

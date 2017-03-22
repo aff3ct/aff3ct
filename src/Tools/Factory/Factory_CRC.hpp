@@ -1,14 +1,21 @@
 #ifndef FACTORY_CRC_HPP
 #define FACTORY_CRC_HPP
 
-#include "../../CRC/CRC.hpp"
+#include "Module/CRC/CRC.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Factory.hpp"
 
-template <typename B>
-struct Factory_CRC
+namespace aff3ct
 {
-	static CRC<B>* build(const t_code_param &code_params, const t_decoder_param &deco_params);
+namespace tools
+{
+template <typename B = int>
+struct Factory_CRC : public Factory
+{
+	static module::CRC<B>* build(const parameters &params);
 };
+}
+}
 
 #endif /* FACTORY_CRC_HPP */

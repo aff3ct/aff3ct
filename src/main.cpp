@@ -1,28 +1,41 @@
 #include <cstdlib>
-#include <string>
 #include <iostream>
 #include <map>
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include "Tools/types.h"
+#include "Tools/params.h"
+#include "Tools/Arguments_reader.hpp"
+#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Launcher/Launcher.hpp"
 
-#include "Launcher/BFER/Launcher_BFER_polar.hpp"
-#include "Launcher/BFER/Launcher_BFER_turbo.hpp"
-#include "Launcher/BFER/Launcher_BFER_RSC.hpp"
-#include "Launcher/BFER/Launcher_BFER_RA.hpp"
-#include "Launcher/BFER/Launcher_BFER_BCH.hpp"
-#include "Launcher/BFER/Launcher_BFER_repetition.hpp"
+#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
+#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
+#include "Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp"
+#include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
+#include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
+#include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
+#include "Launcher/BFER/BCH/Launcher_BFER_BCH.hpp"
+#include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
 
-#include "Launcher/EXIT/Launcher_EXIT_polar.hpp"
-#include "Launcher/EXIT/Launcher_EXIT_RSC.hpp"
+#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
+#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
+#include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
 
-#include "Launcher/GEN/Launcher_GEN_polar.hpp"
+#include "Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp"
+#include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
 
-#include "Tools/params.h"
-#include "Tools/bash_tools.h"
-#include "Tools/MIPP/mipp.h"
-#include "Tools/Arguments_reader.hpp"
+#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
+
+#include "main.h"
+
+using namespace aff3ct::launcher;
+using namespace aff3ct::tools;
 
 void print_version()
 {
@@ -62,11 +75,14 @@ void print_version()
 	std::string compiler = "g++";
 	std::string compiler_version = std::to_string(__GNUC__);
 	compiler_version += "." + std::to_string(__GNUC_MINOR__);
+#elif defined(_MSC_VER)
+	std::string compiler = "MSVC++";
+	std::string compiler_version = std::to_string(_MSC_VER);
 #else
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
 #endif
-	std::string affect_version = "1.0.0";
+	std::string affect_version = "1.1.0";
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
 	          << mipp::IntructionsType << ") " << affect_version << std::endl;
@@ -84,45 +100,50 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 {
 	using namespace std::chrono;
 
-	std::map<std::string, std::string> req_args, opt_args, doc_args;
+	std::map<std::vector<std::string>, std::vector<std::string>> req_args, opt_args;
 	Arguments_reader ar(argc, argv);
 
-	req_args["code-type"] = "code_type";
-	doc_args["code-type"] = "the type of codes you want to simulate (POLAR, TURBO, REPETITION, RA or RSC).";
-	
-	opt_args["simu-type"] = "simu_type";
-	doc_args["simu-type"] = "the type of simulation to run (BFER [default], EXIT or GEN).";
-
-	opt_args["v"        ] = "";
-	doc_args["v"        ] = "print informations about the version of the code.";
-	opt_args["version"  ] = "";
-	doc_args["version"  ] = "print informations about the version of the code.";
-
-	opt_args["h"        ] = "";
-	doc_args["h"        ] = "print this help.";
-	opt_args["help"     ] = "";
-	doc_args["help"     ] = "print this help.";
-
+	// ---------------------------------------------------------------------------------------------------- simulation
+	opt_args[{"sim-type"}] =
+			{"string",
+			 "the type of simulation to run.",
+			 "BFER, BFERI, EXIT, GEN"};
 #ifdef MULTI_PREC
-	opt_args["prec"] = "prec";
-	doc_args["prec"] = "the simulation precision in bit (ex: 8, 16, 32 or 64).";
+	opt_args[{"sim-prec", "p"}] =
+		{"positive_int",
+		 "the simulation precision in bit.",
+		 "8, 16, 32, 64"};
 #endif
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	req_args[{"cde-type"}] =
+		{"string",
+		 "the type of codes you want to simulate.",
+		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
+
+	// --------------------------------------------------------------------------------------------------------- other
+	opt_args[{"version", "v"}] =
+		{"",
+		 "print informations about the version of the code."};
+	opt_args[{"help", "h"}] =
+		{"",
+		 "print this help."};
 
 	auto display_help = true;
 	auto parsing = ar.parse_arguments(req_args, opt_args);
 
-	if (ar.exist_arg("v") || ar.exist_arg("version")) 
+	if (ar.exist_arg({"version", "v"}))
 		print_version();
 
 	if (parsing)
 	{
 		// required parameters
-		code_type = ar.get_arg("code-type");
+		code_type = ar.get_arg({"cde-type"});
 
 		// facultative parameters
-		if(ar.exist_arg("simu-type")) simu_type = ar.get_arg("simu-type");
+		if(ar.exist_arg({"sim-type"})) simu_type = ar.get_arg({"sim-type"});
 #ifdef MULTI_PREC
-		if(ar.exist_arg("prec")) prec = stoi(ar.get_arg("prec"));
+		if(ar.exist_arg({"sim-prec", "p"})) prec = ar.get_arg_int({"sim-prec", "p"});
 #endif
 
 		display_help = false;
@@ -130,14 +151,60 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	if (display_help)
 	{
-		if (ar.parse_doc_args(doc_args))
-			ar.print_usage();
-		else
-			std::cerr << bold_red("(EE) A problem was encountered when parsing arguments documentation, exiting.") 
-			          << std::endl;
-		exit(EXIT_FAILURE);
+		std::vector<std::vector<std::string>> arg_grp;
+		arg_grp.push_back({"sim", "Simulation parameter(s)"});
+		arg_grp.push_back({"cde", "Code parameter(s)"      });
+		ar.print_usage(arg_grp);
+		std::exit(EXIT_FAILURE);
 	}
+
+	if (!ar.check_arguments())
+		std::exit(EXIT_FAILURE);
 }
+
+template <typename B, typename R, typename Q, typename QD>
+Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
+{
+	return nullptr;
+}
+
+#if defined(MULTI_PREC) || defined(PREC_32_BIT)
+template <>
+Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc, 
+                                                                      const char  **argv, 
+                                                                      std::string   code_type, 
+                                                                      std::string   simu_type)
+{
+	if (code_type == "POLAR")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_polar<int,float,float>(argc, argv);
+
+	if (code_type == "RSC")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_RSC<int,float,float,float>(argc, argv);
+
+	return nullptr;
+}
+#endif
+
+#if defined(MULTI_PREC) || defined(PREC_64_BIT)
+template <>
+Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc, 
+                                                                                       const char  **argv, 
+                                                                                       std::string   code_type, 
+                                                                                       std::string   simu_type)
+{
+	if (code_type == "POLAR")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_polar<long long,double,double>(argc, argv);
+
+	if (code_type == "RSC")
+		if (simu_type == "EXIT")
+			return new Launcher_EXIT_RSC<long long,double,double,double>(argc, argv);
+
+	return nullptr;
+}
+#endif
 
 template <typename B, typename R, typename Q, typename QD>
 void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
@@ -148,8 +215,6 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	{
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
-		else if (simu_type == "EXIT" && (typeid(Q) == typeid(float) || typeid(Q) == typeid(double)))
-			launcher = new Launcher_EXIT_polar<B,R,Q>(argc, argv);
 		else if (simu_type == "GEN")
 			launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
 	}
@@ -158,8 +223,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	{
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
-		else if (simu_type == "EXIT" && (typeid(Q) == typeid(float) || typeid(Q) == typeid(double)))
-			launcher = new Launcher_EXIT_RSC<B,R,Q,QD>(argc, argv);
+		else if (simu_type == "BFERI")
+			launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
 	}
 
 	if (code_type == "TURBO")
@@ -179,26 +244,53 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
 	}
-	
+
 	if (code_type == "BCH")
 	{
 		if (simu_type == "BFER")
 			launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
 	}
 
+	if (code_type == "LDPC")
+	{
+		if (simu_type == "BFER")
+			launcher = new Launcher_BFER_LDPC<B,R,Q>(argc, argv);
+		else if (simu_type == "BFERI")
+			launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
+	}
+
+	if (code_type == "UNCODED")
+	{
+		if (simu_type == "BFER")
+			launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
+		else if (simu_type == "BFERI")
+			launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
+	}
+
 	if (launcher == nullptr)
 	{
-		std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
-		exit(EXIT_FAILURE);
+		launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
+
+		if (launcher == nullptr)
+		{
+			std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	launcher->launch();
 	delete launcher;
 }
 
+#ifndef SYSTEMC
 int main(int argc, char **argv)
+#else
+int sc_main(int argc, char **argv)
+#endif
 {
-	srand(0);
+#ifdef ENABLE_MPI
+	MPI_Init(nullptr, nullptr);
+#endif
 
 	std::string code_type, simu_type = "BFER";
 
@@ -226,6 +318,10 @@ int main(int argc, char **argv)
 #else
 	read_arguments(argc, (const char**)argv, code_type, simu_type);
 	start_simu<B,R,Q,QD>(argc, (const char**)argv, code_type, simu_type);
+#endif
+
+#ifdef ENABLE_MPI
+	MPI_Finalize();
 #endif
 
 	return EXIT_SUCCESS;

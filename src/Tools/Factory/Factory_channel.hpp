@@ -1,15 +1,21 @@
 #ifndef FACTORY_CHANNEL_HPP
 #define FACTORY_CHANNEL_HPP
 
-#include "../../Channel/Channel.hpp"
+#include "Module/Channel/Channel.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Factory.hpp"
 
-template <typename B, typename R>
-struct Factory_channel
+namespace aff3ct
 {
-	static Channel<B,R>* build(const t_channel_param &chan_params, const R& sigma, const int seed = 0, 
-	                           const R scaling_factor = 1);
+namespace tools
+{
+template <typename R = float>
+struct Factory_channel : public Factory
+{
+	static module::Channel<R>* build(const parameters &params, const R& sigma, const int size, const int seed = 0);
 };
+}
+}
 
 #endif /* FACTORY_CHANNEL_HPP */

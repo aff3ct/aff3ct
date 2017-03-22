@@ -1,14 +1,21 @@
 #ifndef FACTORY_QUANTIZER_HPP
 #define FACTORY_QUANTIZER_HPP
 
-#include "../../Quantizer/Quantizer.hpp"
+#include "Module/Quantizer/Quantizer.hpp"
+#include "Tools/params.h"
 
-#include "../params.h"
+#include "Factory.hpp"
 
-template <typename R, typename Q>
-struct Factory_quantizer
+namespace aff3ct
 {
-	static Quantizer<R,Q>* build(const t_channel_param &chan_params, const R& sigma);
+namespace tools
+{
+template <typename R = float, typename Q = R>
+struct Factory_quantizer : public Factory
+{
+	static module::Quantizer<R,Q>* build(const parameters &params, const float& sigma, const int size);
 };
+}
+}
 
 #endif /* FACTORY_QUANTIZER_HPP */
