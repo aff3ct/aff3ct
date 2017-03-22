@@ -11,11 +11,13 @@ Galois
 ::Galois(const int& m, const int& N, const int& K, const int& t)
  : m(m), K(K), N(N), t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), p(m+1), g(N-K+1)
 {
+	assert(N == ((1 << m) -1));
+	assert(K <= N);
+	assert(N - K == m * t);
+
 	Select_Polynomial();
 	Generate_GF();
 	Compute_BCH_Generator_Polynomial();
-	assert(N == ((1 << m) -1));
-	assert(K <= N);
 }
 
 Galois
