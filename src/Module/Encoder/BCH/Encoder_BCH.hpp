@@ -16,8 +16,6 @@ class Encoder_BCH : public Encoder<B>
 {
 
 protected:
-	const int K; // info bits
-	const int N; // code length
 	const int m; // order of the Galois Field
 
 	mipp::vector<int> g;  // coefficients of the generator polynomial, g(x)
@@ -30,6 +28,9 @@ public:
 	virtual ~Encoder_BCH() {}
 
 	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+
+private:
+	void _encode(const B* U_K, B* X_N);
 };
 }
 }
