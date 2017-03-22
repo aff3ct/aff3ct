@@ -24,8 +24,6 @@ private:
 	mipp::vector<int> reg;
 
 protected:
-	const int K;                // info bits
-	const int N;                // code length
 	const int m;                // order of the Galois Field
 	const int t;                // correction power
 	const int d;                // minimum distance of the code (d=2t+1))
@@ -34,7 +32,6 @@ protected:
 	mipp::vector<int> index_of; // antilog table of GF(2**m)
 
 	mipp::vector<B> YH_N;       // hard decision input vector
-	mipp::vector<R> Y_N;
 	mipp::vector<B> V_K;
 
 public:

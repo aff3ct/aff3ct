@@ -7,17 +7,18 @@ Decoder_BCH<B, R>
 ::Decoder_BCH(const int& K, const int& N, const int& m, const int&t, const tools::Galois &GF, const int n_frames,
               const std::string name)
 : Decoder<B,R>(K, N, n_frames, 1, name),
-  elp(N+2), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), K(K), N(N), m(m), t(t), d(2*t+1),
-  alpha_to(N+1), index_of(N+1), YH_N(N), Y_N(N), V_K(K)
-{	
+  elp(N+2), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), m(m), t(t), d(2*t+1), alpha_to(N+1),
+  index_of(N+1), YH_N(N), V_K(K)
+{
+	assert(K <= N);
+	assert(K > 3);
+
 	alpha_to = GF.alpha_to;
 	index_of = GF.index_of;
 	for (auto i = 0; i < N; i++)
 	{
 		elp[i].resize(N);
 	}
-	assert(K <= N);
-	assert(K > 3);
 }
 
 template <typename B, typename R>
@@ -30,8 +31,7 @@ template <typename B, typename R>
 void Decoder_BCH<B, R>
 ::load(const mipp::vector<R>& Y_N)
 {
-	this->Y_N = Y_N;
-	for (int j = 0; j < N; j++)
+	for (int j = 0; j < this->N; j++)
 		this->YH_N[j] = (Y_N[j] > 0)? 0 : 1; // hard decision on the input
 }
 
@@ -47,9 +47,9 @@ void Decoder_BCH<B, R>
 	for (i = 1; i <= t2; i++)
 	{
 		s[i] = 0;
-		for (j = 0; j < N; j++)
+		for (j = 0; j < this->N; j++)
 			if (YH_N[j] != 0)
-				s[i] ^= alpha_to[(i * j) % N];
+				s[i] ^= alpha_to[(i * j) % this->N];
 		if (s[i] != 0)
 			syn_error = 1; /* set error flag if non-zero syndrome */
 		/*
@@ -137,7 +137,7 @@ void Decoder_BCH<B, R>
 				for (i = 0; i <= l[q]; i++)
 					if (elp[q][i] != -1)
 						elp[u + 1][i + u - q] =
-							alpha_to[(discrepancy[u] + N - discrepancy[q] + elp[q][i]) % N];
+							alpha_to[(discrepancy[u] + this->N - discrepancy[q] + elp[q][i]) % this->N];
 				for (i = 0; i <= l[u]; i++)
 				{
 					elp[u + 1][i] ^= elp[u][i];
@@ -157,7 +157,7 @@ void Decoder_BCH<B, R>
 				for (i = 1; i <= l[u + 1]; i++)
 					if ((s[u + 1 - i] != -1) && (elp[u + 1][i] != 0))
 						discrepancy[u + 1] ^= alpha_to[(s[u + 1 - i]
-							+ index_of[elp[u + 1][i]]) % N];
+							+ index_of[elp[u + 1][i]]) % this->N];
 				/* put d[u+1] into index form */
 				discrepancy[u + 1] = index_of[discrepancy[u + 1]];
 			}
@@ -175,19 +175,19 @@ void Decoder_BCH<B, R>
 			for (i = 1; i <= l[u]; i++)
 				reg[i] = elp[u][i];
 			count = 0;
-			for (i = 1; i <= N; i++)
+			for (i = 1; i <= this->N; i++)
 			{
 				q = 1;
 				for (j = 1; j <= l[u]; j++)
 					if (reg[j] != -1)
 					{
-						reg[j] = (reg[j] + j) % N;
+						reg[j] = (reg[j] + j) % this->N;
 						q ^= alpha_to[reg[j]];
 					}
 				if (!q)
 				{ /* store root and error
 				   * location number indices */
-					loc[count] = N - i;
+					loc[count] = this->N - i;
 					count++;
 				}
 			}
@@ -199,8 +199,8 @@ void Decoder_BCH<B, R>
 		}
 	}
 	
-	for (i = 0; i < K; i++)
-		this->V_K[i] = YH_N[i+N-K];
+	for (i = 0; i < this->K; i++)
+		this->V_K[i] = YH_N[i+this->N-this->K];
 }
 
 template <typename B, typename R>
