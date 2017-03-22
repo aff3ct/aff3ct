@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cassert>
 #include <iostream>
 
@@ -9,11 +10,13 @@ using namespace aff3ct::tools;
 
 Galois
 ::Galois(const int& m, const int& N, const int& K, const int& t)
- : m(m), K(K), N(N), t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), p(m+1), g(N-K+1)
+ : m(m), K(K), N(N), t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), p(m+1, 0), g(N-K+1)
 {
+	assert(m <= 20);
+	assert(N < 1048576); // N < 2^20
 	assert(N == ((1 << m) -1));
 	assert(K <= N);
-	assert(N - K == m * t);
+	assert(m == std::log2(N +1));
 
 	Select_Polynomial();
 	Generate_GF();
@@ -28,9 +31,6 @@ Galois
 void Galois
 ::Select_Polynomial()
 {
-	for (int i=1; i<m; i++)
-		p[i] = 0;
-
 	p[0] = p[m] = 1;
 	if      (m ==  2) p[1] = 1;
 	else if (m ==  3) p[1] = 1;
@@ -161,11 +161,11 @@ void Galois
 			kaux++;
 		}
 
-	//K = N - rdncy;
-
-	if (K < 0)
+	if (K > N - rdncy)
 	{
-		std::cerr << bold_red("Galois: parameters invalid!") << std::endl;
+		std::cerr << bold_red("(EE) Galois Field: parameters invalid (K seems to be too big for this ")
+		          << bold_red("correction power (t))!")
+		          << std::endl;
 		std::exit(0);
 	}
 
