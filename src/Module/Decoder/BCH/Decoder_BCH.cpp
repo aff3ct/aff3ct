@@ -6,8 +6,9 @@ template <typename B, typename R>
 Decoder_BCH<B, R>
 ::Decoder_BCH(const int& K, const int& N, const int& m, const int&t, const tools::Galois &GF, const int n_frames,
               const std::string name)
- : Decoder<B,R>(K, N, n_frames, 1, name),
-   elp(N+2), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), K(K), N(N), m(m), t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), YH_N(N), Y_N(N), V_K(K)
+: Decoder<B,R>(K, N, n_frames, 1, name),
+  elp(N+2), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), K(K), N(N), m(m), t(t), d(2*t+1),
+  alpha_to(N+1), index_of(N+1), YH_N(N), Y_N(N), V_K(K)
 {	
 	alpha_to = GF.alpha_to;
 	index_of = GF.index_of;
@@ -15,8 +16,8 @@ Decoder_BCH<B, R>
 	{
 		elp[i].resize(N);
 	}
-	assert( K <= N );
-	assert( K > 3 );
+	assert(K <= N);
+	assert(K > 3);
 }
 
 template <typename B, typename R>
@@ -40,16 +41,9 @@ void Decoder_BCH<B, R>
 {
 	register int i, j, u, q, t2, count = 0, syn_error = 0;
 
-
-	/*clog << "YH_N bef cor:";
-	for (int i = 0; i < N; i++)
-		clog << " " << YH_N[i];
-	clog << endl;*/
-	
 	t2 = 2 * t;
 	
 	/* first form the syndromes */
-	//printf("S(x) = ");
 	for (i = 1; i <= t2; i++)
 	{
 		s[i] = 0;
@@ -64,9 +58,7 @@ void Decoder_BCH<B, R>
 		 */
 		/* convert syndrome from polynomial form to index form  */
 		s[i] = index_of[s[i]];
-		//printf("%3d ", s[i]);
 	}
-	//printf("\n");
 
 	if (syn_error)
 	{ /* if there are errors, try to correct them */
@@ -108,10 +100,10 @@ void Decoder_BCH<B, R>
 				}
 			}
 			else
-				/*
-				 * search for words with greatest u_lu[q] for
-				 * which d[q]!=0 
-				 */
+			/*
+			 * search for words with greatest u_lu[q] for
+			 * which d[q]!=0
+			 */
 			{
 				q = u - 1;
 				while ((discrepancy[q] == -1) && (q > 0))
@@ -179,12 +171,6 @@ void Decoder_BCH<B, R>
 			for (i = 0; i <= l[u]; i++)
 				elp[u][i] = index_of[elp[u][i]];
 
-			//printf("sigma(x) = ");
-			for (i = 0; i <= l[u]; i++)
-			//printf("%3d ", elp[u][i]);
-			//printf("\n");
-			//printf("Roots: ");
-
 			/* Chien search: find roots of the error location polynomial */
 			for (i = 1; i <= l[u]; i++)
 				reg[i] = elp[u][i];
@@ -200,30 +186,18 @@ void Decoder_BCH<B, R>
 					}
 				if (!q)
 				{ /* store root and error
-						 * location number indices */
+				   * location number indices */
 					loc[count] = N - i;
 					count++;
-					//printf("%3d ", N - i);
 				}
 			}
-			//printf("\n");
-			//std::clog << "before correction, YH_N=" << std::endl;
-			//this->display_bit_vector(YH_N);
+
 			if (count == l[u])
 				/* no. roots = degree of elp hence <= t errors */
 				for (i = 0; i < l[u]; i++)
 					YH_N[loc[i]] ^= 1;
-
-			//std::clog << "after correction, YH_N=" << std::endl;
-			//this->display_bit_vector(YH_N);
-			//else /* elp has degree >t hence cannot solve */
-				//printf("Incomplete decoding: errors detected\n");
 		}
 	}
-	/*clog << "YH_N aft cor:";
-	for (int i = 0; i < N; i++)
-		clog << " " << YH_N[i];
-	clog << endl;*/
 	
 	for (i = 0; i < K; i++)
 		this->V_K[i] = YH_N[i+N-K];

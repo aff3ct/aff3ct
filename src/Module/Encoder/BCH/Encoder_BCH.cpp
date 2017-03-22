@@ -11,7 +11,7 @@ Encoder_BCH<B>
 ::Encoder_BCH(const int& K, const int& N, const int& m, const tools::Galois &GF,
               const int n_frames, const std::string name)
  : Encoder<B>(K, N, n_frames, name), K(K), N(N), m(m), g(N-K+1), bb(N-K)
-{	
+{
 	//assert(2**m == N+1);
 	//assertion on K required
 
@@ -25,7 +25,7 @@ void Encoder_BCH<B>
 {
 	register int i, j;
 	register int feedback;
-	
+
 	for (i = 0; i < N - K; i++)
 		bb[i] = 0;
 	for (i = K - 1; i >= 0; i--)
@@ -52,7 +52,6 @@ void Encoder_BCH<B>
 		X_N[i] = bb[i];
 	for (i = 0; i < K; i++)
 		X_N[i + N - K] = U_K[i];
-	
 }
 
 // ==================================================================================== explicit template instantiation
