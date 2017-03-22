@@ -1,7 +1,7 @@
 Run command:
-./bin/aff3ct --sim-type "BFER" --cde-type "BCH" -N "255" -K "231" -T "3" --mGF "8" -m "0" -M "8.01" -s "0.25" -e "4000" --enc-type "AZCW" --chn-type "AWGN_FAST" --sim-pyber "BCH (255,231)" 
+./bin/aff3ct --sim-type "BFER" --cde-type "BCH" -N "255" -K "231" -T "3" --mGF "8" -m "0" -M "8.01" -s "0.25" -e "4000" --enc-type "AZCW" --chn-type "AWGN_FAST" --sim-pyber "BCH (255,231,3)" 
 Curve name:
-BCH (255,231)
+BCH (255,231,3)
 # -------------------------------------------------
 # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
 # -------------------------------------------------
