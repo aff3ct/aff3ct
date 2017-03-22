@@ -32,11 +32,11 @@ void Launcher_BFER_BCH<B,R,Q>
 	this->opt_args[{"enc-type"}][2] += ", BCH";
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	this->req_args[{"cde-corr-pow", "T"}] =
+	this->opt_args[{"cde-corr-pow", "T"}] =
 		{"positive_int",
 		 "correction power of the BCH code."};
 
-	this->req_args[{"cde-gfield-order", "mGF"}] =
+	this->opt_args[{"cde-gfield-order", "mGF"}] =
 		{"positive_int",
 		 "order of the Galois Field (used in BCH simulations)."};
 }
@@ -48,8 +48,15 @@ void Launcher_BFER_BCH<B,R,Q>
 	Launcher_BFER<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	this->params.code.t   = this->ar.get_arg_int({"cde-corr-pow", "T"});
-	this->params.code.mGF = this->ar.get_arg_int({"cde-gfield-order", "mGF"});
+	if (this->ar.exist_arg({"cde-gfield-order", "mGF"}))
+		this->params.code.mGF = this->ar.get_arg_int({"cde-gfield-order", "mGF"});
+	else
+		this->params.code.mGF = (int)std::log2(this->params.code.N +1);
+
+	if (this->ar.exist_arg({"cde-corr-pow", "T"}))
+		this->params.code.t = this->ar.get_arg_int({"cde-corr-pow", "T"});
+	else
+		this->params.code.t = (this->params.code.N - this->params.code.K) / this->params.code.mGF;
 }
 
 template <typename B, typename R, typename Q>

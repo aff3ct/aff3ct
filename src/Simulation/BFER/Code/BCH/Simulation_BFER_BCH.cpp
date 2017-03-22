@@ -19,7 +19,7 @@ Simulation_BFER_BCH<B,R,Q>
 ::Simulation_BFER_BCH(const parameters& params)
 : Simulation_BFER<B,R,Q>(params), GF(params.code.mGF, params.code.N, params.code.K, params.code.t)
 {
-	// TODO : put some assertion on the BCH code parameters
+	// assertion are made in the Galois Field (GF)
 }
 
 template <typename B, typename R, typename Q>
