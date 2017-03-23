@@ -18,13 +18,12 @@ class Interleaver_row_column : public Interleaver<T>
 {
 private:
 	const int n_cols;
-	int n_rows;
+	const int n_rows;
 
 public:
 	Interleaver_row_column(const int size, const int n_cols, const std::string name = "Interleaver_row_column")
-	: Interleaver<T>(size, 1, name), n_cols(n_cols)
+	: Interleaver<T>(size, 1, name), n_cols(n_cols), n_rows(size / n_cols)
 	{
-		n_rows = (size / n_cols);
 		assert(n_rows * n_cols == size);
 		gen_lookup_tables();
 	}
