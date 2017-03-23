@@ -3,7 +3,7 @@
 
 #include "Module/Encoder/Encoder.hpp"
 #include "Tools/params.h"
-#include "Tools/Math/Algebraic/Galois.hpp"
+#include "Tools/Math/Galois.hpp"
 
 #include "../Factory.hpp"
 

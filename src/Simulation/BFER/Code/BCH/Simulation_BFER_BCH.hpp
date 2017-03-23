@@ -1,7 +1,7 @@
 #ifndef SIMULATION_BCH_HPP_
 #define SIMULATION_BCH_HPP_
 
-#include "Tools/Math/Algebraic/Galois.hpp"
+#include "Tools/Math/Galois.hpp"
 
 #include "Simulation/BFER/Standard/STD_Simulation_BFER.hpp"
 

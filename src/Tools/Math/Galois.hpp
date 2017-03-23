@@ -11,14 +11,14 @@ namespace tools
 class Galois
 {
 protected:
-	const int m; // order of the Galois Field
 	const int K;
 	const int N; // number of non-nul elements in the field : N = 2^m - 1
+	const int m; // order of the Galois Field
 	const int t;
 	const int d;
 
 public:
-	Galois(const int& m, const int& N, const int& K, const int& t);
+	Galois(const int& K, const int& N, const int& m, const int& t);
 	virtual ~Galois();
 
 	void Select_Polynomial(); // move this private section

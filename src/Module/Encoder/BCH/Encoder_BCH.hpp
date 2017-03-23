@@ -5,7 +5,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../Encoder.hpp"
-#include "Tools/Math/Algebraic/Galois.hpp"
+#include "Tools/Math/Galois.hpp"
 
 namespace aff3ct
 {

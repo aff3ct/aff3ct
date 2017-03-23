@@ -103,7 +103,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_BCH.cpp
 	if [[ ${codetype} == "BCH"         && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --cde-corr-pow -T -cde-gfield-order --mGF"
+		opts="$opts --cde-corr-pow -T"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp

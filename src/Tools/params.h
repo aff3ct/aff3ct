@@ -51,7 +51,6 @@ struct code_parameters
 	int         m;
 	int         tail_length;
 	int         t;
-	int         mGF;
 };
 
 struct source_parameters

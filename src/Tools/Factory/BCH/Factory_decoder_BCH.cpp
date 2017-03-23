@@ -17,7 +17,7 @@ Decoder<B,R>* Factory_decoder_BCH<B,R>
 		if (params.decoder.implem == "STD")
 			decoder = new Decoder_BCH<B,R>(params.code.K,
 			                               params.code.N,
-			                               params.code.mGF,
+			                               params.code.m,
 			                               params.code.t,
 			                               GF,
 			                               params.simulation.inter_frame_level);

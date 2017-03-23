@@ -6,7 +6,7 @@
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/SISO.hpp"
 #include "Tools/params.h"
-#include "Tools/Math/Algebraic/Galois.hpp"
+#include "Tools/Math/Galois.hpp"
 
 #include "../Factory.hpp"
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Math/Algebraic/Galois.hpp"
+#include "Tools/Math/Galois.hpp"
 
 #include "../Decoder.hpp"
 
