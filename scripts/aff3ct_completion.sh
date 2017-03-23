@@ -284,8 +284,8 @@ _aff3ct() {
 		--itl-type)
 			local params
 			case "${simutype}" in
-				BFER)      params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
-				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
+				BFER)      params="LTE CCSDS RANDOM RAND_COL ROW_COL GOLDEN USER NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM RAND_COL ROW_COL GOLDEN USER NO" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
