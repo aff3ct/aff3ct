@@ -81,7 +81,7 @@ _aff3ct() {
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --itl-col --itl-uni --dmod-ite --mnt-max-fe -e        \
+		      --itl-path --itl-cols --itl-uni --dmod-ite --mnt-max-fe -e       \
 		      --term-type"
 	fi
 
@@ -95,7 +95,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_RA.cpp
 	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --dec-ite -i --itl-type --itl-path --itl-col --itl-uni"
+		opts="$opts --dec-ite -i --itl-type --itl-path --itl-cols --itl-uni"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -124,7 +124,7 @@ _aff3ct() {
 	if [[ ${codetype} == "TURBO"      && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --sim-json-path --crc-type --enc-no-buff --enc-type   \
-		      --enc-poly --itl-type --itl-path --itl-col --itl-uni        \
+		      --enc-poly --itl-type --itl-path --itl-cols --itl-uni       \
 		      --dec-type -D --dec-implem --dec-ite -i --dec-sf --dec-simd \
 		      --dec-max" 
 	fi
@@ -182,7 +182,7 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber | --itl-col |               \
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --itl-cols |              \
 		--dec-synd-depth)
 			COMPREPLY=()
 			;;
