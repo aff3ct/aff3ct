@@ -18,9 +18,10 @@ class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
 protected:
 	mipp::vector<int> swapped;
-	mipp::vector<B> G;
+	mipp::vector<B>   G;
+
 	void build_H(const int k, const int n, const std::vector<std::vector<unsigned int>>& positions,
-				 std::vector<mipp::vector<B>>& H);
+	             std::vector<mipp::vector<B>>& H);
 	void triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<int>& swapped);
 	void identity_H(std::vector<mipp::vector<B>>& H);
 	void transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G);
