@@ -25,7 +25,7 @@ Launcher_BFER_LDPC<B,R,Q>
 	this->params.decoder  .offset           = 0.f;
 	this->params.decoder  .normalize_factor = 1.f;
 	this->params.decoder  .enable_syndrome  = true;
-	this->params.decoder  .syndrome_depth   = 1;
+	this->params.decoder  .syndrome_depth   = 2;
 }
 
 template <typename B, typename R, typename Q>
