@@ -14,9 +14,10 @@ Decoder_LDPC_BP_flooding_log_sum_product<B,R>
                                            const AList_reader &alist_data,
                                            const mipp::vector<B> &info_bits_pos,
                                            const bool enable_syndrome,
+                                           const int syndrome_depth,
                                            const int n_frames,
                                            const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, n_frames, name),
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
   values(alist_data.get_CN_max_degree())
 {
 }

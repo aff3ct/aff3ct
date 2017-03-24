@@ -21,6 +21,7 @@ public:
 	                                                  const float normalize_factor = 1.f,
 	                                                  const float offset = 0.f,
 	                                                  const bool enable_syndrome = true,
+	                                                  const int syndrome_depth = 1,
 	                                                  const int n_frames = 1,
 	                                                  const std::string name = "Decoder_LDPC_BP_flooding_offset_normalize_min_sum");
 	virtual ~Decoder_LDPC_BP_flooding_offset_normalize_min_sum();

@@ -1,5 +1,5 @@
-#ifndef INTERLEAVER_COLUMNS_HPP
-#define	INTERLEAVER_COLUMNS_HPP
+#ifndef INTERLEAVER_RANDOM_COLUMN_HPP
+#define	INTERLEAVER_RANDOM_COLUMN_HPP
 
 #include <algorithm>
 #include <time.h>
@@ -12,21 +12,20 @@ namespace aff3ct
 namespace module
 {
 template <typename T = int>
-class Interleaver_columns : public Interleaver<T>
+class Interleaver_random_column : public Interleaver<T>
 {
 private:
 	std::random_device rd;
 	std::mt19937       rd_engine;
 
 	const int n_cols;
-	int col_size;
+	const int col_size;
 
 public:
-	Interleaver_columns(const int size, const int n_cols, const int seed = 0,
-	                    const std::string name = "Interleaver_columns")
-	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd()), n_cols(n_cols)
+	Interleaver_random_column(const int size, const int n_cols, const int seed = 0,
+	                          const std::string name = "Interleaver_random_column")
+	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd()), n_cols(n_cols), col_size(size / n_cols)
 	{
-		col_size = (size / n_cols);
 		assert(col_size * n_cols == size);
 		rd_engine.seed(seed);
 		gen_lookup_tables();
@@ -54,4 +53,4 @@ public:
 }
 }
 
-#endif	/* INTERLEAVER_COLUMNS_HPP */
+#endif	/* INTERLEAVER_RANDOM_COLUMNS_HPP */

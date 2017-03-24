@@ -26,6 +26,7 @@ Launcher_BFERI_LDPC<B,R,Q>
 	this->params.decoder    .offset           = 0.f;
 	this->params.decoder    .normalize_factor = 1.f;
 	this->params.decoder    .enable_syndrome  = true;
+	this->params.decoder    .syndrome_depth   = 1;
 }
 
 template <typename B, typename R, typename Q>
@@ -57,6 +58,9 @@ void Launcher_BFERI_LDPC<B,R,Q>
 	this->opt_args[{"dec-no-synd"}] =
 		{"",
 		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
+	this->opt_args[{"dec-synd-depth"}] =
+		{"positive_int",
+		 "successive number of iterations to validate the syndrome detection."};
 }
 
 template <typename B, typename R, typename Q>
@@ -69,11 +73,11 @@ void Launcher_BFERI_LDPC<B,R,Q>
 	if(this->ar.exist_arg({"cde-alist-path"})) this->params.code.alist_path = this->ar.get_arg({"cde-alist-path"});
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite            = this->ar.get_arg_int  ({"dec-ite", "i"});
-	if(this->ar.exist_arg({"dec-off"     })) this->params.decoder.offset           = this->ar.get_arg_float({"dec-off"     });
-	if(this->ar.exist_arg({"dec-norm"    })) this->params.decoder.normalize_factor = this->ar.get_arg_float({"dec-norm"    });
-	if(this->ar.exist_arg({"dec-no-synd" })) this->params.decoder.enable_syndrome  = false;
-
+	if(this->ar.exist_arg({"dec-ite",   "i"})) this->params.decoder.n_ite            = this->ar.get_arg_int  ({"dec-ite",   "i"});
+	if(this->ar.exist_arg({"dec-off"       })) this->params.decoder.offset           = this->ar.get_arg_float({"dec-off"       });
+	if(this->ar.exist_arg({"dec-norm"      })) this->params.decoder.normalize_factor = this->ar.get_arg_float({"dec-norm"      });
+	if(this->ar.exist_arg({"dec-synd-depth"})) this->params.decoder.syndrome_depth   = this->ar.get_arg_int  ({"dec-synd-depth"});
+	if(this->ar.exist_arg({"dec-no-synd"   })) this->params.decoder.enable_syndrome  = false;
 }
 
 template <typename B, typename R, typename Q>
@@ -109,6 +113,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
 		p.push_back(std::make_pair("Normalize factor", std::to_string(this->params.decoder.normalize_factor)));
 	}
 	p.push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
+
+	if (this->params.decoder.enable_syndrome)
+		p.push_back(std::make_pair("Stop criterion depth",  std::to_string(this->params.decoder.syndrome_depth)));
 
 	return p;
 }

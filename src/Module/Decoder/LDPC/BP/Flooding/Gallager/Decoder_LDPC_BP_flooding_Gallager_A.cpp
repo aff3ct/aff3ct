@@ -12,11 +12,13 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const AList_reader &H,
                                       const mipp::vector<B> &info_bits_pos, const bool enable_syndrome,
-                                      const int n_frames, const std::string name)
+                                      const int syndrome_depth, const int n_frames, const std::string name)
+
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
   n_ite            (n_ite                  ),
   H                (H                      ),
   enable_syndrome  (enable_syndrome        ),
+  syndrome_depth   (syndrome_depth         ),
   info_bits_pos    (info_bits_pos          ),
   Y_N              (N                      ),
   C_to_V_messages  (H.get_n_branches(),   0),
@@ -24,6 +26,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 {
 	assert(this->N == (int)H.get_n_VN());
 	assert(n_ite > 0);
+	assert(syndrome_depth > 0);
 }
 
 template <typename B, typename R>
@@ -46,6 +49,8 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_hard_decode()
 {
+	auto cur_syndrome_depth = 0;
+
 	for (auto ite = 0; ite < n_ite; ite++)
 	{
 		auto C_to_V_mess_ptr = C_to_V_messages.data();
@@ -99,7 +104,13 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 		// stop criterion
 		if (this->enable_syndrome && (syndrome == 0))
-			break;
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
 }
 
