@@ -29,6 +29,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                                     params.decoder.normalize_factor,
 			                                                                     params.decoder.offset,
 			                                                                     params.decoder.enable_syndrome,
+			                                                                     params.decoder.syndrome_depth,
 			                                                                     params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "GALA")
 			decoder = new Decoder_LDPC_BP_flooding_Gallager_A<B,R>(params.code.K,
@@ -36,6 +37,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                       params.decoder.n_ite,
 			                                                       alist_data,
 			                                                       params.decoder.enable_syndrome,
+			                                                       params.decoder.syndrome_depth,
 			                                                       params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "SPA")
 			decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
@@ -43,6 +45,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                        params.decoder.n_ite,
 			                                                        alist_data,
 			                                                        params.decoder.enable_syndrome,
+			                                                        params.decoder.syndrome_depth,
 			                                                        params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "LSPA")
 			decoder = new Decoder_LDPC_BP_flooding_log_sum_product<B,R>(params.code.K,
@@ -50,6 +53,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                            params.decoder.n_ite,
 			                                                            alist_data,
 			                                                            params.decoder.enable_syndrome,
+			                                                            params.decoder.syndrome_depth,
 			                                                            params.simulation.inter_frame_level);
 	}
 	else if (params.decoder.type == "BP_LAYERED")
@@ -62,6 +66,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                                    params.decoder.normalize_factor,
 			                                                                    params.decoder.offset,
 			                                                                    params.decoder.enable_syndrome,
+			                                                                    params.decoder.syndrome_depth,
 			                                                                    params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "SPA")
 			decoder = new Decoder_LDPC_BP_layered_sum_product<B,R>(params.code.K,
@@ -69,6 +74,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                       params.decoder.n_ite,
 			                                                       alist_data,
 			                                                       params.decoder.enable_syndrome,
+			                                                       params.decoder.syndrome_depth,
 			                                                       params.simulation.inter_frame_level);
 		else if (params.decoder.implem == "LSPA")
 			decoder = new Decoder_LDPC_BP_layered_log_sum_product<B,R>(params.code.K,
@@ -76,6 +82,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                           params.decoder.n_ite,
 			                                                           alist_data,
 			                                                           params.decoder.enable_syndrome,
+			                                                           params.decoder.syndrome_depth,
 			                                                           params.simulation.inter_frame_level);
 	}
 

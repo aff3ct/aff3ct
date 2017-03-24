@@ -20,6 +20,7 @@ protected:
 	const int n_C_nodes; // number of check nodes (= N - K)
 
 	const bool enable_syndrome;
+	const int  syndrome_depth;
 
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
@@ -34,6 +35,7 @@ public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
 	                        const tools::AList_reader &alist_data,
 	                        const bool enable_syndrome = true,
+	                        const int syndrome_depth = 1,
 	                        const int n_frames = 1,
 	                        const std::string name = "Decoder_LDPC_BP_layered");
 	virtual ~Decoder_LDPC_BP_layered();

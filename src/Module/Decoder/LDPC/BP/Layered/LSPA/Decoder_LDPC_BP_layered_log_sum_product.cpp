@@ -14,9 +14,10 @@ Decoder_LDPC_BP_layered_log_sum_product<B,R>
 ::Decoder_LDPC_BP_layered_log_sum_product(const int &K, const int &N, const int& n_ite,
                                           const AList_reader &alist_data,
                                           const bool enable_syndrome,
+                                          const int syndrome_depth,
                                           const int n_frames,
                                           const std::string name)
-: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name),
+: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, enable_syndrome, syndrome_depth, n_frames, name),
   contributions(alist_data.get_CN_max_degree()), values(alist_data.get_CN_max_degree())
 {
 }

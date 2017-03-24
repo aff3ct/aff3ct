@@ -15,6 +15,7 @@ Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
                            const AList_reader &alist_data,
                            const bool enable_syndrome,
+                           const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
 : Decoder_SISO<B,R>      (K, N, n_frames, 1, name                      ),
@@ -24,6 +25,7 @@ Decoder_LDPC_BP_flooding<B,R>
   n_C_nodes              ((int)alist_data.get_n_CN()                   ),
   n_branches             ((int)alist_data.get_n_branches()             ),
   enable_syndrome        (enable_syndrome                              ),
+  syndrome_depth         (syndrome_depth                               ),
   init_flag              (false                                        ),
 
   n_variables_per_parity (alist_data.get_n_VN_per_CN()                 ),
@@ -39,6 +41,7 @@ Decoder_LDPC_BP_flooding<B,R>
 	assert(N == (int)alist_data.get_n_VN());
 //	assert(K == N - (int)alist_data.get_n_CN());
 	assert(n_ite > 0);
+	assert(syndrome_depth > 0);
 }
 
 template <typename B, typename R>
@@ -131,6 +134,8 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::BP_decode(const mipp::vector<R> &Y_N)
 {
+	auto cur_syndrome_depth = 0;
+
 	// actual decoding
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
@@ -142,7 +147,13 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 		// stop criterion
 		if (this->enable_syndrome && syndrome)
-			break;
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
 
 	// begining of the iteration upon all the matrix lines

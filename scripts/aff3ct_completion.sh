@@ -148,7 +148,7 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
-		--dec-no-synd --dec-off --dec-norm"
+		--dec-no-synd --dec-off --dec-norm --dec-synd-depth"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
@@ -182,7 +182,8 @@ _aff3ct() {
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber | --itl-col)
+		--sim-seed | --sim-mpi-comm | --sim-pyber | --itl-col |               \
+		--dec-synd-depth)
 			COMPREPLY=()
 			;;
 

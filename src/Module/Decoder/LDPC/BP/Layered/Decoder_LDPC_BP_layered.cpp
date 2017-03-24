@@ -14,6 +14,7 @@ Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
                           const AList_reader &alist_data,
                           const bool enable_syndrome,
+                          const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name                                  ),
@@ -21,6 +22,7 @@ Decoder_LDPC_BP_layered<B,R>
   n_ite            (n_ite                                                    ),
   n_C_nodes        ((int)alist_data.get_n_CN()                               ),
   enable_syndrome  (enable_syndrome                                          ),
+  syndrome_depth   (syndrome_depth                                           ),
   init_flag        (false                                                    ),
   CN_to_VN         (alist_data.get_CN_to_VN()                                ),
   var_nodes        (n_frames, mipp::vector<R>(N,                           0)),
@@ -28,6 +30,7 @@ Decoder_LDPC_BP_layered<B,R>
 {
 	assert(N == (int)alist_data.get_n_VN());
 	assert(n_ite > 0);
+	assert(syndrome_depth > 0);
 }
 
 template <typename B, typename R>
@@ -119,12 +122,21 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::BP_decode()
 {
+	auto cur_syndrome_depth = 0;
+
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->BP_process(this->var_nodes[cur_frame], this->branches[cur_frame]);
 
 		// stop criterion
-		if (this->enable_syndrome && this->check_syndrome()) break;
+		if (this->enable_syndrome && this->check_syndrome())
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
 }
 
