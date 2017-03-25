@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <exception>
 #include <functional>
 
 #ifdef ENABLE_MPI

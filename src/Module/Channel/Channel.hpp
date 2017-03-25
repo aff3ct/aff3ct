@@ -46,6 +46,8 @@ public:
 	Channel_i(const int N, const int n_frames = 1, const std::string name = "Channel_i")
 	: Module(n_frames, name), N(N)
 	{
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Channel: \"N\" has to be greater than 0.");
 	}
 
 	/*!
