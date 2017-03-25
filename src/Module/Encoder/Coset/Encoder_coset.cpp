@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "Tools/Display/bash_tools.h"
 
 #include "Encoder_coset.hpp"
@@ -21,12 +19,8 @@ Encoder_coset<B>
 
 template <typename B>
 void Encoder_coset<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() <= X_N.size());
-	assert(this->K * this->n_frames == static_cast<int>(U_K.size()));
-	assert(this->N * this->n_frames == static_cast<int>(X_N.size()));
-
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		std::copy(U_K.begin() + (f+ 0) * this->K, U_K.begin() + (f +1) * this->K, X_N.begin() + f * this->N);
@@ -38,10 +32,8 @@ void Encoder_coset<B>
 
 template <typename B>
 void Encoder_coset<B>
-::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+::_encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
-	assert((this->N - this->K) * this->n_frames == static_cast<int>(par.size()));
-
 	for (auto i = 0; i < (int)par.size(); i++)
 		par[i] = (B)this->uniform_dist(this->rd_engine);
 }

@@ -1,5 +1,5 @@
-#include <cassert>
 #include <fstream>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -23,8 +23,13 @@ Encoder_user<B>
 		file >> src_size;
 		file >> cw_size;
 
-		assert(n_cw > 0 && src_size > 0 && cw_size > 0);
-		assert(cw_size >= src_size);
+		if (n_cw <= 0 || src_size <= 0 || cw_size <= 0)
+			throw std::runtime_error("aff3ct::module::Encoder_user: \"n_cw\", \"src_size\" and \"cw_size\" have to be "
+			                         "greater than 0.");
+
+		if (cw_size < src_size)
+			throw std::runtime_error("aff3ct::module::Encoder_user: \"cw_size\" has to be equal or greater than "
+			                         "\"src_size\".");
 
 		this->codewords.resize(n_cw);
 		for (auto i = 0; i < n_cw; i++)
@@ -42,23 +47,19 @@ Encoder_user<B>
 		}
 		else
 		{
-			std::cerr << bold_red("(EE) The number of information bits or the codeword size is wrong (read: {")
-			          << bold_red(std::to_string(src_size)) << bold_red(",")
-			          << bold_red(std::to_string(cw_size))
-			          << bold_red("}, expected: {") << bold_red(std::to_string(this->K)) << bold_red(",")
-			          << bold_red(std::to_string(this->N))
-			          << bold_red("}), exiting.") << std::endl;
 			file.close();
-			std::exit(-1);
+
+			std::string mess = "aff3ct::module::Encoder_user: the number of information bits or the codeword size "
+			                   "is wrong (read: {" + std::to_string(src_size) + "," + std::to_string(cw_size) + "}"
+			                   ", expected: {" + std::to_string(this->K) + "," + std::to_string(this->N) + "}).";
+			throw std::runtime_error(mess.c_str());
 		}
 
 		file.close();
 	}
 	else
 	{
-		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
-		          << std::endl;
-		std::exit(-1);
+		throw std::invalid_argument("aff3ct::module::Encoder_user: can't open \"" + filename + "\" file.");
 	}
 }
 
@@ -70,11 +71,8 @@ Encoder_user<B>
 
 template <typename B>
 void Encoder_user<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned)(this->K * this->n_frames));
-	assert(X_N.size() == (unsigned)(this->N * this->n_frames));
-
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		std::copy(this->codewords[this->cw_counter].begin(),

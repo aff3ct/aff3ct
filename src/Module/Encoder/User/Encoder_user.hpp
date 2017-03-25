@@ -21,7 +21,8 @@ public:
 	             const std::string name = "Encoder_user");
 	virtual ~Encoder_user();
 
-	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
 }
 }

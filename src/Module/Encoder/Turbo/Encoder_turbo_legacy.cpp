@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -17,17 +17,16 @@ Encoder_turbo_legacy<B>
   X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*n_frames)
 {
-	assert(n_frames > 0);
+	if (N_without_tb / K != 3)
+		throw std::invalid_argument("aff3ct::module::Encoder_turbo_legacy: \"N\" / \"K\" has to be equal to 3.");
+	if ((int)pi.size() != K)
+		throw std::length_error("aff3ct::module::Encoder_turbo_legacy: \"pi.size()\" has to be equal to \"K\".");
 }
 
 template <typename B>
 void Encoder_turbo_legacy<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-	assert(((this->N - (sub_enc.tail_length() + sub_enc.tail_length())) / this->K) == 3);
-
 	pi.interleave (U_K,   U_K_i);
 	sub_enc.encode(U_K,   X_N_n);
 	sub_enc.encode(U_K_i, X_N_i);
@@ -65,7 +64,8 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::set_n_frames(const int n_frames)
 {
-	assert(n_frames > 0);
+	if (n_frames <= 0)
+		throw std::invalid_argument("aff3ct::module::Encoder_turbo_legacy: \"n_frames\" has to be greater than 0.");
 		
 	Encoder<B>::set_n_frames(n_frames);
 	sub_enc.set_n_frames(n_frames);

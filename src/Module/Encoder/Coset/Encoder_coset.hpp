@@ -25,8 +25,9 @@ public:
 	              const std::string name = "Encoder_coset");
 	virtual ~Encoder_coset();
 
-	void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
+protected:
+	void _encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
 };
 }
 }

@@ -2,6 +2,8 @@
 #include <iterator>
 #endif
 
+#include <stdexcept>
+
 #include "Encoder_RSC_sys.hpp"
 
 using namespace aff3ct::module;
@@ -13,7 +15,10 @@ Encoder_RSC_sys<B>
 : Encoder_sys<B>(K, N + 2*n_ff, n_frames, name), n_ff(n_ff), n_states(1 << n_ff), 
   buffered_encoding(buffered_encoding)
 {
-	assert(N == (2 * K));
+	if (N !=  2 * K)
+		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"N\" / \"K\" has to be a equal to 2.");
+	if (n_ff <= 0)
+		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"n_ff\" has to be greater than 0.");
 }
 
 template <typename B>
@@ -31,11 +36,8 @@ int Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-
 	if (buffered_encoding)
 		for (auto f = 0; f < this->n_frames; f++)
 		{
@@ -55,10 +57,8 @@ void Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+::_encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
-	assert(par.size() == (unsigned) ((this->K +2*this->n_ff) * this->n_frames));
-
 	// par bits: [par | tail bit sys | tail bits par]
 	for (auto f = 0 ; f < this->n_frames ; f++)
 		frame_encode(U_K.data() + f*this->K, par.data() + f*(this->K+2*this->n_ff), 1, true);

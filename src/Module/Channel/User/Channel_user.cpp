@@ -46,7 +46,7 @@ Channel_user<R>
 	}
 	else
 	{
-		throw std::invalid_argument("aff3ct::module::Channel_user: can't open \"" + filename + "\" file");
+		throw std::invalid_argument("aff3ct::module::Channel_user: can't open \"" + filename + "\" file.");
 	}
 }
 

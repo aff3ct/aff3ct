@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -20,15 +20,16 @@ Encoder_turbo<B>
   par_n(((N_without_tb - K) / 2 + enco_n.tail_length()) * n_frames),
   par_i(((N_without_tb - K) / 2 + enco_i.tail_length()) * n_frames)
 {
+	if (N_without_tb / K != 3)
+		throw std::invalid_argument("aff3ct::module::Encoder_turbo: \"N\" / \"K\" has to be equal to 3.");
+	if ((int)pi.size() != K)
+		throw std::length_error("aff3ct::module::Encoder_turbo: \"pi.size()\" has to be equal to \"K\".");
 }
 
 template <typename B>
 void Encoder_turbo<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-
 	pi.interleave(U_K, U_K_i);
 
 	enco_n.encode_sys(U_K,   par_n);
@@ -57,8 +58,9 @@ template <typename B>
 void Encoder_turbo<B>
 ::set_n_frames(const int n_frames)
 {
-	assert(n_frames > 0);
-	
+	if (n_frames <= 0)
+		throw std::invalid_argument("aff3ct::module::Encoder_turbo: \"n_frames\" has to be greater than 0.");
+
 	const int N_without_tb = this->N - (enco_n.tail_length() + enco_i.tail_length());
 
 	Encoder<B>::set_n_frames(n_frames);
