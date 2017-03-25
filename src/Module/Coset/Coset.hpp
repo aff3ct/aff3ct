@@ -82,7 +82,7 @@ public:
 			throw std::length_error("aff3ct::module::Coset: \"out_data.size()\" has to be equal to "
 			                        "\"size\" * \"n_frames\".");
 
-		_apply(ref, in_data, out_data);
+		this->_apply(ref, in_data, out_data);
 	}
 
 protected:

@@ -14,9 +14,11 @@ public:
 	CRC_NO(const int K, const int n_frames = 1, const std::string name = "CRC_NO");
 	virtual ~CRC_NO();
 
-	int  size (                                                   ) const;
-	void build(      mipp::vector<B>& U_K                         );
-	bool check(const mipp::vector<B>& V_K, const int n_frames = -1);
+	int  size (                    ) const;
+	void build(mipp::vector<B>& U_K);
+
+protected:
+	bool _check(const mipp::vector<B>& V_K, const int n_frames = -1);
 };
 }
 }

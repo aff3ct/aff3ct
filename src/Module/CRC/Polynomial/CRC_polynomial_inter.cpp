@@ -1,4 +1,5 @@
 #include <cassert>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/MIPP/mipp.h"
@@ -12,15 +13,18 @@ CRC_polynomial_inter<B>
 ::CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames, const std::string name)
 : CRC_polynomial<B>(K, poly_key, n_frames, name)
 {
-	assert(mipp::nElmtsPerRegister<B>() == n_frames);
+	if (mipp::nElReg<B>() != n_frames)
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
+		                            "\"mipp::nElReg<B>()\".");
 }
 
 template <typename B>
 bool CRC_polynomial_inter<B>
-::check(const mipp::vector<B>& V_K, const int n_frames)
+::_check(const mipp::vector<B>& V_K, const int n_frames)
 {
-	assert(n_frames == -1 || n_frames == this->n_frames);
-	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
+	if (n_frames != -1 && n_frames != this->n_frames)
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
+		                            "\"this->n_frames\".");
 
 	auto real_frame_size = int(V_K.size() / this->n_frames);
 	this->_generate_INTER(V_K, this->buff_crc, 

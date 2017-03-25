@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -52,8 +52,13 @@ template <typename B>
 void CRC_polynomial<B>
 ::build(mipp::vector<B>& U_K)
 {
-	assert(U_K.size() >  (unsigned)(this->n_frames * this->size()));
-	assert(U_K.size() == (unsigned)(this->n_frames * this->K));
+	if (U_K.size() <= (unsigned)(this->n_frames * this->size()))
+		throw std::length_error("aff3ct::module::CRC_polynomial: \"U_K.size()\" has to be greater "
+		                        "than \"n_frames\" * \"size\".");
+
+	if (U_K.size() != (unsigned)(this->n_frames * this->K))
+		throw std::length_error("aff3ct::module::CRC_polynomial: \"U_K.size()\" has to be equal "
+		                        "to \"n_frames\" * \"K\".");
 
 	for (auto f = 0; f < this->n_frames; f++)
 		this->_generate(U_K, U_K, 
@@ -84,10 +89,9 @@ void CRC_polynomial<B>
 
 template <typename B>
 bool CRC_polynomial<B>
-::check(const mipp::vector<B>& V_K, const int n_frames)
+::_check(const mipp::vector<B>& V_K, const int n_frames)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-	assert(V_K.size() > (unsigned)(real_n_frames * this->size()));
 	auto real_frame_size = (int)(V_K.size() / real_n_frames);
 
 	auto i = 0;
