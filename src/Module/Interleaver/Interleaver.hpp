@@ -76,6 +76,11 @@ public:
 		return pi_inv;
 	}
 
+	unsigned size() const
+	{
+		return pi.size();
+	}
+
 	/*!
 	 * \brief Interleaves a vector.
 	 *

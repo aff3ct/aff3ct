@@ -1,9 +1,10 @@
+#include <stdexcept>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-#include <cassert>
+#include <cmath>
 
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_polar_SCAN_naive.hpp"
 
@@ -27,8 +28,17 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
   feedback_graph(layers_count),
   soft_graph    (layers_count)
 {
-	assert(max_iter           >  0                 );
-	assert(frozen_bits.size() == (unsigned) this->N);
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"N\" has to be positive a power "
+		                            "of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SCAN_naive: \"frozen_bits.size()\" has to be equal to "
+		                        "\"N\".");
+
+	if (max_iter <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"max_iter\" has to be greater "
+		                            "than 0.");
 
 	for (auto t = 0; t < layers_count; t++)
 	{
@@ -67,10 +77,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() >= (unsigned) this->N);
-
 	load_init();
 		
 	// init the softGraph (special case for the right most stage)
@@ -125,10 +133,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= (unsigned) this->K);
-
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!frozen_bits[i]) // if i is not a frozen bit

@@ -11,6 +11,8 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <stdexcept>
+
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Display/bash_tools.h"
 
@@ -69,6 +71,17 @@ public:
 	  V_N(n_dec_waves, mipp::vector<B>(simd_inter_frame_level * N + mipp::nElReg<B>(), (B)0)),
 	  K(K), N(N), simd_inter_frame_level(simd_inter_frame_level)
 	{
+		if (K <= 0)
+			throw std::invalid_argument("aff3ct::module::Decoder: \"K\" has to be greater than 0.");
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Decoder: \"N\" has to be greater than 0.");
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::Decoder: \"n_frames\" has to be greater than 0.");
+		if (simd_inter_frame_level <= 0)
+			throw std::invalid_argument("aff3ct::module::Decoder: \"simd_inter_frame_level\" has to be greater "
+			                            "than 0.");
+		if (K > N)
+			throw std::invalid_argument("aff3ct::module::Decoder: \"K\" has to be smaller than \"N\".");
 	}
 
 	/*!
@@ -94,6 +107,14 @@ public:
 	                 const bool store_fast = false,
 	                 const bool unpack     = false)
 	{
+		if (this->N * this->n_frames != (int)Y_N.size())
+			throw std::length_error("aff3ct::module::Decoder: \"Y_N.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		if (this->K * this->n_frames != (int)V_K.size())
+			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal to "
+			                        "\"K\" * \"n_frames\".");
+
 		using namespace std::chrono;
 
 		this->d_load_total  = std::chrono::nanoseconds(0);
@@ -199,7 +220,7 @@ protected:
 	 *
 	 * \param Y_N: a noisy frame.
 	 */
-	virtual void load(const mipp::vector<R>& Y_N) = 0;
+	virtual void _load(const mipp::vector<R>& Y_N) = 0;
 
 	/*!
 	 * \brief Decodes the noisy frame (have to be called after the load method).
@@ -211,7 +232,7 @@ protected:
 	 *
 	 * \param V_K: an decoded codeword (only the information bits).
 	 */
-	virtual void store(mipp::vector<B>& V_K) const = 0;
+	virtual void _store(mipp::vector<B>& V_K) const = 0;
 
 	/*!
 	 * \brief Stores the decoded codeword, may or may not contain the redundancy bits (parity) (should be called over
@@ -219,7 +240,7 @@ protected:
 	 *
 	 * \param V: the decoded codeword.
 	 */
-	virtual void store_fast(mipp::vector<B>& V) const { store(V); }
+	virtual void _store_fast(mipp::vector<B>& V) const { _store(V); }
 
 	/*!
 	 * \brief Can be called after the store_fast method if store_fast return the bits in a non-standard format. The
@@ -227,7 +248,7 @@ protected:
 	 *
 	 * \param V: the decoded and unpacked codeword.
 	 */
-	virtual void unpack(mipp::vector<B>& V) const {}
+	virtual void _unpack(mipp::vector<B>& V) const {}
 
 private:
 	inline void __hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K,
@@ -260,6 +281,34 @@ private:
 				this->store(V_K);
 		}
 		this->d_store_total += steady_clock::now() - t_store;
+	}
+
+	inline void load(const mipp::vector<R>& Y_N)
+	{
+		if (this->N * this->simd_inter_frame_level > (int)Y_N.size())
+			throw std::length_error("aff3ct::module::Decoder: \"Y_N.size()\" has to be greater than "
+			                        "\"N\" * \"simd_inter_frame_level\".");
+
+		this->_load(Y_N);
+	}
+
+	inline void store(mipp::vector<B>& V_K) const
+	{
+		if (this->K * this->simd_inter_frame_level > (int)V_K.size())
+			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be greater than "
+			                        "\"K\" * \"simd_inter_frame_level\".");
+
+		this->_store(V_K);
+	}
+
+	inline void store_fast(mipp::vector<B>& V) const
+	{
+		this->_store_fast(V);
+	}
+
+	inline void unpack(mipp::vector<B>& V) const
+	{
+		this->_unpack(V);
 	}
 };
 }

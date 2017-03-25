@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
@@ -41,8 +42,18 @@ Decoder_turbo<B,R>
   l_e2i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   s    ((K                                              ) * siso_n.get_simd_inter_frame_level()                    )
 {
-	assert(siso_n.get_n_frames()               == siso_i.get_n_frames()              );
-	assert(siso_n.get_simd_inter_frame_level() == siso_i.get_simd_inter_frame_level());
+	if (K / N_without_tb != 3)
+		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"N\" / \"K\" has to be equal to 3.");
+	if (n_ite <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"n_ite\" has to be greater than 0.");
+	if ((int)pi.size() != K)
+		throw std::length_error("aff3ct::module::Decoder_turbo: \"interleaver.size()\" has to be equal to \"K\".");
+	if (siso_n.get_n_frames() != siso_i.get_n_frames())
+		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"siso_n.get_n_frames()\" has to be equal to "
+		                            "\"siso_i.get_n_frames()\".");
+	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
+		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"siso_n.get_simd_inter_frame_level()\" has to "
+		                            "be equal to \"siso_i.get_simd_inter_frame_level()\".");
 }
 
 template <typename B, typename R>
@@ -53,7 +64,7 @@ Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	if (buffered_encoding)
 		this->buffered_load(Y_N);
@@ -201,7 +212,7 @@ void Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	if (this->get_simd_inter_frame_level() == 1)
 	{

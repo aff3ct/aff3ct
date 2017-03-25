@@ -20,9 +20,8 @@ Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() >= this->Y_N.size());
 	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
 }
 
@@ -34,10 +33,8 @@ void Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert(Y_N.size() <= V_K.size());
-
 	auto K = (int) Y_N.size();
 
 	// take the hard decision

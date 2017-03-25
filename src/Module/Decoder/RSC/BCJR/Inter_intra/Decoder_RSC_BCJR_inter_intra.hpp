@@ -28,8 +28,8 @@ public:
 	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
 
 protected:
-	void load (const mipp::vector<R>& Y_N);
-	void store(      mipp::vector<B>& V_K) const;
+	void _load (const mipp::vector<R>& Y_N);
+	void _store(      mipp::vector<B>& V_K) const;
 	
 	virtual void compute_gamma   (const mipp::vector<R> &sys, const mipp::vector<R> &par) = 0;
 	virtual void compute_alpha   (                                                      ) = 0;

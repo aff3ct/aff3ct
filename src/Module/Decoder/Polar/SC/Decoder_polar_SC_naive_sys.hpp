@@ -21,7 +21,7 @@ public:
 	virtual ~Decoder_polar_SC_naive_sys();
 
 protected:
-	void store(mipp::vector<B>& V_K) const;
+	void _store(mipp::vector<B>& V_K) const;
 };
 }
 }

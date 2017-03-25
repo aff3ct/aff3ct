@@ -10,6 +10,8 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
+
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -61,6 +63,16 @@ public:
 	  Y_N2(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), (R)0)),
 	  K_siso(K), N_siso(N), simd_inter_frame_level_siso(simd_inter_frame_level)
 	{
+		if (K <= 0)
+			throw std::invalid_argument("aff3ct::module::SISO: \"K\" has to be greater than 0.");
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::SISO: \"N\" has to be greater than 0.");
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::SISO: \"n_frames\" has to be greater than 0.");
+		if (simd_inter_frame_level <= 0)
+			throw std::invalid_argument("aff3ct::module::SISO: \"simd_inter_frame_level\" has to be greater than 0.");
+		if (K > N)
+			throw std::invalid_argument("aff3ct::module::SISO: \"K\" has to be smaller than \"N\".");
 	}
 
 	/*!
@@ -86,6 +98,14 @@ public:
 	 */
 	void soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 	{
+		if (this->N_siso * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::SISO: \"Y_N1.size()\" has to be equal to "
+			                        "\"N_siso\" * \"n_frames\".");
+
+		if (this->N_siso * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::SISO: \"Y_N2.size()\" has to be equal to "
+			                        "\"N_siso\" * \"n_frames\".");
+
 		if (this->n_dec_waves_siso == 1 && this->n_inter_frame_rest_siso == 0)
 		{
 			_soft_decode(Y_N1, Y_N2);

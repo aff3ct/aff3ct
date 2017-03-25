@@ -20,7 +20,7 @@ Decoder_polar_SC_naive_sys<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive_sys<B,R,F,G,H>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	auto *contents_root = this->polar_tree.get_root()->get_c();
 	assert(V_K.size() >= (unsigned) this->K);

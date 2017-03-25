@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 
 #include "Tools/Display/bash_tools.h"
@@ -16,7 +16,8 @@ Decoder_repetition<B,R>
    SISO   <  R>(K, N, n_frames, 1, name + "_siso"),
    rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
 {
-	assert(N % K == 0);
+	if (N % K)
+		throw std::invalid_argument("aff3ct::module::Decoder_repetition: \"K\" has to be a multiple of \"N\".");
 }
 
 template <typename B, typename R>
@@ -27,7 +28,7 @@ Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	if (!buffered_encoding)
 	{
@@ -75,7 +76,7 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	V_K = s;
 }
@@ -84,8 +85,8 @@ template <typename B, typename R>
 void Decoder_repetition<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Decoder_repetition: this decoder does not support the "
+	                         "\"_soft_decode\" interface.");
 }
 
 // ==================================================================================== explicit template instantiation
