@@ -1,8 +1,8 @@
 #ifdef CHANNEL_GSL
 
 #include <cmath>
+#include <stdexcept>
 #include <algorithm>
-#include <cassert>
 
 #include "Channel_AWGN_GSL_LLR.hpp"
 
@@ -15,7 +15,7 @@ Channel_AWGN_GSL_LLR<R>
   sigma(sigma),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
-	assert(sigma != 0);
+	if (sigma == (R)0) throw std::domain_error("aff3ct::module::Channel_AWGN_GSL_LLR: \"sigma\" can't be equal to 0.");
 	
 	gsl_rng_set(rng, seed);
 
@@ -31,10 +31,8 @@ Channel_AWGN_GSL_LLR<R>
 
 template <typename R>
 void Channel_AWGN_GSL_LLR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
 	for (unsigned i = 0; i < X_N.size(); i++)
 	{
 		double r1 = gsl_ran_gaussian(rng, sigma);

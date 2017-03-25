@@ -793,7 +793,16 @@ void Launcher<B,R,Q>
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
 			std::clog << bold_yellow(cmd_warn);
-		simu->launch();
+
+		try
+		{
+			simu->launch();
+		}
+		catch (std::exception const& e)
+		{
+			std::cerr << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		}
+
 		if (params.simulation.mpi_rank == 0)
 			stream << "# End of the simulation." << std::endl;
 	}

@@ -19,10 +19,8 @@ Channel_NO<R>
 
 template <typename R>
 void Channel_NO<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
 	Y_N = X_N;
 }
 

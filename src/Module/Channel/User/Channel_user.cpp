@@ -1,6 +1,5 @@
-
 #include <fstream>
-#include <cassert>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Channel_user.hpp"
@@ -22,7 +21,9 @@ Channel_user<R>
 		file.read((char*)&n_fra,    sizeof(n_fra));
 		file.read((char*)&fra_size, sizeof(fra_size));
 
-		assert(n_fra > 0 && fra_size > 0);
+		if (n_fra <= 0 || fra_size <= 0)
+			throw std::runtime_error("aff3ct::module::Channel_user: \"n_fra\" and \"fra_size\" have to be "
+			                         "bigger than 0.");
 
 		this->noise.resize(n_fra);
 		for (unsigned i = 0; i < (unsigned)n_fra; i++)
@@ -35,20 +36,17 @@ Channel_user<R>
 		}
 		else
 		{
-			std::cerr << bold_red("(EE) The frame size is wrong (read: ") << bold_red(std::to_string(fra_size))
-			          << bold_red(", expected: ") << bold_red(std::to_string(this->N))
-			          << bold_red("), exiting.") << std::endl;
 			file.close();
-			std::exit(-1);
+
+			throw std::runtime_error("aff3ct::module::Channel_user: the frame size is wrong (read: " +
+			                         std::to_string(fra_size) + ", expected: " + std::to_string(this->N) + ").");
 		}
 
 		file.close();
 	}
 	else
 	{
-		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
-		          << std::endl;
-		std::exit(-1);
+		throw std::invalid_argument("aff3ct::module::Channel_user: can't open \"" + filename + "\" file");
 	}
 }
 
@@ -60,10 +58,8 @@ Channel_user<R>
 
 template <typename R>
 void Channel_user<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert((int)X_N.size() == this->N * this->n_frames);
-
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		for (auto i = 0; i < this->N; i++)

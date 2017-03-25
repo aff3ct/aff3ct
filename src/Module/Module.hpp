@@ -10,6 +10,7 @@
 
 #include <string>
 #include <cassert>
+#include <stdexcept>
 
 namespace aff3ct
 {
@@ -34,7 +35,10 @@ public:
 	 * \param name    : Module's name.
 	 */
 	Module(const int n_frames = 1, const std::string name = "Module") : n_frames(n_frames), name(name)
-	{ assert(n_frames > 0); }
+	{
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::Module: \"n_frames\" has to be greater than 0.");
+	}
 
 	/*!
 	 * \brief Destructor.
@@ -48,7 +52,9 @@ public:
 	 */
 	virtual void set_n_frames(const int n_frames)
 	{
-		assert(n_frames > 0);
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::Module: \"n_frames\" has to be greater than 0.");
+
 		this->n_frames = n_frames;
 	}
 

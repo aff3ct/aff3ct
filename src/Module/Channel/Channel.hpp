@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include <algorithm>
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -60,7 +61,17 @@ public:
 	 * \param X_N: a perfectly clear message.
 	 * \param Y_N: a noisy signal.
 	 */
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
+	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+	{
+		if (X_N.size() != Y_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"Y_N.size()\".");
+		if (this->N * this->n_frames != (int)X_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+		if (this->N * this->n_frames != (int)Y_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"Y_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+
+		this->_add_noise(X_N, Y_N);
+	}
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -69,9 +80,27 @@ public:
 	 * \param Y_N: a noisy signal.
 	 * \param H_N: the channel gains.
 	 */
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
 	{
-		this->add_noise(X_N, Y_N);
+		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"Y_N.size()\" and "
+			                        "\"H_N.size()\".");
+		if (this->N * this->n_frames != (int)X_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+		if (this->N * this->n_frames != (int)Y_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"Y_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+		if (this->N * this->n_frames != (int)H_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"H_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+
+		this->_add_noise(X_N, Y_N, H_N);
+	}
+
+protected:
+	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
+
+	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+	{
+		this->_add_noise(X_N, Y_N);
 		std::fill(H_N.begin(), H_N.end(), (R)1);
 	}
 };
