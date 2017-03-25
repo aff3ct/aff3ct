@@ -1,6 +1,8 @@
 #ifndef DECODER_POLAR_SCL_NAIVE_CA_SYS_
 #define DECODER_POLAR_SCL_NAIVE_CA_SYS_
 
+#include "Decoder_polar_SCL_naive_CA.hpp"
+
 namespace aff3ct
 {
 namespace module

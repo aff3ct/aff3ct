@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <set>
-#include "../../Decoder.hpp"
+
+#include "Decoder_polar_SCL_naive.hpp"
+
 #include "../decoder_polar_functions.h"
 
 namespace aff3ct
