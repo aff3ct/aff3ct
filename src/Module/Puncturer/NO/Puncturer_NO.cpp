@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Puncturer_NO.hpp"
 
 using namespace aff3ct::module;
@@ -17,18 +19,20 @@ Puncturer_NO<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_NO<B,Q>
-::puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+::_puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
 {
-	assert(X_N1.size() == X_N2.size());
+	if (X_N1.size() != X_N2.size())
+		throw std::length_error("aff3ct::module::Puncturer_NO: \"X_N1.size()\" has to be equal to \"X_N2.size()\".");
 
 	X_N2 = X_N1;
 }
 
 template <typename B, typename Q>
 void Puncturer_NO<B,Q>
-::depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+::_depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
 {
-	assert(Y_N1.size() == Y_N2.size());
+	if (Y_N1.size() != Y_N2.size())
+		throw std::length_error("aff3ct::module::Puncturer_NO: \"Y_N1.size()\" has to be equal to \"Y_N2.size()\".");
 
 	Y_N2 = Y_N1;
 }
