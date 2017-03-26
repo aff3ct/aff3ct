@@ -49,10 +49,10 @@ Encoder_user<B>
 		{
 			file.close();
 
-			std::string mess = "aff3ct::module::Encoder_user: the number of information bits or the codeword size "
-			                   "is wrong (read: {" + std::to_string(src_size) + "," + std::to_string(cw_size) + "}"
-			                   ", expected: {" + std::to_string(this->K) + "," + std::to_string(this->N) + "}).";
-			throw std::runtime_error(mess.c_str());
+			throw std::runtime_error("aff3ct::module::Encoder_user: the number of information bits or the codeword "
+			                         "size is wrong (read: {" + std::to_string(src_size) + "," +
+			                         std::to_string(cw_size) + "}, expected: {" + std::to_string(this->K) + "," +
+			                         std::to_string(this->N) + "}).");
 		}
 
 		file.close();

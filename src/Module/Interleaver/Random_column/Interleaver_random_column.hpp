@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_RANDOM_COLUMN_HPP
 #define	INTERLEAVER_RANDOM_COLUMN_HPP
 
+#include <stdexcept>
 #include <algorithm>
 #include <time.h>
 #include <random>
@@ -26,7 +27,10 @@ public:
 	                          const std::string name = "Interleaver_random_column")
 	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd()), n_cols(n_cols), col_size(size / n_cols)
 	{
-		assert(col_size * n_cols == size);
+		if (col_size * n_cols != size)
+			throw std::invalid_argument("aff3ct::module::Interleaver_random_column: \"size\" has to be equal to "
+			                            "\"n_cols\" * \"col_size\".");
+
 		rd_engine.seed(seed);
 		gen_lookup_tables();
 	}

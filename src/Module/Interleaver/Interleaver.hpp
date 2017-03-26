@@ -8,9 +8,9 @@
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 
+#include <stdexcept>
 #include <typeinfo>
 #include <string>
-#include <cassert>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -47,6 +47,8 @@ public:
 	Interleaver_i(const int size, const int n_frames = 1, const std::string name = "Interleaver_i")
 	: Module(n_frames, name), pi(size), pi_inv(size)
 	{
+		if (size <= 0)
+			throw std::invalid_argument("aff3ct::module::Interleaver: \"size\" has to be greater than 0.");
 	}
 
 	/*!
@@ -165,11 +167,20 @@ private:
 	                        const bool             frame_reordering = false,
 	                        const int              n_frames = -1) const
 	{
-		assert(n_frames == -1 || n_frames > 0);
+		if (n_frames != -1 && n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::Interleaver: \"n_frames\" has to be greater than 0 "
+			                            "(or equal to -1).");
+
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
-		assert(in_vec.size() == out_vec.size());
-		assert(in_vec.size() >= lookup_table.size() * real_n_frames);
+		if (in_vec.size() != out_vec.size())
+			throw std::length_error("aff3ct::module::Interleaver: \"in_vec.size()\" has to be equal to "
+			                        "\"out_vec.size()\".");
+
+		if (in_vec.size() < lookup_table.size() * real_n_frames)
+			throw std::length_error("aff3ct::module::Interleaver: \"in_vec.size()\" has to be equal or greater than "
+			                        "\"lookup_table.size()\" * \"real_n_frames\".");
+
 		const auto frame_size = (int)lookup_table.size();
 
 		if (frame_reordering)

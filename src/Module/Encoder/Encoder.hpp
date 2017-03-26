@@ -52,8 +52,6 @@ public:
 			throw std::invalid_argument("aff3ct::module::Encoder: \"K\" has to be greater than 0.");
 		if (N <= 0)
 			throw std::invalid_argument("aff3ct::module::Encoder: \"N\" has to be greater than 0.");
-		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::module::Encoder: \"n_frames\" has to be greater than 0.");
 		if (K > N)
 			throw std::invalid_argument("aff3ct::module::Encoder: \"K\" has to be smaller than \"N\".");
 	}

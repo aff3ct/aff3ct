@@ -67,8 +67,6 @@ public:
 			throw std::invalid_argument("aff3ct::module::SISO: \"K\" has to be greater than 0.");
 		if (N <= 0)
 			throw std::invalid_argument("aff3ct::module::SISO: \"N\" has to be greater than 0.");
-		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::module::SISO: \"n_frames\" has to be greater than 0.");
 		if (simd_inter_frame_level <= 0)
 			throw std::invalid_argument("aff3ct::module::SISO: \"simd_inter_frame_level\" has to be greater than 0.");
 		if (K > N)

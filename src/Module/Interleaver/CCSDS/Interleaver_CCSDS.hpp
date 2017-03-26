@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_CCSDS_HPP
 #define	INTERLEAVER_CCSDS_HPP
 
+#include <stdexcept>
 #include <map>
 
 #include "Tools/Display/bash_tools.h"
@@ -50,11 +51,9 @@ public:
 		}
 		else
 		{
-			std::cerr << tools::bold_red("(EE) There is no CCSDS k_1 and k_2 parameters for size = ")
-			          << tools::bold_red(std::to_string(size))
-			          << tools::bold_red(" (supported size are K = {1784, 3568, 7136, 8920}. Exiting simulation.")
-			          << std::endl;
-			exit(-1);
+			throw std::runtime_error("aff3ct::module::Interleaver_CCSDS: there is no CCSDS k_1 and k_2 parameters "
+			                         "for \"size\" = " + std::to_string(size) + "(supported size are K = {1784, 3568, "
+			                         "7136, 8920}.");
 		}
 	}
 

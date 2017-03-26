@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_LTE_HPP
 #define	INTERLEAVER_LTE_HPP
 
+#include <stdexcept>
 #include <map>
 
 #include "Tools/Display/bash_tools.h"
@@ -234,10 +235,8 @@ public:
 		}
 		else
 		{
-			std::cerr << tools::bold_red("(EE) There is no LTE f_1 and f_2 parameters for size = ")
-			          << tools::bold_red(std::to_string(size))
-			          << tools::bold_red(": exiting simulation.") << std::endl;
-			exit(-1);
+			throw std::runtime_error("aff3ct::module::Interleaver_LTE: there is no LTE f_1 and f_2 parameters "
+			                         "for \"size\" = " + std::to_string(size) + ".");
 		}
 	}
 
