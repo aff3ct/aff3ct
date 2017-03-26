@@ -1,6 +1,6 @@
 #include <string>
 #include <vector>
-#include <cassert>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -18,7 +18,6 @@ Monitor_std<B,R>
   n_frame_errors(0),
   n_analyzed_frames(0)
 {
-	assert(n_frames > 0);
 }
 
 template <typename B, typename R>
@@ -37,21 +36,25 @@ void Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::check_and_track_errors(const mipp::vector<B>& U,
-                         const mipp::vector<B>& V,
-                         const mipp::vector<B>& X,
-                         const mipp::vector<R>& X_mod,
-                         const mipp::vector<R>& Y)
+::_check_and_track_errors(const mipp::vector<B>& U,
+                          const mipp::vector<B>& V,
+                          const mipp::vector<B>& X,
+                          const mipp::vector<R>& X_mod,
+                          const mipp::vector<R>& Y)
 {
-	assert(this->K * this->n_frames == (int)U    .size());
-	assert(this->K * this->n_frames == (int)V    .size());
-	assert(this->N * this->n_frames == (int)X    .size());
-	assert(Y.size()                 ==      X_mod.size());
+	if (this->K * this->n_frames != (int)U.size())
+		throw std::length_error("aff3ct::module::Monitor_std: \"U.size()\" has to be equal to \"K\" * \"n_frames\".");
+	if (this->K * this->n_frames != (int)V.size())
+		throw std::length_error("aff3ct::module::Monitor_std: \"V.size()\" has to be equal to \"K\" * \"n_frames\".");
+	if (this->N * this->n_frames != (int)X.size())
+		throw std::length_error("aff3ct::module::Monitor_std: \"X.size()\" has to be equal to \"N\" * \"n_frames\".");
+	if (Y.size() != X_mod.size())
+		throw std::length_error("aff3ct::module::Monitor_std: \"X_mod.size()\" and \"Y.size()\" have to be equal.");
 
 	const int Y_size = (int)X_mod.size() / this->n_frames;
 
 	for (auto i = 0; i < this->n_frames; i++)
-		if (check_errors(U.data() + i * this->K, V.data() + i * this->K, this->K))
+		if (__check_errors(U.data() + i * this->K, V.data() + i * this->K, this->K))
 			copy_bad_frame(U    .data() + i * this->K,
 			               X    .data() + i * this->N,
 			               X_mod.data() + i * Y_size,
@@ -62,8 +65,20 @@ void Monitor_std<B,R>
 }
 
 template <typename B, typename R>
+void Monitor_std<B,R>
+::_check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
+{
+	auto n = (int)U.size() / this->n_frames;
+
+	for (auto i = 0; i < this->n_frames; i++)
+		__check_errors(U.data() + i * n, V.data() + i * n, n);
+
+	this->update_n_analyzed_frames();
+}
+
+template <typename B, typename R>
 bool Monitor_std<B,R>
-::check_errors(const B* U, const B* V, const int length)
+::__check_errors(const B* U, const B* V, const int length)
 {
 	auto bit_errors_count = 0;
 	for (auto b = 0; b < length; b++)
@@ -78,19 +93,6 @@ bool Monitor_std<B,R>
 	}
 
 	return false;
-}
-
-template <typename B, typename R>
-void Monitor_std<B,R>
-::check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
-{
-	assert(U.size() == V.size());
-	auto n = (int)U.size() / this->n_frames;
-
-	for (auto i = 0; i < this->n_frames; i++)
-		check_errors(U.data() + i * n, V.data() + i * n, n);
-
-	this->update_n_analyzed_frames();
 }
 
 template <typename B, typename R>
@@ -159,11 +161,8 @@ template <typename B, typename R>
 void Monitor_std<B,R>
 ::dump_bad_frames(const std::string& base_path, const float snr, mipp::vector<int> itl_pi)
 {
-	std::cerr << bold_red("\"dump_bad_frames\" is not defined in \"Monitor_std\", please call this method on ")
-	          << bold_red("\"Monitor_reduction\" instead.")
-	          << std::endl;
-
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Monitor_std: \"dump_bad_frames\" is not defined in \"Monitor_std\" "
+	                         "class, please call this method on \"Monitor_reduction\" instead.");
 }
 
 template <typename B, typename R>

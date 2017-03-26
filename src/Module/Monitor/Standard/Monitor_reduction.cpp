@@ -18,9 +18,12 @@ Monitor_reduction<B,R>
 : Monitor_std<B,R>(K, N, max_fe, n_frames, name),
   monitors        (monitors                    )
 {
-	assert(monitors.size() != 0);
+	if (monitors.size() == 0)
+		throw std::length_error("aff3ct::module::Monitor_reduction: \"monitors.size()\" has to be greater than 0.");
+
 	for (size_t i = 0; i < monitors.size(); ++i)
-		assert(monitors[i] != nullptr);
+		if (monitors[i] == nullptr)
+			throw std::logic_error("aff3ct::module::Monitor_reduction: \"monitors[i]\" can't be null.");
 }
 
 template <typename B, typename R>
@@ -127,7 +130,9 @@ void Monitor_reduction<B,R>
 
 		// write encoder
 		auto buff_enc = mon->get_buff_enc();
-		assert(buff_src.size() == buff_enc.size());
+		if (buff_src.size() != buff_enc.size())
+			throw std::length_error("aff3ct::module::Monitor_reduction: \"buff_src.size()\" has to be equal to "
+			                        "\"buff_enc.size()\".");
 		for (unsigned f = 0; f < buff_enc.size(); f++)
 		{
 			for (unsigned b = 0; b < buff_enc[f].size(); b++)
@@ -138,7 +143,9 @@ void Monitor_reduction<B,R>
 
 		// write noise
 		auto buff_noise = mon->get_buff_noise();
-		assert(buff_src.size() == buff_noise.size());
+		if (buff_src.size() != buff_noise.size())
+			throw std::length_error("aff3ct::module::Monitor_reduction: \"buff_src.size()\" has to be equal to "
+			                        "\"buff_noise.size()\".");
 		for (unsigned f = 0; f < buff_noise.size(); f++)
 			file_noise.write(reinterpret_cast<char*>(&buff_noise[f][0]), buff_noise[f].size()*sizeof(R));
 	}
@@ -155,7 +162,9 @@ void Monitor_reduction<B,R>
 			std::exit(-1);
 		}
 
-		assert(this->get_N() == (int)itl_pi.size());
+		if (this->get_N() != (int)itl_pi.size())
+			throw std::length_error("aff3ct::module::Monitor_reduction: \"itl_pi.size()\" has to be equal to \"N\".");
+
 		file_itl << itl_pi.size() << std::endl << std::endl; // write length of coded frames
 
 		for (unsigned b = 0; b < itl_pi.size(); b++)
