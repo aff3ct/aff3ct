@@ -1,11 +1,12 @@
+#include <cassert>
+
 #include "Encoder_CPE.hpp"
 
 using namespace aff3ct::module;
 
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>
-::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm, const int n_frames,
-                  const std::string name)
+::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm, const int n_frames, const std::string name)
 : N(N), cpm(cpm), n_frames(n_frames)
 {
 	assert((int)sizeof(SIN )*256 >= cpm.m_order); // because U_n can have Mo values

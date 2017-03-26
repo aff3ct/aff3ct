@@ -8,8 +8,10 @@
 #ifndef MODULATOR_HPP_
 #define MODULATOR_HPP_
 
+#include <stdexcept>
 #include <string>
 #include <vector>
+
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Display/bash_tools.h"
 
@@ -52,6 +54,14 @@ public:
 	            const std::string name = "Modulator_i")
 	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil)
 	{
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Modulator: \"N\" has to be greater than 0.");
+
+		// TODO: commented because of the hack in the Modulator_CPM
+//		if (N_mod <= 0)
+//			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
+//		if (N_fil <= 0)
+//			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
 	}
 
 	/*!
@@ -93,7 +103,18 @@ public:
 	 * \param X_N1: a vector of bits or symbols.
 	 * \param X_N2: a vector of modulated bits or symbols.
 	 */
-	virtual void modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) = 0;
+	void modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+	{
+		if (this->N * this->n_frames != (int)X_N1.size())
+			throw std::length_error("aff3ct::module::Modulator: \"X_N1.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		if (this->N_mod * this->n_frames != (int)X_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"X_N2.size()\" has to be equal to "
+			                        "\"N_mod\" * \"n_frames\".");
+
+		this->_modulate(X_N1, X_N2);
+	}
 
 	/*!
 	 * \brief Filters a vector of noised and modulated bits/symbols.
@@ -103,10 +124,17 @@ public:
 	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a filtered vector.
 	 */
-	virtual void filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+	void filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 	{
-		assert(Y_N1.size() == Y_N2.size());
-		Y_N2 = Y_N1;
+		if (this->N_mod * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			                        "\"N_mod\" * \"n_frames\".");
+
+		if (this->N_fil * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		this->_filter(Y_N1, Y_N2);
 	}
 
 	/*!
@@ -115,7 +143,18 @@ public:
 	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a demodulated vector.
 	 */
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
+	void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+	{
+		if (this->N_fil * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		this->_demodulate(Y_N1, Y_N2);
+	}
 
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
@@ -124,10 +163,21 @@ public:
 	 * \param H_N:  channel gains.
 	 * \param Y_N2: a demodulated vector.
 	 */
-	virtual void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
 	{
-		std::cerr << tools::bold_red("(EE) Unimplemented demodulate method... exiting.") << std::endl;
-		std::exit(-1);
+		if (this->N_fil * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		if (this->N_fil * this->n_frames != (int)H_N.size())
+			throw std::length_error("aff3ct::module::Modulator: \"H_N.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		this->_demodulate_with_gains(Y_N1, H_N, Y_N2);
 	}
 
 	/*!
@@ -141,9 +191,21 @@ public:
 	 *              demodulation technique).
 	 * \param Y_N3: a demodulated vector.
 	 */
-	virtual void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 	{
-		demodulate(Y_N1, Y_N3);
+		if (this->N_fil * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)Y_N3.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N3.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		this->_demodulate(Y_N1, Y_N2, Y_N3);
 	}
 
 	/*!
@@ -158,11 +220,26 @@ public:
 	 *              demodulation technique).
 	 * \param Y_N3: a demodulated vector.
 	 */
-	virtual void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
-	                                   const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
+	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
+	                           const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
 	{
-		std::cerr << tools::bold_red("(EE) Unimplemented demodulate method... exiting.") << std::endl;
-		std::exit(-1);
+		if (this->N_fil * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		if (this->N_fil * this->n_frames != (int)H_N.size())
+			throw std::length_error("aff3ct::module::Modulator: \"H_N.size()\" has to be equal to "
+			                        "\"N_fil\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)Y_N3.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N3.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		this->_demodulate_with_gains(Y_N1, H_N, Y_N2, Y_N3);
 	}
 
 	/*!
@@ -187,6 +264,35 @@ public:
 	virtual int get_buffer_size_after_filtering (const int N)
 	{
 		return get_buffer_size_after_modulation(N);
+	}
+
+protected:
+	virtual void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) = 0;
+
+	virtual void _filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+	{
+		if (Y_N1.size() != Y_N2.size())
+			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" and \"Y_N2.size()\" have to be equal.");
+
+		Y_N2 = Y_N1;
+	}
+
+	virtual void _demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
+
+	virtual void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+	{
+		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
+	}
+
+	virtual void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+	{
+		_demodulate(Y_N1, Y_N3);
+	}
+
+	virtual void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
+	                                    const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
+	{
+		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
 	}
 };
 }

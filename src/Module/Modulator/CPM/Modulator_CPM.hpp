@@ -60,16 +60,16 @@ public:
 	int get_buffer_size_after_modulation(const int N);
 	int get_buffer_size_after_filtering (const int N);
 
-	void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
-	void     filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2);
-	void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
-	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
-
 protected:
-	void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);
-	void   _filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2);
+	void   _modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
+	void     _filter(const mipp::vector<R>& Y_N1,                              mipp::vector<R>& Y_N2);
+	void _demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
+	void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
-private :
+private:
+	void __modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2);
+	void   __filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2);
+
 	void generate_baseband    (               );
 	void generate_projection  (               );
 	R calculate_phase_response(const R t_stamp);
