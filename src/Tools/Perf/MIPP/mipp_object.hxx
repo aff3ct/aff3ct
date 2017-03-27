@@ -86,8 +86,7 @@ public:
 		mipp::transpose8x8<T>(rs);
 		for (auto i = 0; i < 8; i++) regs[i].r = rs[i];
 #else
-		std::cerr << "\"transpose8x8\" static method is a non-sense in sequential mode, exiting." << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("mipp::Reg::transpose8x8: non-sense in sequential mode.");
 #endif
 	}
 
@@ -99,8 +98,7 @@ public:
 		mipp::transpose2<T>(rs);
 		for (auto i = 0; i < nElReg<T>()/2; i++) regs[i].r = rs[i];
 #else
-		std::cerr << "\"transpose2\" static method is a non-sense in sequential mode, exiting." << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("mipp::Reg::transpose2: non-sense in sequential mode.");
 #endif
 	}
 
@@ -112,8 +110,7 @@ public:
 		mipp::transpose28x8<T>(rs);
 		for (auto i = 0; i < 8; i++) regs[i].r = rs[i];
 #else
-		std::cerr << "\"transpose28x8\" static method is a non-sense in sequential mode, exiting." << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("mipp::Reg::transpose28x8: non-sense in sequential mode.");
 #endif
 	}
 
@@ -251,8 +248,7 @@ public:
 	template <typename T2> inline Reg<T2> cvt ()               const { return (T2)r; }
 	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const
 	{
-		std::cerr << "\"pack\" method is a non-sense in sequential mode, exiting." << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("mipp::Reg::pack: non-sense in sequential mode.");
 	}
 #endif
 
