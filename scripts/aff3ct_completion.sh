@@ -173,21 +173,6 @@ _aff3ct() {
 
 	case "${prev}" in
 		# awaiting random number or strings
-<<<<<<< HEAD
-		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |        \
-		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |          \
-		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |         \
-		--cde-size | -N |                                                     \
-		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |     \
-		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                   \
-		--sim-benchs | -b | --sim-debug-limit |                               \
-		--mnt-max-fe | -e |                                                   \
-		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |         \
-		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
-		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |         \
-		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |       \
-		--dec-fnc-q | --dec-fnc-ite-m | --dec-fnc-ite-M | --dec-fnc-ite-s     )
-=======
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |       \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |         \
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |        \
@@ -200,8 +185,8 @@ _aff3ct() {
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
-		--itl-col)
->>>>>>> scl_dev
+		--itl-col |                                                          \
+		--dec-fnc-q | --dec-fnc-ite-m | --dec-fnc-ite-M | --dec-fnc-ite-s    )
 			COMPREPLY=()
 			;;
 
@@ -209,13 +194,8 @@ _aff3ct() {
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
 		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-<<<<<<< HEAD
-		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev |                   \
-		--dec-partial-adaptive | --dec-fnc | --dec-sc)
-=======
 		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev | --itl-uni |       \
-		--dec-partial-adaptive)
->>>>>>> scl_dev
+		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
 
