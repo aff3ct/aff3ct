@@ -7,11 +7,13 @@
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
+#include "Tools/Code/LDPC/G_tools/G_tools.hpp"
 
 #include "Encoder_LDPC_from_H.hpp"
 
 using namespace aff3ct;
 using namespace module;
+
 
 template <typename B>
 Encoder_LDPC_from_H<B>
@@ -20,12 +22,12 @@ Encoder_LDPC_from_H<B>
 : Encoder_LDPC<B>(K, N, n_frames, name)
 {
 	std::vector<mipp::vector<B>> H;
-	build_H(alist_H.get_n_CN(), alist_H.get_n_VN(), alist_H.get_CN_to_VN(), H);
-	triangularization_H(H, swapped);
+	tools::G_tools::build_H(alist_H.get_n_CN(), alist_H.get_n_VN(), alist_H.get_CN_to_VN(), H);
+	tools::G_tools::triangularization_H(H, swapped);
 	assert((int) H[0].size() == N);
 	assert((int)(H[0].size() - H.size()) == K);
-	identity_H(H);
-	transformation_H_to_G(H, G);
+	tools::G_tools::identity_H(H);
+	tools::G_tools::transformation_H_to_G(H, G, swapped);
 	tools::real_transpose(K, N, G, this->tG);
 }
 
@@ -56,130 +58,11 @@ void Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::get_G(mipp::vector<B>& G)
+::get_G(mipp::vector<B>& matrix_G)
 {
 	assert(this->G.size() == G.size());
 
-	std::copy(this->G.begin(), this->G.end(), G.begin());
-}
-
-template <typename B>
-void Encoder_LDPC_from_H<B>
-::build_H(const int k, const int n, const std::vector<std::vector<unsigned int>>& positions,
-          std::vector<mipp::vector<B>>& H)
-{
-	for (int i = 0; i < k; i++)
-		H.push_back(mipp::vector<B>(n, 0));
-
-	for (unsigned i = 0; i < positions.size(); i++)
-		for (unsigned j = 0; j < positions[i].size(); j++)
-			H[i][positions[i][j]] = 1;
-}
-
-template <typename B>
-void Encoder_LDPC_from_H<B>
-::triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<int>& swapped)
-{
-	unsigned n = H[0].size();
-	unsigned k = H.size();
-	unsigned i = 0;
-	bool fund = false;
-
-	mipp::vector<B> tmp(n, 0);
-	mipp::vector<B> tmp2;
-
-	while (i < k -1)
-	{
-		if (H[i][i])
-		{
-			for (unsigned j = i +1; j < k; j++)
-				if (H[j][i])
-					std::transform(H[j].begin(), H[j].end(), H[i].begin(), H[j].begin(), std::not_equal_to<B>());
-		}
-		else
-		{
-			for (unsigned j = i +1; j < k; j++) // find an other row which is good
-				if (H[j][i])
-				{
-					tmp = H[i];
-					H[i] = H[j];
-					H[j] = tmp;
-					i--;
-					fund = true;
-					break;
-				}
-
-			if (!fund) // if does not fund
-				for (unsigned j = (i+1); j<n; j++) // find an other column which is good
-					if( H[i][j] )
-					{
-						swapped.push_back(i);
-						swapped.push_back(j);
-
-						tmp2.clear();
-
-						for (unsigned l = 0; l < k; l++) tmp2.push_back(H[l][i]);
-						for (unsigned l = 0; l < k; l++) H[l][i] = H[l][j];
-						for (unsigned l = 0; l < k; l++) H[l][j] = tmp2[l];
-
-						i--;
-						fund = true;
-						break;
-					}
-
-			if (!fund) // if does not fund again this mean that the row is the null vector
-			{
-				H.erase(H.begin() +i);
-				i--;
-				k--;
-			}
-			fund = false;
-		}
-
-		i++;
-	}
-}
-
-template <typename B>
-void Encoder_LDPC_from_H<B>
-::identity_H(std::vector<mipp::vector<B>>& H)
-{
-	auto k = (int)H.size();
-	for (auto i = k -1 ; i > 0; i--)
-		for (auto j = i -1; j >= 0; j--)
-			if (H[j][i])
-				std::transform(H[j].begin(), H[j].end(), H[i].begin(), H[j].begin(), std::not_equal_to<B>());
-}
-
-template <typename B>
-void Encoder_LDPC_from_H<B>
-::transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G)
-{
-	unsigned n = H[0].size();
-	unsigned k = H.size();
-
-	for (unsigned i = 0; i < k; i++) // Kill of the Identity in H
-		H[i].erase( H[i].begin(), H[i].begin() + k );
-
-	for (unsigned i = k; i < n; i++) // Add identity at the end
-	{
-		H.push_back(mipp::vector<B>(n - k, 0));
-		H[i][i - k] = 1;
-	}
-
-	// re-organization: column of G
-	mipp::vector<B> tmp(n - k, 0);
-	for (unsigned l = swapped.size() / 2; l > 0; l--)
-	{
-		tmp = H[swapped[l * 2 -1]];
-		H[swapped[l * 2 -1]] = H[swapped[(l - 1) * 2]];
-		H[swapped[(l - 1) * 2]] = tmp;
-	}
-
-	// write G matrix in G vector
-	for (unsigned j = 0; j < n - k; j++)
-		for (unsigned i = 0; i < n; i++)
-			G.push_back(H[i][j]);
+	std::copy(this->G.begin(), this->G.end(), matrix_G.begin());
 }
 
 // ==================================================================================== explicit template instantiation
