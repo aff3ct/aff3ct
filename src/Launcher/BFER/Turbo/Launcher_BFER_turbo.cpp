@@ -179,7 +179,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
 	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
 
-	if (this->ar.exist_arg({"crc-type"}))
+	if (this->ar.exist_arg({"crc-poly"}))
 	{
 		if (this->ar.exist_arg({"dec-sc"}))
 			this->params.decoder.self_corrected = true;
