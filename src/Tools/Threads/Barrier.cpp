@@ -1,5 +1,5 @@
 #include <chrono>
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
@@ -12,7 +12,8 @@ Barrier
 ::Barrier(const int n_threads)
 : n_threads(n_threads), counter_barrier(n_threads), generation(0)
 {
-	assert(n_threads > 0);
+	if (n_threads <= 0)
+		throw std::invalid_argument("aff3ct::tools::Barrier: \"n_threads\" has to be greater than 0.");
 }
 	
 Barrier

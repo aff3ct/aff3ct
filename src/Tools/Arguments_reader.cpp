@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 using namespace std;
 
@@ -13,7 +13,8 @@ Arguments_reader
 ::Arguments_reader(const int argc, const char** argv)
 : m_argv(argc), max_n_char_arg(0)
 {
-	assert(argc > 0);
+	if (argc <= 0)
+		throw std::invalid_argument("aff3ct::tools::Arguments_reader: \"argc\" has to be greater than 0.");
 
 	this->m_program_name = argv[0];
 
@@ -74,13 +75,19 @@ bool Arguments_reader
 bool Arguments_reader
 ::sub_parse_arguments(map<vector<string>, vector<string>> &args, unsigned short pos_arg)
 {
-	assert(pos_arg < this->m_argv.size());
+	if (pos_arg >= this->m_argv.size())
+		throw std::invalid_argument("aff3ct::tools::Arguments_reader: \"pos_arg\" has to be smaller than "
+		                            "\"this->m_argv.size()\".");
 
 	auto is_found = false;
 	for (auto it = args.begin(); it != args.end(); ++it)
 	{
-		assert(it->first .size() > 0);
-		assert(it->second.size() > 0);
+		if (it->first.size() <= 0)
+			throw std::runtime_error("aff3ct::tools::Arguments_reader: \"it->first.size()\" has to be greater "
+			                         "than 0.");
+		if (it->second.size() <= 0)
+			throw std::runtime_error("aff3ct::tools::Arguments_reader: \"it->second.size()\" has to be greater "
+			                         "than 0.");
 
 		// remember the biggest argument length to display the doc after
 		const string delimiter = ", ";
@@ -174,7 +181,9 @@ void Arguments_reader
 
 	for (auto i = 0; i < (int)arg_groups.size(); i++)
 	{
-		assert(arg_groups[i].size() > 1);
+		if (arg_groups[i].size() <= 1)
+			throw std::runtime_error("aff3ct::tools::Arguments_reader: \"arg_groups[i].size()\" has to be greater "
+			                         "than 1.");
 
 		// detect if there is at least one argument of this group
 		auto display = false;

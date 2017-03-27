@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 
 #include "Binary_tree.hpp"
@@ -42,8 +42,10 @@ template <typename T>
 void Binary_tree<T>
 ::create_nodes(Binary_node<T>* cur_node, int cur_depth, std::vector<int> &lanes)
 {
-	assert(cur_node->left  == nullptr);
-	assert(cur_node->right == nullptr);
+	if (cur_node->left != nullptr)
+		throw std::runtime_error("aff3ct::tools::Binary_tree: \"cur_node->left\" can't be null.");
+	if (cur_node->right != nullptr)
+		throw std::runtime_error("aff3ct::tools::Binary_tree: \"cur_node->right\" can't be null.");
 
 	if (cur_depth < this->depth)
 	{

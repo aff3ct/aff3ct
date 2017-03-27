@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
@@ -37,10 +38,8 @@ bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int
 		is_transposed = true;
 	}
 #else
-	std::cerr << bold_red("(EE) Transposition does not support this architecture ")
-	          << bold_red("(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).")
-	          << std::endl;
-	exit(-1);
+	throw std::runtime_error("aff3ct::tools::char_transpose: transposition does not support this architecture "
+	                         "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
 #endif
 
 	return is_transposed;
@@ -70,10 +69,8 @@ bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, in
 		is_itransposed = true;
 	}
 #else
-	std::cerr << bold_red("(EE) iTransposition does not support this architecture ")
-	          << bold_red("(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).")
-	          << std::endl;
-	exit(-1);
+	throw std::runtime_error("aff3ct::tools::char_itranspose: transposition inv. does not support this architecture "
+	                         "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
 #endif
 
 	return is_itransposed;

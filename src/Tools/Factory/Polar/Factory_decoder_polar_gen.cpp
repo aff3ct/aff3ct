@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 /* // GENERATED DECODERS // */
 
 #define ENABLE_SHORT_GENERATED_DECODERS
@@ -1992,10 +1994,7 @@ void Factory_decoder_polar_gen<B,R>
 #endif
 
 	if (fb_ptr == nullptr)
-	{
-		std::cerr << bold_red("(EE) Generated frozen bits does not exist, exiting.") << std::endl;
-		exit(EXIT_FAILURE);
-	}	
+		throw std::runtime_error("aff3ct::tools::Factory_decoder_polar_gen: generated frozen bits does not exist.");
 
 	for (auto i = 0; i < params.code.N; i++)
 		frozen_bits[i] = (B)fb_ptr[i];
