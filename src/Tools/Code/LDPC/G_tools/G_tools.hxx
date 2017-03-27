@@ -38,7 +38,7 @@ void G_tools
 	mipp::vector<B> tmp(n,0);
 	mipp::vector<B> tmp2;
 
-	while ( i < k-1 )
+	while ( i < k )
 	{
 		if ( H[i][i] )
 		{
