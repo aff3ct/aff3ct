@@ -79,11 +79,8 @@ void Monitor_reduction<B,R>
 	std::ofstream file_noise (path_noise, std::ios_base::binary);
 
 	if (!file_src.is_open() || !file_enc.is_open() || !file_noise.is_open())
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-		          << bold_red(base_path) << bold_red("\"") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::module::Monitor_reduction: issue while trying to open error tracker "
+		                            "log files, check the base path (\"" + base_path + "\").");
 
 	auto n_fe = get_n_fe();
 	int Y_size = 0;
@@ -133,6 +130,7 @@ void Monitor_reduction<B,R>
 		if (buff_src.size() != buff_enc.size())
 			throw std::length_error("aff3ct::module::Monitor_reduction: \"buff_src.size()\" has to be equal to "
 			                        "\"buff_enc.size()\".");
+
 		for (unsigned f = 0; f < buff_enc.size(); f++)
 		{
 			for (unsigned b = 0; b < buff_enc[f].size(); b++)
@@ -156,11 +154,8 @@ void Monitor_reduction<B,R>
 		std::ofstream file_itl(path_itl);
 
 		if (!file_itl.is_open())
-		{
-			std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-			          << bold_red(base_path) << bold_red("\"") << std::endl;
-			std::exit(-1);
-		}
+			throw std::invalid_argument("aff3ct::module::Monitor_reduction: issue while trying to open error tracker "
+			                            "log files, check the base path (\"" + base_path + "\").");
 
 		if (this->get_N() != (int)itl_pi.size())
 			throw std::length_error("aff3ct::module::Monitor_reduction: \"itl_pi.size()\" has to be equal to \"N\".");
@@ -200,13 +195,8 @@ void Monitor_reduction<B,R>
                     std::string& path_enc, std::string& path_noise, std::string& path_itl)
 {
 	if (!check_path(base_path))
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check head of the path: \"")
-		          << bold_red(base_path)
-		          << bold_red("\" and please create yourself the needed directory.")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::module::Monitor_reduction: issue while trying to open error tracker "
+		                            "log files, check the base path (\"" + base_path + "\").");
 
 	std::stringstream snr_stream;
 	snr_stream << std::fixed << std::setprecision(3) << snr;

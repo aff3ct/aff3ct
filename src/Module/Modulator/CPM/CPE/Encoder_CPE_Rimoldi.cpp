@@ -101,11 +101,7 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
 			                                      this->cpm.n_b_per_s, true)] = tr;
 	}
 	else
-	{
-		std::cerr << bold_red("(EE) Unknown BCJR mapping scheme!") << std::endl;
-		exit(-1);
-	}
-
+		throw std::runtime_error("aff3ct::module::Encoder_CPE_Rimoldi: unknown BCJR mapping scheme.");
 }
 
 template<typename SIN, typename SOUT>

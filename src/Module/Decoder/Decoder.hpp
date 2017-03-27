@@ -161,11 +161,8 @@ public:
 						          V_K.begin() + waves_off3);
 					}
 					else
-					{
-						std::cerr << tools::bold_red("(EE) This should never happen, V_K is not a multiple of K or of N.")
-						          << std::endl;
-						std::exit(-1);
-					}
+						throw std::runtime_error("aff3ct::module::Decoder: this should never happen, \"V_K\" is not "
+						                         "a multiple of \"K\" or of \"N\".");
 				}
 				this->d_store_total += steady_clock::now() - t_store;
 			}
