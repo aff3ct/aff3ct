@@ -49,12 +49,13 @@ Launcher<B,R,Q>
 	params.simulation .n_threads         = 1;
 	params.simulation .stop_time         = std::chrono::seconds(0);
 	params.simulation .inter_frame_level = 1;
-	params.simulation .seed              = 0;
 	params.simulation .mpi_rank          = 0;
 	params.simulation .mpi_size          = 1;
 	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
 	params.simulation .pyber             = "";
 	params.simulation .snr_type          = "EB";
+	params.simulation .seed              = 0;
+	params.interleaver.seed              = 0;
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -308,6 +309,9 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
 	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
 	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
+
+	params.interleaver.seed = params.simulation.seed;
+
 #ifndef STARPU
 	if (ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
 	if(ar.exist_arg({"sim-threads",    "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",    "t"});

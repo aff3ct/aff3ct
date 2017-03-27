@@ -19,20 +19,15 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 Simulation_BFER_RA<B,R,Q>
 ::Simulation_BFER_RA(const parameters& params)
-: Simulation_BFER<B,R,Q>(params),
-  interleaver(nullptr)
+: Simulation_BFER<B,R,Q>(params)
 {
 	assert(params.code.N % params.code.K == 0);
-
-	// build the interleaver for the encoder and the decoder
-	interleaver = Factory_interleaver<int>::build(this->params, this->params.code.N, this->rd_engine_seed[0]());
 }
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_RA<B,R,Q>
 ::~Simulation_BFER_RA()
 {
-	delete interleaver;
 }
 
 template <typename B, typename R, typename Q>
@@ -53,7 +48,7 @@ Encoder<B>* Simulation_BFER_RA<B,R,Q>
 {
 	auto encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
 	if (encoder == nullptr)
-		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *interleaver);
+		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *this->interleaver[tid]);
 	return encoder;
 }
 
@@ -63,13 +58,20 @@ Decoder<B,Q>* Simulation_BFER_RA<B,R,Q>
 {
 	Decoder<B,Q>* decoder = new Decoder_RA<B,Q>(this->params.code.K,
 	                                            this->params.code.N,
-	                                            *interleaver,
+	                                            *this->interleaver[tid],
 	                                            this->params.decoder.n_ite,
 	                                            this->params.simulation.inter_frame_level);
-	if (tid == 0)
-		interleaver->set_n_frames(decoder->get_n_frames());
-
 	return decoder;
+}
+
+template <typename B, typename R, typename Q>
+Interleaver<int>* Simulation_BFER_RA<B,R,Q>
+::build_interleaver(const int tid)
+{
+	auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.interleaver.seed;
+	Interleaver<int>* itl = Factory_interleaver<int>::build(this->params, this->params.code.K, seed);
+	this->check_errors(itl, "Interleaver<int>");
+	return itl;
 }
 
 // ==================================================================================== explicit template instantiation 

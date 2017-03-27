@@ -22,12 +22,13 @@ public:
 	Decoder_turbo_naive_CA_self_corrected(const int& K,
 	                                      const int& N_without_tb,
 	                                      const int& n_ite,
-	                                      const Interleaver<short> &pi,
+	                                      const Interleaver<int> &pi,
 	                                      SISO<R> &siso_n,
 	                                      SISO<R> &siso_i,
 	                                      tools::Scaling_factor<R> &scaling_factor,
 	                                      CRC<B> &crc,
 	                                      const bool buffered_encoding = true);
+
 	virtual ~Decoder_turbo_naive_CA_self_corrected();
 
 protected:

@@ -59,7 +59,7 @@ void Simulation_BFER_polar<B,R,Q>
 			fb_generator->generate(frozen_bits);
 			if (this->params.code.N != this->params.code.N_code)
 			{
-				Puncturer_polar_wangliu<B,Q> punct(this->params.code.N, this->params.code.K, *fb_generator);
+				Puncturer_polar_wangliu<B,Q> punct(this->params.code.K, this->params.code.N, *fb_generator);
 				punct.gen_frozen_bits(frozen_bits);
 			}
 		}
@@ -80,7 +80,7 @@ void Simulation_BFER_polar<B,R,Q>
 
 		if (this->params.code.N != this->params.code.N_code)
 		{
-			Puncturer_polar_wangliu<B,Q> punct(this->params.code.N, this->params.code.K, *fb_generator);
+			Puncturer_polar_wangliu<B,Q> punct(this->params.code.K, this->params.code.N, *fb_generator);
 			punct.gen_frozen_bits(frozen_bits);
 		}
 	}

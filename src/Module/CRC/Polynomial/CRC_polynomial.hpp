@@ -91,7 +91,7 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
    {"5-EPC"          , std::make_tuple(0x09      ,  5)},
    {"5-USB"          , std::make_tuple(0x05      ,  5)},
    {"4-ITU"          , std::make_tuple(0x3       ,  4)},
-   {"1-PAR"          , std::make_tuple(0x1       ,  4)}};
+   {"1-PAR"          , std::make_tuple(0x1       ,  1)}};
 }
 }
 
