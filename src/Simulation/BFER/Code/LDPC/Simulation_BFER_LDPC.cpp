@@ -19,7 +19,6 @@ Simulation_BFER_LDPC<B,R,Q>
 ::Simulation_BFER_LDPC(const parameters& params)
 : Simulation_BFER<B,R,Q>(params), alist_data(params.code.alist_path)
 {
-	assert(this->params.code.N == (int)alist_data.get_n_VN());
 }
 
 template <typename B, typename R, typename Q>

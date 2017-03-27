@@ -98,10 +98,7 @@ void Simulation_EXIT<B,R,Q>
 	terminal    = build_terminal   (      ); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames() > 1)
-	{
-		std::cout << bold_red("(EE) EXIT simulation does not support inter frame SIMD... Exiting.") << std::endl;
-		exit(-1);
-	}
+		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
 
 	// resize the modulation buffers
 	const auto K_mod = modulator_a->get_buffer_size_after_modulation(params.code.K);

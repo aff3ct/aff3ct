@@ -5,10 +5,10 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
@@ -56,23 +56,14 @@ Simulation_BFER<B,R,Q>
   terminal   (nullptr)
 {
 	if (params.simulation.debug)
-	{
-		std::cerr << bold_red("(EE) StarPU simulation does not support the debug mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: StarPU simulation does not support "
+		                            "the debug mode.");
 	if (params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) StarPU simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: StarPU simulation does not support "
+		                            "the bench mode.");
 	if (params.interleaver.uniform)
-	{
-		std::cerr << bold_red("(EE) StarPU simulation does not support the uniform interleaver mode... Exiting")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: StarPU simulation does not support "
+		                            "the uniform interleaver mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the StarPU simulation.") << std::endl;

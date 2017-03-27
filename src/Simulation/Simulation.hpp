@@ -8,6 +8,8 @@
 #ifndef SIMULATION_HPP_
 #define SIMULATION_HPP_
 
+#include <stdexcept>
+
 #include "Tools/Display/bash_tools.h"
 
 namespace aff3ct
@@ -52,16 +54,8 @@ protected:
 	static void check_errors(void *ptr, std::string str, const int tid = 0)
 	{
 		if (ptr == nullptr)
-		{
-			std::cerr << tools::bold_red("(EE) Something went wrong during the \"")
-			          << tools::bold_red(str)
-			          << tools::bold_red("\" instantiation (tid = ")
-			          << tools::bold_red(std::to_string(tid))
-			          << tools::bold_red("), exiting.")
-			          << std::endl;
-
-			exit(EXIT_FAILURE);
-		}
+			throw std::runtime_error("aff3ct::simulation::Simulation: something went wrong during the "
+			                         "\"" + str + "\" instantiation (tid = " + std::to_string(tid) + ").");
 	}
 };
 }

@@ -42,7 +42,7 @@ Decoder_turbo<B,R>
   l_e2i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   s    ((K                                              ) * siso_n.get_simd_inter_frame_level()                    )
 {
-	if (N_without_tb / K != 3)
+	if (N_without_tb != K * 3)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"N\" / \"K\" has to be equal to 3.");
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"n_ite\" has to be greater than 0.");

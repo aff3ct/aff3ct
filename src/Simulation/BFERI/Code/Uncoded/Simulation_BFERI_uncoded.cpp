@@ -20,7 +20,6 @@ Simulation_BFERI_uncoded<B,R,Q>
 ::Simulation_BFERI_uncoded(const parameters& params)
 : Simulation_BFERI<B,R,Q>(params)
 {
-	assert(params.code.N == params.code.K);
 }
 
 template <typename B, typename R, typename Q>

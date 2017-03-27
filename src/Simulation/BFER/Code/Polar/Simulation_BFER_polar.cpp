@@ -38,7 +38,11 @@ Simulation_BFER_polar<B,R,Q>
 		Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");
 	}
 	else
-		assert(this->params.code.N == this->params.code.N_code);
+	{
+		if (this->params.code.N != this->params.code.N_code)
+			throw std::invalid_argument("aff3ct::simulation::Simulation_BFER_polar: \"params.code.N\" has to be equal "
+			                            "to \"params.code.N_code\".");
+	}
 }
 
 template <typename B, typename R, typename Q>

@@ -2,7 +2,6 @@
 #include <chrono>
 #include <vector>
 #include <string>
-#include <cassert>
 #include <utility>
 #include <cstdlib>
 #include <algorithm>
@@ -23,7 +22,6 @@ Simulation_BFERI_RSC<B,R,Q,QD>
 ::Simulation_BFERI_RSC(const parameters& params)
 : Simulation_BFERI<B,R,Q>(params)
 {
-	assert(params.code.N / params.code.K == 2);
 }
 
 template <typename B, typename R, typename Q, typename QD>

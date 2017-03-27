@@ -20,7 +20,6 @@ Simulation_BFER_repetition<B,R,Q>
 ::Simulation_BFER_repetition(const parameters& params)
 : Simulation_BFER<B,R,Q>(params)
 {
-	assert(params.code.N % params.code.K == 0);
 }
 
 template <typename B, typename R, typename Q>

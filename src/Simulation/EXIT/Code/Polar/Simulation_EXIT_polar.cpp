@@ -1,4 +1,3 @@
-#include <cassert>
 #include <vector>
 #include <chrono>
 #include <algorithm>
@@ -23,9 +22,6 @@ Simulation_EXIT_polar<B,R,Q>
   frozen_bits(params.code.N),
   fb_generator(nullptr)
 {
-	// fixed fronzen bits is mandatory
-	assert(params.code.sigma != 0.f);
-
 	// build the frozen bits generator
 	fb_generator = Factory_frozenbits_generator<B>::build(params);
 	Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");

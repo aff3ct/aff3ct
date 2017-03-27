@@ -4,8 +4,8 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <stdexcept>
 
 #ifdef ENABLE_MPI
 #include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
@@ -81,29 +81,19 @@ Simulation_BFERI<B,R,Q>
 		          << std::endl;
 
 	if (params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) BFERI simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: the bench mode is not supported.");
 
 #ifdef ENABLE_MPI
 	if (params.simulation.debug || params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) Debug and bench modes are unavailable in MPI, exiting.") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: debug and bench modes are unavailable "
+		                            "in MPI.");
 #endif
 
 	// check, if the error tracker is enable, if the given file name is good
 	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert) &&
 	     !Monitor_reduction<B,R>::check_path(this->params.monitor.err_track_path))
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-		          << bold_red(this->params.monitor.err_track_path)
-		          << bold_red("\" and please create yourself the needed directory.")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFERI: issue while trying to open error tracker "
+		                         "log files, check the base path (" + this->params.monitor.err_track_path + ").");
 
 	if (this->params.monitor.err_track_revert)
 	{
@@ -191,7 +181,10 @@ void Simulation_BFERI<B,R,Q>
 
 	// get the real number of frames per threads (from the decoder)
 	const auto n_fra = simu->siso[tid]->get_n_frames();
-	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
+
+	if (simu->siso[tid]->get_n_frames() != simu->decoder[tid]->get_n_frames())
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: \"siso[tid]->get_n_frames()\" and "
+		                            "\"decoder[tid]->get_n_frames()\" have to be equal.");
 
 	// resize the buffers
 	const auto K     = simu->params.code.K;

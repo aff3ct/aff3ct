@@ -22,7 +22,6 @@ Simulation_BFERI_LDPC<B,R,Q>
   alist_data(params.code.alist_path),
   decoder_siso(params.simulation.n_threads, nullptr)
 {
-	assert(this->params.code.N == (int)alist_data.get_n_VN());
 }
 
 template <typename B, typename R, typename Q>

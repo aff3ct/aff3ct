@@ -5,8 +5,8 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Factory/Factory_terminal.hpp"
@@ -32,24 +32,15 @@ Simulation_BFERI<B,R,Q>
   dbg_R      {nullptr, nullptr, nullptr},
   dbg_Q      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}
 {
-	if (params.simulation.n_threads > 1)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support multi-threading... Exiting.") << std::endl;
-		std::exit(-1);
-	}
-
+	if (this->params.simulation.n_threads > 1)
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: SystemC simulation does not support "
+		                            "multi-threading.");
 	if (params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: SystemC simulation does not support "
+		                            "the bench mode.");
 	if (params.interleaver.uniform)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the uniform interleaver mode... Exiting")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: SystemC simulation does not support "
+		                            "the uniform interleaver mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
@@ -98,7 +89,9 @@ void Simulation_BFERI<B,R,Q>
 	this->interleaver_e->rename("Interleaver_e");
 	this->coset_real_i ->rename("Coset_real_i" );
 
-	assert(*this->interleaver[0] == *this->interleaver_e);
+	if (*this->interleaver[0] != *this->interleaver_e);
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFERI: \"interleaver[0]\" and \"interleaver_e\" "
+		                         "have to be equal.");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source     [0]->create_sc_module              ();

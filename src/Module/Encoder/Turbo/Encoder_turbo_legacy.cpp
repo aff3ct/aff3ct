@@ -17,7 +17,7 @@ Encoder_turbo_legacy<B>
   X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*n_frames)
 {
-	if (N_without_tb / K != 3)
+	if (N_without_tb != 3 * K)
 		throw std::invalid_argument("aff3ct::module::Encoder_turbo_legacy: \"N\" / \"K\" has to be equal to 3.");
 	if ((int)pi.size() != K)
 		throw std::length_error("aff3ct::module::Encoder_turbo_legacy: \"pi.size()\" has to be equal to \"K\".");

@@ -2,8 +2,8 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -55,7 +55,8 @@ Simulation_BFER_i<B,R,Q>
   monitor    (params.simulation.n_threads, nullptr),
   interleaver(params.simulation.n_threads, nullptr)
 {
-	assert(params.simulation.n_threads >= 1);
+	if (params.simulation.n_threads < 1)
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: \"n_threads\" has to be greater than 0.");
 
 	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 		rd_engine_seed[tid].seed(params.simulation.seed + tid);
