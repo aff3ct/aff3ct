@@ -186,6 +186,15 @@ public:
 		return Monitor_i<B,R>::over;
 	}
 
+	/*!
+	 * \brief Put Monitor_i<B,R>::interrupt and Monitor_i<B,R>::over to true.
+	 */
+	static void stop()
+	{
+		Monitor_i<B,R>::interrupt = true;
+		Monitor_i<B,R>::over      = true;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The following public methods are specific to catch the bad frames and to dump them into files. //
 	// The proposed default implementation do nothing.                                                //
@@ -274,7 +283,7 @@ private:
 		{
 			Monitor_i<B,R>::d_delta_interrupt = t_now - Monitor_i<B,R>::t_last_interrupt;
 			if (Monitor_i<B,R>::d_delta_interrupt < std::chrono::milliseconds(500))
-				Monitor_i<B,R>::over = true;
+				Monitor_i<B,R>::stop();
 		}
 		Monitor_i<B,R>::t_last_interrupt  = t_now;
 

@@ -93,7 +93,7 @@ void Simulation_BFER<B,R,Q>
 	// launch the master thread
 	this->Monte_Carlo_method();
 
-	if (!this->params.terminal.disabled)
+	if (!this->params.terminal.disabled && this->terminal != nullptr)
 		terminal->final_report(std::cout);
 }
 
@@ -218,49 +218,71 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::Monte_Carlo_method()
 {
-	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	std::vector<std::thread> threads(this->params.simulation.n_threads -1);
-	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
-		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::build_communication_chain, this, tid);
+	try
+	{
+		// launch a group of slave threads (there is "n_threads -1" slave threads)
+		std::vector<std::thread> threads(this->params.simulation.n_threads -1);
+		for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+			threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::build_communication_chain, this, tid);
 
-	// build the communication chain
-	Simulation_BFER<B,R,Q>::build_communication_chain(this, 0);
+		// build the communication chain
+		Simulation_BFER<B,R,Q>::build_communication_chain(this, 0);
 
-	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
-		threads[tid -1].join();
+		// join the slave threads with the master thread
+		for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+			threads[tid -1].join();
 
-	if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min)
-		terminal->legend(std::cout);
+		if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min)
+			terminal->legend(std::cout);
 
-	if (this->params.source.type == "AZCW")
-		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+		if (this->params.source.type == "AZCW")
+			for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+			{
+				std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
+				std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
+				std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
+				this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			}
+
+		std::thread term_thread;
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+			// launch a thread dedicated to the terminal display
+			term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
+
+		try
 		{
-			std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
-			std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
-			std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-			this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			// Monte Carlo simulation
+			while (!this->monitor_red->fe_limit_achieved())
+			{
+				for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+					this->seq_tasks_submission(tid);
+
+				starpu_task_wait_for_all();
+			}
+		}
+		catch (std::exception const& e)
+		{
+			Monitor<B,R>::stop();
+
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+			          << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 		}
 
-	std::thread term_thread;
-	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
-		// launch a thread dedicated to the terminal display
-		term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
-
-	// Monte Carlo simulation
-	while (!this->monitor_red->fe_limit_achieved())
-	{
-		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
-			this->seq_tasks_submission(tid);
-
-		starpu_task_wait_for_all();
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+		{
+			cond_terminal.notify_all();
+			// wait the terminal thread to finish
+			term_thread.join();
+		}
 	}
-
-	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+	catch (std::exception const& e)
 	{
-		cond_terminal.notify_all();
-		// wait the terminal thread to finish
-		term_thread.join();
+		Monitor<B,R>::stop();
+
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+		          << bold_red("communication chain.") << std::endl
+		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 	}
 }
 

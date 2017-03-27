@@ -57,6 +57,7 @@ Launcher<B,R,Q>
 	params.simulation .snr_type          = "EB";
 	params.simulation .seed              = 0;
 	params.interleaver.seed              = 0;
+	params.interleaver.uniform           = false;
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -784,7 +785,17 @@ void Launcher<B,R,Q>
 
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
-	simu = this->build_simu();
+
+	try
+	{
+		simu = this->build_simu();
+	}
+	catch (std::exception const& e)
+	{
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+		          << bold_red("simulation.") << std::endl
+		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+	}
 
 	if (simu != nullptr)
 	{
@@ -801,12 +812,14 @@ void Launcher<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when running the ")
+			          << bold_red("simulation.") << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 		}
-
-		if (params.simulation.mpi_rank == 0)
-			stream << "# End of the simulation." << std::endl;
 	}
+
+	if (params.simulation.mpi_rank == 0)
+		stream << "# End of the simulation." << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

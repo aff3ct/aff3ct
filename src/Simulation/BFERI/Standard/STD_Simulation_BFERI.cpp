@@ -145,13 +145,13 @@ void Simulation_BFERI<B,R,Q>
 	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1].join();
 
-	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled)
+	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled && terminal != nullptr)
 	{
 		time_reduction(true);
 		terminal->final_report(std::cout);
 	}
 
-	if (this->params.monitor.err_track_enable)
+	if (this->params.monitor.err_track_enable && monitor_red != nullptr)
 		monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr, this->interleaver[0]->get_lookup_table());
 }
 
@@ -237,42 +237,66 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::Monte_Carlo_method(Simulation_BFERI<B,R,Q> *simu, const int tid)
 {
-	Simulation_BFERI<B,R,Q>::build_communication_chain(simu, tid);
-
-	if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
-	    (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1)))
-		simu->terminal->legend(std::cout);
-
-	if (simu->params.source.type == "AZCW")
+	try
 	{
-		std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
-		std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
-		std::fill(simu->X_N2[tid].begin(), simu->X_N2[tid].end(), (B)0);
-		simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
+		Simulation_BFERI<B,R,Q>::build_communication_chain(simu, tid);
+
+		if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
+			(!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
+			!(simu->params.simulation.debug && simu->params.simulation.n_threads == 1)))
+			simu->terminal->legend(std::cout);
+
+		if (simu->params.source.type == "AZCW")
+		{
+			std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
+			std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
+			std::fill(simu->X_N2[tid].begin(), simu->X_N2[tid].end(), (B)0);
+			simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
+		}
+
+		simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_crc_total  [tid] = std::chrono::nanoseconds(0);
+		simu->d_encod_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_inter_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_filte_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_deint_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_check_total[tid] = std::chrono::nanoseconds(0);
+
+		simu->barrier(tid);
+
+		try
+		{
+			if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
+				Simulation_BFERI<B,R,Q>::simulation_loop_debug(simu);
+			else
+				Simulation_BFERI<B,R,Q>::simulation_loop(simu, tid);
+		}
+		catch (std::exception const& e)
+		{
+			Monitor<B,R>::stop();
+
+			if (tid == 0)
+				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+				          << std::endl
+				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		}
 	}
+	catch (std::exception const& e)
+	{
+		Monitor<B,R>::stop();
 
-	simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_crc_total  [tid] = std::chrono::nanoseconds(0);
-	simu->d_encod_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_inter_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_filte_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_deint_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_check_total[tid] = std::chrono::nanoseconds(0);
-
-	simu->barrier(tid);
-
-	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
-		Simulation_BFERI<B,R,Q>::simulation_loop_debug(simu);
-	else
-		Simulation_BFERI<B,R,Q>::simulation_loop(simu, tid);
+		if (tid == 0)
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+			          << bold_red("communication chain.") << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+	}
 }
 
 template <typename B, typename R, typename Q>

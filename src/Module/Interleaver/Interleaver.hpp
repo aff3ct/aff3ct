@@ -153,6 +153,11 @@ public:
 		return true;
 	}
 
+	bool operator!=(Interleaver_i<T> &interleaver) const
+	{
+		return !(*this == interleaver);
+	}
+
 	/*!
 	 * \brief Generates the interleaving and deinterleaving lookup tables. This method defines the interleaver and have
 	 *        to be called in the constructor.
