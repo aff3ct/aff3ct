@@ -10,6 +10,8 @@ Decoder_NO<B,R>
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
   Y_N(N)
 {
+	if (N != K)
+		throw std::invalid_argument("aff3ct::module::Decoder_NO: \"K\" and \"N\" have to be equal.");
 }
 
 template <typename B, typename R>
@@ -59,7 +61,8 @@ template <typename B, typename R>
 void Decoder_NO<B,R>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
-	assert(sys.size() == ext.size());
+	if (sys.size() == ext.size())
+		throw std::length_error("aff3ct::module::Decoder_NO: \"sys.size()\" and \"ext.size()\" have to be equal.");
 
 	ext = sys;
 }
@@ -68,8 +71,6 @@ template <typename B, typename R>
 void Decoder_NO<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-
 	Y_N2 = Y_N1;
 }
 

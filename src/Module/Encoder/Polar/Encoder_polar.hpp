@@ -26,8 +26,7 @@ public:
 	void light_encode(B *bits);
 
 	void set_n_frames(const int n_frames) 
-	{ 
-		assert(n_frames > 0);
+	{
 		Encoder<B>::set_n_frames(n_frames);
 		U_N.resize(this->N * n_frames);
 	}

@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -51,7 +51,9 @@ template<typename SIN, typename SOUT>
 SIN Encoder_CPE_Rimoldi<SIN, SOUT>
 ::tail_symb(const int &state)
 {
-	assert(state < this->cpm.max_st_id);
+	if (state >= this->cpm.max_st_id)
+		throw std::invalid_argument("aff3ct::module::Encoder_CPE_Rimoldi: \"state\" has to be smaller than "
+		                            "\"cpm.max_st_id\".");
 
 	// extract V_n
 	int val = state & ((1 << this->cpm.n_bits_p)-1);
@@ -69,8 +71,12 @@ void Encoder_CPE_Rimoldi<SIN, SOUT>
                   mipp::vector<SIN>& binary_to_transition,
                   const std::string& mapping)
 {
-	assert((int)transition_to_binary.size() == (this->cpm.m_order*this->cpm.n_b_per_s));
-	assert((int)binary_to_transition.size() == (this->cpm.m_order                    ));
+	if ((int)transition_to_binary.size() != (this->cpm.m_order*this->cpm.n_b_per_s))
+		throw std::length_error("aff3ct::module::Encoder_CPE_Rimoldi: \"transition_to_binary.size()\" has to be "
+		                        "equal to \"cpm.m_order\" * \"this->cpm.n_b_per_s\".");
+	if ((int)binary_to_transition.size() != this->cpm.m_order)
+		throw std::length_error("aff3ct::module::Encoder_CPE_Rimoldi: \"binary_to_transition.size()\" has to be "
+		                        "equal to \"cpm.m_order\".");
 
 	if (mapping == "NATURAL")
 	{
@@ -106,7 +112,9 @@ template<typename SIN, typename SOUT>
 void Encoder_CPE_Rimoldi<SIN, SOUT>
 ::generate_allowed_states(mipp::vector<int>& allowed_states)
 {
-	assert((int)allowed_states.size() == this->cpm.n_st);
+	if ((int)allowed_states.size() != this->cpm.n_st)
+		throw std::length_error("aff3ct::module::Encoder_CPE_Rimoldi: \"allowed_states.size()\" has to be "
+		                        "equal to \"cpm.n_st\".");
 
 	int state_index = 0;
 	int state_pos   = 0;
@@ -132,7 +140,9 @@ template<typename SIN, typename SOUT>
 void Encoder_CPE_Rimoldi<SIN, SOUT>
 ::generate_allowed_wave_forms(mipp::vector<SOUT>& allowed_wave_forms)
 {
-	assert((int)allowed_wave_forms.size() == this->cpm.n_wa);
+	if ((int)allowed_wave_forms.size() != this->cpm.n_wa)
+		throw std::length_error("aff3ct::module::Encoder_CPE_Rimoldi: \"allowed_wave_forms.size()\" has to be "
+		                        "equal to \"cpm.n_wa\".");
 
 	int wa_index = 0;
 	int wa_pos = 0;

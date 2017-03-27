@@ -13,21 +13,18 @@ CRC_polynomial<B>
 : CRC<B>(K, n_frames, name), polynomial(0), buff_crc(n_frames * K)
 {
 	if (poly_key.empty())
-	{
-		std::cerr << bold_red("(EE) Please choose a CRC.") << std::endl;
-		exit(EXIT_FAILURE);
-	}
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"poly_key\" can't be empty, choose a CRC.");
 
 	if (polynomials.find(poly_key) != polynomials.end())
 		polynomial = polynomials.at(poly_key);
 	else
 	{
-		std::cerr << bold_red("(EE) CRC \"") << bold_red(poly_key) << bold_red("\" is not supported.") 
-		          << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"poly_key\" = \"" + poly_key +
+		                            "\" is not supported.");
 	}
 
-	assert(K > this->size());
+	if (K <= this->size())
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"K\" has to be greater than \"this->size()\".");
 }
 
 template <typename B>

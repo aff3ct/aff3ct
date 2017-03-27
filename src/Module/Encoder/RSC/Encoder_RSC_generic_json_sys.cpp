@@ -12,6 +12,8 @@ Encoder_RSC_generic_json_sys<B>
 : Encoder_RSC_generic_sys<B>(K, N, n_frames, buffered_encoding, poly, name),
   stream(stream), bit_counter(0), natural_domain(true), poly(poly)
 {
+	if (n_frames != 1)
+		throw std::invalid_argument("aff3ct::module::Encoder_RSC_generic_json_sys: \"n_frames\" has to be equal to 1.");
 }
 
 template <typename B>
@@ -64,7 +66,6 @@ int Encoder_RSC_generic_json_sys<B>
 	{
 		if (natural_domain)
 		{
-			assert(this->n_frames == 1);
 			const auto trellis = this->get_trellis();
 
 			stream << "\t" << "[{" << std::endl;

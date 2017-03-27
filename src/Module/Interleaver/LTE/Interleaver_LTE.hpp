@@ -229,7 +229,6 @@ public:
 			for (auto i = 0; i < size; i++)
 			{
 				this->pi[i] = (T)pi_LTE(i, (int)f_1[size], (int)f_2[size], size);
-				assert(this->pi[i] >= 0 && this->pi[i] < size);
 				this->pi_inv[this->pi[i]] = (T)i;
 			}
 		}

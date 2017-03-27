@@ -23,8 +23,6 @@ template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive_sys<B,R,F,G>
 ::_store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= (unsigned) this->K);
-
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!this->frozen_bits[i])

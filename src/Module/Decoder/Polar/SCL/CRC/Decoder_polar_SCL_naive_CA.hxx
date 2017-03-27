@@ -12,8 +12,6 @@ Decoder_polar_SCL_naive_CA<B,R,F,G>
                              const int n_frames, const std::string name)
 : Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames, name), crc(crc)
 {
-	assert(crc.size());
-
 	if (!crc.size())
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive_CA: \"crc.size()\" has to be greater "
 		                            "than 0.");

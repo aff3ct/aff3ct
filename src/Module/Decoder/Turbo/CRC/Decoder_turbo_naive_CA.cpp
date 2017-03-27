@@ -38,9 +38,7 @@ void Decoder_turbo_naive_CA<B,R>
 ::_hard_decode()
 {
 	constexpr auto start_check_crc = 2;
-
-	assert(start_check_crc >= 1          );
-	assert(start_check_crc <= this->n_ite);
+	static_assert(start_check_crc >= 1, "");
 
 	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;

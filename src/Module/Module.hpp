@@ -9,7 +9,6 @@
 #define MODULE_HPP_
 
 #include <string>
-#include <cassert>
 #include <stdexcept>
 
 namespace aff3ct

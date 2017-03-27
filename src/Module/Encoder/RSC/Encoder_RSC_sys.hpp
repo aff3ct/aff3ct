@@ -1,7 +1,6 @@
 #ifndef ENCODER_RSC_SYS_HPP_
 #define ENCODER_RSC_SYS_HPP_
 
-#include <cassert>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 

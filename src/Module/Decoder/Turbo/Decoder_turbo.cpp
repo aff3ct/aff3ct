@@ -142,8 +142,6 @@ template <typename B, typename R>
 void Decoder_turbo<B,R>
 ::standard_load(const mipp::vector<R>& Y_N)
 {
-	assert(this->K == (this->N - (siso_n.tail_length() + siso_i.tail_length()) - this->K) / 2);
-
 	const auto tail_n = siso_n.tail_length();
 	const auto tail_i = siso_i.tail_length();
 

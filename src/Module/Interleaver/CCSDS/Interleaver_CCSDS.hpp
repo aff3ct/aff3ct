@@ -45,7 +45,6 @@ public:
 			for (auto i = 0; i < size; i++)
 			{
 				this->pi[i] = (T)pi_CCSDS(i, (int)k_1[size], (int)k_2[size]);
-				assert(this->pi[i] >= 0 && this->pi[i] < size);
 				this->pi_inv[this->pi[i]] = (T)i;
 			}
 		}

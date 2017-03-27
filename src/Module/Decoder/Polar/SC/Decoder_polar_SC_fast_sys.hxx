@@ -2,8 +2,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
-#include <cassert>
-
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
@@ -198,7 +196,9 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_hard_decode()
 {
-	assert(m >= static_level);
+	if (m < static_level)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
+		                         "\"static_level\".");
 
 	int first_id = 0, off_l = 0, off_s = 0;
 	this->recursive_decode(off_l, off_s, m, first_id);
@@ -342,7 +342,9 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_store_fast(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	if (V_N.size() < (unsigned) (this->N * this->get_simd_inter_frame_level()))
+		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"V_N.size()\" has to be equal or greater "
+		                        "than \"N\" * \"get_simd_inter_frame_level()\".");
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -381,7 +383,9 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_unpack(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	if (V_N.size() < (unsigned) (this->N * this->get_simd_inter_frame_level()))
+		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"V_N.size()\" has to be equal or greater "
+		                        "than \"N\" * \"get_simd_inter_frame_level()\".");
 
 	constexpr int n_frames = API_polar::get_n_frames();
 

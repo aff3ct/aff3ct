@@ -15,11 +15,13 @@ Channel_AWGN_GSL_LLR<R>
   sigma(sigma),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
-	if (sigma == (R)0) throw std::domain_error("aff3ct::module::Channel_AWGN_GSL_LLR: \"sigma\" can't be equal to 0.");
+	if (sigma == (R)0)
+		throw std::domain_error("aff3ct::module::Channel_AWGN_GSL_LLR: \"sigma\" can't be equal to 0.");
 	
 	gsl_rng_set(rng, seed);
 
-	assert(rng != nullptr);
+	if (rng == nullptr)
+		throw std::runtime_error("aff3ct::module::Channel_AWGN_GSL_LLR: \"rng\" can't be null.");
 }
 
 template <typename R>

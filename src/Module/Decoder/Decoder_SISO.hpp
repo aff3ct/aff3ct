@@ -8,8 +8,6 @@
 #ifndef DECODER_SISO_HPP_
 #define DECODER_SISO_HPP_
 
-#include <cassert>
-
 #include "Decoder.hpp"
 #include "SISO.hpp"
 
@@ -55,7 +53,6 @@ public:
 	 */
 	virtual int get_n_frames() const
 	{
-		assert((SISO<R>::n_frames) == (Decoder<B,R>::n_frames));
 		return SISO<R>::n_frames;
 	}
 
@@ -72,7 +69,6 @@ public:
 
 	int get_simd_inter_frame_level() const
 	{
-		assert((SISO<R>::simd_inter_frame_level_siso) == (Decoder<B,R>::simd_inter_frame_level));
 		return SISO<R>::simd_inter_frame_level_siso;
 	}
 };

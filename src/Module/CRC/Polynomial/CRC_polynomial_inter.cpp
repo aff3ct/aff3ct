@@ -1,4 +1,3 @@
-#include <cassert>
 #include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
@@ -50,9 +49,6 @@ void CRC_polynomial_inter<B>
                   const int off_out, 
                   const int loop_size)
 {
-	assert(this->n_frames == mipp::nElmtsPerRegister<B>());
-	assert(loop_size % this->n_frames == 0);
-
 	std::copy(U_in.begin() + off_in, U_in.begin() + off_in + loop_size, this->buff_crc.begin());
 	std::fill(this->buff_crc.end() - (this->n_frames * this->size()), this->buff_crc.end(), (B)0);
 

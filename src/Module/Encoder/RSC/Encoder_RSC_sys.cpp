@@ -138,13 +138,20 @@ void Encoder_RSC_sys<B>
 		X_N[j] = inner_encode((int)bit_sys, state); j += stride; // encoding block
 	}
 
-	assert(state == 0);
+	if (state != 0)
+		throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"state\" should be equal to 0.");
+
 	if (!only_parity)
-		assert(j == this->N * stride);
+	{
+		if (j != this->N * stride)
+			throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"j\" should be equal to \"N\" * \"stride\".");
+	}
 	else
 	{
 		j += this->n_ff * stride;
-		assert(j == (this->K + 2*this->n_ff) * stride);
+		if (j != (this->K + 2*this->n_ff) * stride)
+			throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"j\" should be equal to "
+			                         "(\"K\" + 2 * \"n_ff\") * \"stride\".");
 	}
 }
 

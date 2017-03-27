@@ -20,7 +20,11 @@ Channel_Rayleigh_LLR<R>
   normal_dist_n(0, sigma),
   normal_dist_h(0, (R)1 / (R)std::sqrt((R)2))
 {
-	if (sigma == (R)0) throw std::domain_error("aff3ct::module::Channel_Rayleigh_LLR: \"sigma\" can't be equal to 0.");
+	if (sigma == (R)0)
+		throw std::domain_error("aff3ct::module::Channel_Rayleigh_LLR: \"sigma\" can't be equal to 0.");
+
+	if (complex && N % 2)
+		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"N\" has to be divisible by 2.");
 
 	rd_engine.seed(seed);
 }
@@ -45,7 +49,6 @@ void Channel_Rayleigh_LLR<R>
 {
 	if (this->complex)
 	{
-		assert((int)X_N.size() % 2 == 0);
 		for (auto i = 0; i < (int)X_N.size() / 2 ; i++)
 		{
 			H_N[2*i   ] = this->normal_dist_h(this->rd_engine);

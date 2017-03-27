@@ -28,7 +28,9 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
-	assert(sys.size() + par.size() == (unsigned)this->N);
+	if (sys.size() + par.size() != (unsigned)this->N)
+		throw std::length_error("aff3ct::module::Decoder_polar_SCAN_naive_sys: \"sys.size()\" + \"par.size()\" "
+		                        "should be equal to \"N\".");
 
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->load_init();

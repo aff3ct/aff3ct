@@ -58,7 +58,9 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 {
 	auto k = 0;
 	this->recursive_store(this->polar_tree.get_root(), V_K, k);
-	assert(k == this->K);
+
+	if (k != this->K)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_naive: \"k\" should be equal to \"K\".");
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
