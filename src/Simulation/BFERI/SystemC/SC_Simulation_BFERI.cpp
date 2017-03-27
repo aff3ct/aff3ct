@@ -134,8 +134,9 @@ void Simulation_BFERI<B,R,Q>
 	{
 		this->build_communication_chain();
 
-		if ((!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-			!(this->params.simulation.debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
+		if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
+		    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) &&
+		    !this->params.simulation.benchs)
 			this->terminal->legend(std::cout);
 
 		Predicate_ite p(this->params.demodulator.n_ite);
@@ -255,9 +256,9 @@ void Simulation_BFERI<B,R,Q>
 		delete this->router;      this->router      = nullptr;
 		delete this->predicate;   this->predicate   = nullptr;
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STANDARD! /!\ //
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		sc_core::sc_curr_simcontext = new sc_core::sc_simcontext();
 		sc_core::sc_default_global_context = sc_core::sc_curr_simcontext;
 	}

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cassert>
 #include <cmath>
 
 #include "Tools/Display/bash_tools.h"
@@ -124,13 +123,7 @@ Simulation* Launcher_BFER_polar<B,R,Q>
 {
 	// hack for K when there is a CRC
 	if (!this->params.crc.type.empty())
-	{
-		assert(this->params.code.K > module::CRC_polynomial<B>::size(this->params.crc.type));
-
 		this->params.code.K += module::CRC_polynomial<B>::size(this->params.crc.type);
-
-		assert(this->params.code.K <= this->params.code.N);
-	}
 
 	return new Simulation_BFER_polar<B,R,Q>(this->params);
 }

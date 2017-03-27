@@ -1,11 +1,10 @@
 #include <cmath>
 #include <chrono>
-#include <cassert>
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
-#include <exception>
+#include <stdexcept>
 #include <functional>
 
 #ifdef ENABLE_MPI
@@ -325,7 +324,8 @@ void Launcher<B,R,Q>
 
 	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 
-	assert(max_n_threads_global > 0);
+	if (max_n_threads_global <= 0)
+		throw std::invalid_argument("aff3ct::launcher::Launcher: \"max_n_threads_global\" has to be greater than 0.");
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
 	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
@@ -344,11 +344,6 @@ void Launcher<B,R,Q>
 	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
 	params.code.m      = (int)std::ceil(std::log2(params.code.N));
-	if (params.code.K > params.code.N)
-	{
-		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
 
 	// -------------------------------------------------------------------------------------------------------- source
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
@@ -359,11 +354,9 @@ void Launcher<B,R,Q>
 	// ----------------------------------------------------------------------------------------------------- modulator
 	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
 	if (params.modulator.type == "USR" && !(ar.exist_arg({"mod-const-path"})))
-	{
-		std::cerr << bold_red("(EE) When USR modulation type is used, a path to a file containing the constellation")
-		          << bold_red("symbols must be given.") << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
+		throw std::invalid_argument("aff3ct::launcher::Launcher: when USR modulation type is used, a path to a file "
+		                            "containing the constellation symbols must be given.");
+
 	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
 		params.modulator.complex = false;
 
@@ -384,10 +377,7 @@ void Launcher<B,R,Q>
 				params.modulator.wave_shape     = "GMSK";
 			}
 			else
-			{
-				std::cerr << bold_red("(EE) Unknown CPM standard!") << std::endl;
-				exit(-1);
-			}
+				throw std::invalid_argument("aff3ct::launcher::Launcher: unknown CPM standard.");
 		}
 	}
 

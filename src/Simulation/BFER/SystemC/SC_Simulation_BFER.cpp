@@ -121,8 +121,9 @@ void Simulation_BFER<B,R,Q>
 	{
 		this->build_communication_chain();
 
-		if ((!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-			!(this->params.simulation.debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
+		if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
+		    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) &&
+		    !this->params.simulation.benchs)
 			this->terminal->legend(std::cout);
 
 		this->duplicator[0] = new SC_Duplicator("Duplicator0");
@@ -229,9 +230,9 @@ void Simulation_BFER<B,R,Q>
 				this->duplicator[i] = nullptr;
 			}
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STANDARD! /!\ //
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		sc_core::sc_curr_simcontext = new sc_core::sc_simcontext();
 		sc_core::sc_default_global_context = sc_core::sc_curr_simcontext;
 	}

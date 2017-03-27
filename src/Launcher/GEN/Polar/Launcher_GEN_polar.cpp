@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cassert>
 #include <cmath>
 
 #include "Tools/Display/bash_tools.h"
@@ -95,11 +94,6 @@ void Launcher_GEN_polar<B,R,Q>
 	this->params.code.N_code = this->ar.get_arg_int({"cde-size",      "N"});
 	this->params.code.m      = (int)std::ceil(std::log2(this->params.code.N));
 
-	if (this->params.code.K > this->params.code.N)
-	{
-		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
-		exit(EXIT_FAILURE);
-	}
 	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path  = this->ar.get_arg({"cde-awgn-fb-path" });
 	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg({"cde-fb-gen-method"});
 
@@ -131,12 +125,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_GEN_polar<B,R,Q>
 ::header_code()
 {
 	std::vector<std::pair<std::string,std::string>> p;
-
-	if (this->params.code.N != std::exp2(std::ceil(std::log2(this->params.code.N))))
-	{
-		std::cerr << bold_red("(EE) N isn't a power of two.")  << std::endl;
-		std::exit(-1);
-	}
 
 	p.push_back(std::make_pair("Type",              this->params.code.type             ));
 	p.push_back(std::make_pair("Info. bits (K)",    std::to_string(this->params.code.K)));
