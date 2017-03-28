@@ -7,13 +7,12 @@
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
-#include "Tools/Code/LDPC/G_tools/G_tools.hpp"
+#include "Tools/Code/LDPC/G/LDPC_G.hpp"
 
 #include "Encoder_LDPC_from_H.hpp"
 
 using namespace aff3ct;
 using namespace module;
-
 
 template <typename B>
 Encoder_LDPC_from_H<B>
@@ -22,12 +21,12 @@ Encoder_LDPC_from_H<B>
 : Encoder_LDPC<B>(K, N, n_frames, name)
 {
 	std::vector<mipp::vector<B>> H;
-	tools::G_tools::build_H(alist_H.get_n_CN(), alist_H.get_n_VN(), alist_H.get_CN_to_VN(), H);
-	tools::G_tools::triangularization_H(H, swapped);
+	tools::LDPC_G::build_H(alist_H.get_n_CN(), alist_H.get_n_VN(), alist_H.get_CN_to_VN(), H);
+	tools::LDPC_G::triangularization_H(H, swapped);
 	assert((int) H[0].size() == N);
 	assert((int)(H[0].size() - H.size()) == K);
-	tools::G_tools::identity_H(H);
-	tools::G_tools::transformation_H_to_G(H, G, swapped);
+	tools::LDPC_G::identity_H(H);
+	tools::LDPC_G::transformation_H_to_G(H, G, swapped);
 	tools::real_transpose(K, N, G, this->tG);
 }
 

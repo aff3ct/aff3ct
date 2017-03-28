@@ -5,7 +5,7 @@
 
 #include "Tools/Display/bash_tools.h"
 
-#include "G_tools.hpp"
+#include "LDPC_G.hpp"
 
 using namespace aff3ct::tools;
 
@@ -14,42 +14,42 @@ namespace aff3ct
 namespace tools
 {
 template <typename B>
-void G_tools
+void LDPC_G
 ::build_H(const int k, const int n, const std::vector<std::vector<unsigned int>>& positions,
-	      std::vector<mipp::vector<B>>& H)
+          std::vector<mipp::vector<B>>& H)
 {
 	for (int i = 0; i < k; i++)
-		H.push_back(mipp::vector<B>(n,0));
+		H.push_back(mipp::vector<B>(n, 0));
 
-	for (unsigned int i = 0; i < positions.size(); i++)
-		for(unsigned int j = 0; j < positions[i].size(); j++)
+	for (unsigned i = 0; i < positions.size(); i++)
+		for (unsigned j = 0; j < positions[i].size(); j++)
 			H[i][positions[i][j]] = 1;
 }
 
 template <typename B>
-void G_tools
+void LDPC_G
 ::triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<int>& swapped)
 {
-	unsigned n = H[0].size();
-	unsigned k = H.size();
-	unsigned i = 0;
+	int n = (int)H[0].size();
+	int k = (int)H.size();
+	int i = 0;
 	bool fund = false;
 
 	mipp::vector<B> tmp(n,0);
 	mipp::vector<B> tmp2;
 
-	while ( i < k )
+	while (i < k)
 	{
-		if ( H[i][i] )
+		if (H[i][i])
 		{
-			for (int j = (i+1); j < k; j++)
+			for (int j = i +1; j < k; j++)
  				if( H[j][i] )
 					std::transform(H[j].begin(), H[j].end(), H[i].begin(), H[j].begin(), std::not_equal_to<B>());
 		}
 		else
 		{
-			for (int j = (i+1); j < k; j++) // find an other row which is good
-				if ( H[j][i] )
+			for (int j = i +1; j < k; j++) // find an other row which is good
+				if (H[j][i])
 				{
 					tmp = H[i];
 					H[i] = H[j];
@@ -59,9 +59,9 @@ void G_tools
 					break;
 				}
 
-			if ( !fund ) // if does not fund
-				for (int j = (i+1); j<n; j++) // find an other column which is good
-					if ( H[i][j] )
+			if (!fund) // if does not fund
+				for (int j = i +1; j < n; j++) // find an other column which is good
+					if (H[i][j])
 					{
 						swapped.push_back(i);
 						swapped.push_back(j);
@@ -77,9 +77,9 @@ void G_tools
 						break;
 					}
 
-			if ( !fund ) // if does not fund again this mean that the row is the null vector
+			if (!fund) // if does not fund again this mean that the row is the null vector
 			{
-				H.erase( H.begin() + i );
+				H.erase(H.begin() +i);
 				i--;
 				k--;
 			}
@@ -90,19 +90,19 @@ void G_tools
 }
 
 template <typename B>
-void G_tools
+void LDPC_G
 ::identity_H(std::vector<mipp::vector<B>>& H)
 {
 	auto k = (int)H.size();
-	for (auto i = k-1 ; i > 0; i--)
-		for (auto j = (i-1); j > -1; j--)
-			if ( H[j][i] )
+	for (auto i = k -1 ; i > 0; i--)
+		for (auto j = i -1; j > -1; j--)
+			if (H[j][i])
 				std::transform (H[j].begin(), H[j].end(), H[i].begin(), H[j].begin(), std::not_equal_to<B>());
 
 }
 
 template <typename B>
-void G_tools
+void LDPC_G
 ::transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<int>& swapped)
 {
 	unsigned n = H[0].size();
@@ -118,8 +118,8 @@ void G_tools
 	}
 
 	// Re-organization: column of G
-	mipp::vector<B> tmp(n-k,0);
-	for (unsigned l = (swapped.size() / 2); l > 0; l-- )
+	mipp::vector<B> tmp(n - k, 0);
+	for (unsigned l = (swapped.size() / 2); l > 0; l--)
 	{
 		tmp = H[swapped[l*2-1]];
 		H[swapped[l*2-1]] = H[swapped[(l-1)*2]];
@@ -127,7 +127,7 @@ void G_tools
 	}
 
 	// Write G matrix in G vector
-	for (unsigned j = 0; j < n-k; j++)
+	for (unsigned j = 0; j < n - k; j++)
 		for (unsigned i = 0; i < n; i++)
 			G.push_back(H[i][j]);
 }
