@@ -10,6 +10,9 @@ Source_user<B>
 ::Source_user(const int K, const std::string filename, const int n_frames, const std::string name)
 : Source<B>(K, n_frames, name), source(), src_counter(0)
 {
+	if (filename.empty())
+		throw std::invalid_argument("aff3ct::module::Source_user: path to the file should not be empty.");
+
 	std::ifstream file(filename.c_str(), std::ios::in);
 
 	if (file.is_open())

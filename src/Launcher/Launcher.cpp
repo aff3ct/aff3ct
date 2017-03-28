@@ -353,9 +353,6 @@ void Launcher<B,R,Q>
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
-	if (params.modulator.type == "USR" && !(ar.exist_arg({"mod-const-path"})))
-		throw std::invalid_argument("aff3ct::launcher::Launcher: when USR modulation type is used, a path to a file "
-		                            "containing the constellation symbols must be given.");
 
 	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
 		params.modulator.complex = false;

@@ -10,6 +10,9 @@ Encoder_user<B>
 ::Encoder_user(const int K, const int N, const std::string filename, const int n_frames, const std::string name)
 : Encoder<B>(K, N, n_frames, name), codewords(), cw_counter(0)
 {
+	if (filename.empty())
+		throw std::invalid_argument("aff3ct::module::Encoder_user: path to the file should not be empty.");
+
 	std::ifstream file(filename.c_str(), std::ios::in);
 
 	if (file.is_open())

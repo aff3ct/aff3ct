@@ -26,6 +26,10 @@ Modulator_user<B,R,Q,MAX>
   disable_sig2   (disable_sig2),
   constellation  ()
 {
+	if (const_path.empty())
+		throw std::invalid_argument("aff3ct::module::Modulator_user: path to the constellation file should not "
+		                            "be empty.");
+
 	if (this->bits_per_symbol % 2)
 		throw std::invalid_argument("aff3ct::module::Modulator_user: \"bits_per_symbol\" has to be a multiple of 2.");
 
