@@ -25,7 +25,7 @@ Source_random_fast<B>
 
 template <typename B>
 void Source_random_fast<B>
-::generate(mipp::vector<B>& U_K)
+::_generate(mipp::vector<B>& U_K)
 {
 	const auto size = U_K.size();
 

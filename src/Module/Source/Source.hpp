@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -45,6 +46,8 @@ public:
 	Source_i(const int K, const int n_frames = 1, const std::string name = "Source_i")
 	: Module(n_frames, name), K(K)
 	{
+		if (K <= 0)
+			throw std::invalid_argument("aff3ct::module::Source: \"K\" has to be greater than 0.");
 	}
 
 	/*!
@@ -59,7 +62,17 @@ public:
 	 *
 	 * \param U_K: a vector of bits to fill.
 	 */
-	virtual void generate(mipp::vector<B>& U_K) = 0;
+	void generate(mipp::vector<B>& U_K)
+	{
+		if (this->K * this->n_frames != (int)U_K.size())
+			throw std::length_error("aff3ct::module::Source: \"U_K.size()\" has to be equal to "
+			                        "\"K\" * \"n_frames\".");
+
+		this->_generate(U_K);
+	}
+
+protected:
+	virtual void _generate(mipp::vector<B>& U_K) = 0;
 };
 }
 }

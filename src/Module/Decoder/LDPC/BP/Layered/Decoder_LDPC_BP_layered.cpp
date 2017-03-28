@@ -1,7 +1,7 @@
 #include <limits>
 #include <cmath>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered.hpp"
@@ -14,6 +14,7 @@ Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
                           const AList_reader &alist_data,
                           const bool enable_syndrome,
+                          const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name                                  ),
@@ -21,13 +22,20 @@ Decoder_LDPC_BP_layered<B,R>
   n_ite            (n_ite                                                    ),
   n_C_nodes        ((int)alist_data.get_n_CN()                               ),
   enable_syndrome  (enable_syndrome                                          ),
+  syndrome_depth   (syndrome_depth                                           ),
   init_flag        (false                                                    ),
   CN_to_VN         (alist_data.get_CN_to_VN()                                ),
   var_nodes        (n_frames, mipp::vector<R>(N,                           0)),
   branches         (n_frames, mipp::vector<R>(alist_data.get_n_branches(), 0))
 {
-	assert(N == (int)alist_data.get_n_VN());
-	assert(n_ite > 0);
+	if (n_ite <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"n_ite\" has to be greater than 0.");
+	if (syndrome_depth <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"syndrome_depth\" has to be greater "
+		                            "than 0.");
+	if (N != (int)alist_data.get_n_VN())
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"N\" is not compatible with the alist "
+		                            "file.");
 }
 
 template <typename B, typename R>
@@ -40,19 +48,16 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered: this decoder does not support the "
+	                         "\"soft_decode\" interface.");
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-	assert(Y_N1.size() >= this->var_nodes[cur_frame].size());
-
 	// memory zones initialization
-	load(Y_N1);
+	_load(Y_N1);
 
 	// actual decoding
 	this->BP_decode();
@@ -69,10 +74,8 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() >= this->var_nodes[cur_frame].size());
-
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -103,10 +106,8 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert((int)V_K.size() >= this->K);
-
 	const auto past_frame = (cur_frame -1) < 0 ? Decoder<B,R>::n_frames -1 : cur_frame -1;
 
 	// take the hard decision
@@ -119,12 +120,21 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
 ::BP_decode()
 {
+	auto cur_syndrome_depth = 0;
+
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->BP_process(this->var_nodes[cur_frame], this->branches[cur_frame]);
 
 		// stop criterion
-		if (this->enable_syndrome && this->check_syndrome()) break;
+		if (this->enable_syndrome && this->check_syndrome())
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
 }
 

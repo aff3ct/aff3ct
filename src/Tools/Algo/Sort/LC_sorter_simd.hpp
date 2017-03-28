@@ -21,8 +21,6 @@ private:
 public:
 	LC_sorter_simd(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
 	{
-		// assert(is_power_of_2(max_elmts));
-
 		tree_idx.resize(2 * max_elmts -1);
 		std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);
 	}

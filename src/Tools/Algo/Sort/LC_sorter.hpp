@@ -25,8 +25,6 @@ private:
 public:
 	LC_sorter(const int max_elmts) : max_elmts(max_elmts), vals(2 * max_elmts)
 	{
-		// assert(is_power_of_2(max_elmts));
-
 		tree_idx.resize(2 * max_elmts -1);
 		std::iota(tree_idx.begin(), tree_idx.begin() + this->max_elmts, 0);
 	}
@@ -35,8 +33,6 @@ public:
 	{
 		K       = (K       <= 0) ? (int)pos.size() : K;
 		n_elmts = (n_elmts <= 0) ? max_elmts       : n_elmts;
-
-		// assert(is_power_of_2(n_elmts));
 
 		auto depth = (int)std::log2(n_elmts);
 
@@ -60,8 +56,6 @@ public:
 	{
 		K       = (K       <= 0) ? (int)pos.size() : K;
 		n_elmts = (n_elmts <= 0) ? max_elmts       : n_elmts;
-
-		// assert(is_power_of_2(n_elmts));
 
 		auto depth = (int)std::log2(n_elmts);
 

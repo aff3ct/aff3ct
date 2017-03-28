@@ -42,7 +42,8 @@ public:
 	                 const std::string name = "Quantizer_tricky");
 	virtual ~Quantizer_tricky();
 
-	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
+protected:
+	void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
 }
 }

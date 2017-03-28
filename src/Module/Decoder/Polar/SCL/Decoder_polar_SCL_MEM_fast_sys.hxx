@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <limits>
@@ -19,6 +20,7 @@
 
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
+#include "Decoder_polar_SCL_fast_sys.hpp"
 #include "Decoder_polar_SCL_MEM_fast_sys.hpp"
 
 namespace aff3ct
@@ -68,7 +70,16 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
-	assert(tools::is_power_of_2(L));
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"N\" has to be a power of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"frozen_bits.size()\" has to be "
+		                        "equal to \"N\".");
+
+	if (this->L <= 0 || !tools::is_power_of_2(this->L))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"L\" has to be positive and "
+		                            "a power of 2.");
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
@@ -110,7 +121,16 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
-	assert(tools::is_power_of_2(L));
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"N\" has to be a power of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"frozen_bits.size()\" has to be "
+		                        "equal to \"N\".");
+
+	if (this->L <= 0 || !tools::is_power_of_2(this->L))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"L\" has to be positive and "
+		                            "a power of 2.");
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
@@ -148,7 +168,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	std::copy(Y_N.begin(), Y_N.begin() + this->N, this->Y_N.begin());
 	init_buffers();
@@ -441,10 +461,8 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= (unsigned) this->K);
-
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!frozen_bits[i])
@@ -453,17 +471,22 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::store_fast(mipp::vector<B>& V) const
+::_store_fast(mipp::vector<B>& V) const
 {
-	assert(V.size() == (unsigned) this->N);
+	if (V.size() != (unsigned) this->N)
+		throw std::length_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"V.size()\" has to be equal to "
+		                        "\"N\".");
+
 	std::copy(s[best_path].begin(), s[best_path].end() - mipp::nElReg<B>(), V.begin());
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::unpack(mipp::vector<B>& V_N) const
+::_unpack(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() == frozen_bits.size());
+	if (V_N.size() != (unsigned) this->N)
+		throw std::length_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"V_N.size()\" has to be equal to "
+		                        "\"N\".");
 
 	for (unsigned i = 0; i < V_N.size(); i++)
 		V_N[i] = !frozen_bits[i] && V_N[i];

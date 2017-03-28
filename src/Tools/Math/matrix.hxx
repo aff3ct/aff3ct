@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "matrix.h"
 
 namespace aff3ct
@@ -10,9 +12,12 @@ inline void cgemm(const int M, const int N, const int K,
                   const mipp::vector<T> &tB, 
                         mipp::vector<T> &tC)
 {
-	assert( A.size() == unsigned(M * K * 2));
-	assert(tB.size() == unsigned(K * N * 2));
-	assert(tC.size() == unsigned(M * N * 2));
+	if (A.size() != unsigned(M * K * 2))
+		throw std::length_error("aff3ct::tools::cgemm: \"A.size()\" has to be equal to \"M\" * \"K\" * \"2\".");
+	if (tB.size() != unsigned(K * N * 2))
+		throw std::length_error("aff3ct::tools::cgemm: \"tB.size()\" has to be equal to \"K\" * \"N\" * \"2\".");
+	if (tC.size() != unsigned(M * N * 2))
+		throw std::length_error("aff3ct::tools::cgemm: \"A.size()\" has to be equal to \"M\" * \"N\" * \"2\".");
 
 	const T*  A_real =  A.data();
 	const T*  A_imag =  A.data() + ( A.size() >> 1);
@@ -44,9 +49,12 @@ inline void cgemm_r(const int M, const int N, const int K,
                     const mipp::vector<T> &tB, 
                           mipp::vector<T> &tC)
 {
-	assert( A.size() == unsigned(M * K * 2));
-	assert(tB.size() == unsigned(K * N * 2));
-	assert(tC.size() == unsigned(M * N * 1)); // because we only store the real part
+	if (A.size() != unsigned(M * K * 2))
+		throw std::length_error("aff3ct::tools::cgemm_r: \"A.size()\" has to be equal to \"M\" * \"K\" * \"2\".");
+	if (tB.size() != unsigned(K * N * 2))
+		throw std::length_error("aff3ct::tools::cgemm_r: \"tB.size()\" has to be equal to \"K\" * \"N\" * \"2\".");
+	if (tC.size() != unsigned(M * N * 1)) // because we only store the real part
+		throw std::length_error("aff3ct::tools::cgemm_r: \"A.size()\" has to be equal to \"M\" * \"N\" * \"1\".");
 
 	const T*  A_real =  A.data();
 	const T*  A_imag =  A.data() + ( A.size() >> 1);
@@ -72,8 +80,12 @@ inline void complex_transpose(const int M, const int N,
                               const mipp::vector<T> &A,
                                     mipp::vector<T> &B)
 {
-	assert(A.size() == unsigned(M * N * 2));
-	assert(B.size() == unsigned(N * M * 2));
+	if (A.size() != unsigned(M * N * 2))
+		throw std::length_error("aff3ct::tools::complex_transpose: \"A.size()\" has to be equal to "
+		                        "\"M\" * \"N\" * \"2\".");
+	if (B.size() != unsigned(N * M * 2))
+		throw std::length_error("aff3ct::tools::complex_transpose: \"A.size()\" has to be equal to "
+		                        "\"N\" * \"M\" * \"2\".");
 
 	const T* A_real = A.data();
 	const T* A_imag = A.data() + ( A.size() >> 1);

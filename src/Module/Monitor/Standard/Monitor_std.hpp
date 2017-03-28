@@ -31,14 +31,6 @@ public:
 	            const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
-	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
-
-	virtual void check_and_track_errors(const mipp::vector<B>& U,
-	                                    const mipp::vector<B>& V,
-	                                    const mipp::vector<B>& X,
-	                                    const mipp::vector<R>& X_mod,
-	                                    const mipp::vector<R>& Y);
-
 	virtual bool fe_limit_achieved();
 	unsigned get_fe_limit() const;
 
@@ -55,10 +47,19 @@ public:
 	const std::vector<mipp::vector<B>> get_buff_enc  () const;
 	const std::vector<mipp::vector<R>> get_buff_noise() const;
 
+protected:
+	virtual void _check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
+
+	virtual void _check_and_track_errors(const mipp::vector<B>& U,
+	                                     const mipp::vector<B>& V,
+	                                     const mipp::vector<B>& X,
+	                                     const mipp::vector<R>& X_mod,
+	                                     const mipp::vector<R>& Y);
+
 private:
 	void update_n_analyzed_frames();
 	void copy_bad_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size);
-	inline bool check_errors(const B* U, const B* V, const int length);
+	inline bool __check_errors(const B* U, const B* V, const int length);
 };
 }
 }

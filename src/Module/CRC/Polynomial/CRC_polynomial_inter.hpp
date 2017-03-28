@@ -17,9 +17,9 @@ public:
 	                     const std::string name = "CRC_polynomial_inter");
 	virtual ~CRC_polynomial_inter(){};
 
-	virtual bool check(const mipp::vector<B>& V_K, const int n_frames = -1);
-
 protected:
+	virtual bool _check(const mipp::vector<B>& V_K, const int n_frames = -1);
+
 	void _generate_INTER(const mipp::vector<B>& U_in, 
 	                           mipp::vector<B>& U_out, 
 	                     const int off_in, 

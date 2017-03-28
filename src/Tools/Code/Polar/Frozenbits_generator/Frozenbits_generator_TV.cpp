@@ -6,7 +6,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -52,8 +52,8 @@ void Frozenbits_generator_TV<B>
 	DIR *dp;
 	if ((dp = opendir(awgn_codes_dir.c_str())) == nullptr)
 	{
-		std::cerr << bold_red("(EE) Following directory does not exist: ") << bold_red(awgn_codes_dir) << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_TV: the following directory does not exist: "
+		                            "\"" + awgn_codes_dir + "\".");
 	}
 	else
 	{
@@ -71,12 +71,11 @@ void Frozenbits_generator_TV<B>
 			if((ret = mkdir(sub_folder.c_str())) != 0)
 			{
 #else // UNIX like
-			if((ret = mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) != 0)
+			if ((ret = mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) != 0)
 			{
 #endif
-				std::cerr << bold_red("(EE) Error (") << bold_red(std::to_string(ret)) << bold_red(") when creating ")
-				          << bold_red(sub_folder) << std::endl;
-				exit(EXIT_FAILURE);
+				throw std::runtime_error("aff3ct::tools::Frozenbits_generator_TV: impossible to create "
+				                         "\"" + sub_folder + "\".");
 			}
 		}
 		else
@@ -95,28 +94,23 @@ void Frozenbits_generator_TV<B>
 			cmd      += " --log-length=" + str_m;                  // m
 			cmd      += " -f=" + filename;                         // filename
 
-			std::clog << "(II) Generating best channels positions file (\"" << filename << "\")..." << "\r";
+			std::clog << bold_blue("(II) Generating best channels positions file (\"")
+			          << bold_blue(filename)
+			          << bold_blue("\")...") << "\r";
 			fflush(stdout);
 
 			if (system(cmd.c_str()) == 0)
 			{
 				if (!this->load_channels_file(filename))
-				{
-					std::cerr << bold_red("(EE) File does not exist: ") << bold_red(filename)
-					          << std::endl;
-					exit(EXIT_FAILURE);
-				}
+					throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_TV: can't open \"" +
+					                            filename + "\" file.");
 			}
 			else
-			{
-				std::cerr << bold_red("(EE) Following command failed: ") << bold_red(cmd) << std::endl;
-				exit(EXIT_FAILURE);
-			}
+				throw std::runtime_error("aff3ct::tools::Frozenbits_generator_TV: following command failed: \"" +
+				                         cmd + "\".");
 #else
-			std::cerr << bold_red("(EE) File does not exist: ") << bold_red(filename)
-			          << bold_red(", try to use the \"--cde-fb-gen-method GA\" option.")
-			          << std::endl;
-			exit(EXIT_FAILURE);
+			throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_TV: can't open \"" +
+			                            filename + "\" file.");
 #endif
 		}
 	}

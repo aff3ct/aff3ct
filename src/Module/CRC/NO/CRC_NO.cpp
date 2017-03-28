@@ -30,14 +30,14 @@ void CRC_NO<B>
 
 template <typename B>
 bool CRC_NO<B>
-::check(const mipp::vector<B>& V_K, const int n_frames)
+::_check(const mipp::vector<B>& V_K, const int n_frames)
 { 
 	return false; 
 }
 
 template <typename B>
 bool CRC_NO<B>
-::check_packed(const mipp::vector<B>& V_K, const int n_frames)
+::_check_packed(const mipp::vector<B>& V_K, const int n_frames)
 {
 	return false;
 }

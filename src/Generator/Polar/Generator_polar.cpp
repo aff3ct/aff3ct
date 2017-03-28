@@ -1,5 +1,5 @@
 #include <cmath>
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -412,7 +412,9 @@ void Generator_polar
 unsigned long Generator_polar
 ::get_n_generated_nodes(int graph_depth) const
 {
-	assert(graph_depth < m +1);
+	if (graph_depth >= m +1)
+		throw std::runtime_error("aff3ct::generator::Generator_polar: \"graph_depth\" has to be smaller than "
+		                         "\"m\" +1.");
 
 	unsigned long sum_nodes = 0;
 
@@ -430,7 +432,9 @@ unsigned long Generator_polar
 unsigned long Generator_polar
 ::get_n_generated_nodes_by_pattern(std::size_t pattern_hash, int graph_depth) const
 {
-	assert(graph_depth < m +1);
+	if (graph_depth >= m +1)
+		throw std::runtime_error("aff3ct::generator::Generator_polar: \"graph_depth\" has to be smaller than "
+		                         "\"m\" +1.");
 
 	unsigned long sum_nodes = 0;
 

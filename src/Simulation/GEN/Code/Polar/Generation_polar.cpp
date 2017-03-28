@@ -15,6 +15,7 @@
 #include "Tools/params.h"
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 #include "Tools/Code/Polar/nodes_parser.h"
+#include "Tools/Display/bash_tools.h"
 
 #include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
 

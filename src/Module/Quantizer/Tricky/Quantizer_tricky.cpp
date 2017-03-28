@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 #include <cmath>
 
@@ -51,7 +51,9 @@ Quantizer_tricky<R,Q>
   delta_inv((R)0),
   sigma(sigma)
 {
-	assert(sizeof(Q) * 8 >= (unsigned) saturation_pos);
+	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_tricky: \"saturation_pos\" has to be equal or smaller "
+		                            "than \"sizeof(Q)\" * 8.");
 }
 
 namespace aff3ct
@@ -121,7 +123,9 @@ Quantizer_tricky<R,Q>
   delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max)),
   sigma(sigma)
 {
-	assert(sizeof(Q) * 8 >= (unsigned) saturation_pos);	
+	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_tricky: \"saturation_pos\" has to be equal or smaller "
+		                            "than \"sizeof(Q)\" * 8.");
 }
 
 template <typename R, typename Q>
@@ -132,10 +136,8 @@ Quantizer_tricky<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_tricky<R,Q>
-::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::_process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-
 	if (delta_inv == (R)0)
 	{
 		mipp::vector<R> tmp(Y_N1.size());

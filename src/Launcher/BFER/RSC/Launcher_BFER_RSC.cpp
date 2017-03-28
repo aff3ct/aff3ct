@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Simulation/BFER/Code/RSC/Simulation_BFER_RSC.hpp"
 
 #include "Launcher_BFER_RSC.hpp"

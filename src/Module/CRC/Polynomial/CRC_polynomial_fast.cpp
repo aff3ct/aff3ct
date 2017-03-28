@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Algo/Bit_packer.hpp"
@@ -13,7 +13,9 @@ CRC_polynomial_fast<B>
 ::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
 : CRC_polynomial<B>(K, poly_key, size, n_frames, name), lut_crc32(256), polynomial_packed_rev(0)
 {
-	assert(this->size() <= 32);
+	if (this->size() > 32)
+		throw std::length_error("aff3ct::module::CRC_polynomial_fast: \"this->size()\" has to be equal or smaller "
+		                        "than 32.");
 
 	// reverse the order of the bits in the bitpacked polynomial
 	for (auto i = 0; i < (int)sizeof(this->polynomial_packed) * 8; i++)
@@ -38,12 +40,9 @@ void CRC_polynomial_fast<B>
 ::build(mipp::vector<B>& U_K)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
+	                         "little endian CPUs (x86, ARM, ...)");
 #endif
-
-	assert(U_K.size() >  (unsigned)(this->n_frames * this->size()));
-	assert(U_K.size() == (unsigned)(this->n_frames * this->K));
 
 	Bit_packer<B>::pack(U_K, this->buff_crc, this->n_frames);
 
@@ -63,27 +62,24 @@ void CRC_polynomial_fast<B>
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::check(const mipp::vector<B>& V_K, const int n_frames)
+::_check(const mipp::vector<B>& V_K, const int n_frames)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
-	assert(V_K.size() == this->buff_crc.size());
 	Bit_packer<B>::pack(V_K, this->buff_crc, real_n_frames);
-	return this->check_packed(this->buff_crc, n_frames);
+	return this->_check_packed(this->buff_crc, n_frames);
 }
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::check_packed(const mipp::vector<B>& V_K, const int n_frames)
+::_check_packed(const mipp::vector<B>& V_K, const int n_frames)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
+	                         "little endian CPUs (x86, ARM, ...)");
 #endif
 
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-	assert(real_n_frames > 0);
-	assert((int)V_K.size() % real_n_frames == 0);
 
 	const auto crc_size          = this->size();
 	const auto n_bits_per_frame  = (int)((int)V_K.size() / real_n_frames); // number of bits with the CRC bits included
@@ -129,8 +125,8 @@ unsigned CRC_polynomial_fast<B>
 ::compute_crc_v1(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
+	                         "little endian CPUs (x86, ARM, ...)");
 #endif
 
 	unsigned crc = 0;
@@ -167,8 +163,8 @@ unsigned CRC_polynomial_fast<B>
 ::compute_crc_v2(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
+	                         "little endian CPUs (x86, ARM, ...)");
 #endif
 
 	unsigned crc = 0;
@@ -205,8 +201,8 @@ unsigned CRC_polynomial_fast<B>
 ::compute_crc_v3(const void* data, const int n_bits)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-	std::cout << bold_red("(EE) This fast CRC code works only on little endian CPUs (x86, ARM, ...).") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
+	                         "little endian CPUs (x86, ARM, ...)");
 #endif
 
 	unsigned crc = 0;

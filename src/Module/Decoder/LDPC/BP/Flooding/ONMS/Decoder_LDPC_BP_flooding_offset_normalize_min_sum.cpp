@@ -1,6 +1,5 @@
 #include <limits>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
@@ -15,9 +14,10 @@ Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
                                                     const float normalize_factor,
                                                     const float offset,
                                                     const bool enable_syndrome,
+                                                    const int syndrome_depth,
                                                     const int n_frames,
                                                     const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name),
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, syndrome_depth, n_frames, name),
   normalize_factor((R)normalize_factor), offset((R)offset)
 {
 }

@@ -23,17 +23,17 @@ public:
 	              const std::string name = "Encoder_polar");
 	virtual ~Encoder_polar() {}
 
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 	void light_encode(B *bits);
 
 	void set_n_frames(const int n_frames) 
-	{ 
-		assert(n_frames > 0);
+	{
 		Encoder<B>::set_n_frames(n_frames);
 		U_N.resize(this->N * n_frames);
 	}
 
 protected:
+	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+
 	void frame_encode(const mipp::vector<B>& U_N, mipp::vector<B>& X_N, const int &i_frame = 0);
 	void convert(const mipp::vector<B>& U_K, mipp::vector<B>& U_N);
 };

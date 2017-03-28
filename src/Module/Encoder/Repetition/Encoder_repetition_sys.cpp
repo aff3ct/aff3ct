@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -11,14 +11,17 @@ Encoder_repetition_sys<B>
 ::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const std::string name)
 : Encoder_sys<B>(K, N, 1, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
-	assert(N % K == 0); // check if repetition count is consistent
+	if (N % K)
+		throw std::invalid_argument("aff3ct::module::Encoder_repetition_sys: \"K\" has to be a multiple of \"N\".");
 }
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+::_encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 {
-	assert(buffered_encoding);
+	if (!buffered_encoding)
+		throw std::runtime_error("aff3ct::module::Encoder_repetition_sys: the \"_encode_sys\" method works only with "
+		                         "the \"buffered_encoding\" enabled.");
 
 	for (auto f = 0; f < this->n_frames; f++)
 		for (auto i = 0; i < rep_count; i++) // parity bits
@@ -29,7 +32,7 @@ void Encoder_repetition_sys<B>
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
 	for (auto f = 0; f < this->n_frames; f++)
 	{

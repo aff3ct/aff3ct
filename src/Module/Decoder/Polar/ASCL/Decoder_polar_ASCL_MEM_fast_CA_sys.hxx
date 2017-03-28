@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Decoder_polar_ASCL_MEM_fast_CA_sys.hpp"
 
 namespace aff3ct
@@ -12,7 +14,17 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
   sc_decoder                                      (K, N       , frozen_bits,      n_frames, true, name),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
-	assert(L_max > 0);
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_MEM_fast_CA_sys: \"N\" has to be a power "
+		                            "of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_ASCL_MEM_fast_CA_sys: \"frozen_bits.size()\" has to be "
+		                        "equal to \"N\".");
+
+	if (this->L_max <= 0 || !tools::is_power_of_2(this->L_max))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_MEM_fast_CA_sys: \"L_max\" has to be positive "
+		                            "and a power of 2.");
 }
 
 template <typename B, typename R, class API_polar>
@@ -25,14 +37,24 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
   sc_decoder                                      (K, N       , frozen_bits,                                      n_frames, true, name),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
-	assert(L_max > 0);
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_MEM_fast_CA_sys: \"N\" has to be a power "
+		                            "of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_ASCL_MEM_fast_CA_sys: \"frozen_bits.size()\" has to be "
+		                        "equal to \"N\".");
+
+	if (this->L_max <= 0 || !tools::is_power_of_2(this->L_max))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_MEM_fast_CA_sys: \"L_max\" has to be positive "
+		                            "and a power of 2.");
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
-	sc_decoder.load(Y_N);
+	sc_decoder._load(Y_N);
 }
 
 template <typename B, typename R, class API_polar>
@@ -64,7 +86,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 		else // pseudo adaptive mode
 		{
 			this->L = this->L_max;
-			Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::load(sc_decoder.l);
+			Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_load(sc_decoder.l);
 			Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_hard_decode();
 		}
 	}
@@ -72,26 +94,26 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	if (this->L == 1) sc_decoder.                      store(V_K);
-	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::store(V_K);
+	if (this->L == 1) sc_decoder.                          _store(V_K);
+	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_store(V_K);
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::store_fast(mipp::vector<B>& V) const
+::_store_fast(mipp::vector<B>& V) const
 {
-	if (this->L == 1) sc_decoder.                      store_fast(V);
-	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::store_fast(V);
+	if (this->L == 1) sc_decoder.                          _store_fast(V);
+	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_store_fast(V);
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::unpack(mipp::vector<B>& V_N) const
+::_unpack(mipp::vector<B>& V_N) const
 {
-	if (this->L == 1) sc_decoder.                      unpack(V_N);
-	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::unpack(V_N);
+	if (this->L == 1) sc_decoder.                          _unpack(V_N);
+	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_unpack(V_N);
 }
 }
 }

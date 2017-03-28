@@ -2,7 +2,7 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <cassert>
+#include <stdexcept>
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
@@ -50,7 +50,9 @@ Modulator_CPM<B,R,Q,MAX>
   cpe       (n_sy, cpm, this->n_frames          ),
   bcjr      (cpm, n_sy_tl                       )
 {
-	assert(N%bits_per_symbol == 0);
+	if (N % bits_per_symbol)
+		throw std::invalid_argument("aff3ct::module::Modulator_CPM: \"bits_per_symbol\" has to be a multiple of "
+		                            "\"N\".");
 
 	// write the right buffers sizes
 	int* N_mod_writable = const_cast<int*>(&this->N_mod     );
@@ -106,13 +108,10 @@ int Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
-	assert((int)X_N1.size() == this->N     * this->n_frames);
-	assert((int)X_N2.size() == this->N_mod * this->n_frames);
-
 	if (this->n_frames == 1)
-		_modulate(X_N1, X_N2);
+		__modulate(X_N1, X_N2);
 	else // more than 1 frame
 	{
 		mipp::vector<B> X_N1_tmp(this->N    );
@@ -123,7 +122,7 @@ void Modulator_CPM<B,R,Q,MAX>
 			          X_N1.begin() + (f +1) * this->N,
 			          X_N1_tmp.begin());
 
-			_modulate(X_N1_tmp, X_N2_tmp);
+			__modulate(X_N1_tmp, X_N2_tmp);
 
 			std::copy(X_N2_tmp.begin(), X_N2_tmp.end(), X_N2.begin() + f * this->N_mod);
 		}
@@ -132,11 +131,8 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::__modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
-	assert((int)X_N1.size() == this->N    );
-	assert((int)X_N2.size() == this->N_mod);
-
 	// mapper
 	mipp::vector<SIN> mapped_frame(n_sy);
 
@@ -163,13 +159,10 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+::_filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 {
-	assert((int)Y_N1.size() == this->N_mod * this->n_frames);
-	assert((int)Y_N2.size() == this->N_fil * this->n_frames);
-
 	if (this->n_frames == 1)
-		_filter(Y_N1, Y_N2);
+		__filter(Y_N1, Y_N2);
 	else // more than 1 frame
 	{
 		mipp::vector<R> Y_N1_tmp(this->N_mod);
@@ -181,7 +174,7 @@ void Modulator_CPM<B,R,Q,MAX>
 			          Y_N1.begin() + (f +1) * this->N_mod,
 			          Y_N1_tmp.begin());
 
-			_filter(Y_N1_tmp, Y_N2_tmp);
+			__filter(Y_N1_tmp, Y_N2_tmp);
 
 			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * this->N_fil);
 		}
@@ -190,11 +183,8 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+::__filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 {
-	assert((int)Y_N1.size() == this->N_mod);
-	assert((int)Y_N2.size() == this->N_fil);
-
 	const auto Y_real = Y_N1.data();
 	const auto Y_imag = Y_N1.data() + (Y_N1.size() >> 1);
 	const auto p_real = projection.data();
@@ -214,11 +204,8 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert((int)Y_N1.size() == this->N_fil * this->n_frames);
-	assert((int)Y_N2.size() == this->N     * this->n_frames);
-
 	if (this->n_frames == 1)
 		bcjr.decode(Y_N1, Y_N2);
 	else // more than 1 frame
@@ -241,12 +228,8 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	assert((int)Y_N1.size() == this->n_frames * this->N_fil);
-	assert((int)Y_N2.size() == this->n_frames * this->N    );
-	assert((int)Y_N3.size() == this->n_frames * this->N    );
-
 	if (this->n_frames == 1)
 		bcjr.decode(Y_N1, Y_N2, Y_N3);
 	else
@@ -277,7 +260,10 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::generate_baseband()
 {
-	assert((int)baseband.size() == (cpm.max_wa_id*cpm.s_factor*2));
+	if ((int)baseband.size() != (cpm.max_wa_id * cpm.s_factor * 2))
+		throw std::length_error("aff3ct::module::Modulator_CPM: \"baseband.size()\" has to be equal to "
+		                        "\"cpm.max_wa_id\" * \"cpm.s_factor\" * 2");
+
 	mipp::vector<R> phase_response(cpm.L*cpm.s_factor);
 
 	// calculate the different phase responses
@@ -356,8 +342,7 @@ R Modulator_CPM<B,R,Q,MAX>
 		return t_stamp / ((R)2.0 * cpm.L);
 	else
 	{
-		std::cerr << tools::bold_red("(EE) Unknown CPM wave shape") << std::endl;
-		exit(-1);
+		throw std::runtime_error("aff3ct::module::Modulator_CPM: unknown CPM wave shape.");
 	}
 }
 
@@ -365,7 +350,9 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
 ::generate_projection()
 {
-	assert(projection.size() == baseband.size());
+	if (projection.size() != baseband.size())
+		throw std::length_error("aff3ct::module::Modulator_CPM: \"projection.size()\" and \"baseband.size()\" have "
+		                        "to be equal.");
 
 	R factor = (R)1;
 
@@ -384,8 +371,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	//}
 	else
 	{
-		std::cerr << tools::bold_red("(EE) Unknown CPM filter bank type") << std::endl;
-		exit(-1);
+		throw std::runtime_error("aff3ct::module::Modulator_CPM: unknown CPM filter bank type.");
 	}
 }
 }

@@ -1,7 +1,7 @@
 #ifndef PATTERN_POLAR_RATE_0_LEFT_HPP_
 #define PATTERN_POLAR_RATE_0_LEFT_HPP_
 
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -23,14 +23,18 @@ protected:
 	                      const int min_level = 1, const int max_level = -1)
 	: Pattern_polar_i(N, node, min_level, max_level)
 	{
-		assert(min_level >= 1);
+		if (min_level < 1)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar_r0_left: \"min_level\" has to be "
+			                            "equal or greater than 1.");
 	}
 
 public:
 	Pattern_polar_r0_left(const int min_level = 1, const int max_level = -1)
 	: Pattern_polar_i(min_level, max_level)
 	{
-		assert(min_level >= 1);
+		if (min_level < 1)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar_r0_left: \"min_level\" has to be "
+			                            "equal or greater than 1.");
 	}
 
 	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
@@ -54,7 +58,8 @@ public:
 	{
 		const Pattern_polar_i *pattern_left = node_curr->get_left()->get_contents();
 
-		assert(pattern_left != nullptr);
+		if (pattern_left == nullptr)
+			throw std::runtime_error("aff3ct::module::Pattern_polar_r0_left: \"pattern_left\" can't be null.");
 
 		int match_val = 0;
 

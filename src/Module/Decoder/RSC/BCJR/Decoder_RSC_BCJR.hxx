@@ -1,10 +1,10 @@
-#include "Decoder_RSC_BCJR.hpp"
-
 #include <limits>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
+
+#include "Decoder_RSC_BCJR.hpp"
 
 namespace aff3ct
 {
@@ -28,7 +28,9 @@ Decoder_RSC_BCJR<B,R>
   ext( K       * simd_inter_frame_level + mipp::nElReg<R>()),
   s  ( K       * simd_inter_frame_level + mipp::nElReg<B>())
 {
-	assert(tools::is_power_of_2(n_states));
+	if (!tools::is_power_of_2(n_states))
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR: \"n_states\" has to be a power of 2.");
+
 }
 
 template <typename B, typename R>
@@ -39,7 +41,7 @@ Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	if (buffered_encoding)
 	{
@@ -117,7 +119,7 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	if (this->get_simd_inter_frame_level() == 1)
 	{
@@ -138,8 +140,8 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	std::cerr << tools::bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR: this decoder does not support the "
+	                         "\"_soft_decode\" interface.");
 }
 }
 }

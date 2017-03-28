@@ -139,6 +139,7 @@ struct decoder_parameters
 	int         n_ite;
 	int         L;
 	bool        self_corrected;
+	int         syndrome_depth;
 };
 
 struct monitor_parameters

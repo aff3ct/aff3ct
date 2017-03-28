@@ -31,7 +31,8 @@ public:
 	                   const std::string name = "Quantizer_standard");
 	virtual ~Quantizer_standard();
 
-	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
+protected:
+	void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
 }
 }

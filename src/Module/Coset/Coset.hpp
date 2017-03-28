@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -46,6 +47,8 @@ public:
 	Coset_i(const int size, const int n_frames = 1, const std::string name = "Coset_i")
 	: Module(n_frames, name), size(size)
 	{
+		if (size <= 0)
+			throw std::invalid_argument("aff3ct::module::Coset: \"size\" has to be greater than 0.");
 	}
 
 	/*!
@@ -64,7 +67,26 @@ public:
 	 * \param in_data:  the input data to apply the coset on.
 	 * \param out_data: the output data after the coset application.
 	 */
-	virtual void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data) = 0;
+	void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data)
+	{
+		if (ref.size() != in_data.size() || in_data.size() != out_data.size())
+			throw std::length_error("aff3ct::module::Coset: \"ref.size()\" has to be equal to \"in_data.size()\" and "
+			                        "\"out_data.size()\".");
+		if (this->size * this->n_frames != (int)ref.size())
+			throw std::length_error("aff3ct::module::Coset: \"ref.size()\" has to be equal to "
+			                        "\"size\" * \"n_frames\".");
+		if (this->size * this->n_frames != (int)in_data.size())
+			throw std::length_error("aff3ct::module::Coset: \"in_data.size()\" has to be equal to "
+			                        "\"size\" * \"n_frames\".");
+		if (this->size * this->n_frames != (int)out_data.size())
+			throw std::length_error("aff3ct::module::Coset: \"out_data.size()\" has to be equal to "
+			                        "\"size\" * \"n_frames\".");
+
+		this->_apply(ref, in_data, out_data);
+	}
+
+protected:
+	virtual void _apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data) = 0;
 };
 }
 }
