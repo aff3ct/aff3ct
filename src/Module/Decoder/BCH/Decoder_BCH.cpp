@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Decoder_BCH.hpp"
 
 using namespace aff3ct::module;
@@ -10,8 +12,8 @@ Decoder_BCH<B, R>
   elp(N+2), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), m(m), t(t), d(2*t+1), alpha_to(N+1),
   index_of(N+1), YH_N(N), V_K(K)
 {
-	assert(K <= N);
-	assert(K > 3);
+	if (K <= 3)
+		throw std::invalid_argument("aff3ct::module::Decoder_BCH: \"K\" has to be greater than 3.");
 
 	alpha_to = GF.alpha_to;
 	index_of = GF.index_of;
@@ -29,7 +31,7 @@ Decoder_BCH<B, R>
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	for (int j = 0; j < this->N; j++)
 		this->YH_N[j] = (Y_N[j] > 0)? 0 : 1; // hard decision on the input
@@ -205,7 +207,7 @@ void Decoder_BCH<B, R>
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	V_K = this->V_K;
 }

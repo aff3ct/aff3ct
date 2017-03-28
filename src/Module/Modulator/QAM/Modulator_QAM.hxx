@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <cmath>
 #include <complex>
 #include <limits>
@@ -27,6 +27,9 @@ Modulator_QAM<B,R,Q,MAX>
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)
 {
+	if (this->bits_per_symbol % 2)
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: \"bits_per_symbol\" has to be a multiple of 2.");
+
 	mipp::vector<B> bits(this->bits_per_symbol);
 
 	for (auto j = 0; j < this->nbr_symbols; j++)
@@ -53,7 +56,6 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 int Modulator_QAM<B,R,Q,MAX>
 ::get_buffer_size_after_modulation(const int N)
 {
-	assert(this->bits_per_symbol % 2 == 0);
 	return (int)std::ceil((float)N / (float)this->bits_per_symbol) * 2;
 }
 
@@ -83,7 +85,7 @@ std::complex<R> Modulator_QAM<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
 	auto size_in  = (int)X_N1.size();
 	auto size_out = (int)X_N2.size();
@@ -123,10 +125,13 @@ void Modulator_QAM<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
 	
 	auto size       = (int)Y_N2.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
@@ -157,10 +162,13 @@ void Modulator_QAM<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+::_demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
 
 	auto size       = (int)Y_N2.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
@@ -191,10 +199,13 @@ void Modulator_QAM<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
 
 	auto size       = (int)Y_N3.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
@@ -231,11 +242,14 @@ void Modulator_QAM<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_QAM<B,R,Q,MAX>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
-                              mipp::vector<Q>& Y_N3)
+::_demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
+                               mipp::vector<Q>& Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
 
 	auto size       = (int)Y_N3.size();
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);

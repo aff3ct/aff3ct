@@ -2,12 +2,9 @@
 #include <chrono>
 #include <vector>
 #include <string>
-#include <cassert>
 #include <utility>
 #include <cstdlib>
 #include <algorithm>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
@@ -23,7 +20,6 @@ Simulation_BFER_RSC<B,R,Q,QD>
 ::Simulation_BFER_RSC(const parameters& params)
 :  Simulation_BFER<B,R,Q>(params)
 {
-	assert(params.code.N / params.code.K == 2);
 }
 
 template <typename B, typename R, typename Q, typename QD>

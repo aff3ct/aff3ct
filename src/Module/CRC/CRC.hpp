@@ -10,6 +10,8 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
+
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -44,6 +46,8 @@ public:
 	CRC_i(const int K, const int n_frames = 1, const std::string name = "CRC_i")
 	: Module(n_frames, name), K(K)
 	{
+		if (K <= 0)
+			throw std::invalid_argument("aff3ct::module::CRC: \"K\" has to be greater than 0.");
 	}
 
 	/*!
@@ -78,7 +82,21 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
-	virtual bool check(const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
+	bool check(const mipp::vector<B>& V_K, const int n_frames = -1)
+	{
+		if (this->K * n_frames > (int)V_K.size() || this->K * this->n_frames > (int)V_K.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal or greater than "
+			                        "\"K\" * \"n_frames\".");
+
+		if (n_frames <= 0 && n_frames != -1)
+			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
+			                            "to -1).");
+
+		return this->_check(V_K, n_frames);
+	}
+
+protected:
+	virtual bool _check(const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
 };
 }
 }

@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
@@ -38,7 +37,11 @@ Simulation_BFER_polar<B,R,Q>
 		Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");
 	}
 	else
-		assert(this->params.code.N == this->params.code.N_code);
+	{
+		if (this->params.code.N != this->params.code.N_code)
+			throw std::invalid_argument("aff3ct::simulation::Simulation_BFER_polar: \"params.code.N\" has to be equal "
+			                            "to \"params.code.N_code\".");
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -59,7 +62,7 @@ void Simulation_BFER_polar<B,R,Q>
 			fb_generator->generate(frozen_bits);
 			if (this->params.code.N != this->params.code.N_code)
 			{
-				Puncturer_polar_wangliu<B,Q> punct(this->params.code.N, this->params.code.K, *fb_generator);
+				Puncturer_polar_wangliu<B,Q> punct(this->params.code.K, this->params.code.N, *fb_generator);
 				punct.gen_frozen_bits(frozen_bits);
 			}
 		}
@@ -80,7 +83,7 @@ void Simulation_BFER_polar<B,R,Q>
 
 		if (this->params.code.N != this->params.code.N_code)
 		{
-			Puncturer_polar_wangliu<B,Q> punct(this->params.code.N, this->params.code.K, *fb_generator);
+			Puncturer_polar_wangliu<B,Q> punct(this->params.code.K, this->params.code.N, *fb_generator);
 			punct.gen_frozen_bits(frozen_bits);
 		}
 	}

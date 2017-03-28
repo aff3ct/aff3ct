@@ -1,5 +1,5 @@
 #include <cmath>
-#include <cassert>
+#include <stdexcept>
 
 #include "Reorderer.hpp"
 
@@ -139,7 +139,8 @@ template <typename T, int N_FRAMES>
 void Reorderer_static<T,N_FRAMES>
 ::apply(const std::vector<const T*> in_data, T* out_data, const int data_length)
 {
-	assert(in_data.size() == N_FRAMES);
+	if (in_data.size() != N_FRAMES)
+		throw std::length_error("aff3ct::tools::Reorderer_static: \"in_data.size()\" has to be equal to \"N_FRAMES\".");
 
 	constexpr int n_fra = N_FRAMES;
 
@@ -367,7 +368,8 @@ template <typename T, int N_FRAMES>
 void Reorderer_static<T,N_FRAMES>
 ::apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length)
 {
-	assert(out_data.size() == N_FRAMES);
+	if (out_data.size() != N_FRAMES)
+		throw std::length_error("aff3ct::tools::Reorderer_static: \"out_data.size()\" has to be equal to \"N_FRAMES\".");
 
 	constexpr int n_fra   = N_FRAMES;
 	constexpr int n_fra_2 = N_FRAMES / 2;

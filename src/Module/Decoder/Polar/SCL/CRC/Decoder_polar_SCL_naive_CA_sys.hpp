@@ -1,6 +1,8 @@
 #ifndef DECODER_POLAR_SCL_NAIVE_CA_SYS_
 #define DECODER_POLAR_SCL_NAIVE_CA_SYS_
 
+#include "Decoder_polar_SCL_naive_CA.hpp"
+
 namespace aff3ct
 {
 namespace module
@@ -18,7 +20,7 @@ public:
 
 protected:
 	virtual void select_best_path();
-	virtual void store (mipp::vector<B>& V_K      ) const;
+	virtual void _store(mipp::vector<B>& V_K) const;
 };
 }
 }

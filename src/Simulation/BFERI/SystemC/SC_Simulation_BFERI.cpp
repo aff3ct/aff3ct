@@ -5,10 +5,9 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Factory/Factory_terminal.hpp"
 #include "Tools/Algo/Predicate_ite.hpp"
 
@@ -32,24 +31,15 @@ Simulation_BFERI<B,R,Q>
   dbg_R      {nullptr, nullptr, nullptr},
   dbg_Q      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}
 {
-	if (params.simulation.n_threads > 1)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support multi-threading... Exiting.") << std::endl;
-		std::exit(-1);
-	}
-
+	if (this->params.simulation.n_threads > 1)
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: SystemC simulation does not support "
+		                            "multi-threading.");
 	if (params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: SystemC simulation does not support "
+		                            "the bench mode.");
 	if (params.interleaver.uniform)
-	{
-		std::cerr << bold_red("(EE) SystemC simulation does not support the uniform interleaver mode... Exiting")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: SystemC simulation does not support "
+		                            "the uniform interleaver mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
@@ -73,7 +63,7 @@ void Simulation_BFERI<B,R,Q>
 	// launch the simulation
 	this->launch_simulation();
 
-	if (!this->params.terminal.disabled && !this->params.simulation.benchs)
+	if (!this->params.terminal.disabled && terminal != nullptr)
 		terminal->final_report(std::cout);
 }
 
@@ -92,13 +82,15 @@ void Simulation_BFERI<B,R,Q>
 	Simulation_BFERI_i<B,R,Q>::build_communication_chain(this);
 
 	// build the objects
-	this->interleaver_e  = this->build_interleaver(); Simulation::check_errors(this->interleaver_e , "Interleaver<int>");
-	this->coset_real_i   = this->build_coset_real (); Simulation::check_errors(this->coset_real_i  , "Coset<B,Q>"      );
+	this->interleaver_e = this->build_interleaver(); Simulation::check_errors(this->interleaver_e, "Interleaver<int>");
+	this->coset_real_i  = this->build_coset_real (); Simulation::check_errors(this->coset_real_i , "Coset<B,Q>"      );
 
 	this->interleaver_e->rename("Interleaver_e");
 	this->coset_real_i ->rename("Coset_real_i" );
 
-	assert(*this->interleaver[0] == *this->interleaver_e);
+	if (*this->interleaver[0] != *this->interleaver_e)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFERI: \"interleaver[0]\" and \"interleaver_e\" "
+		                         "have to be equal.");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source     [0]->create_sc_module              ();
@@ -137,112 +129,146 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::launch_simulation()
 {
-	this->build_communication_chain();
-
-	if ((!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
-	    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) && !this->params.simulation.benchs))
-		this->terminal->legend(std::cout);
-
-	Predicate_ite p(this->params.demodulator.n_ite);
-
-	this->duplicator[0] = new SC_Duplicator(   "Duplicator0");
-	this->duplicator[1] = new SC_Duplicator(   "Duplicator1");
-	if (this->params.code.coset)
+	try
 	{
-		this->duplicator[2] = new SC_Duplicator("Duplicator2");
-		this->duplicator[3] = new SC_Duplicator("Duplicator3");
-		this->duplicator[4] = new SC_Duplicator("Duplicator4");
-	}
-	this->router        = new SC_Router    (p, "Router"     );
-	this->predicate     = new SC_Predicate (p, "Predicate"  );
+		this->build_communication_chain();
 
-	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
-	{
-		const auto dl = this->params.simulation.debug_limit;
+		if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min &&
+		    !(this->params.simulation.debug && this->params.simulation.n_threads == 1) &&
+		    !this->params.simulation.benchs)
+			this->terminal->legend(std::cout);
 
-		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
-		this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
-		this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", dl, "Debug_B2");
-		this->dbg_B[3] = new SC_Debug<B>("Interleave X_N1 in X_N2...                \nX_N2:\n", dl, "Debug_B3");
-		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
-		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
-		this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
-		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N2 to Y_N3...\nY_N3:\n", dl, "Debug_Q0");
-		this->dbg_Q[1] = new SC_Debug<Q>("Demodulate from Y_N3 and Y_N7 to Y_N4...  \nY_N4:\n", dl, "Debug_Q1");
-		this->dbg_Q[2] = new SC_Debug<Q>("Deinterleave from Y_N4 to Y_N5...         \nY_N5:\n", dl, "Debug_Q2");
-		this->dbg_Q[3] = new SC_Debug<Q>("Soft decode from Y_N5 to Y_N6...          \nY_N6:\n", dl, "Debug_Q3");
-		this->dbg_Q[4] = new SC_Debug<Q>("Interleave from Y_N6 to Y_N7...           \nY_N7:\n", dl, "Debug_Q4");
-		this->dbg_B[4] = new SC_Debug<B>("Hard decode Y_N5 and generate V_K...      \nV_K: \n", dl, "Debug_B4");
+		Predicate_ite p(this->params.demodulator.n_ite);
 
+		this->duplicator[0] = new SC_Duplicator(   "Duplicator0");
+		this->duplicator[1] = new SC_Duplicator(   "Duplicator1");
 		if (this->params.code.coset)
 		{
-			this->dbg_Q[5] = new SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q5");
-			this->dbg_Q[6] = new SC_Debug<Q>("Reverse the coset on Y_N6...              \nY_N6:\n", dl, "Debug_Q6");
-			this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
+			this->duplicator[2] = new SC_Duplicator("Duplicator2");
+			this->duplicator[3] = new SC_Duplicator("Duplicator3");
+			this->duplicator[4] = new SC_Duplicator("Duplicator4");
 		}
-		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
-			this->dbg_R[3] = new SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R3");
+		this->router        = new SC_Router    (p, "Router"     );
+		this->predicate     = new SC_Predicate (p, "Predicate"  );
 
-		this->bind_sockets_debug();
-		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
-		sc_core::sc_start(); // start simulation
-		this->terminal->legend(std::cout);
+		if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
+		{
+			const auto dl = this->params.simulation.debug_limit;
 
-		for (auto i = 0; i < 6; i++)
-			if (this->dbg_B[i] != nullptr)
+			this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
+			this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
+			this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", dl, "Debug_B2");
+			this->dbg_B[3] = new SC_Debug<B>("Interleave X_N1 in X_N2...                \nX_N2:\n", dl, "Debug_B3");
+			this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
+			this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
+			this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
+			this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N2 to Y_N3...\nY_N3:\n", dl, "Debug_Q0");
+			this->dbg_Q[1] = new SC_Debug<Q>("Demodulate from Y_N3 and Y_N7 to Y_N4...  \nY_N4:\n", dl, "Debug_Q1");
+			this->dbg_Q[2] = new SC_Debug<Q>("Deinterleave from Y_N4 to Y_N5...         \nY_N5:\n", dl, "Debug_Q2");
+			this->dbg_Q[3] = new SC_Debug<Q>("Soft decode from Y_N5 to Y_N6...          \nY_N6:\n", dl, "Debug_Q3");
+			this->dbg_Q[4] = new SC_Debug<Q>("Interleave from Y_N6 to Y_N7...           \nY_N7:\n", dl, "Debug_Q4");
+			this->dbg_B[4] = new SC_Debug<B>("Hard decode Y_N5 and generate V_K...      \nV_K: \n", dl, "Debug_B4");
+
+			if (this->params.code.coset)
 			{
-				delete this->dbg_B[i];
-				this->dbg_B[i] = nullptr;
+				this->dbg_Q[5] = new SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q5");
+				this->dbg_Q[6] = new SC_Debug<Q>("Reverse the coset on Y_N6...              \nY_N6:\n", dl, "Debug_Q6");
+				this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
+			}
+			if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+				this->dbg_R[3] = new SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R3");
+
+			try
+			{
+				this->bind_sockets_debug();
+				sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
+				sc_core::sc_start(); // start simulation
+				this->terminal->legend(std::cout);
+			}
+			catch (std::exception const& e)
+			{
+				Monitor<B,R>::stop();
+
+				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+				          << std::endl
+				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 			}
 
-		for (auto i = 0; i < 4; i++)
-			if (this->dbg_R[i] != nullptr)
+			for (auto i = 0; i < 6; i++)
+				if (this->dbg_B[i] != nullptr)
+				{
+					delete this->dbg_B[i];
+					this->dbg_B[i] = nullptr;
+				}
+
+			for (auto i = 0; i < 4; i++)
+				if (this->dbg_R[i] != nullptr)
+				{
+					delete this->dbg_R[i];
+					this->dbg_R[i] = nullptr;
+				}
+
+			for (auto i = 0; i < 7; i++)
+				if (this->dbg_Q[i] != nullptr)
+				{
+					delete this->dbg_Q[i];
+					this->dbg_Q[i] = nullptr;
+				}
+		}
+		else
+		{
+			std::thread term_thread;
+			if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+				// launch a thread dedicated to the terminal display
+				term_thread = std::thread(Simulation_BFERI<B,R,Q>::terminal_temp_report, this);
+
+			try
 			{
-				delete this->dbg_R[i];
-				this->dbg_R[i] = nullptr;
+				this->bind_sockets();
+				sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
+				sc_core::sc_start(); // start simulation
+			}
+			catch (std::exception const& e)
+			{
+				Monitor<B,R>::stop();
+
+				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+				          << std::endl
+				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 			}
 
-		for (auto i = 0; i < 7; i++)
-			if (this->dbg_Q[i] != nullptr)
+			if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
 			{
-				delete this->dbg_Q[i];
-				this->dbg_Q[i] = nullptr;
+				cond_terminal.notify_all();
+				// wait the terminal thread to finish
+				term_thread.join();
 			}
+		}
+
+		for (auto i = 0; i < 5; i++)
+			if (this->duplicator[i] != nullptr)
+			{
+				delete this->duplicator[i];
+				this->duplicator[i] = nullptr;
+			}
+
+		delete this->router;      this->router      = nullptr;
+		delete this->predicate;   this->predicate   = nullptr;
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STD! /!\ //
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		sc_core::sc_curr_simcontext = new sc_core::sc_simcontext();
+		sc_core::sc_default_global_context = sc_core::sc_curr_simcontext;
 	}
-	else
+	catch (std::exception const& e)
 	{
-		std::thread term_thread;
-		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
-			// launch a thread dedicated to the terminal display
-			term_thread = std::thread(Simulation_BFERI<B,R,Q>::terminal_temp_report, this);
+		Monitor<B,R>::stop();
 
-		this->bind_sockets();
-		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
-		sc_core::sc_start(); // start simulation
-
-		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
-		{
-			cond_terminal.notify_all();
-			// wait the terminal thread to finish
-			term_thread.join();
-		}
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+		          << bold_red("communication chain.") << std::endl
+		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 	}
-
-	for (auto i = 0; i < 5; i++)
-		if (this->duplicator[i] != nullptr)
-		{
-			delete this->duplicator[i];
-			this->duplicator[i] = nullptr;
-		}
-
-	delete this->router;      this->router      = nullptr;
-	delete this->predicate;   this->predicate   = nullptr;
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// /!\ VERY DIRTY WAY TO CREATE A NEW SIMULATION CONTEXT IN SYSTEMC, BE CAREFUL THIS IS NOT IN THE STANDARD! /!\ //
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	sc_core::sc_curr_simcontext = new sc_core::sc_simcontext();
-	sc_core::sc_default_global_context = sc_core::sc_curr_simcontext;
 }
 
 template <typename B, typename R, typename Q>

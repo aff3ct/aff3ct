@@ -28,7 +28,9 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
-	assert(sys.size() + par.size() == (unsigned)this->N);
+	if (sys.size() + par.size() != (unsigned)this->N)
+		throw std::length_error("aff3ct::module::Decoder_polar_SCAN_naive_sys: \"sys.size()\" + \"par.size()\" "
+		                        "should be equal to \"N\".");
 
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->load_init();
@@ -54,7 +56,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::store(mipp::vector<B>& V_N) const
+::_store(mipp::vector<B>& V_N) const
 {
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
@@ -70,8 +72,8 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	std::cerr << tools::bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Decoder_polar_SCAN_naive_sys: this decoder does not support the "
+	                         "\"soft_decode\" interface.");
 }
 }
 }

@@ -23,8 +23,9 @@ public:
 	                       const std::string name = "Encoder_repetition_sys");
 	virtual ~Encoder_repetition_sys() {}
 
-	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
-	virtual void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	virtual void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
+	virtual void _encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
 }
 }

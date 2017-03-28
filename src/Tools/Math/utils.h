@@ -1,6 +1,7 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
+#include <stdexcept>
 #include <algorithm>
 #include <limits>
 
@@ -61,8 +62,10 @@ B sgn(R val) { return (B)((R(0) < val) - (val < R(0))); }
 template<typename R, typename function_type>
 inline R integral(function_type func, const R min, const R max, const int number_steps)
 {
-	assert(         max >= min);
-	assert(number_steps != 0  );
+	if (max < min)
+		throw std::invalid_argument("aff3ct::tools::integral: \"max\" has to be equal or greater than min.");
+	if (number_steps <= 0)
+		throw std::invalid_argument("aff3ct::tools::integral: \"number_steps\" has to be greater than 0.");
 
 	R step = (max - min) / number_steps; // width of rectangle
 	R area = (R)0;

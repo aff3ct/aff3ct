@@ -27,10 +27,11 @@ public:
 
 	virtual ~Encoder_BCH() {}
 
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 
 private:
-	void _encode(const B* U_K, B* X_N);
+	void __encode(const B* U_K, B* X_N);
 };
 }
 }

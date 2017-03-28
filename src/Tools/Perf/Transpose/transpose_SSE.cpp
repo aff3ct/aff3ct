@@ -1,6 +1,6 @@
 #ifdef __SSE4_1__
 
-#include <cassert>
+#include <stdexcept>
 
 #include "transpose_SSE.h"
 
@@ -51,7 +51,8 @@ void sse_itrans_float(float *A, float *B, int n)
 
 void uchar_transpose_sse(const __m128i *src, __m128i *dst, int n)
 {
-	assert((n % 16) == 0);
+	if (n % 16)
+		throw std::invalid_argument("aff3ct::tools::uchar_transpose_sse: \"n\" has to be divisible by 16.");
 
 	const int N = n /16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	__m128i *p_input = const_cast<__m128i*>(src);
@@ -181,7 +182,8 @@ void uchar_transpose_sse(const __m128i *src, __m128i *dst, int n)
 
 void uchar_itranspose_sse(const __m128i *src, __m128i *dst, int n)
 {
-	assert((n % 16) == 0);
+	if (n % 16)
+		throw std::invalid_argument("aff3ct::tools::uchar_itranspose_sse: \"n\" has to be divisible by 16.");
 
 	const int N = n /16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	__m128i *p_input  = const_cast<__m128i*>(src);

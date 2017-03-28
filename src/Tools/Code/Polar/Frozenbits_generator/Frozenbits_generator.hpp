@@ -8,7 +8,7 @@
 #ifndef FROZENBITS_GENERATOR_HPP_
 #define FROZENBITS_GENERATOR_HPP_
 
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -63,7 +63,9 @@ public:
 	 */
 	void generate(mipp::vector<B> &frozen_bits)
 	{
-		assert(frozen_bits.size() == (unsigned)N);
+		if (frozen_bits.size() != (unsigned)N)
+			throw std::length_error("aff3ct::tools::Frozenbits_generator: \"frozen_bits.size()\" has to be equal to "
+			                        "\"N\".");
 
 		this->evaluate();
 

@@ -2,8 +2,7 @@
 #include <cmath>     // min(), fabs(), copysign()...
 #include <algorithm> // min()
 #include <chrono>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "decoder_polar_functions.h"
 
@@ -14,8 +13,7 @@ namespace module
 template <typename R>
 inline R f_LR(const R& lambda_a, const R& lambda_b)
 {
-	std::cerr << tools::bold_red("(EE) f_LR work only on 64bit data, exiting.") << std::endl;
-	exit(EXIT_FAILURE);
+	throw std::runtime_error("aff3ct::module::f_LR: work only on 64bit data.");
 }
 
 template <>
@@ -105,8 +103,7 @@ inline mipp::reg f_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda_
 template <typename B, typename R>
 inline R g_LR(const R& lambda_a, const R& lambda_b, const B& u)
 {
-	std::cerr << tools::bold_red("(EE) f_LR work only on 64bit data, exiting.") << std::endl;
-	exit(EXIT_FAILURE);
+	throw std::runtime_error("aff3ct::module::f_LR: work only on 64bit data.");
 }
 
 template <>
@@ -153,8 +150,7 @@ inline mipp::reg g_LLR_i(const mipp::reg& r_lambda_a, const mipp::reg& r_lambda_
 template <typename R>
 inline R g0_LR(const R& lambda_a, const R& lambda_b)
 {
-	std::cerr << tools::bold_red("(EE) f_LR work only on 64bit data, exiting.") << std::endl;
-	exit(EXIT_FAILURE);
+	throw std::runtime_error("aff3ct::module::f_LR: work only on 64bit data.");
 }
 
 template <>

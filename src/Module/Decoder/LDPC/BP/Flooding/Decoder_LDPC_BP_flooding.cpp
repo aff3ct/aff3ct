@@ -1,6 +1,6 @@
 #include <limits>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding.hpp"
@@ -15,6 +15,7 @@ Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
                            const AList_reader &alist_data,
                            const bool enable_syndrome,
+                           const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
 : Decoder_SISO<B,R>      (K, N, n_frames, 1, name                      ),
@@ -24,6 +25,7 @@ Decoder_LDPC_BP_flooding<B,R>
   n_C_nodes              ((int)alist_data.get_n_CN()                   ),
   n_branches             ((int)alist_data.get_n_branches()             ),
   enable_syndrome        (enable_syndrome                              ),
+  syndrome_depth         (syndrome_depth                               ),
   init_flag              (false                                        ),
 
   n_variables_per_parity (alist_data.get_n_VN_per_CN()                 ),
@@ -36,9 +38,14 @@ Decoder_LDPC_BP_flooding<B,R>
   C_to_V                 (n_frames, mipp::vector<R>(this->n_branches, 0)),
   V_to_C                 (n_frames, mipp::vector<R>(this->n_branches, 0))
 {
-	assert(N == (int)alist_data.get_n_VN());
-//	assert(K == N - (int)alist_data.get_n_CN());
-	assert(n_ite > 0);
+	if (n_ite <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"n_ite\" has to be greater than 0.");
+	if (syndrome_depth <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"syndrome_depth\" has to be greater "
+		                            "than 0.");
+	if (N != (int)alist_data.get_n_VN())
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"N\" is not compatible with the alist "
+		                            "file.");
 }
 
 template <typename B, typename R>
@@ -51,17 +58,14 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
 {
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding: this decoder does not support the "
+	                         "\"soft_decode\" interface.");
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-	assert(Y_N1.size() >= this->Y_N.size());
-
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -85,9 +89,8 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() >= this->Y_N.size());
 	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
 }
 
@@ -120,9 +123,8 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= this->V_K.size());
 	std::copy(this->V_K.begin(), this->V_K.end(), V_K.begin());
 }
 
@@ -131,6 +133,8 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
 ::BP_decode(const mipp::vector<R> &Y_N)
 {
+	auto cur_syndrome_depth = 0;
+
 	// actual decoding
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
@@ -142,7 +146,13 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 		// stop criterion
 		if (this->enable_syndrome && syndrome)
-			break;
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
 
 	// begining of the iteration upon all the matrix lines

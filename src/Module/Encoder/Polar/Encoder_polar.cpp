@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -12,17 +12,15 @@ Encoder_polar<B>
                 const std::string name)
 : Encoder<B>(K, N, n_frames, name), m((int)std::log2(N)), frozen_bits(frozen_bits), U_N(N * n_frames)
 {
-	assert(frozen_bits.size() == (unsigned) N);
-	assert(this->n_frames > 0);
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Encoder_polar: \"frozen_bits.size()\" has to be equal to "
+		                        "\"N\".");
 }
 
 template <typename B>
 void Encoder_polar<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-
 	this->convert(U_K, U_N);
 	for (auto i_frame = 0; i_frame < this->n_frames; i_frame++)
 		frame_encode(U_N, X_N, i_frame); // frame encode
@@ -53,9 +51,6 @@ template <typename B>
 void Encoder_polar<B>
 ::convert(const mipp::vector<B>& U_K, mipp::vector<B>& U_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(U_N.size() == (unsigned) (this->N * this->n_frames));
-
 	for (auto f = 0; f < this->n_frames; f++)
 	{
 		const auto offset_U_k = f * this->K;

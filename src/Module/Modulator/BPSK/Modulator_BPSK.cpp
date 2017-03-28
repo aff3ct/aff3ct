@@ -1,4 +1,5 @@
 #include <typeinfo>
+#include <stdexcept>
 
 #include "Modulator_BPSK.hpp"
 
@@ -20,7 +21,7 @@ Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
 	auto size = X_N1.size();
 	for (unsigned i = 0; i < size; i++)
@@ -29,10 +30,13 @@ void Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"Q\" has to be float or double.");
 
 	if (disable_sig2)
 		Y_N2 = Y_N1;
@@ -46,8 +50,14 @@ void Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+::_demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
 {
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"Q\" has to be float or double.");
+
 	if (disable_sig2)
 	{
 		auto size = Y_N1.size();
@@ -64,10 +74,13 @@ void Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"Q\" has to be float or double.");
 
 	auto size = Y_N1.size();
 	if (disable_sig2)
@@ -80,11 +93,14 @@ void Modulator_BPSK<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK<B,R,Q>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
-                              mipp::vector<Q>& Y_N3)
+::_demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
+                               mipp::vector<Q>& Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK: type \"Q\" has to be float or double.");
 
 	auto size = Y_N1.size();
 	if (disable_sig2)

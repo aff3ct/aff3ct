@@ -22,6 +22,7 @@ protected:
 	const int  n_branches; // number of branched in the bi-partite graph (connexions between the V and C nodes)
 
 	const bool enable_syndrome;
+	const int  syndrome_depth;
 
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
@@ -42,6 +43,7 @@ public:
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
 	                         const tools::AList_reader &alist_data,
 	                         const bool enable_syndrome = true,
+	                         const int syndrome_depth = 1,
 	                         const int n_frames = 1,
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
@@ -54,9 +56,9 @@ protected:
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 
 	// hard decoder (load -> decode -> store)
-	void load        (const mipp::vector<R>& Y_N);
+	void _load       (const mipp::vector<R>& Y_N);
 	void _hard_decode(                          );
-	void store       (      mipp::vector<B>& V_K) const;
+	void _store      (      mipp::vector<B>& V_K) const;
 
 	// BP functions for decoding
 	void BP_decode(const mipp::vector<R> &Y_N);

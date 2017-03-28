@@ -2,10 +2,8 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
@@ -55,7 +53,8 @@ Simulation_BFERI_i<B,R,Q>
   coset_bit  (params.simulation.n_threads, nullptr),
   monitor    (params.simulation.n_threads, nullptr)
 {
-	assert(params.simulation.n_threads >= 1);
+	if (params.simulation.n_threads < 1)
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: \"n_threads\" has to be greater than 0.");
 
 	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 		rd_engine_seed[tid].seed(params.simulation.seed + tid);
@@ -94,7 +93,10 @@ void Simulation_BFERI_i<B,R,Q>
 
 	// get the real number of frames per threads (from the decoder)
 	const auto n_frames = simu->siso[tid]->get_n_frames();
-	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
+
+	if (simu->siso[tid]->get_n_frames() != simu->decoder[tid]->get_n_frames())
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFERI: \"simu->siso[tid]->get_n_frames()\" and "
+		                         "\"simu->decoder[tid]->get_n_frames()\" have to be equal.");
 
 	// set the real number of frames per thread
 	simu->source     [tid]->set_n_frames(n_frames);

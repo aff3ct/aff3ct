@@ -1,12 +1,9 @@
 #include <algorithm>
-#include <cassert>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "Channel_Rayleigh_LLR.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
@@ -20,7 +17,12 @@ Channel_Rayleigh_LLR<R>
   normal_dist_n(0, sigma),
   normal_dist_h(0, (R)1 / (R)std::sqrt((R)2))
 {
-	assert(sigma != 0);
+	if (sigma == (R)0)
+		throw std::domain_error("aff3ct::module::Channel_Rayleigh_LLR: \"sigma\" can't be equal to 0.");
+
+	if (complex && N % 2)
+		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"N\" has to be divisible by 2.");
+
 	rd_engine.seed(seed);
 }
 
@@ -32,23 +34,18 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	std::cerr << bold_red("(EE) Adding noise without computing the gains is not possible with the Rayleigh channel.")
-	          << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Channel_Rayleigh_LLR: adding noise without computing the gains is not "
+	                         "possible with the Rayleigh channel.");
 }
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
 {
-	assert(X_N.size() == Y_N.size());
-	assert(X_N.size() == H_N.size());
-
 	if (this->complex)
 	{
-		assert((int)X_N.size() % 2 == 0);
 		for (auto i = 0; i < (int)X_N.size() / 2 ; i++)
 		{
 			H_N[2*i   ] = this->normal_dist_h(this->rd_engine);

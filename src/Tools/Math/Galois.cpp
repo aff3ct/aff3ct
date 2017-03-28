@@ -1,8 +1,6 @@
 #include <cmath>
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "Galois.hpp"
 
@@ -13,25 +11,13 @@ Galois
  : K(K), N(N), m(m), t(t), d(2 * t + 1), alpha_to(N + 1), index_of(N + 1), p(m + 1, 0), g(N - K + 1)
 {
 	if (N >= 1048576) // 2^20
-	{
-		std::cerr << bold_red("(EE) Galois Field: parameters invalid (N has to be smaller than 1048576)!")
-		          << std::endl;
-		std::exit(0);
-	}
+		throw std::invalid_argument("aff3ct::tools::Galois: \"N\" has to be smaller than 1048576.");
 
 	if (m != (int)std::ceil(std::log2(N +1)))
-	{
-		std::cerr << bold_red("(EE) Galois Field: parameters invalid (m has to be equal to log2(N +1))!")
-		          << std::endl;
-		std::exit(0);
-	}
+		throw std::invalid_argument("aff3ct::tools::Galois: \"m\" has to be equal to \"log2(N +1)\".");
 
 	if (N != ((1 << m) -1))
-	{
-		std::cerr << bold_red("(EE) Galois Field: parameters invalid (N has to be a power of 2 minus 1)!")
-		          << std::endl;
-		std::exit(0);
-	}
+		throw std::invalid_argument("aff3ct::tools::Galois: \"N\" has to be a power of 2 minus 1.");
 
 	Select_Polynomial();
 	Generate_GF();
@@ -177,12 +163,7 @@ void Galois
 		}
 
 	if (K > N - rdncy)
-	{
-		std::cerr << bold_red("(EE) Galois Field: parameters invalid (K seems to be too big for this ")
-		          << bold_red("correction power t)!")
-		          << std::endl;
-		std::exit(0);
-	}
+		throw std::runtime_error("aff3ct::tools::Galois: \"K\" seems to be too big for this correction power \"t\".");
 
 	/* Compute the generator polynomial */
 	g[0] = alpha_to[zeros[1]];

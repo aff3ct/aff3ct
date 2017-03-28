@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Decoder_RSC_BCJR_inter_intra_fast_x4_AVX.hpp"
 
@@ -90,8 +90,12 @@ Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
                                            const std::string name)
 : Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
-	assert(mipp::nElReg<R>() == 32);
-	assert(K % 8 == 0);
+	if (mipp::nElReg<R>() != 32)
+		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_inter_intra_fast_x4_AVX: \"mipp::nElReg<R>()\" "
+		                            "has to be equal to 32.");
+	if (K % 8)
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_inter_intra_fast_x4_AVX: \"K\" "
+		                            "has to be divisible by 8.");
 
 	RSC_BCJR_inter_intra_fast_x4_AVX_init<R>::apply(this->alpha);
 }

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <exception>
 #include <map>
 
 #ifdef ENABLE_MPI
@@ -158,8 +159,12 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		std::exit(EXIT_FAILURE);
 	}
 
-	if (!ar.check_arguments())
+	std::string error;
+	if (!ar.check_arguments(error))
+	{
+		std::cerr << bold_red("(EE) " + error) << std::endl;
 		std::exit(EXIT_FAILURE);
+	}
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -209,77 +214,85 @@ Launcher<long long,double,double>* create_exit_simu<long long, double, double, d
 template <typename B, typename R, typename Q, typename QD>
 void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
 {
-	Launcher<B,R,Q> *launcher = nullptr;
-
-	if (code_type == "POLAR")
+	try
 	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
-		else if (simu_type == "GEN")
-			launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
-	}
+		Launcher<B,R,Q> *launcher = nullptr;
 
-	if (code_type == "RSC")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
-		else if (simu_type == "BFERI")
-			launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
-	}
+		if (code_type == "POLAR")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
+			else if (simu_type == "GEN")
+				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
+		}
 
-	if (code_type == "TURBO")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
-	}
+		if (code_type == "RSC")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
+		}
 
-	if (code_type == "REPETITION")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
-	}
+		if (code_type == "TURBO")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
+		}
 
-	if (code_type == "RA")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
-	}
+		if (code_type == "REPETITION")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
+		}
 
-	if (code_type == "BCH")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
-	}
+		if (code_type == "BCH")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
+		}
 
-	if (code_type == "LDPC")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_LDPC<B,R,Q>(argc, argv);
-		else if (simu_type == "BFERI")
-			launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
-	}
+		if (code_type == "RA")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
+		}
 
-	if (code_type == "UNCODED")
-	{
-		if (simu_type == "BFER")
-			launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
-		else if (simu_type == "BFERI")
-			launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
-	}
+		if (code_type == "LDPC")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_LDPC<B,R,Q>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
+		}
 
-	if (launcher == nullptr)
-	{
-		launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
+		if (code_type == "UNCODED")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
+		}
 
 		if (launcher == nullptr)
 		{
-			std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
-			exit(EXIT_FAILURE);
-		}
-	}
+			launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
 
-	launcher->launch();
-	delete launcher;
+			if (launcher == nullptr)
+			{
+				std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		launcher->launch();
+		delete launcher;
+	}
+	catch (std::exception const& e)
+	{
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the launcher.") << std::endl
+		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+	}
 }
 
 #ifndef SYSTEMC

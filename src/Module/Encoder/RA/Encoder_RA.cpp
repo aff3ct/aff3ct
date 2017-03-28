@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -10,13 +10,16 @@ template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const std::string name)
  : Encoder<B>(K, N, 1, name), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
-{	
-	assert(N % K == 0); // check if RA count is consistent
+{
+	if (N % K)
+		throw std::invalid_argument("aff3ct::module::Encoder_RA: \"K\" has to be a multiple of \"N\".");
+	if ((int)interleaver.size() != N)
+		throw std::length_error("aff3ct::module::Encoder_RA: \"interleaver.size()\" has to be equal to \"N\".");
 }
 
 template <typename B>
 void Encoder_RA<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
 	for (auto f = 0; f < this->n_frames; f++)
 	{

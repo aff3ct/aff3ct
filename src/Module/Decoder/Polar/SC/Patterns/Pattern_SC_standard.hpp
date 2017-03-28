@@ -1,7 +1,7 @@
 #ifndef PATTERN_SC_STANDARD_HPP_
 #define PATTERN_SC_STANDARD_HPP_
 
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -111,7 +111,9 @@ public:
 	virtual int match(const int &reverse_graph_depth,
 	                  const tools::Binary_node<Pattern_SC_interface>* node_curr) const
 	{
-		assert(reverse_graph_depth > 0);
+		if (reverse_graph_depth <= 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_SC<STANDARD>: \"reverse_graph_depth\" has to be "
+			                            "greater than 0.");
 
 		int match_val = 1;
 

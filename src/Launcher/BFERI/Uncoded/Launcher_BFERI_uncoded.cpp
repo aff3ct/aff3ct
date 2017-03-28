@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Simulation/BFERI/Code/Uncoded/Simulation_BFERI_uncoded.hpp"
 
 #include "Launcher_BFERI_uncoded.hpp"

@@ -1,6 +1,5 @@
 #ifdef CHANNEL_GSL
 
-#include <cassert>
 #include <cmath>
 
 #include "Channel_AWGN_GSL_LR.hpp"
@@ -22,10 +21,8 @@ Channel_AWGN_GSL_LR<R>
 
 template <typename R>
 void Channel_AWGN_GSL_LR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-	
 	Channel_AWGN_GSL_LLR<R>::add_noise(X_N, Y_N);
 	for (unsigned i = 0; i < X_N.size(); i++)
 		Y_N[i] = std::exp(Y_N[i]);

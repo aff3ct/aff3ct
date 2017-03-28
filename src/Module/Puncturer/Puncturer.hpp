@@ -8,6 +8,7 @@
 #ifndef PUNCTURER_HPP_
 #define PUNCTURER_HPP_
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
@@ -46,10 +47,20 @@ public:
 	 * \param n_frames: number of frames to process in the Puncturer.
 	 * \param name:     Puncturer's name.
 	 */
-	Puncturer_i(const int K, const int N, const int N_code, const int n_frames = 1, 
-	                    const std::string name = "Puncturer_i")
+	Puncturer_i(const int K, const int N, const int N_code, const int n_frames = 1,
+	            const std::string name = "Puncturer_i")
 	: Module(n_frames, name), K(K), N(N), N_code(N_code)
 	{
+		if (K <= 0)
+			throw std::invalid_argument("aff3ct::module::Puncturer: \"K\" has to be greater than 0.");
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Puncturer: \"N\" has to be greater than 0.");
+		if (N_code <= 0)
+			throw std::invalid_argument("aff3ct::module::Puncturer: \"N_code\" has to be greater than 0.");
+		if (K > N)
+			throw std::invalid_argument("aff3ct::module::Puncturer: \"K\" has to be smaller than \"N\".");
+		if (N > N_code)
+			throw std::invalid_argument("aff3ct::module::Puncturer: \"N_code\" has to be equal or greater than \"N\".");
 	}
 
 	/*!
@@ -63,7 +74,18 @@ public:
 	 * \param X_N1: a complete/valid codeword..
 	 * \param X_N2: a punctured codeword (corresponding to the frame size).
 	 */
-	virtual void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
+	void puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+	{
+		if (this->N_code * this->n_frames != (int)X_N1.size())
+			throw std::length_error("aff3ct::module::Puncturer: \"X_N1.size()\" has to be equal to "
+			                        "\"N_code\" * \"n_frames\".");
+
+		if (this->N * this->n_frames != (int)X_N2.size())
+			throw std::length_error("aff3ct::module::Puncturer: \"X_N2.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		this->_puncture(X_N1, X_N2);
+	}
 
 	/*!
 	 * \brief Depunctures a codeword.
@@ -71,7 +93,22 @@ public:
 	 * \param Y_N1: a noised and punctured codeword (corresponding to the frame size).
 	 * \param Y_N2: a noised and complete/valid codeword.
 	 */
-	virtual void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
+	void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+	{
+		if (this->N * this->n_frames != (int)Y_N1.size())
+			throw std::length_error("aff3ct::module::Puncturer: \"Y_N1.size()\" has to be equal to "
+			                        "\"N\" * \"n_frames\".");
+
+		if (this->N_code * this->n_frames != (int)Y_N2.size())
+			throw std::length_error("aff3ct::module::Puncturer: \"Y_N2.size()\" has to be equal to "
+			                        "\"N_code\" * \"n_frames\".");
+
+		this->_depuncture(Y_N1, Y_N2);
+	}
+
+protected:
+	virtual void   _puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
+	virtual void _depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
 };
 }
 }

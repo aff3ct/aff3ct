@@ -1,4 +1,3 @@
-#include <cassert>
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -17,11 +16,8 @@ Encoder_polar_sys<B>
 
 template <typename B>
 void Encoder_polar_sys<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-
 	this->convert(U_K, this->U_N);
 
 	for (auto i_frame = 0; i_frame < this->n_frames; i_frame++)

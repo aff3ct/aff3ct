@@ -30,9 +30,12 @@ public:
 	                     const int n_frames = 1, const std::string name = "Encoder_turbo_legacy");
 	virtual ~Encoder_turbo_legacy() {}
 
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	int tail_length() const { return sub_enc.tail_length() + sub_enc.tail_length(); }
 
 	void set_n_frames(const int n_frames);
+
+protected:
+	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
 }
 }

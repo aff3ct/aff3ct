@@ -1,7 +1,8 @@
+#include "Module/Interleaver/Random_column/Interleaver_random_column.hpp"
+#include "Module/Interleaver/Row_column/Interleaver_row_column.hpp"
 #include "Module/Interleaver/LTE/Interleaver_LTE.hpp"
 #include "Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp"
 #include "Module/Interleaver/NO/Interleaver_NO.hpp"
-#include "Module/Interleaver/Columns/Interleaver_columns.hpp"
 #include "Module/Interleaver/Golden/Interleaver_golden.hpp"
 #include "Module/Interleaver/Random/Interleaver_random.hpp"
 #include "Module/Interleaver/User/Interleaver_user.hpp"
@@ -24,8 +25,10 @@ Interleaver<T>* Factory_interleaver<T>
 		interleaver = new Interleaver_CCSDS<T>(size);
 	else if (params.interleaver.type == "RANDOM")
 		interleaver = new Interleaver_random<T>(size, seed);
-	else if (params.interleaver.type == "COLUMNS")
-		interleaver = new Interleaver_columns<T>(size, params.interleaver.n_cols, seed);
+	else if (params.interleaver.type == "RAND_COL")
+		interleaver = new Interleaver_random_column<T>(size, params.interleaver.n_cols, seed);
+	else if (params.interleaver.type == "ROW_COL")
+		interleaver = new Interleaver_row_column<T>(size, params.interleaver.n_cols);
 	else if (params.interleaver.type == "GOLDEN")
 		interleaver = new Interleaver_golden<T>(size, seed);
 	else if (params.interleaver.type == "USER")

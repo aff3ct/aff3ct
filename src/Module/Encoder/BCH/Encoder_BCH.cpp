@@ -1,4 +1,3 @@
-#include <cassert>
 #include <vector>
 #include <cmath>
 
@@ -18,18 +17,15 @@ Encoder_BCH<B>
 
 template <typename B>
 void Encoder_BCH<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(this->K * this->n_frames == (int)U_K.size());
-	assert(this->N * this->n_frames == (int)X_N.size());
-
 	for (auto f = 0; f < this->n_frames; f++)
-		this->_encode(U_K.data() + f * this->K, X_N.data() + f * this->N);
+		this->__encode(U_K.data() + f * this->K, X_N.data() + f * this->N);
 }
 
 template <typename B>
 void Encoder_BCH<B>
-::_encode(const B* U_K, B* X_N)
+::__encode(const B* U_K, B* X_N)
 {
 	register int i, j;
 	register int feedback;

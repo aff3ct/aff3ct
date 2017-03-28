@@ -40,9 +40,9 @@ public:
 	virtual ~Decoder_BCH();
 
 protected:
-	void load        (const mipp::vector<R>& Y_N);
+	void _load       (const mipp::vector<R>& Y_N);
 	void _hard_decode(                          );
-	void store       (      mipp::vector<B>& V_K) const;
+	void _store      (      mipp::vector<B>& V_K) const;
 };
 }
 }

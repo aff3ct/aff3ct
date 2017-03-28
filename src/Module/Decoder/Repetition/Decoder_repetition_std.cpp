@@ -1,4 +1,3 @@
-#include <cassert>
 #include <algorithm>
 
 #include "Decoder_repetition_std.hpp"

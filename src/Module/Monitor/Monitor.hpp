@@ -8,6 +8,7 @@
 #ifndef MONITOR_HPP_
 #define MONITOR_HPP_
 
+#include <stdexcept>
 #include <csignal>
 #include <chrono>
 #include <vector>
@@ -57,6 +58,13 @@ public:
 	Monitor_i(const int& K, const int& N, const int& n_frames = 1, const std::string name = "Monitor_i")
 	: Module(n_frames, name), K(K), N(N)
 	{
+		if (K <= 0)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"K\" has to be greater than 0.");
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"N\" has to be greater than 0.");
+		if (K > N)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"K\" has to be smaller than \"N\".");
+
 		Monitor_i<B,R>::interrupt = false;
 		Monitor_i<B,R>::d_delta_interrupt = std::chrono::nanoseconds(0);
 
@@ -150,7 +158,13 @@ public:
 	 * \param U: the original message (from the Source or the CRC).
 	 * \param V: the decoded message (from the Decoder).
 	 */
-	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
+	void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
+	{
+		if (U.size() != V.size())
+			throw std::length_error("aff3ct::module::Monitor: \"U.size()\" has to be equal to \"V.size()\".");
+
+		this->_check_errors(U, V);
+	}
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
@@ -172,6 +186,15 @@ public:
 		return Monitor_i<B,R>::over;
 	}
 
+	/*!
+	 * \brief Put Monitor_i<B,R>::interrupt and Monitor_i<B,R>::over to true.
+	 */
+	static void stop()
+	{
+		Monitor_i<B,R>::interrupt = true;
+		Monitor_i<B,R>::over      = true;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The following public methods are specific to catch the bad frames and to dump them into files. //
 	// The proposed default implementation do nothing.                                                //
@@ -188,13 +211,16 @@ public:
 	 * \param X_mod:  the modulated message (from the Modulator, the input of the Channel).
 	 * \param Y:      the noised message (the output of the Channel).
 	 */
-	virtual void check_and_track_errors(const mipp::vector<B>& U,
-	                                    const mipp::vector<B>& V,
-	                                    const mipp::vector<B>& X,
-	                                    const mipp::vector<R>& X_mod,
-	                                    const mipp::vector<R>& Y)
+	void check_and_track_errors(const mipp::vector<B>& U,
+	                            const mipp::vector<B>& V,
+	                            const mipp::vector<B>& X,
+	                            const mipp::vector<R>& X_mod,
+	                            const mipp::vector<R>& Y)
 	{
-		check_errors(U, V);
+		if (U.size() != V.size())
+			throw std::length_error("aff3ct::module::Monitor: \"U.size()\" has to be equal to \"V.size()\".");
+
+		this->_check_and_track_errors(U, V, X, X_mod, Y);
 	}
 
 	/*!
@@ -237,6 +263,18 @@ public:
 		return std::vector<mipp::vector<R>>(0);
 	}
 
+protected:
+	virtual void _check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
+
+	virtual void _check_and_track_errors(const mipp::vector<B>& U,
+	                                     const mipp::vector<B>& V,
+	                                     const mipp::vector<B>& X,
+	                                     const mipp::vector<R>& X_mod,
+	                                     const mipp::vector<R>& Y)
+	{
+		this->_check_errors(U, V);
+	}
+
 private:
 	static void signal_interrupt_handler(int signal)
 	{
@@ -245,7 +283,7 @@ private:
 		{
 			Monitor_i<B,R>::d_delta_interrupt = t_now - Monitor_i<B,R>::t_last_interrupt;
 			if (Monitor_i<B,R>::d_delta_interrupt < std::chrono::milliseconds(500))
-				Monitor_i<B,R>::over = true;
+				Monitor_i<B,R>::stop();
 		}
 		Monitor_i<B,R>::t_last_interrupt  = t_now;
 

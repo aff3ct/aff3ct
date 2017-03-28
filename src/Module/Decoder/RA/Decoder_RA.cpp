@@ -1,7 +1,6 @@
+#include <stdexcept>
 #include <algorithm>
 #include <cmath>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "Decoder_RA.hpp"
 
@@ -27,7 +26,12 @@ Decoder_RA<B, R>
   Xu(2),
   interleaver(interleaver)
 {
-	assert(N % K == 0);
+	if (max_iter <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_RA: \"max_iter\" has to be greater than 0.");
+	if (N % K)
+		throw std::invalid_argument("aff3ct::module::Decoder_RA: \"K\" has to be a multiple of \"N\".");
+	if ((int)interleaver.size() != N)
+		throw std::length_error("aff3ct::module::Decoder_RA: \"interleaver.size()\" has to be equal to \"N\".");
 
 	Xd[0].resize(N);
 	Xd[1].resize(N);
@@ -43,7 +47,7 @@ Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
 }
@@ -107,7 +111,7 @@ void Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	V_K = this->V_K;
 }
