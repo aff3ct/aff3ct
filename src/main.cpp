@@ -158,8 +158,12 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		std::exit(EXIT_FAILURE);
 	}
 
-	if (!ar.check_arguments())
+	std::string error;
+	if (!ar.check_arguments(error))
+	{
+		std::cerr << bold_red("(EE) " + error) << std::endl;
 		std::exit(EXIT_FAILURE);
+	}
 }
 
 template <typename B, typename R, typename Q, typename QD>

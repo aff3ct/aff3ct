@@ -462,8 +462,12 @@ int Launcher<B,R,Q>
 		return EXIT_FAILURE;
 	}
 
-	if (!ar.check_arguments())
+	std::string error;
+	if (!ar.check_arguments(error))
+	{
+		std::cerr << bold_red("(EE) " + error) << std::endl;
 		return EXIT_FAILURE;
+	}
 
 	return 0;
 }
@@ -794,7 +798,8 @@ void Launcher<B,R,Q>
 			stream << "# The simulation is running..." << std::endl;
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
-			std::clog << bold_yellow(cmd_warn);
+			for (auto w = 0; w < (int)cmd_warn.size(); w++)
+				std::clog << bold_yellow("(WW) " + cmd_warn[w]) << std::endl;
 
 		try
 		{

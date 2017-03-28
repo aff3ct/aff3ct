@@ -18,7 +18,7 @@ Arguments_reader
 
 	this->m_program_name = argv[0];
 
-	for(unsigned short i = 0; i < argc; ++i)
+	for (unsigned short i = 0; i < argc; ++i)
 		this->m_argv[i] = string(argv[i]);
 }
 
@@ -32,11 +32,12 @@ bool Arguments_reader
                   const map<vector<string>, vector<string>> &optional_args,
                   const bool display_warnings)
 {
-	string warns;
+	std::vector<std::string> warns;
 	const bool result = parse_arguments(required_args, optional_args, warns);
 
 	if (display_warnings)
-		std::clog << bold_yellow(warns);
+		for (auto w = 0; w < (int)warns.size(); w++)
+			std::clog << warns[w] << std::endl;
 
 	return result;
 }
@@ -44,7 +45,7 @@ bool Arguments_reader
 bool Arguments_reader
 ::parse_arguments(const map<vector<string>, vector<string>> &required_args,
                   const map<vector<string>, vector<string>> &optional_args,
-                        string                              &warnings)
+                        std::vector<std::string>            &warnings)
 {
 	unsigned short int n_req_arg = 0;
 
@@ -53,20 +54,17 @@ bool Arguments_reader
 	this->m_required_args = required_args;
 	this->m_optional_args = optional_args;
 
-	for(unsigned short i = 0; i < this->m_argv.size(); ++i)
+	for (unsigned short i = 0; i < this->m_argv.size(); ++i)
 	{
 		bool valid_arg = false;
-		if(this->sub_parse_arguments(this->m_required_args, i))
+		if (this->sub_parse_arguments(this->m_required_args, i))
 		{
 			valid_arg = true;
 			n_req_arg++;
 		}
 		valid_arg = this->sub_parse_arguments(this->m_optional_args, i) || valid_arg;
-		if(!valid_arg && this->m_argv[i][0] == '-')
-		{
-			warnings += string("(WW) Unknown argument \"") + string(this->m_argv[i]) + string("\".");
-			warnings += "\n";
-		}
+		if (!valid_arg && this->m_argv[i][0] == '-')
+			warnings.push_back("Unknown argument \"" + this->m_argv[i] + "\".");
 	}
 
 	return n_req_arg >= required_args.size();
@@ -122,7 +120,7 @@ bool Arguments_reader
 
 			i++;
 		}
-		while(!is_found && i < (int)it->first.size());
+		while( !is_found && i < (int)it->first.size());
 	}
 
 	return is_found;
@@ -146,7 +144,7 @@ void Arguments_reader
 	cout << "Usage: " << this->m_program_name;
 
 	for (auto it = this->m_required_args.begin(); it != this->m_required_args.end(); ++it)
-		if(it->second[0] != "")
+		if (it->second[0] != "")
 			cout << ((it->first[0].size() == 1) ? " -" : " --") << it->first[0] << " <" << it->second[0] << ">";
 		else
 			cout << ((it->first[0].size() == 1) ? " -" : " --") << it->first[0];
@@ -306,15 +304,15 @@ void Arguments_reader
 }
 
 bool Arguments_reader
-::check_arguments()
+::check_arguments(std::string &error)
 {
 	auto success = true;
 	for (auto it = this->m_args.begin(); it != this->m_args.end(); ++it)
 	{
 		if (this->m_required_args.find(it->first) != this->m_required_args.end())
-			success = this->check_argument(it->first, this->m_required_args);
+			success = this->check_argument(it->first, this->m_required_args, error);
 		else if (this->m_optional_args.find(it->first) != this->m_optional_args.end())
-			success = this->check_argument(it->first, this->m_optional_args);
+			success = this->check_argument(it->first, this->m_optional_args, error);
 		else
 			success = false;
 
@@ -326,7 +324,7 @@ bool Arguments_reader
 }
 
 bool Arguments_reader
-::check_argument(const vector<string> &tags, map<vector<string>, vector<string>> &args)
+::check_argument(const vector<string> &tags, map<vector<string>, vector<string>> &args, string &error)
 {
 	// check if the input is positive
 	if (args[tags][0] == "positive_int")
@@ -334,8 +332,8 @@ bool Arguments_reader
 		const auto int_num = std::stoi(this->m_args[tags]);
 		if (int_num < 0)
 		{
-			cerr << bold_red("(EE) The \"") << ((tags[0].length() == 1) ? bold_red("-") : bold_red("--"))
-			     << bold_red(tags[0]) << bold_red("\" argument have to be positive, exiting.") << endl;
+			error = "The \"" + ((tags[0].length() == 1) ? string("-") : string("--")) + tags[0] +
+			        "\" argument have to be positive.";
 			return false;
 		}
 	}
@@ -346,8 +344,8 @@ bool Arguments_reader
 		const auto float_num = std::stof(this->m_args[tags]);
 		if (float_num < 0.f)
 		{
-			cerr << bold_red("(EE) The \"") << ((tags[0].length() == 1) ? bold_red("-") : bold_red("--"))
-			     << bold_red(tags[0]) << bold_red("\" argument have to be positive, exiting.") << endl;
+			error = "The \"" + ((tags[0].length() == 1) ? string("-") : string("--")) + tags[0] +
+			        "\" argument have to be positive.";
 			return false;
 		}
 	}
@@ -374,13 +372,14 @@ bool Arguments_reader
 				set += entries[i] + "|";
 			set += entries[entries.size() -1] + ">";
 
-			cerr << bold_red("(EE) The \"") << ((tags[0].length() == 1) ? bold_red("-") : bold_red("--"))
-			     << bold_red(tags[0]) << bold_red("\" argument have to be in the ") << bold_red(set)
-			     << bold_red(" set, exiting.") << endl;
+			error = "The \"" + ((tags[0].length() == 1) ? string("-") : string("--")) + tags[0] +
+			        "\" argument have to be in the " + set + " set.";
+
 			return false;
 		}
 	}
 
+	error = "";
 	return true;
 }
 
