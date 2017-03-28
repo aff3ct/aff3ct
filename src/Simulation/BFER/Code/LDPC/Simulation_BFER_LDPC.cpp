@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
 
 #include "Simulation_BFER_LDPC.hpp"

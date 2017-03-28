@@ -3,8 +3,6 @@
 #include <complex>
 #include <limits>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Modulator_PSK.hpp"
 
 #ifndef M_PI

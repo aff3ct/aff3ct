@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <map>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "../Interleaver.hpp"
 
 namespace aff3ct

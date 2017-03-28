@@ -1,8 +1,6 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
-
 #ifdef __AVX2__
 #include "transpose_AVX.h"
 #elif defined(__SSE4_1__)

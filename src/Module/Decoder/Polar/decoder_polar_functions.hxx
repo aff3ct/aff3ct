@@ -4,8 +4,6 @@
 #include <chrono>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "decoder_polar_functions.h"
 
 namespace aff3ct

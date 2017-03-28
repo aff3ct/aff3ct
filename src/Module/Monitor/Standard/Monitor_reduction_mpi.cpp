@@ -3,8 +3,6 @@
 #include <stddef.h>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Monitor_reduction_mpi.hpp"
 
 using namespace aff3ct::module;

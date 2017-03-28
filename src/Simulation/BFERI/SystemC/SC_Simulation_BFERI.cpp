@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Factory/Factory_terminal.hpp"
 #include "Tools/Algo/Predicate_ite.hpp"
 

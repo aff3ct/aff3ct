@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Display/bash_tools.h"
 
 #include "Module/Module.hpp"
 

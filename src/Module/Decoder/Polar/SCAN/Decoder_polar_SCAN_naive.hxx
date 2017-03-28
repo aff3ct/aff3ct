@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <cmath>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_polar_SCAN_naive.hpp"

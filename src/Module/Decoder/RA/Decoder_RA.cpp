@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Decoder_RA.hpp"
 
 using namespace aff3ct::module;

@@ -1,7 +1,6 @@
 #include <limits>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 

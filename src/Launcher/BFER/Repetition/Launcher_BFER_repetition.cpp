@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Simulation/BFER/Code/Repetition/Simulation_BFER_repetition.hpp"
 
 #include "Launcher_BFER_repetition.hpp"

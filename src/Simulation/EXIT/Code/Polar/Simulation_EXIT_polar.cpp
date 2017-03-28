@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 #include "Tools/Factory/Polar/Factory_encoder_polar.hpp"
 #include "Tools/Factory/Polar/Factory_decoder_polar.hpp"

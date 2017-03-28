@@ -2,8 +2,6 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Barrier.hpp"
 
 using namespace aff3ct::tools;
@@ -39,14 +37,14 @@ void Barrier
 		while (cur_gen == generation)
 		{
 			// release the lock
-			if (cond_barrier.wait_for(lock, std::chrono::milliseconds(3000)) == std::cv_status::timeout)
+			if (cond_barrier.wait_for(lock, std::chrono::milliseconds(6000)) == std::cv_status::timeout)
 			{
-				std::cerr << bold_red("(EE) Some threads did not reach the barrier (")
-				          << bold_red("counter_barrier = ") << bold_red(std::to_string(counter_barrier)) << bold_red(", ")
-				          << bold_red("tid = ")             << bold_red(std::to_string(tid))             << bold_red(", ")
-				          << bold_red("generation = ")      << bold_red(std::to_string(generation))      << bold_red("). ")
-				          << bold_red("This message should never happen: there is a bug in the multithreaded code.")
-				          << std::endl;
+				throw std::invalid_argument("aff3ct::tools::Barrier: some threads did not reach the barrier "
+				                            "(counter_barrier = " + std::to_string(counter_barrier) +
+				                            ", tid = " + std::to_string(tid) +
+				                            ", generation = " + std::to_string(generation) + ")." +
+				                            "This message should never happen: there is a bug in the "
+				                            "multithreaded code.");
 			}
 		}
 	}

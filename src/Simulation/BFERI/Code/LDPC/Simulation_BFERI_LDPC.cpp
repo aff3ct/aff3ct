@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"

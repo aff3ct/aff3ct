@@ -1,12 +1,9 @@
 #include <typeinfo>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Modulator_BPSK_fast.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R, typename Q>
 Modulator_BPSK_fast<B,R,Q>

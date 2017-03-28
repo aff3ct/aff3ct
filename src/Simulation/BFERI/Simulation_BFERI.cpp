@@ -5,8 +5,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"

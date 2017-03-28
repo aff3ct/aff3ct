@@ -1,6 +1,5 @@
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "CRC_polynomial_inter.hpp"

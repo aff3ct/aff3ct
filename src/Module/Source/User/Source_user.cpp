@@ -1,12 +1,9 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Source_user.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Source_user<B>

@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Channel_AWGN_MKL_LLR.hpp"
 
 using namespace aff3ct::module;

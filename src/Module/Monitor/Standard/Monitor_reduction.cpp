@@ -4,12 +4,9 @@
 #include <fstream>
 #include <exception>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Monitor_reduction.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Monitor_reduction<B,R>

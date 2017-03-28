@@ -4,8 +4,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "AList_reader.hpp"
 
 using namespace aff3ct::tools;

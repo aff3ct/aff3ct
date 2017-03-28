@@ -1,8 +1,6 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Channel_AWGN_fast_LLR.hpp"
 
 using namespace aff3ct::module;

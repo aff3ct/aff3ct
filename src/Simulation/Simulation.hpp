@@ -10,8 +10,6 @@
 
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
-
 namespace aff3ct
 {
 namespace simulation

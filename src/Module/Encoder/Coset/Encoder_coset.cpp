@@ -1,5 +1,3 @@
-#include "Tools/Display/bash_tools.h"
-
 #include "Encoder_coset.hpp"
 
 using namespace aff3ct::module;

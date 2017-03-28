@@ -1,8 +1,6 @@
 #include <cmath>     // min(), fabs(), copysign()...
 #include <algorithm> // min()
 
-#include "Tools/Display/bash_tools.h"
-
 #include "max.h"
 
 namespace aff3ct

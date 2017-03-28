@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 

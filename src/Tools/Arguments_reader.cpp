@@ -3,8 +3,6 @@
 #include <algorithm>
 using namespace std;
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Arguments_reader.hpp"
 
 using namespace aff3ct::tools;

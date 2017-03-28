@@ -13,7 +13,6 @@
 #include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
 #endif
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 

@@ -6,7 +6,6 @@
 #include <cmath>
 #include <map>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_polar_SCL_naive.hpp"

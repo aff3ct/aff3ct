@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_polar_SC_naive.hpp"

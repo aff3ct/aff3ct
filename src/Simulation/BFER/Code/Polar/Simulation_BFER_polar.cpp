@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"

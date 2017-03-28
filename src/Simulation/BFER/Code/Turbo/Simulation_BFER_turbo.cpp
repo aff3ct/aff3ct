@@ -6,8 +6,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"

@@ -8,8 +8,6 @@
 #include <sstream>
 #include <iomanip>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Frozenbits_generator_file.hpp"
 
 using namespace aff3ct::tools;

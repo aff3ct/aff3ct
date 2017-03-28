@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "Tools/Display/bash_tools.h"
 #include "Simulation/GEN/Code/Polar/Generation_polar.hpp"
 
 #include "Launcher_GEN_polar.hpp"
