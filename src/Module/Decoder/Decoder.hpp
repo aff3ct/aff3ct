@@ -108,9 +108,9 @@ public:
 			throw std::length_error("aff3ct::module::Decoder: \"Y_N.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
-		if (this->K * this->n_frames != (int)V_K.size())
-			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal to "
-			                        "\"K\" * \"n_frames\".");
+		if (this->N * this->n_frames < (int)V_K.size())
+			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal or smaller than "
+			                        "\"N\" * \"n_frames\".");
 
 		using namespace std::chrono;
 
