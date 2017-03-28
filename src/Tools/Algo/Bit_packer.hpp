@@ -9,6 +9,7 @@
 #define BIT_PACKER_HPP_
 
 #include <cmath>
+#include <stdexcept>
 
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -36,9 +37,14 @@ struct Bit_packer
 	static inline void pack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const int n_frames = 1,
 	                        const bool rev = false)
 	{
-		assert((int)vec_out.size() >= static_cast<int>(std::ceil((float)vec_in.size() / (sizeof(B) * 8.f))));
-		assert(n_frames > 0);
-		assert(vec_in.size() % n_frames == 0);
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		if (vec_in.size() % n_frames)
+			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_in.size()\" has to be divisible by "
+			                        "\"n_frame\".");
+		if ((int)vec_out.size() < (int)(std::ceil((float)vec_in.size() / (sizeof(B) * 8.f))))
+			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_out.size()\" has to be equal or greater than "
+			                        "\"ceil(vec_in.size() / (sizeof(B) * 8.f))\".");
 
 		const auto n_bits_per_frame  = static_cast<int>(vec_in.size() / n_frames);
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
@@ -60,8 +66,11 @@ struct Bit_packer
 	 */
 	static inline void pack(mipp::vector<B> &vec, const int n_frames = 1, const bool rev = false)
 	{
-		assert(n_frames > 0);
-		assert(vec.size() % n_frames == 0);
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		if (vec.size() % n_frames)
+			throw std::length_error("aff3ct::tools::Bit_packer: \"vec.size()\" has to be divisible by "
+			                        "\"n_frame\".");
 
 		const auto n_bits_per_frame  = static_cast<int>(vec.size() / n_frames);
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
@@ -85,9 +94,14 @@ struct Bit_packer
 	static inline void unpack(const mipp::vector<B> &vec_in, mipp::vector<B> &vec_out, const int n_frames = 1,
 	                          const bool rev = false)
 	{
-		assert(vec_in.size() >= static_cast<int>(std::ceil((float)vec_out.size() / (sizeof(B) * 8.f))));
-		assert(n_frames > 0);
-		assert(vec_out.size() % n_frames == 0);
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		if (vec_out.size() % n_frames)
+			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_out.size()\" has to be divisible by "
+			                        "\"n_frame\".");
+		if ((int)vec_in.size() < (int)(std::ceil((float)vec_out.size() / (sizeof(B) * 8.f))))
+			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_in.size()\" has to be equal or greater than "
+			                        "\"ceil(vec_out.size() / (sizeof(B) * 8.f))\".");
 
 		const auto n_bits_per_frame  = static_cast<int>(vec_out.size() / n_frames);
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
@@ -109,8 +123,11 @@ struct Bit_packer
 	 */
 	static inline void unpack(mipp::vector<B> &vec, const int n_frames = 1, bool rev = false)
 	{
-		assert(n_frames > 0);
-		assert(vec.size() % n_frames == 0);
+		if (n_frames <= 0)
+			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		if (vec.size() % n_frames)
+			throw std::length_error("aff3ct::tools::Bit_packer: \"vec.size()\" has to be divisible by "
+			                        "\"n_frame\".");
 
 		const auto n_bits_per_frame  = static_cast<int>(vec.size() / n_frames);
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
