@@ -8,6 +8,8 @@
 #ifndef ENCODER_SYS_HPP_
 #define ENCODER_SYS_HPP_
 
+#include <stdexcept>
+
 #include "Encoder.hpp"
 
 namespace aff3ct
@@ -53,7 +55,21 @@ public:
 	 * \param par: a vector of the parity bits only (without the systematic bits), may contain the tail bits.
 	 *             par = [par | tail bit sys | tail bits par]
 	 */
-	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par) = 0;
+	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+	{
+		if (this->K * this->n_frames != (int)U_K.size())
+			throw std::length_error("aff3ct::module::Encoder_sys: \"U_K.size()\" has to be equal to "
+			                        "\"K\" * \"n_frames\".");
+
+		if ((this->N - this->K) * this->n_frames != (int)par.size())
+			throw std::length_error("aff3ct::module::Encoder_sys: \"par.size()\" has to be equal to "
+			                        "(\"N\" - \"K\") * \"n_frames\".");
+
+		_encode_sys(U_K, par);
+	}
+
+protected:
+	virtual void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par) = 0;
 };
 }
 }

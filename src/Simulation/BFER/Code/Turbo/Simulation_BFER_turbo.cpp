@@ -6,8 +6,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
@@ -29,11 +27,12 @@ Simulation_BFER_turbo<B,R,Q,QD>
   siso       (this->params.simulation.n_threads, nullptr),
   sf         (this->params.simulation.n_threads, nullptr)
 {
-	assert(params.code.N / params.code.K == 3);
-
 	if (!params.simulation.json_path.empty())
 	{
-		assert(this->params.simulation.n_threads == 1);
+		if (this->params.simulation.n_threads != 1)
+			throw std::runtime_error("aff3ct::simulation::Simulation_BFER_turbo: only single-threaded simulation is "
+			                         "available with JSON trace.");
+
 		json_stream.open(params.simulation.json_path.c_str(), std::ios::out | std::ios::trunc);
 
 		json_stream << "[" << std::endl;

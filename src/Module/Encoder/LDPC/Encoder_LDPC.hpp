@@ -29,7 +29,8 @@ public:
 
 	virtual void get_info_bits_pos(mipp::vector<B>& info_bits_pos);
 
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };
 
 }

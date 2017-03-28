@@ -1,9 +1,8 @@
-#include <cassert>
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
 #include <ctgmath>
-#include <exception>
+#include <stdexcept>
 
 #include "Tools/Math/utils.h"
 
@@ -103,7 +102,9 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::LLR_to_logsymb_proba(const mipp::vector<Q> &Ldec_N)
 {
-	assert(Ldec_N.size() == (symb_apriori_prob.size()/cpm.m_order - cpm.tl) * cpm.n_b_per_s);
+	if (Ldec_N.size() != (symb_apriori_prob.size()/cpm.m_order - cpm.tl) * cpm.n_b_per_s)
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Ldec_N.size()\" has to be equal to "
+		                        "(\"symb_apriori_prob.size()\" / \"cpm.m_order\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
 
 	std::fill(symb_apriori_prob.begin(), symb_apriori_prob.end(), (Q)0);
 
@@ -205,7 +206,9 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(mipp::vector<Q> &Le_N)
 {
-	assert(Le_N.size()*2 <= proba_msg_bits.size());
+	if (Le_N.size() * 2 > proba_msg_bits.size())
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
+		                        "\"proba_msg_bits.size()\".");
 
 	// remove tail bits because Le_N.size*2 <= proba_msg_bits.size + modulation tail bits
 	for (auto i = 0; i < (int)Le_N.size(); i ++)
@@ -218,8 +221,12 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(const mipp::vector<Q> &Ldec_N,
                     mipp::vector<Q> &Le_N)
 {
-	assert(Le_N.size()*2 <= proba_msg_bits.size());
-	assert(Le_N.size()   == Ldec_N.size()        );
+	if (Le_N.size() * 2 > proba_msg_bits.size())
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
+		                        "\"proba_msg_bits.size()\".");
+
+	if (Le_N.size() != Ldec_N.size())
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal to \"Ldec_N.size()\".");
 
 	// remove tail bits because Le_N.size*2 <= proba_msg_bits.size + modulation tail bits
 	for (auto i = 0; i < (int)Le_N.size(); i ++)

@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <set>
-#include "../../Decoder.hpp"
+
+#include "Decoder_polar_SCL_naive.hpp"
+
 #include "../decoder_polar_functions.h"
 
 namespace aff3ct
@@ -21,7 +23,7 @@ public:
 	virtual ~Decoder_polar_SCL_naive_sys() {}
 
 protected:
-	virtual void store(mipp::vector<B>& V_K) const;
+	virtual void _store(mipp::vector<B>& V_K) const;
 };
 }
 }

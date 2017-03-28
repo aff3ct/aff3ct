@@ -1,6 +1,7 @@
 #include <algorithm>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_polar_SC_naive.hpp"
 
@@ -14,6 +15,14 @@ Decoder_polar_SC_naive<B,R,F,G,H>
                          const std::string name)
 : Decoder<B,R>(K, N, n_frames, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SC_naive: \"N\" has to be positive a power "
+		                            "of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SC_naive: \"frozen_bits.size()\" has to be equal to "
+		                        "\"N\".");
+
 	this->recursive_allocate_nodes_contents(this->polar_tree.get_root(), this->N);
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
 }
@@ -27,7 +36,7 @@ Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	auto *contents = this->polar_tree.get_root()->get_contents();
 
@@ -44,13 +53,13 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= (unsigned) this->K);
-
 	auto k = 0;
 	this->recursive_store(this->polar_tree.get_root(), V_K, k);
-	assert(k == this->K);
+
+	if (k != this->K)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_naive: \"k\" should be equal to \"K\".");
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>

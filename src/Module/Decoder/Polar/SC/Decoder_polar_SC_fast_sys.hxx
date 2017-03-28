@@ -1,8 +1,8 @@
 #include <algorithm>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
 #include "Tools/Code/Polar/Pattern_parser_polar.hpp"
@@ -127,6 +127,14 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 {
 	static_assert(sizeof(B) == sizeof(R), "");
 
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SC_fast_sys: \"N\" has to be positive a power "
+		                            "of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"frozen_bits.size()\" has to be equal to "
+		                        "\"N\".");
+
 	Pattern_SC_interface* pattern_SC_r0 = new Pattern_SC<pattern_SC_type::RATE_0>();
 	Pattern_SC_interface* pattern_SC_r1 = new Pattern_SC<pattern_SC_type::RATE_1>();
 
@@ -161,10 +169,8 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
-	assert(Y_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
-
 	constexpr int n_frames = API_polar::get_n_frames();
 
 	if (n_frames == 1)
@@ -189,7 +195,9 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_hard_decode()
 {
-	assert(m >= static_level);
+	if (m < static_level)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
+		                         "\"static_level\".");
 
 	int first_id = 0, off_l = 0, off_s = 0;
 	this->recursive_decode(off_l, off_s, m, first_id);
@@ -269,10 +277,8 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
-	assert(V_K.size() >= (unsigned) (this->K * this->get_simd_inter_frame_level()));
-
 	constexpr int n_frames = API_polar::get_n_frames();
 
 	if (n_frames == 1)
@@ -292,10 +298,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			                                                 (signed char*)s_bis.data(),
 			                                                 (int)this->N)))
 			{
-				std::cerr << tools::bold_red("(EE) Unsupported N value for itransposition ")
-				          << tools::bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
-				          << std::endl;
-				exit(-1);
+
+				throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: unsupported \"N\" value for "
+				                         "itransposition (N have to be greater or equal to 128 for SSE/NEON or to "
+				                         "256 for AVX)");
 			}
 			else
 			{
@@ -333,9 +339,11 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::store_fast(mipp::vector<B>& V_N) const
+::_store_fast(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	if (V_N.size() < (unsigned) (this->N * this->get_simd_inter_frame_level()))
+		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"V_N.size()\" has to be equal or greater "
+		                        "than \"N\" * \"get_simd_inter_frame_level()\".");
 
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -353,10 +361,9 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			                                                 (signed char*)V_N.data(),
 			                                                 (int)this->N)))
 			{
-				std::cerr << tools::bold_red("(EE) Unsupported N value for itransposition ")
-				          << tools::bold_red("(N have to be greater or equal to 128 for SSE/NEON or to 256 for AVX).")
-				          << std::endl;
-				exit(-1);
+				throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: unsupported \"N\" value for "
+				                         "itransposition (\"N\" has to be greater or equal to 128 for SSE/NEON or to "
+				                         "256 for AVX)");
 			}
 		}
 #endif
@@ -373,9 +380,11 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::unpack(mipp::vector<B>& V_N) const
+::_unpack(mipp::vector<B>& V_N) const
 {
-	assert(V_N.size() >= (unsigned) (this->N * this->get_simd_inter_frame_level()));
+	if (V_N.size() < (unsigned) (this->N * this->get_simd_inter_frame_level()))
+		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"V_N.size()\" has to be equal or greater "
+		                        "than \"N\" * \"get_simd_inter_frame_level()\".");
 
 	constexpr int n_frames = API_polar::get_n_frames();
 

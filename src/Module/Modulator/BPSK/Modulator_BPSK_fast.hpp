@@ -22,9 +22,10 @@ public:
 	                    const std::string name = "Modulator_BPSK_fast");
 	virtual ~Modulator_BPSK_fast();
 
-	void   modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
-	void demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
-	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
+protected:
+	void   _modulate(const mipp::vector<B>& X_N1,                              mipp::vector<R>& X_N2);
+	void _demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
+	void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 };
 }
 }

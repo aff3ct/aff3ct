@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
@@ -20,7 +18,6 @@ Simulation_BFER_uncoded<B,R,Q>
 ::Simulation_BFER_uncoded(const parameters& params)
 : Simulation_BFER<B,R,Q>(params)
 {
-	assert(params.code.N == params.code.K);
 }
 
 template <typename B, typename R, typename Q>

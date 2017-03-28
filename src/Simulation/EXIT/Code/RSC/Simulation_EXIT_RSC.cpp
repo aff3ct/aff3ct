@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"

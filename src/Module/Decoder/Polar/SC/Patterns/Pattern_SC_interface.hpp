@@ -2,7 +2,7 @@
 #define PATTERN_SC_INTERFACE_HPP_
 
 #include <cmath>
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -56,9 +56,10 @@ protected:
 	  id(0),
 	  key("")
 	{
-		assert(N > 0);
-		assert(size > 0);
-		assert(node != nullptr);
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_SC_interface: \"N\" has to be greater than 0.");
+		if (node == nullptr)
+			throw std::invalid_argument("aff3ct::module::Pattern_SC_interface: \"node\" can't be null.");
 
 		const int *p_size = &size;
 		for (auto i = 0; i < node->get_depth(); i++) *const_cast<int*>(p_size) >>= 1;

@@ -1,7 +1,7 @@
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
 #include <math.h>
-#include <cassert>
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -44,7 +44,8 @@
 
 void uchar_transpose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
 {
-	assert((n % 16) == 0);
+	if (n % 16)
+		throw std::invalid_argument("aff3ct::tools::uchar_transpose_neon: \"n\" has to be divisible by 16.");
 
 	const int N = n / 16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	t_u8x16 *p_input  = const_cast<DATA_TYPE*>(src);
@@ -209,7 +210,8 @@ void uchar_transpose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
 
 void uchar_itranspose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
 {
-	assert (n % 16 == 0);
+	if (n % 16)
+		throw std::invalid_argument("aff3ct::tools::uchar_itranspose_neon: \"n\" has to be divisible by 16.");
 
 	const int N = n / 16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	t_u8x16 *p_input  = const_cast<DATA_TYPE*>(src);

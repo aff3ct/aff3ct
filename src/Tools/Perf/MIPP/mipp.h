@@ -70,6 +70,7 @@ SOFTWARE.
 
 #include <unordered_map>
 #include <typeindex>
+#include <stdexcept>
 #include <typeinfo>
 #include <iostream>
 #include <iomanip>
@@ -293,21 +294,22 @@ static void errorMessage(std::string instr)
 	type_names[typeid(double)]                 = "double";
 
 	if (RegisterSizeBit == 0)
-		std::cerr << "Undefined type of instructions, try to add -mfpu=neon, -msse4.2, -mavx, -march=native... "
-		          << "at the compile time." << std::endl;
-	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T)] << "> (" << IntructionsType << ") is undefined! "
-	          << "Program halting..." << std::endl;
+		throw std::runtime_error("mipp: undefined type of instructions, try to add "
+		                         "-mfpu=neon, -msse4.2, -mavx, -march=native... at the compile time.");
 
-#if defined(__GNUC__) && (defined(__linux__) || defined(__linux))
+#if defined(MIPP_ENABLE_BACKTRACE) && defined(__GNUC__) && (defined(__linux__) || defined(__linux))
 	void *array[5];
 	size_t size;
 
 	// get void*'s for all entries on the stack
 	size = backtrace(array, 5);
 
-	std::cerr << std::endl << "Backtrace:" << std::endl;
+	std::cerr << "Backtrace:" << std::endl;
 	backtrace_symbols_fd(array, size, STDERR_FILENO);
 #endif
+
+	throw std::runtime_error("mipp::" + instr + "<" + type_names[typeid(T)] + "> (" +
+	                         IntructionsType + ") is undefined!");
 }
 
 template <typename T1, typename T2>
@@ -344,21 +346,22 @@ static void errorMessage(std::string instr)
 	type_names[typeid(double)]                 = "double";
 
 	if (RegisterSizeBit == 0)
-		std::cerr << "Undefined type of instructions, try to add -mfpu=neon, -msse4.2, -mavx, -march=native... "
-		          << "at the compile time." << std::endl;
-	std::cerr << "mipp::" << instr << "<" << type_names[typeid(T1)] << "," << type_names[typeid(T2)] << "> ("
-	          << IntructionsType << ") is undefined! Program halting..." << std::endl;
+		throw std::runtime_error("mipp: undefined type of instructions, try to add "
+		                         "-mfpu=neon, -msse4.2, -mavx, -march=native... at the compile time.");
 
-#if defined(__GNUC__) && (defined(__linux__) || defined(__linux))
+#if defined(MIPP_ENABLE_BACKTRACE) && defined(__GNUC__) && (defined(__linux__) || defined(__linux))
 	void *array[5];
 	size_t size;
 
 	// get void*'s for all entries on the stack
 	size = backtrace(array, 5);
 
-	std::cerr << std::endl << "Backtrace:" << std::endl;
+	std::cerr << "Backtrace:" << std::endl;
 	backtrace_symbols_fd(array, size, STDERR_FILENO);
 #endif
+
+	throw std::runtime_error("mipp::" + instr + "<" + type_names[typeid(T1)] + "," + type_names[typeid(T2)] + "> (" +
+	                         IntructionsType + ") is undefined!");
 }
 
 template <typename T> inline reg   load         (const T*)                        { errorMessage<T>("load");          exit(-1); }

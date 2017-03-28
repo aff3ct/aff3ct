@@ -1,10 +1,9 @@
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
 
 #include "Tools/Math/utils.h"
-#include "Tools/Display/bash_tools.h"
 
 #include "Quantizer_fast.hpp"
 
@@ -20,7 +19,9 @@ Quantizer_fast<R,Q>
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
 {
-	assert(sizeof(Q) * 8 > (unsigned) fixed_point_pos);
+	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"fixed_point_pos\" has to be smaller "
+		                            "than \"sizeof(Q)\" * 8.");
 }
 
 namespace aff3ct
@@ -55,11 +56,23 @@ Quantizer_fast<R,Q>
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
 {
-	assert(saturation_pos >= 2);
-	assert(fixed_point_pos <= saturation_pos);
-	assert(sizeof(Q) * 8 > (unsigned) fixed_point_pos);
-	assert(val_max <= +(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)));
-	assert(val_min >= -(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)));
+	if (fixed_point_pos <= 0)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"fixed_point_pos\" has to be greater than 0.");
+	if (saturation_pos <= 0)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"saturation_pos\" has to be greater than 0.");
+	if (saturation_pos < 2)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"saturation_pos\" has to be equal or greater "
+		                            "than 2.");
+	if (fixed_point_pos > saturation_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"saturation_pos\" has to be equal or greater "
+		                            "than \"fixed_point_pos\".");
+	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"fixed_point_pos\" has to be smaller "
+		                            "than \"sizeof(Q)\" * 8.");
+	if (val_max > +(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"val_max\" value is invalid.");
+	if (val_min < -(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"val_min\" value is invalid.");
 }
 
 namespace aff3ct
@@ -94,10 +107,10 @@ Quantizer_fast<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_fast<R,Q>
-::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::_process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	std::cerr << bold_red("(EE) Quantizer_fast only support float to short or float to signed char.") << std::endl;
-	exit(EXIT_FAILURE);
+	throw std::runtime_error("aff3ct::module::Quantizer_fast: this class only support \"float to short\" "
+	                         "or \"float to signed char\".");
 }
 
 namespace aff3ct
@@ -106,10 +119,8 @@ namespace module
 {
 template<>
 void Quantizer_fast<float,short>
-::process(const mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
+::_process(const mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-
 	auto size = (unsigned)Y_N1.size();
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
@@ -140,10 +151,8 @@ namespace module
 {
 template<>
 void Quantizer_fast<float,signed char>
-::process(const mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
+::_process(const mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-
 	auto size = (unsigned)Y_N1.size();
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;

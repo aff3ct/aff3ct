@@ -2,8 +2,6 @@
 #include <string>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Launcher_BFERI.hpp"
 
 using namespace aff3ct::tools;

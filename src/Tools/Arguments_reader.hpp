@@ -70,7 +70,7 @@ public:
 
 	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
 	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
-	                           std::string                                                  &warnings);
+	                           std::vector<std::string>                                     &warnings);
 
 	/*!
 	 * \brief Searches if the tags exist.
@@ -150,9 +150,11 @@ public:
 	/*!
 	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args.
 	 *
+	 * \param error: error message.
+	 *
 	 * \return true if the arguments criteria are respected, false otherwise.
 	 */
-	bool check_arguments();
+	bool check_arguments(std::string &error);
 
 private:
 	/*!
@@ -178,7 +180,8 @@ private:
 	 * \return true if the argument criteria are respected, false otherwise.
 	 */
 	bool check_argument(const std::vector<std::string> &tags,
-	                          std::map<std::vector<std::string>, std::vector<std::string>> &args);
+	                          std::map<std::vector<std::string>, std::vector<std::string>> &args,
+	                          std::string &error);
 
 	/*!
 	 * \brief Clears m_required_args, m_optional_args and m_args.

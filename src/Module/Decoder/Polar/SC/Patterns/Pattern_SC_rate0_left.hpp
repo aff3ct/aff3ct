@@ -1,7 +1,7 @@
 #ifndef PATTERN_SC_YIELD0_LEFT_HPP_
 #define PATTERN_SC_YIELD0_LEFT_HPP_
 
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -97,11 +97,14 @@ public:
 	virtual int match(const int &reverse_graph_depth,
 	                  const tools::Binary_node<Pattern_SC_interface>* node_curr) const
 	{
-		assert(reverse_graph_depth > 0);
+		if (reverse_graph_depth <= 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_SC<RATE_0_LEFT>: \"reverse_graph_depth\" has to be "
+			                            "greater than 0.");
 
 		const Pattern_SC_interface *pattern_left  = node_curr->get_left ()->get_contents();
 
-		assert(pattern_left != nullptr);
+		if (pattern_left == nullptr)
+			throw std::invalid_argument("aff3ct::module::Pattern_SC<RATE_0_LEFT>: \"pattern_left\" can't be null.");
 
 		int match_val = 0;
 

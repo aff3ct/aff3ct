@@ -17,7 +17,7 @@ Source_AZCW<B>
 
 template <typename B>
 void Source_AZCW<B>
-::generate(mipp::vector<B>& U_K)
+::_generate(mipp::vector<B>& U_K)
 {
 	std::fill(U_K.begin(), U_K.end(), 0);
 }

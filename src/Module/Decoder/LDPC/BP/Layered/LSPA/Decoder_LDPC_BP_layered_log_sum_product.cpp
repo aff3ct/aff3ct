@@ -1,7 +1,6 @@
 #include <limits>
 #include <cmath>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered_log_sum_product.hpp"

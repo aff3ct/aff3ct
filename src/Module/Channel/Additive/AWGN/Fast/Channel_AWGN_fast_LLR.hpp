@@ -25,7 +25,8 @@ public:
 	                      const std::string name = "Channel_AWGN_fast_LLR");
 	virtual ~Channel_AWGN_fast_LLR();
 
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
+protected:
+	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 
 private:
 	inline mipp::Reg<R> get_random_simd();

@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <vector>
 #include <numeric>
@@ -23,8 +23,14 @@ Encoder_LDPC_from_H<B>
 	std::vector<mipp::vector<B>> H;
 	tools::LDPC_G::build_H(alist_H.get_n_CN(), alist_H.get_n_VN(), alist_H.get_CN_to_VN(), H);
 	tools::LDPC_G::triangularization_H(H, swapped);
-	assert((int) H[0].size() == N);
-	assert((int)(H[0].size() - H.size()) == K);
+
+	if ((int) H[0].size() != N)
+		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"H[0].size()\" has to be equal to \"N\".");
+
+	if ((int)(H[0].size() - H.size()) != K)
+		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"H[0].size()\" - \"H.size()\"  has to be "
+		                        "equal to \"K\".");
+
 	tools::LDPC_G::identity_H(H);
 	tools::LDPC_G::transformation_H_to_G(H, G, swapped);
 	tools::real_transpose(K, N, G, this->tG);
@@ -40,7 +46,9 @@ template <typename B>
 void Encoder_LDPC_from_H<B>
 ::get_info_bits_pos(mipp::vector<B>& info_bits_pos)
 {
-	assert(this->K <= (int)info_bits_pos.size());
+	if (this->K > (int)info_bits_pos.size())
+		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"info_bits_pos.size()\" has to be equal "
+		                        "or greater than \"K\".");
 
 	mipp::vector<B> tmp(this->N);
 	std::iota(tmp.begin(), tmp.begin() + this->N, 0);
@@ -59,7 +67,9 @@ template <typename B>
 void Encoder_LDPC_from_H<B>
 ::get_G(mipp::vector<B>& matrix_G)
 {
-	assert(this->G.size() == G.size());
+	if (this->G.size() != G.size())
+		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"G.size()\" has to be equal "
+		                        "to \"this->G.size()\".");
 
 	std::copy(this->G.begin(), this->G.end(), matrix_G.begin());
 }

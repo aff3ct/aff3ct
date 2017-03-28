@@ -32,7 +32,7 @@ protected:
 #pragma clang diagnostic pop
 #endif
 
-	void store(mipp::vector<B>& V_N) const;
+	void _store(mipp::vector<B>& V_N) const;
 };
 }
 }

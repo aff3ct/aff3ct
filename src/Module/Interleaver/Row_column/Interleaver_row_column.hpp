@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_ROW_COLUMN_HPP
 #define	INTERLEAVER_ROW_COLUMN_HPP
 
+#include <stdexcept>
 #include <algorithm>
 #include <time.h>
 #include <random>
@@ -24,7 +25,10 @@ public:
 	Interleaver_row_column(const int size, const int n_cols, const std::string name = "Interleaver_row_column")
 	: Interleaver<T>(size, 1, name), n_cols(n_cols), n_rows(size / n_cols)
 	{
-		assert(n_rows * n_cols == size);
+		if (n_rows * n_cols != size)
+			throw std::invalid_argument("aff3ct::module::Interleaver_row_column: \"size\" has to be equal to "
+			                            "\"n_rows\" * \"n_cols\".");
+
 		gen_lookup_tables();
 	}
 

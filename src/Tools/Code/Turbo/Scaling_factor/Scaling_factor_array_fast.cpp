@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Tools/Math/utils.h"
 
@@ -17,7 +17,9 @@ template <typename R>
 void Scaling_factor_array_fast<R>
 ::operator()(mipp::vector<R> &ext, const int ite) 
 {
-	assert((unsigned)ite < alpha_array.size());
+	if ((unsigned)ite >= alpha_array.size())
+		throw std::invalid_argument("aff3ct::tools::Scaling_factor_array_fast: \"ite\" has to be smaller than "
+		                            "\"alpha_array.size()\".");
 	
 	const auto loop_size = (int)ext.size();
 

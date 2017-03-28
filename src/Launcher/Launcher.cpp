@@ -1,10 +1,10 @@
 #include <cmath>
 #include <chrono>
-#include <cassert>
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 #include <functional>
 
 #ifdef ENABLE_MPI
@@ -56,6 +56,7 @@ Launcher<B,R,Q>
 	params.simulation .snr_type          = "EB";
 	params.simulation .seed              = 0;
 	params.interleaver.seed              = 0;
+	params.interleaver.uniform           = false;
 	params.code       .tail_length       = 0;
 	params.source     .type              = "RAND";
 	params.source     .path              = "";
@@ -323,7 +324,8 @@ void Launcher<B,R,Q>
 
 	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 
-	assert(max_n_threads_global > 0);
+	if (max_n_threads_global <= 0)
+		throw std::invalid_argument("aff3ct::launcher::Launcher: \"max_n_threads_global\" has to be greater than 0.");
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
 	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
@@ -342,11 +344,6 @@ void Launcher<B,R,Q>
 	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
 	params.code.m      = (int)std::ceil(std::log2(params.code.N));
-	if (params.code.K > params.code.N)
-	{
-		std::cerr << bold_red("(EE) K have to be smaller than N, exiting.") << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
 
 	// -------------------------------------------------------------------------------------------------------- source
 	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
@@ -356,12 +353,7 @@ void Launcher<B,R,Q>
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
-	if (params.modulator.type == "USR" && !(ar.exist_arg({"mod-const-path"})))
-	{
-		std::cerr << bold_red("(EE) When USR modulation type is used, a path to a file containing the constellation")
-		          << bold_red("symbols must be given.") << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
+
 	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
 		params.modulator.complex = false;
 
@@ -382,10 +374,7 @@ void Launcher<B,R,Q>
 				params.modulator.wave_shape     = "GMSK";
 			}
 			else
-			{
-				std::cerr << bold_red("(EE) Unknown CPM standard!") << std::endl;
-				exit(-1);
-			}
+				throw std::invalid_argument("aff3ct::launcher::Launcher: unknown CPM standard.");
 		}
 	}
 
@@ -470,8 +459,12 @@ int Launcher<B,R,Q>
 		return EXIT_FAILURE;
 	}
 
-	if (!ar.check_arguments())
+	std::string error;
+	if (!ar.check_arguments(error))
+	{
+		std::cerr << bold_red("(EE) " + error) << std::endl;
 		return EXIT_FAILURE;
+	}
 
 	return 0;
 }
@@ -783,7 +776,17 @@ void Launcher<B,R,Q>
 
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
-	simu = this->build_simu();
+
+	try
+	{
+		simu = this->build_simu();
+	}
+	catch (std::exception const& e)
+	{
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+		          << bold_red("simulation.") << std::endl
+		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+	}
 
 	if (simu != nullptr)
 	{
@@ -792,11 +795,23 @@ void Launcher<B,R,Q>
 			stream << "# The simulation is running..." << std::endl;
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
-			std::clog << bold_yellow(cmd_warn);
-		simu->launch();
-		if (params.simulation.mpi_rank == 0)
-			stream << "# End of the simulation." << std::endl;
+			for (auto w = 0; w < (int)cmd_warn.size(); w++)
+				std::clog << bold_yellow("(WW) " + cmd_warn[w]) << std::endl;
+
+		try
+		{
+			simu->launch();
+		}
+		catch (std::exception const& e)
+		{
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when running the ")
+			          << bold_red("simulation.") << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		}
 	}
+
+	if (params.simulation.mpi_rank == 0)
+		stream << "# End of the simulation." << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation 

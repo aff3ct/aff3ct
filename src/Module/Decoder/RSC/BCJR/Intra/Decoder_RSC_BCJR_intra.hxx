@@ -1,4 +1,5 @@
 #include <limits>
+#include <stdexcept>
 
 #include "Tools/Math/utils.h"
 
@@ -69,10 +70,8 @@ Decoder_RSC_BCJR_intra<B,R>
 
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
-		{
-			std::cerr << "(EE) This decoder does not support the input trellis... Exiting." << std::endl;
-			exit(-1);
-		}
+			throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_intra: this decoder does not support "
+			                            "the input trellis.");
 
 	// init alpha values
 	RSC_BCJR_intra_init<R>::apply(alpha);

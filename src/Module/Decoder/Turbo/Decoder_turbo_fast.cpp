@@ -33,7 +33,7 @@ Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const mipp::vector<R>& Y_N)
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
@@ -121,7 +121,7 @@ void Decoder_turbo_fast<B,R>
 		std::fill(this->l_e1n.begin(), this->l_e1n.end(), (R)0);
 	}
 	else
-		Decoder_turbo<B,R>::load(Y_N);
+		Decoder_turbo<B,R>::_load(Y_N);
 }
 
 template <typename B, typename R>
@@ -208,7 +208,7 @@ void Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(mipp::vector<B>& V_K) const
 {
 	if (this->get_simd_inter_frame_level() > 1)
 	{
@@ -232,7 +232,7 @@ void Decoder_turbo_fast<B,R>
 		}
 	}
 	else
-		Decoder_turbo<B,R>::store(V_K);
+		Decoder_turbo<B,R>::_store(V_K);
 }
 
 // ==================================================================================== explicit template instantiation

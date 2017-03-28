@@ -294,9 +294,9 @@ template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 {
-	assert(this->buffered_encoding);
-	assert((int) Y_N1.size() == 2 * this->K + this->tail_length());
-	assert(Y_N1.size()       == Y_N2.size());
+	if (!this->buffered_encoding)
+		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_seq_generic_std: \"buffered_encoding\" has to be "
+		                         "enabled to use the \"_soft_decode\" method.");
 
 	const R* sys          = Y_N1.data();
 	const R* par          = Y_N1.data() + 1 * this->K;

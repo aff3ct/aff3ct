@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Decoder_RSC_BCJR_intra_std.hpp"
 
@@ -15,8 +15,12 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
                              const std::string name)
 : Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
-	assert(mipp::nElReg<R>() == 8);
-	assert(K % 8 == 0);
+	if (mipp::nElReg<R>() != 8)
+		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_intra_std: \"mipp::nElReg<R>()\" "
+		                         "has to be equal to 8.");
+	if (K % 8)
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_intra_std: \"K\" "
+		                            "has to be divisible by 8.");
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>

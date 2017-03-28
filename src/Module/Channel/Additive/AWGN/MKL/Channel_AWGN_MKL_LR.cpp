@@ -1,6 +1,5 @@
 #ifdef CHANNEL_MKL
 
-#include <cassert>
 #include <cmath>
 
 #include "Channel_AWGN_MKL_LR.hpp"
@@ -22,10 +21,8 @@ Channel_AWGN_MKL_LR<R>
 
 template <typename R>
 void Channel_AWGN_MKL_LR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-	
 	Channel_AWGN_MKL_LLR<R>::add_noise(X_N, Y_N);
 	auto size = Y_N.size();
 	for (unsigned i = 0; i < size; i++)

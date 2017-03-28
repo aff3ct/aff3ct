@@ -2,8 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "AList_reader.hpp"
 
@@ -55,22 +54,13 @@ AList_reader
 				file.close();
 
 				if (!success)
-				{
-					std::cerr << bold_red("(EE) The \"")
-					          << bold_red(filename)
-					          << bold_red("\" file is not supported by ")
-					          << bold_red("the AList reader, exiting.")
-					          << std::endl;
-					std::exit(-1);
-				}
+					throw std::runtime_error("aff3ct::tools::AList_reader: \"" + filename + "\" file is not "
+					                         "supported by the AList reader.");
 			}
 		}
 	}
 	else
-	{
-		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::tools::AList_reader: can't open \"" + filename + "\" file.");
 
 	this->compute_branches_transpose();
 }
@@ -431,7 +421,9 @@ void AList_reader
 			branch_id += connections[id_V];
 			connections[id_V]++;
 
-			assert(connections[id_V] <= (int)VN_to_CN[id_V].size());
+			if (connections[id_V] > (int)VN_to_CN[id_V].size())
+				throw std::runtime_error("aff3ct::tools::AList_reader: \"connections[id_V]\" has to be equal or "
+				                         "smaller than \"VN_to_CN[id_V].size()\".");
 
 			branches_transpose[k] = branch_id;
 			k++;

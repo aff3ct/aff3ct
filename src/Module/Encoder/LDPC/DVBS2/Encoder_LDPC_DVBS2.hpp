@@ -21,9 +21,8 @@ public:
 	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC");
 	virtual ~Encoder_LDPC_DVBS2();
 
-	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-
 private:
+	void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 	void build_dvbs2();
 };
 

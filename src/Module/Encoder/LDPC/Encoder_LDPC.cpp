@@ -1,6 +1,6 @@
-#include <cassert>
 #include <numeric>
 #include <iostream>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
@@ -23,8 +23,9 @@ Encoder_LDPC<B>
                const std::string name)
 : Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
 {
-	assert(K == (int)alist_G.get_n_CN());
-	assert(N == (int)alist_G.get_n_VN());
+	if (K != (int)alist_G.get_n_CN() || N != (int)alist_G.get_n_VN())
+		throw std::invalid_argument("aff3ct::module::Encoder_LDPC: \"alist_G\" dimensions are not compatible with "
+		                            "\"K\" and \"N\".");
 
 	auto CN_to_VN = alist_G.get_CN_to_VN();
 
@@ -46,17 +47,17 @@ template <typename B>
 void Encoder_LDPC<B>
 ::get_info_bits_pos(mipp::vector<B>& info_bits_pos)
 {
-	assert(this->K <= (int)info_bits_pos.size());
+	if (this->K > (int)info_bits_pos.size())
+		throw std::length_error("aff3ct::module::Encoder_LDPC: \"info_bits_pos.size()\" has to be equal or greater "
+		                        "than \"K\".");
+
 	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);
 }
 
 template <typename B>
 void Encoder_LDPC<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert(this->K == (int)U_K.size());
-	assert(this->N == (int)X_N.size());
-
 	// Real General Matrix Multiplication
 	tools::rgemm(1, this->N, this->K, U_K, tG, X_N);
 

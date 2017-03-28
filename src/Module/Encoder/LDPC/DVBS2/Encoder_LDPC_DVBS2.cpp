@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 
 #include "Tools/Display/bash_tools.h"
@@ -17,13 +17,13 @@ Encoder_LDPC_DVBS2<B>
 	build_dvbs2();
 
 	if (!dvbs2)
-	{
-		std::cerr << tools::bold_red("(EE) The given format does not match any known generator matrix!") << std::endl;
-		std::exit(-1);
-	}
+		throw std::runtime_error("aff3ct::module::Encoder_LDPC_DVBS2: the given format does not match any known "
+		                         "generator matrix.");
 
-	assert(K == dvbs2->K_LDPC);
-	assert(N == dvbs2->N_LDPC);
+	if (K != dvbs2->K_LDPC)
+		throw std::invalid_argument("aff3ct::module::Encoder_LDPC_DVBS2: \"K\" has to be equal to \"dvbs2->K_LDPC\".");
+	if (N != dvbs2->N_LDPC)
+		throw std::invalid_argument("aff3ct::module::Encoder_LDPC_DVBS2: \"N\" has to be equal to \"dvbs2->N_LDPC\".");
 }
 
 template <typename B>
@@ -93,11 +93,8 @@ void Encoder_LDPC_DVBS2<B>
 
 template <typename B>
 void Encoder_LDPC_DVBS2<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 {
-	assert((int)U_K.size() == this->K);
-	assert((int)X_N.size() == this->N);
-
 	std::copy(U_K.begin(),           U_K.end(), X_N.begin());
 	std::fill(X_N.begin() + this->K, X_N.end(), 0          );
 

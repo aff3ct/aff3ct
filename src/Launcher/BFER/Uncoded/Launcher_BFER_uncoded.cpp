@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Simulation/BFER/Code/Uncoded/Simulation_BFER_uncoded.hpp"
 
 #include "Launcher_BFER_uncoded.hpp"

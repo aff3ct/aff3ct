@@ -23,7 +23,8 @@ public:
 	Source_user(const int K, std::string filename, const int n_frames = 1, const std::string name = "Source_user");
 	virtual ~Source_user();
 
-	void generate(mipp::vector<B>& U_K);
+protected:
+	void _generate(mipp::vector<B>& U_K);
 };
 }
 }

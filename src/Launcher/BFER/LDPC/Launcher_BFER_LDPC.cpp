@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Simulation/BFER/Code/LDPC/Simulation_BFER_LDPC.hpp"
 
 #include "Launcher_BFER_LDPC.hpp"

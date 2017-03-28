@@ -35,9 +35,9 @@ public:
 
 protected:
 	// hard decoder (load -> decode -> store)
-	void load        (const mipp::vector<R>& Y_N);
+	void _load       (const mipp::vector<R>& Y_N);
 	void _hard_decode(                          );
-	void store       (      mipp::vector<B>& V_K) const;
+	void _store      (      mipp::vector<B>& V_K) const;
 
 	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
 

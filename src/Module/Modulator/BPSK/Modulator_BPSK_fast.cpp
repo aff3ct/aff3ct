@@ -1,11 +1,9 @@
 #include <typeinfo>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "Modulator_BPSK_fast.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R, typename Q>
 Modulator_BPSK_fast<B,R,Q>
@@ -23,10 +21,10 @@ Modulator_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 {
-	std::cerr << bold_red("(EE) The fast modulator does not support this type of data.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Modulator_BPSK_fast: this type of data is not supported in the "
+	                         "\"_modulate\" method.");
 }
 
 namespace aff3ct
@@ -35,7 +33,7 @@ namespace module
 {
 template <>
 void Modulator_BPSK_fast<int, float, float>
-::modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2)
+::_modulate(const mipp::vector<int>& X_N1, mipp::vector<float>& X_N2)
 {
 	auto size = (unsigned int)X_N1.size();
 	
@@ -61,7 +59,7 @@ namespace module
 {
 template <>
 void Modulator_BPSK_fast<short, float, float>
-::modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2)
+::_modulate(const mipp::vector<short>& X_N1, mipp::vector<float>& X_N2)
 {
 	auto size = (unsigned)X_N1.size();
 	
@@ -95,7 +93,7 @@ namespace module
 {
 template <>
 void Modulator_BPSK_fast<signed char, float, float>
-::modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2)
+::_modulate(const mipp::vector<signed char>& X_N1, mipp::vector<float>& X_N2)
 {
 	auto size = (unsigned)X_N1.size();
 	
@@ -136,10 +134,13 @@ void Modulator_BPSK_fast<signed char, float, float>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"Q\" has to be float or double.");
 
 	if (disable_sig2)
 		Y_N2 = Y_N1;
@@ -159,10 +160,13 @@ void Modulator_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
-::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"Q\" has to be float or double.");
 
 	auto size = (unsigned int)Y_N1.size();
 	if (disable_sig2)

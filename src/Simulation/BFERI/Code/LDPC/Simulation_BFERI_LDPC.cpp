@@ -5,7 +5,6 @@
 #include <numeric>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
@@ -25,8 +24,6 @@ Simulation_BFERI_LDPC<B,R,Q>
   info_bits_pos(this->params.code.K),
   decoder_siso(params.simulation.n_threads, nullptr)
 {
-	assert(this->params.code.N == (int)alist_data.get_n_VN());
-
 	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 }
 

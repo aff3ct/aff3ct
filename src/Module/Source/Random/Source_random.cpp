@@ -19,7 +19,7 @@ Source_random<B>
 
 template <typename B>
 void Source_random<B>
-::generate(mipp::vector<B>& U_K)
+::_generate(mipp::vector<B>& U_K)
 {
 	auto size = (int)U_K.size();
 

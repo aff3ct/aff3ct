@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Decoder_turbo_fast_CA.hpp"
 
@@ -21,6 +22,9 @@ Decoder_turbo_fast_CA<B,R>
                         const bool buffered_encoding)
 : Decoder_turbo_fast<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding), crc(crc)
 {
+	if (crc.size() > K)
+		throw std::invalid_argument("aff3ct::module::Decoder_turbo_fast_CA: \"crc.size()\" has to be equal or "
+		                            "smaller than K.");
 }
 
 template <typename B, typename R>
@@ -34,9 +38,7 @@ void Decoder_turbo_fast_CA<B,R>
 ::_hard_decode()
 {
 	constexpr auto start_check_crc = 2;
-
-	assert(start_check_crc >= 1          );
-	assert(start_check_crc <= this->n_ite);
+	static_assert(start_check_crc >= 1, "");
 
 	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;

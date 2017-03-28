@@ -5,8 +5,6 @@
 #include <numeric>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
 
@@ -23,8 +21,6 @@ Simulation_BFER_LDPC<B,R,Q>
   alist_data   (params.code.alist_path),
   info_bits_pos(this->params.code.K, 0)
 {
-	assert(this->params.code.N == (int)alist_data.get_n_VN());
-
 	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
 }
 

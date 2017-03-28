@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 
@@ -15,7 +15,12 @@ Encoder_RSC_generic_sys<B>
   next_state(),
   sys_tail  ()
 {
-	assert(std::floor(std::log2(poly[0])) == std::floor(std::log2(poly[1])));
+	if (poly.size() < 2)
+		throw std::length_error("aff3ct::module::Encoder_RSC_generic_sys: \"poly.size()\" has to be equal or greater "
+		                        "than 2.");
+	if (std::floor(std::log2(poly[0])) != std::floor(std::log2(poly[1])))
+		throw std::invalid_argument("aff3ct::module::Encoder_RSC_generic_sys: \"log2(poly[0])\" has to be equal "
+		                            "to \"log2(poly[1])\".");
 
 	for (auto s = 0; s < this->n_states; s++)
 	{

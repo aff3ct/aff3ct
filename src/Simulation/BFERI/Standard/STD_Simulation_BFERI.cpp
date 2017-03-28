@@ -4,14 +4,13 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
+#include <stdexcept>
 
 #ifdef ENABLE_MPI
 #include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
 #endif
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
@@ -81,29 +80,19 @@ Simulation_BFERI<B,R,Q>
 		          << std::endl;
 
 	if (params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) BFERI simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: the bench mode is not supported.");
 
 #ifdef ENABLE_MPI
 	if (params.simulation.debug || params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) Debug and bench modes are unavailable in MPI, exiting.") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: debug and bench modes are unavailable "
+		                            "in MPI.");
 #endif
 
 	// check, if the error tracker is enable, if the given file name is good
 	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert) &&
 	     !Monitor_reduction<B,R>::check_path(this->params.monitor.err_track_path))
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-		          << bold_red(this->params.monitor.err_track_path)
-		          << bold_red("\" and please create yourself the needed directory.")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFERI: issue while trying to open error tracker "
+		                         "log files, check the base path (" + this->params.monitor.err_track_path + ").");
 
 	if (this->params.monitor.err_track_revert)
 	{
@@ -155,13 +144,13 @@ void Simulation_BFERI<B,R,Q>
 	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1].join();
 
-	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled)
+	if (this->params.simulation.mpi_rank == 0 && !this->params.terminal.disabled && terminal != nullptr)
 	{
 		time_reduction(true);
 		terminal->final_report(std::cout);
 	}
 
-	if (this->params.monitor.err_track_enable)
+	if (this->params.monitor.err_track_enable && monitor_red != nullptr)
 		monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr, this->interleaver[0]->get_lookup_table());
 }
 
@@ -191,7 +180,10 @@ void Simulation_BFERI<B,R,Q>
 
 	// get the real number of frames per threads (from the decoder)
 	const auto n_fra = simu->siso[tid]->get_n_frames();
-	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
+
+	if (simu->siso[tid]->get_n_frames() != simu->decoder[tid]->get_n_frames())
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: \"siso[tid]->get_n_frames()\" and "
+		                            "\"decoder[tid]->get_n_frames()\" have to be equal.");
 
 	// resize the buffers
 	const auto K     = simu->params.code.K;
@@ -244,42 +236,66 @@ template <typename B, typename R, typename Q>
 void Simulation_BFERI<B,R,Q>
 ::Monte_Carlo_method(Simulation_BFERI<B,R,Q> *simu, const int tid)
 {
-	Simulation_BFERI<B,R,Q>::build_communication_chain(simu, tid);
-
-	if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
-	    (!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
-	    !(simu->params.simulation.debug && simu->params.simulation.n_threads == 1)))
-		simu->terminal->legend(std::cout);
-
-	if (simu->params.source.type == "AZCW")
+	try
 	{
-		std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
-		std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
-		std::fill(simu->X_N2[tid].begin(), simu->X_N2[tid].end(), (B)0);
-		simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
+		Simulation_BFERI<B,R,Q>::build_communication_chain(simu, tid);
+
+		if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
+			(!simu->params.terminal.disabled && simu->snr == simu->params.simulation.snr_min &&
+			!(simu->params.simulation.debug && simu->params.simulation.n_threads == 1)))
+			simu->terminal->legend(std::cout);
+
+		if (simu->params.source.type == "AZCW")
+		{
+			std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
+			std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
+			std::fill(simu->X_N2[tid].begin(), simu->X_N2[tid].end(), (B)0);
+			simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
+		}
+
+		simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_crc_total  [tid] = std::chrono::nanoseconds(0);
+		simu->d_encod_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_inter_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_filte_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_deint_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
+		simu->d_check_total[tid] = std::chrono::nanoseconds(0);
+
+		simu->barrier(tid);
+
+		try
+		{
+			if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
+				Simulation_BFERI<B,R,Q>::simulation_loop_debug(simu);
+			else
+				Simulation_BFERI<B,R,Q>::simulation_loop(simu, tid);
+		}
+		catch (std::exception const& e)
+		{
+			Monitor<B,R>::stop();
+
+			if (tid == 0)
+				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+				          << std::endl
+				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		}
 	}
+	catch (std::exception const& e)
+	{
+		Monitor<B,R>::stop();
 
-	simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_crc_total  [tid] = std::chrono::nanoseconds(0);
-	simu->d_encod_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_inter_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_filte_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_deint_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
-	simu->d_check_total[tid] = std::chrono::nanoseconds(0);
-
-	simu->barrier(tid);
-
-	if (simu->params.simulation.n_threads == 1 && simu->params.simulation.debug)
-		Simulation_BFERI<B,R,Q>::simulation_loop_debug(simu);
-	else
-		Simulation_BFERI<B,R,Q>::simulation_loop(simu, tid);
+		if (tid == 0)
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+			          << bold_red("communication chain.") << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+	}
 }
 
 template <typename B, typename R, typename Q>
