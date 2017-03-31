@@ -19,6 +19,9 @@ template <typename B = int, typename R = float,
                                                                tools::xo_STD<B  >>>
 class Decoder_polar_SCL_fast_CA_sys : public Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
+private:
+	bool fast_store;
+
 protected:
 	CRC<B>& crc;
 	mipp::vector<B> U_test;
@@ -35,8 +38,11 @@ public:
 	virtual ~Decoder_polar_SCL_fast_CA_sys(){};
 
 protected:
-	        bool crc_check       (mipp::vector<B> &s);
-	virtual int  select_best_path(                  );
+	        bool crc_check       (mipp::vector<B> &s  );
+	virtual int  select_best_path(                    );
+
+	virtual void _load (const mipp::vector<R>& Y_N);
+	virtual void _store(      mipp::vector<B>& V_K) const;
 };
 }
 }

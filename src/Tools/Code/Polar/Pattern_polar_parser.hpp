@@ -10,6 +10,7 @@
 #define PATTERN_POLAR_PARSER_HPP
 
 #include <map>
+#include <utility>
 #include <vector>
 #include <vector>
 
@@ -38,6 +39,7 @@ protected:
 	const Pattern_polar_i               *pattern_rate1; /*!< Terminal pattern when the bit is an information bit. */
 	      Binary_tree<Pattern_polar_i>  *polar_tree;    /*!< Tree of patterns. */
 	      std::vector<unsigned char>     pattern_types; /*!< Tree of patterns represented with a vector of pattern IDs. */
+	      std::vector<std::pair<unsigned char, int>> leaves_pattern_types;
 
 public:
 	/*!
@@ -91,6 +93,8 @@ public:
 	 * \return a vector of pattern IDs.
 	 */
 	std::vector<unsigned char> get_pattern_types() const;
+
+	const std::vector<std::pair<unsigned char, int>>& get_leaves_pattern_types() const;
 
 	/*!
 	 * \brief Gets a node pattern type from the id of the node.

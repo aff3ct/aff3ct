@@ -10,8 +10,8 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L_max, const mipp::vector<B>& frozen_bits,
                                      CRC<B>& crc, const bool is_full_adaptive, const int n_frames, const std::string name)
-: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc, n_frames,       name),
-  sc_decoder                                      (K, N       , frozen_bits,      n_frames, true, name),
+: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc, n_frames, name),
+  sc_decoder                                      (K, N       , frozen_bits,      n_frames, name),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
 	if (!tools::is_power_of_2(this->N))
@@ -33,8 +33,8 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
                                      const std::vector<tools::Pattern_polar_i*> polar_patterns,
                                      const int idx_r0, const int idx_r1,
                                      CRC<B>& crc, const bool is_full_adaptive, const int n_frames, const std::string name)
-: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, polar_patterns, idx_r0, idx_r1, crc, n_frames,       name),
-  sc_decoder                                      (K, N       , frozen_bits,                                      n_frames, true, name),
+: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, polar_patterns, idx_r0, idx_r1, crc, n_frames, name),
+  sc_decoder                                      (K, N       , frozen_bits,                                      n_frames, name),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
 	if (!tools::is_power_of_2(this->N))
@@ -65,7 +65,8 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 	sc_decoder._hard_decode();
 
 	// check the CRC
-	auto crc_decode_result = this->crc_check(sc_decoder.s);
+	sc_decoder._store(this->U_test);
+	auto crc_decode_result = this->crc.check(this->U_test, this->get_simd_inter_frame_level());
 
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)
@@ -96,8 +97,10 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::_store(mipp::vector<B>& V_K) const
 {
-	if (this->L == 1) sc_decoder.                          _store(V_K);
-	else Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_store(V_K);
+	if (this->L == 1)
+		std::copy(this->U_test.begin(), this->U_test.begin() + this->K, V_K.begin());
+	else
+		Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::_store(V_K);
 }
 
 template <typename B, typename R, class API_polar>

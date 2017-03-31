@@ -38,22 +38,17 @@ protected:
 	      mipp::vector<B> s;            // bits, partial sums
 	      mipp::vector<B> s_bis;        // bits, partial sums
 	const mipp::vector<B> &frozen_bits; // frozen bits
-	const bool            k_extract;
-	      mipp::vector<B> sk;          // K decoded bits
-	      int             sk_idx;
 
 	const tools::Pattern_polar_parser<B> polar_patterns;
 
 public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
-	                          const int n_frames = 1, const bool k_extract = false,
-	                          const std::string name = "Decoder_polar_SC_fast_sys");
+	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
 
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
 	                          const std::vector<tools::Pattern_polar_i*> polar_patterns,
 	                          const int idx_r0, const int idx_r1,
-	                          const int n_frames = 1, const bool k_extract = false,
-	                          const std::string name = "Decoder_polar_SC_fast_sys");
+	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
 
 	virtual ~Decoder_polar_SC_fast_sys();
 
@@ -65,6 +60,10 @@ protected:
 	        void _unpack     (      mipp::vector<B>& V_N) const;
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
+
+	inline static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns,
+	                              const mipp::vector<B>                            &V_N,
+	                                    mipp::vector<B>                            &V_K);
 };
 }
 }

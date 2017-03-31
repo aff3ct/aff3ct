@@ -25,7 +25,8 @@ Pattern_polar_parser<B>
   pattern_rate0(pattern_rate0),
   pattern_rate1(pattern_rate1),
   polar_tree(new Binary_tree<Pattern_polar_i>(m +1)),
-  pattern_types()
+  pattern_types(),
+  leaves_pattern_types()
 {
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
 	this->generate_nodes_indexes           (this->polar_tree->get_root());
@@ -45,7 +46,8 @@ Pattern_polar_parser<B>
   pattern_rate0(patterns[pattern_rate0_id]),
   pattern_rate1(patterns[pattern_rate1_id]),
   polar_tree(new Binary_tree<Pattern_polar_i>(m +1)),
-  pattern_types()
+  pattern_types(),
+  leaves_pattern_types()
 {
 	this->recursive_allocate_nodes_patterns(this->polar_tree->get_root());
 	this->generate_nodes_indexes           (this->polar_tree->get_root());
@@ -121,6 +123,9 @@ void Pattern_polar_parser<B>
 		this->generate_nodes_indexes(node_curr->get_left() ); // recursive call
 		this->generate_nodes_indexes(node_curr->get_right()); // recursive call
 	}
+	else
+		leaves_pattern_types.push_back(std::make_pair<unsigned char, int>((unsigned char)node_curr->get_c()->type(),
+		                                                                  node_curr->get_c()->get_size()));
 }
 
 template <typename B>
@@ -143,6 +148,13 @@ std::vector<unsigned char> Pattern_polar_parser<B>
 ::get_pattern_types() const
 {
 	return pattern_types;
+}
+
+template <typename B>
+const std::vector<std::pair<unsigned char, int>>& Pattern_polar_parser<B>
+::get_leaves_pattern_types() const
+{
+	return leaves_pattern_types;
 }
 
 template <typename B>

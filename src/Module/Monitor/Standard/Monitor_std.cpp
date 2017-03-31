@@ -79,7 +79,7 @@ bool Monitor_std<B,R>
 {
 	auto bit_errors_count = 0;
 	for (auto b = 0; b < length; b++)
-		bit_errors_count += U[b] != V[b];
+		bit_errors_count += !U[b] != !V[b];
 
 	if (bit_errors_count)
 	{
