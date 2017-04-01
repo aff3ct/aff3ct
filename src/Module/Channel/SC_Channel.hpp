@@ -43,12 +43,6 @@ public:
 		s_in.register_b_transport(this, &SC_Channel_module::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)X_N.size() != channel.N * channel.n_frames) X_N.resize(channel.N * channel.n_frames);
-		if ((int)Y_N.size() != channel.N * channel.n_frames) Y_N.resize(channel.N * channel.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -96,13 +90,6 @@ public:
 		s_in.register_b_transport(this, &SC_Channel_module_wg::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)X_N.size() != channel.N * channel.n_frames) X_N.resize(channel.N * channel.n_frames);
-		if ((int)Y_N.size() != channel.N * channel.n_frames) Y_N.resize(channel.N * channel.n_frames);
-		if ((int)H_N.size() != channel.N * channel.n_frames) H_N.resize(channel.N * channel.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -147,14 +134,6 @@ public:
 		if (module    != nullptr) { delete module;    module    = nullptr; }
 		if (module_wg != nullptr) { delete module_wg; module_wg = nullptr; }
 	};
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Channel_i<R>::set_n_frames(n_frames);
-
-		if (module    != nullptr) module   ->resize_buffers();
-		if (module_wg != nullptr) module_wg->resize_buffers();
-	}
 
 	void create_sc_module()
 	{

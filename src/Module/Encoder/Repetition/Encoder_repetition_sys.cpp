@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_repetition_sys<B>
-::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const std::string name)
-: Encoder_sys<B>(K, N, 1, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
+::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const int n_frames, const std::string name)
+: Encoder_sys<B>(K, N, n_frames, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
 	if (N % K)
 		throw std::invalid_argument("aff3ct::module::Encoder_repetition_sys: \"K\" has to be a multiple of \"N\".");

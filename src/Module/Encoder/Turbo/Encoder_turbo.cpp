@@ -54,24 +54,6 @@ void Encoder_turbo<B>
 	}
 }
 
-template <typename B>
-void Encoder_turbo<B>
-::set_n_frames(const int n_frames)
-{
-	if (n_frames <= 0)
-		throw std::invalid_argument("aff3ct::module::Encoder_turbo: \"n_frames\" has to be greater than 0.");
-
-	const int N_without_tb = this->N - (enco_n.tail_length() + enco_i.tail_length());
-
-	Encoder<B>::set_n_frames(n_frames);
-	enco_n.set_n_frames(n_frames);
-	enco_i.set_n_frames(n_frames);
-
-	U_K_i.resize(this->K * n_frames);
-	par_n.resize(((N_without_tb - this->K) / 2 + enco_n.tail_length()) * n_frames);
-	par_i.resize(((N_without_tb - this->K) / 2 + enco_i.tail_length()) * n_frames);
-}
-
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

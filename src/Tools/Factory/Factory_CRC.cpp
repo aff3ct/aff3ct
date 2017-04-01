@@ -22,18 +22,18 @@ CRC<B>* Factory_CRC<B>
 	if(params.decoder.simd_strategy == "INTER")
 	{
 		if (!params.crc.type.empty() && params.decoder.type.find("LTE") != std::string::npos)
-			crc = new CRC_polynomial_inter<B>(params.code.K, params.crc.type, mipp::nElmtsPerRegister<B>());
+			crc = new CRC_polynomial_inter<B>(params.code.K, params.crc.type, params.simulation.inter_frame_level);
 		else if (!params.crc.type.empty())
-			crc = new CRC_polynomial<B>(params.code.K, params.crc.type);
+			crc = new CRC_polynomial<B>(params.code.K, params.crc.type, params.simulation.inter_frame_level);
 		else
-			crc = new CRC_NO<B>(params.code.K);
+			crc = new CRC_NO<B>(params.code.K, params.simulation.inter_frame_level);
 	}
 	else
 	{
 		if (!params.crc.type.empty())
-			crc = new CRC_polynomial<B>(params.code.K, params.crc.type);
+			crc = new CRC_polynomial<B>(params.code.K, params.crc.type, params.simulation.inter_frame_level);
 		else
-			crc = new CRC_NO<B>(params.code.K);
+			crc = new CRC_NO<B>(params.code.K, params.simulation.inter_frame_level);
 	}
 
 	return crc;

@@ -45,7 +45,8 @@ Encoder<B>* Simulation_BFER_RA<B,R,Q>
 {
 	auto encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
 	if (encoder == nullptr)
-		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *this->interleaver[tid]);
+		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *this->interleaver[tid],
+		                            this->params.simulation.inter_frame_level);
 	return encoder;
 }
 

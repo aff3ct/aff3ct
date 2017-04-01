@@ -15,11 +15,10 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_turbo : public Factory
 {
-	static module::Encoder<B>* build(const parameters                  &params,
-	                                       module::Interleaver<int>   *interleaver,
-	                                       module::Encoder_sys<B>      *sub_encoder_n,
-	                                       module::Encoder_sys<B>      *sub_encoder_i,
-	                                 const int                          n_frames = 1);
+	static module::Encoder<B>* build(const parameters               &params,
+	                                       module::Interleaver<int> *interleaver,
+	                                       module::Encoder_sys<B>   *sub_encoder_n,
+	                                       module::Encoder_sys<B>   *sub_encoder_i);
 };
 }
 }

@@ -35,8 +35,6 @@ public:
 
 	int tail_length() const { return enco_n.tail_length() + enco_i.tail_length(); }
 
-	void set_n_frames(const int n_frames);
-
 protected:
 	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 };

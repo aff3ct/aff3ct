@@ -23,9 +23,9 @@ private:
 	const int col_size;
 
 public:
-	Interleaver_random_column(const int size, const int n_cols, const int seed = 0,
+	Interleaver_random_column(const int size, const int n_cols, const int seed = 0, const int n_frames = 1,
 	                          const std::string name = "Interleaver_random_column")
-	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd()), n_cols(n_cols), col_size(size / n_cols)
+	: Interleaver<T>(size, n_frames, name), rd(), rd_engine(rd()), n_cols(n_cols), col_size(size / n_cols)
 	{
 		if (col_size * n_cols != size)
 			throw std::invalid_argument("aff3ct::module::Interleaver_random_column: \"size\" has to be equal to "

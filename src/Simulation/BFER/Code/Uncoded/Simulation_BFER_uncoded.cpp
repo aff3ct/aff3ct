@@ -42,7 +42,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_uncoded<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return new Encoder_NO<B>(this->params.code.K, this->params.code.N);
+	return new Encoder_NO<B>(this->params.code.K, this->params.code.N, this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>

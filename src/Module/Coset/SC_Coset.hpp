@@ -47,13 +47,6 @@ public:
 		s_in2.register_b_transport(this, &SC_Coset_module::b_transport_data);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)ref     .size() != coset.size * coset.n_frames) ref     .resize(coset.size * coset.n_frames);
-		if ((int)in_data .size() != coset.size * coset.n_frames) in_data .resize(coset.size * coset.n_frames);
-		if ((int)out_data.size() != coset.size * coset.n_frames) out_data.resize(coset.size * coset.n_frames);
-	}
-
 private:
 	void b_transport_ref(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -96,12 +89,6 @@ public:
 	virtual ~SC_Coset()
 	{ 
 		if (module != nullptr) { delete module; module = nullptr; }
-	}
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Coset_i<B,D>::set_n_frames(n_frames);
-		if (module != nullptr) module->resize_buffers();
 	}
 
 	void create_sc_module()

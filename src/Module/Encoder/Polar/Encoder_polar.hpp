@@ -25,12 +25,6 @@ public:
 
 	void light_encode(B *bits);
 
-	void set_n_frames(const int n_frames) 
-	{
-		Encoder<B>::set_n_frames(n_frames);
-		U_N.resize(this->N * n_frames);
-	}
-
 protected:
 	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 

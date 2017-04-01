@@ -19,7 +19,7 @@ protected:
 	const bool buffered_encoding;
 	
 public:
-	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true,
+	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1,
 	                       const std::string name = "Encoder_repetition_sys");
 	virtual ~Encoder_repetition_sys() {}
 
