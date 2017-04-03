@@ -67,7 +67,7 @@ Interleaver<int>* Simulation_BFER_RA<B,R,Q>
 ::build_interleaver(const int tid)
 {
 	auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.interleaver.seed;
-	Interleaver<int>* itl = Factory_interleaver<int>::build(this->params, this->params.code.K, seed);
+	Interleaver<int>* itl = Factory_interleaver<int>::build(this->params, this->params.code.N, seed);
 	this->check_errors(itl, "Interleaver<int>");
 	return itl;
 }

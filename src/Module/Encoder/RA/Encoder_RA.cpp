@@ -19,23 +19,20 @@ Encoder_RA<B>
 
 template <typename B>
 void Encoder_RA<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		// repetition
-		for (auto i = 0; i < this->K; i++)
-			for (auto j = 0; j < rep_count; j++)
-				U[i * rep_count +j] = U_K[f * this->K +i];
+	// repetition
+	for (auto i = 0; i < this->K; i++)
+		for (auto j = 0; j < rep_count; j++)
+			U[i * rep_count +j] = U_K[i];
 
-		interleaver.interleave(U, tmp_X_N, false, 1);
+	interleaver.interleave(U, tmp_X_N, false, 1);
 
-		// accumulation
-		for (auto i = 1; i < this->N; i++)
-			tmp_X_N[i] = tmp_X_N[i-1] ^ tmp_X_N[i];
+	// accumulation
+	for (auto i = 1; i < this->N; i++)
+		tmp_X_N[i] = tmp_X_N[i-1] ^ tmp_X_N[i];
 
-		std::copy(tmp_X_N.begin(), tmp_X_N.end(), X_N.begin() + f * this->N);
-	}
+	std::copy(tmp_X_N.begin(), tmp_X_N.end(), X_N);
 }
 
 // ==================================================================================== explicit template instantiation 

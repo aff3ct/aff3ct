@@ -30,10 +30,10 @@ public:
 	virtual std::vector<std::vector<int>> get_trellis();
 
 protected:
-	void _encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-	void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
+	void _encode_fbf    (const B *U_K, B *X_N);
+	void _encode_sys_fbf(const B *U_K, B *par);
 
-	void frame_encode(const B* U_K, B* X_N, const int stride = 1, const bool only_parity = false);
+	void __encode(const B* U_K, B* X_N, const int stride = 1, const bool only_parity = false);
 	
 	virtual int inner_encode(const int bit_sys, int &state) = 0;
 	virtual int tail_bit_sys(const int &state             ) = 0;

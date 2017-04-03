@@ -77,7 +77,17 @@ public:
 	}
 
 protected:
-	virtual void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
+	virtual void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_process_fbf(Y_N1.data() + f * this->N,
+			                   Y_N2.data() + f * this->N);
+	}
+
+	virtual void _process_fbf(const R *Y_N1, Q *Y_N2)
+	{
+		throw std::runtime_error("aff3ct::module::Quantizer: \"_process_fbf\" is unimplemented.");
+	}
 };
 }
 }

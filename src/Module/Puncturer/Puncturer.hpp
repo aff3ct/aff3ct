@@ -107,8 +107,29 @@ public:
 	}
 
 protected:
-	virtual void   _puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const = 0;
-	virtual void _depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const = 0;
+	virtual void _puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_puncture_fbf(X_N1.data() + f * this->N_code,
+			                    X_N2.data() + f * this->N);
+	}
+
+	virtual void _puncture_fbf(const B *X_N1, B *X_N2) const
+	{
+		throw std::runtime_error("aff3ct::module::Puncturer: \"_puncture_fbf\" is unimplemented.");
+	}
+
+	virtual void _depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_depuncture_fbf(Y_N1.data() + f * this->N,
+			                      Y_N2.data() + f * this->N_code);
+	}
+
+	virtual void _depuncture_fbf(const Q *Y_N1, Q *Y_N2) const
+	{
+		throw std::runtime_error("aff3ct::module::Puncturer: \"_depuncture_fbf\" is unimplemented.");
+	}
 };
 }
 }

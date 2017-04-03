@@ -98,12 +98,27 @@ public:
 	}
 
 protected:
-	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
+	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_add_noise_fbf(X_N.data() + f * this->N,
+			                     Y_N.data() + f * this->N);
+	}
+
+	virtual void _add_noise_fbf(const R *X_N, R *Y_N)
+	{
+		throw std::runtime_error("aff3ct::module::Channel: \"_add_noise_fbf\" is unimplemented.");
+	}
 
 	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
 	{
 		this->_add_noise(X_N, Y_N);
 		std::fill(H_N.begin(), H_N.end(), (R)1);
+	}
+
+	virtual void _add_noise_fbf(const R *X_N, R *Y_N, R *H_N)
+	{
+		throw std::runtime_error("aff3ct::module::Channel: \"_add_noise_fbf\" is unimplemented.");
 	}
 };
 }

@@ -17,55 +17,45 @@ Encoder_repetition_sys<B>
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::_encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+::_encode_sys_fbf(const B *U_K, B *par)
 {
 	if (!buffered_encoding)
 		throw std::runtime_error("aff3ct::module::Encoder_repetition_sys: the \"_encode_sys\" method works only with "
 		                         "the \"buffered_encoding\" enabled.");
 
-	for (auto f = 0; f < this->n_frames; f++)
-		for (auto i = 0; i < rep_count; i++) // parity bits
-			std::copy(U_K.begin() + (f +0) * this->K,
-			          U_K.begin() + (f +1) * this->K,
-			          par.begin() + (f +0) * this->N + i * this->K);
+	for (auto i = 0; i < rep_count; i++) // parity bits
+		std::copy(U_K, U_K + this->K, par + i * this->K);
 }
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
-	for (auto f = 0; f < this->n_frames; f++)
+	// repetition
+	if (!buffered_encoding)
 	{
-		// repetition
-		if (!buffered_encoding)
+		for (auto i = 0; i < this->K; i++)
 		{
-			for (auto i = 0; i < this->K; i++)
-			{
-				const auto off1 = i * (rep_count +1);
-				const auto off2 = off1 +1;
+			const auto off1 = i * (rep_count +1);
+			const auto off2 = off1 +1;
 
-				const auto bit = U_K[f * this->K +i];
+			const auto bit = U_K[i];
 
-				X_N[f * this->N + off1] = bit; // systematic bit
-
-				// parity bits
-				for (auto j = 0; j < rep_count; j++)
-					X_N[f * this->N + off2 +j] = bit;
-			}
-		}
-		else
-		{
-			// systematic bits
-			std::copy(U_K.begin() + (f +0) * this->K,
-			          U_K.begin() + (f +1) * this->K,
-			          X_N.begin() + (f +0) * this->N);
+			X_N[off1] = bit; // systematic bit
 
 			// parity bits
-			for (auto i = 1; i <= rep_count; i++)
-				std::copy(U_K.begin() + (f +0) * this->K,
-				          U_K.begin() + (f +1) * this->K,
-				          X_N.begin() + (f +0) * this->N + i * this->K);
+			for (auto j = 0; j < rep_count; j++)
+				X_N[off2 +j] = bit;
 		}
+	}
+	else
+	{
+		// systematic bits
+		std::copy(U_K, U_K + this->K, X_N);
+
+		// parity bits
+		for (auto i = 1; i <= rep_count; i++)
+			std::copy(U_K, U_K + this->K, X_N + i * this->K);
 	}
 }
 
