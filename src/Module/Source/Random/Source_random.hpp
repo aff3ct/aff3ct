@@ -28,7 +28,6 @@ public:
 
 	virtual ~Source_random();
 
-protected:
 	void _generate(mipp::vector<B>& U_K);
 };
 }

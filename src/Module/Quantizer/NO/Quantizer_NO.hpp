@@ -17,7 +17,6 @@ public:
 	Quantizer_NO(const int N, const int n_frames = 1, const std::string name = "Quantizer_NO");
 	virtual ~Quantizer_NO();
 
-protected:
 	void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2);
 };
 }

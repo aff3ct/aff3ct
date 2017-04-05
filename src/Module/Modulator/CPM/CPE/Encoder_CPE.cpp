@@ -6,8 +6,8 @@ using namespace aff3ct::module;
 
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>
-::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm, const int n_frames, const std::string name)
-: N(N), cpm(cpm), n_frames(n_frames)
+::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm)
+: N(N), cpm(cpm)
 {
 	// because U_n can have Mo values
 	if ((int)sizeof(SIN) * 256 < cpm.m_order)
@@ -41,22 +41,13 @@ template<typename SIN, typename SOUT>
 void Encoder_CPE<SIN, SOUT>
 ::encode(const mipp::vector<SIN>& U_N, mipp::vector<SOUT>& X_N)
 {
-	if ((int)U_N.size() != (N * n_frames))
-		throw std::length_error("aff3ct::module::Encoder_CPE: \"U_N.size()\" has to be equal to "
-		                        "\"N\" * n_frames.");
+	if ((int)U_N.size() != N)
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"U_N.size()\" has to be equal to \"N\".");
 
-	if ((int)X_N.size() != ((N + cpm.tl) * n_frames))
+	if ((int)X_N.size() != (N + cpm.tl))
 		throw std::length_error("aff3ct::module::Encoder_CPE: \"X_N.size()\" has to be equal to "
-		                        "(\"N\" + \"cpm.tl\") * n_frames.");
+		                        "(\"N\" + \"cpm.tl\").");
 
-	for (auto f = 0; f <n_frames; f++)
-		frame_encode(U_N.data() + f*N, X_N.data() + f*(N+cpm.tl));
-}
-
-template<typename SIN, typename SOUT>
-void Encoder_CPE<SIN, SOUT>
-::frame_encode(const SIN* U_N, SOUT* X_N)
-{
 	auto state = 0; // initial (and final) state 0
 	auto i = 0;
 

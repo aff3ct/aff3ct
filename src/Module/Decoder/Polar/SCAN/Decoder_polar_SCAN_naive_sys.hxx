@@ -26,14 +26,10 @@ Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode_fbf(const R *sys, const R *par, R *ext)
 {
-	if (sys.size() + par.size() != (unsigned)this->N)
-		throw std::length_error("aff3ct::module::Decoder_polar_SCAN_naive_sys: \"sys.size()\" + \"par.size()\" "
-		                        "should be equal to \"N\".");
-
 	// ----------------------------------------------------------------------------------------------------------- LOAD
-	this->load_init();
+	this->_load_init();
 	
 	// init the softGraph (special case for the right most stage)
 	auto sys_idx = 0, par_idx = 0;
@@ -44,7 +40,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 			this->soft_graph[this->layers_count - 1][i] = par[par_idx++];
 
 	// --------------------------------------------------------------------------------------------------------- DECODE
-	Decoder_polar_SCAN_naive<B,R,I,F,V,H>::decode();
+	Decoder_polar_SCAN_naive<B,R,I,F,V,H>::_decode();
 
 	// ---------------------------------------------------------------------------------------------------------- STORE
 	sys_idx = 0;
@@ -56,7 +52,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::_store(mipp::vector<B>& V_N) const
+::_store(B *V_N) const
 {
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
@@ -64,16 +60,6 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 		if (!this->frozen_bits[i]) // if i is not a frozen bit
 			V_N[k++] = (H(this->feedback_graph[this->layers_count -1][i]) == 0) ? (B)0 : (B)1;
 	}
-}
-
-
-template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
-void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_polar_SCAN_naive_sys: this decoder does not support the "
-	                         "\"soft_decode\" interface.");
 }
 }
 }

@@ -17,7 +17,6 @@ public:
 	Puncturer_NO(const int K, const int N, const int n_frames = 1, const std::string name = "Puncturer_NO");
 	virtual ~Puncturer_NO();
 
-protected:
 	void   _puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const;
 	void _depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const;
 };

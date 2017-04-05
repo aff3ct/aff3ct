@@ -22,7 +22,6 @@ public:
 	                      const std::string name = "Channel_additive_user");
 	virtual ~Channel_additive_user();
 
-protected:
 	void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 };
 }

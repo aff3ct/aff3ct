@@ -82,6 +82,13 @@ public:
 		this->_encode(U_K, X_N);
 	}
 
+	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_encode_fbf(U_K.data() + f * this->K,
+			                  X_N.data() + f * this->N);
+	}
+
 	/*!
 	 * \brief Gets the number of tail bits.
 	 *
@@ -93,13 +100,6 @@ public:
 	virtual int tail_length() const { return 0; }
 
 protected:
-	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
-	{
-		for (auto f = 0; f < this->n_frames; f++)
-			this->_encode_fbf(U_K.data() + f * this->K,
-			                  X_N.data() + f * this->N);
-	}
-
 	virtual void _encode_fbf(const B *U_K, B *X_N)
 	{
 		throw std::runtime_error("aff3ct::module::Encoder: \"_encode_fbf\" is unimplemented.");

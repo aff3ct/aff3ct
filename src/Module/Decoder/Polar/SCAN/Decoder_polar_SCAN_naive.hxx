@@ -1,3 +1,4 @@
+#include <chrono>
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
@@ -52,7 +53,7 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::load_init()
+::_load_init()
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
@@ -76,10 +77,10 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
-	load_init();
-		
+	_load_init();
+
 	// init the softGraph (special case for the right most stage)
 	for (auto i = 0; i < this->N; i++)
 		soft_graph[layers_count - 1][i] = Y_N[i];
@@ -91,7 +92,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::decode()
+::_decode()
 {
 	for (auto iter = 0; iter < max_iter; iter++)
 	{
@@ -121,9 +122,23 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
-	this->decode();
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 /********************************************************************/
@@ -132,7 +147,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)

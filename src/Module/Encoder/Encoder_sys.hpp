@@ -68,7 +68,6 @@ public:
 		_encode_sys(U_K, par);
 	}
 
-protected:
 	virtual void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
@@ -76,6 +75,7 @@ protected:
 			                      par.data() + f * (this->N - this->K));
 	}
 
+protected:
 	virtual void _encode_sys_fbf(const B *U_K, B *par)
 	{
 		throw std::runtime_error("aff3ct::module::Encoder_sys: \"_encode_sys_fbf\" is unimplemented.");

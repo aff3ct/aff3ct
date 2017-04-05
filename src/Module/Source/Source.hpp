@@ -71,13 +71,13 @@ public:
 		this->_generate(U_K);
 	}
 
-protected:
 	virtual void _generate(mipp::vector<B>& U_K)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_generate_fbf(U_K.data() + f * this->K);
 	}
 
+protected:
 	virtual void _generate_fbf(B *U_K)
 	{
 		throw std::runtime_error("aff3ct::module::Source: \"_generate_fbf\" is unimplemented.");

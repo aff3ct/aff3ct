@@ -47,7 +47,7 @@ Modulator_CPM<B,R,Q,MAX>
   projection(cpm.max_wa_id * cpm.s_factor *2,  0),
   n_sy      (N/cpm.n_b_per_s                    ),
   n_sy_tl   (n_sy+cpm.tl                        ),
-  cpe       (n_sy, cpm, this->n_frames          ),
+  cpe       (n_sy, cpm                          ),
   bcjr      (cpm, n_sy_tl                       )
 {
 	if (N % bits_per_symbol)

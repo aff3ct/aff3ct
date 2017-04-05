@@ -95,7 +95,6 @@ public:
 		return this->_check(V_K, n_frames);
 	}
 
-protected:
 	virtual bool _check(const mipp::vector<B>& V_K, const int n_frames = -1)
 	{
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
@@ -107,6 +106,7 @@ protected:
 		return f == real_n_frames;
 	}
 
+protected:
 	virtual bool _check_fbf(const B *V_K)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_check_fbf\" is unimplemented.");

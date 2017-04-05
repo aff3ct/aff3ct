@@ -8,11 +8,8 @@ using namespace aff3ct::module;
 
 template <typename SIN, typename SOUT>
 Encoder_CPE_Rimoldi<SIN, SOUT>
-::Encoder_CPE_Rimoldi(const int N,
-                      const CPM_parameters<SIN,SOUT>& cpm,
-                      const int n_frames,
-                      const std::string name)
-: Encoder_CPE<SIN,SOUT>(N, cpm, n_frames, name)
+::Encoder_CPE_Rimoldi(const int N, const CPM_parameters<SIN,SOUT>& cpm)
+: Encoder_CPE<SIN,SOUT>(N, cpm)
 {
 }
 

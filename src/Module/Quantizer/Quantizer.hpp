@@ -76,7 +76,6 @@ public:
 		this->_process(Y_N1, Y_N2);
 	}
 
-protected:
 	virtual void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
@@ -84,6 +83,7 @@ protected:
 			                   Y_N2.data() + f * this->N);
 	}
 
+protected:
 	virtual void _process_fbf(const R *Y_N1, Q *Y_N2)
 	{
 		throw std::runtime_error("aff3ct::module::Quantizer: \"_process_fbf\" is unimplemented.");

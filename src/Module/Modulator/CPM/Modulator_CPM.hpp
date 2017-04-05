@@ -60,12 +60,12 @@ public:
 	int get_buffer_size_after_modulation(const int N);
 	int get_buffer_size_after_filtering (const int N);
 
+	void _demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
+	void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
+
 protected:
 	void _modulate_fbf(const B *X_N1, R *X_N2);
 	void   _filter_fbf(const R *Y_N1, R *Y_N2);
-
-	void _demodulate(const mipp::vector<Q>& Y_N1,                              mipp::vector<Q>& Y_N2);
-	void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
 
 private:
 	void generate_baseband    (               );

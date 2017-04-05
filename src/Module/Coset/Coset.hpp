@@ -85,7 +85,6 @@ public:
 		this->_apply(ref, in_data, out_data);
 	}
 
-protected:
 	virtual void _apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
@@ -93,6 +92,8 @@ protected:
 			                 in_data .data() + f * this->size,
 			                 out_data.data() + f * this->size);
 	}
+
+protected:
 
 	virtual void _apply_fbf(const B *ref, const D *in_data, D *out_data)
 	{

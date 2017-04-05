@@ -18,8 +18,7 @@ protected:
 	const int rep_count; // number of repetitions
 	int max_iter;        // max number of iterations
 
-	mipp::vector<R> Y_N, Fw, Bw;
-	mipp::vector<B> V_K;
+	mipp::vector<R> Fw, Bw;
 	mipp::vector<R> Tu, Td, Wu, Wd, U;
 	std::vector<mipp::vector<R>> Xd, Xu;
 
@@ -31,9 +30,7 @@ public:
 	virtual ~Decoder_RA();
 
 protected:
-	void _load       (const mipp::vector<R>& Y_N);
-	void _hard_decode(                          );
-	void _store      (      mipp::vector<B>& V_K) const;
+	void _hard_decode_fbf(const R *Y_N, B *V_K);
 
 private:
 	R check_node(R a, R b);
