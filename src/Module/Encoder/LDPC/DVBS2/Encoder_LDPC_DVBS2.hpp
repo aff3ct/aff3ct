@@ -12,7 +12,7 @@ namespace aff3ct
 namespace module
 {
 
-template <typename B>
+template <typename B = int>
 class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 {
 	const dvbs2_values* dvbs2 = nullptr;
