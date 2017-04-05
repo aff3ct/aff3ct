@@ -17,7 +17,7 @@ template <typename B>
 class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
 protected:
-	mipp::vector<int> swapped;
+	mipp::vector<unsigned> swapped;
 	mipp::vector<B>   G;
 
 public:
