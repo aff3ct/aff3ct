@@ -15,12 +15,10 @@ namespace tools
 {
 template <typename B>
 void LDPC_G
-::build_H(const int k, const int n, const std::vector<std::vector<unsigned int>>& positions,
+::build_H(const unsigned k, const unsigned n, const std::vector<std::vector<unsigned>>& positions,
           std::vector<mipp::vector<B>>& H)
 {
-	for (int i = 0; i < k; i++)
-		H.push_back(mipp::vector<B>(n, 0));
-
+	H.resize(k, mipp::vector<B>(n, 0));
 	for (unsigned i = 0; i < positions.size(); i++)
 		for (unsigned j = 0; j < positions[i].size(); j++)
 			H[i][positions[i][j]] = 1;
@@ -28,11 +26,11 @@ void LDPC_G
 
 template <typename B>
 void LDPC_G
-::triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<int>& swapped)
+::triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<unsigned>& swapped)
 {
-	int n = (int)H[0].size();
-	int k = (int)H.size();
-	int i = 0;
+	unsigned n = H[0].size();
+	unsigned k = H.size();
+	unsigned i = 0;
 	bool fund = false;
 
 	mipp::vector<B> tmp(n,0);
@@ -42,13 +40,13 @@ void LDPC_G
 	{
 		if (H[i][i])
 		{
-			for (int j = i +1; j < k; j++)
+			for (unsigned j = i +1; j < k; j++)
  				if( H[j][i] )
 					std::transform(H[j].begin(), H[j].end(), H[i].begin(), H[j].begin(), std::not_equal_to<B>());
 		}
 		else
 		{
-			for (int j = i +1; j < k; j++) // find an other row which is good
+			for (unsigned j = i +1; j < k; j++) // find an other row which is good
 				if (H[j][i])
 				{
 					tmp = H[i];
@@ -60,7 +58,7 @@ void LDPC_G
 				}
 
 			if (!fund) // if does not fund
-				for (int j = i +1; j < n; j++) // find an other column which is good
+				for (unsigned j = i +1; j < n; j++) // find an other column which is good
 					if (H[i][j])
 					{
 						swapped.push_back(i);
@@ -68,9 +66,9 @@ void LDPC_G
 
 						tmp2.clear();
 
-						for (int l = 0; l < k; l++) tmp2.push_back(H[l][i]);
-						for (int l = 0; l < k; l++) H[l][i] = H[l][j];
-						for (int l = 0; l < k; l++) H[l][j] = tmp2[l];
+						for (unsigned l = 0; l < k; l++) tmp2.push_back(H[l][i]);
+						for (unsigned l = 0; l < k; l++) H[l][i] = H[l][j];
+						for (unsigned l = 0; l < k; l++) H[l][j] = tmp2[l];
 
 						i--;
 						fund = true;
@@ -93,17 +91,17 @@ template <typename B>
 void LDPC_G
 ::identity_H(std::vector<mipp::vector<B>>& H)
 {
-	auto k = (int)H.size();
-	for (auto i = k -1 ; i > 0; i--)
-		for (auto j = i -1; j > -1; j--)
-			if (H[j][i])
-				std::transform (H[j].begin(), H[j].end(), H[i].begin(), H[j].begin(), std::not_equal_to<B>());
+	unsigned k = H.size();
+	for (unsigned i = k - 1 ; i > 0; i--)
+		for (unsigned j = i; j > 0; j--)
+			if (H[j-1][i])
+				std::transform (H[j-1].begin(), H[j-1].end(), H[i].begin(), H[j-1].begin(), std::not_equal_to<B>());
 
 }
 
 template <typename B>
 void LDPC_G
-::transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<int>& swapped)
+::transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<unsigned>& swapped)
 {
 	unsigned n = H[0].size();
 	unsigned k = H.size();
@@ -111,11 +109,9 @@ void LDPC_G
 	for (unsigned i = 0; i < k; i++) // Kill of the Identity in H
 		H[i].erase( H[i].begin(), H[i].begin() + k );
 
+	H.resize(n, mipp::vector<B>(n-k,0));
 	for (unsigned i = k; i < n; i++) // Add identity at the end
-	{
-		H.push_back(mipp::vector<B>(n-k,0));
 		H[i][i-k] = 1;
-	}
 
 	// Re-organization: column of G
 	mipp::vector<B> tmp(n - k, 0);
@@ -127,9 +123,14 @@ void LDPC_G
 	}
 
 	// Write G matrix in G vector
+	G.resize(n*(n-k));
+	unsigned long long compter = 0;
 	for (unsigned j = 0; j < n - k; j++)
+	{
+		std::cout << j << " ";
 		for (unsigned i = 0; i < n; i++)
-			G.push_back(H[i][j]);
+			G[compter++] = H[i][j];
+	}
 }
 
 }
