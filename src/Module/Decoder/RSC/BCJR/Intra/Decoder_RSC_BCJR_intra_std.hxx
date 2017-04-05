@@ -31,7 +31,7 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_intra_std<B,R,MAX>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	// compute gamma values
 	for (auto i = 0; i < this->K +3; i += mipp::nElReg<R>())
@@ -95,7 +95,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_intra_std<B,R,MAX>
-::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_beta_ext(const R *sys, R *ext)
 {
 	constexpr int cmask_b0  [8] = {0, 4, 5, 1, 2, 6, 7, 3}; // beta trellis transitions 0.
 	constexpr int cmask_b1  [8] = {4, 0, 1, 5, 6, 2, 3, 7}; // beta trellis transitions 1.

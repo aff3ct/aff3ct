@@ -93,10 +93,10 @@ void Encoder_LDPC_DVBS2<B>
 
 template <typename B>
 void Encoder_LDPC_DVBS2<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
-	std::copy(U_K.begin(),           U_K.end(), X_N.begin());
-	std::fill(X_N.begin() + this->K, X_N.end(), 0          );
+	std::copy(U_K,           U_K + this->K, X_N);
+	std::fill(X_N + this->K, X_N + this->N, 0  );
 
 	B* Px = &X_N[this->K];
 	const int *p = dvbs2->EncValues.data();

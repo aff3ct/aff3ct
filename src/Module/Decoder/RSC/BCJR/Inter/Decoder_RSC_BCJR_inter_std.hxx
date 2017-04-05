@@ -25,7 +25,7 @@ Decoder_RSC_BCJR_inter_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_std<B,R,MAX>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
 
@@ -144,7 +144,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_std<B,R,MAX>
-::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_ext(const R *sys, R *ext)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
 
@@ -190,7 +190,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_std<B,R,MAX>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode_fbf(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

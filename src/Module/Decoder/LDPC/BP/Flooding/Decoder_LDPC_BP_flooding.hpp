@@ -32,9 +32,6 @@ protected:
 	const mipp::vector<unsigned char> n_variables_per_parity;
 	const mipp::vector<unsigned char> n_parities_per_variable;
 	const mipp::vector<unsigned int > transpose;
-	
-	mipp::vector<R>  Y_N; // input  LLRs
-	mipp::vector<B>  V_K; // output bits
 
 	// data structures for iterative decoding
 	            mipp::vector<R>  Lp_N;   // a posteriori information
@@ -51,22 +48,17 @@ public:
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
 
-	// unsupported prototype
-	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-
 protected:
 	// soft decode
-	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	void _soft_decode_fbf(const R *Y_N1, R *Y_N2);
 
-	// hard decoder (load -> decode -> store)
-	void _load       (const mipp::vector<R>& Y_N);
-	void _hard_decode(                          );
-	void _store      (      mipp::vector<B>& V_K) const;
+	// hard decoder
+	void _hard_decode_fbf(const R *Y_N, B *V_K);
 
 	// BP functions for decoding
-	void BP_decode(const mipp::vector<R> &Y_N);
+	void BP_decode(const R *Y_N);
 
-	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
+	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
 };
 }
 }

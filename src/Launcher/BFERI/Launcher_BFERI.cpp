@@ -14,7 +14,6 @@ Launcher_BFERI<B,R,Q>
 {
 	this->params.simulation .type             = "BFERI";
 	this->params.simulation .benchs           = 0;
-	this->params.simulation .benchs_no_ldst   = false;
 	this->params.simulation .debug            = false;
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .time_report      = false;
@@ -49,9 +48,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-benchs", "b"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
-	this->opt_args[{"sim-benchs-no-ldst"}] =
-		{"",
-		 "enable the display of the decoder throughput considering only the decoding time."};
 	this->opt_args[{"sim-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};

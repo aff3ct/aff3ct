@@ -24,7 +24,7 @@ Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	// compute gamma values (auto-vectorized loop)
 	for (auto i = 0; i < this->K + this->n_ff; i++)
@@ -91,7 +91,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_ext(const R *sys, R *ext)
 {
 	// compute extrinsic values
 	for (auto i = 0; i < this->K; i++)
@@ -125,7 +125,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_beta_ext(const R *sys, R *ext)
 {
 	// compute the first beta values [trellis backward traversal <-]
 	for (auto j = 0; j < this->n_states; j++)
@@ -281,7 +281,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode_fbf(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
@@ -292,18 +292,18 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode_fbf(const R *Y_N1, R *Y_N2)
 {
 	if (!this->buffered_encoding)
 		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_seq_generic_std: \"buffered_encoding\" has to be "
 		                         "enabled to use the \"_soft_decode\" method.");
 
-	const R* sys          = Y_N1.data();
-	const R* par          = Y_N1.data() + 1 * this->K;
-	const R* tail_sys     = Y_N1.data() + 2 * this->K + this->n_ff;
-	const R* tail_par     = Y_N1.data() + 2 * this->K;
-	      R* ext_sys      = Y_N2.data();
-	      R* ext_par      = Y_N2.data() + 1 * this->K;
+	const R* sys          = Y_N1;
+	const R* par          = Y_N1 + 1 * this->K;
+	const R* tail_sys     = Y_N1 + 2 * this->K + this->n_ff;
+	const R* tail_par     = Y_N1 + 2 * this->K;
+	      R* ext_sys      = Y_N2;
+	      R* ext_par      = Y_N2 + 1 * this->K;
 
 	this->compute_gamma  (sys, par, tail_sys, tail_par);
 	this->compute_alpha  (                            );

@@ -24,7 +24,6 @@ public:
 	Source_random_fast(const int K, const int seed = 0, const int n_frames = 1, const std::string name = "Source_random_fast");
 	virtual ~Source_random_fast();
 
-protected:
 	void _generate(mipp::vector<B>& U_K);
 };
 }

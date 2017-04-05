@@ -45,12 +45,6 @@ public:
 		s_in2.register_b_transport(this, &SC_Monitor_module::b_transport_decoder);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)U_K.size() != monitor.K * monitor.n_frames) U_K.resize(monitor.K * monitor.n_frames);
-		if ((int)V_K.size() != monitor.K * monitor.n_frames) V_K.resize(monitor.K * monitor.n_frames);
-	}
-
 private:
 	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -87,14 +81,6 @@ public:
 	: Monitor_i<B,R>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (module != nullptr) { delete module; module = nullptr; }};
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Monitor_i<B,R>::set_n_frames(n_frames);
-
-		if (module != nullptr)
-			module->resize_buffers();
-	}
 
 	void create_sc_module()
 	{

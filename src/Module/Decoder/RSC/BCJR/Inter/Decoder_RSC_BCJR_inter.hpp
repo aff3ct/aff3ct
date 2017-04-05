@@ -26,11 +26,9 @@ public:
 	                       const std::string name = "Decoder_RSC_BCJR_inter");
 	virtual ~Decoder_RSC_BCJR_inter();
 
-	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
-
 protected:
-	void _load (const mipp::vector<R>& Y_N);
-	void _store(      mipp::vector<B>& V_K) const;
+	void _load (const R *Y_N);
+	void _store(      B *V_K) const;
 };
 }
 }

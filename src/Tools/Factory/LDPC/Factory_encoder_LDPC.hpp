@@ -14,7 +14,7 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_LDPC : public Factory
 {
-	static module::Encoder_LDPC<B>* build(const parameters &params, const int seed = 0, const int n_frames = 1);
+	static module::Encoder_LDPC<B>* build(const parameters &params, const int seed = 0);
 };
 }
 }

@@ -10,19 +10,19 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_common<B>
-::build(const parameters &params, const int seed, const int n_frames)
+::build(const parameters &params, const int seed)
 {
 	Encoder<B> *encoder = nullptr;
 
 	// build the encoder
 	if (params.encoder.type == "NO")
-		encoder = new Encoder_NO<B>(params.code.K, params.code.N + params.code.tail_length, n_frames);
+		encoder = new Encoder_NO<B>(params.code.K, params.code.N + params.code.tail_length, params.simulation.inter_frame_level);
 	else if (params.encoder.type == "AZCW")
-		encoder = new Encoder_AZCW<B>(params.code.K, params.code.N + params.code.tail_length, n_frames);
+		encoder = new Encoder_AZCW<B>(params.code.K, params.code.N + params.code.tail_length, params.simulation.inter_frame_level);
 	else if (params.encoder.type == "COSET")
-		encoder = new Encoder_coset<B>(params.code.K, params.code.N + params.code.tail_length, seed, n_frames);
+		encoder = new Encoder_coset<B>(params.code.K, params.code.N + params.code.tail_length, seed, params.simulation.inter_frame_level);
 	else if (params.encoder.type == "USER")
-		encoder = new Encoder_user<B>(params.code.K, params.code.N + params.code.tail_length, params.encoder.path, n_frames);
+		encoder = new Encoder_user<B>(params.code.K, params.code.N + params.code.tail_length, params.encoder.path, params.simulation.inter_frame_level);
 
 	return encoder;
 }

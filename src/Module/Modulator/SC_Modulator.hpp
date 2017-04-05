@@ -44,12 +44,6 @@ public:
 		s_in.register_b_transport(this, &SC_Modulator_module_modulator::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)X_N1.size() != modulator.N     * modulator.n_frames) X_N1.resize(modulator.N     * modulator.n_frames);
-		if ((int)X_N2.size() != modulator.N_mod * modulator.n_frames) X_N2.resize(modulator.N_mod * modulator.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -93,12 +87,6 @@ public:
 		s_in.register_b_transport(this, &SC_Modulator_module_filterer::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != modulator.N_mod * modulator.n_frames) Y_N1.resize(modulator.N_mod * modulator.n_frames);
-		if ((int)Y_N2.size() != modulator.N_fil * modulator.n_frames) Y_N2.resize(modulator.N_fil * modulator.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -140,12 +128,6 @@ public:
 	  Y_N2(modulator.N     * modulator.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_demodulator::b_transport);
-	}
-
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != modulator.N_fil * modulator.n_frames) Y_N1.resize(modulator.N_fil * modulator.n_frames);
-		if ((int)Y_N2.size() != modulator.N     * modulator.n_frames) Y_N2.resize(modulator.N     * modulator.n_frames);
 	}
 
 private:
@@ -193,13 +175,6 @@ public:
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport2);
-	}
-
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != modulator.N_fil * modulator.n_frames) Y_N1.resize(modulator.N_fil * modulator.n_frames);
-		if ((int)Y_N2.size() != modulator.N     * modulator.n_frames) Y_N2.resize(modulator.N     * modulator.n_frames);
-		if ((int)H_N .size() != modulator.N_fil * modulator.n_frames) H_N .resize(modulator.N_fil * modulator.n_frames);
 	}
 
 private:
@@ -254,13 +229,6 @@ public:
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport2);
-	}
-
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != modulator.N_fil * modulator.n_frames) Y_N1.resize(modulator.N_fil * modulator.n_frames);
-		if ((int)Y_N2.size() != modulator.N     * modulator.n_frames) Y_N2.resize(modulator.N     * modulator.n_frames);
-		if ((int)Y_N3.size() != modulator.N     * modulator.n_frames) Y_N3.resize(modulator.N     * modulator.n_frames);
 	}
 
 private:
@@ -330,14 +298,6 @@ public:
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport2);
 		s_in3.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport3);
-	}
-
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != modulator.N_fil * modulator.n_frames) Y_N1.resize(modulator.N_fil * modulator.n_frames);
-		if ((int)Y_N2.size() != modulator.N     * modulator.n_frames) Y_N2.resize(modulator.N     * modulator.n_frames);
-		if ((int)Y_N3.size() != modulator.N     * modulator.n_frames) Y_N3.resize(modulator.N     * modulator.n_frames);
-		if ((int)H_N .size() != modulator.N_fil * modulator.n_frames) H_N .resize(modulator.N_fil * modulator.n_frames);
 	}
 
 private:
@@ -429,18 +389,6 @@ public:
 		if (module_demod_wg  != nullptr) { delete module_demod_wg;  module_demod_wg  = nullptr; }
 		if (module_tdemod    != nullptr) { delete module_tdemod;    module_tdemod    = nullptr; }
 		if (module_tdemod_wg != nullptr) { delete module_tdemod_wg; module_tdemod_wg = nullptr; }
-	}
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Modulator_i<B,R,Q>::set_n_frames(n_frames);
-
-		if (module_mod       != nullptr) module_mod      ->resize_buffers();
-		if (module_filt      != nullptr) module_filt     ->resize_buffers();
-		if (module_demod     != nullptr) module_demod    ->resize_buffers();
-		if (module_demod_wg  != nullptr) module_demod_wg ->resize_buffers();
-		if (module_tdemod    != nullptr) module_tdemod   ->resize_buffers();
-		if (module_tdemod_wg != nullptr) module_tdemod_wg->resize_buffers();
 	}
 
 	void create_sc_module_modulator()

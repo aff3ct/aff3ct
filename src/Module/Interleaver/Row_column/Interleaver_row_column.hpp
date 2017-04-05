@@ -22,8 +22,9 @@ private:
 	const int n_rows;
 
 public:
-	Interleaver_row_column(const int size, const int n_cols, const std::string name = "Interleaver_row_column")
-	: Interleaver<T>(size, 1, name), n_cols(n_cols), n_rows(size / n_cols)
+	Interleaver_row_column(const int size, const int n_cols, const int n_frames = 1,
+	                       const std::string name = "Interleaver_row_column")
+	: Interleaver<T>(size, n_frames, name), n_cols(n_cols), n_rows(size / n_cols)
 	{
 		if (n_rows * n_cols != size)
 			throw std::invalid_argument("aff3ct::module::Interleaver_row_column: \"size\" has to be equal to "

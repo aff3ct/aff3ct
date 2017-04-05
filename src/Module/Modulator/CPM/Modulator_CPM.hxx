@@ -47,7 +47,7 @@ Modulator_CPM<B,R,Q,MAX>
   projection(cpm.max_wa_id * cpm.s_factor *2,  0),
   n_sy      (N/cpm.n_b_per_s                    ),
   n_sy_tl   (n_sy+cpm.tl                        ),
-  cpe       (n_sy, cpm, this->n_frames          ),
+  cpe       (n_sy, cpm                          ),
   bcjr      (cpm, n_sy_tl                       )
 {
 	if (N % bits_per_symbol)
@@ -108,36 +108,13 @@ int Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
-{
-	if (this->n_frames == 1)
-		__modulate(X_N1, X_N2);
-	else // more than 1 frame
-	{
-		mipp::vector<B> X_N1_tmp(this->N    );
-		mipp::vector<R> X_N2_tmp(this->N_mod);
-		for (auto f = 0; f < this->n_frames; f++)
-		{
-			std::copy(X_N1.begin() +  f     * this->N,
-			          X_N1.begin() + (f +1) * this->N,
-			          X_N1_tmp.begin());
-
-			__modulate(X_N1_tmp, X_N2_tmp);
-
-			std::copy(X_N2_tmp.begin(), X_N2_tmp.end(), X_N2.begin() + f * this->N_mod);
-		}
-	}
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
-::__modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate_fbf(const B *X_N1, R *X_N2)
 {
 	// mapper
 	mipp::vector<SIN> mapped_frame(n_sy);
 
 	for (int i=0; i < n_sy; i++)
-		mapped_frame[i] = cpm.binary_to_transition[cpe.merge_bits(X_N1.data()+i*cpm.n_b_per_s, cpm.n_b_per_s, true)];
+		mapped_frame[i] = cpm.binary_to_transition[cpe.merge_bits(X_N1+i*cpm.n_b_per_s, cpm.n_b_per_s, true)];
 
 	// continuous phase encoder
 	mipp::vector<SIN> encoded_frame(n_sy_tl);
@@ -145,7 +122,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 	// memoryless modulation (attributing complex waveforms to symbols)
 	const auto off_X_r  = 0;
-	const auto off_X_i  = (int)X_N2.size() / 2;
+	const auto off_X_i  = this->N_mod / 2;
 	const auto off_BB_r = 0;
 	const auto off_BB_i = (int)baseband.size() / 2;
 
@@ -159,34 +136,10 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+::_filter_fbf(const R *Y_N1, R *Y_N2)
 {
-	if (this->n_frames == 1)
-		__filter(Y_N1, Y_N2);
-	else // more than 1 frame
-	{
-		mipp::vector<R> Y_N1_tmp(this->N_mod);
-		mipp::vector<R> Y_N2_tmp(this->N_fil);
-
-		for (auto f = 0; f < this->n_frames; f++)
-		{
-			std::copy(Y_N1.begin() + (f +0) * this->N_mod,
-			          Y_N1.begin() + (f +1) * this->N_mod,
-			          Y_N1_tmp.begin());
-
-			__filter(Y_N1_tmp, Y_N2_tmp);
-
-			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * this->N_fil);
-		}
-	}
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
-::__filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
-{
-	const auto Y_real = Y_N1.data();
-	const auto Y_imag = Y_N1.data() + (Y_N1.size() >> 1);
+	const auto Y_real = Y_N1;
+	const auto Y_imag = Y_N1 + this->N_mod / 2;
 	const auto p_real = projection.data();
 	const auto p_imag = projection.data() + (projection.size() >> 1);
 

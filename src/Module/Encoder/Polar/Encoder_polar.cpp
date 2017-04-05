@@ -10,7 +10,7 @@ template <typename B>
 Encoder_polar<B>
 ::Encoder_polar(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames, 
                 const std::string name)
-: Encoder<B>(K, N, n_frames, name), m((int)std::log2(N)), frozen_bits(frozen_bits), U_N(N * n_frames)
+: Encoder<B>(K, N, n_frames, name), m((int)std::log2(N)), frozen_bits(frozen_bits)
 {
 	if (this->N != (int)frozen_bits.size())
 		throw std::length_error("aff3ct::module::Encoder_polar: \"frozen_bits.size()\" has to be equal to "
@@ -19,22 +19,10 @@ Encoder_polar<B>
 
 template <typename B>
 void Encoder_polar<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
-	this->convert(U_K, U_N);
-	for (auto i_frame = 0; i_frame < this->n_frames; i_frame++)
-		frame_encode(U_N, X_N, i_frame); // frame encode
-}
-
-template <typename B>
-void Encoder_polar<B>
-::frame_encode(const mipp::vector<B>& U_N, mipp::vector<B>& X_N, const int &i_frame)
-{
-	const auto offset = i_frame * this->N;
-
-	for (auto i = 0; i < this->N; i++) X_N[offset +i] = U_N[offset +i];
-
-	light_encode(X_N.data() + offset);
+	this->convert(U_K, X_N);
+	this->light_encode(X_N);
 }
 
 template <typename B>
@@ -49,17 +37,11 @@ void Encoder_polar<B>
 
 template <typename B>
 void Encoder_polar<B>
-::convert(const mipp::vector<B>& U_K, mipp::vector<B>& U_N)
+::convert(const B *U_K, B *U_N)
 {
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		const auto offset_U_k = f * this->K;
-		const auto offset_U_n = f * this->N;
-
-		auto j = 0;
-		for (unsigned i = 0; i < frozen_bits.size(); i++)
-			U_N[offset_U_n +i] = (frozen_bits[i]) ? (B)0 : U_K[offset_U_k + j++];
-	}
+	auto j = 0;
+	for (unsigned i = 0; i < frozen_bits.size(); i++)
+		U_N[i] = (frozen_bits[i]) ? (B)0 : U_K[j++];
 }
 
 // ==================================================================================== explicit template instantiation 
