@@ -1,3 +1,4 @@
+#include <chrono>
 #include <stdexcept>
 #include <algorithm>
 
@@ -11,7 +12,7 @@ Decoder_repetition<B,R>
                      const std::string name)
  : Decoder<B,R>(K, N, n_frames, 1, name),
    SISO   <  R>(K, N, n_frames, 1, name + "_siso"),
-   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K), s(K)
+   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	if (N % K)
 		throw std::invalid_argument("aff3ct::module::Decoder_repetition: \"K\" has to be a multiple of \"N\".");
@@ -25,7 +26,7 @@ Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	if (!buffered_encoding)
 	{
@@ -41,18 +42,25 @@ void Decoder_repetition<B,R>
 	}
 	else
 	{
-		std::copy(Y_N.begin(), Y_N.begin() + this->K, sys.begin());
+		std::copy(Y_N, Y_N + this->K, sys.begin());
 		for (auto i = 0; i < rep_count; i++)
-			std::copy(Y_N.begin() + (i +1) * this->K, Y_N.begin() + (i +2) * this->K, par.begin() + (i +0) * this->K);
+			std::copy(Y_N + (i +1) * this->K, Y_N + (i +2) * this->K, par.begin() + (i +0) * this->K);
 	}
 }
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
-	soft_decode(sys, par, ext);
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_soft_decode_fbf(sys.data(), par.data(), ext.data());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	auto vec_loop_size = (this->K / mipp::nElReg<R>()) * mipp::nElReg<R>();
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
@@ -65,25 +73,15 @@ void Decoder_repetition<B,R>
 #else
 		const auto r_s = mipp::Reg<B>(r_ext.sign().r) >> (sizeof(B) * 8 - 1);
 #endif
-		r_s.store(&s[i]);
+		r_s.store(&V_K[i]);
 	}
 	for (auto i = vec_loop_size; i < this->K; i++)
-		s[i] = ext[i] < 0;
-}
+		V_K[i] = ext[i] < 0;
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_repetition<B,R>
-::_store(mipp::vector<B>& V_K) const
-{
-	V_K = s;
-}
-
-template <typename B, typename R>
-void Decoder_repetition<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_repetition: this decoder does not support the "
-	                         "\"_soft_decode\" interface.");
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // ==================================================================================== explicit template instantiation

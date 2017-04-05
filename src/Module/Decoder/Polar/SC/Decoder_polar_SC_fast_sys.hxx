@@ -1,3 +1,4 @@
+#include <chrono>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
@@ -169,23 +170,23 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	constexpr int n_frames = API_polar::get_n_frames();
 
 	if (n_frames == 1)
-		std::copy(Y_N.begin(), Y_N.end(), l.begin());
+		std::copy(Y_N, Y_N + this->N, l.begin());
 	else
 	{
 		bool fast_interleave = false;
 		if (typeid(B) == typeid(signed char))
-			fast_interleave = tools::char_transpose((signed char*)Y_N.data(), (signed char*)l.data(), (int)this->N);
+			fast_interleave = tools::char_transpose((signed char*)Y_N, (signed char*)l.data(), (int)this->N);
 
 		if (!fast_interleave)
 		{
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*this->N;
+				frames[f] = Y_N + f*this->N;
 			tools::Reorderer_static<R,n_frames>::apply(frames, l.data(), this->N);
 		}
 	}
@@ -193,14 +194,28 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
 	if (m < static_level)
 		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
 		                         "\"static_level\".");
 
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	int first_id = 0, off_l = 0, off_s = 0;
 	this->recursive_decode(off_l, off_s, m, first_id);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R, class API_polar>
@@ -277,7 +292,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	constexpr int n_frames = API_polar::get_n_frames();
 
@@ -335,81 +350,6 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			}
 		}
 	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_store_fast(mipp::vector<B>& V_N) const
-{
-	if (V_N.size() < (unsigned) (this->N * this->get_simd_inter_frame_level()))
-		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"V_N.size()\" has to be equal or greater "
-		                        "than \"N\" * \"get_simd_inter_frame_level()\".");
-
-	constexpr int n_frames = API_polar::get_n_frames();
-
-	if (n_frames == 1)
-	{
-		std::copy(s.begin(), s.end() - mipp::nElmtsPerRegister<B>(), V_N.begin());
-	}
-	else
-	{
-		bool fast_deinterleave = false;
-#if defined(ENABLE_BIT_PACKING)
-		if (typeid(B) == typeid(signed char))
-		{
-			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
-			                                                 (signed char*)V_N.data(),
-			                                                 (int)this->N)))
-			{
-				throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: unsupported \"N\" value for "
-				                         "itransposition (\"N\" has to be greater or equal to 128 for SSE/NEON or to "
-				                         "256 for AVX)");
-			}
-		}
-#endif
-		if (!fast_deinterleave)
-		{
-			// transpose without bit packing (vectorized)
-			std::vector<B*> frames(n_frames);
-			for (auto f = 0; f < n_frames; f++)
-				frames[f] = V_N.data() + f*this->N;
-			tools::Reorderer_static<B,n_frames>::apply_rev(s.data(), frames, this->N);
-		}
-	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_unpack(mipp::vector<B>& V_N) const
-{
-	if (V_N.size() < (unsigned) (this->N * this->get_simd_inter_frame_level()))
-		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"V_N.size()\" has to be equal or greater "
-		                        "than \"N\" * \"get_simd_inter_frame_level()\".");
-
-	constexpr int n_frames = API_polar::get_n_frames();
-
-	bool unpack = false;
-#if defined(ENABLE_BIT_PACKING)
-	if (typeid(B) == typeid(signed char) && n_frames == mipp::nElReg<R>())
-	{
-		// bit unpacking
-		auto idx = n_frames * this->N -1;
-		for (auto i = n_frames * this->N -1; i > 0; i -= this->N)
-			for (unsigned j = (unsigned) 0; j < (unsigned) this->N; j += sizeof(B) * 8)
-			{
-				unsigned char packed_vals = (unsigned char) V_N[(i -j) / (sizeof(B) * 8)];
-				for (auto k = 0; k < 8; k++)
-					V_N[idx--] = !frozen_bits[(this->N -1 -j) -k] && ((packed_vals >> (7-k)) & 0x01);
-			}
-
-		unpack = true;
-	}
-#endif
-
-	if (!unpack)
-		for (auto i = 0; i < n_frames; i++)
-			for (auto j = 0; j < this->N; j++)
-				V_N[i * this->N + j] = !frozen_bits[j] && V_N[i * this->N + j];
 }
 }
 }

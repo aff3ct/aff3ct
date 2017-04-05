@@ -40,7 +40,6 @@ Simulation_BFER<B,R,Q>
   Y_N4(this->params.simulation.n_threads),
   Y_N5(this->params.simulation.n_threads),
   V_K (this->params.simulation.n_threads),
-  V_N (this->params.simulation.n_threads),
 
   monitor_red(nullptr),
   terminal   (nullptr),
@@ -56,9 +55,10 @@ Simulation_BFER<B,R,Q>
   d_quant_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_depun_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_corea_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_load_total (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_decod_load (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_decod_only (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
+  d_decod_store(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_decod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_store_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_cobit_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
   d_check_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
 
@@ -73,9 +73,10 @@ Simulation_BFER<B,R,Q>
   d_quant_total_sum(std::chrono::nanoseconds(0)),
   d_depun_total_sum(std::chrono::nanoseconds(0)),
   d_corea_total_sum(std::chrono::nanoseconds(0)),
-  d_load_total_sum (std::chrono::nanoseconds(0)),
+  d_decod_load_sum (std::chrono::nanoseconds(0)),
+  d_decod_only_sum (std::chrono::nanoseconds(0)),
+  d_decod_store_sum(std::chrono::nanoseconds(0)),
   d_decod_total_sum(std::chrono::nanoseconds(0)),
-  d_store_total_sum(std::chrono::nanoseconds(0)),
   d_cobit_total_sum(std::chrono::nanoseconds(0)),
   d_check_total_sum(std::chrono::nanoseconds(0))
 {
@@ -204,7 +205,6 @@ void Simulation_BFER<B,R,Q>
 	if (simu->Y_N4[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
 	if (simu->Y_N5[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N5[tid].resize((N_code + tail) * n_fra);
 	if (simu->V_K [tid].size() != (unsigned) ( K              * n_fra)) simu->V_K [tid].resize( K              * n_fra);
-	if (simu->V_N [tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->V_N [tid].resize((N_code + tail) * n_fra);
 
 	simu->barrier(tid);
 	if (tid == 0)
@@ -265,9 +265,10 @@ void Simulation_BFER<B,R,Q>
 		simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
 		simu->d_depun_total[tid] = std::chrono::nanoseconds(0);
 		simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_load_total [tid] = std::chrono::nanoseconds(0);
+		simu->d_decod_load [tid] = std::chrono::nanoseconds(0);
+		simu->d_decod_only [tid] = std::chrono::nanoseconds(0);
+		simu->d_decod_store[tid] = std::chrono::nanoseconds(0);
 		simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_store_total[tid] = std::chrono::nanoseconds(0);
 		simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
 		simu->d_check_total[tid] = std::chrono::nanoseconds(0);
 
@@ -411,7 +412,9 @@ void Simulation_BFER<B,R,Q>
 		}
 
 		// launch decoder
+		auto t_decod = steady_clock::now();
 		simu->decoder[tid]->hard_decode(simu->Y_N5[tid], simu->V_K[tid]);
+		auto d_decod = steady_clock::now() - t_decod;
 
 		// apply the coset to recover the real bits
 		if (simu->params.code.coset)
@@ -442,9 +445,10 @@ void Simulation_BFER<B,R,Q>
 		simu->d_quant_total[tid] += d_quant;
 		simu->d_depun_total[tid] += d_depun;
 		simu->d_corea_total[tid] += d_corea;
-		simu->d_load_total [tid] += simu->decoder[tid]->get_load_duration();
-		simu->d_decod_total[tid] += simu->decoder[tid]->get_decode_duration();
-		simu->d_store_total[tid] += simu->decoder[tid]->get_store_duration();
+		simu->d_decod_load [tid] += simu->decoder[tid]->get_load_duration();
+		simu->d_decod_only [tid] += simu->decoder[tid]->get_decode_duration();
+		simu->d_decod_store[tid] += simu->decoder[tid]->get_store_duration();
+		simu->d_decod_total[tid] += d_decod;
 		simu->d_cobit_total[tid] += d_cobit;
 		simu->d_check_total[tid] += d_check;
 
@@ -475,14 +479,12 @@ void Simulation_BFER<B,R,Q>
 
 	simu->barrier(tid);
 	auto t_start = std::chrono::steady_clock::now(); // start time
+
 	simu->barrier(tid);
-	if (simu->params.simulation.benchs_no_ldst)
-		for (auto i = 0; i < simu->params.simulation.benchs; i++)
-			simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_N[tid], false, false, false, false);
-	else
-		for (auto i = 0; i < simu->params.simulation.benchs; i++)
-			simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_N[tid], true, true, true, false);
+	for (auto i = 0; i < simu->params.simulation.benchs; i++)
+		simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_K[tid]);
 	simu->barrier(tid);
+
 	auto t_stop = std::chrono::steady_clock::now(); // stop time
 
 	auto frames   = (float)simu->params.simulation.benchs *
@@ -727,7 +729,9 @@ void Simulation_BFER<B,R,Q>
 		
 		// launch decoder
 		std::clog << "Decode Y_N5 and generate V_K..." << std::endl;
+		auto t_decod = steady_clock::now();
 		simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K[0]);
+		auto d_decod = steady_clock::now() - t_decod;
 
 		// display V_K
 		std::clog << "V_K:" << std::endl;
@@ -772,9 +776,10 @@ void Simulation_BFER<B,R,Q>
 		simu->d_quant_total[0] += d_quant;
 		simu->d_depun_total[0] += d_depun;
 		simu->d_corea_total[0] += d_corea;
-		simu->d_load_total [0] += simu->decoder[0]->get_load_duration  ();
-		simu->d_decod_total[0] += simu->decoder[0]->get_decode_duration();
-		simu->d_store_total[0] += simu->decoder[0]->get_store_duration ();
+		simu->d_decod_load [0] += simu->decoder[0]->get_load_duration();
+		simu->d_decod_only [0] += simu->decoder[0]->get_decode_duration();
+		simu->d_decod_store[0] += simu->decoder[0]->get_store_duration();
+		simu->d_decod_total[0] += d_decod;
 		simu->d_cobit_total[0] += d_cobit;
 		simu->d_check_total[0] += d_check;
 
@@ -865,10 +870,10 @@ void Simulation_BFER<B,R,Q>
 	d_quant_total_red = nanoseconds(0);
 	d_depun_total_red = nanoseconds(0);
 	d_corea_total_red = nanoseconds(0);
-	d_load_total_red  = nanoseconds(0);
+	d_decod_load_red  = nanoseconds(0);
+	d_decod_only_red  = nanoseconds(0);
+	d_decod_store_red = nanoseconds(0);
 	d_decod_total_red = nanoseconds(0);
-	d_store_total_red = nanoseconds(0);
-	d_decod_all_red   = nanoseconds(0);
 	d_cobit_total_red = nanoseconds(0);
 	d_check_total_red = nanoseconds(0);
 
@@ -885,10 +890,10 @@ void Simulation_BFER<B,R,Q>
 		d_quant_total_red += d_quant_total[tid];
 		d_depun_total_red += d_depun_total[tid];
 		d_corea_total_red += d_corea_total[tid];
-		d_load_total_red  += d_load_total [tid];
+		d_decod_load_red  += d_decod_load [tid];
+		d_decod_only_red  += d_decod_only [tid];
+		d_decod_store_red += d_decod_store[tid];
 		d_decod_total_red += d_decod_total[tid];
-		d_store_total_red += d_store_total[tid];
-		d_decod_all_red   += (d_load_total[tid] + d_decod_total[tid] + d_store_total[tid]);
 		d_cobit_total_red += d_cobit_total[tid];
 		d_check_total_red += d_check_total[tid];
 	}
@@ -907,9 +912,10 @@ void Simulation_BFER<B,R,Q>
 			d_quant_total_sum += d_quant_total[tid];
 			d_depun_total_sum += d_depun_total[tid];
 			d_corea_total_sum += d_corea_total[tid];
-			d_load_total_sum  += d_load_total [tid];
+			d_decod_load_sum  += d_decod_load [tid];
+			d_decod_only_sum  += d_decod_only [tid];
+			d_decod_store_sum += d_decod_store[tid];
 			d_decod_total_sum += d_decod_total[tid];
-			d_store_total_sum += d_store_total[tid];
 			d_cobit_total_sum += d_cobit_total[tid];
 			d_check_total_sum += d_check_total[tid];
 		}
@@ -932,107 +938,108 @@ void Simulation_BFER<B,R,Q>
 	               d_quant_total_sum +
 	               d_depun_total_sum +
 	               d_corea_total_sum +
-	               d_load_total_sum  +
 	               d_decod_total_sum +
-	               d_store_total_sum +
 	               d_cobit_total_sum +
 	               d_check_total_sum;
 
-	auto sourc_sec     = ((float)d_sourc_total_sum.count()) * 0.000000001f;
-	auto crc_sec       = ((float)d_crc_total_sum  .count()) * 0.000000001f;
-	auto encod_sec     = ((float)d_encod_total_sum.count()) * 0.000000001f;
-	auto punct_sec     = ((float)d_punct_total_sum.count()) * 0.000000001f;
-	auto modul_sec     = ((float)d_modul_total_sum.count()) * 0.000000001f;
-	auto chann_sec     = ((float)d_chann_total_sum.count()) * 0.000000001f;
-	auto filte_sec     = ((float)d_filte_total_sum.count()) * 0.000000001f;
-	auto demod_sec     = ((float)d_demod_total_sum.count()) * 0.000000001f;
-	auto quant_sec     = ((float)d_quant_total_sum.count()) * 0.000000001f;
-	auto depun_sec     = ((float)d_depun_total_sum.count()) * 0.000000001f;
-	auto corea_sec     = ((float)d_corea_total_sum.count()) * 0.000000001f;
-	auto load_sec      = ((float)d_load_total_sum .count()) * 0.000000001f;
-	auto decod_sec     = ((float)d_decod_total_sum.count()) * 0.000000001f;
-	auto store_sec     = ((float)d_store_total_sum.count()) * 0.000000001f;
-	auto decod_tot_sec = load_sec + decod_sec + store_sec;
-	auto cobit_sec     = ((float)d_cobit_total_sum.count()) * 0.000000001f;
-	auto check_sec     = ((float)d_check_total_sum.count()) * 0.000000001f;
-	auto total_sec     = ((float)d_total          .count()) * 0.000000001f;
+	auto sourc_sec       = ((float)d_sourc_total_sum.count()) * 0.000000001f;
+	auto crc_sec         = ((float)d_crc_total_sum  .count()) * 0.000000001f;
+	auto encod_sec       = ((float)d_encod_total_sum.count()) * 0.000000001f;
+	auto punct_sec       = ((float)d_punct_total_sum.count()) * 0.000000001f;
+	auto modul_sec       = ((float)d_modul_total_sum.count()) * 0.000000001f;
+	auto chann_sec       = ((float)d_chann_total_sum.count()) * 0.000000001f;
+	auto filte_sec       = ((float)d_filte_total_sum.count()) * 0.000000001f;
+	auto demod_sec       = ((float)d_demod_total_sum.count()) * 0.000000001f;
+	auto quant_sec       = ((float)d_quant_total_sum.count()) * 0.000000001f;
+	auto depun_sec       = ((float)d_depun_total_sum.count()) * 0.000000001f;
+	auto corea_sec       = ((float)d_corea_total_sum.count()) * 0.000000001f;
+	auto decod_load_sec  = ((float)d_decod_load_sum .count()) * 0.000000001f;
+	auto decod_only_sec  = ((float)d_decod_only_sum .count()) * 0.000000001f;
+	auto decod_store_sec = ((float)d_decod_store_sum.count()) * 0.000000001f;
+	auto decod_sec       = ((float)d_decod_total_sum.count()) * 0.000000001f;
+	auto cobit_sec       = ((float)d_cobit_total_sum.count()) * 0.000000001f;
+	auto check_sec       = ((float)d_check_total_sum.count()) * 0.000000001f;
+	auto total_sec       = ((float)d_total          .count()) * 0.000000001f;
 
-	auto sourc_pc     = (sourc_sec     / total_sec)     * 100.f;
-	auto crc_pc       = (crc_sec       / total_sec)     * 100.f;
-	auto encod_pc     = (encod_sec     / total_sec)     * 100.f;
-	auto punct_pc     = (punct_sec     / total_sec)     * 100.f;
-	auto modul_pc     = (modul_sec     / total_sec)     * 100.f;
-	auto chann_pc     = (chann_sec     / total_sec)     * 100.f;
-	auto filte_pc     = (filte_sec     / total_sec)     * 100.f;
-	auto demod_pc     = (demod_sec     / total_sec)     * 100.f;
-	auto quant_pc     = (quant_sec     / total_sec)     * 100.f;
-	auto depun_pc     = (depun_sec     / total_sec)     * 100.f;
-	auto corea_pc     = (corea_sec     / total_sec)     * 100.f;
-	auto decod_tot_pc = (decod_tot_sec / total_sec)     * 100.f;
-	auto load_pc      = (load_sec      / decod_tot_sec) * 100.f;
-	auto decod_pc     = (decod_sec     / decod_tot_sec) * 100.f;
-	auto store_pc     = (store_sec     / decod_tot_sec) * 100.f;
-	auto cobit_pc     = (cobit_sec     / total_sec)     * 100.f;
-	auto check_pc     = (check_sec     / total_sec)     * 100.f;
+	auto sourc_pc       = (sourc_sec       / total_sec) * 100.f;
+	auto crc_pc         = (crc_sec         / total_sec) * 100.f;
+	auto encod_pc       = (encod_sec       / total_sec) * 100.f;
+	auto punct_pc       = (punct_sec       / total_sec) * 100.f;
+	auto modul_pc       = (modul_sec       / total_sec) * 100.f;
+	auto chann_pc       = (chann_sec       / total_sec) * 100.f;
+	auto filte_pc       = (filte_sec       / total_sec) * 100.f;
+	auto demod_pc       = (demod_sec       / total_sec) * 100.f;
+	auto quant_pc       = (quant_sec       / total_sec) * 100.f;
+	auto depun_pc       = (depun_sec       / total_sec) * 100.f;
+	auto corea_pc       = (corea_sec       / total_sec) * 100.f;
+	auto decod_load_pc  = (decod_load_sec  / decod_sec) * 100.f;
+	auto decod_only_pc  = (decod_only_sec  / decod_sec) * 100.f;
+	auto decod_store_pc = (decod_store_sec / decod_sec) * 100.f;
+	auto decod_pc       = (decod_sec       / total_sec) * 100.f;
+	auto cobit_pc       = (cobit_sec       / total_sec) * 100.f;
+	auto check_pc       = (check_sec       / total_sec) * 100.f;
 
 	stream << "#" << std::endl;
 	stream << "# " << bold_underlined("Time report:") << std::endl;
 	stream << "# " << bold           ("* Source") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << sourc_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << sourc_pc     << "%)" 
+	       << sourc_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << sourc_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* CRC") << "         : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << crc_sec       << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << crc_pc       << "%)" 
+	       << crc_sec        << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << crc_pc         << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Encoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << encod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << encod_pc     << "%)" 
+	       << encod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << encod_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Puncturer") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << punct_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << punct_pc     << "%)" 
+	       << punct_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << punct_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Modulator") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << modul_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << modul_pc     << "%)" 
+	       << modul_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << modul_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Channel") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << chann_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << chann_pc     << "%)" 
+	       << chann_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << chann_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Filter") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << filte_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << filte_pc     << "%)" 
+	       << filte_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << filte_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << demod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc     << "%)" 
+	       << demod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << quant_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << quant_pc     << "%)" 
+	       << quant_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << quant_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << depun_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << depun_pc     << "%)" 
+	       << depun_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << depun_pc       << "%)"
 	       << std::endl;
 	if (this->params.code.coset)
 	stream << "# " << bold           ("* Coset real") << "  : " << std::setw(9) << std::fixed << std::setprecision(3)
-	       << corea_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << corea_pc     << "%)"
+	       << corea_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << corea_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << decod_tot_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_tot_pc << "%)" 
+	       << decod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc       << "%)"
 	       << std::endl;
+	if (decod_load_pc != 0 || decod_only_pc != 0 || decod_store_pc != 0)
+	{
 	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << load_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << load_pc      << "%)" 
+	       << decod_load_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_load_pc  << "%)"
 	       << std::endl;
 	stream << "# " << bold_italic    ("  - decode") << "    : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << decod_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc     << "%)" 
+	       << decod_only_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_only_pc  << "%)"
 	       << std::endl;
 	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << store_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << store_pc     << "%)" 
+	       << decod_store_sec<< " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_store_pc << "%)"
 	       << std::endl;
+	}
 	if (this->params.code.coset)
 	stream << "# " << bold           ("* Coset bit") << "   : " << std::setw(9) << std::fixed << std::setprecision(3)
-	       << cobit_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << cobit_pc     << "%)"
+	       << cobit_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << cobit_pc       << "%)"
 	       << std::endl;
 	stream << "# " << bold           ("* Check errors") << ": " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << check_sec     << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc     << "%)" 
+	       << check_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc       << "%)"
 	       << std::endl;
 	stream << "#   ----------------------------------" << std::endl;
 	stream << "# " << bold           ("* TOTAL") << "       : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << total_sec     << " sec" 
+	       << total_sec      << " sec"
 	       << std::endl;
 	stream << "#" << std::endl;
 }
@@ -1044,7 +1051,7 @@ Terminal* Simulation_BFER<B,R,Q>
 #ifdef ENABLE_MPI
 	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr);
 #else
-	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr, &d_decod_all_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr, &d_decod_total_red);
 #endif
 }
 

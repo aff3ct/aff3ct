@@ -1,3 +1,4 @@
+#include <chrono>
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
@@ -13,10 +14,8 @@ Decoder_RA<B, R>
 : Decoder<B,R>(K, N, n_frames, 1, name),
   rep_count(N/K),
   max_iter(max_iter),
-  Y_N(N),
   Fw(N),
   Bw(N),
-  V_K(K),
   Tu(N),
   Td(N),
   Wu(N),
@@ -47,15 +46,9 @@ Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::_load(const mipp::vector<R>& Y_N)
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
-	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
-}
-
-template <typename B, typename R>
-void Decoder_RA<B, R>
-::_hard_decode()
-{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)
 	{
@@ -63,7 +56,9 @@ void Decoder_RA<B, R>
 		Bw[i] = 0;
 		Td[i] = 0;
 	}
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	for (auto iter = 0; iter < max_iter; iter++)
 	{
 		///////////////////
@@ -105,15 +100,16 @@ void Decoder_RA<B, R>
 		// Interleaving
 		interleaver.interleave(Wd, Td, false, 1);
 	}
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	for (auto i = 0; i < this->K; i++)
 		V_K[i] = (U[i] > 0) ? 0 : 1;
-}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_RA<B, R>
-::_store(mipp::vector<B>& V_K) const
-{
-	V_K = this->V_K;
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R>

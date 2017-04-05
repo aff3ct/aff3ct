@@ -14,7 +14,6 @@ class CRC_polynomial : public CRC<B>
 {
 protected:
 	const static std::map<std::string, mipp::vector<B>> polynomials;
-//const int insert_pos;
 	mipp::vector<B> polynomial;
 	mipp::vector<B> buff_crc;
 
@@ -27,10 +26,10 @@ public:
 	virtual void build(mipp::vector<B>& U_K);
 
 protected:
-	virtual bool _check(const mipp::vector<B>& V_K, const int n_frames = -1);
+	virtual bool _check_fbf(const B *V_K);
 
-	void _generate(const mipp::vector<B>& U_in, 
-	                     mipp::vector<B>& U_out, 
+	void _generate(const B *U_in,
+	                     B *U_out,
 	               const int off_in, 
 	               const int off_out, 
 	               const int loop_size);

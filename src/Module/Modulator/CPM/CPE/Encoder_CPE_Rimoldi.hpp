@@ -12,10 +12,7 @@ template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE_Rimoldi : public Encoder_CPE<SIN, SOUT>
 {
 public:
-	Encoder_CPE_Rimoldi(const int N,
-	                    const CPM_parameters<SIN,SOUT>& cpm,
-	                    const int n_frames = 1,
-	                    const std::string name = "Encoder_CPE_Rimoldi");
+	Encoder_CPE_Rimoldi(const int N, const CPM_parameters<SIN,SOUT>& cpm);
 	virtual ~Encoder_CPE_Rimoldi() {}
 
 	SOUT inner_encode(const SIN new_symbol, int &state);

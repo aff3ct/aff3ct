@@ -42,7 +42,6 @@ protected:
 	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
 	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
 	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
-	std::vector<mipp::vector<B>> V_N;  // decoded codeword (especially for simulation_bench and SC_FAST decoders)
 
 	// objects
 	module::Monitor_reduction<B,R> *monitor_red;
@@ -65,9 +64,10 @@ protected:
 	std::vector<std::chrono::nanoseconds> d_quant_total;
 	std::vector<std::chrono::nanoseconds> d_depun_total;
 	std::vector<std::chrono::nanoseconds> d_corea_total;
-	std::vector<std::chrono::nanoseconds> d_load_total;
+	std::vector<std::chrono::nanoseconds> d_decod_load;
+	std::vector<std::chrono::nanoseconds> d_decod_only;
+	std::vector<std::chrono::nanoseconds> d_decod_store;
 	std::vector<std::chrono::nanoseconds> d_decod_total;
-	std::vector<std::chrono::nanoseconds> d_store_total;
 	std::vector<std::chrono::nanoseconds> d_cobit_total;
 	std::vector<std::chrono::nanoseconds> d_check_total;
 
@@ -82,10 +82,10 @@ protected:
 	std::chrono::nanoseconds d_quant_total_red;
 	std::chrono::nanoseconds d_depun_total_red;
 	std::chrono::nanoseconds d_corea_total_red;
-	std::chrono::nanoseconds d_load_total_red;
+	std::chrono::nanoseconds d_decod_load_red;
+	std::chrono::nanoseconds d_decod_only_red;
+	std::chrono::nanoseconds d_decod_store_red;
 	std::chrono::nanoseconds d_decod_total_red;
-	std::chrono::nanoseconds d_store_total_red;
-	std::chrono::nanoseconds d_decod_all_red;
 	std::chrono::nanoseconds d_cobit_total_red;
 	std::chrono::nanoseconds d_check_total_red;
 
@@ -100,9 +100,10 @@ protected:
 	std::chrono::nanoseconds d_quant_total_sum;
 	std::chrono::nanoseconds d_depun_total_sum;
 	std::chrono::nanoseconds d_corea_total_sum;
-	std::chrono::nanoseconds d_load_total_sum;
+	std::chrono::nanoseconds d_decod_load_sum;
+	std::chrono::nanoseconds d_decod_only_sum;
+	std::chrono::nanoseconds d_decod_store_sum;
 	std::chrono::nanoseconds d_decod_total_sum;
-	std::chrono::nanoseconds d_store_total_sum;
 	std::chrono::nanoseconds d_cobit_total_sum;
 	std::chrono::nanoseconds d_check_total_sum;
 

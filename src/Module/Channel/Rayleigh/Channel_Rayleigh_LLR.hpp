@@ -26,7 +26,6 @@ public:
 	                     const std::string name = "Channel_Rayleigh_LLR");
 	virtual ~Channel_Rayleigh_LLR();
 
-protected:
 	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
 	virtual void _add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R> &H_N);
 };

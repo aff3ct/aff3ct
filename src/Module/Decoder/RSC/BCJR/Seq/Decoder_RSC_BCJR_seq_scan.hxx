@@ -27,7 +27,7 @@ Decoder_RSC_BCJR_seq_scan<B,R,RD>
 
 template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	// compute gamma values (auto-vectorized loop)
 	for (auto i = 0; i < this->K +3; i++)
@@ -372,7 +372,7 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 
 template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_ext(const R *sys, R *ext)
 {
 	// compute extrinsic values
 	constexpr int block = 16;
@@ -450,7 +450,7 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 
 template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode_fbf(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

@@ -138,7 +138,7 @@ Decoder_RSC_BCJR_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter<B,R>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
@@ -149,20 +149,20 @@ void Decoder_RSC_BCJR_inter<B,R>
 
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size;
+			frames[f] = Y_N + f*frame_size;
 		tools::Reorderer_static<R,n_frames>::apply(frames, this->sys.data(), this->K);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +this->K;
+			frames[f] = Y_N + f*frame_size +this->K;
 		tools::Reorderer_static<R,n_frames>::apply(frames, this->par.data(), this->K);
 
 		// tails bit
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size + 2*this->K + tail/2;
+			frames[f] = Y_N + f*frame_size + 2*this->K + tail/2;
 		tools::Reorderer_static<R,n_frames>::apply(frames, &this->sys[this->K*n_frames], tail/2);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size + 2*this->K;
+			frames[f] = Y_N + f*frame_size + 2*this->K;
 		tools::Reorderer_static<R,n_frames>::apply(frames, &this->par[this->K*n_frames], tail/2);
 	}
 	else
@@ -171,7 +171,7 @@ void Decoder_RSC_BCJR_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter<B,R>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	if (this->get_simd_inter_frame_level() > 1)
 	{
@@ -179,7 +179,7 @@ void Decoder_RSC_BCJR_inter<B,R>
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = V_K.data() + f*this->K;
+			frames[f] = V_K + f*this->K;
 		tools::Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 	}
 	else

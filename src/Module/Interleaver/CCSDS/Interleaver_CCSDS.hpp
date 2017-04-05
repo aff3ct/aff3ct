@@ -17,8 +17,8 @@ private:
 	int call_counter;
 
 public:
-	Interleaver_CCSDS(int size, const std::string name = "Interleaver_CCSDS") 
-	: Interleaver<T>(size, 1, name), call_counter(0) { gen_lookup_tables(); }
+	Interleaver_CCSDS(int size, const int n_frames = 1, const std::string name = "Interleaver_CCSDS")
+	: Interleaver<T>(size, n_frames, name), call_counter(0) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{

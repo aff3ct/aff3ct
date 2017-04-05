@@ -17,7 +17,6 @@ public:
 	int  size (                    ) const;
 	void build(mipp::vector<B>& U_K);
 
-protected:
 	bool _check(const mipp::vector<B>& V_K, const int n_frames = -1);
 };
 }
