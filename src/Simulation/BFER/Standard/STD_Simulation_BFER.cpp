@@ -1018,6 +1018,8 @@ void Simulation_BFER<B,R,Q>
 	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc       << "%)"
 	       << std::endl;
+	if (decod_load_pc != 0 || decod_only_pc != 0 || decod_store_pc != 0)
+	{
 	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_load_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_load_pc  << "%)"
 	       << std::endl;
@@ -1027,6 +1029,7 @@ void Simulation_BFER<B,R,Q>
 	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
 	       << decod_store_sec<< " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_store_pc << "%)"
 	       << std::endl;
+	}
 	if (this->params.code.coset)
 	stream << "# " << bold           ("* Coset bit") << "   : " << std::setw(9) << std::fixed << std::setprecision(3)
 	       << cobit_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << cobit_pc       << "%)"
