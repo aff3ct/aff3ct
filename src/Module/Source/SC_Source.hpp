@@ -39,11 +39,6 @@ public:
 		SC_THREAD(sc_generate);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)U_K.size() != source.K * source.n_frames) U_K.resize(source.K * source.n_frames);
-	}
-
 private:
 	void sc_generate()
 	{
@@ -77,14 +72,6 @@ public:
 	: Source_i<B>(K, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Source() { if (module != nullptr) { delete module; module = nullptr; } };
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Source_i<B>::set_n_frames(n_frames);
-
-		if (module != nullptr)
-			module->resize_buffers();
-	}
 
 	void create_sc_module()
 	{

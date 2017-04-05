@@ -22,7 +22,7 @@ public:
 
 protected:
 	virtual void select_best_path();
-	virtual void _store(mipp::vector<B>& V_K) const;
+	virtual void _store(B *V_K) const;
 };
 }
 }

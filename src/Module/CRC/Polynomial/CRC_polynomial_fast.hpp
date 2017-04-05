@@ -24,8 +24,8 @@ public:
 	virtual void build(mipp::vector<B>& U_K);
 
 protected:
-	virtual bool _check       (const mipp::vector<B>& V_K, const int n_frames = -1);
-	virtual bool _check_packed(const mipp::vector<B>& V_K, const int n_frames = -1);
+	virtual bool _check_fbf       (const B *V_K);
+	virtual bool _check_packed_fbf(const B *V_K);
 
 private:
 	inline unsigned compute_crc_v1(const void* data, const int n_bits);

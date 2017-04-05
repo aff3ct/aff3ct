@@ -53,17 +53,14 @@ public:
 	virtual ~Decoder_polar_SC_fast_sys();
 
 protected:
-	        void _load       (const mipp::vector<R>& Y_N);
-	virtual void _hard_decode(                          );
-	        void _store      (      mipp::vector<B>& V_K) const;
-	        void _store_fast (      mipp::vector<B>& V_N) const;
-	        void _unpack     (      mipp::vector<B>& V_N) const;
+	        void _load           (const R *Y_N        );
+	virtual void _hard_decode_fbf(const R *Y_N, B *V_K);
+	        void _store          (              B *V_K) const;
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
 
 	inline static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns,
-	                              const mipp::vector<B>                            &V_N,
-	                                    mipp::vector<B>                            &V_K);
+	                              const B *V_N, B *V_K);
 };
 }
 }

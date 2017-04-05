@@ -11,8 +11,7 @@ Encoder<B>* Factory_encoder_turbo<B>
 ::build(const parameters         &params,
               Interleaver<int>   *interleaver,
               Encoder_sys<B>     *sub_encoder_n,
-              Encoder_sys<B>     *sub_encoder_i,
-        const int                 n_frames)
+              Encoder_sys<B>     *sub_encoder_i)
 {
 	Encoder<B> *encoder = nullptr;
 
@@ -21,9 +20,10 @@ Encoder<B>* Factory_encoder_turbo<B>
 	{
 		if (params.encoder.buffered)
 			encoder = new Encoder_turbo<B>(params.code.K, params.code.N, *interleaver, *sub_encoder_n, *sub_encoder_i,
-			                               n_frames);
+			                               params.simulation.inter_frame_level);
 		else
-			encoder = new Encoder_turbo_legacy<B>(params.code.K, params.code.N, *interleaver, *sub_encoder_n, n_frames);
+			encoder = new Encoder_turbo_legacy<B>(params.code.K, params.code.N, *interleaver, *sub_encoder_n,
+			                                      params.simulation.inter_frame_level);
 	}
 
 	return encoder;

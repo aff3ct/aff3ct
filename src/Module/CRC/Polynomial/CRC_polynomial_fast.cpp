@@ -62,59 +62,49 @@ void CRC_polynomial_fast<B>
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check(const mipp::vector<B>& V_K, const int n_frames)
+::_check_fbf(const B *V_K)
 {
-	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-
-	Bit_packer<B>::pack(V_K, this->buff_crc, real_n_frames);
-	return this->_check_packed(this->buff_crc, n_frames);
+	Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K);
+	return this->_check_packed_fbf(this->buff_crc.data());
 }
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check_packed(const mipp::vector<B>& V_K, const int n_frames)
+::_check_packed_fbf(const B *V_K)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
 	                         "little endian CPUs (x86, ARM, ...)");
 #endif
 
-	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+	const auto crc_size = this->size();
+	const auto rest     = this->K % 8;
 
-	const auto crc_size          = this->size();
-	const auto n_bits_per_frame  = (int)((int)V_K.size() / real_n_frames); // number of bits with the CRC bits included
-	const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
-	const auto rest              = n_bits_per_frame % 8;
-
-	unsigned char* bytes = (unsigned char*)V_K.data();
+	unsigned char* bytes = (unsigned char*)V_K;
 
 	unsigned crc_invalid = 0;
-	auto f = 0;
-	do
+
+	const auto data = bytes;
+	const auto crc  = this->compute_crc_v3((void*)data, this->K - crc_size);
+
+	auto n_bits_crc = crc_size;
+	auto current = data + ((this->K - crc_size) / 8);
+
+	unsigned crc_ref = 0;
+	if (rest)
 	{
-		const auto data = bytes + f * n_bytes_per_frame;
-		const auto crc  = this->compute_crc_v3((void*)data, n_bits_per_frame - crc_size);
-
-		auto n_bits_crc = crc_size;
-		auto current = data + ((n_bits_per_frame - crc_size) / 8);
-
-		unsigned crc_ref = 0;
-		if (rest)
-		{
-			auto cur = *current++;
-			for (auto j = rest; j < 8 && n_bits_crc > 0; j++)
-				crc_ref |= ((cur >> j) & 1) << (crc_size - n_bits_crc--);
-		}
-		while (n_bits_crc)
-		{
-			auto cur = *current++;
-			for (auto j = 0; j < 8 && n_bits_crc > 0; j++)
-				crc_ref |= ((cur >> j) & 1) << (crc_size - n_bits_crc--);
-		}
-
-		crc_invalid |= crc ^ crc_ref;
+		auto cur = *current++;
+		for (auto j = rest; j < 8 && n_bits_crc > 0; j++)
+			crc_ref |= ((cur >> j) & 1) << (crc_size - n_bits_crc--);
 	}
-	while(++f < real_n_frames && !crc_invalid);
+	while (n_bits_crc)
+	{
+		auto cur = *current++;
+		for (auto j = 0; j < 8 && n_bits_crc > 0; j++)
+			crc_ref |= ((cur >> j) & 1) << (crc_size - n_bits_crc--);
+	}
+
+	crc_invalid |= crc ^ crc_ref;
 
 	return !crc_invalid;
 }

@@ -20,7 +20,7 @@ Decoder_polar_SC_naive_sys<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive_sys<B,R,F,G,H>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	auto *contents_root = this->polar_tree.get_root()->get_c();
 

@@ -90,22 +90,44 @@ void Simulation_BFER_i<B,R,Q>
 	simu->coset_bit  [tid] = simu->build_coset_bit  (        tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
 	simu->monitor    [tid] = simu->build_monitor    (        tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
 
-	// get the real number of frames per threads (from the decoder)
-	const auto n_frames = simu->decoder[tid]->get_n_frames();
-
-	// set the real number of frames per thread
-	simu->source    [tid]->set_n_frames(n_frames);
-	simu->crc       [tid]->set_n_frames(n_frames);
-	simu->encoder   [tid]->set_n_frames(n_frames);
-	simu->puncturer [tid]->set_n_frames(n_frames);
-	simu->modulator [tid]->set_n_frames(n_frames);
-	simu->channel   [tid]->set_n_frames(n_frames);
-	simu->quantizer [tid]->set_n_frames(n_frames);
-	simu->coset_real[tid]->set_n_frames(n_frames);
-	simu->coset_bit [tid]->set_n_frames(n_frames);
-	simu->monitor   [tid]->set_n_frames(n_frames);
+	// check if the inter frame level is right in all the modules
+	if (simu->source    [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Source\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->crc       [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"CRC\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->encoder   [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Encoder\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->puncturer [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Puncturer\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->modulator [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Modulator\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->channel   [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Channel\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->quantizer [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Quantizer\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->coset_real[tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Coset_real\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->decoder   [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Decoder\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->coset_bit [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Coset_bit\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->monitor   [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Monitor\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
 	if (simu->interleaver[tid] != nullptr)
-		simu->interleaver[tid]->set_n_frames(n_frames);
+		if (simu->interleaver[tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+			throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Interleaver\" is "
+			                         "incompatible with \"params.simulation.inter_frame_level\".");
 }
 
 template <typename B, typename R, typename Q>
@@ -218,7 +240,8 @@ template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER_i<B,R,Q>
 ::build_puncturer(const int tid)
 {
-	return new Puncturer_NO<B,Q>(params.code.K, params.code.N + params.code.tail_length);
+	return new Puncturer_NO<B,Q>(params.code.K, params.code.N + params.code.tail_length,
+	                             params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>

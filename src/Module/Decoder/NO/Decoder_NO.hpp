@@ -10,21 +10,14 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_NO : public Decoder_SISO<B,R>
 {
-private:
-	mipp::vector<R> Y_N;
-	
 public:
 	Decoder_NO(const int K, const int N, const int n_frames = 1, const std::string name = "Decoder_NO");
 	virtual ~Decoder_NO();
 
-	void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-
 protected:
-	void _load       (const mipp::vector<R>& Y_N);
-	void _hard_decode(                          );
-	void _store      (      mipp::vector<B>& V_K) const;
-
-	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	void _hard_decode_fbf(const R *Y_N, B *V_K);
+	void _soft_decode_fbf(const R *sys, const R *par, R *ext);
+	void _soft_decode_fbf(const R *Y_N1, R *Y_N2);
 };
 }
 }

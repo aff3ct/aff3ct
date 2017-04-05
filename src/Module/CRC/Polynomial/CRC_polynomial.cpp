@@ -120,7 +120,7 @@ void CRC_polynomial<B>
 		                        "to \"n_frames\" * \"K\".");
 
 	for (auto f = 0; f < this->n_frames; f++)
-		this->_generate(U_K, U_K, 
+		this->_generate(U_K.data(), U_K.data(),
 		                this->K * f, 
 		                this->K * f + (this->K - this->size()), 
 		                this->K - this->size());
@@ -128,13 +128,13 @@ void CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::_generate(const mipp::vector<B>& U_in, 
-                  mipp::vector<B>& U_out, 
+::_generate(const B *U_in,
+                  B *U_out,
             const int off_in, 
             const int off_out, 
             const int loop_size)
 {
-	std::copy(U_in.begin() + off_in, U_in.begin() + off_in + loop_size, buff_crc.begin());
+	std::copy(U_in + off_in, U_in + off_in + loop_size, buff_crc.begin());
 	std::fill(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), (B)0);
 
 	for (auto i = 0; i < loop_size; i++)
@@ -143,50 +143,35 @@ void CRC_polynomial<B>
 				if (this->polynomial[j])
 					buff_crc[i+j] = !buff_crc[i+j];
 
-	if (U_out.data() != buff_crc.data())
-		std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out.begin() + off_out);
+	if (U_out != buff_crc.data())
+		std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out + off_out);
 }
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check(const mipp::vector<B>& V_K, const int n_frames)
+::_check_fbf(const B *V_K)
 {
-	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-	auto real_frame_size = (int)(V_K.size() / real_n_frames);
+	this->_generate(V_K, this->buff_crc.data(), 0, this->K - this->size(), this->K - this->size());
 
 	auto i = 0;
-	auto f = 0;
-	do
-	{
-		this->_generate(V_K, this->buff_crc,
-		                real_frame_size * f,
-		                real_frame_size * (f +1) - this->size(),
-		                real_frame_size - this->size());
+	auto off = this->K - this->size();
+	while ((i < this->size()) &&
+	       // because the position of the bit in a variable can vary,
+	       // the idea is to test: (this->buff_crc[off +i] == V_K[off +i])
+	       ((this->buff_crc[off +i] || !V_K[off +i]) && (!this->buff_crc[off +i] || V_K[off +i])))
+		i++;
 
-		i = 0;
-		auto off1 = real_frame_size * (f +1) - this->size();
-		auto off2 = real_frame_size * (f +1) - this->size();
-		while ((i < this->size()) &&
-		       // because the position of the bit in a variable can vary,
-		       // the idea is to test: (this->buff_crc[off1 +i] == V_K[off2 +i])
-		       ((this->buff_crc[off1 +i] || !V_K[off2 +i]) && (!this->buff_crc[off1 +i] || V_K[off2 +i])))
-			i++;
-		f++;
-	}
-	while ((f < real_n_frames) && (i == this->size()));
-
-	return (f == real_n_frames) && (i == this->size());
+	return (i == this->size());
 }
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check_packed(const mipp::vector<B>& V_K, const int n_frames)
+::_check_packed_fbf(const B *V_K)
 {
-	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-
-	mipp::vector<B> V_K_unpack = V_K;
-	Bit_packer<B>::unpack(V_K_unpack, real_n_frames);
-	return _check(V_K_unpack, n_frames);
+	mipp::vector<B> V_K_unpack(this->K);
+	std::copy(V_K, V_K + this->K, V_K_unpack.begin());
+	Bit_packer<B>::unpack(V_K_unpack, this->K);
+	return _check_fbf(V_K_unpack.data());
 }
 
 // ==================================================================================== explicit template instantiation 

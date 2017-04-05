@@ -43,12 +43,6 @@ public:
 		s_in.register_b_transport(this, &SC_Encoder_module::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)U_K.size() != encoder.K * encoder.n_frames) U_K.resize(encoder.K * encoder.n_frames);
-		if ((int)X_N.size() != encoder.N * encoder.n_frames) X_N.resize(encoder.N * encoder.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -81,14 +75,6 @@ public:
 	: Encoder_i<B>(K, N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Encoder() { if (module != nullptr) { delete module; module = nullptr; } }
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Encoder_i<B>::set_n_frames(n_frames);
-
-		if (module != nullptr)
-			module->resize_buffers();
-	}
 
 	void create_sc_module()
 	{

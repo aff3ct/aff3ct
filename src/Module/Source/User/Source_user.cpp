@@ -65,16 +65,13 @@ Source_user<B>
 
 template <typename B>
 void Source_user<B>
-::_generate(mipp::vector<B>& U_K)
+::_generate_fbf(B *U_K)
 {
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		std::copy(this->source[this->src_counter].begin(),
-		          this->source[this->src_counter].end  (),
-		          U_K.begin() + f * this->K);
+	std::copy(this->source[this->src_counter].begin(),
+	          this->source[this->src_counter].end  (),
+	          U_K);
 
-		this->src_counter = (this->src_counter +1) % (int)this->source.size();
-	}
+	this->src_counter = (this->src_counter +1) % (int)this->source.size();
 }
 
 // ==================================================================================== explicit template instantiation 

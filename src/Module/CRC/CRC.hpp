@@ -95,6 +95,22 @@ public:
 		return this->_check(V_K, n_frames);
 	}
 
+	bool _check(const mipp::vector<B>& V_K, const int n_frames = -1)
+	{
+		return this->_check(V_K.data(), n_frames);
+	}
+
+	virtual bool _check(const B *V_K, const int n_frames = -1)
+	{
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+		auto f = 0;
+		while (f < real_n_frames && this->_check_fbf(V_K + f * this->K))
+			f++;
+
+		return f == real_n_frames;
+	}
+
 	/*!
 	 * \brief Checks if the CRC is verified or not (works on packed bits).
 	 *
@@ -117,10 +133,29 @@ public:
 		return this->_check_packed(V_K, n_frames);
 	}
 
+	virtual bool _check_packed(const mipp::vector<B>& V_K, const int n_frames = -1)
+	{
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+		auto f = 0;
+		while (f < real_n_frames && this->_check_packed_fbf(V_K.data() + f * this->K))
+			f++;
+
+		return f == real_n_frames;
+	}
 
 protected:
-	virtual bool _check       (const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
-	virtual bool _check_packed(const mipp::vector<B>& V_K, const int n_frames = -1) = 0;
+	virtual bool _check_fbf(const B *V_K)
+	{
+		throw std::runtime_error("aff3ct::module::CRC: \"_check_fbf\" is unimplemented.");
+		return false;
+	}
+
+	virtual bool _check_packed_fbf(const B *V_K)
+	{
+		throw std::runtime_error("aff3ct::module::CRC: \"_check_packed_fbf\" is unimplemented.");
+		return false;
+	}
 };
 }
 }

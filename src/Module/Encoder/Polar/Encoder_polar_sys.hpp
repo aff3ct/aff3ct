@@ -19,7 +19,7 @@ public:
 	virtual ~Encoder_polar_sys() {}
 
 protected:
-	void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	void _encode_fbf(const B *U_K, B *X_N);
 };
 }
 }

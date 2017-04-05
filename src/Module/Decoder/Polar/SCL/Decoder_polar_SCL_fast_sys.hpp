@@ -31,7 +31,6 @@ protected:
 
 	            std ::vector<int >       paths;          // active paths
 	            std ::vector<R   >       metrics;        // path metrics
-	            mipp::vector<R   >       Y_N;            // channel llrs
 	std::vector<mipp::vector<R   >>      l;              // llrs
 	std::vector<mipp::vector<B   >>      s;              // partial sums
 	std::vector<std ::vector<R   >>      metrics_vec;    // list of candidate metrics to be sorted
@@ -62,14 +61,11 @@ public:
 
 	virtual ~Decoder_polar_SCL_fast_sys();
 
-	virtual void _load       (const mipp::vector<R>& Y_N);
-	virtual void _hard_decode(                          );
-	virtual void _store      (mipp::vector<B>& V_N      ) const;
-	virtual void _unpack     (mipp::vector<B>& V_N      ) const;
-	virtual void _store_fast (mipp::vector<B>& V        ) const;
+	virtual void _hard_decode_fbf(const R *Y_N, B *V_N);
+	virtual void _store          (              B *V_N) const;
 
 protected:
-	inline void recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id     );
+	inline void recursive_decode(const R *Y_N, const int off_l, const int off_s, const int rev_depth, int &node_id);
 
 	inline void update_paths_r0 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_r1 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
@@ -82,14 +78,12 @@ protected:
 	template <int REV_D, int N_ELMTS> inline void update_paths_rep(const int off_l, const int off_s);
 	template <int REV_D, int N_ELMTS> inline void update_paths_spc(const int off_l, const int off_s);
 
-	        inline void init_buffers    (                             );
+	virtual inline void init_buffers    (                             );
 	        inline void delete_path     (int path_id                  );
 	virtual inline int  select_best_path(                             );
 	        inline int  up_ref_array_idx(const int path, const int r_d); // return the array
 
-	static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns,
-	                       const mipp::vector<B>                            &V_N,
-	                             mipp::vector<B>                            &V_K);
+	static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K);
 
 private:
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);

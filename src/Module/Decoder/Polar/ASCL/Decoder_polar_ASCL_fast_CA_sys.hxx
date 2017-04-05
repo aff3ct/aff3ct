@@ -1,3 +1,4 @@
+#include <chrono>
 #include <stdexcept>
 
 #include "Decoder_polar_ASCL_fast_CA_sys.hpp"
@@ -50,71 +51,56 @@ Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_load(const mipp::vector<R>& Y_N)
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
-	sc_decoder._load(Y_N);
-}
+	sc_decoder.d_load_total  = std::chrono::nanoseconds(0);
+	sc_decoder.d_decod_total = std::chrono::nanoseconds(0);
+	sc_decoder.d_store_total = std::chrono::nanoseconds(0);
 
-template <typename B, typename R, class API_polar>
-void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_hard_decode()
-{
 	this->L = 1;
-	sc_decoder._hard_decode();
+	sc_decoder._hard_decode_fbf(Y_N, V_K);
 
+	this->d_load_total  += sc_decoder.d_load_total;
+	this->d_decod_total += sc_decoder.d_decod_total;
+	this->d_store_total += sc_decoder.d_store_total;
+
+	auto t_decod = std::chrono::steady_clock::now();
 	// check the CRC
-	sc_decoder._store(this->U_test);
-	auto crc_decode_result = this->crc.check(this->U_test, this->get_simd_inter_frame_level());
+	auto crc_decode_result = this->crc._check(V_K, this->get_simd_inter_frame_level());
 
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)
 	{
 		if (is_full_adaptive)
 		{
-			std::copy(sc_decoder.l.begin(), sc_decoder.l.begin() + this->N, this->Y_N.begin());
 			do
 			{
 				int first_node_id = 0, off_l = 0, off_s = 0;
 
 				this->L <<= 1;
 				this->init_buffers();
-				this->recursive_decode(off_l, off_s, this->m, first_node_id);
+				this->recursive_decode(Y_N, off_l, off_s, this->m, first_node_id);
 			}
 			while (!this->select_best_path() && this->L < L_max);
 		}
-		else // pseudo adaptive mode
+		else // partial adaptive mode
 		{
+			int first_node_id = 0, off_l = 0, off_s = 0;
+
 			this->L = this->L_max;
-			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_load(sc_decoder.l);
-			Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_hard_decode();
+			this->init_buffers();
+			this->recursive_decode(Y_N, off_l, off_s, this->m, first_node_id);
 		}
 	}
-}
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-template <typename B, typename R, class API_polar>
-void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_store(mipp::vector<B>& V_K) const
-{
-	if (this->L == 1)
-		std::copy(this->U_test.begin(), this->U_test.begin() + this->K, V_K.begin());
-	else
+	auto t_store = std::chrono::steady_clock::now();
+	if (this->L > 1)
 		Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_store(V_K);
-}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R, class API_polar>
-void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_store_fast(mipp::vector<B>& V) const
-{
-	if (this->L == 1) sc_decoder.                      _store_fast(V);
-	else Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_store_fast(V);
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_unpack(mipp::vector<B>& V_N) const
-{
-	if (this->L == 1) sc_decoder.                      _unpack(V_N);
-	else Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::_unpack(V_N);
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 }
 }

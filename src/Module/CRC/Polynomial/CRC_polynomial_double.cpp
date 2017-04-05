@@ -32,8 +32,8 @@ void CRC_polynomial_double<B>
 	for (unsigned i = unsigned(U_K.size() - 2 * this->size() -1); i >= (unsigned)cut_index - this->size(); i--)
 		U_K[i + this->size()] = U_K[i];
 
-	this->_generate(U_K, U_K, 0, cut_index - this->size(), cut_index - this->size());
-	this->_generate(U_K, U_K, 0, this->K   - this->size(),   this->K - this->size());
+	this->_generate(U_K.data(), U_K.data(), 0, cut_index - this->size(), cut_index - this->size());
+	this->_generate(U_K.data(), U_K.data(), 0, this->K   - this->size(),   this->K - this->size());
 }
 
 // ==================================================================================== explicit template instantiation 

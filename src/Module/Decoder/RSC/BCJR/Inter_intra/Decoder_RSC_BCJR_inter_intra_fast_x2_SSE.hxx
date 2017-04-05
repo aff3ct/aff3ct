@@ -78,7 +78,7 @@ Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8; // = 2
 
@@ -166,7 +166,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
-::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_beta_ext(const R *sys, R *ext)
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
 

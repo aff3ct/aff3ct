@@ -19,7 +19,6 @@ public:
 
 	virtual ~Source_AZCW();
 
-protected:
 	void _generate(mipp::vector<B>& U_K);
 };
 }

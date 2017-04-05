@@ -28,7 +28,7 @@ template <typename B, typename R, class API_polar>
 bool Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 ::crc_check(mipp::vector<B> &s)
 {
-	this->fb_extract(this->polar_patterns.get_leaves_pattern_types(), s, U_test);
+	this->fb_extract(this->polar_patterns.get_leaves_pattern_types(), s.data(), U_test.data());
 
 	// check the CRC
 	return crc.check(U_test, this->get_simd_inter_frame_level());
@@ -54,18 +54,18 @@ int Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
-::_load(const mipp::vector<R>& Y_N)
+::init_buffers()
 {
-	Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>::_load(Y_N);
+	Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>::init_buffers();
 	fast_store = false;
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	if (fast_store)
-		std::copy(U_test.begin(), U_test.begin() + this->K, V_K.begin());
+		std::copy(U_test.begin(), U_test.begin() + this->K, V_K);
 	else
 		Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>::_store(V_K);
 }

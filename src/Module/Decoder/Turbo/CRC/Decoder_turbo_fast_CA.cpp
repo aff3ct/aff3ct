@@ -1,3 +1,4 @@
+#include <chrono>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -35,8 +36,13 @@ Decoder_turbo_fast_CA<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast_CA<B,R>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	constexpr auto start_check_crc = 2;
 	static_assert(start_check_crc >= 1, "");
 
@@ -55,15 +61,12 @@ void Decoder_turbo_fast_CA<B,R>
 			const auto r_l_sen = mipp::Reg<R>(&this->l_sn[i]) + mipp::Reg<R>(&this->l_e1n[i]);
 			r_l_sen.store(&this->l_sen[i]);
 		}
-		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i += mipp::nElReg<R>())
-		{
-			mipp::Reg<R> r_l_sen;
-			r_l_sen.loadu (&this->l_sn [i]);
-			r_l_sen.storeu(&this->l_sen[i]);
-		}
+		std::copy(this->l_sn .begin() +  this->K             * n_frames,
+		          this->l_sn .begin() + (this->K + tail_n_2) * n_frames,
+		          this->l_sen.begin() +  this->K             * n_frames);
 
 		// SISO in the natural domain
-		this->siso_n.soft_decode(this->l_sen, this->l_pn, this->l_e2n);
+		this->siso_n._soft_decode(this->l_sen, this->l_pn, this->l_e2n, n_frames);
 
 		// the CRC is here because it is convenient to do not have to make the interleaving process!  
 		if (ite >= start_check_crc)
@@ -95,7 +98,7 @@ void Decoder_turbo_fast_CA<B,R>
 			this->scaling_factor(this->l_e2n, ite);
 
 			// make the interleaving
-			this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, this->get_simd_inter_frame_level());
+			this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, n_frames);
 
 			// l_se = sys + ext
 			for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
@@ -103,15 +106,12 @@ void Decoder_turbo_fast_CA<B,R>
 				const auto r_l_sei = mipp::Reg<R>(&this->l_si[i]) + mipp::Reg<R>(&this->l_e1i[i]);
 				r_l_sei.store(&this->l_sei[i]);
 			}
-			for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i += mipp::nElReg<R>())
-			{
-				mipp::Reg<R> r_l_sei;
-				r_l_sei.loadu (&this->l_si [i]);
-				r_l_sei.storeu(&this->l_sei[i]);
-			}
+			std::copy(this->l_si .begin() +  this->K             * n_frames,
+			          this->l_si .begin() + (this->K + tail_i_2) * n_frames,
+			          this->l_sei.begin() +  this->K             * n_frames);
 
 			// SISO in the interleave domain
-			this->siso_i.soft_decode(this->l_sei, this->l_pi, this->l_e2i);
+			this->siso_i._soft_decode(this->l_sei, this->l_pi, this->l_e2i, n_frames);
 
 			if (ite != this->n_ite)
 				// apply the scaling factor
@@ -125,7 +125,7 @@ void Decoder_turbo_fast_CA<B,R>
 				}
 
 			// make the deinterleaving
-			this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, this->get_simd_inter_frame_level());
+			this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, n_frames);
 
 			// compute the hard decision only if we are in the last iteration
 			if (ite == this->n_ite)
@@ -151,6 +151,15 @@ void Decoder_turbo_fast_CA<B,R>
 		ite++; // increment the number of iteration
 	}
 	while ((ite <= this->n_ite) && !check_crc);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // ==================================================================================== explicit template instantiation

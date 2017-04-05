@@ -24,19 +24,16 @@ public:
 	                             const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive_sys");
 	virtual ~Decoder_polar_SCAN_naive_sys();
 
+protected:
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
-	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-
-protected:
-	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	void _soft_decode_fbf(const R *sys, const R *par, R *ext);
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
-	void _store(mipp::vector<B>& V_N) const;
+	void _store(B *V_N) const;
 };
 }
 }

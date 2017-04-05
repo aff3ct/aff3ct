@@ -1,3 +1,4 @@
+#include <chrono>
 #include <limits>
 #include <stdexcept>
 
@@ -18,7 +19,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
   H                (H                      ),
   enable_syndrome  (enable_syndrome        ),
   syndrome_depth   (syndrome_depth         ),
-  Y_N              (N                      ),
+  HY_N              (N                      ),
   C_to_V_messages  (H.get_n_branches(),   0),
   V_to_C_messages  (H.get_n_branches(),   0)
 {
@@ -41,18 +42,15 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_load(const mipp::vector<R>& Y_N_chn)
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
+	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	for (auto i = 0; i < this->N; i++)
-		Y_N[i] = Y_N_chn[i] < 0;
-}
+		HY_N[i] = Y_N[i] < 0;
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_hard_decode()
-{
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto cur_syndrome_depth = 0;
-
 	for (auto ite = 0; ite < n_ite; ite++)
 	{
 		auto C_to_V_mess_ptr = C_to_V_messages.data();
@@ -65,7 +63,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 			for (auto j = 0; j < node_degree; j++)
 			{
-				auto cur_state = Y_N[i];
+				auto cur_state = HY_N[i];
 				if (ite > 0)
 				{
 					auto count = 0;
@@ -114,14 +112,10 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 		else
 			cur_syndrome_depth = 0;
 	}
-}
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_store(mipp::vector<B>& V_K) const
-{
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	auto C_to_V_ptr = C_to_V_messages.data();
-
 	// for the K first variable nodes (make a majority vote with the entering messages)
 	for (auto i = 0; i < this->K; i++)
 	{
@@ -132,29 +126,18 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 			count += C_to_V_ptr[j] ? 1 : -1;
 
 		if (node_degree % 2 == 0)
-			count += Y_N[i] ? 1 : -1;
+			count += HY_N[i] ? 1 : -1;
 
 		// take the hard decision
 		V_K[i] = count > 0 ? 1 : 0;
 
 		C_to_V_ptr += node_degree; // jump to the next node
 	}
-}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: this decoder does not support the "
-	                         "\"soft_decode\" interface.");
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: this decoder does not support the "
-	                         "\"_soft_decode\" interface.");
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // ==================================================================================== explicit template instantiation 

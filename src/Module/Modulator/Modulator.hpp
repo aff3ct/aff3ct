@@ -115,6 +115,13 @@ public:
 		this->_modulate(X_N1, X_N2);
 	}
 
+	virtual void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_modulate_fbf(X_N1.data() + f * this->N,
+			                    X_N2.data() + f * this->N_mod);
+	}
+
 	/*!
 	 * \brief Filters a vector of noised and modulated bits/symbols.
 	 *
@@ -136,6 +143,16 @@ public:
 		this->_filter(Y_N1, Y_N2);
 	}
 
+	virtual void _filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+	{
+		if (Y_N1.size() == Y_N2.size())
+			Y_N2 = Y_N1;
+		else
+			for (auto f = 0; f < this->n_frames; f++)
+				this->_filter_fbf(Y_N1.data() + f * this->N_mod,
+				                  Y_N2.data() + f * this->N_fil);
+	}
+
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
@@ -153,6 +170,13 @@ public:
 			                        "\"N\" * \"n_frames\".");
 
 		this->_demodulate(Y_N1, Y_N2);
+	}
+
+	virtual void _demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_demodulate_fbf(Y_N1.data() + f * this->N_fil,
+			                      Y_N2.data() + f * this->N);
 	}
 
 	/*!
@@ -177,6 +201,14 @@ public:
 			                        "\"N\" * \"n_frames\".");
 
 		this->_demodulate_with_gains(Y_N1, H_N, Y_N2);
+	}
+
+	virtual void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_demodulate_with_gains_fbf(Y_N1.data() + f * this->N_fil,
+			                                 H_N .data() + f * this->N_fil,
+			                                 Y_N2.data() + f * this->N);
 	}
 
 	/*!
@@ -205,6 +237,14 @@ public:
 			                        "\"N\" * \"n_frames\".");
 
 		this->_demodulate(Y_N1, Y_N2, Y_N3);
+	}
+
+	virtual void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_demodulate_fbf(Y_N1.data() + f * this->N_fil,
+			                      Y_N2.data() + f * this->N,
+			                      Y_N3.data() + f * this->N);
 	}
 
 	/*!
@@ -241,6 +281,16 @@ public:
 		this->_demodulate_with_gains(Y_N1, H_N, Y_N2, Y_N3);
 	}
 
+	virtual void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
+	                                    const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_demodulate_with_gains_fbf(Y_N1.data() + f * this->N_fil,
+			                                 H_N .data() + f * this->N_fil,
+			                                 Y_N2.data() + f * this->N,
+			                                 Y_N3.data() + f * this->N);
+	}
+
 	/*!
 	 * \brief Gets the vector size after the modulation (considering a given frame size).
 	 *
@@ -266,32 +316,34 @@ public:
 	}
 
 protected:
-	virtual void _modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2) = 0;
-
-	virtual void _filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
+	virtual void _modulate_fbf(const B *X_N1, R *X_N2)
 	{
-		if (Y_N1.size() != Y_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" and \"Y_N2.size()\" have to be equal.");
-
-		Y_N2 = Y_N1;
+		throw std::runtime_error("aff3ct::module::Modulator: \"_modulate_fbf\" is unimplemented.");
 	}
 
-	virtual void _demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) = 0;
-
-	virtual void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+	virtual void _filter_fbf(const R *Y_N1, R *Y_N2)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modulator: \"_filter_fbf\" is unimplemented.");
 	}
 
-	virtual void _demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+	virtual void _demodulate_fbf(const Q *Y_N1, Q *Y_N2)
 	{
-		_demodulate(Y_N1, Y_N3);
+		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_fbf\" is unimplemented.");
 	}
 
-	virtual void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,
-	                                    const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
+	virtual void _demodulate_with_gains_fbf(const Q *Y_N1, const R *H_N, Q *Y_N2)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains_fbf\" is unimplemented.");
+	}
+
+	virtual void _demodulate_fbf(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+	{
+		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_fbf\" is unimplemented.");
+	}
+
+	virtual void _demodulate_with_gains_fbf(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+	{
+		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains_fbf\" is unimplemented.");
 	}
 };
 }

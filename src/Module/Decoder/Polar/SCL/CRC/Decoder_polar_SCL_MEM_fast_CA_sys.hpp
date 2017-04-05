@@ -41,8 +41,8 @@ protected:
 	        bool crc_check       (mipp::vector<B> &s);
 	virtual int  select_best_path(                  );
 
-	virtual void _load (const mipp::vector<R>& Y_N);
-	virtual void _store(      mipp::vector<B>& V_K) const;
+	virtual void init_buffers();
+	virtual void _store(B *V_K) const;
 };
 }
 }

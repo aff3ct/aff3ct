@@ -30,7 +30,6 @@ public:
 
 	int get_buffer_size_after_modulation(const int N);
 
-protected:
 	void   _modulate           (const mipp::vector<B>& X_N1,                                                          mipp::vector<R>& X_N2);
 	void _demodulate           (const mipp::vector<Q>& Y_N1,                                                          mipp::vector<Q>& Y_N2);
 	void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,                              mipp::vector<Q>& Y_N2);

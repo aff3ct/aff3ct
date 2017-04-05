@@ -52,19 +52,6 @@ public:
 		s_in.register_b_transport(this, &SC_Interleaver_module_interleaver::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		const int size = interleaver.pi.size();
-		if ((int)natural_vec_1    .size() != size * interleaver.n_frames) natural_vec_1    .resize(size * interleaver.n_frames);
-		if ((int)natural_vec_2    .size() != size * interleaver.n_frames) natural_vec_2    .resize(size * interleaver.n_frames);
-		if ((int)natural_vec_4    .size() != size * interleaver.n_frames) natural_vec_4    .resize(size * interleaver.n_frames);
-		if ((int)natural_vec_8    .size() != size * interleaver.n_frames) natural_vec_8    .resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_1.size() != size * interleaver.n_frames) interleaved_vec_1.resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_2.size() != size * interleaver.n_frames) interleaved_vec_2.resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_4.size() != size * interleaver.n_frames) interleaved_vec_4.resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_8.size() != size * interleaver.n_frames) interleaved_vec_8.resize(size * interleaver.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -137,19 +124,6 @@ public:
 		s_in.register_b_transport(this, &SC_Interleaver_module_deinterleaver::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		const int size = interleaver.pi.size();
-		if ((int)natural_vec_1    .size() != size * interleaver.n_frames) natural_vec_1    .resize(size * interleaver.n_frames);
-		if ((int)natural_vec_2    .size() != size * interleaver.n_frames) natural_vec_2    .resize(size * interleaver.n_frames);
-		if ((int)natural_vec_4    .size() != size * interleaver.n_frames) natural_vec_4    .resize(size * interleaver.n_frames);
-		if ((int)natural_vec_8    .size() != size * interleaver.n_frames) natural_vec_8    .resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_1.size() != size * interleaver.n_frames) interleaved_vec_1.resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_2.size() != size * interleaver.n_frames) interleaved_vec_2.resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_4.size() != size * interleaver.n_frames) interleaved_vec_4.resize(size * interleaver.n_frames);
-		if ((int)interleaved_vec_8.size() != size * interleaver.n_frames) interleaved_vec_8.resize(size * interleaver.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -206,14 +180,6 @@ public:
 	{
 		if (module_inter   != nullptr) { delete module_inter;   module_inter   = nullptr; }
 		if (module_deinter != nullptr) { delete module_deinter; module_deinter = nullptr; }
-	}
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Interleaver_i<T>::set_n_frames(n_frames);
-
-		if (module_inter   != nullptr) module_inter  ->resize_buffers();
-		if (module_deinter != nullptr) module_deinter->resize_buffers();
 	}
 
 	void create_sc_module_interleaver()

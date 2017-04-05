@@ -11,8 +11,8 @@ template <typename T = int>
 class Interleaver_NO : public Interleaver<T>
 {
 public:
-	Interleaver_NO(int size, const std::string name = "Interleaver_NO") 
-	: Interleaver<T>(size, 1, name) { gen_lookup_tables(); }
+	Interleaver_NO(int size, const int n_frames = 1, const std::string name = "Interleaver_NO")
+	: Interleaver<T>(size, n_frames, name) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{

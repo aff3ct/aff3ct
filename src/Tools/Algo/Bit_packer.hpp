@@ -46,13 +46,18 @@ struct Bit_packer
 			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_out.size()\" has to be equal or greater than "
 			                        "\"ceil(vec_in.size() / (sizeof(B) * 8.f))\".");
 
-		const auto n_bits_per_frame  = static_cast<int>(vec_in.size() / n_frames);
+		Bit_packer<B>::pack(vec_in.data(), vec_out.data(), (int)(vec_in.size() / n_frames), n_frames, rev);
+	}
+
+	static inline void pack(const B *vec_in, B *vec_out, const int n_bits_per_frame,
+	                        const int n_frames = 1, const bool rev = false)
+	{
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 
-		unsigned char* bytes_out = (unsigned char*)vec_out.data();
+		unsigned char* bytes_out = (unsigned char*)vec_out;
 
 		for (auto f = 0; f < n_frames; f++)
-			Bit_packer<B>::_pack(vec_in .data() + f * n_bits_per_frame,
+			Bit_packer<B>::_pack(vec_in         + f * n_bits_per_frame,
 			                     bytes_out      + f * n_bytes_per_frame,
 			                     n_bits_per_frame,
 			                     rev);
@@ -72,13 +77,17 @@ struct Bit_packer
 			throw std::length_error("aff3ct::tools::Bit_packer: \"vec.size()\" has to be divisible by "
 			                        "\"n_frame\".");
 
-		const auto n_bits_per_frame  = static_cast<int>(vec.size() / n_frames);
+		Bit_packer<B>::pack(vec.data(), (int)(vec.size() / n_frames), n_frames, rev);
+	}
+
+	static inline void pack(B *vec, const int n_bits_per_frame, const int n_frames = 1, const bool rev = false)
+	{
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 
-		unsigned char* bytes_out = (unsigned char*)vec.data();
+		unsigned char* bytes_out = (unsigned char*)vec;
 
 		for (auto f = 0; f < n_frames; f++)
-			Bit_packer<B>::_pack(vec.data() + f * n_bits_per_frame,
+			Bit_packer<B>::_pack(vec        + f * n_bits_per_frame,
 			                     bytes_out  + f * n_bytes_per_frame,
 			                     n_bits_per_frame,
 			                     rev);
@@ -103,14 +112,19 @@ struct Bit_packer
 			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_in.size()\" has to be equal or greater than "
 			                        "\"ceil(vec_out.size() / (sizeof(B) * 8.f))\".");
 
-		const auto n_bits_per_frame  = static_cast<int>(vec_out.size() / n_frames);
+		Bit_packer<B>::unpack(vec_in.data(), vec_out.data(), (int)(vec_out.size() / n_frames), n_frames, rev);
+	}
+
+	static inline void unpack(const B *vec_in, B *vec_out, const int n_bits_per_frame,
+	                          const int n_frames = 1, const bool rev = false)
+	{
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 
-		unsigned char* bytes_in = (unsigned char*)vec_in.data();
+		unsigned char* bytes_in = (unsigned char*)vec_in;
 
 		for (auto f = 0; f < n_frames; f++)
 			Bit_packer<B>::_unpack(bytes_in       + f * n_bytes_per_frame,
-			                       vec_out.data() + f * n_bits_per_frame,
+			                       vec_out        + f * n_bits_per_frame,
 			                       n_bits_per_frame,
 			                       rev);
 	}
@@ -129,10 +143,14 @@ struct Bit_packer
 			throw std::length_error("aff3ct::tools::Bit_packer: \"vec.size()\" has to be divisible by "
 			                        "\"n_frame\".");
 
-		const auto n_bits_per_frame  = static_cast<int>(vec.size() / n_frames);
+		Bit_packer<B>::unpack(vec.data(), (int)(vec.size() / n_frames), n_frames, rev);
+	}
+
+	static inline void unpack(B *vec, const int n_bits_per_frame, const int n_frames = 1, bool rev = false)
+	{
 		const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
 
-		unsigned char* bytes = (unsigned char*)vec.data();
+		unsigned char* bytes = (unsigned char*)vec;
 		mipp::vector<unsigned char> bytes_cpy(n_bytes_per_frame); //TODO: find a way to avoid this allocation
 
 		for (auto f = 0; f < n_frames; f++)
@@ -140,8 +158,8 @@ struct Bit_packer
 			//TODO: find a way to avoid this copy
 			std::copy(&bytes[f * n_bytes_per_frame], &bytes[(f +1) * n_bytes_per_frame], bytes_cpy.begin());
 
-			Bit_packer<B>::_unpack(bytes_cpy .data() + f * n_bytes_per_frame,
-			                       vec       .data() + f * n_bits_per_frame,
+			Bit_packer<B>::_unpack(bytes_cpy.data() + f * n_bytes_per_frame,
+			                       vec              + f * n_bits_per_frame,
 			                       n_bits_per_frame,
 			                       rev);
 		}

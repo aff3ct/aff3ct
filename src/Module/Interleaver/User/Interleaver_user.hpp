@@ -18,8 +18,9 @@ private:
 	int call_counter;
 
 public:
-	Interleaver_user(int size, const std::string filename, const std::string name = "Interleaver_user")
-	: Interleaver<T>(size, 1, name), filename(filename), call_counter(0)
+	Interleaver_user(int size, const std::string filename, const int n_frames = 1,
+	                 const std::string name = "Interleaver_user")
+	: Interleaver<T>(size, n_frames, name), filename(filename), call_counter(0)
 	{
 		if (filename.empty())
 			throw std::invalid_argument("aff3ct::module::Interleaver_user: path to the file should not be empty.");

@@ -32,7 +32,7 @@ public:
 	virtual ~Decoder_turbo_naive_CA_self_corrected();
 
 protected:
-	virtual void _hard_decode();
+	virtual void _hard_decode_fbf(const R *Y_N, B *V_K);
 
 private:
 	void collect (const mipp::vector<R> &cur_ext, const int &ite, std::vector<mipp::vector<R>> &ext_hist);

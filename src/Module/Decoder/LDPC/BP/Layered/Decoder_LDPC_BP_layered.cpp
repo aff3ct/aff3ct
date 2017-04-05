@@ -1,3 +1,4 @@
+#include <chrono>
 #include <limits>
 #include <cmath>
 #include <stdexcept>
@@ -46,18 +47,10 @@ Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered: this decoder does not support the "
-	                         "\"soft_decode\" interface.");
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_layered<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode_fbf(const R *Y_N1, R *Y_N2)
 {
 	// memory zones initialization
-	_load(Y_N1);
+	this->_load(Y_N1);
 
 	// actual decoding
 	this->BP_decode();
@@ -67,14 +60,14 @@ void Decoder_LDPC_BP_layered<B,R>
 		Y_N2[i] = this->var_nodes[cur_frame][i] - Y_N1[i];
 
 	// copy extrinsic information into var_nodes for next TURBO iteration
-	std::copy(Y_N2.begin(), Y_N2.begin() + this->N, this->var_nodes[cur_frame].begin());
+	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[cur_frame].begin());
 
 	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	// memory zones initialization
 	if (this->init_flag)
@@ -92,21 +85,35 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	this->BP_decode();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
 	if (cur_frame == Decoder<B,R>::n_frames -1)
 		this->init_flag = true;
 
 	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
+
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	const auto past_frame = (cur_frame -1) < 0 ? Decoder<B,R>::n_frames -1 : cur_frame -1;
 
