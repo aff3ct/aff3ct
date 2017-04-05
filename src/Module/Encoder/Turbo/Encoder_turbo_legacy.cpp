@@ -60,21 +60,6 @@ void Encoder_turbo_legacy<B>
 	}
 }
 
-template <typename B>
-void Encoder_turbo_legacy<B>
-::set_n_frames(const int n_frames)
-{
-	if (n_frames <= 0)
-		throw std::invalid_argument("aff3ct::module::Encoder_turbo_legacy: \"n_frames\" has to be greater than 0.");
-		
-	Encoder<B>::set_n_frames(n_frames);
-	sub_enc.set_n_frames(n_frames);
-
-	U_K_i.resize(this->K * n_frames);
-	X_N_n.resize((2 * (this->K + sub_enc.tail_length()/2)) * n_frames);
-	X_N_i.resize((2 * (this->K + sub_enc.tail_length()/2)) * n_frames);
-}
-
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

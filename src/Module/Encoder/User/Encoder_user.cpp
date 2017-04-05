@@ -71,16 +71,13 @@ Encoder_user<B>
 
 template <typename B>
 void Encoder_user<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		std::copy(this->codewords[this->cw_counter].begin(),
-		          this->codewords[this->cw_counter].end  (),
-		          X_N.begin() + f * this->N);
+	std::copy(this->codewords[this->cw_counter].begin(),
+	          this->codewords[this->cw_counter].end  (),
+	          X_N);
 
-		this->cw_counter = (this->cw_counter +1) % (int)this->codewords.size();
-	}
+	this->cw_counter = (this->cw_counter +1) % (int)this->codewords.size();
 }
 
 // ==================================================================================== explicit template instantiation 

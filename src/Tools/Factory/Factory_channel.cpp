@@ -30,33 +30,33 @@ Channel<R>* Factory_channel<R>
 	if (params.channel.type == "AWGN")
 	{
 		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_std_LLR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_std_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_std_LR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_std_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 	}
 	else if (params.channel.type == "AWGN_FAST")
 	{
 		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_fast_LLR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_fast_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_fast_LR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_fast_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 	}
 #ifdef CHANNEL_MKL
 	else if (params.channel.type == "AWGN_MKL")
 	{
 		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_MKL_LLR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_MKL_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_MKL_LR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_MKL_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 	}
 #endif
 #ifdef CHANNEL_GSL
 	else if (params.channel.type == "AWGN_GSL")
 	{
 		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_GSL_LLR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_GSL_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_GSL_LR<R>(size, sigma, seed +1);
+			channel = new Channel_AWGN_GSL_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
 	}
 #endif
 	else if (params.channel.type == "RAYLEIGH")
@@ -64,7 +64,7 @@ Channel<R>* Factory_channel<R>
 		if (params.channel.domain == "LLR")
 		{
 			if (params.channel.block_fading == "NO")
-				channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, seed +1);
+				channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, seed +1, params.simulation.inter_frame_level);
 			else if (params.channel.block_fading == "ONETAP")
 				channel = nullptr;
 			else if (params.channel.block_fading == "FRAME")
@@ -73,15 +73,15 @@ Channel<R>* Factory_channel<R>
 	}
 	else if (params.channel.type == "NO")
 	{
-		channel = new Channel_NO<R>(size);
+		channel = new Channel_NO<R>(size, params.simulation.inter_frame_level);
 	}
 	else if (params.channel.type == "ADD_USER")
 	{
-		channel = new Channel_additive_user<R>(size, params.channel.path);
+		channel = new Channel_additive_user<R>(size, params.channel.path, params.simulation.inter_frame_level);
 	}
 	else if (params.channel.type == "USER")
 	{
-		channel = new Channel_user<R>(size, params.channel.path);
+		channel = new Channel_user<R>(size, params.channel.path, params.simulation.inter_frame_level);
 	}
 
 	return channel;

@@ -1,3 +1,4 @@
+#include <chrono>
 #include <limits>
 #include <stdexcept>
 
@@ -41,7 +42,7 @@ Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	if (buffered_encoding)
 	{
@@ -50,12 +51,12 @@ void Decoder_RSC_BCJR<B,R>
 
 		if (n_frames == 1)
 		{
-			std::copy(Y_N.begin() + 0*this->K, Y_N.begin() + 1*this->K, sys.begin());
-			std::copy(Y_N.begin() + 1*this->K, Y_N.begin() + 2*this->K, par.begin());
+			std::copy(Y_N + 0*this->K, Y_N + 1*this->K, sys.begin());
+			std::copy(Y_N + 1*this->K, Y_N + 2*this->K, par.begin());
 
 			// tails bit
-			std::copy(Y_N.begin() + 2*this->K         , Y_N.begin() + 2*this->K + tail/2, par.begin() +this->K);
-			std::copy(Y_N.begin() + 2*this->K + tail/2, Y_N.begin() + 2*this->K + tail  , sys.begin() +this->K);
+			std::copy(Y_N + 2*this->K         , Y_N + 2*this->K + tail/2, par.begin() +this->K);
+			std::copy(Y_N + 2*this->K + tail/2, Y_N + 2*this->K + tail  , sys.begin() +this->K);
 		}
 		else
 		{
@@ -63,20 +64,20 @@ void Decoder_RSC_BCJR<B,R>
 
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size;
+				frames[f] = Y_N + f*frame_size;
 			tools::Reorderer<R>::apply(frames, sys.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +this->K;
+				frames[f] = Y_N + f*frame_size +this->K;
 			tools::Reorderer<R>::apply(frames, par.data(), this->K);
 
 			// tails bit
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size + 2*this->K + tail/2;
+				frames[f] = Y_N + f*frame_size + 2*this->K + tail/2;
 			tools::Reorderer<R>::apply(frames, &sys[this->K*n_frames], tail/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size + 2*this->K;
+				frames[f] = Y_N + f*frame_size + 2*this->K;
 			tools::Reorderer<R>::apply(frames, &par[this->K*n_frames], tail/2);
 		}
 	}
@@ -98,10 +99,17 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
-	soft_decode(sys, par, ext);
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_soft_decode_fbf(sys.data(), par.data(), ext.data());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	for (auto i = 0; i < this->K * this->simd_inter_frame_level; i += mipp::nElReg<R>())
 	{
@@ -115,15 +123,22 @@ void Decoder_RSC_BCJR<B,R>
 #endif
 		r_s.store(&s[i]);
 	}
+
+	_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	if (this->get_simd_inter_frame_level() == 1)
 	{
-		std::copy(s.begin(), s.begin() + this->K, V_K.begin());
+		std::copy(s.begin(), s.begin() + this->K, V_K);
 	}
 	else // inter frame => output reordering
 	{
@@ -131,17 +146,9 @@ void Decoder_RSC_BCJR<B,R>
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = V_K.data() + f*this->K;
+			frames[f] = V_K + f*this->K;
 		tools::Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
-}
-
-template <typename B, typename R>
-void Decoder_RSC_BCJR<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR: this decoder does not support the "
-	                         "\"_soft_decode\" interface.");
 }
 }
 }

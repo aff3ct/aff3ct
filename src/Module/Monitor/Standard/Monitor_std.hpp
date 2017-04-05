@@ -47,7 +47,6 @@ public:
 	const std::vector<mipp::vector<B>> get_buff_enc  () const;
 	const std::vector<mipp::vector<R>> get_buff_noise() const;
 
-protected:
 	virtual void _check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V);
 
 	virtual void _check_and_track_errors(const mipp::vector<B>& U,

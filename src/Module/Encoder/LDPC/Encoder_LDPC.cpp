@@ -56,10 +56,10 @@ void Encoder_LDPC<B>
 
 template <typename B>
 void Encoder_LDPC<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
 	// Real General Matrix Multiplication
-	tools::rgemm(1, this->N, this->K, U_K, tG, X_N);
+	tools::rgemm(1, this->N, this->K, U_K, tG.data(), X_N);
 
 	for (auto j = 0; j < this->N; ++j)
 		X_N[j] %= 2;

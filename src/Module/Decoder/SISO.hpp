@@ -36,8 +36,8 @@ private:
 	const int n_dec_waves_siso;
 	const int n_inter_frame_rest_siso;
 
-	std::vector<mipp::vector<R>> Y_N1;
-	std::vector<mipp::vector<R>> Y_N2;
+	mipp::vector<R> Y_N1;
+	mipp::vector<R> Y_N2;
 
 protected:
 	const int K_siso; /*!< Number of information bits in one frame */
@@ -59,8 +59,8 @@ public:
 	: Module(n_frames, name),
 	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
-	  Y_N1(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), (R)0)),
-	  Y_N2(n_dec_waves_siso, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), (R)0)),
+	  Y_N1(simd_inter_frame_level * N, (R)0),
+	  Y_N2(simd_inter_frame_level * N, (R)0),
 	  K_siso(K), N_siso(N), simd_inter_frame_level_siso(simd_inter_frame_level)
 	{
 		if (K <= 0)
@@ -86,7 +86,43 @@ public:
 	 * \param par: parity LLRs from the channel.
 	 * \param ext: extrinsic information about the systematic bits.
 	 */
-	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
+	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
+	                         const int n_frames = 1)
+	{
+		if (n_frames != -1 && n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::SISO: \"n_frames\" has to be greater than 0 "
+			                            "(or equal to -1).");
+
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+		if ((this->K_siso + this->tail_length() / 2) * real_n_frames != (int)sys.size())
+			throw std::length_error("aff3ct::module::SISO: \"sys.size()\" has to be equal to "
+			                        "\"(K_siso + tail_length() / 2)\" * \"real_n_frames\".");
+
+		if (((this->N_siso - this->K_siso) - this->tail_length() / 2) * real_n_frames != (int)par.size())
+			throw std::length_error("aff3ct::module::SISO: \"par.size()\" has to be equal to "
+			                        "\"((N_siso - K_siso) - tail_length() / 2)\" * \"real_n_frames\".");
+
+		if (this->K_siso * real_n_frames != (int)ext.size())
+			throw std::length_error("aff3ct::module::SISO: \"ext.size()\" has to be equal to "
+			                        "\"K_siso\" * \"real_n_frames\".");
+
+		this->_soft_decode(sys, par, ext, real_n_frames);
+	}
+
+	virtual void _soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
+	                          const int n_frames)
+	{
+		if (n_frames % this->simd_inter_frame_level_siso)
+			throw std::runtime_error("aff3ct::module::SISO: \"n_frames\" has to be divisible by "
+			                         "\"simd_inter_frame_level_siso\".");
+
+		const auto n_dec_waves_siso = n_frames / this->simd_inter_frame_level_siso;
+		for (auto w = 0; w < n_dec_waves_siso; w++)
+			this->_soft_decode_fbf(sys.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
+			                       par.data() + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
+			                       ext.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso);
+	}
 
 	/*!
 	 * \brief Decodes a given noisy codeword.
@@ -104,29 +140,38 @@ public:
 			throw std::length_error("aff3ct::module::SISO: \"Y_N2.size()\" has to be equal to "
 			                        "\"N_siso\" * \"n_frames\".");
 
-		if (this->n_dec_waves_siso == 1 && this->n_inter_frame_rest_siso == 0)
-		{
-			_soft_decode(Y_N1, Y_N2);
-		}
+		this->_soft_decode(Y_N1, Y_N2);
+	}
+
+	/*!
+	 * \brief Decodes a given noisy codeword.
+	 *
+	 * \param Y_N1: a completely noisy codeword from the channel.
+	 * \param Y_N2: an extrinsic information about all the bits in the frame.
+	 */
+	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+	{
+		auto w = 0;
+		for (w = 0; w < this->n_dec_waves_siso -1; w++)
+			this->_soft_decode_fbf(Y_N1.data() + w * this->N_siso * this->simd_inter_frame_level_siso,
+			                       Y_N2.data() + w * this->N_siso * this->simd_inter_frame_level_siso);
+
+		if (this->n_inter_frame_rest_siso == 0)
+			this->_soft_decode_fbf(Y_N1.data() + w * this->N_siso * this->simd_inter_frame_level_siso,
+			                       Y_N2.data() + w * this->N_siso * this->simd_inter_frame_level_siso);
 		else
 		{
-			for (auto w = 0; w < this->n_dec_waves_siso; w++)
-			{
-				const int n_frames_per_wave = (w == this->n_dec_waves_siso -1 && this->n_inter_frame_rest_siso != 0) ?
-				                              this->n_inter_frame_rest_siso :
-				                              this->simd_inter_frame_level_siso;
+			const auto waves_off1 = w * this->simd_inter_frame_level_siso * this->N_siso;
+			std::copy(Y_N1.begin() + waves_off1,
+			          Y_N1.begin() + waves_off1 + this->n_inter_frame_rest_siso * this->N_siso,
+			          this->Y_N1.begin());
 
-				const auto waves_off = w * this->simd_inter_frame_level_siso * this->N_siso;
-				std::copy(Y_N1.begin() + waves_off,
-				          Y_N1.begin() + waves_off + n_frames_per_wave * this->N_siso,
-				          this->Y_N1[w].begin());
+			this->_soft_decode_fbf(this->Y_N1.data(), this->Y_N2.data());
 
-				_soft_decode(this->Y_N1[w], this->Y_N2[w]);
-
-				std::copy(this->Y_N2[w].begin(),
-				          this->Y_N2[w].begin() + n_frames_per_wave * this->N_siso,
-				          Y_N2.begin() + waves_off);
-			}
+			const auto waves_off2 = w * this->simd_inter_frame_level_siso * this->N_siso;
+			std::copy(this->Y_N2.begin(),
+			          this->Y_N2.begin() + this->n_inter_frame_rest_siso * this->N_siso,
+			          Y_N2.begin() + waves_off2);
 		}
 	}
 
@@ -151,13 +196,15 @@ public:
 	}
 
 protected:
-	/*!
-	 * \brief Decodes a given noisy codeword.
-	 *
-	 * \param Y_N1: a completely noisy codeword from the channel.
-	 * \param Y_N2: an extrinsic information about all the bits in the frame.
-	 */
-	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2) = 0;
+	virtual void _soft_decode_fbf(const R *sys, const R *par, R *ext)
+	{
+		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode_fbf\" is unimplemented.");
+	}
+
+	virtual void _soft_decode_fbf(const R *Y_N1, R *Y_N2)
+	{
+		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode_fbf\" is unimplemented.");
+	}
 };
 }
 }

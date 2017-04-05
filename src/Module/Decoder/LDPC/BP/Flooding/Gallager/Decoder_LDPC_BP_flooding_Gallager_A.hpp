@@ -17,10 +17,9 @@ protected:
 	const tools::AList_reader &H;               // LDPC H matrix
 	const bool                 enable_syndrome; // stop criterion
 	const int                  syndrome_depth;
-
 	const mipp::vector<B>     &info_bits_pos;
-
-	mipp::vector<char>         Y_N;             // input LLRs (transformed in bit)
+	mipp::vector<char>         HY_N;            // input LLRs (transformed in bit)
+	mipp::vector<char>         V_N;             // decoded bits
 	mipp::vector<char>         C_to_V_messages; // check    nodes to variable nodes messages
 	mipp::vector<char>         V_to_C_messages; // variable nodes to check    nodes messages
 
@@ -35,15 +34,7 @@ public:
 
 protected:
 	// hard decoder (load -> decode -> store)
-	void _load       (const mipp::vector<R>& Y_N);
-	void _hard_decode(                          );
-	void _store      (      mipp::vector<B>& V_K) const;
-
-	void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
-
-public:
-	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-
+	void _hard_decode_fbf(const R *Y_N, B *V_K);
 };
 }
 }

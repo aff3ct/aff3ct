@@ -43,12 +43,6 @@ public:
 		s_in.register_b_transport(this, &SC_Puncturer_module_puncturer::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)X_N1.size() != puncturer.N_code * puncturer.n_frames) X_N1.resize(puncturer.N_code * puncturer.n_frames);
-		if ((int)X_N2.size() != puncturer.N      * puncturer.n_frames) X_N2.resize(puncturer.N      * puncturer.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -92,12 +86,6 @@ public:
 		s_in.register_b_transport(this, &SC_Puncturer_module_depuncturer::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != puncturer.N      * puncturer.n_frames) Y_N1.resize(puncturer.N      * puncturer.n_frames);
-		if ((int)Y_N2.size() != puncturer.N_code * puncturer.n_frames) Y_N2.resize(puncturer.N_code * puncturer.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -137,14 +125,6 @@ public:
 	{ 
 		if (module_punct   != nullptr) { delete module_punct;   module_punct   = nullptr; }
 		if (module_depunct != nullptr) { delete module_depunct; module_depunct = nullptr; }
-	}
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Puncturer_i<B,Q>::set_n_frames(n_frames);
-
-		if (module_punct   != nullptr) module_punct  ->resize_buffers();
-		if (module_depunct != nullptr) module_depunct->resize_buffers();
 	}
 
 	void create_sc_module_puncturer()

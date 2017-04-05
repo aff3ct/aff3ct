@@ -24,7 +24,7 @@ Decoder_repetition_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_fast<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode_fbf(const R *sys, const R *par, R *ext)
 {
 	for (auto i = 0; i < this->K; i += mipp::nElReg<R>())
 	{

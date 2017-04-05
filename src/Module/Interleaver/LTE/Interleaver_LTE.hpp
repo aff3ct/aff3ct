@@ -19,8 +19,8 @@ private:
 	int call_counter;
 
 public:
-	Interleaver_LTE(int size, const std::string name = "Interleaver_LTE") 
-	: Interleaver<T>(size, 1, name), call_counter(0) { gen_lookup_tables(); }
+	Interleaver_LTE(int size, const int n_frames = 1, const std::string name = "Interleaver_LTE")
+	: Interleaver<T>(size, n_frames, name), call_counter(0) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{

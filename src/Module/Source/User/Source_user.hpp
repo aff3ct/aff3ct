@@ -24,7 +24,7 @@ public:
 	virtual ~Source_user();
 
 protected:
-	void _generate(mipp::vector<B>& U_K);
+	void _generate_fbf(B *U_K);
 };
 }
 }

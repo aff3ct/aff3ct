@@ -12,7 +12,7 @@ Coset<B,B>* Factory_coset_bit<B>
 	Coset<B,B> *coset = nullptr;
 
 	// build the coset
-	coset = new Coset_bit<B,B>(params.code.K);
+	coset = new Coset_bit<B,B>(params.code.K, params.simulation.inter_frame_level);
 
 	return coset;
 }

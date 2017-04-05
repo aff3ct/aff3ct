@@ -56,17 +56,6 @@ public:
 		return SISO<R>::n_frames;
 	}
 
-	/*!
-	 * \brief Sets the number of frames.
-	 *
-	 * \param n_frames: the number of frames to process in the decoder.
-	 */
-	void set_n_frames(const int n_frames)
-	{
-		Decoder<B,R>::set_n_frames(n_frames);
-		SISO   <  R>::set_n_frames(n_frames);
-	}
-
 	int get_simd_inter_frame_level() const
 	{
 		return SISO<R>::simd_inter_frame_level_siso;

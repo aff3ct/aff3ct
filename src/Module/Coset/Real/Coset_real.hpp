@@ -20,7 +20,6 @@ public:
 
 	virtual ~Coset_real();
 
-protected:
 	virtual void _apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data);
 };
 }

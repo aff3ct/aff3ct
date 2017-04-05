@@ -85,7 +85,44 @@ Decoder_RSC_BCJR_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_intra<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
+{
+	if (n_frames != -1 && n_frames <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_intra: \"n_frames\" has to be greater than 0 "
+		                            "(or equal to -1).");
+
+	const int real_n_frames = (n_frames != -1) ? n_frames : this->get_n_frames();
+
+	if (real_n_frames != this->simd_inter_frame_level_siso)
+		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"real_n_frames\" has to be equal to "
+		                         "\"simd_inter_frame_level_siso\".");
+
+	const auto limit_size1 = (this->K + this->n_ff) * this->simd_inter_frame_level + mipp::nElReg<R>();
+
+	if ((int)sys.size() < limit_size1)
+		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"sys.size()\" has to be equal or greater "
+		                        "than \"limit_size1\".");
+
+	if ((int)par.size() < limit_size1)
+		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"par.size()\" has to be equal or greater "
+		                        "than \"limit_size1\".");
+
+	const auto limit_size2 = this->K * this->simd_inter_frame_level + mipp::nElReg<R>();
+
+	if ((int)ext.size() < limit_size2)
+		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"ext.size()\" has to be equal or greater "
+		                        "than \"limit_size2 * real_n_frames\".");
+
+	const auto n_dec_waves_siso = real_n_frames / this->simd_inter_frame_level_siso;
+	for (auto w = 0; w < n_dec_waves_siso; w++)
+		this->_soft_decode_fbf(sys.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
+		                       par.data() + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
+		                       ext.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso);
+}
+
+template <typename B, typename R>
+void Decoder_RSC_BCJR_intra<B,R>
+::_soft_decode_fbf(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );

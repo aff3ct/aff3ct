@@ -80,7 +80,7 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_BFER_turbo<B,R,Q,QD>
 ::build_encoder(const int tid)
 {
-	sub_encoder[tid] = Factory_encoder_RSC<B>::build(this->params, 1, json_stream);
+	sub_encoder[tid] = Factory_encoder_RSC<B>::build(this->params, json_stream);
 	Simulation::check_errors(sub_encoder[tid], "Encoder_RSC_sys<B>");
 
 	if (tid == 0)
@@ -105,8 +105,6 @@ Decoder<B,Q>* Simulation_BFER_turbo<B,R,Q,QD>
 	this->barrier(tid);
 	siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis, json_stream);
 	Simulation::check_errors(siso[tid], "SISO<Q>");
-
-	this->interleaver[tid]->set_n_frames(siso[tid]->get_n_frames());
 
 	return Factory_decoder_turbo<B,Q>::build(this->params, this->interleaver[tid], siso[tid], siso[tid], sf[tid], this->crc[tid]);
 }

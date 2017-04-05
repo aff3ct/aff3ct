@@ -15,8 +15,7 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_RSC : public Factory
 {
-	static module::Encoder_RSC_sys<B>* build(const parameters &params, const int n_frames = 1,
-	                                         std::ostream &stream = std::cout);
+	static module::Encoder_RSC_sys<B>* build(const parameters &params, std::ostream &stream = std::cout);
 };
 }
 }

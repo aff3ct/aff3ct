@@ -39,17 +39,17 @@ private:
 	const int n_dec_waves;
 	const int n_inter_frame_rest;
 
-	std::vector<mipp::vector<R>> Y_N;
-	std::vector<mipp::vector<B>> V_N;
-
-	std::chrono::nanoseconds d_load_total;
-	std::chrono::nanoseconds d_decod_total;
-	std::chrono::nanoseconds d_store_total;
+	mipp::vector<R> Y_N;
+	mipp::vector<B> V_K;
 
 protected:
 	const int K; /*!< Number of information bits in one frame */
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
 	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
+
+	std::chrono::nanoseconds d_load_total;
+	std::chrono::nanoseconds d_decod_total;
+	std::chrono::nanoseconds d_store_total;
 
 public:
 	/*!
@@ -66,8 +66,8 @@ public:
 	: Module(n_frames, name),
 	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N(n_dec_waves, mipp::vector<R>(simd_inter_frame_level * N + mipp::nElReg<R>(), (R)0)),
-	  V_N(n_dec_waves, mipp::vector<B>(simd_inter_frame_level * N + mipp::nElReg<B>(), (B)0)),
+	  Y_N(simd_inter_frame_level * N, (R)0),
+	  V_K(simd_inter_frame_level * K, (B)0),
 	  K(K), N(N), simd_inter_frame_level(simd_inter_frame_level)
 	{
 		if (K <= 0)
@@ -91,26 +91,18 @@ public:
 	/*!
 	 * \brief Decodes the noisy frame.
 	 *
-	 * \param Y_N:        a noisy frame.
-	 * \param V_K:        an decoded codeword (only the information bits).
-	 * \param load:       true = performs the data loading, false = do not load the data in the decoder.
-	 * \param store:      true = performs the data storing, false = do not store the data in the decoder.
-	 * \param store_fast: true = enables the fast data storage.
-	 * \param unpack:     true = unpacks the data after the fast storage.
+	 * \param Y_N: a noisy frame.
+	 * \param V_K: a decoded codeword (only the information bits).
 	 */
-	void hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K,
-	                 const bool load       = true,
-	                 const bool store      = true,
-	                 const bool store_fast = false,
-	                 const bool unpack     = false)
+	void hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 			throw std::length_error("aff3ct::module::Decoder: \"Y_N.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
-		if (this->N * this->n_frames < (int)V_K.size())
-			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal or smaller than "
-			                        "\"N\" * \"n_frames\".");
+		if (this->K * this->n_frames != (int)V_K.size())
+			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal to "
+			                        "\"K\" * \"n_frames\".");
 
 		using namespace std::chrono;
 
@@ -118,53 +110,32 @@ public:
 		this->d_decod_total = std::chrono::nanoseconds(0);
 		this->d_store_total = std::chrono::nanoseconds(0);
 
-		if (this->n_dec_waves == 1 && this->n_inter_frame_rest == 0)
-		{
-			__hard_decode(Y_N, V_K, load, store, store_fast, unpack);
-		}
+		this->_hard_decode(Y_N, V_K);
+	}
+
+	virtual void _hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
+	{
+		auto w = 0;
+		for (w = 0; w < this->n_dec_waves -1; w++)
+			this->_hard_decode_fbf(Y_N.data() + w * this->N * this->simd_inter_frame_level,
+			                       V_K.data() + w * this->K * this->simd_inter_frame_level);
+
+		if (this->n_inter_frame_rest == 0)
+			this->_hard_decode_fbf(Y_N.data() + w * this->N * this->simd_inter_frame_level,
+			                       V_K.data() + w * this->K * this->simd_inter_frame_level);
 		else
 		{
-			for (auto w = 0; w < this->n_dec_waves; w++)
-			{
-				auto t_load = steady_clock::now();
-				const int n_frames_per_wave = (w == this->n_dec_waves -1 && this->n_inter_frame_rest != 0) ?
-				                              this->n_inter_frame_rest :
-				                              this->simd_inter_frame_level;
+			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
+			std::copy(Y_N.begin() + waves_off1,
+			          Y_N.begin() + waves_off1 + this->n_inter_frame_rest * this->N,
+			          this->Y_N.begin());
 
-				if (load)
-				{
-					const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
-					std::copy(Y_N.begin() + waves_off1,
-					          Y_N.begin() + waves_off1 + n_frames_per_wave * this->N,
-					          this->Y_N[w].begin());
-				}
-				this->d_load_total += steady_clock::now() - t_load;
+			this->_hard_decode_fbf(this->Y_N.data(), this->V_K.data());
 
-				__hard_decode(this->Y_N[w], this->V_N[w], load, store, store_fast, unpack);
-
-				auto t_store = steady_clock::now();
-				if (store)
-				{
-					if (this->K * this->n_frames == (int)V_K.size())
-					{
-						const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
-						std::copy(this->V_N[w].begin(),
-						          this->V_N[w].begin() + n_frames_per_wave * this->K,
-						          V_K.begin() + waves_off2);
-					}
-					else if (this->N * this->n_frames == (int)V_K.size())
-					{
-						const auto waves_off3 = w * this->simd_inter_frame_level * this->N;
-						std::copy(this->V_N[w].begin(),
-						          this->V_N[w].begin() + n_frames_per_wave * this->N,
-						          V_K.begin() + waves_off3);
-					}
-					else
-						throw std::runtime_error("aff3ct::module::Decoder: this should never happen, \"V_K\" is not "
-						                         "a multiple of \"K\" or of \"N\".");
-				}
-				this->d_store_total += steady_clock::now() - t_store;
-			}
+			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
+			std::copy(this->V_K.begin(),
+			          this->V_K.begin() + this->n_inter_frame_rest * this->K,
+			          V_K.begin() + waves_off2);
 		}
 	}
 
@@ -209,100 +180,9 @@ public:
 	}
 
 protected:
-	/*!
-	 * \brief Loads the noisy frame into the Decoder.
-	 *
-	 * \param Y_N: a noisy frame.
-	 */
-	virtual void _load(const mipp::vector<R>& Y_N) = 0;
-
-	/*!
-	 * \brief Decodes the noisy frame (have to be called after the load method).
-	 */
-	virtual void _hard_decode() = 0;
-
-	/*!
-	 * \brief Stores the decoded information bits (have to be called after the decode method).
-	 *
-	 * \param V_K: an decoded codeword (only the information bits).
-	 */
-	virtual void _store(mipp::vector<B>& V_K) const = 0;
-
-	/*!
-	 * \brief Stores the decoded codeword, may or may not contain the redundancy bits (parity) (should be called over
-	 *        the standard store method).
-	 *
-	 * \param V: the decoded codeword.
-	 */
-	virtual void _store_fast(mipp::vector<B>& V) const { _store(V); }
-
-	/*!
-	 * \brief Can be called after the store_fast method if store_fast return the bits in a non-standard format. The
-	 *        unpack method converts those bits into a standard format.
-	 *
-	 * \param V: the decoded and unpacked codeword.
-	 */
-	virtual void _unpack(mipp::vector<B>& V) const {}
-
-private:
-	inline void __hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K,
-	                          const bool load       = true,
-	                          const bool store      = true,
-	                          const bool store_fast = false,
-	                          const bool unpack     = false)
+	virtual void _hard_decode_fbf(const R *Y_N, B *V_K)
 	{
-		using namespace std::chrono;
-
-		auto t_load = steady_clock::now();
-		if (load)
-			this->load(Y_N);
-		this->d_load_total += steady_clock::now() - t_load;
-
-		auto t_decod = steady_clock::now();
-		this->_hard_decode();
-		this->d_decod_total += steady_clock::now() - t_decod;
-
-		auto t_store = steady_clock::now();
-		if (store)
-		{
-			if (store_fast)
-			{
-				this->store_fast(V_K);
-				if (unpack)
-					this->unpack(V_K);
-			}
-			else
-				this->store(V_K);
-		}
-		this->d_store_total += steady_clock::now() - t_store;
-	}
-
-	inline void load(const mipp::vector<R>& Y_N)
-	{
-		if (this->N * this->simd_inter_frame_level > (int)Y_N.size())
-			throw std::length_error("aff3ct::module::Decoder: \"Y_N.size()\" has to be greater than "
-			                        "\"N\" * \"simd_inter_frame_level\".");
-
-		this->_load(Y_N);
-	}
-
-	inline void store(mipp::vector<B>& V_K) const
-	{
-		if (this->K * this->simd_inter_frame_level > (int)V_K.size())
-			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be greater than "
-			                        "\"K\" * \"simd_inter_frame_level\".");
-
-		this->_store(V_K);
-	}
-
-	inline void store_fast(mipp::vector<B>& V) const
-	{
-		this->_store_fast(V);
-	}
-
-	inline void unpack(mipp::vector<B>& V) const
-	{
-		this->_unpack(V);
+		throw std::runtime_error("aff3ct::module::Decoder: \"_hard_decode_fbf\" is unimplemented.");
 	}
 };
 }

@@ -1,3 +1,4 @@
+#include <chrono>
 #include <limits>
 #include <stdexcept>
 
@@ -34,8 +35,6 @@ Decoder_LDPC_BP_flooding<B,R>
   n_parities_per_variable(alist_data.get_n_CN_per_VN()                 ),
   transpose              (alist_data.get_branches_transpose()          ),
 
-  Y_N                    (N                                            ),
-  V_K                    (K                                            ),
   Lp_N                   (N,                                          -1), // -1 in order to fail when AZCW
   C_to_V                 (n_frames, mipp::vector<R>(this->n_branches, 0)),
   V_to_C                 (n_frames, mipp::vector<R>(this->n_branches, 0))
@@ -58,15 +57,7 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
-{
-	throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding: this decoder does not support the "
-	                         "\"soft_decode\" interface.");
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+::_soft_decode_fbf(const R *Y_N1, R *Y_N2)
 {
 	// memory zones initialization
 	if (this->init_flag)
@@ -91,15 +82,9 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_load(const mipp::vector<R>& Y_N)
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
-	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::_hard_decode()
-{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -108,17 +93,19 @@ void Decoder_LDPC_BP_flooding<B,R>
 		if (cur_frame == Decoder<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BP_decode(this->Y_N);
+	this->BP_decode(Y_N);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-//	for (unsigned i = 0; i < this->V_K.size(); i++)
-//		this->V_K[i] = !(this->Lp_N[i] >= 0);
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
-		this->V_K[i] = !(this->Lp_N[k] >= 0);
+		V_K[i] = !(this->Lp_N[k] >= 0);
 	}
 
 	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
@@ -126,19 +113,17 @@ void Decoder_LDPC_BP_flooding<B,R>
 		this->init_flag = true;
 
 	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
-}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::_store(mipp::vector<B>& V_K) const
-{
-	std::copy(this->V_K.begin(), this->V_K.end(), V_K.begin());
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // BP algorithm
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::BP_decode(const mipp::vector<R> &Y_N)
+::BP_decode(const R *Y_N)
 {
 	auto cur_syndrome_depth = 0;
 

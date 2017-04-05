@@ -45,19 +45,6 @@ public:
 	virtual ~Module() {}
 
 	/*!
-	 * \brief Set the number of frames.
-	 *
-	 * \param n_frames: number of frames to process in this Module.
-	 */
-	virtual void set_n_frames(const int n_frames)
-	{
-		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::module::Module: \"n_frames\" has to be greater than 0.");
-
-		this->n_frames = n_frames;
-	}
-
-	/*!
 	 * \brief Get the number of frames.
 	 *
 	 * \return the number of frames to process in this Module.

@@ -166,6 +166,8 @@ public:
 		this->_check_errors(U, V);
 	}
 
+	virtual void _check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
+
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
 	 *
@@ -223,6 +225,15 @@ public:
 		this->_check_and_track_errors(U, V, X, X_mod, Y);
 	}
 
+	virtual void _check_and_track_errors(const mipp::vector<B>& U,
+	                                     const mipp::vector<B>& V,
+	                                     const mipp::vector<B>& X,
+	                                     const mipp::vector<R>& X_mod,
+	                                     const mipp::vector<R>& Y)
+	{
+		this->_check_errors(U, V);
+	}
+
 	/*!
 	 * \brief Write the bad frames into files.
 	 *
@@ -261,18 +272,6 @@ public:
 	virtual const std::vector<mipp::vector<R>> get_buff_noise() const
 	{
 		return std::vector<mipp::vector<R>>(0);
-	}
-
-protected:
-	virtual void _check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
-
-	virtual void _check_and_track_errors(const mipp::vector<B>& U,
-	                                     const mipp::vector<B>& V,
-	                                     const mipp::vector<B>& X,
-	                                     const mipp::vector<R>& X_mod,
-	                                     const mipp::vector<R>& Y)
-	{
-		this->_check_errors(U, V);
 	}
 
 private:

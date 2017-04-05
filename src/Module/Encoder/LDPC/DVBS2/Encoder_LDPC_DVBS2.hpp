@@ -12,7 +12,7 @@ namespace aff3ct
 namespace module
 {
 
-template <typename B>
+template <typename B = int>
 class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 {
 	const dvbs2_values* dvbs2 = nullptr;
@@ -21,8 +21,10 @@ public:
 	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC");
 	virtual ~Encoder_LDPC_DVBS2();
 
+protected:
+	void _encode_fbf(const B *U_K, B *X_N);
+
 private:
-	void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
 	void build_dvbs2();
 };
 

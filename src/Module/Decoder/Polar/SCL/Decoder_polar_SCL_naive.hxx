@@ -1,3 +1,4 @@
+#include <chrono>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
@@ -65,7 +66,7 @@ Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 
 	for(auto path = 0 ; path < this->L ; path ++)
@@ -84,8 +85,13 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_hard_decode()
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	typedef typename std::vector<std::tuple<int,B,R>>::iterator it_type;
 	std::set<int> last_active_paths;
 	int cur_path;
@@ -203,11 +209,20 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	}
 
 	this->select_best_path();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	auto k = 0;
 	this->recursive_store((tools::Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);
@@ -347,7 +362,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::recursive_store(const tools::Binary_node<Contents_SCL<B,R>>* node_curr, mipp::vector<B>& V_K, int &k) const
+::recursive_store(const tools::Binary_node<Contents_SCL<B,R>>* node_curr, B *V_K, int &k) const
 {
 	auto *contents = node_curr->get_contents();
 
