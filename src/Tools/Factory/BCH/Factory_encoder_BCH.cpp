@@ -13,7 +13,7 @@ Encoder<B>* Factory_encoder_BCH<B>
 
 	// build the encoder
 	if (params.encoder.systematic)
-		encoder = new Encoder_BCH<B>(params.code.K, params.code.N, params.code.m, GF);
+		encoder = new Encoder_BCH<B>(params.code.K, params.code.N, params.code.m, GF, params.simulation.inter_frame_level);
 
 	return encoder;
 }

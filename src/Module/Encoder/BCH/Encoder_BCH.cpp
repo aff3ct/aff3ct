@@ -17,15 +17,7 @@ Encoder_BCH<B>
 
 template <typename B>
 void Encoder_BCH<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
-{
-	for (auto f = 0; f < this->n_frames; f++)
-		this->__encode(U_K.data() + f * this->K, X_N.data() + f * this->N);
-}
-
-template <typename B>
-void Encoder_BCH<B>
-::__encode(const B* U_K, B* X_N)
+::_encode_fbf(const B *U_K, B *X_N)
 {
 	register int i, j;
 	register int feedback;

@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 class Encoder_BCH : public Encoder<B>
 {
 
@@ -28,10 +28,7 @@ public:
 	virtual ~Encoder_BCH() {}
 
 protected:
-	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-
-private:
-	void __encode(const B* U_K, B* X_N);
+	virtual void _encode_fbf(const B *U_K, B *X_N);
 };
 }
 }

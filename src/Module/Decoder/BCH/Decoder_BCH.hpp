@@ -11,7 +11,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B = int, typename R = float>
 class Decoder_BCH : public Decoder<B, R>
 {
 private:
@@ -40,9 +40,7 @@ public:
 	virtual ~Decoder_BCH();
 
 protected:
-	void _load       (const mipp::vector<R>& Y_N);
-	void _hard_decode(                          );
-	void _store      (      mipp::vector<B>& V_K) const;
+	void _hard_decode_fbf(const R *Y_N, B *V_K);
 };
 }
 }

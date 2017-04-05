@@ -1,3 +1,4 @@
+#include <chrono>
 #include <stdexcept>
 
 #include "Decoder_BCH.hpp"
@@ -31,16 +32,14 @@ Decoder_BCH<B, R>
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
-::_load(const mipp::vector<R>& Y_N)
+::_hard_decode_fbf(const R *Y_N, B *V_K)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	for (int j = 0; j < this->N; j++)
 		this->YH_N[j] = (Y_N[j] > 0)? 0 : 1; // hard decision on the input
-}
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-template <typename B, typename R>
-void Decoder_BCH<B, R>
-::_hard_decode()
-{
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	register int i, j, u, q, t2, count = 0, syn_error = 0;
 
 	t2 = 2 * t;
@@ -200,16 +199,16 @@ void Decoder_BCH<B, R>
 					YH_N[loc[i]] ^= 1;
 		}
 	}
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 	
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	for (i = 0; i < this->K; i++)
-		this->V_K[i] = YH_N[i+this->N-this->K];
-}
+		V_K[i] = YH_N[i+this->N-this->K];
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_BCH<B, R>
-::_store(mipp::vector<B>& V_K) const
-{
-	V_K = this->V_K;
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // ==================================================================================== explicit template instantiation
