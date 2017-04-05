@@ -104,8 +104,6 @@ public:
 			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal to "
 			                        "\"K\" * \"n_frames\".");
 
-		using namespace std::chrono;
-
 		this->d_load_total  = std::chrono::nanoseconds(0);
 		this->d_decod_total = std::chrono::nanoseconds(0);
 		this->d_store_total = std::chrono::nanoseconds(0);
