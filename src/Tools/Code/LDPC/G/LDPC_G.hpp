@@ -13,14 +13,14 @@ struct LDPC_G
 {
 public:
 	template <typename B>
-	static void build_H(const int k, const int n, const std::vector<std::vector<unsigned int>>& positions,
+	static void build_H(const unsigned k, const unsigned n, const std::vector<std::vector<unsigned>>& positions,
 	                    std::vector<mipp::vector<B>>& H);
 	template <typename B>
-	static void triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<int>& swapped);
+	static void triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<unsigned>& swapped);
 	template <typename B>
 	static void identity_H(std::vector<mipp::vector<B>>& H);
 	template <typename B>
-	static void transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<int>& swapped);
+	static void transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<unsigned>& swapped);
 };
 }
 }
