@@ -17,7 +17,7 @@ Encoder_BCH<B>
 
 template <typename B>
 void Encoder_BCH<B>
-::_encode_fbf(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N)
 {
 	register int i, j;
 	register int feedback;
