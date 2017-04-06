@@ -101,7 +101,7 @@ void LDPC_G
 
 template <typename B>
 void LDPC_G
-::transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<unsigned>& swapped)
+::transformation_H_to_G(std::vector<mipp::vector<B>>& H, std::vector<mipp::vector<unsigned>>& G, mipp::vector<unsigned>& swapped)
 {
 	unsigned n = H[0].size();
 	unsigned k = H.size();
@@ -122,15 +122,12 @@ void LDPC_G
 		H[swapped[(l-1)*2]] = tmp;
 	}
 
-	// Write G matrix in G vector
-	G.resize(n*(n-k));
-	unsigned long long compter = 0;
-	for (unsigned j = 0; j < n - k; j++)
-	{
-		std::cout << j << " ";
-		for (unsigned i = 0; i < n; i++)
-			G[compter++] = H[i][j];
-	}
+	// Write G matrix name H in G with the positions of each one by column
+	G.resize(n, mipp::vector<unsigned>(0,0));
+	for (unsigned i = 0; i < H.size(); i++)
+		for (unsigned j = 0; j < H[0].size(); j++)
+			if (H[i][j])
+				G[i].push_back(j+1);
 }
 
 }

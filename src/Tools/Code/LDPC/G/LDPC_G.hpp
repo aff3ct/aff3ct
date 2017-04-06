@@ -20,7 +20,7 @@ public:
 	template <typename B>
 	static void identity_H(std::vector<mipp::vector<B>>& H);
 	template <typename B>
-	static void transformation_H_to_G(std::vector<mipp::vector<B>>& H, mipp::vector<B>& G, mipp::vector<unsigned>& swapped);
+	static void transformation_H_to_G(std::vector<mipp::vector<B>>& H, std::vector<mipp::vector<unsigned>>& G, mipp::vector<unsigned>& swapped);
 };
 }
 }

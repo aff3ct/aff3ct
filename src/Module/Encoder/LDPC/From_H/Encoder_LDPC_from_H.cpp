@@ -33,7 +33,6 @@ Encoder_LDPC_from_H<B>
 
 	tools::LDPC_G::identity_H(H);
 	tools::LDPC_G::transformation_H_to_G(H, G, swapped);
-	tools::real_transpose(K, N, G, this->tG);
 }
 
 template <typename B>
@@ -65,13 +64,15 @@ void Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::get_G(mipp::vector<B>& matrix_G)
+::_encode_fbf(const B *U_K, B *X_N)
 {
-	if (this->G.size() != G.size())
-		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"G.size()\" has to be equal "
-		                        "to \"this->G.size()\".");
-
-	std::copy(this->G.begin(), this->G.end(), matrix_G.begin());
+	for (unsigned i = 0; i < G.size(); i++)
+	{
+		X_N[i] = 0;
+		for (unsigned j = 0; j < G[i].size(); j++)
+			X_N[i] += U_K[ G[i][j] - 1 ];
+		X_N[i] %= 2;
+	}
 }
 
 // ==================================================================================== explicit template instantiation
