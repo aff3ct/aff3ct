@@ -17,7 +17,7 @@ Encoder_repetition_sys<B>
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::_encode_sys_fbf(const B *U_K, B *par)
+::_encode_sys(const B *U_K, B *par)
 {
 	if (!buffered_encoding)
 		throw std::runtime_error("aff3ct::module::Encoder_repetition_sys: the \"_encode_sys\" method works only with "
@@ -29,7 +29,7 @@ void Encoder_repetition_sys<B>
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::_encode_fbf(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N)
 {
 	// repetition
 	if (!buffered_encoding)

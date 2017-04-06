@@ -47,6 +47,8 @@ struct code_parameters
 	int         K;
 	int         N;
 	int         N_code;
+	int         N_mod;
+	int         N_fil;
 	int         m;
 	int         tail_length;
 };

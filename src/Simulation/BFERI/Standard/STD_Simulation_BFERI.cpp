@@ -189,8 +189,8 @@ void Simulation_BFERI<B,R,Q>
 	const auto K     = simu->params.code.K;
 	const auto N     = simu->params.code.N;
 	const auto tail  = simu->params.code.tail_length;
-	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
-	const auto N_fil = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
+	const auto N_mod = simu->params.code.N_mod;
+	const auto N_fil = simu->params.code.N_fil;
 
 	if (simu->U_K [tid].size() != (unsigned) ( K             * n_fra)) simu->U_K [tid].resize( K              * n_fra);
 	if (simu->X_N1[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N1[tid].resize((N      + tail) * n_fra);
@@ -222,6 +222,7 @@ void Simulation_BFERI<B,R,Q>
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
 		                                               simu->params.code.N + tail,
+		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
 		                                               n_fra);
@@ -454,7 +455,7 @@ void Simulation_BFERI<B,R,Q>
 		auto t_check = steady_clock::now();
 		if (simu->params.monitor.err_track_enable)
 			simu->monitor[tid]->check_and_track_errors(simu->U_K [tid], simu->V_K [tid], simu->X_N1[tid],
-			                                           simu->X_N3[tid], simu->Y_N1[tid]);
+			                                           simu->Y_N1[tid]);
 		else
 			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
@@ -782,8 +783,7 @@ void Simulation_BFERI<B,R,Q>
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		if (simu->params.monitor.err_track_enable)
-			simu->monitor[0]->check_and_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0],
-			                                         simu->X_N3[0], simu->Y_N1[0]);
+			simu->monitor[0]->check_and_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0], simu->Y_N1[0]);
 		else
 			simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
 		auto d_check = steady_clock::now() - t_check;

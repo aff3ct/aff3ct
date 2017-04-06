@@ -90,7 +90,7 @@ void Simulation_EXIT<B,R,Q>
 
 	const auto N     = params.code.N;
 	const auto tail  = params.code.tail_length;
-	const auto N_mod = modulator->get_buffer_size_after_modulation(N + tail);
+	const auto N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, N + tail);
 
 	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
 	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
@@ -101,7 +101,8 @@ void Simulation_EXIT<B,R,Q>
 		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
 
 	// resize the modulation buffers
-	const auto K_mod = modulator_a->get_buffer_size_after_modulation(params.code.K);
+	const auto K     = params.code.K;
+	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, K);
 	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
 	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );

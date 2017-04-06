@@ -14,9 +14,9 @@ Coset_real<B,D>::~Coset_real()
 }
 
 template <typename B, typename D>
-void Coset_real<B,D>::_apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data)
+void Coset_real<B,D>::apply(const B *ref, const D *in_data, D *out_data)
 {
-	for (auto i = 0; i < (int)ref.size(); i++)
+	for (auto i = 0; i < this->size * this->n_frames; i++)
 		out_data[i] = ref[i] ? -in_data[i] : in_data[i];
 }
 

@@ -19,7 +19,7 @@ public:
 	virtual ~Decoder_repetition_fast();
 
 protected:
-	void _soft_decode_fbf(const R *sys, const R *par, R *ext);
+	void _soft_decode(const R *sys, const R *par, R *ext);
 };
 }
 }

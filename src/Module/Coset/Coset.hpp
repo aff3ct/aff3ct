@@ -82,22 +82,21 @@ public:
 			throw std::length_error("aff3ct::module::Coset: \"out_data.size()\" has to be equal to "
 			                        "\"size\" * \"n_frames\".");
 
-		this->_apply(ref, in_data, out_data);
+		this->apply(ref.data(), in_data.data(), out_data.data());
 	}
 
-	virtual void _apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data)
+	virtual void apply(const B *ref, const D *in_data, D *out_data)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_apply_fbf(ref     .data() + f * this->size,
-			                 in_data .data() + f * this->size,
-			                 out_data.data() + f * this->size);
+			this->_apply(ref      + f * this->size,
+			             in_data  + f * this->size,
+			             out_data + f * this->size);
 	}
 
 protected:
-
-	virtual void _apply_fbf(const B *ref, const D *in_data, D *out_data)
+	virtual void _apply(const B *ref, const D *in_data, D *out_data)
 	{
-		throw std::runtime_error("aff3ct::module::Coset: \"_apply_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Coset: \"_apply\" is unimplemented.");
 	}
 };
 }

@@ -27,17 +27,17 @@ Simulation_BFER<B,R,Q>
   task_names(this->params.simulation.n_threads, std::vector<std::string>(14)),
   frame_id(0),
 
-  U_K (this->params.simulation.n_threads),
-  X_N1(this->params.simulation.n_threads),
-  X_N2(this->params.simulation.n_threads),
-  X_N3(this->params.simulation.n_threads),
-  H_N (this->params.simulation.n_threads),
-  Y_N1(this->params.simulation.n_threads),
-  Y_N2(this->params.simulation.n_threads),
-  Y_N3(this->params.simulation.n_threads),
-  Y_N4(this->params.simulation.n_threads),
-  Y_N5(this->params.simulation.n_threads),
-  V_K (this->params.simulation.n_threads),
+  U_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  X_N1(this->params.simulation.n_threads, mipp::vector<B>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
+  X_N2(this->params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  X_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  H_N (this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  Y_N1(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  Y_N2(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_fil                             * params.simulation.inter_frame_level)),
+  Y_N3(this->params.simulation.n_threads, mipp::vector<R>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N4(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N5(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
+  V_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
 
   spu_U_K (this->params.simulation.n_threads),
   spu_X_N1(this->params.simulation.n_threads),
@@ -140,6 +140,7 @@ void Simulation_BFER<B,R,Q>
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
 		                                               simu->params.code.N,
+		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
 		                                               n_fra);
@@ -153,29 +154,6 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::allocate_data(Simulation_BFER<B,R,Q> *simu, const int tid)
 {
-	// get the real number of frames per threads (from the decoder)
-	const auto n_fra = simu->decoder[tid]->get_n_frames();
-
-	// resize the buffers
-	const auto N      = simu->params.code.N;
-	const auto K      = simu->params.code.K;
-	const auto tail   = simu->params.code.tail_length;
-	const auto N_mod  = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
-	const auto N_code = simu->params.code.N_code;
-	const auto N_fil  = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
-
-	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
-	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
-	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N3[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
-	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
-	if (simu->H_N [tid].size() != (unsigned) ( N_mod          * n_fra)) simu->H_N [tid].resize( N_mod          * n_fra);
-	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil          * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
-	if (simu->Y_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N3[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N4[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N5[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N5[tid].resize((N_code + tail) * n_fra);
-	if (simu->V_K [tid].size() != (unsigned) ( K              * n_fra)) simu->V_K [tid].resize( K              * n_fra);
-
 	// Tell StaPU to associate the "vector" vector with the "vector_handle"
 	// identifier. When a task needs to access a piece of data, it should
 	// refer to the handle that is associated to it.

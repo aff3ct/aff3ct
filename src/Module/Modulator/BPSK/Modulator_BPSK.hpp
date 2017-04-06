@@ -22,11 +22,21 @@ public:
 	               const std::string name = "Modulator_BPSK");
 	virtual ~Modulator_BPSK();
 
-	void   _modulate           (const mipp::vector<B>& X_N1,                                                          mipp::vector<R>& X_N2);
-	void _demodulate           (const mipp::vector<Q>& Y_N1,                                                          mipp::vector<Q>& Y_N2);
-	void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N,                              mipp::vector<Q>& Y_N2);
-	void _demodulate           (const mipp::vector<Q>& Y_N1,                             const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
-	void _demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3);
+	void   modulate           (const B *X_N1,                     R *X_N2);
+	void demodulate           (const Q *Y_N1,                     Q *Y_N2);
+	void demodulate_with_gains(const Q *Y_N1, const R *H_N,       Q *Y_N2);
+	void demodulate           (const Q *Y_N1,               const Q *Y_N2, Q *Y_N3);
+	void demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3);
+
+	static int size_mod(const int N)
+	{
+		return Modulator<B,R,Q>::get_buffer_size_after_modulation(N, 1, 0, 1, false);
+	}
+
+	static int size_fil(const int N)
+	{
+		return Modulator<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, false);
+	}
 };
 }
 }

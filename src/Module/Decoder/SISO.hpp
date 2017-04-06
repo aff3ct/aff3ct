@@ -87,7 +87,7 @@ public:
 	 * \param ext: extrinsic information about the systematic bits.
 	 */
 	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
-	                         const int n_frames = 1)
+	                         const int n_frames = -1)
 	{
 		if (n_frames != -1 && n_frames <= 0)
 			throw std::invalid_argument("aff3ct::module::SISO: \"n_frames\" has to be greater than 0 "
@@ -107,21 +107,18 @@ public:
 			throw std::length_error("aff3ct::module::SISO: \"ext.size()\" has to be equal to "
 			                        "\"K_siso\" * \"real_n_frames\".");
 
-		this->_soft_decode(sys, par, ext, real_n_frames);
+		this->soft_decode(sys.data(), par.data(), ext.data(), real_n_frames);
 	}
 
-	virtual void _soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
-	                          const int n_frames)
+	virtual void soft_decode(const R *sys, const R *par, R *ext, const int n_frames = -1)
 	{
-		if (n_frames % this->simd_inter_frame_level_siso)
-			throw std::runtime_error("aff3ct::module::SISO: \"n_frames\" has to be divisible by "
-			                         "\"simd_inter_frame_level_siso\".");
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
-		const auto n_dec_waves_siso = n_frames / this->simd_inter_frame_level_siso;
+		const auto n_dec_waves_siso = real_n_frames / this->simd_inter_frame_level_siso;
 		for (auto w = 0; w < n_dec_waves_siso; w++)
-			this->_soft_decode_fbf(sys.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
-			                       par.data() + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
-			                       ext.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso);
+			this->_soft_decode(sys + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
+			                   par + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
+			                   ext + w * (               this->K_siso) * this->simd_inter_frame_level_siso);
 	}
 
 	/*!
@@ -140,38 +137,32 @@ public:
 			throw std::length_error("aff3ct::module::SISO: \"Y_N2.size()\" has to be equal to "
 			                        "\"N_siso\" * \"n_frames\".");
 
-		this->_soft_decode(Y_N1, Y_N2);
+		this->soft_decode(Y_N1.data(), Y_N2.data());
 	}
 
-	/*!
-	 * \brief Decodes a given noisy codeword.
-	 *
-	 * \param Y_N1: a completely noisy codeword from the channel.
-	 * \param Y_N2: an extrinsic information about all the bits in the frame.
-	 */
-	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+	virtual void soft_decode(const R *Y_N1, R *Y_N2)
 	{
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves_siso -1; w++)
-			this->_soft_decode_fbf(Y_N1.data() + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                       Y_N2.data() + w * this->N_siso * this->simd_inter_frame_level_siso);
+			this->_soft_decode(Y_N1 + w * this->N_siso * this->simd_inter_frame_level_siso,
+			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso);
 
 		if (this->n_inter_frame_rest_siso == 0)
-			this->_soft_decode_fbf(Y_N1.data() + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                       Y_N2.data() + w * this->N_siso * this->simd_inter_frame_level_siso);
+			this->_soft_decode(Y_N1 + w * this->N_siso * this->simd_inter_frame_level_siso,
+			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level_siso * this->N_siso;
-			std::copy(Y_N1.begin() + waves_off1,
-			          Y_N1.begin() + waves_off1 + this->n_inter_frame_rest_siso * this->N_siso,
+			std::copy(Y_N1 + waves_off1,
+			          Y_N1 + waves_off1 + this->n_inter_frame_rest_siso * this->N_siso,
 			          this->Y_N1.begin());
 
-			this->_soft_decode_fbf(this->Y_N1.data(), this->Y_N2.data());
+			this->_soft_decode(this->Y_N1.data(), this->Y_N2.data());
 
 			const auto waves_off2 = w * this->simd_inter_frame_level_siso * this->N_siso;
 			std::copy(this->Y_N2.begin(),
 			          this->Y_N2.begin() + this->n_inter_frame_rest_siso * this->N_siso,
-			          Y_N2.begin() + waves_off2);
+			          Y_N2 + waves_off2);
 		}
 	}
 
@@ -196,14 +187,14 @@ public:
 	}
 
 protected:
-	virtual void _soft_decode_fbf(const R *sys, const R *par, R *ext)
+	virtual void _soft_decode(const R *sys, const R *par, R *ext)
 	{
-		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode\" is unimplemented.");
 	}
 
-	virtual void _soft_decode_fbf(const R *Y_N1, R *Y_N2)
+	virtual void _soft_decode(const R *Y_N1, R *Y_N2)
 	{
-		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode\" is unimplemented.");
 	}
 };
 }

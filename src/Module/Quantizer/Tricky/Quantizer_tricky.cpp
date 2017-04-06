@@ -136,13 +136,15 @@ Quantizer_tricky<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_tricky<R,Q>
-::_process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const R *Y_N1, Q *Y_N2)
 {
+	const auto size = (unsigned)(this->N * this->n_frames);
+
 	if (delta_inv == (R)0)
 	{
-		mipp::vector<R> tmp(Y_N1.size());
+		mipp::vector<R> tmp(size);
 		R avg = 0;
-		for (unsigned i = 0; i < Y_N1.size(); i++)
+		for (unsigned i = 0; i < size; i++)
 		{
 			tmp[i] = std::abs(Y_N1[i]);
 			avg += tmp[i];
@@ -153,7 +155,6 @@ void Quantizer_tricky<R,Q>
 		delta_inv = (R)1.0 / ((R)std::abs(tmp[(tmp.size() / 10) * 8]) / (R)val_max);
 	}
 
-	auto size = Y_N1.size();
 	for (unsigned i = 0; i < size; i++)
 		Y_N2[i] = (Q)saturate(std::round(Y_N1[i] * delta_inv), (R)val_min, (R)val_max);
 }

@@ -43,6 +43,7 @@ protected:
 
 	const int K; /*!< Number of information bits in one frame */
 	const int N; /*!< Size of one encoded frame (= number of bits in one frame) */
+	const int N_mod;
 
 public:
 	/*!
@@ -55,14 +56,17 @@ public:
 	 * \param n_frames: number of frames to process in the Monitor.
 	 * \param name:     Monitor's name.
 	 */
-	Monitor_i(const int& K, const int& N, const int& n_frames = 1, const std::string name = "Monitor_i")
-	: Module(n_frames, name), K(K), N(N)
+	Monitor_i(const int& K, const int& N, const int& N_mod, const int& n_frames = 1,
+	          const std::string name = "Monitor_i")
+	: Module(n_frames, name), K(K), N(N), N_mod(N_mod)
 	{
-		if (K <= 0)
+		if (this->K <= 0)
 			throw std::invalid_argument("aff3ct::module::Monitor: \"K\" has to be greater than 0.");
-		if (N <= 0)
+		if (this->N <= 0)
 			throw std::invalid_argument("aff3ct::module::Monitor: \"N\" has to be greater than 0.");
-		if (K > N)
+		if (this->N_mod <= 0)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"N_mod\" has to be greater than 0.");
+		if (this->K > this->N)
 			throw std::invalid_argument("aff3ct::module::Monitor: \"K\" has to be smaller than \"N\".");
 
 		Monitor_i<B,R>::interrupt = false;
@@ -89,6 +93,11 @@ public:
 	int get_N() const
 	{
 		return N;
+	}
+
+	int get_N_mod() const
+	{
+		return N_mod;
 	}
 
 	/*!
@@ -158,15 +167,23 @@ public:
 	 * \param U: the original message (from the Source or the CRC).
 	 * \param V: the decoded message (from the Decoder).
 	 */
-	void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
+	void check_errors(const mipp::vector<B>& U_K, const mipp::vector<B>& V_K)
 	{
-		if (U.size() != V.size())
-			throw std::length_error("aff3ct::module::Monitor: \"U.size()\" has to be equal to \"V.size()\".");
+		if ((int)U_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"U_K.size()\" has to be equal to \"K * n_frames\".");
 
-		this->_check_errors(U, V);
+		if ((int)V_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"V_K.size()\" has to be equal to \"K * n_frames\".");
+
+		this->check_errors(U_K.data(), V_K.data());
 	}
 
-	virtual void _check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
+	virtual void check_errors(const B *U_K, const B *V_K)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_check_errors(U_K + f * this->K,
+			                    V_K + f * this->K);
+	}
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
@@ -213,25 +230,34 @@ public:
 	 * \param X_mod:  the modulated message (from the Modulator, the input of the Channel).
 	 * \param Y:      the noised message (the output of the Channel).
 	 */
-	void check_and_track_errors(const mipp::vector<B>& U,
-	                            const mipp::vector<B>& V,
-	                            const mipp::vector<B>& X,
-	                            const mipp::vector<R>& X_mod,
-	                            const mipp::vector<R>& Y)
+	void check_and_track_errors(const mipp::vector<B>& U_K,
+	                            const mipp::vector<B>& V_K,
+	                            const mipp::vector<B>& X_N,
+	                            const mipp::vector<R>& Y_N_mod)
 	{
-		if (U.size() != V.size())
-			throw std::length_error("aff3ct::module::Monitor: \"U.size()\" has to be equal to \"V.size()\".");
+		if ((int)U_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"U_K.size()\" has to be equal to \"K * n_frames\".");
 
-		this->_check_and_track_errors(U, V, X, X_mod, Y);
+		if ((int)V_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"V_K.size()\" has to be equal to \"K * n_frames\".");
+
+		if ((int)X_N.size() != this->N * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"X_N.size()\" has to be equal to \"N * n_frames\".");
+
+		if ((int)Y_N_mod.size() != this->N_mod * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"Y_N_mod.size()\" has to be equal to "
+			                        "\"N_mod * n_frames\".");
+
+		this->check_and_track_errors(U_K.data(), V_K.data(), X_N.data(), Y_N_mod.data());
 	}
 
-	virtual void _check_and_track_errors(const mipp::vector<B>& U,
-	                                     const mipp::vector<B>& V,
-	                                     const mipp::vector<B>& X,
-	                                     const mipp::vector<R>& X_mod,
-	                                     const mipp::vector<R>& Y)
+	virtual void check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
 	{
-		this->_check_errors(U, V);
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_check_and_track_errors(U_K     + f * this->K,
+			                              V_K     + f * this->K,
+			                              X_N     + f * this->N,
+			                              Y_N_mod + f * this->N_mod);
 	}
 
 	/*!
@@ -272,6 +298,17 @@ public:
 	virtual const std::vector<mipp::vector<R>> get_buff_noise() const
 	{
 		return std::vector<mipp::vector<R>>(0);
+	}
+
+protected:
+	virtual void _check_errors(const B *U, const B *V)
+	{
+		throw std::runtime_error("aff3ct::module::Monitor: \"_check_errors\" is unimplemented.");
+	}
+
+	void _check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
+	{
+		throw std::runtime_error("aff3ct::module::Monitor: \"_check_and_track_errors\" is unimplemented.");
 	}
 
 private:

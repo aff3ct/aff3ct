@@ -194,7 +194,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_hard_decode_fbf(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K)
 {
 	if (m < static_level)
 		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "

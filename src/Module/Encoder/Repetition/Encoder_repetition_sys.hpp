@@ -24,8 +24,8 @@ public:
 	virtual ~Encoder_repetition_sys() {}
 
 protected:
-	virtual void _encode_sys_fbf(const B *U_K, B *par);
-	virtual void _encode_fbf    (const B *U_K, B *X_N);
+	virtual void _encode_sys(const B *U_K, B *par);
+	virtual void _encode    (const B *U_K, B *X_N);
 };
 }
 }

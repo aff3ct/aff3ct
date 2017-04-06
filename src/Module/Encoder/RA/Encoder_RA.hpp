@@ -27,7 +27,7 @@ public:
 	virtual ~Encoder_RA() {}
 
 protected:
-	virtual void _encode_fbf(const B *U_K, B *X_N);
+	virtual void _encode(const B *U_K, B *X_N);
 };
 }
 }

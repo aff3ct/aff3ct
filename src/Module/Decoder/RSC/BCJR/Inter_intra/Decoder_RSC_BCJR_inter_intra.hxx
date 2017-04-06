@@ -79,7 +79,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
-::_soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
 {
 	if (n_frames != -1 && n_frames <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_inter_intra: \"n_frames\" has to be greater "
@@ -107,16 +107,12 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_inter_intra: \"ext.size()\" has to be equal or "
 		                        "greater than \"limit_size2 * real_n_frames\".");
 
-	const auto n_dec_waves_siso = real_n_frames / this->simd_inter_frame_level_siso;
-	for (auto w = 0; w < n_dec_waves_siso; w++)
-		this->_soft_decode_fbf(sys.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
-		                       par.data() + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
-		                       ext.data() + w * (               this->K_siso) * this->simd_inter_frame_level_siso);
+	SISO<R>::soft_decode(sys.data(), par.data(), ext.data(), real_n_frames);
 }
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
-::_soft_decode_fbf(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );

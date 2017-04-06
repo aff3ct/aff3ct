@@ -57,7 +57,7 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_soft_decode_fbf(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2)
 {
 	// memory zones initialization
 	if (this->init_flag)
@@ -82,7 +82,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_hard_decode_fbf(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization

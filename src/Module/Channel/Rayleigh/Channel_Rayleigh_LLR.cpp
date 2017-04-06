@@ -34,19 +34,11 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
-{
-	throw std::runtime_error("aff3ct::module::Channel_Rayleigh_LLR: adding noise without computing the gains is not "
-	                         "possible with the Rayleigh channel.");
-}
-
-template <typename R>
-void Channel_Rayleigh_LLR<R>
-::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+::add_noise(const R *X_N, R *Y_N, R *H_N)
 {
 	if (this->complex)
 	{
-		for (auto i = 0; i < (int)X_N.size() / 2 ; i++)
+		for (auto i = 0; i < (this->N * this->n_frames) / 2 ; i++)
 		{
 			H_N[2*i   ] = this->normal_dist_h(this->rd_engine);
 			H_N[2*i +1] = this->normal_dist_h(this->rd_engine);
@@ -60,7 +52,7 @@ void Channel_Rayleigh_LLR<R>
 	}
 	else
 	{
-		for (auto i = 0; i < (int)X_N.size() ; i++)
+		for (auto i = 0; i < this->N * this->n_frames ; i++)
 		{
 			const auto h_re = this->normal_dist_h(this->rd_engine);
 			const auto h_im = this->normal_dist_h(this->rd_engine);

@@ -30,7 +30,11 @@ Modulator_CPM<B,R,Q,MAX>
                 bool no_sig2,
                 int  n_frames,
                 const std::string name)
-: Modulator<B,R,Q>(N, 0, 0, n_frames, name      ), // TODO: hack
+: Modulator<B,R,Q>(N,
+                   Modulator_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, sampling_factor),
+                   Modulator_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
+                   n_frames,
+                   name),
   sigma     (sigma                              ),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_std,
@@ -53,12 +57,6 @@ Modulator_CPM<B,R,Q,MAX>
 	if (N % bits_per_symbol)
 		throw std::invalid_argument("aff3ct::module::Modulator_CPM: \"bits_per_symbol\" has to be a multiple of "
 		                            "\"N\".");
-
-	// write the right buffers sizes
-	int* N_mod_writable = const_cast<int*>(&this->N_mod     );
-	*N_mod_writable     = get_buffer_size_after_modulation(N);
-	int* N_fil_writable = const_cast<int*>(&this->N_fil     );
-	*N_fil_writable     = get_buffer_size_after_filtering(N );
 
 	// initialize CPM
 	cpe.generate_allowed_states    (cpm.allowed_states               );
@@ -84,31 +82,8 @@ Modulator_CPM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-int Modulator_CPM<B,R,Q,MAX>
-::get_buffer_size_after_modulation(const int N)
-{
-	// N : number of bits to send
-	//  / cpm.n_b_per_s: because buffer contains symbols and not bits anymore
-	// +cpm.tl: tails symbols
-	// *cpm.s_factor: because work with samples of wave forms
-	// *2: because of complex numbers
-	return (N / cpm.n_b_per_s + cpm.tl) * cpm.s_factor * 2;
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-int Modulator_CPM<B,R,Q,MAX>
-::get_buffer_size_after_filtering(const int N)
-{
-	// N : number of bits to receive
-	// / cpm.n_b_per_s: because buffer contains symbols and not bits
-	// +cpm.tl: tails symbols
-	// *cpm.n_wa: because work with waveforms probability
-	return (N / cpm.n_b_per_s + cpm.tl) * cpm.max_wa_id;
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_modulate_fbf(const B *X_N1, R *X_N2)
+::_modulate(const B *X_N1, R *X_N2)
 {
 	// mapper
 	mipp::vector<SIN> mapped_frame(n_sy);
@@ -136,7 +111,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_filter_fbf(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2)
 {
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
@@ -157,56 +132,16 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2)
 {
-	if (this->n_frames == 1)
-		bcjr.decode(Y_N1, Y_N2);
-	else // more than 1 frame
-	{
-		mipp::vector<Q> Y_N1_tmp(this->N_fil);
-		mipp::vector<Q> Y_N2_tmp(this->N    );
-
-		for (auto f = 0; f < this->n_frames; f++)
-		{
-			std::copy(Y_N1.begin() + (f +0) * this->N_fil,
-			          Y_N1.begin() + (f +1) * this->N_fil,
-			          Y_N1_tmp.begin());
-
-			bcjr.decode(Y_N1_tmp, Y_N2_tmp);
-
-			std::copy(Y_N2_tmp.begin(), Y_N2_tmp.end(), Y_N2.begin() + f * this->N);
-		}
-	}
+	bcjr.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
-	if (this->n_frames == 1)
-		bcjr.decode(Y_N1, Y_N2, Y_N3);
-	else
-	{
-		mipp::vector<Q> Y_N1_tmp(this->N_fil);
-		mipp::vector<Q> Y_N2_tmp(this->N    );
-		mipp::vector<Q> Y_N3_tmp(this->N    );
-
-		for (auto f = 0; f < this->n_frames; f++)
-		{
-			std::copy(Y_N1.begin() + (f +0) * this->N_fil,
-			          Y_N1.begin() + (f +1) * this->N_fil,
-			          Y_N1_tmp.begin());
-
-			std::copy(Y_N2.begin() + (f +0) * this->N,
-			          Y_N2.begin() + (f +1) * this->N,
-			          Y_N2_tmp.begin());
-
-			bcjr.decode(Y_N1_tmp, Y_N2_tmp, Y_N3_tmp); // remove tail symb automatically because
-			                                           // Y_N3_tmp.size = Y_N1_tmp.size + cpm.tl
-
-			std::copy(Y_N3_tmp.begin(), Y_N3_tmp.end(), Y_N3.begin() + f * this->N);
-		}
-	}
+	bcjr.decode(Y_N1, Y_N2, Y_N3);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>

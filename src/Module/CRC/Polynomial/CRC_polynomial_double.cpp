@@ -15,25 +15,21 @@ CRC_polynomial_double<B>
 
 	if ((this->K - 2 * this->size()) <= (cut_index - this->size()))
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"K\" is wrong.");
+
+	if (this->K <= 2 * this->size())
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"K\" has to be greater "
+		                            "than 2 * \"size\".");
 }
 
 template <typename B>
 void CRC_polynomial_double<B>
-::build(mipp::vector<B>& U_K)
+::_build(B *U_K)
 {
-	if (U_K.size() <= (unsigned)(2 * this->size()))
-		throw std::length_error("aff3ct::module::CRC_polynomial_double: \"U_K.size()\" has to be greater "
-		                        "than 2 * \"size\".");
-
-	if (U_K.size() != (unsigned)(this->n_frames * this->K))
-		throw std::length_error("aff3ct::module::CRC_polynomial_double: \"U_K.size()\" has to be equal "
-		                        "to \"n_frames\" * \"K\".");
-
-	for (unsigned i = unsigned(U_K.size() - 2 * this->size() -1); i >= (unsigned)cut_index - this->size(); i--)
+	for (unsigned i = unsigned(this->K - 2 * this->size() -1); i >= (unsigned)cut_index - this->size(); i--)
 		U_K[i + this->size()] = U_K[i];
 
-	this->_generate(U_K.data(), U_K.data(), 0, cut_index - this->size(), cut_index - this->size());
-	this->_generate(U_K.data(), U_K.data(), 0, this->K   - this->size(),   this->K - this->size());
+	this->_generate(U_K, U_K, 0, cut_index - this->size(), cut_index - this->size());
+	this->_generate(U_K, U_K, 0, this->K   - this->size(),   this->K - this->size());
 }
 
 // ==================================================================================== explicit template instantiation 
