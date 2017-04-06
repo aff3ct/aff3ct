@@ -33,9 +33,9 @@ public:
 	virtual ~Decoder_polar_SC_fast_sys();
 
 protected:
-	        void _load           (const R *Y_N        );
-	virtual void _hard_decode_fbf(const R *Y_N, B *V_K);
-	        void _store          (              B *V_K) const;
+	        void _load       (const R *Y_N        );
+	virtual void _hard_decode(const R *Y_N, B *V_K);
+	        void _store      (              B *V_K) const;
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &id);
 };

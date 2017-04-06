@@ -104,38 +104,36 @@ public:
 			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal to "
 			                        "\"K\" * \"n_frames\".");
 
-		using namespace std::chrono;
+		this->hard_decode(Y_N.data(), V_K.data());
+	}
 
+	virtual void hard_decode(const R *Y_N, B *V_K)
+	{
 		this->d_load_total  = std::chrono::nanoseconds(0);
 		this->d_decod_total = std::chrono::nanoseconds(0);
 		this->d_store_total = std::chrono::nanoseconds(0);
 
-		this->_hard_decode(Y_N, V_K);
-	}
-
-	virtual void _hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
-	{
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_hard_decode_fbf(Y_N.data() + w * this->N * this->simd_inter_frame_level,
-			                       V_K.data() + w * this->K * this->simd_inter_frame_level);
+			this->_hard_decode(Y_N + w * this->N * this->simd_inter_frame_level,
+			                   V_K + w * this->K * this->simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
-			this->_hard_decode_fbf(Y_N.data() + w * this->N * this->simd_inter_frame_level,
-			                       V_K.data() + w * this->K * this->simd_inter_frame_level);
+			this->_hard_decode(Y_N + w * this->N * this->simd_inter_frame_level,
+			                   V_K + w * this->K * this->simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
-			std::copy(Y_N.begin() + waves_off1,
-			          Y_N.begin() + waves_off1 + this->n_inter_frame_rest * this->N,
+			std::copy(Y_N + waves_off1,
+			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_hard_decode_fbf(this->Y_N.data(), this->V_K.data());
+			this->_hard_decode(this->Y_N.data(), this->V_K.data());
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
 			std::copy(this->V_K.begin(),
 			          this->V_K.begin() + this->n_inter_frame_rest * this->K,
-			          V_K.begin() + waves_off2);
+			          V_K + waves_off2);
 		}
 	}
 
@@ -180,9 +178,9 @@ public:
 	}
 
 protected:
-	virtual void _hard_decode_fbf(const R *Y_N, B *V_K)
+	virtual void _hard_decode(const R *Y_N, B *V_K)
 	{
-		throw std::runtime_error("aff3ct::module::Decoder: \"_hard_decode_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Decoder: \"_hard_decode\" is unimplemented.");
 	}
 };
 }

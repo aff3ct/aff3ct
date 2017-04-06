@@ -79,6 +79,17 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, mipp::vector<Q> &Le_N)
 {
+	if (Le_N.size() * 2 > proba_msg_bits.size())
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
+		                        "\"proba_msg_bits.size()\".");
+
+	this->decode(Lch_N.data(), Le_N.data());
+}
+
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+void CPM_BCJR<SIN,SOUT,Q,MAX>
+::decode(const Q *Lch_N, Q *Le_N)
+{
 	std::fill(symb_apriori_prob.begin(), symb_apriori_prob.end(), (Q)0);
 
 	compute_alpha_beta_gamma(Lch_N);
@@ -91,6 +102,25 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, const mipp::vector<Q> &Ldec_N, mipp::vector<Q> &Le_N)
 {
+	if (Ldec_N.size() != (symb_apriori_prob.size()/cpm.m_order - cpm.tl) * cpm.n_b_per_s)
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Ldec_N.size()\" has to be equal to "
+		                        "(\"symb_apriori_prob.size()\" / \"cpm.m_order\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
+
+	if (Le_N.size() * 2 > proba_msg_bits.size())
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
+		                        "\"proba_msg_bits.size()\".");
+
+	if (Le_N.size() != Ldec_N.size())
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal to \"Ldec_N.size()\".");
+
+	this->decode(Lch_N.data(), Ldec_N.data(), Le_N.data());
+}
+
+
+template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
+void CPM_BCJR<SIN,SOUT,Q,MAX>
+::decode(const Q *Lch_N, const Q *Ldec_N, Q *Le_N)
+{
 	LLR_to_logsymb_proba    (Ldec_N      );
 	compute_alpha_beta_gamma(Lch_N       );
 	symboles_probas         (            );
@@ -100,15 +130,11 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
-::LLR_to_logsymb_proba(const mipp::vector<Q> &Ldec_N)
+::LLR_to_logsymb_proba(const Q *Ldec_N)
 {
-	if (Ldec_N.size() != (symb_apriori_prob.size()/cpm.m_order - cpm.tl) * cpm.n_b_per_s)
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Ldec_N.size()\" has to be equal to "
-		                        "(\"symb_apriori_prob.size()\" / \"cpm.m_order\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
-
 	std::fill(symb_apriori_prob.begin(), symb_apriori_prob.end(), (Q)0);
 
-	for (int i = 0; i < (int)Ldec_N.size()/cpm.n_b_per_s; i++)
+	for (int i = 0; i < (int)symb_apriori_prob.size() / cpm.m_order - cpm.tl; i++)
 		for (int tr = 0; tr < cpm.m_order; tr++)
 		{
 			for (int b = 0; b < cpm.n_b_per_s; b++)
@@ -122,9 +148,9 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
-::compute_alpha_beta_gamma(const mipp::vector<Q> &Lch_N)
+::compute_alpha_beta_gamma(const Q *Lch_N)
 {
-    // alpha and beta initialization
+	// alpha and beta initialization
 	std::fill(alpha.begin(), alpha.end(), negative_inf<Q>());
 	std::fill(beta .begin(), beta .end(), negative_inf<Q>());
 	alpha[                                 cpm.allowed_states[0]] = 0;
@@ -204,32 +230,20 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
-::compute_ext(mipp::vector<Q> &Le_N)
+::compute_ext(Q *Le_N)
 {
-	if (Le_N.size() * 2 > proba_msg_bits.size())
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
-		                        "\"proba_msg_bits.size()\".");
-
-	// remove tail bits because Le_N.size*2 <= proba_msg_bits.size + modulation tail bits
-	for (auto i = 0; i < (int)Le_N.size(); i ++)
+	// remove tail bits
+	for (auto i = 0; i < frame_size - cpm.tl; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - proba_msg_bits[i*2 +1];
 }
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
-::compute_ext(const mipp::vector<Q> &Ldec_N,
-                    mipp::vector<Q> &Le_N)
+::compute_ext(const Q *Ldec_N, Q *Le_N)
 {
-	if (Le_N.size() * 2 > proba_msg_bits.size())
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
-		                        "\"proba_msg_bits.size()\".");
-
-	if (Le_N.size() != Ldec_N.size())
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal to \"Ldec_N.size()\".");
-
-	// remove tail bits because Le_N.size*2 <= proba_msg_bits.size + modulation tail bits
-	for (auto i = 0; i < (int)Le_N.size(); i ++)
+	// remove tail bits
+	for (auto i = 0; i < frame_size - cpm.tl; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
 }

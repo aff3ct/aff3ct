@@ -17,9 +17,9 @@ Source_AZCW<B>
 
 template <typename B>
 void Source_AZCW<B>
-::_generate(mipp::vector<B>& U_K)
+::generate(B *U_K)
 {
-	std::fill(U_K.begin(), U_K.end(), 0);
+	std::fill(U_K, U_K + this->K * this->n_frames, 0);
 }
 
 // ==================================================================================== explicit template instantiation 

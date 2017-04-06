@@ -16,8 +16,8 @@ public:
 	Encoder_AZCW(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_AZCW");
 	virtual ~Encoder_AZCW();
 
-	void _encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-	void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
+	void encode    (const B *U_K, B *X_N);
+	void encode_sys(const B *U_K, B *par);
 };
 }
 }

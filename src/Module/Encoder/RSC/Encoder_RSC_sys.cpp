@@ -36,7 +36,7 @@ int Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::_encode_fbf(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N)
 {
 	if (buffered_encoding)
 	{
@@ -49,7 +49,7 @@ void Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::_encode_sys_fbf(const B *U_K, B *par)
+::_encode_sys(const B *U_K, B *par)
 {
 	// par bits: [par | tail bit sys | tail bits par]
 	__encode(U_K, par, 1, true);

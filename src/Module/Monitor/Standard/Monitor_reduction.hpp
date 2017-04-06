@@ -19,8 +19,9 @@ private:
 	const std::string           error_tracker_head_file_name;
 
 public:
-	Monitor_reduction(const int& K, const int& N, const unsigned& max_fe, std::vector<Monitor<B,R>*>& monitors,
-	                  const int& n_frames = 1, const std::string name = "Monitor_reduction");
+	Monitor_reduction(const int& K, const int& N, const int& N_mod, const unsigned& max_fe,
+	                  std::vector<Monitor<B,R>*>& monitors, const int& n_frames = 1,
+	                  const std::string name = "Monitor_reduction");
 	virtual ~Monitor_reduction();
 
 	unsigned long long get_n_analyzed_fra() const;

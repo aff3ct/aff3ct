@@ -161,7 +161,7 @@ void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
-::_soft_decode_fbf(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

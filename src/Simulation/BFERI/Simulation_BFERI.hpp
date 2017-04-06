@@ -78,18 +78,18 @@ protected:
 	virtual void release_objects   ();
 	virtual void launch_postcompute();
 
-	virtual module::Source     <B    >* build_source     (                const int tid = 0);
-	virtual module::CRC        <B    >* build_crc        (                const int tid = 0);
-	virtual module::Encoder    <B    >* build_encoder    (                const int tid = 0);
-	virtual module::Interleaver<int  >* build_interleaver(                const int tid = 0);
-	virtual module::Modulator  <B,R,Q>* build_modulator  (                const int tid = 0);
-	virtual module::Channel    <R    >* build_channel    (const int size, const int tid = 0);
-	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int size, const int tid = 0);
-	virtual module::SISO       <Q    >* build_siso       (                const int tid = 0) = 0;
-	virtual module::Coset      <B,Q  >* build_coset_real (                const int tid = 0);
-	virtual module::Decoder    <B,Q  >* build_decoder    (                const int tid = 0) = 0;
-	virtual module::Coset      <B,B  >* build_coset_bit  (                const int tid = 0);
-	virtual module::Monitor    <B,R  >* build_monitor    (                const int tid = 0);
+	virtual module::Source     <B    >* build_source     (const int tid = 0);
+	virtual module::CRC        <B    >* build_crc        (const int tid = 0);
+	virtual module::Encoder    <B    >* build_encoder    (const int tid = 0);
+	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0);
+	virtual module::Modulator  <B,R,Q>* build_modulator  (const int tid = 0);
+	virtual module::Channel    <R    >* build_channel    (const int tid = 0);
+	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int tid = 0);
+	virtual module::SISO       <Q    >* build_siso       (const int tid = 0) = 0;
+	virtual module::Coset      <B,Q  >* build_coset_real (const int tid = 0);
+	virtual module::Decoder    <B,Q  >* build_decoder    (const int tid = 0) = 0;
+	virtual module::Coset      <B,B  >* build_coset_bit  (const int tid = 0);
+	virtual module::Monitor    <B,R  >* build_monitor    (const int tid = 0);
 };
 }
 }

@@ -10,10 +10,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_reduction<B,R>
-::Monitor_reduction(const int& K, const int& N, const unsigned& max_fe, std::vector<Monitor<B,R>*>& monitors,
-                    const int& n_frames, const std::string name)
-: Monitor_std<B,R>(K, N, max_fe, n_frames, name),
-  monitors        (monitors                    )
+::Monitor_reduction(const int& K, const int& N, const int& N_mod, const unsigned& max_fe,
+                    std::vector<Monitor<B,R>*>& monitors, const int& n_frames, const std::string name)
+: Monitor_std<B,R>(K, N, N_mod, max_fe, n_frames, name),
+  monitors        (monitors                           )
 {
 	if (monitors.size() == 0)
 		throw std::length_error("aff3ct::module::Monitor_reduction: \"monitors.size()\" has to be greater than 0.");
@@ -80,21 +80,6 @@ void Monitor_reduction<B,R>
 		                            "log files, check the base path (\"" + base_path + "\").");
 
 	auto n_fe = get_n_fe();
-	int Y_size = 0;
-	// get Y_size
-	for (unsigned i = 0; i <= monitors.size(); i++)
-	{
-		auto mon = (i == monitors.size()) ? this : monitors[i];
-
-		// write noise
-		auto buff_noise = mon->get_buff_noise();
-
-		if (buff_noise.empty())
-			continue;
-
-		Y_size = (int)buff_noise.front().size();
-		break;
-	}
 
 	// write headers
 	file_src << n_fe          << std::endl << std::endl; // write number frames
@@ -104,8 +89,8 @@ void Monitor_reduction<B,R>
 	file_enc << this->get_K() << std::endl << std::endl; // write length of non coded frames
 	file_enc << this->get_N() << std::endl << std::endl; // write length of coded frames
 
-	file_noise.write((char *)&n_fe  , sizeof(n_fe  )); // write number frames
-	file_noise.write((char *)&Y_size, sizeof(Y_size)); // write length of frames
+	file_noise.write((char *)&n_fe,        sizeof(n_fe       )); // write number frames
+	file_noise.write((char *)&this->N_mod, sizeof(this->N_mod)); // write length of frames
 
 	// write frames
 	for (unsigned i = 0; i <= monitors.size(); i++)

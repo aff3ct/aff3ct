@@ -21,11 +21,10 @@ Channel_AWGN_MKL_LR<R>
 
 template <typename R>
 void Channel_AWGN_MKL_LR<R>
-::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
-	Channel_AWGN_MKL_LLR<R>::add_noise(X_N, Y_N);
-	auto size = Y_N.size();
-	for (unsigned i = 0; i < size; i++)
+	Channel_AWGN_MKL_LLR<R>::_add_noise(X_N, Y_N);
+	for (auto i = 0; i < this->N * this->n_frames; i++)
 		Y_N[i] = std::exp(Y_N[i]);
 }
 

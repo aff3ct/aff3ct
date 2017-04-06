@@ -30,13 +30,13 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 
 template <typename B, typename R>
 Monitor_reduction_mpi<B,R>
-::Monitor_reduction_mpi(const int& K, const int& N, const int& max_fe,
+::Monitor_reduction_mpi(const int& K, const int& N, const int& N_mod, const int& max_fe,
                         std::vector<Monitor<B,R>*>& monitors,
                         const std::thread::id master_thread_id,
                         const std::chrono::nanoseconds d_mpi_comm_frequency,
                         const int& n_frames,
                         const std::string name)
-: Monitor_reduction<B,R>(K, N, max_fe, monitors, n_frames, name),
+: Monitor_reduction<B,R>(K, N, N_mod, max_fe, monitors, n_frames, name),
   master_thread_id(master_thread_id),
   is_fe_limit_achieved(false),
   t_last_mpi_comm(std::chrono::steady_clock::now()),

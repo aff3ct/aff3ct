@@ -20,7 +20,8 @@ public:
 	                      const std::string name = "CRC_polynomial_double");
 	virtual ~CRC_polynomial_double(){};
 
-	virtual void build(mipp::vector<B>& U_K);
+protected:
+	virtual void _build(B *U_K);
 };
 }
 }

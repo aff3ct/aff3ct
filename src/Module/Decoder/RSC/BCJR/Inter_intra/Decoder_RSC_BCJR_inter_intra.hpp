@@ -25,13 +25,13 @@ public:
 	                             const std::string name = "Decoder_RSC_BCJR_inter_intra");
 	virtual ~Decoder_RSC_BCJR_inter_intra();
 
+	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
+	                 const int n_frames = -1);
+
 protected:
 	void _load (const R *Y_N);
 	void _store(      B *V_K) const;
-
-	void _soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
-	                  const int n_frames = -1);
-	void _soft_decode_fbf(const R *sys, const R *par, R *ext);
+	void _soft_decode(const R *sys, const R *par, R *ext);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

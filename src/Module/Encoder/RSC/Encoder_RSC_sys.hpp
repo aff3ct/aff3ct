@@ -30,8 +30,8 @@ public:
 	virtual std::vector<std::vector<int>> get_trellis();
 
 protected:
-	void _encode_fbf    (const B *U_K, B *X_N);
-	void _encode_sys_fbf(const B *U_K, B *par);
+	void _encode    (const B *U_K, B *X_N);
+	void _encode_sys(const B *U_K, B *par);
 
 	void __encode(const B* U_K, B* X_N, const int stride = 1, const bool only_parity = false);
 	
