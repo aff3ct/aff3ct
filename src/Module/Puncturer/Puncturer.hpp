@@ -84,14 +84,14 @@ public:
 			throw std::length_error("aff3ct::module::Puncturer: \"X_N2.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
-		this->_puncture(X_N1, X_N2);
+		this->puncture(X_N1.data(), X_N2.data());
 	}
 
-	virtual void _puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+	virtual void puncture(const B *X_N1, B *X_N2) const
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_puncture_fbf(X_N1.data() + f * this->N_code,
-			                    X_N2.data() + f * this->N);
+			this->_puncture(X_N1 + f * this->N_code,
+			                X_N2 + f * this->N);
 	}
 
 	/*!
@@ -110,25 +110,25 @@ public:
 			throw std::length_error("aff3ct::module::Puncturer: \"Y_N2.size()\" has to be equal to "
 			                        "\"N_code\" * \"n_frames\".");
 
-		this->_depuncture(Y_N1, Y_N2);
+		this->depuncture(Y_N1.data(), Y_N2.data());
 	}
 
-	virtual void _depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+	virtual void depuncture(const Q *Y_N1, Q *Y_N2) const
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_depuncture_fbf(Y_N1.data() + f * this->N,
-			                      Y_N2.data() + f * this->N_code);
+			this->_depuncture(Y_N1 + f * this->N,
+			                  Y_N2 + f * this->N_code);
 	}
 
 protected:
-	virtual void _puncture_fbf(const B *X_N1, B *X_N2) const
+	virtual void _puncture(const B *X_N1, B *X_N2) const
 	{
-		throw std::runtime_error("aff3ct::module::Puncturer: \"_puncture_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Puncturer: \"_puncture\" is unimplemented.");
 	}
 
-	virtual void _depuncture_fbf(const Q *Y_N1, Q *Y_N2) const
+	virtual void _depuncture(const Q *Y_N1, Q *Y_N2) const
 	{
-		throw std::runtime_error("aff3ct::module::Puncturer: \"_depuncture_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Puncturer: \"_depuncture\" is unimplemented.");
 	}
 };
 }

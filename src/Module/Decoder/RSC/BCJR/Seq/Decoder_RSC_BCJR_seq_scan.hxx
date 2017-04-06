@@ -450,7 +450,7 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 
 template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
-::_soft_decode_fbf(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

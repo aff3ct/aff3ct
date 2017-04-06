@@ -99,14 +99,14 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::_hard_decode_fbf(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_soft_decode_fbf(sys.data(), par.data(), ext.data());
+	this->_soft_decode(sys.data(), par.data(), ext.data());
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

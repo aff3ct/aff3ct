@@ -35,7 +35,7 @@ public:
 
 	int tail_length() const { return enco_n.tail_length() + enco_i.tail_length(); }
 
-	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	virtual void encode(const B *U_K, B *X_N);
 };
 }
 }

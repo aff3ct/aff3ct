@@ -102,7 +102,30 @@ public:
 	                       const bool             frame_reordering = false,
 	                       const int              n_frames = -1) const
 	{
-		this->_interleave(natural_vec, interleaved_vec, pi, frame_reordering, n_frames);
+		if (n_frames != -1 && n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::Interleaver: \"n_frames\" has to be greater than 0 "
+			                            "(or equal to -1).");
+
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+		if (natural_vec.size() != interleaved_vec.size())
+			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal to "
+			                        "\"interleaved_vec.size()\".");
+
+		if (natural_vec.size() < this->size() * real_n_frames)
+			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal or greater "
+			                        "than \"this->size()\" * \"real_n_frames\".");
+
+		this->interleave(natural_vec.data(), interleaved_vec.data(), frame_reordering, real_n_frames);
+	}
+
+	template <typename D>
+	inline void interleave(const D *natural_vec, D *interleaved_vec,
+	                       const bool frame_reordering = false,
+	                       const int  n_frames = -1) const
+	{
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+		this->_interleave(natural_vec, interleaved_vec, pi, frame_reordering, real_n_frames);
 	}
 
 	/*!
@@ -123,8 +146,31 @@ public:
 	                               mipp::vector<D> &natural_vec, 
 	                         const bool             frame_reordering = false,
 	                         const int              n_frames = -1) const
-	{ 
-		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering, n_frames);
+	{
+		if (n_frames != -1 && n_frames <= 0)
+			throw std::invalid_argument("aff3ct::module::Interleaver: \"n_frames\" has to be greater than 0 "
+			                            "(or equal to -1).");
+
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+		if (natural_vec.size() != interleaved_vec.size())
+			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal to "
+			                        "\"interleaved_vec.size()\".");
+
+		if (natural_vec.size() < this->size() * real_n_frames)
+			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal or greater "
+			                        "than \"this->size()\" * \"real_n_frames\".");
+
+		this->_interleave(interleaved_vec.data(), natural_vec.data(), pi_inv, frame_reordering, real_n_frames);
+	}
+
+	template <typename D>
+	inline void _deinterleave(const D *interleaved_vec, D *natural_vec,
+	                          const bool frame_reordering = false,
+	                          const int  n_frames = -1) const
+	{
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering, real_n_frames);
 	}
 
 	/*!
@@ -166,77 +212,33 @@ public:
 
 private:
 	template <typename D>
-	inline void _interleave(const mipp::vector<D> &in_vec, 
-	                              mipp::vector<D> &out_vec,
+	inline void _interleave(const D *in_vec, D *out_vec,
 	                        const mipp::vector<T> &lookup_table,
-	                        const bool             frame_reordering = false,
-	                        const int              n_frames = -1) const
+	                        const bool frame_reordering,
+	                        const int  n_frames) const
 	{
-		if (n_frames != -1 && n_frames <= 0)
-			throw std::invalid_argument("aff3ct::module::Interleaver: \"n_frames\" has to be greater than 0 "
-			                            "(or equal to -1).");
-
-		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-
-		if (in_vec.size() != out_vec.size())
-			throw std::length_error("aff3ct::module::Interleaver: \"in_vec.size()\" has to be equal to "
-			                        "\"out_vec.size()\".");
-
-		if (in_vec.size() < lookup_table.size() * real_n_frames)
-			throw std::length_error("aff3ct::module::Interleaver: \"in_vec.size()\" has to be equal or greater than "
-			                        "\"lookup_table.size()\" * \"real_n_frames\".");
-
 		const auto frame_size = (int)lookup_table.size();
 
 		if (frame_reordering)
 		{
 			// vectorized interleaving
-			if (real_n_frames == mipp::nElReg<D>())
-			{
+			if (n_frames == mipp::nElReg<D>())
 				for (auto i = 0; i < frame_size; i++)
 					mipp::store<D>(&out_vec[i * mipp::nElReg<D>()], 
 					               mipp::load<D>(&in_vec[lookup_table[i] * mipp::nElReg<D>()]));
-			}
 			else
-			{
-				if ((real_n_frames == 4 && typeid(D) == typeid(signed char)) && // partially vectorized interleaving
-				    (in_vec.size() >= (unsigned)(frame_size * real_n_frames + mipp::nElReg<D>())))
+				for (auto i = 0; i < frame_size; i++)
 				{
-					const signed char mask[32] = { 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
-					                              -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-					const auto r_mask = mipp::set<signed char>(mask);
-
-					for (auto i = 0; i < frame_size; i++)
-					{
-						const auto off1 =              i  * real_n_frames;
-						const auto off2 = lookup_table[i] * real_n_frames;
-
-						auto r_ld = mipp::loadu<D>(&in_vec[off2]);
-						auto r_st = mipp::loadu<D>(&in_vec[off1]);
-
-						r_ld = mipp::andnb<D>(r_mask, r_ld);
-						r_st = mipp::andb <D>(r_mask, r_st);
-						r_st = mipp::xorb <D>(r_ld,   r_st);
-
-						mipp::storeu<D>(&out_vec[off1], r_st);
-					}
+					const auto off1 =              i  * n_frames;
+					const auto off2 = lookup_table[i] * n_frames;
+					for (auto f = 0; f < n_frames; f++)
+						out_vec[off1 +f] = in_vec[off2 +f];
 				}
-				else // sequential interleaving
-				{
-					for (auto i = 0; i < frame_size; i++)
-					{
-						const auto off1 =              i  * real_n_frames;
-						const auto off2 = lookup_table[i] * real_n_frames;
-						for (auto f = 0; f < real_n_frames; f++)
-							out_vec[off1 +f] = in_vec[off2 +f];
-					}
-				}
-			}
 		}
 		else // sequential interleaving
 		{
 			// TODO: vectorize this code with the new AVX gather instruction
-			for (auto f = 0; f < real_n_frames; f++)
+			for (auto f = 0; f < n_frames; f++)
 			{
 				const auto off = f * frame_size;
 				for (auto i = 0; i < frame_size; i++)

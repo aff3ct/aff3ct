@@ -23,10 +23,10 @@ public:
 
 	static  int  size (std::string poly_key);
 	virtual int  size (                    ) const;
-	virtual void build(mipp::vector<B>& U_K);
 
 protected:
-	virtual bool _check_fbf(const B *V_K);
+	virtual void _build(B *U_K);
+	virtual bool _check(const B *V_K);
 
 	void _generate(const B *U_in,
 	                     B *U_out,

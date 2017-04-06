@@ -40,7 +40,7 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_naive_CA_self_corrected<B,R>
-::_hard_decode_fbf(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -67,7 +67,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 			this->l_sen[i] = this->l_sn[i];
 
 		// SISO in the natural domain
-		this->siso_n._soft_decode(this->l_sen, this->l_pn, this->l_e2n, n_frames);
+		this->siso_n.soft_decode(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
 		// the CRC is here because it is convenient to do not have to make the interleaving process!
 		if (ite >= start_check_crc)
@@ -104,7 +104,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 				this->l_sei[i] = this->l_si[i];
 
 			// SISO in the interleave domain
-			this->siso_i._soft_decode(this->l_sei, this->l_pi, this->l_e2i, n_frames);
+			this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
 			if (ite != this->n_ite)
 				// apply the scaling factor

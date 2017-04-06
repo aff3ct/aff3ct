@@ -117,7 +117,6 @@ void Launcher_BFER<B,R,Q>
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
 
-
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
 	if (this->params.code.coset)

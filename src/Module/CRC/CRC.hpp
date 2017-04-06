@@ -71,7 +71,19 @@ public:
 	 * \param U_K: a vector (size = K - CRC<B>::size()) containing the information bits, adds "CRC<B>::size()" bits in
 	 *             U_K.
 	 */
-	virtual void build(mipp::vector<B>& U_K) = 0;
+	void build(mipp::vector<B>& U_K)
+	{
+		if (this->K * this->n_frames != (int)U_K.size())
+			throw std::length_error("aff3ct::module::CRC: \"U_K.size()\" has to be equal to \"K\" * \"n_frames\".");
+
+		this->build(U_K.data());
+	}
+
+	virtual void build(B *U_K)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_build(U_K + f * this->K);
+	}
 
 	/*!
 	 * \brief Checks if the CRC is verified or not.
@@ -84,32 +96,37 @@ public:
 	 */
 	bool check(const mipp::vector<B>& V_K, const int n_frames = -1)
 	{
-		if (this->K * n_frames > (int)V_K.size() || this->K * this->n_frames > (int)V_K.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal or greater than "
-			                        "\"K\" * \"n_frames\".");
+		if (this->K * n_frames != (int)V_K.size() || this->K * this->n_frames != (int)V_K.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal to \"K\" * \"n_frames\".");
 
 		if (n_frames <= 0 && n_frames != -1)
 			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
 			                            "to -1).");
 
-		return this->_check(V_K, n_frames);
+		return this->check(V_K.data(), n_frames);
 	}
 
-	virtual bool _check(const mipp::vector<B>& V_K, const int n_frames = -1)
+	virtual bool check(const B *V_K, const int n_frames = -1)
 	{
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		auto f = 0;
-		while (f < real_n_frames && this->_check_fbf(V_K.data() + f * this->K))
+		while (f < real_n_frames && this->_check(V_K + f * this->K))
 			f++;
 
 		return f == real_n_frames;
 	}
 
 protected:
-	virtual bool _check_fbf(const B *V_K)
+	virtual bool _build(const B *V_K)
 	{
-		throw std::runtime_error("aff3ct::module::CRC: \"_check_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::CRC: \"_build\" is unimplemented.");
+		return false;
+	}
+
+	virtual bool _check(const B *V_K)
+	{
+		throw std::runtime_error("aff3ct::module::CRC: \"_check\" is unimplemented.");
 		return false;
 	}
 };

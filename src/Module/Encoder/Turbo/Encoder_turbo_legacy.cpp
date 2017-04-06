@@ -25,11 +25,11 @@ Encoder_turbo_legacy<B>
 
 template <typename B>
 void Encoder_turbo_legacy<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::encode(const B *U_K, B *X_N)
 {
-	pi.interleave (U_K,   U_K_i);
-	sub_enc.encode(U_K,   X_N_n);
-	sub_enc.encode(U_K_i, X_N_i);
+	pi.interleave (U_K,          U_K_i.data());
+	sub_enc.encode(U_K,          X_N_n.data());
+	sub_enc.encode(U_K_i.data(), X_N_i.data());
 
 	for (auto f = 0; f < this->n_frames; f++)
 	{

@@ -281,7 +281,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::_soft_decode_fbf(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
@@ -292,7 +292,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
-::_soft_decode_fbf(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2)
 {
 	if (!this->buffered_encoding)
 		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_seq_generic_std: \"buffered_encoding\" has to be "

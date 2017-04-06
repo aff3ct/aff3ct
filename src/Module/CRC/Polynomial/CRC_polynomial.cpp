@@ -44,21 +44,9 @@ int CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::build(mipp::vector<B>& U_K)
+::_build(B *U_K)
 {
-	if (U_K.size() <= (unsigned)(this->n_frames * this->size()))
-		throw std::length_error("aff3ct::module::CRC_polynomial: \"U_K.size()\" has to be greater "
-		                        "than \"n_frames\" * \"size\".");
-
-	if (U_K.size() != (unsigned)(this->n_frames * this->K))
-		throw std::length_error("aff3ct::module::CRC_polynomial: \"U_K.size()\" has to be equal "
-		                        "to \"n_frames\" * \"K\".");
-
-	for (auto f = 0; f < this->n_frames; f++)
-		this->_generate(U_K.data(), U_K.data(),
-		                this->K * f, 
-		                this->K * f + (this->K - this->size()), 
-		                this->K - this->size());
+	this->_generate(U_K, U_K, 0, this->K - this->size(), this->K - this->size());
 }
 
 template <typename B>
@@ -83,7 +71,7 @@ void CRC_polynomial<B>
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check_fbf(const B *V_K)
+::_check(const B *V_K)
 {
 	this->_generate(V_K, this->buff_crc.data(), 0, this->K - this->size(), this->K - this->size());
 

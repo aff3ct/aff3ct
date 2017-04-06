@@ -30,7 +30,7 @@ public:
 	virtual ~Decoder_RA();
 
 protected:
-	void _hard_decode_fbf(const R *Y_N, B *V_K);
+	void _hard_decode(const R *Y_N, B *V_K);
 
 private:
 	R check_node(R a, R b);

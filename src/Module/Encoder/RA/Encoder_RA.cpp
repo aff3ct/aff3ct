@@ -19,7 +19,7 @@ Encoder_RA<B>
 
 template <typename B>
 void Encoder_RA<B>
-::_encode_fbf(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N)
 {
 	// repetition
 	for (auto i = 0; i < this->K; i++)

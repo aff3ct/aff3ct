@@ -33,9 +33,9 @@ Channel_AWGN_GSL_LLR<R>
 
 template <typename R>
 void Channel_AWGN_GSL_LLR<R>
-::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
-	for (unsigned i = 0; i < X_N.size(); i++)
+	for (auto i = 0; i < this->N * this->n_frames; i++)
 	{
 		double r1 = gsl_ran_gaussian(rng, sigma);
 		Y_N[i] = (R)X_N[i] + (R)r1;

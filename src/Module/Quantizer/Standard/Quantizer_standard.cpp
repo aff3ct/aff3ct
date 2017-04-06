@@ -106,9 +106,9 @@ Quantizer_standard<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_standard<R,Q>
-::_process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const R *Y_N1, Q *Y_N2)
 {
-	auto size = Y_N1.size();
+	auto size = (unsigned)(this->N * this->n_frames);
 	for (unsigned i = 0; i < size; i++)
 		Y_N2[i] = (Q)saturate((R)std::round((R)factor * Y_N1[i]), (R)val_min, (R)val_max);
 }

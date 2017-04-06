@@ -190,7 +190,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_std<B,R,MAX>
-::_soft_decode_fbf(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

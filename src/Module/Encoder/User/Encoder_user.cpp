@@ -71,7 +71,7 @@ Encoder_user<B>
 
 template <typename B>
 void Encoder_user<B>
-::_encode_fbf(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N)
 {
 	std::copy(this->codewords[this->cw_counter].begin(),
 	          this->codewords[this->cw_counter].end  (),

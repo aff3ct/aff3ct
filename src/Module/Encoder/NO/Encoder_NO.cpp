@@ -21,9 +21,9 @@ Encoder_NO<B>
 
 template <typename B>
 void Encoder_NO<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::encode(const B *U_K, B *X_N)
 {
-	X_N = U_K;
+	std::copy(U_K, U_K + this->N * this->n_frames, X_N);
 }
 
 // ==================================================================================== explicit template instantiation 

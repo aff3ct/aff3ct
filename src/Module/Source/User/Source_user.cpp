@@ -65,7 +65,7 @@ Source_user<B>
 
 template <typename B>
 void Source_user<B>
-::_generate_fbf(B *U_K)
+::_generate(B *U_K)
 {
 	std::copy(this->source[this->src_counter].begin(),
 	          this->source[this->src_counter].end  (),

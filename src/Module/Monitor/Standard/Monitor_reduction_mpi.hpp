@@ -29,7 +29,7 @@ private:
 	MPI_Op       MPI_SUM_monitor_vals;
 
 public:
-	Monitor_reduction_mpi(const int& K, const int& N, const int& max_fe,
+	Monitor_reduction_mpi(const int& K, const int& N, const int& N_mod, const int& max_fe,
 	                      std::vector<Monitor<B,R>*>& monitors,
 	                      const std::thread::id master_thread_id,
 	                      const std::chrono::nanoseconds d_mpi_comm_frequency = std::chrono::milliseconds(1000),
