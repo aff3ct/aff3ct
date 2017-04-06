@@ -64,7 +64,7 @@ void Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::_encode_fbf(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N)
 {
 	for (unsigned i = 0; i < G.size(); i++)
 	{
