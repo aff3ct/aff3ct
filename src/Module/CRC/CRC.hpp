@@ -118,7 +118,7 @@ public:
 	}
 
 protected:
-	virtual void _build(const B *V_K)
+	virtual void _build(B *V_K)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_build\" is unimplemented.");
 	}
