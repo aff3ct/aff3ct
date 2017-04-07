@@ -107,7 +107,7 @@ Quantizer_fast<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_fast<R,Q>
-::_process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const R *Y_N1, Q *Y_N2)
 {
 	throw std::runtime_error("aff3ct::module::Quantizer_fast: this class only support \"float to short\" "
 	                         "or \"float to signed char\".");
@@ -119,9 +119,9 @@ namespace module
 {
 template<>
 void Quantizer_fast<float,short>
-::_process(const mipp::vector<float>& Y_N1, mipp::vector<short>& Y_N2)
+::process(const float *Y_N1, short *Y_N2)
 {
-	auto size = (unsigned)Y_N1.size();
+	auto size = (unsigned)(this->N * this->n_frames);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
 
@@ -151,9 +151,9 @@ namespace module
 {
 template<>
 void Quantizer_fast<float,signed char>
-::_process(const mipp::vector<float>& Y_N1, mipp::vector<signed char>& Y_N2)
+::process(const float *Y_N1, signed char *Y_N2)
 {
-	auto size = (unsigned)Y_N1.size();
+	auto size = (unsigned)(this->N * this->n_frames);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;
 

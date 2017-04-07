@@ -77,8 +77,8 @@ public:
 	SC_Monitor_module<B,R> *module;
 
 public:
-	SC_Monitor(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_i<B,R>(K, N, n_frames, name), module(nullptr) {}
+	SC_Monitor(const int K, const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Monitor")
+	: Monitor_i<B,R>(K, N, N_mod, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (module != nullptr) { delete module; module = nullptr; }};
 

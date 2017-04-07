@@ -47,10 +47,10 @@ public:
 
 protected:
 	// soft decode
-	void _soft_decode_fbf(const R *Y_N1, R *Y_N2);
+	void _soft_decode(const R *Y_N1, R *Y_N2);
 
 	// hard decoder
-	void _hard_decode_fbf(const R *Y_N, B *V_K);
+	void _hard_decode(const R *Y_N, B *V_K);
 
 	// BP functions for decoding
 	void BP_decode(const R *Y_N);

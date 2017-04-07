@@ -52,14 +52,14 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::_hard_decode_fbf(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K)
 {
 	sc_decoder.d_load_total  = std::chrono::nanoseconds(0);
 	sc_decoder.d_decod_total = std::chrono::nanoseconds(0);
 	sc_decoder.d_store_total = std::chrono::nanoseconds(0);
 
 	this->L = 1;
-	sc_decoder._hard_decode_fbf(Y_N, V_K);
+	sc_decoder._hard_decode(Y_N, V_K);
 
 	this->d_load_total  += sc_decoder.d_load_total;
 	this->d_decod_total += sc_decoder.d_decod_total;
@@ -67,7 +67,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 	auto t_decod = std::chrono::steady_clock::now();
 	// check the CRC
-	auto crc_decode_result = this->crc._check(V_K, this->get_simd_inter_frame_level());
+	auto crc_decode_result = this->crc.check(V_K, this->get_simd_inter_frame_level());
 
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)

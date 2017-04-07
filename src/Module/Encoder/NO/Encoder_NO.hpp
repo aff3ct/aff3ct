@@ -14,7 +14,7 @@ public:
 	Encoder_NO(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_NO");
 	virtual ~Encoder_NO();
 
-	void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+	void encode(const B *U_K, B *X_N);
 };
 }
 }

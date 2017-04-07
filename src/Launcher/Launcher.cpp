@@ -11,6 +11,7 @@
 #include <mpi.h>
 #endif
 
+#include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher.hpp"
@@ -432,6 +433,13 @@ int Launcher<B,R,Q>
 	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
 	{
 		this->store_args();
+
+		params.code.N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params,
+		                                                                               params.code.N +
+		                                                                               params.code.tail_length);
+		params.code.N_fil = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params,
+		                                                                               params.code.N +
+		                                                                               params.code.tail_length);
 
 		display_help = false;
 

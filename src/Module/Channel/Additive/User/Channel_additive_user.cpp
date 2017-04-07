@@ -59,15 +59,12 @@ Channel_additive_user<R>
 
 template <typename R>
 void Channel_additive_user<R>
-::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const R *X_N, R *Y_N)
 {
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		for (auto i = 0; i < this->N; i++)
-			Y_N[f * this->N +i] = X_N[f * this->N +i] + this->noise[this->noise_counter][i];
+	for (auto i = 0; i < this->N; i++)
+		Y_N[i] = X_N[i] + this->noise[this->noise_counter][i];
 
-		this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
-	}
+	this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
 }
 
 // ==================================================================================== explicit template instantiation 

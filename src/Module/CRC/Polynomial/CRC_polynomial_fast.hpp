@@ -21,11 +21,10 @@ public:
 	                    const std::string name = "CRC_polynomial_fast");
 	virtual ~CRC_polynomial_fast(){};
 
-	virtual void build(mipp::vector<B>& U_K);
-
 protected:
-	virtual bool _check_fbf       (const B *V_K);
-	virtual bool _check_packed_fbf(const B *V_K);
+	virtual void _build       (      B *U_K);
+	virtual bool _check       (const B *V_K);
+	virtual bool _check_packed(const B *V_K);
 
 private:
 	inline unsigned compute_crc_v1(const void* data, const int n_bits);

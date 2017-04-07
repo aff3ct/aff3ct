@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Tools/Math/max.h"
 
 #include "Module/Modulator/BPSK/Modulator_BPSK.hpp"
@@ -125,6 +127,36 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	}
 
 	return modulator;
+}
+
+template <typename B, typename R, typename Q>
+int Factory_modulator<B,R,Q>
+::get_buffer_size_after_modulation(const parameters &params, const int N)
+{
+	if      (params.modulator.type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_mod(N);
+	else if (params.modulator.type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_mod(N);
+	else if (params.modulator.type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "USER"     ) return Modulator_user     <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "CPM"      ) return Modulator_CPM      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol, params.modulator.cpm_L, params.modulator.upsample_factor);
+
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: unknown type of modulator.");
+}
+
+template <typename B, typename R, typename Q>
+int Factory_modulator<B,R,Q>
+::get_buffer_size_after_filtering(const parameters &params, const int N)
+{
+	if      (params.modulator.type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_fil(N);
+	else if (params.modulator.type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_fil(N);
+	else if (params.modulator.type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "USER"     ) return Modulator_user     <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "CPM"      ) return Modulator_CPM      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol, params.modulator.cpm_L, params.modulator.cpm_p);
+
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: unknown type of modulator.");
 }
 
 // ==================================================================================== explicit template instantiation 

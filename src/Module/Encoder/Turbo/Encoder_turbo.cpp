@@ -28,12 +28,12 @@ Encoder_turbo<B>
 
 template <typename B>
 void Encoder_turbo<B>
-::_encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::encode(const B *U_K, B *X_N)
 {
-	pi.interleave(U_K, U_K_i);
+	pi.interleave(U_K, U_K_i.data());
 
-	enco_n.encode_sys(U_K,   par_n);
-	enco_i.encode_sys(U_K_i, par_i);
+	enco_n.encode_sys(U_K,          par_n.data());
+	enco_i.encode_sys(U_K_i.data(), par_i.data());
 
 	const auto N_without_tb = this->N - (enco_n.tail_length() + enco_i.tail_length());
 	const auto p_si = (N_without_tb - this->K) / 2; // size of the parity
@@ -46,11 +46,11 @@ void Encoder_turbo<B>
 		const auto off_pn = f * (p_si + t_n);               // off_par_n
 		const auto off_pi = f * (p_si + t_i);               // off_par_i
 
-		std::copy(  U_K.begin() +off_U       ,   U_K.begin() +off_U  +this->K  , X_N.begin() +off_X                       );
-		std::copy(par_n.begin() +off_pn      , par_n.begin() +off_pn +p_si     , X_N.begin() +off_X +this->K              );
-		std::copy(par_i.begin() +off_pi      , par_i.begin() +off_pi +p_si     , X_N.begin() +off_X +this->K + 1*p_si     );
-		std::copy(par_n.begin() +off_pn +p_si, par_n.begin() +off_pn +p_si +t_n, X_N.begin() +off_X +this->K + 2*p_si     );
-		std::copy(par_i.begin() +off_pi +p_si, par_i.begin() +off_pi +p_si +t_i, X_N.begin() +off_X +this->K + 2*p_si +t_n);
+		std::copy(  U_K         +off_U       ,   U_K         +off_U  +this->K  , X_N +off_X                       );
+		std::copy(par_n.begin() +off_pn      , par_n.begin() +off_pn +p_si     , X_N +off_X +this->K              );
+		std::copy(par_i.begin() +off_pi      , par_i.begin() +off_pi +p_si     , X_N +off_X +this->K + 1*p_si     );
+		std::copy(par_n.begin() +off_pn +p_si, par_n.begin() +off_pn +p_si +t_n, X_N +off_X +this->K + 2*p_si     );
+		std::copy(par_i.begin() +off_pi +p_si, par_i.begin() +off_pi +p_si +t_i, X_N +off_X +this->K + 2*p_si +t_n);
 	}
 }
 

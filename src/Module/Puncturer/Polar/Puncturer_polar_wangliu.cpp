@@ -50,14 +50,14 @@ void Puncturer_polar_wangliu<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
-::_puncture_fbf(const B *X_N1, B *X_N2) const
+::_puncture(const B *X_N1, B *X_N2) const
 {
 	std::copy(X_N1, X_N1 + this->N, X_N2);
 }
 
 template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
-::_depuncture_fbf(const Q *Y_N1, Q *Y_N2) const
+::_depuncture(const Q *Y_N1, Q *Y_N2) const
 {
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 

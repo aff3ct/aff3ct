@@ -25,9 +25,9 @@ Source_random_fast<B>
 
 template <typename B>
 void Source_random_fast<B>
-::_generate(mipp::vector<B>& U_K)
+::generate(B *U_K)
 {
-	const auto size = U_K.size();
+	const auto size = (unsigned)(this->K * this->n_frames);
 
 	// vectorized loop
 	const auto period = mipp::nElReg<B>() * sizeof(B) * 8; 

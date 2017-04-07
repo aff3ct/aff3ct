@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_std<B,R>
-::Monitor_std(const int& K, const int& N, const unsigned& max_fe, const int& n_frames, const std::string name)
-: Monitor<B,R>(K, N, n_frames, name.c_str()),
+::Monitor_std(const int& K, const int& N, const int& N_mod, const unsigned& max_fe, const int& n_frames, const std::string name)
+: Monitor<B,R>(K, N, N_mod, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
@@ -26,51 +26,20 @@ bool Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::update_n_analyzed_frames()
+::_check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
 {
-	n_analyzed_frames += (unsigned long long)this->n_frames;
+	if (__check_errors(U_K, V_K, this->K)) copy_bad_frame(U_K, X_N, Y_N_mod);
+
+	n_analyzed_frames++;
 }
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::_check_and_track_errors(const mipp::vector<B>& U,
-                          const mipp::vector<B>& V,
-                          const mipp::vector<B>& X,
-                          const mipp::vector<R>& X_mod,
-                          const mipp::vector<R>& Y)
+::_check_errors(const B *U_K, const B *V_K)
 {
-	if (this->K * this->n_frames != (int)U.size())
-		throw std::length_error("aff3ct::module::Monitor_std: \"U.size()\" has to be equal to \"K\" * \"n_frames\".");
-	if (this->K * this->n_frames != (int)V.size())
-		throw std::length_error("aff3ct::module::Monitor_std: \"V.size()\" has to be equal to \"K\" * \"n_frames\".");
-	if (this->N * this->n_frames != (int)X.size())
-		throw std::length_error("aff3ct::module::Monitor_std: \"X.size()\" has to be equal to \"N\" * \"n_frames\".");
-	if (Y.size() != X_mod.size())
-		throw std::length_error("aff3ct::module::Monitor_std: \"X_mod.size()\" and \"Y.size()\" have to be equal.");
+	__check_errors(U_K, V_K, this->K);
 
-	const int Y_size = (int)X_mod.size() / this->n_frames;
-
-	for (auto i = 0; i < this->n_frames; i++)
-		if (__check_errors(U.data() + i * this->K, V.data() + i * this->K, this->K))
-			copy_bad_frame(U    .data() + i * this->K,
-			               X    .data() + i * this->N,
-			               X_mod.data() + i * Y_size,
-			               Y    .data() + i * Y_size,
-			               Y_size);
-
-	this->update_n_analyzed_frames();
-}
-
-template <typename B, typename R>
-void Monitor_std<B,R>
-::_check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
-{
-	auto n = (int)U.size() / this->n_frames;
-
-	for (auto i = 0; i < this->n_frames; i++)
-		__check_errors(U.data() + i * n, V.data() + i * n, n);
-
-	this->update_n_analyzed_frames();
+	n_analyzed_frames++;
 }
 
 template <typename B, typename R>
@@ -138,20 +107,20 @@ float Monitor_std<B,R>
 
 template <typename B, typename R>
 void Monitor_std<B,R>
-::copy_bad_frame(const B* U, const B* X, const R* X_mod, const R* Y, const int Y_size)
+::copy_bad_frame(const B* U_K, const B* X_N, const R* Y_N_mod)
 {
-	buff_src.  push_back(mipp::vector<B>(this->K));
-	buff_enc.  push_back(mipp::vector<B>(this->N));
-	buff_noise.push_back(mipp::vector<R>(Y_size ));
+	buff_src.  push_back(mipp::vector<B>(this->K    ));
+	buff_enc.  push_back(mipp::vector<B>(this->N    ));
+	buff_noise.push_back(mipp::vector<R>(this->N_mod));
 
 	for (int b = 0; b < this->K; b++)
-		buff_src.back()[b] = U[b];
+		buff_src.back()[b] = U_K[b];
 
 	for (int b = 0; b < this->N; b++)
-		buff_enc.back()[b] = X[b];
+		buff_enc.back()[b] = X_N[b];
 
-	for (int b = 0; b < Y_size; b++)
-		buff_noise.back()[b] = Y[b];// - X_mod[b];
+	for (int b = 0; b < this->N_mod; b++)
+		buff_noise.back()[b] = Y_N_mod[b];// - X_mod[b];
 }
 
 template <typename B, typename R>

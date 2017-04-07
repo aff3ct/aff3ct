@@ -37,40 +37,33 @@ CRC_polynomial_fast<B>
 
 template <typename B>
 void CRC_polynomial_fast<B>
-::build(mipp::vector<B>& U_K)
+::_build(B *U_K)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
 	                         "little endian CPUs (x86, ARM, ...)");
 #endif
 
-	Bit_packer<B>::pack(U_K, this->buff_crc, this->n_frames);
+	Bit_packer<B>::pack(U_K, this->buff_crc.data(), this->K);
 
-	const auto n_bits_per_frame  = this->K; // number of bits with the CRC bits included
-	const auto n_bytes_per_frame = static_cast<int>(std::ceil((float)n_bits_per_frame / 8.f));
+	const auto data = (unsigned char*)this->buff_crc.data();
+	const auto crc  = this->compute_crc_v3((void*)data, this->K - this->size());
 
-	auto bytes = (unsigned char*)this->buff_crc.data();
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		auto data = bytes + f * n_bytes_per_frame;
-		const auto crc  = this->compute_crc_v3((void*)data, n_bits_per_frame - this->size());
-
-		for (auto i = 0; i < this->size(); i++)
-			U_K[this->K * (f +1) - this->size() +i] = (crc >> i) & 1;
-	}
+	for (auto i = 0; i < this->size(); i++)
+		U_K[this->K - this->size() +i] = (crc >> i) & 1;
 }
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check_fbf(const B *V_K)
+::_check(const B *V_K)
 {
 	Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K);
-	return this->_check_packed_fbf(this->buff_crc.data());
+	return this->_check_packed(this->buff_crc.data());
 }
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check_packed_fbf(const B *V_K)
+::_check_packed(const B *V_K)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "

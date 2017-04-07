@@ -65,20 +65,20 @@ public:
 			throw std::length_error("aff3ct::module::Encoder_sys: \"par.size()\" has to be equal to "
 			                        "(\"N\" - \"K\") * \"n_frames\".");
 
-		_encode_sys(U_K, par);
+		this->encode_sys(U_K.data(), par.data());
 	}
 
-	virtual void _encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+	virtual void encode_sys(const B *U_K, B *par)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_encode_sys_fbf(U_K.data() + f *            this->K,
-			                      par.data() + f * (this->N - this->K));
+			this->_encode_sys(U_K + f *            this->K,
+			                  par + f * (this->N - this->K));
 	}
 
 protected:
-	virtual void _encode_sys_fbf(const B *U_K, B *par)
+	virtual void _encode_sys(const B *U_K, B *par)
 	{
-		throw std::runtime_error("aff3ct::module::Encoder_sys: \"_encode_sys_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Encoder_sys: \"_encode_sys\" is unimplemented.");
 	}
 };
 }

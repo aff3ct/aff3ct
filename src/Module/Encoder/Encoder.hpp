@@ -79,14 +79,14 @@ public:
 			throw std::length_error("aff3ct::module::Encoder: \"X_N.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
-		this->_encode(U_K, X_N);
+		this->encode(U_K.data(), X_N.data());
 	}
 
-	virtual void _encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+	virtual void encode(const B *U_K, B *X_N)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_encode_fbf(U_K.data() + f * this->K,
-			                  X_N.data() + f * this->N);
+			this->_encode(U_K + f * this->K,
+			              X_N + f * this->N);
 	}
 
 	/*!
@@ -100,9 +100,9 @@ public:
 	virtual int tail_length() const { return 0; }
 
 protected:
-	virtual void _encode_fbf(const B *U_K, B *X_N)
+	virtual void _encode(const B *U_K, B *X_N)
 	{
-		throw std::runtime_error("aff3ct::module::Encoder: \"_encode_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Encoder: \"_encode\" is unimplemented.");
 	}
 };
 }

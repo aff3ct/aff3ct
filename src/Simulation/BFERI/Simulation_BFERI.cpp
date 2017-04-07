@@ -72,24 +72,18 @@ void Simulation_BFERI_i<B,R,Q>
 ::build_communication_chain(Simulation_BFERI_i<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source     [tid] = simu->build_source     (       tid); check_errors(simu->source     [tid], "Source<B>"       );
-	simu->crc        [tid] = simu->build_crc        (       tid); check_errors(simu->crc        [tid], "CRC<B>"          );
-	simu->encoder    [tid] = simu->build_encoder    (       tid); check_errors(simu->encoder    [tid], "Encoder<B>"      );
-	simu->interleaver[tid] = simu->build_interleaver(       tid); check_errors(simu->interleaver[tid], "Interleaver<int>");
-	simu->modulator  [tid] = simu->build_modulator  (       tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"  );
-
-	const auto N     = simu->params.code.N;
-	const auto tail  = simu->params.code.tail_length;
-	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
-	const auto N_fil = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
-
-	simu->channel    [tid] = simu->build_channel    (N_mod, tid); check_errors(simu->channel    [tid], "Channel<R>"      );
-	simu->quantizer  [tid] = simu->build_quantizer  (N_fil, tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
-	simu->coset_real [tid] = simu->build_coset_real (       tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
-	simu->siso       [tid] = simu->build_siso       (       tid); check_errors(simu->siso       [tid], "SISO<Q>"         );
-	simu->decoder    [tid] = simu->build_decoder    (       tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
-	simu->coset_bit  [tid] = simu->build_coset_bit  (       tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
-	simu->monitor    [tid] = simu->build_monitor    (       tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
+	simu->source     [tid] = simu->build_source     (tid); check_errors(simu->source     [tid], "Source<B>"       );
+	simu->crc        [tid] = simu->build_crc        (tid); check_errors(simu->crc        [tid], "CRC<B>"          );
+	simu->encoder    [tid] = simu->build_encoder    (tid); check_errors(simu->encoder    [tid], "Encoder<B>"      );
+	simu->interleaver[tid] = simu->build_interleaver(tid); check_errors(simu->interleaver[tid], "Interleaver<int>");
+	simu->modulator  [tid] = simu->build_modulator  (tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"  );
+	simu->channel    [tid] = simu->build_channel    (tid); check_errors(simu->channel    [tid], "Channel<R>"      );
+	simu->quantizer  [tid] = simu->build_quantizer  (tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
+	simu->coset_real [tid] = simu->build_coset_real (tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
+	simu->siso       [tid] = simu->build_siso       (tid); check_errors(simu->siso       [tid], "SISO<Q>"         );
+	simu->decoder    [tid] = simu->build_decoder    (tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
+	simu->coset_bit  [tid] = simu->build_coset_bit  (tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
+	simu->monitor    [tid] = simu->build_monitor    (tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
 
 	// check if the inter frame level is right in all the modules
 	if (simu->source     [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
@@ -260,16 +254,16 @@ Modulator<B,R,Q>* Simulation_BFERI_i<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFERI_i<B,R,Q>
-::build_channel(const int size, const int tid)
+::build_channel(const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed + tid);
+	return Factory_channel<R>::build(params, sigma, params.code.N_mod, params.simulation.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFERI_i<B,R,Q>
-::build_quantizer(const int size, const int tid)
+::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build(params, sigma, size);
+	return Factory_quantizer<R,Q>::build(params, sigma, params.code.N_fil);
 }
 
 template <typename B, typename R, typename Q>

@@ -73,20 +73,20 @@ public:
 		if (this->N * this->n_frames != (int)Y_N2.size())
 			throw std::length_error("aff3ct::module::Quantizer: \"Y_N2.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
-		this->_process(Y_N1, Y_N2);
+		this->process(Y_N1.data(), Y_N2.data());
 	}
 
-	virtual void _process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+	virtual void process(const R *Y_N1, Q *Y_N2)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_process_fbf(Y_N1.data() + f * this->N,
-			                   Y_N2.data() + f * this->N);
+			this->_process(Y_N1 + f * this->N,
+			               Y_N2 + f * this->N);
 	}
 
 protected:
-	virtual void _process_fbf(const R *Y_N1, Q *Y_N2)
+	virtual void _process(const R *Y_N1, Q *Y_N2)
 	{
-		throw std::runtime_error("aff3ct::module::Quantizer: \"_process_fbf\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Quantizer: \"_process\" is unimplemented.");
 	}
 };
 }

@@ -75,12 +75,12 @@ float Channel_AWGN_fast_LLR<float>
 
 template <typename R>
 void Channel_AWGN_fast_LLR<R>
-::_add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
 	const auto twopi = (R)(2.0 * 3.14159265358979323846);
 
 	// SIMD version of the Box Muller method in the polar form
-	const auto loop_size = (int)Y_N.size();
+	const auto loop_size = this->N * this->n_frames;
 	const auto vec_loop_size = (int)((loop_size / (mipp::nElReg<R>() * 2)) * mipp::nElReg<R>() * 2);
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2) 
 	{
