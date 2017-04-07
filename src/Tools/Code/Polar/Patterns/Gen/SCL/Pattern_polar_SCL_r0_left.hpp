@@ -68,8 +68,8 @@ public:
 			       << si << this->tab << "const auto path  = this->paths[i];" << std::endl
 			       << si << this->tab << "const auto child = l[this->up_ref_array_idx(path, " << this->rev_depth << " -1)].data();" << std::endl
 			       << si << this->tab << "API_polar::template " << this->g() << "<" << this->si_2 << ">("
-			                          << "y.data(), "
-			                          << "y.data() + " << this->si_2 << ", "
+			                          << "y, "
+			                          << "y + " << this->si_2 << ", "
 			                          << "child, "
 			                          << this->si_2 << ");" << std::endl
 			       << si << "}" << std::endl;

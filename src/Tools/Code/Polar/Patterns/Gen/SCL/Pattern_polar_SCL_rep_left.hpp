@@ -36,8 +36,8 @@ public:
 		if (node->get_depth() == 0) // root node
 		{
 			stream << si << "API_polar::template " << this->f() << "<" << this->si_2 << ">("
-			             << "y.data(), "
-			             << "y.data() + " << this->si_2 << ", "
+			             << "y, "
+			             << "y + " << this->si_2 << ", "
 			             << "l[0].data(), "
 			             << this->si_2 << ");" << std::endl;
 		}
@@ -72,8 +72,8 @@ public:
 			       << si << this->tab << "const auto path  = this->paths[i];" << std::endl
 			       << si << this->tab << "const auto child = l[this->up_ref_array_idx(path, " << this->rev_depth << " -1)].data();" << std::endl
 			       << si << this->tab << "API_polar::template " << this->g() << "<" << this->si_2 << ">("
-			                          << "y.data(), "
-			                          << "y.data() + " << this->si_2 << ", "
+			                          << "y, "
+			                          << "y + " << this->si_2 << ", "
 			                          << "s[path].data() + " << str_off_s << ", "
 			                          << "child, "
 			                          << this->si_2 << ");" << std::endl

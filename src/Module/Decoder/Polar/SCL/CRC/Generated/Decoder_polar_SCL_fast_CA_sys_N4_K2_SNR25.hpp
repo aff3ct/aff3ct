@@ -31,27 +31,41 @@ public:
 	{
 	}
 
-	void _hard_decode()
+	void _hard_decode(const R *Y_N, B *V_K)
 	{
 		using namespace tools;
 
-		auto &y = this->Y_N;
+		auto t_decod = std::chrono::steady_clock::now();
+		this->init_buffers();
+
+		auto  y = Y_N;
 		auto &l = this->l;
 		auto &s = this->s;
 
 		this->template update_paths_r0<1, 2>(0, 0);
+		normalize_scl_metrics<R>(this->metrics, this->L);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			const auto path  = this->paths[i];
 			const auto child = l[this->up_ref_array_idx(path, 2 -1)].data();
-			API_polar::template g0<2>(y.data(), y.data() + 2, child, 2);
+			API_polar::template g0<2>(y, y + 2, child, 2);
 		}
 		this->template update_paths_r1<1, 2>(0, 2);
+		normalize_scl_metrics<R>(this->metrics, this->L);
 		for (auto i = 0; i < this->n_active_paths; i++) 
 		{
 			API_polar::template xo0<2>(s[this->paths[i]], 0 + 2, 0, 2);
 		}
+
 		this->select_best_path();
+		auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+		auto t_store = std::chrono::steady_clock::now();
+		this->_store(V_K);
+		auto d_store = std::chrono::steady_clock::now() - t_store;
+
+		this->d_decod_total += d_decod;
+		this->d_store_total += d_store;
 	}
 };
 }
