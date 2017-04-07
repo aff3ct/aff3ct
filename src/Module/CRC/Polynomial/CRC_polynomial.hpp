@@ -25,7 +25,7 @@ public:
 	virtual int  size (                    ) const;
 
 protected:
-	virtual void _build(B *U_K);
+	virtual void _build(      B *U_K);
 	virtual bool _check(const B *V_K);
 
 	void _generate(const B *U_in,
