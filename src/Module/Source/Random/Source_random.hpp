@@ -28,7 +28,7 @@ public:
 
 	virtual ~Source_random();
 
-	void generate(B *U_K);
+	void generate(B *U_K); using Source<B>::generate;
 };
 }
 }

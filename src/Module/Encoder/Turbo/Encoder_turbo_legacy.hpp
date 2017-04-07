@@ -32,7 +32,7 @@ public:
 
 	int tail_length() const { return sub_enc.tail_length() + sub_enc.tail_length(); }
 
-	virtual void encode(const B *U_K, B *X_N);
+	virtual void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
 };
 }
 }
