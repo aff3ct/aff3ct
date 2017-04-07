@@ -26,7 +26,7 @@ public:
 	               const std::string name = "Quantizer_fast");
 	virtual ~Quantizer_fast();
 
-	void process(const R *Y_N1, Q *Y_N2);
+	void process(const R *Y_N1, Q *Y_N2); using Quantizer<R,Q>::process;
 };
 }
 }

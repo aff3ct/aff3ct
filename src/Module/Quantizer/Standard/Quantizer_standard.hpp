@@ -31,7 +31,7 @@ public:
 	                   const std::string name = "Quantizer_standard");
 	virtual ~Quantizer_standard();
 
-	void process(const R *Y_N1, Q *Y_N2);
+	void process(const R *Y_N1, Q *Y_N2); using Quantizer<R,Q>::process;
 };
 }
 }

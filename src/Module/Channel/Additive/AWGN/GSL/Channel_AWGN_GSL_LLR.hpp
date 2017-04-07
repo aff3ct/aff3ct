@@ -25,7 +25,7 @@ public:
 
 	virtual ~Channel_AWGN_GSL_LLR();
 
-	virtual void add_noise(const R *X_N, R *Y_N);
+	virtual void add_noise(const R *X_N, R *Y_N); using Channel<R>::add_noise;
 };
 }
 }

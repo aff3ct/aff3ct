@@ -22,9 +22,9 @@ public:
 	                    const std::string name = "Modulator_BPSK_fast");
 	virtual ~Modulator_BPSK_fast();
 
-	void   modulate(const B *X_N1,                R *X_N2);
+	void   modulate(const B *X_N1,                R *X_N2); using Modulator<B,R,Q>::modulate;
 	void demodulate(const Q *Y_N1,                Q *Y_N2);
-	void demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3);
+	void demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3); using Modulator<B,R,Q>::demodulate;
 
 	static int size_mod(const int N)
 	{

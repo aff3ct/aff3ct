@@ -72,6 +72,8 @@ void Launcher_EXIT_polar<B,R,Q>
 {
 	Launcher_EXIT<B,R,Q>::store_args();
 
+	this->params.code.N_code = (int)std::exp2(this->params.code.m);
+
 	// ---------------------------------------------------------------------------------------------------- simulation
 #ifdef ENABLE_POLAR_BOUNDS
 	if(this->ar.exist_arg({"sim-pb-path"})) this->params.simulation.bin_pb_path = this->ar.get_arg({"sim-pb-path"});
