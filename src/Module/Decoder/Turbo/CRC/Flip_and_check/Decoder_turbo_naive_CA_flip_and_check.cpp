@@ -159,7 +159,7 @@ bool Decoder_turbo_naive_CA_flip_and_check<B,R>
 {
 	// reconstruct the a posteriori information and calculate the metric associated
 	for (auto i = 0; i < this->K; i++)
-		metric[i] = std::fabs((l_en[i]*0.75 + l_sen[i]));
+		metric[i] = std::abs((div2(l_en[i]) + div4(l_en[i]) + l_sen[i]));
 
 	// get the least reliable positions
 	mipp::vector<unsigned int> positions = partial_sort_indexes(metric);
