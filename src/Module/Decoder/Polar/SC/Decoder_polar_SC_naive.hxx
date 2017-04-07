@@ -24,6 +24,11 @@ Decoder_polar_SC_naive<B,R,F,G,H>
 		throw std::length_error("aff3ct::module::Decoder_polar_SC_naive: \"frozen_bits.size()\" has to be equal to "
 		                        "\"N\".");
 
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_naive: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
+
 	this->recursive_allocate_nodes_contents(this->polar_tree.get_root(), this->N);
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
 }

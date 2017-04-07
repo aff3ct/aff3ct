@@ -4,7 +4,7 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
-#include "../../Decoder.hpp"
+#include "../../Decoder_SISO.hpp"
 #include "../decoder_polar_functions.h"
 
 namespace aff3ct
@@ -13,7 +13,7 @@ namespace module
 {
 template <typename B = int, typename R = float,
           proto_i<R> I = tools::init_LLR, proto_f<R> F = f_LLR, proto_v<R> V = v_LLR, proto_h<B,R> H = h_LLR>
-class Decoder_polar_SCAN_naive : public Decoder<B,R>
+class Decoder_polar_SCAN_naive : public Decoder_SISO<B,R>
 {
 protected:
 	const int m;            // coded bits log-length
@@ -25,14 +25,15 @@ protected:
 	std::vector<mipp::vector<R>> soft_graph;
 
 public:
-	Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits,
+	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
 	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 
 protected:
-	        void _load       (const R *Y_N        );
-	        void _hard_decode(const R *Y_N, B *V_K);
-	virtual void _store      (              B *V_K) const;
+	        void _load       (const R *Y_N          );
+	        void _hard_decode(const R *Y_N,  B *V_K );
+	virtual void _soft_decode(const R *Y_N1, R *Y_N2);
+	virtual void _store      (               B *V_K ) const;
 
 	void _load_init();
 	void _decode();
