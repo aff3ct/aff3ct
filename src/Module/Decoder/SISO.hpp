@@ -59,8 +59,8 @@ public:
 	: Module(n_frames, name),
 	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
-	  Y_N1(simd_inter_frame_level * N, (R)0),
-	  Y_N2(simd_inter_frame_level * N, (R)0),
+	  Y_N1(simd_inter_frame_level * N),
+	  Y_N2(simd_inter_frame_level * N),
 	  K_siso(K), N_siso(N), simd_inter_frame_level_siso(simd_inter_frame_level)
 	{
 		if (K <= 0)
