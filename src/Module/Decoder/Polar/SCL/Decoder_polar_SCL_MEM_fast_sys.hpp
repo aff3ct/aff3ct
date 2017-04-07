@@ -91,8 +91,6 @@ protected:
 	        inline void delete_path     (int path_id, const int r_d);
 	virtual inline int  select_best_path(                          );
 
-	static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K);
-
 private:
 	inline void erase_bad_paths(const int r_d);
 

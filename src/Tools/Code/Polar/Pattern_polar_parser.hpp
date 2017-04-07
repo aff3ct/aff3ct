@@ -120,6 +120,8 @@ public:
 	 */
 	void release_patterns() const;
 
+	inline void fb_extract(const B *V_N, B *V_K, const int n_frames = 1) const;
+
 private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_polar_i>* node_curr);
 	void generate_nodes_indexes             (const Binary_node<Pattern_polar_i>* node_curr);

@@ -483,7 +483,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::_store(B *V_K) const
 {
-	this->fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s[best_path].data(), V_K);
+	this->polar_patterns.fb_extract(this->s[best_path].data(), V_K);
 }
 
 template <typename B, typename R, class API_polar>
@@ -1271,51 +1271,6 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			delete_path(k, r_d);
 		else
 			k++;
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K)
-{
-	constexpr int n_frames = API_polar::get_n_frames();
-
-	auto off_s = 0;
-	auto sk_idx = 0;
-	for (auto l = 0; l < (int)leaves_patterns.size(); l++)
-	{
-		const auto node_type = (tools::polar_node_t)leaves_patterns[l].first;
-		const auto n_elmts = leaves_patterns[l].second;
-		switch (node_type)
-		{
-			case tools::RATE_0:
-				break;
-			case tools::RATE_1:
-				std::copy(V_N +  off_s            * n_frames,
-				          V_N + (off_s + n_elmts) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += n_elmts * n_frames;
-				break;
-			case tools::REP:
-				std::copy(V_N + (off_s + n_elmts -1) * n_frames,
-				          V_N + (off_s + n_elmts +0) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += n_frames;
-				break;
-			case tools::SPC:
-				std::copy(V_N + (off_s + 1      ) * n_frames,
-				          V_N + (off_s + n_elmts) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += (n_elmts -1) * n_frames;
-				break;
-			default:
-				throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: unknown polar node type.");
-				break;
-		}
-		off_s += n_elmts;
-	}
 }
 }
 }

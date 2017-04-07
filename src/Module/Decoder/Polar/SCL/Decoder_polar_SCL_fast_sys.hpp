@@ -83,8 +83,6 @@ protected:
 	virtual inline int  select_best_path(                             );
 	        inline int  up_ref_array_idx(const int path, const int r_d); // return the array
 
-	static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K);
-
 private:
 	inline void flip_bits_r1 (const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);
 	inline void flip_bits_spc(const int old_path, const int new_path, const int dup, const int off_s, const int n_elmts);

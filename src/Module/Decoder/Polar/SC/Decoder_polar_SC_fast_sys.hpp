@@ -58,9 +58,6 @@ protected:
 	        void _store      (              B *V_K);
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
-
-	inline static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns,
-	                              const B *V_N, B *V_K, const int n_frames = 1);
 };
 }
 }
