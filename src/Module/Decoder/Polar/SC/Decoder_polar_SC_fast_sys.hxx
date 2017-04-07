@@ -147,10 +147,14 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (this->N != (int)frozen_bits.size())
 		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"frozen_bits.size()\" has to be equal to "
 		                        "\"N\".");
-
 	if (m < static_level)
 		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
 		                         "\"static_level\".");
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
 }
 
 template <typename B, typename R, class API_polar>
@@ -179,6 +183,11 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (m < static_level)
 		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
 		                         "\"static_level\".");
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
 }
 
 template <typename B, typename R, class API_polar>

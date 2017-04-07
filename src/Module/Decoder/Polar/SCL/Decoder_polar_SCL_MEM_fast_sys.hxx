@@ -85,6 +85,11 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"L\" has to be positive and "
 		                            "a power of 2.");
 
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
+
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
 	metrics_vec[2].resize((L <= 2 ? 4 : 8) * L);
@@ -138,6 +143,11 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	if (this->L <= 0 || !tools::is_power_of_2(this->L))
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"L\" has to be positive and "
 		                            "a power of 2.");
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
