@@ -190,7 +190,7 @@ void Simulation_BFER<B,R,Q>
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K,
 		                                                   simu->params.code.N + simu->params.code.tail_length,
-		                                                   simu->params.code.N_mod
+		                                                   simu->params.code.N_mod,
 		                                                   simu->params.monitor.n_frame_errors,
 		                                                   simu->monitor,
 		                                                   std::this_thread::get_id(),
