@@ -17,7 +17,7 @@ public:
 	                    const std::string name = "Channel_AWGN_MKL_LR");
 	virtual ~Channel_AWGN_MKL_LR();
 
-	void add_noise(const R *X_N, R *Y_N);
+	void add_noise(const R *X_N, R *Y_N); using Channel_AWGN_MKL_LLR<R>::add_noise;
 };
 }
 }

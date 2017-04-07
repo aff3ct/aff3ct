@@ -22,11 +22,11 @@ public:
 	               const std::string name = "Modulator_BPSK");
 	virtual ~Modulator_BPSK();
 
-	void   modulate           (const B *X_N1,                     R *X_N2);
-	void demodulate           (const Q *Y_N1,                     Q *Y_N2);
-	void demodulate_with_gains(const Q *Y_N1, const R *H_N,       Q *Y_N2);
-	void demodulate           (const Q *Y_N1,               const Q *Y_N2, Q *Y_N3);
-	void demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3);
+	void   modulate           (const B *X_N1,                              R *X_N2); using Modulator<B,R,Q>::modulate;
+	void demodulate           (const Q *Y_N1,                              Q *Y_N2);
+	void demodulate_with_gains(const Q *Y_N1, const R *H_N,                Q *Y_N2);
+	void demodulate           (const Q *Y_N1,               const Q *Y_N2, Q *Y_N3); using Modulator<B,R,Q>::demodulate;
+	void demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3); using Modulator<B,R,Q>::demodulate_with_gains;
 
 	static int size_mod(const int N)
 	{

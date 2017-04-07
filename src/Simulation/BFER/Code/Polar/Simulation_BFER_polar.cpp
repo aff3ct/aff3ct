@@ -28,8 +28,6 @@ Simulation_BFER_polar<B,R,Q>
   is_generated_decoder((params.decoder.implem.find("_SNR") != std::string::npos)),
   fb_generator(nullptr)
 {
-	const_cast<code_parameters&>(this->params.code).N_code = (int)std::exp2(this->params.code.m);
-
 	if (!is_generated_decoder)
 	{
 		// build the frozen bits generator
