@@ -151,10 +151,9 @@ public:
 	}
 
 protected:
-	virtual bool _build(const B *V_K)
+	virtual void _build(const B *V_K)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_build\" is unimplemented.");
-		return false;
 	}
 
 	virtual bool _check(const B *V_K)
