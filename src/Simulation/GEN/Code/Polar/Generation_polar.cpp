@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #include "Tools/params.h"
+#include "Tools/Display/bash_tools.h"
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
 #include "Tools/Code/Polar/nodes_parser.h"
 #include "Tools/Display/bash_tools.h"
