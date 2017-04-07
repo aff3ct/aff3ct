@@ -1,9 +1,10 @@
+#include <chrono>
+#include <stdexcept>
 #include <iostream>
 #include <iomanip>
-#include <math.h>
-#include <cassert>
+#include <cmath>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_polar_SCAN_naive.hpp"
 
@@ -27,8 +28,17 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
   feedback_graph(layers_count),
   soft_graph    (layers_count)
 {
-	assert(max_iter           >  0                 );
-	assert(frozen_bits.size() == (unsigned) this->N);
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"N\" has to be positive a power "
+		                            "of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SCAN_naive: \"frozen_bits.size()\" has to be equal to "
+		                        "\"N\".");
+
+	if (max_iter <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"max_iter\" has to be greater "
+		                            "than 0.");
 
 	for (auto t = 0; t < layers_count; t++)
 	{
@@ -43,7 +53,7 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::load_init()
+::_load_init()
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
@@ -67,12 +77,10 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
-	assert(Y_N.size() >= (unsigned) this->N);
+	_load_init();
 
-	load_init();
-		
 	// init the softGraph (special case for the right most stage)
 	for (auto i = 0; i < this->N; i++)
 		soft_graph[layers_count - 1][i] = Y_N[i];
@@ -84,7 +92,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::decode()
+::_decode()
 {
 	for (auto iter = 0; iter < max_iter; iter++)
 	{
@@ -114,9 +122,23 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::_hard_decode()
+::_hard_decode(const R *Y_N, B *V_K)
 {
-	this->decode();
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 /********************************************************************/
@@ -125,10 +147,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
-	assert(V_K.size() >= (unsigned) this->K);
-
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!frozen_bits[i]) // if i is not a frozen bit

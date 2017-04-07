@@ -1,9 +1,10 @@
-#include "Decoder_RSC_BCJR_inter.hpp"
-
 #include <limits>
+#include <stdexcept>
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
+
+#include "Decoder_RSC_BCJR_inter.hpp"
 
 namespace aff3ct
 {
@@ -119,10 +120,8 @@ Decoder_RSC_BCJR_inter<B,R>
 
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
-		{
-			std::cerr << "(EE) This decoder does not support the input trellis... Exiting." << std::endl;
-			exit(-1);
-		}
+			throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_inter: this decoder does not support the "
+			                            "input trellis.");
 		
 	for (auto i = 0; i < 8; i++) alpha[i].resize((K +4) * mipp::nElmtsPerRegister<R>());
 	for (auto i = 0; i < 8; i++) beta [i].resize((K +4) * mipp::nElmtsPerRegister<R>());
@@ -139,7 +138,7 @@ Decoder_RSC_BCJR_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
@@ -150,29 +149,29 @@ void Decoder_RSC_BCJR_inter<B,R>
 
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size;
+			frames[f] = Y_N + f*frame_size;
 		tools::Reorderer_static<R,n_frames>::apply(frames, this->sys.data(), this->K);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size +this->K;
+			frames[f] = Y_N + f*frame_size +this->K;
 		tools::Reorderer_static<R,n_frames>::apply(frames, this->par.data(), this->K);
 
 		// tails bit
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size + 2*this->K + tail/2;
+			frames[f] = Y_N + f*frame_size + 2*this->K + tail/2;
 		tools::Reorderer_static<R,n_frames>::apply(frames, &this->sys[this->K*n_frames], tail/2);
 
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = Y_N.data() + f*frame_size + 2*this->K;
+			frames[f] = Y_N + f*frame_size + 2*this->K;
 		tools::Reorderer_static<R,n_frames>::apply(frames, &this->par[this->K*n_frames], tail/2);
 	}
 	else
-		Decoder_RSC_BCJR<B,R>::load(Y_N);
+		Decoder_RSC_BCJR<B,R>::_load(Y_N);
 }
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_inter<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	if (this->get_simd_inter_frame_level() > 1)
 	{
@@ -180,11 +179,11 @@ void Decoder_RSC_BCJR_inter<B,R>
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
-			frames[f] = V_K.data() + f*this->K;
+			frames[f] = V_K + f*this->K;
 		tools::Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 	}
 	else
-		Decoder_RSC_BCJR<B,R>::store(V_K);
+		Decoder_RSC_BCJR<B,R>::_store(V_K);
 }
 
 // =================================================================================================== sys/par division

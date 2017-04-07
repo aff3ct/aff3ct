@@ -1,6 +1,4 @@
-#include <cassert>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "CRC_polynomial_double.hpp"
 
@@ -12,18 +10,22 @@ CRC_polynomial_double<B>
                         const std::string name)
 : CRC_polynomial<B>(K, poly_key, size, n_frames, name), cut_index(cut_index)
 {
-	assert(n_frames == 1);
-	assert((this->K - 2 * this->size()) > (cut_index - this->size()));
+	if (n_frames > 1)
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"n_frames\" has to be equal to 1.");
+
+	if ((this->K - 2 * this->size()) <= (cut_index - this->size()))
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"K\" is wrong.");
+
+	if (this->K <= 2 * this->size())
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"K\" has to be greater "
+		                            "than 2 * \"size\".");
 }
 
 template <typename B>
 void CRC_polynomial_double<B>
-::build(mipp::vector<B>& U_K)
+::_build(B *U_K)
 {
-	assert(U_K.size() > (unsigned)(2 * this->size()));
-	assert(U_K.size() == (unsigned)this->K);
-
-	for (unsigned i = unsigned(U_K.size() - 2 * this->size() -1); i >= (unsigned)cut_index - this->size(); i--)
+	for (unsigned i = unsigned(this->K - 2 * this->size() -1); i >= (unsigned)cut_index - this->size(); i--)
 		U_K[i + this->size()] = U_K[i];
 
 	this->_generate(U_K, U_K, 0, cut_index - this->size(), cut_index - this->size());

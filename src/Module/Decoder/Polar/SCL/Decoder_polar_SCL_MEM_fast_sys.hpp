@@ -31,7 +31,6 @@ protected:
 
 	            std ::vector<int  >      paths;          // active paths
 	            std ::vector<R    >      metrics;        // path metrics
-	            mipp::vector<R    >      Y_N;            // channel llrs
 	std::vector<mipp::vector<R    >>     l;              // llrs
 	std::vector<mipp::vector<B    >>     s;              // partial sums
 	std::vector<mipp::vector<B    >>     s2;             // partial sums
@@ -67,14 +66,11 @@ public:
 
 	virtual ~Decoder_polar_SCL_MEM_fast_sys();
 
-	virtual void load        (const mipp::vector<R>& Y_N);
-	virtual void _hard_decode(                          );
-	virtual void store       (mipp::vector<B>& V_N      ) const;
-	virtual void unpack      (mipp::vector<B>& V_N      ) const;
-	virtual void store_fast  (mipp::vector<B>& V        ) const;
+	virtual void _hard_decode(const R *Y_N, B *V_N);
+	virtual void _store      (              B *V_N) const;
 
 protected:
-	inline void recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id     );
+	inline void recursive_decode(const R *Y_N, const int off_l, const int off_s, const int rev_depth, int &node_id);
 
 	inline void update_paths_r0 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
 	inline void update_paths_r1 (const int rev_depth, const int off_l, const int off_s, const int n_elmts);
@@ -91,9 +87,11 @@ protected:
 	inline int  up_ref_array_idx(const int path, const int r_d                                      ); // return the array
 	inline void copy_left       (const int r_d, const int off_s                                     ); // return the array
 
-	        inline void init_buffers    (                          );
+	virtual inline void init_buffers    (                          );
 	        inline void delete_path     (int path_id, const int r_d);
 	virtual inline int  select_best_path(                          );
+
+	static void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K);
 
 private:
 	inline void erase_bad_paths(const int r_d);

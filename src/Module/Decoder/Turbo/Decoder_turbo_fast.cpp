@@ -1,3 +1,4 @@
+#include <chrono>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -33,7 +34,7 @@ Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_load(const R *Y_N)
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
@@ -49,35 +50,35 @@ void Decoder_turbo_fast<B,R>
 
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size;
+				frames[f] = Y_N + f*frame_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +this->K;
+				frames[f] = Y_N + f*frame_size +this->K;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +this->K + p_size;
+				frames[f] = Y_N + f*frame_size +this->K + p_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
 			this->pi.interleave(this->l_sn, this->l_si, true, this->get_simd_inter_frame_level());
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n/2;
+				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb;
+				frames[f] = Y_N + f*frame_size +N_without_tb;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
 
 			// tails bit in the interleaved domain
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n + tail_i/2;
+				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n;
+				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
 		}
 		else
@@ -86,48 +87,53 @@ void Decoder_turbo_fast<B,R>
 
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size;
+				frames[f] = Y_N + f*frame_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->K);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +this->K;
+				frames[f] = Y_N + f*frame_size +this->K;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), p_size);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +this->K + p_size;
+				frames[f] = Y_N + f*frame_size +this->K + p_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
 			this->pi.interleave(this->l_sn, this->l_si, true, this->get_simd_inter_frame_level());
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n/2;
+				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n/2;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_sn[this->K*n_frames], tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb;
+				frames[f] = Y_N + f*frame_size +N_without_tb;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_pn[p_size*n_frames], tail_n/2);
 
 			// tails bit in the interleaved domain
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n + tail_i/2;
+				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n + tail_i/2;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N.data() + f*frame_size +N_without_tb + tail_n;
+				frames[f] = Y_N + f*frame_size +N_without_tb + tail_n;
 			Reorderer_static<R,n_frames>::apply(frames, &this->l_pi[p_size*n_frames], tail_i/2);
 		}
 
 		std::fill(this->l_e1n.begin(), this->l_e1n.end(), (R)0);
 	}
 	else
-		Decoder_turbo<B,R>::load(Y_N);
+		Decoder_turbo<B,R>::_load(Y_N);
 }
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::_hard_decode()
+::_hard_decode(const R *Y_N, B *V_K)
 {
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	const auto n_frames = this->get_simd_inter_frame_level();
 	const auto tail_n_2 = this->siso_n.tail_length() / 2;
 	const auto tail_i_2 = this->siso_i.tail_length() / 2;
@@ -141,22 +147,18 @@ void Decoder_turbo_fast<B,R>
 			const auto r_l_sen = mipp::Reg<R>(&this->l_sn[i]) + mipp::Reg<R>(&this->l_e1n[i]);
 			r_l_sen.store(&this->l_sen[i]);
 		}
-
-		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i += mipp::nElReg<R>())
-		{
-			mipp::Reg<R> r_l_sen;
-			r_l_sen.loadu (&this->l_sn [i]);
-			r_l_sen.storeu(&this->l_sen[i]);
-		}
+		std::copy(this->l_sn .begin() +  this->K             * n_frames,
+		          this->l_sn .begin() + (this->K + tail_n_2) * n_frames,
+		          this->l_sen.begin() +  this->K             * n_frames);
 
 		// SISO in the natural domain
-		this->siso_n.soft_decode(this->l_sen, this->l_pn, this->l_e2n);
+		this->siso_n.soft_decode(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
 		// apply the scaling factor
 		this->scaling_factor(this->l_e2n, 2 * (ite -1));
 
 		// make the interleaving
-		this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, this->get_simd_inter_frame_level());
+		this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, n_frames);
 
 		// l_se = sys + ext
 		for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
@@ -164,15 +166,12 @@ void Decoder_turbo_fast<B,R>
 			const auto r_l_sei = mipp::Reg<R>(&this->l_si[i]) + mipp::Reg<R>(&this->l_e1i[i]);
 			r_l_sei.store(&this->l_sei[i]);
 		}
-		for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i += mipp::nElReg<R>())
-		{
-			mipp::Reg<R> r_l_sei;
-			r_l_sei.loadu (&this->l_si [i]);
-			r_l_sei.storeu(&this->l_sei[i]);
-		}
+		std::copy(this->l_si .begin() +  this->K             * n_frames,
+		          this->l_si .begin() + (this->K + tail_i_2) * n_frames,
+		          this->l_sei.begin() +  this->K             * n_frames);
 
 		// SISO in the interleave domain
-		this->siso_i.soft_decode(this->l_sei, this->l_pi, this->l_e2i);
+		this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
 		if (ite != this->n_ite)
 			// apply the scaling factor
@@ -186,9 +185,11 @@ void Decoder_turbo_fast<B,R>
 			}
 
 		// make the deinterleaving
-		this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, this->get_simd_inter_frame_level());
+		this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, n_frames);
 	}
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	const auto loop_size1 = (this->K * n_frames) / mipp::nElReg<R>();
 	for (auto i = 0; i < loop_size1; i++)
@@ -204,11 +205,18 @@ void Decoder_turbo_fast<B,R>
 	const auto loop_size2 = this->K * n_frames;
 	for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
 		this->s[i] = (this->l_e1n[i] < 0);
+
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
 	if (this->get_simd_inter_frame_level() > 1)
 	{
@@ -218,7 +226,7 @@ void Decoder_turbo_fast<B,R>
 
 			std::vector<B*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = V_K.data() + f*this->K;
+				frames[f] = V_K + f*this->K;
 			Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 		}
 		else
@@ -227,12 +235,12 @@ void Decoder_turbo_fast<B,R>
 
 			std::vector<B*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = V_K.data() + f*this->K;
+				frames[f] = V_K + f*this->K;
 			Reorderer_static<B,n_frames>::apply_rev(this->s.data(), frames, this->K);
 		}
 	}
 	else
-		Decoder_turbo<B,R>::store(V_K);
+		Decoder_turbo<B,R>::_store(V_K);
 }
 
 // ==================================================================================== explicit template instantiation

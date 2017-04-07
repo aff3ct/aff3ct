@@ -21,11 +21,13 @@ protected:
 	Interleaver<int>& interleaver;
 
 public:
-    Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const std::string name = "Encoder_RA");
+	Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const int n_frames = 1,
+	           const std::string name = "Encoder_RA");
 
 	virtual ~Encoder_RA() {}
 
-	virtual void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	virtual void _encode(const B *U_K, B *X_N);
 };
 }
 }

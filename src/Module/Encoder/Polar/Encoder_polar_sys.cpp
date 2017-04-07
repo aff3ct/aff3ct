@@ -1,4 +1,3 @@
-#include <cassert>
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -17,26 +16,18 @@ Encoder_polar_sys<B>
 
 template <typename B>
 void Encoder_polar_sys<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const B *U_K, B *X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
+	this->convert(U_K, X_N);
 
-	this->convert(U_K, this->U_N);
+	// first time encode
+	this->light_encode(X_N);
 
-	for (auto i_frame = 0; i_frame < this->n_frames; i_frame++)
-	{
-		// first time encode
-		this->frame_encode(this->U_N, X_N, i_frame);
+	for (auto i = 0; i < this->N; i++)
+		X_N[i] = !this->frozen_bits[i] && X_N[i];
 
-		const auto offset_X_N = i_frame * this->N;
-
-		for (auto i = 0; i < this->N; i++)
-			X_N[offset_X_N +i] = !this->frozen_bits[i] && X_N[offset_X_N +i];
-
-		// second time encode because of systematic encoder
-		this->frame_encode(X_N, X_N, i_frame);
-	}
+	// second time encode because of systematic encoder
+	this->light_encode(X_N);
 }
 
 // ==================================================================================== explicit template instantiation 

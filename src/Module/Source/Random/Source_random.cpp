@@ -19,9 +19,9 @@ Source_random<B>
 
 template <typename B>
 void Source_random<B>
-::generate(mipp::vector<B>& U_K)
+::generate(B *U_K)
 {
-	auto size = (int)U_K.size();
+	auto size = this->K * this->n_frames;
 
 	// generate a random k bits vector U_k
 	for (auto i = 0; i < size; i++)

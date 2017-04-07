@@ -1,10 +1,8 @@
 #ifdef CHANNEL_MKL
 
 #include <cmath>
+#include <stdexcept>
 #include <algorithm>
-#include <cassert>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "Channel_AWGN_MKL_LLR.hpp"
 
@@ -17,12 +15,14 @@ Channel_AWGN_MKL_LLR<R>
 : Channel<R>(N, n_frames, name),
   sigma(sigma)
 {
-	assert(sigma != 0);
+	if (sigma == (R)0)
+		throw std::domain_error("aff3ct::module::Channel_AWGN_MKL_LLR: \"sigma\" can't be equal to 0.");
 
 	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
 	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
 
-	assert(stream_state != nullptr);
+	if (stream_state == nullptr)
+		throw std::runtime_error("aff3ct::module::Channel_AWGN_MKL_LLR: \"stream_state\" can't be null.");
 }
 
 template <typename R>
@@ -34,12 +34,10 @@ Channel_AWGN_MKL_LLR<R>
 
 template <typename R>
 void Channel_AWGN_MKL_LLR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
-	std::cerr << bold_red("(EE) Adding white Gaussian noise is impossible on this type of data.") << std::endl;
-	exit(-1);
+	throw std::runtime_error("aff3ct::module::Channel_AWGN_MKL_LLR: adding white Gaussian noise is impossible on this "
+	                         "type of data.");
 }
 
 namespace aff3ct
@@ -48,27 +46,24 @@ namespace module
 {
 template <>
 void Channel_AWGN_MKL_LLR<float>
-::add_noise(const mipp::vector<float>& X_N, mipp::vector<float>& Y_N)
+::add_noise(const float *X_N, float *Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
-	              Y_N.size(),
-	              Y_N.data(),
+	              this->N * this->n_frames,
+	              Y_N,
 	              0.0,
 	              sigma);
 	/*
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
 	              stream_state,
-	              Y_N.size(),
-	              Y_N.data(),
+	              this->N * this->n_frames,
+	              Y_N,
 	              0.0,
 	              sigma);
 	*/
 
-	auto size = Y_N.size();
-	for (unsigned i = 0; i < size; i++)
+	for (auto i = 0; i < this->N * this->n_frames; i++)
 		Y_N[i] = X_N[i] + Y_N[i];
 }
 }
@@ -80,27 +75,24 @@ namespace module
 {
 template <>
 void Channel_AWGN_MKL_LLR<double>
-::add_noise(const mipp::vector<double>& X_N, mipp::vector<double>& Y_N)
+::add_noise(const double *X_N, double *Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
 	              stream_state,
-	              Y_N.size(),
-	              Y_N.data(),
+	              this->N * this->n_frames,
+	              Y_N,
 	              0.0,
 	              sigma);
 	/*
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
 	              stream_state,
-	              Y_N.size(),
-	              Y_N.data(),
+	              this->N * this->n_frames,
+	              Y_N,
 	              0.0,
 	              sigma);
 	*/
 
-	auto size = Y_N.size();
-	for (unsigned i = 0; i < size; i++)
+	for (auto i = 0; i < this->N * this->n_frames; i++)
 		Y_N[i] = X_N[i] + Y_N[i];
 }
 }

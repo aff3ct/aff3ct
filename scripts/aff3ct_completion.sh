@@ -63,7 +63,7 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-benchs -b --sim-benchs-no-ldst -B --sim-debug -d   \
+		opts="$opts --sim-benchs -b --sim-debug -d                           \
 		--sim-debug-limit --snr-sim-trace-path --sim-time-report --cde-coset \
 		-c --mnt-max-fe -e  --term-type "
 	fi
@@ -81,7 +81,7 @@ _aff3ct() {
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --itl-col --itl-uni --dmod-ite --mnt-max-fe -e        \
+		      --itl-path --itl-cols --itl-uni --dmod-ite --mnt-max-fe -e       \
 		      --term-type"
 	fi
 
@@ -95,7 +95,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_RA.cpp
 	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --dec-ite -i --itl-type --itl-path --itl-col --itl-uni"
+		opts="$opts --dec-ite -i --itl-type --itl-path --itl-cols --itl-uni"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -126,7 +126,7 @@ _aff3ct() {
 	then
 		opts="$opts --sim-json-path --crc-type --crc-poly --crc-rate       \
 		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path   \
-		      --itl-col --itl-uni --dec-type -D --dec-implem --dec-ite -i  \
+		      --itl-cols --itl-uni --dec-type -D --dec-implem --dec-ite -i \
 		      --dec-sf --dec-simd --dec-max --dec-sc --dec-fnc --dec-fnc-q \
 		      --dec-fnc-ite-m --dec-fnc-ite-M --dec-fnc-ite-s" 
 	fi
@@ -150,7 +150,7 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
-		--dec-no-synd --dec-off --dec-norm"
+		--dec-no-synd --dec-off --dec-norm --dec-synd-depth"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
@@ -185,14 +185,14 @@ _aff3ct() {
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
-		--itl-col |                                                          \
+		--itl-cols | --dec-synd-depth |                                      \
 		--dec-fnc-q | --dec-fnc-ite-m | --dec-fnc-ite-M | --dec-fnc-ite-s    )
 			COMPREPLY=()
 			;;
 
 		# awaiting nothing	
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
-		--sim-benchs-no-ldst | -B | --sim-debug | -d | --sim-time-report | \
+		--sim-debug | -d | --sim-time-report |                             \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
 		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev | --itl-uni |       \
 		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )
@@ -289,8 +289,8 @@ _aff3ct() {
 		--itl-type)
 			local params
 			case "${simutype}" in
-				BFER)      params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
-				BFERI)     params="LTE CCSDS RANDOM COLUMNS GOLDEN USER NO" ;;
+				BFER)      params="LTE CCSDS RANDOM RAND_COL ROW_COL GOLDEN USER NO" ;;
+				BFERI)     params="LTE CCSDS RANDOM RAND_COL ROW_COL GOLDEN USER NO" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;

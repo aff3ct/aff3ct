@@ -31,10 +31,9 @@ public:
 	                                      const std::string name = "Decoder_RSC_BCJR_seq_generic_std_json");
 	virtual ~Decoder_RSC_BCJR_seq_generic_std_json();
 
-	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-
 protected:
-	void compute_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext);
+	virtual void _soft_decode(const R *sys, const R *par, R *ext);
+	void compute_ext(const R *sys, R *ext);
 };
 }
 }

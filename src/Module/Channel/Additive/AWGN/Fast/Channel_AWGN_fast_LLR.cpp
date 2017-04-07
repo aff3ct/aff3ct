@@ -1,7 +1,5 @@
+#include <stdexcept>
 #include <algorithm>
-#include <cassert>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "Channel_AWGN_fast_LLR.hpp"
 
@@ -16,7 +14,8 @@ Channel_AWGN_fast_LLR<R>
   mt19937(seed),
   mt19937_simd()
 {
-	assert(sigma != 0);
+	if (sigma == (R)0)
+		throw std::domain_error("aff3ct::module::Channel_AWGN_fast_LLR: \"sigma\" can't be equal to 0.");
 
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
@@ -34,16 +33,16 @@ template <typename R>
 mipp::Reg<R> Channel_AWGN_fast_LLR<R>
 ::get_random_simd()
 {
-	std::cerr << bold_red("(EE) The MT19937 random generator does not support this type.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Channel_AWGN_fast_LLR: the MT19937 random generator does not support "
+	                         "this type.");
 }
 
 template <typename R>
 R Channel_AWGN_fast_LLR<R>
 ::get_random()
 {
-	std::cerr << bold_red("(EE) The MT19937 random generator does not support this type.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::module::Channel_AWGN_fast_LLR: the MT19937 random generator does not support "
+	                         "this type.");
 }
 
 namespace aff3ct
@@ -76,14 +75,12 @@ float Channel_AWGN_fast_LLR<float>
 
 template <typename R>
 void Channel_AWGN_fast_LLR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
 	const auto twopi = (R)(2.0 * 3.14159265358979323846);
 
 	// SIMD version of the Box Muller method in the polar form
-	const auto loop_size = (int)Y_N.size();
+	const auto loop_size = this->N * this->n_frames;
 	const auto vec_loop_size = (int)((loop_size / (mipp::nElReg<R>() * 2)) * mipp::nElReg<R>() * 2);
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2) 
 	{
@@ -133,8 +130,7 @@ void Channel_AWGN_fast_LLR<R>
 		const auto sintheta = std::sin(theta);
 
 		Y_N[loop_size -1] = radius * sintheta + X_N[loop_size -1];
-	}	
-
+	}
 }
 
 // ==================================================================================== explicit template instantiation 

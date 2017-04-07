@@ -1,4 +1,3 @@
-#include <cassert>
 #include <algorithm>
 #include <cmath>
 
@@ -21,11 +20,9 @@ Quantizer_NO<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_NO<R,Q>
-::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const R *Y_N1, Q *Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-
-	const auto loop_size = Y_N1.size();
+	const auto loop_size = (unsigned)(this->N * this->n_frames);
 	for (unsigned i = 0; i < loop_size; i++)
 		Y_N2[i] = (Q)Y_N1[i];
 }
@@ -36,10 +33,9 @@ namespace module
 {
 template<>
 void Quantizer_NO<float,float>
-::process(const mipp::vector<float>& Y_N1, mipp::vector<float>& Y_N2)
+::process(const float *Y_N1, float *Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-	Y_N2 = Y_N1;	
+	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
 }
 }
 }
@@ -50,10 +46,9 @@ namespace module
 {
 template<>
 void Quantizer_NO<double,double>
-::process(const mipp::vector<double>& Y_N1, mipp::vector<double>& Y_N2)
+::process(const double *Y_N1, double *Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-	Y_N2 = Y_N1;	
+	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
 }
 }
 }

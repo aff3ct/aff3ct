@@ -1,6 +1,7 @@
 #ifndef INTERLEAVER_LTE_HPP
 #define	INTERLEAVER_LTE_HPP
 
+#include <stdexcept>
 #include <map>
 
 #include "Tools/Display/bash_tools.h"
@@ -18,8 +19,8 @@ private:
 	int call_counter;
 
 public:
-	Interleaver_LTE(int size, const std::string name = "Interleaver_LTE") 
-	: Interleaver<T>(size, 1, name), call_counter(0) { gen_lookup_tables(); }
+	Interleaver_LTE(int size, const int n_frames = 1, const std::string name = "Interleaver_LTE")
+	: Interleaver<T>(size, n_frames, name), call_counter(0) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{
@@ -228,16 +229,13 @@ public:
 			for (auto i = 0; i < size; i++)
 			{
 				this->pi[i] = (T)pi_LTE(i, (int)f_1[size], (int)f_2[size], size);
-				assert(this->pi[i] >= 0 && this->pi[i] < size);
 				this->pi_inv[this->pi[i]] = (T)i;
 			}
 		}
 		else
 		{
-			std::cerr << tools::bold_red("(EE) There is no LTE f_1 and f_2 parameters for size = ")
-			          << tools::bold_red(std::to_string(size))
-			          << tools::bold_red(": exiting simulation.") << std::endl;
-			exit(-1);
+			throw std::runtime_error("aff3ct::module::Interleaver_LTE: there is no LTE f_1 and f_2 parameters "
+			                         "for \"size\" = " + std::to_string(size) + ".");
 		}
 	}
 

@@ -1,4 +1,5 @@
 #include <limits>
+#include <stdexcept>
 
 #include "Tools/Math/utils.h"
 
@@ -69,10 +70,8 @@ Decoder_RSC_BCJR_intra<B,R>
 
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
-		{
-			std::cerr << "(EE) This decoder does not support the input trellis... Exiting." << std::endl;
-			exit(-1);
-		}
+			throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_intra: this decoder does not support "
+			                            "the input trellis.");
 
 	// init alpha values
 	RSC_BCJR_intra_init<R>::apply(alpha);
@@ -86,7 +85,40 @@ Decoder_RSC_BCJR_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_intra<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
+{
+	if (n_frames != -1 && n_frames <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_intra: \"n_frames\" has to be greater than 0 "
+		                            "(or equal to -1).");
+
+	const int real_n_frames = (n_frames != -1) ? n_frames : this->get_n_frames();
+
+	if (real_n_frames != this->simd_inter_frame_level_siso)
+		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"real_n_frames\" has to be equal to "
+		                         "\"simd_inter_frame_level_siso\".");
+
+	const auto limit_size1 = (this->K + this->n_ff) * this->simd_inter_frame_level + mipp::nElReg<R>();
+
+	if ((int)sys.size() < limit_size1)
+		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"sys.size()\" has to be equal or greater "
+		                        "than \"limit_size1\".");
+
+	if ((int)par.size() < limit_size1)
+		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"par.size()\" has to be equal or greater "
+		                        "than \"limit_size1\".");
+
+	const auto limit_size2 = this->K * this->simd_inter_frame_level + mipp::nElReg<R>();
+
+	if ((int)ext.size() < limit_size2)
+		throw std::length_error("aff3ct::module::Decoder_RSC_BCJR_intra: \"ext.size()\" has to be equal or greater "
+		                        "than \"limit_size2 * real_n_frames\".");
+
+	SISO<R>::soft_decode(sys.data(), par.data(), ext.data(), real_n_frames);
+}
+
+template <typename B, typename R>
+void Decoder_RSC_BCJR_intra<B,R>
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );

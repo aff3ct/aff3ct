@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Decoder_RSC_BCJR_seq_very_fast.hpp"
 
@@ -15,6 +15,9 @@ Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
                                  const std::string name)
 : Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
+	if (this->K % mipp::nElReg<R>())
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_seq_very_fast: \"K\" "
+		                            "has to be divisible by \"mipp::nElReg<R>()\".");
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
@@ -25,7 +28,7 @@ Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	// compute gamma values (auto-vectorized loop)
 	for (auto i = 0; i < this->K +3; i++)
@@ -62,10 +65,8 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 
 // template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 // void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
-// ::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+// ::compute_beta_ext(const R *sys, R *ext)
 // {
-// 	assert(this->K % mipp::nElReg<R>() == 0);
-
 // 	constexpr int idx_b1[8] = {0, 4, 5, 1, 2, 6, 7, 3};
 // 	constexpr int idx_b2[8] = {4, 0, 1, 5, 6, 2, 3, 7};
 // 	constexpr int idx_g2[8] = {0, 0, 1, 1, 1, 1, 0, 0};
@@ -143,10 +144,8 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
-::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_beta_ext(const R *sys, R *ext)
 {
-	assert(this->K % mipp::nElReg<R>() == 0);
-
 	// compute the first beta values [trellis backward traversal <-]
 	R beta_prev[8];
 	for (auto j = 0; j < 8; j++)
@@ -254,7 +253,7 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
 void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );

@@ -5,12 +5,11 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 
@@ -28,17 +27,17 @@ Simulation_BFER<B,R,Q>
   task_names(this->params.simulation.n_threads, std::vector<std::string>(14)),
   frame_id(0),
 
-  U_K (this->params.simulation.n_threads),
-  X_N1(this->params.simulation.n_threads),
-  X_N2(this->params.simulation.n_threads),
-  X_N3(this->params.simulation.n_threads),
-  H_N (this->params.simulation.n_threads),
-  Y_N1(this->params.simulation.n_threads),
-  Y_N2(this->params.simulation.n_threads),
-  Y_N3(this->params.simulation.n_threads),
-  Y_N4(this->params.simulation.n_threads),
-  Y_N5(this->params.simulation.n_threads),
-  V_K (this->params.simulation.n_threads),
+  U_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  X_N1(this->params.simulation.n_threads, mipp::vector<B>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
+  X_N2(this->params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  X_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  H_N (this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  Y_N1(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  Y_N2(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_fil                             * params.simulation.inter_frame_level)),
+  Y_N3(this->params.simulation.n_threads, mipp::vector<R>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N4(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N5(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
+  V_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
 
   spu_U_K (this->params.simulation.n_threads),
   spu_X_N1(this->params.simulation.n_threads),
@@ -56,23 +55,14 @@ Simulation_BFER<B,R,Q>
   terminal   (nullptr)
 {
 	if (params.simulation.debug)
-	{
-		std::cerr << bold_red("(EE) StarPU simulation does not support the debug mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: StarPU simulation does not support "
+		                            "the debug mode.");
 	if (params.simulation.benchs)
-	{
-		std::cerr << bold_red("(EE) StarPU simulation does not support the bench mode... Exiting") << std::endl;
-		std::exit(-1);
-	}
-
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: StarPU simulation does not support "
+		                            "the bench mode.");
 	if (params.interleaver.uniform)
-	{
-		std::cerr << bold_red("(EE) StarPU simulation does not support the uniform interleaver mode... Exiting")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: StarPU simulation does not support "
+		                            "the uniform interleaver mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the StarPU simulation.") << std::endl;
@@ -102,7 +92,7 @@ void Simulation_BFER<B,R,Q>
 	// launch the master thread
 	this->Monte_Carlo_method();
 
-	if (!this->params.terminal.disabled)
+	if (!this->params.terminal.disabled && this->terminal != nullptr)
 		terminal->final_report(std::cout);
 }
 
@@ -150,6 +140,7 @@ void Simulation_BFER<B,R,Q>
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
 		                                               simu->params.code.N,
+		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
 		                                               n_fra);
@@ -163,29 +154,6 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::allocate_data(Simulation_BFER<B,R,Q> *simu, const int tid)
 {
-	// get the real number of frames per threads (from the decoder)
-	const auto n_fra = simu->decoder[tid]->get_n_frames();
-
-	// resize the buffers
-	const auto N      = simu->params.code.N;
-	const auto K      = simu->params.code.K;
-	const auto tail   = simu->params.code.tail_length;
-	const auto N_mod  = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
-	const auto N_code = simu->params.code.N_code;
-	const auto N_fil  = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
-
-	if (simu->U_K [tid].size() != (unsigned) ( K              * n_fra)) simu->U_K [tid].resize( K              * n_fra);
-	if (simu->X_N1[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->X_N1[tid].resize((N_code + tail) * n_fra);
-	if (simu->X_N2[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N3[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
-	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod          * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
-	if (simu->H_N [tid].size() != (unsigned) ( N_mod          * n_fra)) simu->H_N [tid].resize( N_mod          * n_fra);
-	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil          * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
-	if (simu->Y_N3[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N3[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N4[tid].size() != (unsigned) ((N      + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N5[tid].size() != (unsigned) ((N_code + tail) * n_fra)) simu->Y_N5[tid].resize((N_code + tail) * n_fra);
-	if (simu->V_K [tid].size() != (unsigned) ( K              * n_fra)) simu->V_K [tid].resize( K              * n_fra);
-
 	// Tell StaPU to associate the "vector" vector with the "vector_handle"
 	// identifier. When a task needs to access a piece of data, it should
 	// refer to the handle that is associated to it.
@@ -227,49 +195,71 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::Monte_Carlo_method()
 {
-	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	std::vector<std::thread> threads(this->params.simulation.n_threads -1);
-	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
-		threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::build_communication_chain, this, tid);
+	try
+	{
+		// launch a group of slave threads (there is "n_threads -1" slave threads)
+		std::vector<std::thread> threads(this->params.simulation.n_threads -1);
+		for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+			threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::build_communication_chain, this, tid);
 
-	// build the communication chain
-	Simulation_BFER<B,R,Q>::build_communication_chain(this, 0);
+		// build the communication chain
+		Simulation_BFER<B,R,Q>::build_communication_chain(this, 0);
 
-	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
-		threads[tid -1].join();
+		// join the slave threads with the master thread
+		for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+			threads[tid -1].join();
 
-	if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min)
-		terminal->legend(std::cout);
+		if (!this->params.terminal.disabled && this->snr == this->params.simulation.snr_min)
+			terminal->legend(std::cout);
 
-	if (this->params.source.type == "AZCW")
-		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+		if (this->params.source.type == "AZCW")
+			for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+			{
+				std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
+				std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
+				std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
+				this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			}
+
+		std::thread term_thread;
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+			// launch a thread dedicated to the terminal display
+			term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
+
+		try
 		{
-			std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
-			std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
-			std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-			this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			// Monte Carlo simulation
+			while (!this->monitor_red->fe_limit_achieved())
+			{
+				for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+					this->seq_tasks_submission(tid);
+
+				starpu_task_wait_for_all();
+			}
+		}
+		catch (std::exception const& e)
+		{
+			Monitor<B,R>::stop();
+
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+			          << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 		}
 
-	std::thread term_thread;
-	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
-		// launch a thread dedicated to the terminal display
-		term_thread = std::thread(Simulation_BFER<B,R,Q>::terminal_temp_report, this);
-
-	// Monte Carlo simulation
-	while (!this->monitor_red->fe_limit_achieved())
-	{
-		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
-			this->seq_tasks_submission(tid);
-
-		starpu_task_wait_for_all();
+		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+		{
+			cond_terminal.notify_all();
+			// wait the terminal thread to finish
+			term_thread.join();
+		}
 	}
-
-	if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0))
+	catch (std::exception const& e)
 	{
-		cond_terminal.notify_all();
-		// wait the terminal thread to finish
-		term_thread.join();
+		Monitor<B,R>::stop();
+
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+		          << bold_red("communication chain.") << std::endl
+		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 	}
 }
 

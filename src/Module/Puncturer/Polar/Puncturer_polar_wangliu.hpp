@@ -25,8 +25,9 @@ public:
 
 	void gen_frozen_bits(mipp::vector<B> &frozen_bits);
 
-	void   puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const;
-	void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const;
+protected:
+	void   _puncture(const B *X_N1, B *X_N2) const;
+	void _depuncture(const Q *Y_N1, Q *Y_N2) const;
 };
 }
 }

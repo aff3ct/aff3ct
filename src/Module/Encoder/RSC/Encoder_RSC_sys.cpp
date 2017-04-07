@@ -2,6 +2,8 @@
 #include <iterator>
 #endif
 
+#include <stdexcept>
+
 #include "Encoder_RSC_sys.hpp"
 
 using namespace aff3ct::module;
@@ -13,7 +15,10 @@ Encoder_RSC_sys<B>
 : Encoder_sys<B>(K, N + 2*n_ff, n_frames, name), n_ff(n_ff), n_states(1 << n_ff), 
   buffered_encoding(buffered_encoding)
 {
-	assert(N == (2 * K));
+	if (N !=  2 * K)
+		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"N\" / \"K\" has to be a equal to 2.");
+	if (n_ff <= 0)
+		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"n_ff\" has to be greater than 0.");
 }
 
 template <typename B>
@@ -31,37 +36,23 @@ int Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::_encode(const B *U_K, B *X_N)
 {
-	assert(U_K.size() == (unsigned) (this->K * this->n_frames));
-	assert(X_N.size() == (unsigned) (this->N * this->n_frames));
-
 	if (buffered_encoding)
-		for (auto f = 0; f < this->n_frames; f++)
-		{
-#ifdef _MSC_VER
-			std::copy(U_K.data() + f*this->K,
-			          U_K.data() + f*this->K + this->K,
-			          stdext::checked_array_iterator<B*>(X_N.data() + f * 2 * (this->K + this->n_ff), this->K)); // sys
-#else
-			std::copy(U_K.data() + f*this->K, U_K.data() + f*this->K + this->K, X_N.data() + f * 2 * (this->K + this->n_ff)); // sys
-#endif
-			frame_encode(U_K.data() + f*this->K, X_N.data() + f * 2 * (this->K + this->n_ff) + this->K, 1, true);             // par + tail bits
-		}
+	{
+		std::copy(U_K, U_K + this->K, X_N); // sys
+		__encode(U_K, X_N + this->K, 1, true); // par + tail bits
+	}
 	else
-		for (auto f = 0; f < this->n_frames; f++)
-			frame_encode(U_K.data() + f*this->K, X_N.data() + f*2*(this->K+this->n_ff));
+		__encode(U_K, X_N);
 }
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+::_encode_sys(const B *U_K, B *par)
 {
-	assert(par.size() == (unsigned) ((this->K +2*this->n_ff) * this->n_frames));
-
 	// par bits: [par | tail bit sys | tail bits par]
-	for (auto f = 0 ; f < this->n_frames ; f++)
-		frame_encode(U_K.data() + f*this->K, par.data() + f*(this->K+2*this->n_ff), 1, true);
+	__encode(U_K, par, 1, true);
 }
 
 template <typename B>
@@ -106,7 +97,7 @@ std::vector<std::vector<int>> Encoder_RSC_sys<B>
 
 template <typename B>
 void Encoder_RSC_sys<B>
-::frame_encode(const B* U_K, B* X_N, const int stride, const bool only_parity)
+::__encode(const B* U_K, B* X_N, const int stride, const bool only_parity)
 {
 	auto j = 0; // cur offset in X_N buffer
 	auto state = 0; // initial (and final) state 0 0 0
@@ -138,13 +129,20 @@ void Encoder_RSC_sys<B>
 		X_N[j] = inner_encode((int)bit_sys, state); j += stride; // encoding block
 	}
 
-	assert(state == 0);
+	if (state != 0)
+		throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"state\" should be equal to 0.");
+
 	if (!only_parity)
-		assert(j == this->N * stride);
+	{
+		if (j != this->N * stride)
+			throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"j\" should be equal to \"N\" * \"stride\".");
+	}
 	else
 	{
 		j += this->n_ff * stride;
-		assert(j == (this->K + 2*this->n_ff) * stride);
+		if (j != (this->K + 2*this->n_ff) * stride)
+			throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"j\" should be equal to "
+			                         "(\"K\" + 2 * \"n_ff\") * \"stride\".");
 	}
 }
 

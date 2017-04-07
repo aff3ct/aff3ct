@@ -27,16 +27,15 @@ public:
 	                                 const std::string name = "Decoder_RSC_BCJR_seq_generic_std");
 	virtual ~Decoder_RSC_BCJR_seq_generic_std();
 
-	virtual void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
-
 protected:
-	virtual void _soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	virtual void _soft_decode(const R *sys, const R *par, R *ext);
+	virtual void _soft_decode(const R *Y_N1, R *Y_N2);
 
-	virtual void compute_gamma   (const mipp::vector<R> &sys, const mipp::vector<R> &par);
-	virtual void compute_alpha   (                                                      );
-	virtual void compute_beta    (                                                      );
-	virtual void compute_ext     (const mipp::vector<R> &sys,       mipp::vector<R> &ext);
-	virtual void compute_beta_ext(const mipp::vector<R> &sys,       mipp::vector<R> &ext);
+	virtual void compute_gamma   (const R *sys, const R *par);
+	virtual void compute_alpha   (                          );
+	virtual void compute_beta    (                          );
+	virtual void compute_ext     (const R *sys,       R *ext);
+	virtual void compute_beta_ext(const R *sys,       R *ext);
 
 	virtual void compute_gamma   (const R *sys, const R *par, const R *tail_sys, const R *tail_par);
 	virtual void compute_ext_sys (const R *sys,                                        R *ext_sys );

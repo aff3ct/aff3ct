@@ -41,16 +41,16 @@ public:
 	virtual ~Decoder_polar_SC_naive();
 
 protected:
-	        void  load       (const mipp::vector<R>& Y_N);
-	        void _hard_decode(                          );
-	virtual void  store      (      mipp::vector<B>& V_K) const;
+	        void _load       (const R *Y_N        );
+	        void _hard_decode(const R *Y_N, B *V_K);
+	virtual void _store      (              B *V_K) const;
 
 private:
-	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size                     );
-	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SC<B,R>>* node_curr, const mipp::vector<B>& frozen_bits        );
-	void recursive_decode                   (const tools::Binary_node<Contents_SC<B,R>>* node_curr                                            );
-	void recursive_store                    (const tools::Binary_node<Contents_SC<B,R>>* node_curr,       mipp::vector<B>& V_K,         int &k) const;
-	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_SC<B,R>>* node_curr                                            );
+	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size             );
+	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SC<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);
+	void recursive_decode                   (const tools::Binary_node<Contents_SC<B,R>>* node_curr                                    );
+	void recursive_store                    (const tools::Binary_node<Contents_SC<B,R>>* node_curr, B *V_K, int &k                    ) const;
+	void recursive_deallocate_nodes_contents(      tools::Binary_node<Contents_SC<B,R>>* node_curr                                    );
 };
 }
 }

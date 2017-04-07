@@ -28,9 +28,9 @@ public:
 	virtual ~Decoder_turbo_fast();
 
 protected:
-	void load        (const mipp::vector<R>& Y_N);
-	void _hard_decode(                          );
-	void store       (      mipp::vector<B>& V_K) const;
+	void _load       (const R *Y_N        );
+	void _hard_decode(const R *Y_N, B *V_K);
+	void _store      (              B *V_K) const;
 };
 }
 }

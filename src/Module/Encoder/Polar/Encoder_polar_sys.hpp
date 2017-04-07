@@ -18,7 +18,8 @@ public:
 	                  const std::string name = "Encoder_polar_sys");
 	virtual ~Encoder_polar_sys() {}
 
-	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	void _encode(const B *U_K, B *X_N);
 };
 }
 }

@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Tools/Math/max.h"
 
 #include "Module/Modulator/BPSK/Modulator_BPSK.hpp"
@@ -21,41 +23,41 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 
 	// build the modulator
 	if (params.modulator.type == "BPSK")
-		modulator = new Modulator_BPSK<B,R,Q>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+		modulator = new Modulator_BPSK<B,R,Q>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 	else if (params.modulator.type == "BPSK_FAST")
-		modulator = new Modulator_BPSK_fast<B,R,Q>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2);
+		modulator = new Modulator_BPSK_fast<B,R,Q>(params.code.N + params.code.tail_length, sigma, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 	else if (params.modulator.type == "PAM")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_PAM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PAM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_PAM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PAM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_PAM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PAM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_PAM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PAM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 	}
 	else if (params.modulator.type == "QAM")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_QAM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_QAM<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_QAM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_QAM<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_QAM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_QAM<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_QAM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_QAM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 	}
 	else if (params.modulator.type == "PSK")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_PSK<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PSK<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_PSK<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PSK<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_PSK<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PSK<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_PSK<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2);
+			modulator = new Modulator_PSK<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 	}
 	else if (params.modulator.type == "CPM")
 	{
@@ -70,7 +72,8 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 			                                                      params.modulator.mapping,
 			                                                      params.modulator.wave_shape,
 			                                                      sigma,
-			                                                      params.demodulator.no_sig2);
+			                                                      params.demodulator.no_sig2,
+			                                                      params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXL")
 			modulator = new Modulator_CPM<B,R,Q,max_linear<Q>>   (params.code.N + params.code.tail_length,
 			                                                      params.modulator.bits_per_symbol,
@@ -82,7 +85,8 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 			                                                      params.modulator.mapping,
 			                                                      params.modulator.wave_shape,
 			                                                      sigma,
-			                                                      params.demodulator.no_sig2);
+			                                                      params.demodulator.no_sig2,
+			                                                      params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXS")
 			modulator = new Modulator_CPM<B,R,Q,max_star<Q>>     (params.code.N + params.code.tail_length,
 			                                                      params.modulator.bits_per_symbol,
@@ -94,7 +98,8 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 			                                                      params.modulator.mapping,
 			                                                      params.modulator.wave_shape,
 			                                                      sigma,
-			                                                      params.demodulator.no_sig2);
+			                                                      params.demodulator.no_sig2,
+			                                                      params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXSS")
 			modulator = new Modulator_CPM<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length,
 			                                                      params.modulator.bits_per_symbol,
@@ -106,21 +111,52 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 			                                                      params.modulator.mapping,
 			                                                      params.modulator.wave_shape,
 			                                                      sigma,
-			                                                      params.demodulator.no_sig2);
+			                                                      params.demodulator.no_sig2,
+			                                                      params.simulation.inter_frame_level);
 	}
 	else if (params.modulator.type == "USER")
 	{
 		if (params.demodulator.max == "MAX")
-			modulator = new Modulator_user<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2);
+			modulator = new Modulator_user<B,R,Q,max<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXL")
-			modulator = new Modulator_user<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2);
+			modulator = new Modulator_user<B,R,Q,max_linear<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXS")
-			modulator = new Modulator_user<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2);
+			modulator = new Modulator_user<B,R,Q,max_star<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 		else if (params.demodulator.max == "MAXSS")
-			modulator = new Modulator_user<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2);
+			modulator = new Modulator_user<B,R,Q,max_star_safe<Q>>(params.code.N + params.code.tail_length, sigma, params.modulator.bits_per_symbol, params.modulator.const_path, params.demodulator.no_sig2, params.simulation.inter_frame_level);
 	}
 
 	return modulator;
+}
+
+template <typename B, typename R, typename Q>
+int Factory_modulator<B,R,Q>
+::get_buffer_size_after_modulation(const parameters &params, const int N)
+{
+	if      (params.modulator.type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_mod(N);
+	else if (params.modulator.type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_mod(N);
+	else if (params.modulator.type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "USER"     ) return Modulator_user     <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "CPM"      ) return Modulator_CPM      <B,R,Q>::size_mod(N, params.modulator.bits_per_symbol, params.modulator.cpm_L, params.modulator.upsample_factor);
+
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: unknown type of modulator.");
+}
+
+template <typename B, typename R, typename Q>
+int Factory_modulator<B,R,Q>
+::get_buffer_size_after_filtering(const parameters &params, const int N)
+{
+	if      (params.modulator.type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_fil(N);
+	else if (params.modulator.type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_fil(N);
+	else if (params.modulator.type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "USER"     ) return Modulator_user     <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol);
+	else if (params.modulator.type == "CPM"      ) return Modulator_CPM      <B,R,Q>::size_fil(N, params.modulator.bits_per_symbol, params.modulator.cpm_L, params.modulator.cpm_p);
+
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: unknown type of modulator.");
 }
 
 // ==================================================================================== explicit template instantiation 

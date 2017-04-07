@@ -19,12 +19,13 @@ protected:
 	const bool buffered_encoding;
 	
 public:
-	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true,
+	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1,
 	                       const std::string name = "Encoder_repetition_sys");
 	virtual ~Encoder_repetition_sys() {}
 
-	virtual void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
-	virtual void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
+protected:
+	virtual void _encode_sys(const B *U_K, B *par);
+	virtual void _encode    (const B *U_K, B *X_N);
 };
 }
 }

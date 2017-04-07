@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "Channel_NO.hpp"
 
 using namespace aff3ct::module;
@@ -19,11 +17,9 @@ Channel_NO<R>
 
 template <typename R>
 void Channel_NO<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
-	Y_N = X_N;
+	std::copy(X_N, X_N + this->N * this->n_frames, Y_N);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -4,23 +4,23 @@
 #include <fstream>
 #include <exception>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Monitor_reduction.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Monitor_reduction<B,R>
-::Monitor_reduction(const int& K, const int& N, const unsigned& max_fe, std::vector<Monitor<B,R>*>& monitors,
-                    const int& n_frames, const std::string name)
-: Monitor_std<B,R>(K, N, max_fe, n_frames, name),
-  monitors        (monitors                    )
+::Monitor_reduction(const int& K, const int& N, const int& N_mod, const unsigned& max_fe,
+                    std::vector<Monitor<B,R>*>& monitors, const int& n_frames, const std::string name)
+: Monitor_std<B,R>(K, N, N_mod, max_fe, n_frames, name),
+  monitors        (monitors                           )
 {
-	assert(monitors.size() != 0);
+	if (monitors.size() == 0)
+		throw std::length_error("aff3ct::module::Monitor_reduction: \"monitors.size()\" has to be greater than 0.");
+
 	for (size_t i = 0; i < monitors.size(); ++i)
-		assert(monitors[i] != nullptr);
+		if (monitors[i] == nullptr)
+			throw std::logic_error("aff3ct::module::Monitor_reduction: \"monitors[i]\" can't be null.");
 }
 
 template <typename B, typename R>
@@ -76,28 +76,10 @@ void Monitor_reduction<B,R>
 	std::ofstream file_noise (path_noise, std::ios_base::binary);
 
 	if (!file_src.is_open() || !file_enc.is_open() || !file_noise.is_open())
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-		          << bold_red(base_path) << bold_red("\"") << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::module::Monitor_reduction: issue while trying to open error tracker "
+		                            "log files, check the base path (\"" + base_path + "\").");
 
 	auto n_fe = get_n_fe();
-	int Y_size = 0;
-	// get Y_size
-	for (unsigned i = 0; i <= monitors.size(); i++)
-	{
-		auto mon = (i == monitors.size()) ? this : monitors[i];
-
-		// write noise
-		auto buff_noise = mon->get_buff_noise();
-
-		if (buff_noise.empty())
-			continue;
-
-		Y_size = (int)buff_noise.front().size();
-		break;
-	}
 
 	// write headers
 	file_src << n_fe          << std::endl << std::endl; // write number frames
@@ -107,8 +89,8 @@ void Monitor_reduction<B,R>
 	file_enc << this->get_K() << std::endl << std::endl; // write length of non coded frames
 	file_enc << this->get_N() << std::endl << std::endl; // write length of coded frames
 
-	file_noise.write((char *)&n_fe  , sizeof(n_fe  )); // write number frames
-	file_noise.write((char *)&Y_size, sizeof(Y_size)); // write length of frames
+	file_noise.write((char *)&n_fe,        sizeof(n_fe       )); // write number frames
+	file_noise.write((char *)&this->N_mod, sizeof(this->N_mod)); // write length of frames
 
 	// write frames
 	for (unsigned i = 0; i <= monitors.size(); i++)
@@ -127,7 +109,10 @@ void Monitor_reduction<B,R>
 
 		// write encoder
 		auto buff_enc = mon->get_buff_enc();
-		assert(buff_src.size() == buff_enc.size());
+		if (buff_src.size() != buff_enc.size())
+			throw std::length_error("aff3ct::module::Monitor_reduction: \"buff_src.size()\" has to be equal to "
+			                        "\"buff_enc.size()\".");
+
 		for (unsigned f = 0; f < buff_enc.size(); f++)
 		{
 			for (unsigned b = 0; b < buff_enc[f].size(); b++)
@@ -138,7 +123,9 @@ void Monitor_reduction<B,R>
 
 		// write noise
 		auto buff_noise = mon->get_buff_noise();
-		assert(buff_src.size() == buff_noise.size());
+		if (buff_src.size() != buff_noise.size())
+			throw std::length_error("aff3ct::module::Monitor_reduction: \"buff_src.size()\" has to be equal to "
+			                        "\"buff_noise.size()\".");
 		for (unsigned f = 0; f < buff_noise.size(); f++)
 			file_noise.write(reinterpret_cast<char*>(&buff_noise[f][0]), buff_noise[f].size()*sizeof(R));
 	}
@@ -149,13 +136,12 @@ void Monitor_reduction<B,R>
 		std::ofstream file_itl(path_itl);
 
 		if (!file_itl.is_open())
-		{
-			std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check file name: \"")
-			          << bold_red(base_path) << bold_red("\"") << std::endl;
-			std::exit(-1);
-		}
+			throw std::invalid_argument("aff3ct::module::Monitor_reduction: issue while trying to open error tracker "
+			                            "log files, check the base path (\"" + base_path + "\").");
 
-		assert(this->get_N() == (int)itl_pi.size());
+		if (this->get_N() != (int)itl_pi.size())
+			throw std::length_error("aff3ct::module::Monitor_reduction: \"itl_pi.size()\" has to be equal to \"N\".");
+
 		file_itl << itl_pi.size() << std::endl << std::endl; // write length of coded frames
 
 		for (unsigned b = 0; b < itl_pi.size(); b++)
@@ -191,13 +177,8 @@ void Monitor_reduction<B,R>
                     std::string& path_enc, std::string& path_noise, std::string& path_itl)
 {
 	if (!check_path(base_path))
-	{
-		std::cerr << bold_red("(EE) issue while trying to open error tracker log files ; check head of the path: \"")
-		          << bold_red(base_path)
-		          << bold_red("\" and please create yourself the needed directory.")
-		          << std::endl;
-		std::exit(-1);
-	}
+		throw std::invalid_argument("aff3ct::module::Monitor_reduction: issue while trying to open error tracker "
+		                            "log files, check the base path (\"" + base_path + "\").");
 
 	std::stringstream snr_stream;
 	snr_stream << std::fixed << std::setprecision(3) << snr;

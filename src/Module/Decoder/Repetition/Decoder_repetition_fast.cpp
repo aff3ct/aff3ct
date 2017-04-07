@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 
 #include "Decoder_repetition_fast.hpp"
@@ -11,7 +11,9 @@ Decoder_repetition_fast<B,R>
                           const std::string name)
  : Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames, name)
 {
-	assert(this->K % mipp::nElReg<R>() == 0);
+	if (this->K % mipp::nElReg<R>())
+		throw std::invalid_argument("aff3ct::module::Decoder_repetition_fast: \"K\" has to be a multiple of "
+		                            "\"mipp::nElReg<R>()\".");
 }
 
 template <typename B, typename R>
@@ -22,7 +24,7 @@ Decoder_repetition_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_fast<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	for (auto i = 0; i < this->K; i += mipp::nElReg<R>())
 	{

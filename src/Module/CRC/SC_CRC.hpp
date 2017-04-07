@@ -41,11 +41,6 @@ public:
 		s_in.register_b_transport(this, &SC_CRC_module::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)U_K.size() != crc.K * crc.n_frames) U_K.resize(crc.K * crc.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -78,14 +73,6 @@ public:
 	: CRC_i<B>(K, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_CRC() { if (module != nullptr) { delete module; module = nullptr; } }
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		CRC_i<B>::set_n_frames(n_frames);
-
-		if (module != nullptr)
-			module->resize_buffers();
-	}
 
 	void create_sc_module()
 	{

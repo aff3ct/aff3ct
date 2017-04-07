@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Module/Encoder/RA/Encoder_RA.hpp"
 #include "Module/Decoder/RA/Decoder_RA.hpp"
@@ -21,7 +19,6 @@ Simulation_BFER_RA<B,R,Q>
 ::Simulation_BFER_RA(const parameters& params)
 : Simulation_BFER<B,R,Q>(params)
 {
-	assert(params.code.N % params.code.K == 0);
 }
 
 template <typename B, typename R, typename Q>
@@ -48,7 +45,8 @@ Encoder<B>* Simulation_BFER_RA<B,R,Q>
 {
 	auto encoder = Simulation_BFER<B,R,Q>::build_encoder(tid);
 	if (encoder == nullptr)
-		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *this->interleaver[tid]);
+		encoder = new Encoder_RA<B>(this->params.code.K, this->params.code.N, *this->interleaver[tid],
+		                            this->params.simulation.inter_frame_level);
 	return encoder;
 }
 
@@ -69,7 +67,7 @@ Interleaver<int>* Simulation_BFER_RA<B,R,Q>
 ::build_interleaver(const int tid)
 {
 	auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.interleaver.seed;
-	Interleaver<int>* itl = Factory_interleaver<int>::build(this->params, this->params.code.K, seed);
+	Interleaver<int>* itl = Factory_interleaver<int>::build(this->params, this->params.code.N, seed);
 	this->check_errors(itl, "Interleaver<int>");
 	return itl;
 }

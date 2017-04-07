@@ -1,6 +1,7 @@
+#include <chrono>
 #include <limits>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_Gallager_A.hpp"
@@ -11,17 +12,26 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const AList_reader &H,
-                                      const bool enable_syndrome, const int n_frames, const std::string name)
+                                      const bool enable_syndrome, const int syndrome_depth, const int n_frames,
+                                      const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
   n_ite            (n_ite                  ),
   H                (H                      ),
   enable_syndrome  (enable_syndrome        ),
-  Y_N              (N                      ),
+  syndrome_depth   (syndrome_depth         ),
+  HY_N              (N                      ),
   C_to_V_messages  (H.get_n_branches(),   0),
   V_to_C_messages  (H.get_n_branches(),   0)
 {
-	assert(this->N == (int)H.get_n_VN());
-	assert(n_ite > 0);
+	if (n_ite <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"n_ite\" has to be "
+		                            "greater than 0.");
+	if (syndrome_depth <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"syndrome_depth\" has to "
+		                            "be greater than 0.");
+	if (N != (int)H.get_n_VN())
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"N\" is not compatible "
+		                            "with the alist file.");
 }
 
 template <typename B, typename R>
@@ -32,18 +42,15 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::load(const mipp::vector<R>& Y_N_chn)
+::_hard_decode(const R *Y_N, B *V_K)
 {
-	assert(Y_N_chn.size() >= Y_N.size());
-
+	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	for (auto i = 0; i < this->N; i++)
-		Y_N[i] = Y_N_chn[i] < 0;
-}
+		HY_N[i] = Y_N[i] < 0;
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_hard_decode()
-{
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	auto cur_syndrome_depth = 0;
 	for (auto ite = 0; ite < n_ite; ite++)
 	{
 		auto C_to_V_mess_ptr = C_to_V_messages.data();
@@ -56,7 +63,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 			for (auto j = 0; j < node_degree; j++)
 			{
-				auto cur_state = Y_N[i];
+				auto cur_state = HY_N[i];
 				if (ite > 0)
 				{
 					auto count = 0;
@@ -97,18 +104,18 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 		// stop criterion
 		if (this->enable_syndrome && (syndrome == 0))
-			break;
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
-}
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::store(mipp::vector<B>& V_K) const
-{
-	assert((int)V_K.size() >= this->K);
-
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	auto C_to_V_ptr = C_to_V_messages.data();
-
 	// for the K first variable nodes (make a majority vote with the entering messages)
 	for (auto i = 0; i < this->K; i++)
 	{
@@ -119,29 +126,18 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 			count += C_to_V_ptr[j] ? 1 : -1;
 
 		if (node_degree % 2 == 0)
-			count += Y_N[i] ? 1 : -1;
+			count += HY_N[i] ? 1 : -1;
 
 		// take the hard decision
 		V_K[i] = count > 0 ? 1 : 0;
 
 		C_to_V_ptr += node_degree; // jump to the next node
 	}
-}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
-{
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
-{
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // ==================================================================================== explicit template instantiation 

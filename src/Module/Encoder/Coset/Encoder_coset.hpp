@@ -3,14 +3,14 @@
 
 #include <random>
 
-#include "../Encoder_sys.hpp"
+#include "../Encoder.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int>
-class Encoder_coset : public Encoder_sys<B>
+class Encoder_coset : public Encoder<B>
 {
 private:
 	std::mt19937 rd_engine; // Mersenne Twister 19937
@@ -25,8 +25,8 @@ public:
 	              const std::string name = "Encoder_coset");
 	virtual ~Encoder_coset();
 
-	void encode    (const mipp::vector<B>& U_K, mipp::vector<B>& X_N);
-	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par);
+protected:
+	void _encode(const B *U_K, B *X_N);
 };
 }
 }

@@ -28,7 +28,7 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 //
 // template <typename B, typename R, tools::proto_max_i<R> MAX>
 // void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
-// ::compute_gamma_alpha(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+// ::compute_gamma_alpha(const R *sys, const R *par)
 // {
 // 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
 
@@ -85,7 +85,7 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
-::compute_gamma_alpha(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma_alpha(const R *sys, const R *par)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
 
@@ -133,7 +133,7 @@ void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
-::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_beta_ext(const R *sys, R *ext)
 {
 	constexpr auto stride = mipp::nElmtsPerRegister<R>();
 
@@ -229,7 +229,7 @@ void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	compute_gamma_alpha(sys, par);
 	compute_beta_ext   (sys, ext);

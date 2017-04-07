@@ -1,12 +1,12 @@
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
 #include "Tools/Factory/Factory_modulator.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
+#include "Tools/Display/bash_tools.h"
 
 #include "Simulation_EXIT.hpp"
 
@@ -90,7 +90,7 @@ void Simulation_EXIT<B,R,Q>
 
 	const auto N     = params.code.N;
 	const auto tail  = params.code.tail_length;
-	const auto N_mod = modulator->get_buffer_size_after_modulation(N + tail);
+	const auto N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, N + tail);
 
 	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
 	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
@@ -98,13 +98,11 @@ void Simulation_EXIT<B,R,Q>
 	terminal    = build_terminal   (      ); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames() > 1)
-	{
-		std::cout << bold_red("(EE) EXIT simulation does not support inter frame SIMD... Exiting.") << std::endl;
-		exit(-1);
-	}
+		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
 
 	// resize the modulation buffers
-	const auto K_mod = modulator_a->get_buffer_size_after_modulation(params.code.K);
+	const auto K     = params.code.K;
+	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, K);
 	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
 	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
 	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
@@ -295,14 +293,14 @@ double Simulation_EXIT<B,R,Q>
 			if ((int)bits[i] == 0)
 			{
 				llr_0_noninfinite_count++;
-                llr_0_min = std::min((double)llrs[i], llr_0_min);
-                llr_0_max = std::max((double)llrs[i], llr_0_max);
+				llr_0_min = std::min((double)llrs[i], llr_0_min);
+				llr_0_max = std::max((double)llrs[i], llr_0_max);
 			}
 			else
 			{
 				llr_1_noninfinite_count++;
-                llr_1_min = std::min((double)llrs[i], llr_1_min);
-                llr_1_max = std::max((double)llrs[i], llr_1_max);
+				llr_1_min = std::min((double)llrs[i], llr_1_min);
+				llr_1_max = std::max((double)llrs[i], llr_1_max);
 			}
 		}
 		if (llr_0_noninfinite_count > 0 && llr_1_noninfinite_count > 0 && 

@@ -52,12 +52,12 @@ public:
 	virtual ~Decoder_turbo();
 
 protected:
-	virtual void load (const mipp::vector<R>& Y_N);
-	virtual void store(      mipp::vector<B>& V_K) const;
+	virtual void _load (const R *Y_N);
+	virtual void _store(      B *V_K) const;
 
 private:
-	void buffered_load(const mipp::vector<R>& Y_N);
-	void standard_load(const mipp::vector<R>& Y_N);
+	void buffered_load(const R *Y_N);
+	void standard_load(const R *Y_N);
 };
 }
 }

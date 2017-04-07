@@ -19,8 +19,9 @@ private:
 	std::mt19937       rd_engine;
 
 public:
-	Interleaver_random(int size, const int seed = 0, const std::string name = "Interleaver_random")
-	: Interleaver<T>(size, 1, name), rd(), rd_engine(rd())
+	Interleaver_random(int size, const int seed = 0, const int n_frames = 1,
+	                   const std::string name = "Interleaver_random")
+	: Interleaver<T>(size, n_frames, name), rd(), rd_engine(rd())
 	{
 		rd_engine.seed(seed);
 		gen_lookup_tables();

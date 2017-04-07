@@ -43,12 +43,6 @@ public:
 		s_in.register_b_transport(this, &SC_Quantizer_module::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != quantizer.N * quantizer.n_frames) Y_N1.resize(quantizer.N * quantizer.n_frames);
-		if ((int)Y_N2.size() != quantizer.N * quantizer.n_frames) Y_N2.resize(quantizer.N * quantizer.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -81,14 +75,6 @@ public:
 	: Quantizer_i<R,Q>(N, n_frames, name), module(nullptr) {}
 
 	virtual ~SC_Quantizer() { if (module != nullptr) { delete module; module = nullptr; } };
-
-	virtual void set_n_frames(const int n_frames)
-	{
-		Quantizer_i<R,Q>::set_n_frames(n_frames);
-
-		if (module != nullptr)
-			module->resize_buffers();
-	}
 
 	void create_sc_module()
 	{

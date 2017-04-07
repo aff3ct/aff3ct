@@ -10,15 +10,15 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_polar<B>
-::build(const parameters &params, const mipp::vector<B> &frozen_bits, const int n_frames)
+::build(const parameters &params, const mipp::vector<B> &frozen_bits)
 {
 	Encoder<B> *encoder = nullptr;
 
 	// build the encoder
 	if (!params.encoder.systematic)
-		encoder = new Encoder_polar    <B>(params.code.K, params.code.N_code, frozen_bits, n_frames);
+		encoder = new Encoder_polar    <B>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level);
 	else
-		encoder = new Encoder_polar_sys<B>(params.code.K, params.code.N_code, frozen_bits, n_frames);
+		encoder = new Encoder_polar_sys<B>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level);
 
 	return encoder;
 }

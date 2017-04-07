@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "Tools/Display/bash_tools.h"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 #include "Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp"
 
@@ -89,7 +88,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, GOLDEN, USER, COLUMNS, NO"};
+		 "LTE, CCSDS, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
 
 	this->opt_args[{"itl-path"}] =
 		{"string",
@@ -353,7 +352,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	if (this->params.interleaver.type == "USER")
 		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
-	if (this->params.interleaver.type == "COLUMNS")
+	if (this->params.interleaver.type == "RAND_COL" || this->params.interleaver.type == "ROW_COL")
 		p.push_back(std::make_pair("Number of columns", std::to_string(this->params.interleaver.n_cols)));
 
 	p.push_back(std::make_pair("Uniform", (this->params.interleaver.uniform ? "on" : "off")));

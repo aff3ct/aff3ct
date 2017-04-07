@@ -18,7 +18,8 @@ public:
 	                        const int n_frames = 1, const std::string name = "Decoder_repetition_fast");
 	virtual ~Decoder_repetition_fast();
 
-	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+protected:
+	void _soft_decode(const R *sys, const R *par, R *ext);
 };
 }
 }

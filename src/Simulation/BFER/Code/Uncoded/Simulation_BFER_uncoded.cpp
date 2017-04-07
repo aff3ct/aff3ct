@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
@@ -20,7 +18,6 @@ Simulation_BFER_uncoded<B,R,Q>
 ::Simulation_BFER_uncoded(const parameters& params)
 : Simulation_BFER<B,R,Q>(params)
 {
-	assert(params.code.N == params.code.K);
 }
 
 template <typename B, typename R, typename Q>
@@ -45,7 +42,7 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_uncoded<B,R,Q>
 ::build_encoder(const int tid)
 {
-	return new Encoder_NO<B>(this->params.code.K, this->params.code.N);
+	return new Encoder_NO<B>(this->params.code.K, this->params.code.N, this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>

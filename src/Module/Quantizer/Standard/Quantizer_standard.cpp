@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 #include <cmath>
 
@@ -18,7 +18,9 @@ Quantizer_standard<R,Q>
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
 {
-	assert(sizeof(Q) * 8 > (unsigned) fixed_point_pos);
+	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"fixed_point_pos\" has to be smaller "
+		                            "than \"sizeof(Q)\" * 8.");
 }
 
 namespace aff3ct
@@ -53,11 +55,23 @@ Quantizer_standard<R,Q>
   fixed_point_pos(fixed_point_pos),
   factor(1 << fixed_point_pos)
 {
-	assert(saturation_pos >= 2);
-	assert(fixed_point_pos <= saturation_pos);
-	assert(sizeof(Q) * 8 > (unsigned) fixed_point_pos);
-	assert(val_max <= +(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)));
-	assert(val_min >= -(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)));
+	if (fixed_point_pos <= 0)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"fixed_point_pos\" has to be greater than 0.");
+	if (saturation_pos <= 0)
+		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"saturation_pos\" has to be greater than 0.");
+	if (saturation_pos < 2)
+		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"saturation_pos\" has to be equal or greater "
+		                            "than 2.");
+	if (fixed_point_pos > saturation_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"saturation_pos\" has to be equal or greater "
+		                            "than \"fixed_point_pos\".");
+	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"fixed_point_pos\" has to be smaller "
+		                            "than \"sizeof(Q)\" * 8.");
+	if (val_max > +(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
+		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"val_max\" value is invalid.");
+	if (val_min < -(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
+		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"val_min\" value is invalid.");
 }
 
 namespace aff3ct
@@ -92,11 +106,9 @@ Quantizer_standard<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_standard<R,Q>
-::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const R *Y_N1, Q *Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
-
-	auto size = Y_N1.size();
+	auto size = (unsigned)(this->N * this->n_frames);
 	for (unsigned i = 0; i < size; i++)
 		Y_N2[i] = (Q)saturate((R)std::round((R)factor * Y_N1[i]), (R)val_min, (R)val_max);
 }

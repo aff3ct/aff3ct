@@ -1,7 +1,6 @@
 #ifndef ENCODER_CPE_HPP_
 #define ENCODER_CPE_HPP_
 
-#include <cassert>
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../CPM_parameters.hpp"
@@ -14,13 +13,11 @@ template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE
 {
 public:
-	Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm, const int n_frames,
-	                const std::string name = "Encoder_CPE");
+	Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm);
 	virtual ~Encoder_CPE() {}
 
 	const int N; // number of symbol to send for one frame
 	const CPM_parameters<SIN,SOUT>& cpm;
-	const int n_frames;
 
 	int get_n_ff   () const;
 	int tail_length() const;
@@ -47,8 +44,6 @@ public:
 	SIN merge_bits(const SIN* in_bit, const int number_of_bits, const bool msb_to_lsb = true);
 
 protected:
-	void frame_encode(const SIN* U_N, SOUT* X_N);
-
 	virtual SOUT inner_encode(const SIN bit_sys, int &state) = 0;
 	virtual SIN  tail_symb   (const int &state             ) = 0;
 };

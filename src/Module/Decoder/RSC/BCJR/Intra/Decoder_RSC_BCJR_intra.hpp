@@ -25,12 +25,15 @@ public:
 	                       const std::string name = "Decoder_RSC_BCJR_intra");
 	virtual ~Decoder_RSC_BCJR_intra();
 
-	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext);
+	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
+	                 const int n_frames = -1);
 
 protected:
-	virtual void compute_gamma   (const mipp::vector<R> &sys, const mipp::vector<R> &par) = 0;
-	virtual void compute_alpha   (                                                      ) = 0;
-	virtual void compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext      ) = 0;
+	void _soft_decode(const R *sys, const R *par, R *ext);
+
+	virtual void compute_gamma   (const R *sys, const R *par) = 0;
+	virtual void compute_alpha   (                          ) = 0;
+	virtual void compute_beta_ext(const R *sys,       R *ext) = 0;
 };
 }
 }

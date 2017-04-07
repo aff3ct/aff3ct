@@ -2,7 +2,7 @@
 #define PATTERN_POLAR_INTERFACE_HPP_
 
 #include <cmath>
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -68,12 +68,16 @@ protected:
 	  min_level(min_level),
 	  max_level(max_level)
 	{
-		assert(N > 0);
-		assert(size > 0);
-		assert(node != nullptr);
-
-		assert(min_level >= 0);
-		assert(max_level == -1 || (max_level >= 0 && max_level >= min_level));
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"N\" has to be greater than 0.");
+		if (node == nullptr)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"node\" can't be null.");
+		if (min_level < 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"min_level\" has to be equal or greater "
+			                            "than 0.");
+		if (max_level != -1 && (max_level < 0 || max_level < min_level))
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"max_level\" has to be equal or greater "
+			                            "than \"min_level\".");
 
 		const int *p_size = &size;
 		for (auto i = 0; i < node->get_depth(); i++) *const_cast<int*>(p_size) >>= 1;
@@ -93,8 +97,12 @@ public:
 	: N(0), m(0), size(0), si_2(0), node(nullptr), off_l(0), off_s(0), rev_depth(0), n_dig(0), n2_dig(0), tab("\t"),
 	  id(0), key(""), min_level(min_level), max_level(max_level)
 	{
-		assert(min_level >= 0);
-		assert(max_level == -1 || (max_level >= 0 && max_level >= min_level));
+		if (min_level < 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"min_level\" has to be equal or greater "
+			                            "than 0.");
+		if (max_level != -1 && (max_level < 0 || max_level < min_level))
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"max_level\" has to be equal or greater "
+			                            "than \"min_level\".");
 	}
 
 	virtual ~Pattern_polar_i() {}
@@ -141,8 +149,11 @@ public:
 
 	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr)
 	{
-		assert(reverse_graph_depth > 0);
-		assert(node_curr != nullptr);
+		if (reverse_graph_depth <= 0)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"reverse_graph_depth\" has to be "
+			                            "greater than 0.");
+		if (node_curr == nullptr)
+			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"node_curr\" can't be null.");
 
 		if ((reverse_graph_depth >= min_level) && (max_level == -1 || reverse_graph_depth <= max_level))
 			return _match(reverse_graph_depth, node_curr);

@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Encoder_NO.hpp"
 
@@ -9,6 +9,8 @@ Encoder_NO<B>
 ::Encoder_NO(const int K, const int N, const int n_frames, const std::string name)
 : Encoder<B>(K, N, n_frames, name)
 {
+	if (this->K != this->N)
+		throw std::length_error("aff3ct::module::Encoder_NO: \"K\" and \"N\" have to be equal.");
 }
 
 template <typename B>
@@ -19,11 +21,9 @@ Encoder_NO<B>
 
 template <typename B>
 void Encoder_NO<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::encode(const B *U_K, B *X_N)
 {
-	assert(U_K.size() == (unsigned)(this->K * this->n_frames));
-	assert(U_K.size() == X_N.size()                          );
-	X_N = U_K;
+	std::copy(U_K, U_K + this->N * this->n_frames, X_N);
 }
 
 // ==================================================================================== explicit template instantiation 

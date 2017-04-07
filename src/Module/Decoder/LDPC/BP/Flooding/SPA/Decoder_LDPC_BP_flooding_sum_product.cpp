@@ -1,6 +1,5 @@
 #include <limits>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_sum_product.hpp"
@@ -12,9 +11,10 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
 ::Decoder_LDPC_BP_flooding_sum_product(const int &K, const int &N, const int& n_ite,
                                        const AList_reader &alist_data,
                                        const bool enable_syndrome,
+                                       const int syndrome_depth,
                                        const int n_frames,
                                        const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, n_frames, name),
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, enable_syndrome, syndrome_depth, n_frames, name),
   values(alist_data.get_CN_max_degree())
 {
 }
@@ -28,7 +28,7 @@ Decoder_LDPC_BP_flooding_sum_product<B,R>
 // log sum-product implementation
 template <typename B, typename R>
 bool Decoder_LDPC_BP_flooding_sum_product<B,R>
-::BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V)
+::BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V)
 {
 	// beginning of the iteration upon all the matrix lines
 	R *C_to_V_ptr = C_to_V.data();

@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
@@ -22,7 +21,6 @@ Simulation_BFERI_LDPC<B,R,Q>
   alist_data(params.code.alist_path),
   decoder_siso(params.simulation.n_threads, nullptr)
 {
-	assert(this->params.code.N == (int)alist_data.get_n_VN());
 }
 
 template <typename B, typename R, typename Q>

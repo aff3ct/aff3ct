@@ -8,6 +8,7 @@
 #ifndef MONITOR_HPP_
 #define MONITOR_HPP_
 
+#include <stdexcept>
 #include <csignal>
 #include <chrono>
 #include <vector>
@@ -42,6 +43,7 @@ protected:
 
 	const int K; /*!< Number of information bits in one frame */
 	const int N; /*!< Size of one encoded frame (= number of bits in one frame) */
+	const int N_mod;
 
 public:
 	/*!
@@ -54,9 +56,19 @@ public:
 	 * \param n_frames: number of frames to process in the Monitor.
 	 * \param name:     Monitor's name.
 	 */
-	Monitor_i(const int& K, const int& N, const int& n_frames = 1, const std::string name = "Monitor_i")
-	: Module(n_frames, name), K(K), N(N)
+	Monitor_i(const int& K, const int& N, const int& N_mod, const int& n_frames = 1,
+	          const std::string name = "Monitor_i")
+	: Module(n_frames, name), K(K), N(N), N_mod(N_mod)
 	{
+		if (this->K <= 0)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"K\" has to be greater than 0.");
+		if (this->N <= 0)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"N\" has to be greater than 0.");
+		if (this->N_mod <= 0)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"N_mod\" has to be greater than 0.");
+		if (this->K > this->N)
+			throw std::invalid_argument("aff3ct::module::Monitor: \"K\" has to be smaller than \"N\".");
+
 		Monitor_i<B,R>::interrupt = false;
 		Monitor_i<B,R>::d_delta_interrupt = std::chrono::nanoseconds(0);
 
@@ -81,6 +93,11 @@ public:
 	int get_N() const
 	{
 		return N;
+	}
+
+	int get_N_mod() const
+	{
+		return N_mod;
 	}
 
 	/*!
@@ -150,7 +167,23 @@ public:
 	 * \param U: the original message (from the Source or the CRC).
 	 * \param V: the decoded message (from the Decoder).
 	 */
-	virtual void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V) = 0;
+	void check_errors(const mipp::vector<B>& U_K, const mipp::vector<B>& V_K)
+	{
+		if ((int)U_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"U_K.size()\" has to be equal to \"K * n_frames\".");
+
+		if ((int)V_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"V_K.size()\" has to be equal to \"K * n_frames\".");
+
+		this->check_errors(U_K.data(), V_K.data());
+	}
+
+	virtual void check_errors(const B *U_K, const B *V_K)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_check_errors(U_K + f * this->K,
+			                    V_K + f * this->K);
+	}
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
@@ -172,6 +205,15 @@ public:
 		return Monitor_i<B,R>::over;
 	}
 
+	/*!
+	 * \brief Put Monitor_i<B,R>::interrupt and Monitor_i<B,R>::over to true.
+	 */
+	static void stop()
+	{
+		Monitor_i<B,R>::interrupt = true;
+		Monitor_i<B,R>::over      = true;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The following public methods are specific to catch the bad frames and to dump them into files. //
 	// The proposed default implementation do nothing.                                                //
@@ -188,13 +230,34 @@ public:
 	 * \param X_mod:  the modulated message (from the Modulator, the input of the Channel).
 	 * \param Y:      the noised message (the output of the Channel).
 	 */
-	virtual void check_and_track_errors(const mipp::vector<B>& U,
-	                                    const mipp::vector<B>& V,
-	                                    const mipp::vector<B>& X,
-	                                    const mipp::vector<R>& X_mod,
-	                                    const mipp::vector<R>& Y)
+	void check_and_track_errors(const mipp::vector<B>& U_K,
+	                            const mipp::vector<B>& V_K,
+	                            const mipp::vector<B>& X_N,
+	                            const mipp::vector<R>& Y_N_mod)
 	{
-		check_errors(U, V);
+		if ((int)U_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"U_K.size()\" has to be equal to \"K * n_frames\".");
+
+		if ((int)V_K.size() != this->K * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"V_K.size()\" has to be equal to \"K * n_frames\".");
+
+		if ((int)X_N.size() != this->N * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"X_N.size()\" has to be equal to \"N * n_frames\".");
+
+		if ((int)Y_N_mod.size() != this->N_mod * this->n_frames)
+			throw std::length_error("aff3ct::module::Monitor: \"Y_N_mod.size()\" has to be equal to "
+			                        "\"N_mod * n_frames\".");
+
+		this->check_and_track_errors(U_K.data(), V_K.data(), X_N.data(), Y_N_mod.data());
+	}
+
+	virtual void check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_check_and_track_errors(U_K     + f * this->K,
+			                              V_K     + f * this->K,
+			                              X_N     + f * this->N,
+			                              Y_N_mod + f * this->N_mod);
 	}
 
 	/*!
@@ -237,6 +300,17 @@ public:
 		return std::vector<mipp::vector<R>>(0);
 	}
 
+protected:
+	virtual void _check_errors(const B *U, const B *V)
+	{
+		throw std::runtime_error("aff3ct::module::Monitor: \"_check_errors\" is unimplemented.");
+	}
+
+	void _check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
+	{
+		throw std::runtime_error("aff3ct::module::Monitor: \"_check_and_track_errors\" is unimplemented.");
+	}
+
 private:
 	static void signal_interrupt_handler(int signal)
 	{
@@ -245,7 +319,7 @@ private:
 		{
 			Monitor_i<B,R>::d_delta_interrupt = t_now - Monitor_i<B,R>::t_last_interrupt;
 			if (Monitor_i<B,R>::d_delta_interrupt < std::chrono::milliseconds(500))
-				Monitor_i<B,R>::over = true;
+				Monitor_i<B,R>::stop();
 		}
 		Monitor_i<B,R>::t_last_interrupt  = t_now;
 

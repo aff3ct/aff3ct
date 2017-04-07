@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Puncturer_NO.hpp"
 
 using namespace aff3ct::module;
@@ -17,20 +19,16 @@ Puncturer_NO<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_NO<B,Q>
-::puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+::puncture(const B *X_N1, B *X_N2) const
 {
-	assert(X_N1.size() == X_N2.size());
-
-	X_N2 = X_N1;
+	std::copy(X_N1, X_N1 + this->N * this->n_frames, X_N2);
 }
 
 template <typename B, typename Q>
 void Puncturer_NO<B,Q>
-::depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+::depuncture(const Q *Y_N1, Q *Y_N2) const
 {
-	assert(Y_N1.size() == Y_N2.size());
-
-	Y_N2 = Y_N1;
+	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
 }
 
 // ==================================================================================== explicit template instantiation 

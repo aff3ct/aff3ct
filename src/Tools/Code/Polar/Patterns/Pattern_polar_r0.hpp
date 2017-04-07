@@ -1,7 +1,6 @@
 #ifndef PATTERN_POLAR_RATE_0_HPP_
 #define PATTERN_POLAR_RATE_0_HPP_
 
-#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <iomanip>

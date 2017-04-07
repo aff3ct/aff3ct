@@ -1,8 +1,6 @@
 #include <cmath>     // min(), fabs(), copysign()...
 #include <algorithm> // min()
 
-#include "Tools/Display/bash_tools.h"
-
 #include "max.h"
 
 namespace aff3ct
@@ -33,8 +31,9 @@ inline R max_star(const R& a, const R& b)
 template <typename R>
 inline R max_star_safe(const R& a, const R& b) 
 {
-	std::cerr << bold_red("(EE) max_star_safe is not defined in fixed-point arithmetic, exiting.") << std::endl;
-	std::exit(-1);
+	throw std::runtime_error("aff3ct::tools::max_star_safe: \"max_star_safe\" is not defined in fixed-point "
+	                         "arithmetic.");
+
 	return (R)0;
 }
 

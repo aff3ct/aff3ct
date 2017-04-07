@@ -1,9 +1,7 @@
 #include <iostream>
-#include <cassert>
 #include <sstream>
 #include <cmath>
 
-#include "Tools/Display/bash_tools.h"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 #include "Simulation/BFER/Code/Polar/Simulation_BFER_polar.hpp"
 

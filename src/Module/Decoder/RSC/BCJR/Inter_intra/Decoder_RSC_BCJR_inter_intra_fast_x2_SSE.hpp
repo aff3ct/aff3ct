@@ -23,9 +23,9 @@ public:
 	virtual ~Decoder_RSC_BCJR_inter_intra_fast_x2_SSE();
 
 protected:
-	void compute_gamma   (const mipp::vector<R> &sys, const mipp::vector<R> &par);
-	void compute_alpha   (                                                      );
-	void compute_beta_ext(const mipp::vector<R> &sys,       mipp::vector<R> &ext);
+	void compute_gamma   (const R *sys, const R *par);
+	void compute_alpha   (                          );
+	void compute_beta_ext(const R *sys,       R *ext);
 };
 }
 }

@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include <algorithm>
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -45,6 +46,8 @@ public:
 	Channel_i(const int N, const int n_frames = 1, const std::string name = "Channel_i")
 	: Module(n_frames, name), N(N)
 	{
+		if (N <= 0)
+			throw std::invalid_argument("aff3ct::module::Channel: \"N\" has to be greater than 0.");
 	}
 
 	/*!
@@ -60,7 +63,24 @@ public:
 	 * \param X_N: a perfectly clear message.
 	 * \param Y_N: a noisy signal.
 	 */
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N) = 0;
+	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+	{
+		if (X_N.size() != Y_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"Y_N.size()\".");
+		if (this->N * this->n_frames != (int)X_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+		if (this->N * this->n_frames != (int)Y_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"Y_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+
+		this->add_noise(X_N.data(), Y_N.data());
+	}
+
+	virtual void add_noise(const R *X_N, R *Y_N)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_add_noise(X_N + f * this->N,
+			                 Y_N + f * this->N);
+	}
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -69,10 +89,38 @@ public:
 	 * \param Y_N: a noisy signal.
 	 * \param H_N: the channel gains.
 	 */
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
+	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N, mipp::vector<R>& H_N)
 	{
-		this->add_noise(X_N, Y_N);
-		std::fill(H_N.begin(), H_N.end(), (R)1);
+		if (X_N.size() != Y_N.size() || Y_N.size() != H_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"Y_N.size()\" and "
+			                        "\"H_N.size()\".");
+		if (this->N * this->n_frames != (int)X_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"X_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+		if (this->N * this->n_frames != (int)Y_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"Y_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+		if (this->N * this->n_frames != (int)H_N.size())
+			throw std::length_error("aff3ct::module::Channel: \"H_N.size()\" has to be equal to \"N\" * \"n_frames\".");
+
+		this->add_noise(X_N.data(), Y_N.data(), H_N.data());
+	}
+
+	virtual void add_noise(const R *X_N, R *Y_N, R *H_N)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_add_noise(X_N + f * this->N,
+			                 Y_N + f * this->N,
+			                 H_N + f * this->N);
+	}
+
+protected:
+	virtual void _add_noise(const R *X_N, R *Y_N)
+	{
+		throw std::runtime_error("aff3ct::module::Channel: \"_add_noise\" is unimplemented.");
+	}
+
+	virtual void _add_noise(const R *X_N, R *Y_N, R *H_N)
+	{
+		throw std::runtime_error("aff3ct::module::Channel: \"_add_noise\" is unimplemented.");
 	}
 };
 }

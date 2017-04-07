@@ -25,7 +25,7 @@ public:
 	                     const std::string name = "Channel_AWGN_std_LLR");
 	virtual ~Channel_AWGN_std_LLR();
 
-	virtual void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
+	virtual void add_noise(const R *X_N, R *Y_N);
 };
 }
 }

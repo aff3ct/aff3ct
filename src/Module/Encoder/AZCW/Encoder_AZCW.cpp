@@ -1,7 +1,3 @@
-#include <cassert>
-
-#include "Tools/Display/bash_tools.h"
-
 #include "Encoder_AZCW.hpp"
 
 using namespace aff3ct::module;
@@ -21,16 +17,16 @@ Encoder_AZCW<B>
 
 template <typename B>
 void Encoder_AZCW<B>
-::encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+::encode(const B *U_K, B *X_N)
 {
-	std::fill(X_N.begin(), X_N.end(), (B)0);
+	std::fill(X_N, X_N + this->N * this->n_frames, (B)0);
 }
 
 template <typename B>
 void Encoder_AZCW<B>
-::encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+::encode_sys(const B *U_K, B *par)
 {
-	std::fill(par.begin(), par.end(), (B)0);
+	std::fill(par, par + (this->N - this->K) * this->n_frames, (B)0);
 }
 
 // ==================================================================================== explicit template instantiation 

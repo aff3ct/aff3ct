@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <algorithm>
 #include <cmath>
 
@@ -51,7 +51,9 @@ Quantizer_tricky<R,Q>
   delta_inv((R)0),
   sigma(sigma)
 {
-	assert(sizeof(Q) * 8 >= (unsigned) saturation_pos);
+	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_tricky: \"saturation_pos\" has to be equal or smaller "
+		                            "than \"sizeof(Q)\" * 8.");
 }
 
 namespace aff3ct
@@ -121,7 +123,9 @@ Quantizer_tricky<R,Q>
   delta_inv((R)1.0 / ((R)std::abs(min_max) / (R)val_max)),
   sigma(sigma)
 {
-	assert(sizeof(Q) * 8 >= (unsigned) saturation_pos);	
+	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
+		throw std::invalid_argument("aff3ct::module::Quantizer_tricky: \"saturation_pos\" has to be equal or smaller "
+		                            "than \"sizeof(Q)\" * 8.");
 }
 
 template <typename R, typename Q>
@@ -132,15 +136,15 @@ Quantizer_tricky<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_tricky<R,Q>
-::process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
+::process(const R *Y_N1, Q *Y_N2)
 {
-	assert(Y_N1.size() == Y_N2.size());
+	const auto size = (unsigned)(this->N * this->n_frames);
 
 	if (delta_inv == (R)0)
 	{
-		mipp::vector<R> tmp(Y_N1.size());
+		mipp::vector<R> tmp(size);
 		R avg = 0;
-		for (unsigned i = 0; i < Y_N1.size(); i++)
+		for (unsigned i = 0; i < size; i++)
 		{
 			tmp[i] = std::abs(Y_N1[i]);
 			avg += tmp[i];
@@ -151,7 +155,6 @@ void Quantizer_tricky<R,Q>
 		delta_inv = (R)1.0 / ((R)std::abs(tmp[(tmp.size() / 10) * 8]) / (R)val_max);
 	}
 
-	auto size = Y_N1.size();
 	for (unsigned i = 0; i < size; i++)
 		Y_N2[i] = (Q)saturate(std::round(Y_N1[i] * delta_inv), (R)val_min, (R)val_max);
 }

@@ -1,5 +1,5 @@
+#include <stdexcept>
 #include <algorithm>
-#include <cassert>
 
 #include "Channel_AWGN_std_LLR.hpp"
 
@@ -14,7 +14,8 @@ Channel_AWGN_std_LLR<R>
   rd_engine(this->rd()),
   normal_dist(0, sigma)
 {
-	assert(sigma != 0);
+	if (sigma == (R)0)
+		throw std::domain_error("aff3ct::module::Channel_AWGN_std_LLR: \"sigma\" can't be equal to 0.");
 
 	rd_engine.seed(seed);
 }
@@ -27,11 +28,9 @@ Channel_AWGN_std_LLR<R>
 
 template <typename R>
 void Channel_AWGN_std_LLR<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::add_noise(const R *X_N, R *Y_N)
 {
-	assert(X_N.size() == Y_N.size());
-
-	for (unsigned i = 0; i < X_N.size(); i++)
+	for (auto i = 0; i < this->N * this->n_frames; i++)
 		Y_N[i] = X_N[i] + this->normal_dist(this->rd_engine);
 }
 

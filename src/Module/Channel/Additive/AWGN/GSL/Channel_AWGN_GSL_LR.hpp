@@ -18,7 +18,7 @@ public:
 
 	virtual ~Channel_AWGN_GSL_LR();
 
-	void add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N);
+	void add_noise(const R *X_N, R *Y_N);
 };
 }
 }

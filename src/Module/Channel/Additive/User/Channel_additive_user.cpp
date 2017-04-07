@@ -1,18 +1,18 @@
 #include <fstream>
-#include <cassert>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "Channel_additive_user.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename R>
 Channel_additive_user<R>
 ::Channel_additive_user(const int N, const std::string filename, const int n_frames, const std::string name)
 : Channel<R>(N, n_frames, name), noise(), noise_counter(0)
 {
+	if (filename.empty())
+		throw std::invalid_argument("aff3ct::module::Channel_additive_user: path to the file should not be empty.");
+
 	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.is_open())
 	{
@@ -22,7 +22,9 @@ Channel_additive_user<R>
 		file.read((char*)&n_fra,    sizeof(n_fra));
 		file.read((char*)&fra_size, sizeof(fra_size));
 
-		assert(n_fra > 0 && fra_size > 0);
+		if (n_fra <= 0 || fra_size <= 0)
+			throw std::runtime_error("aff3ct::module::Channel_additive_user: \"n_fra\" and \"fra_size\" have to be "
+			                         "bigger than 0.");
 
 		this->noise.resize(n_fra);
 		for (unsigned i = 0; i < (unsigned)n_fra; i++)
@@ -35,20 +37,17 @@ Channel_additive_user<R>
 		}
 		else
 		{
-			std::cerr << bold_red("(EE) The frame size is wrong (read: ") << bold_red(std::to_string(fra_size))
-			          << bold_red(", expected: ") << bold_red(std::to_string(this->N))
-			          << bold_red("), exiting.") << std::endl;
 			file.close();
-			std::exit(-1);
+
+			throw std::runtime_error("aff3ct::module::Channel_additive_user: the frame size is wrong (read: " +
+			                         std::to_string(fra_size) + ", expected: " + std::to_string(this->N) + ").");
 		}
 
 		file.close();
 	}
 	else
 	{
-		std::cerr << bold_red("(EE) Can't open \"") << bold_red(filename) << bold_red("\" file, exiting.")
-		          << std::endl;
-		std::exit(-1);
+		throw std::invalid_argument("aff3ct::module::Channel_additive_user: can't open \"" + filename + "\" file");
 	}
 }
 
@@ -60,17 +59,12 @@ Channel_additive_user<R>
 
 template <typename R>
 void Channel_additive_user<R>
-::add_noise(const mipp::vector<R>& X_N, mipp::vector<R>& Y_N)
+::_add_noise(const R *X_N, R *Y_N)
 {
-	assert((int)X_N.size() == this->N * this->n_frames);
+	for (auto i = 0; i < this->N; i++)
+		Y_N[i] = X_N[i] + this->noise[this->noise_counter][i];
 
-	for (auto f = 0; f < this->n_frames; f++)
-	{
-		for (auto i = 0; i < this->N; i++)
-			Y_N[f * this->N +i] = X_N[f * this->N +i] + this->noise[this->noise_counter][i];
-
-		this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
-	}
+	this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
 }
 
 // ==================================================================================== explicit template instantiation 

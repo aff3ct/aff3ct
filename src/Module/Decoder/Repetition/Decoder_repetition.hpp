@@ -22,20 +22,15 @@ protected:
 	mipp::vector<R> sys;
 	mipp::vector<R> par;
 	mipp::vector<R> ext;
-	mipp::vector<B> s;
 
 public:
 	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, 
 	                   const int n_frames = 1, const std::string name = "Decoder_repetition");
 	virtual ~Decoder_repetition();
 
-	virtual void soft_decode (const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext) = 0;
-
 protected:
-	void load         (const mipp::vector<R>& Y_N                        );
-	void _hard_decode (                                                  );
-	void store        (      mipp::vector<B>& V_K                        ) const;
-	void _soft_decode (const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2);
+	void _load       (const R *Y_N);
+	void _hard_decode(const R *Y_N, B *V_K);
 };
 }
 }

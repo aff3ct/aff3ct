@@ -26,7 +26,6 @@ struct simulation_parameters
 	float                     sig_a_max;
 	float                     sig_a_step;
 	bool                      debug;
-	bool                      benchs_no_ldst;
 	bool                      time_report;
 	int                       benchs;
 	int                       debug_limit;
@@ -48,6 +47,8 @@ struct code_parameters
 	int         K;
 	int         N;
 	int         N_code;
+	int         N_mod;
+	int         N_fil;
 	int         m;
 	int         tail_length;
 };
@@ -144,7 +145,7 @@ struct decoder_parameters
 	int         fnc_ite_min;
 	int         fnc_ite_max;
 	int         fnc_ite_step;
-
+	int         syndrome_depth;
 };
 
 struct monitor_parameters

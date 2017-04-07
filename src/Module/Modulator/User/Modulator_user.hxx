@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <cmath>
 #include <complex>
 #include <limits>
@@ -26,6 +26,13 @@ Modulator_user<B,R,Q,MAX>
   disable_sig2   (disable_sig2),
   constellation  ()
 {
+	if (const_path.empty())
+		throw std::invalid_argument("aff3ct::module::Modulator_user: path to the constellation file should not "
+		                            "be empty.");
+
+	if (this->bits_per_symbol % 2)
+		throw std::invalid_argument("aff3ct::module::Modulator_user: \"bits_per_symbol\" has to be a multiple of 2.");
+
 	std::fstream const_file(const_path, std::ios_base::in);
 
 	std::string temp;
@@ -35,7 +42,9 @@ Modulator_user<B,R,Q,MAX>
 
 		std::istringstream buffer(temp);
 		std::vector<R> line((std::istream_iterator<R>(buffer)), std::istream_iterator<R>());
-		assert (line.size() < 3);
+
+		if (line.size() >= 3)
+			throw std::runtime_error("aff3ct::module::Modulator_user: \"line.size()\" has to be smaller than 3.");
 
 		if (line.size() == 2)
 			constellation.push_back(std::complex<R>(line[0],line[1]));
@@ -45,7 +54,9 @@ Modulator_user<B,R,Q,MAX>
 	}
 	sqrt_es = std::sqrt(sqrt_es/nbr_symbols);
 
-	assert ((int)constellation.size() == nbr_symbols);
+	if ((int)constellation.size() != nbr_symbols)
+		throw std::runtime_error("aff3ct::module::Modulator_user: \"constellation.size()\" has to be equal to "
+		                         "\"nbr_symbols\".");
 
 	for (auto i = 0; i < nbr_symbols; i++)
 		constellation[i] /= (std::complex<R>)sqrt_es;
@@ -60,27 +71,14 @@ Modulator_user<B,R,Q,MAX>
 }
 
 /*
- * int get_buffer_size_after_modulation(const int N)
- * N = number of input bits
- * returns number of output symbols
- */
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-int Modulator_user<B,R,Q,MAX>
-::get_buffer_size_after_modulation(const int N)
-{
-	assert(this->bits_per_symbol % 2 == 0);
-	return (int)(std::ceil((float)N / (float)this->bits_per_symbol) * 2);
-}
-
-/*
  * Modulator
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate(const B *X_N1, R *X_N2)
 {
-	auto size_in  = (int)X_N1.size();
-	auto size_out = (int)X_N2.size();
+	auto size_in  = this->N;
+	auto size_out = this->N_mod;
 
 	auto loop_size = size_in / this->bits_per_symbol;
 	for (auto i = 0; i < loop_size; i++)
@@ -112,12 +110,15 @@ void Modulator_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
-	
-	auto size       = (int)Y_N2.size();
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -147,12 +148,15 @@ void Modulator_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
 
-	auto size       = (int)Y_N2.size();
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -182,12 +186,15 @@ void Modulator_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
 
-	auto size       = (int)Y_N3.size();
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -220,16 +227,17 @@ void Modulator_user<B,R,Q,MAX>
 	}
 }
 
-
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
-                              mipp::vector<Q>& Y_N3)
+::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
 
-	auto size       = (int)Y_N3.size();
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs

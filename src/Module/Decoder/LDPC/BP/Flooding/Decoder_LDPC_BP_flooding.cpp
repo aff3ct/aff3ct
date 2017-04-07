@@ -1,6 +1,7 @@
+#include <chrono>
 #include <limits>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding.hpp"
@@ -15,6 +16,7 @@ Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
                            const AList_reader &alist_data,
                            const bool enable_syndrome,
+                           const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
 : Decoder_SISO<B,R>      (K, N, n_frames, 1, name                      ),
@@ -24,21 +26,25 @@ Decoder_LDPC_BP_flooding<B,R>
   n_C_nodes              ((int)alist_data.get_n_CN()                   ),
   n_branches             ((int)alist_data.get_n_branches()             ),
   enable_syndrome        (enable_syndrome                              ),
+  syndrome_depth         (syndrome_depth                               ),
   init_flag              (false                                        ),
 
   n_variables_per_parity (alist_data.get_n_VN_per_CN()                 ),
   n_parities_per_variable(alist_data.get_n_CN_per_VN()                 ),
   transpose              (alist_data.get_branches_transpose()          ),
 
-  Y_N                    (N                                            ),
-  V_K                    (K                                            ),
   Lp_N                   (N,                                          -1), // -1 in order to fail when AZCW
   C_to_V                 (n_frames, mipp::vector<R>(this->n_branches, 0)),
   V_to_C                 (n_frames, mipp::vector<R>(this->n_branches, 0))
 {
-	assert(N == (int)alist_data.get_n_VN());
-//	assert(K == N - (int)alist_data.get_n_CN());
-	assert(n_ite > 0);
+	if (n_ite <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"n_ite\" has to be greater than 0.");
+	if (syndrome_depth <= 0)
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"syndrome_depth\" has to be greater "
+		                            "than 0.");
+	if (N != (int)alist_data.get_n_VN())
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"N\" is not compatible with the alist "
+		                            "file.");
 }
 
 template <typename B, typename R>
@@ -49,19 +55,8 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext)
+::_soft_decode(const R *Y_N1, R *Y_N2)
 {
-	std::cerr << bold_red("(EE) This decoder does not support this interface.") << std::endl;
-	std::exit(-1);
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::_soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
-{
-	assert(Y_N1.size() == Y_N2.size());
-	assert(Y_N1.size() >= this->Y_N.size());
-
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -85,16 +80,9 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::load(const mipp::vector<R>& Y_N)
+::_hard_decode(const R *Y_N, B *V_K)
 {
-	assert(Y_N.size() >= this->Y_N.size());
-	std::copy(Y_N.begin(), Y_N.begin() + this->Y_N.size(), this->Y_N.begin());
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::_hard_decode()
-{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -103,34 +91,37 @@ void Decoder_LDPC_BP_flooding<B,R>
 		if (cur_frame == Decoder<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
+	auto d_load = std::chrono::steady_clock::now() - t_load;
 
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BP_decode(this->Y_N);
+	this->BP_decode(Y_N);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	for (unsigned i = 0; i < this->V_K.size(); i++)
-		this->V_K[i] = !(this->Lp_N[i] >= 0);
+	for (auto i = 0; i < this->K; i++)
+		V_K[i] = !(this->Lp_N[i] >= 0);
 
 	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
 	if (cur_frame == Decoder<B,R>::n_frames -1)
 		this->init_flag = true;
 
 	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
-}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_flooding<B,R>
-::store(mipp::vector<B>& V_K) const
-{
-	assert(V_K.size() >= this->V_K.size());
-	std::copy(this->V_K.begin(), this->V_K.end(), V_K.begin());
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 // BP algorithm
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::BP_decode(const mipp::vector<R> &Y_N)
+::BP_decode(const R *Y_N)
 {
+	auto cur_syndrome_depth = 0;
+
 	// actual decoding
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
@@ -142,7 +133,13 @@ void Decoder_LDPC_BP_flooding<B,R>
 
 		// stop criterion
 		if (this->enable_syndrome && syndrome)
-			break;
+		{
+			cur_syndrome_depth++;
+			if (cur_syndrome_depth == this->syndrome_depth)
+				break;
+		}
+		else
+			cur_syndrome_depth = 0;
 	}
 
 	// begining of the iteration upon all the matrix lines

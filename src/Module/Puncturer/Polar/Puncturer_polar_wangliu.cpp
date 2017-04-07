@@ -50,28 +50,19 @@ void Puncturer_polar_wangliu<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
-::puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+::_puncture(const B *X_N1, B *X_N2) const
 {
-	assert(X_N1.size() == (unsigned) (this->N_code * this->n_frames));
-	assert(X_N2.size() == (unsigned) (this->N      * this->n_frames));
-
-	for (auto f = 0; f < this->n_frames; f++)
-		std::copy(X_N1.begin() + f * this->N_code, X_N1.begin() + f * this->N_code + this->N, X_N2.begin() + f * this->N);
+	std::copy(X_N1, X_N1 + this->N, X_N2);
 }
 
 template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
-::depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+::_depuncture(const Q *Y_N1, Q *Y_N2) const
 {
-	assert(Y_N1.size() == (unsigned) (this->N      * this->n_frames));
-	assert(Y_N2.size() == (unsigned) (this->N_code * this->n_frames));
-
-	for (auto f = 0; f < this->n_frames; f++)
-		std::copy(Y_N1.begin() + f * this->N, Y_N1.begin() + f * this->N + this->N, Y_N2.begin() + f * this->N_code);
+	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 
 	// +inf (bit = 0)
-	for (auto f = 0; f < this->n_frames; f++)
-		std::fill(Y_N2.begin() + f * this->N_code + this->N, Y_N2.begin() + f * this->N_code + this->N_code, sat_vals<Q>().second);
+	std::fill(Y_N2 + this->N, Y_N2 + this->N_code, sat_vals<Q>().second);
 }
 
 // ==================================================================================== explicit template instantiation 

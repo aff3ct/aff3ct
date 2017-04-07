@@ -2,13 +2,11 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <cassert>
+#include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "Frozenbits_generator_file.hpp"
 
@@ -40,9 +38,8 @@ void Frozenbits_generator_file<B>
 {
 	if(!load_channels_file(filename))
 	{
-		//Loaded best channels from given file
-		std::cerr << bold_red("(EE) Following file does not exist: ") << bold_red(filename) << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_file: \"" + filename + "\" file "
+		                            "does not exist.");
 	}
 }
 
@@ -56,7 +53,10 @@ bool Frozenbits_generator_file<B>
 	{
 		std::string trash;
 		in_code >> trash; // N
-		assert(std::stoi(trash) == this->N);
+
+		if (std::stoi(trash) != this->N)
+			throw std::runtime_error("aff3ct::tools::Frozenbits_generator_file: \"trash\" has to be equal to \"N\".");
+
 		in_code >> trash; // type
 		in_code >> trash; // sigma
 

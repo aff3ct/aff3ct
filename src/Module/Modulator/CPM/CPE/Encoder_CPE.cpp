@@ -1,16 +1,26 @@
+#include <stdexcept>
+
 #include "Encoder_CPE.hpp"
 
 using namespace aff3ct::module;
 
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>
-::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm, const int n_frames,
-                  const std::string name)
-: N(N), cpm(cpm), n_frames(n_frames)
+::Encoder_CPE(const int N, const CPM_parameters<SIN,SOUT>& cpm)
+: N(N), cpm(cpm)
 {
-	assert((int)sizeof(SIN )*256 >= cpm.m_order); // because U_n can have Mo values
-	assert((int)sizeof(SIN )*256 >= cpm.p      ); // because V_n can have p values
-	assert((int)sizeof(SOUT)*256 >= cpm.n_wa   ); // because X_n can have Nb_xa values
+	// because U_n can have Mo values
+	if ((int)sizeof(SIN) * 256 < cpm.m_order)
+		throw std::invalid_argument("aff3ct::module::Encoder_CPE: \"cpm.m_order\" has to be equal or smaller than "
+		                            "\"sizeof(SIN)\" * 256.");
+	// because V_n can have p values
+	if ((int)sizeof(SIN) * 256 < cpm.p)
+		throw std::invalid_argument("aff3ct::module::Encoder_CPE: \"cpm.p\" has to be equal or smaller than "
+		                            "\"sizeof(SIN)\" * 256.");
+	// because X_n can have Nb_xa values
+	if ((int)sizeof(SOUT) * 256 < cpm.n_wa)
+		throw std::invalid_argument("aff3ct::module::Encoder_CPE: \"cpm.n_wa\" has to be equal or smaller than "
+		                            "\"sizeof(SOUT)\" * 256.");
 }
 
 template<typename SIN, typename SOUT>
@@ -31,17 +41,13 @@ template<typename SIN, typename SOUT>
 void Encoder_CPE<SIN, SOUT>
 ::encode(const mipp::vector<SIN>& U_N, mipp::vector<SOUT>& X_N)
 {
-	assert((int)U_N.size() == (N * n_frames));
-	assert((int)X_N.size() == ((N + cpm.tl) * n_frames));
+	if ((int)U_N.size() != N)
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"U_N.size()\" has to be equal to \"N\".");
 
-	for (auto f = 0; f <n_frames; f++)
-		frame_encode(U_N.data() + f*N, X_N.data() + f*(N+cpm.tl));
-}
+	if ((int)X_N.size() != (N + cpm.tl))
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"X_N.size()\" has to be equal to "
+		                        "(\"N\" + \"cpm.tl\").");
 
-template<typename SIN, typename SOUT>
-void Encoder_CPE<SIN, SOUT>
-::frame_encode(const SIN* U_N, SOUT* X_N)
-{
 	auto state = 0; // initial (and final) state 0
 	auto i = 0;
 
@@ -53,15 +59,20 @@ void Encoder_CPE<SIN, SOUT>
 	for (; i < N + tail_length(); i++)
 		X_N[i] = inner_encode(tail_symb(state), state); // encoding block
 
-	assert(state == 0);
+	if (state != 0)
+		throw std::runtime_error("aff3ct::module::Encoder_CPE: \"state\" should be equal to 0.");
 }
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE<SIN, SOUT>
 ::generate_trellis(mipp::vector<int>& trellis_next_state, mipp::vector<SOUT>& trellis_related_wave_form)
 {
-	assert((int)trellis_next_state       .size() == (cpm.max_st_id*cpm.m_order));
-	assert((int)trellis_related_wave_form.size() == (cpm.max_st_id*cpm.m_order));
+	if ((int)trellis_next_state.size() != cpm.max_st_id * cpm.m_order)
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"trellis_next_state.size()\" has to be equal to "
+		                        "\"cpm.max_st_id\" * \"cpm.m_order\".");
+	if ((int)trellis_related_wave_form.size() != cpm.max_st_id * cpm.m_order)
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"trellis_related_wave_form.size()\" has to be equal to "
+		                        "\"cpm.max_st_id\" * \"cpm.m_order\".");
 
 	int state;
 	SOUT wa_symb;
@@ -82,8 +93,12 @@ void Encoder_CPE<SIN, SOUT>
 ::generate_anti_trellis(mipp::vector<int>& anti_trellis_original_state,
                         mipp::vector<SIN>& anti_trellis_input_transition)
 {
-	assert((int)anti_trellis_original_state  .size() == (cpm.max_st_id*cpm.m_order));
-	assert((int)anti_trellis_input_transition.size() == (cpm.max_st_id*cpm.m_order));
+	if ((int)anti_trellis_original_state.size() != cpm.max_st_id * cpm.m_order)
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"anti_trellis_original_state.size()\" has to be "
+		                        "equal to \"cpm.max_st_id\" * \"cpm.m_order\".");
+	if ((int)anti_trellis_input_transition.size() != cpm.max_st_id * cpm.m_order)
+		throw std::length_error("aff3ct::module::Encoder_CPE: \"anti_trellis_input_transition.size()\" has to be "
+		                        "equal to \"cpm.max_st_id\" * \"cpm.m_order\".");
 
 	mipp::vector<int> counter(cpm.max_st_id, 0);
 
@@ -94,8 +109,15 @@ void Encoder_CPE<SIN, SOUT>
 		for (auto tr = 0; tr < cpm.m_order; tr++)
 		{
 			next_state = cpm.trellis_next_state[cpm.allowed_states[st]*cpm.m_order + tr];
-			assert(next_state < cpm.max_st_id);
-			assert(counter[next_state] < cpm.m_order);
+
+			if (next_state >= cpm.max_st_id)
+				throw std::runtime_error("aff3ct::module::Encoder_CPE: \"next_state\" should be smaller than "
+				                         "\"cpm.max_st_id\".");
+
+			if (counter[next_state] >= cpm.m_order)
+				throw std::runtime_error("aff3ct::module::Encoder_CPE: \"counter[next_state]\" should be smaller than "
+				                         "\"cpm.m_order\".");
+
 			anti_trellis_original_state  [next_state*cpm.m_order + counter[next_state]] = cpm.allowed_states[st];
 			anti_trellis_input_transition[next_state*cpm.m_order + counter[next_state]] = tr;
 

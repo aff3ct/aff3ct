@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <sstream>
 
 #include "Tools/Display/bash_tools.h"
@@ -44,8 +44,11 @@ void Frame_trace<B>
 	unsigned int stride         = 0;
 	bool         enable_ref     = !ref.empty();
 	
-	assert(!enable_ref || ref.size() == vec.size());
-	assert(this->n_bits >= 0);
+	if (enable_ref && ref.size() != vec.size())
+		throw std::length_error("aff3ct::tools::Frame_trace: \"ref.size()\" has to be equal to \"vec.size()\".");
+
+	if (this->n_bits < 0)
+		throw std::invalid_argument("aff3ct::tools::Frame_trace: \"n_bits\" has to be equal or greater than 0.");
 
 	const auto n_bits = this->n_bits ? (this->n_bits <= (int)vec.size() ? this->n_bits : (int)vec.size()) : (int)vec.size();
 	if (row_width == vec.size())

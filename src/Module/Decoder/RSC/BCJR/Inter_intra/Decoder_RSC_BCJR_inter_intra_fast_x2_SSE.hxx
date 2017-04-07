@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 
 #include "Decoder_RSC_BCJR_inter_intra_fast_x2_SSE.hpp"
 
@@ -60,8 +60,12 @@ Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
                                            const std::string name)
 : Decoder_RSC_BCJR_inter_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
-	assert(mipp::nElReg<R>() == 16);
-	assert(K % 8 == 0);
+	if (mipp::nElReg<R>() != 16)
+		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_inter_intra_fast_x2_SSE: \"mipp::nElReg<R>()\" "
+		                            "has to be equal to 16.");
+	if (K % 8)
+		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_inter_intra_fast_x2_SSE: \"K\" "
+		                            "has to be divisible by 8.");
 
 	RSC_BCJR_inter_intra_fast_x2_SSE_init<R>::apply(this->alpha);
 }
@@ -74,7 +78,7 @@ Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
-::compute_gamma(const mipp::vector<R> &sys, const mipp::vector<R> &par)
+::compute_gamma(const R *sys, const R *par)
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8; // = 2
 
@@ -162,7 +166,7 @@ void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
-::compute_beta_ext(const mipp::vector<R> &sys, mipp::vector<R> &ext)
+::compute_beta_ext(const R *sys, R *ext)
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
 

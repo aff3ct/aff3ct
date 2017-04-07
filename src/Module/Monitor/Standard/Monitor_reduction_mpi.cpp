@@ -1,8 +1,7 @@
 #ifdef ENABLE_MPI
 
 #include <stddef.h>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "Monitor_reduction_mpi.hpp"
 
@@ -31,13 +30,13 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 
 template <typename B, typename R>
 Monitor_reduction_mpi<B,R>
-::Monitor_reduction_mpi(const int& K, const int& N, const int& max_fe,
+::Monitor_reduction_mpi(const int& K, const int& N, const int& N_mod, const int& max_fe,
                         std::vector<Monitor<B,R>*>& monitors,
                         const std::thread::id master_thread_id,
                         const std::chrono::nanoseconds d_mpi_comm_frequency,
                         const int& n_frames,
                         const std::string name)
-: Monitor_reduction<B,R>(K, N, max_fe, monitors, n_frames, name),
+: Monitor_reduction<B,R>(K, N, N_mod, max_fe, monitors, n_frames, name),
   master_thread_id(master_thread_id),
   is_fe_limit_achieved(false),
   t_last_mpi_comm(std::chrono::steady_clock::now()),
@@ -52,25 +51,16 @@ Monitor_reduction_mpi<B,R>
 	blen[2] = 1; displacements[2] = offsetof(monitor_vals, n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
 
 	if (auto ret = MPI_Type_create_struct(3, blen, displacements, oldtypes, &MPI_monitor_vals))
-	{
-		std::cerr << bold_red("(EE) MPI_Type_create_struct returned \"") << bold_red(std::to_string(ret))
-		          << bold_red("\", exiting.") << std::endl;
-		std::exit(-1);
-	}
+		throw std::runtime_error("aff3ct::module::Monitor_reduction_mpi: \"MPI_Type_create_struct\" returned \"" +
+		                         std::to_string(ret) + "\".");
 
 	if (auto ret = MPI_Type_commit(&MPI_monitor_vals))
-	{
-		std::cerr << bold_red("(EE) MPI_Type_commit returned \"") << bold_red(std::to_string(ret))
-		          << bold_red("\", exiting.") << std::endl;
-		std::exit(-1);
-	}
+		throw std::runtime_error("aff3ct::module::Monitor_reduction_mpi: \"MPI_Type_create_struct\" returned \"" +
+		                         std::to_string(ret) + "\".");
 
 	if (auto ret = MPI_Op_create(MPI_SUM_monitor_vals_func, true, &MPI_SUM_monitor_vals))
-	{
-		std::cerr << bold_red("(EE) MPI_Op_create returned \"") << bold_red(std::to_string(ret))
-		          << bold_red("\", exiting.") << std::endl;
-		std::exit(-1);
-	}
+		throw std::runtime_error("aff3ct::module::Monitor_reduction_mpi: \"MPI_Op_create\" returned \"" +
+		                         std::to_string(ret) + "\".");
 }
 
 template <typename B, typename R>

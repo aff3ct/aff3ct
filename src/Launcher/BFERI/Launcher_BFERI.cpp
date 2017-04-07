@@ -2,8 +2,6 @@
 #include <string>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Launcher_BFERI.hpp"
 
 using namespace aff3ct::tools;
@@ -16,7 +14,6 @@ Launcher_BFERI<B,R,Q>
 {
 	this->params.simulation .type             = "BFERI";
 	this->params.simulation .benchs           = 0;
-	this->params.simulation .benchs_no_ldst   = false;
 	this->params.simulation .debug            = false;
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .time_report      = false;
@@ -51,9 +48,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-benchs", "b"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
-	this->opt_args[{"sim-benchs-no-ldst"}] =
-		{"",
-		 "enable the display of the decoder throughput considering only the decoding time."};
 	this->opt_args[{"sim-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};
@@ -89,7 +83,7 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"itl-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, GOLDEN, USER, COLUMNS, NO"};
+		 "LTE, CCSDS, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
 
 	this->opt_args[{"itl-path"}] =
 		{"string",
@@ -256,7 +250,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 	if (this->params.interleaver.type == "USER")
 		p.push_back(std::make_pair("Path", this->params.interleaver.path));
 
-	if (this->params.interleaver.type == "COLUMNS")
+	if (this->params.interleaver.type == "RAND_COL" || this->params.interleaver.type == "ROW_COL")
 		p.push_back(std::make_pair("Number of columns", std::to_string(this->params.interleaver.n_cols)));
 
 	p.push_back(std::make_pair("Uniform", (this->params.interleaver.uniform ? "on" : "off")));

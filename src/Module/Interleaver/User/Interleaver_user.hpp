@@ -1,9 +1,8 @@
 #ifndef INTERLEAVER_USER_HPP
 #define INTERLEAVER_USER_HPP
 
+#include <stdexcept>
 #include <fstream>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "../Interleaver.hpp"
 
@@ -19,8 +18,14 @@ private:
 	int call_counter;
 
 public:
-	Interleaver_user(int size, const std::string filename, const std::string name = "Interleaver_user")
-	: Interleaver<T>(size, 1, name), filename(filename), call_counter(0) { gen_lookup_tables(); }
+	Interleaver_user(int size, const std::string filename, const int n_frames = 1,
+	                 const std::string name = "Interleaver_user")
+	: Interleaver<T>(size, n_frames, name), filename(filename), call_counter(0)
+	{
+		if (filename.empty())
+			throw std::invalid_argument("aff3ct::module::Interleaver_user: path to the file should not be empty.");
+		gen_lookup_tables();
+	}
 
 	void gen_lookup_tables()
 	{
@@ -59,24 +64,20 @@ public:
 							this->pi[i] = (T)val;
 						else
 						{
-							std::cerr << tools::bold_red("(EE) The interleaver value is wrong, it already")
-							          << tools::bold_red(" exists elsewhere (read: ")
-							          << tools::bold_red(std::to_string(val))
-							          << tools::bold_red("), exiting.")
-							          << std::endl;
 							file.close();
-							std::exit(-1);
+
+							throw std::runtime_error("aff3ct::module::Interleaver_user: the interleaver value is "
+							                         "wrong, it already exists elsewhere (read: " +
+							                         std::to_string(val) + ").");
 						}
 					}
 					else
 					{
-						std::cerr << tools::bold_red("(EE) The interleaver value is wrong (read: ")
-						          << tools::bold_red(std::to_string(val)) << tools::bold_red(", expected: < ")
-						          << tools::bold_red(std::to_string(this->pi.size()))
-						          << tools::bold_red("), exiting.")
-						          << std::endl;
 						file.close();
-						std::exit(-1);
+
+						throw std::runtime_error("aff3ct::module::Interleaver_user: the interleaver value is "
+						                         "wrong (read: " + std::to_string(val) + ", expected: < " +
+						                         std::to_string(this->pi.size()) + ").");
 					}
 				}
 
@@ -85,23 +86,18 @@ public:
 			}
 			else
 			{
-				std::cerr << tools::bold_red("(EE) The interleaver size is wrong (read: ")
-				          << tools::bold_red(std::to_string(val))
-				          << tools::bold_red(", expected: ") << tools::bold_red(std::to_string(this->pi.size()))
-				          << tools::bold_red("), exiting.") << std::endl;
 				file.close();
-				std::exit(-1);
+
+				throw std::runtime_error("aff3ct::module::Interleaver_user: the interleaver value is "
+				                         "wrong (read: " + std::to_string(val) + ", expected: " +
+				                         std::to_string(this->pi.size()) + ").");
 			}
 
 			file.close();
 		}
 		else
 		{
-			std::cerr << tools::bold_red("(EE) Can't open \"")
-			          << tools::bold_red(filename)
-			          << tools::bold_red("\" file, exiting.")
-			          << std::endl;
-			std::exit(-1);
+			throw std::invalid_argument("aff3ct::module::Interleaver_user: can't open \"" + filename + "\" file.");
 		}
 	}
 };

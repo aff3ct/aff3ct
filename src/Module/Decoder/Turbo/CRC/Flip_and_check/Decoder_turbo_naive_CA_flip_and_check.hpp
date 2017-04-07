@@ -35,7 +35,7 @@ public:
 	virtual ~Decoder_turbo_naive_CA_flip_and_check();
 
 protected:
-	virtual void _hard_decode();
+	virtual void _hard_decode(const R *Y_N, B *V_K);
 	bool apply_flip_and_check(const mipp::vector<R>& l_en, const mipp::vector<R>& l_sen, mipp::vector<B>& s);
 
 private:

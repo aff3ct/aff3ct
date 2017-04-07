@@ -28,14 +28,15 @@ public:
 	static std::string name (std::string poly_key);
 	static unsigned    value(std::string poly_key);
 
-	virtual int  size        (                                                   ) const;
-	virtual void build       (      mipp::vector<B>& U_K                         );
-	virtual bool check       (const mipp::vector<B>& V_K, const int n_frames = -1);
-	virtual bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1);
+	virtual int  size (                    ) const;
 
 protected:
-	void _generate(const mipp::vector<B>& U_in, 
-	                     mipp::vector<B>& U_out, 
+	virtual void _build       (      B *U_K);
+	virtual bool _check       (const B *V_K);
+	virtual bool _check_packed(const B *V_K);
+
+	void _generate(const B *U_in,
+	                     B *U_out,
 	               const int off_in, 
 	               const int off_out, 
 	               const int loop_size);

@@ -2,8 +2,6 @@
 #include <string>
 #include <iostream>
 
-#include "Tools/Display/bash_tools.h"
-
 #include "Launcher_BFER.hpp"
 
 using namespace aff3ct::tools;
@@ -16,7 +14,6 @@ Launcher_BFER<B,R,Q>
 {
 	this->params.simulation .type             = "BFER";
 	this->params.simulation .benchs           = 0;
-	this->params.simulation .benchs_no_ldst   = false;
 	this->params.simulation .debug            = false;
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .time_report      = false;
@@ -47,9 +44,6 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"sim-benchs", "b"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};
-	this->opt_args[{"sim-benchs-no-ldst", "B"}] =
-		{"",
-		 "enable the display of the decoder throughput considering only the decoding time."};
 	this->opt_args[{"sim-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};
@@ -115,7 +109,6 @@ void Launcher_BFER<B,R,Q>
 	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path        = this->ar.get_arg    ({"sim-trace-path"     });
 	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs            = this->ar.get_arg_int({"sim-benchs",     "b"});
 	if(this->ar.exist_arg({"sim-snr-type",       "E"})) this->params.simulation.snr_type          = this->ar.get_arg    ({"sim-snr-type",   "E"});
-	if(this->ar.exist_arg({"sim-benchs-no-ldst", "B"})) this->params.simulation.benchs_no_ldst    = true;
 	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report       = true;
 	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug             = true;
 	if(this->ar.exist_arg({"sim-debug-limit"        }))
@@ -123,7 +116,6 @@ void Launcher_BFER<B,R,Q>
 		this->params.simulation.debug = true;
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
-
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;

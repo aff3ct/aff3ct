@@ -1,9 +1,8 @@
 #ifndef INTERLEAVER_CCSDS_HPP
 #define	INTERLEAVER_CCSDS_HPP
 
+#include <stdexcept>
 #include <map>
-
-#include "Tools/Display/bash_tools.h"
 
 #include "../Interleaver.hpp"
 
@@ -18,8 +17,8 @@ private:
 	int call_counter;
 
 public:
-	Interleaver_CCSDS(int size, const std::string name = "Interleaver_CCSDS") 
-	: Interleaver<T>(size, 1, name), call_counter(0) { gen_lookup_tables(); }
+	Interleaver_CCSDS(int size, const int n_frames = 1, const std::string name = "Interleaver_CCSDS")
+	: Interleaver<T>(size, n_frames, name), call_counter(0) { gen_lookup_tables(); }
 
 	void gen_lookup_tables()
 	{
@@ -44,17 +43,14 @@ public:
 			for (auto i = 0; i < size; i++)
 			{
 				this->pi[i] = (T)pi_CCSDS(i, (int)k_1[size], (int)k_2[size]);
-				assert(this->pi[i] >= 0 && this->pi[i] < size);
 				this->pi_inv[this->pi[i]] = (T)i;
 			}
 		}
 		else
 		{
-			std::cerr << tools::bold_red("(EE) There is no CCSDS k_1 and k_2 parameters for size = ")
-			          << tools::bold_red(std::to_string(size))
-			          << tools::bold_red(" (supported size are K = {1784, 3568, 7136, 8920}. Exiting simulation.")
-			          << std::endl;
-			exit(-1);
+			throw std::runtime_error("aff3ct::module::Interleaver_CCSDS: there is no CCSDS k_1 and k_2 parameters "
+			                         "for \"size\" = " + std::to_string(size) + "(supported size are K = {1784, 3568, "
+			                         "7136, 8920}.");
 		}
 	}
 

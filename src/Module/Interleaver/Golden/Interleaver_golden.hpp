@@ -19,8 +19,9 @@ private:
 	std::uniform_real_distribution<double> dist;
 
 public:
-	Interleaver_golden(int size, const int seed = 0, const std::string name = "Interleaver_golden")
-	: Interleaver<T>(size, 1, name), gen(), dist(0.0, size * 0.1)
+	Interleaver_golden(int size, const int seed = 0, const int n_frames = 1,
+	                   const std::string name = "Interleaver_golden")
+	: Interleaver<T>(size, n_frames, name), gen(), dist(0.0, size * 0.1)
 	{
 		gen.seed(seed);
 		gen_lookup_tables();

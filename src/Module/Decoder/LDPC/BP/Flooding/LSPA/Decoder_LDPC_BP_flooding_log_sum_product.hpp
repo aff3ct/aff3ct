@@ -17,13 +17,14 @@ public:
 	Decoder_LDPC_BP_flooding_log_sum_product(const int &K, const int &N, const int& n_ite,
 	                                         const tools::AList_reader &alist_data,
 	                                         const bool enable_syndrome = true,
+	                                         const int syndrome_depth = 1,
 	                                         const int n_frames = 1,
 	                                         const std::string name = "Decoder_LDPC_BP_flooding_log_sum_product");
 	virtual ~Decoder_LDPC_BP_flooding_log_sum_product();
 
 protected:
 	// BP functions for decoding
-	virtual bool BP_process(const mipp::vector<R> &Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
+	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
 };
 }
 }

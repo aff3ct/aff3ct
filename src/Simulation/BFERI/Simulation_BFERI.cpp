@@ -2,10 +2,8 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
-#include <cassert>
 #include <algorithm>
-
-#include "Tools/Display/bash_tools.h"
+#include <stdexcept>
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
@@ -55,7 +53,8 @@ Simulation_BFERI_i<B,R,Q>
   coset_bit  (params.simulation.n_threads, nullptr),
   monitor    (params.simulation.n_threads, nullptr)
 {
-	assert(params.simulation.n_threads >= 1);
+	if (params.simulation.n_threads < 1)
+		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: \"n_threads\" has to be greater than 0.");
 
 	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 		rd_engine_seed[tid].seed(params.simulation.seed + tid);
@@ -73,40 +72,56 @@ void Simulation_BFERI_i<B,R,Q>
 ::build_communication_chain(Simulation_BFERI_i<B,R,Q> *simu, const int tid)
 {
 	// build the objects
-	simu->source     [tid] = simu->build_source     (       tid); check_errors(simu->source     [tid], "Source<B>"       );
-	simu->crc        [tid] = simu->build_crc        (       tid); check_errors(simu->crc        [tid], "CRC<B>"          );
-	simu->encoder    [tid] = simu->build_encoder    (       tid); check_errors(simu->encoder    [tid], "Encoder<B>"      );
-	simu->interleaver[tid] = simu->build_interleaver(       tid); check_errors(simu->interleaver[tid], "Interleaver<int>");
-	simu->modulator  [tid] = simu->build_modulator  (       tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"  );
+	simu->source     [tid] = simu->build_source     (tid); check_errors(simu->source     [tid], "Source<B>"       );
+	simu->crc        [tid] = simu->build_crc        (tid); check_errors(simu->crc        [tid], "CRC<B>"          );
+	simu->encoder    [tid] = simu->build_encoder    (tid); check_errors(simu->encoder    [tid], "Encoder<B>"      );
+	simu->interleaver[tid] = simu->build_interleaver(tid); check_errors(simu->interleaver[tid], "Interleaver<int>");
+	simu->modulator  [tid] = simu->build_modulator  (tid); check_errors(simu->modulator  [tid], "Modulator<B,R>"  );
+	simu->channel    [tid] = simu->build_channel    (tid); check_errors(simu->channel    [tid], "Channel<R>"      );
+	simu->quantizer  [tid] = simu->build_quantizer  (tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
+	simu->coset_real [tid] = simu->build_coset_real (tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
+	simu->siso       [tid] = simu->build_siso       (tid); check_errors(simu->siso       [tid], "SISO<Q>"         );
+	simu->decoder    [tid] = simu->build_decoder    (tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
+	simu->coset_bit  [tid] = simu->build_coset_bit  (tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
+	simu->monitor    [tid] = simu->build_monitor    (tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
 
-	const auto N     = simu->params.code.N;
-	const auto tail  = simu->params.code.tail_length;
-	const auto N_mod = simu->modulator[tid]->get_buffer_size_after_modulation(N + tail);
-	const auto N_fil = simu->modulator[tid]->get_buffer_size_after_filtering (N + tail);
-
-	simu->channel    [tid] = simu->build_channel    (N_mod, tid); check_errors(simu->channel    [tid], "Channel<R>"      );
-	simu->quantizer  [tid] = simu->build_quantizer  (N_fil, tid); check_errors(simu->quantizer  [tid], "Quantizer<R,Q>"  );
-	simu->coset_real [tid] = simu->build_coset_real (       tid); check_errors(simu->coset_real [tid], "Coset<B,Q>"      );
-	simu->siso       [tid] = simu->build_siso       (       tid); check_errors(simu->siso       [tid], "SISO<Q>"         );
-	simu->decoder    [tid] = simu->build_decoder    (       tid); check_errors(simu->decoder    [tid], "Decoder<B,Q>"    );
-	simu->coset_bit  [tid] = simu->build_coset_bit  (       tid); check_errors(simu->coset_bit  [tid], "Coset<B,B>"      );
-	simu->monitor    [tid] = simu->build_monitor    (       tid); check_errors(simu->monitor    [tid], "Monitor<B>"      );
-
-	// get the real number of frames per threads (from the decoder)
-	const auto n_frames = simu->siso[tid]->get_n_frames();
-	assert(simu->siso[tid]->get_n_frames() == simu->decoder[tid]->get_n_frames());
-
-	// set the real number of frames per thread
-	simu->source     [tid]->set_n_frames(n_frames);
-	simu->crc        [tid]->set_n_frames(n_frames);
-	simu->encoder    [tid]->set_n_frames(n_frames);
-	simu->interleaver[tid]->set_n_frames(n_frames);
-	simu->modulator  [tid]->set_n_frames(n_frames);
-	simu->channel    [tid]->set_n_frames(n_frames);
-	simu->quantizer  [tid]->set_n_frames(n_frames);
-	simu->coset_real [tid]->set_n_frames(n_frames);
-	simu->coset_bit  [tid]->set_n_frames(n_frames);
-	simu->monitor    [tid]->set_n_frames(n_frames);
+	// check if the inter frame level is right in all the modules
+	if (simu->source     [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Source\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->crc        [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"CRC\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->encoder    [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Encoder\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->interleaver[tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Interleaver\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->modulator  [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Modulator\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->channel    [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Channel\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->quantizer  [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Quantizer\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->coset_real [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Coset_real\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->siso       [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"SISO\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->decoder    [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Decoder\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->coset_bit  [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Coset_bit\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
+	if (simu->monitor    [tid]->get_n_frames() != simu->params.simulation.inter_frame_level)
+		throw std::runtime_error("aff3ct::simulation::Simulation_BFER: number of frames in the \"Monitor\" is "
+		                         "incompatible with \"params.simulation.inter_frame_level\".");
 }
 
 template <typename B, typename R, typename Q>
@@ -239,16 +254,16 @@ Modulator<B,R,Q>* Simulation_BFERI_i<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFERI_i<B,R,Q>
-::build_channel(const int size, const int tid)
+::build_channel(const int tid)
 {
-	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed + tid);
+	return Factory_channel<R>::build(params, sigma, params.code.N_mod, params.simulation.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFERI_i<B,R,Q>
-::build_quantizer(const int size, const int tid)
+::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build(params, sigma, size);
+	return Factory_quantizer<R,Q>::build(params, sigma, params.code.N_fil);
 }
 
 template <typename B, typename R, typename Q>

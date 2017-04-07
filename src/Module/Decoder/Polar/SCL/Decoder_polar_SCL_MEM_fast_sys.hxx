@@ -1,4 +1,6 @@
+#include <chrono>
 #include <algorithm>
+#include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <limits>
@@ -19,6 +21,7 @@
 
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
+#include "Decoder_polar_SCL_fast_sys.hpp"
 #include "Decoder_polar_SCL_MEM_fast_sys.hpp"
 
 namespace aff3ct
@@ -46,7 +49,6 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
                  2),
   paths         (L),
   metrics       (L),
-  Y_N           (                   N + mipp::nElReg<R>() ),
   l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
   s2            (L, mipp::vector<B>(N + mipp::nElReg<B>())),
@@ -68,7 +70,20 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
-	assert(tools::is_power_of_2(L));
+	if (this->N < mipp::nElReg<R>() * 2)
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be equal or greater "
+		                            "than \"mipp::nElReg<R>() * 2\".");
+
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"N\" has to be a power of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"frozen_bits.size()\" has to be "
+		                        "equal to \"N\".");
+
+	if (this->L <= 0 || !tools::is_power_of_2(this->L))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"L\" has to be positive and "
+		                            "a power of 2.");
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
@@ -88,7 +103,6 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
   polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1),
   paths         (L),
   metrics       (L),
-  Y_N           (                   N + mipp::nElReg<R>() ),
   l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
   s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
   s2            (L, mipp::vector<B>(N + mipp::nElReg<B>())),
@@ -110,7 +124,20 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
-	assert(tools::is_power_of_2(L));
+	if (this->N < mipp::nElReg<R>() * 2)
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be equal or greater "
+		                            "than \"mipp::nElReg<R>() * 2\".");
+
+	if (!tools::is_power_of_2(this->N))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"N\" has to be a power of 2.");
+
+	if (this->N != (int)frozen_bits.size())
+		throw std::length_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"frozen_bits.size()\" has to be "
+		                        "equal to \"N\".");
+
+	if (this->L <= 0 || !tools::is_power_of_2(this->L))
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: \"L\" has to be positive and "
+		                            "a power of 2.");
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
@@ -148,24 +175,27 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::load(const mipp::vector<R>& Y_N)
+::_hard_decode(const R *Y_N, B *V_K)
 {
-	std::copy(Y_N.begin(), Y_N.begin() + this->N, this->Y_N.begin());
-	init_buffers();
-}
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->init_buffers();
 
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::_hard_decode()
-{
 	int first_node_id = 0, off_l = 0, off_s = 0;
-	recursive_decode(off_l, off_s, m, first_node_id);
+	recursive_decode(Y_N, off_l, off_s, m, first_node_id);
 	select_best_path();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::recursive_decode(const int off_l, const int off_s, const int rev_depth, int &node_id)
+::recursive_decode(const R *Y_N, const int off_l, const int off_s, const int rev_depth, int &node_id)
 {
 	const int n_elmts = 1 << rev_depth;
 	const int n_elm_2 = n_elmts >> 1;
@@ -183,16 +213,16 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		switch (node_type)
 		{
 			case tools::STANDARD:
-				API_polar::f(Y_N.data(), Y_N.data() + n_elm_2, l[0].data(), n_elm_2);
+				API_polar::f(Y_N, Y_N + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			case tools::REP_LEFT:
-				API_polar::f(Y_N.data(), Y_N.data() + n_elm_2, l[0].data(), n_elm_2);
+				API_polar::f(Y_N, Y_N + n_elm_2, l[0].data(), n_elm_2);
 				break;
 			default:
 				break;
 		}
 
-		recursive_decode(off_l, off_s, rev_depth -1, ++node_id); // recursive call left
+		recursive_decode(Y_N, off_l, off_s, rev_depth -1, ++node_id); // recursive call left
 
 		// g
 		switch (node_type)
@@ -202,7 +232,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 				{
 					const auto path  = paths[i];
 					const auto child = l[up_ref_array_idx(path, rev_depth -1)].data();
-					API_polar::g (Y_N.data(), Y_N.data() + n_elm_2, s[path].data() + off_s, child, n_elm_2);
+					API_polar::g (Y_N, Y_N + n_elm_2, s[path].data() + off_s, child, n_elm_2);
 				}
 				break;
 			case tools::RATE_0_LEFT:
@@ -210,7 +240,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 				{
 					const auto path  = paths[i];
 					const auto child = l[up_ref_array_idx(path, rev_depth -1)].data();
-					API_polar::g0(Y_N.data(), Y_N.data() + n_elm_2,                         child, n_elm_2);
+					API_polar::g0(Y_N, Y_N + n_elm_2,                         child, n_elm_2);
 				}
 				break;
 			case tools::REP_LEFT:
@@ -218,14 +248,14 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 				{
 					const auto path  = paths[i];
 					const auto child = l[up_ref_array_idx(path, rev_depth -1)].data();
-					API_polar::gr(Y_N.data(), Y_N.data() + n_elm_2, s[path].data() + off_s, child, n_elm_2);
+					API_polar::gr(Y_N, Y_N + n_elm_2, s[path].data() + off_s, child, n_elm_2);
 				}
 				break;
 			default:
 				break;
 		}
 
-		recursive_decode(off_l, off_s + n_elm_2, rev_depth -1, ++node_id); // recursive call right
+		recursive_decode(Y_N, off_l, off_s + n_elm_2, rev_depth -1, ++node_id); // recursive call right
 
 		// xor
 		switch (node_type)
@@ -315,7 +345,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 				break;
 		}
 
-		recursive_decode(off_l + n_elmts, off_s, rev_depth -1, ++node_id); // recursive call left
+		recursive_decode(Y_N, off_l + n_elmts, off_s, rev_depth -1, ++node_id); // recursive call left
 
 		// g
 		switch (node_type)
@@ -351,7 +381,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 				break;
 		}
 
-		recursive_decode(off_l + n_elmts, off_s + n_elm_2, rev_depth -1, ++node_id); // recursive call right
+		recursive_decode(Y_N, off_l + n_elmts, off_s + n_elm_2, rev_depth -1, ++node_id); // recursive call right
 
 		// xor
 
@@ -441,32 +471,9 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::store(mipp::vector<B>& V_K) const
+::_store(B *V_K) const
 {
-	assert(V_K.size() >= (unsigned) this->K);
-
-	auto k = 0;
-	for (auto i = 0; i < this->N; i++)
-		if (!frozen_bits[i])
-			V_K[k++] = s[best_path][i] ? 1 : 0;
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::store_fast(mipp::vector<B>& V) const
-{
-	assert(V.size() == (unsigned) this->N);
-	std::copy(s[best_path].begin(), s[best_path].end() - mipp::nElReg<B>(), V.begin());
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::unpack(mipp::vector<B>& V_N) const
-{
-	assert(V_N.size() == frozen_bits.size());
-
-	for (unsigned i = 0; i < V_N.size(); i++)
-		V_N[i] = !frozen_bits[i] && V_N[i];
+	this->fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s[best_path].data(), V_K);
 }
 
 template <typename B, typename R, class API_polar>
@@ -1254,6 +1261,51 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			delete_path(k, r_d);
 		else
 			k++;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K)
+{
+	constexpr int n_frames = API_polar::get_n_frames();
+
+	auto off_s = 0;
+	auto sk_idx = 0;
+	for (auto l = 0; l < (int)leaves_patterns.size(); l++)
+	{
+		const auto node_type = (tools::polar_node_t)leaves_patterns[l].first;
+		const auto n_elmts = leaves_patterns[l].second;
+		switch (node_type)
+		{
+			case tools::RATE_0:
+				break;
+			case tools::RATE_1:
+				std::copy(V_N +  off_s            * n_frames,
+				          V_N + (off_s + n_elmts) * n_frames,
+				          V_K + sk_idx);
+
+				sk_idx += n_elmts * n_frames;
+				break;
+			case tools::REP:
+				std::copy(V_N + (off_s + n_elmts -1) * n_frames,
+				          V_N + (off_s + n_elmts +0) * n_frames,
+				          V_K + sk_idx);
+
+				sk_idx += n_frames;
+				break;
+			case tools::SPC:
+				std::copy(V_N + (off_s + 1      ) * n_frames,
+				          V_N + (off_s + n_elmts) * n_frames,
+				          V_K + sk_idx);
+
+				sk_idx += (n_elmts -1) * n_frames;
+				break;
+			default:
+				throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: unknown polar node type.");
+				break;
+		}
+		off_s += n_elmts;
+	}
 }
 }
 }

@@ -1,4 +1,4 @@
-#include <cassert>
+#include <stdexcept>
 #include <cmath>
 #include <complex>
 #include <limits>
@@ -45,18 +45,6 @@ Modulator_PAM<B,R,Q,MAX>
 }
 
 /*
- * int get_buffer_size_after_modulation(const int N)
- * N = number of input bits
- * returns number of output symbols
- */
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-int Modulator_PAM<B,R,Q,MAX>
-::get_buffer_size_after_modulation(const int N)
-{
-	return (int)std::ceil((float)N / (float)this->bits_per_symbol);
-}
-
-/*
  * Mapping function
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -77,10 +65,10 @@ R Modulator_PAM<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_PAM<B,R,Q,MAX>
-::modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
+::_modulate(const B *X_N1, R *X_N2)
 {
-	auto size_in  = (int)X_N1.size();
-	auto size_out = (int)X_N2.size();
+	auto size_in  = this->N;
+	auto size_out = this->N_mod;
 	auto bps      = this->bits_per_symbol;
 
 	auto main_loop_size = size_in / bps;
@@ -115,12 +103,15 @@ void Modulator_PAM<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_PAM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
-	
-	auto size       = (int)Y_N2.size();
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"R\" and \"Q\" have to be the same.");
+
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -147,12 +138,15 @@ void Modulator_PAM<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_PAM<B,R,Q,MAX>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
+::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"R\" and \"Q\" have to be the same.");
 
-	auto size       = (int)Y_N2.size();
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -176,12 +170,15 @@ void Modulator_PAM<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_PAM<B,R,Q,MAX>
-::demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
+::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"R\" and \"Q\" have to be the same.");
 
-	auto size       = (int)Y_N3.size();
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -214,13 +211,15 @@ void Modulator_PAM<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_PAM<B,R,Q,MAX>
-::demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, const mipp::vector<Q>& Y_N2,
-                              mipp::vector<Q>& Y_N3)
+::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
 {
-	assert(typeid(R) == typeid(Q));
-	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
+	if (typeid(R) != typeid(Q))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"R\" and \"Q\" have to be the same.");
 
-	auto size       = (int)Y_N3.size();
+	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+		throw std::invalid_argument("aff3ct::module::Modulator_PAM: type \"Q\" has to be float or double.");
+
+	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
 
 	for (auto n = 0; n < size; n++) // boucle sur les LLRs

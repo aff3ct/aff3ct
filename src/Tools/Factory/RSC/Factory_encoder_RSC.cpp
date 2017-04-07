@@ -8,7 +8,7 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
-::build(const parameters &params, const int n_frames, std::ostream &stream)
+::build(const parameters &params, std::ostream &stream)
 {
 	Encoder_RSC_sys<B> *encoder = nullptr;
 
@@ -19,12 +19,12 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 	{
 		if (params.encoder.type == "TURBO_JSON")
 		{
-			encoder = new Encoder_RSC_generic_json_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
+			encoder = new Encoder_RSC_generic_json_sys<B>(params.code.K, N, params.simulation.inter_frame_level, params.encoder.buffered,
 			                                              params.encoder.poly, stream);
 		}
 		else
 		{
-			encoder = new Encoder_RSC_generic_sys<B>(params.code.K, N, n_frames, params.encoder.buffered,
+			encoder = new Encoder_RSC_generic_sys<B>(params.code.K, N, params.simulation.inter_frame_level, params.encoder.buffered,
 			                                         params.encoder.poly);
 		}
 	}

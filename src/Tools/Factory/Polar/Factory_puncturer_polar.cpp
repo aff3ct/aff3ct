@@ -1,5 +1,3 @@
-#include "Tools/Display/bash_tools.h"
-
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
@@ -15,9 +13,9 @@ Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
 	Puncturer<B,Q> *puncturer = nullptr;
 
 	if (params.code.N != params.code.N_code)
-		puncturer = new Puncturer_polar_wangliu<B,Q>(params.code.K, params.code.N, *fb_generator);
+		puncturer = new Puncturer_polar_wangliu<B,Q>(params.code.K, params.code.N, *fb_generator, params.simulation.inter_frame_level);
 	else
-		puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N);
+		puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N, params.simulation.inter_frame_level);
 
 	return puncturer;
 }

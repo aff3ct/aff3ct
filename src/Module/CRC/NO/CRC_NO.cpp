@@ -24,20 +24,20 @@ int CRC_NO<B>
 
 template <typename B>
 void CRC_NO<B>
-::build(mipp::vector<B>& U_K)
+::build(B *U_K)
 {
 }
 
 template <typename B>
 bool CRC_NO<B>
-::check(const mipp::vector<B>& V_K, const int n_frames)
+::check(const B *V_K, const int n_frames)
 { 
 	return false; 
 }
 
 template <typename B>
 bool CRC_NO<B>
-::check_packed(const mipp::vector<B>& V_K, const int n_frames)
+::check_packed(const B *V_K, const int n_frames)
 {
 	return false;
 }

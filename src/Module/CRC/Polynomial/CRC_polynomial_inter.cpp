@@ -1,6 +1,5 @@
-#include <cassert>
+#include <stdexcept>
 
-#include "Tools/Display/bash_tools.h"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "CRC_polynomial_inter.hpp"
@@ -12,25 +11,27 @@ CRC_polynomial_inter<B>
 ::CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
 : CRC_polynomial<B>(K, poly_key, size, n_frames, name)
 {
-	assert(mipp::nElmtsPerRegister<B>() == n_frames);
+	if (mipp::nElReg<B>() != n_frames)
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
+		                            "\"mipp::nElReg<B>()\".");
 }
 
 template <typename B>
 bool CRC_polynomial_inter<B>
-::check(const mipp::vector<B>& V_K, const int n_frames)
+::check(const B *V_K, const int n_frames)
 {
-	assert(n_frames == -1 || n_frames == this->n_frames);
-	assert(V_K.size() > (unsigned)(this->n_frames * this->size()));
+	if (n_frames != -1 && n_frames != this->n_frames)
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
+		                            "\"this->n_frames\".");
 
-	auto real_frame_size = int(V_K.size() / this->n_frames);
-	this->_generate_INTER(V_K, this->buff_crc, 
+	this->_generate_INTER(V_K, this->buff_crc.data(),
 	                      0, 
 	                      int(this->buff_crc.size() - (this->n_frames * this->size())),
-	                      int(this->n_frames * (real_frame_size - this->size())));
+	                      int(this->n_frames * (this->K - this->size())));
 
 	auto i = 0;
 	const auto off1 = this->buff_crc.size() - (this->n_frames * this->size());
-	const auto off2 = V_K.size()            - (this->n_frames * this->size());
+	const auto off2 = this->K               - (this->n_frames * this->size());
 	const auto total_crc_size = this->n_frames * this->size();
 	while ((i < total_crc_size) && (this->buff_crc[off1 +i] == V_K[off2 +i]))
 		i++;
@@ -40,16 +41,13 @@ bool CRC_polynomial_inter<B>
 
 template <typename B>
 void CRC_polynomial_inter<B>
-::_generate_INTER(const mipp::vector<B>& U_in, 
-                        mipp::vector<B>& U_out, 
+::_generate_INTER(const B *U_in,
+                        B *U_out,
                   const int off_in, 
                   const int off_out, 
                   const int loop_size)
 {
-	assert(this->n_frames == mipp::nElmtsPerRegister<B>());
-	assert(loop_size % this->n_frames == 0);
-
-	std::copy(U_in.begin() + off_in, U_in.begin() + off_in + loop_size, this->buff_crc.begin());
+	std::copy(U_in + off_in, U_in + off_in + loop_size, this->buff_crc.begin());
 	std::fill(this->buff_crc.end() - (this->n_frames * this->size()), this->buff_crc.end(), (B)0);
 
 	const auto r_zero = mipp::set0<B>();
@@ -70,7 +68,7 @@ void CRC_polynomial_inter<B>
 		}
 	}
 
-	std::copy(this->buff_crc.end() - this->n_frames * this->size(), this->buff_crc.end(), U_out.begin() + off_out);
+	std::copy(this->buff_crc.end() - this->n_frames * this->size(), this->buff_crc.end(), U_out + off_out);
 }
 
 // ==================================================================================== explicit template instantiation 
