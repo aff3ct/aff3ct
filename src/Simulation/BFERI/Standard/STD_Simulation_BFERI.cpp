@@ -27,19 +27,19 @@ Simulation_BFERI<B,R,Q>
 
   threads(params.simulation.n_threads -1),
 
-  U_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
-  X_N1(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
-  X_N2(params.simulation.n_threads, mipp::vector<B>(params.code.N)),
-  X_N3(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
-  H_N (params.simulation.n_threads, mipp::vector<R>(params.code.N)),
-  Y_N1(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
-  Y_N2(params.simulation.n_threads, mipp::vector<R>(params.code.N)),
-  Y_N3(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
-  Y_N4(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
-  Y_N5(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
-  Y_N6(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
-  Y_N7(params.simulation.n_threads, mipp::vector<Q>(params.code.N)),
-  V_K (params.simulation.n_threads, mipp::vector<B>(params.code.K)),
+  U_K (params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  X_N1(params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  X_N2(params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  X_N3(params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  H_N (params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  Y_N1(params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
+  Y_N2(params.simulation.n_threads, mipp::vector<R>( params.code.N_fil                             * params.simulation.inter_frame_level)),
+  Y_N3(params.simulation.n_threads, mipp::vector<Q>( params.code.N_fil                             * params.simulation.inter_frame_level)),
+  Y_N4(params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N5(params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N6(params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  Y_N7(params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
+  V_K (params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
 
   monitor_red(nullptr),
   terminal   (nullptr),
@@ -178,54 +178,27 @@ void Simulation_BFERI<B,R,Q>
 {
 	Simulation_BFERI_i<B,R,Q>::build_communication_chain(simu, tid);
 
-	// get the real number of frames per threads (from the decoder)
-	const auto n_fra = simu->siso[tid]->get_n_frames();
-
-	if (simu->siso[tid]->get_n_frames() != simu->decoder[tid]->get_n_frames())
-		throw std::invalid_argument("aff3ct::simulation::Simulation_BFERI: \"siso[tid]->get_n_frames()\" and "
-		                            "\"decoder[tid]->get_n_frames()\" have to be equal.");
-
-	// resize the buffers
-	const auto K     = simu->params.code.K;
-	const auto N     = simu->params.code.N;
-	const auto tail  = simu->params.code.tail_length;
-	const auto N_mod = simu->params.code.N_mod;
-	const auto N_fil = simu->params.code.N_fil;
-
-	if (simu->U_K [tid].size() != (unsigned) ( K             * n_fra)) simu->U_K [tid].resize( K              * n_fra);
-	if (simu->X_N1[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N1[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N2[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->X_N2[tid].resize((N      + tail) * n_fra);
-	if (simu->X_N3[tid].size() != (unsigned) ( N_mod         * n_fra)) simu->X_N3[tid].resize( N_mod          * n_fra);
-	if (simu->Y_N1[tid].size() != (unsigned) ( N_mod         * n_fra)) simu->Y_N1[tid].resize( N_mod          * n_fra);
-	if (simu->H_N [tid].size() != (unsigned) ( N_mod         * n_fra)) simu->H_N [tid].resize( N_mod          * n_fra);
-	if (simu->Y_N2[tid].size() != (unsigned) ( N_fil         * n_fra)) simu->Y_N2[tid].resize( N_fil          * n_fra);
-	if (simu->Y_N3[tid].size() != (unsigned) ( N_fil         * n_fra)) simu->Y_N3[tid].resize( N_fil          * n_fra);
-	if (simu->Y_N4[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N4[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N5[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N5[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N6[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N6[tid].resize((N      + tail) * n_fra);
-	if (simu->Y_N7[tid].size() != (unsigned) ((N     + tail) * n_fra)) simu->Y_N7[tid].resize((N      + tail) * n_fra);
-	if (simu->V_K [tid].size() != (unsigned) ( K             * n_fra)) simu->V_K [tid].resize( K              * n_fra);
-
 	simu->barrier(tid);
 	if (tid == 0)
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K,
-		                                                   simu->params.code.N,
+		                                                   simu->params.code.N + simu->params.code.tail_length,
+		                                                   simu->params.code.N_mod,
 		                                                   simu->params.monitor.n_frame_errors,
 		                                                   simu->monitor,
 		                                                   std::this_thread::get_id(),
 		                                                   simu->params.simulation.mpi_comm_freq,
-		                                                   n_fra);
+		                                                   simu->params.simulation.inter_frame_level);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
-		                                               simu->params.code.N + tail,
+		                                               simu->params.code.N + simu->params.code.tail_length,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
-		                                               n_fra);
+		                                               simu->params.simulation.inter_frame_level);
 #endif
 		// build the terminal to display the BER/FER
 		simu->terminal = simu->build_terminal(tid);
