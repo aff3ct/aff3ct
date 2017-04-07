@@ -23,6 +23,7 @@ public:
 	virtual ~Modulator_BPSK_fast();
 
 	void   modulate(const B *X_N1,                R *X_N2); using Modulator<B,R,Q>::modulate;
+	void     filter(const R *Y_N1,                R *Y_N2); using Modulator<B,R,Q>::filter;
 	void demodulate(const Q *Y_N1,                Q *Y_N2);
 	void demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3); using Modulator<B,R,Q>::demodulate;
 
