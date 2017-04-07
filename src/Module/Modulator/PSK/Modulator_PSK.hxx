@@ -105,6 +105,16 @@ void Modulator_PSK<B,R,Q,MAX>
 }
 
 /*
+ * Filter
+ */
+template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
+void Modulator_PSK<B,R,Q,MAX>
+::_filter(const R *Y_N1, R *Y_N2)
+{
+	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
+}
+
+/*
  * Demodulator
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
