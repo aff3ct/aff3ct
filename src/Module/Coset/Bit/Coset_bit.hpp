@@ -20,7 +20,7 @@ public:
 
 	virtual ~Coset_bit();
 
-	virtual void apply(const B *ref, const D *in_data, D *out_data);
+	virtual void apply(const B *ref, const D *in_data, D *out_data); using Coset<B,D>::apply;
 };
 }
 }

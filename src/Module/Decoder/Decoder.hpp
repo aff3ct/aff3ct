@@ -66,8 +66,8 @@ public:
 	: Module(n_frames, name),
 	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N(simd_inter_frame_level * N, (R)0),
-	  V_K(simd_inter_frame_level * K, (B)0),
+	  Y_N(simd_inter_frame_level * N),
+	  V_K(simd_inter_frame_level * K),
 	  K(K), N(N), simd_inter_frame_level(simd_inter_frame_level)
 	{
 		if (K <= 0)

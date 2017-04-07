@@ -26,7 +26,7 @@ public:
 	                     const std::string name = "Channel_Rayleigh_LLR");
 	virtual ~Channel_Rayleigh_LLR();
 
-	virtual void add_noise(const R *X_N, R *Y_N, R *H_N);
+	virtual void add_noise(const R *X_N, R *Y_N, R *H_N); using Channel<R>::add_noise;
 };
 }
 }
