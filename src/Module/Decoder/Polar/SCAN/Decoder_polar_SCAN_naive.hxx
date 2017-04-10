@@ -18,12 +18,12 @@ namespace module
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::Decoder_polar_SCAN_naive(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits, 
+::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
                            const int n_frames, const std::string name)
-: Decoder<B,R>  (K, 1 << m, n_frames, 1, name),
-  m             (m           ),
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name),
+  m             (std::log2(N)),
   max_iter      (max_iter    ),
-  layers_count  (m +1        ),
+  layers_count  (this->m +1  ),
   frozen_bits   (frozen_bits ),
   feedback_graph(layers_count),
   soft_graph    (layers_count)
@@ -39,6 +39,11 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	if (max_iter <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"max_iter\" has to be greater "
 		                            "than 0.");
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCAN_naive: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
 
 	for (auto t = 0; t < layers_count; t++)
 	{
@@ -139,6 +144,22 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	this->d_load_total  += d_load;
 	this->d_decod_total += d_decod;
 	this->d_store_total += d_store;
+}
+
+template <typename B, typename R,
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+::_soft_decode(const R *Y_N1, R *Y_N2)
+{
+	// ----------------------------------------------------------------------------------------------------------- LOAD
+	this->_load(Y_N1);
+
+	// --------------------------------------------------------------------------------------------------------- DECODE
+	Decoder_polar_SCAN_naive<B,R,I,F,V,H>::_decode();
+
+	// ---------------------------------------------------------------------------------------------------------- STORE
+	for (auto i = 0; i < this->N; i++)
+		Y_N2[i] = this->feedback_graph[0][i];
 }
 
 /********************************************************************/

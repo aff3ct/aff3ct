@@ -15,6 +15,7 @@ Launcher_BFERI_LDPC<B,R,Q>
 {
 	this->params.code       .type             = "LDPC";
 	this->params.encoder    .type             = "COSET";
+	this->params.encoder    .systematic       = false;
 	this->params.interleaver.type             = "RANDOM";
 	this->params.quantizer  .n_bits           = 6;
 	this->params.quantizer  .n_decimals       = 2;
@@ -24,7 +25,7 @@ Launcher_BFERI_LDPC<B,R,Q>
 	this->params.decoder    .offset           = 0.f;
 	this->params.decoder    .normalize_factor = 1.f;
 	this->params.decoder    .enable_syndrome  = true;
-	this->params.decoder    .syndrome_depth   = 1;
+	this->params.decoder    .syndrome_depth   = 2;
 }
 
 template <typename B, typename R, typename Q>
@@ -37,6 +38,9 @@ void Launcher_BFERI_LDPC<B,R,Q>
 	this->req_args[{"cde-alist-path"}] =
 		{"string",
 		 "path to the AList formated file."};
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	this->opt_args[{"enc-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
@@ -111,6 +115,18 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
 
 	if (this->params.decoder.enable_syndrome)
 		p.push_back(std::make_pair("Stop criterion depth",  std::to_string(this->params.decoder.syndrome_depth)));
+
+	return p;
+}
+
+template <typename B, typename R, typename Q>
+std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
+::header_encoder()
+{
+	auto p = Launcher_BFERI<B,R,Q>::header_encoder();
+
+	if (this->params.encoder.type == "LDPC")
+		p.push_back(std::make_pair("Path", this->params.encoder.path));
 
 	return p;
 }

@@ -74,10 +74,15 @@ public:
 		API_polar::template xo < 4>(s,    off_s+  0, off_s+  4,          off_s+  0,  4);
 	}
 
-	void _hard_decode()
+	void _hard_decode(const R *Y_N, B *V_K)
 	{
 		using namespace tools;
 
+		auto t_load = std::chrono::steady_clock::now();
+		this->_load(Y_N);
+		auto d_load = std::chrono::steady_clock::now() - t_load;
+
+		auto t_decod = std::chrono::steady_clock::now();
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -112,6 +117,15 @@ public:
 		API_polar::template g  <64>(s, l,   0+  0,   0+ 64,   0+  0,   0+128, 64);
 		API_polar::template spc<64>(s, l, 128+  0,                    64+  0, 64);
 		API_polar::template xo <64>(s,      0+  0,   0+ 64,            0+  0, 64);
+		auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+		auto t_store = std::chrono::steady_clock::now();
+		this->_store(V_K);
+		auto d_store = std::chrono::steady_clock::now() - t_store;
+
+		this->d_load_total  += d_load;
+		this->d_decod_total += d_decod;
+		this->d_store_total += d_store;
 	}
 };
 }

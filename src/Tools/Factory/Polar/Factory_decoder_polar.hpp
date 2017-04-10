@@ -2,7 +2,7 @@
 #define FACTORY_DECODER_POLAR_HPP
 
 #include "Module/CRC/CRC.hpp"
-#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/Decoder.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
@@ -16,7 +16,7 @@ namespace tools
 template <typename B = int, typename R = float>
 struct Factory_decoder_polar : public Factory
 {
-	static module::SISO<R>* build_siso(const parameters &params, const mipp::vector<B> &frozen_bits);
+	static module::Decoder_SISO<B,R>* build_siso(const parameters &params, const mipp::vector<B> &frozen_bits);
 
 	static module::Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits,
 	                                   module::CRC<B> *crc);

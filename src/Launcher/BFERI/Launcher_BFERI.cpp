@@ -98,7 +98,7 @@ void Launcher_BFERI<B,R,Q>
 		 "enable the regeneration of the interleaver for each new frame."};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	this->opt_args[{"dmod-ite"}] =
+	this->opt_args[{"dmod-ite", "I"}] =
 		{"positive_int",
 		 "number of iterations in the turbo demodulation."};
 
@@ -166,7 +166,7 @@ void Launcher_BFERI<B,R,Q>
 	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.uniform = true;
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	if(this->ar.exist_arg({"dmod-ite"})) this-> params.demodulator.n_ite = this->ar.get_arg_int({"dmod-ite"});
+	if(this->ar.exist_arg({"dmod-ite", "I"})) this-> params.demodulator.n_ite = this->ar.get_arg_int({"dmod-ite", "I"});
 
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
@@ -264,7 +264,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 {
 	auto p = Launcher<B,R,Q>::header_demodulator();
 
-	p.push_back(std::make_pair("Turbo demod. iterations", std::to_string(this->params.demodulator.n_ite)));
+	p.push_back(std::make_pair("Turbo demod. iterations (I)", std::to_string(this->params.demodulator.n_ite)));
 
 	return p;
 }

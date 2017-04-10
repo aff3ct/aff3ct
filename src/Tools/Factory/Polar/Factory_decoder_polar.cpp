@@ -40,16 +40,17 @@ using namespace aff3ct::tools;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-SISO<R>* Factory_decoder_polar<B,R>
+Decoder_SISO<B,R>* Factory_decoder_polar<B,R>
 ::build_siso(const parameters &params, const mipp::vector<B> &frozen_bits)
 {
-	SISO<R> *siso = nullptr;
+	Decoder_SISO<B,R> *siso = nullptr;
 
 	// build the decoder
 	if (params.encoder.systematic) // non-systematic encoding / decoding
 		if (params.channel.domain == "LLR")
 			if (params.decoder.type == "SCAN" && params.decoder.implem == "NAIVE")
-				siso = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(params.code.K, params.code.m, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
+				siso = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
+
 	return siso;
 }
 
@@ -72,8 +73,8 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 			if (params.decoder.type == "SC" && params.decoder.implem == "NAIVE")
 				decoder = new Decoder_polar_SC_naive <B,R,f_LLR<R>,g_LLR<B,R>,h_LLR<B,R>>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level);
 			if (params.decoder.type == "SCAN" && params.decoder.implem == "NAIVE")
-				decoder = new Decoder_polar_SCAN_naive<B,R,init_LLR<R>,f_LLR<R>,v_LLR<R>,h_LLR<B,R>>(params.code.K, params.code.m, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
-			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.poly.empty())
+				decoder = new Decoder_polar_SCAN_naive<B,R,init_LLR<R>,f_LLR<R>,v_LLR<R>,h_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
+			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.type.empty())
 				decoder = new Decoder_polar_SCL_naive<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
 			if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && !params.crc.poly.empty())
 				decoder = new Decoder_polar_SCL_naive_CA<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);
@@ -93,8 +94,8 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 				if (params.decoder.type == "SC" && params.decoder.implem == "NAIVE")
 					decoder = new Decoder_polar_SC_naive_sys<B, R, f_LLR<R>, g_LLR<B,R>, h_LLR<B,R>>(params.code.K, params.code.N_code, frozen_bits, params.simulation.inter_frame_level);
 				if (params.decoder.type == "SCAN" && params.decoder.implem == "NAIVE")
-					decoder = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(params.code.K, params.code.m, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
-				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.poly.empty())
+					decoder = new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.n_ite, frozen_bits, params.simulation.inter_frame_level);
+				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && params.crc.type.empty())
 					decoder = new Decoder_polar_SCL_naive_sys<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, params.simulation.inter_frame_level);
 				if (params.decoder.type == "SCL" && params.decoder.implem == "NAIVE" && !params.crc.poly.empty())
 					decoder = new Decoder_polar_SCL_naive_CA_sys<B,R,f_LLR<R>,g_LLR<B,R>>(params.code.K, params.code.N_code, params.decoder.L, frozen_bits, *crc, params.simulation.inter_frame_level);

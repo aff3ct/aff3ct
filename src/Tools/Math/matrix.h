@@ -32,12 +32,31 @@ namespace tools
 //      op( B ). K must be at least  zero.  Unchanged on
 //      exit.
 
+// real general matrix multiplication: C = A * B, tB is B transposed, tC is C transposed
+template <typename T>
+__forceinline void rgemm(const int M, const int N, const int K,
+                         const mipp::vector<T> &A,
+                         const mipp::vector<T> &tB,
+                               mipp::vector<T> &tC);
+
+template <typename T>
+__forceinline void rgemm(const int M, const int N, const int K,
+                         const T *A,
+                         const T *tB,
+                               T *tC);
+
 // complex general matrix multiplication: C = A * B, tB is B transposed, tC is C transposed
 template <typename T> 
 __forceinline void cgemm(const int M, const int N, const int K,
                          const mipp::vector<T> &A, 
                          const mipp::vector<T> &tB, 
                                mipp::vector<T> &tC);
+
+template <typename T>
+__forceinline void cgemm(const int M, const int N, const int K,
+                         const T *A,
+                         const T *tB,
+                               T *tC);
 
 // keep only the real part in C
 template <typename T> 
@@ -46,12 +65,34 @@ __forceinline void cgemm_r(const int M, const int N, const int K,
                            const mipp::vector<T> &tB, 
                                  mipp::vector<T> &tC);
 
+template <typename T>
+__forceinline void cgemm_r(const int M, const int N, const int K,
+                           const T *A,
+                           const T *tB,
+                                 T *tC);
+
+// real transpose : B = tA, where A is of size M*N and then B of size N*M
+template <typename T>
+__forceinline void real_transpose(const int M, const int N,
+                                  const mipp::vector<T> &A,
+                                        mipp::vector<T> &B);
+
+template <typename T>
+__forceinline void real_transpose(const int M, const int N,
+                                  const T *A,
+                                        T *B);
+
 // complex transpose : B_real = tA_real and B_imag = -tA_imag, where A is of size M*N*2 and then B of size N*M*2
 // (with both complex elements) : B's elements are the conjugates of A's
 template <typename T>
 __forceinline void complex_transpose(const int M, const int N,
                                      const mipp::vector<T> &A,
                                            mipp::vector<T> &B);
+
+template <typename T>
+__forceinline void complex_transpose(const int M, const int N,
+                                     const T *A,
+                                           T *B);
 }
 }
 

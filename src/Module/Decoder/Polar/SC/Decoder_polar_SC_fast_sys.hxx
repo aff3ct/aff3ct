@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
@@ -147,10 +148,14 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (this->N != (int)frozen_bits.size())
 		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"frozen_bits.size()\" has to be equal to "
 		                        "\"N\".");
-
 	if (m < static_level)
 		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
 		                         "\"static_level\".");
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
 }
 
 template <typename B, typename R, class API_polar>
@@ -179,6 +184,11 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	if (m < static_level)
 		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
 		                         "\"static_level\".");
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
 }
 
 template <typename B, typename R, class API_polar>
@@ -309,12 +319,12 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::_store(B *V_K) const
+::_store(B *V_K)
 {
 	constexpr int n_frames = API_polar::get_n_frames();
 
 	if (n_frames == 1)
-		this->fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s.data(), V_K);
+		this->polar_patterns.fb_extract(this->s.data(), V_K);
 	else
 	{
 		bool fast_deinterleave = false;
@@ -324,32 +334,16 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
 			                                                 (signed char*)s_bis.data(),
 			                                                 (int)this->N)))
-			{
-
 				throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: unsupported \"N\" value for "
 				                         "itransposition (N have to be greater or equal to 128 for SSE/NEON or to "
 				                         "256 for AVX)");
-			}
 			else
-			{
-				// bit unpacking
-				auto idx = n_frames * this->K -1;
-				for (auto i = n_frames * this->N -1; i > 0; i -= this->N)
-				for (unsigned j = (unsigned) 0; j < (unsigned) this->N; j += sizeof(B) * 8)
-				{
-					unsigned char packed_vals = (unsigned char) s_bis[(i -j) / (sizeof(B) * 8)];
-					for (auto k = 0; k < 8; k++)
-						if (!frozen_bits[(this->N -1 -j) -k])
-							V_K[idx--] = ((packed_vals >> (7-k)) & 0x01);
-				}
-			}
+				tools::Bit_packer<B>::unpack(this->s_bis.data(), this->s.data(), this->N, n_frames);
 		}
 #endif
 		if (!fast_deinterleave)
 		{
-			this->fb_extract(this->polar_patterns.get_leaves_pattern_types(),
-			                 this->s.data(),
-			                 const_cast<Decoder_polar_SC_fast_sys<B,R,API_polar>*>(this)->s_bis.data());
+			this->polar_patterns.fb_extract(this->s.data(), this->s_bis.data(), n_frames);
 
 			// transpose without bit packing (vectorized)
 			std::vector<B*> frames(n_frames);
@@ -357,51 +351,10 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 				frames[f] = (B*)(V_K + f*this->K);
 			tools::Reorderer_static<B,n_frames>::apply_rev(s_bis.data(), frames, this->K);
 		}
-	}
-}
-
-template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_patterns, const B *V_N, B *V_K)
-{
-	constexpr int n_frames = API_polar::get_n_frames();
-
-	auto off_s = 0;
-	auto sk_idx = 0;
-	for (auto l = 0; l < (int)leaves_patterns.size(); l++)
-	{
-		const auto node_type = (tools::polar_node_t)leaves_patterns[l].first;
-		const auto n_elmts = leaves_patterns[l].second;
-		switch (node_type)
-		{
-			case tools::RATE_0:
-				break;
-			case tools::RATE_1:
-				std::copy(V_N +  off_s            * n_frames,
-				          V_N + (off_s + n_elmts) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += n_elmts * n_frames;
-				break;
-			case tools::REP:
-				std::copy(V_N + (off_s + n_elmts -1) * n_frames,
-				          V_N + (off_s + n_elmts +0) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += n_frames;
-				break;
-			case tools::SPC:
-				std::copy(V_N + (off_s + 1      ) * n_frames,
-				          V_N + (off_s + n_elmts) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += (n_elmts -1) * n_frames;
-				break;
-			default:
-				throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: unknown polar node type.");
-				break;
-		}
-		off_s += n_elmts;
+		else
+			for (auto f = 0; f < n_frames; f++)
+				this->polar_patterns.fb_extract(this->s.data() + f * this->N,
+				                                V_K            + f * this->K);
 	}
 }
 }

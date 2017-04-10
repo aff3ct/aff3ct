@@ -15,7 +15,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const parameters &params, const AList_reader &alist_data)
+::build(const parameters &params, const AList_reader &alist_data, const mipp::vector<B> &info_bits_pos)
 {
 	Decoder_SISO<B,R> *decoder = nullptr;
 
@@ -26,6 +26,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                                     params.code.N,
 			                                                                     params.decoder.n_ite,
 			                                                                     alist_data,
+			                                                                     info_bits_pos,
 			                                                                     params.decoder.normalize_factor,
 			                                                                     params.decoder.offset,
 			                                                                     params.decoder.enable_syndrome,
@@ -36,6 +37,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                       params.code.N,
 			                                                       params.decoder.n_ite,
 			                                                       alist_data,
+			                                                       info_bits_pos,
 			                                                       params.decoder.enable_syndrome,
 			                                                       params.decoder.syndrome_depth,
 			                                                       params.simulation.inter_frame_level);
@@ -44,6 +46,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                        params.code.N,
 			                                                        params.decoder.n_ite,
 			                                                        alist_data,
+			                                                        info_bits_pos,
 			                                                        params.decoder.enable_syndrome,
 			                                                        params.decoder.syndrome_depth,
 			                                                        params.simulation.inter_frame_level);
@@ -52,6 +55,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                            params.code.N,
 			                                                            params.decoder.n_ite,
 			                                                            alist_data,
+			                                                            info_bits_pos,
 			                                                            params.decoder.enable_syndrome,
 			                                                            params.decoder.syndrome_depth,
 			                                                            params.simulation.inter_frame_level);
@@ -63,6 +67,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                                    params.code.N,
 			                                                                    params.decoder.n_ite,
 			                                                                    alist_data,
+			                                                                    info_bits_pos,
 			                                                                    params.decoder.normalize_factor,
 			                                                                    params.decoder.offset,
 			                                                                    params.decoder.enable_syndrome,
@@ -73,6 +78,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                       params.code.N,
 			                                                       params.decoder.n_ite,
 			                                                       alist_data,
+			                                                       info_bits_pos,
 			                                                       params.decoder.enable_syndrome,
 			                                                       params.decoder.syndrome_depth,
 			                                                       params.simulation.inter_frame_level);
@@ -81,6 +87,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 			                                                           params.code.N,
 			                                                           params.decoder.n_ite,
 			                                                           alist_data,
+			                                                           info_bits_pos,
 			                                                           params.decoder.enable_syndrome,
 			                                                           params.decoder.syndrome_depth,
 			                                                           params.simulation.inter_frame_level);

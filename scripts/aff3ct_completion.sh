@@ -36,6 +36,7 @@ _aff3ct() {
 	      ${codetype} == "RA"         && ${simutype} == "BFER"  || \
 	      ${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
+	      ${codetype} == "POLAR"      && ${simutype} == "BFERI" || \
 	      ${codetype} == "RSC"        && ${simutype} == "BFERI" || \
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFERI" || \
@@ -76,12 +77,14 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFERI.cpp
-	if [[ ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFERI" || \
+	      ${codetype} == "RSC"        && ${simutype} == "BFERI" || \
+	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --itl-cols --itl-uni --dmod-ite --mnt-max-fe -e       \
+		      --itl-path --itl-cols --itl-uni --dmod-ite -I --mnt-max-fe -e    \
 		      --term-type"
 	fi
 
@@ -106,13 +109,20 @@ _aff3ct() {
 		      --dec-simd --dec-max"
 	fi
 
+	# add contents of Launcher_BFER_RSC.cpp
+	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFER" || \
+	      ${codetype} == "POLAR"      && ${simutype} == "BFERI" ]]
+	then
+		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method \
+		      --cde-sigma --dec-type -D --dec-ite -i --dec-implem"
+	fi
+
 	# add contents of Launcher_BFER_polar.cpp
 	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-pb-path --cde-awgn-fb-path --cde-fb-gen-method \
-		      --cde-sigma --crc-type --crc-poly --crc-rate --enc-no-sys  \
-		      --dec-type -D --dec-ite -i --dec-lists -L --dec-simd       \
-		      --dec-polar-nodes --dec-partial-adaptive"
+		opts="$opts --crc-type --crc-poly --crc-rate --enc-no-sys \
+		      --dec-lists -L --dec-simd --dec-polar-nodes         \
+		      --dec-partial-adaptive"
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
@@ -181,7 +191,7 @@ _aff3ct() {
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                  \
 		--sim-benchs | -b | --sim-debug-limit |                              \
 		--mnt-max-fe | -e |                                                  \
-		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step |        \
+		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |   \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
@@ -234,12 +244,12 @@ _aff3ct() {
 		--enc-type)
 			local params
 			case "${codetype}" in
-				POLAR)      params="AZCW COSET USER POLAR"     ;;
-				RSC)        params="AZCW COSET USER RSC"       ;;
-				REPETITION) params="AZCW COSET USER REPETITION";;
-				RA)         params="AZCW COSET USER RA"        ;;
-				TURBO)      params="AZCW COSET USER TURBO"     ;;
-				LDPC)       params="AZCW COSET USER"           ;;
+				POLAR)      params="AZCW COSET USER POLAR"                  ;;
+				RSC)        params="AZCW COSET USER RSC"                    ;;
+				REPETITION) params="AZCW COSET USER REPETITION"             ;;
+				RA)         params="AZCW COSET USER RA"                     ;;
+				TURBO)      params="AZCW COSET USER TURBO"                  ;;
+				LDPC)       params="AZCW COSET USER LDPC LDPC_H LDPC_DVBS2" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -258,7 +268,7 @@ _aff3ct() {
 			;;
 
 		--dec-implem)
-			local params="GENERIC STD FAST VERY_FAST"
+			local params="NAIVE GENERIC STD FAST VERY_FAST"
 			if [ "${codetype}" == 'LDPC' ]; then
 				params="ONMS SPA LSPA GALA"
 			fi
