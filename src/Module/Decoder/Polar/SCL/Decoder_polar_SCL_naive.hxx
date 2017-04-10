@@ -37,6 +37,11 @@ Decoder_polar_SCL_naive<B,R,F,G>
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive: \"L\" has to be positive and a power "
 		                            "of 2.");
 
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_naive: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
+
 	this->active_paths.insert(0);
 	for (auto i = 0 ; i < L ; i++)
 	{

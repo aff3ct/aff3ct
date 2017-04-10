@@ -136,6 +136,11 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"frozen_bits.size()\" has to be equal to "
 		                        "\"N\".");
 
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
+
 	Pattern_SC_interface* pattern_SC_r0 = new Pattern_SC<pattern_SC_type::RATE_0>();
 	Pattern_SC_interface* pattern_SC_r1 = new Pattern_SC<pattern_SC_type::RATE_1>();
 
