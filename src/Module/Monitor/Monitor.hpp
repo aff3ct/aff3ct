@@ -306,7 +306,7 @@ protected:
 		throw std::runtime_error("aff3ct::module::Monitor: \"_check_errors\" is unimplemented.");
 	}
 
-	void _check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
+	virtual void _check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
 	{
 		throw std::runtime_error("aff3ct::module::Monitor: \"_check_and_track_errors\" is unimplemented.");
 	}
