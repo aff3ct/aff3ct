@@ -1,0 +1,66 @@
+Run command:
+./bin/aff3ct --sim-type "BFER" --cde-type "LDPC" --src-type "RAND_FAST" -K "58320" -N "64800" -m "3.60" -M "4.01" -s "0.05" -e "100" --mod-type "PSK" --mod-bps "2" --dec-type "BP_LAYERED" --dec-implem "SPA" -i "35" --cde-alist-path "../conf/dec/LDPC/DVB-S2_6480_64800.alist" --enc-type "COSET" --sim-pyber "DVBS2 6480*64800 35it coset" 
+Curve name:
+DVBS2 6480*64800 35it coset
+# -------------------------------------------------
+# ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
+# -------------------------------------------------
+# Parameters:
+# * Simulation ------------------------------------
+#    ** Type                      = BFER
+#    ** SNR min (m)               = 3.600000 dB
+#    ** SNR max (M)               = 4.010000 dB
+#    ** SNR step (s)              = 0.050000 dB
+#    ** Type of bits              = int (32 bits)
+#    ** Type of reals             = float (32 bits)
+#    ** Inter frame level         = 1
+#    ** Seed                      = 0
+#    ** Multi-threading (t)       = 8 thread(s)
+# * Code ------------------------------------------
+#    ** Type                      = LDPC
+#    ** Info. bits (K)            = 58320
+#    ** Codeword size (N)         = 64800
+#    ** Coset approach (c)        = on
+#    ** AList file path           = ../conf/dec/LDPC/DVB-S2_6480_64800.alist
+# * Source ----------------------------------------
+#    ** Type                      = RAND_FAST
+# * Encoder ---------------------------------------
+#    ** Type                      = COSET
+#    ** Systematic encoding       = off
+# * Modulator -------------------------------------
+#    ** Type                      = PSK
+#    ** Bits per symbol           = 2
+#    ** Sampling factor           = 1
+# * Channel ---------------------------------------
+#    ** Type                      = AWGN
+#    ** Domain                    = LLR
+# * Demodulator -----------------------------------
+#    ** Sigma square              = on
+#    ** Max type                  = MAX
+# * Decoder ---------------------------------------
+#    ** Type (D)                  = BP_LAYERED
+#    ** Implementation            = SPA
+#    ** Num. of iterations (i)    = 35
+#    ** Stop criterion (syndrome) = on
+# * Monitor ---------------------------------------
+#    ** Frame error count (e)     = 100
+#    ** Bad frames tracking       = off
+#    ** Bad frames replay         = off
+#
+# The simulation is running...
+# ----------------------------------------------------------------------||--------------------------------||---------------------
+#       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||     Decoder throughput and     ||  Global throughput  
+#                    on the Signal Noise Ratio (SNR)                    ||      latency (per thread)      ||  and elapsed time   
+# ----------------------------------------------------------------------||--------------------------------||---------------------
+# -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+#  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
+#   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
+# -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+    6.15 |  3.60 |      110 |    73383 |      107 | 1.14e-02 | 9.73e-01 ||     0.06 |     0.05 | 1.06e+06 ||     0.47 | 00h00'15  
+    6.20 |  3.65 |      118 |    61360 |      107 | 8.92e-03 | 9.07e-01 ||     0.06 |     0.06 | 1.02e+06 ||     0.49 | 00h00'15  
+    6.25 |  3.70 |      154 |    51547 |      105 | 5.74e-03 | 6.82e-01 ||     0.07 |     0.06 | 9.16e+05 ||     0.55 | 00h00'18  
+    6.30 |  3.75 |      413 |    42987 |      102 | 1.78e-03 | 2.47e-01 ||     0.09 |     0.08 | 6.92e+05 ||     0.74 | 00h00'36  
+    6.35 |  3.80 |     1420 |    35320 |      102 | 4.26e-04 | 7.18e-02 ||     0.13 |     0.12 | 4.99e+05 ||     1.02 | 00h01'30  
+    6.40 |  3.85 |    11009 |    33315 |      100 | 5.19e-05 | 9.08e-03 ||     0.18 |     0.16 | 3.69e+05 ||     1.38 | 00h08'38  
+    6.45 |  3.90 |     8335 |     2802 |       10 | 5.76e-06 | 1.20e-03 ||     0.21 |     0.19 | 3.02e+05 ||     1.67 | 00h05'22 x
+# End of the simulation.

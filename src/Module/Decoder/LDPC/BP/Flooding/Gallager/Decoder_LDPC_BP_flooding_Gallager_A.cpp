@@ -12,14 +12,17 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const AList_reader &H,
-                                      const bool enable_syndrome, const int syndrome_depth, const int n_frames,
-                                      const std::string name)
+                                      const mipp::vector<B> &info_bits_pos, const bool enable_syndrome,
+                                      const int syndrome_depth, const int n_frames, const std::string name)
+
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
   n_ite            (n_ite                  ),
   H                (H                      ),
   enable_syndrome  (enable_syndrome        ),
   syndrome_depth   (syndrome_depth         ),
-  HY_N              (N                      ),
+  info_bits_pos    (info_bits_pos          ),
+  HY_N             (N                      ),
+  V_N              (N                      ),
   C_to_V_messages  (H.get_n_branches(),   0),
   V_to_C_messages  (H.get_n_branches(),   0)
 {
@@ -115,9 +118,10 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+
 	auto C_to_V_ptr = C_to_V_messages.data();
-	// for the K first variable nodes (make a majority vote with the entering messages)
-	for (auto i = 0; i < this->K; i++)
+	// for the K variable nodes (make a majority vote with the entering messages)
+	for (auto i = 0; i < this->N; i++)
 	{
 		const auto node_degree = (int)H.get_VN_to_CN()[i].size();
 		auto count = 0;
@@ -129,10 +133,13 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 			count += HY_N[i] ? 1 : -1;
 
 		// take the hard decision
-		V_K[i] = count > 0 ? 1 : 0;
+		this->V_N[i] = count > 0 ? 1 : 0;
 
 		C_to_V_ptr += node_degree; // jump to the next node
 	}
+
+	for (auto i = 0; i < this->K; i++)
+		V_K[i] = this->V_N[this->info_bits_pos[i]];
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;

@@ -25,6 +25,8 @@ protected:
 	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
 	bool init_flag;
 
+	const mipp::vector<B> &info_bits_pos;
+
 	const std::vector<std::vector<unsigned int>> &CN_to_VN;
 
 	// data structures for iterative decoding
@@ -34,6 +36,7 @@ protected:
 public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
 	                        const tools::AList_reader &alist_data,
+	                        const mipp::vector<B> &info_bits_pos,
 	                        const bool enable_syndrome = true,
 	                        const int syndrome_depth = 1,
 	                        const int n_frames = 1,

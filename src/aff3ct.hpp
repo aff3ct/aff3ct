@@ -45,6 +45,7 @@
 #include <Tools/Factory/Factory_encoder_common.hpp>
 #include <Tools/Factory/Repetition/Factory_decoder_repetition.hpp>
 #include <Tools/Factory/Repetition/Factory_encoder_repetition.hpp>
+#include <Tools/Factory/LDPC/Factory_encoder_LDPC.hpp>
 #include <Tools/Factory/LDPC/Factory_decoder_LDPC.hpp>
 #include <Tools/Factory/Coset/Factory_coset_real.hpp>
 #include <Tools/Factory/Coset/Factory_coset_bit.hpp>
@@ -107,6 +108,7 @@
 #include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_std.hpp>
 #include <Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp>
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
+#include <Tools/Code/LDPC/G/LDPC_G.hpp>
 #include <Tools/Code/LDPC/AList_reader/AList_reader.hpp>
 #include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp>
 #include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_constant.hpp>
@@ -163,6 +165,10 @@
 #include <Module/Encoder/SC_Encoder.hpp>
 #include <Module/Encoder/SPU_Encoder.hpp>
 #include <Module/Encoder/Repetition/Encoder_repetition_sys.hpp>
+#include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
+#include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
+#include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp>
+#include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2_constants.hpp>
 #include <Module/Encoder/Coset/Encoder_coset.hpp>
 #include <Module/Encoder/User/Encoder_user.hpp>
 #include <Module/Encoder/Encoder.hpp>

@@ -433,7 +433,6 @@ void Simulation_BFERI<B,R,Q>
 			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
-
 		// increment total durations for each operations
 		simu->d_sourc_total[tid] += d_sourc;
 		simu->d_crc_total  [tid] += d_crc;
@@ -728,7 +727,7 @@ void Simulation_BFERI<B,R,Q>
 			else
 			{
 				// decode
-				std::clog << "Hard decode form Y_N5 to V_K..." << std::endl;
+				std::clog << "Hard decode from Y_N5 to V_K..." << std::endl;
 				auto t_decod = steady_clock::now();
 				simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K[0]);
 				d_decod += steady_clock::now() - t_decod;
