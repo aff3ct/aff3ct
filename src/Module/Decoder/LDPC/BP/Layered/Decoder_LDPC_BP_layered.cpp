@@ -49,7 +49,7 @@ Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_soft_decode_fbf(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2)
 {
 	// memory zones initialization
 	this->_load(Y_N1);
@@ -87,7 +87,7 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_hard_decode_fbf(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);

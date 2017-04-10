@@ -45,12 +45,12 @@ public:
 
 protected:
 	// soft decode
-	void _soft_decode_fbf(const R *Y_N1, R *Y_N2);
+	void _soft_decode(const R *Y_N1, R *Y_N2);
 
 	// hard decoder (load -> decode -> store)
-	void _load           (const R *Y_N);
-	void _hard_decode_fbf(const R *Y_N, B *V_K);
-	void _store          (B *V_K) const;
+	void _load       (const R *Y_N);
+	void _hard_decode(const R *Y_N, B *V_K);
+	void _store      (B *V_K) const;
 
 	// BP functions for decoding
 	void BP_decode();
