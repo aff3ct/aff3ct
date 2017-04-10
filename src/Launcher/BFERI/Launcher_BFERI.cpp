@@ -144,6 +144,11 @@ void Launcher_BFERI<B,R,Q>
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
 
+	if (this->params.simulation.debug &&
+	    !(this->ar.exist_arg({"sim-threads", "t"}) && this->ar.get_arg_int({"sim-threads", "t"}) > 0))
+		// check if debug is asked and if n_thread kept its default value
+		this->params.simulation.n_threads = 1;
+
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
 	if (this->params.code.coset)
