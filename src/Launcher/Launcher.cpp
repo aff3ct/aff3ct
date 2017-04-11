@@ -304,6 +304,8 @@ void Launcher<B,R,Q>
 	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
 	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
 
+	params.simulation.snr_max += 0.0001f; // hack to avoid the miss of the last snr
+
 	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
 	if(ar.exist_arg({"sim-pyber"          })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"          });
 	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
