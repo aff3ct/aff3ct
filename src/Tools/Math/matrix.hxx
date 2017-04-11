@@ -170,9 +170,9 @@ inline void complex_transpose(const int M, const int N,
                                     T *B)
 {
 	const T* A_real = A;
-	const T* A_imag = A + ((M * N) >> 1);
+	const T* A_imag = A + M * N;
 	      T* B_real = B;
-	      T* B_imag = B + ((M * N) >> 1);
+	      T* B_imag = B + M * N;
 
 	for (auto i = 0; i < M; i++)
 	{
