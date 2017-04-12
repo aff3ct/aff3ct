@@ -138,7 +138,7 @@ _aff3ct() {
 		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path   \
 		      --itl-cols --itl-uni --dec-type -D --dec-implem --dec-ite -i \
 		      --dec-sf --dec-simd --dec-max --dec-sc --dec-fnc --dec-fnc-q \
-		      --dec-fnc-ite-m --dec-fnc-ite-M --dec-fnc-ite-s" 
+		      --dec-fnc-ite-m --dec-fnc-ite-M --dec-fnc-ite-s --pct-pattern" 
 	fi
 
 	# add contents of Launcher_EXIT_RSC.cpp
@@ -195,7 +195,7 @@ _aff3ct() {
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
-		--itl-cols | --dec-synd-depth |                                      \
+		--itl-cols | --dec-synd-depth | --pct-pattern |                      \
 		--dec-fnc-q | --dec-fnc-ite-m | --dec-fnc-ite-M | --dec-fnc-ite-s    )
 			COMPREPLY=()
 			;;

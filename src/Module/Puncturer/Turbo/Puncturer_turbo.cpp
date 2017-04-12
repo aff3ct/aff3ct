@@ -89,10 +89,6 @@ void Puncturer_turbo<B,Q>
 	}
 
 	std::copy(X_N1 + 3 * this->K, X_N1 + 3 * this->K + this->tail_bits, X_N2 + k);
-
-	if (k + this->tail_bits != this->N)
-		throw std::invalid_argument("aff3ct::module::Puncturer_turbo: \"k + this->tail_bits\" has to be equal to "
-		                            "\"N\".");
 }
 
 template <typename B, typename Q>
