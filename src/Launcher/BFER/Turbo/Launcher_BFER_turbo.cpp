@@ -26,6 +26,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.encoder    .type           = "TURBO";
 	this->params.encoder    .buffered       = true;
 	this->params.encoder    .poly           = {013, 015};
+	this->params.puncturer  .pattern        = "111,111,111";
 	this->params.interleaver.type           = "LTE";
 	this->params.interleaver.path           = "";
 	this->params.interleaver.n_cols         = 4;
@@ -83,6 +84,11 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"enc-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	// ----------------------------------------------------------------------------------------------------- puncturer
+	this->opt_args[{"pct-pattern"}] =
+		{"string",
+		 "puncturing pattern for the turbo encoder (ex: \"11,10,01\")."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
@@ -147,6 +153,8 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	this->params.code.N_code = 3 * this->params.code.K;
+
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(this->ar.exist_arg({"sim-json-path"})) this->params.simulation.json_path = this->ar.get_arg({"sim-json-path"});
 
@@ -177,6 +185,9 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 		std::sscanf(poly_str.c_str(), "{%o,%o}", &this->params.encoder.poly[0], &this->params.encoder.poly[1]);
 #endif
 	}
+
+	// ------------------------------------------------------------------------------------------------------ puncturer
+	if(this->ar.exist_arg({"pct-pattern"})) this->params.puncturer.pattern = this->ar.get_arg({"pct-pattern"});
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type    = this->ar.get_arg    ({"itl-type"});
@@ -307,6 +318,18 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 
 	p.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 	p.push_back(std::make_pair(std::string("Buffered"), buff_enc));
+
+	return p;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_puncturer()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_puncturer();
+
+	if (this->params.code.N != this->params.code.N_code)
+		p.push_back(std::make_pair(std::string("Pattern"), std::string("{" + this->params.puncturer.pattern) + "}"));
 
 	return p;
 }

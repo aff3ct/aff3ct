@@ -76,6 +76,11 @@ struct encoder_parameters
 	std::vector<int> poly;
 };
 
+struct puncturer_parameters
+{
+	std::string pattern;
+};
+
 struct interleaver_parameters
 {
 	std::string type;
@@ -169,11 +174,12 @@ struct parameters
 	code_parameters        code;
 	source_parameters      source;
 	crc_parameters         crc;
-	modulator_parameters   modulator;
-	demodulator_parameters demodulator;
 	encoder_parameters     encoder;
+	puncturer_parameters   puncturer;
 	interleaver_parameters interleaver;
+	modulator_parameters   modulator;
 	channel_parameters     channel;
+	demodulator_parameters demodulator;
 	quantizer_parameters   quantizer;
 	decoder_parameters     decoder;
 	monitor_parameters     monitor;

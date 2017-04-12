@@ -29,18 +29,11 @@
 
 #include "Tools/Display/bash_tools.h"
 
+#include "Tools/general_utils.h"
+
 #include "nodes_parser.h"
 
-std::vector<std::string> string_split(const std::string &s, char delim)
-{
-	std::stringstream ss(s);
-	std::string item;
-	std::vector<std::string> elems;
-	while (std::getline(ss, item, delim))
-		elems.push_back(std::move(item));
-
-	return elems;
-}
+using namespace aff3ct::tools;
 
 std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools::nodes_parser(const std::string &str_polar,
                                                                                int         &idx_r0,

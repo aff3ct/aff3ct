@@ -9,6 +9,7 @@
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
+#include "Tools/Factory/Turbo/Factory_puncturer_turbo.hpp"
 #include "Tools/Factory/Turbo/Factory_scaling_factor.hpp"
 #include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
@@ -93,6 +94,13 @@ Encoder<B>* Simulation_BFER_turbo<B,R,Q,QD>
 		encoder = Factory_encoder_turbo<B>::build(this->params, this->interleaver[tid], sub_encoder[tid], sub_encoder[tid]);
 
 	return encoder;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+Puncturer<B,Q>* Simulation_BFER_turbo<B,R,Q,QD>
+::build_puncturer(const int tid)
+{
+	return Factory_puncturer_turbo<B,Q>::build(this->params);
 }
 
 template <typename B, typename R, typename Q, typename QD>
