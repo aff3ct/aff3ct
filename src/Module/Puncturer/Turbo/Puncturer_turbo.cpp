@@ -22,9 +22,6 @@ Puncturer_turbo<B,Q>
 	if (tail_bits < 0)
 		throw std::invalid_argument("aff3ct::module::Puncturer_turbo: \"tail_bits\" has to be positive.");
 
-	if (!buff_enc)
-		throw std::invalid_argument("aff3ct::module::Puncturer_turbo: \"buff_enc\" has to be set to true.");
-
 	auto str_array = string_split(pattern, ',');
 
 	if (str_array.size() != 3)
@@ -76,13 +73,28 @@ void Puncturer_turbo<B,Q>
 	const auto period = pattern_bits[0].size();
 
 	auto k = 0;
-	for (auto j = 0; j < 3; j++)
+	if (this->buff_enc)
+	{
+		for (auto j = 0; j < 3; j++)
+		{
+			auto p = 0;
+			for (auto i = 0; i < this->K; i++)
+			{
+				if (pattern_bits[j][p])
+					X_N2[k++] = X_N1[this->K * j +i];
+
+				p = (p +1) % period;
+			}
+		}
+	}
+	else
 	{
 		auto p = 0;
 		for (auto i = 0; i < this->K; i++)
 		{
-			if (pattern_bits[j][p])
-				X_N2[k++] = X_N1[this->K * j +i];
+			if (pattern_bits[0][p]) X_N2[k++] = X_N1[i * 3 +0];
+			if (pattern_bits[1][p]) X_N2[k++] = X_N1[i * 3 +1];
+			if (pattern_bits[2][p]) X_N2[k++] = X_N1[i * 3 +2];
 
 			p = (p +1) % period;
 		}
@@ -98,12 +110,27 @@ void Puncturer_turbo<B,Q>
 	const auto period = pattern_bits[0].size();
 
 	auto k = 0;
-	for (auto j = 0; j < 3; j++)
+	if (this->buff_enc)
+	{
+		for (auto j = 0; j < 3; j++)
+		{
+			auto p = 0;
+			for (auto i = 0; i < this->K; i++)
+			{
+				Y_N2[this->K * j +i] = pattern_bits[j][p] ? Y_N1[k++] : (Q)0;
+
+				p = (p +1) % period;
+			}
+		}
+	}
+	else
 	{
 		auto p = 0;
 		for (auto i = 0; i < this->K; i++)
 		{
-			Y_N2[this->K * j +i] = pattern_bits[j][p] ? Y_N1[k++] : (Q)0;
+			Y_N2[i * 3 +0] = pattern_bits[0][p] ? Y_N1[k++] : (Q)0;
+			Y_N2[i * 3 +1] = pattern_bits[1][p] ? Y_N1[k++] : (Q)0;
+			Y_N2[i * 3 +2] = pattern_bits[2][p] ? Y_N1[k++] : (Q)0;
 
 			p = (p +1) % period;
 		}
