@@ -1,5 +1,6 @@
 //find ./src/ -type f -follow -print | grep "[.]h$"
-// #include <Tools/types.h>
+#include <Tools/general_utils.h>
+#include <Tools/types.h>
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/utils.h>
 #include <Tools/Math/max.h>
@@ -26,6 +27,7 @@
 // #include <Tools/MSVC/dirent.h>
 #include <Tools/params.h>
 // #include <main.h>
+
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
 #include <Tools/Threads/Barrier.hpp>
@@ -54,6 +56,7 @@
 #include <Tools/Factory/Factory_modulator.hpp>
 #include <Tools/Factory/Turbo/Factory_encoder_turbo.hpp>
 #include <Tools/Factory/Turbo/Factory_scaling_factor.hpp>
+#include <Tools/Factory/Turbo/Factory_puncturer_turbo.hpp>
 #include <Tools/Factory/Turbo/Factory_decoder_turbo.hpp>
 #include <Tools/Algo/Sort/LC_sorter.hpp>
 #include <Tools/Algo/Sort/LC_sorter_simd.hpp>
@@ -154,6 +157,7 @@
 #include <Module/Puncturer/Puncturer.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
 #include <Module/Puncturer/SC_Puncturer.hpp>
+#include <Module/Puncturer/Turbo/Puncturer_turbo.hpp>
 #include <Module/Encoder/Encoder_sys.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
@@ -328,9 +332,9 @@
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp>
-#include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.hpp>
-#include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp>
-#include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp>
+// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.hpp>
+// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp>
+// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp>
 #include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hpp>
 #include <Module/Decoder/SPU_Decoder.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hpp>
@@ -378,6 +382,7 @@
 #include <Module/Decoder/Turbo/CRC/Decoder_turbo_naive_CA.hpp>
 #include <Module/Decoder/Turbo/CRC/Self_corrected/Decoder_turbo_naive_CA_self_corrected.hpp>
 #include <Module/Decoder/Turbo/CRC/Decoder_turbo_fast_CA.hpp>
+#include <Module/Decoder/Turbo/CRC/Flip_and_check/Decoder_turbo_naive_CA_flip_and_check.hpp>
 #include <Module/Coset/SPU_Coset.hpp>
 #include <Module/Coset/Real/Coset_real.hpp>
 #include <Module/Coset/Coset.hpp>
@@ -426,6 +431,7 @@
 #include <Launcher/BFER/RA/Launcher_BFER_RA.hpp>
 #include <Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp>
 #include <Launcher/BFERI/Launcher_BFERI.hpp>
+#include <Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp>
 #include <Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp>
 #include <Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp>
 #include <Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp>
@@ -449,6 +455,7 @@
 #include <Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp>
 #include <Simulation/BFERI/SystemC/SC_Simulation_BFERI.hpp>
 #include <Simulation/BFERI/Simulation_BFERI.hpp>
+#include <Simulation/BFERI/Code/Polar/Simulation_BFERI_polar.hpp>
 #include <Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp>
 #include <Simulation/BFERI/Code/LDPC/Simulation_BFERI_LDPC.hpp>
 #include <Simulation/BFERI/Code/Uncoded/Simulation_BFERI_uncoded.hpp>
