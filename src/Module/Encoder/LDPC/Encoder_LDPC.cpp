@@ -68,11 +68,11 @@ void Encoder_LDPC<B>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class Encoder_LDPC<B_8>;
-template class Encoder_LDPC<B_16>;
-template class Encoder_LDPC<B_32>;
-template class Encoder_LDPC<B_64>;
+template class aff3ct::module::Encoder_LDPC<B_8>;
+template class aff3ct::module::Encoder_LDPC<B_16>;
+template class aff3ct::module::Encoder_LDPC<B_32>;
+template class aff3ct::module::Encoder_LDPC<B_64>;
 #else
-template class Encoder_LDPC<B>;
+template class aff3ct::module::Encoder_LDPC<B>;
 #endif
 // ==================================================================================== explicit template instantiation
