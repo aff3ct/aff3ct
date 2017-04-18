@@ -77,6 +77,11 @@ public:
 			this->_generate(U_K + f * this->K);
 	}
 
+	virtual int get_K() const
+	{
+		return K;
+	}
+
 protected:
 	virtual void _generate(B *U_K)
 	{
