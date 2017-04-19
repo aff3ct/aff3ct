@@ -21,12 +21,12 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
                            const int n_frames, const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
-  m             (std::log2(N)),
-  max_iter      (max_iter    ),
-  layers_count  (this->m +1  ),
-  frozen_bits   (frozen_bits ),
-  feedback_graph(layers_count),
-  soft_graph    (layers_count)
+  m             ((int)std::log2(N)),
+  max_iter      (max_iter         ),
+  layers_count  (this->m +1       ),
+  frozen_bits   (frozen_bits      ),
+  feedback_graph(layers_count     ),
+  soft_graph    (layers_count     )
 {
 	if (!tools::is_power_of_2(this->N))
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"N\" has to be positive a power "

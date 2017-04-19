@@ -63,7 +63,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
                              const int n_frames, const std::string name)
 : Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             (std::log2(N)),
+  m             ((int)std::log2(N)),
   L             (L),
   frozen_bits   (frozen_bits),
   polar_patterns(N,
@@ -129,7 +129,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                              const int idx_r0, const int idx_r1,
                              const int n_frames, const std::string name)
 : Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             (std::log2(N)),
+  m             ((int)std::log2(N)),
   L             (L),
   frozen_bits   (frozen_bits),
   polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1),

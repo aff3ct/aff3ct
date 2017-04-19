@@ -116,7 +116,7 @@ template <typename B>
 void Pattern_polar_parser<B>
 ::generate_nodes_indexes(const Binary_node<Pattern_polar_i>* node_curr)
 {
-	node_curr->get_c()->set_id(pattern_types.size());
+	node_curr->get_c()->set_id((unsigned int)pattern_types.size());
 	pattern_types.push_back((unsigned char)node_curr->get_c()->type());
 
 	if (!node_curr->is_leaf()) // stop condition

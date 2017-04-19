@@ -108,7 +108,7 @@ void Encoder_LDPC_DVBS2<B>
 
 		for (int l = 0; l < dvbs2->M_LDPC; l++)
 		{
-			int bit = U_K[xPos];
+			int bit = (int)U_K[xPos];
 			if (bit == 1)
 			{
 				for (int q = 0; q < nbPos; q++)

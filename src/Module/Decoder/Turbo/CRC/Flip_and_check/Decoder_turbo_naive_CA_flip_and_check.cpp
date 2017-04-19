@@ -16,7 +16,7 @@ mipp::vector<unsigned int> partial_sort_indexes(const mipp::vector<R> &v)
 	// initialize original index locations
 	mipp::vector<unsigned int> idx(v.size());
 	for (size_t i = 0; i != idx.size(); ++i)
-		idx[i] = i;
+		idx[i] = (unsigned int)i;
 	// sort indexes based on comparing values in v
 	std::partial_sort(idx.begin(),idx.begin() + 20, idx.end(),
 	                  [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
@@ -31,7 +31,7 @@ Decoder_turbo_naive_CA_flip_and_check<B,R>
                                         const Interleaver<int> &pi,
                                         SISO<R> &siso_n,
                                         SISO<R> &siso_i,
-                                        tools::Scaling_factor<R> &scaling_factor,
+                                        Scaling_factor<R> &scaling_factor,
                                         CRC<B> &crc,
                                         int fnc_q, int fnc_m, int fnc_M, int fnc_s,
                                         const bool buffered_encoding)
