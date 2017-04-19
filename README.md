@@ -21,7 +21,7 @@ Open a shell and type (from the `AFF3CT` root folder):
 
     $ mkdir build
     $ cd build
-    $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -march=native -DMULTI_PREC" -DCMAKE_CXX_FLAGS_RELEASE="-Ofast"
+    $ cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-funroll-loops -march=native -DMULTI_PREC"
 
 ## Compile the code with the Makefile
 
@@ -30,14 +30,14 @@ Open a shell and type (from the `AFF3CT` root folder):
 This command will use the generated Makefile.
 
 ## Run the code
-Here are some examples of runs. You can skip the computations of the current SNR point with the `ctrl+C` combination on the keyboard.
+Here is an example of run. You can skip the computations of the current SNR point with the `ctrl+C` combination on the keyboard.
 If you use `ctrl+C` twice in a small time-step (500ms), the program will stop.
 
-### Decoding of the Polar codes with the Successive Cancellation decoder
+### Decoding of the Polar codes with the Successive Cancellation List decoder (SCL)
 
 Open a shell and type (from the `$ROOT_AFF3CT/build/` folder):
 
-    $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -K 1024 -N 2048 -m 1.5 -M 2.81 --cde-fb-gen-method GA -t 1
+    $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -m 1 -M 4 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
 
 Expected output:
 
@@ -46,66 +46,76 @@ Expected output:
     # -------------------------------------------------
     # Parameters:
     # * Simulation ------------------------------------
-    #    ** Type                    = BFER
-    #    ** SNR min (m)             = 1.500000 dB
-    #    ** SNR max (M)             = 2.810000 dB
-    #    ** SNR step (s)            = 0.100000 dB
-    #    ** Type of bits            = int (32 bits)
-    #    ** Type of reals           = float (32 bits)
-    #    ** Inter frame level       = 1
-    #    ** Seed                    = 0
-    #    ** Multi-threading (t)     = 1 thread(s)
+    #    ** Type                     = BFER
+    #    ** SNR min (m)              = 1.000000 dB
+    #    ** SNR max (M)              = 4.000100 dB
+    #    ** SNR step (s)             = 0.250000 dB
+    #    ** Type of bits             = int (32 bits)
+    #    ** Type of reals            = float (32 bits)
+    #    ** Inter frame level        = 1
+    #    ** Seed                     = 0
+    #    ** Multi-threading (t)      = 4 thread(s)
     # * Code ------------------------------------------
-    #    ** Type                    = POLAR
-    #    ** Info. bits (K)          = 1024
-    #    ** Codeword size (N)       = 2048
-    #    ** Coset approach (c)      = off
-    #    ** Sigma for code gen.     = adaptative
-    #    ** Frozen bits gen. method = GA
+    #    ** Type                     = POLAR
+    #    ** Info. bits (K)           = 1723 + 32 (CRC)
+    #    ** Codeword size (N)        = 2048
+    #    ** Coset approach (c)       = off
+    #    ** Sigma for code gen.      = adaptative
+    #    ** Frozen bits gen. method  = GA
     # * Source ----------------------------------------
-    #    ** Type                    = RAND
+    #    ** Type                     = RAND
+    # * CRC -------------------------------------------
+    #    ** Type                     = FAST
+    #    ** Name                     = 32-GZIP
+    #    ** Polynomial (hexadecimal) = 0x4c11db7
+    #    ** Size (in bit)            = 32
+    #    ** Add CRC in the code rate = off
     # * Encoder ---------------------------------------
-    #    ** Type                    = POLAR
-    #    ** Systematic encoding     = on
+    #    ** Type                     = POLAR
+    #    ** Systematic encoding      = on
     # * Modulator -------------------------------------
-    #    ** Type                    = BPSK
-    #    ** Bits per symbol         = 1
-    #    ** Sampling factor         = 1
+    #    ** Type                     = BPSK
+    #    ** Bits per symbol          = 1
+    #    ** Sampling factor          = 1
     # * Channel ---------------------------------------
-    #    ** Type                    = AWGN
-    #    ** Domain                  = LLR
+    #    ** Type                     = AWGN
+    #    ** Domain                   = LLR
     # * Demodulator -----------------------------------
-    #    ** Sigma square            = on
-    #    ** Max type                = unused
+    #    ** Sigma square             = on
+    #    ** Max type                 = unused
     # * Decoder ---------------------------------------
-    #    ** Type (D)                = SC
-    #    ** Implementation          = FAST
+    #    ** Type (D)                 = ASCL
+    #    ** Implementation           = FAST
+    #    ** Max num. of lists (L)    = 8
+    #    ** Adaptative mode          = full
+    #    ** Polar node types         = {R0,R0L,R1,REP,REPL,SPC}
     # * Monitor ---------------------------------------
-    #    ** Frame error count (e)   = 100
+    #    ** Frame error count (e)    = 100
+    #    ** Bad frames tracking      = off
+    #    ** Bad frames replay        = off
     #
     # The simulation is running...
-    # -------------------------------------------------------------||--------------------------------||---------------------
-    #   Bit Error Rate (BER) and Frame Error Rate (FER) depending  ||     Decoder throughput and     ||  Global throughput  
-    #             on the Signal Noise Ratio (SNR) Eb/N0            ||      latency (per thread)      ||  and elapsed time   
-    # -------------------------------------------------------------||--------------------------------||---------------------
-    # ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
-    #   SNR |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
-    #  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
-    # ------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
-       1.50 |      397 |     6512 |      100 | 1.60e-02 | 2.52e-01 ||    97.92 |    48.96 |    20.91 ||    13.19 | 00h00'00  
-       1.60 |      522 |     6100 |      100 | 1.14e-02 | 1.92e-01 ||   119.57 |    59.79 |    17.13 ||    17.35 | 00h00'00  
-       1.70 |      695 |     6232 |      100 | 8.76e-03 | 1.44e-01 ||   118.62 |    59.31 |    17.27 ||    17.42 | 00h00'00  
-       1.80 |      988 |     5160 |      100 | 5.10e-03 | 1.01e-01 ||   119.23 |    59.62 |    17.18 ||    17.53 | 00h00'00  
-       1.90 |     1540 |     4590 |      100 | 2.91e-03 | 6.49e-02 ||   117.27 |    58.63 |    17.46 ||    17.78 | 00h00'00  
-       2.00 |     2593 |     4880 |      100 | 1.84e-03 | 3.86e-02 ||   117.29 |    58.64 |    17.46 ||    17.96 | 00h00'00  
-       2.10 |     3519 |     4488 |      100 | 1.25e-03 | 2.84e-02 ||   117.14 |    58.57 |    17.48 ||    18.02 | 00h00'00  
-       2.20 |     5374 |     4636 |      100 | 8.42e-04 | 1.86e-02 ||   115.91 |    57.95 |    17.67 ||    18.02 | 00h00'00  
-       2.30 |    11013 |     3728 |      100 | 3.31e-04 | 9.08e-03 ||   115.70 |    57.85 |    17.70 ||    18.02 | 00h00'01  
-       2.40 |    20949 |     3812 |      100 | 1.78e-04 | 4.77e-03 ||   114.89 |    57.45 |    17.83 ||    17.92 | 00h00'02  
-       2.50 |    30454 |     3226 |      100 | 1.03e-04 | 3.28e-03 ||   115.22 |    57.61 |    17.77 ||    18.01 | 00h00'03  
-       2.60 |    40835 |     3990 |      100 | 9.54e-05 | 2.45e-03 ||   113.05 |    56.52 |    18.12 ||    17.93 | 00h00'04  
-       2.70 |    93116 |     3216 |      100 | 3.37e-05 | 1.07e-03 ||   111.32 |    55.66 |    18.40 ||    17.73 | 00h00'10  
-       2.80 |   199253 |     2795 |      100 | 1.37e-05 | 5.02e-04 ||   109.16 |    54.58 |    18.76 ||    17.82 | 00h00'22  
+    # ----------------------------------------------------------------------||--------------------------------||---------------------
+    #       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||     Decoder throughput and     ||  Global throughput  
+    #                    on the Signal Noise Ratio (SNR)                    ||      latency (per thread)      ||  and elapsed time   
+    # ----------------------------------------------------------------------||--------------------------------||---------------------
+    # -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+    #  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
+    #   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
+    # -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+        0.25 |  1.00 |      103 |    15777 |      103 | 8.73e-02 | 1.00e+00 ||     2.46 |     2.10 |   834.12 ||     5.23 | 00h00'00  
+        0.50 |  1.25 |      103 |    15096 |      103 | 8.35e-02 | 1.00e+00 ||     2.72 |     2.33 |   752.64 ||     6.72 | 00h00'00  
+        0.75 |  1.50 |      103 |    13921 |      103 | 7.70e-02 | 1.00e+00 ||     3.07 |     2.63 |   666.28 ||     7.36 | 00h00'00  
+        1.00 |  1.75 |      103 |    13156 |      103 | 7.28e-02 | 1.00e+00 ||     3.22 |     2.76 |   636.18 ||     6.62 | 00h00'00  
+        1.25 |  2.00 |      103 |    12146 |      103 | 6.72e-02 | 1.00e+00 ||     3.12 |     2.68 |   655.87 ||     6.94 | 00h00'00  
+        1.50 |  2.25 |      103 |    10499 |      103 | 5.81e-02 | 1.00e+00 ||     3.23 |     2.77 |   633.48 ||     7.61 | 00h00'00  
+        1.75 |  2.50 |      106 |     9028 |      103 | 4.85e-02 | 9.72e-01 ||     3.06 |     2.63 |   668.27 ||     6.98 | 00h00'00  
+        2.00 |  2.75 |      125 |     6568 |      103 | 2.99e-02 | 8.24e-01 ||     3.36 |     2.88 |   609.05 ||     7.83 | 00h00'00  
+        2.25 |  3.00 |      200 |     4557 |      103 | 1.30e-02 | 5.15e-01 ||     4.30 |     3.68 |   476.63 ||    10.25 | 00h00'00  
+        2.50 |  3.25 |      565 |     3849 |      100 | 3.88e-03 | 1.77e-01 ||     8.14 |     6.98 |   251.59 ||    16.54 | 00h00'00  
+        2.75 |  3.50 |     2594 |     3024 |      101 | 6.64e-04 | 3.89e-02 ||    15.78 |    13.53 |   129.74 ||    24.63 | 00h00'00  
+        3.00 |  3.75 |    18102 |     2265 |      100 | 7.13e-05 | 5.52e-03 ||    32.96 |    28.25 |    62.13 ||    31.41 | 00h00'01  
+        3.25 |  4.00 |   179246 |     1712 |      100 | 5.44e-06 | 5.58e-04 ||    48.69 |    41.72 |    42.06 ||    32.47 | 00h00'11  
     # End of the simulation.
 
 ## More
