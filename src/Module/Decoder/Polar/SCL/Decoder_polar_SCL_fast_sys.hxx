@@ -21,6 +21,7 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
+#include "Tools/Code/Polar/fb_extract.h"
 
 #include "Decoder_polar_SCL_fast_sys.hpp"
 
@@ -419,7 +420,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::_store(B *V_K) const
 {
-	this->polar_patterns.fb_extract(this->s[best_path].data(), V_K);
+	tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s[best_path].data(), V_K);
 }
 
 template <typename B, typename R, class API_polar>

@@ -1,3 +1,5 @@
+#include "Tools/Code/Polar/fb_extract.h"
+
 #include "Decoder_polar_SCL_fast_CA_sys.hpp"
 
 namespace aff3ct
@@ -28,7 +30,7 @@ template <typename B, typename R, class API_polar>
 bool Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::crc_check(mipp::vector<B> &s)
 {
-	this->polar_patterns.fb_extract(s.data(), U_test.data());
+	tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), s.data(), U_test.data());
 
 	// check the CRC
 	return crc.check(U_test, this->get_simd_inter_frame_level());
