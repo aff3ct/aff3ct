@@ -22,7 +22,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.simulation .json_path      = "";
 	this->params.code       .type           = "TURBO";
 	this->params.code       .tail_length    = 4 * 3;
-	this->params.crc        .type           = "STD";
+	this->params.crc        .type           = "FAST";
 	this->params.encoder    .type           = "TURBO";
 	this->params.encoder    .buffered       = true;
 	this->params.encoder    .poly           = {013, 015};

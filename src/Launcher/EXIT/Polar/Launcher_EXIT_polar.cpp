@@ -24,7 +24,7 @@ Launcher_EXIT_polar<B,R,Q>
 	this->params.decoder   .type          = "SCAN";
 	this->params.decoder   .implem        = "NAIVE";
 	this->params.decoder   .n_ite         = 1;
-	this->params.decoder   .L             = 1;
+	this->params.decoder   .L             = 8;
 	this->params.decoder   .polar_nodes   = "{R0,R1,R0L,REP,REPL,SPC4}";
 }
 

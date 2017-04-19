@@ -18,14 +18,14 @@ Launcher_BFERI_polar<B,R,Q>
 	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.f;
 	this->params.code      .fb_gen_method = "GA";
-	this->params.crc       .type          = "STD";
+	this->params.crc       .type          = "FAST";
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 1;
 	this->params.decoder   .type          = "SCAN";
 	this->params.decoder   .implem        = "NAIVE";
 	this->params.decoder   .n_ite         = 1;
-	this->params.decoder   .L             = 1;
+	this->params.decoder   .L             = 8;
 	this->params.decoder   .simd_strategy = "";
 	this->params.decoder   .polar_nodes   = "{R0,R0L,R1,REP,REPL,SPC}";
 	this->params.decoder   .full_adaptive = true;
