@@ -17,7 +17,7 @@ Launcher_BFERI_polar<B,R,Q>
 	this->params.code      .type          = "POLAR";
 	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.f;
-	this->params.code      .fb_gen_method = "TV";
+	this->params.code      .fb_gen_method = "GA";
 	this->params.crc       .type          = "STD";
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;

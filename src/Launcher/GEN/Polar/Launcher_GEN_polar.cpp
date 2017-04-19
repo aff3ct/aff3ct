@@ -18,7 +18,7 @@ Launcher_GEN_polar<B,R,Q>
 	this->params.code      .type          = "POLAR";
 	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.f;
-	this->params.code      .fb_gen_method = "TV";
+	this->params.code      .fb_gen_method = "GA";
 	this->params.decoder   .simd_strategy = "";
 	this->params.decoder   .type          = "SC";
 	this->params.decoder   .gen_path      = "../src/Module/Decoder/Polar/SC/Generated";
