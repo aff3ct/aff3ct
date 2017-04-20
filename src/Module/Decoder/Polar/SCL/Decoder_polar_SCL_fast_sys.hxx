@@ -21,6 +21,7 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
+#include "Tools/Code/Polar/fb_extract.h"
 
 #include "Decoder_polar_SCL_fast_sys.hpp"
 
@@ -63,7 +64,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
                              const int n_frames, const std::string name)
 : Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             (std::log2(N)),
+  m             ((int)std::log2(N)),
   L             (L),
   frozen_bits   (frozen_bits),
   polar_patterns(N,
@@ -129,7 +130,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                              const int idx_r0, const int idx_r1,
                              const int n_frames, const std::string name)
 : Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             (std::log2(N)),
+  m             ((int)std::log2(N)),
   L             (L),
   frozen_bits   (frozen_bits),
   polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1),
@@ -419,7 +420,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::_store(B *V_K) const
 {
-	this->polar_patterns.fb_extract(this->s[best_path].data(), V_K);
+	tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s[best_path].data(), V_K);
 }
 
 template <typename B, typename R, class API_polar>

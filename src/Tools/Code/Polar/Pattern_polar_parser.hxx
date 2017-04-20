@@ -116,7 +116,7 @@ template <typename B>
 void Pattern_polar_parser<B>
 ::generate_nodes_indexes(const Binary_node<Pattern_polar_i>* node_curr)
 {
-	node_curr->get_c()->set_id(pattern_types.size());
+	node_curr->get_c()->set_id((unsigned int)pattern_types.size());
 	pattern_types.push_back((unsigned char)node_curr->get_c()->type());
 
 	if (!node_curr->is_leaf()) // stop condition
@@ -214,53 +214,6 @@ const Binary_tree<Pattern_polar_i>* Pattern_polar_parser<B>
 ::get_polar_tree() const
 {
 	return polar_tree;
-}
-
-template <typename B>
-void Pattern_polar_parser<B>
-::fb_extract(const B *V_N, B *V_K, const int n_frames) const
-{
-	const auto leaves_patterns = this->get_leaves_pattern_types();
-
-	auto off_s = 0;
-	auto sk_idx = 0;
-
-	const auto loop_size = (int)leaves_patterns.size();
-	for (auto l = 0; l < loop_size; l++)
-	{
-		const auto node_type = (tools::polar_node_t)leaves_patterns[l].first;
-		const auto n_elmts = leaves_patterns[l].second;
-		switch (node_type)
-		{
-			case tools::RATE_0:
-				break;
-			case tools::RATE_1:
-				std::copy(V_N +  off_s            * n_frames,
-				          V_N + (off_s + n_elmts) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += n_elmts * n_frames;
-				break;
-			case tools::REP:
-				std::copy(V_N + (off_s + n_elmts -1) * n_frames,
-				          V_N + (off_s + n_elmts +0) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += n_frames;
-				break;
-			case tools::SPC:
-				std::copy(V_N + (off_s + 1      ) * n_frames,
-				          V_N + (off_s + n_elmts) * n_frames,
-				          V_K + sk_idx);
-
-				sk_idx += (n_elmts -1) * n_frames;
-				break;
-			default:
-				throw std::runtime_error("aff3ct::tools::Pattern_polar_parser: unknown polar node type.");
-				break;
-		}
-		off_s += n_elmts;
-	}
 }
 }
 }

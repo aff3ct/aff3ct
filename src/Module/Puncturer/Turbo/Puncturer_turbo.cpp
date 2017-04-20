@@ -46,7 +46,7 @@ Puncturer_turbo<B,Q>
 		for (auto j = 0; j < period; j++)
 		{
 			char c[2] = {str_array[i][j], '\0'};
-			pattern_bits[i][j] = (bool)std::stoi(std::string(c));
+			pattern_bits[i][j] = std::stoi(std::string(c)) ? true : false;
 		}
 
 	auto bit_sys_count = 0; for (auto j = 0; j < period; j++) bit_sys_count += pattern_bits[0][j] ? 1 : 0;
