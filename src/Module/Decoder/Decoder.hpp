@@ -36,7 +36,6 @@ template <typename B = int, typename R = float>
 class Decoder_i : public Module
 {
 private:
-	const int n_dec_waves;
 	const int n_inter_frame_rest;
 
 	mipp::vector<R> Y_N;
@@ -46,6 +45,7 @@ protected:
 	const int K; /*!< Number of information bits in one frame */
 	const int N; /*!< Size of one frame (= number of bits in one frame) */
 	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
+	const int n_dec_waves;
 
 	std::chrono::nanoseconds d_load_total;
 	std::chrono::nanoseconds d_decod_total;
@@ -64,11 +64,13 @@ public:
 	Decoder_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	          std::string name = "Decoder_i")
 	: Module(n_frames, name),
-	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  Y_N(simd_inter_frame_level * N),
 	  V_K(simd_inter_frame_level * K),
-	  K(K), N(N), simd_inter_frame_level(simd_inter_frame_level)
+	  K(K),
+	  N(N),
+	  simd_inter_frame_level(simd_inter_frame_level),
+	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
 	{
 		if (K <= 0)
 			throw std::invalid_argument("aff3ct::module::Decoder: \"K\" has to be greater than 0.");

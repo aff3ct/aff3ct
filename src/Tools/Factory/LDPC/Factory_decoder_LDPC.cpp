@@ -7,6 +7,7 @@
 #include "Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
+#include "Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp"
 
 #include "Factory_decoder_LDPC.hpp"
 
@@ -65,16 +66,30 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 		else if (params.decoder.type == "BP_LAYERED")
 		{
 			if (params.decoder.implem == "ONMS")
-				decoder = new Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>(params.code.K,
-				                                                                    params.code.N,
-				                                                                    params.decoder.n_ite,
-				                                                                    alist_data,
-				                                                                    info_bits_pos,
-				                                                                    params.decoder.normalize_factor,
-				                                                                    params.decoder.offset,
-				                                                                    params.decoder.enable_syndrome,
-				                                                                    params.decoder.syndrome_depth,
-				                                                                    params.simulation.inter_frame_level);
+			{
+				if (params.decoder.simd_strategy.empty())
+					decoder = new Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>(params.code.K,
+					                                                                    params.code.N,
+					                                                                    params.decoder.n_ite,
+					                                                                    alist_data,
+					                                                                    info_bits_pos,
+					                                                                    params.decoder.normalize_factor,
+					                                                                    (R)params.decoder.offset,
+					                                                                    params.decoder.enable_syndrome,
+					                                                                    params.decoder.syndrome_depth,
+					                                                                    params.simulation.inter_frame_level);
+				else if (params.decoder.simd_strategy == "INTER")
+					decoder = new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.code.K,
+					                                                      params.code.N,
+					                                                      params.decoder.n_ite,
+					                                                      alist_data,
+					                                                      info_bits_pos,
+					                                                      params.decoder.normalize_factor,
+					                                                      (R)params.decoder.offset,
+					                                                      params.decoder.enable_syndrome,
+					                                                      params.decoder.syndrome_depth,
+					                                                      params.simulation.inter_frame_level);
+			}
 			else if (params.decoder.implem == "SPA")
 				decoder = new Decoder_LDPC_BP_layered_sum_product<B,R>(params.code.K,
 				                                                       params.code.N,

@@ -60,6 +60,10 @@ void Launcher_BFERI_LDPC<B,R,Q>
 	this->opt_args[{"dec-synd-depth"}] =
 		{"positive_int",
 		 "successive number of iterations to validate the syndrome detection."};
+	this->opt_args[{"dec-simd"}] =
+		{"string",
+		 "the SIMD strategy you want to use.",
+		 "INTER"};
 }
 
 template <typename B, typename R, typename Q>
@@ -77,6 +81,10 @@ void Launcher_BFERI_LDPC<B,R,Q>
 	if(this->ar.exist_arg({"dec-norm"      })) this->params.decoder.normalize_factor = this->ar.get_arg_float({"dec-norm"      });
 	if(this->ar.exist_arg({"dec-synd-depth"})) this->params.decoder.syndrome_depth   = this->ar.get_arg_int  ({"dec-synd-depth"});
 	if(this->ar.exist_arg({"dec-no-synd"   })) this->params.decoder.enable_syndrome  = false;
+	if(this->ar.exist_arg({"dec-simd"      })) this->params.decoder.simd_strategy    = this->ar.get_arg      ({"dec-simd"      });
+
+	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
+		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
 }
 
 template <typename B, typename R, typename Q>
@@ -104,6 +112,9 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI_LDPC<B,R,Q>
 	auto p = Launcher_BFERI<B,R,Q>::header_decoder();
 
 	std::string syndrome = this->params.decoder.enable_syndrome ? "on" : "off";
+
+	if (!this->params.decoder.simd_strategy.empty())
+		p.push_back(std::make_pair("SIMD strategy", this->params.decoder.simd_strategy));
 
 	p.push_back(std::make_pair("Num. of iterations (i)", std::to_string(this->params.decoder.n_ite)));
 	if (this->params.decoder.implem == "ONMS")

@@ -292,6 +292,30 @@ public:
 	inline Reg<T>  operator>  (      Reg<T>  v) const { return this->cmpgt (v);                 }
 	inline Reg<T>  operator>= (      Reg<T>  v) const { return this->cmpge (v);                 }
 
+#ifndef MIPP_NO_INTRINSICS
+	inline T& operator[](size_t index)
+	{
+		T *data = (T*)&this->r;
+		return data[index % nElReg<T>()];
+	}
+
+	inline const T& operator[](size_t index) const
+	{
+		T *data = (T*)&this->r;
+		return data[index % nElReg<T>()];
+	}
+#else
+	inline T& operator[](size_t index)
+	{
+		return r;
+	}
+
+	inline const T& operator[](size_t index) const
+	{
+		return r;
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------ reduction
 #ifndef MIPP_NO_INTRINSICS
 	inline Reg<T> sum () const { return Reduction<T,mipp::add>::apply(*this); }
