@@ -1,3 +1,5 @@
+#include <stdexcept>
+#include <typeinfo>
 #include <limits>
 #include <cmath>
 
@@ -20,6 +22,9 @@ Decoder_LDPC_BP_layered_sum_product<B,R>
 : Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
   contributions(alist_data.get_CN_max_degree()), values(alist_data.get_CN_max_degree())
 {
+	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
+		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_sum_product: this decoder only supports "
+		                         "floating-point numbers for the LLRs.");
 }
 
 template <typename B, typename R>
