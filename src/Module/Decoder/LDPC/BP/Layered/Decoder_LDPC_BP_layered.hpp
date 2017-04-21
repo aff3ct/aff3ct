@@ -22,7 +22,7 @@ protected:
 	const bool enable_syndrome;
 	const int  syndrome_depth;
 
-	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
+	// reset so C_to_V and V_to_C structures can be cleared only at the beginning of the loop in iterative decoding
 	bool init_flag;
 
 	const mipp::vector<B> &info_bits_pos;

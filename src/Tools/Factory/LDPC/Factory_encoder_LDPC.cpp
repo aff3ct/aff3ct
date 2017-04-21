@@ -14,12 +14,15 @@ Encoder_LDPC<B>* Factory_encoder_LDPC<B>
 	Encoder_LDPC<B> *encoder = nullptr;
 
 	// build the encoder
-	if (params.encoder.type == "LDPC")
-		encoder = new Encoder_LDPC<B>(params.code.K, params.code.N + params.code.tail_length, AList_reader(params.encoder.path), params.simulation.inter_frame_level);
-	else if (params.encoder.type == "LDPC_H")
-		encoder = new Encoder_LDPC_from_H<B>(params.code.K, params.code.N + params.code.tail_length, AList_reader(params.code.alist_path), params.simulation.inter_frame_level);
-	else if (params.encoder.type == "LDPC_DVBS2")
-		encoder = new Encoder_LDPC_DVBS2<B>(params.code.K, params.code.N + params.code.tail_length, params.simulation.inter_frame_level);
+	if (params.encoder.systematic)
+	{
+		if (params.encoder.type == "LDPC")
+			encoder = new Encoder_LDPC<B>(params.code.K, params.code.N + params.code.tail_length, AList_reader(params.encoder.path), params.simulation.inter_frame_level);
+		else if (params.encoder.type == "LDPC_H")
+			encoder = new Encoder_LDPC_from_H<B>(params.code.K, params.code.N + params.code.tail_length, AList_reader(params.code.alist_path), params.simulation.inter_frame_level);
+		else if (params.encoder.type == "LDPC_DVBS2")
+			encoder = new Encoder_LDPC_DVBS2<B>(params.code.K, params.code.N + params.code.tail_length, params.simulation.inter_frame_level);
+	}
 
 	return encoder;
 }

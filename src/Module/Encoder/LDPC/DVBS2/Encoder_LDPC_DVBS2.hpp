@@ -4,7 +4,9 @@
 #include <vector>
 
 #include "Tools/Perf/MIPP/mipp.h"
+
 #include "../Encoder_LDPC.hpp"
+
 #include "Encoder_LDPC_DVBS2_constants.hpp"
 
 namespace aff3ct
@@ -18,7 +20,7 @@ class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 	const dvbs2_values* dvbs2 = nullptr;
 
 public:
-	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC");
+	Encoder_LDPC_DVBS2(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC_DVBS2");
 	virtual ~Encoder_LDPC_DVBS2();
 
 protected:
