@@ -274,8 +274,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		auto cste1 = mipp_normalize<R,F>(min2 - offset, normalize_factor);
 		auto cste2 = mipp_normalize<R,F>(min1 - offset, normalize_factor);
 
-		cste1 = mipp::blend(zero, cste1, zero > cste1); // cste1 = (cste1 < zero) ? zero : cste1;
-		cste2 = mipp::blend(zero, cste2, zero > cste2); // cste2 = (cste2 < zero) ? zero : cste2;
+		cste1 = mipp::blend(zero, cste1, zero > cste1); // cste1 = (0 > cste1) ? cste1 : 0;
+		cste2 = mipp::blend(zero, cste2, zero > cste2); // cste2 = (0 > cste2) ? cste2 : 0;
 
 		for (auto j = 0; j < n_VN; j++)
 		{
