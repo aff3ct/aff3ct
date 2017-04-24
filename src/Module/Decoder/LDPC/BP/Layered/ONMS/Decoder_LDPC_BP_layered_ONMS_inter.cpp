@@ -10,19 +10,6 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename R, int F = 0> inline mipp::Reg<R> simd_normalize(const mipp::Reg<R> val, const float factor) { return val * mipp::Reg<R>((R)factor); }
-
-template <> inline mipp::Reg<short > simd_normalize<short, 1>(const mipp::Reg<short > v, const float f) { return (v >> 3);                       } // v * 0.125
-template <> inline mipp::Reg<short > simd_normalize<short, 2>(const mipp::Reg<short > v, const float f) { return            (v >> 2);            } // v * 0.250
-template <> inline mipp::Reg<short > simd_normalize<short, 3>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
-template <> inline mipp::Reg<short > simd_normalize<short, 4>(const mipp::Reg<short > v, const float f) { return                       (v >> 1); } // v * 0.500
-template <> inline mipp::Reg<short > simd_normalize<short, 5>(const mipp::Reg<short > v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
-template <> inline mipp::Reg<short > simd_normalize<short, 6>(const mipp::Reg<short > v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
-template <> inline mipp::Reg<short > simd_normalize<short, 7>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
-template <> inline mipp::Reg<short > simd_normalize<short, 8>(const mipp::Reg<short > v, const float f) { return v;                              } // v * 1.000
-template <> inline mipp::Reg<float > simd_normalize<float, 8>(const mipp::Reg<float > v, const float f) { return v;                              } // v * 1.000
-template <> inline mipp::Reg<double> simd_normalize<double,8>(const mipp::Reg<double> v, const float f) { return v;                              } // v * 1.000
-
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
@@ -34,22 +21,23 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
                                      const int syndrome_depth,
                                      const int n_frames,
                                      const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                   ),
-  cur_wave         (0                                                                         ),
-  normalize_factor (normalize_factor                                                          ),
-  offset           ((R)offset                                                                 ),
-  contributions    (alist_data.get_CN_max_degree()                                            ),
-  n_ite            (n_ite                                                                     ),
-  n_C_nodes        ((int)alist_data.get_n_CN()                                                ),
-  enable_syndrome  (enable_syndrome                                                           ),
-  syndrome_depth   (syndrome_depth                                                            ),
-  init_flag        (false                                                                     ),
-  info_bits_pos    (info_bits_pos                                                             ),
-  CN_to_VN         (alist_data.get_CN_to_VN()                                                 ),
-  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N                          )),
-  branches         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(alist_data.get_n_branches())),
-  Y_N_reorderered  (N                                                                         ),
-  V_K_reorderered  (K                                                                         )
+: Decoder_SISO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                        ),
+  cur_wave         (0                                                                              ),
+  normalize_factor (normalize_factor                                                               ),
+  offset           ((R)offset                                                                      ),
+  contributions    (alist_data.get_CN_max_degree()                                                 ),
+  saturation       ((1 << ((sizeof(R) * 8 -2) - (int)std::log2(alist_data.get_VN_max_degree()))) -1),
+  n_ite            (n_ite                                                                          ),
+  n_C_nodes        ((int)alist_data.get_n_CN()                                                     ),
+  enable_syndrome  (enable_syndrome                                                                ),
+  syndrome_depth   (syndrome_depth                                                                 ),
+  init_flag        (true                                                                           ),
+  info_bits_pos    (info_bits_pos                                                                  ),
+  CN_to_VN         (alist_data.get_CN_to_VN()                                                      ),
+  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N                          )     ),
+  branches         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(alist_data.get_n_branches())     ),
+  Y_N_reorderered  (N                                                                              ),
+  V_K_reorderered  (K                                                                              )
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"n_ite\" has to be greater "
@@ -61,9 +49,13 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"N\" is not compatible with "
 		                            "the alist file.");
 
-	if (typeid(R) == typeid(signed char))
-		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: this decoder does not work in "
-		                         "8-bit fixed-point.");
+//	if (typeid(R) == typeid(signed char))
+//		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: this decoder does not work in "
+//		                         "8-bit fixed-point.");
+
+	if (saturation <= 0)
+		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"saturation\" has to be "
+		                         "greater than 0.");
 }
 
 template <typename B, typename R>
@@ -80,7 +72,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	this->_load(Y_N1);
 
 	// actual decoding
-	if (typeid(R) == typeid(short))
+	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
 		     if (normalize_factor == 0.125f) this->BP_decode<1>();
 		else if (normalize_factor == 0.250f) this->BP_decode<2>();
@@ -122,8 +114,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		std::fill(this->branches [cur_wave].begin(), this->branches [cur_wave].end(), zero);
 		std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
 
-		if (cur_wave == this->n_dec_waves -1)
-			this->init_flag = false;
+		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
 	}
 
 	std::vector<const R*> frames(mipp::nElReg<R>());
@@ -144,7 +135,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	if (typeid(R) == typeid(short))
+	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
 		     if (normalize_factor == 0.125f) this->BP_decode<1>();
 		else if (normalize_factor == 0.250f) this->BP_decode<2>();
@@ -192,11 +183,10 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_K + f * this->K;
 	Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_K_reorderered.data(), frames, this->K);
 
-	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (cur_wave == this->n_dec_waves -1)
-		this->init_flag = true;
-
 	cur_wave = (cur_wave +1) % this->n_dec_waves;
+
+	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
+	if (cur_wave == 0) this->init_flag = true;
 }
 
 // BP algorithm
@@ -251,6 +241,42 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	return (i == mipp::nElReg<B>());
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------- SIMD TOOLS
+
+// saturation
+template <typename R> inline mipp::Reg<R> simd_sat(const mipp::Reg<R> val, const R saturation) { return val; }
+
+template <> inline mipp::Reg<short      > simd_sat(const mipp::Reg<short      > v, const short       s) { return mipp::sat(v, (short      )-s, (short      )+s); }
+template <> inline mipp::Reg<signed char> simd_sat(const mipp::Reg<signed char> v, const signed char s) { return mipp::sat(v, (signed char)-s, (signed char)+s); }
+
+// normalization
+template <typename R, int F = 0> inline mipp::Reg<R> simd_normalize(const mipp::Reg<R> val, const float factor) { return val * mipp::Reg<R>((R)factor); }
+
+template <> inline mipp::Reg<float > simd_normalize<float,  8>(const mipp::Reg<float > v, const float f) { return v; } // v * 1.000
+template <> inline mipp::Reg<double> simd_normalize<double, 8>(const mipp::Reg<double> v, const float f) { return v; } // v * 1.000
+
+template <> inline mipp::Reg<short> simd_normalize<short, 1>(const mipp::Reg<short > v, const float f) { return (v >> 3);                       } // v * 0.125
+template <> inline mipp::Reg<short> simd_normalize<short, 2>(const mipp::Reg<short > v, const float f) { return            (v >> 2);            } // v * 0.250
+template <> inline mipp::Reg<short> simd_normalize<short, 3>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
+template <> inline mipp::Reg<short> simd_normalize<short, 4>(const mipp::Reg<short > v, const float f) { return                       (v >> 1); } // v * 0.500
+template <> inline mipp::Reg<short> simd_normalize<short, 5>(const mipp::Reg<short > v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
+template <> inline mipp::Reg<short> simd_normalize<short, 6>(const mipp::Reg<short > v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
+template <> inline mipp::Reg<short> simd_normalize<short, 7>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
+template <> inline mipp::Reg<short> simd_normalize<short, 8>(const mipp::Reg<short > v, const float f) { return v;                              } // v * 1.000
+
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 1>(const mipp::Reg<signed char> v, const float f) { return (v >> 3);                       } // v * 0.125
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 2>(const mipp::Reg<signed char> v, const float f) { return            (v >> 2);            } // v * 0.250
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 3>(const mipp::Reg<signed char> v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 4>(const mipp::Reg<signed char> v, const float f) { return                       (v >> 1); } // v * 0.500
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 5>(const mipp::Reg<signed char> v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 6>(const mipp::Reg<signed char> v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 7>(const mipp::Reg<signed char> v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
+template <> inline mipp::Reg<signed char> simd_normalize<signed char, 8>(const mipp::Reg<signed char> v, const float f) { return v;                              } // v * 1.000
+
+// --------------------------------------------------------------------------------------------------------- SIMD TOOLS
+// --------------------------------------------------------------------------------------------------------------------
+
 // BP algorithm
 template <typename B, typename R>
 template <int F>
@@ -293,6 +319,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			      auto v_res = mipp::blend(cste1, cste2, v_abs == min1);
 			const auto v_sig = sign ^ mipp::Reg<B>(mipp::sign(value).r);
 			           v_res = mipp::copysign(v_res, mipp::Reg<R>(v_sig.r));
+			           v_res = simd_sat<R>(v_res, saturation);
 
 			branches[kw++] = v_res;
 			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;

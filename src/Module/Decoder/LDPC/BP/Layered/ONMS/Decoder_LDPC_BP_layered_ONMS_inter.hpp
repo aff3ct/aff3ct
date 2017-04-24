@@ -19,6 +19,7 @@ private:
 	mipp::vector<mipp::Reg<R>> contributions;
 
 protected:
+	const R saturation;
 	const int n_ite;     // number of iterations to perform
 	const int n_C_nodes; // number of check nodes (= N - K)
 
