@@ -28,8 +28,8 @@ template <typename B>
 void LDPC_G
 ::triangularization_H(std::vector<mipp::vector<B>>& H, mipp::vector<unsigned>& swapped)
 {
-	unsigned n = H[0].size();
-	unsigned k = H.size();
+	unsigned n = (unsigned)H[0].size();
+	unsigned k = (unsigned)H.size();
 	unsigned i = 0;
 	bool fund = false;
 
@@ -91,7 +91,7 @@ template <typename B>
 void LDPC_G
 ::identity_H(std::vector<mipp::vector<B>>& H)
 {
-	unsigned k = H.size();
+	unsigned k = (unsigned)H.size();
 	for (unsigned i = k - 1 ; i > 0; i--)
 		for (unsigned j = i; j > 0; j--)
 			if (H[j-1][i])
@@ -103,8 +103,8 @@ template <typename B>
 void LDPC_G
 ::transformation_H_to_G(std::vector<mipp::vector<B>>& H, std::vector<mipp::vector<unsigned>>& G, mipp::vector<unsigned>& swapped)
 {
-	unsigned n = H[0].size();
-	unsigned k = H.size();
+	unsigned n = (unsigned)H[0].size();
+	unsigned k = (unsigned)H.size();
 
 	for (unsigned i = 0; i < k; i++) // Kill of the Identity in H
 		H[i].erase( H[i].begin(), H[i].begin() + k );
@@ -115,7 +115,7 @@ void LDPC_G
 
 	// Re-organization: column of G
 	mipp::vector<B> tmp(n - k, 0);
-	for (unsigned l = (swapped.size() / 2); l > 0; l--)
+	for (unsigned l = (unsigned)(swapped.size() / 2); l > 0; l--)
 	{
 		tmp = H[swapped[l*2-1]];
 		H[swapped[l*2-1]] = H[swapped[(l-1)*2]];

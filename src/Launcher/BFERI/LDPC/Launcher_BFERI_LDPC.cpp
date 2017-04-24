@@ -15,7 +15,7 @@ Launcher_BFERI_LDPC<B,R,Q>
 {
 	this->params.code       .type             = "LDPC";
 	this->params.encoder    .type             = "COSET";
-	this->params.encoder    .systematic       = false;
+	this->params.encoder    .systematic       = true;
 	this->params.interleaver.type             = "RANDOM";
 	this->params.quantizer  .n_bits           = 6;
 	this->params.quantizer  .n_decimals       = 2;

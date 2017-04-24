@@ -19,6 +19,8 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
+#include "Tools/Code/Polar/fb_extract.h"
+
 namespace aff3ct
 {
 namespace module
@@ -324,7 +326,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 	constexpr int n_frames = API_polar::get_n_frames();
 
 	if (n_frames == 1)
-		this->polar_patterns.fb_extract(this->s.data(), V_K);
+		tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s.data(), V_K);
 	else
 	{
 		bool fast_deinterleave = false;
@@ -343,7 +345,8 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 #endif
 		if (!fast_deinterleave)
 		{
-			this->polar_patterns.fb_extract(this->s.data(), this->s_bis.data(), n_frames);
+			tools::fb_extract<B,n_frames>(this->polar_patterns.get_leaves_pattern_types(),
+			                              this->s.data(), this->s_bis.data());
 
 			// transpose without bit packing (vectorized)
 			std::vector<B*> frames(n_frames);
@@ -353,8 +356,8 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 		}
 		else
 			for (auto f = 0; f < n_frames; f++)
-				this->polar_patterns.fb_extract(this->s.data() + f * this->N,
-				                                V_K            + f * this->K);
+				tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s.data() + f * this->N,
+				                                                                   V_K            + f * this->K);
 	}
 }
 }
