@@ -10,16 +10,18 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename R, int F = 1> inline mipp::Reg<R> mipp_normalize(const mipp::Reg<R> val, const float factor) { return val * mipp::Reg<R>((R)factor); }
+template <typename R, int F = 0> inline mipp::Reg<R> simd_normalize(const mipp::Reg<R> val, const float factor) { return val * mipp::Reg<R>((R)factor); }
 
-template <> inline mipp::Reg<short> mipp_normalize<short, 1>(const mipp::Reg<short> v, const float f) { return (v >> 3);                       } // v * 0.125
-template <> inline mipp::Reg<short> mipp_normalize<short, 2>(const mipp::Reg<short> v, const float f) { return            (v >> 2);            } // v * 0.250
-template <> inline mipp::Reg<short> mipp_normalize<short, 3>(const mipp::Reg<short> v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
-template <> inline mipp::Reg<short> mipp_normalize<short, 4>(const mipp::Reg<short> v, const float f) { return                       (v >> 1); } // v * 0.500
-template <> inline mipp::Reg<short> mipp_normalize<short, 5>(const mipp::Reg<short> v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
-template <> inline mipp::Reg<short> mipp_normalize<short, 6>(const mipp::Reg<short> v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
-template <> inline mipp::Reg<short> mipp_normalize<short, 7>(const mipp::Reg<short> v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
-template <> inline mipp::Reg<short> mipp_normalize<short, 8>(const mipp::Reg<short> v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<short > simd_normalize<short, 1>(const mipp::Reg<short > v, const float f) { return (v >> 3);                       } // v * 0.125
+template <> inline mipp::Reg<short > simd_normalize<short, 2>(const mipp::Reg<short > v, const float f) { return            (v >> 2);            } // v * 0.250
+template <> inline mipp::Reg<short > simd_normalize<short, 3>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
+template <> inline mipp::Reg<short > simd_normalize<short, 4>(const mipp::Reg<short > v, const float f) { return                       (v >> 1); } // v * 0.500
+template <> inline mipp::Reg<short > simd_normalize<short, 5>(const mipp::Reg<short > v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
+template <> inline mipp::Reg<short > simd_normalize<short, 6>(const mipp::Reg<short > v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
+template <> inline mipp::Reg<short > simd_normalize<short, 7>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
+template <> inline mipp::Reg<short > simd_normalize<short, 8>(const mipp::Reg<short > v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<float > simd_normalize<float, 8>(const mipp::Reg<float > v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<double> simd_normalize<double,8>(const mipp::Reg<double> v, const float f) { return v;                              } // v * 1.000
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
@@ -92,8 +94,11 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"normalize_factor\" can "
 			                            "only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
 	}
-	else
-		this->BP_decode<1>(); // float or double
+	else // float or double
+	{
+		if (normalize_factor == 1.000f) this->BP_decode<8>();
+		else                            this->BP_decode<0>();
+	}
 
 	// prepare for next round by processing extrinsic information
 	for (auto i = 0; i < this->N; i++)
@@ -153,8 +158,12 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"normalize_factor\" can "
 			                            "only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
 	}
-	else
-		this->BP_decode<1>(); // float or double
+	else // float or double
+	{
+		if (normalize_factor == 1.000f) this->BP_decode<8>();
+		else                            this->BP_decode<0>();
+	}
+
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -267,23 +276,23 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			const auto v_temp = min1;
 
 			sign ^= mipp::Reg<B>(c_sign.r);
-			min1  = mipp::min(min1,           v_abs         ); // 1st min
-			min2  = mipp::min(min2, mipp::max(v_abs, v_temp)); // 2nd min
+			min1  = mipp::min(min1,           v_abs         );
+			min2  = mipp::min(min2, mipp::max(v_abs, v_temp));
 		}
 
-		auto cste1 = mipp_normalize<R,F>(min2 - offset, normalize_factor);
-		auto cste2 = mipp_normalize<R,F>(min1 - offset, normalize_factor);
+		auto cste1 = simd_normalize<R,F>(min2 - offset, normalize_factor);
+		auto cste2 = simd_normalize<R,F>(min1 - offset, normalize_factor);
 
-		cste1 = mipp::blend(zero, cste1, zero > cste1); // cste1 = (0 > cste1) ? cste1 : 0;
-		cste2 = mipp::blend(zero, cste2, zero > cste2); // cste2 = (0 > cste2) ? cste2 : 0;
+		cste1 = mipp::blend(zero, cste1, zero > cste1);
+		cste2 = mipp::blend(zero, cste2, zero > cste2);
 
 		for (auto j = 0; j < n_VN; j++)
 		{
 			const auto value = contributions[j];
 			const auto v_abs = mipp::abs(value);
-			      auto v_res = mipp::blend(cste1, cste2, v_abs == min1); // auto v_res = ((v_abs == min1) ? cste1 : cste2);
-			const auto v_sig = sign ^ mipp::Reg<B>(mipp::sign(value).r); // xor bit
-			           v_res = mipp::neg(v_res, mipp::Reg<R>(v_sig.r));  // magnitude of v_res, sign of v_sig
+			      auto v_res = mipp::blend(cste1, cste2, v_abs == min1);
+			const auto v_sig = sign ^ mipp::Reg<B>(mipp::sign(value).r);
+			           v_res = mipp::copysign(v_res, mipp::Reg<R>(v_sig.r));
 
 			branches[kw++] = v_res;
 			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
