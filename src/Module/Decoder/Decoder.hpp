@@ -176,7 +176,10 @@ public:
 	{
 		return this->simd_inter_frame_level;
 	}
-
+	int get_N()
+	{
+		return this->N;
+	}
 protected:
 	virtual void _hard_decode(const R *Y_N, B *V_K)
 	{

@@ -331,6 +331,16 @@ public:
 		return ((int)(std::ceil((float)N / (float)n_b_per_s)) + tl) * max_wa_id * (complex ? 2 : 1);
 	}
 
+
+	unsigned get_N()
+	{
+		return this->N;
+	}
+
+	unsigned get_N_mod()
+	{
+		return this->N_mod;
+	}
 protected:
 	virtual void _modulate(const B *X_N1, R *X_N2)
 	{

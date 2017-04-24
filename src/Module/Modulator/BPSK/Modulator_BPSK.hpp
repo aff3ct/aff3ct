@@ -38,6 +38,13 @@ public:
 	{
 		return Modulator<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, false);
 	}
+
+	// void set_sigma(const R sigma)
+	// {
+	// 	this->sigma = sigma;
+	// 	this->two_on_square_sigma = (R)2.0 / (sigma * sigma);
+	// }
+
 };
 }
 }

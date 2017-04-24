@@ -67,6 +67,6 @@ template class aff3ct::module::Decoder_NO<B_16,Q_16>;
 template class aff3ct::module::Decoder_NO<B_32,Q_32>;
 template class aff3ct::module::Decoder_NO<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_NO<B,Q>;
+template class aff3ct::module::Decoder_NO<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -51,7 +51,9 @@ void Modulator_BPSK<B,R,Q>
 	{
 		auto size = (unsigned int)(this->N_fil * this->n_frames);
 		for (unsigned i = 0; i < size; i++)
+		{
 			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
+		}
 	}
 }
 
