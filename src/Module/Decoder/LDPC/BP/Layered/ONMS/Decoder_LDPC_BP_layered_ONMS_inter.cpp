@@ -173,8 +173,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
-		const auto decision = zero > this->var_nodes[cur_wave][k];
-		V_K_reorderered[i] = mipp::Reg<B>(decision.r);
+		V_K_reorderered[i] = mipp::cast<R,B>(zero > this->var_nodes[cur_wave][k]);
 	}
 
 	std::vector<B*> frames(mipp::nElReg<R>());
