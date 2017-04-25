@@ -226,9 +226,7 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		for (auto j = 0; j < n_VN; j++)
 		{
 			const auto value = this->var_nodes[cur_wave][this->CN_to_VN[i][j]] - this->branches[cur_wave][k++];
-			const auto tmp_sign = mipp::sign(value);
-
-			sign ^= mipp::Reg<B>(tmp_sign.r);
+			sign ^= mipp::cast<R,B>(mipp::sign(value));
 		}
 
 		syndrome |= sign;
@@ -297,7 +295,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			const auto c_sign = mipp::sign(contributions[j]);
 			const auto v_temp = min1;
 
-			sign ^= mipp::Reg<B>(c_sign.r);
+			sign ^= mipp::cast<R,B>(c_sign);
 			min1  = mipp::min(min1,           v_abs         );
 			min2  = mipp::min(min2, mipp::max(v_abs, v_temp));
 		}
@@ -313,8 +311,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			const auto value = contributions[j];
 			const auto v_abs = mipp::abs(value);
 			      auto v_res = mipp::blend(cste1, cste2, v_abs == min1);
-			const auto v_sig = sign ^ mipp::Reg<B>(mipp::sign(value).r);
-			           v_res = mipp::copysign(v_res, mipp::Reg<R>(v_sig.r));
+			const auto v_sig = sign ^ mipp::cast<R,B>(mipp::sign(value));
+			           v_res = mipp::copysign(v_res, mipp::cast<B,R>(v_sig));
 
 			branches[kw++] = v_res;
 			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;

@@ -250,12 +250,14 @@ public:
 #ifndef MIPP_NO_INTRINSICS
 	template <typename T2> inline Reg<T2> cvt ()               const { return mipp::cvt<T,T2>(r);       }
 	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const { return mipp::pack<T,T2>(r, v.r); }
+	template <typename T2> inline Reg<T2> cast()               const { return Reg<T2>(this->r);         }
 #else
-	template <typename T2> inline Reg<T2> cvt ()               const { return (T2)r; }
+	template <typename T2> inline Reg<T2> cvt ()               const { return (T2)r;                    }
 	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const
 	{
 		throw std::runtime_error("mipp::Reg::pack: non-sense in sequential mode.");
 	}
+	template <typename T2> inline Reg<T2> cast()               const { return Reg<T2>((T2)this->r);     }
 #endif
 
 	inline Reg<T>  operator~  (               )       { return this->notb();                    }
@@ -295,7 +297,7 @@ public:
 	inline Reg<T>  operator>= (      Reg<T>  v) const { return this->cmpge (v);                 }
 
 #ifndef MIPP_NO_INTRINSICS
-	inline const T& operator[](size_t index) const { return *((T*)&this->r + (index % nElReg<T>())); }
+	inline const T& operator[](size_t index) const { return *((T*)&this->r + index); }
 #else
 	inline const T& operator[](size_t index) const { return r; }
 #endif
@@ -447,4 +449,10 @@ inline Reg<T2> cvt(const Reg_2<T1> v) {
 template <typename T1, typename T2>
 inline Reg<T2> pack(const Reg<T1> v1, const Reg<T1> v2) {
 	return v1.template pack<T2>(v2);
+}
+
+template <typename T1, typename T2>
+inline Reg<T2> cast(const Reg<T1> v)
+{
+	return v.template cast<T2>();
 }
