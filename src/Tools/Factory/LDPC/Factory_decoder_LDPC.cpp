@@ -31,7 +31,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 				                                                                     alist_data,
 				                                                                     info_bits_pos,
 				                                                                     params.decoder.normalize_factor,
-				                                                                     params.decoder.offset,
+				                                                                     (R)params.decoder.offset,
 				                                                                     params.decoder.enable_syndrome,
 				                                                                     params.decoder.syndrome_depth,
 				                                                                     params.simulation.inter_frame_level);

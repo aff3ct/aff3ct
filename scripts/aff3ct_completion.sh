@@ -160,7 +160,7 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
-		--dec-no-synd --dec-off --dec-norm --dec-synd-depth"
+		--dec-no-synd --dec-off --dec-norm --dec-synd-depth --dec-simd"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp

@@ -22,7 +22,7 @@ inline R normalize(const R val, const float factor)
 	else if (factor == 0.875f) return div2<R>(val) + div4<R>(val) + div8<R>(val);
 	else if (factor == 1.000f) return val;
 	else
-		throw std::invalid_argument("aff3ct::tools::normalize: \"factor\" can only be 0.125f, 0.250f, "
+		throw std::invalid_argument("aff3ct::module::normalize: \"factor\" can only be 0.125f, 0.250f, "
 		                            "0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
 }
 
@@ -52,6 +52,9 @@ Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 : Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
   normalize_factor(normalize_factor), offset(offset), contributions(alist_data.get_CN_max_degree())
 {
+	if (typeid(R) == typeid(signed char))
+		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum: this decoder "
+		                         "does not work in 8-bit fixed-point (try in 16-bit).");
 }
 
 template <typename B, typename R>
