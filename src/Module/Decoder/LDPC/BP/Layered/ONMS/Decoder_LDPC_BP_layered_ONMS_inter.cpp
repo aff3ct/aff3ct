@@ -48,11 +48,9 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	if (N != (int)alist_data.get_n_VN())
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"N\" is not compatible with "
 		                            "the alist file.");
-
-//	if (typeid(R) == typeid(signed char))
-//		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: this decoder does not work in "
-//		                         "8-bit fixed-point.");
-
+	if (typeid(R) == typeid(signed char))
+		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: this decoder does not work in "
+		                         "8-bit fixed-point (try in 16-bit).");
 	if (saturation <= 0)
 		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"saturation\" has to be "
 		                         "greater than 0.");
@@ -244,35 +242,33 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 // --------------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------- SIMD TOOLS
 
-// saturation
-template <typename R> inline mipp::Reg<R> simd_sat(const mipp::Reg<R> val, const R saturation) { return val; }
+//                                                                                                           saturation
+template <typename R>
+inline mipp::Reg<R> simd_sat(const mipp::Reg<R> val, const R saturation)
+{
+	return val;
+}
+template <>
+inline mipp::Reg<short> simd_sat(const mipp::Reg<short> v, const short s)
+{
+	return mipp::sat(v, (short)-s, (short)+s);
+}
 
-template <> inline mipp::Reg<short      > simd_sat(const mipp::Reg<short      > v, const short       s) { return mipp::sat(v, (short      )-s, (short      )+s); }
-template <> inline mipp::Reg<signed char> simd_sat(const mipp::Reg<signed char> v, const signed char s) { return mipp::sat(v, (signed char)-s, (signed char)+s); }
-
-// normalization
-template <typename R, int F = 0> inline mipp::Reg<R> simd_normalize(const mipp::Reg<R> val, const float factor) { return val * mipp::Reg<R>((R)factor); }
-
-template <> inline mipp::Reg<float > simd_normalize<float,  8>(const mipp::Reg<float > v, const float f) { return v; } // v * 1.000
-template <> inline mipp::Reg<double> simd_normalize<double, 8>(const mipp::Reg<double> v, const float f) { return v; } // v * 1.000
-
-template <> inline mipp::Reg<short> simd_normalize<short, 1>(const mipp::Reg<short > v, const float f) { return (v >> 3);                       } // v * 0.125
-template <> inline mipp::Reg<short> simd_normalize<short, 2>(const mipp::Reg<short > v, const float f) { return            (v >> 2);            } // v * 0.250
-template <> inline mipp::Reg<short> simd_normalize<short, 3>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
-template <> inline mipp::Reg<short> simd_normalize<short, 4>(const mipp::Reg<short > v, const float f) { return                       (v >> 1); } // v * 0.500
-template <> inline mipp::Reg<short> simd_normalize<short, 5>(const mipp::Reg<short > v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
-template <> inline mipp::Reg<short> simd_normalize<short, 6>(const mipp::Reg<short > v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
-template <> inline mipp::Reg<short> simd_normalize<short, 7>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
-template <> inline mipp::Reg<short> simd_normalize<short, 8>(const mipp::Reg<short > v, const float f) { return v;                              } // v * 1.000
-
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 1>(const mipp::Reg<signed char> v, const float f) { return (v >> 3);                       } // v * 0.125
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 2>(const mipp::Reg<signed char> v, const float f) { return            (v >> 2);            } // v * 0.250
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 3>(const mipp::Reg<signed char> v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 4>(const mipp::Reg<signed char> v, const float f) { return                       (v >> 1); } // v * 0.500
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 5>(const mipp::Reg<signed char> v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 6>(const mipp::Reg<signed char> v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 7>(const mipp::Reg<signed char> v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
-template <> inline mipp::Reg<signed char> simd_normalize<signed char, 8>(const mipp::Reg<signed char> v, const float f) { return v;                              } // v * 1.000
+//                                                                                                        normalization
+template <typename R, int F = 0> inline mipp::Reg<R> simd_normalize(const mipp::Reg<R> val, const float factor)
+{
+	return val * mipp::Reg<R>((R)factor);
+}
+template <> inline mipp::Reg<short > simd_normalize<short, 1>(const mipp::Reg<short > v, const float f) { return (v >> 3);                       } // v * 0.125
+template <> inline mipp::Reg<short > simd_normalize<short, 2>(const mipp::Reg<short > v, const float f) { return            (v >> 2);            } // v * 0.250
+template <> inline mipp::Reg<short > simd_normalize<short, 3>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2);            } // v * 0.375
+template <> inline mipp::Reg<short > simd_normalize<short, 4>(const mipp::Reg<short > v, const float f) { return                       (v >> 1); } // v * 0.500
+template <> inline mipp::Reg<short > simd_normalize<short, 5>(const mipp::Reg<short > v, const float f) { return (v >> 3) +            (v >> 1); } // v * 0.625
+template <> inline mipp::Reg<short > simd_normalize<short, 6>(const mipp::Reg<short > v, const float f) { return            (v >> 2) + (v >> 1); } // v * 0.750
+template <> inline mipp::Reg<short > simd_normalize<short, 7>(const mipp::Reg<short > v, const float f) { return (v >> 3) + (v >> 2) + (v >> 1); } // v * 0.825
+template <> inline mipp::Reg<short > simd_normalize<short, 8>(const mipp::Reg<short > v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<float > simd_normalize<float, 8>(const mipp::Reg<float > v, const float f) { return v;                              } // v * 1.000
+template <> inline mipp::Reg<double> simd_normalize<double,8>(const mipp::Reg<double> v, const float f) { return v;                              } // v * 1.000
 
 // --------------------------------------------------------------------------------------------------------- SIMD TOOLS
 // --------------------------------------------------------------------------------------------------------------------
@@ -306,8 +302,8 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			min2  = mipp::min(min2, mipp::max(v_abs, v_temp));
 		}
 
-		auto cste1 = simd_normalize<R,F>(min2 - offset, normalize_factor);
-		auto cste2 = simd_normalize<R,F>(min1 - offset, normalize_factor);
+		auto cste1 = simd_sat<R>(simd_normalize<R,F>(min2 - offset, normalize_factor), saturation);
+		auto cste2 = simd_sat<R>(simd_normalize<R,F>(min1 - offset, normalize_factor), saturation);
 
 		cste1 = mipp::blend(zero, cste1, zero > cste1);
 		cste2 = mipp::blend(zero, cste2, zero > cste2);
@@ -319,7 +315,6 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			      auto v_res = mipp::blend(cste1, cste2, v_abs == min1);
 			const auto v_sig = sign ^ mipp::Reg<B>(mipp::sign(value).r);
 			           v_res = mipp::copysign(v_res, mipp::Reg<R>(v_sig.r));
-			           v_res = simd_sat<R>(v_res, saturation);
 
 			branches[kw++] = v_res;
 			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
