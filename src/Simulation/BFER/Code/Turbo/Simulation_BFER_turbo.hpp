@@ -34,6 +34,7 @@ protected:
 	void                      launch_precompute();
 	void                      snr_precompute   ();
 	module::Encoder    <B  >* build_encoder    (const int tid = 0);
+	module::Puncturer  <B,Q>* build_puncturer  (const int tid = 0);
 	module::Decoder    <B,Q>* build_decoder    (const int tid = 0);
 	module::Interleaver<int>* build_interleaver(const int tid = 0);
 };

@@ -155,12 +155,9 @@ public:
 
 	virtual void filter(const R *Y_N1, R *Y_N2)
 	{
-		if (this->N_mod == this->N_fil)
-			std::copy(Y_N1, Y_N1 + this->N_mod * this->n_frames, Y_N2);
-		else
-			for (auto f = 0; f < this->n_frames; f++)
-				this->_filter(Y_N1 + f * this->N_mod,
-				              Y_N2 + f * this->N_fil);
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_filter(Y_N1 + f * this->N_mod,
+			              Y_N2 + f * this->N_fil);
 	}
 
 	/*!

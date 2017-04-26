@@ -2,6 +2,7 @@
 #define FACTORY_DECODER_POLAR_GEN_HPP
 
 #include "Module/Decoder/Decoder.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 
@@ -14,7 +15,8 @@ namespace tools
 template <typename B = int, typename R = float>
 struct Factory_decoder_polar_gen : public Factory
 {
-	static module::Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits);
+	static module::Decoder<B,R>* build(const parameters &params, const mipp::vector<B> &frozen_bits,
+	                                   module::CRC<B> *crc = nullptr);
 
 	static void get_frozen_bits(const parameters &params, mipp::vector<B> &frozen_bits);
 };

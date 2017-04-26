@@ -16,8 +16,8 @@ protected:
 	const tools::Frozenbits_generator<B> &fb_generator;
 
 public:
-	Puncturer_polar_wangliu(const int &N, 
-	                        const int &K, 
+	Puncturer_polar_wangliu(const int &K,
+	                        const int &N,
 	                        const tools::Frozenbits_generator<B> &fb_generator,
 	                        const int n_frames = 1,
 	                        const std::string name = "Puncturer_polar_wangliu");

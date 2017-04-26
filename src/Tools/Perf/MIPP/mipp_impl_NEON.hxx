@@ -1002,6 +1002,27 @@
 		return res;
 	}
 
+	// ------------------------------------------------------------------------------------------------------------ neg
+	template <>
+	inline reg neg<float>(const reg v) {
+		return xorb<int>(v, mipp::set1<int>(0x80000000));
+	}
+
+	template <>
+	inline reg neg<int>(const reg v) {
+		return (reg) vqnegq_s32((int32x4_t) v);
+	}
+
+	template <>
+	inline reg neg<short>(const reg v) {
+		return (reg) vqnegq_s16((int16x8_t) v);
+	}
+
+	template <>
+	inline reg neg<signed char>(const reg v) {
+		return (reg) vqnegq_s8((int8x16_t) v);
+	}
+
 	// ------------------------------------------------------------------------------------------------------------ abs
 	template <>
 	inline reg abs<float>(const reg v1) {
@@ -1081,6 +1102,27 @@
 	template <>
 	inline reg fmsub<float>(const reg v1, const reg v2, const reg v3) {
 		return sub<float>(mul<float>(v1, v2), v3);
+	}
+
+	// ---------------------------------------------------------------------------------------------------------- blend
+	template <>
+	inline reg blend<float>(const reg v1, const reg v2, const reg m) {
+		return (float32x4_t)vbslq_f32((uint32x4_t)m, (float32x4_t)v1, (float32x4_t)v2);
+	}
+
+	template <>
+	inline reg blend<int>(const reg v1, const reg v2, const reg m) {
+		return (float32x4_t)vbslq_u32((uint32x4_t)m, (uint32x4_t)v1, (uint32x4_t)v2);
+	}
+
+	template <>
+	inline reg blend<short>(const reg v1, const reg v2, const reg m) {
+		return (float32x4_t)vbslq_u16((uint16x8_t)m, (uint16x8_t)v1, (uint16x8_t)v2);
+	}
+
+	template <>
+	inline reg blend<signed char>(const reg v1, const reg v2, const reg m) {
+		return (float32x4_t)vbslq_u8((uint8x16_t)m, (uint8x16_t)v1, (uint8x16_t)v2);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------ rot

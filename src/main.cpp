@@ -24,6 +24,8 @@
 #include "Launcher/BFER/BCH/Launcher_BFER_BCH.hpp"
 #include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
 
+
+#include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
 #include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
 #include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
 #include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
@@ -106,9 +108,9 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	// ---------------------------------------------------------------------------------------------------- simulation
 	opt_args[{"sim-type"}] =
-			{"string",
-			 "the type of simulation to run.",
-			 "BFER, BFERI, EXIT, GEN"};
+		{"string",
+		 "the type of simulation to run.",
+		 "BFER, BFERI, EXIT, GEN"};
 #ifdef MULTI_PREC
 	opt_args[{"sim-prec", "p"}] =
 		{"positive_int",
@@ -222,6 +224,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		{
 			if (simu_type == "BFER")
 				launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_BFERI_polar<B,R,Q>(argc, argv);
 			else if (simu_type == "GEN")
 				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
 		}

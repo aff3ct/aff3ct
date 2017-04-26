@@ -117,6 +117,11 @@ void Launcher_BFER<B,R,Q>
 		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
 	}
 
+	if (this->params.simulation.debug &&
+	    !(this->ar.exist_arg({"sim-threads", "t"}) && this->ar.get_arg_int({"sim-threads", "t"}) > 0))
+		// check if debug is asked and if n_thread kept its default value
+		this->params.simulation.n_threads = 1;
+
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
 	if (this->params.code.coset)
@@ -150,6 +155,10 @@ void Launcher_BFER<B,R,Q>
 		this->params.channel.path = this->params.monitor.err_track_path + std::string("_$snr.chn");
 		// the paths are set in the Simulation class
 	}
+
+	if (this->params.monitor.err_track_revert &&
+	    !(this->ar.exist_arg({"sim-threads", "t"}) && this->ar.get_arg_int({"sim-threads", "t"}) > 0))
+		this->params.simulation.n_threads = 1;
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	if(this->ar.exist_arg({"term-type"})) this->params.terminal.type = this->ar.get_arg({"term-type"});

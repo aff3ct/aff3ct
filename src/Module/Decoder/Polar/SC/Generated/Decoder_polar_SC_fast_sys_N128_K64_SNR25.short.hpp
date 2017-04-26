@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_128_64_25[128] = {
+static const char Decoder_polar_SC_fast_sys_fb_128_64_25[128] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -26,7 +26,7 @@ public:
 		assert(K == 64);
 		
 		auto i = 0;
-		while (i < 128 && Frozen_bits_128_64_25[i] == frozen_bits[i]) i++;
+		while (i < 128 && Decoder_polar_SC_fast_sys_fb_128_64_25[i] == frozen_bits[i]) i++;
 		assert(i == 128);
 	}
 
@@ -50,6 +50,8 @@ public:
 	__attribute__((always_inline))
 	inline void r16(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -60,6 +62,8 @@ public:
 	__attribute__((always_inline))
 	inline void r06r16(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -73,6 +77,8 @@ public:
 	__attribute__((always_inline))
 	inline void re5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -83,6 +89,8 @@ public:
 	__attribute__((always_inline))
 	inline void s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -93,6 +101,8 @@ public:
 	__attribute__((always_inline))
 	inline void re5s5(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -107,14 +117,23 @@ public:
 	__attribute__((always_inline))
 	inline void r14(const int off_l, const int off_s)
 	{
+		using namespace tools;
+
 		auto &l = this->l;
 		auto &s = this->s;
 
 		API_polar::template h  < 8>(s, l, off_l+  0,                   off_s+  0,  8);
 	}
 
-	void decode()
+	void _hard_decode(const R *Y_N, B *V_K)
 	{
+		using namespace tools;
+
+		auto t_load = std::chrono::steady_clock::now();
+		this->_load(Y_N);
+		auto d_load = std::chrono::steady_clock::now() - t_load;
+
+		auto t_decod = std::chrono::steady_clock::now();
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -173,6 +192,15 @@ public:
 		API_polar::template xo <16>(s,     96+  0,  96+ 16,           96+  0, 16);
 		API_polar::template xo <32>(s,     64+  0,  64+ 32,           64+  0, 32);
 		API_polar::template xo <64>(s,      0+  0,   0+ 64,            0+  0, 64);
+		auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+		auto t_store = std::chrono::steady_clock::now();
+		this->_store(V_K);
+		auto d_store = std::chrono::steady_clock::now() - t_store;
+
+		this->d_load_total  += d_load;
+		this->d_decod_total += d_decod;
+		this->d_store_total += d_store;
 	}
 };
 }

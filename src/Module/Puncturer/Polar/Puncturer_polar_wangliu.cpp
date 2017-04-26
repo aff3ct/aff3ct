@@ -29,7 +29,7 @@ template <typename B, typename Q>
 void Puncturer_polar_wangliu<B,Q>
 ::gen_frozen_bits(mipp::vector<B> &frozen_bits)
 {
-	const std::vector<int>& best_channels = fb_generator.get_best_channels();
+	auto best_channels = fb_generator.get_best_channels();
 
 	int info_bits_placed = 0;
 

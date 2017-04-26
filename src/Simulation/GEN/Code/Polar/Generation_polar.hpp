@@ -8,10 +8,10 @@
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/params.h"
 
-#include "Generator/Polar/SC/Generator_polar_SC_sys.hpp"
-#include "Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp"
+#include "Generator/Polar/Generator_polar.hpp"
 
 #include "Simulation/Simulation.hpp"
 
@@ -33,14 +33,13 @@ protected:
 	float sigma;
 
 	// patterns
-	std::vector<module::Pattern_SC_interface*> patterns_SC;
-	module::Pattern_SC_interface* pattern_SC_rate0;
-	module::Pattern_SC_interface* pattern_SC_rate1;
-
+	std::vector<tools::Pattern_polar_i*> polar_patterns;
+	tools::Pattern_polar_i* polar_pattern_r0;
+	tools::Pattern_polar_i* polar_pattern_r1;
 	tools::Frozenbits_generator<int> *fb_generator;
 
 	// generator
-	generator::Generator_polar_SC_sys *generator;
+	generator::Generator_polar *generator;
 
 	// file into generate the decoder
 	std::string  directory;

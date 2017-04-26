@@ -117,6 +117,39 @@ public:
 		return f == real_n_frames;
 	}
 
+	/*!
+	 * \brief Checks if the CRC is verified or not (works on packed bits).
+	 *
+	 * \param V_K:      a vector of packed bits containing information bits plus the CRC bits.
+	 * \param n_frames: you should not use this parameter unless you know what you are doing, this parameter
+	 *                  redefine the number of frames to check specifically in this method.
+	 *
+	 * \return true if the CRC is verified, false otherwise.
+	 */
+	bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1)
+	{
+		if (this->K * n_frames > (int)V_K.size() || this->K * this->n_frames > (int)V_K.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal or greater than "
+			                        "\"K\" * \"n_frames\".");
+
+		if (n_frames <= 0 && n_frames != -1)
+			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
+			                            "to -1).");
+
+		return this->check_packed(V_K.data(), n_frames);
+	}
+
+	bool check_packed(const B *V_K, const int n_frames = -1)
+	{
+		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+		auto f = 0;
+		while (f < real_n_frames && this->_check_packed(V_K + f * this->K))
+			f++;
+
+		return f == real_n_frames;
+	}
+
 protected:
 	virtual void _build(B *V_K)
 	{
@@ -126,6 +159,12 @@ protected:
 	virtual bool _check(const B *V_K)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_check\" is unimplemented.");
+		return false;
+	}
+
+	virtual bool _check_packed(const B *V_K)
+	{
+		throw std::runtime_error("aff3ct::module::CRC: \"_check_packed\" is unimplemented.");
 		return false;
 	}
 };

@@ -80,7 +80,7 @@ public:
 
 	unsigned size() const
 	{
-		return pi.size();
+		return (unsigned)pi.size();
 	}
 
 	/*!

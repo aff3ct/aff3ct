@@ -4,6 +4,7 @@
 
 #include "Module/CRC/NO/CRC_NO.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
+#include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_double.hpp"
 
@@ -19,13 +20,17 @@ CRC<B>* Factory_CRC<B>
 	CRC<B> *crc = nullptr;
 
 	// build the crc
-	if (!params.crc.type.empty() && params.decoder.simd_strategy == "INTER")
-		crc = new CRC_polynomial_inter<B>(params.code.K, params.crc.type, params.simulation.inter_frame_level);
-	else if (!params.crc.type.empty())
-		crc = new CRC_polynomial<B>(params.code.K, params.crc.type, params.simulation.inter_frame_level);
+	if (!params.crc.poly.empty() && params.decoder.simd_strategy == "INTER")
+		crc = new CRC_polynomial_inter<B>(params.code.K, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
+	else if (!params.crc.poly.empty())
+	{
+		if (params.crc.type == "FAST")
+			crc = new CRC_polynomial_fast<B>(params.code.K, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
+		else
+			crc = new CRC_polynomial<B>(params.code.K, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
+	}
 	else
 		crc = new CRC_NO<B>(params.code.K, params.simulation.inter_frame_level);
-
 
 	return crc;
 }

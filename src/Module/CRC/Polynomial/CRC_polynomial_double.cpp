@@ -6,9 +6,9 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial_double<B>
-::CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int n_frames, 
+::CRC_polynomial_double(const int K, std::string poly_key, const int cut_index, const int size, const int n_frames,
                         const std::string name)
-: CRC_polynomial<B>(K, poly_key, n_frames, name), cut_index(cut_index)
+: CRC_polynomial<B>(K, poly_key, size, n_frames, name), cut_index(cut_index)
 {
 	if (n_frames > 1)
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"n_frames\" has to be equal to 1.");

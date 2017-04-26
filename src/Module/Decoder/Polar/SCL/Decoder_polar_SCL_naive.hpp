@@ -5,9 +5,9 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../Decoder.hpp"
-#include "../decoder_polar_functions.h"
 
 namespace aff3ct
 {
@@ -25,7 +25,7 @@ public:
 	virtual ~Contents_SCL() {}
 };
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
 class Decoder_polar_SCL_naive : public Decoder<B,R>
 {
 protected:
@@ -64,7 +64,6 @@ private:
 
 protected:
 	virtual void select_best_path();
-	virtual void intermediate_select_best_path(int leaf_index){};
 
 	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SCL<B,R>>* node_curr, const int vector_size             );
 	void recursive_initialize_frozen_bits   (const tools::Binary_node<Contents_SCL<B,R>>* node_curr, const mipp::vector<B>& frozen_bits);

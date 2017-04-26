@@ -132,6 +132,13 @@ void Modulator_BPSK_fast<signed char, float, float>
 }
 }
 
+template <typename B,typename R, typename Q>
+void Modulator_BPSK_fast<B,R,Q>
+::filter(const R *Y_N1, R *Y_N2)
+{
+	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
+}
+
 template <typename B, typename R, typename Q>
 void Modulator_BPSK_fast<B,R,Q>
 ::demodulate(const Q *Y_N1, Q *Y_N2)

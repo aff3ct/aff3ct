@@ -4,7 +4,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SC_naive_sys<B,R,F,G,H>
 ::Decoder_polar_SC_naive_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
                              const std::string name)
@@ -12,13 +12,13 @@ Decoder_polar_SC_naive_sys<B,R,F,G,H>
 {
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SC_naive_sys<B,R,F,G,H>
 ::~Decoder_polar_SC_naive_sys()
 {
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G, proto_h<B,R> H>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive_sys<B,R,F,G,H>
 ::_store(B *V_K) const
 {

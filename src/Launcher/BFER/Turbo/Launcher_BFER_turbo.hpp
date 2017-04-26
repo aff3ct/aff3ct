@@ -22,6 +22,7 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_simulation ();
 	virtual std::vector<std::pair<std::string,std::string>> header_crc        ();
 	virtual std::vector<std::pair<std::string,std::string>> header_encoder    ();
+	virtual std::vector<std::pair<std::string,std::string>> header_puncturer  ();
 	virtual std::vector<std::pair<std::string,std::string>> header_interleaver();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder    ();
 };

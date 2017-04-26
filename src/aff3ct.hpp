@@ -1,8 +1,19 @@
 //find ./src/ -type f -follow -print | grep "[.]h$"
-//#include <Tools/types.h>
+#include <Tools/general_utils.h>
+#include <Tools/types.h>
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/utils.h>
 #include <Tools/Math/max.h>
+#include <Tools/Code/Polar/nodes_parser.h>
+#include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
+#include <Tools/Code/Polar/API/functions_polar_intra.h>
+#include <Tools/Code/Polar/API/functions_polar_intra_8bit.h>
+#include <Tools/Code/Polar/API/functions_polar_seq.h>
+#include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
+#include <Tools/Code/Polar/API/functions_polar_intra_16bit.h>
+#include <Tools/Code/Polar/API/functions_polar_inter.h>
+#include <Tools/Code/Polar/API/functions_polar_intra_32bit.h>
+#include <Tools/Code/Polar/decoder_polar_functions.h>
 #include <Tools/Perf/MIPP/math/sse_mathfun.h>
 #include <Tools/Perf/MIPP/math/avx_mathfun.h>
 #include <Tools/Perf/MIPP/math/neon_mathfun.h>
@@ -15,16 +26,8 @@
 #include <Tools/Display/bash_tools.h>
 // #include <Tools/MSVC/dirent.h>
 #include <Tools/params.h>
-#include <Module/Decoder/Polar/decoder_polar_functions.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_inter_intra.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_intra.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_intra_8bit.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_seq.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_inter_8bit_bitpacking.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_intra_16bit.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_inter.h>
-#include <Module/Decoder/Polar/SC/API/functions_polar_intra_32bit.h>
 // #include <main.h>
+
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
 #include <Tools/Threads/Barrier.hpp>
@@ -45,6 +48,7 @@
 #include <Tools/Factory/Factory_encoder_common.hpp>
 #include <Tools/Factory/Repetition/Factory_decoder_repetition.hpp>
 #include <Tools/Factory/Repetition/Factory_encoder_repetition.hpp>
+#include <Tools/Factory/LDPC/Factory_encoder_LDPC.hpp>
 #include <Tools/Factory/LDPC/Factory_decoder_LDPC.hpp>
 #include <Tools/Factory/Coset/Factory_coset_real.hpp>
 #include <Tools/Factory/Coset/Factory_coset_bit.hpp>
@@ -55,7 +59,10 @@
 #include <Tools/Factory/Factory_modulator.hpp>
 #include <Tools/Factory/Turbo/Factory_encoder_turbo.hpp>
 #include <Tools/Factory/Turbo/Factory_scaling_factor.hpp>
+#include <Tools/Factory/Turbo/Factory_puncturer_turbo.hpp>
 #include <Tools/Factory/Turbo/Factory_decoder_turbo.hpp>
+#include <Tools/Algo/Sort/LC_sorter.hpp>
+#include <Tools/Algo/Sort/LC_sorter_simd.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937_simd.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937.hpp>
 #include <Tools/Algo/Predicate.hpp>
@@ -69,11 +76,45 @@
 #include <Tools/SystemC/SC_Predicate.hpp>
 #include <Tools/SystemC/SC_Debug.hpp>
 #include <Tools/SystemC/SC_Duplicator.hpp>
+#include <Tools/Code/Polar/API/API_polar_static_intra_32bit.hpp>
+#include <Tools/Code/Polar/API/API_polar_dynamic_seq.hpp>
+#include <Tools/Code/Polar/API/API_polar.hpp>
+#include <Tools/Code/Polar/API/API_polar_static_inter.hpp>
+#include <Tools/Code/Polar/API/API_polar_static_inter_8bit_bitpacking.hpp>
+#include <Tools/Code/Polar/API/API_polar_static_seq.hpp>
+#include <Tools/Code/Polar/API/API_polar_dynamic_inter.hpp>
+#include <Tools/Code/Polar/API/API_polar_static_intra_8bit.hpp>
+#include <Tools/Code/Polar/API/API_polar_static_intra_16bit.hpp>
+#include <Tools/Code/Polar/API/API_polar_dynamic_inter_8bit_bitpacking.hpp>
+#include <Tools/Code/Polar/API/API_polar_dynamic_intra.hpp>
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp>
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp>
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp>
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp>
-#include <Tools/Code/Polar/Pattern_parser_polar.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_std.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_rep_left.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_i.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_rep.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_r0_left.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_r1.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_rep_left.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_spc.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_rep.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_r0.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SC/Pattern_polar_SC_std.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_spc.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_r1.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_rep.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_r0.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_rep_left.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_r0_left.hpp>
+#include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_std.hpp>
+#include <Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp>
+#include <Tools/Code/Polar/Pattern_polar_parser.hpp>
+#include <Tools/Code/LDPC/G/LDPC_G.hpp>
 #include <Tools/Code/LDPC/AList_reader/AList_reader.hpp>
 #include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp>
 #include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_constant.hpp>
@@ -119,6 +160,7 @@
 #include <Module/Puncturer/Puncturer.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
 #include <Module/Puncturer/SC_Puncturer.hpp>
+#include <Module/Puncturer/Turbo/Puncturer_turbo.hpp>
 #include <Module/Encoder/Encoder_sys.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
@@ -130,6 +172,10 @@
 #include <Module/Encoder/SC_Encoder.hpp>
 #include <Module/Encoder/SPU_Encoder.hpp>
 #include <Module/Encoder/Repetition/Encoder_repetition_sys.hpp>
+#include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
+#include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
+#include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp>
+#include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2_constants.hpp>
 #include <Module/Encoder/Coset/Encoder_coset.hpp>
 #include <Module/Encoder/User/Encoder_user.hpp>
 #include <Module/Encoder/BCH/Encoder_BCH.hpp>
@@ -156,17 +202,6 @@
 #include <Module/Decoder/Decoder.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_static_intra_32bit.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_dynamic_seq.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_static_inter.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_static_inter_8bit_bitpacking.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_static_seq.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_dynamic_inter.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_static_intra_8bit.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_static_intra_16bit.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_dynamic_inter_8bit_bitpacking.hpp>
-#include <Module/Decoder/Polar/SC/API/API_polar_dynamic_intra.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp>
@@ -292,18 +327,19 @@
 // #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.short.hpp>
 // #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.hpp>
 // #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.short.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_spc.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate0_left.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate1.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_standard.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_interface.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_rate0.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_rep.hpp>
-#include <Module/Decoder/Polar/SC/Patterns/Pattern_SC_rep_left.hpp>
+#include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
+#include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp>
 #include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp>
+#include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp>
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA_sys.hpp>
+#include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp>
+#include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp>
+// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.hpp>
+// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp>
+// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp>
+#include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hpp>
 #include <Module/Decoder/SPU_Decoder.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp>
@@ -351,6 +387,7 @@
 #include <Module/Decoder/Turbo/CRC/Decoder_turbo_naive_CA.hpp>
 #include <Module/Decoder/Turbo/CRC/Self_corrected/Decoder_turbo_naive_CA_self_corrected.hpp>
 #include <Module/Decoder/Turbo/CRC/Decoder_turbo_fast_CA.hpp>
+#include <Module/Decoder/Turbo/CRC/Flip_and_check/Decoder_turbo_naive_CA_flip_and_check.hpp>
 #include <Module/Coset/SPU_Coset.hpp>
 #include <Module/Coset/Real/Coset_real.hpp>
 #include <Module/Coset/Coset.hpp>
@@ -380,6 +417,7 @@
 #include <Module/CRC/SC_CRC.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_double.hpp>
+#include <Module/CRC/Polynomial/CRC_polynomial_fast.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_inter.hpp>
 #include <Module/CRC/NO/CRC_NO.hpp>
 #include <Module/CRC/CRC.hpp>
@@ -399,6 +437,7 @@
 #include <Launcher/BFER/RA/Launcher_BFER_RA.hpp>
 #include <Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp>
 #include <Launcher/BFERI/Launcher_BFERI.hpp>
+#include <Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp>
 #include <Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp>
 #include <Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp>
 #include <Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp>
@@ -423,9 +462,12 @@
 #include <Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp>
 #include <Simulation/BFERI/SystemC/SC_Simulation_BFERI.hpp>
 #include <Simulation/BFERI/Simulation_BFERI.hpp>
+#include <Simulation/BFERI/Code/Polar/Simulation_BFERI_polar.hpp>
 #include <Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp>
 #include <Simulation/BFERI/Code/LDPC/Simulation_BFERI_LDPC.hpp>
 #include <Simulation/BFERI/Code/Uncoded/Simulation_BFERI_uncoded.hpp>
 // #include <aff3ct.hpp>
 #include <Generator/Polar/SC/Generator_polar_SC_sys.hpp>
+#include <Generator/Polar/Generator_polar.hpp>
+#include <Generator/Polar/SCL/Generator_polar_SCL_sys.hpp>
 #include <Generator/Generator.hpp>

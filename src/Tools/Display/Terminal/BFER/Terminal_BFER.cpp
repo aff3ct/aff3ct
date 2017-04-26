@@ -213,10 +213,10 @@ void Terminal_BFER<B,R>
 	stream << " ";
 	switch (real_time_state)
 	{
-		case 0: stream << bold("*"); break;
-		case 1: stream << bold("*"); break;
-		case 2: stream << bold(" "); break;
-		case 3: stream << bold(" "); break;
+		case 0: stream << bold_green("*"); break;
+		case 1: stream << bold_green("*"); break;
+		case 2: stream << bold_green(" "); break;
+		case 3: stream << bold_green(" "); break;
 		default: break;
 	}
 	real_time_state = (real_time_state +1) % 4;

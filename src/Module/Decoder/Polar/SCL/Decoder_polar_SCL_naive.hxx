@@ -15,7 +15,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
                           const int n_frames, const std::string name)
@@ -26,8 +26,7 @@ Decoder_polar_SCL_naive<B,R,F,G>
   L(L)
 {
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive: \"N\" has to be positive a power "
-		                            "of 2.");
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive: \"N\" has to be a power of 2.");
 
 	if (this->N != (int)frozen_bits.size())
 		throw std::length_error("aff3ct::module::Decoder_polar_SCL_naive: \"frozen_bits.size()\" has to be equal to "
@@ -37,22 +36,27 @@ Decoder_polar_SCL_naive<B,R,F,G>
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive: \"L\" has to be positive and a power "
 		                            "of 2.");
 
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_naive: the number of information bits in the "
+		                         "\"frozen_bits\" is invalid.");
+
 	this->active_paths.insert(0);
-	for (auto i = 0 ; i < L ; i++)
+	for (auto i = 0; i < L; i++)
 	{
 		this->polar_trees.push_back(new tools::Binary_tree_metric<Contents_SCL<B,R>,R>(this->m + 1, metric_init));
 		this->recursive_allocate_nodes_contents(this->polar_trees[i]->get_root(), this->N);
 		this->recursive_initialize_frozen_bits(this->polar_trees[i]->get_root(), frozen_bits);
 	}
-	for (auto i = 0 ; i < L ; i++)
+	for (auto i = 0; i < L; i++)
 		leaves_array.push_back(this->polar_trees[i]->get_leaves());
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::~Decoder_polar_SCL_naive()
 {
-	for (auto i = 0 ; i < L ; i++)
+	for (auto i = 0; i < L; i++)
 	{
 		auto *cur_tree = this->polar_trees.back();
 		this->recursive_deallocate_nodes_contents(cur_tree->get_root());
@@ -64,12 +68,12 @@ Decoder_polar_SCL_naive<B,R,F,G>
 	}
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::_load(const R *Y_N)
 {
 
-	for(auto path = 0 ; path < this->L ; path ++)
+	for (auto path = 0; path < this->L; path ++)
 	{
 		auto *contents = this->polar_trees[path]->get_root()->get_contents();
 		for (auto i = 0; i < this->N; i++)
@@ -83,7 +87,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	active_paths.insert(0);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::_hard_decode(const R *Y_N, B *V_K)
 {
@@ -92,7 +96,6 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	typedef typename std::vector<std::tuple<int,B,R>>::iterator it_type;
 	std::set<int> last_active_paths;
 	int cur_path;
 
@@ -100,39 +103,39 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	std::vector<std::tuple<int,B,R>> metrics_vec;
 
 	// run through each leaf
-	for (auto leaf_index = 0 ; leaf_index < this->N ; leaf_index++)
+	for (auto leaf_index = 0 ; leaf_index < this->N; leaf_index++)
 	{
 		// compute LLR for current leaf
 		for (auto path : active_paths)
-			this->recursive_compute_llr(leaves_array[path][leaf_index], compute_depth(leaf_index, this->m));
+			this->recursive_compute_llr(leaves_array[path][leaf_index], tools::compute_depth(leaf_index, this->m));
 
 		// if current leaf is a frozen bit
 		if (leaves_array[0][leaf_index]->get_c()->is_frozen_bit)
 		{
-			R min_phi = std::numeric_limits<R>::max();
+			auto min_phi = std::numeric_limits<R>::max();
 			for (auto path : active_paths)
 			{
 				auto cur_leaf = leaves_array[path][leaf_index];
 				cur_leaf->get_c()->s[0] = 0;
-				auto phi_cur = phi<R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0], 0);
+				auto phi_cur = tools::phi<R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0], 0);
 				this->polar_trees[path]->set_path_metric(phi_cur);
 				min_phi = std::min<R>(min_phi, phi_cur);
 			}
-			
+
 			// normalization
-			for(auto path : active_paths)
+			for (auto path : active_paths)
 				this->polar_trees[path]->set_path_metric(this->polar_trees[path]->get_path_metric() - min_phi);
 		}
 		else
 		{
 			// metrics vec used to store values of hypothetic path metrics
 			metrics_vec.clear();
-			R min_phi = std::numeric_limits<R>::max();
+			auto min_phi = std::numeric_limits<R>::max();
 			for (auto path : active_paths)
 			{
 				auto cur_leaf = leaves_array[path][leaf_index];
-				R phi0 = phi<B,R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0],                 (B)0);
-				R phi1 = phi<B,R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0], tools::bit_init<B>());
+				R phi0 = tools::phi<B,R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0],                 (B)0);
+				R phi1 = tools::phi<B,R>(polar_trees[path]->get_path_metric(), cur_leaf->get_c()->lambda[0], tools::bit_init<B>());
 				metrics_vec.push_back(std::make_tuple(path,                 (B)0, phi0));
 				metrics_vec.push_back(std::make_tuple(path, tools::bit_init<B>(), phi1));
 
@@ -141,7 +144,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			}
 
 			// normalization
-			for(auto vec : metrics_vec)
+			for (auto vec : metrics_vec)
 				std::get<2>(vec) -= min_phi;
 
 			if (active_paths.size() <= (unsigned)(L / 2))
@@ -154,35 +157,35 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			{
 				// sort hypothetic metrics
 				std::sort(metrics_vec.begin(), metrics_vec.end(),
-						[](std::tuple<int,B,R> x, std::tuple<int,B,R> y)
-							{ return std::get<2>(x) < std::get<2>(y); }
-				);
+					[](std::tuple<int,B,R> x, std::tuple<int,B,R> y){
+						return std::get<2>(x) < std::get<2>(y);
+					});
 
 				// search in worst metrics. If a path is found twice, erase it
-				for (it_type it = metrics_vec.begin() + metrics_vec.size() / 2 ;
-					it != metrics_vec.end() ;
-					++it)
+				for (auto it = metrics_vec.begin() + metrics_vec.size() / 2; it != metrics_vec.end(); ++it)
 				{
 					cur_path = std::get<0>(*it);
 
-					it_type it_double = std::find_if(it + 1, metrics_vec.end(),
-												[cur_path](std::tuple<int,B,R> x)
-												{ return std::get<0>(x) == cur_path; });
+					auto it_double = std::find_if(it +1, metrics_vec.end(),
+						[cur_path](std::tuple<int,B,R> x){
+							return std::get<0>(x) == cur_path;
+						});
 
-					if(it_double != metrics_vec.end())
+					if (it_double != metrics_vec.end())
 						active_paths.erase(std::get<0>(*it));
 				}
 
 				// remove worst metrics from list
-				metrics_vec.resize(metrics_vec.size()/2);
+				metrics_vec.resize(metrics_vec.size() / 2);
 
-				for (it_type it = metrics_vec.begin(); it != metrics_vec.end(); ++it)
+				for (auto it = metrics_vec.begin(); it != metrics_vec.end(); ++it)
 				{
 					cur_path = std::get<0>(*it);
 
-					it_type it_double = std::find_if(it + 1, metrics_vec.end(),
-							[cur_path](std::tuple<int,B,R> x)
-							{ return std::get<0>(x) == cur_path; });
+					auto it_double = std::find_if(it +1, metrics_vec.end(),
+						[cur_path](std::tuple<int,B,R> x){
+							return std::get<0>(x) == cur_path;
+						});
 
 					if (it_double != metrics_vec.end())
 					{
@@ -199,9 +202,6 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 				}
 			}
 		}
-
-		// if double crc aided, intermediate crc check
-		this->intermediate_select_best_path(leaf_index);
 
 		// propagate sums
 		for (auto path : active_paths)
@@ -220,7 +220,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	this->d_store_total += d_store;
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::_store(B *V_K) const
 {
@@ -228,11 +228,11 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	this->recursive_store((tools::Binary_node<Contents_SCL<B,R>>*)this->polar_trees[*active_paths.begin()]->get_root(), V_K, k);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_compute_llr(tools::Binary_node<Contents_SCL<B, R> >* node_cur, int depth)
 {
-	if(depth != 0)
+	if (depth != 0)
 		recursive_compute_llr(node_cur->get_father(), --depth);
 
 	if(node_cur->is_left())
@@ -242,19 +242,19 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 		this->apply_g((tools::Binary_node<Contents_SCL<B,R>>*)node_cur->get_father());
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::propagate_sums(const tools::Binary_node<Contents_SCL<B, R> >* node_cur)
 {
 	if(!node_cur->is_leaf())
 		this->compute_sums((tools::Binary_node<Contents_SCL<B,R>>*)node_cur);
 
-	if(node_cur->is_right() && !node_cur->is_root())
+	if (node_cur->is_right() && !node_cur->is_root())
 		this->propagate_sums(node_cur->get_father());
 
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_duplicate_tree_llr(tools::Binary_node<Contents_SCL<B,R>>* node_a,
                                tools::Binary_node<Contents_SCL<B,R> >* node_b)
@@ -265,26 +265,26 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 		this->recursive_duplicate_tree_llr(node_a->get_father(), node_b->get_father());
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_duplicate_tree_sums(tools::Binary_node<Contents_SCL<B,R>>* node_a,
                                 tools::Binary_node<Contents_SCL<B,R> >* node_b,
                                 tools::Binary_node<Contents_SCL<B,R> >* node_caller)
 {
-	if(node_a->get_left() != node_caller && !node_a->is_leaf())
+	if (node_a->get_left() != node_caller && !node_a->is_leaf())
 		node_b->get_left()->get_c()->s = node_a->get_left()->get_c()->s;
 
 	if(!node_a->is_root())
 		this->recursive_duplicate_tree_sums(node_a->get_father(), node_b->get_father(), node_a);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::duplicate_path(int path, int leaf_index, std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array)
 {
 	std::vector<tools::Binary_node<Contents_SCL<B,R>>*> path_leaves, newpath_leaves;
 	int newpath = 0;
-	while(active_paths.find(newpath++) != active_paths.end()){};
+	while (active_paths.find(newpath++) != active_paths.end()){};
 	newpath--;
 
 	active_paths.insert(newpath);
@@ -293,44 +293,42 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 	newpath_leaves = leaves_array[newpath];
 
-	for(auto i = 0 ; i < leaf_index ; i++)
+	for (auto i = 0; i < leaf_index; i++)
 		newpath_leaves[i]->get_c()->s = path_leaves[i]->get_c()->s;
 
 	recursive_duplicate_tree_sums(leaves_array[path][leaf_index], leaves_array[newpath][leaf_index], nullptr);
 
-	if(leaf_index < this->N - 1)
+	if (leaf_index < this->N - 1)
 		recursive_duplicate_tree_llr(leaves_array[path][leaf_index + 1], leaves_array[newpath][leaf_index + 1]);
 
 	leaves_array[newpath][leaf_index]->get_c()->s[0] = tools::bit_init<B>();
-	polar_trees[newpath]->set_path_metric(phi<B,R>(polar_trees[path]->get_path_metric(),
-	                                               leaves_array[path][leaf_index]->get_c()->lambda[0], 
-	                                               tools::bit_init<B>()));
+	polar_trees[newpath]->set_path_metric(tools::phi<B,R>(polar_trees[path]->get_path_metric(),
+	                                                      leaves_array[path][leaf_index]->get_c()->lambda[0],
+	                                                      tools::bit_init<B>()));
 
 	leaves_array[path][leaf_index]->get_c()->s[0] = 0;
-	polar_trees[path]->set_path_metric(phi<B,R>(polar_trees[path]->get_path_metric(),
-	                                            leaves_array[path][leaf_index]->get_c()->lambda[0], 
-	                                            0));
+	polar_trees[path]->set_path_metric(tools::phi<B,R>(polar_trees[path]->get_path_metric(),
+	                                                   leaves_array[path][leaf_index]->get_c()->lambda[0],
+	                                                   0));
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::select_best_path() 
 {
 	int best_path = 0;
-	if(active_paths.size() >= 1)
+	if (active_paths.size() >= 1)
 		best_path = *active_paths.begin();
 
-	for(int path : active_paths)
-	{
+	for (int path : active_paths)
 		if(polar_trees[path]->get_path_metric() < polar_trees[best_path]->get_path_metric())
 			best_path = path;
-	}
 
 	active_paths.clear();
 	active_paths.insert(best_path);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_allocate_nodes_contents(tools::Binary_node<Contents_SCL<B,R>>* node_curr,
                                     const int vector_size)
@@ -344,7 +342,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	}
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_initialize_frozen_bits(const tools::Binary_node<Contents_SCL<B,R>>* node_curr,
                                    const mipp::vector<B>& frozen_bits)
@@ -360,7 +358,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 		contents->is_frozen_bit = frozen_bits[node_curr->get_lane_id()];
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_store(const tools::Binary_node<Contents_SCL<B,R>>* node_curr, B *V_K, int &k) const
 {
@@ -376,7 +374,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			V_K[k++] = contents->s[0] ? 1 : 0;
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::recursive_deallocate_nodes_contents(tools::Binary_node<Contents_SCL<B,R>>* node_curr)
 {
@@ -391,7 +389,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 	}
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::apply_f(const tools::Binary_node<Contents_SCL<B,R>>* node_curr)
 {
@@ -405,7 +403,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 		                                  node_curr->get_c()->lambda[size_2 +i]);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::apply_g(const tools::Binary_node<Contents_SCL<B,R>>* node_curr)
 {
@@ -421,7 +419,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 		                                   node_left->get_c()->s     [        i]);
 }
 
-template <typename B, typename R, proto_f<R> F, proto_g<B,R> G>
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::compute_sums(const tools::Binary_node<Contents_SCL<B,R>>* node_curr)
 {

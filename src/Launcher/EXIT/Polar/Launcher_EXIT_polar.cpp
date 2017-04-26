@@ -17,14 +17,15 @@ Launcher_EXIT_polar<B,R,Q>
 	this->params.code      .type          = "POLAR";
 	this->params.code      .awgn_fb_path  = "../conf/cde/awgn_polar_codes/TV";
 	this->params.code      .sigma         = 0.3f;
-	this->params.code      .fb_gen_method = "TV";
+	this->params.code      .fb_gen_method = "GA";
 	this->params.encoder   .type          = "POLAR";
 	this->params.quantizer .n_bits        = 6;
 	this->params.quantizer .n_decimals    = 3;
 	this->params.decoder   .type          = "SCAN";
 	this->params.decoder   .implem        = "NAIVE";
 	this->params.decoder   .n_ite         = 1;
-	this->params.decoder   .L             = 1;
+	this->params.decoder   .L             = 8;
+	this->params.decoder   .polar_nodes   = "{R0,R1,R0L,REP,REPL,SPC4}";
 }
 
 template <typename B, typename R, typename Q>

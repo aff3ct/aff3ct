@@ -1,6 +1,8 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "Tools/Math/utils.h"
+
 #include "Reorderer.hpp"
 
 #ifdef _MSC_VER
@@ -11,11 +13,6 @@ namespace aff3ct
 {
 namespace tools
 {
-constexpr bool is_power_of_2(unsigned x)
-{
-	return (x > 0) && !(x & (x - 1));
-}
-
 template <typename T>
 void Reorderer<T>
 ::apply(const std::vector<const T*> in_data, T* out_data, const int data_length)

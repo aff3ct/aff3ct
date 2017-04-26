@@ -4,15 +4,15 @@
 #include <vector>
 #include <set>
 
-#include "Decoder_polar_SCL_naive.hpp"
+#include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../decoder_polar_functions.h"
+#include "Decoder_polar_SCL_naive.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float, proto_f<R> F = f_LLR, proto_g<B,R> G = g_LLR>
+template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
 class Decoder_polar_SCL_naive_sys : public Decoder_polar_SCL_naive<B,R,F,G>
 {
 

@@ -41,6 +41,7 @@ public:
 
 protected:
 	void   _modulate           (const B *X_N1,                              R *X_N2);
+	void     _filter           (const R *Y_N1,                              R *Y_N2);
 	void _demodulate           (const Q *Y_N1,                              Q *Y_N2);
 	void _demodulate_with_gains(const Q *Y_N1, const R *H_N,                Q *Y_N2);
 	void _demodulate           (const Q *Y_N1,               const Q *Y_N2, Q *Y_N3);

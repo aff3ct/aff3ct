@@ -1664,6 +1664,37 @@
 	}
 #endif
 
+	// ------------------------------------------------------------------------------------------------------------ neg
+	template <>
+	inline reg neg<float>(const reg v) {
+		return xorb<int>(v, mipp::set1<int>(0x80000000));
+	}
+
+	template <>
+	inline reg neg<double>(const reg v) {
+		return xorb<long long>(v, mipp::set1<long long>(0x8000000000000000));
+	}
+
+#ifdef __SSSE3__
+	template <>
+	inline reg neg<int>(const reg v) {
+		reg tmp = set1<int>(-1);
+		return _mm_castsi128_ps(_mm_sign_epi32(_mm_castps_si128(v), _mm_castps_si128(tmp)));
+	}
+
+	template <>
+	inline reg neg<short>(const reg v) {
+		reg tmp = set1<short>(-1);
+		return _mm_castsi128_ps(_mm_sign_epi16(_mm_castps_si128(v), _mm_castps_si128(tmp)));
+	}
+
+	template <>
+	inline reg neg<signed char>(const reg v) {
+		reg tmp = set1<signed char>(-1);
+		return _mm_castsi128_ps(_mm_sign_epi8(_mm_castps_si128(v), _mm_castps_si128(tmp)));
+	}
+#endif
+
 	// ------------------------------------------------------------------------------------------------------------ abs
 	template <>
 	inline reg abs<float>(const reg v1) {
@@ -1858,6 +1889,34 @@
 	inline reg fmsub<double>(const reg v1, const reg v2, const reg v3) {
 		return sub<double>(mul<double>(v1, v2), v3);
 	}
+
+	// ---------------------------------------------------------------------------------------------------------- blend
+#ifdef __SSE4_1__
+	template <>
+	inline reg blend<double>(const reg v1, const reg v2, const reg m) {
+		return _mm_castpd_ps(_mm_blendv_pd(_mm_castps_pd(v2), _mm_castps_pd(v1), _mm_castps_pd(m)));
+	}
+
+	template <>
+	inline reg blend<float>(const reg v1, const reg v2, const reg m) {
+		return _mm_blendv_ps(v2, v1, m);
+	}
+
+	template <>
+	inline reg blend<int>(const reg v1, const reg v2, const reg m) {
+		return _mm_blendv_ps(v2, v1, m);
+	}
+
+	template <>
+	inline reg blend<short>(const reg v1, const reg v2, const reg m) {
+		return _mm_castsi128_ps(_mm_blendv_epi8(_mm_castps_si128(v2), _mm_castps_si128(v1), _mm_castps_si128(m)));
+	}
+
+	template <>
+	inline reg blend<signed char>(const reg v1, const reg v2, const reg m) {
+		return _mm_castsi128_ps(_mm_blendv_epi8(_mm_castps_si128(v2), _mm_castps_si128(v1), _mm_castps_si128(m)));
+	}
+#endif
 
 	// ------------------------------------------------------------------------------------------------------------ rot
 #ifdef __SSE2__

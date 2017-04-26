@@ -63,6 +63,9 @@ struct source_parameters
 struct crc_parameters
 {
 	std::string type;
+	std::string poly;
+	bool        inc_code_rate;
+	int         size;
 };
 
 struct encoder_parameters
@@ -72,6 +75,11 @@ struct encoder_parameters
 	bool             systematic;
 	bool             buffered;
 	std::vector<int> poly;
+};
+
+struct puncturer_parameters
+{
+	std::string pattern;
 };
 
 struct interleaver_parameters
@@ -130,12 +138,19 @@ struct decoder_parameters
 	std::string scaling_factor;
 	std::string max;
 	std::string gen_path;
+	std::string polar_nodes;
 	bool        enable_syndrome;
+	bool        full_adaptive;
 	float       normalize_factor;
 	float       offset;
 	int         n_ite;
 	int         L;
 	bool        self_corrected;
+	bool        fnc;
+	int         fnc_q;
+	int         fnc_ite_min;
+	int         fnc_ite_max;
+	int         fnc_ite_step;
 	int         syndrome_depth;
 };
 
@@ -160,11 +175,12 @@ struct parameters
 	code_parameters        code;
 	source_parameters      source;
 	crc_parameters         crc;
-	modulator_parameters   modulator;
-	demodulator_parameters demodulator;
 	encoder_parameters     encoder;
+	puncturer_parameters   puncturer;
 	interleaver_parameters interleaver;
+	modulator_parameters   modulator;
 	channel_parameters     channel;
+	demodulator_parameters demodulator;
 	quantizer_parameters   quantizer;
 	decoder_parameters     decoder;
 	monitor_parameters     monitor;

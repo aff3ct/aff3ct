@@ -9,7 +9,7 @@ namespace aff3ct
 {
 namespace module
 {
-static const char Frozen_bits_262144_218453_40[262144] = {
+static const char Decoder_polar_SC_fast_sys_fb_262144_218453_40[262144] = {
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -8214,7 +8214,7 @@ public:
 		assert(K == 218453);
 		
 		auto i = 0;
-		while (i < 262144 && Frozen_bits_262144_218453_40[i] == frozen_bits[i]) i++;
+		while (i < 262144 && Decoder_polar_SC_fast_sys_fb_262144_218453_40[i] == frozen_bits[i]) i++;
 		assert(i == 262144);
 	}
 
@@ -8222,8 +8222,15 @@ public:
 	{
 	}
 
-	void decode()
+	void _hard_decode(const R *Y_N, B *V_K)
 	{
+		using namespace tools;
+
+		auto t_load = std::chrono::steady_clock::now();
+		this->_load(Y_N);
+		auto d_load = std::chrono::steady_clock::now() - t_load;
+
+		auto t_decod = std::chrono::steady_clock::now();
 		auto &l = this->l;
 		auto &s = this->s;
 
@@ -32918,6 +32925,15 @@ public:
 		API_polar::template xo < 32768>(s,    196608+     0, 196608+ 32768,                196608+     0,  32768);
 		API_polar::template xo < 65536>(s,    131072+     0, 131072+ 65536,                131072+     0,  65536);
 		API_polar::template xo <131072>(s,         0+     0,      0+131072,                     0+     0, 131072);
+		auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+		auto t_store = std::chrono::steady_clock::now();
+		this->_store(V_K);
+		auto d_store = std::chrono::steady_clock::now() - t_store;
+
+		this->d_load_total  += d_load;
+		this->d_decod_total += d_decod;
+		this->d_store_total += d_store;
 	}
 };
 }

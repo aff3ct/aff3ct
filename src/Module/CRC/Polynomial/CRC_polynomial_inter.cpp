@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial_inter<B>
-::CRC_polynomial_inter(const int K, std::string poly_key, const int n_frames, const std::string name)
-: CRC_polynomial<B>(K, poly_key, n_frames, name)
+::CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
+: CRC_polynomial<B>(K, poly_key, size, n_frames, name)
 {
 	if (mipp::nElReg<B>() != n_frames)
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "

@@ -19,10 +19,10 @@ Encoder<B>* Factory_encoder_turbo<B>
 	if (params.encoder.systematic)
 	{
 		if (params.encoder.buffered)
-			encoder = new Encoder_turbo<B>(params.code.K, params.code.N, *interleaver, *sub_encoder_n, *sub_encoder_i,
+			encoder = new Encoder_turbo<B>(params.code.K, params.code.N_code, *interleaver, *sub_encoder_n, *sub_encoder_i,
 			                               params.simulation.inter_frame_level);
 		else
-			encoder = new Encoder_turbo_legacy<B>(params.code.K, params.code.N, *interleaver, *sub_encoder_n,
+			encoder = new Encoder_turbo_legacy<B>(params.code.K, params.code.N_code, *interleaver, *sub_encoder_n,
 			                                      params.simulation.inter_frame_level);
 	}
 

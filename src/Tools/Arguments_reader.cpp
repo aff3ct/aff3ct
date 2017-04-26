@@ -61,6 +61,11 @@ bool Arguments_reader
 			n_req_arg++;
 		}
 		valid_arg = this->sub_parse_arguments(this->m_optional_args, i) || valid_arg;
+
+		// do not display warning when negative value
+		try { std::stoi(this->m_argv[i]); if (!valid_arg) valid_arg = true; }
+		catch (std::exception const& e) {}
+
 		if (!valid_arg && this->m_argv[i][0] == '-')
 			warnings.push_back("Unknown argument \"" + this->m_argv[i] + "\".");
 	}

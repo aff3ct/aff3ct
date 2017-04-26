@@ -1,5 +1,3 @@
-#include "../decoder_polar_functions.h"
-
 #include "Decoder_polar_SCAN_naive_sys.hpp"
 
 namespace aff3ct
@@ -7,26 +5,25 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::Decoder_polar_SCAN_naive_sys(const int &K, const int &m, const int &max_iter, const mipp::vector<B> &frozen_bits,
+::Decoder_polar_SCAN_naive_sys(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
                                const int n_frames, const std::string name)
-: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K, m, max_iter, frozen_bits, n_frames, name),
-  SISO<R>(K, 1 << m, n_frames, 1, name + "_siso")
+: Decoder_polar_SCAN_naive<B,R,I,F,V,H>(K, N, max_iter, frozen_bits, n_frames, name)
 {
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::~Decoder_polar_SCAN_naive_sys()
 {
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::_soft_decode_fbf(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load_init();
@@ -50,7 +47,23 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          proto_i<R> I, proto_f<R> F, proto_v<R> V, proto_h<B,R> H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
+void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
+::_soft_decode(const R *Y_N1, R *Y_N2)
+{
+	// ----------------------------------------------------------------------------------------------------------- LOAD
+	this->_load(Y_N1);
+
+	// --------------------------------------------------------------------------------------------------------- DECODE
+	Decoder_polar_SCAN_naive<B,R,I,F,V,H>::_decode();
+
+	// ---------------------------------------------------------------------------------------------------------- STORE
+	for (auto i = 0; i < this->N; i++)
+		Y_N2[i] = this->feedback_graph[this->layers_count -1][i];
+}
+
+template <typename B, typename R,
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 ::_store(B *V_N) const
 {

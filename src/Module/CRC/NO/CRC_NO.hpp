@@ -15,8 +15,10 @@ public:
 	virtual ~CRC_NO();
 
 	int  size () const;
-	void build(B *U_K); using CRC<B>::build;
-	bool check(const B *V_K, const int n_frames = -1); using CRC<B>::check;
+
+	void build       (      B *U_K                         ); using CRC<B>::build;
+	bool check       (const B *V_K, const int n_frames = -1); using CRC<B>::check;
+	bool check_packed(const B *V_K, const int n_frames = -1); using CRC<B>::check_packed;
 };
 }
 }

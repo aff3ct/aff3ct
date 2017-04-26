@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 #include "Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp"
 
 #include "Launcher_BFER_turbo.hpp"
@@ -11,6 +12,7 @@
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 using namespace aff3ct::launcher;
+using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q, typename QD>
 Launcher_BFER_turbo<B,R,Q,QD>
@@ -20,10 +22,11 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.simulation .json_path      = "";
 	this->params.code       .type           = "TURBO";
 	this->params.code       .tail_length    = 4 * 3;
-	this->params.crc        .type           = "";
+	this->params.crc        .type           = "FAST";
 	this->params.encoder    .type           = "TURBO";
 	this->params.encoder    .buffered       = true;
 	this->params.encoder    .poly           = {013, 015};
+	this->params.puncturer  .pattern        = "111,111,111";
 	this->params.interleaver.type           = "LTE";
 	this->params.interleaver.path           = "";
 	this->params.interleaver.n_cols         = 4;
@@ -37,6 +40,11 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.decoder    .scaling_factor = "LTE_VEC";
 	this->params.decoder    .simd_strategy  = "";
 	this->params.decoder    .self_corrected = false;
+	this->params.decoder    .fnc            = false;
+	this->params.decoder    .fnc_q          = 10;
+	this->params.decoder    .fnc_ite_min    = 3;
+	this->params.decoder    .fnc_ite_max    = this->params.decoder.n_ite;
+	this->params.decoder    .fnc_ite_step   = 1;
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -53,8 +61,20 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	// ----------------------------------------------------------------------------------------------------------- crc
 	this->opt_args[{"crc-type"}] =
 		{"string",
-		 "select the crc you want to use.",
-		 "1-0x1, 2-0x1, 3-0x3, 4-ITU, 8-DVB-S2, 16-CCITT, 16-IBM, 24-LTEA, 32-GZIP"};
+		 "select the CRC implementation you want to use.",
+		 "STD, FAST"};
+
+	this->opt_args[{"crc-poly"}] =
+		{"string",
+		 "select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
+
+	this->opt_args[{"crc-size"}] =
+		{"positive_int",
+		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
+
+	this->opt_args[{"crc-rate"}] =
+		{"",
+		 "enable the CRC to be counted in the code rate computation."};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", TURBO";
@@ -64,6 +84,11 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"enc-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	// ----------------------------------------------------------------------------------------------------- puncturer
+	this->opt_args[{"pct-pattern"}] =
+		{"string",
+		 "puncturing pattern for the turbo encoder (ex: \"11,10,01\")."};
 
 	// --------------------------------------------------------------------------------------------------- interleaver
 	this->opt_args[{"itl-type"}] =
@@ -104,6 +129,22 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"dec-sc"}] =
 		{"",
 		 "enables the self corrected decoder (requires \"--crc-type\")."};
+	this->opt_args[{"dec-fnc"}] =
+		{"",
+		 "enables the flip and check decoder (requires \"--crc-type\")."};
+	this->opt_args[{"dec-fnc-q"}] =
+		{"positive_int",
+		 "set the search's space for the fnc algorithm."};
+	this->opt_args[{"dec-fnc-ite-m"}] =
+		{"positive_int",
+		 "set first iteration at which the fnc is used."};
+	this->opt_args[{"dec-fnc-ite-M"}] =
+		{"positive_int",
+		 "set last iteration at which the fnc is used."};
+	this->opt_args[{"dec-fnc-ite-s"}] =
+		{"positive_int",
+		 "set iteration step for the fnc algorithm."};
+
 }
 
 template <typename B, typename R, typename Q, typename QD>
@@ -112,11 +153,19 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
+	this->params.code.N_code = 3 * this->params.code.K;
+
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(this->ar.exist_arg({"sim-json-path"})) this->params.simulation.json_path = this->ar.get_arg({"sim-json-path"});
 
 	// ----------------------------------------------------------------------------------------------------------- crc
-	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg({"crc-type"});
+	if(this->ar.exist_arg({"crc-type"})) this->params.crc.type = this->ar.get_arg    ({"crc-type"});
+	if(this->ar.exist_arg({"crc-poly"})) this->params.crc.poly = this->ar.get_arg    ({"crc-poly"});
+	if(this->ar.exist_arg({"crc-size"})) this->params.crc.size = this->ar.get_arg_int({"crc-size"});
+	if(this->ar.exist_arg({"crc-rate"})) this->params.crc.inc_code_rate = true;
+
+	if (!this->params.crc.poly.empty() && !this->params.crc.size)
+		this->params.crc.size = CRC_polynomial<B>::size(this->params.crc.poly);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(this->ar.exist_arg({"enc-no-buff"})) this->params.encoder.buffered = false;
@@ -137,6 +186,9 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 #endif
 	}
 
+	// ------------------------------------------------------------------------------------------------------ puncturer
+	if(this->ar.exist_arg({"pct-pattern"})) this->params.puncturer.pattern = this->ar.get_arg({"pct-pattern"});
+
 	// --------------------------------------------------------------------------------------------------- interleaver
 	if(this->ar.exist_arg({"itl-type"})) this->params.interleaver.type    = this->ar.get_arg    ({"itl-type"});
 	if(this->ar.exist_arg({"itl-path"})) this->params.interleaver.path    = this->ar.get_arg    ({"itl-path"});
@@ -149,9 +201,25 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
 	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
 
-	if (this->ar.exist_arg({"crc-type"}))
+	if (this->ar.exist_arg({"crc-poly"}))
+	{
 		if (this->ar.exist_arg({"dec-sc"}))
 			this->params.decoder.self_corrected = true;
+		else if (this->ar.exist_arg({"dec-fnc"}))
+		{
+			this->params.decoder.fnc = true;
+			if (this->ar.exist_arg({"dec-fnc-q"}))
+				this->params.decoder.fnc_q = this->ar.get_arg_int({"dec-fnc-q"});
+			if (this->ar.exist_arg({"dec-fnc-ite-m"}))
+				this->params.decoder.fnc_ite_min = this->ar.get_arg_int({"dec-fnc-ite-m"});
+			if (this->ar.exist_arg({"dec-fnc-ite-M"}))
+				this->params.decoder.fnc_ite_max = this->ar.get_arg_int({"dec-fnc-ite-M"});
+			else
+				this->params.decoder.fnc_ite_max = this->params.decoder.n_ite;
+			if (this->ar.exist_arg({"dec-fnc-ite-s"}))
+				this->params.decoder.fnc_ite_step = this->ar.get_arg_int({"dec-fnc-ite-s"});
+		}
+	}
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -217,8 +285,22 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 {
 	auto p = Launcher_BFER<B,R,Q>::header_crc();
 
-	if (!this->params.crc.type.empty())
+	if (!this->params.crc.poly.empty())
+	{
+		std::string crc_inc_rate = (this->params.crc.inc_code_rate) ? "on" : "off";
+
+		auto poly_name = CRC_polynomial<B>::name (this->params.crc.poly);
+		std::stringstream poly_val;
+		poly_val << "0x" << std::hex << CRC_polynomial<B>::value(this->params.crc.poly);
+		auto poly_size = CRC_polynomial<B>::size (this->params.crc.poly);
+
 		p.push_back(std::make_pair("Type", this->params.crc.type));
+		if (!poly_name.empty())
+			p.push_back(std::make_pair("Name", poly_name));
+		p.push_back(std::make_pair("Polynomial (hexadecimal)", poly_val.str()));
+		p.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : this->params.crc.size)));
+		p.push_back(std::make_pair("Add CRC in the code rate", crc_inc_rate));
+	}
 
 	return p;
 }
@@ -242,11 +324,24 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 
 template <typename B, typename R, typename Q, typename QD>
 std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
+::header_puncturer()
+{
+	auto p = Launcher_BFER<B,R,Q>::header_puncturer();
+
+	if (this->params.code.N != this->params.code.N_code)
+		p.push_back(std::make_pair(std::string("Pattern"), std::string("{" + this->params.puncturer.pattern) + "}"));
+
+	return p;
+}
+
+template <typename B, typename R, typename Q, typename QD>
+std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 ::header_decoder()
 {
 	auto p = Launcher_BFER<B,R,Q>::header_decoder();
 
-	std::string sc = ((this->params.decoder.self_corrected) ? "on" : "off");
+	std::string sc  = ((this->params.decoder.self_corrected) ? "on" : "off");
+	std::string fnc = ((this->params.decoder.fnc) ? "on" : "off");
 
 	if (!this->params.decoder.simd_strategy.empty())
 		p.push_back(std::make_pair("SIMD strategy", this->params.decoder.simd_strategy));
@@ -255,8 +350,17 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER_turbo<B,R,Q,QD>
 	p.push_back(std::make_pair("Scaling factor",         this->params.decoder.scaling_factor       ));
 	p.push_back(std::make_pair("Max type",               this->params.decoder.max                  ));
 	if (this->ar.exist_arg({"crc-type"}))
+	{
 		p.push_back(std::make_pair("Self-corrected", sc));
-
+		p.push_back(std::make_pair("Flip aNd Check (FNC)", fnc));
+		if (this->params.decoder.fnc)
+		{
+			p.push_back(std::make_pair("FNC q"       ,  std::to_string(this->params.decoder.fnc_q)));
+			p.push_back(std::make_pair("FNC ite min" ,  std::to_string(this->params.decoder.fnc_ite_min)));
+			p.push_back(std::make_pair("FNC ite max" ,  std::to_string(this->params.decoder.fnc_ite_max)));
+			p.push_back(std::make_pair("FNC ite step",  std::to_string(this->params.decoder.fnc_ite_step)));
+		}
+	}
 	return p;
 }
 
