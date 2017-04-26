@@ -1,5 +1,5 @@
 Run command:
-./bin/aff3ct --sim-type "BFER" --cde-type "BCH" -N "255" -K "239" -T "2" --mGF "8" -m "0" -M "8.01" -s "0.25" -e "4000" --enc-type "AZCW" --chn-type "AWGN_FAST" --sim-pyber "BCH (255,239,2)" 
+./bin/aff3ct --sim-type "BFER" --cde-type "BCH" -N "255" -K "239" -T "2" -m "0" -M "8.01" -s "0.25" -e "4000" --enc-type "AZCW" --chn-type "AWGN_FAST" --sim-pyber "BCH (255,239,2)" 
 Curve name:
 BCH (255,239,2)
 # -------------------------------------------------
