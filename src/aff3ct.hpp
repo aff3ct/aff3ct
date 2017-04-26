@@ -31,6 +31,7 @@
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
 #include <Tools/Threads/Barrier.hpp>
+#include <Tools/Math/Galois.hpp>
 #include <Tools/Factory/Factory_monitor.hpp>
 #include <Tools/Factory/Polar/Factory_decoder_polar_gen.hpp>
 #include <Tools/Factory/Polar/Factory_decoder_polar.hpp>
@@ -51,6 +52,8 @@
 #include <Tools/Factory/LDPC/Factory_decoder_LDPC.hpp>
 #include <Tools/Factory/Coset/Factory_coset_real.hpp>
 #include <Tools/Factory/Coset/Factory_coset_bit.hpp>
+#include <Tools/Factory/BCH/Factory_encoder_BCH.hpp>
+#include <Tools/Factory/BCH/Factory_decoder_BCH.hpp>
 #include <Tools/Factory/Factory_CRC.hpp>
 #include <Tools/Factory/Factory_source.hpp>
 #include <Tools/Factory/Factory_modulator.hpp>
@@ -175,6 +178,7 @@
 #include <Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2_constants.hpp>
 #include <Module/Encoder/Coset/Encoder_coset.hpp>
 #include <Module/Encoder/User/Encoder_user.hpp>
+#include <Module/Encoder/BCH/Encoder_BCH.hpp>
 #include <Module/Encoder/Encoder.hpp>
 #include <Module/Encoder/NO/Encoder_NO.hpp>
 #include <Module/Encoder/RA/Encoder_RA.hpp>
@@ -372,6 +376,7 @@
 #include <Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp>
+#include <Module/Decoder/BCH/Decoder_BCH.hpp>
 #include <Module/Decoder/Decoder_SISO.hpp>
 #include <Module/Decoder/NO/Decoder_NO.hpp>
 #include <Module/Decoder/RA/Decoder_RA.hpp>
@@ -428,6 +433,7 @@
 #include <Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp>
 #include <Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp>
 #include <Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp>
+#include <Launcher/BFER/BCH/Launcher_BFER_BCH.hpp>
 #include <Launcher/BFER/RA/Launcher_BFER_RA.hpp>
 #include <Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp>
 #include <Launcher/BFERI/Launcher_BFERI.hpp>
@@ -450,6 +456,7 @@
 #include <Simulation/BFER/Code/Repetition/Simulation_BFER_repetition.hpp>
 #include <Simulation/BFER/Code/LDPC/Simulation_BFER_LDPC.hpp>
 #include <Simulation/BFER/Code/Uncoded/Simulation_BFER_uncoded.hpp>
+#include <Simulation/BFER/Code/BCH/Simulation_BFER_BCH.hpp>
 #include <Simulation/BFER/Code/RA/Simulation_BFER_RA.hpp>
 #include <Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp>
 #include <Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp>

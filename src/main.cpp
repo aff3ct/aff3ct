@@ -21,6 +21,7 @@
 #include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
 #include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
 #include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
+#include "Launcher/BFER/BCH/Launcher_BFER_BCH.hpp"
 #include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
 
 
@@ -121,7 +122,7 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	req_args[{"cde-type"}] =
 		{"string",
 		 "the type of codes you want to simulate.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, UNCODED"};
+		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
 
 	// --------------------------------------------------------------------------------------------------------- other
 	opt_args[{"version", "v"}] =
@@ -247,6 +248,12 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		{
 			if (simu_type == "BFER")
 				launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
+		}
+
+		if (code_type == "BCH")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
 		}
 
 		if (code_type == "RA")
