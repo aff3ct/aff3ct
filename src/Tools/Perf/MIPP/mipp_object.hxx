@@ -238,7 +238,7 @@ public:
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
-	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return (m.r) ? v1.r : r;                      }
+	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return (m.r) ? r : v1.r;                      }
 	inline Reg<T>   rot          ()                                 const { return r;                                     }
 	inline Reg<T>   rotr         ()                                 const { return r;                                     }
 	inline Reg<T>   div2         ()                                 const { return mipp_scop::div2<T>(r);                 }
