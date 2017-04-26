@@ -7,7 +7,7 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_BCH<B>
-::build(const parameters &params, const tools::Galois &GF)
+::build(const parameters &params, const Galois &GF)
 {
 	Encoder<B> *encoder = nullptr;
 

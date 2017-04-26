@@ -19,7 +19,7 @@ protected:
 	const int m; // order of the Galois Field
 
 	mipp::vector<int> g;  // coefficients of the generator polynomial, g(x)
-	mipp::vector<int> bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
+	mipp::vector<B  > bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
 public:
 	Encoder_BCH(const int& K, const int& N, const int& m, const tools::Galois &GF,

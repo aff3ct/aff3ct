@@ -64,7 +64,7 @@ bool Arguments_reader
 
 		// do not display warning when negative value
 		try { std::stoi(this->m_argv[i]); if (!valid_arg) valid_arg = true; }
-		catch (std::exception const& e) {}
+		catch (std::exception const&) {}
 
 		if (!valid_arg && this->m_argv[i][0] == '-')
 			warnings.push_back("Unknown argument \"" + this->m_argv[i] + "\".");
