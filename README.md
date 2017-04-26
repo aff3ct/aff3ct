@@ -30,8 +30,8 @@ Open a shell and type (from the `AFF3CT` root folder):
 This command will use the generated Makefile.
 
 ## Run the code
-Here is an example of run. You can skip the computations of the current SNR point with the `ctrl+C` combination on the keyboard.
-If you use `ctrl+C` twice in a small time-step (500ms), the program will stop.
+Here is an example of run. You can skip the computations of the current SNR point with the `ctrl+c` combination on the keyboard.
+If you use `ctrl+c` twice in a small time-step (500ms), the program will stop.
 
 ### Decoding of the Polar codes with the Successive Cancellation List decoder (SCL)
 
