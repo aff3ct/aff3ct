@@ -13,7 +13,7 @@ template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_layered_offset_normalize_min_sum : public Decoder_LDPC_BP_layered<B,R>
 {
 private:
-	const R normalize_factor;
+	const float normalize_factor;
 	const R offset;
 	mipp::vector<R> contributions;
 
@@ -22,7 +22,7 @@ public:
 	                                                 const tools::AList_reader &alist_data,
 	                                                 const mipp::vector<B> &info_bits_pos,
 	                                                 const float normalize_factor = 1.f,
-	                                                 const float offset = 0.f,
+	                                                 const R offset = (R)0,
 	                                                 const bool enable_syndrome = true,
 	                                                 const int syndrome_depth = 1,
 	                                                 const int n_frames = 1,

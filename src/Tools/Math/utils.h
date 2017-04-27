@@ -11,15 +11,20 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R> inline R           div2(R           val) { return val * (R)0.50; }
-template <>           inline int         div2(int         val) { return val >> 1;      }
-template <>           inline short       div2(short       val) { return val >> 1;      }
-template <>           inline signed char div2(signed char val) { return val >> 1;      }
+template <typename R> inline R           div2(R           val) { return val * (R)0.500; }
+template <>           inline int         div2(int         val) { return val >> 1;       }
+template <>           inline short       div2(short       val) { return val >> 1;       }
+template <>           inline signed char div2(signed char val) { return val >> 1;       }
 
-template <typename R> inline R           div4(R           val) { return val * (R)0.25; }
-template <>           inline int         div4(int         val) { return val >> 2;      }
-template <>           inline short       div4(short       val) { return val >> 2;      }
-template <>           inline signed char div4(signed char val) { return val >> 2;      }
+template <typename R> inline R           div4(R           val) { return val * (R)0.250; }
+template <>           inline int         div4(int         val) { return val >> 2;       }
+template <>           inline short       div4(short       val) { return val >> 2;       }
+template <>           inline signed char div4(signed char val) { return val >> 2;       }
+
+template <typename R> inline R           div8(R           val) { return val * (R)0.125; }
+template <>           inline int         div8(int         val) { return val >> 3;       }
+template <>           inline short       div8(short       val) { return val >> 3;       }
+template <>           inline signed char div8(signed char val) { return val >> 3;       }
 
 // init value depending on the domain
 template <typename R>

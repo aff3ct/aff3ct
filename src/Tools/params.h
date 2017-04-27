@@ -51,6 +51,7 @@ struct code_parameters
 	int         N_fil;
 	int         m;
 	int         tail_length;
+	int         t;
 };
 
 struct source_parameters

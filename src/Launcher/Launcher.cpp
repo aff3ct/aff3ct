@@ -166,7 +166,7 @@ void Launcher<B,R,Q>
 	req_args[{"cde-type"}] =
 		{"string",
 		 "select the code type you want to use.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, UNCODED" };
+		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED" };
 	req_args[{"cde-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (only information bits)."};

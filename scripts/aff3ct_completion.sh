@@ -31,6 +31,7 @@ _aff3ct() {
 	      ${codetype} == "RSC"        && ${simutype} == "EXIT"  || \
 	      ${codetype} == "POLAR"      && ${simutype} == "BFER"  || \
 	      ${codetype} == "RSC"        && ${simutype} == "BFER"  || \
+	      ${codetype} == "BCH"        && ${simutype} == "BFER"  || \
 	      ${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
 	      ${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
 	      ${codetype} == "RA"         && ${simutype} == "BFER"  || \
@@ -58,6 +59,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER.cpp
 	if [[ ${codetype} == "POLAR"      && ${simutype} == "BFER" || \
 	      ${codetype} == "RSC"        && ${simutype} == "BFER" || \
+	      ${codetype} == "BCH"        && ${simutype} == "BFER" || \
 	      ${codetype} == "TURBO"      && ${simutype} == "BFER" || \
 	      ${codetype} == "REPETITION" && ${simutype} == "BFER" || \
 	      ${codetype} == "RA"         && ${simutype} == "BFER" || \
@@ -99,6 +101,12 @@ _aff3ct() {
 	if [[ ${codetype} == "RA"         && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --dec-ite -i --itl-type --itl-path --itl-cols --itl-uni"
+	fi
+
+	# add contents of Launcher_BFER_BCH.cpp
+	if [[ ${codetype} == "BCH"         && ${simutype} == "BFER" ]]
+	then
+		opts="$opts --cde-corr-pow -T"
 	fi
 
 	# add contents of Launcher_BFER_RSC.cpp
@@ -160,7 +168,7 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts --dec-type -D --dec-implem --dec-ite -i --cde-alist-path \
-		--dec-no-synd --dec-off --dec-norm --dec-synd-depth"
+		--dec-no-synd --dec-off --dec-norm --dec-synd-depth --dec-simd"
 	fi
 
 	# add contents of Launcher_BFER_uncoded.cpp
@@ -221,7 +229,7 @@ _aff3ct() {
 			;;
 
 		--cde-type)
-			local params="POLAR TURBO LDPC REPETITION RA RSC UNCODED"
+			local params="POLAR TURBO LDPC REPETITION RA RSC BCH UNCODED"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -233,6 +241,7 @@ _aff3ct() {
 				LDPC)       params="BFER BFERI"      ;;
 				REPETITION) params="BFER"            ;;
 				RA)         params="BFER"            ;;
+				BCH)        params="BFER"            ;;
 				RSC)        params="BFER BFERI EXIT" ;;
 				UNCODED)    params="BFER BFERI"      ;;
 				*)          params="BFER BFERI EXIT" ;;
@@ -248,6 +257,7 @@ _aff3ct() {
 				RSC)        params="AZCW COSET USER RSC"                    ;;
 				REPETITION) params="AZCW COSET USER REPETITION"             ;;
 				RA)         params="AZCW COSET USER RA"                     ;;
+				BCH)        params="AZCW COSET USER BCH"                    ;;
 				TURBO)      params="AZCW COSET USER TURBO"                  ;;
 				LDPC)       params="AZCW COSET USER LDPC LDPC_H LDPC_DVBS2" ;;
 			esac
@@ -261,6 +271,7 @@ _aff3ct() {
 				RSC)        params="BCJR BCJR4 LTE CCSDS"     ;;
 				REPETITION) params="STD"                      ;;
 				RA)         params="STD"                      ;;
+                BCH)        params="ALGEBRAIC"                ;;
 				TURBO)      params="LTE CCSDS"                ;;
 				LDPC)       params="BP BP_FLOODING BP_LAYERED";;
 			esac

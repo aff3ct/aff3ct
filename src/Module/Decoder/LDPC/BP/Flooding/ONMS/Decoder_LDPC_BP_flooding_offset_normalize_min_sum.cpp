@@ -7,20 +7,51 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
+template <typename R>
+inline R normalize(const R val, const float factor)
+{
+	     if (factor == 0.125f) return div8<R>(val);
+	else if (factor == 0.250f) return div4<R>(val);
+	else if (factor == 0.375f) return div4<R>(val) + div8<R>(val);
+	else if (factor == 0.500f) return div2<R>(val);
+	else if (factor == 0.625f) return div2<R>(val) + div8<R>(val);
+	else if (factor == 0.750f) return div2<R>(val) + div4<R>(val);
+	else if (factor == 0.875f) return div2<R>(val) + div4<R>(val) + div8<R>(val);
+	else if (factor == 1.000f) return val;
+	else
+		throw std::invalid_argument("aff3ct::module::normalize: \"factor\" can only be 0.125f, 0.250f, "
+		                            "0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
+}
+
+template <>
+inline float normalize(const float val, const float factor)
+{
+	return val * factor;
+}
+
+template <>
+inline double normalize(const double val, const float factor)
+{
+	return val * (double)factor;
+}
+
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
                                                     const AList_reader &alist_data,
                                                     const mipp::vector<B> &info_bits_pos,
                                                     const float normalize_factor,
-                                                    const float offset,
+                                                    const R offset,
                                                     const bool enable_syndrome,
                                                     const int syndrome_depth,
                                                     const int n_frames,
                                                     const std::string name)
 : Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
-  normalize_factor((R)normalize_factor), offset((R)offset)
+  normalize_factor(normalize_factor), offset(offset)
 {
+	if (typeid(R) == typeid(signed char))
+		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_offset_normalize_min_sum: this decoder "
+		                         "does not work in 8-bit fixed-point (try in 16-bit).");
 }
 
 template <typename B, typename R>
@@ -82,8 +113,8 @@ bool Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 			min2  = std::min(min2, std::max(v_abs, v_temp)); // 2nd min
 		}
 
-		auto cste1 = (min2 - offset) * normalize_factor;
-		auto cste2 = (min1 - offset) * normalize_factor;
+		auto cste1 = normalize<R>(min2 - offset, normalize_factor);
+		auto cste2 = normalize<R>(min1 - offset, normalize_factor);
 		cste1 = (cste1 < 0) ? 0 : cste1;
 		cste2 = (cste2 < 0) ? 0 : cste2;
 

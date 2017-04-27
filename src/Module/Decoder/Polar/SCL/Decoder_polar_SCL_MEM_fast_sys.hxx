@@ -719,8 +719,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 		s[new_path][off_s + bit_flips[2 * old_path +1]] = !s[old_path][off_s + bit_flips[2 * old_path +1]] ? b : 0;
 		break;
 	default:
-		std::cout << tools::bold_red("(EE) Flip bits error on rate 1 node.") << std::endl;
-		std::exit(-1);
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: flip bits error on rate 1 node.");
 		break;
 	}
 }
@@ -1152,8 +1151,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 			s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	default:
-		std::cout << tools::bold_red("(EE) Flip bits error on SPC node.") << std::endl;
-		std::exit(-1);
+		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_MEM_fast_sys: flip bits error on SPC node.");
 		break;
 	}
 }

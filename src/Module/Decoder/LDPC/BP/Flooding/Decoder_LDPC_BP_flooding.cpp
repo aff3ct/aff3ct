@@ -20,24 +20,24 @@ Decoder_LDPC_BP_flooding<B,R>
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder_SISO<B,R>      (K, N, n_frames, 1, name                      ),
-  cur_frame              (0                                            ),
-  n_ite                  (n_ite                                        ),
-  n_V_nodes              (N                                            ), // same as N but more explicit
-  n_C_nodes              ((int)alist_data.get_n_CN()                   ),
-  n_branches             ((int)alist_data.get_n_branches()             ),
-  enable_syndrome        (enable_syndrome                              ),
-  syndrome_depth         (syndrome_depth                               ),
-  init_flag              (false                                        ),
+: Decoder_SISO<B,R>      (K, N, n_frames, 1, name                    ),
+  cur_frame              (0                                          ),
+  n_ite                  (n_ite                                      ),
+  n_V_nodes              (N                                          ), // same as N but more explicit
+  n_C_nodes              ((int)alist_data.get_n_CN()                 ),
+  n_branches             ((int)alist_data.get_n_branches()           ),
+  enable_syndrome        (enable_syndrome                            ),
+  syndrome_depth         (syndrome_depth                             ),
+  init_flag              (true                                       ),
 
-  info_bits_pos          (info_bits_pos                                ),
-  n_variables_per_parity (alist_data.get_n_VN_per_CN()                 ),
-  n_parities_per_variable(alist_data.get_n_CN_per_VN()                 ),
-  transpose              (alist_data.get_branches_transpose()          ),
+  info_bits_pos          (info_bits_pos                              ),
+  n_variables_per_parity (alist_data.get_n_VN_per_CN()               ),
+  n_parities_per_variable(alist_data.get_n_CN_per_VN()               ),
+  transpose              (alist_data.get_branches_transpose()        ),
 
-  Lp_N                   (N,                                          -1), // -1 in order to fail when AZCW
-  C_to_V                 (n_frames, mipp::vector<R>(this->n_branches, 0)),
-  V_to_C                 (n_frames, mipp::vector<R>(this->n_branches, 0))
+  Lp_N                   (N,                                       -1), // -1 in order to fail when AZCW
+  C_to_V                 (n_frames, mipp::vector<R>(this->n_branches)),
+  V_to_C                 (n_frames, mipp::vector<R>(this->n_branches))
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"n_ite\" has to be greater than 0.");

@@ -33,7 +33,6 @@ template <typename R = float>
 class SISO_i : public Module
 {
 private:
-	const int n_dec_waves_siso;
 	const int n_inter_frame_rest_siso;
 
 	mipp::vector<R> Y_N1;
@@ -43,6 +42,7 @@ protected:
 	const int K_siso; /*!< Number of information bits in one frame */
 	const int N_siso; /*!< Size of one frame (= number of bits in one frame) */
 	const int simd_inter_frame_level_siso;
+	const int n_dec_waves_siso;
 
 public:
 	/*!
@@ -57,11 +57,13 @@ public:
 	SISO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	       std::string name = "SISO_i")
 	: Module(n_frames, name),
-	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
 	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
 	  Y_N1(simd_inter_frame_level * N),
 	  Y_N2(simd_inter_frame_level * N),
-	  K_siso(K), N_siso(N), simd_inter_frame_level_siso(simd_inter_frame_level)
+	  K_siso(K),
+	  N_siso(N),
+	  simd_inter_frame_level_siso(simd_inter_frame_level),
+	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
 	{
 		if (K <= 0)
 			throw std::invalid_argument("aff3ct::module::SISO: \"K\" has to be greater than 0.");

@@ -169,6 +169,7 @@ public:
 	inline Reg<T>   sign         ()                                 const { return mipp::sign         <T>(r);             }
 	inline Reg<T>   sign         (const Reg<T> v)                   const { return mipp::sign         <T>(r, v.r);        }
 	inline Reg<T>   neg          (const Reg<T> v)                   const { return mipp::neg          <T>(r, v.r);        }
+	inline Reg<T>   copysign     (const Reg<T> v)                   const { return mipp::copysign     <T>(r, v.r);        }
 	inline Reg<T>   neg          ()                                 const { return mipp::neg          <T>(r);             }
 	inline Reg<T>   abs          ()                                 const { return mipp::abs          <T>(r);             }
 	inline Reg<T>   sqrt         ()                                 const { return mipp::sqrt         <T>(r);             }
@@ -224,6 +225,7 @@ public:
 	inline Reg<T>   sign         ()                                 const { return (T)((T(0) < r) - (r < T(0)));          }
 	inline Reg<T>   sign         (const Reg<T> v)                   const { return sign(Reg<T>(r ^ v.r));                 }
 	inline Reg<T>   neg          (const Reg<T> v)                   const { return v.r >= 0 ? Reg<T>(r) : Reg<T>(-r);     }
+	inline Reg<T>   copysign     (const Reg<T> v)                   const { return this->neg(v);                          }
 	inline Reg<T>   neg          ()                                 const { return -r;                                    }
 	inline Reg<T>   abs          ()                                 const { return std::abs(r);                           }
 	inline Reg<T>   sqrt         ()                                 const { return (T)std::sqrt(r);                       }
@@ -236,7 +238,7 @@ public:
 	inline Reg<T>   fmadd        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r + v2.r;                     }
 	inline Reg<T>   fnmadd       (const Reg<T> v1, const Reg<T> v2) const { return -(r * v1.r + v2.r);                    }
 	inline Reg<T>   fmsub        (const Reg<T> v1, const Reg<T> v2) const { return   r * v1.r - v2.r;                     }
-	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return (m.r) ? v1.r : r;                      }
+	inline Reg<T>   blend        (const Reg<T> v1, const Reg<T> m ) const { return (m.r) ? r : v1.r;                      }
 	inline Reg<T>   rot          ()                                 const { return r;                                     }
 	inline Reg<T>   rotr         ()                                 const { return r;                                     }
 	inline Reg<T>   div2         ()                                 const { return mipp_scop::div2<T>(r);                 }
@@ -248,12 +250,14 @@ public:
 #ifndef MIPP_NO_INTRINSICS
 	template <typename T2> inline Reg<T2> cvt ()               const { return mipp::cvt<T,T2>(r);       }
 	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const { return mipp::pack<T,T2>(r, v.r); }
+	template <typename T2> inline Reg<T2> cast()               const { return Reg<T2>(this->r);         }
 #else
-	template <typename T2> inline Reg<T2> cvt ()               const { return (T2)r; }
+	template <typename T2> inline Reg<T2> cvt ()               const { return (T2)r;                    }
 	template <typename T2> inline Reg<T2> pack(const Reg<T> v) const
 	{
 		throw std::runtime_error("mipp::Reg::pack: non-sense in sequential mode.");
 	}
+	template <typename T2> inline Reg<T2> cast()               const { return Reg<T2>((T2)this->r);     }
 #endif
 
 	inline Reg<T>  operator~  (               )       { return this->notb();                    }
@@ -291,6 +295,12 @@ public:
 	inline Reg<T>  operator<= (      Reg<T>  v) const { return this->cmple (v);                 }
 	inline Reg<T>  operator>  (      Reg<T>  v) const { return this->cmpgt (v);                 }
 	inline Reg<T>  operator>= (      Reg<T>  v) const { return this->cmpge (v);                 }
+
+#ifndef MIPP_NO_INTRINSICS
+	inline const T& operator[](size_t index) const { return *((T*)&this->r + index); }
+#else
+	inline const T& operator[](size_t index) const { return r; }
+#endif
 
 	// ------------------------------------------------------------------------------------------------------ reduction
 #ifndef MIPP_NO_INTRINSICS
@@ -401,6 +411,7 @@ template <typename T> inline Reg<T>   max          (const Reg<T> v1, const Reg<T
 template <typename T> inline Reg<T>   sign         (const Reg<T> v)                                    { return v.sign();             }
 template <typename T> inline Reg<T>   sign         (const Reg<T> v1, const Reg<T> v2)                  { return v1.sign(v2);          }
 template <typename T> inline Reg<T>   neg          (const Reg<T> v1, const Reg<T> v2)                  { return v1.neg(v2);           }
+template <typename T> inline Reg<T>   copysign     (const Reg<T> v1, const Reg<T> v2)                  { return v1.copysign(v2);      }
 template <typename T> inline Reg<T>   neg          (const Reg<T> v)                                    { return v.neg();              }
 template <typename T> inline Reg<T>   abs          (const Reg<T> v)                                    { return v.abs();              }
 template <typename T> inline Reg<T>   sqrt         (const Reg<T> v)                                    { return v.sqrt();             }
@@ -438,4 +449,10 @@ inline Reg<T2> cvt(const Reg_2<T1> v) {
 template <typename T1, typename T2>
 inline Reg<T2> pack(const Reg<T1> v1, const Reg<T1> v2) {
 	return v1.template pack<T2>(v2);
+}
+
+template <typename T1, typename T2>
+inline Reg<T2> cast(const Reg<T1> v)
+{
+	return v.template cast<T2>();
 }

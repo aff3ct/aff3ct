@@ -19,17 +19,17 @@ Decoder_LDPC_BP_layered<B,R>
                           const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name                                  ),
-  cur_frame        (0                                                        ),
-  n_ite            (n_ite                                                    ),
-  n_C_nodes        ((int)alist_data.get_n_CN()                               ),
-  enable_syndrome  (enable_syndrome                                          ),
-  syndrome_depth   (syndrome_depth                                           ),
-  init_flag        (false                                                    ),
-  info_bits_pos    (info_bits_pos                                            ),
-  CN_to_VN         (alist_data.get_CN_to_VN()                                ),
-  var_nodes        (n_frames, mipp::vector<R>(N,                           0)),
-  branches         (n_frames, mipp::vector<R>(alist_data.get_n_branches(), 0))
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name                               ),
+  cur_frame        (0                                                     ),
+  n_ite            (n_ite                                                 ),
+  n_C_nodes        ((int)alist_data.get_n_CN()                            ),
+  enable_syndrome  (enable_syndrome                                       ),
+  syndrome_depth   (syndrome_depth                                        ),
+  init_flag        (true                                                  ),
+  info_bits_pos    (info_bits_pos                                         ),
+  CN_to_VN         (alist_data.get_CN_to_VN()                             ),
+  var_nodes        (n_frames, mipp::vector<R>(N                          )),
+  branches         (n_frames, mipp::vector<R>(alist_data.get_n_branches()))
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"n_ite\" has to be greater than 0.");
