@@ -78,7 +78,7 @@ public:
 		return N;
 	}
 
-		int get_N_code() const
+	int get_N_code() const
 	{
 		return N_code;
 	}
