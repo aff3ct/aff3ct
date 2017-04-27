@@ -58,6 +58,11 @@ public:
 	{
 	}
 
+	int get_N() const
+	{
+		return N;
+	}
+
 	/*!
 	 * \brief Quantizes the data if Q is a fixed-point representation, does nothing else.
 	 *

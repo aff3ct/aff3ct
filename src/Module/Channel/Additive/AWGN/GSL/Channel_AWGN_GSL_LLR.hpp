@@ -16,7 +16,6 @@ template <typename R = float>
 class Channel_AWGN_GSL_LLR : public Channel<R>
 {
 private:
-	const R sigma;
 	gsl_rng *rng;
 
 public:

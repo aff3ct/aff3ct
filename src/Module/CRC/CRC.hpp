@@ -57,6 +57,11 @@ public:
 	{
 	}
 
+	int get_K() const
+	{
+		return this->K;
+	}
+
 	/*!
 	 * \brief Gets the size of the CRC (the number of bits for the CRC signature).
 	 *

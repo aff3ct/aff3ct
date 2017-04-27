@@ -15,7 +15,6 @@ template <typename R = float>
 class Channel_AWGN_MKL_LLR : public Channel<R>
 {
 private:
-	const R sigma;
 	VSLStreamStatePtr stream_state;
 
 public:

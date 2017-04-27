@@ -86,6 +86,16 @@ public:
 	}
 
 	/*!
+	 * \brief Gets the number of information bits in a frame.
+	 *
+	 * \return the number of information bits.
+	 */
+	int get_K() const
+	{
+		return K;
+	}
+
+	/*!
 	 * \brief Gets the frame size.
 	 *
 	 * \return the frame size.
@@ -98,16 +108,6 @@ public:
 	int get_N_mod() const
 	{
 		return N_mod;
-	}
-
-	/*!
-	 * \brief Gets the number of information bits in a frame.
-	 *
-	 * \return the number of information bits.
-	 */
-	int get_K() const
-	{
-		return K;
 	}
 
 	/*!

@@ -68,6 +68,21 @@ public:
 	 */
 	virtual ~Puncturer_i() {}
 
+	int get_K() const
+	{
+		return K;
+	}
+
+	int get_N() const
+	{
+		return N;
+	}
+
+		int get_N_code() const
+	{
+		return N_code;
+	}
+
 	/*!
 	 * \brief Punctures a codeword.
 	 *

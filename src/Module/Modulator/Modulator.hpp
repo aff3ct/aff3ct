@@ -39,6 +39,7 @@ protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	const int N_mod; /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
 	const int N_fil; /*!< Number of transmitted elements after the filtering process */
+	      R   sigma; /*!< Sigma^2, the noise variance */
 
 public:
 	/*!
@@ -50,9 +51,9 @@ public:
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_i(const int N, const int N_mod, const int N_fil, const int n_frames = 1,
+	Modulator_i(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
 	            const std::string name = "Modulator_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil)
+	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
 		if (N <= 0)
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N\" has to be greater than 0.");
@@ -60,6 +61,8 @@ public:
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
 		if (N_fil <= 0)
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
+		if (sigma <= 0)
+			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
@@ -70,8 +73,9 @@ public:
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_i(const int N, const int N_mod, const int n_frames = 1, const std::string name = "Modulator_i")
-	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_mod)
+	Modulator_i(const int N, const int N_mod, const R sigma, const int n_frames = 1,
+	            const std::string name = "Modulator_i")
+	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
 		if (N <= 0)
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N\" has to be greater than 0.");
@@ -79,6 +83,8 @@ public:
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
 		if (N_fil <= 0)
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
+		if (sigma <= 0)
+			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
@@ -88,7 +94,7 @@ public:
 	 * \param n_frames: number of frames to process in the Modulator.
 	 * \param name:     Modulator's name.
 	 */
-	Modulator_i(const int N, const int n_frames = 1, const std::string name = "Modulator_i")
+	Modulator_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Modulator_i")
 	: Module(n_frames, name), N(N), N_mod(N), N_fil(N)
 	{
 		if (N <= 0)
@@ -97,6 +103,8 @@ public:
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
 		if (N_fil <= 0)
 			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
+		if (sigma <= 0)
+			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
@@ -104,6 +112,33 @@ public:
 	 */
 	virtual ~Modulator_i()
 	{
+	}
+
+	int get_N() const
+	{
+		return this->N;
+	}
+
+	int get_N_mod() const
+	{
+		return this->N_mod;
+	}
+
+	int get_N_fil() const
+	{
+		return this->N_fil;
+	}
+
+	R get_sigma() const
+	{
+		return this->sigma;
+	}
+
+	virtual void set_sigma(const R sigma)
+	{
+		if (sigma <= 0)
+			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
+		this->sigma = sigma;
 	}
 
 	/*!

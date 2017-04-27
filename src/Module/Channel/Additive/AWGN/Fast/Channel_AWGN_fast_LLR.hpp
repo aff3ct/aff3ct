@@ -16,7 +16,6 @@ template <typename R = float>
 class Channel_AWGN_fast_LLR : public Channel<R>
 {
 private:
-	const R                  sigma;
 	tools::PRNG_MT19937      mt19937;      // Mersenne Twister 19937 (scalar)
 	tools::PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
 

@@ -33,9 +33,9 @@ Modulator_CPM<B,R,Q,MAX>
 : Modulator<B,R,Q>(N,
                    Modulator_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, sampling_factor),
                    Modulator_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
+                   sigma,
                    n_frames,
                    name),
-  sigma     (sigma                              ),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_std,
              cpm_L,
@@ -79,6 +79,15 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::~Modulator_CPM()
 {
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modulator_CPM<B,R,Q,MAX>
+::set_sigma(const R sigma)
+{
+	Modulator<B,R,Q>::set_sigma(sigma);
+	if (!no_sig2) this->generate_projection();
+
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -245,7 +254,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	R factor = (R)1;
 
 	if (!no_sig2)
-		factor = (R)1 / (sigma * sigma);
+		factor = (R)1 / (this->sigma * this->sigma);
 
 	if (cpm.filters_type == "TOTAL")
 	{

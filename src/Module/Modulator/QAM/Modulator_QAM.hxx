@@ -18,11 +18,11 @@ Modulator_QAM<B,R,Q,MAX>
                 const std::string name)
 : Modulator<B,R,Q>(N, 
                    (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
+                   sigma,
                    n_frames,
                    name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
-  sigma          (sigma),
   sqrt_es        ((R)std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),
   disable_sig2   (disable_sig2),
   constellation  (nbr_symbols)

@@ -63,6 +63,16 @@ public:
 	{
 	}
 
+	int get_K() const
+	{
+		return this->K;
+	}
+
+	int get_N() const
+	{
+		return this->N;
+	}
+
 	/*!
 	 * \brief Encodes a vector of information bits (a message).
 	 *
@@ -98,7 +108,6 @@ public:
 	 * \return the number of tail bits.
 	 */
 	virtual int tail_length() const { return 0; }
-	virtual int get_N() const { return N; }
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N)

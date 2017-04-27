@@ -33,7 +33,8 @@ template <typename R = float>
 class Channel_i : public Module
 {
 protected:
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
+	const int N;     /*!< Size of one frame (= number of bits in one frame) */
+	      R   sigma; /*!< Sigma^2, the noise variance */
 
 public:
 	/*!
@@ -43,11 +44,13 @@ public:
 	 * \param n_frames: number of frames to process in the Channel.
 	 * \param name:     Channel's name.
 	 */
-	Channel_i(const int N, const int n_frames = 1, const std::string name = "Channel_i")
-	: Module(n_frames, name), N(N)
+	Channel_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Channel_i")
+	: Module(n_frames, name), N(N), sigma(sigma)
 	{
 		if (N <= 0)
 			throw std::invalid_argument("aff3ct::module::Channel: \"N\" has to be greater than 0.");
+		if (sigma <= 0)
+			throw std::invalid_argument("aff3ct::module::Channel: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
@@ -55,6 +58,23 @@ public:
 	 */
 	virtual ~Channel_i()
 	{
+	}
+
+	int get_N() const
+	{
+		return this->N;
+	}
+
+	R get_sigma() const
+	{
+		return this->sigma;
+	}
+
+	virtual void set_sigma(const R sigma)
+	{
+		if (sigma <= 0)
+			throw std::invalid_argument("aff3ct::module::Channel: \"sigma\" has to be greater than 0.");
+		this->sigma = sigma;
 	}
 
 	/*!

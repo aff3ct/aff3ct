@@ -57,6 +57,11 @@ public:
 	{
 	}
 
+	virtual int get_K() const
+	{
+		return K;
+	}
+
 	/*!
 	 * \brief Fulfills a vector with bits.
 	 *
@@ -75,11 +80,6 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_generate(U_K + f * this->K);
-	}
-
-	virtual int get_K() const
-	{
-		return K;
 	}
 
 protected:

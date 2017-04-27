@@ -12,12 +12,8 @@ using namespace aff3ct::tools;
 template <typename R>
 Channel_AWGN_MKL_LLR<R>
 ::Channel_AWGN_MKL_LLR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)
-: Channel<R>(N, n_frames, name),
-  sigma(sigma)
+: Channel<R>(N, sigma, n_frames, name)
 {
-	if (sigma == (R)0)
-		throw std::domain_error("aff3ct::module::Channel_AWGN_MKL_LLR: \"sigma\" can't be equal to 0.");
-
 	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
 	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
 
@@ -53,14 +49,14 @@ void Channel_AWGN_MKL_LLR<float>
 	              this->N * this->n_frames,
 	              Y_N,
 	              0.0,
-	              sigma);
+	              this->sigma);
 	/*
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
 	              stream_state,
 	              this->N * this->n_frames,
 	              Y_N,
 	              0.0,
-	              sigma);
+	              this->sigma);
 	*/
 
 	for (auto i = 0; i < this->N * this->n_frames; i++)
@@ -82,14 +78,14 @@ void Channel_AWGN_MKL_LLR<double>
 	              this->N * this->n_frames,
 	              Y_N,
 	              0.0,
-	              sigma);
+	              this->sigma);
 	/*
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
 	              stream_state,
 	              this->N * this->n_frames,
 	              Y_N,
 	              0.0,
-	              sigma);
+	              this->sigma);
 	*/
 
 	for (auto i = 0; i < this->N * this->n_frames; i++)

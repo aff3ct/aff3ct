@@ -17,7 +17,6 @@ class Modulator_PAM : public Modulator<B,R,Q>
 private:
 	const int bits_per_symbol;
 	const int nbr_symbols;
-	const R sigma;
 	const R sqrt_es;
 	const bool disable_sig2;
 	mipp::vector<R> constellation;

@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_user<R>
 ::Channel_user(const int N, const std::string filename, const int n_frames, const std::string name)
-: Channel<R>(N, n_frames, name), noise(), noise_counter(0)
+: Channel<R>(N, (R)1, n_frames, name), noise(), noise_counter(0)
 {
 	if (filename.empty())
 		throw std::invalid_argument("aff3ct::module::Channel_user: path to the file should not be empty.");

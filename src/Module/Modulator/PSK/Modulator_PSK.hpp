@@ -18,7 +18,6 @@ class Modulator_PSK : public Modulator<B,R,Q>
 private:
 	const int bits_per_symbol;
 	const int nbr_symbols;
-	const R sigma;
 	const bool disable_sig2;
 	mipp::vector<std::complex<R>> constellation;
 

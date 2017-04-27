@@ -5,7 +5,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_NO<R>
 ::Channel_NO(const int N, const int n_frames, const std::string name)
-: Channel<R>(N, n_frames, name)
+: Channel<R>(N, (R)1, n_frames, name)
 {
 }
 

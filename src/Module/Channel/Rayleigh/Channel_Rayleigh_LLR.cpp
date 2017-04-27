@@ -9,17 +9,13 @@ template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N, const R& sigma, const bool complex, const int seed, const int n_frames,
                        const std::string name)
-: Channel<R>(N, n_frames, name.c_str()),
-  sigma(sigma),
+: Channel<R>(N, sigma, n_frames, name.c_str()),
   complex(complex),
   rd(),
   rd_engine(this->rd()),
-  normal_dist_n(0, sigma),
+  normal_dist_n(0, this->sigma),
   normal_dist_h(0, (R)1 / (R)std::sqrt((R)2))
 {
-	if (sigma == (R)0)
-		throw std::domain_error("aff3ct::module::Channel_Rayleigh_LLR: \"sigma\" can't be equal to 0.");
-
 	if (complex && N % 2)
 		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"N\" has to be divisible by 2.");
 
@@ -30,6 +26,14 @@ template <typename R>
 Channel_Rayleigh_LLR<R>
 ::~Channel_Rayleigh_LLR()
 {
+}
+
+template <typename R>
+void Channel_Rayleigh_LLR<R>
+::set_sigma(const R sigma)
+{
+	Channel<R>::set_sigma(sigma);
+	normal_dist_n = std::normal_distribution<R>(0, this->sigma);
 }
 
 template <typename R>

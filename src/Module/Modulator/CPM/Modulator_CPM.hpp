@@ -28,7 +28,6 @@ class Modulator_CPM : public Modulator<B,R,Q>
 
 protected:
 	// inputs:
-	const R                       sigma;      // sigma^2 = noise variance
 	const bool                    no_sig2;    // no computation of sigma^2
 
 	// modulation data:
@@ -58,6 +57,8 @@ public:
 	              int  n_frames = 1,
 	              const std::string name = "Modulator_CPM");
 	virtual ~Modulator_CPM();
+
+	void set_sigma(const R sigma);
 
 	static int size_mod(const int N, const int bps, const int L, const int ups)
 	{

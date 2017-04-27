@@ -9,14 +9,10 @@ using namespace aff3ct::tools;
 template <typename R>
 Channel_AWGN_fast_LLR<R>
 ::Channel_AWGN_fast_LLR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)
-: Channel<R>(N, n_frames, name),
-  sigma(sigma),
+: Channel<R>(N, sigma, n_frames, name),
   mt19937(seed),
   mt19937_simd()
 {
-	if (sigma == (R)0)
-		throw std::domain_error("aff3ct::module::Channel_AWGN_fast_LLR: \"sigma\" can't be equal to 0.");
-
 	mipp::vector<int> seeds(mipp::nElReg<int>());
 	for (auto i = 0; i < mipp::nElReg<int>(); i++)
 		seeds[i] = mt19937.rand();
@@ -87,7 +83,7 @@ void Channel_AWGN_fast_LLR<R>
 		const auto u1 = get_random_simd();
 		const auto u2 = get_random_simd();
 
-		const auto radius = mipp::sqrt(mipp::log(u1) * (R)-2.0) * sigma;
+		const auto radius = mipp::sqrt(mipp::log(u1) * (R)-2.0) * this->sigma;
 		const auto theta  = u2 * twopi;
 
 		mipp::Reg<R> sintheta, costheta;
@@ -108,7 +104,7 @@ void Channel_AWGN_fast_LLR<R>
 		const auto u1 = get_random();
 		const auto u2 = get_random();
 
-		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * sigma;
+		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * this->sigma;
 		const auto theta  = u2 * twopi;
 
 		const auto sintheta = std::sin(theta);
@@ -124,7 +120,7 @@ void Channel_AWGN_fast_LLR<R>
 		const auto u1 = get_random();
 		const auto u2 = get_random();
 
-		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * sigma;
+		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * this->sigma;
 		const auto theta  = twopi * u2;
 
 		const auto sintheta = std::sin(theta);

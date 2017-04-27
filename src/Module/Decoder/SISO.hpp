@@ -80,6 +80,31 @@ public:
 	 */
 	virtual ~SISO_i() {};
 
+	int get_K() const
+	{
+		return this->K_siso;
+	}
+
+	int get_N() const
+	{
+		return this->N_siso;
+	}
+
+	/*!
+	 * \brief Gets the number of frames absorbed by the SIMD instructions.
+	 *
+	 * \return the number of frames absorbed by the SIMD instructions.
+	 */
+	int get_simd_inter_frame_level() const
+	{
+		return this->simd_inter_frame_level_siso;
+	}
+
+	int get_n_dec_waves() const
+	{
+		return this->n_dec_waves_siso;
+	}
+
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
 	 *        used otherwise.
@@ -176,16 +201,6 @@ public:
 	virtual int tail_length() const
 	{
 		return 0;
-	}
-
-	/*!
-	 * \brief Gets the number of frames absorbed by the SIMD instructions.
-	 *
-	 * \return the number of frames absorbed by the SIMD instructions.
-	 */
-	int get_simd_inter_frame_level() const
-	{
-		return this->simd_inter_frame_level_siso;
 	}
 
 protected:

@@ -58,6 +58,11 @@ public:
 	{
 	}
 
+	int get_size() const
+	{
+		return this->size;
+	}
+
 	/*!
 	 * \brief Applies the coset approach on data using the reference.
 	 *

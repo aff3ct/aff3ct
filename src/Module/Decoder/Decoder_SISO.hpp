@@ -56,9 +56,29 @@ public:
 		return SISO<R>::n_frames;
 	}
 
+	int get_K() const
+	{
+		return SISO<R>::K_siso;
+	}
+
+	int get_N() const
+	{
+		return SISO<R>::N_siso;
+	}
+
+	/*!
+	 * \brief Gets the number of frames absorbed by the SIMD instructions.
+	 *
+	 * \return the number of frames absorbed by the SIMD instructions.
+	 */
 	int get_simd_inter_frame_level() const
 	{
 		return SISO<R>::simd_inter_frame_level_siso;
+	}
+
+	int get_n_dec_waves() const
+	{
+		return SISO<R>::n_dec_waves;
 	}
 };
 }

@@ -15,12 +15,14 @@ class Modulator_BPSK : public Modulator<B,R,Q>
 {
 private:
 	const bool disable_sig2;
-	const R two_on_square_sigma;
+	R two_on_square_sigma;
 
 public:
 	Modulator_BPSK(const int N, const R sigma, const bool disable_sig2 = false, const int n_frames = 1,
 	               const std::string name = "Modulator_BPSK");
 	virtual ~Modulator_BPSK();
+
+	void set_sigma(const R sigma);
 
 	void   modulate           (const B *X_N1,                              R *X_N2); using Modulator<B,R,Q>::modulate;
 	void     filter           (const R *Y_N1,                              R *Y_N2); using Modulator<B,R,Q>::filter;
@@ -38,13 +40,6 @@ public:
 	{
 		return Modulator<B,R,Q>::get_buffer_size_after_filtering(N, 1, 0, 1, false);
 	}
-
-	// void set_sigma(const R sigma)
-	// {
-	// 	this->sigma = sigma;
-	// 	this->two_on_square_sigma = (R)2.0 / (sigma * sigma);
-	// }
-
 };
 }
 }

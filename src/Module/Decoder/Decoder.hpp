@@ -90,6 +90,31 @@ public:
 	{
 	}
 
+	int get_K() const
+	{
+		return this->K;
+	}
+
+	int get_N() const
+	{
+		return this->N;
+	}
+
+	/*!
+	 * \brief Gets the number of frames absorbed by the SIMD instructions.
+	 *
+	 * \return the number of frames absorbed by the SIMD instructions.
+	 */
+	int get_simd_inter_frame_level() const
+	{
+		return this->simd_inter_frame_level;
+	}
+
+	int get_n_dec_waves() const
+	{
+		return this->n_dec_waves;
+	}
+
 	/*!
 	 * \brief Decodes the noisy frame.
 	 *
@@ -169,19 +194,6 @@ public:
 		return this->d_store_total;
 	}
 
-	/*!
-	 * \brief Gets the number of frames absorbed by the SIMD instructions.
-	 *
-	 * \return the number of frames absorbed by the SIMD instructions.
-	 */
-	int get_simd_inter_frame_level() const
-	{
-		return this->simd_inter_frame_level;
-	}
-	int get_N()
-	{
-		return this->N;
-	}
 protected:
 	virtual void _hard_decode(const R *Y_N, B *V_K)
 	{
