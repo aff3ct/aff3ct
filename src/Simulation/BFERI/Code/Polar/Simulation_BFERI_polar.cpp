@@ -19,7 +19,7 @@ template <typename B, typename R, typename Q>
 Simulation_BFERI_polar<B,R,Q>
 ::Simulation_BFERI_polar(const parameters& params)
 : Simulation_BFERI<B,R,Q>(params),
-  frozen_bits((int)std::exp2(this->params.code.m)),
+  frozen_bits(this->params.code.N_code),
   fb_generator(nullptr),
   decoder_siso(params.simulation.n_threads, nullptr)
 {
