@@ -30,24 +30,20 @@ public:
 
 private:
 	SC_Interleaver<T> &interleaver;
-	mipp::vector<char     > natural_vec_1, interleaved_vec_1;
-	mipp::vector<short    > natural_vec_2, interleaved_vec_2;
-	mipp::vector<int      > natural_vec_4, interleaved_vec_4;
-	mipp::vector<long long> natural_vec_8, interleaved_vec_8;
+	mipp::vector<char     > vec_1;
+	mipp::vector<short    > vec_2;
+	mipp::vector<int      > vec_4;
+	mipp::vector<long long> vec_8;
 
 public:
 	SC_Interleaver_module_interleaver(SC_Interleaver<T> &interleaver,
 	                                  const sc_core::sc_module_name name = "SC_Interleaver_module_interleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  natural_vec_1    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_1(interleaver.pi.size() * interleaver.n_frames),
-	  natural_vec_2    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_2(interleaver.pi.size() * interleaver.n_frames),
-	  natural_vec_4    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_4(interleaver.pi.size() * interleaver.n_frames),
-	  natural_vec_8    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_8(interleaver.pi.size() * interleaver.n_frames)
+	  vec_1(interleaver.size() * interleaver.n_frames),
+	  vec_2(interleaver.size() * interleaver.n_frames),
+	  vec_4(interleaver.size() * interleaver.n_frames),
+	  vec_8(interleaver.size() * interleaver.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_interleaver::b_transport);
 	}
@@ -59,12 +55,12 @@ private:
 
 		switch (size_of_data)
 		{
-			case 1: _b_transport<char     >(trans, t, natural_vec_1, interleaved_vec_1); break;
-			case 2: _b_transport<short    >(trans, t, natural_vec_2, interleaved_vec_2); break;
-			case 4: _b_transport<int      >(trans, t, natural_vec_4, interleaved_vec_4); break;
-			case 8: _b_transport<long long>(trans, t, natural_vec_8, interleaved_vec_8); break;
+			case 1: _b_transport<char     >(trans, t, vec_1); break;
+			case 2: _b_transport<short    >(trans, t, vec_2); break;
+			case 4: _b_transport<int      >(trans, t, vec_4); break;
+			case 8: _b_transport<long long>(trans, t, vec_8); break;
 			default:
-				std::cerr << "(EE) Unrecognized type of data, exiting." << std::endl; std::exit(-1);
+				throw std::runtime_error("aff3ct::module::Interleaver: TLM unrecognized type of data.");
 				break;
 		}
 	}
@@ -72,15 +68,14 @@ private:
 	template <typename D>
 	void _b_transport(tlm::tlm_generic_payload& trans, 
 	                  sc_core::sc_time& t, 
-	                  mipp::vector<D> &natural_vec, 
 	                  mipp::vector<D> &interleaved_vec)
 	{
-		assert((trans.get_data_length() / sizeof(D)) == natural_vec.size());
+		if (interleaver.size() * interleaver.n_frames != (trans.get_data_length() / sizeof(D)))
+			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
-		const D* buffer_in = (D*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + natural_vec.size(), natural_vec.begin());
+		const auto natural_vec = (D*)trans.get_data_ptr();
 
-		interleaver.interleave(natural_vec, interleaved_vec);
+		interleaver.interleave(natural_vec, interleaved_vec.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)interleaved_vec.data());
@@ -102,24 +97,20 @@ public:
 
 private:
 	SC_Interleaver<T> &interleaver;
-	mipp::vector<char     > natural_vec_1, interleaved_vec_1;
-	mipp::vector<short    > natural_vec_2, interleaved_vec_2;
-	mipp::vector<int      > natural_vec_4, interleaved_vec_4;
-	mipp::vector<long long> natural_vec_8, interleaved_vec_8;
+	mipp::vector<char     > vec_1;
+	mipp::vector<short    > vec_2;
+	mipp::vector<int      > vec_4;
+	mipp::vector<long long> vec_8;
 
 public:
 	SC_Interleaver_module_deinterleaver(SC_Interleaver<T> &interleaver, 
-	                                   const sc_core::sc_module_name name = "SC_Interleaver_module_deinterleaver")
+	                                    const sc_core::sc_module_name name = "SC_Interleaver_module_deinterleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  natural_vec_1    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_1(interleaver.pi.size() * interleaver.n_frames),
-	  natural_vec_2    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_2(interleaver.pi.size() * interleaver.n_frames),
-	  natural_vec_4    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_4(interleaver.pi.size() * interleaver.n_frames),
-	  natural_vec_8    (interleaver.pi.size() * interleaver.n_frames),
-	  interleaved_vec_8(interleaver.pi.size() * interleaver.n_frames)
+	  vec_1(interleaver.pi.size() * interleaver.n_frames),
+	  vec_2(interleaver.pi.size() * interleaver.n_frames),
+	  vec_4(interleaver.pi.size() * interleaver.n_frames),
+	  vec_8(interleaver.pi.size() * interleaver.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_deinterleaver::b_transport);
 	}
@@ -130,12 +121,12 @@ private:
 		int size_of_data = trans.get_data_length() / (interleaver.pi.size() * interleaver.n_frames);
 		switch (size_of_data)
 		{
-			case 1: _b_transport<char     >(trans, t, interleaved_vec_1, natural_vec_1); break;
-			case 2: _b_transport<short    >(trans, t, interleaved_vec_2, natural_vec_2); break;
-			case 4: _b_transport<int      >(trans, t, interleaved_vec_4, natural_vec_4); break;
-			case 8: _b_transport<long long>(trans, t, interleaved_vec_8, natural_vec_8); break;
+			case 1: _b_transport<char     >(trans, t, vec_1); break;
+			case 2: _b_transport<short    >(trans, t, vec_2); break;
+			case 4: _b_transport<int      >(trans, t, vec_4); break;
+			case 8: _b_transport<long long>(trans, t, vec_8); break;
 			default:
-				std::cerr << "(EE) Unrecognized type of data, exiting." << std::endl; std::exit(-1);
+				throw std::runtime_error("aff3ct::module::Interleaver: TLM unrecognized type of data.");
 				break;
 		}
 	}
@@ -143,15 +134,14 @@ private:
 	template <typename D>
 	void _b_transport(tlm::tlm_generic_payload& trans, 
 	                  sc_core::sc_time& t, 
-	                  mipp::vector<D> &interleaved_vec, 
 	                  mipp::vector<D> &natural_vec)
 	{
-		assert((trans.get_data_length() / sizeof(D)) == interleaved_vec.size());
+		if (interleaver.size() * interleaver.n_frames != (trans.get_data_length() / sizeof(D)))
+			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
-		const D* buffer_in = (D*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + interleaved_vec.size(), interleaved_vec.begin());
+		const auto interleaved_vec = (D*)trans.get_data_ptr();
 
-		interleaver.deinterleave(interleaved_vec, natural_vec);
+		interleaver.deinterleave(interleaved_vec, natural_vec.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)natural_vec.data());

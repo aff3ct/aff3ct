@@ -30,14 +30,12 @@ public:
 
 private:
 	SC_Encoder<B> &encoder;
-	mipp::vector<B> U_K;
 	mipp::vector<B> X_N;
 
 public:
 	SC_Encoder_module(SC_Encoder<B> &encoder, const sc_core::sc_module_name name = "SC_Encoder_module")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  encoder(encoder),
-	  U_K(encoder.K * encoder.n_frames),
 	  X_N(encoder.N * encoder.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Encoder_module::b_transport);
@@ -46,12 +44,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == (int)U_K.size());
+		if (encoder.K * encoder.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::Encoder: TLM input data size is invalid.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + U_K.size(), U_K.begin());
+		const auto U_K = (B*)trans.get_data_ptr();
 
-		encoder.encode(U_K, X_N);
+		encoder.encode(U_K, X_N.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)X_N.data());

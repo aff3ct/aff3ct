@@ -30,34 +30,26 @@ public:
 
 private:
 	SC_Decoder<B,R> &decoder;
-	mipp::vector<R> Y_N;
 	mipp::vector<B> V_K;
 
 public:
 	SC_Decoder_module(SC_Decoder<B,R> &decoder, const sc_core::sc_module_name name = "SC_Decoder_module")
 	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  decoder(decoder),
-	  Y_N(decoder.N * decoder.n_frames),
 	  V_K(decoder.K * decoder.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Decoder_module::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)Y_N.size() != decoder.N * decoder.n_frames) Y_N.resize(decoder.N * decoder.n_frames);
-		if ((int)V_K.size() != decoder.K * decoder.n_frames) V_K.resize(decoder.K * decoder.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == Y_N.size());
+		if (decoder.N * decoder.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Decoder: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N.size(), Y_N.begin());
+		const auto Y_N = (R*)trans.get_data_ptr();
 
-		decoder.hard_decode(Y_N, V_K);
+		decoder.hard_decode(Y_N, V_K.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)V_K.data());

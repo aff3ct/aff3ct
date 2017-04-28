@@ -30,15 +30,14 @@ public:
 
 private:
 	SC_Puncturer<B,Q> &puncturer;
-	mipp::vector<B> X_N1, X_N2;
+	mipp::vector<B> X_N2;
 
 public:
 	SC_Puncturer_module_puncturer(SC_Puncturer<B,Q> &puncturer, 
 	                              const sc_core::sc_module_name name = "SC_Puncturer_module_puncturer")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  puncturer(puncturer),
-	  X_N1(puncturer.N_code * puncturer.n_frames),
-	  X_N2(puncturer.N      * puncturer.n_frames)
+	  X_N2(puncturer.N * puncturer.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Puncturer_module_puncturer::b_transport);
 	}
@@ -46,12 +45,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == X_N1.size());
+		if (puncturer.N_code * puncturer.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::Puncturer: TLM input data size is invalid.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + X_N1.size(), X_N1.begin());
+		const auto X_N1 = (B*)trans.get_data_ptr();
 
-		puncturer.puncture(X_N1, X_N2);
+		puncturer.puncture(X_N1, X_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)X_N2.data());
@@ -73,14 +72,13 @@ public:
 
 private:
 	SC_Puncturer<B,Q> &puncturer;
-	mipp::vector<Q> Y_N1, Y_N2;
+	mipp::vector<Q> Y_N2;
 
 public:
 	SC_Puncturer_module_depuncturer(SC_Puncturer<B,Q> &puncturer,
 	                                const sc_core::sc_module_name name = "SC_Puncturer_module_depuncturer")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  puncturer(puncturer),
-	  Y_N1(puncturer.N      * puncturer.n_frames),
 	  Y_N2(puncturer.N_code * puncturer.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Puncturer_module_depuncturer::b_transport);
@@ -89,12 +87,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == (int)Y_N1.size());
+		if (puncturer.N * puncturer.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Puncturer: TLM input data size is invalid.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		const auto Y_N1 = (Q*)trans.get_data_ptr();
 
-		puncturer.depuncture(Y_N1, Y_N2);
+		puncturer.depuncture(Y_N1, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());

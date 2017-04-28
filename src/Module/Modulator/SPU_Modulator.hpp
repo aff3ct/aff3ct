@@ -26,15 +26,16 @@ private:
 	static starpu_codelet spu_cl_tdemodulate_wg;
 
 public:
-	SPU_Modulator(const int N, const int N_mod, const int N_fil, const int n_frames = 1,
+	SPU_Modulator(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
 	              const std::string name = "SPU_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, N_fil, n_frames, name) {}
+	: Modulator_i<B,R,Q>(N, N_mod, N_fil, sigma, n_frames, name) {}
 
-	SPU_Modulator(const int N, const int N_mod, const int n_frames = 1, const std::string name = "SPU_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, n_frames, name) {}
+	SPU_Modulator(const int N, const int N_mod, const R sigma, const int n_frames = 1,
+	              const std::string name = "SPU_Modulator")
+	: Modulator_i<B,R,Q>(N, N_mod, sigma, n_frames, name) {}
 
-	SPU_Modulator(const int N, const int n_frames = 1, const std::string name = "SPU_Modulator")
-	: Modulator_i<B,R,Q>(N, n_frames, name) {}
+	SPU_Modulator(const int N, const R sigma, const int n_frames = 1, const std::string name = "SPU_Modulator")
+	: Modulator_i<B,R,Q>(N, sigma, n_frames, name) {}
 
 	virtual ~SPU_Modulator() {}
 

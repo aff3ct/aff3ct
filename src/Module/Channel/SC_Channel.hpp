@@ -30,14 +30,12 @@ public:
 
 private:
 	SC_Channel<R> &channel;
-	mipp::vector<R> X_N;
 	mipp::vector<R> Y_N;
 
 public:
 	SC_Channel_module(SC_Channel<R> &channel, const sc_core::sc_module_name name = "SC_Channel_module")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  channel(channel),
-	  X_N(channel.N * channel.n_frames),
 	  Y_N(channel.N * channel.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Channel_module::b_transport);
@@ -46,12 +44,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == X_N.size());
+		if (channel.N * channel.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Channel: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + X_N.size(), X_N.begin());
+		const auto X_N = (R*)trans.get_data_ptr();
 
-		channel.add_noise(X_N, Y_N);
+		channel.add_noise(X_N, Y_N.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N.data());
@@ -83,7 +81,6 @@ public:
 	                     const sc_core::sc_module_name name = "SC_Channel_module_wg")
 	: sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2"),
 	  channel(channel),
-	  X_N(channel.N * channel.n_frames),
 	  Y_N(channel.N * channel.n_frames),
 	  H_N(channel.N * channel.n_frames)
 	{
@@ -93,12 +90,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == X_N.size());
+		if (channel.N * channel.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Channel: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + X_N.size(), X_N.begin());
+		const auto X_N = (R*)trans.get_data_ptr();
 
-		channel.add_noise(X_N, Y_N, H_N);
+		channel.add_noise(X_N, Y_N.data(), H_N.data());
 
 		tlm::tlm_generic_payload payload1;
 		payload1.set_data_ptr((unsigned char*)H_N.data());
@@ -126,8 +123,8 @@ public:
 	SC_Channel_module_wg<R> *module_wg;
 
 public:
-	SC_Channel(const int N, const int n_frames = 1, const std::string name = "SC_Channel")
-	: Channel_i<R>(N, n_frames, name), module(nullptr), module_wg(nullptr) {}
+	SC_Channel(const int N, const R sigma, const int n_frames = 1, const std::string name = "SC_Channel")
+	: Channel_i<R>(N, sigma, n_frames, name), module(nullptr), module_wg(nullptr) {}
 
 	virtual ~SC_Channel()
 	{

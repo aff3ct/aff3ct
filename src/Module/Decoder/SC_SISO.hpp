@@ -30,33 +30,26 @@ public:
 
 private:
 	SC_SISO<R> &siso;
-	mipp::vector<R> Y_N1, Y_N2;
+	mipp::vector<R> Y_N2;
 
 public:
 	SC_SISO_module(SC_SISO<R> &siso, const sc_core::sc_module_name name = "SC_SISO_module")
 	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  siso(siso),
-	  Y_N1(siso.N_siso * siso.n_frames),
 	  Y_N2(siso.N_siso * siso.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_SISO_module::b_transport);
 	}
 
-	void resize_buffers()
-	{
-		if ((int)Y_N1.size() != siso.N_siso * siso.n_frames) Y_N1.resize(siso.N_siso * siso.n_frames);
-		if ((int)Y_N2.size() != siso.N_siso * siso.n_frames) Y_N2.resize(siso.N_siso * siso.n_frames);
-	}
-
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == Y_N1.size());
+		if (siso.N_siso * siso.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::SISO: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		const auto Y_N1 = (R*)trans.get_data_ptr();
 
-		siso.soft_decode(Y_N1, Y_N2);
+		siso.soft_decode(Y_N1, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());

@@ -22,8 +22,8 @@ private:
 	static starpu_codelet spu_cl_add_noise_wg;
 
 public:
-	SPU_Channel(const int N, const int n_frames = 1, const std::string name = "SPU_Channel")
-	: Channel_i<R>(N, n_frames, name) {}
+	SPU_Channel(const int N, const R sigma, const int n_frames = 1, const std::string name = "SPU_Channel")
+	: Channel_i<R>(N, sigma, n_frames, name) {}
 
 	virtual ~SPU_Channel()
 	{

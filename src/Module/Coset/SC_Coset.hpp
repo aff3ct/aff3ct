@@ -31,16 +31,14 @@ public:
 
 private:
 	SC_Coset<B,D> &coset;
-	mipp::vector<B> ref;
-	mipp::vector<D> in_data;
+	B *ref;
 	mipp::vector<D> out_data;
 
 public:
 	SC_Coset_module(SC_Coset<B,D> &coset, const sc_core::sc_module_name name = "SC_Coset_module")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  coset   (coset),
-	  ref     (coset.size * coset.n_frames),
-	  in_data (coset.size * coset.n_frames),
+	  ref     (nullptr),
 	  out_data(coset.size * coset.n_frames)
 	{
 		s_in1.register_b_transport(this, &SC_Coset_module::b_transport_ref);
@@ -50,20 +48,23 @@ public:
 private:
 	void b_transport_ref(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == ref.size());
+		if (coset.size * coset.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::Coset: TLM input data size is invalid.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + ref.size(), ref.begin());
+		ref = (B*)trans.get_data_ptr();
 	}
 
 	void b_transport_data(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(D)) == in_data.size());
+		if (ref == nullptr)
+			throw std::runtime_error("aff3ct::module::Coset: TLM \"ref\" pointer can't be NULL.");
 
-		const D* buffer_in = (D*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + in_data.size(), in_data.begin());
+		if (coset.size * coset.n_frames != (int)(trans.get_data_length() / sizeof(D)))
+			throw std::length_error("aff3ct::module::Coset: TLM input data size is invalid.");
 
-		coset.apply(ref, in_data, out_data);
+		const auto in_data = (D*)trans.get_data_ptr();
+
+		coset.apply(ref, in_data, out_data.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)out_data.data());

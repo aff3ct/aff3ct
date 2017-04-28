@@ -30,14 +30,12 @@ public:
 
 private:
 	SC_Quantizer<R,Q> &quantizer;
-	mipp::vector<R> Y_N1;
 	mipp::vector<Q> Y_N2;
 
 public:
 	SC_Quantizer_module(SC_Quantizer<R,Q> &quantizer, const sc_core::sc_module_name name = "SC_Quantizer_module")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  quantizer(quantizer),
-	  Y_N1(quantizer.N * quantizer.n_frames),
 	  Y_N2(quantizer.N * quantizer.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Quantizer_module::b_transport);
@@ -46,12 +44,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == Y_N1.size());
+		if (quantizer.N * quantizer.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Quantizer: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		const auto Y_N1 = (R*)trans.get_data_ptr();
 
-		quantizer.process(Y_N1, Y_N2);
+		quantizer.process(Y_N1, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());

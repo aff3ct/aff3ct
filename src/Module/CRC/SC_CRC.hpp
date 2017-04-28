@@ -30,13 +30,11 @@ public:
 
 private:
 	SC_CRC<B> &crc;
-	mipp::vector<B> U_K;
 
 public:
 	SC_CRC_module(SC_CRC<B> &crc, const sc_core::sc_module_name name = "SC_CRC_module")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
-	  crc(crc),
-	  U_K(crc.K * crc.n_frames)
+	  crc(crc)
 	{
 		s_in.register_b_transport(this, &SC_CRC_module::b_transport);
 	}
@@ -44,16 +42,16 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == (int)U_K.size());
+		if (crc.K * crc.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::CRC: TLM input data size is invalid.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + U_K.size(), U_K.begin());
+		const auto U_K = (B*)trans.get_data_ptr();
 
 		crc.build(U_K);
 
 		tlm::tlm_generic_payload payload;
-		payload.set_data_ptr((unsigned char*)U_K.data());
-		payload.set_data_length(U_K.size() * sizeof(B));
+		payload.set_data_ptr((unsigned char*)U_K);
+		payload.set_data_length(trans.get_data_length());
 
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
 		s_out->b_transport(payload, zero_time);

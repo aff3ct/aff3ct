@@ -30,16 +30,14 @@ public:
 
 private:
 	SC_Monitor<B,R> &monitor;
-	mipp::vector<B> V_K;
-	mipp::vector<B> U_K;
+	B *U_K;
 
 public:
 	SC_Monitor_module(SC_Monitor<B,R> &monitor,
 	                  const sc_core::sc_module_name name = "SC_Monitor_module")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"),
 	  monitor(monitor),
-	  V_K(monitor.K * monitor.n_frames),
-	  U_K(monitor.K * monitor.n_frames)
+	  U_K(nullptr)
 	{
 		s_in1.register_b_transport(this, &SC_Monitor_module::b_transport_source);
 		s_in2.register_b_transport(this, &SC_Monitor_module::b_transport_decoder);
@@ -48,18 +46,21 @@ public:
 private:
 	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == U_K.size());
+		if (monitor.K * monitor.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + U_K.size(), U_K.begin());
+		U_K = (B*)trans.get_data_ptr();
 	}
 
 	void b_transport_decoder(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == V_K.size());
+		if (U_K == nullptr)
+			throw std::runtime_error("aff3ct::module::Monitor: TLM \"U_K\" pointer can't be NULL.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + V_K.size(), V_K.begin());
+		if (monitor.K * monitor.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
+
+		const auto V_K = (B*)trans.get_data_ptr();
 
 		monitor.check_errors(U_K, V_K);
 

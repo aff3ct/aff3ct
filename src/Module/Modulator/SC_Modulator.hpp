@@ -30,7 +30,6 @@ public:
 
 private:
 	SC_Modulator<B,R,Q> &modulator;
-	mipp::vector<B> X_N1;
 	mipp::vector<R> X_N2;
 
 public:
@@ -38,7 +37,6 @@ public:
 	                               const sc_core::sc_module_name name = "SC_Modulator_module_modulator")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  modulator(modulator),
-	  X_N1(modulator.N     * modulator.n_frames),
 	  X_N2(modulator.N_mod * modulator.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_modulator::b_transport);
@@ -47,12 +45,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(B)) == X_N1.size());
+		if (modulator.N * modulator.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		const B* buffer_in = (B*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + X_N1.size(), X_N1.begin());
+		const auto X_N1 = (B*)trans.get_data_ptr();
 
-		modulator.modulate(X_N1, X_N2);
+		modulator.modulate(X_N1, X_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)X_N2.data());
@@ -74,14 +72,13 @@ public:
 
 private:
 	SC_Modulator<B,R,Q> &modulator;
-	mipp::vector<R> Y_N1, Y_N2;
+	mipp::vector<R> Y_N2;
 
 public:
 	SC_Modulator_module_filterer(SC_Modulator<B,R,Q> &modulator, 
 	                              const sc_core::sc_module_name name = "SC_Modulator_module_filterer")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N1(modulator.N_mod * modulator.n_frames),
 	  Y_N2(modulator.N_fil * modulator.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_filterer::b_transport);
@@ -90,12 +87,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == Y_N1.size());
+		if (modulator.N_mod * modulator.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		const auto Y_N1 = (R*)trans.get_data_ptr();
 
-		modulator.filter(Y_N1, Y_N2);
+		modulator.filter(Y_N1, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());
@@ -117,14 +114,13 @@ public:
 
 private:
 	SC_Modulator<B,R,Q> &modulator;
-	mipp::vector<Q> Y_N1, Y_N2;
+	mipp::vector<Q> Y_N2;
 
 public:
 	SC_Modulator_module_demodulator(SC_Modulator<B,R,Q> &modulator, 
 	                                 const sc_core::sc_module_name name = "SC_Modulator_module_demodulator")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N1(modulator.N_fil * modulator.n_frames),
 	  Y_N2(modulator.N     * modulator.n_frames)
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_demodulator::b_transport);
@@ -133,12 +129,12 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == Y_N1.size());
+		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		const auto Y_N1 = (Q*)trans.get_data_ptr();
 
-		modulator.demodulate(Y_N1, Y_N2);
+		modulator.demodulate(Y_N1, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());
@@ -161,17 +157,16 @@ public:
 
 private:
 	SC_Modulator<B,R,Q> &modulator;
-	mipp::vector<Q> Y_N1, Y_N2;
-	mipp::vector<R> H_N;
+	R *H_N;
+	mipp::vector<Q> Y_N2;
 
 public:
 	SC_Modulator_module_demodulator_wg(SC_Modulator<B,R,Q> &modulator,
 	                                   const sc_core::sc_module_name name = "SC_Modulator_module_demodulator_wg")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N1(modulator.N_fil * modulator.n_frames),
-	  Y_N2(modulator.N     * modulator.n_frames),
-	  H_N (modulator.N_fil * modulator.n_frames)
+	  H_N(nullptr),
+	  Y_N2(modulator.N * modulator.n_frames)
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport2);
@@ -180,20 +175,23 @@ public:
 private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == H_N.size());
+		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + H_N.size(), H_N.begin());
+		H_N = (R*)trans.get_data_ptr();
 	}
 
 	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == Y_N1.size());
+		if (H_N == nullptr)
+			throw std::runtime_error("aff3ct::module::Modulator: TLM \"H_N\" pointer can't be NULL.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		modulator.demodulate_with_gains(Y_N1, H_N, Y_N2);
+		const auto Y_N1 = (Q*)trans.get_data_ptr();
+
+		modulator.demodulate_with_gains(Y_N1, H_N, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());
@@ -216,16 +214,16 @@ public:
 
 private:
 	SC_Modulator<B,R,Q> &modulator;
-	mipp::vector<Q> Y_N1, Y_N2, Y_N3;
+	Q *Y_N1;
+	mipp::vector<Q> Y_N3;
 
 public:
 	SC_Modulator_module_tdemodulator(SC_Modulator<B,R,Q> &modulator, 
 	                                 const sc_core::sc_module_name name = "SC_Modulator_module_tdemodulator")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N1(modulator.N_fil * modulator.n_frames),
-	  Y_N2(modulator.N     * modulator.n_frames),
-	  Y_N3(modulator.N     * modulator.n_frames)
+	  Y_N1(nullptr),
+	  Y_N3(modulator.N * modulator.n_frames)
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport2);
@@ -234,14 +232,12 @@ public:
 private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == Y_N1.size());
+		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		Y_N1 = (Q*)trans.get_data_ptr();
 
-		std::fill(Y_N2.begin(), Y_N2.end(), 0);
-		modulator.demodulate(Y_N1, Y_N2, Y_N3);
-		// modulator.demodulate(Y_N1, Y_N3); // optim to avoid the 0 init
+		modulator.demodulate(Y_N1, Y_N3.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N3.data());
@@ -253,12 +249,15 @@ private:
 
 	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == Y_N2.size());
+		if (Y_N1 == nullptr)
+			throw std::runtime_error("aff3ct::module::Modulator: TLM \"Y_N1\" pointer can't be NULL.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N2.size(), Y_N2.begin());
+		if (modulator.N * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		modulator.demodulate(Y_N1, Y_N2, Y_N3);
+		const auto Y_N2 = (Q*)trans.get_data_ptr();
+
+		modulator.demodulate(Y_N1, Y_N2, Y_N3.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N3.data());
@@ -282,18 +281,18 @@ public:
 
 private:
 	SC_Modulator<B,R,Q> &modulator;
-	mipp::vector<Q> Y_N1, Y_N2, Y_N3;
-	mipp::vector<R> H_N;
+	R *H_N;
+	Q *Y_N1;
+	mipp::vector<Q> Y_N3;
 
 public:
 	SC_Modulator_module_tdemodulator_wg(SC_Modulator<B,R,Q> &modulator,
 	                                    const sc_core::sc_module_name name = "SC_Modulator_module_tdemodulator_wg")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_in3("s_in3"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N1(modulator.N_fil * modulator.n_frames),
-	  Y_N2(modulator.N     * modulator.n_frames),
-	  Y_N3(modulator.N     * modulator.n_frames),
-	  H_N (modulator.N_fil * modulator.n_frames)
+	  H_N (nullptr),
+	  Y_N1(nullptr),
+	  Y_N3(modulator.N * modulator.n_frames)
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport2);
@@ -303,22 +302,23 @@ public:
 private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(R)) == H_N.size());
+		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		const R* buffer_in = (R*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + H_N.size(), H_N.begin());
+		H_N = (R*)trans.get_data_ptr();
 	}
 
 	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == Y_N1.size());
+		if (H_N == nullptr)
+			throw std::runtime_error("aff3ct::module::Modulator: TLM \"H_N\" pointer can't be NULL.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N1.size(), Y_N1.begin());
+		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
-		std::fill(Y_N2.begin(), Y_N2.end(), 0);
-		modulator.demodulate_with_gains(Y_N1, H_N, Y_N2, Y_N3);
-		// modulator.demodulate(Y_N1, H_N, Y_N3); // optim to avoid the 0 init
+		Y_N1 = (Q*)trans.get_data_ptr();
+
+		modulator.demodulate_with_gains(Y_N1, H_N, Y_N3.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N3.data());
@@ -330,12 +330,18 @@ private:
 
 	void b_transport3(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		assert((trans.get_data_length() / sizeof(Q)) == Y_N2.size());
+		if (H_N == nullptr)
+			throw std::runtime_error("aff3ct::module::Modulator: TLM \"H_N\" pointer can't be NULL.");
 
-		const Q* buffer_in = (Q*)trans.get_data_ptr();
-		std::copy(buffer_in, buffer_in + Y_N2.size(), Y_N2.begin());
+		if (Y_N1 == nullptr)
+			throw std::runtime_error("aff3ct::module::Modulator: TLM \"Y_N1\" pointer can't be NULL.");
 
-		modulator.demodulate_with_gains(Y_N1, H_N, Y_N2, Y_N3);
+		if (modulator.N * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
+
+		const auto Y_N2 = (Q*)trans.get_data_ptr();
+
+		modulator.demodulate_with_gains(Y_N1, H_N, Y_N2, Y_N3.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N3.data());
@@ -365,19 +371,20 @@ public:
 	SC_Modulator_module_tdemodulator_wg<B,R,Q> *module_tdemod_wg;
 
 public:
-	SC_Modulator(const int N, const int N_mod, const int N_fil, const int n_frames = 1,
+	SC_Modulator(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, N_fil, n_frames, name),
+	: Modulator_i<B,R,Q>(N, N_mod, N_fil, sigma, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_demod_wg(nullptr),
 	  module_tdemod(nullptr), module_tdemod_wg(nullptr) {}
 
-	SC_Modulator(const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, n_frames, name),
+	SC_Modulator(const int N, const int N_mod, const R sigma, const int n_frames = 1,
+	             const std::string name = "SC_Modulator")
+	: Modulator_i<B,R,Q>(N, N_mod, sigma, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_demod_wg(nullptr),
 	  module_tdemod(nullptr), module_tdemod_wg(nullptr) {}
 
-	SC_Modulator(const int N, const int n_frames = 1, const std::string name = "SC_Modulator")
-	: Modulator_i<B,R,Q>(N, n_frames, name),
+	SC_Modulator(const int N, const R sigma, const int n_frames = 1, const std::string name = "SC_Modulator")
+	: Modulator_i<B,R,Q>(N, sigma, n_frames, name),
 	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_demod_wg(nullptr),
 	  module_tdemod(nullptr), module_tdemod_wg(nullptr) {}
 
