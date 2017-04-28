@@ -14,7 +14,10 @@ class CPM_BCJR
 {
 protected:
 	const CPM_parameters<SIN,SOUT>& cpm; // all CPM parameters
-	const int frame_size;                // size of a frame with tail bits
+	const int n_symbols;                 // size of a frame (in symbols) from the channel (with tail bits)
+	const int chn_size;                  // size of a frame (wave form probas) from the channel (with tail bits)
+	const int dec_size;                  // size of a frame (bits proba) from the decoder
+	const int ext_size;                  // size of a frame (bits proba) from the bcjr
 
 	mipp::vector<Q> symb_apriori_prob;
 	mipp::vector<Q> gamma;
