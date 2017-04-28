@@ -56,16 +56,19 @@ inline void BCJR_normalize(signed char *metrics, const int &i, const int &n_stat
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 CPM_BCJR<SIN,SOUT,Q,MAX>
-::CPM_BCJR(const CPM_parameters<SIN,SOUT>& _cpm, const int _frame_size)
-: cpm              (_cpm                                    ),
-  frame_size       (_frame_size                             ),
+::CPM_BCJR(const CPM_parameters<SIN,SOUT>& _cpm, const int _n_symbols)
+: cpm              (_cpm                                   ),
+  n_symbols        (_n_symbols                             ),
+  chn_size         ( n_symbols           * cpm.max_wa_id   ),
+  dec_size         ((n_symbols - cpm.tl) * cpm.n_b_per_s   ),
+  ext_size         ( dec_size                              ),
 
-  symb_apriori_prob(frame_size                 * cpm.m_order),
-  gamma            (frame_size * cpm.max_st_id * cpm.m_order),
-  alpha            (frame_size * cpm.max_st_id              ),
-  beta             (frame_size * cpm.max_st_id              ),
-  proba_msg_symb   (frame_size                 * cpm.m_order),
-  proba_msg_bits   (frame_size * cpm.n_b_per_s* 2           )
+  symb_apriori_prob(n_symbols                 * cpm.m_order),
+  gamma            (n_symbols * cpm.max_st_id * cpm.m_order),
+  alpha            (n_symbols * cpm.max_st_id              ),
+  beta             (n_symbols * cpm.max_st_id              ),
+  proba_msg_symb   (n_symbols                 * cpm.m_order),
+  proba_msg_bits   (n_symbols * cpm.n_b_per_s * 2          )
 {
 }
 
@@ -79,9 +82,13 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, mipp::vector<Q> &Le_N)
 {
-	if (Le_N.size() * 2 > proba_msg_bits.size())
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
-		                        "\"proba_msg_bits.size()\".");
+	if ((int)Lch_N.size() != chn_size)
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Lch_N.size()\" has to be equal to "
+		                        "\"n_symbols\" * \"cpm.max_wa_id\".");
+
+	if ((int)Le_N.size() != ext_size)
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" has to be equal to "
+		                        "(\"n_symbols\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
 
 	this->decode(Lch_N.data(), Le_N.data());
 }
@@ -102,20 +109,20 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, const mipp::vector<Q> &Ldec_N, mipp::vector<Q> &Le_N)
 {
-	if (Ldec_N.size() != (symb_apriori_prob.size()/cpm.m_order - cpm.tl) * cpm.n_b_per_s)
+	if ((int)Lch_N.size() != chn_size)
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Lch_N.size()\" has to be equal to "
+		                        "\"n_symbols\" * \"cpm.max_wa_id\".");
+
+	if ((int)Ldec_N.size() != dec_size)
 		throw std::length_error("aff3ct::module::CPM_BCJR: \"Ldec_N.size()\" has to be equal to "
-		                        "(\"symb_apriori_prob.size()\" / \"cpm.m_order\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
+		                        "(\"n_symbols\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
 
-	if (Le_N.size() * 2 > proba_msg_bits.size())
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal or smaller than "
-		                        "\"proba_msg_bits.size()\".");
-
-	if (Le_N.size() != Ldec_N.size())
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" * 2 has to be equal to \"Ldec_N.size()\".");
+	if ((int)Le_N.size() != ext_size)
+		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" has to be equal to "
+		                        "(\"n_symbols\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
 
 	this->decode(Lch_N.data(), Ldec_N.data(), Le_N.data());
 }
-
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
@@ -154,10 +161,10 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	std::fill(alpha.begin(), alpha.end(), negative_inf<Q>());
 	std::fill(beta .begin(), beta .end(), negative_inf<Q>());
 	alpha[                                 cpm.allowed_states[0]] = 0;
-	beta [(frame_size -1) * cpm.max_st_id +cpm.allowed_states[0]] = 0;
+	beta [(n_symbols -1) * cpm.max_st_id +cpm.allowed_states[0]] = 0;
 
 	// compute gamma
-	for (auto i = 0; i < frame_size; i++)
+	for (auto i = 0; i < n_symbols; i++)
 		for (auto st = 0; st < cpm.n_st; st++)
 			for (auto tr = 0; tr < cpm.m_order; tr++)
 				gamma[(i * cpm.max_st_id + cpm.allowed_states[st]) * cpm.m_order + tr] =
@@ -166,7 +173,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 
 	// compute alpha and beta
-	for (auto i = 1; i < frame_size; i++)
+	for (auto i = 1; i < n_symbols; i++)
 	{
 		for (auto st = 0; st < cpm.n_st; st++)
 		{
@@ -180,15 +187,15 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 			// compute the beta nodes
 			for (auto tr = 0; tr < cpm.m_order; tr++)
-				beta         [(frame_size - (i +1)) * cpm.max_st_id + cpm.allowed_states[st]] =
-				    MAX(beta [(frame_size - (i +1)) * cpm.max_st_id + cpm.allowed_states[st]],
-				        beta [(frame_size - (i +0)) * cpm.max_st_id + cpm.trellis_next_state[cpm.allowed_states[st]*cpm.m_order +tr]] +
-				        gamma[((frame_size-      i) * cpm.max_st_id + cpm.allowed_states[st]) * cpm.m_order + tr]);
+				beta         [(n_symbols - (i +1)) * cpm.max_st_id + cpm.allowed_states[st]] =
+				    MAX(beta [(n_symbols - (i +1)) * cpm.max_st_id + cpm.allowed_states[st]],
+				        beta [(n_symbols - (i +0)) * cpm.max_st_id + cpm.trellis_next_state[cpm.allowed_states[st]*cpm.m_order +tr]] +
+				        gamma[((n_symbols-      i) * cpm.max_st_id + cpm.allowed_states[st]) * cpm.m_order + tr]);
 		}
 
 		// normalize alpha and beta vectors (not impact on the decoding performances)
 		BCJR_normalize<Q,MAX>(&alpha[              (i +0)  * cpm.max_st_id], i, cpm.max_st_id);
-		BCJR_normalize<Q,MAX>(&beta [(frame_size - (i +1)) * cpm.max_st_id], i, cpm.max_st_id);
+		BCJR_normalize<Q,MAX>(&beta [(n_symbols - (i +1)) * cpm.max_st_id], i, cpm.max_st_id);
 	}
 }
 
@@ -198,7 +205,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 {
 	std::fill(proba_msg_symb.begin(), proba_msg_symb.end(), negative_inf<Q>());
 
-	for (auto i = 0; i < frame_size; i++)
+	for (auto i = 0; i < n_symbols; i++)
 		for (auto tr = 0; tr < cpm.m_order; tr++)
 			for (auto st = 0; st < cpm.n_st; st++)
 				proba_msg_symb        [ i * cpm.m_order  + tr] =
@@ -215,7 +222,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 	// initialize proba_msg_bits
 	std::fill(proba_msg_bits.begin(), proba_msg_bits.end(), negative_inf<Q>());
 
-	for (auto i = 0; i < frame_size; i++)
+	for (auto i = 0; i < n_symbols; i++)
 	{
 		for (auto b = 0; b < cpm.n_b_per_s; b++)
 			for (auto tr = 0; tr < cpm.m_order; tr++)
@@ -233,7 +240,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(Q *Le_N)
 {
 	// remove tail bits
-	for (auto i = 0; i < frame_size - cpm.tl; i ++)
+	for (auto i = 0; i < (n_symbols - cpm.tl)*cpm.n_b_per_s; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - proba_msg_bits[i*2 +1];
 }
@@ -243,7 +250,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(const Q *Ldec_N, Q *Le_N)
 {
 	// remove tail bits
-	for (auto i = 0; i < frame_size - cpm.tl; i ++)
+	for (auto i = 0; i < (n_symbols - cpm.tl)*cpm.n_b_per_s; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
 }
