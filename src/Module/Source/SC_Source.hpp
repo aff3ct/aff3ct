@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <systemc>
-#include <cassert>
 #include <tlm>
 #include <tlm_utils/simple_initiator_socket.h>
 

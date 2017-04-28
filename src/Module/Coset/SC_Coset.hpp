@@ -4,7 +4,7 @@
 #ifdef SYSTEMC
 #include <vector>
 #include <string>
-#include <cassert>
+#include <stdexcept>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
