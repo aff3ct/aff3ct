@@ -165,9 +165,9 @@ public:
 	}
 
 	template <typename D>
-	inline void _deinterleave(const D *interleaved_vec, D *natural_vec,
-	                          const bool frame_reordering = false,
-	                          const int  n_frames = -1) const
+	inline void deinterleave(const D *interleaved_vec, D *natural_vec,
+	                         const bool frame_reordering = false,
+	                         const int  n_frames = -1) const
 	{
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 		this->_interleave(interleaved_vec, natural_vec, pi_inv, frame_reordering, real_n_frames);
