@@ -41,7 +41,7 @@ private:
 	{
 		T* buffer = (T*)trans.get_data_ptr();
 		int length = trans.get_data_length() / sizeof(T);
-		
+
 		mipp::vector<T> data_in(length);
 		std::copy(buffer, buffer + length, data_in.begin());
 
@@ -54,12 +54,8 @@ private:
 			ft.display_bit_vector(data_in);
 		std::cout << std::endl;
 
-		tlm::tlm_generic_payload payload;
-		payload.set_data_ptr((unsigned char*)data_in.data());
-		payload.set_data_length(data_in.size() * sizeof(T));
-
 		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		s_out->b_transport(payload, zero_time);
+		s_out->b_transport(trans, zero_time);
 	}
 };
 }
