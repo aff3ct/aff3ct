@@ -24,8 +24,8 @@ public:
 	tlm_utils::simple_initiator_socket<SC_Duplicator> s_out2;
 
 public:
-    SC_Duplicator(sc_core::sc_module_name name = "SC_Duplicator")
-    : sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2")
+	SC_Duplicator(sc_core::sc_module_name name = "SC_Duplicator")
+	: sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2")
 	{
 		s_in.register_b_transport(this, &SC_Duplicator::b_transport);
 	}

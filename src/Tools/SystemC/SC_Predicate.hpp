@@ -24,8 +24,8 @@ private:
 	Predicate &p;
 
 public:
-    SC_Predicate(Predicate &p, sc_core::sc_module_name name)
-    : sc_module(name), s_in("s_in"), p(p)
+	SC_Predicate(Predicate &p, sc_core::sc_module_name name)
+	: sc_module(name), s_in("s_in"), p(p)
 	{
 		s_in.register_b_transport(this, &SC_Predicate::b_transport);
 	}

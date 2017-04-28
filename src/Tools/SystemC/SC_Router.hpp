@@ -29,8 +29,8 @@ private:
 	Predicate &p;
 
 public:
-    SC_Router(Predicate &p, sc_core::sc_module_name name = "SC_Router")
-    : sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2"), p(p)
+	SC_Router(Predicate &p, sc_core::sc_module_name name = "SC_Router")
+	: sc_module(name), s_in("s_in"), s_out1("s_out1"), s_out2("s_out2"), p(p)
 	{
 		s_in.register_b_transport(this, &SC_Router::b_transport);
 	}
