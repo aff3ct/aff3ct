@@ -141,7 +141,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 {
 	std::fill(symb_apriori_prob.begin(), symb_apriori_prob.end(), (Q)0);
 
-	for (int i = 0; i < (int)symb_apriori_prob.size() / cpm.m_order - cpm.tl; i++)
+	for (int i = 0; i < dec_size/cpm.n_b_per_s; i++)
 		for (int tr = 0; tr < cpm.m_order; tr++)
 		{
 			for (int b = 0; b < cpm.n_b_per_s; b++)
@@ -194,7 +194,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 		}
 
 		// normalize alpha and beta vectors (not impact on the decoding performances)
-		BCJR_normalize<Q,MAX>(&alpha[              (i +0)  * cpm.max_st_id], i, cpm.max_st_id);
+		BCJR_normalize<Q,MAX>(&alpha[             (i +0)  * cpm.max_st_id], i, cpm.max_st_id);
 		BCJR_normalize<Q,MAX>(&beta [(n_symbols - (i +1)) * cpm.max_st_id], i, cpm.max_st_id);
 	}
 }
@@ -240,7 +240,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(Q *Le_N)
 {
 	// remove tail bits
-	for (auto i = 0; i < (n_symbols - cpm.tl)*cpm.n_b_per_s; i ++)
+	for (auto i = 0; i < ext_size; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - proba_msg_bits[i*2 +1];
 }
@@ -250,7 +250,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::compute_ext(const Q *Ldec_N, Q *Le_N)
 {
 	// remove tail bits
-	for (auto i = 0; i < (n_symbols - cpm.tl)*cpm.n_b_per_s; i ++)
+	for (auto i = 0; i < ext_size; i ++)
 		// processing aposteriori and substracting a priori to directly obtain extrinsic
 		Le_N[i] = proba_msg_bits[i*2] - (proba_msg_bits[i*2+1] + Ldec_N[i]);
 }
