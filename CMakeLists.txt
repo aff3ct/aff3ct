@@ -30,11 +30,13 @@ endfunction(assign_source_group)
 assign_source_group(${source_files})
 
 # Command line options
-option (ENABLE_GSL     "Enable GSL support"     OFF)
-option (ENABLE_MKL     "Enable MKL support"     OFF)
-option (ENABLE_SYSTEMC "Enable SystemC support" OFF)
-option (ENABLE_STARPU  "Enable StarPU support"  OFF)
-option (ENABLE_MPI     "Enable MPI support"     OFF)
+option (ENABLE_EXEC           "Enable to compile AFF3CT executable"           ON )
+option (ENABLE_GSL            "Enable GSL support"                            OFF)
+option (ENABLE_MKL            "Enable MKL support"                            OFF)
+option (ENABLE_SYSTEMC        "Enable SystemC support"                        OFF)
+option (ENABLE_SYSTEMC_MODULE "Enable SystemC support (only for the modules)" OFF)
+option (ENABLE_STARPU         "Enable StarPU support"                         OFF)
+option (ENABLE_MPI            "Enable MPI support"                            OFF)
 
 # StarPU: set the link dir
 if (ENABLE_STARPU)
@@ -55,8 +57,10 @@ endif()
 add_library (aff3ct-obj OBJECT ${source_files})
 
 # Binary
-add_executable        (aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
-set_target_properties (aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct)
+if (ENABLE_EXEC)
+    add_executable        (aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
+    set_target_properties (aff3ct-bin PROPERTIES OUTPUT_NAME aff3ct)
+endif (ENABLE_EXEC)
 
 # Library
 add_library           (aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
@@ -65,7 +69,9 @@ add_library           (aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj>)
 set_target_properties (aff3ct-static-lib PROPERTIES OUTPUT_NAME aff3ct)
 
 macro (aff3ct_link_libraries lib)
-    target_link_libraries (aff3ct-bin ${lib})
+    if (ENABLE_EXEC)
+        target_link_libraries (aff3ct-bin ${lib})
+    endif (ENABLE_EXEC)
     target_link_libraries (aff3ct-shared-lib ${lib})
     target_link_libraries (aff3ct-static-lib ${lib})
 endmacro()
@@ -94,7 +100,12 @@ endif (ENABLE_MKL)
 
 # SystemC
 if (ENABLE_SYSTEMC)
-    add_definitions ("-DSYSTEMC")
+    if (ENABLE_SYSTEMC_MODULE)
+        add_definitions ("-DSYSTEMC_MODULE")
+    else ()
+        add_definitions ("-DSYSTEMC")
+        add_definitions ("-DSYSTEMC_MODULE")
+	endif (ENABLE_SYSTEMC_MODULE)
 
     find_package (SystemC REQUIRED)
     if (SystemC_FOUND)
@@ -133,21 +144,26 @@ if (ENABLE_MPI)
         aff3ct_link_libraries ("${MPI_CXX_LIBRARIES}")
 
         if (MPI_CXX_COMPILE_FLAGS)
-            set_target_properties(aff3ct-bin PROPERTIES
-                COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
+            if (ENABLE_EXEC)
+                set_target_properties(aff3ct-bin    PROPERTIES COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
+            endif (ENABLE_EXEC)
+            set_target_properties(aff3ct-shared-lib PROPERTIES COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
+            set_target_properties(aff3ct-static-lib PROPERTIES COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
         endif (MPI_CXX_COMPILE_FLAGS)
 
         if (MPI_CXX_LINK_FLAGS)
-            set_target_properties(aff3ct-bin PROPERTIES
-                LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
+            if (ENABLE_EXEC)
+                set_target_properties(aff3ct-bin    PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
+            endif (ENABLE_EXEC)
+            set_target_properties(aff3ct-shared-lib PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
+            set_target_properties(aff3ct-static-lib PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
         endif (MPI_CXX_LINK_FLAGS)
 
     endif (MPI_CXX_FOUND)
 endif (ENABLE_MPI)
 
 # Enable C++11 and pthread
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"
-        OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     add_definitions (-std=c++1y -Wno-overloaded-virtual)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

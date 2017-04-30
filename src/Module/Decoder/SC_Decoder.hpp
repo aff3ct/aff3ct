@@ -1,7 +1,7 @@
 #ifndef SC_DECODER_HPP_
 #define SC_DECODER_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -36,7 +36,7 @@ public:
 	SC_Decoder_module(SC_Decoder<B,R> &decoder, const sc_core::sc_module_name name = "SC_Decoder_module")
 	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  decoder(decoder),
-	  V_K(decoder.K * decoder.n_frames)
+	  V_K(decoder.get_K() * decoder.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Decoder_module::b_transport);
 	}
@@ -44,7 +44,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (decoder.N * decoder.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+		if (decoder.get_N() * decoder.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
 			throw std::length_error("aff3ct::module::Decoder: TLM input data size is invalid.");
 
 		const auto Y_N = (R*)trans.get_data_ptr();
@@ -63,21 +63,19 @@ private:
 template <typename B, typename R>
 class SC_Decoder : public Decoder_i<B,R>
 {
-	friend SC_Decoder_module<B,R>;
-
 public:
-	SC_Decoder_module<B,R> *module;
+	SC_Decoder_module<B,R> *sc_module;
 
 public:
 	SC_Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
 	           const std::string name = "SC_Decoder")
-	: Decoder_i<B,R>(K, N, n_frames, simd_inter_frame_level, name), module(nullptr) {}
+	: Decoder_i<B,R>(K, N, n_frames, simd_inter_frame_level, name), sc_module(nullptr) {}
 
-	virtual ~SC_Decoder() { if (module != nullptr) { delete module; module = nullptr; } }
+	virtual ~SC_Decoder() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } }
 
 	void create_sc_module()
 	{
-		this->module = new SC_Decoder_module<B,R>(*this, this->name.c_str());
+		this->sc_module = new SC_Decoder_module<B,R>(*this, this->name.c_str());
 	}
 };
 

@@ -1,7 +1,7 @@
 #ifndef SC_PUNCTURER_HPP_
 #define SC_PUNCTURER_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -37,7 +37,7 @@ public:
 	                              const sc_core::sc_module_name name = "SC_Puncturer_module_puncturer")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  puncturer(puncturer),
-	  X_N2(puncturer.N * puncturer.n_frames)
+	  X_N2(puncturer.get_N() * puncturer.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Puncturer_module_puncturer::b_transport);
 	}
@@ -45,7 +45,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (puncturer.N_code * puncturer.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+		if (puncturer.get_N_code() * puncturer.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Puncturer: TLM input data size is invalid.");
 
 		const auto X_N1 = (B*)trans.get_data_ptr();
@@ -79,7 +79,7 @@ public:
 	                                const sc_core::sc_module_name name = "SC_Puncturer_module_depuncturer")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  puncturer(puncturer),
-	  Y_N2(puncturer.N_code * puncturer.n_frames)
+	  Y_N2(puncturer.get_N_code() * puncturer.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Puncturer_module_depuncturer::b_transport);
 	}
@@ -87,7 +87,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (puncturer.N * puncturer.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (puncturer.get_N() * puncturer.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Puncturer: TLM input data size is invalid.");
 
 		const auto Y_N1 = (Q*)trans.get_data_ptr();
@@ -106,35 +106,32 @@ private:
 template <typename B, typename Q>
 class SC_Puncturer : public Puncturer_i<B,Q>
 {
-	friend SC_Puncturer_module_puncturer  <B,Q>;
-	friend SC_Puncturer_module_depuncturer<B,Q>;
-
 public:
-	SC_Puncturer_module_puncturer  <B,Q> *module_punct;
-	SC_Puncturer_module_depuncturer<B,Q> *module_depunct;
+	SC_Puncturer_module_puncturer  <B,Q> *sc_module_punct;
+	SC_Puncturer_module_depuncturer<B,Q> *sc_module_depunct;
 
 public:
 	SC_Puncturer(const int K, const int N, const int N_code, const int n_frames = 1, 
 	             const std::string name = "SC_Puncturer")
 	: Puncturer_i<B,Q>(K, N, N_code, n_frames, name),
-	  module_punct(nullptr), module_depunct(nullptr) {}
+	  sc_module_punct(nullptr), sc_module_depunct(nullptr) {}
 
 	virtual ~SC_Puncturer() 
 	{ 
-		if (module_punct   != nullptr) { delete module_punct;   module_punct   = nullptr; }
-		if (module_depunct != nullptr) { delete module_depunct; module_depunct = nullptr; }
+		if (sc_module_punct   != nullptr) { delete sc_module_punct;   sc_module_punct   = nullptr; }
+		if (sc_module_depunct != nullptr) { delete sc_module_depunct; sc_module_depunct = nullptr; }
 	}
 
 	void create_sc_module_puncturer()
 	{
 		const std::string new_name = this->name + "_punct";
-		this->module_punct = new SC_Puncturer_module_puncturer<B,Q>(*this, new_name.c_str());
+		this->sc_module_punct = new SC_Puncturer_module_puncturer<B,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_depuncturer()
 	{
 		const std::string new_name = this->name + "_depunct";
-		this->module_depunct = new SC_Puncturer_module_depuncturer<B,Q>(*this, new_name.c_str());
+		this->sc_module_depunct = new SC_Puncturer_module_depuncturer<B,Q>(*this, new_name.c_str());
 	}
 };
 

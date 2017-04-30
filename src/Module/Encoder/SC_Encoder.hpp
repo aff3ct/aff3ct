@@ -1,7 +1,7 @@
 #ifndef SC_ENCODER_HPP_
 #define SC_ENCODER_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -36,7 +36,7 @@ public:
 	SC_Encoder_module(SC_Encoder<B> &encoder, const sc_core::sc_module_name name = "SC_Encoder_module")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  encoder(encoder),
-	  X_N(encoder.N * encoder.n_frames)
+	  X_N(encoder.get_N() * encoder.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Encoder_module::b_transport);
 	}
@@ -44,7 +44,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (encoder.K * encoder.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+		if (encoder.get_K() * encoder.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Encoder: TLM input data size is invalid.");
 
 		const auto U_K = (B*)trans.get_data_ptr();
@@ -63,20 +63,18 @@ private:
 template <typename B>
 class SC_Encoder : public Encoder_i<B>
 {
-	friend SC_Encoder_module<B>;
-
 public:
-	SC_Encoder_module<B> *module;
+	SC_Encoder_module<B> *sc_module;
 
 public:
 	SC_Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Encoder")
-	: Encoder_i<B>(K, N, n_frames, name), module(nullptr) {}
+	: Encoder_i<B>(K, N, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Encoder() { if (module != nullptr) { delete module; module = nullptr; } }
+	virtual ~SC_Encoder() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } }
 
 	void create_sc_module()
 	{
-		this->module = new SC_Encoder_module<B>(*this, this->name.c_str());
+		this->sc_module = new SC_Encoder_module<B>(*this, this->name.c_str());
 	}
 };
 

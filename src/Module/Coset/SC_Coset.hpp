@@ -1,7 +1,7 @@
 #ifndef SC_COSET_HPP_
 #define SC_COSET_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -39,7 +39,7 @@ public:
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  coset   (coset),
 	  ref     (nullptr),
-	  out_data(coset.size * coset.n_frames)
+	  out_data(coset.get_size() * coset.get_n_frames())
 	{
 		s_in1.register_b_transport(this, &SC_Coset_module::b_transport_ref);
 		s_in2.register_b_transport(this, &SC_Coset_module::b_transport_data);
@@ -48,7 +48,7 @@ public:
 private:
 	void b_transport_ref(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (coset.size * coset.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+		if (coset.get_size() * coset.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Coset: TLM input data size is invalid.");
 
 		ref = (B*)trans.get_data_ptr();
@@ -59,7 +59,7 @@ private:
 		if (ref == nullptr)
 			throw std::runtime_error("aff3ct::module::Coset: TLM \"ref\" pointer can't be NULL.");
 
-		if (coset.size * coset.n_frames != (int)(trans.get_data_length() / sizeof(D)))
+		if (coset.get_size() * coset.get_n_frames() != (int)(trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Coset: TLM input data size is invalid.");
 
 		const auto in_data = (D*)trans.get_data_ptr();
@@ -78,23 +78,21 @@ private:
 template <typename B, typename D>
 class SC_Coset : public Coset_i<B,D>
 {
-	friend SC_Coset_module<B,D>;
-
 public:
-	SC_Coset_module<B,D> *module;
+	SC_Coset_module<B,D> *sc_module;
 
 public:
 	SC_Coset(const int size, const int n_frames = 1, const std::string name = "SC_Coset")
-	: Coset_i<B,D>(size, n_frames, name), module(nullptr) {}
+	: Coset_i<B,D>(size, n_frames, name), sc_module(nullptr) {}
 
 	virtual ~SC_Coset()
 	{ 
-		if (module != nullptr) { delete module; module = nullptr; }
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 	}
 
 	void create_sc_module()
 	{
-		this->module = new SC_Coset_module<B,D>(*this, this->name.c_str());
+		this->sc_module = new SC_Coset_module<B,D>(*this, this->name.c_str());
 	}
 };
 

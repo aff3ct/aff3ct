@@ -1,7 +1,7 @@
 #ifndef SC_INTERLEAVER_HPP_
 #define SC_INTERLEAVER_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -40,10 +40,10 @@ public:
 	                                  const sc_core::sc_module_name name = "SC_Interleaver_module_interleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  vec_1(interleaver.size() * interleaver.n_frames),
-	  vec_2(interleaver.size() * interleaver.n_frames),
-	  vec_4(interleaver.size() * interleaver.n_frames),
-	  vec_8(interleaver.size() * interleaver.n_frames)
+	  vec_1(interleaver.size() * interleaver.get_n_frames()),
+	  vec_2(interleaver.size() * interleaver.get_n_frames()),
+	  vec_4(interleaver.size() * interleaver.get_n_frames()),
+	  vec_8(interleaver.size() * interleaver.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_interleaver::b_transport);
 	}
@@ -51,7 +51,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		int size_of_data = trans.get_data_length() / (interleaver.pi.size() * interleaver.n_frames);
+		int size_of_data = trans.get_data_length() / (interleaver.size() * interleaver.get_n_frames());
 
 		switch (size_of_data)
 		{
@@ -70,7 +70,7 @@ private:
 	                  sc_core::sc_time& t, 
 	                  mipp::vector<D> &interleaved_vec)
 	{
-		if (interleaver.size() * interleaver.n_frames != (trans.get_data_length() / sizeof(D)))
+		if (interleaver.size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
 		const auto natural_vec = (D*)trans.get_data_ptr();
@@ -107,10 +107,10 @@ public:
 	                                    const sc_core::sc_module_name name = "SC_Interleaver_module_deinterleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  vec_1(interleaver.pi.size() * interleaver.n_frames),
-	  vec_2(interleaver.pi.size() * interleaver.n_frames),
-	  vec_4(interleaver.pi.size() * interleaver.n_frames),
-	  vec_8(interleaver.pi.size() * interleaver.n_frames)
+	  vec_1(interleaver.size() * interleaver.get_n_frames()),
+	  vec_2(interleaver.size() * interleaver.get_n_frames()),
+	  vec_4(interleaver.size() * interleaver.get_n_frames()),
+	  vec_8(interleaver.size() * interleaver.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_deinterleaver::b_transport);
 	}
@@ -118,7 +118,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		int size_of_data = trans.get_data_length() / (interleaver.pi.size() * interleaver.n_frames);
+		int size_of_data = trans.get_data_length() / (interleaver.size() * interleaver.get_n_frames());
 		switch (size_of_data)
 		{
 			case 1: _b_transport<char     >(trans, t, vec_1); break;
@@ -136,7 +136,7 @@ private:
 	                  sc_core::sc_time& t, 
 	                  mipp::vector<D> &natural_vec)
 	{
-		if (interleaver.size() * interleaver.n_frames != (trans.get_data_length() / sizeof(D)))
+		if (interleaver.size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
 		const auto interleaved_vec = (D*)trans.get_data_ptr();
@@ -155,33 +155,30 @@ private:
 template <typename T>
 class SC_Interleaver : public Interleaver_i<T>
 {
-	friend SC_Interleaver_module_interleaver  <T>;
-	friend SC_Interleaver_module_deinterleaver<T>;
-
 public:
-	SC_Interleaver_module_interleaver  <T> *module_inter;
-	SC_Interleaver_module_deinterleaver<T> *module_deinter;
+	SC_Interleaver_module_interleaver  <T> *sc_module_inter;
+	SC_Interleaver_module_deinterleaver<T> *sc_module_deinter;
 
 public:
 	SC_Interleaver(const int size, const int n_frames = 1, const std::string name = "SC_Interleaver")
-	: Interleaver_i<T>(size, n_frames, name), module_inter(nullptr), module_deinter(nullptr) {}
+	: Interleaver_i<T>(size, n_frames, name), sc_module_inter(nullptr), sc_module_deinter(nullptr) {}
 
 	virtual ~SC_Interleaver() 
 	{
-		if (module_inter   != nullptr) { delete module_inter;   module_inter   = nullptr; }
-		if (module_deinter != nullptr) { delete module_deinter; module_deinter = nullptr; }
+		if (sc_module_inter   != nullptr) { delete sc_module_inter;   sc_module_inter   = nullptr; }
+		if (sc_module_deinter != nullptr) { delete sc_module_deinter; sc_module_deinter = nullptr; }
 	}
 
 	void create_sc_module_interleaver()
 	{
 		const std::string new_name = this->name + "_inter";
-		this->module_inter = new SC_Interleaver_module_interleaver<T>(*this, new_name.c_str());
+		this->sc_module_inter = new SC_Interleaver_module_interleaver<T>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_deinterleaver()
 	{
 		const std::string new_name = this->name + "_deinter";
-		this->module_deinter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
+		this->sc_module_deinter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
 	}
 };
 

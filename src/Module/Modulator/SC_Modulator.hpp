@@ -1,7 +1,7 @@
 #ifndef SC_MODULATOR_HPP_
 #define SC_MODULATOR_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -37,7 +37,7 @@ public:
 	                               const sc_core::sc_module_name name = "SC_Modulator_module_modulator")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  modulator(modulator),
-	  X_N2(modulator.N_mod * modulator.n_frames)
+	  X_N2(modulator.get_N_mod() * modulator.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_modulator::b_transport);
 	}
@@ -45,7 +45,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (modulator.N * modulator.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+		if (modulator.get_N() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		const auto X_N1 = (B*)trans.get_data_ptr();
@@ -76,10 +76,10 @@ private:
 
 public:
 	SC_Modulator_module_filterer(SC_Modulator<B,R,Q> &modulator, 
-	                              const sc_core::sc_module_name name = "SC_Modulator_module_filterer")
+	                             const sc_core::sc_module_name name = "SC_Modulator_module_filterer")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N2(modulator.N_fil * modulator.n_frames)
+	  Y_N2(modulator.get_N_fil() * modulator.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_filterer::b_transport);
 	}
@@ -87,7 +87,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (modulator.N_mod * modulator.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+		if (modulator.get_N_mod() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		const auto Y_N1 = (R*)trans.get_data_ptr();
@@ -121,7 +121,7 @@ public:
 	                                 const sc_core::sc_module_name name = "SC_Modulator_module_demodulator")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  modulator(modulator),
-	  Y_N2(modulator.N     * modulator.n_frames)
+	  Y_N2(modulator.get_N() * modulator.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_demodulator::b_transport);
 	}
@@ -129,7 +129,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		const auto Y_N1 = (Q*)trans.get_data_ptr();
@@ -166,7 +166,7 @@ public:
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  modulator(modulator),
 	  H_N(nullptr),
-	  Y_N2(modulator.N * modulator.n_frames)
+	  Y_N2(modulator.get_N() * modulator.get_n_frames())
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport2);
@@ -175,7 +175,7 @@ public:
 private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		H_N = (R*)trans.get_data_ptr();
@@ -186,7 +186,7 @@ private:
 		if (H_N == nullptr)
 			throw std::runtime_error("aff3ct::module::Modulator: TLM \"H_N\" pointer can't be NULL.");
 
-		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		const auto Y_N1 = (Q*)trans.get_data_ptr();
@@ -223,7 +223,7 @@ public:
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"), s_out("s_out"),
 	  modulator(modulator),
 	  Y_N1(nullptr),
-	  Y_N3(modulator.N * modulator.n_frames)
+	  Y_N3(modulator.get_N() * modulator.get_n_frames())
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport2);
@@ -232,7 +232,7 @@ public:
 private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		Y_N1 = (Q*)trans.get_data_ptr();
@@ -252,7 +252,7 @@ private:
 		if (Y_N1 == nullptr)
 			throw std::runtime_error("aff3ct::module::Modulator: TLM \"Y_N1\" pointer can't be NULL.");
 
-		if (modulator.N * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (modulator.get_N() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		const auto Y_N2 = (Q*)trans.get_data_ptr();
@@ -292,7 +292,7 @@ public:
 	  modulator(modulator),
 	  H_N (nullptr),
 	  Y_N1(nullptr),
-	  Y_N3(modulator.N * modulator.n_frames)
+	  Y_N3(modulator.get_N() * modulator.get_n_frames())
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport2);
@@ -302,7 +302,7 @@ public:
 private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		H_N = (R*)trans.get_data_ptr();
@@ -313,7 +313,7 @@ private:
 		if (H_N == nullptr)
 			throw std::runtime_error("aff3ct::module::Modulator: TLM \"H_N\" pointer can't be NULL.");
 
-		if (modulator.N_fil * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		Y_N1 = (Q*)trans.get_data_ptr();
@@ -336,7 +336,7 @@ private:
 		if (Y_N1 == nullptr)
 			throw std::runtime_error("aff3ct::module::Modulator: TLM \"Y_N1\" pointer can't be NULL.");
 
-		if (modulator.N * modulator.n_frames != (int)(trans.get_data_length() / sizeof(Q)))
+		if (modulator.get_N() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
 			throw std::length_error("aff3ct::module::Modulator: TLM input data size is invalid.");
 
 		const auto Y_N2 = (Q*)trans.get_data_ptr();
@@ -355,83 +355,76 @@ private:
 template <typename B, typename R, typename Q>
 class SC_Modulator : public Modulator_i<B,R,Q>
 {
-	friend SC_Modulator_module_modulator      <B,R,Q>;
-	friend SC_Modulator_module_filterer       <B,R,Q>;
-	friend SC_Modulator_module_demodulator    <B,R,Q>;
-	friend SC_Modulator_module_demodulator_wg <B,R,Q>;
-	friend SC_Modulator_module_tdemodulator   <B,R,Q>;
-	friend SC_Modulator_module_tdemodulator_wg<B,R,Q>;
-
 public:
-	SC_Modulator_module_modulator      <B,R,Q> *module_mod;
-	SC_Modulator_module_filterer       <B,R,Q> *module_filt;
-	SC_Modulator_module_demodulator    <B,R,Q> *module_demod;
-	SC_Modulator_module_demodulator_wg <B,R,Q> *module_demod_wg;
-	SC_Modulator_module_tdemodulator   <B,R,Q> *module_tdemod;
-	SC_Modulator_module_tdemodulator_wg<B,R,Q> *module_tdemod_wg;
+	SC_Modulator_module_modulator      <B,R,Q> *sc_module_mod;
+	SC_Modulator_module_filterer       <B,R,Q> *sc_module_filt;
+	SC_Modulator_module_demodulator    <B,R,Q> *sc_module_demod;
+	SC_Modulator_module_demodulator_wg <B,R,Q> *sc_module_demod_wg;
+	SC_Modulator_module_tdemodulator   <B,R,Q> *sc_module_tdemod;
+	SC_Modulator_module_tdemodulator_wg<B,R,Q> *sc_module_tdemod_wg;
 
 public:
 	SC_Modulator(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
 	: Modulator_i<B,R,Q>(N, N_mod, N_fil, sigma, n_frames, name),
-	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_demod_wg(nullptr),
-	  module_tdemod(nullptr), module_tdemod_wg(nullptr) {}
+	  sc_module_mod(nullptr), sc_module_filt(nullptr), sc_module_demod(nullptr), sc_module_demod_wg(nullptr),
+	  sc_module_tdemod(nullptr), sc_module_tdemod_wg(nullptr) {}
 
 	SC_Modulator(const int N, const int N_mod, const R sigma, const int n_frames = 1,
 	             const std::string name = "SC_Modulator")
 	: Modulator_i<B,R,Q>(N, N_mod, sigma, n_frames, name),
-	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_demod_wg(nullptr),
-	  module_tdemod(nullptr), module_tdemod_wg(nullptr) {}
+	  sc_module_mod(nullptr), sc_module_filt(nullptr), sc_module_demod(nullptr), sc_module_demod_wg(nullptr),
+	  sc_module_tdemod(nullptr), sc_module_tdemod_wg(nullptr) {}
 
 	SC_Modulator(const int N, const R sigma, const int n_frames = 1, const std::string name = "SC_Modulator")
 	: Modulator_i<B,R,Q>(N, sigma, n_frames, name),
-	  module_mod(nullptr), module_filt(nullptr), module_demod(nullptr), module_demod_wg(nullptr),
-	  module_tdemod(nullptr), module_tdemod_wg(nullptr) {}
+	  sc_module_mod(nullptr), sc_module_filt(nullptr), sc_module_demod(nullptr), sc_module_demod_wg(nullptr),
+	  sc_module_tdemod(nullptr), sc_module_tdemod_wg(nullptr) {}
 
 	virtual ~SC_Modulator() 
 	{ 
-		if (module_mod       != nullptr) { delete module_mod;       module_mod       = nullptr; }
-		if (module_filt      != nullptr) { delete module_filt;      module_filt      = nullptr; }
-		if (module_demod     != nullptr) { delete module_demod;     module_demod     = nullptr; }
-		if (module_demod_wg  != nullptr) { delete module_demod_wg;  module_demod_wg  = nullptr; }
-		if (module_tdemod    != nullptr) { delete module_tdemod;    module_tdemod    = nullptr; }
-		if (module_tdemod_wg != nullptr) { delete module_tdemod_wg; module_tdemod_wg = nullptr; }
+		if (sc_module_mod       != nullptr) { delete sc_module_mod;       sc_module_mod       = nullptr; }
+		if (sc_module_filt      != nullptr) { delete sc_module_filt;      sc_module_filt      = nullptr; }
+		if (sc_module_demod     != nullptr) { delete sc_module_demod;     sc_module_demod     = nullptr; }
+		if (sc_module_demod_wg  != nullptr) { delete sc_module_demod_wg;  sc_module_demod_wg  = nullptr; }
+		if (sc_module_tdemod    != nullptr) { delete sc_module_tdemod;    sc_module_tdemod    = nullptr; }
+		if (sc_module_tdemod_wg != nullptr) { delete sc_module_tdemod_wg; sc_module_tdemod_wg = nullptr; }
 	}
 
 	void create_sc_module_modulator()
 	{
 		const std::string new_name = this->name + "_mod";
-		this->module_mod = new SC_Modulator_module_modulator<B,R,Q>(*this, new_name.c_str());
+		this->sc_module_mod = new SC_Modulator_module_modulator<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_filterer()
 	{
 		const std::string new_name = this->name + "_filt";
-		this->module_filt = new SC_Modulator_module_filterer<B,R,Q>(*this, new_name.c_str());
+		this->sc_module_filt = new SC_Modulator_module_filterer<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_demodulator()
 	{
 		const std::string new_name = this->name + "_demod";
-		this->module_demod = new SC_Modulator_module_demodulator<B,R,Q>(*this, new_name.c_str());
+		this->sc_module_demod = new SC_Modulator_module_demodulator<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_demodulator_wg()
 	{
 		const std::string new_name = this->name + "_demod_wg";
-		this->module_demod_wg = new SC_Modulator_module_demodulator_wg<B,R,Q>(*this, new_name.c_str());
+		this->sc_module_demod_wg = new SC_Modulator_module_demodulator_wg<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_tdemodulator()
 	{
 		const std::string new_name = this->name + "_tdemod";
-		this->module_tdemod = new SC_Modulator_module_tdemodulator<B,R,Q>(*this, new_name.c_str());
+		this->sc_module_tdemod = new SC_Modulator_module_tdemodulator<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_tdemodulator_wg()
 	{
 		const std::string new_name = this->name + "_tdemod_wg";
-		this->module_tdemod_wg = new SC_Modulator_module_tdemodulator_wg<B,R,Q>(*this, new_name.c_str());
+		this->sc_module_tdemod_wg = new SC_Modulator_module_tdemodulator_wg<B,R,Q>(*this, new_name.c_str());
 	}
 };
 

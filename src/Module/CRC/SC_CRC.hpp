@@ -1,7 +1,7 @@
 #ifndef SC_CRC_HPP_
 #define SC_CRC_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -42,7 +42,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (crc.K * crc.n_frames != (int)(trans.get_data_length() / sizeof(B)))
+		if (crc.get_K() * crc.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::CRC: TLM input data size is invalid.");
 
 		const auto U_K = (B*)trans.get_data_ptr();
@@ -61,20 +61,18 @@ private:
 template <typename B>
 class SC_CRC : public CRC_i<B>
 {
-	friend SC_CRC_module<B>;
-
 public:
-	SC_CRC_module<B> *module;
+	SC_CRC_module<B> *sc_module;
 
 public:
 	SC_CRC(const int K, const int n_frames = 1, const std::string name = "SC_CRC") 
-	: CRC_i<B>(K, n_frames, name), module(nullptr) {}
+	: CRC_i<B>(K, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_CRC() { if (module != nullptr) { delete module; module = nullptr; } }
+	virtual ~SC_CRC() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } }
 
 	void create_sc_module()
 	{
-		this->module = new SC_CRC_module<B>(*this, this->name.c_str());
+		this->sc_module = new SC_CRC_module<B>(*this, this->name.c_str());
 	}
 };
 

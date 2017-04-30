@@ -1,7 +1,7 @@
 #ifndef SC_QUANTIZER_HPP_
 #define SC_QUANTIZER_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -36,7 +36,7 @@ public:
 	SC_Quantizer_module(SC_Quantizer<R,Q> &quantizer, const sc_core::sc_module_name name = "SC_Quantizer_module")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  quantizer(quantizer),
-	  Y_N2(quantizer.N * quantizer.n_frames)
+	  Y_N2(quantizer.get_N() * quantizer.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Quantizer_module::b_transport);
 	}
@@ -44,7 +44,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (quantizer.N * quantizer.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+		if (quantizer.get_N() * quantizer.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
 			throw std::length_error("aff3ct::module::Quantizer: TLM input data size is invalid.");
 
 		const auto Y_N1 = (R*)trans.get_data_ptr();
@@ -63,20 +63,18 @@ private:
 template <typename R, typename Q>
 class SC_Quantizer : public Quantizer_i<R,Q>
 {
-	friend SC_Quantizer_module<R,Q>;
-
 public:
-	SC_Quantizer_module<R,Q> *module;
+	SC_Quantizer_module<R,Q> *sc_module;
 
 public:
 	SC_Quantizer(const int N, const int n_frames = 1, const std::string name = "SC_Quantizer")
-	: Quantizer_i<R,Q>(N, n_frames, name), module(nullptr) {}
+	: Quantizer_i<R,Q>(N, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Quantizer() { if (module != nullptr) { delete module; module = nullptr; } };
+	virtual ~SC_Quantizer() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } };
 
 	void create_sc_module()
 	{
-		this->module = new SC_Quantizer_module<R,Q>(*this, this->name.c_str());
+		this->sc_module = new SC_Quantizer_module<R,Q>(*this, this->name.c_str());
 	}
 };
 

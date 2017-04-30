@@ -1,7 +1,7 @@
 #ifndef SC_SOURCE_HPP_
 #define SC_SOURCE_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <systemc>
@@ -33,7 +33,7 @@ public:
 	SC_Source_module(SC_Source<B> &source, const sc_core::sc_module_name name = "SC_Source_module")
 	: sc_module(name), s_out("s_out"),
 	  source(source),
-	  U_K(source.K * source.n_frames)
+	  U_K(source.get_K() * source.get_n_frames())
 	{
 		SC_THREAD(sc_generate);
 	}
@@ -61,20 +61,18 @@ private:
 template <typename B>
 class SC_Source : public Source_i<B>
 {
-	friend SC_Source_module<B>;
-
 public:
-	SC_Source_module<B> *module;
+	SC_Source_module<B> *sc_module;
 
 public:
 	SC_Source(const int K, const int n_frames = 1, const std::string name = "Source_SC")
-	: Source_i<B>(K, n_frames, name), module(nullptr) {}
+	: Source_i<B>(K, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Source() { if (module != nullptr) { delete module; module = nullptr; } };
+	virtual ~SC_Source() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } };
 
 	void create_sc_module()
 	{
-		this->module = new SC_Source_module<B>(*this, this->name.c_str());
+		this->sc_module = new SC_Source_module<B>(*this, this->name.c_str());
 	}
 };
 

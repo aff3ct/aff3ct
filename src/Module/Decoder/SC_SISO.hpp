@@ -1,7 +1,7 @@
 #ifndef SC_SISO_HPP_
 #define SC_SISO_HPP_
 
-#ifdef SYSTEMC
+#ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -36,7 +36,7 @@ public:
 	SC_SISO_module(SC_SISO<R> &siso, const sc_core::sc_module_name name = "SC_SISO_module")
 	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  siso(siso),
-	  Y_N2(siso.N_siso * siso.n_frames)
+	  Y_N2(siso.get_N() * siso.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_SISO_module::b_transport);
 	}
@@ -44,7 +44,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (siso.N_siso * siso.n_frames != (int)(trans.get_data_length() / sizeof(R)))
+		if (siso.get_N() * siso.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
 			throw std::length_error("aff3ct::module::SISO: TLM input data size is invalid.");
 
 		const auto Y_N1 = (R*)trans.get_data_ptr();
@@ -63,21 +63,19 @@ private:
 template <typename R>
 class SC_SISO : public SISO_i<R>
 {
-	friend SC_SISO_module<R>;
-
 public:
-	SC_SISO_module<R> *module_siso;
+	SC_SISO_module<R> *sc_module_siso;
 
 public:
 	SC_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level = 1,
 	        const std::string name = "SC_SISO")
-	: SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), module_siso(nullptr) {}
+	: SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), sc_module_siso(nullptr) {}
 
-	virtual ~SC_SISO() { if (module_siso != nullptr) { delete module_siso; module_siso = nullptr; } }
+	virtual ~SC_SISO() { if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; } }
 
 	void create_sc_module_siso()
 	{
-		this->module_siso = new SC_SISO_module<R>(*this, this->name.c_str());
+		this->sc_module_siso = new SC_SISO_module<R>(*this, this->name.c_str());
 	}
 };
 
