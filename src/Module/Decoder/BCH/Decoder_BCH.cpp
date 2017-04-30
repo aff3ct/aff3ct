@@ -41,7 +41,7 @@ void Decoder_BCH<B, R>
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	register int i, j, u, q, t2, count = 0, syn_error = 0;
+	int i, j, u, q, t2, count = 0, syn_error = 0;
 
 	t2 = 2 * t;
 	
