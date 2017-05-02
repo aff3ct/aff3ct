@@ -22,8 +22,8 @@ Encoder_turbo<B>
 {
 	if (N_without_tb != 3 * K)
 		throw std::invalid_argument("aff3ct::module::Encoder_turbo: \"N\" / \"K\" has to be equal to 3.");
-	if ((int)pi.size() != K)
-		throw std::length_error("aff3ct::module::Encoder_turbo: \"pi.size()\" has to be equal to \"K\".");
+	if ((int)pi.get_size() != K)
+		throw std::length_error("aff3ct::module::Encoder_turbo: \"pi.get_size()\" has to be equal to \"K\".");
 }
 
 template <typename B>

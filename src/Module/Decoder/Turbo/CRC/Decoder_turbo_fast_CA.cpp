@@ -23,7 +23,7 @@ Decoder_turbo_fast_CA<B,R>
                         const bool buffered_encoding)
 : Decoder_turbo_fast<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding), crc(crc)
 {
-	if (crc.size() > K)
+	if (crc.get_size() > K)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo_fast_CA: \"crc.size()\" has to be equal or "
 		                            "smaller than K.");
 }

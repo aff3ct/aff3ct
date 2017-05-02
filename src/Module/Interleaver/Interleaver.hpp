@@ -78,7 +78,7 @@ public:
 		return pi_inv;
 	}
 
-	unsigned size() const
+	unsigned get_size() const
 	{
 		return (unsigned)pi.size();
 	}
@@ -112,9 +112,9 @@ public:
 			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal to "
 			                        "\"interleaved_vec.size()\".");
 
-		if (natural_vec.size() < this->size() * real_n_frames)
+		if (natural_vec.size() < this->get_size() * real_n_frames)
 			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal or greater "
-			                        "than \"this->size()\" * \"real_n_frames\".");
+			                        "than \"this->get_size()\" * \"real_n_frames\".");
 
 		this->interleave(natural_vec.data(), interleaved_vec.data(), frame_reordering, real_n_frames);
 	}
@@ -157,9 +157,9 @@ public:
 			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal to "
 			                        "\"interleaved_vec.size()\".");
 
-		if (natural_vec.size() < this->size() * real_n_frames)
+		if (natural_vec.size() < this->get_size() * real_n_frames)
 			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal or greater "
-			                        "than \"this->size()\" * \"real_n_frames\".");
+			                        "than \"this->get_size()\" * \"real_n_frames\".");
 
 		this->_interleave(interleaved_vec.data(), natural_vec.data(), pi_inv, frame_reordering, real_n_frames);
 	}

@@ -44,8 +44,8 @@ CRC_polynomial<B>
 	for (auto i = 0; i < poly_size; i++)
 		polynomial.push_back((polynomial_packed >> ((poly_size -1) -i)) & 1);
 
-	if (K <= this->size())
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"K\" has to be greater than \"this->size()\".");
+	if (K <= this->get_size())
+		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"K\" has to be greater than \"size\".");
 }
 
 template <typename B>
@@ -102,7 +102,7 @@ unsigned CRC_polynomial<B>
 
 template <typename B>
 int CRC_polynomial<B>
-::size() const
+::get_size() const
 {
 	return this->poly_size;
 }
@@ -111,7 +111,7 @@ template <typename B>
 void CRC_polynomial<B>
 ::_build(B *U_K)
 {
-	this->_generate(U_K, U_K, 0, this->K - this->size(), this->K - this->size());
+	this->_generate(U_K, U_K, 0, this->K - this->get_size(), this->K - this->get_size());
 }
 
 template <typename B>
@@ -123,33 +123,33 @@ void CRC_polynomial<B>
             const int loop_size)
 {
 	std::copy(U_in + off_in, U_in + off_in + loop_size, buff_crc.begin());
-	std::fill(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), (B)0);
+	std::fill(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->get_size(), (B)0);
 
 	for (auto i = 0; i < loop_size; i++)
 		if (buff_crc[i])
-			for (auto j = 0; j <= this->size(); j++)
+			for (auto j = 0; j <= this->get_size(); j++)
 				if (this->polynomial[j])
 					buff_crc[i+j] = !buff_crc[i+j];
 
 	if (U_out != buff_crc.data())
-		std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->size(), U_out + off_out);
+		std::copy(buff_crc.begin() + loop_size, buff_crc.begin() + loop_size + this->get_size(), U_out + off_out);
 }
 
 template <typename B>
 bool CRC_polynomial<B>
 ::_check(const B *V_K)
 {
-	this->_generate(V_K, this->buff_crc.data(), 0, this->K - this->size(), this->K - this->size());
+	this->_generate(V_K, this->buff_crc.data(), 0, this->K - this->get_size(), this->K - this->get_size());
 
 	auto i = 0;
-	auto off = this->K - this->size();
-	while ((i < this->size()) &&
+	auto off = this->K - this->get_size();
+	while ((i < this->get_size()) &&
 	       // because the position of the bit in a variable can vary,
 	       // the idea is to test: (this->buff_crc[off +i] == V_K[off +i])
 	       ((this->buff_crc[off +i] || !V_K[off +i]) && (!this->buff_crc[off +i] || V_K[off +i])))
 		i++;
 
-	return (i == this->size());
+	return (i == this->get_size());
 }
 
 template <typename B>

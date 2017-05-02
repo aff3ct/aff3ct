@@ -40,10 +40,10 @@ public:
 	                                  const sc_core::sc_module_name name = "SC_Interleaver_module_interleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  vec_1(interleaver.size() * interleaver.get_n_frames()),
-	  vec_2(interleaver.size() * interleaver.get_n_frames()),
-	  vec_4(interleaver.size() * interleaver.get_n_frames()),
-	  vec_8(interleaver.size() * interleaver.get_n_frames())
+	  vec_1(interleaver.get_size() * interleaver.get_n_frames()),
+	  vec_2(interleaver.get_size() * interleaver.get_n_frames()),
+	  vec_4(interleaver.get_size() * interleaver.get_n_frames()),
+	  vec_8(interleaver.get_size() * interleaver.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_interleaver::b_transport);
 	}
@@ -51,7 +51,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		int size_of_data = trans.get_data_length() / (interleaver.size() * interleaver.get_n_frames());
+		int size_of_data = trans.get_data_length() / (interleaver.get_size() * interleaver.get_n_frames());
 
 		switch (size_of_data)
 		{
@@ -70,7 +70,7 @@ private:
 	                  sc_core::sc_time& t, 
 	                  mipp::vector<D> &interleaved_vec)
 	{
-		if (interleaver.size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
+		if (interleaver.get_size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
 		const auto natural_vec = (D*)trans.get_data_ptr();
@@ -107,10 +107,10 @@ public:
 	                                    const sc_core::sc_module_name name = "SC_Interleaver_module_deinterleaver")
 	: sc_module(name), s_in("s_in"), s_out("s_out"),
 	  interleaver(interleaver),
-	  vec_1(interleaver.size() * interleaver.get_n_frames()),
-	  vec_2(interleaver.size() * interleaver.get_n_frames()),
-	  vec_4(interleaver.size() * interleaver.get_n_frames()),
-	  vec_8(interleaver.size() * interleaver.get_n_frames())
+	  vec_1(interleaver.get_size() * interleaver.get_n_frames()),
+	  vec_2(interleaver.get_size() * interleaver.get_n_frames()),
+	  vec_4(interleaver.get_size() * interleaver.get_n_frames()),
+	  vec_8(interleaver.get_size() * interleaver.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Interleaver_module_deinterleaver::b_transport);
 	}
@@ -118,7 +118,7 @@ public:
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		int size_of_data = trans.get_data_length() / (interleaver.size() * interleaver.get_n_frames());
+		int size_of_data = trans.get_data_length() / (interleaver.get_size() * interleaver.get_n_frames());
 		switch (size_of_data)
 		{
 			case 1: _b_transport<char     >(trans, t, vec_1); break;
@@ -136,7 +136,7 @@ private:
 	                  sc_core::sc_time& t, 
 	                  mipp::vector<D> &natural_vec)
 	{
-		if (interleaver.size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
+		if (interleaver.get_size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
 		const auto interleaved_vec = (D*)trans.get_data_ptr();

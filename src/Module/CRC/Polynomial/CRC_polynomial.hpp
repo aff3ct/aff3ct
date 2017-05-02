@@ -28,7 +28,7 @@ public:
 	static std::string name (std::string poly_key);
 	static unsigned    value(std::string poly_key);
 
-	virtual int  size (                    ) const;
+	virtual int get_size() const;
 
 protected:
 	virtual void _build       (      B *U_K);

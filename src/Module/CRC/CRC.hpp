@@ -67,7 +67,7 @@ public:
 	 *
 	 * \return the size of the CRC.
 	 */
-	virtual int size() const = 0;
+	virtual int get_size() const = 0;
 
 	/*!
 	 * \brief Computes and adds the CRC in the vector of information bits (the CRC bits are often put at the end of the

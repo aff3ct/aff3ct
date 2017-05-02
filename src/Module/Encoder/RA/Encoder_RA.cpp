@@ -13,8 +13,8 @@ Encoder_RA<B>
 {
 	if (N % K)
 		throw std::invalid_argument("aff3ct::module::Encoder_RA: \"K\" has to be a multiple of \"N\".");
-	if ((int)interleaver.size() != N)
-		throw std::length_error("aff3ct::module::Encoder_RA: \"interleaver.size()\" has to be equal to \"N\".");
+	if ((int)interleaver.get_size() != N)
+		throw std::length_error("aff3ct::module::Encoder_RA: \"interleaver.get_size()\" has to be equal to \"N\".");
 }
 
 template <typename B>

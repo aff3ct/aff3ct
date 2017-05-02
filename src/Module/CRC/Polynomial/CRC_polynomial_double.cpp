@@ -13,10 +13,10 @@ CRC_polynomial_double<B>
 	if (n_frames > 1)
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"n_frames\" has to be equal to 1.");
 
-	if ((this->K - 2 * this->size()) <= (cut_index - this->size()))
+	if ((this->K - 2 * this->get_size()) <= (cut_index - this->get_size()))
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"K\" is wrong.");
 
-	if (this->K <= 2 * this->size())
+	if (this->K <= 2 * this->get_size())
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_double: \"K\" has to be greater "
 		                            "than 2 * \"size\".");
 }
@@ -25,11 +25,11 @@ template <typename B>
 void CRC_polynomial_double<B>
 ::_build(B *U_K)
 {
-	for (unsigned i = unsigned(this->K - 2 * this->size() -1); i >= (unsigned)cut_index - this->size(); i--)
-		U_K[i + this->size()] = U_K[i];
+	for (unsigned i = unsigned(this->K - 2 * this->get_size() -1); i >= (unsigned)cut_index - this->get_size(); i--)
+		U_K[i + this->get_size()] = U_K[i];
 
-	this->_generate(U_K, U_K, 0, cut_index - this->size(), cut_index - this->size());
-	this->_generate(U_K, U_K, 0, this->K   - this->size(),   this->K - this->size());
+	this->_generate(U_K, U_K, 0, cut_index - this->get_size(), cut_index - this->get_size());
+	this->_generate(U_K, U_K, 0, this->K   - this->get_size(),   this->K - this->get_size());
 }
 
 // ==================================================================================== explicit template instantiation 

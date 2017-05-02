@@ -29,8 +29,8 @@ Decoder_RA<B, R>
 		throw std::invalid_argument("aff3ct::module::Decoder_RA: \"max_iter\" has to be greater than 0.");
 	if (N % K)
 		throw std::invalid_argument("aff3ct::module::Decoder_RA: \"K\" has to be a multiple of \"N\".");
-	if ((int)interleaver.size() != N)
-		throw std::length_error("aff3ct::module::Decoder_RA: \"interleaver.size()\" has to be equal to \"N\".");
+	if ((int)interleaver.get_size() != N)
+		throw std::length_error("aff3ct::module::Decoder_RA: \"interleaver.get_size()\" has to be equal to \"N\".");
 
 	Xd[0].resize(N);
 	Xd[1].resize(N);
