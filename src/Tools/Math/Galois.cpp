@@ -57,7 +57,7 @@ void Galois
 void Galois
 ::Generate_GF()
 {
-	register int i, mask;
+	int i, mask;
 
 	mask = 1;
 	alpha_to[m] = 0;
@@ -86,8 +86,8 @@ void Galois
 void Galois
 ::Compute_BCH_Generator_Polynomial()
 {
-	register int ii, jj, ll, kaux;
-	register int test, aux, nocycles, root, noterms, rdncy;
+	int ii, jj, ll, kaux;
+	int test, aux, nocycles, root, noterms, rdncy;
 	int cycle[1024][21], size[1024], min[1024], zeros[1024];
 
 	/* Generate cycle sets modulo n, n = 2**m - 1 */
