@@ -130,16 +130,16 @@
 #include <Tools/Display/Terminal/BFER/Terminal_BFER.hpp>
 #include <Module/Interleaver/Random/Interleaver_random.hpp>
 #include <Module/Interleaver/Golden/Interleaver_golden.hpp>
-#include <Module/Interleaver/SPU_Interleaver.hpp>
+// #include <Module/Interleaver/SPU_Interleaver.hpp>
 #include <Module/Interleaver/Row_column/Interleaver_row_column.hpp>
-#include <Module/Interleaver/SC_Interleaver.hpp>
+// #include <Module/Interleaver/SC_Interleaver.hpp>
 #include <Module/Interleaver/User/Interleaver_user.hpp>
 #include <Module/Interleaver/Random_column/Interleaver_random_column.hpp>
 #include <Module/Interleaver/Interleaver.hpp>
 #include <Module/Interleaver/NO/Interleaver_NO.hpp>
 #include <Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp>
 #include <Module/Interleaver/LTE/Interleaver_LTE.hpp>
-#include <Module/Modulator/SC_Modulator.hpp>
+// #include <Module/Modulator/SC_Modulator.hpp>
 #include <Module/Modulator/BPSK/Modulator_BPSK_fast.hpp>
 #include <Module/Modulator/BPSK/Modulator_BPSK.hpp>
 #include <Module/Modulator/PSK/Modulator_PSK.hpp>
@@ -151,13 +151,13 @@
 #include <Module/Modulator/User/Modulator_user.hpp>
 #include <Module/Modulator/QAM/Modulator_QAM.hpp>
 #include <Module/Modulator/PAM/Modulator_PAM.hpp>
-#include <Module/Modulator/SPU_Modulator.hpp>
+// #include <Module/Modulator/SPU_Modulator.hpp>
 #include <Module/Modulator/Modulator.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
-#include <Module/Puncturer/SPU_Puncturer.hpp>
+// #include <Module/Puncturer/SPU_Puncturer.hpp>
 #include <Module/Puncturer/Puncturer.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
-#include <Module/Puncturer/SC_Puncturer.hpp>
+// #include <Module/Puncturer/SC_Puncturer.hpp>
 #include <Module/Puncturer/Turbo/Puncturer_turbo.hpp>
 #include <Module/Encoder/Encoder_sys.hpp>
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
@@ -167,8 +167,8 @@
 #include <Module/Encoder/RSC/Encoder_RSC_sys.hpp>
 #include <Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp>
 #include <Module/Encoder/RSC/Encoder_RSC3_CPE_sys.hpp>
-#include <Module/Encoder/SC_Encoder.hpp>
-#include <Module/Encoder/SPU_Encoder.hpp>
+// #include <Module/Encoder/SC_Encoder.hpp>
+// #include <Module/Encoder/SPU_Encoder.hpp>
 #include <Module/Encoder/Repetition/Encoder_repetition_sys.hpp>
 #include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
 #include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
@@ -192,10 +192,10 @@
 #include <Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LLR.hpp>
 #include <Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LR.hpp>
 #include <Module/Channel/Additive/User/Channel_additive_user.hpp>
-#include <Module/Channel/SPU_Channel.hpp>
+// #include <Module/Channel/SPU_Channel.hpp>
 #include <Module/Channel/User/Channel_user.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
-#include <Module/Channel/SC_Channel.hpp>
+// #include <Module/Channel/SC_Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Decoder/Decoder.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
@@ -338,7 +338,7 @@
 // #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp>
 // #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp>
 #include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hpp>
-#include <Module/Decoder/SPU_Decoder.hpp>
+// #include <Module/Decoder/SPU_Decoder.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic.hpp>
@@ -359,12 +359,12 @@
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_AVX.hpp>
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_SSE.hpp>
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra.hpp>
-#include <Module/Decoder/SPU_SISO.hpp>
+// #include <Module/Decoder/SPU_SISO.hpp>
 #include <Module/Decoder/SISO.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition_fast.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition_std.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition.hpp>
-#include <Module/Decoder/SC_SISO.hpp>
+// #include <Module/Decoder/SC_SISO.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp>
@@ -378,7 +378,7 @@
 #include <Module/Decoder/Decoder_SISO.hpp>
 #include <Module/Decoder/NO/Decoder_NO.hpp>
 #include <Module/Decoder/RA/Decoder_RA.hpp>
-#include <Module/Decoder/SC_Decoder.hpp>
+// #include <Module/Decoder/SC_Decoder.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_naive.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_fast.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo.hpp>
@@ -386,33 +386,33 @@
 #include <Module/Decoder/Turbo/CRC/Self_corrected/Decoder_turbo_naive_CA_self_corrected.hpp>
 #include <Module/Decoder/Turbo/CRC/Decoder_turbo_fast_CA.hpp>
 #include <Module/Decoder/Turbo/CRC/Flip_and_check/Decoder_turbo_naive_CA_flip_and_check.hpp>
-#include <Module/Coset/SPU_Coset.hpp>
+// #include <Module/Coset/SPU_Coset.hpp>
 #include <Module/Coset/Real/Coset_real.hpp>
 #include <Module/Coset/Coset.hpp>
-#include <Module/Coset/SC_Coset.hpp>
+// #include <Module/Coset/SC_Coset.hpp>
 #include <Module/Coset/Bit/Coset_bit.hpp>
-#include <Module/Source/SC_Source.hpp>
+// #include <Module/Source/SC_Source.hpp>
 #include <Module/Source/Random/Source_random_fast.hpp>
 #include <Module/Source/Random/Source_random.hpp>
 #include <Module/Source/AZCW/Source_AZCW.hpp>
-#include <Module/Source/SPU_Source.hpp>
+// #include <Module/Source/SPU_Source.hpp>
 #include <Module/Source/Source.hpp>
 #include <Module/Source/User/Source_user.hpp>
 #include <Module/Monitor/Standard/Monitor_reduction_mpi.hpp>
 #include <Module/Monitor/Standard/Monitor_std.hpp>
 #include <Module/Monitor/Standard/Monitor_reduction.hpp>
 #include <Module/Monitor/Monitor.hpp>
-#include <Module/Monitor/SC_Monitor.hpp>
-#include <Module/Monitor/SPU_Monitor.hpp>
+// #include <Module/Monitor/SC_Monitor.hpp>
+// #include <Module/Monitor/SPU_Monitor.hpp>
 #include <Module/Quantizer/Fast/Quantizer_fast.hpp>
 #include <Module/Quantizer/Standard/Quantizer_standard.hpp>
 #include <Module/Quantizer/Quantizer.hpp>
-#include <Module/Quantizer/SC_Quantizer.hpp>
+// #include <Module/Quantizer/SC_Quantizer.hpp>
 #include <Module/Quantizer/Tricky/Quantizer_tricky.hpp>
-#include <Module/Quantizer/SPU_Quantizer.hpp>
+// #include <Module/Quantizer/SPU_Quantizer.hpp>
 #include <Module/Quantizer/NO/Quantizer_NO.hpp>
-#include <Module/CRC/SPU_CRC.hpp>
-#include <Module/CRC/SC_CRC.hpp>
+// #include <Module/CRC/SPU_CRC.hpp>
+// #include <Module/CRC/SC_CRC.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_double.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_fast.hpp>
@@ -447,8 +447,8 @@
 #include <Simulation/GEN/Code/Polar/Generation_polar.hpp>
 #include <Simulation/BFER/Standard/STD_Simulation_BFER.hpp>
 #include <Simulation/BFER/Simulation_BFER.hpp>
-#include <Simulation/BFER/StarPU/SPU_Simulation_BFER.hpp>
-#include <Simulation/BFER/SystemC/SC_Simulation_BFER.hpp>
+// #include <Simulation/BFER/StarPU/SPU_Simulation_BFER.hpp>
+// #include <Simulation/BFER/SystemC/SC_Simulation_BFER.hpp>
 #include <Simulation/BFER/Code/Polar/Simulation_BFER_polar.hpp>
 #include <Simulation/BFER/Code/RSC/Simulation_BFER_RSC.hpp>
 #include <Simulation/BFER/Code/Repetition/Simulation_BFER_repetition.hpp>
@@ -458,7 +458,7 @@
 #include <Simulation/BFER/Code/RA/Simulation_BFER_RA.hpp>
 #include <Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp>
 #include <Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp>
-#include <Simulation/BFERI/SystemC/SC_Simulation_BFERI.hpp>
+// #include <Simulation/BFERI/SystemC/SC_Simulation_BFERI.hpp>
 #include <Simulation/BFERI/Simulation_BFERI.hpp>
 #include <Simulation/BFERI/Code/Polar/Simulation_BFERI_polar.hpp>
 #include <Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp>
