@@ -1,4 +1,4 @@
-#ifdef SYSTEMC
+#if defined(SYSTEMC) || defined(SYSTEMC_MODULE)
 
 #ifndef SC_DUPLICATOR_HPP_
 #define SC_DUPLICATOR_HPP_

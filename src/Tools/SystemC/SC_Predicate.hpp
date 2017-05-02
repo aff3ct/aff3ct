@@ -1,4 +1,4 @@
-#ifdef SYSTEMC
+#if defined(SYSTEMC) || defined(SYSTEMC_MODULE)
 
 #ifndef SC_PREDICATE_HPP_
 #define SC_PREDICATE_HPP_
