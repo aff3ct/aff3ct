@@ -20,7 +20,7 @@ class SC_Source;
 template <typename B = int>
 class SC_Source_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Source_module);
+	SC_HAS_PROCESS(SC_Source_module); // required because of the "SC_THREAD" call in the constructor
 
 public:
 	tlm_utils::simple_initiator_socket<SC_Source_module> s_out;

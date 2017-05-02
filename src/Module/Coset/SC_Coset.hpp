@@ -22,8 +22,6 @@ class SC_Coset;
 template <typename B, typename D>
 class SC_Coset_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Coset_module);
-
 public:
 	tlm_utils::simple_target_socket   <SC_Coset_module> s_in1;
 	tlm_utils::simple_target_socket   <SC_Coset_module> s_in2;

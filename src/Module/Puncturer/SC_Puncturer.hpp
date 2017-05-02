@@ -22,8 +22,6 @@ class SC_Puncturer;
 template <typename B, typename Q>
 class SC_Puncturer_module_puncturer : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Puncturer_module_puncturer);
-
 public:
 	tlm_utils::simple_target_socket   <SC_Puncturer_module_puncturer> s_in;
 	tlm_utils::simple_initiator_socket<SC_Puncturer_module_puncturer> s_out;

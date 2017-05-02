@@ -22,8 +22,6 @@ class SC_Modulator;
 template <typename B = int, typename R = float, typename Q = R>
 class SC_Modulator_module_modulator : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Modulator_module_modulator);
-
 public:
 	tlm_utils::simple_target_socket   <SC_Modulator_module_modulator> s_in;
 	tlm_utils::simple_initiator_socket<SC_Modulator_module_modulator> s_out;

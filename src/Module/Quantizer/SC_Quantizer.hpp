@@ -22,8 +22,6 @@ class SC_Quantizer;
 template <typename R, typename Q>
 class SC_Quantizer_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Quantizer_module);
-
 public:
 	tlm_utils::simple_target_socket   <SC_Quantizer_module> s_in;
 	tlm_utils::simple_initiator_socket<SC_Quantizer_module> s_out;

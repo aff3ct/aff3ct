@@ -22,8 +22,6 @@ class SC_Channel;
 template <typename R = float>
 class SC_Channel_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Channel_module);
-
 public:
 	tlm_utils::simple_target_socket   <SC_Channel_module> s_in;
 	tlm_utils::simple_initiator_socket<SC_Channel_module> s_out;

@@ -22,8 +22,6 @@ class SC_CRC;
 template <typename B = int>
 class SC_CRC_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_CRC_module);
-
 public:
 	tlm_utils::simple_target_socket   <SC_CRC_module> s_in;
 	tlm_utils::simple_initiator_socket<SC_CRC_module> s_out;

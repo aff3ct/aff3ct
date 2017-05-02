@@ -22,8 +22,6 @@ class SC_Interleaver;
 template <typename T = int>
 class SC_Interleaver_module_interleaver : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Interleaver_module_interleaver);
-
 public:
 	tlm_utils::simple_target_socket   <SC_Interleaver_module_interleaver> s_in;
 	tlm_utils::simple_initiator_socket<SC_Interleaver_module_interleaver> s_out;

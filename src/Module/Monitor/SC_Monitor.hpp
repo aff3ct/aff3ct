@@ -22,8 +22,6 @@ class SC_Monitor;
 template <typename B = int, typename R = float>
 class SC_Monitor_module : public sc_core::sc_module
 {
-	SC_HAS_PROCESS(SC_Monitor_module);
-
 public:
 	tlm_utils::simple_target_socket<SC_Monitor_module> s_in1;
 	tlm_utils::simple_target_socket<SC_Monitor_module> s_in2;
