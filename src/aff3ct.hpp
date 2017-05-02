@@ -26,8 +26,6 @@
 #include <Tools/Display/bash_tools.h>
 // #include <Tools/MSVC/dirent.h>
 #include <Tools/params.h>
-// #include <main.h>
-
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
 #include <Tools/Threads/Barrier.hpp>

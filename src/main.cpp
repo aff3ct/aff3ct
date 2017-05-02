@@ -2,9 +2,14 @@
 #include <iostream>
 #include <exception>
 #include <map>
+#include <string>
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
+#endif
+
+#ifdef SYSTEMC
+#include <systemc>
 #endif
 
 #include "Tools/types.h"
@@ -24,7 +29,6 @@
 #include "Launcher/BFER/BCH/Launcher_BFER_BCH.hpp"
 #include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
 
-
 #include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
 #include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
 #include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
@@ -34,8 +38,6 @@
 #include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
 
 #include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
-
-#include "main.h"
 
 using namespace aff3ct::launcher;
 using namespace aff3ct::tools;
@@ -328,8 +330,8 @@ int sc_main(int argc, char **argv)
 			start_simu<B_64,R_64,Q_64,QD_64>(argc, (const char**)argv, code_type, simu_type); break;
 #endif
 		default:
-			std::cerr << bold_red("(EE) Unsupported number of bits.") << std::endl;
-			exit(EXIT_FAILURE);
+			std::cerr << bold_red("(EE) Unsupported bit precision.") << std::endl;
+			return EXIT_FAILURE;
 			break;
 	}
 #else
