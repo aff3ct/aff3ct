@@ -29,6 +29,7 @@ private:
 	std::ostream &stream; /*!< Stream to trace the frame(s). */
 
 	const int n_bits; /*!< Number of bits to display per frame (if n_bits = 0, display all the bits of the frame). */
+	const int prec;   /*!< Number of characters used to display the number if real vectors */
 
 public:
 	/*!
@@ -37,8 +38,8 @@ public:
 	 * \param n_bits: number of bits to display per frame (if n_bits = 0, display all the bits of the frame).
 	 * \param stream: stream to trace the frame(s).
 	 */
-	Frame_trace(const int n_bits = 0, std::ostream &stream = std::cout)
-	: stream(stream), n_bits(n_bits)
+	Frame_trace(const int n_bits = 0, const int prec = 5, std::ostream &stream = std::cout)
+	: stream(stream), n_bits(n_bits), prec(prec)
 	{
 	}
 

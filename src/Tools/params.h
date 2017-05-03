@@ -29,6 +29,7 @@ struct simulation_parameters
 	bool                      time_report;
 	int                       benchs;
 	int                       debug_limit;
+	int                       debug_precision;
 	int                       n_threads;
 	int                       inter_frame_level;
 	int                       seed;

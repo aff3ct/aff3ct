@@ -16,6 +16,7 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .benchs           = 0;
 	this->params.simulation .debug            = false;
 	this->params.simulation .debug_limit      = 0;
+	this->params.simulation .debug_precision  = 5;
 	this->params.simulation .time_report      = false;
 	this->params.simulation .trace_path       = "";
 #if !defined(STARPU) && !defined(SYSTEMC)
@@ -51,6 +52,9 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};
+	this->opt_args[{"sim-debug-prec"}] =
+		{"positive_int",
+		 "set the precision of real elements when displayed in debug mode."};
 	this->opt_args[{"sim-debug-limit"}] =
 		{"positive_int",
 		 "set the max number of elements to display in the debug mode."};
@@ -141,7 +145,12 @@ void Launcher_BFERI<B,R,Q>
 	if(this->ar.exist_arg({"sim-debug-limit"   }))
 	{
 		this->params.simulation.debug = true;
-		this->params.simulation.debug_limit  = this->ar.get_arg_int({"sim-debug-limit"});
+		this->params.simulation.debug_limit = this->ar.get_arg_int({"sim-debug-limit"});
+	}
+	if(this->ar.exist_arg({"sim-debug-prec"}))
+	{
+		this->params.simulation.debug = true;
+		this->params.simulation.debug_precision = this->ar.get_arg_int({"sim-debug-prec"});
 	}
 
 	if (this->params.simulation.debug &&

@@ -54,7 +54,7 @@ void Frame_trace<B>
 	if (row_width == vec.size())
 	{
 		for (auto i = 0; i < n_bits; i++)
-			stream << std::setw(5) << i << "|";
+			stream << std::setw(prec+2) << i << "|";
 
 		if (n_bits < (int)vec.size())
 			stream << " ...";
@@ -81,16 +81,19 @@ template <typename B> template <typename D>
 void Frame_trace<B>
 ::display_value(D value, debug_version version)
 {
+	std::stringstream sstream;
+	std::string value_string;
+
 	switch(version)
 	{
 		case BIT:
-			stream << std::setw(5) << ((value == 0) ? (int) 0 : (int) 1) << "|";
+			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1) << "|";
 			break;
 		case REAL:
-			if (value >= 0)
-				stream << std::setprecision(2) << std::setw(5) << +value << "|";
-			else
-				stream << std::setprecision(1) << std::setw(5) << +value << "|";
+			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
+			value_string = sstream.str().substr(0, prec+2);
+
+			stream << value_string << "|";
 			break;
 	}
 }
@@ -105,25 +108,23 @@ void Frame_trace<B>
 	switch(version)
 	{
 		case BIT:
+			value_string.append(prec+1, ' ');
 			if (value == 0)
 				if (ref == 0)
-					stream << tools::bold_green ("    0") << "|";
+					stream << tools::bold_green (value_string + "0") << "|";
 				else
-					stream << tools::bold_orange("    0") << "|";
+					stream << tools::bold_orange(value_string + "0") << "|";
 			else
 				if (ref == 0)
-					stream << tools::bold_orange("    1") << "|";
+					stream << tools::bold_orange(value_string + "1") << "|";
 				else	
-					stream << tools::bold_green ("    1") << "|";
+					stream << tools::bold_green (value_string + "1") << "|";
 			break;
 
 		case REAL:
-			if(value >= 0)
-				sstream << std::fixed << std::setprecision(2) << std::setw(5) << +value;
-			else
-				sstream << std::fixed << std::setprecision(1) << std::setw(5) << +value;
+			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
 
-			value_string = sstream.str();
+			value_string = sstream.str().substr(0, prec+2);
 
 			if (value >= 0)
 				if (ref == 0)
