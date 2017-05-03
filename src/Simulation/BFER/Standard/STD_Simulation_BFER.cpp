@@ -494,7 +494,7 @@ void Simulation_BFER<B,R,Q>
 {
 	using namespace std::chrono;
 
-	Frame_trace<B> ft(simu->params.simulation.debug_limit); // frame trace to display the vectors
+	Frame_trace<B> ft(simu->params.simulation.debug_limit, simu->params.simulation.debug_precision); // frame trace to display the vectors
 
 	// simulation loop
 	auto t_simu = steady_clock::now();

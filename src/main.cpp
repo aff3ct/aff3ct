@@ -296,7 +296,7 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the launcher.") << std::endl
+		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when running the launcher.") << std::endl
 		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 	}
 }

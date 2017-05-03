@@ -7,7 +7,6 @@
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Decoder_polar_SC_fast_sys.hpp"
 
