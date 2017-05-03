@@ -6,6 +6,13 @@ project (aff3ct)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set (CMAKE_MACOSX_RPATH 1)
 
+# Enable C++11
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    set (CMAKE_CXX_STANDARD 14)
+else ()
+    set (CMAKE_CXX_STANDARD 11)
+endif()
+
 # Specify bin and lib paths
 set (EXECUTABLE_OUTPUT_PATH bin/)
 set (LIBRARY_OUTPUT_PATH lib/)
@@ -164,13 +171,13 @@ endif (ENABLE_MPI)
 
 # Enable C++11 and pthread
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    add_definitions (-std=c++1y -Wno-overloaded-virtual)
+    add_definitions (-Wno-overloaded-virtual)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_definitions (-std=c++11 -pthread)
+    add_definitions (-pthread)
     aff3ct_link_libraries (-lpthread)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    add_definitions (-std=c++11 -pthread)
+    add_definitions (-pthread)
     aff3ct_link_libraries (-pthread)
 endif()
 
