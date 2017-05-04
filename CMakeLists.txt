@@ -200,7 +200,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
 endif()
 
 if (UNIX)
-	add_definitions (-fPIC)
+    add_definitions (-fPIC)
 endif()
 
 # Specific options
