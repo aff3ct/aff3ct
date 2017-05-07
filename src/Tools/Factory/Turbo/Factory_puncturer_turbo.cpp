@@ -19,7 +19,9 @@ Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
 		                                     params.encoder.buffered,
 		                                     params.simulation.inter_frame_level);
 	else
-		puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N, params.simulation.inter_frame_level);
+		puncturer = new Puncturer_NO<B,Q>(params.code.K,
+		                                  params.code.N + params.code.tail_length,
+		                                  params.simulation.inter_frame_level);
 
 	return puncturer;
 }
