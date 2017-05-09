@@ -22,7 +22,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 
 	if (params.encoder.systematic)
 	{
-		if (params.decoder.type == "BP" || params.decoder.type == "BP_FLOODING")
+		if ((params.decoder.type == "BP" || params.decoder.type == "BP_FLOODING") && params.decoder.simd_strategy.empty())
 		{
 			if (params.decoder.implem == "ONMS")
 				decoder = new Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>(params.code.K,
@@ -90,7 +90,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 					                                                      params.decoder.syndrome_depth,
 					                                                      params.simulation.inter_frame_level);
 			}
-			else if (params.decoder.implem == "SPA")
+			else if (params.decoder.implem == "SPA" && params.decoder.simd_strategy.empty())
 				decoder = new Decoder_LDPC_BP_layered_sum_product<B,R>(params.code.K,
 				                                                       params.code.N,
 				                                                       params.decoder.n_ite,
@@ -99,7 +99,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 				                                                       params.decoder.enable_syndrome,
 				                                                       params.decoder.syndrome_depth,
 				                                                       params.simulation.inter_frame_level);
-			else if (params.decoder.implem == "LSPA")
+			else if (params.decoder.implem == "LSPA" && params.decoder.simd_strategy.empty())
 				decoder = new Decoder_LDPC_BP_layered_log_sum_product<B,R>(params.code.K,
 				                                                           params.code.N,
 				                                                           params.decoder.n_ite,
