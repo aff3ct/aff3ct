@@ -65,8 +65,8 @@ public:
 	          std::string name = "Decoder_i")
 	: Module(n_frames, name),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N(simd_inter_frame_level * N),
-	  V_K(simd_inter_frame_level * K),
+	  Y_N(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
+	  V_K(n_inter_frame_rest ? simd_inter_frame_level * K : 0),
 	  K(K),
 	  N(N),
 	  simd_inter_frame_level(simd_inter_frame_level),

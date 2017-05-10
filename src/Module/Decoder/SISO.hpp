@@ -58,8 +58,8 @@ public:
 	       std::string name = "SISO_i")
 	: Module(n_frames, name),
 	  n_inter_frame_rest_siso(this->n_frames % simd_inter_frame_level),
-	  Y_N1(simd_inter_frame_level * N),
-	  Y_N2(simd_inter_frame_level * N),
+	  Y_N1(n_inter_frame_rest_siso ? simd_inter_frame_level * N : 0),
+	  Y_N2(n_inter_frame_rest_siso ? simd_inter_frame_level * N : 0),
 	  K_siso(K),
 	  N_siso(N),
 	  simd_inter_frame_level_siso(simd_inter_frame_level),
