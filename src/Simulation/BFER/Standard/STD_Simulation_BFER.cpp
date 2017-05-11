@@ -251,43 +251,32 @@ void Simulation_BFER<B,R,Q>
 	        (simu->params.simulation.stop_time == seconds(0) ||
 	         (steady_clock::now() - simu->t_snr) < simu->params.simulation.stop_time))
 	{
-		auto d_sourc = nanoseconds(0);
-		auto d_crcbd = nanoseconds(0);
-		auto d_encod = nanoseconds(0);
-		auto d_punct = nanoseconds(0);
-		auto d_modul = nanoseconds(0);
-		auto d_chann = nanoseconds(0);
-		auto d_filte = nanoseconds(0);
-		auto d_demod = nanoseconds(0);
-		auto d_corea = nanoseconds(0);
-		auto d_cobit = nanoseconds(0);
-
 		if (simu->params.source.type != "AZCW")
 		{
 			// generate a random K bits vector U_K1
 			auto t_sourc = steady_clock::now();
 			simu->source[tid]->generate(simu->U_K1[tid]);
-			d_sourc = steady_clock::now() - t_sourc;
+			simu->durations[tid][std::make_pair(0, "Source")] += steady_clock::now() - t_sourc;
 
 			// build the CRC from U_K1 into U_K2
 			auto t_crcbd = steady_clock::now();
 			simu->crc[tid]->build(simu->U_K1[tid], simu->U_K2[tid]);
-			d_crcbd = steady_clock::now() - t_crcbd;
+			simu->durations[tid][std::make_pair(1, "CRC build")] += steady_clock::now() - t_crcbd;
 
 			// encode U_K2 into a N bits vector X_N
 			auto t_encod = steady_clock::now();
 			simu->encoder[tid]->encode(simu->U_K2[tid], simu->X_N1[tid]);
-			d_encod = steady_clock::now() - t_encod;
+			simu->durations[tid][std::make_pair(2, "Encoder")] += steady_clock::now() - t_encod;
 
 			// puncture X_N1 into X_N2
 			auto t_punct = steady_clock::now();
 			simu->puncturer[tid]->puncture(simu->X_N1[tid], simu->X_N2[tid]);
-			d_punct = steady_clock::now() - t_punct;
+			simu->durations[tid][std::make_pair(3, "Puncturer")] += steady_clock::now() - t_punct;
 
 			// modulate
 			auto t_modul = steady_clock::now();
 			simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
-			d_modul = steady_clock::now() - t_modul;
+			simu->durations[tid][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
 		}
 
 		// Rayleigh channel
@@ -296,71 +285,74 @@ void Simulation_BFER<B,R,Q>
 			// add noise
 			auto t_chann = steady_clock::now();
 			simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid], simu->H_N[tid]);
-			d_chann = steady_clock::now() - t_chann;
+			simu->durations[tid][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
 
 			// filtering
 			auto t_filte = steady_clock::now();
 			simu->modulator[tid]->filter(simu->Y_N1[tid], simu->Y_N2[tid]);
-			d_filte = steady_clock::now() - t_filte;
+			simu->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 			// demodulation
 			auto t_demod = steady_clock::now();
 			simu->modulator[tid]->demodulate_with_gains(simu->Y_N2[tid], simu->H_N[tid], simu->Y_N3[tid]);
-			d_demod = steady_clock::now() - t_demod;
+			simu->durations[tid][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
 			// add noise
 			auto t_chann = steady_clock::now();
 			simu->channel[tid]->add_noise(simu->X_N3[tid], simu->Y_N1[tid]);
-			d_chann = steady_clock::now() - t_chann;
+			simu->durations[tid][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
 
 			// filtering
 			auto t_filte = steady_clock::now();
 			simu->modulator[tid]->filter(simu->Y_N1[tid], simu->Y_N2[tid]);
-			d_filte = steady_clock::now() - t_filte;
+			simu->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 			// demodulation
 			auto t_demod = steady_clock::now();
 			simu->modulator[tid]->demodulate(simu->Y_N2[tid], simu->Y_N3[tid]);
-			d_demod = steady_clock::now() - t_demod;
+			simu->durations[tid][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
 		}
 
 		// make the quantization
 		auto t_quant = steady_clock::now();
 		simu->quantizer[tid]->process(simu->Y_N3[tid], simu->Y_N4[tid]);
-		auto d_quant = steady_clock::now() - t_quant;
+		simu->durations[tid][std::make_pair(8, "Quantizer")] += steady_clock::now() - t_quant;
 
 		// depuncture before the decoding stage
 		auto t_depun = steady_clock::now();
 		simu->puncturer[tid]->depuncture(simu->Y_N4[tid], simu->Y_N5[tid]);
-		auto d_depun = steady_clock::now() - t_depun;
+		simu->durations[tid][std::make_pair(9, "Depuncturer")] += steady_clock::now() - t_depun;
 
 		// apply the coset: the decoder will believe to a AZCW
 		if (simu->params.code.coset)
 		{
 			auto t_corea = steady_clock::now();
 			simu->coset_real[tid]->apply(simu->X_N1[tid], simu->Y_N5[tid], simu->Y_N5[tid]);
-			d_corea = steady_clock::now() - t_corea;
+			simu->durations[tid][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
 		}
 
 		// launch decoder
 		auto t_decod = steady_clock::now();
 		simu->decoder[tid]->hard_decode(simu->Y_N5[tid], simu->V_K1[tid]);
-		auto d_decod = steady_clock::now() - t_decod;
+		simu->durations[tid][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
+		simu->durations[tid][std::make_pair(12, "- load"  )] += simu->decoder[tid]->get_load_duration();
+		simu->durations[tid][std::make_pair(13, "- decode")] += simu->decoder[tid]->get_decode_duration();
+		simu->durations[tid][std::make_pair(14, "- store" )] += simu->decoder[tid]->get_store_duration();
 
 		// apply the coset to recover the real bits
 		if (simu->params.code.coset)
 		{
 			auto t_cobit = steady_clock::now();
 			simu->coset_bit[tid]->apply(simu->U_K2[tid], simu->V_K1[tid], simu->V_K1[tid]);
-			d_cobit = steady_clock::now() - t_cobit;
+			simu->durations[tid][std::make_pair(15, "Coset bit")] += steady_clock::now() - t_cobit;
 		}
 
 		// extract the CRC bits and keep only the information bits
 		auto t_crcex = steady_clock::now();
 		simu->crc[tid]->extract(simu->V_K1[tid], simu->V_K2[tid]);
-		auto d_crcex = steady_clock::now() - t_crcex;
+		simu->durations[tid][std::make_pair(16, "CRC extract")] += steady_clock::now() - t_crcex;
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
@@ -369,27 +361,7 @@ void Simulation_BFER<B,R,Q>
 			                                           simu->Y_N1[tid]);
 		else
 			simu->monitor[tid]->check_errors(simu->U_K1[tid], simu->V_K2[tid]);
-		auto d_check = steady_clock::now() - t_check;
-
-		// increment total durations for each operations
-		simu->durations[tid][std::make_pair( 0, "Source"      )] += d_sourc;
-		simu->durations[tid][std::make_pair( 1, "CRC build"   )] += d_crcbd;
-		simu->durations[tid][std::make_pair( 2, "Encoder"     )] += d_encod;
-		simu->durations[tid][std::make_pair( 3, "Puncturer"   )] += d_punct;
-		simu->durations[tid][std::make_pair( 4, "Modulator"   )] += d_modul;
-		simu->durations[tid][std::make_pair( 5, "Channel"     )] += d_chann;
-		simu->durations[tid][std::make_pair( 6, "Filter"      )] += d_filte;
-		simu->durations[tid][std::make_pair( 7, "Demodulator" )] += d_demod;
-		simu->durations[tid][std::make_pair( 8, "Quantizer"   )] += d_quant;
-		simu->durations[tid][std::make_pair( 9, "Depuncturer" )] += d_depun;
-		simu->durations[tid][std::make_pair(10, "Coset real"  )] += d_corea;
-		simu->durations[tid][std::make_pair(11, "Decoder"     )] += d_decod;
-		simu->durations[tid][std::make_pair(12, "- load"      )] += simu->decoder[tid]->get_load_duration();
-		simu->durations[tid][std::make_pair(13, "- decode"    )] += simu->decoder[tid]->get_decode_duration();
-		simu->durations[tid][std::make_pair(14, "- store"     )] += simu->decoder[tid]->get_store_duration();
-		simu->durations[tid][std::make_pair(15, "Coset bit"   )] += d_cobit;
-		simu->durations[tid][std::make_pair(16, "CRC extract" )] += d_crcex;
-		simu->durations[tid][std::make_pair(17, "Check errors")] += d_check;
+		simu->durations[tid][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
 
 		// display statistics in terminal
 		if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
@@ -464,24 +436,13 @@ void Simulation_BFER<B,R,Q>
 		std::clog << "Frame n°" << simu->monitor_red->get_n_analyzed_fra() << std::endl;
 		std::clog << "-------------------------------" << std::endl;
 
-		auto d_sourc = nanoseconds(0);
-		auto d_crcbd = nanoseconds(0);
-		auto d_encod = nanoseconds(0);
-		auto d_punct = nanoseconds(0);
-		auto d_modul = nanoseconds(0);
-		auto d_corea = nanoseconds(0);
-		auto d_cobit = nanoseconds(0);
-		auto d_chann = nanoseconds(0);
-		auto d_filte = nanoseconds(0);
-		auto d_demod = nanoseconds(0);
-
 		if (simu->params.source.type != "AZCW")
 		{
 			// generate a random K bits vector U_K1
 			std::clog << "Generate random bits U_K1..." << std::endl;
 			auto t_sourc = steady_clock::now();
 			simu->source[0]->generate(simu->U_K1[0]);
-			d_sourc = steady_clock::now() - t_sourc;
+			simu->durations[0][std::make_pair(0, "Source")] += steady_clock::now() - t_sourc;
 
 			// display U_K1
 			std::clog << "U_K1:" << std::endl;
@@ -492,7 +453,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Build the CRC from U_K1 into U_K2..." << std::endl;
 			auto t_crcbd = steady_clock::now();
 			simu->crc[0]->build(simu->U_K1[0], simu->U_K2[0]);
-			d_crcbd = steady_clock::now() - t_crcbd;
+			simu->durations[0][std::make_pair(1, "CRC build")] += steady_clock::now() - t_crcbd;
 
 			// display U_K2
 			std::clog << "U_K2:" << std::endl;
@@ -503,7 +464,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Encode U_K2 in X_N1..." << std::endl;
 			auto t_encod = steady_clock::now();
 			simu->encoder[0]->encode(simu->U_K2[0], simu->X_N1[0]);
-			d_encod = steady_clock::now() - t_encod;
+			simu->durations[0][std::make_pair(2, "Encoder")] += steady_clock::now() - t_encod;
 
 			// display X_N1
 			std::clog << "X_N1:" << std::endl;
@@ -514,7 +475,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Puncture X_N1 in X_N2..." << std::endl;
 			auto t_punct = steady_clock::now();
 			simu->puncturer[0]->puncture(simu->X_N1[0], simu->X_N2[0]);
-			d_punct = steady_clock::now() - t_punct;
+			simu->durations[0][std::make_pair(3, "Puncturer")] += steady_clock::now() - t_punct;
 
 			// display X_N2
 			std::clog << "X_N2:" << std::endl;
@@ -525,7 +486,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Modulate X_N2 in X_N3..." << std::endl;
 			auto t_modul = steady_clock::now();
 			simu->modulator[0]->modulate(simu->X_N2[0], simu->X_N3[0]);
-			d_modul = steady_clock::now() - t_modul;
+			simu->durations[0][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
 
 			// display X_N3
 			std::clog << "X_N3:" << std::endl;
@@ -562,7 +523,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
 			auto t_chann = steady_clock::now();
 			simu->channel[0]->add_noise(simu->X_N3[0], simu->Y_N1[0], simu->H_N[0]);
-			d_chann = steady_clock::now() - t_chann;
+			simu->durations[0][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
 
 			// display Y_N1
 			std::clog << "Y_N1:" << std::endl;
@@ -578,7 +539,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
 			auto t_filte = steady_clock::now();
 			simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
-			d_filte = steady_clock::now() - t_filte;
+			simu->durations[0][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 			// display Y_N2
 			std::clog << "Y_N2:" << std::endl;
@@ -589,7 +550,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
 			auto t_demod = steady_clock::now();
 			simu->modulator[0]->demodulate_with_gains(simu->Y_N2[0], simu->H_N[0], simu->Y_N3[0]);
-			d_demod = steady_clock::now() - t_demod;
+			simu->durations[0][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
 
 			// display Y_N3
 			std::clog << "Y_N3:" << std::endl;
@@ -602,7 +563,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
 			auto t_chann = steady_clock::now();
 			simu->channel[0]->add_noise(simu->X_N3[0], simu->Y_N1[0]);
-			d_chann = steady_clock::now() - t_chann;
+			simu->durations[0][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
 
 			// display Y_N1
 			std::clog << "Y_N1:" << std::endl;
@@ -613,7 +574,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
 			auto t_filte = steady_clock::now();
 			simu->modulator[0]->filter(simu->Y_N1[0], simu->Y_N2[0]);
-			d_filte = steady_clock::now() - t_filte;
+			simu->durations[0][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 			// display Y_N2
 			std::clog << "Y_N2:" << std::endl;
@@ -624,7 +585,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
 			auto t_demod = steady_clock::now();
 			simu->modulator[0]->demodulate(simu->Y_N2[0], simu->Y_N3[0]);
-			d_demod = steady_clock::now() - t_demod;
+			simu->durations[0][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
 
 			// display Y_N3
 			std::clog << "Y_N3:" << std::endl;
@@ -636,7 +597,7 @@ void Simulation_BFER<B,R,Q>
 		std::clog << "Make the quantization from Y_N3 to Y_N4..." << std::endl;
 		auto t_quant = steady_clock::now();
 		simu->quantizer[0]->process(simu->Y_N3[0], simu->Y_N4[0]);
-		auto d_quant = steady_clock::now() - t_quant;
+		simu->durations[0][std::make_pair(8, "Quantizer")] += steady_clock::now() - t_quant;
 
 		// display Y_N4
 		std::clog << "Y_N4:" << std::endl;
@@ -647,7 +608,7 @@ void Simulation_BFER<B,R,Q>
 		std::clog << "Depuncture Y_N4 and generate Y_N5..." << std::endl;
 		auto t_depun = steady_clock::now();
 		simu->puncturer[0]->depuncture(simu->Y_N4[0], simu->Y_N5[0]);
-		auto d_depun = steady_clock::now() - t_depun;
+		simu->durations[0][std::make_pair(9, "Depuncturer")] += steady_clock::now() - t_depun;
 
 		// display Y_N5
 		std::clog << "Y_N5:" << std::endl;
@@ -660,7 +621,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Apply the coset approach on Y_N5..." << std::endl;
 			auto t_corea = steady_clock::now();
 			simu->coset_real[0]->apply(simu->X_N1[0], simu->Y_N5[0], simu->Y_N5[0]);
-			d_corea = steady_clock::now() - t_corea;
+			simu->durations[0][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
 
 			// display Y_N5
 			std::clog << "Y_N5:" << std::endl;
@@ -672,7 +633,10 @@ void Simulation_BFER<B,R,Q>
 		std::clog << "Decode Y_N5 and generate V_K1..." << std::endl;
 		auto t_decod = steady_clock::now();
 		simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K1[0]);
-		auto d_decod = steady_clock::now() - t_decod;
+		simu->durations[0][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
+		simu->durations[0][std::make_pair(12, "- load"  )] += simu->decoder[0]->get_load_duration();
+		simu->durations[0][std::make_pair(13, "- decode")] += simu->decoder[0]->get_decode_duration();
+		simu->durations[0][std::make_pair(14, "- store" )] += simu->decoder[0]->get_store_duration();
 
 		// display V_K1
 		std::clog << "V_K1:" << std::endl;
@@ -688,7 +652,7 @@ void Simulation_BFER<B,R,Q>
 			std::clog << "Apply the coset approach on V_K1..." << std::endl;
 			auto t_cobit = steady_clock::now();
 			simu->coset_bit[0]->apply(simu->U_K2[0], simu->V_K1[0], simu->V_K1[0]);
-			d_cobit = steady_clock::now() - t_cobit;
+			simu->durations[0][std::make_pair(15, "Coset bit")] += steady_clock::now() - t_cobit;
 
 			// display V_K1
 			std::clog << "V_K1:" << std::endl;
@@ -700,7 +664,7 @@ void Simulation_BFER<B,R,Q>
 		std::clog << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl;
 		auto t_crcex = steady_clock::now();
 		simu->crc[0]->extract(simu->V_K1[0], simu->V_K2[0]);
-		auto d_crcex = steady_clock::now() - t_crcex;
+		simu->durations[0][std::make_pair(16, "CRC extract")] += steady_clock::now() - t_crcex;
 
 		// display V_K2
 		std::clog << "V_K2:" << std::endl;
@@ -713,27 +677,7 @@ void Simulation_BFER<B,R,Q>
 			simu->monitor[0]->check_and_track_errors(simu->U_K1[0], simu->V_K2[0], simu->X_N1[0], simu->Y_N1[0]);
 		else
 			simu->monitor[0]->check_errors(simu->U_K1[0], simu->V_K2[0]);
-		auto d_check = steady_clock::now() - t_check;
-
-		// increment total durations for each operations
-		simu->durations[0][std::make_pair( 0, "Source"      )] += d_sourc;
-		simu->durations[0][std::make_pair( 1, "CRC build"   )] += d_crcbd;
-		simu->durations[0][std::make_pair( 2, "Encoder"     )] += d_encod;
-		simu->durations[0][std::make_pair( 3, "Puncturer"   )] += d_punct;
-		simu->durations[0][std::make_pair( 4, "Modulator"   )] += d_modul;
-		simu->durations[0][std::make_pair( 5, "Channel"     )] += d_chann;
-		simu->durations[0][std::make_pair( 6, "Filter"      )] += d_filte;
-		simu->durations[0][std::make_pair( 7, "Demodulator" )] += d_demod;
-		simu->durations[0][std::make_pair( 8, "Quantizer"   )] += d_quant;
-		simu->durations[0][std::make_pair( 9, "Depuncturer" )] += d_depun;
-		simu->durations[0][std::make_pair(10, "Coset real"  )] += d_corea;
-		simu->durations[0][std::make_pair(11, "Decoder"     )] += d_decod;
-		simu->durations[0][std::make_pair(12, "- load"      )] += simu->decoder[0]->get_load_duration();
-		simu->durations[0][std::make_pair(13, "- decode"    )] += simu->decoder[0]->get_decode_duration();
-		simu->durations[0][std::make_pair(14, "- store"     )] += simu->decoder[0]->get_store_duration();
-		simu->durations[0][std::make_pair(15, "Coset bit"   )] += d_cobit;
-		simu->durations[0][std::make_pair(16, "CRC extract" )] += d_crcex;
-		simu->durations[0][std::make_pair(17, "Check errors")] += d_check;
+		simu->durations[0][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
 
 		// display statistics in terminal
 		if (!simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
