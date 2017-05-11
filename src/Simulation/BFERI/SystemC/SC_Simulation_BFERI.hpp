@@ -37,7 +37,7 @@ protected:
 	tools::SC_Router     *router;
 	tools::SC_Predicate  *predicate;
 
-	tools::SC_Debug<B> *dbg_B[6];
+	tools::SC_Debug<B> *dbg_B[7];
 	tools::SC_Debug<R> *dbg_R[4];
 	tools::SC_Debug<Q> *dbg_Q[7];
 

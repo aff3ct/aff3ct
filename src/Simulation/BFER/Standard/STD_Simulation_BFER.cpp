@@ -29,7 +29,8 @@ Simulation_BFER<B,R,Q>
 
   threads(this->params.simulation.n_threads -1),
 
-  U_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  U_K1(this->params.simulation.n_threads, mipp::vector<B>((params.code.K      - params.crc .size)        * params.simulation.inter_frame_level)),
+  U_K2(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
   X_N1(this->params.simulation.n_threads, mipp::vector<B>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
   X_N2(this->params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
   X_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
@@ -39,46 +40,13 @@ Simulation_BFER<B,R,Q>
   Y_N3(this->params.simulation.n_threads, mipp::vector<R>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
   Y_N4(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
   Y_N5(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
-  V_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  V_K1(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  V_K2(this->params.simulation.n_threads, mipp::vector<B>((params.code.K      - params.crc .size)        * params.simulation.inter_frame_level)),
 
   monitor_red(nullptr),
   terminal   (nullptr),
 
-  d_sourc_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_crc_total  (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_encod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_punct_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_modul_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_chann_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_filte_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_demod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_quant_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_depun_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_corea_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_decod_load (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_decod_only (this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_decod_store(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_decod_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_cobit_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-  d_check_total(this->params.simulation.n_threads, std::chrono::nanoseconds(0)),
-
-  d_sourc_total_sum(std::chrono::nanoseconds(0)),
-  d_crc_total_sum  (std::chrono::nanoseconds(0)),
-  d_encod_total_sum(std::chrono::nanoseconds(0)),
-  d_punct_total_sum(std::chrono::nanoseconds(0)),
-  d_modul_total_sum(std::chrono::nanoseconds(0)),
-  d_chann_total_sum(std::chrono::nanoseconds(0)),
-  d_filte_total_sum(std::chrono::nanoseconds(0)),
-  d_demod_total_sum(std::chrono::nanoseconds(0)),
-  d_quant_total_sum(std::chrono::nanoseconds(0)),
-  d_depun_total_sum(std::chrono::nanoseconds(0)),
-  d_corea_total_sum(std::chrono::nanoseconds(0)),
-  d_decod_load_sum (std::chrono::nanoseconds(0)),
-  d_decod_only_sum (std::chrono::nanoseconds(0)),
-  d_decod_store_sum(std::chrono::nanoseconds(0)),
-  d_decod_total_sum(std::chrono::nanoseconds(0)),
-  d_cobit_total_sum(std::chrono::nanoseconds(0)),
-  d_check_total_sum(std::chrono::nanoseconds(0))
+  durations(this->params.simulation.n_threads)
 {
 	if (this->params.simulation.n_threads > 1 && params.simulation.debug)
 		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
@@ -188,7 +156,7 @@ void Simulation_BFER<B,R,Q>
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K,
+		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K - simu->params.crc .size,
 		                                                   simu->params.code.N + simu->params.code.tail_length,
 		                                                   simu->params.code.N_mod,
 		                                                   simu->params.monitor.n_frame_errors,
@@ -198,7 +166,7 @@ void Simulation_BFER<B,R,Q>
 		                                                   simu->params.simulation.inter_frame_level);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K - simu->params.crc .size,
 		                                               simu->params.code.N + simu->params.code.tail_length,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
@@ -227,29 +195,15 @@ void Simulation_BFER<B,R,Q>
 
 		if (simu->params.source.type == "AZCW")
 		{
-			std::fill(simu->U_K [tid].begin(), simu->U_K [tid].end(), (B)0);
+			std::fill(simu->U_K1[tid].begin(), simu->U_K1[tid].end(), (B)0);
+			std::fill(simu->U_K2[tid].begin(), simu->U_K2[tid].end(), (B)0);
 			std::fill(simu->X_N1[tid].begin(), simu->X_N1[tid].end(), (B)0);
 			std::fill(simu->X_N2[tid].begin(), simu->X_N2[tid].end(), (B)0);
 			simu->modulator[tid]->modulate(simu->X_N2[tid], simu->X_N3[tid]);
 		}
 
-		simu->d_sourc_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_crc_total  [tid] = std::chrono::nanoseconds(0);
-		simu->d_encod_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_punct_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_modul_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_chann_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_filte_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_demod_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_quant_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_depun_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_corea_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_decod_load [tid] = std::chrono::nanoseconds(0);
-		simu->d_decod_only [tid] = std::chrono::nanoseconds(0);
-		simu->d_decod_store[tid] = std::chrono::nanoseconds(0);
-		simu->d_decod_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_cobit_total[tid] = std::chrono::nanoseconds(0);
-		simu->d_check_total[tid] = std::chrono::nanoseconds(0);
+		for (auto& duration : simu->durations[tid])
+			duration.second = std::chrono::nanoseconds(0);
 
 		simu->barrier(tid);
 
@@ -298,7 +252,7 @@ void Simulation_BFER<B,R,Q>
 	         (steady_clock::now() - simu->t_snr) < simu->params.simulation.stop_time))
 	{
 		auto d_sourc = nanoseconds(0);
-		auto d_crc   = nanoseconds(0);
+		auto d_crcbd = nanoseconds(0);
 		auto d_encod = nanoseconds(0);
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
@@ -310,19 +264,19 @@ void Simulation_BFER<B,R,Q>
 
 		if (simu->params.source.type != "AZCW")
 		{
-			// generate a random K bits vector U_K
+			// generate a random K bits vector U_K1
 			auto t_sourc = steady_clock::now();
-			simu->source[tid]->generate(simu->U_K[tid]);
+			simu->source[tid]->generate(simu->U_K1[tid]);
 			d_sourc = steady_clock::now() - t_sourc;
 
-			// add the CRC to U_K
-			auto t_crc = steady_clock::now();
-			simu->crc[tid]->build(simu->U_K[tid]);
-			d_crc = steady_clock::now() - t_crc;
+			// build the CRC from U_K1 into U_K2
+			auto t_crcbd = steady_clock::now();
+			simu->crc[tid]->build(simu->U_K1[tid], simu->U_K2[tid]);
+			d_crcbd = steady_clock::now() - t_crcbd;
 
-			// encode U_K into a N bits vector X_N
+			// encode U_K2 into a N bits vector X_N
 			auto t_encod = steady_clock::now();
-			simu->encoder[tid]->encode(simu->U_K[tid], simu->X_N1[tid]);
+			simu->encoder[tid]->encode(simu->U_K2[tid], simu->X_N1[tid]);
 			d_encod = steady_clock::now() - t_encod;
 
 			// puncture X_N1 into X_N2
@@ -392,48 +346,50 @@ void Simulation_BFER<B,R,Q>
 
 		// launch decoder
 		auto t_decod = steady_clock::now();
-		simu->decoder[tid]->hard_decode(simu->Y_N5[tid], simu->V_K[tid]);
+		simu->decoder[tid]->hard_decode(simu->Y_N5[tid], simu->V_K1[tid]);
 		auto d_decod = steady_clock::now() - t_decod;
 
 		// apply the coset to recover the real bits
 		if (simu->params.code.coset)
 		{
 			auto t_cobit = steady_clock::now();
-			simu->coset_bit[tid]->apply(simu->U_K[tid], simu->V_K[tid], simu->V_K[tid]);
+			simu->coset_bit[tid]->apply(simu->U_K2[tid], simu->V_K1[tid], simu->V_K1[tid]);
 			d_cobit = steady_clock::now() - t_cobit;
 		}
+
+		// extract the CRC bits and keep only the information bits
+		auto t_crcex = steady_clock::now();
+		simu->crc[tid]->extract(simu->V_K1[tid], simu->V_K2[tid]);
+		auto d_crcex = steady_clock::now() - t_crcex;
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		if (simu->params.monitor.err_track_enable)
-			simu->monitor[tid]->check_and_track_errors(simu->U_K [tid], simu->V_K [tid], simu->X_N1[tid],
+			simu->monitor[tid]->check_and_track_errors(simu->U_K1[tid], simu->V_K2[tid], simu->X_N1[tid],
 			                                           simu->Y_N1[tid]);
 		else
-			simu->monitor[tid]->check_errors(simu->U_K[tid], simu->V_K[tid]);
+			simu->monitor[tid]->check_errors(simu->U_K1[tid], simu->V_K2[tid]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations
-		simu->d_sourc_total[tid] += d_sourc;
-		simu->d_crc_total  [tid] += d_crc;
-		simu->d_encod_total[tid] += d_encod;
-		simu->d_punct_total[tid] += d_punct;
-		simu->d_modul_total[tid] += d_modul;
-		simu->d_chann_total[tid] += d_chann;
-		simu->d_filte_total[tid] += d_filte;
-		simu->d_demod_total[tid] += d_demod;
-		simu->d_quant_total[tid] += d_quant;
-		simu->d_depun_total[tid] += d_depun;
-		simu->d_corea_total[tid] += d_corea;
-		simu->d_decod_load [tid] += simu->decoder[tid]->get_load_duration();
-		simu->d_decod_only [tid] += simu->decoder[tid]->get_decode_duration();
-		simu->d_decod_store[tid] += simu->decoder[tid]->get_store_duration();
-		simu->d_decod_total[tid] += d_decod;
-		simu->d_cobit_total[tid] += d_cobit;
-		simu->d_check_total[tid] += d_check;
-
-		// save trace in file
-		if (tid == 0 && !simu->params.simulation.trace_path.empty())
-			trace(simu);
+		simu->durations[tid][std::make_pair( 0, "Source"      )] += d_sourc;
+		simu->durations[tid][std::make_pair( 1, "CRC build"   )] += d_crcbd;
+		simu->durations[tid][std::make_pair( 2, "Encoder"     )] += d_encod;
+		simu->durations[tid][std::make_pair( 3, "Puncturer"   )] += d_punct;
+		simu->durations[tid][std::make_pair( 4, "Modulator"   )] += d_modul;
+		simu->durations[tid][std::make_pair( 5, "Channel"     )] += d_chann;
+		simu->durations[tid][std::make_pair( 6, "Filter"      )] += d_filte;
+		simu->durations[tid][std::make_pair( 7, "Demodulator" )] += d_demod;
+		simu->durations[tid][std::make_pair( 8, "Quantizer"   )] += d_quant;
+		simu->durations[tid][std::make_pair( 9, "Depuncturer" )] += d_depun;
+		simu->durations[tid][std::make_pair(10, "Coset real"  )] += d_corea;
+		simu->durations[tid][std::make_pair(11, "Decoder"     )] += d_decod;
+		simu->durations[tid][std::make_pair(12, "- load"      )] += simu->decoder[tid]->get_load_duration();
+		simu->durations[tid][std::make_pair(13, "- decode"    )] += simu->decoder[tid]->get_decode_duration();
+		simu->durations[tid][std::make_pair(14, "- store"     )] += simu->decoder[tid]->get_store_duration();
+		simu->durations[tid][std::make_pair(15, "Coset bit"   )] += d_cobit;
+		simu->durations[tid][std::make_pair(16, "CRC extract" )] += d_crcex;
+		simu->durations[tid][std::make_pair(17, "Check errors")] += d_check;
 
 		// display statistics in terminal
 		if (tid == 0 && simu->params.simulation.mpi_rank == 0 &&
@@ -461,7 +417,7 @@ void Simulation_BFER<B,R,Q>
 
 	simu->barrier(tid);
 	for (auto i = 0; i < simu->params.simulation.benchs; i++)
-		simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_K[tid]);
+		simu->decoder[tid]->hard_decode(simu->Y_N4[tid], simu->V_K1[tid]);
 	simu->barrier(tid);
 
 	auto t_stop = std::chrono::steady_clock::now(); // stop time
@@ -494,7 +450,8 @@ void Simulation_BFER<B,R,Q>
 {
 	using namespace std::chrono;
 
-	Frame_trace<B> ft(simu->params.simulation.debug_limit, simu->params.simulation.debug_precision); // frame trace to display the vectors
+	// frame trace to display the vectors
+	Frame_trace<B> ft(simu->params.simulation.debug_limit, simu->params.simulation.debug_precision);
 
 	// simulation loop
 	auto t_simu = steady_clock::now();
@@ -508,7 +465,7 @@ void Simulation_BFER<B,R,Q>
 		std::clog << "-------------------------------" << std::endl;
 
 		auto d_sourc = nanoseconds(0);
-		auto d_crc   = nanoseconds(0);
+		auto d_crcbd = nanoseconds(0);
 		auto d_encod = nanoseconds(0);
 		auto d_punct = nanoseconds(0);
 		auto d_modul = nanoseconds(0);
@@ -520,32 +477,32 @@ void Simulation_BFER<B,R,Q>
 
 		if (simu->params.source.type != "AZCW")
 		{
-			// generate a random K bits vector U_K
-			std::clog << "Generate random bits U_K..." << std::endl;
+			// generate a random K bits vector U_K1
+			std::clog << "Generate random bits U_K1..." << std::endl;
 			auto t_sourc = steady_clock::now();
-			simu->source[0]->generate(simu->U_K[0]);
+			simu->source[0]->generate(simu->U_K1[0]);
 			d_sourc = steady_clock::now() - t_sourc;
 
-			// display U_K
-			std::clog << "U_K:" << std::endl;
-			ft.display_bit_vector(simu->U_K[0]);
+			// display U_K1
+			std::clog << "U_K1:" << std::endl;
+			ft.display_bit_vector(simu->U_K1[0]);
 			std::clog << std::endl;
 
 			// add the CRC to U_K
-			std::clog << "Add the CRC to U_K..." << std::endl;
-			auto t_crc = steady_clock::now();
-			simu->crc[0]->build(simu->U_K[0]);
-			d_crc = steady_clock::now() - t_crc;
+			std::clog << "Build the CRC from U_K1 into U_K2..." << std::endl;
+			auto t_crcbd = steady_clock::now();
+			simu->crc[0]->build(simu->U_K1[0], simu->U_K2[0]);
+			d_crcbd = steady_clock::now() - t_crcbd;
 
-			// display U_K
-			std::clog << "U_K:" << std::endl;
-			ft.display_bit_vector(simu->U_K[0]);
+			// display U_K2
+			std::clog << "U_K2:" << std::endl;
+			ft.display_bit_vector(simu->U_K2[0]);
 			std::clog << std::endl;
 
-			// encode U_K into a N bits vector X_N1
-			std::clog << "Encode U_K in X_N1..." << std::endl;
+			// encode U_K2 into a N bits vector X_N1
+			std::clog << "Encode U_K2 in X_N1..." << std::endl;
 			auto t_encod = steady_clock::now();
-			simu->encoder[0]->encode(simu->U_K[0], simu->X_N1[0]);
+			simu->encoder[0]->encode(simu->U_K2[0], simu->X_N1[0]);
 			d_encod = steady_clock::now() - t_encod;
 
 			// display X_N1
@@ -577,9 +534,14 @@ void Simulation_BFER<B,R,Q>
 		}
 		else
 		{
-			// display U_K
-			std::clog << "U_K:" << std::endl;
-			ft.display_bit_vector(simu->U_K[0]);
+			// display U_K1
+			std::clog << "U_K1:" << std::endl;
+			ft.display_bit_vector(simu->U_K1[0]);
+			std::clog << std::endl;
+
+			// display U_K2
+			std::clog << "U_K2:" << std::endl;
+			ft.display_bit_vector(simu->U_K2[0]);
 			std::clog << std::endl;
 
 			// display X_N2
@@ -707,63 +669,71 @@ void Simulation_BFER<B,R,Q>
 		}
 		
 		// launch decoder
-		std::clog << "Decode Y_N5 and generate V_K..." << std::endl;
+		std::clog << "Decode Y_N5 and generate V_K1..." << std::endl;
 		auto t_decod = steady_clock::now();
-		simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K[0]);
+		simu->decoder[0]->hard_decode(simu->Y_N5[0], simu->V_K1[0]);
 		auto d_decod = steady_clock::now() - t_decod;
 
-		// display V_K
-		std::clog << "V_K:" << std::endl;
+		// display V_K1
+		std::clog << "V_K1:" << std::endl;
 		if (simu->params.code.coset)
-			ft.display_bit_vector(simu->V_K[0]);
+			ft.display_bit_vector(simu->V_K1[0]);
 		else
-			ft.display_bit_vector(simu->V_K[0], simu->U_K[0]);
+			ft.display_bit_vector(simu->V_K1[0], simu->U_K2[0]);
 		std::clog << std::endl;
 
 		// apply the coset to recover the real bits
 		if (simu->params.code.coset)
 		{
-			std::clog << "Apply the coset approach on V_K..." << std::endl;
+			std::clog << "Apply the coset approach on V_K1..." << std::endl;
 			auto t_cobit = steady_clock::now();
-			simu->coset_bit[0]->apply(simu->U_K[0], simu->V_K[0], simu->V_K[0]);
+			simu->coset_bit[0]->apply(simu->U_K2[0], simu->V_K1[0], simu->V_K1[0]);
 			d_cobit = steady_clock::now() - t_cobit;
 
-			// display V_K
-			std::clog << "V_K:" << std::endl;
-			ft.display_bit_vector(simu->V_K[0], simu->U_K[0]);
+			// display V_K1
+			std::clog << "V_K1:" << std::endl;
+			ft.display_bit_vector(simu->V_K1[0], simu->U_K2[0]);
 			std::clog << std::endl;
 		}
+
+		// extract the CRC bits and keep only the information bits
+		std::clog << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl;
+		auto t_crcex = steady_clock::now();
+		simu->crc[0]->extract(simu->V_K1[0], simu->V_K2[0]);
+		auto d_crcex = steady_clock::now() - t_crcex;
+
+		// display V_K2
+		std::clog << "V_K2:" << std::endl;
+		ft.display_real_vector(simu->V_K2[0], simu->U_K1[0]);
+		std::clog << std::endl;
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
 		if (simu->params.monitor.err_track_enable)
-			simu->monitor[0]->check_and_track_errors(simu->U_K [0], simu->V_K [0], simu->X_N1[0], simu->Y_N1[0]);
+			simu->monitor[0]->check_and_track_errors(simu->U_K1[0], simu->V_K2[0], simu->X_N1[0], simu->Y_N1[0]);
 		else
-			simu->monitor[0]->check_errors(simu->U_K[0], simu->V_K[0]);
+			simu->monitor[0]->check_errors(simu->U_K1[0], simu->V_K2[0]);
 		auto d_check = steady_clock::now() - t_check;
 
 		// increment total durations for each operations
-		simu->d_sourc_total[0] += d_sourc;
-		simu->d_crc_total  [0] += d_crc;
-		simu->d_encod_total[0] += d_encod;
-		simu->d_punct_total[0] += d_punct;
-		simu->d_modul_total[0] += d_modul;
-		simu->d_chann_total[0] += d_chann;
-		simu->d_filte_total[0] += d_filte;
-		simu->d_demod_total[0] += d_demod;
-		simu->d_quant_total[0] += d_quant;
-		simu->d_depun_total[0] += d_depun;
-		simu->d_corea_total[0] += d_corea;
-		simu->d_decod_load [0] += simu->decoder[0]->get_load_duration();
-		simu->d_decod_only [0] += simu->decoder[0]->get_decode_duration();
-		simu->d_decod_store[0] += simu->decoder[0]->get_store_duration();
-		simu->d_decod_total[0] += d_decod;
-		simu->d_cobit_total[0] += d_cobit;
-		simu->d_check_total[0] += d_check;
-
-		// save trace in file
-		if (!simu->params.simulation.trace_path.empty())
-			trace(simu);
+		simu->durations[0][std::make_pair( 0, "Source"      )] += d_sourc;
+		simu->durations[0][std::make_pair( 1, "CRC build"   )] += d_crcbd;
+		simu->durations[0][std::make_pair( 2, "Encoder"     )] += d_encod;
+		simu->durations[0][std::make_pair( 3, "Puncturer"   )] += d_punct;
+		simu->durations[0][std::make_pair( 4, "Modulator"   )] += d_modul;
+		simu->durations[0][std::make_pair( 5, "Channel"     )] += d_chann;
+		simu->durations[0][std::make_pair( 6, "Filter"      )] += d_filte;
+		simu->durations[0][std::make_pair( 7, "Demodulator" )] += d_demod;
+		simu->durations[0][std::make_pair( 8, "Quantizer"   )] += d_quant;
+		simu->durations[0][std::make_pair( 9, "Depuncturer" )] += d_depun;
+		simu->durations[0][std::make_pair(10, "Coset real"  )] += d_corea;
+		simu->durations[0][std::make_pair(11, "Decoder"     )] += d_decod;
+		simu->durations[0][std::make_pair(12, "- load"      )] += simu->decoder[0]->get_load_duration();
+		simu->durations[0][std::make_pair(13, "- decode"    )] += simu->decoder[0]->get_decode_duration();
+		simu->durations[0][std::make_pair(14, "- store"     )] += simu->decoder[0]->get_store_duration();
+		simu->durations[0][std::make_pair(15, "Coset bit"   )] += d_cobit;
+		simu->durations[0][std::make_pair(16, "CRC extract" )] += d_crcex;
+		simu->durations[0][std::make_pair(17, "Check errors")] += d_check;
 
 		// display statistics in terminal
 		if (!simu->params.terminal.disabled && simu->params.terminal.frequency != nanoseconds(0) &&
@@ -782,243 +752,76 @@ void Simulation_BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
-::trace(Simulation_BFER<B,R,Q> *simu)
-{
-	std::ofstream myfile;
-	myfile.open(simu->params.simulation.trace_path);
-	myfile << "U_K, \t X_N1, \t X_N2, \t X_N3_I, \t X_N3_Q, \t Y_N1_I, \t Y_N1_Q, \t Y_N2, \t Y_N3, \t Y_N4, \t V_K" 
-	       << std::endl;
-
-	for (unsigned l_idx = 0; l_idx < simu->Y_N2[0].size(); l_idx++)
-	{
-		if (l_idx < simu->U_K [0].size()) myfile << simu->U_K [0][l_idx];
-		myfile << ", \t ";
-		if (l_idx < simu->X_N1[0].size()) myfile << simu->X_N1[0][l_idx];
-		myfile << ", \t ";
-		if (l_idx < simu->X_N2[0].size()) myfile << simu->X_N2[0][l_idx];
-		myfile << ", \t ";
-		if (simu->params.modulator.type == "PAM"  ||
-		    simu->params.modulator.type == "BPSK" ||
-		    simu->params.modulator.type == "BPSK_FAST")
-		{
-			if (l_idx < simu->X_N3[0].size()) myfile << simu->X_N3[0][l_idx] << ", \t " << 0; 
-			else myfile << ", \t ";
-			myfile << ", \t ";
-
-			if (l_idx < simu->Y_N1[0].size()) myfile << simu->Y_N1[0][l_idx] << ", \t " << 0; 
-			else myfile << ", \t ";
-			myfile << ", \t ";
-		}
-		else
-		{
-			if (2*l_idx < simu->X_N3[0].size()) myfile << simu->X_N3[0][2*l_idx] << ", \t " << simu->X_N3[0][2*l_idx+1];
-			else myfile << ", \t ";
-			myfile << ", \t ";
-
-			if (2*l_idx < simu->Y_N1[0].size()) myfile << simu->Y_N1[0][2*l_idx] << ", \t " << simu->Y_N1[0][2*l_idx+1];
-			else myfile << ", \t ";
-			myfile << ", \t ";
-		}
-		if (l_idx < simu->Y_N2[0].size()) myfile << simu->Y_N2[0][l_idx];
-		myfile << ", \t ";
-		if (l_idx < simu->Y_N3[0].size()) myfile << simu->Y_N3[0][l_idx];
-		myfile << ", \t ";
-		if (l_idx < simu->Y_N4[0].size()) myfile << simu->Y_N4[0][l_idx];
-		myfile << ", \t ";
-		if (l_idx < simu->V_K [0].size()) myfile << simu->V_K [0][l_idx];
-		myfile << std::endl;
-	}
-	myfile.close();
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
 ::time_reduction(const bool is_snr_done)
 {
-	using namespace std::chrono;
-
-	d_sourc_total_red = nanoseconds(0);
-	d_crc_total_red   = nanoseconds(0);
-	d_encod_total_red = nanoseconds(0);
-	d_punct_total_red = nanoseconds(0);
-	d_modul_total_red = nanoseconds(0);
-	d_chann_total_red = nanoseconds(0);
-	d_demod_total_red = nanoseconds(0);
-	d_filte_total_red = nanoseconds(0);
-	d_quant_total_red = nanoseconds(0);
-	d_depun_total_red = nanoseconds(0);
-	d_corea_total_red = nanoseconds(0);
-	d_decod_load_red  = nanoseconds(0);
-	d_decod_only_red  = nanoseconds(0);
-	d_decod_store_red = nanoseconds(0);
-	d_decod_total_red = nanoseconds(0);
-	d_cobit_total_red = nanoseconds(0);
-	d_check_total_red = nanoseconds(0);
+	for (auto& duration : durations_red)
+		duration.second = std::chrono::nanoseconds(0);
 
 	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
-	{
-		d_sourc_total_red += d_sourc_total[tid];
-		d_crc_total_red   += d_crc_total  [tid];
-		d_encod_total_red += d_encod_total[tid];
-		d_punct_total_red += d_punct_total[tid];
-		d_modul_total_red += d_modul_total[tid];
-		d_chann_total_red += d_chann_total[tid];
-		d_filte_total_red += d_filte_total[tid];
-		d_demod_total_red += d_demod_total[tid];
-		d_quant_total_red += d_quant_total[tid];
-		d_depun_total_red += d_depun_total[tid];
-		d_corea_total_red += d_corea_total[tid];
-		d_decod_load_red  += d_decod_load [tid];
-		d_decod_only_red  += d_decod_only [tid];
-		d_decod_store_red += d_decod_store[tid];
-		d_decod_total_red += d_decod_total[tid];
-		d_cobit_total_red += d_cobit_total[tid];
-		d_check_total_red += d_check_total[tid];
-	}
+		for (auto& duration : durations[tid])
+			durations_red[duration.first] += duration.second;
 
 	if (is_snr_done)
 		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
-		{
-			d_sourc_total_sum += d_sourc_total[tid];
-			d_crc_total_sum   += d_crc_total  [tid];
-			d_encod_total_sum += d_encod_total[tid];
-			d_punct_total_sum += d_punct_total[tid];
-			d_modul_total_sum += d_modul_total[tid];
-			d_chann_total_sum += d_chann_total[tid];
-			d_filte_total_sum += d_filte_total[tid];
-			d_demod_total_sum += d_demod_total[tid];
-			d_quant_total_sum += d_quant_total[tid];
-			d_depun_total_sum += d_depun_total[tid];
-			d_corea_total_sum += d_corea_total[tid];
-			d_decod_load_sum  += d_decod_load [tid];
-			d_decod_only_sum  += d_decod_only [tid];
-			d_decod_store_sum += d_decod_store[tid];
-			d_decod_total_sum += d_decod_total[tid];
-			d_cobit_total_sum += d_cobit_total[tid];
-			d_check_total_sum += d_check_total[tid];
-		}
+			for (auto& duration : durations[tid])
+				durations_sum[duration.first] += duration.second;
 }
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::time_report(std::ostream &stream)
 {
-	using namespace std::chrono;
+	auto d_total = std::chrono::nanoseconds(0);
+	for (auto& duration : durations_sum)
+		if (!duration.first.second.empty())
+			d_total += duration.first.second[0] != '-' ? duration.second : std::chrono::nanoseconds(0);
+	auto total_sec = ((float)d_total.count()) * 0.000000001f;
 
-	auto d_total = d_sourc_total_sum +
-	               d_crc_total_sum   +
-	               d_encod_total_sum +
-	               d_punct_total_sum +
-	               d_modul_total_sum +
-	               d_chann_total_sum +
-	               d_filte_total_sum +
-	               d_demod_total_sum +
-	               d_quant_total_sum +
-	               d_depun_total_sum +
-	               d_corea_total_sum +
-	               d_decod_total_sum +
-	               d_cobit_total_sum +
-	               d_check_total_sum;
-
-	auto sourc_sec       = ((float)d_sourc_total_sum.count()) * 0.000000001f;
-	auto crc_sec         = ((float)d_crc_total_sum  .count()) * 0.000000001f;
-	auto encod_sec       = ((float)d_encod_total_sum.count()) * 0.000000001f;
-	auto punct_sec       = ((float)d_punct_total_sum.count()) * 0.000000001f;
-	auto modul_sec       = ((float)d_modul_total_sum.count()) * 0.000000001f;
-	auto chann_sec       = ((float)d_chann_total_sum.count()) * 0.000000001f;
-	auto filte_sec       = ((float)d_filte_total_sum.count()) * 0.000000001f;
-	auto demod_sec       = ((float)d_demod_total_sum.count()) * 0.000000001f;
-	auto quant_sec       = ((float)d_quant_total_sum.count()) * 0.000000001f;
-	auto depun_sec       = ((float)d_depun_total_sum.count()) * 0.000000001f;
-	auto corea_sec       = ((float)d_corea_total_sum.count()) * 0.000000001f;
-	auto decod_load_sec  = ((float)d_decod_load_sum .count()) * 0.000000001f;
-	auto decod_only_sec  = ((float)d_decod_only_sum .count()) * 0.000000001f;
-	auto decod_store_sec = ((float)d_decod_store_sum.count()) * 0.000000001f;
-	auto decod_sec       = ((float)d_decod_total_sum.count()) * 0.000000001f;
-	auto cobit_sec       = ((float)d_cobit_total_sum.count()) * 0.000000001f;
-	auto check_sec       = ((float)d_check_total_sum.count()) * 0.000000001f;
-	auto total_sec       = ((float)d_total          .count()) * 0.000000001f;
-
-	auto sourc_pc       = (sourc_sec       / total_sec) * 100.f;
-	auto crc_pc         = (crc_sec         / total_sec) * 100.f;
-	auto encod_pc       = (encod_sec       / total_sec) * 100.f;
-	auto punct_pc       = (punct_sec       / total_sec) * 100.f;
-	auto modul_pc       = (modul_sec       / total_sec) * 100.f;
-	auto chann_pc       = (chann_sec       / total_sec) * 100.f;
-	auto filte_pc       = (filte_sec       / total_sec) * 100.f;
-	auto demod_pc       = (demod_sec       / total_sec) * 100.f;
-	auto quant_pc       = (quant_sec       / total_sec) * 100.f;
-	auto depun_pc       = (depun_sec       / total_sec) * 100.f;
-	auto corea_pc       = (corea_sec       / total_sec) * 100.f;
-	auto decod_load_pc  = (decod_load_sec  / decod_sec) * 100.f;
-	auto decod_only_pc  = (decod_only_sec  / decod_sec) * 100.f;
-	auto decod_store_pc = (decod_store_sec / decod_sec) * 100.f;
-	auto decod_pc       = (decod_sec       / total_sec) * 100.f;
-	auto cobit_pc       = (cobit_sec       / total_sec) * 100.f;
-	auto check_pc       = (check_sec       / total_sec) * 100.f;
+	auto max_chars = 0;
+	for (auto& duration : durations_sum)
+		max_chars = std::max(max_chars, (int)duration.first.second.length());
 
 	stream << "#" << std::endl;
 	stream << "# " << bold_underlined("Time report:") << std::endl;
-	stream << "# " << bold           ("* Source") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << sourc_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << sourc_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* CRC") << "         : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << crc_sec        << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << crc_pc         << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Encoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << encod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << encod_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Puncturer") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << punct_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << punct_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Modulator") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << modul_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << modul_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Channel") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << chann_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << chann_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Filter") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << filte_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << filte_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Demodulator") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << demod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << demod_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Quantizer") << "   : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << quant_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << quant_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Depuncturer") << " : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << depun_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << depun_pc       << "%)"
-	       << std::endl;
-	if (this->params.code.coset)
-	stream << "# " << bold           ("* Coset real") << "  : " << std::setw(9) << std::fixed << std::setprecision(3)
-	       << corea_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << corea_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Decoder") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << decod_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_pc       << "%)"
-	       << std::endl;
-	if (decod_load_pc != 0 || decod_only_pc != 0 || decod_store_pc != 0)
+
+	auto prev_sec = 0.f;
+	for (auto& duration : durations_sum)
 	{
-	stream << "# " << bold_italic    ("  - load") << "      : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << decod_load_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_load_pc  << "%)"
-	       << std::endl;
-	stream << "# " << bold_italic    ("  - decode") << "    : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << decod_only_sec << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_only_pc  << "%)"
-	       << std::endl;
-	stream << "# " << bold_italic    ("  - store") << "     : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << decod_store_sec<< " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << decod_store_pc << "%)"
-	       << std::endl;
+		if (duration.second.count() != 0 && !duration.first.second.empty())
+		{
+			std::string key = "";
+			const auto cur_sec = ((float)duration.second.count()) * 0.000000001f;
+			auto cur_pc  = 0.f;
+			if (duration.first.second[0] != '-')
+			{
+				cur_pc  = (cur_sec / total_sec) * 100.f;
+				key = bold("* " + duration.first.second);
+				prev_sec = cur_sec;
+			}
+			else
+			{
+				cur_pc  = (prev_sec != 0.f) ? (cur_sec / prev_sec) * 100.f : 0.f;
+				key = bold_italic("  " + duration.first.second);
+			}
+
+			const auto n_spaces = max_chars - (int)duration.first.second.length();
+			std::string str_spaces = "";
+			for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
+
+			stream << "# " << key << str_spaces << ": "
+			       << std::setw(9) << std::fixed << std::setprecision(3) << cur_sec << " sec ("
+			       << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)"
+			       << std::endl;
+		}
 	}
-	if (this->params.code.coset)
-	stream << "# " << bold           ("* Coset bit") << "   : " << std::setw(9) << std::fixed << std::setprecision(3)
-	       << cobit_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << cobit_pc       << "%)"
-	       << std::endl;
-	stream << "# " << bold           ("* Check errors") << ": " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << check_sec      << " sec (" << std::setw(5) << std::fixed << std::setprecision(2) << check_pc       << "%)"
-	       << std::endl;
+
 	stream << "#   ----------------------------------" << std::endl;
-	stream << "# " << bold           ("* TOTAL") << "       : " << std::setw(9) << std::fixed << std::setprecision(3) 
-	       << total_sec      << " sec"
-	       << std::endl;
+	const std::string total_str = "TOTAL";
+	const auto n_spaces = max_chars - (int)total_str.length();
+	std::string str_spaces = "";
+	for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
+	stream << "# " << bold("* " + total_str) << str_spaces << ": "
+	       << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
 	stream << "#" << std::endl;
 }
 
@@ -1026,10 +829,13 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
+	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
+	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
+
 #ifdef ENABLE_MPI
 	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr);
 #else
-	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr, &d_decod_total_red);
+	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, monitor_red, this->t_snr, &d_dec);
 #endif
 }
 

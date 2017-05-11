@@ -32,7 +32,7 @@ protected:
 	tools::Terminal *terminal;
 
 	tools::SC_Duplicator *duplicator[3];
-	tools::SC_Debug<B>   *dbg_B     [6];
+	tools::SC_Debug<B>   *dbg_B     [7];
 	tools::SC_Debug<R>   *dbg_R     [5];
 	tools::SC_Debug<Q>   *dbg_Q     [3];
 

@@ -14,7 +14,6 @@ struct simulation_parameters
 	std::chrono::milliseconds mpi_comm_freq;
 	std::chrono::seconds      stop_time;
 	std::string               type;
-	std::string               trace_path;
 	std::string               bin_pb_path;
 	std::string               json_path;
 	std::string               pyber;

@@ -24,10 +24,11 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params)
 : Simulation_BFER_i<B,R,Q>(params),
 
-  task_names(this->params.simulation.n_threads, std::vector<std::string>(14)),
+  task_names(this->params.simulation.n_threads, std::vector<std::string>(15)),
   frame_id(0),
 
-  U_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  U_K1(this->params.simulation.n_threads, mipp::vector<B>((params.code.K      - params.crc .size)        * params.simulation.inter_frame_level)),
+  U_K2(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
   X_N1(this->params.simulation.n_threads, mipp::vector<B>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
   X_N2(this->params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
   X_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
@@ -37,9 +38,11 @@ Simulation_BFER<B,R,Q>
   Y_N3(this->params.simulation.n_threads, mipp::vector<R>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
   Y_N4(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
   Y_N5(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
-  V_K (this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  V_K1(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
+  V_K2(this->params.simulation.n_threads, mipp::vector<B>((params.code.K      - params.crc .size)        * params.simulation.inter_frame_level)),
 
-  spu_U_K (this->params.simulation.n_threads),
+  spu_U_K1(this->params.simulation.n_threads),
+  spu_U_K2(this->params.simulation.n_threads),
   spu_X_N1(this->params.simulation.n_threads),
   spu_X_N2(this->params.simulation.n_threads),
   spu_X_N3(this->params.simulation.n_threads),
@@ -49,7 +52,8 @@ Simulation_BFER<B,R,Q>
   spu_Y_N3(this->params.simulation.n_threads),
   spu_Y_N4(this->params.simulation.n_threads),
   spu_Y_N5(this->params.simulation.n_threads),
-  spu_V_K (this->params.simulation.n_threads),
+  spu_V_K1(this->params.simulation.n_threads),
+  spu_V_K2(this->params.simulation.n_threads),
 
   monitor_red(nullptr),
   terminal   (nullptr)
@@ -105,7 +109,8 @@ void Simulation_BFER<B,R,Q>
 		// StarPU does not need to manipulate the arrays anymore so we can stop monitoring them
 		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 		{
-			starpu_data_unregister(spu_U_K [tid]);
+			starpu_data_unregister(spu_U_K1[tid]);
+			starpu_data_unregister(spu_U_K2[tid]);
 			starpu_data_unregister(spu_X_N1[tid]);
 			starpu_data_unregister(spu_X_N2[tid]);
 			starpu_data_unregister(spu_X_N3[tid]);
@@ -115,7 +120,8 @@ void Simulation_BFER<B,R,Q>
 			starpu_data_unregister(spu_Y_N3[tid]);
 			starpu_data_unregister(spu_Y_N4[tid]);
 			starpu_data_unregister(spu_Y_N5[tid]);
-			starpu_data_unregister(spu_V_K [tid]);
+			starpu_data_unregister(spu_V_K1[tid]);
+			starpu_data_unregister(spu_V_K2[tid]);
 		}
 
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
@@ -138,8 +144,8 @@ void Simulation_BFER<B,R,Q>
 		const auto n_fra = simu->decoder[tid]->get_n_frames();
 
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K,
-		                                               simu->params.code.N,
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K - simu->params.crc .size,
+		                                               simu->params.code.N + simu->params.code.tail_length,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,
@@ -166,7 +172,8 @@ void Simulation_BFER<B,R,Q>
 	//  - the third argument is the adress of the vector in RAM
 	//  - the fourth argument is the number of elements in the vector
 	//  - the fifth argument is the size of each element.
-	starpu_vector_data_register(&simu->spu_U_K [tid], STARPU_MAIN_RAM, (uintptr_t)simu->U_K [tid].data(), simu->U_K [tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_U_K1[tid], STARPU_MAIN_RAM, (uintptr_t)simu->U_K1[tid].data(), simu->U_K1[tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_U_K2[tid], STARPU_MAIN_RAM, (uintptr_t)simu->U_K2[tid].data(), simu->U_K2[tid].size(), sizeof(B));
 	starpu_vector_data_register(&simu->spu_X_N1[tid], STARPU_MAIN_RAM, (uintptr_t)simu->X_N1[tid].data(), simu->X_N1[tid].size(), sizeof(B));
 	starpu_vector_data_register(&simu->spu_X_N2[tid], STARPU_MAIN_RAM, (uintptr_t)simu->X_N2[tid].data(), simu->X_N2[tid].size(), sizeof(B));
 	starpu_vector_data_register(&simu->spu_X_N3[tid], STARPU_MAIN_RAM, (uintptr_t)simu->X_N3[tid].data(), simu->X_N3[tid].size(), sizeof(R));
@@ -176,9 +183,11 @@ void Simulation_BFER<B,R,Q>
 	starpu_vector_data_register(&simu->spu_Y_N3[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N3[tid].data(), simu->Y_N3[tid].size(), sizeof(R));
 	starpu_vector_data_register(&simu->spu_Y_N4[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N4[tid].data(), simu->Y_N4[tid].size(), sizeof(Q));
 	starpu_vector_data_register(&simu->spu_Y_N5[tid], STARPU_MAIN_RAM, (uintptr_t)simu->Y_N5[tid].data(), simu->Y_N5[tid].size(), sizeof(Q));
-	starpu_vector_data_register(&simu->spu_V_K [tid], STARPU_MAIN_RAM, (uintptr_t)simu->V_K [tid].data(), simu->V_K [tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_V_K1[tid], STARPU_MAIN_RAM, (uintptr_t)simu->V_K1[tid].data(), simu->V_K1[tid].size(), sizeof(B));
+	starpu_vector_data_register(&simu->spu_V_K2[tid], STARPU_MAIN_RAM, (uintptr_t)simu->V_K2[tid].data(), simu->V_K2[tid].size(), sizeof(B));
 
-	starpu_data_set_user_data(simu->spu_U_K [tid], (void*)&simu->U_K [tid]);
+	starpu_data_set_user_data(simu->spu_U_K1[tid], (void*)&simu->U_K1[tid]);
+	starpu_data_set_user_data(simu->spu_U_K2[tid], (void*)&simu->U_K2[tid]);
 	starpu_data_set_user_data(simu->spu_X_N1[tid], (void*)&simu->X_N1[tid]);
 	starpu_data_set_user_data(simu->spu_X_N2[tid], (void*)&simu->X_N2[tid]);
 	starpu_data_set_user_data(simu->spu_X_N3[tid], (void*)&simu->X_N3[tid]);
@@ -188,7 +197,8 @@ void Simulation_BFER<B,R,Q>
 	starpu_data_set_user_data(simu->spu_Y_N3[tid], (void*)&simu->Y_N3[tid]);
 	starpu_data_set_user_data(simu->spu_Y_N4[tid], (void*)&simu->Y_N4[tid]);
 	starpu_data_set_user_data(simu->spu_Y_N5[tid], (void*)&simu->Y_N5[tid]);
-	starpu_data_set_user_data(simu->spu_V_K [tid], (void*)&simu->V_K [tid]);
+	starpu_data_set_user_data(simu->spu_V_K1[tid], (void*)&simu->V_K1[tid]);
+	starpu_data_set_user_data(simu->spu_V_K2[tid], (void*)&simu->V_K2[tid]);
 }
 
 template <typename B, typename R, typename Q>
@@ -215,7 +225,8 @@ void Simulation_BFER<B,R,Q>
 		if (this->params.source.type == "AZCW")
 			for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
 			{
-				std::fill(this->U_K [tid].begin(), this->U_K [tid].end(), (B)0);
+				std::fill(this->U_K1[tid].begin(), this->U_K1[tid].end(), (B)0);
+				std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
 				std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
 				std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
 				this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
@@ -271,9 +282,9 @@ void Simulation_BFER<B,R,Q>
 
 	if (this->params.source.type != "AZCW")
 	{
-		auto task_gen_source = Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K [tid]               );
-		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K [tid]               );
-		auto task_encode     = Encoder  <B    >::spu_task_encode  (this->encoder  [tid], spu_U_K [tid], spu_X_N1[tid]);
+		auto task_gen_source = Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K1[tid]               );
+		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K1[tid], spu_U_K2[tid]);
+		auto task_encode     = Encoder  <B    >::spu_task_encode  (this->encoder  [tid], spu_U_K2[tid], spu_X_N1[tid]);
 		auto task_puncture   = Puncturer<B,  Q>::spu_task_puncture(this->puncturer[tid], spu_X_N1[tid], spu_X_N2[tid]);
 		auto task_modulate   = Modulator<B,R,R>::spu_task_modulate(this->modulator[tid], spu_X_N2[tid], spu_X_N3[tid]);
 
@@ -354,23 +365,28 @@ void Simulation_BFER<B,R,Q>
 		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_real), "task_submit::cst::apply");
 	}
 
-	auto task_decode = Decoder<B,Q>::spu_task_hard_decode(this->decoder[tid], spu_Y_N5[tid], spu_V_K[tid]);
+	auto task_decode = Decoder<B,Q>::spu_task_hard_decode(this->decoder[tid], spu_Y_N5[tid], spu_V_K1[tid]);
 	task_decode->priority = STARPU_MIN_PRIO +11;
 	task_names[tid][11] = "dec::hard_decode_" + str_id; task_decode->name = task_names[tid][11].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "task_submit::dec::hard_decode");
 
 	if (this->params.code.coset)
 	{
-		auto task_coset_bit = Coset<B,B>::spu_task_apply(this->coset_bit[tid], spu_U_K[tid], spu_V_K[tid], spu_V_K[tid]);
+		auto task_coset_bit = Coset<B,B>::spu_task_apply(this->coset_bit[tid], spu_U_K2[tid], spu_V_K1[tid], spu_V_K1[tid]);
 		task_coset_bit->priority = STARPU_MIN_PRIO +12;
 		task_names[tid][12] = "cst::apply_" + str_id; task_coset_bit->name = task_names[tid][12].c_str();
 		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_bit), "task_submit::cst::apply");
 	}
 
-	auto task_check_err = Monitor<B,R>::spu_task_check_errors(this->monitor[tid], spu_U_K[tid], spu_V_K[tid]);
-	task_check_err->priority = STARPU_MIN_PRIO +13;
-	task_names[tid][13] = "mnt::check_errors_" + str_id; task_check_err->name = task_names[tid][13].c_str();
-	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_check_err ), "task_submit::mnt::check_errors");
+	auto task_extract_crc = CRC<B>::spu_task_extract(this->crc[tid], spu_V_K1[tid], spu_V_K2[tid]);
+	task_extract_crc->priority = STARPU_MIN_PRIO +13;
+	task_names[tid][13] = "crc::extract_" + str_id; task_extract_crc->name = task_names[tid][13].c_str();
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_extract_crc), "task_submit::crc::extract");
+
+	auto task_check_err = Monitor<B,R>::spu_task_check_errors(this->monitor[tid], spu_U_K1[tid], spu_V_K2[tid]);
+	task_check_err->priority = STARPU_MIN_PRIO +14;
+	task_names[tid][14] = "mnt::check_errors_" + str_id; task_check_err->name = task_names[tid][14].c_str();
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_check_err), "task_submit::mnt::check_errors");
 
 	frame_id++;
 }

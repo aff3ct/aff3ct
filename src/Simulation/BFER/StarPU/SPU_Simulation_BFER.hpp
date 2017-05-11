@@ -33,7 +33,8 @@ private:
 
 protected:
 	// data vector
-	std::vector<mipp::vector<B>> U_K;  // information bit vector
+	std::vector<mipp::vector<B>> U_K1; // information bit vector
+	std::vector<mipp::vector<B>> U_K2; // information bit vector + CRC bits
 	std::vector<mipp::vector<B>> X_N1; // encoded codeword
 	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
 	std::vector<mipp::vector<R>> X_N3; // modulate codeword
@@ -43,10 +44,12 @@ protected:
 	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after the demodulation)
 	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
 	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
-	std::vector<mipp::vector<B>> V_K;  // decoded codeword
+	std::vector<mipp::vector<B>> V_K1; // decoded bits + CRC bits
+	std::vector<mipp::vector<B>> V_K2; // decoded bits
 
 	// starpu vector handlers
-	std::vector<starpu_data_handle_t> spu_U_K;
+	std::vector<starpu_data_handle_t> spu_U_K1;
+	std::vector<starpu_data_handle_t> spu_U_K2;
 	std::vector<starpu_data_handle_t> spu_X_N1;
 	std::vector<starpu_data_handle_t> spu_X_N2;
 	std::vector<starpu_data_handle_t> spu_X_N3;
@@ -56,7 +59,8 @@ protected:
 	std::vector<starpu_data_handle_t> spu_Y_N3;
 	std::vector<starpu_data_handle_t> spu_Y_N4;
 	std::vector<starpu_data_handle_t> spu_Y_N5;
-	std::vector<starpu_data_handle_t> spu_V_K;
+	std::vector<starpu_data_handle_t> spu_V_K1;
+	std::vector<starpu_data_handle_t> spu_V_K2;
 
 	// objects
 	module::Monitor_reduction<B,R> *monitor_red;

@@ -14,7 +14,7 @@ Monitor<B,R>* Factory_monitor<B,R>
 	Monitor<B,R> *monitor = nullptr;
 
 	// build the monitor
-	monitor = new Monitor_std<B,R>(params.code.K,
+	monitor = new Monitor_std<B,R>(params.code.K - params.crc .size,
 	                               params.code.N + params.code.tail_length,
 	                               params.code.N_mod,
 	                               params.monitor.n_frame_errors,

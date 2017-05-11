@@ -33,7 +33,7 @@ template <typename B = int>
 class CRC_i : public Module
 {
 protected:
-	const int K; /*!< Number of information bits (the CRC bits are included in K) */
+	const int K; /*!< Number of information bits (the CRC bits are not included in K) */
 
 public:
 	/*!
@@ -76,18 +76,42 @@ public:
 	 * \param U_K: a vector (size = K - CRC<B>::size()) containing the information bits, adds "CRC<B>::size()" bits in
 	 *             U_K.
 	 */
-	void build(mipp::vector<B>& U_K)
+	void build(const mipp::vector<B>& U_K1, mipp::vector<B>& U_K2)
 	{
-		if (this->K * this->n_frames != (int)U_K.size())
-			throw std::length_error("aff3ct::module::CRC: \"U_K.size()\" has to be equal to \"K\" * \"n_frames\".");
+		if (this->K * this->n_frames != (int)U_K1.size())
+			throw std::length_error("aff3ct::module::CRC: \"U_K1.size()\" has to be equal to \"K\" * \"n_frames\".");
 
-		this->build(U_K.data());
+		if ((this->K + this->get_size()) * this->n_frames != (int)U_K2.size())
+			throw std::length_error("aff3ct::module::CRC: \"U_K2.size()\" has to be equal to "
+			                        "\"K + size\" * \"n_frames\".");
+
+		this->build(U_K1.data(), U_K2.data());
 	}
 
-	virtual void build(B *U_K)
+	virtual void build(const B *U_K1, B *U_K2)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_build(U_K + f * this->K);
+			this->_build(U_K1 + f *  this->K,
+			             U_K2 + f * (this->K + this->get_size()));
+	}
+
+	void extract(const mipp::vector<B>& V_K1, mipp::vector<B>& V_K2)
+	{
+		if ((this->K + this->get_size()) * this->n_frames != (int)V_K1.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K1.size()\" has to be equal to "
+			                        "\"K + size\" * \"n_frames\".");
+
+		if (this->K * this->n_frames != (int)V_K2.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K2.size()\" has to be equal to \"K\" * \"n_frames\".");
+
+		this->extract(V_K1.data(), V_K2.data());
+	}
+
+	virtual void extract(const B *V_K1, B *V_K2)
+	{
+		for (auto f = 0; f < this->n_frames; f++)
+			this->_extract(V_K1 + f * (this->K + this->get_size()),
+			               V_K2 + f *  this->K);
 	}
 
 	/*!
@@ -101,8 +125,10 @@ public:
 	 */
 	bool check(const mipp::vector<B>& V_K, const int n_frames = -1)
 	{
-		if (this->K * n_frames != (int)V_K.size() || this->K * this->n_frames != (int)V_K.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal to \"K\" * \"n_frames\".");
+		if ((this->K + (int)this->get_size()) *       n_frames != (int)V_K.size() &&
+		    (this->K + (int)this->get_size()) * this->n_frames != (int)V_K.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal to "
+			                        "\"K + size\" * \"n_frames\".");
 
 		if (n_frames <= 0 && n_frames != -1)
 			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
@@ -116,7 +142,7 @@ public:
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		auto f = 0;
-		while (f < real_n_frames && this->_check(V_K + f * this->K))
+		while (f < real_n_frames && this->_check(V_K + f * (this->K + this->get_size())))
 			f++;
 
 		return f == real_n_frames;
@@ -133,9 +159,10 @@ public:
 	 */
 	bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1)
 	{
-		if (this->K * n_frames > (int)V_K.size() || this->K * this->n_frames > (int)V_K.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal or greater than "
-			                        "\"K\" * \"n_frames\".");
+		if ((this->K + this->get_size()) *       n_frames != (int)V_K.size() &&
+		    (this->K + this->get_size()) * this->n_frames != (int)V_K.size())
+			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal to "
+			                        "\"K + size\" * \"n_frames\".");
 
 		if (n_frames <= 0 && n_frames != -1)
 			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
@@ -149,16 +176,21 @@ public:
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		auto f = 0;
-		while (f < real_n_frames && this->_check_packed(V_K + f * this->K))
+		while (f < real_n_frames && this->_check_packed(V_K + f * (this->K + this->get_size())))
 			f++;
 
 		return f == real_n_frames;
 	}
 
 protected:
-	virtual void _build(B *V_K)
+	virtual void _build(const B *U_K1, B *U_K2)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_build\" is unimplemented.");
+	}
+
+	virtual void _extract(const B *V_K1, B *V_K2)
+	{
+		throw std::runtime_error("aff3ct::module::CRC: \"_extract\" is unimplemented.");
 	}
 
 	virtual bool _check(const B *V_K)

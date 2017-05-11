@@ -293,7 +293,7 @@ _aff3ct() {
 
 		--cde-awgn-fb-path | --dec-gen-path | --sim-pb-path | --itl-path | \
 		--mod-const-path | --src-path | --enc-path | --chn-path |          \
-		--cde-alist-path | --sim-trace-path | --mnt-err-trk-path) 
+		--cde-alist-path | --mnt-err-trk-path) 
 			_filedir
 			;;
 		

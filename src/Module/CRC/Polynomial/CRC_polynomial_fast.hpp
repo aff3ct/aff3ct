@@ -22,9 +22,9 @@ public:
 	virtual ~CRC_polynomial_fast(){};
 
 protected:
-	virtual void _build       (      B *U_K);
-	virtual bool _check       (const B *V_K);
-	virtual bool _check_packed(const B *V_K);
+	virtual void _build       (const B *U_K1, B *U_K2);
+	virtual bool _check       (const B *V_K          );
+	virtual bool _check_packed(const B *V_K          );
 
 private:
 	inline unsigned compute_crc_v1(const void* data, const int n_bits);

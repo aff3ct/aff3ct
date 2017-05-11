@@ -26,7 +26,7 @@ Simulation_BFER<B,R,Q>
   terminal(nullptr),
 
   duplicator{nullptr, nullptr, nullptr},
-  dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+  dbg_B     {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
   dbg_R     {nullptr, nullptr, nullptr},
   dbg_Q     {nullptr, nullptr, nullptr}
 {
@@ -82,7 +82,7 @@ void Simulation_BFER<B,R,Q>
 
 	// create the sc_module inside the objects of the communication chain
 	this->source   [0]->create_sc_module            ();
-	this->crc      [0]->create_sc_module            ();
+	this->crc      [0]->create_sc_module_build      ();
 	this->encoder  [0]->create_sc_module            ();
 	this->puncturer[0]->create_sc_module_puncturer  ();
 	this->puncturer[0]->create_sc_module_depuncturer();
@@ -106,6 +106,7 @@ void Simulation_BFER<B,R,Q>
 		this->coset_real[0]->create_sc_module();
 		this->coset_bit [0]->create_sc_module();
 	}
+	this->crc[0]->create_sc_module_extract();
 
 	// build the terminal to display the BER/FER
 	terminal = this->build_terminal();
@@ -136,9 +137,9 @@ void Simulation_BFER<B,R,Q>
 		{
 			const auto dl = this->params.simulation.debug_limit;
 
-			this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
-			this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
-			this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", dl, "Debug_B2");
+			this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K1...              \nU_K1:\n", dl, "Debug_B0");
+			this->dbg_B[1] = new SC_Debug<B>("Build the CRC from U_K1 into U_K2...      \nU_K2:\n", dl, "Debug_B1");
+			this->dbg_B[2] = new SC_Debug<B>("Encode U_K2 in X_N1...                    \nX_N1:\n", dl, "Debug_B2");
 			this->dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", dl, "Debug_B3");
 			this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
 			this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
@@ -146,7 +147,8 @@ void Simulation_BFER<B,R,Q>
 			this->dbg_R[3] = new SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", dl, "Debug_R3");
 			this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", dl, "Debug_Q0");
 			this->dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", dl, "Debug_Q1");
-			this->dbg_B[4] = new SC_Debug<B>("Decode Y_N5 and generate V_K...           \nV_K: \n", dl, "Debug_B4");
+			this->dbg_B[4] = new SC_Debug<B>("Decode Y_N5 and generate V_K1...          \nV_K1:\n", dl, "Debug_B4");
+			this->dbg_B[6] = new SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
 
 			if (this->params.code.coset)
 			{
@@ -171,7 +173,7 @@ void Simulation_BFER<B,R,Q>
 				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 			}
 
-			for (auto i = 0; i < 6; i++)
+			for (auto i = 0; i < 7; i++)
 				if (this->dbg_B[i] != nullptr)
 				{
 					delete this->dbg_B[i];
@@ -251,12 +253,12 @@ void Simulation_BFER<B,R,Q>
 {
 	if (this->params.code.coset)
 	{
-		this->source       [0]->sc_module         ->s_out (this->crc       [0]->sc_module         ->s_in );
-		this->crc          [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                    ->s_out1(this->duplicator[1]                    ->s_in );
-		this->duplicator   [1]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [1]                    ->s_out2(this->coset_bit [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2(this->encoder   [0]->sc_module         ->s_in );
+		this->source       [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
+		this->duplicator   [0]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
+		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
+		this->crc          [0]->sc_module_build   ->s_out (this->duplicator[1]                    ->s_in );
+		this->duplicator   [1]                    ->s_out1(this->coset_bit [0]->sc_module         ->s_in1);
+		this->duplicator   [1]                    ->s_out2(this->encoder   [0]->sc_module         ->s_in );
 		this->encoder      [0]->sc_module         ->s_out (this->duplicator[2]                    ->s_in );
 		this->duplicator   [2]                    ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
 		this->duplicator   [2]                    ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
@@ -277,14 +279,15 @@ void Simulation_BFER<B,R,Q>
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->coset_real[0]->sc_module         ->s_in2);
 		this->coset_real   [0]->sc_module         ->s_out (this->decoder   [0]->sc_module         ->s_in );
 		this->decoder      [0]->sc_module         ->s_out (this->coset_bit [0]->sc_module         ->s_in2);
-		this->coset_bit    [0]->sc_module         ->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		this->coset_bit    [0]->sc_module         ->s_out (this->crc       [0]->sc_module_extract ->s_in );
+		this->crc          [0]->sc_module_extract ->s_out (this->monitor   [0]->sc_module         ->s_in2);
 	}
 	else // standard simulation
 	{
-		this->source       [0]->sc_module         ->s_out (this->crc       [0]->sc_module         ->s_in );
-		this->crc          [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
+		this->source       [0]->sc_module         ->s_out (this->duplicator[0]                    ->s_in );
 		this->duplicator   [0]                    ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                    ->s_out2(this->encoder   [0]->sc_module         ->s_in );
+		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
+		this->crc          [0]->sc_module_build   ->s_out (this->encoder   [0]->sc_module         ->s_in );
 		this->encoder      [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
 		this->puncturer    [0]->sc_module_punct   ->s_out (this->modulator [0]->sc_module_mod     ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
@@ -301,7 +304,8 @@ void Simulation_BFER<B,R,Q>
 		}
 		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		this->decoder      [0]->sc_module         ->s_out (this->crc       [0]->sc_module_extract ->s_in );
+		this->crc          [0]->sc_module_extract ->s_out (this->monitor   [0]->sc_module         ->s_in2);
 	}
 }
 
@@ -311,12 +315,12 @@ void Simulation_BFER<B,R,Q>
 {
 	if (this->params.code.coset)
 	{
-		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc       [0]->sc_module         ->s_in );
-		this->crc          [0]->sc_module         ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                                                                  ->s_out1(this->duplicator[1]                    ->s_in );
-		this->duplicator   [1]                                                                  ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [1]                                                                  ->s_out2(this->coset_bit [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                                                                  ->s_out2(this->encoder   [0]->sc_module         ->s_in );
+		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator[0]                    ->s_in );
+		this->duplicator   [0]                                                                  ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
+		this->duplicator   [0]                                                                  ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
+		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator[1]                    ->s_in );
+		this->duplicator   [1]                                                                  ->s_out1(this->coset_bit [0]->sc_module         ->s_in1);
+		this->duplicator   [1]                                                                  ->s_out2(this->encoder   [0]->sc_module         ->s_in );
 		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->duplicator[2]                    ->s_in );
 		this->duplicator   [2]                                                                  ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
 		this->duplicator   [2]                                                                  ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
@@ -337,14 +341,15 @@ void Simulation_BFER<B,R,Q>
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->coset_real[0]->sc_module         ->s_in2);
 		this->coset_real   [0]->sc_module         ->s_out (this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->decoder   [0]->sc_module         ->s_in );
 		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->coset_bit [0]->sc_module         ->s_in2);
-		this->coset_bit    [0]->sc_module         ->s_out (this->dbg_B[5]->s_in); this->dbg_B[5]->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		this->coset_bit    [0]->sc_module         ->s_out (this->dbg_B[5]->s_in); this->dbg_B[5]->s_out (this->crc       [0]->sc_module_extract ->s_in );
+		this->crc          [0]->sc_module_extract ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->monitor   [0]->sc_module         ->s_in2);
 	}
 	else // standard simulation
 	{
-		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->crc       [0]->sc_module         ->s_in );
-		this->crc          [0]->sc_module         ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->duplicator[0]                    ->s_in );
-		this->duplicator   [0]                                                                  ->s_out1(this->monitor   [0]->sc_module         ->s_in1);
-		this->duplicator   [0]                                                                  ->s_out2(this->encoder   [0]->sc_module         ->s_in );
+		this->source       [0]->sc_module         ->s_out (this->dbg_B[0]->s_in); this->dbg_B[0]->s_out (this->duplicator[0]                    ->s_in );
+		this->duplicator   [0]                    ->s_out1                                              (this->monitor   [0]->sc_module         ->s_in1);
+		this->duplicator   [0]                    ->s_out2                                              (this->crc       [0]->sc_module_build   ->s_in );
+		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder   [0]->sc_module         ->s_in );
 		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
 		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator [0]->sc_module_mod     ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
@@ -361,7 +366,8 @@ void Simulation_BFER<B,R,Q>
 		}
 		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->decoder   [0]->sc_module         ->s_in );
-		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->monitor   [0]->sc_module         ->s_in2);
+		this->decoder      [0]->sc_module         ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->crc       [0]->sc_module_extract ->s_in );
+		this->crc          [0]->sc_module_extract ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->monitor   [0]->sc_module         ->s_in2);
 	}
 }
 

@@ -24,8 +24,16 @@ int CRC_NO<B>
 
 template <typename B>
 void CRC_NO<B>
-::build(B *U_K)
+::build(const B *U_K1, B *U_K2)
 {
+	std::copy(U_K1, U_K1 + this->K * this->n_frames, U_K2);
+}
+
+template <typename B>
+void CRC_NO<B>
+::extract(const B *V_K1, B *V_K2)
+{
+	std::copy(V_K1, V_K1 + this->K * this->n_frames, V_K2);
 }
 
 template <typename B>

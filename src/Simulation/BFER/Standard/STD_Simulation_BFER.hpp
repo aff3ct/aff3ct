@@ -31,7 +31,8 @@ protected:
 	std::vector<std::thread> threads;
 
 	// data vector
-	std::vector<mipp::vector<B>> U_K;  // information bit vector
+	std::vector<mipp::vector<B>> U_K1; // information bit vector
+	std::vector<mipp::vector<B>> U_K2; // information bit vector + CRC bits
 	std::vector<mipp::vector<B>> X_N1; // encoded codeword
 	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
 	std::vector<mipp::vector<R>> X_N3; // modulate codeword
@@ -41,7 +42,8 @@ protected:
 	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after the demodulation)
 	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after quantization)
 	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
-	std::vector<mipp::vector<B>> V_K;  // decoded codeword 
+	std::vector<mipp::vector<B>> V_K1; // decoded bits + CRC bits
+	std::vector<mipp::vector<B>> V_K2; // decoded bits
 
 	// objects
 	module::Monitor_reduction<B,R> *monitor_red;
@@ -53,59 +55,10 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
 	std::chrono::nanoseconds d_snr;
 	std::chrono::nanoseconds d_simu;
-	std::vector<std::chrono::nanoseconds> d_sourc_total;
-	std::vector<std::chrono::nanoseconds> d_crc_total;
-	std::vector<std::chrono::nanoseconds> d_encod_total;
-	std::vector<std::chrono::nanoseconds> d_punct_total;
-	std::vector<std::chrono::nanoseconds> d_modul_total;
-	std::vector<std::chrono::nanoseconds> d_chann_total;
-	std::vector<std::chrono::nanoseconds> d_filte_total;
-	std::vector<std::chrono::nanoseconds> d_demod_total;
-	std::vector<std::chrono::nanoseconds> d_quant_total;
-	std::vector<std::chrono::nanoseconds> d_depun_total;
-	std::vector<std::chrono::nanoseconds> d_corea_total;
-	std::vector<std::chrono::nanoseconds> d_decod_load;
-	std::vector<std::chrono::nanoseconds> d_decod_only;
-	std::vector<std::chrono::nanoseconds> d_decod_store;
-	std::vector<std::chrono::nanoseconds> d_decod_total;
-	std::vector<std::chrono::nanoseconds> d_cobit_total;
-	std::vector<std::chrono::nanoseconds> d_check_total;
 
-	std::chrono::nanoseconds d_sourc_total_red;
-	std::chrono::nanoseconds d_crc_total_red;
-	std::chrono::nanoseconds d_encod_total_red;
-	std::chrono::nanoseconds d_punct_total_red;
-	std::chrono::nanoseconds d_modul_total_red;
-	std::chrono::nanoseconds d_chann_total_red;
-	std::chrono::nanoseconds d_filte_total_red;
-	std::chrono::nanoseconds d_demod_total_red;
-	std::chrono::nanoseconds d_quant_total_red;
-	std::chrono::nanoseconds d_depun_total_red;
-	std::chrono::nanoseconds d_corea_total_red;
-	std::chrono::nanoseconds d_decod_load_red;
-	std::chrono::nanoseconds d_decod_only_red;
-	std::chrono::nanoseconds d_decod_store_red;
-	std::chrono::nanoseconds d_decod_total_red;
-	std::chrono::nanoseconds d_cobit_total_red;
-	std::chrono::nanoseconds d_check_total_red;
-
-	std::chrono::nanoseconds d_sourc_total_sum;
-	std::chrono::nanoseconds d_crc_total_sum;
-	std::chrono::nanoseconds d_encod_total_sum;
-	std::chrono::nanoseconds d_punct_total_sum;
-	std::chrono::nanoseconds d_modul_total_sum;
-	std::chrono::nanoseconds d_chann_total_sum;
-	std::chrono::nanoseconds d_filte_total_sum;
-	std::chrono::nanoseconds d_demod_total_sum;
-	std::chrono::nanoseconds d_quant_total_sum;
-	std::chrono::nanoseconds d_depun_total_sum;
-	std::chrono::nanoseconds d_corea_total_sum;
-	std::chrono::nanoseconds d_decod_load_sum;
-	std::chrono::nanoseconds d_decod_only_sum;
-	std::chrono::nanoseconds d_decod_store_sum;
-	std::chrono::nanoseconds d_decod_total_sum;
-	std::chrono::nanoseconds d_cobit_total_sum;
-	std::chrono::nanoseconds d_check_total_sum;
+	std::vector<std::map<std::pair<int, std::string>, std::chrono::nanoseconds>> durations;
+	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_red;
+	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_sum;
 
 public:
 	Simulation_BFER(const tools::parameters& params);
@@ -122,7 +75,6 @@ private:
 	static void simulation_loop          (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_bench    (Simulation_BFER<B,R,Q> *simu, const int tid = 0);
 	static void simulation_loop_debug    (Simulation_BFER<B,R,Q> *simu);
-	static void trace                    (Simulation_BFER<B,R,Q> *simu);
 
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
