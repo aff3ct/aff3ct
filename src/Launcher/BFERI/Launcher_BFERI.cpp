@@ -18,7 +18,6 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .debug_precision  = 5;
 	this->params.simulation .time_report      = false;
-	this->params.simulation .trace_path       = "";
 #if !defined(STARPU) && !defined(SYSTEMC)
 	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
@@ -58,9 +57,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-debug-limit"}] =
 		{"positive_int",
 		 "set the max number of elements to display in the debug mode."};
-	this->opt_args[{"sim-trace-path"}] =
-		{"string",
-		 "traces array values in a CSV file."};
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
@@ -137,7 +133,6 @@ void Launcher_BFERI<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-trace-path"    })) this->params.simulation.trace_path   = this->ar.get_arg    ({"sim-trace-path"   });
 	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs       = this->ar.get_arg_int({"sim-benchs",   "b"});
 	if(this->ar.exist_arg({"sim-snr-type",  "E"})) this->params.simulation.snr_type     = this->ar.get_arg    ({"sim-snr-type", "E"});
 	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report  = true;
