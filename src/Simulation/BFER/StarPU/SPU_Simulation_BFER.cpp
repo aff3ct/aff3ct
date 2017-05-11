@@ -144,7 +144,7 @@ void Simulation_BFER<B,R,Q>
 		const auto n_fra = simu->decoder[tid]->get_n_frames();
 
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K - simu->params.crc .size,
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K_info,
 		                                               simu->params.code.N,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,

@@ -157,7 +157,7 @@ void Simulation_BFERI<B,R,Q>
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K - simu->params.crc .size,
+		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K_info,
 		                                                   simu->params.code.N,
 		                                                   simu->params.code.N_mod,
 		                                                   simu->params.monitor.n_frame_errors,
@@ -167,7 +167,7 @@ void Simulation_BFERI<B,R,Q>
 		                                                   simu->params.simulation.inter_frame_level);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K - simu->params.crc .size,
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K_info,
 		                                               simu->params.code.N,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
@@ -175,7 +175,7 @@ void Simulation_BFERI<B,R,Q>
 		                                               simu->params.simulation.inter_frame_level);
 #endif
 		// build the terminal to display the BER/FER
-		simu->terminal = simu->build_terminal(tid);
+		simu->terminal = simu->build_terminal();
 		Simulation::check_errors(simu->terminal, "Terminal");
 	}
 }
@@ -795,7 +795,7 @@ void Simulation_BFERI<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFERI<B,R,Q>
-::build_terminal(const int tid)
+::build_terminal()
 {
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];

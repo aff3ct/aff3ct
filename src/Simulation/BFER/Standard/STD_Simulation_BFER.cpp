@@ -156,7 +156,7 @@ void Simulation_BFER<B,R,Q>
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K - simu->params.crc .size,
+		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K_info,
 		                                                   simu->params.code.N,
 		                                                   simu->params.code.N_mod,
 		                                                   simu->params.monitor.n_frame_errors,
@@ -166,7 +166,7 @@ void Simulation_BFER<B,R,Q>
 		                                                   simu->params.simulation.inter_frame_level);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K - simu->params.crc .size,
+		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K_info,
 		                                               simu->params.code.N,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,

@@ -7,9 +7,11 @@
 #ifndef SIMULATION_BFER_HPP_
 #define SIMULATION_BFER_HPP_
 
+#include <map>
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <utility>
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"

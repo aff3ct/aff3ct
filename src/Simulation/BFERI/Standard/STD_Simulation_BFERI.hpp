@@ -5,9 +5,11 @@
 #ifndef SIMULATION_BFERI_HPP_
 #define SIMULATION_BFERI_HPP_
 
+#include <map>
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <utility>
 
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
@@ -47,7 +49,9 @@ protected:
 
 	// objects
 	module::Monitor_reduction<B,R> *monitor_red;
-	tools::Terminal                *terminal;
+
+	// terminal (for the output of the code)
+	tools::Terminal *terminal;
 
 	// time points and durations
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_simu;
@@ -76,7 +80,7 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
-	tools::Terminal* build_terminal(const int tid = 0);
+	tools::Terminal* build_terminal();
 };
 }
 }
