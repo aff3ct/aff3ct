@@ -16,7 +16,7 @@ Decoder<B,R>* Factory_decoder_BCH<B,R>
 	if (params.decoder.type == "ALGEBRAIC")
 		if (params.decoder.implem == "STD")
 			decoder = new Decoder_BCH<B,R>(params.code.K,
-			                               params.code.N,
+			                               params.code.N_code,
 			                               params.code.m,
 			                               params.code.t,
 			                               GF,

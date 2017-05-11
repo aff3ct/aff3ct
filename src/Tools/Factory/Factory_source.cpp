@@ -16,13 +16,13 @@ Source<B>* Factory_source<B>
 
 	// build the generator
 	if (params.source.type == "RAND_FAST")
-		source = new Source_random_fast<B>(params.code.K - params.crc.size, seed, params.simulation.inter_frame_level);
+		source = new Source_random_fast<B>(params.code.K_info, seed, params.simulation.inter_frame_level);
 	else if (params.source.type == "RAND")
-		source = new Source_random<B>(params.code.K - params.crc.size, seed, params.simulation.inter_frame_level);
+		source = new Source_random<B>(params.code.K_info, seed, params.simulation.inter_frame_level);
 	else if (params.source.type == "AZCW")
-		source = new Source_AZCW<B>(params.code.K - params.crc.size, params.simulation.inter_frame_level);
+		source = new Source_AZCW<B>(params.code.K_info, params.simulation.inter_frame_level);
 	else if (params.source.type == "USER")
-		source = new Source_user<B>(params.code.K - params.crc.size, params.source.path, params.simulation.inter_frame_level);
+		source = new Source_user<B>(params.code.K_info, params.source.path, params.simulation.inter_frame_level);
 
 	return source;
 }

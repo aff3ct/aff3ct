@@ -8,10 +8,10 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_turbo<B>
-::build(const parameters         &params,
-              Interleaver<int>   *interleaver,
-              Encoder_sys<B>     *sub_encoder_n,
-              Encoder_sys<B>     *sub_encoder_i)
+::build(const parameters       &params,
+              Interleaver<int> *interleaver,
+              Encoder_sys<B>   *sub_encoder_n,
+              Encoder_sys<B>   *sub_encoder_i)
 {
 	Encoder<B> *encoder = nullptr;
 

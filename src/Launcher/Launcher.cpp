@@ -346,6 +346,7 @@ void Launcher<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
+	params.code.K_info = ar.get_arg_int({"cde-info-bits", "K"}); // required
 	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
 	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
@@ -436,8 +437,9 @@ int Launcher<B,R,Q>
 	{
 		this->store_args();
 
-		params.code.N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, params.code.N);
-		params.code.N_fil = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params, params.code.N);
+		params.code.K_info -= params.crc.size;
+		params.code.N_mod   = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, params.code.N);
+		params.code.N_fil   = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params, params.code.N);
 
 		display_help = false;
 

@@ -13,7 +13,7 @@ Encoder_sys<B>* Factory_encoder_repetition<B>
 
 	// build the encoder
 	if (params.encoder.systematic)
-		encoder = new Encoder_repetition_sys<B>(params.code.K, params.code.N, params.encoder.buffered, params.simulation.inter_frame_level);
+		encoder = new Encoder_repetition_sys<B>(params.code.K, params.code.N_code, params.encoder.buffered, params.simulation.inter_frame_level);
 
 	return encoder;
 }

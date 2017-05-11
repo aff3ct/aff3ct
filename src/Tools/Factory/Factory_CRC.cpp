@@ -20,16 +20,16 @@ CRC<B>* Factory_CRC<B>
 
 	// build the crc
 	if (!params.crc.poly.empty() && params.decoder.simd_strategy == "INTER")
-		crc = new CRC_polynomial_inter<B>(params.code.K - params.crc.size, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
+		crc = new CRC_polynomial_inter<B>(params.code.K_info, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
 	else if (!params.crc.poly.empty())
 	{
 		if (params.crc.type == "FAST")
-			crc = new CRC_polynomial_fast<B>(params.code.K - params.crc.size, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
+			crc = new CRC_polynomial_fast<B>(params.code.K_info, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
 		else
-			crc = new CRC_polynomial<B>(params.code.K - params.crc.size, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
+			crc = new CRC_polynomial<B>(params.code.K_info, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
 	}
 	else
-		crc = new CRC_NO<B>(params.code.K - params.crc.size, params.simulation.inter_frame_level);
+		crc = new CRC_NO<B>(params.code.K_info, params.simulation.inter_frame_level);
 
 	return crc;
 }
