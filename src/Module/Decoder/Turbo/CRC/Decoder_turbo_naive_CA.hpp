@@ -17,7 +17,7 @@ protected:
 
 public:
 	Decoder_turbo_naive_CA(const int& K,
-	                       const int& N_without_tb,
+	                       const int& N,
 	                       const int& n_ite,
 	                       const Interleaver<int> &pi,
 	                       SISO<R> &siso_n,

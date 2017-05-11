@@ -139,7 +139,7 @@ void Simulation_BFERI_i<B,R,Q>
 		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
 			info_bits -= params.crc.size;
 
-		code_rate = (float)(info_bits / (float)(params.code.N + params.code.tail_length));
+		code_rate = (float)(info_bits / (float)params.code.N);
 
 		if (params.simulation.snr_type == "EB")
 		{
@@ -242,7 +242,7 @@ Interleaver<int>* Simulation_BFERI_i<B,R,Q>
 ::build_interleaver(const int tid)
 {
 	auto seed = (params.interleaver.uniform) ? rd_engine_seed[tid]() : params.interleaver.seed;
-	return Factory_interleaver<int>::build(params, params.code.N + params.code.tail_length, seed);
+	return Factory_interleaver<int>::build(params, params.code.N, seed);
 }
 
 template <typename B, typename R, typename Q>

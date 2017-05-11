@@ -8,16 +8,16 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N_without_tb, Interleaver<int> &pi, Encoder_sys<B> &sub_enc,
+::Encoder_turbo_legacy(const int& K, const int& N, Interleaver<int> &pi, Encoder_sys<B> &sub_enc,
                        const int n_frames, const std::string name)
-: Encoder<B>(K, N_without_tb + 2*sub_enc.tail_length(), n_frames, name.c_str()),
+: Encoder<B>(K, N, n_frames, name.c_str()),
   pi(pi),
   sub_enc(sub_enc),
   U_K_i(K*n_frames),
   X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*n_frames)
 {
-	if (N_without_tb != 3 * K)
+	if (N - 2*sub_enc.tail_length() != 3 * K)
 		throw std::invalid_argument("aff3ct::module::Encoder_turbo_legacy: \"N\" / \"K\" has to be equal to 3.");
 	if ((int)pi.get_size() != K)
 		throw std::length_error("aff3ct::module::Encoder_turbo_legacy: \"pi.get_size()\" has to be equal to \"K\".");

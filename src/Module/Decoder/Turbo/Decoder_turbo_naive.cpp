@@ -12,7 +12,7 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_turbo_naive<B,R>
 ::Decoder_turbo_naive(const int& K,
-                      const int& N_without_tb,
+                      const int& N,
                       const int& n_ite,
                       const Interleaver<int> &pi,
                       SISO<R> &siso_n,
@@ -20,7 +20,7 @@ Decoder_turbo_naive<B,R>
                       Scaling_factor<R> &scaling_factor,
                       const bool buffered_encoding,
                       const std::string name)
-: Decoder_turbo<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding, name)
+: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding, name)
 {
 }
 

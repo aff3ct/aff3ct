@@ -26,7 +26,7 @@ mipp::vector<unsigned int> partial_sort_indexes(const mipp::vector<R> &v)
 template <typename B, typename R>
 Decoder_turbo_naive_CA_flip_and_check<B,R>
 ::Decoder_turbo_naive_CA_flip_and_check(const int& K,
-                                        const int& N_without_tb,
+                                        const int& N,
                                         const int& n_ite,
                                         const Interleaver<int> &pi,
                                         SISO<R> &siso_n,
@@ -35,7 +35,7 @@ Decoder_turbo_naive_CA_flip_and_check<B,R>
                                         CRC<B> &crc,
                                         int fnc_q, int fnc_m, int fnc_M, int fnc_s,
                                         const bool buffered_encoding)
-: Decoder_turbo_naive_CA<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
+: Decoder_turbo_naive_CA<B,R>(K, N, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
   q(fnc_q), nb_patterns((1<<q)-1),
   metric(K, (R)0),
   tab_flips(nb_patterns, mipp::vector<B>(q, (B)0)),

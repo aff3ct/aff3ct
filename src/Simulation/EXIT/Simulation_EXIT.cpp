@@ -20,22 +20,22 @@ Simulation_EXIT<B,R,Q>
 : Simulation(),
 
   params(params),
-  H_N        (params.code.N + params.code.tail_length                      ),
-  B_K        (params.code.K                                                ),
-  B_N        (params.code.N + params.code.tail_length                      ),
-  X_K1       (params.code.K                                                ),
-  X_N1       (params.code.N + params.code.tail_length                      ),
-  X_K2       (params.code.K                                                ),
-  X_N2       (params.code.N + params.code.tail_length                      ),
-  Y_N        (params.code.N + params.code.tail_length                      ),
-  Y_K        (params.code.K                                                ),
-  La_K1      (params.code.K                                                ),
-  Lch_N1     (params.code.N + params.code.tail_length                      ),
-  La_K2      (params.code.K                                                ),
-  Lch_N2     (params.code.N + params.code.tail_length                      ),
-  Le_K       (params.code.K                                                ),
-  sys        (params.code.K                                                ),
-  par        ((params.code.N - params.code.K) + (params.code.tail_length/2)),
+  H_N   (params.code.N),
+  B_K   (params.code.K),
+  B_N   (params.code.N),
+  X_K1  (params.code.K),
+  X_N1  (params.code.N),
+  X_K2  (params.code.K),
+  X_N2  (params.code.N),
+  Y_N   (params.code.N),
+  Y_K   (params.code.K),
+  La_K1 (params.code.K),
+  Lch_N1(params.code.N),
+  La_K2 (params.code.K),
+  Lch_N2(params.code.N),
+  Le_K  (params.code.K),
+  sys   (params.code.K),
+  par   ((params.code.N - params.code.K) - (params.code.tail_length/2)),
 
   B_buff (0),
   Le_buff(0),
@@ -89,8 +89,7 @@ void Simulation_EXIT<B,R,Q>
 	modulator_a = build_modulator_a(      ); check_errors(modulator_a, "Modulator<B,R>"    );
 
 	const auto N     = params.code.N;
-	const auto tail  = params.code.tail_length;
-	const auto N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, N + tail);
+	const auto N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, N);
 
 	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
 	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
@@ -103,11 +102,11 @@ void Simulation_EXIT<B,R,Q>
 	// resize the modulation buffers
 	const auto K     = params.code.K;
 	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, K);
-	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
-	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
-	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
-	if (Lch_N1.size() != (unsigned) (N_mod + tail)) Lch_N1.resize(N_mod + tail);
-	if (H_N   .size() != (unsigned) (N_mod + tail)) H_N   .resize(N_mod + tail);
+	if (X_K2  .size() != (unsigned)K_mod) X_K2  .resize(K_mod);
+	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);
+	if (La_K1 .size() != (unsigned)K_mod) La_K1 .resize(K_mod);
+	if (Lch_N1.size() != (unsigned)N_mod) Lch_N1.resize(N_mod);
+	if (H_N   .size() != (unsigned)N_mod) H_N   .resize(N_mod);
 }
 
 template <typename B, typename R, typename Q>

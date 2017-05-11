@@ -12,7 +12,7 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 {
 	Encoder_RSC_sys<B> *encoder = nullptr;
 
-	const auto N = (params.code.type.find("TURBO") != std::string::npos) ? 2*params.code.K : params.code.N;
+	const auto N = (params.code.type.find("TURBO") != std::string::npos) ? 2*params.code.K + params.code.tail_length/2 : params.code.N;
 
 	// build the encoder
 	if (params.encoder.systematic)

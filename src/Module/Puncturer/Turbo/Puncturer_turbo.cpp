@@ -16,7 +16,7 @@ Puncturer_turbo<B,Q>
                   const bool buff_enc,
                   const int n_frames,
                   const std::string name)
-: Puncturer<B,Q>(K, N + tail_bits, K * 3 + tail_bits, n_frames, name),
+: Puncturer<B,Q>(K, N, K * 3 + tail_bits, n_frames, name),
   pattern_bits(3), buff_enc(buff_enc), tail_bits(tail_bits)
 {
 	if (tail_bits < 0)

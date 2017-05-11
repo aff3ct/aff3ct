@@ -12,10 +12,10 @@ template <typename B>
 Encoder_RSC_sys<B>
 ::Encoder_RSC_sys(const int& K, const int& N, const int n_ff, const int& n_frames, const bool buffered_encoding,
                   const std::string name)
-: Encoder_sys<B>(K, N + 2*n_ff, n_frames, name), n_ff(n_ff), n_states(1 << n_ff), 
+: Encoder_sys<B>(K, N, n_frames, name), n_ff(n_ff), n_states(1 << n_ff),
   buffered_encoding(buffered_encoding)
 {
-	if (N !=  2 * K)
+	if (N - 2*n_ff !=  2 * K)
 		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"N\" / \"K\" has to be a equal to 2.");
 	if (n_ff <= 0)
 		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"n_ff\" has to be greater than 0.");

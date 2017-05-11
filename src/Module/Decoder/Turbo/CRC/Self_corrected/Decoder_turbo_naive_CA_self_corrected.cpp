@@ -14,7 +14,7 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_turbo_naive_CA_self_corrected<B,R>
 ::Decoder_turbo_naive_CA_self_corrected(const int& K,
-                                        const int&  N_without_tb,
+                                        const int& N,
                                         const int& n_ite,
                                         const Interleaver<int> &pi,
                                         SISO<R> &siso_n,
@@ -22,7 +22,7 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
                                         Scaling_factor<R> &scaling_factor,
                                         CRC<B> &crc,
                                         const bool buffered_encoding)
-: Decoder_turbo_naive_CA<B,R>(K, N_without_tb, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
+: Decoder_turbo_naive_CA<B,R>(K, N, n_ite, pi, siso_n, siso_i, scaling_factor, crc, buffered_encoding),
   ext_nat(n_ite, mipp::vector<R>(K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)),
   ext_int(n_ite, mipp::vector<R>(K * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>(), (R)0)),
   osc_nat                       (K * siso_n.get_simd_inter_frame_level() + mipp::nElReg<B>(), (B)0),

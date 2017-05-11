@@ -306,13 +306,13 @@ void Launcher<B,R,Q>
 
 	params.simulation.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
-	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
-	if(ar.exist_arg({"sim-pyber"          })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"          });
-	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
-	if(ar.exist_arg({"sim-domain"         })) params.channel.domain               = ar.get_arg      ({"sim-domain"         });
-	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
-	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
-	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
+	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
+	if(ar.exist_arg({"sim-pyber"        })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"        });
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"       });
+	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
+	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
+	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
 
 	params.interleaver.seed = params.simulation.seed;
 
@@ -436,12 +436,8 @@ int Launcher<B,R,Q>
 	{
 		this->store_args();
 
-		params.code.N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params,
-		                                                                               params.code.N +
-		                                                                               params.code.tail_length);
-		params.code.N_fil = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params,
-		                                                                               params.code.N +
-		                                                                               params.code.tail_length);
+		params.code.N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, params.code.N);
+		params.code.N_fil = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params, params.code.N);
 
 		display_help = false;
 
@@ -513,7 +509,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	std::string N = std::to_string(params.code.N);
+	std::string N = std::to_string(params.code.N - params.code.tail_length);
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
@@ -523,9 +519,13 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	else
 		K << params.code.K;
 
-	p.push_back(std::make_pair("Type",              params.code.type));
-	p.push_back(std::make_pair("Info. bits (K)",    K.str()         ));
-	p.push_back(std::make_pair("Codeword size (N)", N               ));
+	auto real_K = (float)params.code.K + (this->params.crc.inc_code_rate ? (float)params.crc.size : 0.f);
+	float code_rate = real_K / (float)params.code.N;
+
+	p.push_back(std::make_pair("Type",              params.code.type         ));
+	p.push_back(std::make_pair("Info. bits (K)",    K.str()                  ));
+	p.push_back(std::make_pair("Codeword size (N)", N                        ));
+	p.push_back(std::make_pair("Code rate (R)",     std::to_string(code_rate)));
 
 	return p;
 }

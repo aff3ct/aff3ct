@@ -10,17 +10,17 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo<B>
-::Encoder_turbo(const int& K, const int& N_without_tb, Interleaver<int> &pi,
+::Encoder_turbo(const int& K, const int& N, Interleaver<int> &pi,
                 Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames, const std::string name)
-: Encoder<B>(K, N_without_tb + enco_n.tail_length() + enco_i.tail_length(), n_frames, name),
+: Encoder<B>(K, N, n_frames, name),
   pi(pi),
   enco_n(enco_n),
   enco_i(enco_i),
-  U_K_i(K                                               * n_frames),
-  par_n(((N_without_tb - K) / 2 + enco_n.tail_length()) * n_frames),
-  par_i(((N_without_tb - K) / 2 + enco_i.tail_length()) * n_frames)
+  U_K_i(  K                                                                                  * n_frames),
+  par_n(((N - (enco_n.tail_length() + enco_i.tail_length()) - K) / 2 + enco_n.tail_length()) * n_frames),
+  par_i(((N - (enco_n.tail_length() + enco_i.tail_length()) - K) / 2 + enco_i.tail_length()) * n_frames)
 {
-	if (N_without_tb != 3 * K)
+	if (N - (enco_n.tail_length() + enco_i.tail_length()) != 3 * K)
 		throw std::invalid_argument("aff3ct::module::Encoder_turbo: \"N\" / \"K\" has to be equal to 3.");
 	if ((int)pi.get_size() != K)
 		throw std::length_error("aff3ct::module::Encoder_turbo: \"pi.get_size()\" has to be equal to \"K\".");

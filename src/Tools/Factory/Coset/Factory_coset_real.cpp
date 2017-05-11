@@ -12,7 +12,7 @@ Coset<B,Q>* Factory_coset_real<B,Q>
 	Coset<B,Q> *coset = nullptr;
 
 	// build the coset
-	coset = new Coset_real<B,Q>(params.code.N_code + params.code.tail_length, params.simulation.inter_frame_level);
+	coset = new Coset_real<B,Q>(params.code.N_code, params.simulation.inter_frame_level);
 
 	return coset;
 }

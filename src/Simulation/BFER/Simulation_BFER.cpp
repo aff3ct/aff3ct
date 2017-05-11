@@ -140,7 +140,7 @@ void Simulation_BFER_i<B,R,Q>
 		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
 			info_bits -= params.crc.size;
 
-		code_rate = (float)(info_bits / (float)(params.code.N + params.code.tail_length));
+		code_rate = (float)(info_bits / (float)params.code.N);
 
 		if (params.simulation.snr_type == "EB")
 		{
@@ -235,8 +235,7 @@ template <typename B, typename R, typename Q>
 Puncturer<B,Q>* Simulation_BFER_i<B,R,Q>
 ::build_puncturer(const int tid)
 {
-	return new Puncturer_NO<B,Q>(params.code.K, params.code.N + params.code.tail_length,
-	                             params.simulation.inter_frame_level);
+	return new Puncturer_NO<B,Q>(params.code.K, params.code.N, params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
@@ -264,7 +263,7 @@ template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_i<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build(params, sigma, params.code.N + params.code.tail_length);
+	return Factory_quantizer<R,Q>::build(params, sigma, params.code.N);
 }
 
 template <typename B, typename R, typename Q>

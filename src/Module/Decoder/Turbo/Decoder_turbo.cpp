@@ -14,7 +14,7 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_turbo<B,R>
 ::Decoder_turbo(const int& K,
-                const int& N_without_tb,
+                const int& N,
                 const int& n_ite,
                 const Interleaver<int> &pi,
                 SISO<R> &siso_n,
@@ -22,26 +22,26 @@ Decoder_turbo<B,R>
                 Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
+: Decoder<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
   siso_n(siso_n),
   siso_i(siso_i),
   scaling_factor(scaling_factor),
-  l_sn ((K                  + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_si ((K                  + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_sen((K                  + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_sei((K                  + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_pn (((N_without_tb-K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_pi (((N_without_tb-K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e1n((K                                              ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e2n((K                                              ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e1i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e2i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  s    ((K                                              ) * siso_n.get_simd_inter_frame_level())
+  l_sn ((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_si ((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_sen((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_sei((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_pn (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_pi (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e1n((K                                                                                    ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e2n((K                                                                                    ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e1i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e2i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
 {
-	if (N_without_tb != K * 3)
+	if (N - (siso_n.tail_length() + siso_i.tail_length()) != K * 3)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"N\" / \"K\" has to be equal to 3.");
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"n_ite\" has to be greater than 0.");

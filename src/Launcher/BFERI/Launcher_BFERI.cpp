@@ -133,10 +133,10 @@ void Launcher_BFERI<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs       = this->ar.get_arg_int({"sim-benchs",   "b"});
-	if(this->ar.exist_arg({"sim-snr-type",  "E"})) this->params.simulation.snr_type     = this->ar.get_arg    ({"sim-snr-type", "E"});
-	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report  = true;
-	if(this->ar.exist_arg({"sim-debug",     "d"})) this->params.simulation.debug        = true;
+	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs      = this->ar.get_arg_int({"sim-benchs",   "b"});
+	if(this->ar.exist_arg({"sim-snr-type",  "E"})) this->params.simulation.snr_type    = this->ar.get_arg    ({"sim-snr-type", "E"});
+	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report = true;
+	if(this->ar.exist_arg({"sim-debug",     "d"})) this->params.simulation.debug       = true;
 	if(this->ar.exist_arg({"sim-debug-limit"   }))
 	{
 		this->params.simulation.debug = true;

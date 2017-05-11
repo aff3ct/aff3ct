@@ -29,19 +29,19 @@ Simulation_BFER<B,R,Q>
 
   threads(this->params.simulation.n_threads -1),
 
-  U_K1(this->params.simulation.n_threads, mipp::vector<B>((params.code.K      - params.crc .size)        * params.simulation.inter_frame_level)),
-  U_K2(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
-  X_N1(this->params.simulation.n_threads, mipp::vector<B>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
-  X_N2(this->params.simulation.n_threads, mipp::vector<B>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
-  X_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
-  H_N (this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
-  Y_N1(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                             * params.simulation.inter_frame_level)),
-  Y_N2(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_fil                             * params.simulation.inter_frame_level)),
-  Y_N3(this->params.simulation.n_threads, mipp::vector<R>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
-  Y_N4(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N      + params.code.tail_length) * params.simulation.inter_frame_level)),
-  Y_N5(this->params.simulation.n_threads, mipp::vector<Q>((params.code.N_code + params.code.tail_length) * params.simulation.inter_frame_level)),
-  V_K1(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                                 * params.simulation.inter_frame_level)),
-  V_K2(this->params.simulation.n_threads, mipp::vector<B>((params.code.K      - params.crc .size)        * params.simulation.inter_frame_level)),
+  U_K1(this->params.simulation.n_threads, mipp::vector<B>((params.code.K - params.crc.size) * params.simulation.inter_frame_level)),
+  U_K2(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                    * params.simulation.inter_frame_level)),
+  X_N1(this->params.simulation.n_threads, mipp::vector<B>( params.code.N_code               * params.simulation.inter_frame_level)),
+  X_N2(this->params.simulation.n_threads, mipp::vector<B>( params.code.N                    * params.simulation.inter_frame_level)),
+  X_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                * params.simulation.inter_frame_level)),
+  H_N (this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                * params.simulation.inter_frame_level)),
+  Y_N1(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_mod                * params.simulation.inter_frame_level)),
+  Y_N2(this->params.simulation.n_threads, mipp::vector<R>( params.code.N_fil                * params.simulation.inter_frame_level)),
+  Y_N3(this->params.simulation.n_threads, mipp::vector<R>( params.code.N                    * params.simulation.inter_frame_level)),
+  Y_N4(this->params.simulation.n_threads, mipp::vector<Q>( params.code.N                    * params.simulation.inter_frame_level)),
+  Y_N5(this->params.simulation.n_threads, mipp::vector<Q>( params.code.N_code               * params.simulation.inter_frame_level)),
+  V_K1(this->params.simulation.n_threads, mipp::vector<B>( params.code.K                    * params.simulation.inter_frame_level)),
+  V_K2(this->params.simulation.n_threads, mipp::vector<B>((params.code.K - params.crc.size) * params.simulation.inter_frame_level)),
 
   monitor_red(nullptr),
   terminal   (nullptr),
@@ -157,7 +157,7 @@ void Simulation_BFER<B,R,Q>
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction_mpi<B,R>(simu->params.code.K - simu->params.crc .size,
-		                                                   simu->params.code.N + simu->params.code.tail_length,
+		                                                   simu->params.code.N,
 		                                                   simu->params.code.N_mod,
 		                                                   simu->params.monitor.n_frame_errors,
 		                                                   simu->monitor,
@@ -167,7 +167,7 @@ void Simulation_BFER<B,R,Q>
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
 		simu->monitor_red = new Monitor_reduction<B,R>(simu->params.code.K - simu->params.crc .size,
-		                                               simu->params.code.N + simu->params.code.tail_length,
+		                                               simu->params.code.N,
 		                                               simu->params.code.N_mod,
 		                                               simu->params.monitor.n_frame_errors,
 		                                               simu->monitor,

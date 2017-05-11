@@ -110,6 +110,8 @@ void Launcher_BFERI_RSC<B,R,Q,QD>
 
 	this->params.code.tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
+	this->params.code.N += this->params.code.tail_length;
+	this->params.code.N_code = 2 * this->params.code.K + this->params.code.tail_length;
 }
 
 template <typename B, typename R, typename Q, typename QD>

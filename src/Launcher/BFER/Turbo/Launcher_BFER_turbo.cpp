@@ -153,8 +153,6 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	this->params.code.N_code = 3 * this->params.code.K;
-
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(this->ar.exist_arg({"sim-json-path"})) this->params.simulation.json_path = this->ar.get_arg({"sim-json-path"});
 
@@ -258,6 +256,8 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	this->params.code.tail_length = (int)(4 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
+	this->params.code.N += this->params.code.tail_length;
+	this->params.code.N_code = 3 * this->params.code.K + this->params.code.tail_length;
 }
 
 template <typename B, typename R, typename Q, typename QD>

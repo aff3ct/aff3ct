@@ -11,7 +11,7 @@ Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
 {
 	Puncturer<B,Q> *puncturer = nullptr;
 
-	if (params.code.N + params.code.tail_length != params.code.N_code + params.code.tail_length)
+	if (params.code.N != params.code.N_code)
 		puncturer = new Puncturer_turbo<B,Q>(params.code.K,
 		                                     params.code.N,
 		                                     params.code.tail_length,
@@ -20,7 +20,7 @@ Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
 		                                     params.simulation.inter_frame_level);
 	else
 		puncturer = new Puncturer_NO<B,Q>(params.code.K,
-		                                  params.code.N + params.code.tail_length,
+		                                  params.code.N,
 		                                  params.simulation.inter_frame_level);
 
 	return puncturer;
