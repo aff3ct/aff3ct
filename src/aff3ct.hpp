@@ -414,7 +414,6 @@
 // #include <Module/CRC/SPU_CRC.hpp>
 // #include <Module/CRC/SC_CRC.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial.hpp>
-#include <Module/CRC/Polynomial/CRC_polynomial_double.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_fast.hpp>
 #include <Module/CRC/Polynomial/CRC_polynomial_inter.hpp>
 #include <Module/CRC/NO/CRC_NO.hpp>
