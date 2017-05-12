@@ -91,7 +91,12 @@ void Frame_trace<B>
 			break;
 		case REAL:
 			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
-			value_string = sstream.str().substr(0, prec+2);
+			value_string = sstream.str();
+			size_t pos = value_string.find('e');
+			if (pos != std::string::npos) // then scientific notation has been used (too big number)
+				value_string = value_string.substr(0, prec-2) + value_string.substr(pos);
+			else
+				value_string = value_string.substr(0, prec+2);
 
 			stream << value_string << "|";
 			break;
@@ -123,8 +128,12 @@ void Frame_trace<B>
 
 		case REAL:
 			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
-
-			value_string = sstream.str().substr(0, prec+2);
+			value_string = sstream.str();
+			size_t pos = value_string.find('e');
+			if (pos != std::string::npos) // then scientific notation has been used (too big number)
+				value_string = value_string.substr(0, prec-2) + value_string.substr(pos);
+			else
+				value_string = value_string.substr(0, prec+2);
 
 			if (value >= 0)
 				if (ref == 0)
