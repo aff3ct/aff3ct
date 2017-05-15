@@ -119,7 +119,6 @@ void SC_Simulation_BFER_std<B,R,Q>
 
 		this->bind_sockets_debug();
 		sc_core::sc_start(); // start simulation
-		this->terminal->legend(std::cout);
 
 		for (auto i = 0; i < 7; i++)
 			if (this->dbg_B[i] != nullptr)
