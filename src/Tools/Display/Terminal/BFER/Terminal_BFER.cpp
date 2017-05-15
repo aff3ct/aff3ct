@@ -49,8 +49,10 @@ template <typename B, typename R>
 void Terminal_BFER<B,R>
 ::legend(std::ostream &stream)
 {
+	const auto dec_perf = this->d_decod_total != nullptr;
+
 #ifdef _WIN32
-	if (this->d_decod_total == nullptr)
+	if (!dec_perf)
 	{
 		stream << "# " << bold("---------------------------------------------------------------------------||---------------------") << std::endl;
 		stream << "# " << bold("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ") << std::endl;
@@ -73,7 +75,7 @@ void Terminal_BFER<B,R>
 		stream << "# " << bold("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------|-----------||----------|----------") << std::endl;
 	}
 #else
-	if (this->d_decod_total == nullptr)
+	if (!dec_perf)
 	{
 		stream << "# " << bold("----------------------------------------------------------------------||---------------------") << std::endl;
 		stream << "# " << bold("      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  ") << std::endl;

@@ -4,7 +4,12 @@
 #include <iostream>
 #include <sstream>
 
-#include "Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp"
+#if defined(SYSTEMC)
+#include "Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp"
+#else
+#include "Simulation/BFER/Iterative/Threads/Simulation_BFER_ite_threads.hpp"
+#endif
+#include "Tools/Codec/RSC/Codec_RSC.hpp"
 
 #include "Launcher_BFERI_RSC.hpp"
 
@@ -118,7 +123,12 @@ template <typename B, typename R, typename Q, typename QD>
 Simulation* Launcher_BFERI_RSC<B,R,Q,QD>
 ::build_simu()
 {
-	return new Simulation_BFERI_RSC<B,R,Q,QD>(this->params);
+	this->codec = new Codec_RSC<B,Q,QD>(this->params);
+#if defined(SYSTEMC)
+	return new SC_Simulation_BFER_ite     <B,R,Q>(this->params, *this->codec);
+#else
+	return new Simulation_BFER_ite_threads<B,R,Q>(this->params, *this->codec);
+#endif
 }
 
 template <typename B, typename R, typename Q, typename QD>

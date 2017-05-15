@@ -9,7 +9,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const int n_frames,
+::Decoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, int max_iter, const int n_frames,
              const std::string name)
 : Decoder<B,R>(K, N, n_frames, 1, name),
   rep_count(N/K),

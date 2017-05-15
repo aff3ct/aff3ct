@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RA<B>
-::Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const int n_frames, const std::string name)
+::Encoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, const int n_frames, const std::string name)
  : Encoder<B>(K, N, n_frames, name), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
 {
 	if (N % K)

@@ -18,10 +18,10 @@ protected:
 	const int rep_count; // number of repetitions
 	mipp::vector<B> U, tmp_X_N;
 
-	Interleaver<int>& interleaver;
+	const Interleaver<int>& interleaver;
 
 public:
-	Encoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, const int n_frames = 1,
+	Encoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, const int n_frames = 1,
 	           const std::string name = "Encoder_RA");
 
 	virtual ~Encoder_RA() {}

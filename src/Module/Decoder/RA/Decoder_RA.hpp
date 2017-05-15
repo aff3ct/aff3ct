@@ -22,10 +22,10 @@ protected:
 	mipp::vector<R> Tu, Td, Wu, Wd, U;
 	std::vector<mipp::vector<R>> Xd, Xu;
 
-	Interleaver<int>& interleaver;
+	const Interleaver<int>& interleaver;
 
 public:
-	Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter,
+	Decoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, int max_iter,
 	           const int n_frames = 1, const std::string name = "Decoder_RA");
 	virtual ~Decoder_RA();
 

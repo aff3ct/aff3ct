@@ -1,6 +1,11 @@
 #include <iostream>
 
-#include "Simulation/BFERI/Code/Polar/Simulation_BFERI_polar.hpp"
+#if defined(SYSTEMC)
+#include "Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp"
+#else
+#include "Simulation/BFER/Iterative/Threads/Simulation_BFER_ite_threads.hpp"
+#endif
+#include "Tools/Codec/Polar/Codec_polar.hpp"
 
 #include "Launcher_BFERI_polar.hpp"
 
@@ -95,7 +100,12 @@ template <typename B, typename R, typename Q>
 Simulation* Launcher_BFERI_polar<B,R,Q>
 ::build_simu()
 {
-	return new Simulation_BFERI_polar<B,R,Q>(this->params);
+	this->codec = new Codec_polar<B,Q>(this->params);
+#if defined(SYSTEMC)
+	return new SC_Simulation_BFER_ite     <B,R,Q>(this->params, *this->codec);
+#else
+	return new Simulation_BFER_ite_threads<B,R,Q>(this->params, *this->codec);
+#endif
 }
 
 template <typename B, typename R, typename Q>

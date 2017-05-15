@@ -10,7 +10,7 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr)
 {
 	this->params.simulation .type             = "BFER";
 	this->params.simulation .benchs           = 0;
@@ -32,6 +32,13 @@ Launcher_BFER<B,R,Q>
 	this->params.encoder    .systematic       = true;
 	this->params.demodulator.max              = "MAX";
 	this->params.terminal   .type             = "STD";
+}
+
+template <typename B, typename R, typename Q>
+Launcher_BFER<B,R,Q>
+::~Launcher_BFER()
+{
+	if (codec != nullptr) delete codec;
 }
 
 template <typename B, typename R, typename Q>

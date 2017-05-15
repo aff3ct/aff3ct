@@ -18,7 +18,7 @@ template <typename B = int>
 class Encoder_turbo : public Encoder<B>
 {
 protected:
-	Interleaver<int> &pi; // the interleaver
+	const Interleaver<int> &pi; // the interleaver
 
 	Encoder_sys<B> &enco_n; // polar systematic encoder
 	Encoder_sys<B> &enco_i; // sub encoder
@@ -28,7 +28,7 @@ protected:
 	mipp::vector<B> par_i;  // internal buffer for the encoded    bits in the interleaved domain
 
 public:
-	Encoder_turbo(const int& K, const int& N, Interleaver<int> &pi,
+	Encoder_turbo(const int& K, const int& N, const Interleaver<int> &pi,
 	              Encoder_sys<B> &enco_n, Encoder_sys<B> &enco_i, const int n_frames = 1,
 	              const std::string name = "Encoder_turbo");
 	virtual ~Encoder_turbo() {}
