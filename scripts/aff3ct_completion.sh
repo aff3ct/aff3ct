@@ -53,7 +53,7 @@ _aff3ct() {
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber     \
 		      --sim-no-colors --mnt-err-trk --mnt-err-trk-rev                 \
-		      --mnt-err-trk-path"
+		      --mnt-err-trk-path --sim-debug-prec"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -197,7 +197,7 @@ _aff3ct() {
 		--cde-size | -N |                                                    \
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |    \
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                  \
-		--sim-benchs | -b | --sim-debug-limit |                              \
+		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |           \
 		--mnt-max-fe | -e |                                                  \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |   \
 		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
