@@ -1,23 +1,32 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <stdexcept>
 
 #include "Terminal_BFER_legacy.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename R>
-Terminal_BFER_legacy<B,R>
-::Terminal_BFER_legacy(const R& snr,
-                       const Monitor<B,R> &monitor,
+template <typename B>
+Terminal_BFER_legacy<B>
+::Terminal_BFER_legacy(const int K,
+                       const int N,
+                       const float snr,
+                       const Monitor<B> &monitor,
                        const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr)
-: Terminal(), snr(snr), monitor(monitor), t_snr(t_snr), real_time_state(0)
+: Terminal(), K(K), N(N), snr(snr), monitor(monitor), t_snr(t_snr), real_time_state(0)
 {
+	if (K <= 0)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER_legacy: \"K\" has to be greater than 0.");
+	if (N <= 0)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER_legacy: \"N\" has to be greater than 0.");
+	if (K > N)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER_legacy: \"K\" has to be smaller than \"N\".");
 }
 
-template <typename B, typename R>
-std::string Terminal_BFER_legacy<B,R>::get_time_format(float secondes)
+template <typename B>
+std::string Terminal_BFER_legacy<B>::get_time_format(float secondes)
 {
 	auto ss = (int)secondes % 60;
 	auto mm = ((int)(secondes / 60.f) % 60);
@@ -35,8 +44,8 @@ std::string Terminal_BFER_legacy<B,R>::get_time_format(float secondes)
 	return time_format2;
 }
 
-template <typename B, typename R>
-void Terminal_BFER_legacy<B,R>::_report(std::ostream &stream)
+template <typename B>
+void Terminal_BFER_legacy<B>::_report(std::ostream &stream)
 {
 	using namespace std::chrono;
 
@@ -49,13 +58,13 @@ void Terminal_BFER_legacy<B,R>::_report(std::ostream &stream)
 	}
 	else
 	{
-		ber = (1.f) / ((float)monitor.get_n_analyzed_fra()) / monitor.get_K();
+		ber = (1.f) / ((float)monitor.get_n_analyzed_fra()) / this->K;
 		fer = (1.f) / ((float)monitor.get_n_analyzed_fra());
 	}
 
 	auto rt   = duration_cast<milliseconds>(steady_clock::now() - t_snr).count() / 1000.f;
 	auto fpmn = (60.f * monitor.get_n_analyzed_fra()) / rt;
-	auto bps  = (fpmn * (float)monitor.get_N()) / 60.f / 1000.f / 1000.f;
+	auto bps  = (fpmn * (float)this->N) / 60.f / 1000.f / 1000.f;
 
 	auto fra = monitor.get_n_analyzed_fra();
 	auto fe  = monitor.get_n_fe();
@@ -71,8 +80,8 @@ void Terminal_BFER_legacy<B,R>::_report(std::ostream &stream)
 	stream << "BE/FE = "    << std::setprecision(2) << std::fixed      << std::setw(7) << be_fe;
 }
 
-template <typename B, typename R>
-void Terminal_BFER_legacy<B,R>::temp_report(std::ostream &stream)
+template <typename B>
+void Terminal_BFER_legacy<B>::temp_report(std::ostream &stream)
 {
 	using namespace std::chrono;
 
@@ -93,8 +102,8 @@ void Terminal_BFER_legacy<B,R>::temp_report(std::ostream &stream)
 	stream.flush();
 }
 
-template <typename B, typename R>
-void Terminal_BFER_legacy<B,R>::final_report(std::ostream &stream)
+template <typename B>
+void Terminal_BFER_legacy<B>::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
 
@@ -110,11 +119,11 @@ void Terminal_BFER_legacy<B,R>::final_report(std::ostream &stream)
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Terminal_BFER_legacy<B_8,R_8>;
-template class aff3ct::tools::Terminal_BFER_legacy<B_16,R_16>;
-template class aff3ct::tools::Terminal_BFER_legacy<B_32,R_32>;
-template class aff3ct::tools::Terminal_BFER_legacy<B_64,R_64>;
+template class aff3ct::tools::Terminal_BFER_legacy<B_8>;
+template class aff3ct::tools::Terminal_BFER_legacy<B_16>;
+template class aff3ct::tools::Terminal_BFER_legacy<B_32>;
+template class aff3ct::tools::Terminal_BFER_legacy<B_64>;
 #else
-template class aff3ct::tools::Terminal_BFER_legacy<B,R>;
+template class aff3ct::tools::Terminal_BFER_legacy<B>;
 #endif
 // ==================================================================================== explicit template instantiation

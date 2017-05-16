@@ -2,6 +2,7 @@
 #include <thread>
 #include <string>
 #include <stdexcept>
+#include <functional>
 
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
@@ -39,12 +40,34 @@ Simulation_BFER<B,R,Q>
 
   monitor    (params.simulation.n_threads, nullptr),
   monitor_red(                             nullptr),
+  dumper     (params.simulation.n_threads, nullptr),
+  dumper_red (                             nullptr),
   terminal   (                             nullptr),
 
   durations(params.simulation.n_threads)
 {
 	if (params.simulation.n_threads < 1)
 		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: \"n_threads\" has to be greater than 0.");
+
+	if (params.monitor.err_track_enable)
+	{
+		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+		{
+			dumper[tid] = build_dumper(tid);
+			Simulation::check_errors(dumper[tid], "Frame_dumper<B,R>");
+		}
+
+		std::vector<Frame_dumper<B,R>*> dumpers;
+		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+			dumpers.push_back(dumper[tid]);
+
+		dumper_red = new Frame_dumper_reduction<B,R>(dumpers,
+		                                             params.code.K_info,
+		                                             params.code.K,
+		                                             params.code.N_code,
+		                                             params.code.N_mod,
+		                                             params.simulation.inter_frame_level);
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -52,6 +75,15 @@ Simulation_BFER<B,R,Q>
 ::~Simulation_BFER()
 {
 	release_objects();
+
+	for (auto i = 0; i < params.simulation.n_threads; i++)
+		if (dumper[i] != nullptr)
+		{
+			delete dumper[i];
+			dumper[i] = nullptr;
+		}
+
+	if (dumper_red  != nullptr) { delete dumper_red;  dumper_red  = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -61,29 +93,30 @@ void Simulation_BFER<B,R,Q>
 	for (auto& duration : this->durations[tid])
 		duration.second = std::chrono::nanoseconds(0);
 
-	this->monitor[tid] = this->build_monitor(tid); check_errors(this->monitor[tid], "Monitor<B>");
+	this->monitor[tid] = this->build_monitor(tid); Simulation::check_errors(this->monitor[tid], "Monitor<B>");
+
+	if (params.monitor.err_track_enable)
+		this->monitor[tid]->add_handler_new_fe(std::bind(&Frame_dumper<B,R>::add,
+		                                                 this->dumper[tid],
+		                                                 std::placeholders::_1));
 
 	this->barrier(tid);
 	if (tid == 0)
 	{
 #ifdef ENABLE_MPI
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		this->monitor_red = new Monitor_reduction_mpi<B,R>(this->params.code.K_info,
-		                                                   this->params.code.N,
-		                                                   this->params.code.N_mod,
-		                                                   this->params.monitor.n_frame_errors,
-		                                                   this->monitor,
-		                                                   std::this_thread::get_id(),
-		                                                   this->params.simulation.mpi_comm_freq,
-		                                                   this->params.simulation.inter_frame_level);
+		this->monitor_red = new Monitor_reduction_mpi<B>(this->params.code.K_info,
+		                                                 this->params.monitor.n_frame_errors,
+		                                                 this->monitor,
+		                                                 std::this_thread::get_id(),
+		                                                 this->params.simulation.mpi_comm_freq,
+		                                                 this->params.simulation.inter_frame_level);
 #else
 		// build a monitor to compute BER/FER (reduce the other monitors)
-		this->monitor_red = new Monitor_reduction<B,R>(this->params.code.K_info,
-		                                               this->params.code.N,
-		                                               this->params.code.N_mod,
-		                                               this->params.monitor.n_frame_errors,
-		                                               this->monitor,
-		                                               this->params.simulation.inter_frame_level);
+		this->monitor_red = new Monitor_reduction<B>(this->params.code.K_info,
+		                                             this->params.monitor.n_frame_errors,
+		                                             this->monitor,
+		                                             this->params.simulation.inter_frame_level);
 #endif
 		// build the terminal to display the BER/FER
 		this->terminal = this->build_terminal();
@@ -120,18 +153,15 @@ void Simulation_BFER<B,R,Q>
 		}
 		sigma = std::sqrt((float)params.modulator.upsample_factor) / std::sqrt(2.f * std::pow(10.f, (snr_s / 10.f)));
 
+		// dirty hack to override simulation params
 		if (this->params.monitor.err_track_revert)
 		{
-			std::string path_src, path_enc, path_noise, path_itl;
-			Monitor_reduction<B,R>::get_tracker_paths(this->params.monitor.err_track_path, this->snr,
-			                                          path_src, path_enc, path_noise, path_itl);
-
-			// dirty hack to override simulation params
 			parameters *params_writable = const_cast<parameters*>(&this->params);
-
-			params_writable->source. path = path_src;
-			params_writable->encoder.path = path_enc;
-			params_writable->channel.path = path_noise;
+			const auto base_path = this->params.monitor.err_track_path;
+			params_writable->source     .path = base_path + "_" + std::to_string(snr_b) + ".src";
+			params_writable->encoder    .path = base_path + "_" + std::to_string(snr_b) + ".enc";
+			params_writable->channel    .path = base_path + "_" + std::to_string(snr_b) + ".chn";
+			params_writable->interleaver.path = base_path + "_" + std::to_string(snr_b) + ".itl";
 		}
 
 		codec.snr_precompute(this->sigma);
@@ -182,14 +212,17 @@ void Simulation_BFER<B,R,Q>
 					terminal->final_report(std::cout);
 				}
 
-				if (this->params.monitor.err_track_enable && monitor_red != nullptr)
-					monitor_red->dump_bad_frames(this->params.monitor.err_track_path, this->snr);
+				if (this->dumper_red != nullptr)
+				{
+					this->dumper_red->dump(this->params.monitor.err_track_path + "_" + std::to_string(snr_b));
+					this->dumper_red->clear();
+				}
 
 				this->release_objects();
 			}
 			catch (std::exception const& e)
 			{
-				Monitor<B,R>::stop();
+				Monitor<B>::stop();
 
 				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
 				          << std::endl
@@ -198,7 +231,7 @@ void Simulation_BFER<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			Monitor<B,R>::stop();
+			Monitor<B>::stop();
 
 			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
 			          << bold_red("communication chain.") << std::endl
@@ -206,7 +239,7 @@ void Simulation_BFER<B,R,Q>
 		}
 
 		// exit simulation (double [ctrl+c])
-		if (Monitor<B,R>::is_over())
+		if (Monitor<B>::is_over())
 			break;
 	}
 
@@ -310,17 +343,26 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Monitor<B,R>* Simulation_BFER<B,R,Q>
+Monitor<B>* Simulation_BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor<B,R>::build(params);
+	return Factory_monitor<B>::build(params);
 }
+
+template <typename B, typename R, typename Q>
+Frame_dumper<B,R>* Simulation_BFER<B,R,Q>
+::build_dumper(const int tid)
+{
+	return new Frame_dumper<B,R>(params.code.K_info, params.code.K, params.code.N_code, params.code.N_mod,
+	                             params.simulation.inter_frame_level);
+}
+
 
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr);
+	return Factory_terminal<B>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr);
 }
 
 template <typename B, typename R, typename Q>

@@ -16,10 +16,10 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B>
 class SC_Monitor;
 
-template <typename B = int, typename R = float>
+template <typename B = int>
 class SC_Monitor_module : public sc_core::sc_module
 {
 public:
@@ -27,12 +27,11 @@ public:
 	tlm_utils::simple_target_socket<SC_Monitor_module> s_in2;
 
 private:
-	SC_Monitor<B,R> &monitor;
+	SC_Monitor<B> &monitor;
 	B *U_K;
 
 public:
-	SC_Monitor_module(SC_Monitor<B,R> &monitor,
-	                  const sc_core::sc_module_name name = "SC_Monitor_module")
+	SC_Monitor_module(SC_Monitor<B> &monitor, const sc_core::sc_module_name name = "SC_Monitor_module")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"),
 	  monitor(monitor),
 	  U_K(nullptr)
@@ -67,26 +66,26 @@ private:
 	}
 };
 
-template <typename B, typename R>
-class SC_Monitor : public Monitor_i<B,R>
+template <typename B>
+class SC_Monitor : public Monitor_i<B>
 {
 public:
-	SC_Monitor_module<B,R> *sc_module;
+	SC_Monitor_module<B> *sc_module;
 
 public:
 	SC_Monitor(const int K, const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_i<B,R>(K, N, N_mod, n_frames, name), sc_module(nullptr) {}
+	: Monitor_i<B>(K, N, N_mod, n_frames, name), sc_module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }};
 
 	void create_sc_module()
 	{
-		this->sc_module = new SC_Monitor_module<B,R>(*this, this->name.c_str());
+		this->sc_module = new SC_Monitor_module<B>(*this, this->name.c_str());
 	}
 };
 
-template <typename B = int, typename R = float>
-using Monitor = SC_Monitor<B,R>;
+template <typename B = int>
+using Monitor = SC_Monitor<B>;
 }
 }
 #else

@@ -43,13 +43,6 @@ Simulation_BFER_std_threads<B,R,Q>
 		                         "unavailable in MPI.");
 #endif
 
-	// check, if the error tracker is enable, if the given file name is good
-	if ((this->params.monitor.err_track_enable || this->params.monitor.err_track_revert) &&
-	     !Monitor_reduction<B,R>::check_path(this->params.monitor.err_track_path))
-		throw std::runtime_error("aff3ct::simulation::Simulation_BFER_std_threads: issue while trying to open error "
-		                         "tracker log files, check the base path (" +
-		                         this->params.monitor.err_track_path + ").");
-
 	if (this->params.monitor.err_track_revert)
 	{
 		if (this->params.simulation.n_threads != 1)
@@ -83,6 +76,13 @@ void Simulation_BFER_std_threads<B,R,Q>
 		std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
 		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
 		this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+	}
+
+	if (this->params.monitor.err_track_enable)
+	{
+		this->dumper[tid]->set_U_K(U_K1[tid].data());
+		this->dumper[tid]->set_X_N(X_N1[tid].data());
+		this->dumper[tid]->set_Y_N(Y_N1[tid].data());
 	}
 }
 
@@ -237,11 +237,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		if (this->params.monitor.err_track_enable)
-			this->monitor[tid]->check_and_track_errors(this->U_K1[tid], this->V_K2[tid], this->X_N1[tid],
-			                                           this->Y_N1[tid]);
-		else
-			this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
+		this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
 		this->durations[tid][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
 
 		if (this->interleaver[tid] != nullptr && this->params.interleaver.uniform)
@@ -543,10 +539,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 		// check errors in the frame
 		auto t_check = steady_clock::now();
-		if (this->params.monitor.err_track_enable)
-			this->monitor[0]->check_and_track_errors(this->U_K1[0], this->V_K2[0], this->X_N1[0], this->Y_N1[0]);
-		else
-			this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
+		this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
 		this->durations[0][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
 
 		if (this->interleaver[0] != nullptr && this->params.interleaver.uniform)
@@ -562,9 +555,9 @@ Terminal* Simulation_BFER_std_threads<B,R,Q>
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
 
 #ifdef ENABLE_MPI
-	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr);
+	return Factory_terminal<B>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr);
 #else
-	return Factory_terminal<B,R>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr, &d_dec);
+	return Factory_terminal<B>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr, &d_dec);
 #endif
 }
 

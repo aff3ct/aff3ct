@@ -10,10 +10,10 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename R = float>
+template <typename B = int>
 struct Factory_monitor : public Factory
 {
-	static module::Monitor<B,R>* build(const parameters &params);
+	static module::Monitor<B>* build(const parameters &params);
 };
 }
 }

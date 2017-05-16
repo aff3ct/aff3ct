@@ -153,6 +153,13 @@ void SPU_Simulation_BFER_std<B,R,Q>
 		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
 		this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
+
+	if (this->params.monitor.err_track_enable)
+	{
+		this->dumper[tid]->set_U_K(U_K1[tid].data());
+		this->dumper[tid]->set_X_N(X_N1[tid].data());
+		this->dumper[tid]->set_Y_N(Y_N1[tid].data());
+	}
 }
 
 template <typename B, typename R, typename Q>

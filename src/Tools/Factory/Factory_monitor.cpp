@@ -7,18 +7,16 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename R>
-Monitor<B,R>* Factory_monitor<B,R>
+template <typename B>
+Monitor<B>* Factory_monitor<B>
 ::build(const parameters &params)
 {
-	Monitor<B,R> *monitor = nullptr;
+	Monitor<B> *monitor = nullptr;
 
 	// build the monitor
-	monitor = new Monitor_std<B,R>(params.code.K - params.crc .size,
-	                               params.code.N,
-	                               params.code.N_mod,
-	                               params.monitor.n_frame_errors,
-	                               params.simulation.inter_frame_level);
+	monitor = new Monitor_std<B>(params.code.K_info,
+	                             params.monitor.n_frame_errors,
+	                             params.simulation.inter_frame_level);
 
 	return monitor;
 }
@@ -26,11 +24,11 @@ Monitor<B,R>* Factory_monitor<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_monitor<B_8, R_8>;
-template struct aff3ct::tools::Factory_monitor<B_16,R_16>;
-template struct aff3ct::tools::Factory_monitor<B_32,R_32>;
-template struct aff3ct::tools::Factory_monitor<B_64,R_64>;
+template struct aff3ct::tools::Factory_monitor<B_8>;
+template struct aff3ct::tools::Factory_monitor<B_16>;
+template struct aff3ct::tools::Factory_monitor<B_32>;
+template struct aff3ct::tools::Factory_monitor<B_64>;
 #else
-template struct aff3ct::tools::Factory_monitor<B,R>;
+template struct aff3ct::tools::Factory_monitor<B>;
 #endif
 // ==================================================================================== explicit template instantiation

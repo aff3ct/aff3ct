@@ -63,7 +63,7 @@ public:
 	 *
 	 * \return a vector of indirections.
 	 */
-	mipp::vector<T> get_lookup_table() const
+	const mipp::vector<T>& get_lookup_table() const
 	{
 		return pi;
 	}
@@ -73,7 +73,7 @@ public:
 	 *
 	 * \return a vector of indirections.
 	 */
-	mipp::vector<T> get_lookup_table_inverse() const
+	const mipp::vector<T>& get_lookup_table_inverse() const
 	{
 		return pi_inv;
 	}

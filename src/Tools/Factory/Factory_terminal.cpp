@@ -6,12 +6,12 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename R>
-Terminal* Factory_terminal<B,R>
+template <typename B>
+Terminal* Factory_terminal<B>
 ::build(const parameters &params,
-        const R snr_s,
-        const R snr_b,
-        const Monitor<B,R> *monitor,
+        const float snr_s,
+        const float snr_b,
+        const Monitor<B> *monitor,
         const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
         const std::chrono::nanoseconds *d_decod_total)
 {
@@ -19,9 +19,10 @@ Terminal* Factory_terminal<B,R>
 
 	// build a terminal to display the BER/FER
 	if (params.terminal.type == "LEGACY")
-		terminal = new Terminal_BFER_legacy<B,R>(snr_b, *monitor, t_snr);
+		terminal = new Terminal_BFER_legacy<B>(params.code.K_info, params.code.N_code, snr_b, *monitor, t_snr);
 	else if (params.terminal.type == "STD")
-		terminal = new Terminal_BFER<B,R>(snr_s, snr_b, *monitor, t_snr, d_decod_total);
+		terminal = new Terminal_BFER<B>(params.code.K_info, params.code.N_code, snr_s, snr_b, *monitor, t_snr,
+		                                d_decod_total);
 
 	return terminal;
 }
@@ -29,11 +30,11 @@ Terminal* Factory_terminal<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_terminal<B_8,R_8>;
-template struct aff3ct::tools::Factory_terminal<B_16,R_16>;
-template struct aff3ct::tools::Factory_terminal<B_32,R_32>;
-template struct aff3ct::tools::Factory_terminal<B_64,R_64>;
+template struct aff3ct::tools::Factory_terminal<B_8>;
+template struct aff3ct::tools::Factory_terminal<B_16>;
+template struct aff3ct::tools::Factory_terminal<B_32>;
+template struct aff3ct::tools::Factory_terminal<B_64>;
 #else
-template struct aff3ct::tools::Factory_terminal<B,R>;
+template struct aff3ct::tools::Factory_terminal<B>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -12,8 +12,8 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float>
-class Monitor_std : public Monitor<B,R>
+template <typename B = int>
+class Monitor_std : public Monitor<B>
 {
 protected:
 	const unsigned max_fe;
@@ -22,13 +22,11 @@ protected:
 	unsigned long long n_frame_errors;
 	unsigned long long n_analyzed_frames;
 
-	std::vector<mipp::vector<B>> buff_src;
-	std::vector<mipp::vector<B>> buff_enc;
-	std::vector<mipp::vector<R>> buff_noise;
+	std::vector<std::function<void(int )>> callbacks_new_fe;
+	std::vector<std::function<void(void)>> callbacks_fe_limit_achieved;
 
 public:
-	Monitor_std(const int& K, const int& N, const int& N_mod, const unsigned& max_fe, const int& n_frames = 1,
-	            const std::string name = "Monitor_std");
+	Monitor_std(const int size, const unsigned max_fe, const int n_frames = 1, const std::string name = "Monitor_std");
 	virtual ~Monitor_std(){};
 
 	virtual bool fe_limit_achieved();
@@ -41,19 +39,11 @@ public:
 	float get_fer() const;
 	float get_ber() const;
 
-	void dump_bad_frames(const std::string& base_path, const float snr, mipp::vector<int> itl_pi = mipp::vector<int>(0));
-
-	const std::vector<mipp::vector<B>> get_buff_src  () const;
-	const std::vector<mipp::vector<B>> get_buff_enc  () const;
-	const std::vector<mipp::vector<R>> get_buff_noise() const;
+	virtual void add_handler_new_fe           (std::function<void(int )> callback);
+	virtual void add_handler_fe_limit_achieved(std::function<void(void)> callback);
 
 protected:
-	virtual void _check_errors          (const B *U_K, const B *V_K);
-	virtual void _check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod);
-
-private:
-	void copy_bad_frame(const B* U_K, const B* X_N, const R* Y_N_mod);
-	inline bool __check_errors(const B* U, const B* V, const int length);
+	virtual void _check_errors(const B *U, const B *V);
 };
 }
 }

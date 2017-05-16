@@ -27,15 +27,15 @@ void MPI_SUM_monitor_vals_func(void *in, void *inout, int *len, MPI_Datatype *da
 	}
 }
 
-template <typename B, typename R>
-Monitor_reduction_mpi<B,R>
-::Monitor_reduction_mpi(const int& K, const int& N, const int& N_mod, const int& max_fe,
-                        std::vector<Monitor<B,R>*>& monitors,
+template <typename B>
+Monitor_reduction_mpi<B>
+::Monitor_reduction_mpi(const int size, const unsigned max_fe,
+                        std::vector<Monitor<B>*> monitors,
                         const std::thread::id master_thread_id,
                         const std::chrono::nanoseconds d_mpi_comm_frequency,
-                        const int& n_frames,
+                        const int n_frames,
                         const std::string name)
-: Monitor_reduction<B,R>(K, N, N_mod, max_fe, monitors, n_frames, name),
+: Monitor_reduction<B>(size, max_fe, monitors, n_frames, name),
   master_thread_id(master_thread_id),
   is_fe_limit_achieved(false),
   t_last_mpi_comm(std::chrono::steady_clock::now()),
@@ -62,14 +62,14 @@ Monitor_reduction_mpi<B,R>
 		                         std::to_string(ret) + "\".");
 }
 
-template <typename B, typename R>
-Monitor_reduction_mpi<B,R>
+template <typename B>
+Monitor_reduction_mpi<B>
 ::~Monitor_reduction_mpi()
 {
 }
 
-template <typename B, typename R>
-bool Monitor_reduction_mpi<B,R>
+template <typename B>
+bool Monitor_reduction_mpi<B>
 ::fe_limit_achieved()
 {
 	// only the master thread can do this
@@ -98,12 +98,12 @@ bool Monitor_reduction_mpi<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_reduction_mpi<B_8 ,R_8>;
-template class aff3ct::module::Monitor_reduction_mpi<B_16,R_16>;
-template class aff3ct::module::Monitor_reduction_mpi<B_32,R_32>;
-template class aff3ct::module::Monitor_reduction_mpi<B_64,R_64>;
+template class aff3ct::module::Monitor_reduction_mpi<B_8>;
+template class aff3ct::module::Monitor_reduction_mpi<B_16>;
+template class aff3ct::module::Monitor_reduction_mpi<B_32>;
+template class aff3ct::module::Monitor_reduction_mpi<B_64>;
 #else
-template class aff3ct::module::Monitor_reduction_mpi<B,R>;
+template class aff3ct::module::Monitor_reduction_mpi<B>;
 #endif
 // ==================================================================================== explicit template instantiation
 

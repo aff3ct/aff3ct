@@ -11,28 +11,20 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float>
-class Monitor_reduction : public Monitor_std<B,R>
+template <typename B = int>
+class Monitor_reduction : public Monitor_std<B>
 {
 private:
-	std::vector<Monitor<B,R>*>& monitors;
-	const std::string           error_tracker_head_file_name;
+	std::vector<Monitor<B>*> monitors;
 
 public:
-	Monitor_reduction(const int& K, const int& N, const int& N_mod, const unsigned& max_fe,
-	                  std::vector<Monitor<B,R>*>& monitors, const int& n_frames = 1,
+	Monitor_reduction(const int size, const unsigned max_fe, std::vector<Monitor<B>*> monitors, const int n_frames = 1,
 	                  const std::string name = "Monitor_reduction");
 	virtual ~Monitor_reduction();
 
 	unsigned long long get_n_analyzed_fra() const;
 	unsigned long long get_n_fe          () const;
 	unsigned long long get_n_be          () const;
-
-	void dump_bad_frames(const std::string& base_path, const float snr, const mipp::vector<int>& itl_pi = mipp::vector<int>(0));
-
-	static bool check_path(const std::string& base_path); // return true if correct
-	static void get_tracker_paths(const std::string& base_path, const float snr, std::string& path_src,
-	                              std::string& path_enc, std::string& path_noise, std::string& path_itl);
 };
 }
 }

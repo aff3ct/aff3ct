@@ -11,18 +11,22 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename R = float>
+template <typename B = int>
 class Terminal_BFER_legacy : public Terminal
 {
 protected:
-	const R                                                                             snr;
-	const module::Monitor<B,R>                                                         &monitor;
+	const int                                                                           K;
+	const int                                                                           N;
+	const float                                                                         snr;
+	const module::Monitor<B>                                                           &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	unsigned short                                                                      real_time_state;
 
 public:
-	Terminal_BFER_legacy(const R& snr,
-	                     const module::Monitor<B,R> &monitor,
+	Terminal_BFER_legacy(const int K,
+	                     const int N,
+	                     const float snr,
+	                     const module::Monitor<B> &monitor,
 	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr);
 	virtual ~Terminal_BFER_legacy() {}
 

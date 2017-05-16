@@ -11,13 +11,13 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename R = float>
+template <typename B = int>
 struct Factory_terminal : public Factory
 {
 	static Terminal* build(const parameters &params,
-	                       const R snr_s,
-	                       const R snr_b,
-	                       const module::Monitor<B,R> *monitor,
+	                       const float snr_s,
+	                       const float snr_b,
+	                       const module::Monitor<B> *monitor,
 	                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	                       const std::chrono::nanoseconds *d_decod_total = nullptr);
 };

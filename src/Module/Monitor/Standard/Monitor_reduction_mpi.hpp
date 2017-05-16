@@ -15,8 +15,8 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float>
-class Monitor_reduction_mpi : public Monitor_reduction<B,R>
+template <typename B = int>
+class Monitor_reduction_mpi : public Monitor_reduction<B>
 {
 private:
 	const std::thread::id master_thread_id;
@@ -29,11 +29,11 @@ private:
 	MPI_Op       MPI_SUM_monitor_vals;
 
 public:
-	Monitor_reduction_mpi(const int& K, const int& N, const int& N_mod, const int& max_fe,
-	                      std::vector<Monitor<B,R>*>& monitors,
+	Monitor_reduction_mpi(const int size, const unsigned max_fe,
+	                      std::vector<Monitor<B,R>*> monitors,
 	                      const std::thread::id master_thread_id,
 	                      const std::chrono::nanoseconds d_mpi_comm_frequency = std::chrono::milliseconds(1000),
-	                      const int& n_frames = 1,
+	                      const int n_frames = 1,
 	                      const std::string name = "Monitor_reduction_mpi");
 	virtual ~Monitor_reduction_mpi();
 
