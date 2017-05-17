@@ -37,7 +37,7 @@ void Monitor_std<B>
 		n_bit_errors += bit_errors_count;
 		n_frame_errors++;
 
-		for (auto c : this->callbacks_new_fe)
+		for (auto c : this->callbacks_fe)
 			c(n_analyzed_frames % this->n_frames);
 
 		if (this->fe_limit_achieved())
@@ -46,6 +46,9 @@ void Monitor_std<B>
 	}
 
 	n_analyzed_frames++;
+
+	for (auto c : this->callbacks_check)
+		c();
 }
 
 template <typename B>
@@ -104,9 +107,15 @@ float Monitor_std<B>
 
 template <typename B>
 void Monitor_std<B>
-::add_handler_new_fe(std::function<void(int)> callback)
+::add_handler_fe(std::function<void(int)> callback)
 {
-	this->callbacks_new_fe.push_back(callback);
+	this->callbacks_fe.push_back(callback);
+}
+template <typename B>
+void Monitor_std<B>
+::add_handler_check(std::function<void(void)> callback)
+{
+	this->callbacks_check.push_back(callback);
 }
 
 template <typename B>
@@ -114,6 +123,19 @@ void Monitor_std<B>
 ::add_handler_fe_limit_achieved(std::function<void(void)> callback)
 {
 	this->callbacks_fe_limit_achieved.push_back(callback);
+}
+
+template <typename B>
+void Monitor_std<B>
+::reset()
+{
+	this->n_bit_errors      = 0;
+	this->n_frame_errors    = 0;
+	this->n_analyzed_frames = 0;
+
+	this->callbacks_fe               .clear();
+	this->callbacks_check            .clear();
+	this->callbacks_fe_limit_achieved.clear();
 }
 
 // ==================================================================================== explicit template instantiation 

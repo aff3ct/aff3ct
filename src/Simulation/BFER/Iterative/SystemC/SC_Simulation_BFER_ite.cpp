@@ -32,9 +32,6 @@ SC_Simulation_BFER_ite<B,R,Q>
 	if (params.simulation.benchs)
 		throw std::invalid_argument("aff3ct::simulation::SC_Simulation_BFERI_ite: SystemC simulation does not support "
 		                            "the bench mode.");
-	if (params.interleaver.uniform)
-		throw std::invalid_argument("aff3ct::simulation::SC_Simulation_BFERI_ite: SystemC simulation does not support "
-		                            "the uniform interleaver mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;

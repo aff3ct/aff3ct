@@ -25,6 +25,8 @@ public:
 	unsigned long long get_n_analyzed_fra() const;
 	unsigned long long get_n_fe          () const;
 	unsigned long long get_n_be          () const;
+
+	void reset();
 };
 }
 }

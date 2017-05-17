@@ -159,8 +159,11 @@ public:
 			                    V + f * this->size);
 	}
 
-	virtual void add_handler_new_fe           (std::function<void(int )> callback) = 0;
+	virtual void add_handler_fe               (std::function<void(int )> callback) = 0;
+	virtual void add_handler_check            (std::function<void(void)> callback) = 0;
 	virtual void add_handler_fe_limit_achieved(std::function<void(void)> callback) = 0;
+
+	virtual void reset() = 0;
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.

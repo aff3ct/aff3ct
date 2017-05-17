@@ -62,6 +62,15 @@ unsigned long long Monitor_reduction<B>
 	return cur_be;
 }
 
+template <typename B>
+void Monitor_reduction<B>
+::reset()
+{
+	Monitor_std<B>::reset();
+	for (auto m : monitors)
+		m->reset();
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

@@ -17,7 +17,7 @@ class Terminal_BFER_legacy : public Terminal
 protected:
 	const int                                                                           K;
 	const int                                                                           N;
-	const float                                                                         snr;
+	const float                                                                        &snr;
 	const module::Monitor<B>                                                           &monitor;
 	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
 	unsigned short                                                                      real_time_state;
@@ -25,7 +25,7 @@ protected:
 public:
 	Terminal_BFER_legacy(const int K,
 	                     const int N,
-	                     const float snr,
+	                     const float &snr,
 	                     const module::Monitor<B> &monitor,
 	                     const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr);
 	virtual ~Terminal_BFER_legacy() {}

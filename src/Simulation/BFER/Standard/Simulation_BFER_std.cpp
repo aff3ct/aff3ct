@@ -61,6 +61,9 @@ void Simulation_BFER_std<B,R,Q>
 	decoder    [tid] = build_decoder    (tid); Simulation::check_errors(decoder    [tid], "Decoder<B,Q>"  );
 	coset_bit  [tid] = build_coset_bit  (tid); Simulation::check_errors(coset_bit  [tid], "Coset<B,B>"    );
 
+	if (interleaver[tid] != nullptr && this->params.interleaver.uniform)
+		this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::gen_lookup_tables, this->interleaver[tid]));
+
 	Simulation_BFER<B,R,Q>::build_communication_chain(tid);
 }
 

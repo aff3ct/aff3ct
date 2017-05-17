@@ -11,8 +11,6 @@
 
 #ifdef ENABLE_MPI
 #include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
-#else
-#include "Module/Monitor/Standard/Monitor_reduction.hpp"
 #endif
 
 #include "Simulation_BFER.hpp"
@@ -68,6 +66,32 @@ Simulation_BFER<B,R,Q>
 		                                             params.code.N_mod,
 		                                             params.simulation.inter_frame_level);
 	}
+
+	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+	{
+		this->monitor[tid] = this->build_monitor(tid);
+		Simulation::check_errors(this->monitor[tid], "Monitor<B>");
+	}
+
+#ifdef ENABLE_MPI
+	// build a monitor to compute BER/FER (reduce the other monitors)
+	this->monitor_red = new Monitor_reduction_mpi<B>(this->params.code.K_info,
+	                                                 this->params.monitor.n_frame_errors,
+	                                                 this->monitor,
+	                                                 std::this_thread::get_id(),
+	                                                 this->params.simulation.mpi_comm_freq,
+	                                                 this->params.simulation.inter_frame_level);
+#else
+	// build a monitor to compute BER/FER (reduce the other monitors)
+	this->monitor_red = new Monitor_reduction<B>(this->params.code.K_info,
+	                                             this->params.monitor.n_frame_errors,
+	                                             this->monitor,
+	                                             this->params.simulation.inter_frame_level);
+#endif
+
+	// build the terminal to display the BER/FER
+	this->terminal = this->build_terminal();
+	Simulation::check_errors(this->terminal, "Terminal");
 }
 
 template <typename B, typename R, typename Q>
@@ -76,14 +100,15 @@ Simulation_BFER<B,R,Q>
 {
 	release_objects();
 
-	for (auto i = 0; i < params.simulation.n_threads; i++)
-		if (dumper[i] != nullptr)
-		{
-			delete dumper[i];
-			dumper[i] = nullptr;
-		}
-
+	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
 	if (dumper_red  != nullptr) { delete dumper_red;  dumper_red  = nullptr; }
+
+	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
+	{
+		if (monitor[tid] != nullptr) { delete monitor[tid]; monitor[tid] = nullptr; }
+		if (dumper [tid] != nullptr) { delete dumper [tid]; dumper [tid] = nullptr; }
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -93,35 +118,10 @@ void Simulation_BFER<B,R,Q>
 	for (auto& duration : this->durations[tid])
 		duration.second = std::chrono::nanoseconds(0);
 
-	this->monitor[tid] = this->build_monitor(tid); Simulation::check_errors(this->monitor[tid], "Monitor<B>");
-
 	if (params.monitor.err_track_enable)
-		this->monitor[tid]->add_handler_new_fe(std::bind(&Frame_dumper<B,R>::add,
-		                                                 this->dumper[tid],
-		                                                 std::placeholders::_1));
-
-	this->barrier(tid);
-	if (tid == 0)
-	{
-#ifdef ENABLE_MPI
-		// build a monitor to compute BER/FER (reduce the other monitors)
-		this->monitor_red = new Monitor_reduction_mpi<B>(this->params.code.K_info,
-		                                                 this->params.monitor.n_frame_errors,
-		                                                 this->monitor,
-		                                                 std::this_thread::get_id(),
-		                                                 this->params.simulation.mpi_comm_freq,
-		                                                 this->params.simulation.inter_frame_level);
-#else
-		// build a monitor to compute BER/FER (reduce the other monitors)
-		this->monitor_red = new Monitor_reduction<B>(this->params.code.K_info,
-		                                             this->params.monitor.n_frame_errors,
-		                                             this->monitor,
-		                                             this->params.simulation.inter_frame_level);
-#endif
-		// build the terminal to display the BER/FER
-		this->terminal = this->build_terminal();
-		Simulation::check_errors(this->terminal, "Terminal");
-	}
+		this->monitor[tid]->add_handler_fe(std::bind(&Frame_dumper<B,R>::add,
+		                                             this->dumper[tid],
+		                                             std::placeholders::_1));
 }
 
 template <typename B, typename R, typename Q>
@@ -165,6 +165,7 @@ void Simulation_BFER<B,R,Q>
 		}
 
 		codec.snr_precompute(this->sigma);
+
 		try
 		{
 			// build the communication chain in multi-threaded mode
@@ -218,6 +219,7 @@ void Simulation_BFER<B,R,Q>
 					this->dumper_red->clear();
 				}
 
+				this->monitor_red->reset();
 				this->release_objects();
 			}
 			catch (std::exception const& e)
@@ -253,15 +255,6 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
-	for (auto i = 0; i < params.simulation.n_threads; i++)
-		if (monitor[i] != nullptr)
-		{
-			delete monitor[i];
-			monitor[i] = nullptr;
-		}
-
-	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
@@ -325,9 +318,9 @@ void Simulation_BFER<B,R,Q>
 				for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
 
 				stream << "# " << key << str_spaces << ": "
-					   << std::setw(9) << std::fixed << std::setprecision(3) << cur_sec << " sec ("
-					   << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)"
-					   << std::endl;
+				       << std::setw(9) << std::fixed << std::setprecision(3) << cur_sec << " sec ("
+				       << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)"
+				       << std::endl;
 			}
 		}
 

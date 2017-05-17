@@ -14,8 +14,8 @@ template <typename B>
 Terminal_BFER<B>
 ::Terminal_BFER(const int K,
                 const int N,
-                const float snr_s,
-                const float snr_b,
+                const float &snr_s,
+                const float &snr_b,
                 const Monitor<B> &monitor,
                 const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
                 const std::chrono::nanoseconds *d_decod_total)

@@ -53,17 +53,9 @@ SPU_Simulation_BFER_std<B,R,Q>
 	if (params.simulation.benchs)
 		throw std::invalid_argument("aff3ct::simulation::SPU_Simulation_BFER_std: StarPU simulation does not support "
 		                            "the bench mode.");
-	if (params.interleaver.uniform)
-		throw std::invalid_argument("aff3ct::simulation::SPU_Simulation_BFER_std: StarPU simulation does not support "
-		                            "the uniform interleaver mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the StarPU simulation.") << std::endl;
-
-#ifdef ENABLE_MPI
-	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
-	          << bold_yellow("on each MPI processes.") << std::endl;
-#endif
 
 	// initialize StarPU with default configuration
 	auto ret = starpu_init(NULL);

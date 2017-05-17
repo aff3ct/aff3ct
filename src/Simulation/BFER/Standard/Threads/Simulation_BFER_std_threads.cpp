@@ -239,9 +239,6 @@ void Simulation_BFER_std_threads<B,R,Q>
 		auto t_check = steady_clock::now();
 		this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
 		this->durations[tid][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
-
-		if (this->interleaver[tid] != nullptr && this->params.interleaver.uniform)
-			this->interleaver[tid]->gen_lookup_tables();
 	}
 }
 
@@ -541,9 +538,6 @@ void Simulation_BFER_std_threads<B,R,Q>
 		auto t_check = steady_clock::now();
 		this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
 		this->durations[0][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
-
-		if (this->interleaver[0] != nullptr && this->params.interleaver.uniform)
-			this->interleaver[0]->gen_lookup_tables();
 	}
 }
 
