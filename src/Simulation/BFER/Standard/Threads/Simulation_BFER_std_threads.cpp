@@ -80,9 +80,15 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 	if (this->params.monitor.err_track_enable)
 	{
-		this->dumper[tid]->set_U_K(U_K1[tid].data());
-		this->dumper[tid]->set_X_N(X_N1[tid].data());
-		this->dumper[tid]->set_Y_N(Y_N1[tid].data());
+		this->dumper[tid]->register_data(U_K1[tid], "src", false, {                             });
+		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K});
+		this->dumper[tid]->register_data(Y_N1[tid], "chn", true , {                             });
+
+		if (this->interleaver[tid] != nullptr)
+		{
+			const auto &lut = this->interleaver[tid]->get_lookup_table();
+			this->dumper[tid]->register_data(lut, "itl", false, {}, 1);
+		}
 	}
 }
 

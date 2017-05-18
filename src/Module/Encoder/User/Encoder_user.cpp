@@ -20,8 +20,8 @@ Encoder_user<B>
 		int n_cw = 0, src_size = 0, cw_size = 0;
 
 		file >> n_cw;
-		file >> src_size;
 		file >> cw_size;
+		file >> src_size;
 
 		if (n_cw <= 0 || src_size <= 0 || cw_size <= 0)
 			throw std::runtime_error("aff3ct::module::Encoder_user: \"n_cw\", \"src_size\" and \"cw_size\" have to be "

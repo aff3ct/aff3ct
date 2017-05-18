@@ -51,20 +51,15 @@ Simulation_BFER<B,R,Q>
 	{
 		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 		{
-			dumper[tid] = build_dumper(tid);
+			dumper[tid] = new Dumper(params.simulation.inter_frame_level);
 			Simulation::check_errors(dumper[tid], "Frame_dumper<B,R>");
 		}
 
-		std::vector<Frame_dumper<B,R>*> dumpers;
+		std::vector<Dumper*> dumpers;
 		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new Frame_dumper_reduction<B,R>(dumpers,
-		                                             params.code.K_info,
-		                                             params.code.K,
-		                                             params.code.N_code,
-		                                             params.code.N_mod,
-		                                             params.simulation.inter_frame_level);
+		dumper_red = new Dumper_reduction(dumpers, params.simulation.inter_frame_level);
 	}
 
 	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
@@ -119,9 +114,7 @@ void Simulation_BFER<B,R,Q>
 		duration.second = std::chrono::nanoseconds(0);
 
 	if (params.monitor.err_track_enable)
-		this->monitor[tid]->add_handler_fe(std::bind(&Frame_dumper<B,R>::add,
-		                                             this->dumper[tid],
-		                                             std::placeholders::_1));
+		this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
 }
 
 template <typename B, typename R, typename Q>
@@ -341,15 +334,6 @@ Monitor<B>* Simulation_BFER<B,R,Q>
 {
 	return Factory_monitor<B>::build(params);
 }
-
-template <typename B, typename R, typename Q>
-Frame_dumper<B,R>* Simulation_BFER<B,R,Q>
-::build_dumper(const int tid)
-{
-	return new Frame_dumper<B,R>(params.code.K_info, params.code.K, params.code.N_code, params.code.N_mod,
-	                             params.simulation.inter_frame_level);
-}
-
 
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>

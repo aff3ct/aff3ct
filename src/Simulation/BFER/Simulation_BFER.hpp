@@ -8,8 +8,8 @@
 #include "Tools/params.h"
 #include "Tools/Threads/Barrier.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
-#include "Tools/Display/Frame_dumper/Frame_dumper.hpp"
-#include "Tools/Display/Frame_dumper/Frame_dumper_reduction.hpp"
+#include "Tools/Display/Dumper/Dumper.hpp"
+#include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Module/Monitor/Monitor.hpp"
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
 
@@ -49,8 +49,8 @@ protected:
 	            module::Monitor_reduction<B>*  monitor_red;
 
 	// dump frames into files
-	std::vector<tools::Frame_dumper          <B,R>*> dumper;
-	            tools::Frame_dumper_reduction<B,R>*  dumper_red;
+	std::vector<tools::Dumper          *> dumper;
+	            tools::Dumper_reduction*  dumper_red;
 
 	// terminal (for the output of the code)
 	tools::Terminal *terminal;
@@ -72,9 +72,8 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	virtual module::Monitor    <B  >* build_monitor (const int tid = 0);
-	virtual tools::Frame_dumper<B,R>* build_dumper  (const int tid = 0);
-	virtual tools::Terminal         * build_terminal(                 );
+	virtual module::Monitor<B>* build_monitor (const int tid = 0);
+	virtual tools::Terminal   * build_terminal(                 );
 
 private:
 	void time_reduction(const bool is_snr_done = false  );

@@ -16,7 +16,7 @@ Channel_additive_user<R>
 	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.is_open())
 	{
-		unsigned long long n_fra = 0;
+		unsigned n_fra = 0;
 		int fra_size = 0;
 
 		file.read((char*)&n_fra,    sizeof(n_fra));
