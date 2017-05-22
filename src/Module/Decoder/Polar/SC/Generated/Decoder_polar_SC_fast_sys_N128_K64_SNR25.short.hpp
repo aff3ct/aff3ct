@@ -125,7 +125,7 @@ public:
 		API_polar::template h  < 8>(s, l, off_l+  0,                   off_s+  0,  8);
 	}
 
-	void _hard_decode(const R *Y_N, B *V_K)
+	void _hard_decode(const R *Y_N, B *V_K, const int frame_id)
 	{
 		using namespace tools;
 

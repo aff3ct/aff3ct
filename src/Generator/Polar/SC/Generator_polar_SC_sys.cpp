@@ -70,7 +70,7 @@ void Generator_polar_SC_sys
 	stream1 << tab << "{"                                                                                 << endl;
 	stream1 << tab << "}"                                                                                 << endl;
 	stream1                                                                                               << endl;
-	stream2 << tab << "void _hard_decode(const R *Y_N, B *V_K)"                                           << endl;
+	stream2 << tab << "void _hard_decode(const R *Y_N, B *V_K, const int frame_id)"                       << endl;
 	stream2 << tab << "{"                                                                                 << endl;
 	stream2 << tab << tab << "using namespace tools;"                                                     << endl;
 	stream2                                                                                               << endl;
