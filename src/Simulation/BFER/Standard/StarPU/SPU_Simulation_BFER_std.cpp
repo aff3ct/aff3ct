@@ -280,7 +280,7 @@ void SPU_Simulation_BFER_std<B,R,Q>
 	task_names[tid][13] = "crc::extract_" + str_id; task_extract_crc->name = task_names[tid][13].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_extract_crc), "task_submit::crc::extract");
 
-	auto task_check_err = Monitor<B,R>::spu_task_check_errors(this->monitor[tid], spu_U_K1[tid], spu_V_K2[tid]);
+	auto task_check_err = Monitor<B>::spu_task_check_errors(this->monitor[tid], spu_U_K1[tid], spu_V_K2[tid]);
 	task_check_err->priority = STARPU_MIN_PRIO +14;
 	task_names[tid][14] = "mnt::check_errors_" + str_id; task_check_err->name = task_names[tid][14].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_check_err), "task_submit::mnt::check_errors");
