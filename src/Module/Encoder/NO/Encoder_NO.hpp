@@ -14,7 +14,7 @@ public:
 	Encoder_NO(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_NO");
 	virtual ~Encoder_NO();
 
-	void encode(const B *U_K, B *X_N, const int frame_id); using Encoder<B>::encode;
+	void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
 };
 }
 }
