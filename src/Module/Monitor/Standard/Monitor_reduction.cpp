@@ -12,8 +12,9 @@ template <typename B>
 Monitor_reduction<B>
 ::Monitor_reduction(const int size, const unsigned max_fe, std::vector<Monitor<B>*> monitors, const int n_frames,
                     const std::string name)
-: Monitor_std<B>(size, max_fe, n_frames, name),
-  monitors      (monitors                    )
+: Monitor_std<B>            (size, max_fe, n_frames, name),
+  n_analyzed_frames_historic(0                           ),
+  monitors                  (monitors                    )
 {
 	if (monitors.size() == 0)
 		throw std::length_error("aff3ct::module::Monitor_reduction: \"monitors.size()\" has to be greater than 0.");
@@ -42,6 +43,13 @@ unsigned long long Monitor_reduction<B>
 
 template <typename B>
 unsigned long long Monitor_reduction<B>
+::get_n_analyzed_fra_historic() const
+{
+	return n_analyzed_frames_historic;
+}
+
+template <typename B>
+unsigned long long Monitor_reduction<B>
 ::get_n_fe() const
 {
 	auto cur_fe = this->n_frame_errors;
@@ -66,6 +74,7 @@ template <typename B>
 void Monitor_reduction<B>
 ::reset()
 {
+	n_analyzed_frames_historic += this->get_n_analyzed_fra();
 	Monitor_std<B>::reset();
 	for (auto m : monitors)
 		m->reset();

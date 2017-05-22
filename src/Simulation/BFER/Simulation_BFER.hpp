@@ -62,6 +62,9 @@ protected:
 	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_red;
 	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_sum;
 
+	// size of the data
+	std::map<std::pair<int, std::string>, unsigned> data_sizes;
+
 public:
 	Simulation_BFER(const tools::parameters& params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER();

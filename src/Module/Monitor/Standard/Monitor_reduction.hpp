@@ -15,6 +15,7 @@ template <typename B = int>
 class Monitor_reduction : public Monitor_std<B>
 {
 private:
+	unsigned long long n_analyzed_frames_historic;
 	std::vector<Monitor<B>*> monitors;
 
 public:
@@ -22,9 +23,10 @@ public:
 	                  const std::string name = "Monitor_reduction");
 	virtual ~Monitor_reduction();
 
-	unsigned long long get_n_analyzed_fra() const;
-	unsigned long long get_n_fe          () const;
-	unsigned long long get_n_be          () const;
+	unsigned long long get_n_analyzed_fra_historic() const;
+	unsigned long long get_n_analyzed_fra         () const;
+	unsigned long long get_n_fe                   () const;
+	unsigned long long get_n_be                   () const;
 
 	void reset();
 };

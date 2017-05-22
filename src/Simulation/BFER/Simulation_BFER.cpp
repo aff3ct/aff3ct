@@ -285,7 +285,7 @@ void Simulation_BFER<B,R,Q>
 			max_chars = std::max(max_chars, (int)duration.first.second.length());
 
 		stream << "#" << std::endl;
-		stream << "# " << bold_underlined("Time report:") << std::endl;
+		stream << "# " << bold_underlined("Time report") << " (the time of the threads is cumulated)" << std::endl;
 
 		auto prev_sec = 0.f;
 		for (auto& duration : durations_sum)
@@ -313,8 +313,21 @@ void Simulation_BFER<B,R,Q>
 
 				stream << "# " << key << str_spaces << ": "
 				       << std::setw(9) << std::fixed << std::setprecision(3) << cur_sec << " sec ("
-				       << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)"
-				       << std::endl;
+				       << std::setw(5) << std::fixed << std::setprecision(2) << cur_pc  << "%)";
+
+				if (data_sizes.find(duration.first) != data_sizes.end())
+				{
+					const auto n_bits_per_fra = data_sizes[duration.first] / params.simulation.inter_frame_level;
+					const auto n_fra = this->monitor_red->get_n_analyzed_fra_historic();
+					const auto mbps = ((float)(n_bits_per_fra * n_fra) / cur_sec) * 0.000001f;
+					const auto inter_lvl = (float)params.simulation.inter_frame_level;
+					const auto lat = (((float)duration.second.count() * 0.001f) / (float)n_fra) * inter_lvl;
+
+					stream << " - " << std::setw(9) << mbps << " Mb/s"
+					       << " - " << std::setw(9) << lat  << " us";
+				}
+
+				stream << std::endl;
 			}
 		}
 
