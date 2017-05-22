@@ -50,14 +50,14 @@ void Decoder_repetition<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_soft_decode(sys.data(), par.data(), ext.data());
+	this->_soft_decode(sys.data(), par.data(), ext.data(), frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

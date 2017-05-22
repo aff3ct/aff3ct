@@ -28,7 +28,7 @@ public:
 	virtual ~Decoder_turbo_fast_CA();
 
 protected:
-	virtual void _hard_decode(const R *Y_N, B *V_K);
+	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
 };
 }
 }

@@ -79,11 +79,11 @@ public:
 	virtual void generate(B *U_K)
 	{
 		for (auto f = 0; f < this->n_frames; f++)
-			this->_generate(U_K + f * this->K);
+			this->_generate(U_K + f * this->K, f);
 	}
 
 protected:
-	virtual void _generate(B *U_K)
+	virtual void _generate(B *U_K, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Source: \"_generate\" is unimplemented.");
 	}

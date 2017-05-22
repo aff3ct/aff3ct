@@ -40,7 +40,6 @@ protected:
 	static bool first_interrupt;                                                                          /*!< True if this is the first time that SIGIN is called. */
 	static bool over;                                                                                     /*!< True if SIGINT is called twice in the Monitor_i::d_delta_interrupt time */
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_interrupt; /*!< Time point of the last call to SIGINT */
-	static std::chrono::nanoseconds d_delta_interrupt;                                                    /*!< Delta time. */
 
 	const int size; /*!< Number of bits */
 
@@ -50,7 +49,7 @@ public:
 	 *
 	 * Registers the SIGINT (signal interrupt or ctrl+C) interruption.
 	 *
-	 * \param size:     number of bits.
+	 * \param size: number of bits.
 	 */
 	Monitor_i(const int size, int n_frames = 1, const std::string name = "Monitor_i")
 	: Module(n_frames, name), size(size)
@@ -59,7 +58,6 @@ public:
 			throw std::invalid_argument("aff3ct::module::Monitor: \"size\" has to be greater than 0.");
 
 		Monitor_i<B>::interrupt = false;
-		Monitor_i<B>::d_delta_interrupt = std::chrono::nanoseconds(0);
 
 #ifndef ENABLE_MPI
 		// Install a signal handler
@@ -156,14 +154,18 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_check_errors(U + f * this->size,
-			                    V + f * this->size);
+			                    V + f * this->size,
+			                    f);
 	}
 
 	virtual void add_handler_fe               (std::function<void(int )> callback) = 0;
 	virtual void add_handler_check            (std::function<void(void)> callback) = 0;
 	virtual void add_handler_fe_limit_achieved(std::function<void(void)> callback) = 0;
 
-	virtual void reset() = 0;
+	virtual void reset()
+	{
+		Monitor_i<B>::interrupt = false;
+	}
 
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
@@ -195,7 +197,7 @@ public:
 	}
 
 protected:
-	virtual void _check_errors(const B *U, const B *V)
+	virtual void _check_errors(const B *U, const B *V, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Monitor: \"_check_errors\" is unimplemented.");
 	}
@@ -206,8 +208,8 @@ private:
 		auto t_now = std::chrono::steady_clock::now();
 		if (!Monitor_i<B>::first_interrupt)
 		{
-			Monitor_i<B>::d_delta_interrupt = t_now - Monitor_i<B>::t_last_interrupt;
-			if (Monitor_i<B>::d_delta_interrupt < std::chrono::milliseconds(500))
+			auto d_delta_interrupt = t_now - Monitor_i<B>::t_last_interrupt;
+			if (d_delta_interrupt < std::chrono::milliseconds(500))
 				Monitor_i<B>::stop();
 		}
 		Monitor_i<B>::t_last_interrupt  = t_now;
@@ -228,9 +230,6 @@ bool Monitor_i<B>::over = false;
 
 template <typename B>
 std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> Monitor_i<B>::t_last_interrupt;
-
-template <typename B>
-std::chrono::nanoseconds Monitor_i<B>::d_delta_interrupt = std::chrono::nanoseconds(0);
 }
 }
 

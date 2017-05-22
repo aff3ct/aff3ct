@@ -152,11 +152,8 @@ void SPU_Simulation_BFER_std<B,R,Q>
 		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K});
 		this->dumper[tid]->register_data(Y_N1[tid], "chn", true , {                             });
 
-		if (this->interleaver[tid] != nullptr)
-		{
-			const auto &lut = this->interleaver[tid]->get_lookup_table();
-			this->dumper[tid]->register_data(lut, "itl", false, {}, 1);
-		}
+		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
+			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}
 }
 

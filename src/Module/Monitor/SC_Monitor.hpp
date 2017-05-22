@@ -43,7 +43,7 @@ public:
 private:
 	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (monitor.get_K() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
+		if (monitor.get_size() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
 
 		U_K = (B*)trans.get_data_ptr();
@@ -54,7 +54,7 @@ private:
 		if (U_K == nullptr)
 			throw std::runtime_error("aff3ct::module::Monitor: TLM \"U_K\" pointer can't be NULL.");
 
-		if (monitor.get_K() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
+		if (monitor.get_size() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
 
 		const auto V_K = (B*)trans.get_data_ptr();
@@ -73,8 +73,8 @@ public:
 	SC_Monitor_module<B> *sc_module;
 
 public:
-	SC_Monitor(const int K, const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_i<B>(K, N, N_mod, n_frames, name), sc_module(nullptr) {}
+	SC_Monitor(const int size, const int n_frames = 1, const std::string name = "SC_Monitor")
+	: Monitor_i<B>(size, n_frames, name), sc_module(nullptr) {}
 
 	virtual ~SC_Monitor() {if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }};
 

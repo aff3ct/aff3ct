@@ -21,7 +21,7 @@ Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
@@ -41,14 +41,14 @@ void Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	std::copy(sys, sys + this->K, ext);
 }
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 }

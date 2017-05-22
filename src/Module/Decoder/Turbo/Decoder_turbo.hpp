@@ -52,12 +52,12 @@ public:
 	virtual ~Decoder_turbo();
 
 protected:
-	virtual void _load (const R *Y_N);
-	virtual void _store(      B *V_K) const;
+	virtual void _load (const R *Y_N, const int frame_id);
+	virtual void _store(      B *V_K                    ) const;
 
 private:
-	void buffered_load(const R *Y_N);
-	void standard_load(const R *Y_N);
+	void buffered_load(const R *Y_N, const int frame_id);
+	void standard_load(const R *Y_N, const int frame_id);
 };
 }
 }

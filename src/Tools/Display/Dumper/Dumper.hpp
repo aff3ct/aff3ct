@@ -24,7 +24,6 @@ protected:
 	std::vector<std::vector<std::vector<char>>> buffer;
 
 	std::vector<const char*>           registered_data_ptr;
-	std::vector<unsigned>              registered_data_fra;
 	std::vector<unsigned>              registered_data_size;
 	std::vector<unsigned>              registered_data_sizeof;
 	std::vector<std::type_index>       registered_data_type;
@@ -38,12 +37,10 @@ public:
 
 	template <typename T>
 	void register_data(const T *ptr, const unsigned size, const std::string file_ext = "dump",
-	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>(),
-	                   const int n_frames = -1);
+	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>());
 	template <typename T>
 	void register_data(const mipp::vector<T> &data, const std::string file_ext = "dump",
-	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>(),
-	                   const int n_frames = -1);
+	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>());
 
 	virtual void dump (const std::string& base_path);
 	virtual void add  (const int frame_id = 0      );

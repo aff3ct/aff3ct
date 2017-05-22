@@ -108,7 +108,7 @@ int CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::_build(const B *U_K1, B *U_K2)
+::_build(const B *U_K1, B *U_K2, const int frame_id)
 {
 	std::copy(U_K1, U_K1 + this->K, U_K2);
 	this->_generate(U_K1, U_K2, 0, this->K, this->K);
@@ -137,14 +137,14 @@ void CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::_extract(const B *V_K1, B *V_K2)
+::_extract(const B *V_K1, B *V_K2, const int frame_id)
 {
 	std::copy(V_K1, V_K1 + this->K, V_K2);
 }
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check(const B *V_K)
+::_check(const B *V_K, const int frame_id)
 {
 	this->_generate(V_K, this->buff_crc.data(), 0, this->K, this->K);
 
@@ -161,12 +161,12 @@ bool CRC_polynomial<B>
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check_packed(const B *V_K)
+::_check_packed(const B *V_K, const int frame_id)
 {
 	mipp::vector<B> V_K_unpack(this->K + this->get_size());
 	std::copy(V_K, V_K + this->K + this->get_size(), V_K_unpack.begin());
 	Bit_packer<B>::unpack(V_K_unpack, this->K + this->get_size());
-	return _check(V_K_unpack.data());
+	return _check(V_K_unpack.data(), frame_id);
 }
 
 // ==================================================================================== explicit template instantiation 

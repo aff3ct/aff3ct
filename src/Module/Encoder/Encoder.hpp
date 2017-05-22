@@ -96,7 +96,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_encode(U_K + f * this->K,
-			              X_N + f * this->N);
+			              X_N + f * this->N,
+			              f);
 	}
 
 	/*!
@@ -110,7 +111,7 @@ public:
 	virtual int tail_length() const { return 0; }
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N)
+	virtual void _encode(const B *U_K, B *X_N, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Encoder: \"_encode\" is unimplemented.");
 	}

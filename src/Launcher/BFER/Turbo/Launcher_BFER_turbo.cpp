@@ -201,6 +201,16 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"itl-cols"})) this->params.interleaver.n_cols  = this->ar.get_arg_int({"itl-cols"});
 	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.uniform = true;
 
+	if(this->params.monitor.err_track_revert)
+	{
+		this->params.monitor.err_track_enable = false;
+		if (this->params.interleaver.uniform)
+		{
+			this->params.interleaver.type = "USER";
+			this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
+		}
+	}
+
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i"});
 	if(this->ar.exist_arg({"dec-sf"      })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"      });

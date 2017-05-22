@@ -68,7 +68,7 @@ Puncturer_turbo<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
-::_puncture(const B *X_N1, B *X_N2) const
+::_puncture(const B *X_N1, B *X_N2, const int frame_id) const
 {
 	const auto period = pattern_bits[0].size();
 
@@ -105,7 +105,7 @@ void Puncturer_turbo<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
-::_depuncture(const Q *Y_N1, Q *Y_N2) const
+::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 {
 	const auto period = pattern_bits[0].size();
 

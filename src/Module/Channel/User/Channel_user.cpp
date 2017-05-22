@@ -59,7 +59,7 @@ Channel_user<R>
 
 template <typename R>
 void Channel_user<R>
-::_add_noise(const R *X_N, R *Y_N)
+::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	for (auto i = 0; i < this->N; i++)
 		Y_N[i] = this->noise[this->noise_counter][i];

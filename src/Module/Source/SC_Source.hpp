@@ -38,6 +38,11 @@ public:
 		SC_THREAD(sc_generate);
 	}
 
+	const mipp::vector<B>& get_U_K()
+	{
+		return U_K;
+	}
+
 private:
 	void sc_generate()
 	{

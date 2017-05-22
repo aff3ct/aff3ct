@@ -92,7 +92,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_build(U_K1 + f *  this->K,
-			             U_K2 + f * (this->K + this->get_size()));
+			             U_K2 + f * (this->K + this->get_size()),
+			             f);
 	}
 
 	void extract(const mipp::vector<B>& V_K1, mipp::vector<B>& V_K2)
@@ -111,7 +112,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_extract(V_K1 + f * (this->K + this->get_size()),
-			               V_K2 + f *  this->K);
+			               V_K2 + f *  this->K,
+			               f);
 	}
 
 	/*!
@@ -142,7 +144,7 @@ public:
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		auto f = 0;
-		while (f < real_n_frames && this->_check(V_K + f * (this->K + this->get_size())))
+		while (f < real_n_frames && this->_check(V_K + f * (this->K + this->get_size()), f))
 			f++;
 
 		return f == real_n_frames;
@@ -176,30 +178,30 @@ public:
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		auto f = 0;
-		while (f < real_n_frames && this->_check_packed(V_K + f * (this->K + this->get_size())))
+		while (f < real_n_frames && this->_check_packed(V_K + f * (this->K + this->get_size()), f))
 			f++;
 
 		return f == real_n_frames;
 	}
 
 protected:
-	virtual void _build(const B *U_K1, B *U_K2)
+	virtual void _build(const B *U_K1, B *U_K2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_build\" is unimplemented.");
 	}
 
-	virtual void _extract(const B *V_K1, B *V_K2)
+	virtual void _extract(const B *V_K1, B *V_K2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_extract\" is unimplemented.");
 	}
 
-	virtual bool _check(const B *V_K)
+	virtual bool _check(const B *V_K, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_check\" is unimplemented.");
 		return false;
 	}
 
-	virtual bool _check_packed(const B *V_K)
+	virtual bool _check_packed(const B *V_K, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::CRC: \"_check_packed\" is unimplemented.");
 		return false;

@@ -13,23 +13,19 @@ namespace module
 template <typename T = int>
 class Interleaver_CCSDS : public Interleaver<T>
 {
-private:
-	int call_counter;
-
 public:
 	Interleaver_CCSDS(int size, const int n_frames = 1, const std::string name = "Interleaver_CCSDS")
-	: Interleaver<T>(size, n_frames, name), call_counter(0) { gen_lookup_tables(); }
-
-	void gen_lookup_tables()
+	: Interleaver<T>(size, false, n_frames, name)
 	{
-		if (call_counter)
-		{
-			std::clog << tools::bold_yellow("(WW) It is useless to call the generation of the lookup table multiple ")
-			          << tools::bold_yellow("times on the CCSDS interleaver.")
-			          << std::endl;
-		}
-		call_counter++;
+	}
 
+	virtual ~Interleaver_CCSDS()
+	{
+	}
+
+protected:
+	void gen_lut(T *lut, const int frame_id)
+	{
 		std::map<T,T> k_1;
 		std::map<T,T> k_2;
 		k_1[1784] = 8; k_2[1784] = 223 * 1;
@@ -37,14 +33,11 @@ public:
 		k_1[7136] = 8; k_2[7136] = 223 * 4;
 		k_1[8920] = 8; k_2[8920] = 223 * 5;
 		
-		auto size = (int)this->pi.size();
+		auto size = this->get_size();
 		if (k_1.find(size) != k_1.end())
 		{
 			for (auto i = 0; i < size; i++)
-			{
-				this->pi[i] = (T)pi_CCSDS(i, (int)k_1[size], (int)k_2[size]);
-				this->pi_inv[this->pi[i]] = (T)i;
-			}
+				lut[i] = (T)pi_CCSDS(i, (int)k_1[size], (int)k_2[size]);
 		}
 		else
 		{

@@ -33,10 +33,6 @@ Simulation_BFER_std_threads<B,R,Q>
   V_K1(this->params.simulation.n_threads, mipp::vector<B>(params.code.K      * params.simulation.inter_frame_level)),
   V_K2(this->params.simulation.n_threads, mipp::vector<B>(params.code.K_info * params.simulation.inter_frame_level))
 {
-	if (this->params.simulation.n_threads > 1 && params.simulation.debug)
-		std::clog << bold_yellow("(WW) Debug mode will be disabled ")
-		          << bold_yellow("because you launched the simulation with more than 1 thread!")
-		          << std::endl;
 #ifdef ENABLE_MPI
 	if (params.simulation.debug || params.simulation.benchs)
 		throw std::runtime_error("aff3ct::simulation::Simulation_BFER_std_threads: debug and bench modes are "
@@ -48,11 +44,6 @@ Simulation_BFER_std_threads<B,R,Q>
 		if (this->params.simulation.n_threads != 1)
 			std::clog << bold_yellow("(WW) Multi-threading detected with error tracking revert feature!")
 			          << bold_yellow(" Each thread will play the same frames. Please run with one thread.")
-			          << std::endl;
-
-		if (this->params.simulation.inter_frame_level != 1)
-			std::clog << bold_yellow("(WW) Inter frame level different than 1 detected with error tracking revert feature!")
-			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
 			          << std::endl;
 	}
 }
@@ -84,11 +75,16 @@ void Simulation_BFER_std_threads<B,R,Q>
 		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K});
 		this->dumper[tid]->register_data(Y_N1[tid], "chn", true , {                             });
 
-		if (this->interleaver[tid] != nullptr)
-		{
-			const auto &lut = this->interleaver[tid]->get_lookup_table();
-			this->dumper[tid]->register_data(lut, "itl", false, {}, 1);
-		}
+		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
+			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
+	}
+
+	if (this->params.simulation.debug)
+	{
+		if (this->params.simulation.debug_fe)
+			this->monitor[tid]->add_handler_fe   (std::bind(&Simulation_BFER_std_threads::display_debug, this));
+		else
+			this->monitor[tid]->add_handler_check(std::bind(&Simulation_BFER_std_threads::display_debug, this));
 	}
 }
 
@@ -112,6 +108,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_std_threads<B,R,Q>
 ::start_thread(Simulation_BFER_std_threads<B,R,Q> *simu, const int tid)
 {
+	simu->thread_id[std::this_thread::get_id()] = tid;
 	simu->Monte_Carlo_method(tid);
 }
 
@@ -119,9 +116,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_std_threads<B,R,Q>
 ::Monte_Carlo_method(const int tid)
 {
-	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
-		this->simulation_loop_debug();
-	else if (this->params.simulation.benchs)
+	if (this->params.simulation.benchs)
 		this->simulation_loop_bench(tid);
 	else
 		this->simulation_loop(tid);
@@ -280,7 +275,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 	if (tid == 0)
 		std::cout << "  SNR (Eb/N0) = "          << std::setw(5) << std::fixed << std::setprecision(2) << this->snr
 		          << " dB"   << ", "
-		          << "information throughput = " << std::setw(8) << std::fixed << std::setprecision(4) << mbps       
+		          << "information throughput = " << std::setw(8) << std::fixed << std::setprecision(4) << mbps
 		          << " Mbps" << ", " 
 		          << "latency = "                << std::setw(8) << std::fixed << std::setprecision(4) << latency_us 
 		          << " us."  << std::endl;
@@ -288,263 +283,145 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER_std_threads<B,R,Q>
-::simulation_loop_debug()
+::display_debug()
 {
-	using namespace std::chrono;
+	this->mutex_debug.lock();
 
-	// frame trace to display the vectors
+	const auto tid = this->thread_id[std::this_thread::get_id()];
 	Frame_trace<B> ft(this->params.simulation.debug_limit, this->params.simulation.debug_precision);
 
-	// simulation loop
-	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params.simulation.stop_time == seconds(0) ||
-	        (steady_clock::now() - this->t_snr) < this->params.simulation.stop_time))
+	std::clog << "-------------------------------" << std::endl;
+	std::clog << "New encoding/decoding session !" << std::endl;
+	std::clog << "Thread id: " << tid              << std::endl;
+	std::clog << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
+	std::clog << "-------------------------------" << std::endl;
+
+	if (this->params.source.type != "AZCW")
 	{
-		std::clog << "-------------------------------" << std::endl;
-		std::clog << "New encoding/decoding session !" << std::endl;
-		std::clog << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
-		std::clog << "-------------------------------" << std::endl;
-
-		if (this->params.source.type != "AZCW")
-		{
-			// generate a random K bits vector U_K1
-			std::clog << "Generate random bits U_K1..." << std::endl;
-			auto t_sourc = steady_clock::now();
-			this->source[0]->generate(this->U_K1[0]);
-			this->durations[0][std::make_pair(0, "Source")] += steady_clock::now() - t_sourc;
-
-			// display U_K1
-			std::clog << "U_K1:" << std::endl;
-			ft.display_bit_vector(this->U_K1[0]);
-			std::clog << std::endl;
-
-			// add the CRC to U_K
-			std::clog << "Build the CRC from U_K1 into U_K2..." << std::endl;
-			auto t_crcbd = steady_clock::now();
-			this->crc[0]->build(this->U_K1[0], this->U_K2[0]);
-			this->durations[0][std::make_pair(1, "CRC build")] += steady_clock::now() - t_crcbd;
-
-			// display U_K2
-			std::clog << "U_K2:" << std::endl;
-			ft.display_bit_vector(this->U_K2[0]);
-			std::clog << std::endl;
-
-			// encode U_K2 into a N bits vector X_N1
-			std::clog << "Encode U_K2 in X_N1..." << std::endl;
-			auto t_encod = steady_clock::now();
-			this->encoder[0]->encode(this->U_K2[0], this->X_N1[0]);
-			this->durations[0][std::make_pair(2, "Encoder")] += steady_clock::now() - t_encod;
-
-			// display X_N1
-			std::clog << "X_N1:" << std::endl;
-			ft.display_bit_vector(this->X_N1[0]);
-			std::clog << std::endl;
-
-			// puncture X_N1 into X_N2
-			std::clog << "Puncture X_N1 in X_N2..." << std::endl;
-			auto t_punct = steady_clock::now();
-			this->puncturer[0]->puncture(this->X_N1[0], this->X_N2[0]);
-			this->durations[0][std::make_pair(3, "Puncturer")] += steady_clock::now() - t_punct;
-
-			// display X_N2
-			std::clog << "X_N2:" << std::endl;
-			ft.display_bit_vector(this->X_N2[0]);
-			std::clog << std::endl;
-
-			// modulate
-			std::clog << "Modulate X_N2 in X_N3..." << std::endl;
-			auto t_modul = steady_clock::now();
-			this->modulator[0]->modulate(this->X_N2[0], this->X_N3[0]);
-			this->durations[0][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
-
-			// display X_N3
-			std::clog << "X_N3:" << std::endl;
-			ft.display_real_vector(this->X_N3[0]);
-			std::clog << std::endl;
-		}
-		else
-		{
-			// display U_K1
-			std::clog << "U_K1:" << std::endl;
-			ft.display_bit_vector(this->U_K1[0]);
-			std::clog << std::endl;
-
-			// display U_K2
-			std::clog << "U_K2:" << std::endl;
-			ft.display_bit_vector(this->U_K2[0]);
-			std::clog << std::endl;
-
-			// display X_N2
-			std::clog << "X_N2:" << std::endl;
-			ft.display_bit_vector(this->X_N2[0]);
-			std::clog << std::endl;
-
-			// display X_N3
-			std::clog << "X_N3:" << std::endl;
-			ft.display_real_vector(this->X_N3[0]);
-			std::clog << std::endl;
-		}
-
-		// Rayleigh channel
-		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
-		{
-			// add noise
-			std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
-			auto t_chann = steady_clock::now();
-			this->channel[0]->add_noise(this->X_N3[0], this->Y_N1[0], this->H_N[0]);
-			this->durations[0][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
-
-			// display Y_N1
-			std::clog << "Y_N1:" << std::endl;
-			ft.display_real_vector(this->Y_N1[0]);
-			std::clog << std::endl;
-
-			// display channel gains
-			std::clog << "H_N:" << std::endl;
-			ft.display_real_vector(this->H_N[0]);
-			std::clog << std::endl;
-
-			// filtering
-			std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
-			auto t_filte = steady_clock::now();
-			this->modulator[0]->filter(this->Y_N1[0], this->Y_N2[0]);
-			this->durations[0][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
-
-			// display Y_N2
-			std::clog << "Y_N2:" << std::endl;
-			ft.display_real_vector(this->Y_N2[0]);
-			std::clog << std::endl;
-
-			// demodulation
-			std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
-			auto t_demod = steady_clock::now();
-			this->modulator[0]->demodulate_with_gains(this->Y_N2[0], this->H_N[0], this->Y_N3[0]);
-			this->durations[0][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
-
-			// display Y_N3
-			std::clog << "Y_N3:" << std::endl;
-			ft.display_real_vector(this->Y_N3[0]);
-			std::clog << std::endl;
-		}
-		else // additive channel (AWGN, USER, NO)
-		{
-			// add noise
-			std::clog << "Add noise from X_N3 to Y_N1..." << std::endl;
-			auto t_chann = steady_clock::now();
-			this->channel[0]->add_noise(this->X_N3[0], this->Y_N1[0]);
-			this->durations[0][std::make_pair(5, "Channel")] += steady_clock::now() - t_chann;
-
-			// display Y_N1
-			std::clog << "Y_N1:" << std::endl;
-			ft.display_real_vector(this->Y_N1[0]);
-			std::clog << std::endl;
-
-			// filtering
-			std::clog << "Filter from Y_N1 to Y_N2..." << std::endl;
-			auto t_filte = steady_clock::now();
-			this->modulator[0]->filter(this->Y_N1[0], this->Y_N2[0]);
-			this->durations[0][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
-
-			// display Y_N2
-			std::clog << "Y_N2:" << std::endl;
-			ft.display_real_vector(this->Y_N2[0]);
-			std::clog << std::endl;
-
-			// demodulation
-			std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl;
-			auto t_demod = steady_clock::now();
-			this->modulator[0]->demodulate(this->Y_N2[0], this->Y_N3[0]);
-			this->durations[0][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
-
-			// display Y_N3
-			std::clog << "Y_N3:" << std::endl;
-			ft.display_real_vector(this->Y_N3[0]);
-			std::clog << std::endl;
-		}
-
-		// make the quantization
-		std::clog << "Make the quantization from Y_N3 to Y_N4..." << std::endl;
-		auto t_quant = steady_clock::now();
-		this->quantizer[0]->process(this->Y_N3[0], this->Y_N4[0]);
-		this->durations[0][std::make_pair(8, "Quantizer")] += steady_clock::now() - t_quant;
-
-		// display Y_N4
-		std::clog << "Y_N4:" << std::endl;
-		ft.display_real_vector(this->Y_N4[0]);
+		std::clog << "Generate random bits U_K1..." << std::endl
+		          << "U_K1:" << std::endl;
+		ft.display_bit_vector(this->U_K1[tid]);
 		std::clog << std::endl;
 
-		// depuncture before the decoding stage
-		std::clog << "Depuncture Y_N4 and generate Y_N5..." << std::endl;
-		auto t_depun = steady_clock::now();
-		this->puncturer[0]->depuncture(this->Y_N4[0], this->Y_N5[0]);
-		this->durations[0][std::make_pair(9, "Depuncturer")] += steady_clock::now() - t_depun;
-
-		// display Y_N5
-		std::clog << "Y_N5:" << std::endl;
-		ft.display_real_vector(this->Y_N5[0]);
+		std::clog << "Build the CRC from U_K1 into U_K2..." << std::endl
+		          << "U_K2:" << std::endl;
+		ft.display_bit_vector(this->U_K2[tid]);
 		std::clog << std::endl;
 
-		// apply the coset: the decoder will believe to a AZCW
-		if (this->params.code.coset)
-		{
-			std::clog << "Apply the coset approach on Y_N5..." << std::endl;
-			auto t_corea = steady_clock::now();
-			this->coset_real[0]->apply(this->X_N1[0], this->Y_N5[0], this->Y_N5[0]);
-			this->durations[0][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
-
-			// display Y_N5
-			std::clog << "Y_N5:" << std::endl;
-			ft.display_real_vector(this->Y_N5[0]);
-			std::clog << std::endl;
-		}
-		
-		// launch decoder
-		std::clog << "Decode Y_N5 and generate V_K1..." << std::endl;
-		auto t_decod = steady_clock::now();
-		this->decoder[0]->hard_decode(this->Y_N5[0], this->V_K1[0]);
-		this->durations[0][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
-		this->durations[0][std::make_pair(12, "- load"  )] += this->decoder[0]->get_load_duration();
-		this->durations[0][std::make_pair(13, "- decode")] += this->decoder[0]->get_decode_duration();
-		this->durations[0][std::make_pair(14, "- store" )] += this->decoder[0]->get_store_duration();
-
-		// display V_K1
-		std::clog << "V_K1:" << std::endl;
-		if (this->params.code.coset)
-			ft.display_bit_vector(this->V_K1[0]);
-		else
-			ft.display_bit_vector(this->V_K1[0], this->U_K2[0]);
+		std::clog << "Encode U_K2 in X_N1..." << std::endl
+		          << "X_N1:" << std::endl;
+		ft.display_bit_vector(this->X_N1[tid]);
 		std::clog << std::endl;
 
-		// apply the coset to recover the real bits
-		if (this->params.code.coset)
-		{
-			std::clog << "Apply the coset approach on V_K1..." << std::endl;
-			auto t_cobit = steady_clock::now();
-			this->coset_bit[0]->apply(this->U_K2[0], this->V_K1[0], this->V_K1[0]);
-			this->durations[0][std::make_pair(15, "Coset bit")] += steady_clock::now() - t_cobit;
-
-			// display V_K1
-			std::clog << "V_K1:" << std::endl;
-			ft.display_bit_vector(this->V_K1[0], this->U_K2[0]);
-			std::clog << std::endl;
-		}
-
-		// extract the CRC bits and keep only the information bits
-		std::clog << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl;
-		auto t_crcex = steady_clock::now();
-		this->crc[0]->extract(this->V_K1[0], this->V_K2[0]);
-		this->durations[0][std::make_pair(16, "CRC extract")] += steady_clock::now() - t_crcex;
-
-		// display V_K2
-		std::clog << "V_K2:" << std::endl;
-		ft.display_real_vector(this->V_K2[0], this->U_K1[0]);
+		std::clog << "Puncture X_N1 in X_N2..." << std::endl
+		          << "X_N2:" << std::endl;
+		ft.display_bit_vector(this->X_N2[tid]);
 		std::clog << std::endl;
 
-		// check errors in the frame
-		auto t_check = steady_clock::now();
-		this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
-		this->durations[0][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
+		// modulate
+		std::clog << "Modulate X_N2 in X_N3..." << std::endl
+		          << "X_N3:" << std::endl;
+		ft.display_real_vector(this->X_N3[tid]);
+		std::clog << std::endl;
 	}
+	else
+	{
+		std::clog << "U_K1:" << std::endl;
+		ft.display_bit_vector(this->U_K1[tid]);
+		std::clog << std::endl;
+
+		std::clog << "U_K2:" << std::endl;
+		ft.display_bit_vector(this->U_K2[tid]);
+		std::clog << std::endl;
+
+		std::clog << "X_N2:" << std::endl;
+		ft.display_bit_vector(this->X_N2[tid]);
+		std::clog << std::endl;
+
+		std::clog << "X_N3:" << std::endl;
+		ft.display_real_vector(this->X_N3[tid]);
+		std::clog << std::endl;
+	}
+
+	// Rayleigh channel
+	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+	{
+		std::clog << "Add noise from X_N3 to Y_N1..." << std::endl
+		          << "Y_N1:" << std::endl;
+		ft.display_real_vector(this->Y_N1[tid]);
+		std::clog << std::endl;
+		std::clog << "H_N:" << std::endl;
+		ft.display_real_vector(this->H_N[tid]);
+		std::clog << std::endl;
+
+		std::clog << "Filter from Y_N1 to Y_N2..." << std::endl
+		          << "Y_N2:" << std::endl;
+		ft.display_real_vector(this->Y_N2[tid]);
+		std::clog << std::endl;
+
+		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl
+		          << "Y_N3:" << std::endl;
+		ft.display_real_vector(this->Y_N3[tid]);
+		std::clog << std::endl;
+	}
+	else // additive channel (AWGN, USER, NO)
+	{
+		std::clog << "Add noise from X_N3 to Y_N1..." << std::endl
+		          << "Y_N1:" << std::endl;
+		ft.display_real_vector(this->Y_N1[tid]);
+		std::clog << std::endl;
+
+		std::clog << "Filter from Y_N1 to Y_N2..." << std::endl
+		          << "Y_N2:" << std::endl;
+		ft.display_real_vector(this->Y_N2[tid]);
+		std::clog << std::endl;
+
+		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl
+		          << "Y_N3:" << std::endl;
+		ft.display_real_vector(this->Y_N3[tid]);
+		std::clog << std::endl;
+	}
+
+	std::clog << "Make the quantization from Y_N3 to Y_N4..." << std::endl
+	          << "Y_N4:" << std::endl;
+	ft.display_real_vector(this->Y_N4[tid]);
+	std::clog << std::endl;
+
+	std::clog << "Depuncture Y_N4 and generate Y_N5..." << std::endl
+	          << "Y_N5:" << std::endl;
+	ft.display_real_vector(this->Y_N5[tid]);
+	std::clog << std::endl;
+
+//	if (this->params.code.coset)
+//	{
+//		std::clog << "Apply the coset approach on Y_N5..." << std::endl
+//		          << "Y_N5:" << std::endl;
+//		ft.display_real_vector(this->Y_N5[tid]);
+//		std::clog << std::endl;
+//	}
+
+	std::clog << "Decode Y_N5 and generate V_K1..." << std::endl
+	          << "V_K1:" << std::endl;
+	if (this->params.code.coset)
+		ft.display_bit_vector(this->V_K1[tid]);
+	else
+		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
+	std::clog << std::endl;
+
+//	if (this->params.code.coset)
+//	{
+//		std::clog << "Apply the coset approach on V_K1..." << std::endl
+//		          << "V_K1:" << std::endl;
+//		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
+//		std::clog << std::endl;
+//	}
+
+	std::clog << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
+	          << "V_K2:" << std::endl;
+	ft.display_real_vector(this->V_K2[tid], this->U_K1[tid]);
+	std::clog << std::endl;
+
+	this->mutex_debug.unlock();
 }
 
 template <typename B, typename R, typename Q>

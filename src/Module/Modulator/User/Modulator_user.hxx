@@ -74,7 +74,7 @@ Modulator_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::_modulate(const B *X_N1, R *X_N2)
+::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	auto size_in  = this->N;
 	auto size_out = this->N_mod;
@@ -109,7 +109,7 @@ void Modulator_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::_filter(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
@@ -119,7 +119,7 @@ void Modulator_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, Q *Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
@@ -157,7 +157,7 @@ void Modulator_user<B,R,Q,MAX>
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
+::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
@@ -195,7 +195,7 @@ void Modulator_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
@@ -238,7 +238,7 @@ void Modulator_user<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_user<B,R,Q,MAX>
-::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
 		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");

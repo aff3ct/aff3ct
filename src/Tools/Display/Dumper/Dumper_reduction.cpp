@@ -33,7 +33,6 @@ void Dumper_reduction
 
 		for (unsigned i = 0; i < n_buff_ref; i++)
 		{
-			const auto fra_ref    = dumpers[0]->registered_data_fra   [i];
 			const auto size_ref   = dumpers[0]->registered_data_size  [i];
 			const auto sizeof_ref = dumpers[0]->registered_data_sizeof[i];
 			const auto type_ref   = dumpers[0]->registered_data_type  [i];
@@ -43,7 +42,6 @@ void Dumper_reduction
 
 			for (auto j = 1; j < (int)dumpers.size(); j++)
 			{
-				const auto fra_cur    = dumpers[j]->registered_data_fra   [i];
 				const auto size_cur   = dumpers[j]->registered_data_size  [i];
 				const auto sizeof_cur = dumpers[j]->registered_data_sizeof[i];
 				const auto type_cur   = dumpers[j]->registered_data_type  [i];
@@ -51,9 +49,6 @@ void Dumper_reduction
 				const auto bin_cur    = dumpers[j]->registered_data_bin   [i];
 				const auto head_cur   = dumpers[j]->registered_data_head  [i];
 
-				if (fra_cur != fra_ref)
-					throw std::runtime_error("aff3ct::tools::Dumper_reduction: \"fra_cur\" should be equal to "
-					                         "\"fra_ref\".");
 				if (size_cur != size_ref)
 					throw std::runtime_error("aff3ct::tools::Dumper_reduction: \"size_cur\" should be equal to "
 					                         "\"size_ref\".");
@@ -126,7 +121,7 @@ void Dumper_reduction
 		std::ofstream file;
 		if (bin)
 		{
-			file.open(path, std::ios_base::binary);
+			file.open(path, std::ofstream::out | std::ios_base::binary);
 
 			this->write_header_binary(file, n_data, size, head);
 			this->write_body_binary(file, this->buffer[i], size * size_of);
@@ -135,7 +130,7 @@ void Dumper_reduction
 		}
 		else
 		{
-			file.open(path);
+			file.open(path, std::ofstream::out);
 
 			this->write_header_text(file, n_data, size, head);
 			this->write_body_text(file, this->buffer[i], size, type);

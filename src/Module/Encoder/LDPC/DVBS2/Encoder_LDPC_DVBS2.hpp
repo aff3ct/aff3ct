@@ -24,7 +24,7 @@ public:
 	virtual ~Encoder_LDPC_DVBS2();
 
 protected:
-	void _encode(const B *U_K, B *X_N);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 
 private:
 	void build_dvbs2();

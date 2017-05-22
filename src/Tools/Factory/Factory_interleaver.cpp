@@ -24,13 +24,13 @@ Interleaver<T>* Factory_interleaver<T>
 	else if (params.interleaver.type == "CCSDS")
 		interleaver = new Interleaver_CCSDS<T>(size, params.simulation.inter_frame_level);
 	else if (params.interleaver.type == "RANDOM")
-		interleaver = new Interleaver_random<T>(size, seed, params.simulation.inter_frame_level);
+		interleaver = new Interleaver_random<T>(size, seed, params.interleaver.uniform, params.simulation.inter_frame_level);
 	else if (params.interleaver.type == "RAND_COL")
-		interleaver = new Interleaver_random_column<T>(size, params.interleaver.n_cols, seed, params.simulation.inter_frame_level);
+		interleaver = new Interleaver_random_column<T>(size, params.interleaver.n_cols, seed, params.interleaver.uniform, params.simulation.inter_frame_level);
 	else if (params.interleaver.type == "ROW_COL")
 		interleaver = new Interleaver_row_column<T>(size, params.interleaver.n_cols, params.simulation.inter_frame_level);
 	else if (params.interleaver.type == "GOLDEN")
-		interleaver = new Interleaver_golden<T>(size, seed, params.simulation.inter_frame_level);
+		interleaver = new Interleaver_golden<T>(size, seed, params.interleaver.uniform, params.simulation.inter_frame_level);
 	else if (params.interleaver.type == "USER")
 		interleaver = new Interleaver_user<T>(size, params.interleaver.path, params.simulation.inter_frame_level);
 	else if (params.interleaver.type == "NO")

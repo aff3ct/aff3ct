@@ -25,6 +25,7 @@ struct simulation_parameters
 	float                     sig_a_max;
 	float                     sig_a_step;
 	bool                      debug;
+	bool                      debug_fe;
 	bool                      time_report;
 	int                       benchs;
 	int                       debug_limit;

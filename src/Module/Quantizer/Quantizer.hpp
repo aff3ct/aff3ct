@@ -85,11 +85,12 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_process(Y_N1 + f * this->N,
-			               Y_N2 + f * this->N);
+			               Y_N2 + f * this->N,
+			               f);
 	}
 
 protected:
-	virtual void _process(const R *Y_N1, Q *Y_N2)
+	virtual void _process(const R *Y_N1, Q *Y_N2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Quantizer: \"_process\" is unimplemented.");
 	}

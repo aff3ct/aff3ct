@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_CRC_module_build::b_transport);
 	}
 
+	const mipp::vector<B>& get_U_K()
+	{
+		return U_K2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{

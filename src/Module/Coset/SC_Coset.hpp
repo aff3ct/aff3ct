@@ -43,6 +43,11 @@ public:
 		s_in2.register_b_transport(this, &SC_Coset_module::b_transport_data);
 	}
 
+	const mipp::vector<D>& get_out_data()
+	{
+		return out_data;
+	}
+
 private:
 	void b_transport_ref(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{

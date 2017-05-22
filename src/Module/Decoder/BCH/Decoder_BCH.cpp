@@ -33,7 +33,7 @@ Decoder_BCH<B, R>
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	for (int j = 0; j < this->N; j++)

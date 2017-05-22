@@ -31,7 +31,7 @@ public:
 protected:
 	void _load (const R *Y_N);
 	void _store(      B *V_K) const;
-	void _soft_decode(const R *sys, const R *par, R *ext);
+	void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

@@ -145,7 +145,8 @@ public:
 		for (auto w = 0; w < n_dec_waves_siso; w++)
 			this->_soft_decode(sys + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
 			                   par + w * (this->N_siso - this->K_siso) * this->simd_inter_frame_level_siso,
-			                   ext + w * (               this->K_siso) * this->simd_inter_frame_level_siso);
+			                   ext + w * (               this->K_siso) * this->simd_inter_frame_level_siso,
+			                   w * simd_inter_frame_level_siso);
 	}
 
 	/*!
@@ -172,11 +173,13 @@ public:
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves_siso -1; w++)
 			this->_soft_decode(Y_N1 + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso);
+			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso,
+			                   w * simd_inter_frame_level_siso);
 
 		if (this->n_inter_frame_rest_siso == 0)
 			this->_soft_decode(Y_N1 + w * this->N_siso * this->simd_inter_frame_level_siso,
-			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso);
+			                   Y_N2 + w * this->N_siso * this->simd_inter_frame_level_siso,
+			                   w * simd_inter_frame_level_siso);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level_siso * this->N_siso;
@@ -184,7 +187,7 @@ public:
 			          Y_N1 + waves_off1 + this->n_inter_frame_rest_siso * this->N_siso,
 			          this->Y_N1.begin());
 
-			this->_soft_decode(this->Y_N1.data(), this->Y_N2.data());
+			this->_soft_decode(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level_siso);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level_siso * this->N_siso;
 			std::copy(this->Y_N2.begin(),
@@ -204,12 +207,12 @@ public:
 	}
 
 protected:
-	virtual void _soft_decode(const R *sys, const R *par, R *ext)
+	virtual void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode\" is unimplemented.");
 	}
 
-	virtual void _soft_decode(const R *Y_N1, R *Y_N2)
+	virtual void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode\" is unimplemented.");
 	}

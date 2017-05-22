@@ -76,10 +76,10 @@ public:
 	}
 
 protected:
-	void   _modulate(const B *X_N1,                R *X_N2);
-	void     _filter(const R *Y_N1,                R *Y_N2);
-	void _demodulate(const Q *Y_N1,                Q *Y_N2);
-	void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3);
+	void   _modulate(const B *X_N1,                R *X_N2, const int frame_id);
+	void     _filter(const R *Y_N1,                R *Y_N2, const int frame_id);
+	void _demodulate(const Q *Y_N1,                Q *Y_N2, const int frame_id);
+	void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
 
 private:
 	void generate_baseband    (               );

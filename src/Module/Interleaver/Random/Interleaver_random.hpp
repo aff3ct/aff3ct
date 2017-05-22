@@ -2,7 +2,7 @@
 #define	INTERLEAVER_RANDOM_HPP
 
 #include <algorithm>
-#include <time.h>
+#include <numeric>
 #include <random>
 
 #include "../Interleaver.hpp"
@@ -15,27 +15,25 @@ template <typename T = int>
 class Interleaver_random : public Interleaver<T>
 {
 private:
-	std::random_device rd;
-	std::mt19937       rd_engine;
+	std::mt19937 rd_engine;
 
 public:
-	Interleaver_random(int size, const int seed = 0, const int n_frames = 1,
+	Interleaver_random(const int size, const int seed = 0, const bool uniform = false, const int n_frames = 1,
 	                   const std::string name = "Interleaver_random")
-	: Interleaver<T>(size, n_frames, name), rd(), rd_engine(rd())
+	: Interleaver<T>(size, uniform, n_frames, name), rd_engine()
 	{
 		rd_engine.seed(seed);
-		gen_lookup_tables();
 	}
 
-	void gen_lookup_tables()
+	virtual ~Interleaver_random()
 	{
-		for (auto i = 0; i < (int)this->pi.size(); i++)
-			this->pi[i] = i;
+	}
 
-		std::shuffle(this->pi.begin(), this->pi.end(), rd_engine);
-
-		for (auto i = 0; i < (int)this->pi_inv.size(); i++)
-			this->pi_inv[this->pi[i]] = i;
+protected:
+	void gen_lut(T *lut, const int frame_id)
+	{
+		std::iota   (lut, lut + this->get_size(), 0);
+		std::shuffle(lut, lut + this->get_size(), rd_engine);
 	}
 };
 }

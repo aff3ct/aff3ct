@@ -23,7 +23,7 @@ Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::_soft_decode(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load_init();
@@ -49,7 +49,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
-::_soft_decode(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load(Y_N1);

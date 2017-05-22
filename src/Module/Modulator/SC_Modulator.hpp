@@ -40,6 +40,11 @@ public:
 		s_in.register_b_transport(this, &SC_Modulator_module_modulator::b_transport);
 	}
 
+	const mipp::vector<R>& get_X_N()
+	{
+		return X_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -82,6 +87,11 @@ public:
 		s_in.register_b_transport(this, &SC_Modulator_module_filterer::b_transport);
 	}
 
+	const mipp::vector<R>& get_Y_N()
+	{
+		return Y_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -122,6 +132,11 @@ public:
 	  Y_N2(modulator.get_N() * modulator.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Modulator_module_demodulator::b_transport);
+	}
+
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N2;
 	}
 
 private:
@@ -168,6 +183,11 @@ public:
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_demodulator_wg::b_transport2);
+	}
+
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N2;
 	}
 
 private:
@@ -225,6 +245,11 @@ public:
 	{
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator::b_transport2);
+	}
+
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N3;
 	}
 
 private:
@@ -295,6 +320,11 @@ public:
 		s_in1.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport1);
 		s_in2.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport2);
 		s_in3.register_b_transport(this, &SC_Modulator_module_tdemodulator_wg::b_transport3);
+	}
+
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N3;
 	}
 
 private:

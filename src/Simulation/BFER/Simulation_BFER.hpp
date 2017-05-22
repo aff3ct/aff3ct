@@ -72,7 +72,7 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	virtual module::Monitor<B>* build_monitor (const int tid = 0);
+	        module::Monitor<B>* build_monitor (const int tid = 0);
 	virtual tools::Terminal   * build_terminal(                 );
 
 private:

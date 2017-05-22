@@ -10,7 +10,7 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_BFERI<B,R,Q>
 ::Launcher_BFERI(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr)
 {
 	this->params.simulation .type             = "BFERI";
 	this->params.simulation .benchs           = 0;
@@ -106,8 +106,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
-
-#if !defined(STARPU) && !defined(SYSTEMC)
 	this->opt_args[{"mnt-err-trk"}] =
 		{"",
 		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
@@ -117,7 +115,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"mnt-err-trk-path"}] =
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
-#endif
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
@@ -190,11 +187,13 @@ void Launcher_BFERI<B,R,Q>
 		this->params.source     .type = "USER";
 		this->params.encoder    .type = "USER";
 		this->params.channel    .type = "USER";
-		this->params.interleaver.type = "USER";
+		if (this->params.interleaver.uniform)
+			this->params.interleaver.type = "USER";
 		this->params.source     .path = this->params.monitor.err_track_path + std::string("_$snr.src");
 		this->params.encoder    .path = this->params.monitor.err_track_path + std::string("_$snr.enc");
 		this->params.channel    .path = this->params.monitor.err_track_path + std::string("_$snr.chn");
-		this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
+		if (this->params.interleaver.uniform)
+			this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
 		// the paths are set in the Simulation class
 	}
 
@@ -302,7 +301,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 
 	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
 
-#if !defined(STARPU) && !defined(SYSTEMC)
 	std::string enable_track = (this->params.monitor.err_track_enable) ? "on" : "off";
 	p.push_back(std::make_pair("Bad frames tracking", enable_track));
 
@@ -314,7 +312,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,itl,chn]");
 		p.push_back(std::make_pair("Bad frames base path", path));
 	}
-#endif
 
 	return p;
 }

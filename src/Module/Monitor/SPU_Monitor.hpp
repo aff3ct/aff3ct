@@ -21,9 +21,8 @@ private:
 	static starpu_codelet spu_cl_check_errors;
 
 public:
-	SPU_Monitor(const int K, const int N, const int N_mod, const int n_frames = 1,
-	            const std::string name = "SPU_Monitor")
-	: Monitor_i<B>(K, N, N_mod, n_frames, name) {}
+	SPU_Monitor(const int size, const int n_frames = 1, const std::string name = "SPU_Monitor")
+	: Monitor_i<B>(size, n_frames, name) {}
 
 	virtual ~SPU_Monitor() {}
 

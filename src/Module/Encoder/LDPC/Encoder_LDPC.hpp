@@ -30,7 +30,7 @@ public:
 	virtual void get_info_bits_pos(mipp::vector<B>& info_bits_pos);
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N);
+	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 
 }

@@ -164,7 +164,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_modulate(X_N1 + f * this->N,
-			                X_N2 + f * this->N_mod);
+			                X_N2 + f * this->N_mod,
+			                f);
 	}
 
 	/*!
@@ -192,7 +193,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_filter(Y_N1 + f * this->N_mod,
-			              Y_N2 + f * this->N_fil);
+			              Y_N2 + f * this->N_fil,
+			              f);
 	}
 
 	/*!
@@ -218,7 +220,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_demodulate(Y_N1 + f * this->N_fil,
-			                  Y_N2 + f * this->N);
+			                  Y_N2 + f * this->N,
+			                  f);
 	}
 
 	/*!
@@ -250,7 +253,8 @@ public:
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_demodulate_with_gains(Y_N1 + f * this->N_fil,
 			                             H_N  + f * this->N_fil,
-			                             Y_N2 + f * this->N);
+			                             Y_N2 + f * this->N,
+			                             f);
 	}
 
 	/*!
@@ -286,7 +290,8 @@ public:
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_demodulate(Y_N1 + f * this->N_fil,
 			                  Y_N2 + f * this->N,
-			                  Y_N3 + f * this->N);
+			                  Y_N3 + f * this->N,
+			                  f);
 	}
 
 	/*!
@@ -329,7 +334,8 @@ public:
 			this->_demodulate_with_gains(Y_N1 + f * this->N_fil,
 			                             H_N  + f * this->N_fil,
 			                             Y_N2 + f * this->N,
-			                             Y_N3 + f * this->N);
+			                             Y_N3 + f * this->N,
+			                             f);
 	}
 
 	/*!
@@ -367,32 +373,32 @@ public:
 	}
 
 protected:
-	virtual void _modulate(const B *X_N1, R *X_N2)
+	virtual void _modulate(const B *X_N1, R *X_N2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Modulator: \"_modulate\" is unimplemented.");
 	}
 
-	virtual void _filter(const R *Y_N1, R *Y_N2)
+	virtual void _filter(const R *Y_N1, R *Y_N2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Modulator: \"_filter\" is unimplemented.");
 	}
 
-	virtual void _demodulate(const Q *Y_N1, Q *Y_N2)
+	virtual void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate\" is unimplemented.");
 	}
 
-	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
+	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
 	}
 
-	virtual void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+	virtual void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate\" is unimplemented.");
 	}
 
-	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
+	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
 	}

@@ -28,7 +28,7 @@ public:
 	virtual ~Encoder_BCH() {}
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N);
+	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

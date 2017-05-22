@@ -90,7 +90,7 @@ void Frame_trace<B>
 			stream << std::setw(prec+2) << ((value == 0) ? (int) 0 : (int) 1) << "|";
 			break;
 		case REAL:
-			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
+			sstream << std::setprecision(prec) << std::setw(prec+2) << +value;
 			value_string = sstream.str().substr(0, prec+2);
 
 			stream << value_string << "|";
@@ -122,7 +122,7 @@ void Frame_trace<B>
 			break;
 
 		case REAL:
-			sstream << std::setprecision(prec) << std::setw(prec+2) << value;
+			sstream << std::setprecision(prec) << std::setw(prec+2) << +value;
 
 			value_string = sstream.str().substr(0, prec+2);
 

@@ -21,7 +21,7 @@ template <typename R>
 void Channel_AWGN_std_LR<R>
 ::add_noise(const R *X_N, R *Y_N)
 {
-	Channel_AWGN_std_LLR<R>::_add_noise(X_N, Y_N);
+	Channel_AWGN_std_LLR<R>::add_noise(X_N, Y_N);
 	for (auto i = 0; i < this->N * this->n_frames; i++)
 		Y_N[i] = std::exp(Y_N[i]);
 }

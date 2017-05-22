@@ -92,7 +92,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_modulate(const B *X_N1, R *X_N2)
+::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	// mapper
 	mipp::vector<SIN> mapped_frame(n_sy);
@@ -120,7 +120,7 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_filter(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
@@ -141,14 +141,14 @@ void Modulator_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, Q *Y_N2)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modulator_CPM<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
+::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2, Y_N3);
 }

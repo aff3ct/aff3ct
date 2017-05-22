@@ -58,11 +58,6 @@ Simulation_BFER_ite_threads<B,R,Q>
 			std::clog << bold_yellow("(WW) Multi-threading detected with error tracking revert feature!")
 			          << bold_yellow(" Each thread will play the same frames. Please run one thread.")
 			          << std::endl;
-
-		if (this->params.simulation.inter_frame_level != 1)
-			std::clog << bold_yellow("(WW) Inter frame level different than 1 detected with error tracking revert feature!")
-			          << bold_yellow(" Each bad frame may be played several times. Please run with an inter frame level of 1.")
-			          << std::endl;
 	}
 }
 
@@ -89,11 +84,11 @@ void Simulation_BFER_ite_threads<B,R,Q>
 
 	if (this->params.monitor.err_track_enable)
 	{
-		const auto &lut = this->interleaver[tid]->get_lookup_table();
-		this->dumper[tid]->register_data(U_K1[tid], "src", false, {                             }   );
-		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K}   );
-		this->dumper[tid]->register_data(Y_N1[tid], "chn", true , {                             }   );
-		this->dumper[tid]->register_data(lut      , "itl", false, {                             }, 1);
+		this->dumper[tid]->register_data(U_K1[tid], "src", false, {                             });
+		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K});
+		this->dumper[tid]->register_data(Y_N1[tid], "chn", true , {                             });
+		if (this->interleaver[tid]->is_uniform())
+			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}
 }
 
@@ -435,7 +430,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		for (auto ite = 0; ite <= this->params.demodulator.n_ite; ite++)
 		{
 			std::clog << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
-			
+
 			// Rayleigh channel
 			if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
 			{

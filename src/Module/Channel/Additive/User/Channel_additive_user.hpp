@@ -23,7 +23,7 @@ public:
 	virtual ~Channel_additive_user();
 
 protected:
-	void _add_noise(const R *X_N, R *Y_N);
+	void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 };
 }
 }

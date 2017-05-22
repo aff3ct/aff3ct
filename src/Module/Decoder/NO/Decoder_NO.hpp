@@ -15,9 +15,9 @@ public:
 	virtual ~Decoder_NO();
 
 protected:
-	void _hard_decode(const R *Y_N, B *V_K);
-	void _soft_decode(const R *sys, const R *par, R *ext);
-	void _soft_decode(const R *Y_N1, R *Y_N2);
+	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
+	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 };
 }
 }

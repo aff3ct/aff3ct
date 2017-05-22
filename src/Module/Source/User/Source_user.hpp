@@ -24,7 +24,7 @@ public:
 	virtual ~Source_user();
 
 protected:
-	void _generate(B *U_K);
+	void _generate(B *U_K, const int frame_id);
 };
 }
 }

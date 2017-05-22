@@ -22,7 +22,7 @@ public:
 	virtual ~Encoder_user();
 
 protected:
-	void _encode(const B *U_K, B *X_N);
+	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

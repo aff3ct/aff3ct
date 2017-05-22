@@ -34,7 +34,7 @@ Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::_load(const R *Y_N)
+::_load(const R *Y_N, const int frame_id)
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
@@ -61,7 +61,7 @@ void Decoder_turbo_fast<B,R>
 				frames[f] = Y_N + f*frame_size +this->K + p_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
-			this->pi.interleave(this->l_sn, this->l_si, true, this->get_simd_inter_frame_level());
+			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
@@ -98,7 +98,7 @@ void Decoder_turbo_fast<B,R>
 				frames[f] = Y_N + f*frame_size +this->K + p_size;
 			Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), p_size);
 
-			this->pi.interleave(this->l_sn, this->l_si, true, this->get_simd_inter_frame_level());
+			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 			// tails bit in the natural domain
 			for (auto f = 0; f < n_frames; f++)
@@ -122,15 +122,15 @@ void Decoder_turbo_fast<B,R>
 		std::fill(this->l_e1n.begin(), this->l_e1n.end(), (R)0);
 	}
 	else
-		Decoder_turbo<B,R>::_load(Y_N);
+		Decoder_turbo<B,R>::_load(Y_N, frame_id);
 }
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	this->_load(Y_N);
+	this->_load(Y_N, frame_id);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -158,7 +158,7 @@ void Decoder_turbo_fast<B,R>
 		this->scaling_factor(this->l_e2n, 2 * (ite -1));
 
 		// make the interleaving
-		this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, n_frames);
+		this->pi.interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, n_frames, n_frames > 1);
 
 		// l_se = sys + ext
 		for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
@@ -185,7 +185,7 @@ void Decoder_turbo_fast<B,R>
 			}
 
 		// make the deinterleaving
-		this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, n_frames);
+		this->pi.deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, n_frames, n_frames > 1);
 	}
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 

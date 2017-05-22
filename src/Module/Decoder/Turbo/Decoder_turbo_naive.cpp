@@ -32,10 +32,10 @@ Decoder_turbo_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_naive<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	this->_load(Y_N);
+	this->_load(Y_N, frame_id);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -60,7 +60,7 @@ void Decoder_turbo_naive<B,R>
 		this->scaling_factor(this->l_e2n, 2 * (ite -1));
 
 		// make the interleaving
-		this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, n_frames);
+		this->pi.interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, n_frames, n_frames > 1);
 
 		// sys + ext
 		for (auto i = 0; i < this->K * n_frames; i++) 
@@ -81,7 +81,7 @@ void Decoder_turbo_naive<B,R>
 				this->l_e2i[i] += this->l_sei[i];
 
 		// make the deinterleaving
-		this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, n_frames);
+		this->pi.deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, n_frames, n_frames > 1);
 	}
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 

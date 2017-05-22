@@ -99,7 +99,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_add_noise(X_N + f * this->N,
-			                 Y_N + f * this->N);
+			                 Y_N + f * this->N,
+			                 f);
 	}
 
 	/*!
@@ -129,16 +130,17 @@ public:
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_add_noise(X_N + f * this->N,
 			                 Y_N + f * this->N,
-			                 H_N + f * this->N);
+			                 H_N + f * this->N,
+			                 f);
 	}
 
 protected:
-	virtual void _add_noise(const R *X_N, R *Y_N)
+	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Channel: \"_add_noise\" is unimplemented.");
 	}
 
-	virtual void _add_noise(const R *X_N, R *Y_N, R *H_N)
+	virtual void _add_noise(const R *X_N, R *Y_N, R *H_N, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Channel: \"_add_noise\" is unimplemented.");
 	}

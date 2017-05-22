@@ -29,7 +29,7 @@ public:
 	                 const int n_frames = -1);
 
 protected:
-	void _soft_decode(const R *sys, const R *par, R *ext);
+	void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

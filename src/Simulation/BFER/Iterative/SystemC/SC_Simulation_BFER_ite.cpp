@@ -5,6 +5,9 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Algo/Predicate_ite.hpp"
 
+#include "Tools/Factory/Coset/Factory_coset_real.hpp"
+#include "Tools/Factory/Factory_interleaver.hpp"
+
 #include "SC_Simulation_BFER_ite.hpp"
 
 using namespace aff3ct::module;
@@ -54,13 +57,6 @@ void SC_Simulation_BFER_ite<B,R,Q>
 {
 	Simulation_BFER_ite<B,R,Q>::build_communication_chain(tid);
 
-	// build the objects
-	this->interleaver_e = this->build_interleaver(); Simulation::check_errors(this->interleaver_e, "Interleaver<int>");
-	this->coset_real_i  = this->build_coset_real (); Simulation::check_errors(this->coset_real_i , "Coset<B,Q>"      );
-
-	this->interleaver_e->rename("Interleaver_e");
-	this->coset_real_i ->rename("Coset_real_i" );
-
 	if (*this->interleaver[tid] != *this->interleaver_e)
 		throw std::runtime_error("aff3ct::simulation::SC_Simulation_BFERI_ite: \"interleaver[tid]\" and "
 		                         "\"interleaver_e\" have to be equal.");
@@ -93,6 +89,20 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->coset_bit [tid]->create_sc_module();
 	}
 	this->crc[tid]->create_sc_module_extract();
+
+	if (this->params.monitor.err_track_enable)
+	{
+		const auto &U_K = this->source [tid]->sc_module->get_U_K();
+		const auto &X_N = this->encoder[tid]->sc_module->get_X_N();
+		const auto &Y_N = this->channel[tid]->sc_module->get_Y_N();
+
+		this->dumper[tid]->register_data(U_K, "src", false, {                             });
+		this->dumper[tid]->register_data(X_N, "enc", false, {(unsigned)this->params.code.K});
+		this->dumper[tid]->register_data(Y_N, "chn", true , {                             });
+
+		if (this->interleaver[tid]->is_uniform())
+			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -371,6 +381,35 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->duplicator     [1]                                                                   ->s_out1(this->monitor    [0]->sc_module          ->s_in2);
 		this->duplicator     [1]                                                                   ->s_out2(this->predicate                          ->s_in );
 	}
+}
+
+template <typename B, typename R, typename Q>
+Interleaver<int>* SC_Simulation_BFER_ite<B,R,Q>
+::build_interleaver(const int tid)
+{
+	const auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.interleaver.seed;
+
+	// build the objects
+	this->interleaver_e = Factory_interleaver<int>::build(this->params, this->params.code.N, seed);
+	Simulation::check_errors(this->interleaver_e, "Interleaver<int>");
+
+	this->interleaver_e->init();
+	this->interleaver_e->rename("Interleaver_e");
+	if (this->interleaver_e->is_uniform())
+		this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::refresh, this->interleaver_e));
+
+	return Factory_interleaver<int>::build(this->params, this->params.code.N, seed);
+}
+
+template <typename B, typename R, typename Q>
+Coset<B,Q>* SC_Simulation_BFER_ite<B,R,Q>
+::build_coset_real(const int tid)
+{
+	this->coset_real_i = Factory_coset_real<B,Q>::build(this->params);
+	Simulation::check_errors(this->coset_real_i, "Coset<B,Q>");
+	this->coset_real_i->rename("Coset_real_i");
+
+	return Factory_coset_real<B,Q>::build(this->params);
 }
 
 // ==================================================================================== explicit template instantiation 

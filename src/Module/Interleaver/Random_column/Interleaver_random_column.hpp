@@ -16,26 +16,30 @@ template <typename T = int>
 class Interleaver_random_column : public Interleaver<T>
 {
 private:
-	std::random_device rd;
-	std::mt19937       rd_engine;
+	std::mt19937 rd_engine;
 
 	const int n_cols;
 	const int col_size;
 
 public:
-	Interleaver_random_column(const int size, const int n_cols, const int seed = 0, const int n_frames = 1,
-	                          const std::string name = "Interleaver_random_column")
-	: Interleaver<T>(size, n_frames, name), rd(), rd_engine(rd()), n_cols(n_cols), col_size(size / n_cols)
+	Interleaver_random_column(const int size, const int n_cols, const int seed = 0, const bool uniform = false,
+	                          const int n_frames = 1, const std::string name = "Interleaver_random_column")
+	: Interleaver<T>(size, uniform, n_frames, name),
+	  rd_engine(), n_cols(n_cols), col_size(size / n_cols)
 	{
 		if (col_size * n_cols != size)
 			throw std::invalid_argument("aff3ct::module::Interleaver_random_column: \"size\" has to be equal to "
 			                            "\"n_cols\" * \"col_size\".");
 
 		rd_engine.seed(seed);
-		gen_lookup_tables();
 	}
 
-	void gen_lookup_tables()
+	virtual ~Interleaver_random_column()
+	{
+	}
+
+protected:
+	void gen_lut(T *lut, const int frame_id)
 	{
 		mipp::vector<T> pi_temp(col_size); // interleaver lookup table for a column
 
@@ -47,11 +51,8 @@ public:
 			std::shuffle(pi_temp.begin(), pi_temp.end(), rd_engine);
 
 			for (auto c = 0; c < col_size; c++)
-				this->pi[c + column * col_size] = pi_temp[c];
+				lut[c + column * col_size] = pi_temp[c];
 		}
-
-		for (auto i = 0; i < (int)this->pi_inv.size(); i++)
-			this->pi_inv[this->pi[i]] = i;
 	}
 };
 }

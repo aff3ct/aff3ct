@@ -39,6 +39,9 @@ protected:
 	virtual void release_objects();
 	virtual void _launch();
 
+	virtual module::Interleaver<int>* build_interleaver(const int tid = 0);
+	virtual module::Coset      <B,Q>* build_coset_real (const int tid = 0);
+
 private:
 	void bind_sockets      ();
 	void bind_sockets_debug();

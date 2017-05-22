@@ -26,7 +26,7 @@ bool Monitor_std<B>
 
 template <typename B>
 void Monitor_std<B>
-::_check_errors(const B *U, const B *V)
+::_check_errors(const B *U, const B *V, const int frame_id)
 {
 	auto bit_errors_count = 0;
 	for (auto b = 0; b < this->size; b++)
@@ -38,17 +38,18 @@ void Monitor_std<B>
 		n_frame_errors++;
 
 		for (auto c : this->callbacks_fe)
-			c(n_analyzed_frames % this->n_frames);
+			c(frame_id);
 
-		if (this->fe_limit_achieved())
+		if (this->fe_limit_achieved() && frame_id == this->n_frames -1)
 			for (auto c : this->callbacks_fe_limit_achieved)
 				c();
 	}
 
 	n_analyzed_frames++;
 
-	for (auto c : this->callbacks_check)
-		c();
+	if (frame_id == this->n_frames -1)
+		for (auto c : this->callbacks_check)
+			c();
 }
 
 template <typename B>
@@ -129,6 +130,8 @@ template <typename B>
 void Monitor_std<B>
 ::reset()
 {
+	Monitor<B>::reset();
+
 	this->n_bit_errors      = 0;
 	this->n_frame_errors    = 0;
 	this->n_analyzed_frames = 0;

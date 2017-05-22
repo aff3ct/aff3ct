@@ -1,8 +1,9 @@
 #ifndef SIMULATION_BFER_STD_THREADS_HPP_
 #define SIMULATION_BFER_STD_THREADS_HPP_
 
-#include <thread>
 #include <vector>
+#include <thread>
+#include <mutex>
 
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -18,6 +19,10 @@ class Simulation_BFER_std_threads : public Simulation_BFER_std<B,R,Q>
 protected:
 	// array of threads
 	std::vector<std::thread> threads;
+
+	std::map<std::thread::id, int> thread_id;
+
+	std::mutex mutex_debug;
 
 	// data vector
 	std::vector<mipp::vector<B>> U_K1; // information bit vector
@@ -47,7 +52,8 @@ private:
 	void Monte_Carlo_method   (const int tid = 0);
 	void simulation_loop      (const int tid = 0);
 	void simulation_loop_bench(const int tid = 0);
-	void simulation_loop_debug(                 );
+
+	void display_debug();
 
 	static void start_thread(Simulation_BFER_std_threads<B,R,Q> *simu, const int tid = 0);
 };

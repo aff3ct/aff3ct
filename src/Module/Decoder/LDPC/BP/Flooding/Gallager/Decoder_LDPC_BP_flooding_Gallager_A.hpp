@@ -33,7 +33,7 @@ public:
 	virtual ~Decoder_LDPC_BP_flooding_Gallager_A();
 
 protected:
-	void _hard_decode(const R *Y_N, B *V_K);
+	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
 };
 }
 }

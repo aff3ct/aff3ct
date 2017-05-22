@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_Encoder_module::b_transport);
 	}
 
+	const mipp::vector<B>& get_X_N()
+	{
+		return X_N;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{

@@ -83,10 +83,6 @@ Simulation_BFER<B,R,Q>
 	                                             this->monitor,
 	                                             this->params.simulation.inter_frame_level);
 #endif
-
-	// build the terminal to display the BER/FER
-	this->terminal = this->build_terminal();
-	Simulation::check_errors(this->terminal, "Terminal");
 }
 
 template <typename B, typename R, typename Q>
@@ -95,7 +91,6 @@ Simulation_BFER<B,R,Q>
 {
 	release_objects();
 
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
 	if (dumper_red  != nullptr) { delete dumper_red;  dumper_red  = nullptr; }
 
@@ -110,6 +105,10 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::build_communication_chain(const int tid)
 {
+	// build the terminal to display the BER/FER
+	this->terminal = this->build_terminal();
+	Simulation::check_errors(this->terminal, "Terminal");
+
 	for (auto& duration : this->durations[tid])
 		duration.second = std::chrono::nanoseconds(0);
 
@@ -154,7 +153,8 @@ void Simulation_BFER<B,R,Q>
 			params_writable->source     .path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->encoder    .path = base_path + "_" + std::to_string(snr_b) + ".enc";
 			params_writable->channel    .path = base_path + "_" + std::to_string(snr_b) + ".chn";
-			params_writable->interleaver.path = base_path + "_" + std::to_string(snr_b) + ".itl";
+			if (this->params.interleaver.uniform)
+				params_writable->interleaver.path = base_path + "_" + std::to_string(snr_b) + ".itl";
 		}
 
 		codec.snr_precompute(this->sigma);
@@ -172,13 +172,13 @@ void Simulation_BFER<B,R,Q>
 				threads[tid -1].join();
 
 			if (params.simulation.mpi_rank == 0 && !params.terminal.disabled && snr == params.simulation.snr_min &&
-			    !(params.simulation.debug && params.simulation.n_threads == 1) && !this->params.simulation.benchs)
+			    !params.simulation.debug && !this->params.simulation.benchs)
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
 			std::thread term_thread;
 			if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
-			    !this->params.simulation.benchs)
+			    !this->params.simulation.benchs && !this->params.simulation.debug)
 				// launch a thread dedicated to the terminal display
 				term_thread = std::thread(Simulation_BFER<B,R,Q>::start_thread_terminal, this);
 
@@ -188,7 +188,7 @@ void Simulation_BFER<B,R,Q>
 
 				// stop the terminal
 				if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
-				    !this->params.simulation.benchs)
+				    !this->params.simulation.benchs && !this->params.simulation.debug)
 				{
 					cond_terminal.notify_all();
 					// wait the terminal thread to finish
@@ -248,6 +248,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
+	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
 }
 
 template <typename B, typename R, typename Q>

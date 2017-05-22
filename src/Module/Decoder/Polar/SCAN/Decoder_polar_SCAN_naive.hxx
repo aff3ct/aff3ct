@@ -127,7 +127,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -149,7 +149,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::_soft_decode(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load(Y_N1);

@@ -37,7 +37,7 @@ CRC_polynomial_fast<B>
 
 template <typename B>
 void CRC_polynomial_fast<B>
-::_build(const B *U_K1, B *U_K2)
+::_build(const B *U_K1, B *U_K2, const int frame_id)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "
@@ -56,15 +56,15 @@ void CRC_polynomial_fast<B>
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check(const B *V_K)
+::_check(const B *V_K, const int frame_id)
 {
 	Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K + this->get_size());
-	return this->_check_packed(this->buff_crc.data());
+	return this->_check_packed(this->buff_crc.data(), frame_id);
 }
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check_packed(const B *V_K)
+::_check_packed(const B *V_K, const int frame_id)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw std::runtime_error("aff3ct::module::CRC_polynomial_fast: the code of the fast CRC works only on "

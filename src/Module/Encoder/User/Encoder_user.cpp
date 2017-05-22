@@ -40,9 +40,9 @@ Encoder_user<B>
 			for (auto i = 0; i < n_cw; i++)
 				for (auto j = 0; j < cw_size; j++)
 				{
-					B symbol;
+					int symbol;
 					file >> symbol;
-					this->codewords[i][j] = symbol;
+					this->codewords[i][j] = (B)symbol;
 				}
 		}
 		else
@@ -71,7 +71,7 @@ Encoder_user<B>
 
 template <typename B>
 void Encoder_user<B>
-::_encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	std::copy(this->codewords[this->cw_counter].begin(),
 	          this->codewords[this->cw_counter].end  (),

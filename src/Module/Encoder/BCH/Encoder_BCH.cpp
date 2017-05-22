@@ -18,7 +18,7 @@ Encoder_BCH<B>
 
 template <typename B>
 void Encoder_BCH<B>
-::_encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	for (auto i = 0; i < this->N - this->K; i++)
 		bb[i] = (B)0;

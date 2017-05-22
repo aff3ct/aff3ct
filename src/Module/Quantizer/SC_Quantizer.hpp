@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_Quantizer_module::b_transport);
 	}
 
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{

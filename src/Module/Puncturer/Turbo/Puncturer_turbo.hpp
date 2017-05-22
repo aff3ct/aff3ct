@@ -28,8 +28,8 @@ public:
 	virtual ~Puncturer_turbo();
 
 protected:
-	void   _puncture(const B *X_N1, B *X_N2) const;
-	void _depuncture(const Q *Y_N1, Q *Y_N2) const;
+	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;
+	void _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const;
 };
 }
 }

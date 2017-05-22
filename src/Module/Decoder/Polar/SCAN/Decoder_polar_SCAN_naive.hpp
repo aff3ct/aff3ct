@@ -32,10 +32,10 @@ public:
 	virtual ~Decoder_polar_SCAN_naive() {}
 
 protected:
-	        void _load       (const R *Y_N          );
-	        void _hard_decode(const R *Y_N,  B *V_K );
-	virtual void _soft_decode(const R *Y_N1, R *Y_N2);
-	virtual void _store      (               B *V_K ) const;
+	        void _load       (const R *Y_N                              );
+	        void _hard_decode(const R *Y_N,  B *V_K , const int frame_id);
+	virtual void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
+	virtual void _store      (               B *V_K                     ) const;
 
 	void _load_init();
 	void _decode();

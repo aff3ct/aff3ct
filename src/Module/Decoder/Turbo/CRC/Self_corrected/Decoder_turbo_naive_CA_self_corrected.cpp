@@ -40,10 +40,10 @@ Decoder_turbo_naive_CA_self_corrected<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_naive_CA_self_corrected<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	this->_load(Y_N);
+	this->_load(Y_N, frame_id);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -85,7 +85,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 			this->scaling_factor(this->l_e2n, ite);
 
 			// make the interleaving
-			this->pi.interleave(this->l_e2n, this->l_e1i, n_frames > 1, n_frames);
+			this->pi.interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, n_frames, n_frames > 1);
 
 			// self corrected
 			this->collect(this->l_e1i, ite, this->ext_nat);
@@ -115,7 +115,7 @@ void Decoder_turbo_naive_CA_self_corrected<B,R>
 					this->l_e2i[i] += this->l_sei[i];
 
 			// make the deinterleaving
-			this->pi.deinterleave(this->l_e2i, this->l_e1n, n_frames > 1, n_frames);
+			this->pi.deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, n_frames, n_frames > 1);
 
 			// compute the hard decision only if we are in the last iteration
 			if (ite == this->n_ite)

@@ -15,23 +15,19 @@ namespace module
 template <typename T = int>
 class Interleaver_LTE : public Interleaver<T>
 {
-private:
-	int call_counter;
-
 public:
 	Interleaver_LTE(int size, const int n_frames = 1, const std::string name = "Interleaver_LTE")
-	: Interleaver<T>(size, n_frames, name), call_counter(0) { gen_lookup_tables(); }
-
-	void gen_lookup_tables()
+	: Interleaver<T>(size, false, n_frames, name)
 	{
-		if (call_counter)
-		{
-			std::clog << tools::bold_yellow("(WW) It is useless to call the generation of the lookup table multiple ")
-			          << tools::bold_yellow("times on the LTE interleaver.")
-			          << std::endl;
-		}
-		call_counter++;
+	}
 
+	virtual ~Interleaver_LTE()
+	{
+	}
+
+protected:
+	void gen_lut(T *lut, const int frame_id)
+	{
 		std::map<T,T> f_1;
 		std::map<T,T> f_2;
 		f_1[  40] =   3; f_2[  40] =  10;
@@ -223,14 +219,11 @@ public:
 		f_1[6080] =  47; f_2[6080] = 190;
 		f_1[6144] = 263; f_2[6144] = 480;
 
-		auto size = (int)this->pi.size();
+		auto size = (int)this->get_size();
 		if (f_1.find(size) != f_1.end())
 		{
 			for (auto i = 0; i < size; i++)
-			{
-				this->pi[i] = (T)pi_LTE(i, (int)f_1[size], (int)f_2[size], size);
-				this->pi_inv[this->pi[i]] = (T)i;
-			}
+				lut[i] = (T)pi_LTE(i, (int)f_1[size], (int)f_2[size], size);
 		}
 		else
 		{

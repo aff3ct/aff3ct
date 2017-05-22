@@ -50,10 +50,10 @@ public:
 
 protected:
 	// soft decode
-	void _soft_decode(const R *Y_N1, R *Y_N2);
+	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 
 	// hard decoder
-	void _hard_decode(const R *Y_N, B *V_K);
+	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
 
 	// BP functions for decoding
 	void BP_decode(const R *Y_N);
