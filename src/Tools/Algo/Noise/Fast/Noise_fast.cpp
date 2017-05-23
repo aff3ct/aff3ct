@@ -87,7 +87,6 @@ void Noise_fast<R>
 		mipp::Reg<R> sintheta, costheta;
 		mipp::sincos(theta, sintheta, costheta);
 
-		// fmadd(a, b, c) = a * b + c
 		auto awgn1 = radius * costheta;
 		auto awgn2 = radius * sintheta;
 
