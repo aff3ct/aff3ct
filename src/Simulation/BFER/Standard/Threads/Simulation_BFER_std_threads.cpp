@@ -305,136 +305,136 @@ void Simulation_BFER_std_threads<B,R,Q>
 	const auto tid = this->thread_id[std::this_thread::get_id()];
 	Frame_trace<B> ft(this->params.simulation.debug_limit, this->params.simulation.debug_precision);
 
-	std::clog << "-------------------------------" << std::endl;
-	std::clog << "New encoding/decoding session !" << std::endl;
-	std::clog << "Thread id: " << tid              << std::endl;
-	std::clog << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
-	std::clog << "-------------------------------" << std::endl;
+	std::cout << "-------------------------------" << std::endl;
+	std::cout << "New encoding/decoding session !" << std::endl;
+	std::cout << "Thread id: " << tid              << std::endl;
+	std::cout << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
+	std::cout << "-------------------------------" << std::endl;
 
 	if (this->params.source.type != "AZCW")
 	{
-		std::clog << "Generate random bits U_K1..." << std::endl
+		std::cout << "Generate random bits U_K1..." << std::endl
 		          << "U_K1:" << std::endl;
 		ft.display_bit_vector(this->U_K1[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Build the CRC from U_K1 into U_K2..." << std::endl
+		std::cout << "Build the CRC from U_K1 into U_K2..." << std::endl
 		          << "U_K2:" << std::endl;
 		ft.display_bit_vector(this->U_K2[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Encode U_K2 in X_N1..." << std::endl
+		std::cout << "Encode U_K2 in X_N1..." << std::endl
 		          << "X_N1:" << std::endl;
 		ft.display_bit_vector(this->X_N1[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Puncture X_N1 in X_N2..." << std::endl
+		std::cout << "Puncture X_N1 in X_N2..." << std::endl
 		          << "X_N2:" << std::endl;
 		ft.display_bit_vector(this->X_N2[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
 		// modulate
-		std::clog << "Modulate X_N2 in X_N3..." << std::endl
+		std::cout << "Modulate X_N2 in X_N3..." << std::endl
 		          << "X_N3:" << std::endl;
 		ft.display_real_vector(this->X_N3[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 	}
 	else
 	{
-		std::clog << "U_K1:" << std::endl;
+		std::cout << "U_K1:" << std::endl;
 		ft.display_bit_vector(this->U_K1[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "U_K2:" << std::endl;
+		std::cout << "U_K2:" << std::endl;
 		ft.display_bit_vector(this->U_K2[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "X_N2:" << std::endl;
+		std::cout << "X_N2:" << std::endl;
 		ft.display_bit_vector(this->X_N2[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "X_N3:" << std::endl;
+		std::cout << "X_N3:" << std::endl;
 		ft.display_real_vector(this->X_N3[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 	}
 
 	// Rayleigh channel
 	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
 	{
-		std::clog << "Add noise from X_N3 to Y_N1..." << std::endl
+		std::cout << "Add noise from X_N3 to Y_N1..." << std::endl
 		          << "Y_N1:" << std::endl;
 		ft.display_real_vector(this->Y_N1[tid]);
-		std::clog << std::endl;
-		std::clog << "H_N:" << std::endl;
+		std::cout << std::endl;
+		std::cout << "H_N:" << std::endl;
 		ft.display_real_vector(this->H_N[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Filter from Y_N1 to Y_N2..." << std::endl
+		std::cout << "Filter from Y_N1 to Y_N2..." << std::endl
 		          << "Y_N2:" << std::endl;
 		ft.display_real_vector(this->Y_N2[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl
+		std::cout << "Demodulate from Y_N2 to Y_N3..." << std::endl
 		          << "Y_N3:" << std::endl;
 		ft.display_real_vector(this->Y_N3[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		std::clog << "Add noise from X_N3 to Y_N1..." << std::endl
+		std::cout << "Add noise from X_N3 to Y_N1..." << std::endl
 		          << "Y_N1:" << std::endl;
 		ft.display_real_vector(this->Y_N1[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Filter from Y_N1 to Y_N2..." << std::endl
+		std::cout << "Filter from Y_N1 to Y_N2..." << std::endl
 		          << "Y_N2:" << std::endl;
 		ft.display_real_vector(this->Y_N2[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 
-		std::clog << "Demodulate from Y_N2 to Y_N3..." << std::endl
+		std::cout << "Demodulate from Y_N2 to Y_N3..." << std::endl
 		          << "Y_N3:" << std::endl;
 		ft.display_real_vector(this->Y_N3[tid]);
-		std::clog << std::endl;
+		std::cout << std::endl;
 	}
 
-	std::clog << "Make the quantization from Y_N3 to Y_N4..." << std::endl
+	std::cout << "Make the quantization from Y_N3 to Y_N4..." << std::endl
 	          << "Y_N4:" << std::endl;
 	ft.display_real_vector(this->Y_N4[tid]);
-	std::clog << std::endl;
+	std::cout << std::endl;
 
-	std::clog << "Depuncture Y_N4 and generate Y_N5..." << std::endl
+	std::cout << "Depuncture Y_N4 and generate Y_N5..." << std::endl
 	          << "Y_N5:" << std::endl;
 	ft.display_real_vector(this->Y_N5[tid]);
-	std::clog << std::endl;
+	std::cout << std::endl;
 
 //	if (this->params.code.coset)
 //	{
-//		std::clog << "Apply the coset approach on Y_N5..." << std::endl
+//		std::cout << "Apply the coset approach on Y_N5..." << std::endl
 //		          << "Y_N5:" << std::endl;
 //		ft.display_real_vector(this->Y_N5[tid]);
-//		std::clog << std::endl;
+//		std::cout << std::endl;
 //	}
 
-	std::clog << "Decode Y_N5 and generate V_K1..." << std::endl
+	std::cout << "Decode Y_N5 and generate V_K1..." << std::endl
 	          << "V_K1:" << std::endl;
 	if (this->params.code.coset)
 		ft.display_bit_vector(this->V_K1[tid]);
 	else
 		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
-	std::clog << std::endl;
+	std::cout << std::endl;
 
 //	if (this->params.code.coset)
 //	{
-//		std::clog << "Apply the coset approach on V_K1..." << std::endl
+//		std::cout << "Apply the coset approach on V_K1..." << std::endl
 //		          << "V_K1:" << std::endl;
 //		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
-//		std::clog << std::endl;
+//		std::cout << std::endl;
 //	}
 
-	std::clog << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
+	std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
 	          << "V_K2:" << std::endl;
 	ft.display_real_vector(this->V_K2[tid], this->U_K1[tid]);
-	std::clog << std::endl;
+	std::cout << std::endl;
 
 	this->mutex_debug.unlock();
 }
