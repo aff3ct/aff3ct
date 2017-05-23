@@ -14,6 +14,7 @@
 #include <Tools/Code/Polar/API/functions_polar_inter.h>
 #include <Tools/Code/Polar/API/functions_polar_intra_32bit.h>
 #include <Tools/Code/Polar/decoder_polar_functions.h>
+#include <Tools/Code/Polar/fb_extract.h>
 #include <Tools/Perf/MIPP/math/sse_mathfun.h>
 #include <Tools/Perf/MIPP/math/avx_mathfun.h>
 #include <Tools/Perf/MIPP/math/neon_mathfun.h>
@@ -26,6 +27,7 @@
 #include <Tools/Display/bash_tools.h>
 // #include <Tools/MSVC/dirent.h>
 #include <Tools/params.h>
+
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
 #include <Tools/Threads/Barrier.hpp>
@@ -67,6 +69,11 @@
 #include <Tools/Algo/Tree/Binary_node.hpp>
 #include <Tools/Algo/Tree/Binary_tree.hpp>
 #include <Tools/Algo/Tree/Binary_tree_metric.hpp>
+#include <Tools/Algo/Noise/Fast/Noise_fast.hpp>
+#include <Tools/Algo/Noise/Standard/Noise_std.hpp>
+#include <Tools/Algo/Noise/MKL/Noise_MKL.hpp>
+#include <Tools/Algo/Noise/Noise.hpp>
+#include <Tools/Algo/Noise/GSL/Noise_GSL.hpp>
 #include <Tools/Algo/Predicate_ite.hpp>
 #include <Tools/Algo/Bit_packer.hpp>
 #include <Tools/SystemC/SC_Router.hpp>
@@ -124,10 +131,22 @@
 #include <Tools/Arguments_reader.hpp>
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
 #include <Tools/Display/Frame_trace/Frame_trace.hpp>
+#include <Tools/Display/Dumper/Dumper.hpp>
+#include <Tools/Display/Dumper/Dumper_reduction.hpp>
 #include <Tools/Display/Terminal/Terminal.hpp>
 #include <Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp>
 #include <Tools/Display/Terminal/BFER/Terminal_BFER_legacy.hpp>
 #include <Tools/Display/Terminal/BFER/Terminal_BFER.hpp>
+#include <Tools/Codec/Polar/Codec_polar.hpp>
+#include <Tools/Codec/Codec_SISO.hpp>
+#include <Tools/Codec/RSC/Codec_RSC.hpp>
+#include <Tools/Codec/Codec.hpp>
+#include <Tools/Codec/Repetition/Codec_repetition.hpp>
+#include <Tools/Codec/LDPC/Codec_LDPC.hpp>
+#include <Tools/Codec/Uncoded/Codec_uncoded.hpp>
+#include <Tools/Codec/BCH/Codec_BCH.hpp>
+#include <Tools/Codec/RA/Codec_RA.hpp>
+#include <Tools/Codec/Turbo/Codec_turbo.hpp>
 #include <Module/Interleaver/Random/Interleaver_random.hpp>
 #include <Module/Interleaver/Golden/Interleaver_golden.hpp>
 // #include <Module/Interleaver/SPU_Interleaver.hpp>
@@ -183,15 +202,7 @@
 #include <Module/Encoder/Turbo/Encoder_turbo.hpp>
 #include <Module/Encoder/Turbo/Encoder_turbo_legacy.hpp>
 #include <Module/Channel/Channel.hpp>
-#include <Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LR.hpp>
-#include <Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LLR.hpp>
-#include <Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LLR.hpp>
-#include <Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LR.hpp>
-#include <Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LLR.hpp>
-#include <Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LR.hpp>
-#include <Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LLR.hpp>
-#include <Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LR.hpp>
-#include <Module/Channel/Additive/User/Channel_additive_user.hpp>
+#include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
 // #include <Module/Channel/SPU_Channel.hpp>
 #include <Module/Channel/User/Channel_user.hpp>
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
@@ -366,6 +377,7 @@
 #include <Module/Decoder/Repetition/Decoder_repetition.hpp>
 // #include <Module/Decoder/SC_SISO.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp>
+#include <Module/Decoder/LDPC/BP/Layered/ONMS/Decoder_LDPC_BP_layered_ONMS_inter.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/LSPA/Decoder_LDPC_BP_layered_log_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/SPA/Decoder_LDPC_BP_layered_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Layered/Decoder_LDPC_BP_layered.hpp>
@@ -444,25 +456,14 @@
 #include <Simulation/EXIT/Code/Polar/Simulation_EXIT_polar.hpp>
 #include <Simulation/EXIT/Code/RSC/Simulation_EXIT_RSC.hpp>
 #include <Simulation/GEN/Code/Polar/Generation_polar.hpp>
-#include <Simulation/BFER/Standard/STD_Simulation_BFER.hpp>
+#include <Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp>
+#include <Simulation/BFER/Standard/StarPU/SPU_Simulation_BFER_std.hpp>
+#include <Simulation/BFER/Standard/SystemC/SC_Simulation_BFER_std.hpp>
+#include <Simulation/BFER/Standard/Simulation_BFER_std.hpp>
+#include <Simulation/BFER/Iterative/Simulation_BFER_ite.hpp>
+#include <Simulation/BFER/Iterative/Threads/Simulation_BFER_ite_threads.hpp>
+#include <Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp>
 #include <Simulation/BFER/Simulation_BFER.hpp>
-// #include <Simulation/BFER/StarPU/SPU_Simulation_BFER.hpp>
-// #include <Simulation/BFER/SystemC/SC_Simulation_BFER.hpp>
-#include <Simulation/BFER/Code/Polar/Simulation_BFER_polar.hpp>
-#include <Simulation/BFER/Code/RSC/Simulation_BFER_RSC.hpp>
-#include <Simulation/BFER/Code/Repetition/Simulation_BFER_repetition.hpp>
-#include <Simulation/BFER/Code/LDPC/Simulation_BFER_LDPC.hpp>
-#include <Simulation/BFER/Code/Uncoded/Simulation_BFER_uncoded.hpp>
-#include <Simulation/BFER/Code/BCH/Simulation_BFER_BCH.hpp>
-#include <Simulation/BFER/Code/RA/Simulation_BFER_RA.hpp>
-#include <Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp>
-#include <Simulation/BFERI/Standard/STD_Simulation_BFERI.hpp>
-// #include <Simulation/BFERI/SystemC/SC_Simulation_BFERI.hpp>
-#include <Simulation/BFERI/Simulation_BFERI.hpp>
-#include <Simulation/BFERI/Code/Polar/Simulation_BFERI_polar.hpp>
-#include <Simulation/BFERI/Code/RSC/Simulation_BFERI_RSC.hpp>
-#include <Simulation/BFERI/Code/LDPC/Simulation_BFERI_LDPC.hpp>
-#include <Simulation/BFERI/Code/Uncoded/Simulation_BFERI_uncoded.hpp>
 // #include <aff3ct.hpp>
 #include <Generator/Polar/SC/Generator_polar_SC_sys.hpp>
 #include <Generator/Polar/Generator_polar.hpp>
