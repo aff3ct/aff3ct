@@ -37,16 +37,16 @@ void Channel_Rayleigh_LLR<R>
 
 	if (this->complex)
 	{
-		for (auto i = 0; i < (this->N * this->n_frames) / 2 ; i++)
+		for (auto i = 0; i < this->N * this->n_frames; i += 2)
 		{
-			const auto h_re = this->gains[2*i   ];
-			const auto h_im = this->gains[2*i +1];
+			const auto h_re = H_N[i   ] = this->gains[i   ];
+			const auto h_im = H_N[i +1] = this->gains[i +1];
 
-			const auto n_re = this->noise[2*i   ];
-			const auto n_im = this->noise[2*i +1];
+			const auto n_re = this->noise[i   ];
+			const auto n_im = this->noise[i +1];
 
-			Y_N[2*i   ] = h_re * X_N[2*i   ] - h_im * X_N[2*i +1] + n_re;
-			Y_N[2*i +1] = h_re * X_N[2*i +1] + h_im * X_N[2*i   ] + n_im;
+			Y_N[i   ] = (X_N[i   ] * h_re - X_N[i +1] * h_im) + n_re;
+			Y_N[i +1] = (X_N[i +1] * h_re + X_N[i   ] * h_im) + n_im;
 		}
 	}
 	else
@@ -57,7 +57,7 @@ void Channel_Rayleigh_LLR<R>
 			const auto h_im = this->gains[2*i +1];
 
 			H_N[i] = std::sqrt(h_re * h_re + h_im * h_im);
-			Y_N[i] = H_N[i] * X_N[i] + this->noise[i];
+			Y_N[i] = X_N[i] * H_N[i] + this->noise[i];
 		}
 	}
 }
