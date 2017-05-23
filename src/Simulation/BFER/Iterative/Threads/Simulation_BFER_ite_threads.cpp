@@ -190,7 +190,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		this->durations[tid][std::make_pair(7, "Quantizer")] += steady_clock::now() - t_quant;
 
 		std::fill(this->Y_N7[tid].begin(), this->Y_N7[tid].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.demodulator.n_ite; ite++)
+		for (auto ite = 0; ite <= this->params.simulation.n_ite; ite++)
 		{
 			// Rayleigh channel
 			if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
@@ -223,7 +223,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			}
 
 			// soft decode
-			if (ite != this->params.demodulator.n_ite)
+			if (ite != this->params.simulation.n_ite)
 			{
 				// decode
 				auto t_decod = steady_clock::now();
@@ -427,7 +427,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		std::cout << std::endl;
 
 		std::fill(this->Y_N7[0].begin(), this->Y_N7[0].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.demodulator.n_ite; ite++)
+		for (auto ite = 0; ite <= this->params.simulation.n_ite; ite++)
 		{
 			std::cout << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
 
@@ -485,7 +485,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			}
 
 			// soft decode
-			if (ite != this->params.demodulator.n_ite)
+			if (ite != this->params.simulation.n_ite)
 			{
 				// decode
 				std::cout << "Soft decode from Y_N5 to Y_N6..." << std::endl;

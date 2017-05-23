@@ -18,6 +18,7 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .debug_precision  = 5;
 	this->params.simulation .time_report      = false;
+	this->params.simulation .n_ite            = 15;
 #if !defined(STARPU) && !defined(SYSTEMC)
 	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
@@ -30,7 +31,6 @@ Launcher_BFERI<B,R,Q>
 	this->params.interleaver.n_cols           = 4;
 	this->params.interleaver.uniform          = false;
 	this->params.demodulator.max              = "MAX";
-	this->params.demodulator.n_ite            = 30;
 	this->params.monitor    .n_frame_errors   = 100;
 	this->params.monitor    .err_track_enable = false;
 	this->params.monitor    .err_track_revert = false;
@@ -64,6 +64,9 @@ void Launcher_BFERI<B,R,Q>
 		{"string",
 		 "select the type of SNR: symbol energy or information bit energy.",
 		 "ES, EB"};
+	this->opt_args[{"sim-ite", "I"}] =
+		{"positive_int",
+		 "number of global turbo iterations between the demodulator and the decoder."};
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	this->opt_args[{"cde-coset", "c"}] =
@@ -97,11 +100,6 @@ void Launcher_BFERI<B,R,Q>
 		{"",
 		 "enable the regeneration of the interleaver for each new frame."};
 
-	// --------------------------------------------------------------------------------------------------- demodulator
-	this->opt_args[{"dmod-ite", "I"}] =
-		{"positive_int",
-		 "number of iterations in the turbo demodulation."};
-
 	// ------------------------------------------------------------------------------------------------------- monitor
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
@@ -132,6 +130,7 @@ void Launcher_BFERI<B,R,Q>
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs      = this->ar.get_arg_int({"sim-benchs",   "b"});
 	if(this->ar.exist_arg({"sim-snr-type",  "E"})) this->params.simulation.snr_type    = this->ar.get_arg    ({"sim-snr-type", "E"});
+	if(this->ar.exist_arg({"sim-ite",       "I"})) this->params.simulation.n_ite       = this->ar.get_arg_int({"sim-ite",      "I"});
 	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report = true;
 	if(this->ar.exist_arg({"sim-debug",     "d"})) this->params.simulation.debug       = true;
 	if(this->ar.exist_arg({"sim-debug-limit"   }))
@@ -171,12 +170,8 @@ void Launcher_BFERI<B,R,Q>
 	if(this->ar.exist_arg({"itl-cols"})) this->params.interleaver.n_cols  = this->ar.get_arg_int({"itl-cols"});
 	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.uniform = true;
 
-	// --------------------------------------------------------------------------------------------------- demodulator
-	if(this->ar.exist_arg({"dmod-ite", "I"})) this-> params.demodulator.n_ite = this->ar.get_arg_int({"dmod-ite", "I"});
-
 	// ------------------------------------------------------------------------------------------------------- monitor
-	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
-
+	if(this->ar.exist_arg({"mnt-max-fe",  "e"})) this->params.monitor.n_frame_errors   = this->ar.get_arg_int({"mnt-max-fe", "e"});
 	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
 	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
 	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = this->ar.get_arg({"mnt-err-trk-path"});
@@ -216,6 +211,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_simulation();
 
 	p.push_back(std::make_pair("Multi-threading (t)", threads));
+	p.push_back(std::make_pair("Global iterations (I)", std::to_string(this->params.simulation.n_ite)));
 
 	return p;
 }
@@ -266,17 +262,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 		p.push_back(std::make_pair("Number of columns", std::to_string(this->params.interleaver.n_cols)));
 
 	p.push_back(std::make_pair("Uniform", (this->params.interleaver.uniform ? "on" : "off")));
-
-	return p;
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
-::header_demodulator()
-{
-	auto p = Launcher<B,R,Q>::header_demodulator();
-
-	p.push_back(std::make_pair("Turbo demod. iterations (I)", std::to_string(this->params.demodulator.n_ite)));
 
 	return p;
 }

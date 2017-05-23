@@ -117,7 +117,7 @@ template <typename B, typename R, typename Q>
 void SC_Simulation_BFER_ite<B,R,Q>
 ::_launch()
 {
-	Predicate_ite p(this->params.demodulator.n_ite);
+	Predicate_ite p(this->params.simulation.n_ite);
 
 	this->duplicator[0] = new SC_Duplicator(   "Duplicator0");
 	this->duplicator[1] = new SC_Duplicator(   "Duplicator1");

@@ -35,6 +35,7 @@ struct simulation_parameters
 	int                       seed;
 	int                       mpi_rank;
 	int                       mpi_size;
+	int                       n_ite; // number of demodulations/decoding sessions to perform in the BFERI simulations
 };
 
 struct code_parameters
@@ -113,7 +114,6 @@ struct demodulator_parameters
 {
 	std::string max;     // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
 	bool        no_sig2; // do not divide by (sig^2) / 2 in the demodulation
-	int         n_ite;   // number of demodulations/decoding sessions to perform in the BFERI simulations
 };
 
 struct channel_parameters

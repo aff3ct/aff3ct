@@ -27,7 +27,6 @@ protected:
 	virtual std::vector<std::pair<std::string,std::string>> header_code       ();
 	virtual std::vector<std::pair<std::string,std::string>> header_encoder    ();
 	virtual std::vector<std::pair<std::string,std::string>> header_interleaver();
-	virtual std::vector<std::pair<std::string,std::string>> header_demodulator();
 	virtual std::vector<std::pair<std::string,std::string>> header_decoder    ();
 	virtual std::vector<std::pair<std::string,std::string>> header_monitor    ();
 };

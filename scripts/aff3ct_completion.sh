@@ -87,7 +87,7 @@ _aff3ct() {
 		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe              \
 		      --sim-debug-limit                                                \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --itl-cols --itl-uni --dmod-ite -I --mnt-max-fe -e    \
+		      --itl-path --itl-cols --itl-uni --sim-ite -I --mnt-max-fe -e     \
 		      --term-type"
 	fi
 
@@ -201,7 +201,7 @@ _aff3ct() {
 		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |           \
 		--mnt-max-fe | -e |                                                  \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |   \
-		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
+		--sim-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
 		--itl-cols | --dec-synd-depth | --pct-pattern |                      \
