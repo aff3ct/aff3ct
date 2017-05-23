@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_user<R>
 ::Channel_user(const int N, const std::string filename, const int n_frames, const std::string name)
-: Channel<R>(N, (R)1, n_frames, name), noise(), noise_counter(0)
+: Channel<R>(N, (R)1, n_frames, name), noise_buff(), noise_counter(0)
 {
 	if (filename.empty())
 		throw std::invalid_argument("aff3ct::module::Channel_user: path to the file should not be empty.");
@@ -26,14 +26,14 @@ Channel_user<R>
 			throw std::runtime_error("aff3ct::module::Channel_user: \"n_fra\" and \"fra_size\" have to be "
 			                         "bigger than 0.");
 
-		this->noise.resize(n_fra);
+		this->noise_buff.resize(n_fra);
 		for (unsigned i = 0; i < (unsigned)n_fra; i++)
-			this->noise[i].resize(fra_size);
+			this->noise_buff[i].resize(fra_size);
 
 		if (fra_size == this->N)
 		{
 			for (unsigned i = 0; i < (unsigned)n_fra; i++)
-				file.read(reinterpret_cast<char*>(&this->noise[i][0]), fra_size*sizeof(R));
+				file.read(reinterpret_cast<char*>(&this->noise_buff[i][0]), fra_size * sizeof(R));
 		}
 		else
 		{
@@ -47,7 +47,7 @@ Channel_user<R>
 	}
 	else
 	{
-		throw std::invalid_argument("aff3ct::module::Channel_user: can't open \"" + filename + "\" file.");
+		throw std::invalid_argument("aff3ct::module::Channel_user: can't open \"" + filename + "\" file");
 	}
 }
 
@@ -61,10 +61,16 @@ template <typename R>
 void Channel_user<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	for (auto i = 0; i < this->N; i++)
-		Y_N[i] = this->noise[this->noise_counter][i];
+	auto noise = this->noise.data() + this->N * frame_id;
 
-	this->noise_counter = (this->noise_counter +1) % (int)this->noise.size();
+	std::copy(this->noise_buff[this->noise_counter].begin(),
+	          this->noise_buff[this->noise_counter].end  (),
+	          noise);
+
+	for (auto i = 0; i < this->N; i++)
+		Y_N[i] = X_N[i] + noise[i];
+
+	this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
 }
 
 // ==================================================================================== explicit template instantiation 

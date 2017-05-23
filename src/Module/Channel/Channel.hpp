@@ -36,6 +36,8 @@ protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
 	      R   sigma; /*!< Sigma^2, the noise variance */
 
+	mipp::vector<R> noise;
+
 public:
 	/*!
 	 * \brief Constructor.
@@ -45,7 +47,7 @@ public:
 	 * \param name:     Channel's name.
 	 */
 	Channel_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Channel_i")
-	: Module(n_frames, name), N(N), sigma(sigma)
+	: Module(n_frames, name), N(N), sigma(sigma), noise(this->N * this->n_frames, 0)
 	{
 		if (N <= 0)
 			throw std::invalid_argument("aff3ct::module::Channel: \"N\" has to be greater than 0.");
@@ -68,6 +70,11 @@ public:
 	R get_sigma() const
 	{
 		return this->sigma;
+	}
+
+	const mipp::vector<R>& get_noise() const
+	{
+		return noise;
 	}
 
 	virtual void set_sigma(const R sigma)

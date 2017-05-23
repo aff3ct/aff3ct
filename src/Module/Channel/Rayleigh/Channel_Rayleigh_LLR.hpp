@@ -1,7 +1,8 @@
 #ifndef CHANNEL_RAYLEIGH_LLR_HPP_
 #define CHANNEL_RAYLEIGH_LLR_HPP_
 
-#include <random>
+#include "Tools/Algo/Noise/Noise.hpp"
+#include "Tools/Algo/Noise/Standard/Noise_std.hpp"
 
 #include "../Channel.hpp"
 
@@ -14,18 +15,14 @@ class Channel_Rayleigh_LLR : public Channel<R> // flat Rayleigh fading channel
 {
 private:
 	const bool complex;
-
-	std::random_device          rd;
-	std::mt19937                rd_engine;
-	std::normal_distribution<R> normal_dist_n;
-	std::normal_distribution<R> normal_dist_h;
+	mipp::vector<R> gains;
+	tools::Noise<R> *noise_generator;
 
 public:
-	Channel_Rayleigh_LLR(const int N, const R& sigma, const bool complex, const int seed = 0, const int n_frames = 1,
+	Channel_Rayleigh_LLR(const int N, const R sigma, const bool complex,
+	                     tools::Noise<R> *noise_generator = new tools::Noise_std<R>(), const int n_frames = 1,
 	                     const std::string name = "Channel_Rayleigh_LLR");
 	virtual ~Channel_Rayleigh_LLR();
-
-	void set_sigma(const R sigma);
 
 	virtual void add_noise(const R *X_N, R *Y_N, R *H_N); using Channel<R>::add_noise;
 };

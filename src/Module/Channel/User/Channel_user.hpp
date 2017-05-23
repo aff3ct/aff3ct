@@ -14,7 +14,7 @@ template <typename R = float>
 class Channel_user : public Channel<R>
 {
 private:
-	mipp::vector<mipp::vector<R>> noise;
+	mipp::vector<mipp::vector<R>> noise_buff;
 	int noise_counter;
 
 public:

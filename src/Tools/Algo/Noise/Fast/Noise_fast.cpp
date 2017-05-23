@@ -1,15 +1,14 @@
 #include <stdexcept>
-#include <algorithm>
+#include <cmath>
 
-#include "Channel_AWGN_fast_LLR.hpp"
+#include "Noise_fast.hpp"
 
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename R>
-Channel_AWGN_fast_LLR<R>
-::Channel_AWGN_fast_LLR(const int N, const R& sigma, const int seed, const int n_frames, const std::string name)
-: Channel<R>(N, sigma, n_frames, name),
+Noise_fast<R>
+::Noise_fast(const int seed)
+: Noise<R>(),
   mt19937(seed),
   mt19937_simd()
 {
@@ -20,33 +19,33 @@ Channel_AWGN_fast_LLR<R>
 }
 
 template <typename R>
-Channel_AWGN_fast_LLR<R>
-::~Channel_AWGN_fast_LLR()
+Noise_fast<R>
+::~Noise_fast()
 {
 }
 
 template <typename R>
-mipp::Reg<R> Channel_AWGN_fast_LLR<R>
+mipp::Reg<R> Noise_fast<R>
 ::get_random_simd()
 {
-	throw std::runtime_error("aff3ct::module::Channel_AWGN_fast_LLR: the MT19937 random generator does not support "
+	throw std::runtime_error("aff3ct::module::Noise_fast: the MT19937 random generator does not support "
 	                         "this type.");
 }
 
 template <typename R>
-R Channel_AWGN_fast_LLR<R>
+R Noise_fast<R>
 ::get_random()
 {
-	throw std::runtime_error("aff3ct::module::Channel_AWGN_fast_LLR: the MT19937 random generator does not support "
+	throw std::runtime_error("aff3ct::module::Noise_fast: the MT19937 random generator does not support "
 	                         "this type.");
 }
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template <>
-mipp::Reg<float> Channel_AWGN_fast_LLR<float>
+mipp::Reg<float> Noise_fast<float>
 ::get_random_simd()
 {
 	// return a vector of numbers between ]0,1[
@@ -57,10 +56,10 @@ mipp::Reg<float> Channel_AWGN_fast_LLR<float>
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template <>
-float Channel_AWGN_fast_LLR<float>
+float Noise_fast<float>
 ::get_random()
 {
 	// return a number between ]0,1[
@@ -70,71 +69,70 @@ float Channel_AWGN_fast_LLR<float>
 }
 
 template <typename R>
-void Channel_AWGN_fast_LLR<R>
-::add_noise(const R *X_N, R *Y_N)
+void Noise_fast<R>
+::generate(R *noise, const unsigned length, const R sigma)
 {
 	const auto twopi = (R)(2.0 * 3.14159265358979323846);
 
 	// SIMD version of the Box Muller method in the polar form
-	const auto loop_size = this->N * this->n_frames;
-	const auto vec_loop_size = (int)((loop_size / (mipp::nElReg<R>() * 2)) * mipp::nElReg<R>() * 2);
+	const auto vec_loop_size = (int)(((int)length / (mipp::nElReg<R>() * 2)) * mipp::nElReg<R>() * 2);
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>() * 2) 
 	{
 		const auto u1 = get_random_simd();
 		const auto u2 = get_random_simd();
 
-		const auto radius = mipp::sqrt(mipp::log(u1) * (R)-2.0) * this->sigma;
+		const auto radius = mipp::sqrt(mipp::log(u1) * (R)-2.0) * sigma;
 		const auto theta  = u2 * twopi;
 
 		mipp::Reg<R> sintheta, costheta;
 		mipp::sincos(theta, sintheta, costheta);
 
 		// fmadd(a, b, c) = a * b + c
-		auto awgn1 = mipp::fmadd(radius, costheta, mipp::Reg<R>(&X_N[i                    ]));
-		auto awgn2 = mipp::fmadd(radius, sintheta, mipp::Reg<R>(&X_N[i + mipp::nElReg<R>()]));
+		auto awgn1 = radius * costheta;
+		auto awgn2 = radius * sintheta;
 
-		awgn1.store(&Y_N[i                    ]);
-		awgn2.store(&Y_N[i + mipp::nElReg<R>()]);
+		awgn1.store(&noise[i                    ]);
+		awgn2.store(&noise[i + mipp::nElReg<R>()]);
 	}
 
 	// seq version of the Box Muller method in the polar form
-	const auto seq_loop_size = (int)(loop_size / 2) * 2;
+	const auto seq_loop_size = (int)(length / 2) * 2;
 	for (auto i = vec_loop_size; i < seq_loop_size; i += 2)
 	{
 		const auto u1 = get_random();
 		const auto u2 = get_random();
 
-		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * this->sigma;
+		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * sigma;
 		const auto theta  = u2 * twopi;
 
 		const auto sintheta = std::sin(theta);
 		const auto costheta = std::cos(theta);
 
-		Y_N[i +0] = radius * sintheta + X_N[i +0];
-		Y_N[i +1] = radius * costheta + X_N[i +1];
+		noise[i +0] = radius * sintheta;
+		noise[i +1] = radius * costheta;
 	}
 
 	// distribute the last odd element
-	if (loop_size != seq_loop_size)
+	if ((int)length != seq_loop_size)
 	{
 		const auto u1 = get_random();
 		const auto u2 = get_random();
 
-		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * this->sigma;
+		const auto radius = (R)std::sqrt(std::log(u1) * (R)-2.0) * sigma;
 		const auto theta  = twopi * u2;
 
 		const auto sintheta = std::sin(theta);
 
-		Y_N[loop_size -1] = radius * sintheta + X_N[loop_size -1];
+		noise[length -1] = radius * sintheta;
 	}
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Channel_AWGN_fast_LLR<R_32>;
-template class aff3ct::module::Channel_AWGN_fast_LLR<R_64>;
+template class aff3ct::tools::Noise_fast<R_32>;
+template class aff3ct::tools::Noise_fast<R_64>;
 #else
-template class aff3ct::module::Channel_AWGN_fast_LLR<R>;
+template class aff3ct::tools::Noise_fast<R>;
 #endif
 // ==================================================================================== explicit template instantiation

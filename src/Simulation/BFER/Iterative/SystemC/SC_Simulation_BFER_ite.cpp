@@ -94,12 +94,10 @@ void SC_Simulation_BFER_ite<B,R,Q>
 	{
 		const auto &U_K = this->source [tid]->sc_module->get_U_K();
 		const auto &X_N = this->encoder[tid]->sc_module->get_X_N();
-		const auto &Y_N = this->channel[tid]->sc_module->get_Y_N();
 
-		this->dumper[tid]->register_data(U_K, "src", false, {                             });
+		this->dumper[tid]->register_data(U_K, "src", false, {});
 		this->dumper[tid]->register_data(X_N, "enc", false, {(unsigned)this->params.code.K});
-		this->dumper[tid]->register_data(Y_N, "chn", true , {                             });
-
+		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 		if (this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}

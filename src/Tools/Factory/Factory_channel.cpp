@@ -1,18 +1,16 @@
 #include "Module/Channel/NO/Channel_NO.hpp"
 #include "Module/Channel/User/Channel_user.hpp"
-#include "Module/Channel/Additive/User/Channel_additive_user.hpp"
-#include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LR.hpp"
-#include "Module/Channel/Additive/AWGN/Standard/Channel_AWGN_std_LLR.hpp"
-#include "Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LR.hpp"
-#include "Module/Channel/Additive/AWGN/Fast/Channel_AWGN_fast_LLR.hpp"
+#include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
+
+#include "Tools/Algo/Noise/Standard/Noise_std.hpp"
+#include "Tools/Algo/Noise/Fast/Noise_fast.hpp"
+
 #ifdef CHANNEL_MKL
-#include "Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LR.hpp"
-#include "Module/Channel/Additive/AWGN/MKL/Channel_AWGN_MKL_LLR.hpp"
+#include "Tools/Algo/Noise/MKL/Noise_MKL.hpp"
 #endif
 #ifdef CHANNEL_GSL
-#include "Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LR.hpp"
-#include "Module/Channel/Additive/AWGN/GSL/Channel_AWGN_GSL_LLR.hpp"
+#include "Tools/Algo/Noise/GSL/Noise_GSL.hpp"
 #endif
 
 #include "Factory_channel.hpp"
@@ -27,61 +25,56 @@ Channel<R>* Factory_channel<R>
 	Channel<R> *channel = nullptr;
 
 	// build the channels
-	if (params.channel.type == "AWGN")
+	if (params.channel.domain == "LLR")
 	{
-		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_std_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_std_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-	}
-	else if (params.channel.type == "AWGN_FAST")
-	{
-		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_fast_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_fast_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-	}
+		if (params.channel.type == "AWGN")
+		{
+			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_std<R>(seed), params.simulation.inter_frame_level);
+		}
+		else if (params.channel.type == "AWGN_FAST")
+		{
+			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_fast<R>(seed), params.simulation.inter_frame_level);
+		}
 #ifdef CHANNEL_MKL
-	else if (params.channel.type == "AWGN_MKL")
-	{
-		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_MKL_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_MKL_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-	}
+		else if (params.channel.type == "AWGN_MKL")
+		{
+			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_MKL<R>(seed), params.simulation.inter_frame_level);
+		}
 #endif
 #ifdef CHANNEL_GSL
-	else if (params.channel.type == "AWGN_GSL")
-	{
-		if (params.channel.domain == "LLR")
-			channel = new Channel_AWGN_GSL_LLR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-		else if (params.channel.domain == "LR")
-			channel = new Channel_AWGN_GSL_LR<R>(size, sigma, seed +1, params.simulation.inter_frame_level);
-	}
-#endif
-	else if (params.channel.type == "RAYLEIGH")
-	{
-		if (params.channel.domain == "LLR")
+		else if (params.channel.type == "AWGN_GSL")
 		{
-			if (params.channel.block_fading == "NO")
-				channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, seed +1, params.simulation.inter_frame_level);
-			else if (params.channel.block_fading == "ONETAP")
-				channel = nullptr;
-			else if (params.channel.block_fading == "FRAME")
-				channel = nullptr;
+			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_GSL<R>(seed), params.simulation.inter_frame_level);
 		}
-	}
-	else if (params.channel.type == "NO")
-	{
-		channel = new Channel_NO<R>(size, params.simulation.inter_frame_level);
-	}
-	else if (params.channel.type == "ADD_USER")
-	{
-		channel = new Channel_additive_user<R>(size, params.channel.path, params.simulation.inter_frame_level);
-	}
-	else if (params.channel.type == "USER")
-	{
-		channel = new Channel_user<R>(size, params.channel.path, params.simulation.inter_frame_level);
+#endif
+		else if (params.channel.type == "RAYLEIGH" && params.channel.block_fading == "NO")
+		{
+			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_std<R>(seed), params.simulation.inter_frame_level);
+		}
+		else if (params.channel.type == "RAYLEIGH_FAST" && params.channel.block_fading == "NO")
+		{
+			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_fast<R>(seed), params.simulation.inter_frame_level);
+		}
+#ifdef CHANNEL_MKL
+		else if (params.channel.type == "RAYLEIGH_MKL" && params.channel.block_fading == "NO")
+		{
+			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_MKL<R>(seed), params.simulation.inter_frame_level);
+		}
+#endif
+#ifdef CHANNEL_GSL
+		else if (params.channel.type == "RAYLEIGH_GSL" && params.channel.block_fading == "NO")
+		{
+			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_GSL<R>(seed), params.simulation.inter_frame_level);
+		}
+#endif
+		else if (params.channel.type == "USER")
+		{
+			channel = new Channel_user<R>(size, params.channel.path, params.simulation.inter_frame_level);
+		}
+		else if (params.channel.type == "NO")
+		{
+			channel = new Channel_NO<R>(size, params.simulation.inter_frame_level);
+		}
 	}
 
 	return channel;
