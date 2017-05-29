@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
 #include "Factory_encoder_repetition.hpp"
@@ -15,7 +17,7 @@ Encoder_sys<B>* Factory_encoder_repetition<B>
 {
 	if (type == "REPETITION") return new Encoder_repetition_sys<B>(K, N, buffered, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_repetition: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

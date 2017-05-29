@@ -1,6 +1,8 @@
 #include <string>
 
 #include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
+#include <stdexcept>
+
 #include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
 #include "Module/Decoder/Turbo/CRC/Decoder_turbo_naive_CA.hpp"
 #include "Module/Decoder/Turbo/CRC/Self_corrected/Decoder_turbo_naive_CA_self_corrected.hpp"
@@ -53,7 +55,7 @@ Decoder<B,R>* Factory_decoder_turbo<B,R>
 		     if (type == "TURBO"    ) return new Decoder_turbo_fast                   <B,R>(K, N, n_ite, itl, siso_n, siso_i, sf,                                                       buffered);
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_turbo: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

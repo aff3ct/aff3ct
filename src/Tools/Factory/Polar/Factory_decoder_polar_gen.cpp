@@ -787,7 +787,7 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_polar_gen: the factory could not allocate the object.");
 }
 
 template <typename B, typename R>
@@ -895,7 +895,7 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 		}
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_polar_gen: the factory could not allocate the object.");
 }
 
 template <typename B, typename R>

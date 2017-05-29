@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Monitor/Standard/Monitor_std.hpp"
 
 #include "Factory_monitor.hpp"
@@ -14,7 +16,7 @@ Monitor<B>* Factory_monitor<B>
 {
 	if (type == "STD") return new Monitor_std<B>(K, fe, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_monitor: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

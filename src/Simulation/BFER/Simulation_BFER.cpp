@@ -50,10 +50,7 @@ Simulation_BFER<B,R,Q>
 	if (params.monitor.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
-		{
 			dumper[tid] = new Dumper(params.simulation.inter_frame_level);
-			Simulation::check_errors(dumper[tid], "Frame_dumper<B,R>");
-		}
 
 		std::vector<Dumper*> dumpers;
 		for (auto tid = 0; tid < params.simulation.n_threads; tid++)
@@ -63,10 +60,7 @@ Simulation_BFER<B,R,Q>
 	}
 
 	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
-	{
 		this->monitor[tid] = this->build_monitor(tid);
-		Simulation::check_errors(this->monitor[tid], "Monitor<B>");
-	}
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
@@ -107,7 +101,6 @@ void Simulation_BFER<B,R,Q>
 {
 	// build the terminal to display the BER/FER
 	this->terminal = this->build_terminal();
-	Simulation::check_errors(this->terminal, "Terminal");
 
 	for (auto& duration : this->durations[tid])
 		duration.second = std::chrono::nanoseconds(0);

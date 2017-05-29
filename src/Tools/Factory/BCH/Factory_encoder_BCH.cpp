@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
 #include "Factory_encoder_BCH.hpp"
@@ -15,7 +17,7 @@ Encoder<B>* Factory_encoder_BCH<B>
 {
 	if (type == "BCH") return new Encoder_BCH<B>(K, N, GF, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_BCH: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

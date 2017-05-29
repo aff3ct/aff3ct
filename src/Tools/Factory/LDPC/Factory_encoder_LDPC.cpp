@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
@@ -18,7 +20,7 @@ Encoder_LDPC<B>* Factory_encoder_LDPC<B>
 	else if (type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(K, N, AList_reader(path), n_frames);
 	else if (type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(K, N,                     n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_LDPC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

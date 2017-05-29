@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER_legacy.hpp"
 
@@ -20,7 +22,7 @@ Terminal* Factory_terminal<B>
 	     if (type == "STD"   ) return new Terminal_BFER       <B>(K, N, snr_s, snr_b, monitor, t_snr, d_decod_total);
 	else if (type == "LEGACY") return new Terminal_BFER_legacy<B>(K, N,        snr_b, monitor, t_snr               );
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_terminal: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

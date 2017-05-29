@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
 
@@ -19,7 +21,7 @@ Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
 	     if (type == "RSC_JSON") return new Encoder_RSC_generic_json_sys<B>(K, N, buffered, poly, stream, n_frames);
 	else if (type == "RSC"     ) return new Encoder_RSC_generic_sys     <B>(K, N, buffered, poly,         n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_RSC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

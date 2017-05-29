@@ -50,17 +50,17 @@ void Simulation_BFER_ite<B,R,Q>
 ::build_communication_chain(const int tid)
 {
 	// build the objects
-	source     [tid] = build_source     (tid); Simulation::check_errors(source     [tid], "Source<B>"       );
-	crc        [tid] = build_crc        (tid); Simulation::check_errors(crc        [tid], "CRC<B>"          );
-	encoder    [tid] = build_encoder    (tid); Simulation::check_errors(encoder    [tid], "Encoder<B>"      );
-	interleaver[tid] = build_interleaver(tid); Simulation::check_errors(interleaver[tid], "Interleaver<int>");
-	modulator  [tid] = build_modulator  (tid); Simulation::check_errors(modulator  [tid], "Modulator<B,R>"  );
-	channel    [tid] = build_channel    (tid); Simulation::check_errors(channel    [tid], "Channel<R>"      );
-	quantizer  [tid] = build_quantizer  (tid); Simulation::check_errors(quantizer  [tid], "Quantizer<R,Q>"  );
-	coset_real [tid] = build_coset_real (tid); Simulation::check_errors(coset_real [tid], "Coset<B,Q>"      );
-	siso       [tid] = build_siso       (tid); Simulation::check_errors(siso       [tid], "SISO<Q>"         );
-	decoder    [tid] = build_decoder    (tid); Simulation::check_errors(decoder    [tid], "Decoder<B,Q>"    );
-	coset_bit  [tid] = build_coset_bit  (tid); Simulation::check_errors(coset_bit  [tid], "Coset<B,B>"      );
+	source     [tid] = build_source     (tid);
+	crc        [tid] = build_crc        (tid);
+	encoder    [tid] = build_encoder    (tid);
+	interleaver[tid] = build_interleaver(tid);
+	modulator  [tid] = build_modulator  (tid);
+	channel    [tid] = build_channel    (tid);
+	quantizer  [tid] = build_quantizer  (tid);
+	coset_real [tid] = build_coset_real (tid);
+	siso       [tid] = build_siso       (tid);
+	decoder    [tid] = build_decoder    (tid);
+	coset_bit  [tid] = build_coset_bit  (tid);
 
 	interleaver[tid]->init();
 	if (interleaver[tid]->is_uniform())
@@ -122,17 +122,19 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_ite<B,R,Q>
 ::build_encoder(const int tid)
 {
-	auto enc = Factory_encoder_common<B>::build(this->params.encoder.type,
-	                                            this->params.code.K,
-	                                            this->params.code.N_code,
-	                                            this->params.encoder.path,
-	                                            rd_engine_seed[tid](),
-	                                            this->params.simulation.inter_frame_level);
-
-	if (enc == nullptr)
-		enc = this->codec.build_encoder(tid, interleaver[tid]);
-
-	return enc;
+	try
+	{
+		return this->codec.build_encoder(tid, interleaver[tid]);
+	}
+	catch (std::exception const&)
+	{
+		return Factory_encoder_common<B>::build(this->params.encoder.type,
+		                                        this->params.code.K,
+		                                        this->params.code.N_code,
+		                                        this->params.encoder.path,
+		                                        rd_engine_seed[tid](),
+		                                        this->params.simulation.inter_frame_level);
+	}
 }
 
 template <typename B, typename R, typename Q>

@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_seq.hpp"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_vec.hpp"
@@ -23,7 +25,7 @@ Scaling_factor<R>* Factory_scaling_factor<R>
 	else if (type == "ARRAY_FAST") return new Scaling_factor_array_fast<R>(K, n_ite     );
 	else if (type == "NO"        ) return new Scaling_factor_NO        <R>(K, n_ite     );
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_scaling_factor: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

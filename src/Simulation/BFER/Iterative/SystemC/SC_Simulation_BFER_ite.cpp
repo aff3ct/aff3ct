@@ -395,7 +395,6 @@ Interleaver<int>* SC_Simulation_BFER_ite<B,R,Q>
 	                                                      this->params.interleaver.n_cols,
 	                                                      seed,
 	                                                      this->params.simulation.inter_frame_level);
-	Simulation::check_errors(this->interleaver_e, "Interleaver<int>");
 
 	this->interleaver_e->init();
 	this->interleaver_e->rename("Interleaver_e");
@@ -416,7 +415,6 @@ Coset<B,Q>* SC_Simulation_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	this->coset_real_i = Simulation_BFER_ite<B,R,Q>::build_coset_real(tid);
-	Simulation::check_errors(this->coset_real_i, "Coset<B,Q>");
 	this->coset_real_i->rename("Coset_real_i");
 
 	return Simulation_BFER_ite<B,R,Q>::build_coset_real(tid);

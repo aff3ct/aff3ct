@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
 
@@ -21,7 +23,7 @@ Decoder<B,R>* Factory_decoder_repetition<B,R>
 		else if (implem == "FAST") return new Decoder_repetition_fast<B,R>(K, N, buffered, n_frames);
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_repetition: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

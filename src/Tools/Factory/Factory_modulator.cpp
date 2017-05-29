@@ -38,7 +38,7 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	else if (type == "USER"     ) return new Modulator_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
 	else if (type == "CPM"      ) return new Modulator_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
 
 template <typename B, typename R, typename Q>
@@ -63,7 +63,7 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	else if (max_type == "MAXS" ) return _build<max_star     <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 	else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
 
 template <typename B, typename R, typename Q>

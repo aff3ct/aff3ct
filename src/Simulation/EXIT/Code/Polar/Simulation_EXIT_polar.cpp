@@ -27,7 +27,6 @@ Simulation_EXIT_polar<B,R,Q>
 	                                                      this->params.code.sigma,
 	                                                      this->params.code.awgn_fb_path,
 	                                                      this->params.simulation.bin_pb_path);
-	Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");
 }
 
 template <typename B, typename R, typename Q>

@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
@@ -14,10 +16,9 @@ Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
         const Frozenbits_generator<B> *fb_generator,
         const int                      n_frames)
 {
-	     if (type == "WANGLIU") return new Puncturer_polar_wangliu<B,Q>(K, N, *fb_generator, n_frames);
-	else if (type == "NO"     ) return new Puncturer_NO           <B,Q>(K, N,                n_frames);
+	if (type == "WANGLIU") return new Puncturer_polar_wangliu<B,Q>(K, N, *fb_generator, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_puncturer_polar: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

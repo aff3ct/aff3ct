@@ -67,7 +67,6 @@ Generation_polar
 	                                                        this->params.code.sigma,
 	                                                        this->params.code.awgn_fb_path,
 	                                                        this->params.simulation.bin_pb_path);
-	check_errors(fb_generator, "Frozenbits_generator<int>");
 
 	// generate the frozen bits
 	fb_generator->set_sigma(sigma);

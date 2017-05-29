@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
 
@@ -18,7 +20,7 @@ Encoder<B>* Factory_encoder_polar<B>
 	     if (type == "POLAR" && !sys_encoding) return new Encoder_polar    <B>(K, N, frozen_bits, n_frames);
 	else if (type == "POLAR" &&  sys_encoding) return new Encoder_polar_sys<B>(K, N, frozen_bits, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_polar: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

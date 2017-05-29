@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Source/AZCW/Source_AZCW.hpp"
 #include "Module/Source/Random/Source_random.hpp"
 #include "Module/Source/Random/Source_random_fast.hpp"
@@ -21,7 +23,7 @@ Source<B>* Factory_source<B>
 	else if (type == "AZCW"     ) return new Source_AZCW       <B>(K,       n_frames);
 	else if (type == "USER"     ) return new Source_user       <B>(K, path, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_source: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -83,10 +83,10 @@ void Simulation_EXIT<B,R,Q>
 	release_objects();
 
 	// build the objects
-	source      = build_source     (     ); check_errors(source     , "Source<B>"         );
-	encoder     = build_encoder    (     ); check_errors(encoder    , "Encoder<B>"        );
-	modulator   = build_modulator  (     ); check_errors(modulator  , "Modulator<B,R>"    );
-	modulator_a = build_modulator_a(     ); check_errors(modulator_a, "Modulator<B,R>"    );
+	source      = build_source     (     );
+	encoder     = build_encoder    (     );
+	modulator   = build_modulator  (     );
+	modulator_a = build_modulator_a(     );
 
 	const auto N_mod = this->params.code.N_mod;
 	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
@@ -95,10 +95,10 @@ void Simulation_EXIT<B,R,Q>
 	                                                                              params.modulator.upsample_factor,
 	                                                                              params.modulator.cpm_L);
 
-	channel     = build_channel    (N_mod); check_errors(channel    , "Channel<R>"        );
-	channel_a   = build_channel_a  (K_mod); check_errors(channel    , "Channel<R>"        );
-	siso        = build_siso       (     ); check_errors(siso       , "SISO<R>"           );
-	terminal    = build_terminal   (     ); check_errors(terminal   , "Terminal_EXIT<B,R>");
+	channel     = build_channel    (N_mod);
+	channel_a   = build_channel_a  (K_mod);
+	siso        = build_siso       (     );
+	terminal    = build_terminal   (     );
 
 	if (siso->get_n_frames() > 1)
 		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");

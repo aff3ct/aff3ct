@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/ONMS/Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
@@ -46,7 +48,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 		     if (implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(K, N, n_ite, H, info_bits_pos, factor, offset, synd, synd_depth, n_frames);
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_LDPC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

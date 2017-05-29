@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 
 #include "Factory_decoder_BCH.hpp"
@@ -20,7 +22,7 @@ Decoder<B,R>* Factory_decoder_BCH<B,R>
 		if (implem == "STD") return new Decoder_BCH<B,R>(K, N, t, GF, n_frames);
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_BCH: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

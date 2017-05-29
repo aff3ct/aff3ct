@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Coset/Real/Coset_real.hpp"
 
 #include "Factory_coset_real.hpp"
@@ -13,7 +15,7 @@ Coset<B,Q>* Factory_coset_real<B,Q>
 {
 	if (type == "STD") return new Coset_real<B,Q>(N, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_coset_real: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
 
@@ -16,10 +18,9 @@ Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
         const bool        buffered,
         const int         n_frames)
 {
-	     if (type == "TURBO") return new Puncturer_turbo<B,Q>(K, N, tail_length, pattern, buffered, n_frames);
-	else if (type == "NO"   ) return new Puncturer_NO   <B,Q>(K, N,                                 n_frames);
+	if (type == "TURBO") return new Puncturer_turbo<B,Q>(K, N, tail_length, pattern, buffered, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_puncturer_turbo: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

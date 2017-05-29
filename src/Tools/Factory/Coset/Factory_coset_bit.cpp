@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Coset/Bit/Coset_bit.hpp"
 
 #include "Factory_coset_bit.hpp"
@@ -13,7 +15,7 @@ Coset<B,B>* Factory_coset_bit<B>
 {
 	if (type == "STD") return new Coset_bit<B,B>(K, n_frames);
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_coset_bit: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

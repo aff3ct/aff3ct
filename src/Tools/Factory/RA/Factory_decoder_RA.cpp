@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
 #include "Factory_decoder_RA.hpp"
@@ -20,7 +22,7 @@ Decoder<B,R>* Factory_decoder_RA<B,R>
 		if (implem == "STD" ) return new Decoder_RA<B,R>(K, N, itl, n_ite, n_frames);
 	}
 
-	return nullptr;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_RA: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 
