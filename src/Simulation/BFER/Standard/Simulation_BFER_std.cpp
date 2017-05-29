@@ -50,18 +50,23 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_std<B,R,Q>
 ::build_communication_chain(const int tid)
 {
+	const auto seed_src =                                    rd_engine_seed[tid]();
+	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
+	const auto seed_enc =                                    rd_engine_seed[tid]();
+	const auto seed_chn =                                    rd_engine_seed[tid]();
+
 	// build the objects
-	source     [tid] = build_source     (tid);
-	crc        [tid] = build_crc        (tid);
-	interleaver[tid] = build_interleaver(tid);
-	encoder    [tid] = build_encoder    (tid);
-	puncturer  [tid] = build_puncturer  (tid);
-	modulator  [tid] = build_modulator  (tid);
-	channel    [tid] = build_channel    (tid);
-	quantizer  [tid] = build_quantizer  (tid);
-	coset_real [tid] = build_coset_real (tid);
-	decoder    [tid] = build_decoder    (tid);
-	coset_bit  [tid] = build_coset_bit  (tid);
+	source     [tid] = build_source     (tid, seed_src);
+	crc        [tid] = build_crc        (tid          );
+	interleaver[tid] = build_interleaver(tid, seed_itl);
+	encoder    [tid] = build_encoder    (tid, seed_enc);
+	puncturer  [tid] = build_puncturer  (tid          );
+	modulator  [tid] = build_modulator  (tid          );
+	channel    [tid] = build_channel    (tid, seed_chn);
+	quantizer  [tid] = build_quantizer  (tid          );
+	coset_real [tid] = build_coset_real (tid          );
+	decoder    [tid] = build_decoder    (tid          );
+	coset_bit  [tid] = build_coset_bit  (tid          );
 
 	if (interleaver[tid] != nullptr)
 	{
@@ -95,12 +100,12 @@ void Simulation_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER_std<B,R,Q>
-::build_source(const int tid)
+::build_source(const int tid, const int seed)
 {
 	return Factory_source<B>::build(this->params.source.type,
 	                                this->params.code.K_info,
 	                                this->params.source.path,
-	                                rd_engine_seed[tid](),
+	                                seed,
 	                                this->params.simulation.inter_frame_level);
 }
 
@@ -117,7 +122,7 @@ CRC<B>* Simulation_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_std<B,R,Q>
-::build_encoder(const int tid)
+::build_encoder(const int tid, const int seed)
 {
 	try
 	{
@@ -129,7 +134,7 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 		                                        this->params.code.K,
 		                                        this->params.code.N_code,
 		                                        this->params.encoder.path,
-		                                        rd_engine_seed[tid](),
+		                                        seed,
 		                                        this->params.simulation.inter_frame_level);
 	}
 }
@@ -152,9 +157,8 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_std<B,R,Q>
-::build_interleaver(const int tid)
+::build_interleaver(const int tid, const int seed)
 {
-	const auto seed = (this->params.interleaver.uniform) ? rd_engine_seed[tid]() : this->params.interleaver.seed;
 	return this->codec.build_interleaver(tid, seed);
 }
 
@@ -180,14 +184,14 @@ Modulator<B,R,R>* Simulation_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_std<B,R,Q>
-::build_channel(const int tid)
+::build_channel(const int tid, const int seed)
 {
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 this->params.code.N_mod,
 	                                 this->sigma,
 	                                 this->params.modulator.complex,
 	                                 this->params.channel.path,
-	                                 rd_engine_seed[tid](),
+	                                 seed,
 	                                 this->params.simulation.inter_frame_level);
 }
 

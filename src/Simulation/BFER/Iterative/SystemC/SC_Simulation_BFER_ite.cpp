@@ -383,31 +383,16 @@ void SC_Simulation_BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Interleaver<int>* SC_Simulation_BFER_ite<B,R,Q>
-::build_interleaver(const int tid)
+::build_interleaver(const int tid, const int seed)
 {
-	const auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.interleaver.seed;
-
 	// build the objects
-	this->interleaver_e = Factory_interleaver<int>::build(this->params.interleaver.type,
-	                                                      this->params.code.N_code,
-	                                                      this->params.interleaver.path,
-	                                                      this->params.interleaver.uniform,
-	                                                      this->params.interleaver.n_cols,
-	                                                      seed,
-	                                                      this->params.simulation.inter_frame_level);
-
+	this->interleaver_e = Simulation_BFER_ite<B,R,Q>::build_interleaver(tid, seed);
 	this->interleaver_e->init();
 	this->interleaver_e->rename("Interleaver_e");
 	if (this->interleaver_e->is_uniform())
 		this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::refresh, this->interleaver_e));
 
-	return Factory_interleaver<int>::build(this->params.interleaver.type,
-	                                       this->params.code.N_code,
-	                                       this->params.interleaver.path,
-	                                       this->params.interleaver.uniform,
-	                                       this->params.interleaver.n_cols,
-	                                       seed,
-	                                       this->params.simulation.inter_frame_level);
+	return Simulation_BFER_ite<B,R,Q>::build_interleaver(tid, seed);
 }
 
 template <typename B, typename R, typename Q>
