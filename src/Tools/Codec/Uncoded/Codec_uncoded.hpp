@@ -19,6 +19,8 @@ public:
 	                                                             module::CRC        <B  >* crc = nullptr);
 	module::Decoder<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
 	                                                             module::CRC        <B  >* crc = nullptr);
+
+	void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par);
 };
 }
 }

@@ -16,9 +16,10 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_EXIT<B,R,Q>
-::Simulation_EXIT(const parameters& params)
+::Simulation_EXIT(const parameters& params, tools::Codec_SISO<B,R> &codec)
 : Simulation(),
 
+  codec (codec),
   params(params),
   H_N   (params.code.N),
   B_K   (params.code.K),
@@ -34,8 +35,8 @@ Simulation_EXIT<B,R,Q>
   La_K2 (params.code.K),
   Lch_N2(params.code.N),
   Le_K  (params.code.K),
-  sys   (params.code.K),
-  par   ((params.code.N - params.code.K) - (params.code.tail_length/2)),
+  sys   (params.code.K                   +  params.code.tail_length / 2),
+  par   ((params.code.N - params.code.K) - (params.code.tail_length / 2)),
 
   B_buff (0),
   Le_buff(0),
@@ -117,7 +118,7 @@ void Simulation_EXIT<B,R,Q>
 {
 	bool first_loop = true;
 
-	launch_precompute();
+	codec.launch_precompute();
 
 	// for each channel SNR to be simulated	
 	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
@@ -127,7 +128,7 @@ void Simulation_EXIT<B,R,Q>
 		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
 		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
 
-		snr_precompute();
+		codec.snr_precompute(sigma);
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		for (sig_a = params.simulation.sig_a_min; sig_a <= params.simulation.sig_a_max; sig_a += params.simulation.sig_a_step)
@@ -215,7 +216,11 @@ void Simulation_EXIT<B,R,Q>
 		}
 
 		// extract systematic and parity information
-		extract_sys_par(Lch_N2, La_K2, sys, par);
+		codec.extract_sys_par(Lch_N2, sys, par);
+
+		// add other siso's extrinsic
+		for (auto k = 0; k < this->params.code.K; k++)
+			sys[k] += La_K2[k];
 
 		// decode
 		siso->soft_decode(sys, par, Le_K);
@@ -411,18 +416,6 @@ void Simulation_EXIT<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
-::launch_precompute()
-{
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
-::snr_precompute()
-{
-}
-
-template <typename B, typename R, typename Q>
 Source<B>* Simulation_EXIT<B,R,Q>
 ::build_source()
 {
@@ -436,11 +429,18 @@ template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_EXIT<B,R,Q>
 ::build_encoder()
 {
-	return Factory_encoder_common<B>::build(this->params.encoder.type,
-	                                        this->params.code.K,
-	                                        this->params.code.N_code,
-	                                        this->params.encoder.path,
-	                                        this->params.simulation.seed);
+	try
+	{
+		return this->codec.build_encoder();
+	}
+	catch (std::exception const&)
+	{
+		return Factory_encoder_common<B>::build(this->params.encoder.type,
+		                                        this->params.code.K,
+		                                        this->params.code.N_code,
+		                                        this->params.encoder.path,
+		                                        this->params.simulation.seed);
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -505,6 +505,13 @@ Channel<R>* Simulation_EXIT<B,R,Q>
 	                                 this->params.channel.path,
 	                                 params.simulation.seed,
 	                                 this->params.simulation.inter_frame_level);
+}
+
+template <typename B, typename R, typename Q>
+SISO<R>* Simulation_EXIT<B,R,Q>
+::build_siso()
+{
+	return this->codec.build_siso();
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

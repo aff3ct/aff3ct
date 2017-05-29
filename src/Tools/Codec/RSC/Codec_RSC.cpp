@@ -72,6 +72,45 @@ Decoder<B,Q>* Codec_RSC<B,Q,QD>
 	return this->build_decoder_siso(tid, itl, crc);
 }
 
+template <typename B, typename Q, typename QD>
+void Codec_RSC<B,Q,QD>
+::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
+{
+	const auto K    = this->params.code.K;
+	const auto N    = this->params.code.N_code;
+	const auto tb_2 = this->params.code.tail_length / 2;
+
+	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_RSC: invalid \"Y_N\" size.");
+	if ((int)sys.size() != (K + tb_2) * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_RSC: invalid \"sys\" size.");
+	if ((int)par.size() != (K + tb_2) * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_RSC: invalid \"par\" size.");
+
+	// extract systematic and parity information
+	for (auto f = 0; f < this->params.simulation.inter_frame_level; f++)
+	{
+		if (this->params.encoder.buffered)
+		{
+			std::copy(Y_N.begin() + f * N,
+			          Y_N.begin() + f * N + K + tb_2,
+			          sys.begin() + f *    (K + tb_2));
+
+			std::copy(Y_N.begin() + f * N + K + tb_2,
+			          Y_N.begin() + f * N + N,
+			          par.begin() + f *    (K + tb_2));
+		}
+		else
+		{
+			for (auto i = 0; i < K + tb_2; i++)
+			{
+				sys[f * (K + tb_2) +i] = Y_N[f * N + i*2 +0];
+				par[f * (K + tb_2) +i] = Y_N[f * N + i*2 +1];
+			}
+		}
+	}
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

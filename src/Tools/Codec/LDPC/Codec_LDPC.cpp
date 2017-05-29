@@ -1,7 +1,8 @@
+#include <numeric>
+#include <algorithm>
+
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
-
-#include <numeric>
 
 #include "Codec_LDPC.hpp"
 
@@ -78,6 +79,36 @@ Decoder<B,Q>* Codec_LDPC<B,Q>
 		auto decoder = this->build_siso(tid, itl, crc);
 		decoder_siso[tid] = nullptr;
 		return decoder;
+	}
+}
+
+template <typename B, typename Q>
+void Codec_LDPC<B,Q>
+::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
+{
+	const auto K = this->params.code.K;
+	const auto N = this->params.code.N_code;
+
+	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_LDPC: invalid \"Y_N\" size.");
+	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_LDPC: invalid \"sys\" size.");
+	if ((int)par.size() != (N - K) * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_LDPC: invalid \"par\" size.");
+
+	// extract systematic and parity information
+	auto sys_idx = 0;
+	for (auto f = 0; f < this->params.simulation.inter_frame_level; f++)
+	{
+		for (auto i = 0; i < K; i++)
+			sys[f * K +i] = Y_N[f * N + info_bits_pos[i]];
+
+		for (auto i = 0; i < N; i++)
+			if (std::find(info_bits_pos.begin(), info_bits_pos.end(), i) != info_bits_pos.end())
+			{
+				par[sys_idx] = Y_N[f * N +i];
+				sys_idx++;
+			}
 	}
 }
 

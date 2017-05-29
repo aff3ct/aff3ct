@@ -24,6 +24,8 @@ public:
 
 	virtual module::SISO<Q>* build_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
 	                                                             module::CRC        <B  >* crc = nullptr) = 0;
+
+	virtual void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par) = 0;
 };
 }
 }

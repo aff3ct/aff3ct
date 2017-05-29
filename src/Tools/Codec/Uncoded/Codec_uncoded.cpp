@@ -46,6 +46,23 @@ Decoder<B,Q>* Codec_uncoded<B,Q>
 	                           this->params.simulation.inter_frame_level);
 }
 
+template <typename B, typename Q>
+void Codec_uncoded<B,Q>
+::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
+{
+	const auto K = this->params.code.K;
+	const auto N = this->params.code.N_code;
+
+	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"Y_N\" size.");
+	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"sys\" size.");
+	if ((int)par.size() != 0)
+		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"par\" size.");
+
+	std::copy(Y_N.begin(), Y_N.end(), sys.begin());
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

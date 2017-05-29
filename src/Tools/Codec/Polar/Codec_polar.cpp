@@ -179,6 +179,36 @@ Decoder<B,Q>* Codec_polar<B,Q>
 	}
 }
 
+template <typename B, typename Q>
+void Codec_polar<B,Q>
+::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
+{
+	const auto K = this->params.code.K;
+	const auto N = this->params.code.N_code;
+
+	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_polar: invalid \"Y_N\" size.");
+	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_polar: invalid \"sys\" size.");
+	if ((int)par.size() != (N - K) * this->params.simulation.inter_frame_level)
+		throw std::length_error("aff3ct::tools::Codec_polar: invalid \"par\" size.");
+
+	// extract systematic and parity information
+	auto par_idx = 0, sys_idx = 0;
+	for (auto f = 0; f < this->params.simulation.inter_frame_level; f++)
+		for (auto i = 0; i < N; i++)
+			if (!frozen_bits[i]) // add La on information (systematic) bits
+			{
+				sys[sys_idx] = Y_N[f * N +i];
+				sys_idx++;
+			}
+			else // parity bit
+			{
+				par[par_idx] = Y_N[f * N +i];
+				par_idx++;
+			}
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

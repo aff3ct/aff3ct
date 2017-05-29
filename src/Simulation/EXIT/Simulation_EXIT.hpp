@@ -13,6 +13,7 @@
 #include "Module/Decoder/SISO.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 #include "../Simulation.hpp"
 
@@ -24,6 +25,8 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_EXIT : public Simulation
 {
 protected:
+	tools::Codec_SISO<B,R> &codec;
+
 	const tools::parameters &params; // simulation parameters
 
 	// channel gains
@@ -67,7 +70,7 @@ protected:
 	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
 
 public:
-	Simulation_EXIT(const tools::parameters& params);
+	Simulation_EXIT(const tools::parameters& params, tools::Codec_SISO<B,R> &codec);
 	virtual ~Simulation_EXIT();
 	
 	void launch();
@@ -80,14 +83,7 @@ private:
 	static double measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits, const int N);
 
 protected:
-	virtual void extract_sys_par(const mipp::vector<R> &Lch_N, 
-	                             const mipp::vector<R> &La_K, 
-	                                   mipp::vector<R> &sys, 
-	                                   mipp::vector<R> &par) = 0;
-
 	virtual void release_objects  ();
-	virtual void launch_precompute();
-	virtual void snr_precompute   ();
 
 	virtual module::Source<B>*         build_source     (              );
 	virtual module::Encoder<B>*        build_encoder    (              );
@@ -95,7 +91,7 @@ protected:
 	virtual module::Modulator<B,R,R>*  build_modulator_a(              );
 	virtual module::Channel<R>*        build_channel    (const int size);
 	virtual module::Channel<R>*        build_channel_a  (const int size);
-	virtual module::SISO<R>*           build_siso       (              ) = 0;
+	virtual module::SISO<R>*           build_siso       (              );
 	        tools::Terminal_EXIT<B,R>* build_terminal   (              );
 };
 }
