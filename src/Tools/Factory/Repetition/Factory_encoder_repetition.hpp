@@ -1,8 +1,9 @@
 #ifndef FACTORY_ENCODER_REPETITION_HPP
 #define FACTORY_ENCODER_REPETITION_HPP
 
+#include <string>
+
 #include "Module/Encoder/Encoder_sys.hpp"
-#include "Tools/params.h"
 
 #include "../Factory.hpp"
 
@@ -13,7 +14,11 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_repetition : public Factory
 {
-	static module::Encoder_sys<B>* build(const parameters &params);
+	static module::Encoder_sys<B>* build(const std::string type,
+	                                     const int         K,
+	                                     const int         N,
+	                                     const bool        buffered = true,
+	                                     const int         n_frames = 1);
 };
 }
 }

@@ -61,7 +61,12 @@ Generation_polar
 	sigma     = (float)1.0 / std::sqrt((float)2.0 * code_rate * std::pow((float)10.0, (snr / (float)10.0)));
 
 	// build the frozen bits generator
-	fb_generator = Factory_frozenbits_generator<int>::build(params);
+	fb_generator = Factory_frozenbits_generator<int>::build(this->params.code.fb_gen_method,
+	                                                        this->params.code.K,
+	                                                        this->params.code.N,
+	                                                        this->params.code.sigma,
+	                                                        this->params.code.awgn_fb_path,
+	                                                        this->params.simulation.bin_pb_path);
 	check_errors(fb_generator, "Frozenbits_generator<int>");
 
 	// generate the frozen bits

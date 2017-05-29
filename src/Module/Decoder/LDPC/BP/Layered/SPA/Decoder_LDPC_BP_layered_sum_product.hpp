@@ -29,6 +29,9 @@ public:
 protected:
 	void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches);
 };
+
+template <typename B = int, typename R = float>
+using Decoder_LDPC_BP_layered_SPA = Decoder_LDPC_BP_layered_sum_product<B,R>;
 }
 }
 

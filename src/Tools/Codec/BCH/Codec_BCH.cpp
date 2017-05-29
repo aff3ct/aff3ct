@@ -25,14 +25,24 @@ template <typename B, typename Q>
 Encoder<B>* Codec_BCH<B,Q>
 ::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return Factory_encoder_BCH<B>::build(this->params, GF);
+	return Factory_encoder_BCH<B>::build(this->params.encoder.type,
+	                                     this->params.code.K,
+	                                     this->params.code.N_code,
+	                                     GF,
+	                                     this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_BCH<B,Q>
 ::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	return Factory_decoder_BCH<B,Q>::build(this->params, GF);
+	return Factory_decoder_BCH<B,Q>::build(this->params.decoder.type,
+	                                       this->params.decoder.implem,
+	                                       this->params.code.K,
+	                                       this->params.code.N_code,
+	                                       this->params.code.t,
+	                                       GF,
+	                                       this->params.simulation.inter_frame_level);
 }
 
 // ==================================================================================== explicit template instantiation 

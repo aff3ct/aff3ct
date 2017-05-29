@@ -83,25 +83,27 @@ void Simulation_EXIT<B,R,Q>
 	release_objects();
 
 	// build the objects
-	source      = build_source     (      ); check_errors(source     , "Source<B>"         );
-	encoder     = build_encoder    (      ); check_errors(encoder    , "Encoder<B>"        );
-	modulator   = build_modulator  (      ); check_errors(modulator  , "Modulator<B,R>"    );
-	modulator_a = build_modulator_a(      ); check_errors(modulator_a, "Modulator<B,R>"    );
+	source      = build_source     (     ); check_errors(source     , "Source<B>"         );
+	encoder     = build_encoder    (     ); check_errors(encoder    , "Encoder<B>"        );
+	modulator   = build_modulator  (     ); check_errors(modulator  , "Modulator<B,R>"    );
+	modulator_a = build_modulator_a(     ); check_errors(modulator_a, "Modulator<B,R>"    );
 
-	const auto N     = params.code.N;
-	const auto N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, N);
+	const auto N_mod = this->params.code.N_mod;
+	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
+	                                                                              params.code.K,
+	                                                                              params.modulator.bits_per_symbol,
+	                                                                              params.modulator.upsample_factor,
+	                                                                              params.modulator.cpm_L);
 
-	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
-	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
-	siso        = build_siso       (      ); check_errors(siso       , "SISO<R>"           );
-	terminal    = build_terminal   (      ); check_errors(terminal   , "Terminal_EXIT<B,R>");
+	channel     = build_channel    (N_mod); check_errors(channel    , "Channel<R>"        );
+	channel_a   = build_channel_a  (K_mod); check_errors(channel    , "Channel<R>"        );
+	siso        = build_siso       (     ); check_errors(siso       , "SISO<R>"           );
+	terminal    = build_terminal   (     ); check_errors(terminal   , "Terminal_EXIT<B,R>");
 
 	if (siso->get_n_frames() > 1)
 		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
 
-	// resize the modulation buffers
-	const auto K     = params.code.K;
-	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, K);
+
 	if (X_K2  .size() != (unsigned)K_mod) X_K2  .resize(K_mod);
 	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);
 	if (La_K1 .size() != (unsigned)K_mod) La_K1 .resize(K_mod);
@@ -142,7 +144,7 @@ void Simulation_EXIT<B,R,Q>
 			if (sig_a == 0)
 				std::fill(La_K2.begin(), La_K2.end(), params.channel.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
 
-			if (!params.terminal.disabled && first_loop && !params.simulation.debug)
+			if (!params.terminal.disabled && first_loop)
 			{
 				terminal->legend(std::cout);
 				first_loop = false;
@@ -424,42 +426,85 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_EXIT<B,R,Q>
 ::build_source()
 {
-	return Factory_source<B>::build(params);
+	return Factory_source<B>::build(this->params.source.type,
+	                                this->params.code.K_info,
+	                                this->params.source.path,
+	                                this->params.simulation.seed);
 }
 
 template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_EXIT<B,R,Q>
 ::build_encoder()
 {
-	return Factory_encoder_common<B>::build(params, params.simulation.seed);
+	return Factory_encoder_common<B>::build(this->params.encoder.type,
+	                                        this->params.code.K,
+	                                        this->params.code.N_code,
+	                                        this->params.encoder.path,
+	                                        this->params.simulation.seed);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator()
 {
-	return Factory_modulator<B,R,R>::build(params, sigma);
+	return Factory_modulator<B,R>::build(this->params.modulator.type,
+	                                     this->params.code.N,
+	                                     this->sigma,
+	                                     this->params.demodulator.max,
+	                                     this->params.modulator.bits_per_symbol,
+	                                     this->params.modulator.const_path,
+	                                     this->params.modulator.upsample_factor,
+	                                     this->params.modulator.cpm_L,
+	                                     this->params.modulator.cpm_k,
+	                                     this->params.modulator.cpm_p,
+	                                     this->params.modulator.mapping,
+	                                     this->params.modulator.wave_shape,
+	                                     this->params.demodulator.no_sig2);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 ::build_modulator_a()
 {
-	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a);
+	return Factory_modulator<B,R>::build(this->params.modulator.type,
+	                                     this->params.code.K,
+	                                     2.f / sig_a,
+	                                     this->params.demodulator.max,
+	                                     this->params.modulator.bits_per_symbol,
+	                                     this->params.modulator.const_path,
+	                                     this->params.modulator.upsample_factor,
+	                                     this->params.modulator.cpm_L,
+	                                     this->params.modulator.cpm_k,
+	                                     this->params.modulator.cpm_p,
+	                                     this->params.modulator.mapping,
+	                                     this->params.modulator.wave_shape,
+	                                     this->params.demodulator.no_sig2);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed);
+	return Factory_channel<R>::build(this->params.channel.type,
+	                                 size,
+	                                 this->sigma,
+	                                 this->params.modulator.complex,
+	                                 this->params.channel.path,
+	                                 params.simulation.seed,
+	                                 this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_EXIT<B,R,Q>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.f / sig_a, size, params.simulation.seed);
+	return Factory_channel<R>::build(this->params.channel.type,
+	                                 size,
+	                                 2.f / sig_a,
+	                                 this->params.modulator.complex,
+	                                 this->params.channel.path,
+	                                 params.simulation.seed,
+	                                 this->params.simulation.inter_frame_level);
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method

@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cctype>
 
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
@@ -32,7 +33,7 @@ Codec_turbo<B,Q,QD>
 		json_stream << "[" << std::endl;
 	}
 
-	auto encoder_RSC = Factory_encoder_RSC<B>::build(this->params);
+	auto encoder_RSC = this->build_sub_encoder();
 	if (encoder_RSC != nullptr)
 	{
 		trellis = encoder_RSC->get_trellis();
@@ -63,7 +64,26 @@ template <typename B, typename Q, typename QD>
 Interleaver<int>* Codec_turbo<B,Q,QD>
 ::build_interleaver(const int tid, const int seed)
 {
-	return Factory_interleaver<int>::build(this->params, this->params.code.K, seed);
+	return Factory_interleaver<int>::build(this->params.interleaver.type,
+	                                       this->params.code.K,
+	                                       this->params.interleaver.path,
+	                                       this->params.interleaver.uniform,
+	                                       this->params.interleaver.n_cols,
+	                                       seed,
+	                                       this->params.simulation.inter_frame_level);
+}
+
+template <typename B, typename Q, typename QD>
+Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
+::build_sub_encoder(const int tid)
+{
+	return Factory_encoder_RSC<B>::build(this->params.simulation.json_path.empty() ? "RSC" : "RSC_JSON",
+	                                     this->params.code.K,
+	                                     (this->params.code.K * 2) + (this->params.code.tail_length / 2),
+	                                     this->params.encoder.buffered,
+	                                     this->params.encoder.poly,
+	                                     json_stream,
+	                                     this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q, typename QD>
@@ -79,19 +99,49 @@ Encoder<B>* Codec_turbo<B,Q,QD>
 		sub_enc[tid] = nullptr;
 	}
 
-	sub_enc[tid] = Factory_encoder_RSC<B>::build(this->params, json_stream);
+	sub_enc[tid] = this->build_sub_encoder(tid);
 
 	if (sub_enc[tid] == nullptr)
 		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"sub_enc\" can't be created.");
 
-	return Factory_encoder_turbo<B>::build(this->params, itl, sub_enc[tid], sub_enc[tid]);
+	return Factory_encoder_turbo<B>::build(this->params.encoder.type,
+	                                       this->params.code.K,
+	                                       this->params.code.N_code,
+	                                       *itl,
+	                                       sub_enc[tid],
+	                                       sub_enc[tid],
+	                                       this->params.encoder.buffered,
+	                                       this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q, typename QD>
 Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 ::build_puncturer(const int tid)
 {
-	return Factory_puncturer_turbo<B,Q>::build(this->params);
+	const std::string type = (this->params.code.N == this->params.code.N_code) ? "NO" : "WANGLIU";
+	return Factory_puncturer_turbo<B,Q>::build(type,
+	                                           this->params.code.K,
+	                                           this->params.code.N,
+	                                           this->params.code.tail_length,
+	                                           this->params.puncturer.pattern,
+	                                           this->params.encoder.buffered,
+	                                           this->params.simulation.inter_frame_level);
+}
+
+template <typename B, typename Q, typename QD>
+SISO<Q>* Codec_turbo<B,Q,QD>
+::build_sub_siso(const int tid)
+{
+	return Factory_decoder_RSC<B,Q,QD>::build(this->params.decoder.type,
+	                                          this->params.decoder.implem,
+	                                          this->params.code.K,
+	                                          trellis,
+	                                          this->params.decoder.max,
+	                                          this->params.decoder.simd_strategy,
+	                                          this->params.encoder.buffered,
+	                                          json_stream,
+	                                          this->params.decoder.n_ite,
+	                                          this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q, typename QD>
@@ -107,7 +157,18 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 		sf[tid] = nullptr;
 	}
 
-	sf[tid] = Factory_scaling_factor<Q>::build(this->params);
+	std::string sf_type = this->params.decoder.scaling_factor;
+	float sf_cst = 0.f;
+	if (std::isdigit(this->params.decoder.scaling_factor[0]))
+	{
+		sf_type = "CST";
+		sf_cst  = std::stof(this->params.decoder.scaling_factor);
+	}
+
+	sf[tid] = Factory_scaling_factor<Q>::build(sf_type,
+	                                           this->params.code.K,
+	                                           this->params.decoder.n_ite,
+	                                           sf_cst);
 
 	if (sf[tid] == nullptr)
 		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"sf\" can't be created.");
@@ -118,12 +179,30 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 		siso[tid] = nullptr;
 	}
 
-	siso[tid] = Factory_decoder_RSC<B,Q,QD>::build_siso(this->params, trellis, json_stream);
+	siso[tid] = this->build_sub_siso(tid);
 
 	if (siso[tid] == nullptr)
 		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"siso\" can't be created.");
 
-	return Factory_decoder_turbo<B,Q>::build(this->params, itl, siso[tid], siso[tid], sf[tid], crc);
+	std::string turbo_type;
+	     if (this->params.decoder.self_corrected) turbo_type = "TURBO_SF";
+	else if (this->params.decoder.fnc           ) turbo_type = "TURBO_FNC";
+	else                                          turbo_type = "TURBO";
+
+	return Factory_decoder_turbo<B,Q>::build(turbo_type,
+	                                         this->params.code.K,
+	                                         this->params.code.N_code,
+	                                         this->params.decoder.n_ite,
+	                                         *itl,
+	                                         *siso[tid],
+	                                         *siso[tid],
+	                                         *sf  [tid],
+	                                         crc,
+	                                         this->params.decoder.fnc_q,
+	                                         this->params.decoder.fnc_ite_min,
+	                                         this->params.decoder.fnc_ite_max,
+	                                         this->params.decoder.fnc_ite_step,
+	                                         this->params.encoder.buffered);
 }
 
 // ==================================================================================== explicit template instantiation 

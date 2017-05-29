@@ -7,9 +7,9 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RSC_generic_json_sys<B>
-::Encoder_RSC_generic_json_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding,
-                               const std::vector<int> poly, std::ostream &stream, const std::string name)
-: Encoder_RSC_generic_sys<B>(K, N, n_frames, buffered_encoding, poly, name),
+::Encoder_RSC_generic_json_sys(const int& K, const int& N, const bool buffered_encoding, const std::vector<int> poly,
+                               std::ostream &stream, const int n_frames, const std::string name)
+: Encoder_RSC_generic_sys<B>(K, N, buffered_encoding, poly, n_frames, name),
   stream(stream), bit_counter(0), natural_domain(true), poly(poly)
 {
 	if (n_frames != 1)

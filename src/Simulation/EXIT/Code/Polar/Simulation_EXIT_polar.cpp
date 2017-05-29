@@ -21,7 +21,12 @@ Simulation_EXIT_polar<B,R,Q>
   fb_generator(nullptr)
 {
 	// build the frozen bits generator
-	fb_generator = Factory_frozenbits_generator<B>::build(params);
+	fb_generator = Factory_frozenbits_generator<B>::build(this->params.code.fb_gen_method,
+	                                                      this->params.code.K,
+	                                                      this->params.code.N_code,
+	                                                      this->params.code.sigma,
+	                                                      this->params.code.awgn_fb_path,
+	                                                      this->params.simulation.bin_pb_path);
 	Simulation::check_errors(fb_generator, "Frozenbits_generator<B>");
 }
 
@@ -71,7 +76,11 @@ Encoder<B>* Simulation_EXIT_polar<B,R,Q>
 {
 	auto encoder = Simulation_EXIT<B,R,Q>::build_encoder();
 	if (encoder == nullptr)
-		encoder = Factory_encoder_polar<B>::build(this->params, frozen_bits);
+		encoder =  Factory_encoder_polar<B>::build(this->params.encoder.type,
+		                                           this->params.code.K,
+		                                           this->params.code.N,
+		                                           frozen_bits,
+		                                           this->params.encoder.systematic);
 	return encoder;
 }
 
@@ -79,7 +88,13 @@ template <typename B, typename R, typename Q>
 SISO<R>* Simulation_EXIT_polar<B,R,Q>
 ::build_siso()
 {
-	return Factory_decoder_polar<B,R>::build_siso(this->params, frozen_bits);
+	return Factory_decoder_polar<B,Q>::build_siso(this->params.decoder.type,
+	                                              this->params.decoder.implem,
+	                                              this->params.code.K,
+	                                              this->params.code.N,
+	                                              frozen_bits,
+	                                              this->params.encoder.systematic,
+	                                              this->params.decoder.n_ite);
 }
 
 // ==================================================================================== explicit template instantiation 

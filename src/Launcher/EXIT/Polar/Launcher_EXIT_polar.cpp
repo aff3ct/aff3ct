@@ -51,7 +51,7 @@ void Launcher_EXIT_polar<B,R,Q>
 	this->opt_args[{"cde-fb-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
-		 "GA, TV"};
+		 "GA, FILE, TV"};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", POLAR";

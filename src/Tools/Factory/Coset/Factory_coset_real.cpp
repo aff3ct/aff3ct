@@ -7,14 +7,13 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Coset<B,Q>* Factory_coset_real<B,Q>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         N,
+        const int         n_frames)
 {
-	Coset<B,Q> *coset = nullptr;
+	if (type == "STD") return new Coset_real<B,Q>(N, n_frames);
 
-	// build the coset
-	coset = new Coset_real<B,Q>(params.code.N_code, params.simulation.inter_frame_level);
-
-	return coset;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

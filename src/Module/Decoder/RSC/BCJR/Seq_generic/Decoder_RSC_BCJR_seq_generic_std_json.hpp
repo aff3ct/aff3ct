@@ -18,7 +18,7 @@ class Decoder_RSC_BCJR_seq_generic_std_json : public Decoder_RSC_BCJR_seq_generi
 {
 private:
 	const int n_ite;
-		  int ite_counter;
+	      int ite_counter;
 	std::ostream &stream;
 
 public:

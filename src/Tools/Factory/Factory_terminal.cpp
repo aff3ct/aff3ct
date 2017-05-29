@@ -8,23 +8,19 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Terminal* Factory_terminal<B>
-::build(const parameters &params,
-        const float &snr_s,
-        const float &snr_b,
-        const Monitor<B> *monitor,
+::build(const std::string                                                                   type,
+        const int                                                                           K,
+        const int                                                                           N,
+        const float                                                                        &snr_s,
+        const float                                                                        &snr_b,
+        const Monitor<B>                                                                   &monitor,
         const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
-        const std::chrono::nanoseconds *d_decod_total)
+        const std::chrono::nanoseconds                                                     *d_decod_total)
 {
-	Terminal *terminal = nullptr;
+	     if (type == "STD"   ) return new Terminal_BFER       <B>(K, N, snr_s, snr_b, monitor, t_snr, d_decod_total);
+	else if (type == "LEGACY") return new Terminal_BFER_legacy<B>(K, N,        snr_b, monitor, t_snr               );
 
-	// build a terminal to display the BER/FER
-	if (params.terminal.type == "LEGACY")
-		terminal = new Terminal_BFER_legacy<B>(params.code.K_info, params.code.N_code, snr_b, *monitor, t_snr);
-	else if (params.terminal.type == "STD")
-		terminal = new Terminal_BFER<B>(params.code.K_info, params.code.N_code, snr_s, snr_b, *monitor, t_snr,
-		                                d_decod_total);
-
-	return terminal;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

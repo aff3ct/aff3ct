@@ -7,14 +7,13 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Coset<B,B>* Factory_coset_bit<B>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         K,
+        const int         n_frames)
 {
-	Coset<B,B> *coset = nullptr;
+	if (type == "STD") return new Coset_bit<B,B>(K, n_frames);
 
-	// build the coset
-	coset = new Coset_bit<B,B>(params.code.K, params.simulation.inter_frame_level);
-
-	return coset;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

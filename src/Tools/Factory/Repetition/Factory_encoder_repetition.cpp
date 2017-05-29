@@ -7,15 +7,15 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_sys<B>* Factory_encoder_repetition<B>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         K,
+        const int         N,
+        const bool        buffered,
+        const int         n_frames)
 {
-	Encoder_sys<B> *encoder = nullptr;
+	if (type == "REPETITION") return new Encoder_repetition_sys<B>(K, N, buffered, n_frames);
 
-	// build the encoder
-	if (params.encoder.systematic)
-		encoder = new Encoder_repetition_sys<B>(params.code.K, params.code.N_code, params.encoder.buffered, params.simulation.inter_frame_level);
-
-	return encoder;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

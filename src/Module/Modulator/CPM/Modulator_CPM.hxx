@@ -18,15 +18,14 @@ namespace module
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modulator_CPM<B,R,Q,MAX>
 ::Modulator_CPM(int  N,
+                R    sigma,
                 int  bits_per_symbol,
                 int  sampling_factor,
-                std::string cpm_std,
                 int  cpm_L,
                 int  cpm_k,
                 int  cpm_p,
                 std::string mapping,
                 std::string wave_shape,
-                R    sigma,
                 bool no_sig2,
                 int  n_frames,
                 const std::string name)
@@ -37,8 +36,7 @@ Modulator_CPM<B,R,Q,MAX>
                    n_frames,
                    name),
   no_sig2   (no_sig2                            ),
-  cpm       (cpm_std,
-             cpm_L,
+  cpm       (cpm_L,
              cpm_k,
              cpm_p,
              bits_per_symbol,

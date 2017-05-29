@@ -14,85 +14,46 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_turbo<B,R>
-::build(const parameters          &params,
-        const Interleaver<int>    *interleaver,
-              SISO<R>             *siso_n, 
-              SISO<R>             *siso_i,
-              Scaling_factor<R>   *scaling_factor,
-              CRC<B>              *crc)
+::build(const std::string          type,
+        const int                  K,
+        const int                  N,
+        const int                  n_ite,
+        const Interleaver<int>    &itl,
+              SISO<R>             &siso_n,
+              SISO<R>             &siso_i,
+              Scaling_factor<R>   &sf,
+              CRC<B>              *crc,
+        const int                  fnc_q,
+        const int                  fnc_ite_min,
+        const int                  fnc_ite_max,
+        const int                  fnc_ite_step,
+        const bool                 buffered)
 {
-	Decoder<B,R> *decoder = nullptr;
+	const auto _fnc_ite_max = fnc_ite_max == -1 ? n_ite : fnc_ite_max;
 
-	if (params.channel.domain == "LLR")
+	if (crc != nullptr && crc->get_size() > 0)
 	{
+		     if (type == "TURBO_SC" ) return new Decoder_turbo_naive_CA_self_corrected<B,R>(K, N, n_ite, itl, siso_n, siso_i, sf, *crc,                                                 buffered);
+		else if (type == "TURBO_FNC") return new Decoder_turbo_naive_CA_flip_and_check<B,R>(K, N, n_ite, itl, siso_n, siso_i, sf, *crc, fnc_q, fnc_ite_min, _fnc_ite_max, fnc_ite_step, buffered);
 		if (typeid(B) == typeid(long long))
 		{
-			// there is a CRC
-			if (crc != nullptr && !params.crc.poly.empty())
-			{
-				if (params.decoder.self_corrected)
-					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i,
-					                                                         *scaling_factor, *crc,
-					                                                         params.encoder.buffered);
-				else if (params.decoder.fnc)
-					decoder = new Decoder_turbo_naive_CA_flip_and_check<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i,
-					                                                         *scaling_factor, *crc,
-					                                                         params.decoder.fnc_q,
-					                                                         params.decoder.fnc_ite_min,
-					                                                         params.decoder.fnc_ite_max,
-					                                                         params.decoder.fnc_ite_step,
-					                                                         params.encoder.buffered);
-				else
-					decoder = new Decoder_turbo_naive_CA<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-					                                          *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
-					                                          params.encoder.buffered);
-
-			}
-			// there is no CRC
-			else
-				decoder = new Decoder_turbo_naive<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-				                                       *interleaver, *siso_n, *siso_i, *scaling_factor, 
-				                                       params.encoder.buffered);
+		     if (type == "TURBO"    ) return new Decoder_turbo_naive_CA               <B,R>(K, N, n_ite, itl, siso_n, siso_i, sf, *crc,                                                 buffered);
 		}
 		else
 		{
-			// there is a CRC
-			if (crc != nullptr && !params.crc.poly.empty())
-			{
-				if (params.decoder.self_corrected)
-					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite, *interleaver,
-					                                                         *siso_n, *siso_i, *scaling_factor, *crc,
-					                                                         params.encoder.buffered);
-				else if (params.decoder.fnc)
-					decoder = new Decoder_turbo_naive_CA_flip_and_check<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i,
-					                                                         *scaling_factor, *crc,
-					                                                         params.decoder.fnc_q,
-					                                                         params.decoder.fnc_ite_min,
-					                                                         params.decoder.fnc_ite_max,
-					                                                         params.decoder.fnc_ite_step,
-					                                                         params.encoder.buffered);
-				else
-					decoder = new Decoder_turbo_fast_CA<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-					                                         *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
-					                                         params.encoder.buffered);
-
-			}
-			// there is no CRC
-			else
-				decoder = new Decoder_turbo_fast<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-				                                      *interleaver, *siso_n, *siso_i, *scaling_factor, 
-				                                      params.encoder.buffered);
+		     if (type == "TURBO"    ) return new Decoder_turbo_fast_CA                <B,R>(K, N, n_ite, itl, siso_n, siso_i, sf, *crc,                                                 buffered);
 		}
 	}
+	else if (typeid(B) == typeid(long long))
+	{
+		     if (type == "TURBO"    ) return new Decoder_turbo_naive                  <B,R>(K, N, n_ite, itl, siso_n, siso_i, sf,                                                       buffered);
+	}
+	else
+	{
+		     if (type == "TURBO"    ) return new Decoder_turbo_fast                   <B,R>(K, N, n_ite, itl, siso_n, siso_i, sf,                                                       buffered);
+	}
 
-	return decoder;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

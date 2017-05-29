@@ -575,13 +575,20 @@ template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER_ite_threads<B,R,Q>
 ::build_terminal()
 {
+#ifdef ENABLE_MPI
+	Simulation_BFER<B,R,Q>::build_terminal();
+#else
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
 
-#ifdef ENABLE_MPI
-	return Factory_terminal<B>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr);
-#else
-	return Factory_terminal<B>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr, &d_dec);
+	return Factory_terminal<B>::build(this->params.terminal.type,
+	                                  this->params.code.K_info,
+	                                  this->params.code.N_code,
+	                                  this->snr_s,
+	                                  this->snr_b,
+	                                  *this->monitor_red,
+	                                  this->t_snr,
+	                                  &d_dec);
 #endif
 }
 

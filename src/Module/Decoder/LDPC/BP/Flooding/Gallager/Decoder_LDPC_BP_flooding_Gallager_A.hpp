@@ -35,6 +35,9 @@ public:
 protected:
 	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
 };
+
+template <typename B = int, typename R = float>
+using Decoder_LDPC_BP_flooding_GALA = Decoder_LDPC_BP_flooding_Gallager_A<B,R>;
 }
 }
 

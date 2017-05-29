@@ -14,29 +14,24 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>
-::build(const parameters &params, const int &size, const int seed)
+::build(const std::string type,
+        const int         size,
+        const std::string path,
+        const bool        uniform,
+        const int         n_cols,
+        const int         seed,
+        const int         n_frames)
 {
-	Interleaver<T> *interleaver = nullptr;
+	     if (type == "LTE"     ) return new Interleaver_LTE          <T>(size,                        n_frames);
+	else if (type == "CCSDS"   ) return new Interleaver_CCSDS        <T>(size,                        n_frames);
+	else if (type == "RANDOM"  ) return new Interleaver_random       <T>(size,         seed, uniform, n_frames);
+	else if (type == "RAND_COL") return new Interleaver_random_column<T>(size, n_cols, seed, uniform, n_frames);
+	else if (type == "ROW_COL" ) return new Interleaver_row_column   <T>(size, n_cols,                n_frames);
+	else if (type == "GOLDEN"  ) return new Interleaver_golden       <T>(size,         seed, uniform, n_frames);
+	else if (type == "USER"    ) return new Interleaver_user         <T>(size, path,                  n_frames);
+	else if (type == "NO"      ) return new Interleaver_NO           <T>(size,                        n_frames);
 
-	// build the interleaver
-	if (params.interleaver.type == "LTE")
-		interleaver = new Interleaver_LTE<T>(size, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "CCSDS")
-		interleaver = new Interleaver_CCSDS<T>(size, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "RANDOM")
-		interleaver = new Interleaver_random<T>(size, seed, params.interleaver.uniform, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "RAND_COL")
-		interleaver = new Interleaver_random_column<T>(size, params.interleaver.n_cols, seed, params.interleaver.uniform, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "ROW_COL")
-		interleaver = new Interleaver_row_column<T>(size, params.interleaver.n_cols, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "GOLDEN")
-		interleaver = new Interleaver_golden<T>(size, seed, params.interleaver.uniform, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "USER")
-		interleaver = new Interleaver_user<T>(size, params.interleaver.path, params.simulation.inter_frame_level);
-	else if (params.interleaver.type == "NO")
-		interleaver = new Interleaver_NO<T>(size, params.simulation.inter_frame_level);
-
-	return interleaver;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

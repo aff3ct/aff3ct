@@ -1,5 +1,3 @@
-#include "Tools/params.h"
-
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_seq.hpp"
 #include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_vec.hpp"
@@ -13,26 +11,19 @@ using namespace aff3ct::tools;
 
 template<typename R>
 Scaling_factor<R>* Factory_scaling_factor<R>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         K,
+        const int         n_ite,
+        const float       cst)
 {
-	Scaling_factor<R> *scaling_factor = nullptr;
+	     if (type == "CST"       ) return new Scaling_factor_constant  <R>(K, n_ite, cst);
+	else if (type == "LTE_VEC"   ) return new Scaling_factor_vec       <R>(K, n_ite     );
+	else if (type == "LTE"       ) return new Scaling_factor_seq       <R>(K, n_ite     );
+	else if (type == "ARRAY"     ) return new Scaling_factor_array     <R>(K, n_ite     );
+	else if (type == "ARRAY_FAST") return new Scaling_factor_array_fast<R>(K, n_ite     );
+	else if (type == "NO"        ) return new Scaling_factor_NO        <R>(K, n_ite     );
 
-	if (isdigit(params.decoder.scaling_factor[0]))
-		scaling_factor = new Scaling_factor_constant<R>(params.code.K, params.decoder.n_ite,
-		                                                stof(params.decoder.scaling_factor));
-	else if (params.decoder.scaling_factor.find("LTE_VEC") != std::string::npos)
-		scaling_factor = new Scaling_factor_vec<R>(params.code.K, params.decoder.n_ite);
-	else if (params.decoder.scaling_factor.find("LTE") != std::string::npos)
-		scaling_factor = new Scaling_factor_seq<R>(params.code.K, params.decoder.n_ite);
-	else if (params.decoder.scaling_factor.find("ARRAY") != std::string::npos)
-		if(params.decoder.implem.find("FAST") != std::string::npos)
-			scaling_factor = new Scaling_factor_array_fast<R>(params.code.K, params.decoder.n_ite);
-		else
-			scaling_factor = new Scaling_factor_array<R>(params.code.K, params.decoder.n_ite);
-	else if (params.decoder.scaling_factor.find("NO") != std::string::npos)
-		scaling_factor = new Scaling_factor_NO<R>(params.code.K, params.decoder.n_ite);
-
-	return scaling_factor;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

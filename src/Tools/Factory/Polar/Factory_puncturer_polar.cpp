@@ -8,16 +8,16 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
-::build(const parameters &params, const Frozenbits_generator<B> *fb_generator)
+::build(const std::string              type,
+        const int                      K,
+        const int                      N,
+        const Frozenbits_generator<B> *fb_generator,
+        const int                      n_frames)
 {
-	Puncturer<B,Q> *puncturer = nullptr;
+	     if (type == "WANGLIU") return new Puncturer_polar_wangliu<B,Q>(K, N, *fb_generator, n_frames);
+	else if (type == "NO"     ) return new Puncturer_NO           <B,Q>(K, N,                n_frames);
 
-	if (params.code.N != params.code.N_code)
-		puncturer = new Puncturer_polar_wangliu<B,Q>(params.code.K, params.code.N, *fb_generator, params.simulation.inter_frame_level);
-	else
-		puncturer = new Puncturer_NO<B,Q>(params.code.K, params.code.N, params.simulation.inter_frame_level);
-
-	return puncturer;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

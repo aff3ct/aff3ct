@@ -1,5 +1,3 @@
-#include <string>
-
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
 
@@ -10,25 +8,20 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_repetition<B,R>
-::build(const parameters &params)
+::build(const std::string type,
+        const std::string implem,
+        const int         K,
+        const int         N,
+        const bool        buffered,
+        const int         n_frames)
 {
-	Decoder<B,R> *decoder = nullptr;
-
-	if (params.decoder.type == "REPETITION")
+	if (type == "REPETITION")
 	{
-		if (params.decoder.implem == "STD")
-			decoder = new Decoder_repetition_std<B,R>(params.code.K,
-			                                          params.code.N_code,
-			                                          params.encoder.buffered,
-			                                          params.simulation.inter_frame_level);
-		else if (params.decoder.implem == "FAST")
-			decoder = new Decoder_repetition_fast<B,R>(params.code.K,
-			                                           params.code.N_code,
-			                                           params.encoder.buffered,
-			                                           params.simulation.inter_frame_level);
+		     if (implem == "STD" ) return new Decoder_repetition_std <B,R>(K, N, buffered, n_frames);
+		else if (implem == "FAST") return new Decoder_repetition_fast<B,R>(K, N, buffered, n_frames);
 	}
 
-	return decoder;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

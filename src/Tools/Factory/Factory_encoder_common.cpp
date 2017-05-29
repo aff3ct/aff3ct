@@ -10,21 +10,19 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_common<B>
-::build(const parameters &params, const int seed)
+::build(const std::string type,
+        const int         K,
+        const int         N,
+        const std::string path,
+        const int         seed,
+        const int         n_frames)
 {
-	Encoder<B> *encoder = nullptr;
+	     if (type == "NO"   ) return new Encoder_NO   <B>(K, N,       n_frames);
+	else if (type == "AZCW" ) return new Encoder_AZCW <B>(K, N,       n_frames);
+	else if (type == "COSET") return new Encoder_coset<B>(K, N, seed, n_frames);
+	else if (type == "USER" ) return new Encoder_user <B>(K, N, path, n_frames);
 
-	// build the encoder
-	if (params.encoder.type == "NO")
-		encoder = new Encoder_NO<B>(params.code.K, params.code.N_code, params.simulation.inter_frame_level);
-	else if (params.encoder.type == "AZCW")
-		encoder = new Encoder_AZCW<B>(params.code.K, params.code.N_code, params.simulation.inter_frame_level);
-	else if (params.encoder.type == "COSET")
-		encoder = new Encoder_coset<B>(params.code.K, params.code.N_code, seed, params.simulation.inter_frame_level);
-	else if (params.encoder.type == "USER")
-		encoder = new Encoder_user<B>(params.code.K, params.code.N_code, params.encoder.path, params.simulation.inter_frame_level);
-
-	return encoder;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -3,28 +3,22 @@
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
 #include "Module/Encoder/LDPC/DVBS2/Encoder_LDPC_DVBS2.hpp"
 
-
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC<B>* Factory_encoder_LDPC<B>
-::build(const parameters &params, const int seed)
+::build(const std::string type,
+        const int         K,
+        const int         N,
+        const std::string path,
+        const int         n_frames)
 {
-	Encoder_LDPC<B> *encoder = nullptr;
+	     if (type == "LDPC"      ) return new Encoder_LDPC       <B>(K, N, AList_reader(path), n_frames);
+	else if (type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(K, N, AList_reader(path), n_frames);
+	else if (type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(K, N,                     n_frames);
 
-	// build the encoder
-	if (params.encoder.systematic)
-	{
-		if (params.encoder.type == "LDPC")
-			encoder = new Encoder_LDPC<B>(params.code.K, params.code.N_code, AList_reader(params.encoder.path), params.simulation.inter_frame_level);
-		else if (params.encoder.type == "LDPC_H")
-			encoder = new Encoder_LDPC_from_H<B>(params.code.K, params.code.N_code, AList_reader(params.code.alist_path), params.simulation.inter_frame_level);
-		else if (params.encoder.type == "LDPC_DVBS2")
-			encoder = new Encoder_LDPC_DVBS2<B>(params.code.K, params.code.N_code, params.simulation.inter_frame_level);
-	}
-
-	return encoder;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

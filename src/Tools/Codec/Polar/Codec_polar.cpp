@@ -27,7 +27,12 @@ Codec_polar<B,Q>
 	if (!is_generated_decoder)
 	{
 		// build the frozen bits generator
-		fb_generator = Factory_frozenbits_generator<B>::build(params);
+		fb_generator = Factory_frozenbits_generator<B>::build(this->params.code.fb_gen_method,
+		                                                      this->params.code.K,
+		                                                      this->params.code.N_code,
+		                                                      this->params.code.sigma,
+		                                                      this->params.code.awgn_fb_path,
+		                                                      this->params.simulation.bin_pb_path);
 
 		if (fb_generator == nullptr)
 			throw std::runtime_error("aff3ct::tools::Codec_polar: \"fb_generator\" can't be null.");
@@ -64,7 +69,9 @@ void Codec_polar<B,Q>
 		}
 	}
 	else
-		Factory_decoder_polar_gen<B,Q>::get_frozen_bits(this->params, frozen_bits);
+		Factory_decoder_polar_gen<B,Q>::get_frozen_bits(this->params.decoder.implem,
+		                                                this->params.code.N_code,
+		                                                frozen_bits);
 }
 
 template <typename B, typename Q>
@@ -97,21 +104,38 @@ template <typename B, typename Q>
 Puncturer<B,Q>* Codec_polar<B,Q>
 ::build_puncturer(const int tid)
 {
-	return Factory_puncturer_polar<B,Q>::build(this->params, fb_generator);
+	const std::string type = (this->params.code.N == this->params.code.N_code) ? "NO" : "WANGLIU";
+	return Factory_puncturer_polar<B,Q>::build(type,
+	                                           this->params.code.K,
+	                                           this->params.code.N,
+	                                           fb_generator,
+	                                           this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q>
 Encoder<B>* Codec_polar<B,Q>
 ::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return Factory_encoder_polar<B>::build(this->params, frozen_bits);
+	return Factory_encoder_polar<B>::build(this->params.encoder.type,
+	                                       this->params.code.K,
+	                                       this->params.code.N_code,
+	                                       frozen_bits,
+	                                       this->params.encoder.systematic,
+	                                       this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q>
 SISO<Q>* Codec_polar<B,Q>
 ::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	decoder_siso[tid] = Factory_decoder_polar<B,Q>::build_siso(this->params, frozen_bits);
+	decoder_siso[tid] = Factory_decoder_polar<B,Q>::build_siso(this->params.decoder.type,
+	                                                           this->params.decoder.implem,
+	                                                           this->params.code.K,
+	                                                           this->params.code.N_code,
+	                                                           frozen_bits,
+	                                                           this->params.encoder.systematic,
+	                                                           this->params.decoder.n_ite,
+	                                                           this->params.simulation.inter_frame_level);
 	return decoder_siso[tid];
 }
 
@@ -128,9 +152,30 @@ Decoder<B,Q>* Codec_polar<B,Q>
 	else
 	{
 		if (is_generated_decoder)
-			return Factory_decoder_polar_gen<B,Q>::build(this->params, frozen_bits, crc);
+			return Factory_decoder_polar_gen<B,Q>::build(this->params.decoder.type,
+			                                             this->params.decoder.implem,
+			                                             this->params.code.K,
+			                                             this->params.code.N_code,
+			                                             frozen_bits,
+			                                             this->params.decoder.simd_strategy,
+			                                             this->params.encoder.systematic,
+			                                             this->params.decoder.L,
+			                                             crc,
+			                                             this->params.simulation.inter_frame_level);
 		else
-			return Factory_decoder_polar<B,Q>::build(this->params, frozen_bits, crc);
+			return Factory_decoder_polar<B,Q>::build(this->params.decoder.type,
+			                                         this->params.decoder.implem,
+			                                         this->params.code.K,
+			                                         this->params.code.N_code,
+			                                         frozen_bits,
+			                                         this->params.decoder.simd_strategy,
+			                                         this->params.encoder.systematic,
+			                                         this->params.decoder.polar_nodes,
+			                                         this->params.decoder.L,
+			                                         this->params.decoder.n_ite,
+			                                         crc,
+			                                         this->params.decoder.full_adaptive,
+			                                         this->params.simulation.inter_frame_level);
 	}
 }
 

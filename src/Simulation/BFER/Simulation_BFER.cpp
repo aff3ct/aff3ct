@@ -337,7 +337,7 @@ void Simulation_BFER<B,R,Q>
 		std::string str_spaces = "";
 		for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
 		stream << "# " << bold("* " + total_str) << str_spaces << ": "
-			   << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
+		       << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
 		stream << "#" << std::endl;
 	}
 }
@@ -346,14 +346,23 @@ template <typename B, typename R, typename Q>
 Monitor<B>* Simulation_BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor<B>::build(params);
+	return Factory_monitor<B>::build("STD",
+	                                 this->params.code.K_info,
+	                                 this->params.monitor.n_frame_errors,
+	                                 this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Terminal* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return Factory_terminal<B>::build(this->params, this->snr_s, this->snr_b, this->monitor_red, this->t_snr);
+	return Factory_terminal<B>::build(this->params.terminal.type,
+	                                  this->params.code.K_info,
+	                                  this->params.code.N_code,
+	                                  this->snr_s,
+	                                  this->snr_b,
+	                                  *this->monitor_red,
+	                                  this->t_snr);
 }
 
 template <typename B, typename R, typename Q>

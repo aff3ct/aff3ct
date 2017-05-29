@@ -329,7 +329,7 @@ _aff3ct() {
 			;;
 
 		--crc-type)
-			local params="STD FAST"
+			local params="STD FAST INTER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 		
@@ -390,7 +390,7 @@ _aff3ct() {
 			;;
 
 		--cde-fb-gen-method)
-			local params="GA TV"
+			local params="GA FILE TV"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

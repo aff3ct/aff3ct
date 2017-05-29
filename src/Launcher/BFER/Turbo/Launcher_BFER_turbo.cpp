@@ -70,7 +70,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"crc-type"}] =
 		{"string",
 		 "select the CRC implementation you want to use.",
-		 "STD, FAST"};
+		 "STD, FAST, INTER"};
 
 	this->opt_args[{"crc-poly"}] =
 		{"string",

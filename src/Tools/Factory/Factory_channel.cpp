@@ -5,7 +5,6 @@
 
 #include "Tools/Algo/Noise/Standard/Noise_std.hpp"
 #include "Tools/Algo/Noise/Fast/Noise_fast.hpp"
-
 #ifdef CHANNEL_MKL
 #include "Tools/Algo/Noise/MKL/Noise_MKL.hpp"
 #endif
@@ -20,64 +19,30 @@ using namespace aff3ct::tools;
 
 template <typename R>	
 Channel<R>* Factory_channel<R>
-::build(const parameters &params, const R& sigma, const int size, const int seed)
+::build(const std::string type,
+        const int         N,
+        const R           sigma,
+        const bool        complex,
+        const std::string path,
+        const int         seed,
+        const int         n_frames)
 {
-	Channel<R> *channel = nullptr;
-
-	// build the channels
-	if (params.channel.domain == "LLR")
-	{
-		if (params.channel.type == "AWGN")
-		{
-			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_std<R>(seed), params.simulation.inter_frame_level);
-		}
-		else if (params.channel.type == "AWGN_FAST")
-		{
-			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_fast<R>(seed), params.simulation.inter_frame_level);
-		}
+	     if (type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_std <R>(seed), n_frames);
+	else if (type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_fast<R>(seed), n_frames);
+	else if (type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_std <R>(seed), n_frames);
+	else if (type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_fast<R>(seed), n_frames);
+	else if (type == "USER"         ) return new Channel_user        <R>(N, path,                                           n_frames);
+	else if (type == "NO"           ) return new Channel_NO          <R>(N,                                                 n_frames);
 #ifdef CHANNEL_MKL
-		else if (params.channel.type == "AWGN_MKL")
-		{
-			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_MKL<R>(seed), params.simulation.inter_frame_level);
-		}
+	else if (type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_MKL <R>(seed), n_frames);
+	else if (type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_MKL <R>(seed), n_frames);
 #endif
 #ifdef CHANNEL_GSL
-		else if (params.channel.type == "AWGN_GSL")
-		{
-			channel = new Channel_AWGN_LLR<R>(size, sigma, new tools::Noise_GSL<R>(seed), params.simulation.inter_frame_level);
-		}
+	else if (type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_GSL <R>(seed), n_frames);
+	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_GSL <R>(seed), n_frames);
 #endif
-		else if (params.channel.type == "RAYLEIGH" && params.channel.block_fading == "NO")
-		{
-			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_std<R>(seed), params.simulation.inter_frame_level);
-		}
-		else if (params.channel.type == "RAYLEIGH_FAST" && params.channel.block_fading == "NO")
-		{
-			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_fast<R>(seed), params.simulation.inter_frame_level);
-		}
-#ifdef CHANNEL_MKL
-		else if (params.channel.type == "RAYLEIGH_MKL" && params.channel.block_fading == "NO")
-		{
-			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_MKL<R>(seed), params.simulation.inter_frame_level);
-		}
-#endif
-#ifdef CHANNEL_GSL
-		else if (params.channel.type == "RAYLEIGH_GSL" && params.channel.block_fading == "NO")
-		{
-			channel = new Channel_Rayleigh_LLR<R>(size, sigma, params.modulator.complex, new tools::Noise_GSL<R>(seed), params.simulation.inter_frame_level);
-		}
-#endif
-		else if (params.channel.type == "USER")
-		{
-			channel = new Channel_user<R>(size, params.channel.path, params.simulation.inter_frame_level);
-		}
-		else if (params.channel.type == "NO")
-		{
-			channel = new Channel_NO<R>(size, params.simulation.inter_frame_level);
-		}
-	}
 
-	return channel;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

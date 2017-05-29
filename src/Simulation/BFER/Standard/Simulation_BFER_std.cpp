@@ -95,21 +95,35 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER_std<B,R,Q>
 ::build_source(const int tid)
 {
-	return Factory_source<B>::build(this->params, rd_engine_seed[tid]());
+	return Factory_source<B>::build(this->params.source.type,
+	                                this->params.code.K_info,
+	                                this->params.source.path,
+	                                rd_engine_seed[tid](),
+	                                this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC<B>::build(this->params);
+	return Factory_CRC<B>::build(this->params.crc.poly.empty() ? "NO" : this->params.crc.type,
+	                             this->params.code.K_info,
+	                             this->params.crc.size,
+	                             this->params.crc.poly,
+	                             this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Encoder<B>* Simulation_BFER_std<B,R,Q>
 ::build_encoder(const int tid)
 {
-	auto enc = Factory_encoder_common<B>::build(this->params, rd_engine_seed[tid]());
+	auto enc = Factory_encoder_common<B>::build(this->params.encoder.type,
+	                                            this->params.code.K,
+	                                            this->params.code.N_code,
+	                                            this->params.encoder.path,
+	                                            rd_engine_seed[tid](),
+	                                            this->params.simulation.inter_frame_level);
+
 	if (enc == nullptr)
 		enc = this->codec.build_encoder(tid, interleaver[tid]);
 
@@ -122,7 +136,8 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 {
 	auto pct = this->codec.build_puncturer(tid);
 	if (pct == nullptr)
-		pct = new Puncturer_NO<B,Q>(this->params.code.K, this->params.code.N,
+		pct = new Puncturer_NO<B,Q>(this->params.code.K,
+		                            this->params.code.N,
 		                            this->params.simulation.inter_frame_level);
 
 	return pct;
@@ -132,35 +147,63 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_std<B,R,Q>
 ::build_interleaver(const int tid)
 {
-	return this->codec.build_interleaver(tid);
+	const auto seed = (this->params.interleaver.uniform) ? rd_engine_seed[tid]() : this->params.interleaver.seed;
+	return this->codec.build_interleaver(tid, seed);
 }
 
 template <typename B, typename R, typename Q>
 Modulator<B,R,R>* Simulation_BFER_std<B,R,Q>
 ::build_modulator(const int tid)
 {
-	return Factory_modulator<B,R,R>::build(this->params, this->sigma);
+	return Factory_modulator<B,R,R>::build(this->params.modulator.type,
+	                                       this->params.code.N,
+	                                       this->sigma,
+	                                       this->params.demodulator.max,
+	                                       this->params.modulator.bits_per_symbol,
+	                                       this->params.modulator.const_path,
+	                                       this->params.modulator.upsample_factor,
+	                                       this->params.modulator.cpm_L,
+	                                       this->params.modulator.cpm_k,
+	                                       this->params.modulator.cpm_p,
+	                                       this->params.modulator.mapping,
+	                                       this->params.modulator.wave_shape,
+	                                       this->params.demodulator.no_sig2,
+	                                       this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_std<B,R,Q>
 ::build_channel(const int tid)
 {
-	return Factory_channel<R>::build(this->params, this->sigma, this->params.code.N_mod, rd_engine_seed[tid]());
+	return Factory_channel<R>::build(this->params.channel.type,
+	                                 this->params.code.N_mod,
+	                                 this->sigma,
+	                                 this->params.modulator.complex,
+	                                 this->params.channel.path,
+	                                 rd_engine_seed[tid](),
+	                                 this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build(this->params, this->sigma, this->params.code.N);
+	return Factory_quantizer<R,Q>::build((typeid(R) == typeid(Q)) ? "NO" : this->params.quantizer.type,
+	                                     this->params.code.N,
+	                                     this->params.quantizer.n_decimals,
+	                                     this->params.quantizer.n_bits,
+	                                     this->sigma,
+	                                     this->params.quantizer.range,
+	                                     this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real<B,Q>::build(this->params);
+	return Factory_coset_real<B,Q>::build("STD",
+	                                      this->params.code.N_code,
+	                                      this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
@@ -174,7 +217,9 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return Factory_coset_bit<B>::build(this->params);
+	return Factory_coset_bit<B>::build("STD",
+	                                   this->params.code.K,
+	                                   this->params.simulation.inter_frame_level);
 }
 
 // ==================================================================================== explicit template instantiation

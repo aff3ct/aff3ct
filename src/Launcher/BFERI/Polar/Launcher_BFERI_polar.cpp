@@ -56,7 +56,7 @@ void Launcher_BFERI_polar<B,R,Q>
 	this->opt_args[{"cde-fb-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
-		 "GA, TV"};
+		 "GA, FILE, TV"};
 	this->opt_args[{"cde-awgn-fb-path"}] =
 		{"string",
 		 "path to a file or a directory containing the best channels to use for information bits."};

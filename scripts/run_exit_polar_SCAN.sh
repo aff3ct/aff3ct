@@ -12,7 +12,6 @@ cd ../build
     --sim-siga-min   0.0         \
     --sim-siga-max   5.01        \
     --sim-snr-step   0.1         \
-    --mnt-max-fe     100         \
     --chn-type       AWGN        \
     --dec-type       SCAN        \
     --dec-implem     NAIVE       \

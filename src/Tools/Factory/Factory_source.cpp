@@ -10,21 +10,18 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Source<B>* Factory_source<B>
-::build(const parameters &params, const int seed)
+::build(const std::string type,
+        const int         K,
+        const std::string path,
+        const int         seed,
+        const int         n_frames)
 {
-	Source<B> *source = nullptr;
+	     if (type == "RAND"     ) return new Source_random     <B>(K, seed, n_frames);
+	else if (type == "RAND_FAST") return new Source_random_fast<B>(K, seed, n_frames);
+	else if (type == "AZCW"     ) return new Source_AZCW       <B>(K,       n_frames);
+	else if (type == "USER"     ) return new Source_user       <B>(K, path, n_frames);
 
-	// build the generator
-	if (params.source.type == "RAND_FAST")
-		source = new Source_random_fast<B>(params.code.K_info, seed, params.simulation.inter_frame_level);
-	else if (params.source.type == "RAND")
-		source = new Source_random<B>(params.code.K_info, seed, params.simulation.inter_frame_level);
-	else if (params.source.type == "AZCW")
-		source = new Source_AZCW<B>(params.code.K_info, params.simulation.inter_frame_level);
-	else if (params.source.type == "USER")
-		source = new Source_user<B>(params.code.K_info, params.source.path, params.simulation.inter_frame_level);
-
-	return source;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

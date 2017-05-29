@@ -44,15 +44,14 @@ protected:
 
 public:
 	Modulator_CPM(int  N,
+	              R    sigma,
 	              int  bits_per_symbol,
 	              int  sampling_factor,
-	              std::string cpm_std,
 	              int  cpm_L,
 	              int  cpm_k,
 	              int  cpm_p,
 	              std::string mapping,
 	              std::string wave_shape,
-	              R    sigma,
 	              bool no_sig2,
 	              int  n_frames = 1,
 	              const std::string name = "Modulator_CPM");

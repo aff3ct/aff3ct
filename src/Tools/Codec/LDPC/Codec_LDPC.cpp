@@ -16,7 +16,7 @@ Codec_LDPC<B,Q>
   info_bits_pos(this->params.code.K),
   decoder_siso (params.simulation.n_threads, nullptr)
 {
-	auto encoder_LDPC = Factory_encoder_LDPC<B>::build(this->params);
+	auto encoder_LDPC = this->build_encoder();
 	if (encoder_LDPC != nullptr)
 	{
 		encoder_LDPC->get_info_bits_pos(info_bits_pos);
@@ -33,17 +33,33 @@ Codec_LDPC<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_LDPC<B,Q>
+Encoder_LDPC<B>* Codec_LDPC<B,Q>
 ::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
-	return Factory_encoder_LDPC<B>::build(this->params);
+	return Factory_encoder_LDPC<B>::build(this->params.encoder.type,
+	                                      this->params.code.K,
+	                                      this->params.code.N_code,
+	                                      this->params.encoder.path,
+	                                      this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename Q>
-SISO<Q>* Codec_LDPC<B,Q>
+Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
 ::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
-	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params, alist_data, info_bits_pos);
+	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params.decoder.type,
+	                                                     this->params.decoder.implem,
+	                                                     this->params.code.K,
+	                                                     this->params.code.N_code,
+	                                                     this->params.decoder.n_ite,
+	                                                     alist_data,
+	                                                     info_bits_pos,
+	                                                     this->params.decoder.simd_strategy,
+	                                                     this->params.decoder.normalize_factor,
+	                                                     (Q)this->params.decoder.offset,
+	                                                     this->params.decoder.enable_syndrome,
+	                                                     this->params.decoder.syndrome_depth,
+	                                                     this->params.simulation.inter_frame_level);
 	return decoder_siso[tid];
 }
 
@@ -58,7 +74,11 @@ Decoder<B,Q>* Codec_LDPC<B,Q>
 		return ptr;
 	}
 	else
-		return Factory_decoder_LDPC<B,Q>::build(this->params, alist_data, info_bits_pos);
+	{
+		auto decoder = this->build_siso(tid, itl, crc);
+		decoder_siso[tid] = nullptr;
+		return decoder;
+	}
 }
 
 // ==================================================================================== explicit template instantiation 

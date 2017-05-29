@@ -1,6 +1,3 @@
-#include <dirent.h>
-#include <cmath>
-
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp"
@@ -11,34 +8,18 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Frozenbits_generator<B>* Factory_frozenbits_generator<B>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         K,
+        const int         N,
+        const float       sigma,
+        const std::string path_fb,
+        const std::string path_pb)
 {
-	Frozenbits_generator<B> *fb_generator = nullptr;
+	     if (type == "GA"  ) return new Frozenbits_generator_GA  <B>(K, N,                   sigma);
+	else if (type == "TV"  ) return new Frozenbits_generator_TV  <B>(K, N, path_fb, path_pb, sigma);
+	else if (type == "FILE") return new Frozenbits_generator_file<B>(K, N, path_fb                );
 
-	// build the frozen bits generator
-	if (params.code.fb_gen_method == "GA")
-		fb_generator = new Frozenbits_generator_GA<B>(params.code.K, params.code.N_code, params.code.sigma);
-	else
-	{
-		bool is_file = false;
-		DIR *dp;
-		if (!params.code.awgn_fb_path.empty())
-		{
-			if ((dp = opendir(params.code.awgn_fb_path.c_str())) == nullptr)
-				is_file = true;
-			else
-				closedir(dp);
-		}
-
-		if (!params.code.awgn_fb_path.empty() && is_file)
-			fb_generator = new Frozenbits_generator_file<B>(params.code.K, params.code.N_code,
-			                                                params.code.awgn_fb_path);
-		else if (params.code.fb_gen_method == "TV")
-			fb_generator = new Frozenbits_generator_TV<B>(params.code.K, params.code.N_code, params.code.awgn_fb_path,
-			                                              params.simulation.bin_pb_path, params.code.sigma);
-	}
-
-	return fb_generator;
+	return nullptr;
 }
 
 // ==================================================================================== explicit template instantiation 

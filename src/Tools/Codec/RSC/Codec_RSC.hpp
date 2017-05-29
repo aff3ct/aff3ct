@@ -1,6 +1,9 @@
 #ifndef CODEC_RSC_HPP_
 #define CODEC_RSC_HPP_
 
+#include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
+
 #include "../Codec_SISO.hpp"
 
 namespace aff3ct
@@ -18,11 +21,13 @@ public:
 	Codec_RSC(const parameters& params);
 	virtual ~Codec_RSC();
 
-	module::Encoder<B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::SISO   <  Q>* build_siso   (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                             module::CRC        <B  >* crc = nullptr);
-	module::Decoder<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                             module::CRC        <B  >* crc = nullptr);
+	module::Encoder_RSC_sys<B  >* build_encoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
+	module::Decoder_SISO   <B,Q>* build_decoder_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                          module::CRC        <B  >* crc = nullptr);
+	module::SISO           <  Q>* build_siso        (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                          module::CRC        <B  >* crc = nullptr);
+	module::Decoder        <B,Q>* build_decoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                          module::CRC        <B  >* crc = nullptr);
 };
 }
 }

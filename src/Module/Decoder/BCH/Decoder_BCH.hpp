@@ -35,7 +35,7 @@ protected:
 	mipp::vector<B> V_K;
 
 public:
-	Decoder_BCH(const int& K, const int& N, const int& m, const int&t, const tools::Galois &GF,
+	Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF,
 	            const int n_frames = 1, const std::string name = "Decoder_BCH");
 	virtual ~Decoder_BCH();
 

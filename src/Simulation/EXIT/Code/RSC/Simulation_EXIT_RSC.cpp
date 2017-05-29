@@ -63,7 +63,11 @@ template <typename B, typename R, typename Q, typename QD>
 Encoder<B>* Simulation_EXIT_RSC<B,R,Q,QD>
 ::build_encoder()
 {
-	auto encoder_RSC = Factory_encoder_RSC<B>::build(this->params);
+	auto encoder_RSC = Factory_encoder_RSC<B>::build(this->params.encoder.type,
+	                                                 this->params.code.K,
+	                                                 this->params.code.N,
+	                                                 this->params.encoder.buffered,
+	                                                 this->params.encoder.poly);
 	trellis = encoder_RSC->get_trellis();
 
 	auto encoder = Simulation_EXIT<B,R,Q>::build_encoder();
@@ -78,7 +82,13 @@ template <typename B, typename R, typename Q, typename QD>
 SISO<R>* Simulation_EXIT_RSC<B,R,Q,QD>
 ::build_siso()
 {
-	return Factory_decoder_RSC<B,R,R>::build_siso(this->params, trellis);
+	return Factory_decoder_RSC<B,Q,QD>::build(this->params.decoder.type,
+	                                          this->params.decoder.implem,
+	                                          this->params.code.K,
+	                                          trellis,
+	                                          this->params.decoder.max,
+	                                          this->params.decoder.simd_strategy,
+	                                          this->params.encoder.buffered);
 }
 
 // ==================================================================================== explicit template instantiation 

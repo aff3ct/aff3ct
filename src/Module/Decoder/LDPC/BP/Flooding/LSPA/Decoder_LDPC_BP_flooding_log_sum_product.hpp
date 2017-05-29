@@ -27,6 +27,9 @@ protected:
 	// BP functions for decoding
 	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
 };
+
+template <typename B = int, typename R = float>
+using Decoder_LDPC_BP_flooding_LSPA = Decoder_LDPC_BP_flooding_log_sum_product<B,R>;
 }
 }
 

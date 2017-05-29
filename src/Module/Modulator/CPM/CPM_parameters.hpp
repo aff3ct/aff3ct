@@ -13,16 +13,14 @@ template <typename SIN = int, typename SOUT = int>
 class CPM_parameters
 {
 public :
-	CPM_parameters(const std::string& cpm_standard,
-	               const int L,
+	CPM_parameters(const int L,
 	               const int k,
 	               const int p,
 	               const int n_b_per_s,
 	               const int s_factor,
 	               const std::string& filters_type,
 	               const std::string& wave_shape)
-	: cpm_standard(cpm_standard                        ),
-	  L           (L                                   ),
+	: L           (L                                   ),
 	  k           (k                                   ),
 	  p           (p                                   ),
 	  n_b_per_s   (n_b_per_s                           ),
@@ -54,8 +52,6 @@ public :
 	}
 
 	virtual ~CPM_parameters(){}
-
-	const std::string cpm_standard; // the selection of a default CPM standard hardly implemented {GSM}
 
 	int L;                          // CPM pulse width or CPm memory
 	int k;                          // modulation index numerator

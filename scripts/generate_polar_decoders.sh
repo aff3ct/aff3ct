@@ -12,6 +12,7 @@ echo "Generate SC decoders (rate 1/2)..."
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N    1024 -K    512 --dec-snr 2.5 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N    2048 -K   1024 --dec-snr 2.5 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N    4096 -K   2048 --dec-snr 2.5 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.report 2>&1
+../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N    4096 -K   2048 --dec-snr 3.3 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N    8192 -K   4096 --dec-snr 2.5 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   16384 -K   8192 --dec-snr 2.5 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.report 2>&1
 ../build/bin/aff3ct --cde-type POLAR --sim-type GEN -N   32768 -K  16384 --dec-snr 2.5 --cde-fb-gen-method TV > ../src/Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.report 2>&1
