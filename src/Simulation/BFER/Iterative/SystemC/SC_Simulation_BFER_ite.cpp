@@ -388,7 +388,13 @@ Interleaver<int>* SC_Simulation_BFER_ite<B,R,Q>
 	const auto seed = (this->params.interleaver.uniform) ? this->rd_engine_seed[tid]() : this->params.interleaver.seed;
 
 	// build the objects
-	this->interleaver_e = Factory_interleaver<int>::build(this->params, this->params.code.N, seed);
+	this->interleaver_e = Factory_interleaver<int>::build(this->params.interleaver.type,
+	                                                      this->params.code.N_code,
+	                                                      this->params.interleaver.path,
+	                                                      this->params.interleaver.uniform,
+	                                                      this->params.interleaver.n_cols,
+	                                                      seed,
+	                                                      this->params.simulation.inter_frame_level);
 	Simulation::check_errors(this->interleaver_e, "Interleaver<int>");
 
 	this->interleaver_e->init();
@@ -396,18 +402,24 @@ Interleaver<int>* SC_Simulation_BFER_ite<B,R,Q>
 	if (this->interleaver_e->is_uniform())
 		this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::refresh, this->interleaver_e));
 
-	return Factory_interleaver<int>::build(this->params, this->params.code.N, seed);
+	return Factory_interleaver<int>::build(this->params.interleaver.type,
+	                                       this->params.code.N_code,
+	                                       this->params.interleaver.path,
+	                                       this->params.interleaver.uniform,
+	                                       this->params.interleaver.n_cols,
+	                                       seed,
+	                                       this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Coset<B,Q>* SC_Simulation_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	this->coset_real_i = Factory_coset_real<B,Q>::build(this->params);
+	this->coset_real_i = Simulation_BFER_ite<B,R,Q>::build_coset_real(tid);
 	Simulation::check_errors(this->coset_real_i, "Coset<B,Q>");
 	this->coset_real_i->rename("Coset_real_i");
 
-	return Factory_coset_real<B,Q>::build(this->params);
+	return Simulation_BFER_ite<B,R,Q>::build_coset_real(tid);
 }
 
 // ==================================================================================== explicit template instantiation 
