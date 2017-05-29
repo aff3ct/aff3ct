@@ -16,8 +16,8 @@ public:
 	Encoder_AZCW(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_AZCW");
 	virtual ~Encoder_AZCW();
 
-	void encode    (const B *U_K, B *X_N, const int frame_id); using Encoder_sys<B>::encode;
-	void encode_sys(const B *U_K, B *par, const int frame_id); using Encoder_sys<B>::encode_sys;
+	void encode    (const B *U_K, B *X_N); using Encoder_sys<B>::encode;
+	void encode_sys(const B *U_K, B *par); using Encoder_sys<B>::encode_sys;
 };
 }
 }
