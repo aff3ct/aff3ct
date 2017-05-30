@@ -29,7 +29,8 @@ struct Factory_modulator : public Factory
 	                                       const std::string mapping  = "NATURAL",
 	                                       const std::string wave     = "GMSK",
 	                                       const bool        no_sig2  = false,
-	                                       const int         n_frames = 1);
+	                                       const int         n_frames = 1,
+	                                       const int         n_ite    = 1);
 
 	static int get_buffer_size_after_modulation(const std::string type,
 	                                            const int         N,
@@ -57,7 +58,8 @@ private:
 	                                        const std::string mapping  = "NATURAL",
 	                                        const std::string wave     = "GMSK",
 	                                        const bool        no_sig2  = false,
-	                                        const int         n_frames = 1);
+	                                        const int         n_frames = 1,
+	                                        const int         n_ite    = 1);
 };
 }
 }

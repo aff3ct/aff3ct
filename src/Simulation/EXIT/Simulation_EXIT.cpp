@@ -450,7 +450,8 @@ Modulator<B,R,R>* Simulation_EXIT<B,R>
 	                                     this->params.modulator.cpm_p,
 	                                     this->params.modulator.mapping,
 	                                     this->params.modulator.wave_shape,
-	                                     this->params.demodulator.no_sig2);
+	                                     this->params.demodulator.no_sig2,
+	                                     this->params.demodulator.n_ite);
 }
 
 template <typename B, typename R>
@@ -469,14 +470,15 @@ Modulator<B,R,R>* Simulation_EXIT<B,R>
 	                                     this->params.modulator.cpm_p,
 	                                     this->params.modulator.mapping,
 	                                     this->params.modulator.wave_shape,
-	                                     this->params.demodulator.no_sig2);
+	                                     this->params.demodulator.no_sig2,
+	                                     this->params.demodulator.n_ite);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
-	const auto add_users = false;
+	const auto add_users = (this->params.modulator.type == "SCMA");
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 size,
 	                                 this->sigma,
@@ -491,7 +493,7 @@ template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	const auto add_users = false;
+	const auto add_users = (this->params.modulator.type == "SCMA");
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 size,
 	                                 2.f / sig_a,

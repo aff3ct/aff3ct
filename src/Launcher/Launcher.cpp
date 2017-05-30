@@ -76,6 +76,8 @@ Launcher<B,R,Q>
 	params.modulator  .complex           = true;
 	params.demodulator.max               = "MAXSS";
 	params.demodulator.no_sig2           = false;
+	params.demodulator.psi               = "PSI0";
+	params.demodulator.n_ite             = 1;
 	params.channel    .domain            = "LLR";
 	params.channel    .type              = "AWGN";
 	params.channel    .path              = "";
@@ -187,7 +189,7 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER, SCMA"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
@@ -229,6 +231,13 @@ void Launcher<B,R,Q>
 	opt_args[{"dmod-no-sig2"}] =
 		{"",
 		 "turn off the division by sigma square in the demodulation."};
+	opt_args[{"dmod-psi"}] =
+		{"string",
+		 "select the type of the psi function to use in the SCMA demodulation.",
+		 "PSI0, PSI1, PSI2, PSI3"};
+	opt_args[{"dmod-ite"}] =
+		{"positive int",
+		 "select the number of iteration in the demodulator."};
 
 	// ------------------------------------------------------------------------------------------------------- channel
 	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
@@ -399,9 +408,15 @@ void Launcher<B,R,Q>
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
 		params.modulator.bits_per_symbol = 1;
 
+	// force the number of bits per symbol to 3 when SCMA mod
+	if (params.modulator.type == "SCMA")
+		params.modulator.bits_per_symbol = 3;
+
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
-	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
+	if(ar.exist_arg({"dmod-ite"    })) params.demodulator.n_ite   = ar.get_arg_int({"dmod-ite"});
+	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg    ({"dmod-max"});
+	if(ar.exist_arg({"dmod-psi"    })) params.demodulator.psi     = ar.get_arg    ({"dmod-psi"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
 	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
@@ -637,12 +652,20 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	std::vector<std::pair<std::string,std::string>> p;
 
 	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
-	std::string demod_max  = (params.modulator.type == "BPSK") ||
-	                         (params.modulator.type == "BPSK_FAST") ?
+	std::string demod_max  = (params.modulator.type == "BPSK"     ) ||
+	                         (params.modulator.type == "BPSK_FAST") ||
+	                         (params.modulator.type == "SCMA"     ) ?
 	                         "unused" : params.demodulator.max;
+	std::string demod_ite  = std::to_string(params.demodulator.n_ite);
+	std::string demod_psi  = params.demodulator.psi;
 
 	p.push_back(std::make_pair("Sigma square", demod_sig2));
 	p.push_back(std::make_pair("Max type",     demod_max ));
+	if (params.modulator.type == "SCMA")
+	{
+		p.push_back(std::make_pair("Number of iterations", demod_ite ));
+		p.push_back(std::make_pair("Psi function",         demod_psi ));
+	}
 
 	return p;
 }

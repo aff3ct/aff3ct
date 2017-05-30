@@ -6,6 +6,7 @@
 #include "Module/Modulator/QAM/Modulator_QAM.hpp"
 #include "Module/Modulator/PSK/Modulator_PSK.hpp"
 #include "Module/Modulator/CPM/Modulator_CPM.hpp"
+#include "Module/Modulator/SCMA/Modulator_SCMA.hpp"
 #include "Module/Modulator/User/Modulator_user.hpp"
 
 #include "Factory_modulator.hpp"
@@ -28,15 +29,17 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
          const std::string mapping,
          const std::string wave,
          const bool        no_sig2,
-         const int         n_frames)
+         const int         n_frames,
+         const int         n_ite)
 {
 	     if (type == "BPSK"     ) return new Modulator_BPSK     <B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
 	else if (type == "BPSK_FAST") return new Modulator_BPSK_fast<B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
-	else if (type == "PAM"      ) return new Modulator_PAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-	else if (type == "QAM"      ) return new Modulator_QAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-	else if (type == "PSK"      ) return new Modulator_PSK      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-	else if (type == "USER"     ) return new Modulator_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
-	else if (type == "CPM"      ) return new Modulator_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+  else if (type == "SCMA"     ) return new Modulator_SCMA     <B,R,Q    >(N, sigma,                                               no_sig2, n_ite   );
+  else if (type == "PAM"      ) return new Modulator_PAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
+  else if (type == "QAM"      ) return new Modulator_QAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
+  else if (type == "PSK"      ) return new Modulator_PSK      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
+  else if (type == "USER"     ) return new Modulator_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
+  else if (type == "CPM"      ) return new Modulator_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 
 	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
@@ -56,12 +59,13 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
         const std::string mapping,
         const std::string wave,
         const bool        no_sig2,
-        const int         n_frames)
+        const int         n_frames,
+        const int         n_ite)
 {
-	     if (max_type == "MAX"  ) return _build<max          <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
-	else if (max_type == "MAXL" ) return _build<max_linear   <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
-	else if (max_type == "MAXS" ) return _build<max_star     <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
-	else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+	     if (max_type == "MAX"  ) return _build<max          <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
+	else if (max_type == "MAXL" ) return _build<max_linear   <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
+	else if (max_type == "MAXS" ) return _build<max_star     <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
+	else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
 
 	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
@@ -75,7 +79,8 @@ int Factory_modulator<B,R,Q>
                                    const int         cpm_L)
 {
 	     if (type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_mod(N                 );
-	else if (type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_mod(N                 );
+  else if (type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_mod(N                 );
+  else if (type == "SCMA"     ) return Modulator_SCMA     <B,R,Q>::size_mod(N                 );
 	else if (type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_mod(N, bps            );
 	else if (type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_mod(N, bps            );
 	else if (type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_mod(N, bps            );
@@ -95,6 +100,7 @@ int Factory_modulator<B,R,Q>
 {
 	     if (type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_fil(N                   );
 	else if (type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_fil(N                   );
+  else if (type == "SCMA"     ) return Modulator_SCMA     <B,R,Q>::size_fil(N                   );
 	else if (type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_fil(N, bps              );
 	else if (type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_fil(N, bps              );
 	else if (type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_fil(N, bps              );

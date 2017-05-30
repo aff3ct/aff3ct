@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iomanip>
 
 #include "Tools/Display/bash_tools.h"
 namespace aff3ct
@@ -50,8 +51,8 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modulator_SCMA<B,R,Q,PSI>
 ::Modulator_SCMA(const int N, const R sigma, const bool disable_sig2, const int n_ite, const std::string name)
 : Modulator<B,R,Q>(N,
-                   Modulator_SCMA<B,R,Q,PSI>::size_mod(N, 3),
-                   Modulator_SCMA<B,R,Q,PSI>::size_fil(N, 3),
+                   Modulator_SCMA<B,R,Q,PSI>::size_mod(N),
+                   Modulator_SCMA<B,R,Q,PSI>::size_fil(N),
                    sigma,
                    6,
                    name),
@@ -76,7 +77,6 @@ void Modulator_SCMA<B,R,Q,PSI>
 
 	for (auto f = 0 ; f < this->n_frames ; f++)
 	{
-
 		for (auto j = 0 ; j < this->N / 2 ; j++)
 		{
 			unsigned idx = 0;
@@ -90,8 +90,6 @@ void Modulator_SCMA<B,R,Q,PSI>
 				X_N2[f * N_mod + 8 * j + 2 * i +1] = CB[f][i][idx].imag();
 			}
 		}
-
-
 	}
 
 	if(this->N % 2 == 1)
@@ -106,7 +104,6 @@ void Modulator_SCMA<B,R,Q,PSI>
 				X_N2[f * N_mod + 8 * (this->N / 2) + 2 * i +1] = CB[f][i][idx].imag();
 			}
 		}
-
 	}
 }
 
@@ -117,7 +114,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
-	for (unsigned batch = 0 ; batch < this->N / 2 ; batch++)
+	for (auto batch = 0 ; batch < this->N / 2 ; batch++)
 	{
 		// filling array_phi luts
 		for (auto i = 0; i < 4; i++)
@@ -139,7 +136,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
-	for (unsigned batch = 0 ; batch < this->N / 2 ; batch++)
+	for (auto batch = 0 ; batch < this->N / 2 ; batch++)
 	{
 		// filling array_phi luts
 		for (auto i = 0; i < 4; i++)
@@ -154,7 +151,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modulator_SCMA<B,R,Q,PSI>
-::demodulate_batch(const Q* Y_N1, Q* Y_N2, unsigned batch)
+::demodulate_batch(const Q* Y_N1, Q* Y_N2, int batch)
 {
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
@@ -287,7 +284,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modulator_SCMA<B,R,Q,PSI>
-::phi(const Q* Y_N1, int i, int j, int k, int re, unsigned batch)
+::phi(const Q* Y_N1, int i, int j, int k, int re, int batch)
 {
 	Q phi;
 	std::complex<Q> tmp;
@@ -307,11 +304,11 @@ Q Modulator_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modulator_SCMA<B,R,Q,PSI>
-::phi(const Q* Y_N1, int i, int j, int k, int re, unsigned batch, const R* H_N)
+::phi(const Q* Y_N1, int i, int j, int k, int re, int batch, const R* H_N)
 {
 	Q phi;
 	std::complex<Q> tmp;
-	const auto Nmod = size_mod(this->N,3);
+	const auto Nmod = size_mod(this->N);
 
 	const auto Y_N  = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
@@ -335,7 +332,7 @@ Q Modulator_SCMA<B,R,Q,PSI>
  */
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modulator_SCMA<B,R,Q,PSI>
-::_filter(const R *Y_N1, R *Y_N2)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }

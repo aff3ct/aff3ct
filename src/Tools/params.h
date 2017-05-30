@@ -114,6 +114,8 @@ struct demodulator_parameters
 {
 	std::string max;     // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
 	bool        no_sig2; // do not divide by (sig^2) / 2 in the demodulation
+	std::string psi;     // psi function to use in the SCMA demodulation (PSI0, PSI1, PSI2, PSI3)
+	int         n_ite;   // number of demodulations/decoding sessions to perform in the BFERI simulations
 };
 
 struct channel_parameters

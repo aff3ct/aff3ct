@@ -36,28 +36,29 @@ public:
 	virtual void modulate             (const B* X_N1, R* X_N2);
 	virtual void demodulate           (const Q *Y_N1, Q *Y_N2);
 	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2);
-	virtual void _filter              (const R *Y_N1, R *Y_N2);
+	virtual void _filter              (const R *Y_N1, R *Y_N2, const int frame_id);
 
 	virtual void set_n_frames(const int n_frames);
 
 
-	static int size_mod(const int N, const int bps)
+	static int size_mod(const int N)
 	{
-		if(bps != 3)
-			throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"bit_per_symbol\" value is invalid.");
+		// TODO move elsewhere
+		// if(bps != 3)
+		// 	throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"bit_per_symbol\" value is invalid.");
 
 		return (8 * ((N + 1) / 2));
 	}
 
-	static int size_fil(const int N, const int bps)
+	static int size_fil(const int N)
 	{
-		return size_mod(N,bps);
+		return size_mod(N);
 	}
 
 private:
-	Q phi(const Q* Y_N1, int i, int j, int k, int re, unsigned batch);
-	Q phi(const Q* Y_N1, int i, int j, int k, int re, unsigned batch, const R* H_N);
-	void demodulate_batch(const Q* Y_N1, Q* Y_N2, unsigned batch);
+	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);
+	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch, const R* H_N);
+	void demodulate_batch(const Q* Y_N1, Q* Y_N2, int batch);
 };
 }
 }
