@@ -99,7 +99,7 @@ Simulation* Launcher_EXIT_polar<B,R,Q>
 ::build_simu()
 {
 	this->codec = new Codec_polar<B,R>(this->params);
-	return new Simulation_EXIT<B,R,Q>(this->params, *this->codec);
+	return new Simulation_EXIT<B,R>(this->params, *this->codec);
 }
 
 template <typename B, typename R, typename Q>

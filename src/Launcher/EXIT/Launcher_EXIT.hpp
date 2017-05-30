@@ -13,7 +13,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class Launcher_EXIT : public Launcher<B,R,Q>
 {
 protected:
-	tools::Codec_SISO<B,Q> *codec;
+	tools::Codec_SISO<B,R> *codec;
 
 public:
 	Launcher_EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);

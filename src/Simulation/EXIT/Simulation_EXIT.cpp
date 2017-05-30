@@ -1,3 +1,4 @@
+#include <cmath>
 #include <algorithm>
 
 #include "Tools/Math/utils.h"
@@ -14,8 +15,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
-template <typename B, typename R, typename Q>
-Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Simulation_EXIT<B,R>
 ::Simulation_EXIT(const parameters& params, tools::Codec_SISO<B,R> &codec)
 : Simulation(),
 
@@ -24,9 +25,8 @@ Simulation_EXIT<B,R,Q>
   H_N   (params.code.N),
   B_K   (params.code.K),
   B_N   (params.code.N),
-  X_K1  (params.code.K),
   X_N1  (params.code.N),
-  X_K2  (params.code.K),
+  X_K   (params.code.K),
   X_N2  (params.code.N),
   Y_N   (params.code.N),
   Y_K   (params.code.K),
@@ -61,41 +61,37 @@ Simulation_EXIT<B,R,Q>
   siso       (nullptr),
   terminal   (nullptr)
 {
-	if (typeid(R) != typeid(Q))
-		std::clog << bold_yellow("(WW) EXIT simulation does not use fixed-point representation!") << std::endl;
-
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
 	          << bold_yellow("on each MPI processes.") << std::endl;
 #endif
 }
 
-template <typename B, typename R, typename Q>
-Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Simulation_EXIT<B,R>
 ::~Simulation_EXIT()
 {
 	release_objects();
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::build_communication_chain()
 {
 	release_objects();
+
+	const auto N_mod = this->params.code.N_mod;
+	const auto K_mod = Factory_modulator<B,R>::get_buffer_size_after_modulation(params.modulator.type,
+	                                                                            params.code.K,
+	                                                                            params.modulator.bits_per_symbol,
+	                                                                            params.modulator.upsample_factor,
+	                                                                            params.modulator.cpm_L);
 
 	// build the objects
 	source      = build_source     (     );
 	encoder     = build_encoder    (     );
 	modulator   = build_modulator  (     );
 	modulator_a = build_modulator_a(     );
-
-	const auto N_mod = this->params.code.N_mod;
-	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
-	                                                                              params.code.K,
-	                                                                              params.modulator.bits_per_symbol,
-	                                                                              params.modulator.upsample_factor,
-	                                                                              params.modulator.cpm_L);
-
 	channel     = build_channel    (N_mod);
 	channel_a   = build_channel_a  (K_mod);
 	siso        = build_siso       (     );
@@ -104,16 +100,15 @@ void Simulation_EXIT<B,R,Q>
 	if (siso->get_n_frames() > 1)
 		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
 
-
-	if (X_K2  .size() != (unsigned)K_mod) X_K2  .resize(K_mod);
+	if (X_K   .size() != (unsigned)K_mod) X_K   .resize(K_mod);
 	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);
 	if (La_K1 .size() != (unsigned)K_mod) La_K1 .resize(K_mod);
 	if (Lch_N1.size() != (unsigned)N_mod) Lch_N1.resize(N_mod);
 	if (H_N   .size() != (unsigned)N_mod) H_N   .resize(N_mod);
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::launch()
 {
 	bool first_loop = true;
@@ -159,19 +154,17 @@ void Simulation_EXIT<B,R,Q>
 	}
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::simulation_loop()
 {
 	using namespace std::chrono;
-
-	// simulation loop
 	auto t_simu = steady_clock::now();
 
 	Le_buff.clear();
 	B_buff .clear();
 	La_buff.clear();
-	
+
 	for (cur_trial = 0; cur_trial < n_trials; cur_trial++) 
 	{
 		// generate a random binary value
@@ -180,11 +173,8 @@ void Simulation_EXIT<B,R,Q>
 		// encode
 		encoder->encode(B_K, X_N1);
 
-		// X_K used to generate La_K vector
-		X_K1 = B_K;
-
 		// modulate
-		modulator_a->modulate(X_K1, X_K2);
+		modulator_a->modulate(B_K,  X_K );
 		modulator  ->modulate(X_N1, X_N2);
 
 		//if sig_a = 0, La_K = 0, no noise to add
@@ -193,26 +183,26 @@ void Simulation_EXIT<B,R,Q>
 			// Rayleigh channel
 			if (params.channel.type.find("RAYLEIGH") != std::string::npos)
 			{
-				channel_a->add_noise(X_K2, La_K1, H_N);
-				modulator_a->demodulate_with_gains(La_K1, H_N, La_K2);
+				channel_a  ->add_noise            (X_K, La_K1, H_N       );
+				modulator_a->demodulate_with_gains(     La_K1, H_N, La_K2);
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
-				channel_a  ->add_noise (X_K2,  La_K1);
-				modulator_a->demodulate(La_K1, La_K2);
+				channel_a  ->add_noise (X_K, La_K1       );
+				modulator_a->demodulate(     La_K1, La_K2);
 			}
 		}
 
 		// Rayleigh channel
 		if (params.channel.type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel->add_noise(X_N2, Lch_N1, H_N);
-			modulator->demodulate_with_gains(Lch_N1, H_N, Lch_N2);
+			channel  ->add_noise            (X_N2, Lch_N1, H_N        );
+			modulator->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			channel  ->add_noise (X_N2,   Lch_N1);
-			modulator->demodulate(Lch_N1, Lch_N2);
+			channel  ->add_noise (X_N2, Lch_N1        );
+			modulator->demodulate(      Lch_N1, Lch_N2);
 		}
 
 		// extract systematic and parity information
@@ -239,12 +229,12 @@ void Simulation_EXIT<B,R,Q>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = measure_mutual_info_avg  (La_buff, B_buff) / (params.code.K * n_trials);
-	I_E = measure_mutual_info_histo(Le_buff, B_buff, 1000);
+	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.code.K * n_trials);
+	I_E = Simulation_EXIT<B,R>::measure_mutual_info_histo(Le_buff, B_buff);
 }
 
-template <typename B, typename R, typename Q>
-double Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+double Simulation_EXIT<B,R>
 ::measure_mutual_info_avg(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
 	double I_A = 0;
@@ -253,17 +243,18 @@ double Simulation_EXIT<B,R,Q>
 	for (int j = 0; j < size; j++)
 	{
 		symb = -2 * (double)bits[j] +1;
-		I_A += (1 - log2(1 + std::exp(-symb * (double)llrs[j])));
+		I_A += (1 - std::log2(1 + std::exp(-symb * (double)llrs[j])));
 	}
 
 	return(I_A);
 }
 
-template <typename B, typename R, typename Q>
-double Simulation_EXIT<B,R,Q>
-::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits, const int N)
+template <typename B, typename R>
+double Simulation_EXIT<B,R>
+::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
-	const double Inf = 10000000;
+//	const double inf = 10000000;
+	const double inf = std::numeric_limits<double>::infinity();
 
 	int vec_length = (int)bits.size();
 
@@ -274,7 +265,7 @@ double Simulation_EXIT<B,R,Q>
 
 	double tmp;
 	double I_E = 0.0;
-	double bin_width = 0.0f;
+	double bin_width = 0.0;
 	double llr_0_variance = 0.0;
 	double llr_1_variance = 0.0;
 	double llr_0_max, llr_0_min, llr_1_max, llr_1_min;
@@ -291,8 +282,8 @@ double Simulation_EXIT<B,R,Q>
 	else
 	{
 		// determine the min and max value for llrs / 0 and llrs / 1
-		llr_0_max = llr_1_max = -Inf;
-		llr_0_min = llr_1_min = +Inf;
+		llr_0_max = llr_1_max = -inf;
+		llr_0_min = llr_1_min = +inf;
 
 		for (int i = 0; i < vec_length; i++)
 		{
@@ -314,7 +305,7 @@ double Simulation_EXIT<B,R,Q>
 		{
 			for (int i = 0; i < vec_length; i++)
 			{
-				if ((double)llrs[i] != -Inf && (double)llrs[i] != Inf)
+				if ((double)llrs[i] != -inf && (double)llrs[i] != inf)
 				{
 					if ((int)bits[i] == 0)
 						llr_0_mean = llr_0_mean + (double)llrs[i];
@@ -327,7 +318,7 @@ double Simulation_EXIT<B,R,Q>
 
 			for (int i = 0; i < vec_length; i++)
 			{
-				if ((double)llrs[i] != -Inf && (double)llrs[i] != Inf)
+				if ((double)llrs[i] != -inf && (double)llrs[i] != inf)
 				{
 					if ((int)bits[i] == 0)
 						llr_0_variance = llr_0_variance + std::pow(((double)llrs[i] - llr_0_mean), 2);
@@ -365,9 +356,9 @@ double Simulation_EXIT<B,R,Q>
 		std::vector<std::vector<double> > pdf(2, std::vector<double>(bin_count));
 		for (int i = 0; i < vec_length; i++)
 		{
-			if ((double)llrs[i] == -Inf)
+			if ((double)llrs[i] == -inf)
 				histogram[(int)bits[i]][0] += 1;
-			else if ((double)llrs[i] == Inf)
+			else if ((double)llrs[i] == inf)
 				histogram[(int)bits[i]][bin_count - 1] += 1;
 			else
 			{
@@ -401,8 +392,8 @@ double Simulation_EXIT<B,R,Q>
 
 // ---------------------------------------------------------------------------------------------------- virtual methods
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::release_objects()
 {
 	if (source      != nullptr) { delete source;      source      = nullptr; }
@@ -415,8 +406,8 @@ void Simulation_EXIT<B,R,Q>
 	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
 }
 
-template <typename B, typename R, typename Q>
-Source<B>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
 	return Factory_source<B>::build(this->params.source.type,
@@ -425,8 +416,8 @@ Source<B>* Simulation_EXIT<B,R,Q>
 	                                this->params.simulation.seed);
 }
 
-template <typename B, typename R, typename Q>
-Encoder<B>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Encoder<B>* Simulation_EXIT<B,R>
 ::build_encoder()
 {
 	try
@@ -443,8 +434,8 @@ Encoder<B>* Simulation_EXIT<B,R,Q>
 	}
 }
 
-template <typename B, typename R, typename Q>
-Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Modulator<B,R,R>* Simulation_EXIT<B,R>
 ::build_modulator()
 {
 	return Factory_modulator<B,R>::build(this->params.modulator.type,
@@ -462,8 +453,8 @@ Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 	                                     this->params.demodulator.no_sig2);
 }
 
-template <typename B, typename R, typename Q>
-Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Modulator<B,R,R>* Simulation_EXIT<B,R>
 ::build_modulator_a()
 {
 	return Factory_modulator<B,R>::build(this->params.modulator.type,
@@ -481,8 +472,8 @@ Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
 	                                     this->params.demodulator.no_sig2);
 }
 
-template <typename B, typename R, typename Q>
-Channel<R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
 	return Factory_channel<R>::build(this->params.channel.type,
@@ -494,8 +485,8 @@ Channel<R>* Simulation_EXIT<B,R,Q>
 	                                 this->params.simulation.inter_frame_level);
 }
 
-template <typename B, typename R, typename Q>
-Channel<R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
 	return Factory_channel<R>::build(this->params.channel.type,
@@ -507,8 +498,8 @@ Channel<R>* Simulation_EXIT<B,R,Q>
 	                                 this->params.simulation.inter_frame_level);
 }
 
-template <typename B, typename R, typename Q>
-SISO<R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+SISO<R>* Simulation_EXIT<B,R>
 ::build_siso()
 {
 	return this->codec.build_siso();
@@ -516,8 +507,8 @@ SISO<R>* Simulation_EXIT<B,R,Q>
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
 
-template <typename B, typename R, typename Q>
-Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Terminal_EXIT<B,R>* Simulation_EXIT<B,R>
 ::build_terminal()
 {
 	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
@@ -526,11 +517,11 @@ Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::Simulation_EXIT<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_EXIT<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_EXIT<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_EXIT<B_64,R_64,Q_64>;
+template class aff3ct::simulation::Simulation_EXIT<B_8,R_8>;
+template class aff3ct::simulation::Simulation_EXIT<B_16,R_16>;
+template class aff3ct::simulation::Simulation_EXIT<B_32,R_32>;
+template class aff3ct::simulation::Simulation_EXIT<B_64,R_64>;
 #else
-template class aff3ct::simulation::Simulation_EXIT<B,R,Q>;
+template class aff3ct::simulation::Simulation_EXIT<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

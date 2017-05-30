@@ -21,7 +21,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B = int, typename R = float, typename Q = R>
+template <typename B = int, typename R = float>
 class Simulation_EXIT : public Simulation
 {
 protected:
@@ -33,8 +33,8 @@ protected:
 	mipp::vector<R> H_N;
 
 	// data vectors
-	mipp::vector<B> B_K, B_N, X_K1, X_N1;
-	mipp::vector<R> X_K2, X_N2;
+	mipp::vector<B> B_K, B_N, X_N1;
+	mipp::vector<R> X_K, X_N2;
 	mipp::vector<R> Y_N, Y_K;
 	mipp::vector<R> La_K1;
 	mipp::vector<R> Lch_N1;
@@ -79,8 +79,8 @@ private:
 	void build_communication_chain();
 	void simulation_loop          ();
 
-	static double measure_mutual_info_avg  (const mipp::vector<R>& llrs, const mipp::vector<B>& bits             );
-	static double measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits, const int N);
+	static double measure_mutual_info_avg  (const mipp::vector<R>& llrs, const mipp::vector<B>& bits);
+	static double measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits);
 
 protected:
 	virtual void release_objects  ();
