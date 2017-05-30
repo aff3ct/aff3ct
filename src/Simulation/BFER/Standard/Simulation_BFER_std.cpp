@@ -159,7 +159,14 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_std<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	return this->codec.build_interleaver(tid, seed);
+	try
+	{
+		return this->codec.build_interleaver(tid, seed);
+	}
+	catch (std::exception const&)
+	{
+		return nullptr;
+	}
 }
 
 template <typename B, typename R, typename Q>
