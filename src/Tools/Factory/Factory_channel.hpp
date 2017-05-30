@@ -18,9 +18,10 @@ struct Factory_channel : public Factory
 	                                 const int         N,
 	                                 const R           sigma,
 	                                 const bool        complex,
-	                                 const std::string path     = "",
-	                                 const int         seed     = 0,
-	                                 const int         n_frames = 1);
+	                                 const bool        add_users = false,
+	                                 const std::string path      = "",
+	                                 const int         seed      = 0,
+	                                 const int         n_frames  = 1);
 };
 }
 }

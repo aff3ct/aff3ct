@@ -7,8 +7,9 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_user<R>
-::Channel_user(const int N, const std::string filename, const int n_frames, const std::string name)
-: Channel<R>(N, (R)1, n_frames, name), noise_buff(), noise_counter(0)
+::Channel_user(const int N, const std::string filename, const bool add_users, const int n_frames,
+               const std::string name)
+: Channel<R>(N, (R)1, n_frames, name), add_users(add_users), noise_buff(), noise_counter(0)
 {
 	if (filename.empty())
 		throw std::invalid_argument("aff3ct::module::Channel_user: path to the file should not be empty.");
@@ -59,18 +60,39 @@ Channel_user<R>
 
 template <typename R>
 void Channel_user<R>
-::_add_noise(const R *X_N, R *Y_N, const int frame_id)
+::add_noise(const R *X_N, R *Y_N)
 {
-	auto noise = this->noise.data() + this->N * frame_id;
+	if (add_users)
+	{
+		std::fill(Y_N, Y_N + this->N, (R)0);
+		for (auto f = 0; f < this->n_frames; f++)
+			for (auto i = 0; i < this->N; i++)
+				Y_N[i] += X_N[f * this->N +i];
 
-	std::copy(this->noise_buff[this->noise_counter].begin(),
-	          this->noise_buff[this->noise_counter].end  (),
-	          noise);
+		for (auto f = 0; f < this->n_frames; f++)
+		{
+			std::copy(this->noise_buff[this->noise_counter].begin(),
+			          this->noise_buff[this->noise_counter].end  (),
+			          this->noise.data() + f * this->N);
 
-	for (auto i = 0; i < this->N; i++)
-		Y_N[i] = X_N[i] + noise[i];
+			this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
+		}
 
-	this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
+		for (auto i = 0; i < this->N; i++)
+			Y_N[i] += this->noise[i];
+	}
+	else
+		for (auto f = 0; f < this->n_frames; f++)
+		{
+			std::copy(this->noise_buff[this->noise_counter].begin(),
+			          this->noise_buff[this->noise_counter].end  (),
+			          this->noise.data() + f * this->N);
+
+			for (auto i = 0; i < this->N; i++)
+				Y_N[f * this->N +i] = X_N[f * this->N +i] + this->noise[f * this->N +i];
+
+			this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
+		}
 }
 
 // ==================================================================================== explicit template instantiation 

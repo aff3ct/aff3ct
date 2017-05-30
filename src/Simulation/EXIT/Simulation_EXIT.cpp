@@ -476,10 +476,12 @@ template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
+	const auto add_users = false;
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 size,
 	                                 this->sigma,
 	                                 this->params.modulator.complex,
+	                                 add_users,
 	                                 this->params.channel.path,
 	                                 params.simulation.seed,
 	                                 this->params.simulation.inter_frame_level);
@@ -489,10 +491,12 @@ template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
+	const auto add_users = false;
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 size,
 	                                 2.f / sig_a,
 	                                 this->params.modulator.complex,
+	                                 add_users,
 	                                 this->params.channel.path,
 	                                 params.simulation.seed,
 	                                 this->params.simulation.inter_frame_level);

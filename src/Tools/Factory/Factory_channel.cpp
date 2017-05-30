@@ -25,23 +25,24 @@ Channel<R>* Factory_channel<R>
         const int         N,
         const R           sigma,
         const bool        complex,
+        const bool        add_users,
         const std::string path,
         const int         seed,
         const int         n_frames)
 {
-	     if (type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_std <R>(seed), n_frames);
-	else if (type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_fast<R>(seed), n_frames);
-	else if (type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_std <R>(seed), n_frames);
-	else if (type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_fast<R>(seed), n_frames);
-	else if (type == "USER"         ) return new Channel_user        <R>(N, path,                                           n_frames);
-	else if (type == "NO"           ) return new Channel_NO          <R>(N,                                                 n_frames);
+	     if (type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_std <R>(seed), add_users, n_frames);
+	else if (type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_fast<R>(seed), add_users, n_frames);
+	else if (type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_std <R>(seed), add_users, n_frames);
+	else if (type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_fast<R>(seed), add_users, n_frames);
+	else if (type == "USER"         ) return new Channel_user        <R>(N, path,                                           add_users, n_frames);
+	else if (type == "NO"           ) return new Channel_NO          <R>(N,                                                 add_users, n_frames);
 #ifdef CHANNEL_MKL
-	else if (type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_MKL <R>(seed), n_frames);
-	else if (type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_MKL <R>(seed), n_frames);
+	else if (type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_MKL <R>(seed), add_users, n_frames);
+	else if (type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_MKL <R>(seed), add_users, n_frames);
 #endif
 #ifdef CHANNEL_GSL
-	else if (type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_GSL <R>(seed), n_frames);
-	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_GSL <R>(seed), n_frames);
+	else if (type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(N, sigma,          new tools::Noise_GSL <R>(seed), add_users, n_frames);
+	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, sigma, complex, new tools::Noise_GSL <R>(seed), add_users, n_frames);
 #endif
 
 	throw std::runtime_error("aff3ct::tools::Factory_channel: the factory could not allocate the object.");
