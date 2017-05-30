@@ -62,7 +62,7 @@ template <typename R>
 void Channel_user<R>
 ::add_noise(const R *X_N, R *Y_N)
 {
-	if (add_users)
+	if (add_users && this->n_frames > 1)
 	{
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)

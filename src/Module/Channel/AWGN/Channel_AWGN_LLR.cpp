@@ -28,7 +28,7 @@ template <typename R>
 void Channel_AWGN_LLR<R>
 ::add_noise(const R *X_N, R *Y_N)
 {
-	if (add_users)
+	if (add_users && this->n_frames > 1)
 	{
 		noise_generator->generate(this->noise.data(), this->N, this->sigma);
 
