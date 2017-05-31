@@ -177,6 +177,7 @@ Modulator<B,R,R>* Simulation_BFER_std<B,R,Q>
 	                                       this->params.code.N,
 	                                       this->sigma,
 	                                       this->params.demodulator.max,
+	                                       this->params.demodulator.psi,
 	                                       this->params.modulator.bits_per_symbol,
 	                                       this->params.modulator.const_path,
 	                                       this->params.modulator.upsample_factor,

@@ -20,6 +20,7 @@ struct Factory_modulator : public Factory
 	                                       const int         N,
 	                                       const float       sigma,
 	                                       const std::string max_type = "MAX",
+	                                       const std::string psi_type = "PSI0",
 	                                       const int         bps      = 1,
 	                                       const std::string path     = "",
 	                                       const int         upf      = 5,
@@ -60,6 +61,14 @@ private:
 	                                        const bool        no_sig2  = false,
 	                                        const int         n_frames = 1,
 	                                        const int         n_ite    = 1);
+	
+	static module::Modulator<B,R,Q>* _build_scma(const std::string type,
+                                                 const int         N,
+                                                 const float       sigma,
+                                                 const std::string psi_type,
+                                                 const bool        no_sig2,
+                                                 const int         n_frames,
+                                                 const int         n_ite);
 };
 }
 }

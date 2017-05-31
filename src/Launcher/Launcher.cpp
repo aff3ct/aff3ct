@@ -410,7 +410,12 @@ void Launcher<B,R,Q>
 
 	// force the number of bits per symbol to 3 when SCMA mod
 	if (params.modulator.type == "SCMA")
+	{
 		params.modulator.bits_per_symbol = 3;
+		if(params.simulation.inter_frame_level != 6)
+			throw std::invalid_argument("aff3ct::launcher::Launcher: sim_inter_lvl must be equal to 6 with SCMA mod");
+	}
+
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
