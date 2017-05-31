@@ -345,7 +345,7 @@ _aff3ct() {
 			;;
 
 		--dec-sf)
-			local params="NO LTE LTE_VEC ARRAY"
+			local params="LTE LTE_VEC ARRAY"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

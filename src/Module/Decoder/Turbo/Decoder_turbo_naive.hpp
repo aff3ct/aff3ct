@@ -2,9 +2,9 @@
 #define DECODER_TURBO_NAIVE_HPP
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
 
-#include "../../Interleaver/Interleaver.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
+#include "Module/Interleaver/Interleaver.hpp"
 
 #include "Decoder_turbo.hpp"
 
@@ -22,7 +22,6 @@ public:
 	                    const Interleaver<int> &pi,
 	                    SISO<R> &siso_n,
 	                    SISO<R> &siso_i,
-	                    tools::Scaling_factor<R> &scaling_factor,
 	                    const bool buffered_encoding = true,
 	                    const std::string name = "Decoder_turbo_naive");
 	virtual ~Decoder_turbo_naive();

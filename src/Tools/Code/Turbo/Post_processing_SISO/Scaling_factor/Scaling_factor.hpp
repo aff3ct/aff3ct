@@ -8,7 +8,7 @@
 #ifndef SCALING_FACTOR_HPP
 #define SCALING_FACTOR_HPP
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include "../Post_processing_SISO.hpp"
 
 namespace aff3ct
 {
@@ -18,11 +18,10 @@ namespace tools
  * \class Scaling_factor
  * \brief Re-scales the extrinsic information (used in the turbo decoding process).
  */
-template <typename R = float>
-class Scaling_factor
+template <typename B = int, typename R = float>
+class Scaling_factor : public Post_processing_SISO<B,R>
 {
 protected:
-	const int K;     /*!< Number of information bits in one frame */
 	const int n_ite; /*!< Number of iterations in the turbo decoding process */
 
 public:
@@ -32,8 +31,8 @@ public:
 	 * \param K:     number of information bits in the frame.
 	 * \param n_ite: number of iterations in the turbo decoding process.
 	 */
-	Scaling_factor(const int K, const int n_ite)
-	: K(K), n_ite(n_ite)
+	Scaling_factor(const int n_ite)
+	: n_ite(n_ite)
 	{
 	}
 
@@ -43,14 +42,6 @@ public:
 	virtual ~Scaling_factor()
 	{
 	}
-
-	/*!
-	 * \brief Performs the scaling factor.
-	 *
-	 * \param ext: a vector of extrinsics to re-scale.
-	 * \param ite: the current iteration number.
-	 */
-	virtual void operator()(mipp::vector<R> &ext, const int ite) = 0;
 };
 }
 }

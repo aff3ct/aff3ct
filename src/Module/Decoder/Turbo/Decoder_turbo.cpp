@@ -19,7 +19,6 @@ Decoder_turbo<B,R>
                 const Interleaver<int> &pi,
                 SISO<R> &siso_n,
                 SISO<R> &siso_i,
-                Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
 : Decoder<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
@@ -28,7 +27,6 @@ Decoder_turbo<B,R>
   pi(pi),
   siso_n(siso_n),
   siso_i(siso_i),
-  scaling_factor(scaling_factor),
   l_sn ((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   l_si ((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   l_sen((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
@@ -59,6 +57,30 @@ template <typename B, typename R>
 Decoder_turbo<B,R>
 ::~Decoder_turbo()
 {
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::add_handler_siso_n(std::function<bool(const int,
+                                        const mipp::vector<R>&,
+                                              mipp::vector<R>&,
+                                              mipp::vector<B>&)> callback)
+{
+	this->callbacks_siso_n.push_back(callback);
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::add_handler_siso_i(std::function<bool(const int, const mipp::vector<R>&, mipp::vector<R>&)> callback)
+{
+	this->callbacks_siso_i.push_back(callback);
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::add_handler_end(std::function<void(const int)> callback)
+{
+	this->callbacks_end.push_back(callback);
 }
 
 template <typename B, typename R>
