@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <vector>
+#include <functional>
 
 #include "Tools/Perf/MIPP/mipp.h"
 

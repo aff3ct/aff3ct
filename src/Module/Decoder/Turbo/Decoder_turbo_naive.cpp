@@ -7,7 +7,6 @@
 #include "Decoder_turbo_naive.hpp"
 
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_turbo_naive<B,R>
@@ -17,10 +16,9 @@ Decoder_turbo_naive<B,R>
                       const Interleaver<int> &pi,
                       SISO<R> &siso_n,
                       SISO<R> &siso_i,
-                      Scaling_factor<R> &scaling_factor,
                       const bool buffered_encoding,
                       const std::string name)
-: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, scaling_factor, buffered_encoding, name)
+: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
 {
 }
 
@@ -44,52 +42,70 @@ void Decoder_turbo_naive<B,R>
 	const auto tail_i_2 = this->siso_i.tail_length() / 2;
 
 	// iterative turbo decoding process
-	for (auto ite = 1; ite <= this->n_ite; ite++)
+	bool stop = false;
+	auto ite  = 1;
+	do
 	{
 		// sys + ext
-		for (auto i = 0; i < this->K * n_frames; i++) 
+		for (auto i = 0; i < this->K * n_frames; i++)
 			this->l_sen[i] = this->l_sn[i] + this->l_e1n[i];
 
-		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i++) 
+		for (auto i = this->K * n_frames; i < (this->K + tail_n_2) * n_frames; i++)
 			this->l_sen[i] = this->l_sn[i];
 	
 		// SISO in the natural domain
 		this->siso_n.soft_decode(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
-		// apply the scaling factor
-		this->scaling_factor(this->l_e2n, 2 * (ite -1));
+		for (auto cb : this->callbacks_siso_n)
+		{
+			stop = cb(ite, this->l_sen, this->l_e2n, this->s);
+			if (stop) break;
+		}
 
-		// make the interleaving
-		this->pi.interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, n_frames, n_frames > 1);
+		if (!stop)
+		{
+			// make the interleaving
+			this->pi.interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, n_frames, n_frames > 1);
 
-		// sys + ext
-		for (auto i = 0; i < this->K * n_frames; i++) 
-			this->l_sei[i] = this->l_si[i] + this->l_e1i[i];
-
-		for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i++) 
-			this->l_sei[i] = this->l_si[i];
-
-		// SISO in the interleave domain
-		this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
-
-		if (ite != this->n_ite)
-			// apply the scaling factor
-			this->scaling_factor(this->l_e2i, 2 * (ite -1) +1);
-		else
-			// add the systematic information to the extrinsic information, gives the a posteriori information
+			// sys + ext
 			for (auto i = 0; i < this->K * n_frames; i++)
-				this->l_e2i[i] += this->l_sei[i];
+				this->l_sei[i] = this->l_si[i] + this->l_e1i[i];
 
-		// make the deinterleaving
-		this->pi.deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, n_frames, n_frames > 1);
+			for (auto i = this->K * n_frames; i < (this->K + tail_i_2) * n_frames; i++)
+				this->l_sei[i] = this->l_si[i];
+
+			// SISO in the interleave domain
+			this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+
+			for (auto cb : this->callbacks_siso_i)
+			{
+				stop = cb(ite, this->l_sei, this->l_e2i);
+				if (stop) break;
+			}
+
+			if (ite == this->n_ite || stop)
+				// add the systematic information to the extrinsic information, gives the a posteriori information
+				for (auto i = 0; i < this->K * n_frames; i++)
+					this->l_e2i[i] += this->l_sei[i];
+
+			// make the deinterleaving
+			this->pi.deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, n_frames, n_frames > 1);
+
+			// compute the hard decision only if we are in the last iteration
+			if (ite == this->n_ite || stop)
+				for (auto i = 0; i < this->K * n_frames; i++)
+					this->s[i] = this->l_e1n[i] < 0;
+		}
+
+		ite++; // increment the number of iteration
 	}
+	while ((ite <= this->n_ite) && !stop);
+
+	for (auto cb : this->callbacks_end)
+		cb(ite -1);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// take the hard decision
-	for (auto i = 0; i < this->K * n_frames; i++)
-		this->s[i] = this->l_e1n[i] < 0;
-
 	this->_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 

@@ -45,7 +45,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.decoder    .implem         = "FAST";
 	this->params.decoder    .max            = "MAX";
 	this->params.decoder    .n_ite          = 6;
-	this->params.decoder    .scaling_factor = "LTE_VEC";
+	this->params.decoder    .scaling_factor = "";
 	this->params.decoder    .simd_strategy  = "";
 	this->params.decoder    .self_corrected = false;
 	this->params.decoder    .fnc            = false;
@@ -125,7 +125,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"dec-sf"}] =
 		{"string",
 		 "scaling factor type.",
-		 "NO, LTE, LTE_VEC, ARRAY"};
+		 "LTE, LTE_VEC, ARRAY"};
 	this->opt_args[{"dec-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
@@ -212,30 +212,17 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i"});
-	if(this->ar.exist_arg({"dec-sf"      })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"      });
-	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
-	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
-
-	if (this->ar.exist_arg({"crc-poly"}))
-	{
-		if (this->ar.exist_arg({"dec-sc"}))
-			this->params.decoder.self_corrected = true;
-		else if (this->ar.exist_arg({"dec-fnc"}))
-		{
-			this->params.decoder.fnc = true;
-			if (this->ar.exist_arg({"dec-fnc-q"}))
-				this->params.decoder.fnc_q = this->ar.get_arg_int({"dec-fnc-q"});
-			if (this->ar.exist_arg({"dec-fnc-ite-m"}))
-				this->params.decoder.fnc_ite_min = this->ar.get_arg_int({"dec-fnc-ite-m"});
-			if (this->ar.exist_arg({"dec-fnc-ite-M"}))
-				this->params.decoder.fnc_ite_max = this->ar.get_arg_int({"dec-fnc-ite-M"});
-			else
-				this->params.decoder.fnc_ite_max = this->params.decoder.n_ite;
-			if (this->ar.exist_arg({"dec-fnc-ite-s"}))
-				this->params.decoder.fnc_ite_step = this->ar.get_arg_int({"dec-fnc-ite-s"});
-		}
-	}
+	if(this->ar.exist_arg({"dec-ite", "i" })) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i" });
+	if(this->ar.exist_arg({"dec-sf"       })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"       });
+	if(this->ar.exist_arg({"dec-simd"     })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"     });
+	if(this->ar.exist_arg({"dec-max"      })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"      });
+	if(this->ar.exist_arg({"dec-sc"       })) this->params.decoder.self_corrected = true;
+	if(this->ar.exist_arg({"dec-fnc"      })) this->params.decoder.fnc            = true;
+	if(this->ar.exist_arg({"dec-fnc-q"    })) this->params.decoder.fnc_q          = this->ar.get_arg_int({"dec-fnc-q"    });
+	if(this->ar.exist_arg({"dec-fnc-ite-s"})) this->params.decoder.fnc_ite_step   = this->ar.get_arg_int({"dec-fnc-ite-s"});
+	if(this->ar.exist_arg({"dec-fnc-ite-m"})) this->params.decoder.fnc_ite_min    = this->ar.get_arg_int({"dec-fnc-ite-m"});
+	if(this->ar.exist_arg({"dec-fnc-ite-M"})) this->params.decoder.fnc_ite_max    = this->ar.get_arg_int({"dec-fnc-ite-M"});
+	else                                      this->params.decoder.fnc_ite_max    = this->params.decoder.n_ite;
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
