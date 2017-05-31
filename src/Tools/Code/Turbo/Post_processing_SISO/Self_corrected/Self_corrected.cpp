@@ -9,9 +9,9 @@ Self_corrected<B,R>
 ::Self_corrected(const int K, const int n_ite, const int m, const int M, const int simd_inter_frame_level)
 : Post_processing_SISO<B,R>     (                                                       ),
   K                             (K                                                      ),
+  simd_inter_frame_level        (simd_inter_frame_level                                 ),
   m                             (m                                                      ),
   M                             (M == -1 ? n_ite : M                                    ),
-  simd_inter_frame_level        (simd_inter_frame_level                                 ),
   ext_nat(n_ite, mipp::vector<R>(K * simd_inter_frame_level + mipp::nElReg<R>(), (R)0)  ),
   ext_int(n_ite, mipp::vector<R>(K * simd_inter_frame_level + mipp::nElReg<R>(), (R)0)  ),
   osc_nat                       (K * simd_inter_frame_level + mipp::nElReg<B>(), (B)0   ),

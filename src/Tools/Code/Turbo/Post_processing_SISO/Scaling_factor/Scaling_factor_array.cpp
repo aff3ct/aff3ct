@@ -20,7 +20,7 @@ bool Scaling_factor_array<B,R>
                mipp::vector<R>& ext,
                mipp::vector<B>& s)
 {
-	const auto id = (2 * (ite -1) +0) >= this->alpha_array.size() ? this->alpha_array.size() -1 : 2 * (ite -1) +0;
+	const auto id = (2 * (ite -1) +0) >= (int)alpha_array.size() ? (int)alpha_array.size() -1 : 2 * (ite -1) +0;
 	const auto alpha = (R)alpha_array[id];
 
 	const auto loop_size = (int)ext.size();
@@ -36,7 +36,7 @@ bool Scaling_factor_array<B,R>
          const mipp::vector<R>& sys,
                mipp::vector<R>& ext)
 {
-	const auto id = (2 * (ite -1) +1) >= this->alpha_array.size() ? this->alpha_array.size() -1 : 2 * (ite -1) +1;
+	const auto id = (2 * (ite -1) +1) >= (int)alpha_array.size() ? (int)alpha_array.size() -1 : 2 * (ite -1) +1;
 	const auto alpha = (R)alpha_array[id];
 
 	const auto loop_size = (int)ext.size();
