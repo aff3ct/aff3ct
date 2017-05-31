@@ -48,7 +48,8 @@ _aff3ct() {
 		      --sim-prec -p --sim-inter-lvl --cde-info-bits -K --cde-size -N  \
 		      --src-type --src-path --enc-type --enc-path --mod-type --mod-bps\
 		      --mod-ups --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p    \
-		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max           \
+		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max --dmod-psi\
+		      --dmod-ite                                                      \
 		      --dmod-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type   \
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber     \
@@ -195,7 +196,7 @@ _aff3ct() {
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |       \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |         \
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |        \
-		--cde-size | -N |                                                    \
+		--cde-size | -N | --dmod-ite |                                       \
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |    \
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                  \
 		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |           \
@@ -365,12 +366,17 @@ _aff3ct() {
 			;;
 
 		--mod-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM CPM USER"
+			local params="BPSK BPSK_FAST PSK PAM QAM CPM SCMA USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
 		--dmod-max)
 			local params="MAX MAXL MAXS MAXSS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--dmod-psi)
+			local params="PSI0 PSI1 PSI2 PSI3"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
