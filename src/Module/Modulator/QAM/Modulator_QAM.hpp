@@ -24,7 +24,7 @@ private:
 
 public:
 	Modulator_QAM(const int N, const R sigma, const int bits_per_symbol = 2, const bool disable_sig2 = false,
-	               const int n_frames = 1, const std::string name = "Modulator_QAM");
+	              const int n_frames = 1, const std::string name = "Modulator_QAM");
 	virtual ~Modulator_QAM();
 
 	static int size_mod(const int N, const int bps)

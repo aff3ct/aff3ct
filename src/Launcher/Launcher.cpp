@@ -407,15 +407,9 @@ void Launcher<B,R,Q>
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
 		params.modulator.bits_per_symbol = 1;
-
 	// force the number of bits per symbol to 3 when SCMA mod
 	if (params.modulator.type == "SCMA")
-	{
 		params.modulator.bits_per_symbol = 3;
-		if(params.simulation.inter_frame_level != 6)
-			throw std::invalid_argument("aff3ct::launcher::Launcher: sim_inter_lvl must be equal to 6 with SCMA mod");
-	}
-
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
@@ -668,8 +662,8 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	p.push_back(std::make_pair("Max type",     demod_max ));
 	if (params.modulator.type == "SCMA")
 	{
-		p.push_back(std::make_pair("Number of iterations", demod_ite ));
-		p.push_back(std::make_pair("Psi function",         demod_psi ));
+		p.push_back(std::make_pair("Number of iterations", demod_ite));
+		p.push_back(std::make_pair("Psi function",         demod_psi));
 	}
 
 	return p;

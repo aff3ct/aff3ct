@@ -30,18 +30,18 @@ struct Factory_modulator : public Factory
 	                                       const std::string mapping  = "NATURAL",
 	                                       const std::string wave     = "GMSK",
 	                                       const bool        no_sig2  = false,
-	                                       const int         n_frames = 1,
-	                                       const int         n_ite    = 1);
+	                                       const int         n_ite    = 1,
+	                                       const int         n_frames = 1);
 
 	static int get_buffer_size_after_modulation(const std::string type,
 	                                            const int         N,
-	                                            const int         bps,
+	                                            const int         bps   = 1,
 	                                            const int         upf   = 5,
 	                                            const int         cpm_L = 3);
 
 	static int get_buffer_size_after_filtering(const std::string type,
 	                                           const int         N,
-	                                           const int         bps,
+	                                           const int         bps   = 1,
 	                                           const int         cpm_L = 3,
 	                                           const int         cpm_p = 2);
 
@@ -59,16 +59,16 @@ private:
 	                                        const std::string mapping  = "NATURAL",
 	                                        const std::string wave     = "GMSK",
 	                                        const bool        no_sig2  = false,
-	                                        const int         n_frames = 1,
-	                                        const int         n_ite    = 1);
-	
+	                                        const int         n_frames = 1);
+
 	static module::Modulator<B,R,Q>* _build_scma(const std::string type,
-                                                 const int         N,
-                                                 const float       sigma,
-                                                 const std::string psi_type,
-                                                 const bool        no_sig2,
-                                                 const int         n_frames,
-                                                 const int         n_ite);
+	                                             const int         N,
+	                                             const float       sigma,
+	                                             const int         bps      = 3,
+	                                             const std::string psi_type = "PSI0",
+	                                             const bool        no_sig2  = false,
+	                                             const int         n_ite    = 1,
+	                                             const int         n_frames = 6);
 };
 }
 }

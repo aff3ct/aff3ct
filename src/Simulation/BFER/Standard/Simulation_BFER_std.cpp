@@ -187,15 +187,15 @@ Modulator<B,R,R>* Simulation_BFER_std<B,R,Q>
 	                                       this->params.modulator.mapping,
 	                                       this->params.modulator.wave_shape,
 	                                       this->params.demodulator.no_sig2,
-	                                       this->params.simulation.inter_frame_level,
-	                                       this->params.demodulator.n_ite);
+	                                       this->params.demodulator.n_ite,
+	                                       this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_std<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
-	const auto add_users = (this->params.modulator.type == "SCMA");
+	const auto add_users = this->params.modulator.type == "SCMA";
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 this->params.code.N_mod,
 	                                 this->sigma,

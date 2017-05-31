@@ -49,18 +49,23 @@ const std::complex<float> Modulator_SCMA<B,R,Q,PSI>::CB[6][4][4] =
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modulator_SCMA<B,R,Q,PSI>
-::Modulator_SCMA(const int N, const R sigma, const bool disable_sig2, const int n_ite, const std::string name)
+::Modulator_SCMA(const int N, const R sigma, const int bps, const bool disable_sig2, const int n_ite,
+                 const int n_frames, const std::string name)
 : Modulator<B,R,Q>(N,
-                   Modulator_SCMA<B,R,Q,PSI>::size_mod(N),
-                   Modulator_SCMA<B,R,Q,PSI>::size_fil(N),
+                   Modulator_SCMA<B,R,Q,PSI>::size_mod(N, bps),
+                   Modulator_SCMA<B,R,Q,PSI>::size_fil(N, bps),
                    sigma,
-                   6,
+                   n_frames,
                    name),
   disable_sig2       (disable_sig2            ),
   two_on_square_sigma((R)2.0 / (sigma * sigma)),
   n0                 ((R)2.0 * sigma * sigma  ),
   n_ite              (n_ite                   )
 {
+	if (n_frames != 6)
+		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"n_frames\" has to be equal to 6.");
+	if (bps != 3)
+		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"bps\" has to be equal to 3.");
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -123,9 +128,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 					for (auto re = 0; re < 4; re++)
 						arr_phi[re][i][j][k] = phi(Y_N1, i, j, k, re, batch, H_N);
 
-
 		demodulate_batch(Y_N1,Y_N2,batch);
-
 	}
 }
 
@@ -157,11 +160,9 @@ void Modulator_SCMA<B,R,Q,PSI>
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
 	// declarations
-
 	Q msg_user_res[6][4][4] = {};
 	Q msg_res_user[4][6][4] = {};
 	Q guess[6][4] = {};
-
 
 	// initial probability of each codeword/user
 	for (auto i = 0; i < 4; i++)
@@ -223,18 +224,30 @@ void Modulator_SCMA<B,R,Q,PSI>
 		// user to resource messaging
 		for (auto i = 0 ; i < 4 ; i++)
 		{
-			msg_user_res[0][1][i] = msg_res_user[3][0][i] / (msg_res_user[3][0][0] + msg_res_user[3][0][1] + msg_res_user[3][0][2] + msg_res_user[3][0][3]);
-			msg_user_res[0][3][i] = msg_res_user[1][0][i] / (msg_res_user[1][0][0] + msg_res_user[1][0][1] + msg_res_user[1][0][2] + msg_res_user[1][0][3]);
-			msg_user_res[1][0][i] = msg_res_user[2][1][i] / (msg_res_user[2][1][0] + msg_res_user[2][1][1] + msg_res_user[2][1][2] + msg_res_user[2][1][3]);
-			msg_user_res[1][2][i] = msg_res_user[0][1][i] / (msg_res_user[0][1][0] + msg_res_user[0][1][1] + msg_res_user[0][1][2] + msg_res_user[0][1][3]);
-			msg_user_res[2][0][i] = msg_res_user[1][2][i] / (msg_res_user[1][2][0] + msg_res_user[1][2][1] + msg_res_user[1][2][2] + msg_res_user[1][2][3]);
-			msg_user_res[2][1][i] = msg_res_user[0][2][i] / (msg_res_user[0][2][0] + msg_res_user[0][2][1] + msg_res_user[0][2][2] + msg_res_user[0][2][3]);
-			msg_user_res[3][2][i] = msg_res_user[3][3][i] / (msg_res_user[3][3][0] + msg_res_user[3][3][1] + msg_res_user[3][3][2] + msg_res_user[3][3][3]);
-			msg_user_res[3][3][i] = msg_res_user[2][3][i] / (msg_res_user[2][3][0] + msg_res_user[2][3][1] + msg_res_user[2][3][2] + msg_res_user[2][3][3]);
-			msg_user_res[4][0][i] = msg_res_user[3][4][i] / (msg_res_user[3][4][0] + msg_res_user[3][4][1] + msg_res_user[3][4][2] + msg_res_user[3][4][3]);
-			msg_user_res[4][3][i] = msg_res_user[0][4][i] / (msg_res_user[0][4][0] + msg_res_user[0][4][1] + msg_res_user[0][4][2] + msg_res_user[0][4][3]);
-			msg_user_res[5][1][i] = msg_res_user[2][5][i] / (msg_res_user[2][5][0] + msg_res_user[2][5][1] + msg_res_user[2][5][2] + msg_res_user[2][5][3]);
-			msg_user_res[5][2][i] = msg_res_user[1][5][i] / (msg_res_user[1][5][0] + msg_res_user[1][5][1] + msg_res_user[1][5][2] + msg_res_user[1][5][3]);
+			msg_user_res[0][1][i] = msg_res_user[3][0][i] / (msg_res_user[3][0][0] + msg_res_user[3][0][1] +
+			                                                 msg_res_user[3][0][2] + msg_res_user[3][0][3]);
+			msg_user_res[0][3][i] = msg_res_user[1][0][i] / (msg_res_user[1][0][0] + msg_res_user[1][0][1] +
+			                                                 msg_res_user[1][0][2] + msg_res_user[1][0][3]);
+			msg_user_res[1][0][i] = msg_res_user[2][1][i] / (msg_res_user[2][1][0] + msg_res_user[2][1][1] +
+			                                                 msg_res_user[2][1][2] + msg_res_user[2][1][3]);
+			msg_user_res[1][2][i] = msg_res_user[0][1][i] / (msg_res_user[0][1][0] + msg_res_user[0][1][1] +
+			                                                 msg_res_user[0][1][2] + msg_res_user[0][1][3]);
+			msg_user_res[2][0][i] = msg_res_user[1][2][i] / (msg_res_user[1][2][0] + msg_res_user[1][2][1] +
+			                                                 msg_res_user[1][2][2] + msg_res_user[1][2][3]);
+			msg_user_res[2][1][i] = msg_res_user[0][2][i] / (msg_res_user[0][2][0] + msg_res_user[0][2][1] +
+			                                                 msg_res_user[0][2][2] + msg_res_user[0][2][3]);
+			msg_user_res[3][2][i] = msg_res_user[3][3][i] / (msg_res_user[3][3][0] + msg_res_user[3][3][1] +
+			                                                 msg_res_user[3][3][2] + msg_res_user[3][3][3]);
+			msg_user_res[3][3][i] = msg_res_user[2][3][i] / (msg_res_user[2][3][0] + msg_res_user[2][3][1] +
+			                                                 msg_res_user[2][3][2] + msg_res_user[2][3][3]);
+			msg_user_res[4][0][i] = msg_res_user[3][4][i] / (msg_res_user[3][4][0] + msg_res_user[3][4][1] +
+			                                                 msg_res_user[3][4][2] + msg_res_user[3][4][3]);
+			msg_user_res[4][3][i] = msg_res_user[0][4][i] / (msg_res_user[0][4][0] + msg_res_user[0][4][1] +
+			                                                 msg_res_user[0][4][2] + msg_res_user[0][4][3]);
+			msg_user_res[5][1][i] = msg_res_user[2][5][i] / (msg_res_user[2][5][0] + msg_res_user[2][5][1] +
+			                                                 msg_res_user[2][5][2] + msg_res_user[2][5][3]);
+			msg_user_res[5][2][i] = msg_res_user[1][5][i] / (msg_res_user[1][5][0] + msg_res_user[1][5][1] +
+			                                                 msg_res_user[1][5][2] + msg_res_user[1][5][3]);
 		}
 	}
 	// end of iterations
@@ -258,7 +271,6 @@ void Modulator_SCMA<B,R,Q,PSI>
 	Y_N2[4 * this->N + batch *2 +0] = std::log(guess[4][0] + guess[4][2]) - std::log(guess[4][1] + guess[4][3]);
 	Y_N2[5 * this->N + batch *2 +0] = std::log(guess[5][0] + guess[5][2]) - std::log(guess[5][1] + guess[5][3]);
 
-
 	if((this->N % 2) != 1 || batch != ((this->N_mod * this->n_frames) / 8 - 1) )
 	{
 		Y_N2[0 * this->N + batch *2 +1] = std::log(guess[0][0] + guess[0][1]) - std::log(guess[0][2] + guess[0][3]);
@@ -269,18 +281,6 @@ void Modulator_SCMA<B,R,Q,PSI>
 		Y_N2[5 * this->N + batch *2 +1] = std::log(guess[5][0] + guess[5][1]) - std::log(guess[5][2] + guess[5][3]);
 	}
 }
-
-template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modulator_SCMA<B,R,Q,PSI>
-::set_n_frames(const int n_frames)
-{
-	if (n_frames != 6)
-	{
-		std::clog << tools::bold_red("(EE) SCMA modulator works only with 6 frames, exiting.") << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-}
-
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Q Modulator_SCMA<B,R,Q,PSI>
@@ -308,13 +308,16 @@ Q Modulator_SCMA<B,R,Q,PSI>
 {
 	Q phi;
 	std::complex<Q> tmp;
-	const auto Nmod = size_mod(this->N);
+	const auto Nmod = size_mod(this->N, 3);
 
 	const auto Y_N  = std::complex<Q>(Y_N1[batch *8 + 2*re], Y_N1[batch*8 + 2*re +1]);
 
-	const auto H_N0 = std::complex<Q>((Q)H_N[re_user[re][0]* Nmod + 8 * batch + 2*re], (Q)H_N[re_user[re][0]* Nmod + 8 * batch + 2*re +1]);
-	const auto H_N1 = std::complex<Q>((Q)H_N[re_user[re][1]* Nmod + 8 * batch + 2*re], (Q)H_N[re_user[re][1]* Nmod + 8 * batch + 2*re +1]);
-	const auto H_N2 = std::complex<Q>((Q)H_N[re_user[re][2]* Nmod + 8 * batch + 2*re], (Q)H_N[re_user[re][2]* Nmod + 8 * batch + 2*re +1]);
+	const auto H_N0 = std::complex<Q>((Q)H_N[re_user[re][0] * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[re_user[re][0] * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N1 = std::complex<Q>((Q)H_N[re_user[re][1] * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[re_user[re][1] * Nmod + 8 * batch + 2 * re +1]);
+	const auto H_N2 = std::complex<Q>((Q)H_N[re_user[re][2] * Nmod + 8 * batch + 2 * re   ],
+	                                  (Q)H_N[re_user[re][2] * Nmod + 8 * batch + 2 * re +1]);
 
 	const auto CB0  = std::complex<Q>((Q)CB[re_user[re][0]][re][i].real(), (Q)CB[re_user[re][0]][re][i].imag());
 	const auto CB1  = std::complex<Q>((Q)CB[re_user[re][1]][re][j].real(), (Q)CB[re_user[re][1]][re][j].imag());
@@ -327,56 +330,11 @@ Q Modulator_SCMA<B,R,Q,PSI>
 	return phi;
 }
 
-/*
- * Filter
- */
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modulator_SCMA<B,R,Q,PSI>
-::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
+::filter(const R *Y_N1, R *Y_N2)
 {
-	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
-}
-
+	std::copy(Y_N1, Y_N1 + this->N_fil + this->n_frames, Y_N2);
 }
 }
-
-// template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-// const std::complex<float> Modulator_SCMA<B,R,Q,PSI>::CB[6][4][4] =
-// {
-// 	{ // codebook2 (code layer 2)
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -0.1980f * 0.5816f, -0.3724f * 0.5816f }, {  0.6337f * 0.5816f,  1.1918f * 0.5816f }, { -0.6337f * 0.5816f, -1.1918f* 0.5816f  }, {  1.1980f * 0.5816f ,  0.3724f *0.5816f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -1.3498f * 0.5816f,  0.0000f * 0.5816f }, { -0.4218f * 0.5816f,  0.0000f * 0.5816f }, {  0.4218f * 0.5816f,  0.0000f* 0.5816f  }, {  1.3498f * 0.5816f ,  0.0000f *0.5816f } }
-// 	},
-// 	{ // codebook1 (code layer 1)
-// 		{ { -1.3498f * 0.5816f,  0.0000f * 0.5816f }, { -0.4218f * 0.5816f,  0.0000f * 0.5816f }, {  0.4218f * 0.5816f,  0.0000f* 0.5816f  }, {  1.3498f * 0.5816f ,  0.0000f *0.5816f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -0.1980f * 0.5816f, -0.3724f * 0.5816f }, {  0.6337f * 0.5816f,  1.1918f * 0.5816f }, { -0.6337f * 0.5816f, -1.1918f* 0.5816f  }, {  1.1980f * 0.5816f ,  0.3724f *0.5816f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-// 	},
-// 	{ // codebook3 (code layer 3)
-// 		{ { -0.6337f * 0.5816f, -1.1918f * 0.5816f }, { -0.1980f * 0.5816f, -0.3724f * 0.5816f }, {  0.1980f * 0.5816f,  0.3724f* 0.5816f  }, {  0.6337f * 0.5816f ,  1.1918f *0.5816f } },
-// 		{ {  0.2109f * 0.5816f, -0.3653f * 0.5816f }, { -0.6749f * 0.5816f,  1.1690f * 0.5816f }, {  0.6749f * 0.5816f, -1.1690f* 0.5816f  }, { -0.2109f * 0.5816f ,  0.3653f *0.5816f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  00000.f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-// 	},
-// 	{ // codebook4 (code layer 4)
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -1.3498f * 0.5816f,  0.0000f * 0.5816f }, { -0.4218f * 0.5816f,  0.0000f * 0.5816f }, {  0.4218f * 0.5816f,  0.0000f* 0.5816f  }, {  1.3498f * 0.5816f ,  0.0000f *0.5816f } },
-// 		{ {  0.2109f * 0.5816f, -0.3653f * 0.5816f }, { -0.6749f * 0.5816f,  1.1690f * 0.5816f }, {  0.6749f * 0.5816f, -1.1690f* 0.5816f  }, { -0.2109f * 0.5816f ,  0.3653f *0.5816f } },
-// 	},
-// 	{ // codebook5 (code layer 5)
-// 		{ {  0.2109f * 0.5816f, -0.3653f * 0.5816f }, { -0.6749f * 0.5816f,  1.1690f * 0.5816f }, {  0.6749f * 0.5816f, -1.1690f* 0.5816f  }, { -0.2109f * 0.5816f ,  0.3653f *0.5816f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -0.6337f * 0.5816f, -1.1918f * 0.5816f }, { -0.1980f * 0.5816f, -0.3724f * 0.5816f }, {  0.1980f * 0.5816f,  0.3724f* 0.5816f  }, {  0.6337f * 0.5816f ,  1.1918f *0.5816f } }
-// 	},
-// 	{ // codebook6 (code layer 6)
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
-// 		{ { -1.3498f * 0.5816f,  0.0000f * 0.5816f }, { -0.4218f * 0.5816f,  0.0000f * 0.5816f }, {  0.4218f * 0.5816f,  0.0000f* 0.5816f  }, {  1.3498f * 0.5816f ,  0.0000f *0.5816f } },
-// 		{ {  0.2109f * 0.5816f, -0.3653f * 0.5816f }, { -0.6749f * 0.5816f,  1.1690f * 0.5816f }, {  0.6749f * 0.5816f, -1.1690f* 0.5816f  }, { -0.2109f * 0.5816f ,  0.3653f *0.5816f } },
-// 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } }
-// 	},
-// };
+}

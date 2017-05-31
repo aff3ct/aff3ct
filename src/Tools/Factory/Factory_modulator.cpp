@@ -29,16 +29,15 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
          const std::string mapping,
          const std::string wave,
          const bool        no_sig2,
-         const int         n_frames,
-         const int         n_ite)
+         const int         n_frames)
 {
-       if (type == "BPSK"     ) return new Modulator_BPSK     <B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
-  else if (type == "BPSK_FAST") return new Modulator_BPSK_fast<B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
-  else if (type == "PAM"      ) return new Modulator_PAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-  else if (type == "QAM"      ) return new Modulator_QAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-  else if (type == "PSK"      ) return new Modulator_PSK      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-  else if (type == "USER"     ) return new Modulator_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
-  else if (type == "CPM"      ) return new Modulator_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+	     if (type == "BPSK"     ) return new Modulator_BPSK     <B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
+	else if (type == "BPSK_FAST") return new Modulator_BPSK_fast<B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
+	else if (type == "PAM"      ) return new Modulator_PAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
+	else if (type == "QAM"      ) return new Modulator_QAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
+	else if (type == "PSK"      ) return new Modulator_PSK      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
+	else if (type == "USER"     ) return new Modulator_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
+	else if (type == "CPM"      ) return new Modulator_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 
   throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
@@ -48,15 +47,16 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 ::_build_scma(const std::string type,
               const int         N,
               const float       sigma,
+              const int         bps,
               const std::string psi_type,
               const bool        no_sig2,
-              const int         n_frames,
-              const int         n_ite)
+              const int         n_ite,
+              const int         n_frames)
 {
-       if (psi_type == "PSI0") return new Modulator_SCMA <B,R,Q,psi_0<Q>>(N, sigma, no_sig2, n_ite);
-  else if (psi_type == "PSI1") return new Modulator_SCMA <B,R,Q,psi_1<Q>>(N, sigma, no_sig2, n_ite);
-  else if (psi_type == "PSI2") return new Modulator_SCMA <B,R,Q,psi_2<Q>>(N, sigma, no_sig2, n_ite);
-  else if (psi_type == "PSI3") return new Modulator_SCMA <B,R,Q,psi_3<Q>>(N, sigma, no_sig2, n_ite);
+	     if (psi_type == "PSI0") return new Modulator_SCMA <B,R,Q,psi_0<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
+	else if (psi_type == "PSI1") return new Modulator_SCMA <B,R,Q,psi_1<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
+	else if (psi_type == "PSI2") return new Modulator_SCMA <B,R,Q,psi_2<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
+	else if (psi_type == "PSI3") return new Modulator_SCMA <B,R,Q,psi_3<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
 
   throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
@@ -77,20 +77,20 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
         const std::string mapping,
         const std::string wave,
         const bool        no_sig2,
-        const int         n_frames,
-        const int         n_ite)
+        const int         n_ite,
+        const int         n_frames)
 {
-  if (type == "SCMA")
-  {
-    return _build_scma(type, N, sigma, psi_type, no_sig2, n_frames, n_ite);
-  }
-  else
-  {
-         if (max_type == "MAX"  ) return _build<max          <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
-    else if (max_type == "MAXL" ) return _build<max_linear   <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
-    else if (max_type == "MAXS" ) return _build<max_star     <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
-    else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames, n_ite);
-  }
+	if (type == "SCMA")
+	{
+		return _build_scma(type, N, sigma, bps, psi_type, no_sig2, n_ite, n_frames);
+	}
+	else
+	{
+		     if (max_type == "MAX"  ) return _build<max          <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+		else if (max_type == "MAXL" ) return _build<max_linear   <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+		else if (max_type == "MAXS" ) return _build<max_star     <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+		else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+	}
 
 	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
@@ -103,14 +103,14 @@ int Factory_modulator<B,R,Q>
                                    const int         upf,
                                    const int         cpm_L)
 {
-       if (type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_mod(N                 );
-  else if (type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_mod(N                 );
-  else if (type == "SCMA"     ) return Modulator_SCMA     <B,R,Q>::size_mod(N                 );
-  else if (type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_mod(N, bps            );
-  else if (type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_mod(N, bps            );
-  else if (type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_mod(N, bps            );
-  else if (type == "USER"     ) return Modulator_user     <B,R,Q>::size_mod(N, bps            );
-  else if (type == "CPM"      ) return Modulator_CPM      <B,R,Q>::size_mod(N, bps, cpm_L, upf);
+	     if (type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_mod(N                 );
+	else if (type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_mod(N                 );
+	else if (type == "SCMA"     ) return Modulator_SCMA     <B,R,Q>::size_mod(N, bps            );
+	else if (type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_mod(N, bps            );
+	else if (type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_mod(N, bps            );
+	else if (type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_mod(N, bps            );
+	else if (type == "USER"     ) return Modulator_user     <B,R,Q>::size_mod(N, bps            );
+	else if (type == "CPM"      ) return Modulator_CPM      <B,R,Q>::size_mod(N, bps, cpm_L, upf);
 
 	throw std::runtime_error("aff3ct::tools::Factory_modulator: unknown type of modulator.");
 }
@@ -125,7 +125,7 @@ int Factory_modulator<B,R,Q>
 {
 	     if (type == "BPSK"     ) return Modulator_BPSK     <B,R,Q>::size_fil(N                   );
 	else if (type == "BPSK_FAST") return Modulator_BPSK_fast<B,R,Q>::size_fil(N                   );
-  else if (type == "SCMA"     ) return Modulator_SCMA     <B,R,Q>::size_fil(N                   );
+	else if (type == "SCMA"     ) return Modulator_SCMA     <B,R,Q>::size_fil(N, bps              );
 	else if (type == "PAM"      ) return Modulator_PAM      <B,R,Q>::size_fil(N, bps              );
 	else if (type == "QAM"      ) return Modulator_QAM      <B,R,Q>::size_fil(N, bps              );
 	else if (type == "PSK"      ) return Modulator_PSK      <B,R,Q>::size_fil(N, bps              );
