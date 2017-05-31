@@ -66,6 +66,8 @@ Modulator_SCMA<B,R,Q,PSI>
 		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"n_frames\" has to be equal to 6.");
 	if (bps != 3)
 		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"bps\" has to be equal to 3.");
+	if (n_ite <= 0)
+		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"n_ite\" has to be greater than 0.");
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>

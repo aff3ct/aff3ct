@@ -4,7 +4,7 @@
 #include <complex>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
-#include "modulator_SCMA_functions.hpp"
+#include "Tools/Code/SCMA/modulator_SCMA_functions.hpp"
 
 #include "../Modulator.hpp"
 

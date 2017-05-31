@@ -9,6 +9,8 @@
 #include "Module/Modulator/SCMA/Modulator_SCMA.hpp"
 #include "Module/Modulator/User/Modulator_user.hpp"
 
+#include "Tools/Code/SCMA/modulator_SCMA_functions.hpp"
+
 #include "Factory_modulator.hpp"
 
 using namespace aff3ct::module;
@@ -39,7 +41,7 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	else if (type == "USER"     ) return new Modulator_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
 	else if (type == "CPM"      ) return new Modulator_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 
-  throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
 
 template <typename B, typename R, typename Q>
@@ -58,7 +60,7 @@ Modulator<B,R,Q>* Factory_modulator<B,R,Q>
 	else if (psi_type == "PSI2") return new Modulator_SCMA <B,R,Q,psi_2<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
 	else if (psi_type == "PSI3") return new Modulator_SCMA <B,R,Q,psi_3<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
 
-  throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
+	throw std::runtime_error("aff3ct::tools::Factory_modulator: the factory could not allocate the object.");
 }
 
 template <typename B, typename R, typename Q>

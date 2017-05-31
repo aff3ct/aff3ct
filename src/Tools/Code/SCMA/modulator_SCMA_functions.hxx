@@ -1,3 +1,7 @@
+#include <cmath>
+
+#include "modulator_SCMA_functions.hpp"
+
 namespace aff3ct
 {
 namespace tools
