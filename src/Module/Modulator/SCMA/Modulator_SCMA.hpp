@@ -36,7 +36,7 @@ public:
 
 	static int size_mod(const int N, const int bps)
 	{
-		return ((int)std::pow(2,bps) * ((N + 1) / 2));
+		return ((int)std::pow(2,bps) * ((N +1) / 2));
 	}
 
 	static int size_fil(const int N, const int bps)

@@ -99,7 +99,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 		}
 	}
 
-	if(this->N % 2 == 1)
+	if (this->N % 2 == 1)
 	{
 		for (auto f = 0 ; f < this->n_frames ; f++)
 		{
