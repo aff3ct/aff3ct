@@ -57,6 +57,8 @@
 #include <Tools/Factory/Factory_CRC.hpp>
 #include <Tools/Factory/Factory_source.hpp>
 #include <Tools/Factory/Factory_modulator.hpp>
+#include <Tools/Factory/RA/Factory_encoder_RA.hpp>
+#include <Tools/Factory/RA/Factory_decoder_RA.hpp>
 #include <Tools/Factory/Turbo/Factory_encoder_turbo.hpp>
 #include <Tools/Factory/Turbo/Factory_scaling_factor.hpp>
 #include <Tools/Factory/Turbo/Factory_puncturer_turbo.hpp>
@@ -121,13 +123,16 @@
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
 #include <Tools/Code/LDPC/G/LDPC_G.hpp>
 #include <Tools/Code/LDPC/AList_reader/AList_reader.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_constant.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_array.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_seq.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_vec.hpp>
-#include <Tools/Code/Turbo/Scaling_factor/Scaling_factor_array_fast.hpp>
+#include <Tools/Code/SCMA/modulator_SCMA_functions.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_constant.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_array.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp>
 #include <Tools/Arguments_reader.hpp>
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
 #include <Tools/Display/Frame_trace/Frame_trace.hpp>
@@ -171,6 +176,7 @@
 #include <Module/Modulator/QAM/Modulator_QAM.hpp>
 #include <Module/Modulator/PAM/Modulator_PAM.hpp>
 // #include <Module/Modulator/SPU_Modulator.hpp>
+#include <Module/Modulator/SCMA/Modulator_SCMA.hpp>
 #include <Module/Modulator/Modulator.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
 // #include <Module/Puncturer/SPU_Puncturer.hpp>
@@ -394,10 +400,6 @@
 #include <Module/Decoder/Turbo/Decoder_turbo_naive.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_fast.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo.hpp>
-#include <Module/Decoder/Turbo/CRC/Decoder_turbo_naive_CA.hpp>
-#include <Module/Decoder/Turbo/CRC/Self_corrected/Decoder_turbo_naive_CA_self_corrected.hpp>
-#include <Module/Decoder/Turbo/CRC/Decoder_turbo_fast_CA.hpp>
-#include <Module/Decoder/Turbo/CRC/Flip_and_check/Decoder_turbo_naive_CA_flip_and_check.hpp>
 // #include <Module/Coset/SPU_Coset.hpp>
 #include <Module/Coset/Real/Coset_real.hpp>
 #include <Module/Coset/Coset.hpp>
@@ -453,8 +455,6 @@
 #include <Launcher/Launcher.hpp>
 #include <Simulation/Simulation.hpp>
 #include <Simulation/EXIT/Simulation_EXIT.hpp>
-#include <Simulation/EXIT/Code/Polar/Simulation_EXIT_polar.hpp>
-#include <Simulation/EXIT/Code/RSC/Simulation_EXIT_RSC.hpp>
 #include <Simulation/GEN/Code/Polar/Generation_polar.hpp>
 #include <Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp>
 #include <Simulation/BFER/Standard/StarPU/SPU_Simulation_BFER_std.hpp>
