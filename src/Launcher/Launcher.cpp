@@ -78,7 +78,6 @@ Launcher<B,R,Q>
 	params.demodulator.no_sig2           = false;
 	params.demodulator.psi               = "PSI0";
 	params.demodulator.n_ite             = 1;
-	params.channel    .domain            = "LLR";
 	params.channel    .type              = "AWGN";
 	params.channel    .path              = "";
 	params.channel    .block_fading      = "NO";
@@ -137,10 +136,6 @@ void Launcher<B,R,Q>
 		{"positive_int",
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
-	opt_args[{"sim-domain"}] =
-		{"string",
-		 "choose the domain in which you want to compute.",
-		 "LR, LLR"};
 #ifdef MULTI_PREC
 	opt_args[{"sim-prec", "p"}] =
 		{"positive_int",
@@ -318,7 +313,6 @@ void Launcher<B,R,Q>
 	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
 	if(ar.exist_arg({"sim-pyber"        })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"        });
 	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-domain"       })) params.channel.domain               = ar.get_arg      ({"sim-domain"       });
 	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
 	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
 	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
@@ -632,8 +626,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back(std::make_pair("Type",   params.channel.type  ));
-	p.push_back(std::make_pair("Domain", params.channel.domain));
+	p.push_back(std::make_pair("Type", params.channel.type));
 
 	if (params.channel.type == "USER")
 		p.push_back(std::make_pair("Path", params.channel.path));

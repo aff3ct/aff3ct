@@ -44,7 +44,7 @@ _aff3ct() {
 	      ${codetype} == "POLAR"      && ${simutype} == "GEN" ]]
 	then
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s       \
-		      --sim-snr-type -E --sim-stop-time --sim-threads -t --sim-domain \
+		      --sim-snr-type -E --sim-stop-time --sim-threads -t              \
 		      --sim-prec -p --sim-inter-lvl --cde-info-bits -K --cde-size -N  \
 		      --src-type --src-path --enc-type --enc-path --mod-type --mod-bps\
 		      --mod-ups --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p    \
@@ -301,11 +301,6 @@ _aff3ct() {
 		
 		--src-type)
 			local params="RAND RAND_FAST AZCW USER"
-			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
-			;;
-
-		--sim-domain)
-			local params="LR LLR"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

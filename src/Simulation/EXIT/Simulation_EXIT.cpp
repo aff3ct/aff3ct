@@ -138,7 +138,7 @@ void Simulation_EXIT<B,R>
 
 			// if sig_a = 0, La_K2 = 0
 			if (sig_a == 0)
-				std::fill(La_K2.begin(), La_K2.end(), params.channel.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
+				std::fill(La_K2.begin(), La_K2.end(), init_LLR<R>());
 
 			if (!params.terminal.disabled && first_loop)
 			{
