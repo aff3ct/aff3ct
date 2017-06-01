@@ -56,7 +56,7 @@
 #include <Tools/Factory/BCH/Factory_decoder_BCH.hpp>
 #include <Tools/Factory/Factory_CRC.hpp>
 #include <Tools/Factory/Factory_source.hpp>
-#include <Tools/Factory/Factory_modulator.hpp>
+#include <Tools/Factory/Factory_modem.hpp>
 #include <Tools/Factory/RA/Factory_encoder_RA.hpp>
 #include <Tools/Factory/RA/Factory_decoder_RA.hpp>
 #include <Tools/Factory/Turbo/Factory_encoder_turbo.hpp>
@@ -123,7 +123,7 @@
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
 #include <Tools/Code/LDPC/G/LDPC_G.hpp>
 #include <Tools/Code/LDPC/AList_reader/AList_reader.hpp>
-#include <Tools/Code/SCMA/modulator_SCMA_functions.hpp>
+#include <Tools/Code/SCMA/modem_SCMA_functions.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_constant.hpp>
@@ -163,21 +163,21 @@
 #include <Module/Interleaver/NO/Interleaver_NO.hpp>
 #include <Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp>
 #include <Module/Interleaver/LTE/Interleaver_LTE.hpp>
-// #include <Module/Modulator/SC_Modulator.hpp>
-#include <Module/Modulator/BPSK/Modulator_BPSK_fast.hpp>
-#include <Module/Modulator/BPSK/Modulator_BPSK.hpp>
-#include <Module/Modulator/PSK/Modulator_PSK.hpp>
-#include <Module/Modulator/CPM/CPM_parameters.hpp>
-#include <Module/Modulator/CPM/CPE/Encoder_CPE_Rimoldi.hpp>
-#include <Module/Modulator/CPM/CPE/Encoder_CPE.hpp>
-#include <Module/Modulator/CPM/BCJR/CPM_BCJR.hpp>
-#include <Module/Modulator/CPM/Modulator_CPM.hpp>
-#include <Module/Modulator/User/Modulator_user.hpp>
-#include <Module/Modulator/QAM/Modulator_QAM.hpp>
-#include <Module/Modulator/PAM/Modulator_PAM.hpp>
-// #include <Module/Modulator/SPU_Modulator.hpp>
-#include <Module/Modulator/SCMA/Modulator_SCMA.hpp>
-#include <Module/Modulator/Modulator.hpp>
+// #include <Module/Modem/SC_Modem.hpp>
+#include <Module/Modem/BPSK/Modem_BPSK_fast.hpp>
+#include <Module/Modem/BPSK/Modem_BPSK.hpp>
+#include <Module/Modem/PSK/Modem_PSK.hpp>
+#include <Module/Modem/CPM/CPM_parameters.hpp>
+#include <Module/Modem/CPM/CPE/Encoder_CPE_Rimoldi.hpp>
+#include <Module/Modem/CPM/CPE/Encoder_CPE.hpp>
+#include <Module/Modem/CPM/BCJR/CPM_BCJR.hpp>
+#include <Module/Modem/CPM/Modem_CPM.hpp>
+#include <Module/Modem/User/Modem_user.hpp>
+#include <Module/Modem/QAM/Modem_QAM.hpp>
+#include <Module/Modem/PAM/Modem_PAM.hpp>
+// #include <Module/Modem/SPU_Modem.hpp>
+#include <Module/Modem/SCMA/Modem_SCMA.hpp>
+#include <Module/Modem/Modem.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
 // #include <Module/Puncturer/SPU_Puncturer.hpp>
 #include <Module/Puncturer/Puncturer.hpp>

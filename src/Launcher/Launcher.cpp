@@ -11,7 +11,7 @@
 #include <mpi.h>
 #endif
 
-#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher.hpp"
@@ -446,16 +446,16 @@ int Launcher<B,R,Q>
 		this->store_args();
 
 		params.code.K_info -= params.crc.size;
-		params.code.N_mod   = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
-		                                                                                 params.code.N,
-		                                                                                 params.modulator.bits_per_symbol,
-		                                                                                 params.modulator.upsample_factor,
-		                                                                                 params.modulator.cpm_L);
-		params.code.N_fil   = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params.modulator.type,
-		                                                                                 params.code.N,
-		                                                                                 params.modulator.bits_per_symbol,
-		                                                                                 params.modulator.cpm_L,
-		                                                                                 params.modulator.cpm_p);
+		params.code.N_mod   = Factory_modem<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
+		                                                                             params.code.N,
+		                                                                             params.modulator.bits_per_symbol,
+		                                                                             params.modulator.upsample_factor,
+		                                                                             params.modulator.cpm_L);
+		params.code.N_fil   = Factory_modem<B,R,Q>::get_buffer_size_after_filtering (params.modulator.type,
+		                                                                             params.code.N,
+		                                                                             params.modulator.bits_per_symbol,
+		                                                                             params.modulator.cpm_L,
+		                                                                             params.modulator.cpm_p);
 
 		display_help = false;
 

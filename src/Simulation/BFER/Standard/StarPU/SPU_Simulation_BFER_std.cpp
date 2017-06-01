@@ -143,7 +143,7 @@ void SPU_Simulation_BFER_std<B,R,Q>
 		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
 		std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
 		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-		this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
 	if (this->params.monitor.err_track_enable)
@@ -182,7 +182,7 @@ void SPU_Simulation_BFER_std<B,R,Q>
 		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K1[tid], spu_U_K2[tid]);
 		auto task_encode     = Encoder  <B    >::spu_task_encode  (this->encoder  [tid], spu_U_K2[tid], spu_X_N1[tid]);
 		auto task_puncture   = Puncturer<B,  Q>::spu_task_puncture(this->puncturer[tid], spu_X_N1[tid], spu_X_N2[tid]);
-		auto task_modulate   = Modulator<B,R,R>::spu_task_modulate(this->modulator[tid], spu_X_N2[tid], spu_X_N3[tid]);
+		auto task_modulate   = Modulator<B,R,R>::spu_task_modulate(this->modem    [tid], spu_X_N2[tid], spu_X_N3[tid]);
 
 		task_gen_source->priority = STARPU_MIN_PRIO +0;
 		task_build_crc ->priority = STARPU_MIN_PRIO +1;
@@ -206,9 +206,9 @@ void SPU_Simulation_BFER_std<B,R,Q>
 	// Rayleigh channel
 	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
 	{
-		auto task_add_noise_wg  = Channel  <  R  >::spu_task_add_noise_wg (this->channel  [tid], spu_X_N3[tid], spu_Y_N1[tid], spu_H_N [tid]);
-		auto task_filter        = Modulator<B,R,R>::spu_task_filter       (this->modulator[tid], spu_Y_N1[tid], spu_Y_N2[tid]               );
-		auto task_demodulate_wg = Modulator<B,R,R>::spu_task_demodulate_wg(this->modulator[tid], spu_Y_N2[tid], spu_H_N [tid], spu_Y_N3[tid]);
+		auto task_add_noise_wg  = Channel  <  R  >::spu_task_add_noise_wg (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid], spu_H_N [tid]);
+		auto task_filter        = Modulator<B,R,R>::spu_task_filter       (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]               );
+		auto task_demodulate_wg = Modulator<B,R,R>::spu_task_demodulate_wg(this->modem  [tid], spu_Y_N2[tid], spu_H_N [tid], spu_Y_N3[tid]);
 
 		task_add_noise_wg ->priority = STARPU_MIN_PRIO +5;
 		task_filter       ->priority = STARPU_MIN_PRIO +6;
@@ -224,9 +224,9 @@ void SPU_Simulation_BFER_std<B,R,Q>
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		auto task_add_noise  = Channel  <  R  >::spu_task_add_noise (this->channel  [tid], spu_X_N3[tid], spu_Y_N1[tid]);
-		auto task_filter     = Modulator<B,R,R>::spu_task_filter    (this->modulator[tid], spu_Y_N1[tid], spu_Y_N2[tid]);
-		auto task_demodulate = Modulator<B,R,R>::spu_task_demodulate(this->modulator[tid], spu_Y_N2[tid], spu_Y_N3[tid]);
+		auto task_add_noise  = Channel  <  R  >::spu_task_add_noise (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid]);
+		auto task_filter     = Modulator<B,R,R>::spu_task_filter    (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]);
+		auto task_demodulate = Modulator<B,R,R>::spu_task_demodulate(this->modem  [tid], spu_Y_N2[tid], spu_Y_N3[tid]);
 
 		task_add_noise ->priority = STARPU_MIN_PRIO +5;
 		task_filter    ->priority = STARPU_MIN_PRIO +6;

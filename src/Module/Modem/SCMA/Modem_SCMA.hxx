@@ -7,7 +7,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-const std::complex<float> Modulator_SCMA<B,R,Q,PSI>::CB[6][4][4] =
+const std::complex<float> Modem_SCMA<B,R,Q,PSI>::CB[6][4][4] =
 {
 	{ // codebook1 (code layer 1)
 		{ {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f }, {  0.0000f,  0.0000f } },
@@ -48,36 +48,36 @@ const std::complex<float> Modulator_SCMA<B,R,Q,PSI>::CB[6][4][4] =
 };
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-Modulator_SCMA<B,R,Q,PSI>
-::Modulator_SCMA(const int N, const R sigma, const int bps, const bool disable_sig2, const int n_ite,
-                 const int n_frames, const std::string name)
-: Modulator<B,R,Q>(N,
-                   Modulator_SCMA<B,R,Q,PSI>::size_mod(N, bps),
-                   Modulator_SCMA<B,R,Q,PSI>::size_fil(N, bps),
-                   sigma,
-                   n_frames,
-                   name),
+Modem_SCMA<B,R,Q,PSI>
+::Modem_SCMA(const int N, const R sigma, const int bps, const bool disable_sig2, const int n_ite,
+             const int n_frames, const std::string name)
+: Modem<B,R,Q>(N,
+               Modem_SCMA<B,R,Q,PSI>::size_mod(N, bps),
+               Modem_SCMA<B,R,Q,PSI>::size_fil(N, bps),
+               sigma,
+               n_frames,
+               name),
   disable_sig2       (disable_sig2            ),
   two_on_square_sigma((R)2.0 / (sigma * sigma)),
   n0                 ((R)2.0 * sigma * sigma  ),
   n_ite              (n_ite                   )
 {
 	if (n_frames != 6)
-		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"n_frames\" has to be equal to 6.");
+		throw std::invalid_argument("aff3ct::module::Modem_SCMA: \"n_frames\" has to be equal to 6.");
 	if (bps != 3)
-		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"bps\" has to be equal to 3.");
+		throw std::invalid_argument("aff3ct::module::Modem_SCMA: \"bps\" has to be equal to 3.");
 	if (n_ite <= 0)
-		throw std::invalid_argument("aff3ct::module::Modulator_SCMA: \"n_ite\" has to be greater than 0.");
+		throw std::invalid_argument("aff3ct::module::Modem_SCMA: \"n_ite\" has to be greater than 0.");
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-Modulator_SCMA<B,R,Q,PSI>
-::~Modulator_SCMA()
+Modem_SCMA<B,R,Q,PSI>
+::~Modem_SCMA()
 {
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modulator_SCMA<B,R,Q,PSI>
+void Modem_SCMA<B,R,Q,PSI>
 ::modulate(const B* X_N1, R* X_N2)
 {
 	const auto N_mod = 8 * ((this->N + 1) / 2);
@@ -115,7 +115,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modulator_SCMA<B,R,Q,PSI>
+void Modem_SCMA<B,R,Q,PSI>
 ::demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
 {
 	assert(typeid(R) == typeid(Q));
@@ -135,7 +135,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modulator_SCMA<B,R,Q,PSI>
+void Modem_SCMA<B,R,Q,PSI>
 ::demodulate(const Q *Y_N1, Q *Y_N2)
 {
 	assert(typeid(R) == typeid(Q));
@@ -155,7 +155,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modulator_SCMA<B,R,Q,PSI>
+void Modem_SCMA<B,R,Q,PSI>
 ::demodulate_batch(const Q* Y_N1, Q* Y_N2, int batch)
 {
 	assert(typeid(R) == typeid(Q));
@@ -285,7 +285,7 @@ void Modulator_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-Q Modulator_SCMA<B,R,Q,PSI>
+Q Modem_SCMA<B,R,Q,PSI>
 ::phi(const Q* Y_N1, int i, int j, int k, int re, int batch)
 {
 	Q phi;
@@ -305,7 +305,7 @@ Q Modulator_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-Q Modulator_SCMA<B,R,Q,PSI>
+Q Modem_SCMA<B,R,Q,PSI>
 ::phi(const Q* Y_N1, int i, int j, int k, int re, int batch, const R* H_N)
 {
 	Q phi;
@@ -333,7 +333,7 @@ Q Modulator_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modulator_SCMA<B,R,Q,PSI>
+void Modem_SCMA<B,R,Q,PSI>
 ::filter(const R *Y_N1, R *Y_N2)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil + this->n_frames, Y_N2);

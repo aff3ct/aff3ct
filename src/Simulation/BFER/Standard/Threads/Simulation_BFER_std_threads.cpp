@@ -82,7 +82,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
 		std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
 		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-		this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
 	if (this->params.monitor.err_track_enable)
@@ -172,7 +172,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 			this->durations[tid][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
 		}
 
@@ -186,12 +186,12 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 			// filtering
 			auto t_filte = steady_clock::now();
-			this->modulator[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
+			this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
 			this->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 			// demodulation
 			auto t_demod = steady_clock::now();
-			this->modulator[tid]->demodulate_with_gains(this->Y_N2[tid], this->H_N[tid], this->Y_N3[tid]);
+			this->modem[tid]->demodulate_with_gains(this->Y_N2[tid], this->H_N[tid], this->Y_N3[tid]);
 			this->durations[tid][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
 		}
 		else // additive channel (AWGN, USER, NO)
@@ -203,12 +203,12 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 			// filtering
 			auto t_filte = steady_clock::now();
-			this->modulator[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
+			this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
 			this->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 			// demodulation
 			auto t_demod = steady_clock::now();
-			this->modulator[tid]->demodulate(this->Y_N2[tid], this->Y_N3[tid]);
+			this->modem[tid]->demodulate(this->Y_N2[tid], this->Y_N3[tid]);
 			this->durations[tid][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
 		}
 

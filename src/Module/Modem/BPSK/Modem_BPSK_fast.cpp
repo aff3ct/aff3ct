@@ -1,38 +1,38 @@
 #include <typeinfo>
 #include <stdexcept>
 
-#include "Modulator_BPSK_fast.hpp"
+#include "Modem_BPSK_fast.hpp"
 
 using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
-Modulator_BPSK_fast<B,R,Q>
-::Modulator_BPSK_fast(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
-: Modulator<B,R,Q>(N, sigma, n_frames, name),
+Modem_BPSK_fast<B,R,Q>
+::Modem_BPSK_fast(const int N, const R sigma, const bool disable_sig2, const int n_frames, const std::string name)
+: Modem<B,R,Q>(N, sigma, n_frames, name),
   disable_sig2(disable_sig2), two_on_square_sigma((R)2.0 / (sigma * sigma))
 {
 }
 
 template <typename B, typename R, typename Q>
-Modulator_BPSK_fast<B,R,Q>
-::~Modulator_BPSK_fast()
+Modem_BPSK_fast<B,R,Q>
+::~Modem_BPSK_fast()
 {
 }
 
 template <typename B, typename R, typename Q>
-void Modulator_BPSK_fast<B,R,Q>
+void Modem_BPSK_fast<B,R,Q>
 ::set_sigma(const R sigma)
 {
-	Modulator<B,R,Q>::set_sigma(sigma);
+	Modem<B,R,Q>::set_sigma(sigma);
 	two_on_square_sigma = (R)2.0 / (sigma * sigma);
 }
 
 
 template <typename B, typename R, typename Q>
-void Modulator_BPSK_fast<B,R,Q>
+void Modem_BPSK_fast<B,R,Q>
 ::modulate(const B *X_N1, R *X_N2)
 {
-	throw std::runtime_error("aff3ct::module::Modulator_BPSK_fast: this type of data is not supported in the "
+	throw std::runtime_error("aff3ct::module::Modem_BPSK_fast: this type of data is not supported in the "
 	                         "\"_modulate\" method.");
 }
 
@@ -41,7 +41,7 @@ namespace aff3ct
 namespace module
 {
 template <>
-void Modulator_BPSK_fast<int, float, float>
+void Modem_BPSK_fast<int, float, float>
 ::modulate(const int *X_N1, float *X_N2)
 {
 	auto size = (unsigned int)(this->N * this->n_frames);
@@ -67,7 +67,7 @@ namespace aff3ct
 namespace module
 {
 template <>
-void Modulator_BPSK_fast<short, float, float>
+void Modem_BPSK_fast<short, float, float>
 ::modulate(const short *X_N1, float *X_N2)
 {
 	auto size = (unsigned int)(this->N * this->n_frames);
@@ -101,7 +101,7 @@ namespace aff3ct
 namespace module
 {
 template <>
-void Modulator_BPSK_fast<signed char, float, float>
+void Modem_BPSK_fast<signed char, float, float>
 ::modulate(const signed char *X_N1, float *X_N2)
 {
 	auto size = (unsigned int)(this->N * this->n_frames);
@@ -142,21 +142,21 @@ void Modulator_BPSK_fast<signed char, float, float>
 }
 
 template <typename B,typename R, typename Q>
-void Modulator_BPSK_fast<B,R,Q>
+void Modem_BPSK_fast<B,R,Q>
 ::filter(const R *Y_N1, R *Y_N2)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
-void Modulator_BPSK_fast<B,R,Q>
+void Modem_BPSK_fast<B,R,Q>
 ::demodulate(const Q *Y_N1, Q *Y_N2)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_BPSK_fast: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_BPSK_fast: type \"Q\" has to be float or double.");
 
 	if (disable_sig2)
 		std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
@@ -175,14 +175,14 @@ void Modulator_BPSK_fast<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Modulator_BPSK_fast<B,R,Q>
+void Modem_BPSK_fast<B,R,Q>
 ::demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_BPSK_fast: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_BPSK_fast: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_BPSK_fast: type \"Q\" has to be float or double.");
 
 	auto size = (unsigned int)(this->N * this->n_frames);
 	if (disable_sig2)
@@ -213,16 +213,16 @@ void Modulator_BPSK_fast<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Modulator_BPSK_fast<B_8,R_8,R_8>;
-template class aff3ct::module::Modulator_BPSK_fast<B_8,R_8,Q_8>;
-template class aff3ct::module::Modulator_BPSK_fast<B_16,R_16,R_16>;
-template class aff3ct::module::Modulator_BPSK_fast<B_16,R_16,Q_16>;
-template class aff3ct::module::Modulator_BPSK_fast<B_32,R_32,R_32>;
-template class aff3ct::module::Modulator_BPSK_fast<B_64,R_64,R_64>;
+template class aff3ct::module::Modem_BPSK_fast<B_8,R_8,R_8>;
+template class aff3ct::module::Modem_BPSK_fast<B_8,R_8,Q_8>;
+template class aff3ct::module::Modem_BPSK_fast<B_16,R_16,R_16>;
+template class aff3ct::module::Modem_BPSK_fast<B_16,R_16,Q_16>;
+template class aff3ct::module::Modem_BPSK_fast<B_32,R_32,R_32>;
+template class aff3ct::module::Modem_BPSK_fast<B_64,R_64,R_64>;
 #else
-template class aff3ct::module::Modulator_BPSK_fast<B,R,Q>;
+template class aff3ct::module::Modem_BPSK_fast<B,R,Q>;
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template class aff3ct::module::Modulator_BPSK_fast<B,R,R>;
+template class aff3ct::module::Modem_BPSK_fast<B,R,R>;
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

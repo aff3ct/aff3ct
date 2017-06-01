@@ -66,17 +66,17 @@ void SC_Simulation_BFER_ite<B,R,Q>
 	this->crc        [tid]->create_sc_module_build        ();
 	this->encoder    [tid]->create_sc_module              ();
 	this->interleaver_e   ->create_sc_module_interleaver  ();
-	this->modulator  [tid]->create_sc_module_modulator    ();
+	this->modem      [tid]->create_sc_module_modulator    ();
 	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
 		this->channel[tid]->create_sc_module_wg           ();
 	else
 		this->channel[tid]->create_sc_module              ();
-	this->modulator  [tid]->create_sc_module_filterer     ();
+	this->modem      [tid]->create_sc_module_filterer     ();
 	this->quantizer  [tid]->create_sc_module              ();
 	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
-		this->modulator[tid]->create_sc_module_tdemodulator_wg();
+		this->modem  [tid]->create_sc_module_tdemodulator_wg();
 	else
-		this->modulator[tid]->create_sc_module_tdemodulator();
+		this->modem  [tid]->create_sc_module_tdemodulator();
 	this->interleaver[tid]->create_sc_module_deinterleaver();
 	this->siso       [tid]->create_sc_module_siso         ();
 	this->interleaver[tid]->create_sc_module_interleaver  ();
@@ -224,20 +224,20 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->duplicator     [4]                     ->s_out1(this->coset_real [0]->sc_module          ->s_in1);
 		this->duplicator     [4]                     ->s_out2(this->coset_real_i  ->sc_module          ->s_in1);
 		this->duplicator     [3]                     ->s_out2(this->interleaver_e ->sc_module_inter    ->s_in );
-		this->interleaver_e     ->sc_module_inter    ->s_out (this->modulator  [0]->sc_module_mod      ->s_in );
+		this->interleaver_e     ->sc_module_inter    ->s_out (this->modem      [0]->sc_module_mod      ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module_wg       ->s_in );
-			this->channel    [0]->sc_module_wg       ->s_out1(this->modulator  [0]->sc_module_tdemod_wg->s_in1);
-			this->channel    [0]->sc_module_wg       ->s_out2(this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in2);
-			this->modulator  [0]->sc_module_tdemod_wg->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module_wg       ->s_in );
+			this->channel    [0]->sc_module_wg       ->s_out1(this->modem      [0]->sc_module_tdemod_wg->s_in1);
+			this->channel    [0]->sc_module_wg       ->s_out2(this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in2);
+			this->modem      [0]->sc_module_tdemod_wg->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		} else {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module          ->s_in );
-			this->channel    [0]->sc_module          ->s_out (this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in1);
-			this->modulator  [0]->sc_module_tdemod   ->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module          ->s_in );
+			this->channel    [0]->sc_module          ->s_out (this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->modem      [0]->sc_module_tdemod   ->s_in1);
+			this->modem      [0]->sc_module_tdemod   ->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		}
 		this->interleaver    [0]->sc_module_deinter  ->s_out (this->coset_real [0]->sc_module          ->s_in2);
 		this->coset_real     [0]->sc_module          ->s_out (this->router                             ->s_in );
@@ -246,9 +246,9 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->siso           [0]->sc_module_siso     ->s_out (this->coset_real_i  ->sc_module          ->s_in2);
 		this->coset_real_i      ->sc_module          ->s_out (this->interleaver[0]->sc_module_inter    ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in3);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in3);
 		} else {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in2);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->modem      [0]->sc_module_tdemod   ->s_in2);
 		}
 		this->decoder        [0]->sc_module          ->s_out (this->coset_bit  [0]->sc_module          ->s_in2);
 		this->coset_bit      [0]->sc_module          ->s_out (this->crc        [0]->sc_module_extract  ->s_in );
@@ -263,29 +263,29 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->duplicator     [0]                     ->s_out2(this->crc        [0]->sc_module_build    ->s_in );
 		this->crc            [0]->sc_module_build    ->s_out (this->encoder    [0]->sc_module          ->s_in );
 		this->encoder        [0]->sc_module          ->s_out (this->interleaver_e ->sc_module_inter    ->s_in );
-		this->interleaver_e     ->sc_module_inter    ->s_out (this->modulator  [0]->sc_module_mod      ->s_in );
+		this->interleaver_e     ->sc_module_inter    ->s_out (this->modem      [0]->sc_module_mod      ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module_wg       ->s_in );
-			this->channel    [0]->sc_module_wg       ->s_out1(this->modulator  [0]->sc_module_tdemod_wg->s_in1);
-			this->channel    [0]->sc_module_wg       ->s_out2(this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in2);
-			this->modulator  [0]->sc_module_tdemod_wg->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module_wg       ->s_in );
+			this->channel    [0]->sc_module_wg       ->s_out1(this->modem      [0]->sc_module_tdemod_wg->s_in1);
+			this->channel    [0]->sc_module_wg       ->s_out2(this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in2);
+			this->modem      [0]->sc_module_tdemod_wg->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		} else {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module          ->s_in );
-			this->channel    [0]->sc_module          ->s_out (this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in1);
-			this->modulator  [0]->sc_module_tdemod   ->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->channel    [0]->sc_module          ->s_in );
+			this->channel    [0]->sc_module          ->s_out (this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->modem      [0]->sc_module_tdemod   ->s_in1);
+			this->modem      [0]->sc_module_tdemod   ->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		}
 		this->interleaver    [0]->sc_module_deinter  ->s_out (this->router                             ->s_in );
 		this->router                                 ->s_out1(this->siso       [0]->sc_module_siso     ->s_in );
 		this->router                                 ->s_out2(this->decoder    [0]->sc_module          ->s_in );
 		this->siso           [0]->sc_module_siso     ->s_out (this->interleaver[0]->sc_module_inter    ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in3);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in3);
 		} else {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in2);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->modem      [0]->sc_module_tdemod   ->s_in2);
 		}
 		this->decoder        [0]->sc_module          ->s_out (this->crc        [0]->sc_module_extract  ->s_in );
 		this->crc            [0]->sc_module_extract  ->s_out (this->duplicator [1]                     ->s_in );
@@ -311,20 +311,20 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->duplicator     [4]                                                                   ->s_out1(this->coset_real [0]->sc_module          ->s_in1);
 		this->duplicator     [4]                                                                   ->s_out2(this->coset_real_i  ->sc_module          ->s_in1);
 		this->duplicator     [3]                                                                   ->s_out2(this->interleaver_e ->sc_module_inter    ->s_in );
-		this->interleaver_e     ->sc_module_inter    ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->sc_module_mod      ->s_in );
+		this->interleaver_e     ->sc_module_inter    ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem      [0]->sc_module_mod      ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module_wg       ->s_in );
-			this->channel    [0]->sc_module_wg       ->s_out1(this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in1);
-			this->channel    [0]->sc_module_wg       ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in2);
-			this->modulator  [0]->sc_module_tdemod_wg->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module_wg       ->s_in );
+			this->channel    [0]->sc_module_wg       ->s_out1(this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in1);
+			this->channel    [0]->sc_module_wg       ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in2);
+			this->modem      [0]->sc_module_tdemod_wg->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		} else {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module          ->s_in );
-			this->channel    [0]->sc_module          ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in1);
-			this->modulator  [0]->sc_module_tdemod   ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module          ->s_in );
+			this->channel    [0]->sc_module          ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modem      [0]->sc_module_tdemod   ->s_in1);
+			this->modem      [0]->sc_module_tdemod   ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		}
 		this->interleaver    [0]->sc_module_deinter  ->s_out (this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->coset_real [0]->sc_module          ->s_in2);
 		this->coset_real     [0]->sc_module          ->s_out (this->dbg_Q[5]->s_in); this->dbg_Q[5]->s_out (this->router                             ->s_in );
@@ -333,9 +333,9 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->siso           [0]->sc_module_siso     ->s_out (this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->coset_real_i  ->sc_module          ->s_in2);
 		this->coset_real_i      ->sc_module          ->s_out (this->dbg_Q[6]->s_in); this->dbg_Q[6]->s_out (this->interleaver[0]->sc_module_inter    ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in3);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in3);
 		} else {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in2);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modem      [0]->sc_module_tdemod   ->s_in2);
 		}
 		this->decoder        [0]->sc_module          ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->coset_bit  [0]->sc_module          ->s_in2);
 		this->coset_bit      [0]->sc_module          ->s_out (this->dbg_B[5]->s_in); this->dbg_B[5]->s_out (this->crc        [0]->sc_module_extract  ->s_in );
@@ -350,29 +350,29 @@ void SC_Simulation_BFER_ite<B,R,Q>
 		this->duplicator     [0]                     ->s_out2                                              (this->crc        [0]->sc_module_build    ->s_in );
 		this->crc            [0]->sc_module_build    ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder    [0]->sc_module          ->s_in );
 		this->encoder        [0]->sc_module          ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->interleaver_e ->sc_module_inter    ->s_in );
-		this->interleaver_e     ->sc_module_inter    ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator  [0]->sc_module_mod      ->s_in );
+		this->interleaver_e     ->sc_module_inter    ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem      [0]->sc_module_mod      ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module_wg       ->s_in );
-			this->channel    [0]->sc_module_wg       ->s_out1(this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in1);
-			this->channel    [0]->sc_module_wg       ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in2);
-			this->modulator  [0]->sc_module_tdemod_wg->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module_wg       ->s_in );
+			this->channel    [0]->sc_module_wg       ->s_out1(this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in1);
+			this->channel    [0]->sc_module_wg       ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in2);
+			this->modem      [0]->sc_module_tdemod_wg->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		} else {
-			this->modulator  [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module          ->s_in );
-			this->channel    [0]->sc_module          ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator  [0]->sc_module_filt     ->s_in );
-			this->modulator  [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
-			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in1);
-			this->modulator  [0]->sc_module_tdemod   ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
+			this->modem      [0]->sc_module_mod      ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel    [0]->sc_module          ->s_in );
+			this->channel    [0]->sc_module          ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem      [0]->sc_module_filt     ->s_in );
+			this->modem      [0]->sc_module_filt     ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->quantizer  [0]->sc_module          ->s_in );
+			this->quantizer  [0]->sc_module          ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->modem      [0]->sc_module_tdemod   ->s_in1);
+			this->modem      [0]->sc_module_tdemod   ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->interleaver[0]->sc_module_deinter  ->s_in );
 		}
 		this->interleaver    [0]->sc_module_deinter  ->s_out (this->dbg_Q[2]->s_in); this->dbg_Q[2]->s_out (this->router                             ->s_in );
 		this->router                                                                               ->s_out1(this->siso       [0]->sc_module_siso     ->s_in );
 		this->router                                                                               ->s_out2(this->decoder    [0]->sc_module          ->s_in );
 		this->siso           [0]->sc_module_siso     ->s_out (this->dbg_Q[3]->s_in); this->dbg_Q[3]->s_out (this->interleaver[0]->sc_module_inter    ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->sc_module_tdemod_wg->s_in3);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modem      [0]->sc_module_tdemod_wg->s_in3);
 		} else {
-			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modulator  [0]->sc_module_tdemod   ->s_in2);
+			this->interleaver[0]->sc_module_inter    ->s_out (this->dbg_Q[4]->s_in); this->dbg_Q[4]->s_out (this->modem      [0]->sc_module_tdemod   ->s_in2);
 		}
 		this->decoder        [0]->sc_module          ->s_out (this->dbg_B[4]->s_in); this->dbg_B[4]->s_out (this->crc        [0]->sc_module_extract  ->s_in );
 		this->crc            [0]->sc_module_extract  ->s_out (this->dbg_B[6]->s_in); this->dbg_B[6]->s_out (this->duplicator [1]                     ->s_in );

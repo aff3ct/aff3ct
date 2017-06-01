@@ -13,7 +13,7 @@
 #include "Module/CRC/CRC.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Puncturer/Puncturer.hpp"
-#include "Module/Modulator/Modulator.hpp"
+#include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Coset/Coset.hpp"
@@ -35,7 +35,7 @@ protected:
 	std::vector<module::CRC        <B    >*> crc;
 	std::vector<module::Encoder    <B    >*> encoder;
 	std::vector<module::Puncturer  <B,Q  >*> puncturer;
-	std::vector<module::Modulator  <B,R,R>*> modulator;
+	std::vector<module::Modem      <B,R,R>*> modem;
 	std::vector<module::Channel    <R    >*> channel;
 	std::vector<module::Quantizer  <R,Q  >*> quantizer;
 	std::vector<module::Coset      <B,Q  >*> coset_real;
@@ -59,7 +59,7 @@ protected:
 	virtual module::Encoder    <B    >* build_encoder    (const int tid = 0, const int seed = 0);
 	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0);
 	virtual module::Puncturer  <B,Q  >* build_puncturer  (const int tid = 0                    );
-	virtual module::Modulator  <B,R,R>* build_modulator  (const int tid = 0                    );
+	virtual module::Modem      <B,R,R>* build_modem      (const int tid = 0                    );
 	virtual module::Channel    <R    >* build_channel    (const int tid = 0, const int seed = 0);
 	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int tid = 0                    );
 	virtual module::Coset      <B,Q  >* build_coset_real (const int tid = 0                    );

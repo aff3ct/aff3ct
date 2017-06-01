@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "modulator_SCMA_functions.hpp"
+#include "modem_SCMA_functions.hpp"
 
 namespace aff3ct
 {

@@ -5,8 +5,8 @@
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
  */
-#ifndef MODULATOR_HPP_
-#define MODULATOR_HPP_
+#ifndef MODEM_HPP_
+#define MODEM_HPP_
 
 #include <stdexcept>
 #include <string>
@@ -22,7 +22,7 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Modulator_i
+ * \class Modem_i
  *
  * \brief Modulates, filters and/or demodulates a signal.
  *
@@ -30,10 +30,10 @@ namespace module
  * \tparam R: type of the reals (floating-point representation) in the modulation and in the filtering process.
  * \tparam Q: type of the reals (floating-point or fixed-point representation) in the demodulation.
  *
- * Please use Modulator for inheritance (instead of Modulator_i)
+ * Please use Modem for inheritance (instead of Modem_i)
  */
 template <typename B = int, typename R = float, typename Q = R>
-class Modulator_i : public Module
+class Modem_i : public Module
 {
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */
@@ -48,21 +48,21 @@ public:
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 * \param N_fil:    number of transmitted elements after the filtering process.
-	 * \param n_frames: number of frames to process in the Modulator.
-	 * \param name:     Modulator's name.
+	 * \param n_frames: number of frames to process in the Modem.
+	 * \param name:     Modem's name.
 	 */
-	Modulator_i(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
-	            const std::string name = "Modulator_i")
+	Modem_i(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
+	        const std::string name = "Modem_i")
 	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_fil), sigma(sigma)
 	{
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N\" has to be greater than 0.");
 		if (N_mod <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N_mod\" has to be greater than 0.");
 		if (N_fil <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N_fil\" has to be greater than 0.");
 		if (sigma <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
@@ -70,47 +70,47 @@ public:
 	 *
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
-	 * \param n_frames: number of frames to process in the Modulator.
-	 * \param name:     Modulator's name.
+	 * \param n_frames: number of frames to process in the Modem.
+	 * \param name:     Modem's name.
 	 */
-	Modulator_i(const int N, const int N_mod, const R sigma, const int n_frames = 1,
-	            const std::string name = "Modulator_i")
+	Modem_i(const int N, const int N_mod, const R sigma, const int n_frames = 1,
+	        const std::string name = "Modem_i")
 	: Module(n_frames, name), N(N), N_mod(N_mod), N_fil(N_mod), sigma(sigma)
 	{
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N\" has to be greater than 0.");
 		if (N_mod <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N_mod\" has to be greater than 0.");
 		if (N_fil <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N_fil\" has to be greater than 0.");
 		if (sigma <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
 	 *
 	 * \param N:        size of one frame (= number of bits in one frame).
-	 * \param n_frames: number of frames to process in the Modulator.
-	 * \param name:     Modulator's name.
+	 * \param n_frames: number of frames to process in the Modem.
+	 * \param name:     Modem's name.
 	 */
-	Modulator_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Modulator_i")
+	Modem_i(const int N, const R sigma, const int n_frames = 1, const std::string name = "Modem_i")
 	: Module(n_frames, name), N(N), N_mod(N), N_fil(N)
 	{
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N\" has to be greater than 0.");
 		if (N_mod <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N_mod\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N_mod\" has to be greater than 0.");
 		if (N_fil <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"N_fil\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"N_fil\" has to be greater than 0.");
 		if (sigma <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"sigma\" has to be greater than 0.");
 	}
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modulator_i()
+	virtual ~Modem_i()
 	{
 	}
 
@@ -137,7 +137,7 @@ public:
 	virtual void set_sigma(const R sigma)
 	{
 		if (sigma <= 0)
-			throw std::invalid_argument("aff3ct::module::Modulator: \"sigma\" has to be greater than 0.");
+			throw std::invalid_argument("aff3ct::module::Modem: \"sigma\" has to be greater than 0.");
 		this->sigma = sigma;
 	}
 
@@ -150,11 +150,11 @@ public:
 	void modulate(const mipp::vector<B>& X_N1, mipp::vector<R>& X_N2)
 	{
 		if (this->N * this->n_frames != (int)X_N1.size())
-			throw std::length_error("aff3ct::module::Modulator: \"X_N1.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"X_N1.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		if (this->N_mod * this->n_frames != (int)X_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"X_N2.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"X_N2.size()\" has to be equal to "
 			                        "\"N_mod\" * \"n_frames\".");
 
 		this->modulate(X_N1.data(), X_N2.data());
@@ -179,11 +179,11 @@ public:
 	void filter(const mipp::vector<R>& Y_N1, mipp::vector<R>& Y_N2)
 	{
 		if (this->N_mod * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N1.size()\" has to be equal to "
 			                        "\"N_mod\" * \"n_frames\".");
 
 		if (this->N_fil * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N2.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		this->filter(Y_N1.data(), Y_N2.data());
@@ -206,11 +206,11 @@ public:
 	void demodulate(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N1.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		if (this->N * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N2.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		this->demodulate(Y_N1.data(), Y_N2.data());
@@ -234,15 +234,15 @@ public:
 	void demodulate_with_gains(const mipp::vector<Q>& Y_N1, const mipp::vector<R>& H_N, mipp::vector<Q>& Y_N2)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N1.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		if (this->N_fil * this->n_frames != (int)H_N.size())
-			throw std::length_error("aff3ct::module::Modulator: \"H_N.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"H_N.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		if (this->N * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N2.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		this->demodulate_with_gains(Y_N1.data(), H_N.data(), Y_N2.data());
@@ -271,15 +271,15 @@ public:
 	void demodulate(const mipp::vector<Q>& Y_N1, const mipp::vector<Q>& Y_N2, mipp::vector<Q>& Y_N3)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N1.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		if (this->N * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N2.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		if (this->N * this->n_frames != (int)Y_N3.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N3.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N3.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		this->demodulate(Y_N1.data(), Y_N2.data(), Y_N3.data());
@@ -310,19 +310,19 @@ public:
 	                           const mipp::vector<Q>& Y_N2,       mipp::vector<Q>& Y_N3)
 	{
 		if (this->N_fil * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N1.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N1.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		if (this->N_fil * this->n_frames != (int)H_N.size())
-			throw std::length_error("aff3ct::module::Modulator: \"H_N.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"H_N.size()\" has to be equal to "
 			                        "\"N_fil\" * \"n_frames\".");
 
 		if (this->N * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N2.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N2.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		if (this->N * this->n_frames != (int)Y_N3.size())
-			throw std::length_error("aff3ct::module::Modulator: \"Y_N3.size()\" has to be equal to "
+			throw std::length_error("aff3ct::module::Modem: \"Y_N3.size()\" has to be equal to "
 			                        "\"N\" * \"n_frames\".");
 
 		this->demodulate_with_gains(Y_N1.data(), H_N.data(), Y_N2.data(), Y_N3.data());
@@ -375,37 +375,37 @@ public:
 protected:
 	virtual void _modulate(const B *X_N1, R *X_N2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_modulate\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modem: \"_modulate\" is unimplemented.");
 	}
 
 	virtual void _filter(const R *Y_N1, R *Y_N2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_filter\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modem: \"_filter\" is unimplemented.");
 	}
 
 	virtual void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modem: \"_demodulate\" is unimplemented.");
 	}
 
 	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modem: \"_demodulate_with_gains\" is unimplemented.");
 	}
 
 	virtual void _demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modem: \"_demodulate\" is unimplemented.");
 	}
 
 	virtual void _demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Modulator: \"_demodulate_with_gains\" is unimplemented.");
+		throw std::runtime_error("aff3ct::module::Modem: \"_demodulate_with_gains\" is unimplemented.");
 	}
 };
 }
 }
 
-#include "SC_Modulator.hpp"
+#include "SC_Modem.hpp"
 
-#endif /* MODULATOR_HPP_ */
+#endif /* MODEM_HPP_ */

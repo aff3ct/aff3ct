@@ -79,7 +79,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
 		std::fill(this->X_N1[tid].begin(), this->X_N1[tid].end(), (B)0);
 		std::fill(this->X_N2[tid].begin(), this->X_N2[tid].end(), (B)0);
-		this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
 	if (this->params.monitor.err_track_enable)
@@ -159,7 +159,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 
 			// modulate
 			auto t_modul = steady_clock::now();
-			this->modulator[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
+			this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 			this->durations[tid][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
 		}
 
@@ -181,7 +181,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 
 		// filtering
 		auto t_filte = steady_clock::now();
-		this->modulator[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
+		this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
 		this->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 		// make the quantization
@@ -197,15 +197,15 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			{
 				// demodulation
 				auto t_demod = steady_clock::now();
-				this->modulator[tid]->demodulate_with_gains(this->Y_N3[tid], this->H_N[tid], this->Y_N7[tid],
-				                                            this->Y_N4[tid]);
+				this->modem[tid]->demodulate_with_gains(this->Y_N3[tid], this->H_N[tid], this->Y_N7[tid],
+				                                        this->Y_N4[tid]);
 				this->durations[tid][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
 				// demodulation
 				auto t_demod = steady_clock::now();
-				this->modulator[tid]->demodulate(this->Y_N3[tid], this->Y_N7[tid], this->Y_N4[tid]);
+				this->modem[tid]->demodulate(this->Y_N3[tid], this->Y_N7[tid], this->Y_N4[tid]);
 				this->durations[tid][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
 			}
 
@@ -340,7 +340,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			// modulate
 			std::cout << "Modulate X_N2 in X_N3..." << std::endl;
 			auto t_modul = steady_clock::now();
-			this->modulator[0]->modulate(this->X_N2[0], this->X_N3[0]);
+			this->modem[0]->modulate(this->X_N2[0], this->X_N3[0]);
 			this->durations[0][std::make_pair(4, "Modulator")] += steady_clock::now() - t_modul;
 
 			// display X_N3
@@ -407,7 +407,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		// filtering
 		std::cout << "Apply the filtering from Y_N1 to Y_N2..." << std::endl;
 		auto t_filte = steady_clock::now();
-		this->modulator[0]->filter(this->Y_N1[0], this->Y_N2[0]);
+		this->modem[0]->filter(this->Y_N1[0], this->Y_N2[0]);
 		this->durations[0][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
 		// display Y_N2
@@ -437,7 +437,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 				// demodulation
 				std::cout << "Demodulate from Y_N3 to Y_N4..." << std::endl;
 				auto t_demod = steady_clock::now();
-				this->modulator[0]->demodulate_with_gains(this->Y_N3[0], this->H_N[0], this->Y_N7[0], this->Y_N4[0]);
+				this->modem[0]->demodulate_with_gains(this->Y_N3[0], this->H_N[0], this->Y_N7[0], this->Y_N4[0]);
 				this->durations[0][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
 
 				// display Y_N5
@@ -450,7 +450,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 				// demodulation
 				std::cout << "Demodulate from Y_N3 to Y_N4..." << std::endl;
 				auto t_demod = steady_clock::now();
-				this->modulator[0]->demodulate(this->Y_N3[0], this->Y_N7[0], this->Y_N4[0]);
+				this->modem[0]->demodulate(this->Y_N3[0], this->Y_N7[0], this->Y_N4[0]);
 				this->durations[0][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
 
 				// display Y_N5

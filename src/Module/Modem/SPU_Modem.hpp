@@ -1,5 +1,5 @@
-#ifndef SPU_MODULATOR_HPP_
-#define SPU_MODULATOR_HPP_
+#ifndef SPU_MODEM_HPP_
+#define SPU_MODEM_HPP_
 
 #ifdef STARPU
 #include <vector>
@@ -15,7 +15,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, typename Q = R>
-class SPU_Modulator : public Modulator_i<B,R,Q>
+class SPU_Modem : public Modem_i<B,R,Q>
 {
 private:
 	static starpu_codelet spu_cl_modulate;
@@ -26,29 +26,29 @@ private:
 	static starpu_codelet spu_cl_tdemodulate_wg;
 
 public:
-	SPU_Modulator(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
-	              const std::string name = "SPU_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, N_fil, sigma, n_frames, name) {}
+	SPU_Modem(const int N, const int N_mod, const int N_fil, const R sigma, const int n_frames = 1,
+	          const std::string name = "SPU_Modem")
+	: Modem_i<B,R,Q>(N, N_mod, N_fil, sigma, n_frames, name) {}
 
-	SPU_Modulator(const int N, const int N_mod, const R sigma, const int n_frames = 1,
-	              const std::string name = "SPU_Modulator")
-	: Modulator_i<B,R,Q>(N, N_mod, sigma, n_frames, name) {}
+	SPU_Modem(const int N, const int N_mod, const R sigma, const int n_frames = 1,
+	          const std::string name = "SPU_Modem")
+	: Modem_i<B,R,Q>(N, N_mod, sigma, n_frames, name) {}
 
-	SPU_Modulator(const int N, const R sigma, const int n_frames = 1, const std::string name = "SPU_Modulator")
-	: Modulator_i<B,R,Q>(N, sigma, n_frames, name) {}
+	SPU_Modem(const int N, const R sigma, const int n_frames = 1, const std::string name = "SPU_Modem")
+	: Modem_i<B,R,Q>(N, sigma, n_frames, name) {}
 
-	virtual ~SPU_Modulator() {}
+	virtual ~SPU_Modem() {}
 
-	static inline starpu_task* spu_task_modulate(      SPU_Modulator<B,R,Q> *modulator,
+	static inline starpu_task* spu_task_modulate(      SPU_Modem<B,R,Q>     *modulator,
 	                                                   starpu_data_handle_t &in_data,
 	                                                   starpu_data_handle_t &out_data,
 	                                             const int                   priority = STARPU_DEFAULT_PRIO,
-	                                             const char                 *name     = "Modulator::modulate")
+	                                             const char                 *name     = "Modem::modulate")
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mod::modulate";
-		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_modulate;
+		task->cl          = &SPU_Modem<B,R,Q>::spu_cl_modulate;
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data;
@@ -57,13 +57,13 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_filter(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t &in_data,
-	                                                                            starpu_data_handle_t &out_data)
+	static inline starpu_task* spu_task_filter(SPU_Modem<B,R,Q> *modulator, starpu_data_handle_t &in_data,
+	                                                                        starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mod::filter";
-		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_filter;
+		task->cl          = &SPU_Modem<B,R,Q>::spu_cl_filter;
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data;
@@ -72,13 +72,13 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_demodulate(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t &in_data,
-	                                                                                starpu_data_handle_t &out_data)
+	static inline starpu_task* spu_task_demodulate(SPU_Modem<B,R,Q> *modulator, starpu_data_handle_t &in_data,
+	                                                                            starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mod::demodulate";
-		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_demodulate;
+		task->cl          = &SPU_Modem<B,R,Q>::spu_cl_demodulate;
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data;
@@ -87,14 +87,14 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_demodulate_wg(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t &in_data1,
-	                                                                                   starpu_data_handle_t &in_data2,
-	                                                                                   starpu_data_handle_t &out_data)
+	static inline starpu_task* spu_task_demodulate_wg(SPU_Modem<B,R,Q> *modulator, starpu_data_handle_t &in_data1,
+	                                                                               starpu_data_handle_t &in_data2,
+	                                                                               starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mod::demodulate_wg";
-		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_demodulate_wg;
+		task->cl          = &SPU_Modem<B,R,Q>::spu_cl_demodulate_wg;
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data1;
@@ -104,14 +104,14 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_tdemodulate(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t &in_data1,
-	                                                                                 starpu_data_handle_t &in_data2,
-	                                                                                 starpu_data_handle_t &out_data)
+	static inline starpu_task* spu_task_tdemodulate(SPU_Modem<B,R,Q> *modulator, starpu_data_handle_t &in_data1,
+	                                                                             starpu_data_handle_t &in_data2,
+	                                                                             starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mod::tdemodulate";
-		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_tdemodulate;
+		task->cl          = &SPU_Modem<B,R,Q>::spu_cl_tdemodulate;
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data1;
@@ -121,15 +121,15 @@ public:
 		return task;
 	}
 
-	static inline starpu_task* spu_task_tdemodulate_wg(SPU_Modulator<B,R,Q> *modulator, starpu_data_handle_t &in_data1,
-	                                                                                    starpu_data_handle_t &in_data2,
-	                                                                                    starpu_data_handle_t &in_data3,
-	                                                                                    starpu_data_handle_t &out_data)
+	static inline starpu_task* spu_task_tdemodulate_wg(SPU_Modem<B,R,Q> *modulator, starpu_data_handle_t &in_data1,
+	                                                                                starpu_data_handle_t &in_data2,
+	                                                                                starpu_data_handle_t &in_data3,
+	                                                                                starpu_data_handle_t &out_data)
 	{
 		auto task = starpu_task_create();
 
 		task->name        = "mod::tdemodulate_wg";
-		task->cl          = &SPU_Modulator<B,R,Q>::spu_cl_tdemodulate_wg;
+		task->cl          = &SPU_Modem<B,R,Q>::spu_cl_tdemodulate_wg;
 		task->cl_arg      = (void*)(modulator);
 		task->cl_arg_size = sizeof(*modulator);
 		task->handles[0]  = in_data1;
@@ -146,7 +146,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Modulator<B,R,Q>::spu_kernel_modulate;
+		cl.cpu_funcs     [0] = SPU_Modem<B,R,Q>::spu_kernel_modulate;
 		cl.cpu_funcs_name[0] = "mod::modulate::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
@@ -160,7 +160,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Modulator<B,R,Q>::spu_kernel_filter;
+		cl.cpu_funcs     [0] = SPU_Modem<B,R,Q>::spu_kernel_filter;
 		cl.cpu_funcs_name[0] = "mod::filter::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
@@ -174,7 +174,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Modulator<B,R,Q>::spu_kernel_demodulate;
+		cl.cpu_funcs     [0] = SPU_Modem<B,R,Q>::spu_kernel_demodulate;
 		cl.cpu_funcs_name[0] = "mod::demodulate::cpu";
 		cl.nbuffers          = 2;
 		cl.modes         [0] = STARPU_R;
@@ -188,7 +188,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Modulator<B,R,Q>::spu_kernel_demodulate_wg;
+		cl.cpu_funcs     [0] = SPU_Modem<B,R,Q>::spu_kernel_demodulate_wg;
 		cl.cpu_funcs_name[0] = "mod::demodulate_wg::cpu";
 		cl.nbuffers          = 3;
 		cl.modes         [0] = STARPU_R;
@@ -203,7 +203,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Modulator<B,R,Q>::spu_kernel_tdemodulate;
+		cl.cpu_funcs     [0] = SPU_Modem<B,R,Q>::spu_kernel_tdemodulate;
 		cl.cpu_funcs_name[0] = "mod::tdemodulate::cpu";
 		cl.nbuffers          = 3;
 		cl.modes         [0] = STARPU_R;
@@ -218,7 +218,7 @@ private:
 		starpu_codelet cl;
 
 		cl.type              = STARPU_SEQ;
-		cl.cpu_funcs     [0] = SPU_Modulator<B,R,Q>::spu_kernel_tdemodulate_wg;
+		cl.cpu_funcs     [0] = SPU_Modem<B,R,Q>::spu_kernel_tdemodulate_wg;
 		cl.cpu_funcs_name[0] = "mod::tdemodulate_wg::cpu";
 		cl.nbuffers          = 4;
 		cl.modes         [0] = STARPU_R;
@@ -231,7 +231,7 @@ private:
 
 	static void spu_kernel_modulate(void *buffers[], void *cl_arg)
 	{
-		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
+		auto modulator = static_cast<SPU_Modem<B,R,Q>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -246,7 +246,7 @@ private:
 
 	static void spu_kernel_filter(void *buffers[], void *cl_arg)
 	{
-		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
+		auto modulator = static_cast<SPU_Modem<B,R,Q>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -261,7 +261,7 @@ private:
 
 	static void spu_kernel_demodulate(void *buffers[], void *cl_arg)
 	{
-		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
+		auto modulator = static_cast<SPU_Modem<B,R,Q>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -276,7 +276,7 @@ private:
 
 	static void spu_kernel_demodulate_wg(void *buffers[], void *cl_arg)
 	{
-		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
+		auto modulator = static_cast<SPU_Modem<B,R,Q>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -293,7 +293,7 @@ private:
 
 	static void spu_kernel_tdemodulate(void *buffers[], void *cl_arg)
 	{
-		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
+		auto modulator = static_cast<SPU_Modem<B,R,Q>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -310,7 +310,7 @@ private:
 
 	static void spu_kernel_tdemodulate_wg(void *buffers[], void *cl_arg)
 	{
-		auto modulator = static_cast<SPU_Modulator<B,R,Q>*>(cl_arg);
+		auto modulator = static_cast<SPU_Modem<B,R,Q>*>(cl_arg);
 
 		auto task = starpu_task_get_current();
 
@@ -329,25 +329,25 @@ private:
 };
 
 template <typename B, typename R, typename Q>
-starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_modulate = SPU_Modulator<B,R,Q>::spu_init_cl_modulate();
+starpu_codelet SPU_Modem<B,R,Q>::spu_cl_modulate = SPU_Modem<B,R,Q>::spu_init_cl_modulate();
 
 template <typename B, typename R, typename Q>
-starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_filter = SPU_Modulator<B,R,Q>::spu_init_cl_filter();
+starpu_codelet SPU_Modem<B,R,Q>::spu_cl_filter = SPU_Modem<B,R,Q>::spu_init_cl_filter();
 
 template <typename B, typename R, typename Q>
-starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_demodulate = SPU_Modulator<B,R,Q>::spu_init_cl_demodulate();
+starpu_codelet SPU_Modem<B,R,Q>::spu_cl_demodulate = SPU_Modem<B,R,Q>::spu_init_cl_demodulate();
 
 template <typename B, typename R, typename Q>
-starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_demodulate_wg = SPU_Modulator<B,R,Q>::spu_init_cl_demodulate_wg();
+starpu_codelet SPU_Modem<B,R,Q>::spu_cl_demodulate_wg = SPU_Modem<B,R,Q>::spu_init_cl_demodulate_wg();
 
 template <typename B, typename R, typename Q>
-starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_tdemodulate = SPU_Modulator<B,R,Q>::spu_init_cl_tdemodulate();
+starpu_codelet SPU_Modem<B,R,Q>::spu_cl_tdemodulate = SPU_Modem<B,R,Q>::spu_init_cl_tdemodulate();
 
 template <typename B, typename R, typename Q>
-starpu_codelet SPU_Modulator<B,R,Q>::spu_cl_tdemodulate_wg = SPU_Modulator<B,R,Q>::spu_init_cl_tdemodulate_wg();
+starpu_codelet SPU_Modem<B,R,Q>::spu_cl_tdemodulate_wg = SPU_Modem<B,R,Q>::spu_init_cl_tdemodulate_wg();
 
 template <typename B, typename R, typename Q>
-using Modulator = SPU_Modulator<B,R,Q>;
+using Modem = SPU_Modem<B,R,Q>;
 }
 }
 #else
@@ -356,9 +356,9 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, typename Q = R>
-using Modulator = Modulator_i<B,R,Q>;
+using Modem = Modem_i<B,R,Q>;
 }
 }
 #endif
 
-#endif /* SPU_MODULATOR_HPP_ */
+#endif /* SPU_MODEM_HPP_ */

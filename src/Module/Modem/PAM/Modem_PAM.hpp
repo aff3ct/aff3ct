@@ -1,39 +1,39 @@
-#ifndef MODULATOR_PSK_HPP_
-#define MODULATOR_PSK_HPP_
+#ifndef MODEM_PAM_HPP_
+#define MODEM_PAM_HPP_
 
-#include <complex>
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/max.h"
 
-#include "../Modulator.hpp"
+#include "../Modem.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX = tools::max_star>
-class Modulator_PSK : public Modulator<B,R,Q>
+class Modem_PAM : public Modem<B,R,Q>
 {
 private:
 	const int bits_per_symbol;
 	const int nbr_symbols;
+	const R sqrt_es;
 	const bool disable_sig2;
-	mipp::vector<std::complex<R>> constellation;
+	mipp::vector<R> constellation;
 
 public:
-	Modulator_PSK(const int N, const R sigma, const int bits_per_symbol = 2, const bool disable_sig2 = false,
-	              const int n_frames = 1, const std::string name = "Modulator_PSK");
-	virtual ~Modulator_PSK();
+	Modem_PAM(const int N, const R sigma, const int bits_per_symbol = 1, const bool disable_sig2 = false,
+	          const int n_frames = 1, const std::string name = "Modem_PAM");
+	virtual ~Modem_PAM();
 
 	static int size_mod(const int N, const int bps)
 	{
-		return Modulator<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, true);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, 0, 1, false);
 	}
 
 	static int size_fil(const int N, const int bps)
 	{
-		return Modulator<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, true);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, 0, 1, false);
 	}
 
 protected:
@@ -45,11 +45,11 @@ protected:
 	void _demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id);
 
 private:
-	inline std::complex<R> bits_to_symbol(const B* bits) const;
+	inline R bits_to_symbol(const B* bits) const;
 };
 }
 }
 
-#include "Modulator_PSK.hxx"
+#include "Modem_PAM.hxx"
 
-#endif // MODULATOR_PSK_HPP_
+#endif // MODEM_PAM_HPP_

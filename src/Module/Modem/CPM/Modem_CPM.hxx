@@ -9,32 +9,32 @@
 #include <ctgmath>
 
 #include "Tools/Math/matrix.h"
-#include "Modulator_CPM.hpp"
+#include "Modem_CPM.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modulator_CPM<B,R,Q,MAX>
-::Modulator_CPM(int  N,
-                R    sigma,
-                int  bits_per_symbol,
-                int  sampling_factor,
-                int  cpm_L,
-                int  cpm_k,
-                int  cpm_p,
-                std::string mapping,
-                std::string wave_shape,
-                bool no_sig2,
-                int  n_frames,
-                const std::string name)
-: Modulator<B,R,Q>(N,
-                   Modulator_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, sampling_factor),
-                   Modulator_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
-                   sigma,
-                   n_frames,
-                   name),
+Modem_CPM<B,R,Q,MAX>
+::Modem_CPM(int  N,
+            R    sigma,
+            int  bits_per_symbol,
+            int  sampling_factor,
+            int  cpm_L,
+            int  cpm_k,
+            int  cpm_p,
+            std::string mapping,
+            std::string wave_shape,
+            bool no_sig2,
+            int  n_frames,
+            const std::string name)
+: Modem<B,R,Q>(N,
+               Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, sampling_factor),
+               Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
+               sigma,
+               n_frames,
+               name),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_L,
              cpm_k,
@@ -53,7 +53,7 @@ Modulator_CPM<B,R,Q,MAX>
   bcjr      (cpm, n_sy_tl                       )
 {
 	if (N % bits_per_symbol)
-		throw std::invalid_argument("aff3ct::module::Modulator_CPM: \"bits_per_symbol\" has to be a multiple of "
+		throw std::invalid_argument("aff3ct::module::Modem_CPM: \"bits_per_symbol\" has to be a multiple of "
 		                            "\"N\".");
 
 	// initialize CPM
@@ -74,22 +74,22 @@ Modulator_CPM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modulator_CPM<B,R,Q,MAX>
-::~Modulator_CPM()
+Modem_CPM<B,R,Q,MAX>
+::~Modem_CPM()
 {
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::set_sigma(const R sigma)
 {
-	Modulator<B,R,Q>::set_sigma(sigma);
+	Modem<B,R,Q>::set_sigma(sigma);
 	if (!no_sig2) this->generate_projection();
 
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	// mapper
@@ -117,7 +117,7 @@ void Modulator_CPM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	const auto Y_real = Y_N1;
@@ -138,25 +138,25 @@ void Modulator_CPM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2, Y_N3);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::generate_baseband()
 {
 	if ((int)baseband.size() != (cpm.max_wa_id * cpm.s_factor * 2))
-		throw std::length_error("aff3ct::module::Modulator_CPM: \"baseband.size()\" has to be equal to "
+		throw std::length_error("aff3ct::module::Modem_CPM: \"baseband.size()\" has to be equal to "
 		                        "\"cpm.max_wa_id\" * \"cpm.s_factor\" * 2");
 
 	mipp::vector<R> phase_response(cpm.L*cpm.s_factor);
@@ -220,7 +220,7 @@ public:
 };
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-R Modulator_CPM<B,R,Q,MAX>
+R Modem_CPM<B,R,Q,MAX>
 ::calculate_phase_response(const R t_stamp)
 {
 	if (cpm.wave_shape == "GMSK")
@@ -237,16 +237,16 @@ R Modulator_CPM<B,R,Q,MAX>
 		return t_stamp / ((R)2.0 * cpm.L);
 	else
 	{
-		throw std::runtime_error("aff3ct::module::Modulator_CPM: unknown CPM wave shape.");
+		throw std::runtime_error("aff3ct::module::Modem_CPM: unknown CPM wave shape.");
 	}
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_CPM<B,R,Q,MAX>
+void Modem_CPM<B,R,Q,MAX>
 ::generate_projection()
 {
 	if (projection.size() != baseband.size())
-		throw std::length_error("aff3ct::module::Modulator_CPM: \"projection.size()\" and \"baseband.size()\" have "
+		throw std::length_error("aff3ct::module::Modem_CPM: \"projection.size()\" and \"baseband.size()\" have "
 		                        "to be equal.");
 
 	R factor = (R)1;
@@ -266,7 +266,7 @@ void Modulator_CPM<B,R,Q,MAX>
 	//}
 	else
 	{
-		throw std::runtime_error("aff3ct::module::Modulator_CPM: unknown CPM filter bank type.");
+		throw std::runtime_error("aff3ct::module::Modem_CPM: unknown CPM filter bank type.");
 	}
 }
 }

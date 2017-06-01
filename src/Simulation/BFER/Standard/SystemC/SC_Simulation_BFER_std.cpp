@@ -55,17 +55,17 @@ void SC_Simulation_BFER_std<B,R,Q>
 	this->encoder  [tid]->create_sc_module            ();
 	this->puncturer[tid]->create_sc_module_puncturer  ();
 	this->puncturer[tid]->create_sc_module_depuncturer();
-	this->modulator[tid]->create_sc_module_modulator  ();
-	this->modulator[tid]->create_sc_module_filterer   ();
+	this->modem    [tid]->create_sc_module_modulator  ();
+	this->modem    [tid]->create_sc_module_filterer   ();
 	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
 	{
-		this->channel  [tid]->create_sc_module_wg            ();
-		this->modulator[tid]->create_sc_module_demodulator_wg();
+		this->channel[tid]->create_sc_module_wg            ();
+		this->modem  [tid]->create_sc_module_demodulator_wg();
 	}
 	else
 	{
-		this->channel  [tid]->create_sc_module            ();
-		this->modulator[tid]->create_sc_module_demodulator();
+		this->channel[tid]->create_sc_module            ();
+		this->modem  [tid]->create_sc_module_demodulator();
 	}
 	this->quantizer[tid]->create_sc_module();
 	this->decoder  [tid]->create_sc_module();
@@ -186,18 +186,18 @@ void SC_Simulation_BFER_std<B,R,Q>
 		this->encoder      [0]->sc_module         ->s_out (this->duplicator[2]                    ->s_in );
 		this->duplicator   [2]                    ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
 		this->duplicator   [2]                    ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->modulator [0]->sc_module_mod     ->s_in );
+		this->puncturer    [0]->sc_module_punct   ->s_out (this->modem     [0]->sc_module_mod     ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modulator[0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->modulator [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->modulator [0]->sc_module_demod_wg->s_in2);
-			this->modulator[0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
+			this->channel  [0]->sc_module_wg      ->s_out1(this->modem     [0]->sc_module_demod_wg->s_in1);
+			this->channel  [0]->sc_module_wg      ->s_out2(this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
+			this->modem    [0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
 		} else { // additive channel (AWGN, USER, NO)
-			this->modulator[0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->modulator [0]->sc_module_demod   ->s_in );
-			this->modulator[0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
+			this->channel  [0]->sc_module         ->s_out (this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod   ->s_in );
+			this->modem    [0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
 		}
 		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->coset_real[0]->sc_module         ->s_in2);
@@ -213,18 +213,18 @@ void SC_Simulation_BFER_std<B,R,Q>
 		this->duplicator   [0]                    ->s_out2(this->crc       [0]->sc_module_build   ->s_in );
 		this->crc          [0]->sc_module_build   ->s_out (this->encoder   [0]->sc_module         ->s_in );
 		this->encoder      [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->modulator [0]->sc_module_mod     ->s_in );
+		this->puncturer    [0]->sc_module_punct   ->s_out (this->modem     [0]->sc_module_mod     ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modulator[0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->modulator [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->modulator [0]->sc_module_demod_wg->s_in2);
-			this->modulator[0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module_wg      ->s_in );
+			this->channel  [0]->sc_module_wg      ->s_out1(this->modem     [0]->sc_module_demod_wg->s_in1);
+			this->channel  [0]->sc_module_wg      ->s_out2(this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
+			this->modem    [0]->sc_module_demod_wg->s_out (this->quantizer [0]->sc_module         ->s_in );
 		} else { // additive channel (AWGN, USER, NO)
-			this->modulator[0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->modulator [0]->sc_module_demod   ->s_in );
-			this->modulator[0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->channel   [0]->sc_module         ->s_in );
+			this->channel  [0]->sc_module         ->s_out (this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->modem     [0]->sc_module_demod   ->s_in );
+			this->modem    [0]->sc_module_demod   ->s_out (this->quantizer [0]->sc_module         ->s_in );
 		}
 		this->quantizer    [0]->sc_module         ->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->decoder   [0]->sc_module         ->s_in );
@@ -248,18 +248,18 @@ void SC_Simulation_BFER_std<B,R,Q>
 		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->duplicator[2]                    ->s_in );
 		this->duplicator   [2]                                                                  ->s_out1(this->coset_real[0]->sc_module         ->s_in1);
 		this->duplicator   [2]                                                                  ->s_out2(this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator [0]->sc_module_mod     ->s_in );
+		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem     [0]->sc_module_mod     ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
- 			this->modulator[0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modulator [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modulator [0]->sc_module_demod_wg->s_in2);
-			this->modulator[0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+ 			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
+			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modem     [0]->sc_module_demod_wg->s_in1);
+			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
+			this->modem    [0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
 		} else { // additive channel (AWGN, USER, NO)
-			this->modulator[0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modulator [0]->sc_module_demod   ->s_in );
-			this->modulator[0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
+			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod   ->s_in );
+			this->modem    [0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
 		}
 		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->coset_real[0]->sc_module         ->s_in2);
@@ -275,18 +275,18 @@ void SC_Simulation_BFER_std<B,R,Q>
 		this->duplicator   [0]                    ->s_out2                                              (this->crc       [0]->sc_module_build   ->s_in );
 		this->crc          [0]->sc_module_build   ->s_out (this->dbg_B[1]->s_in); this->dbg_B[1]->s_out (this->encoder   [0]->sc_module         ->s_in );
 		this->encoder      [0]->sc_module         ->s_out (this->dbg_B[2]->s_in); this->dbg_B[2]->s_out (this->puncturer [0]->sc_module_punct   ->s_in );
-		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modulator [0]->sc_module_mod     ->s_in );
+		this->puncturer    [0]->sc_module_punct   ->s_out (this->dbg_B[3]->s_in); this->dbg_B[3]->s_out (this->modem     [0]->sc_module_mod     ->s_in );
 		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos) { // Rayleigh channel
-			this->modulator[0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
-			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modulator [0]->sc_module_demod_wg->s_in1);
-			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modulator [0]->sc_module_demod_wg->s_in2);
-			this->modulator[0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module_wg      ->s_in );
+			this->channel  [0]->sc_module_wg      ->s_out1(this->dbg_R[4]->s_in); this->dbg_R[4]->s_out (this->modem     [0]->sc_module_demod_wg->s_in1);
+			this->channel  [0]->sc_module_wg      ->s_out2(this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod_wg->s_in2);
+			this->modem    [0]->sc_module_demod_wg->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
 		} else { // additive channel (AWGN, USER, NO)
-			this->modulator[0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
-			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modulator [0]->sc_module_filt    ->s_in );
-			this->modulator[0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modulator [0]->sc_module_demod   ->s_in );
-			this->modulator[0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
+			this->modem    [0]->sc_module_mod     ->s_out (this->dbg_R[0]->s_in); this->dbg_R[0]->s_out (this->channel   [0]->sc_module         ->s_in );
+			this->channel  [0]->sc_module         ->s_out (this->dbg_R[1]->s_in); this->dbg_R[1]->s_out (this->modem     [0]->sc_module_filt    ->s_in );
+			this->modem    [0]->sc_module_filt    ->s_out (this->dbg_R[2]->s_in); this->dbg_R[2]->s_out (this->modem     [0]->sc_module_demod   ->s_in );
+			this->modem    [0]->sc_module_demod   ->s_out (this->dbg_R[3]->s_in); this->dbg_R[3]->s_out (this->quantizer [0]->sc_module         ->s_in );
 		}
 		this->quantizer    [0]->sc_module         ->s_out (this->dbg_Q[0]->s_in); this->dbg_Q[0]->s_out (this->puncturer [0]->sc_module_depunct ->s_in );
 		this->puncturer    [0]->sc_module_depunct ->s_out (this->dbg_Q[1]->s_in); this->dbg_Q[1]->s_out (this->decoder   [0]->sc_module         ->s_in );

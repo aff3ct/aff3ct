@@ -1,5 +1,5 @@
-#ifndef MODULATOR_SCMA_FUNCTIONS_HPP
-#define MODULATOR_SCMA_FUNCTIONS_HPP
+#ifndef MODEM_SCMA_FUNCTIONS_HPP
+#define MODEM_SCMA_FUNCTIONS_HPP
 
 #include <complex>
 
@@ -34,6 +34,6 @@ __forceinline R psi_3(const std::complex<R>& d, const R& n0);
 }
 }
 
-#include "modulator_SCMA_functions.hxx"
+#include "modem_SCMA_functions.hxx"
 
-#endif /* MODULATOR_SCMA_FUNCTIONS_HPP */
+#endif /* MODEM_SCMA_FUNCTIONS_HPP */

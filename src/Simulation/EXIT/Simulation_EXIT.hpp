@@ -8,7 +8,7 @@
 
 #include "Module/Source/Source.hpp"
 #include "Module/Encoder/Encoder.hpp"
-#include "Module/Modulator/Modulator.hpp"
+#include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Decoder/SISO.hpp"
 
@@ -59,8 +59,8 @@ protected:
 	// communication chain
 	module::Source<B>         *source;
 	module::Encoder<B>        *encoder;
-	module::Modulator<B,R,R>  *modulator;
-	module::Modulator<B,R,R>  *modulator_a;
+	module::Modem<B,R,R>      *modem;
+	module::Modem<B,R,R>      *modem_a;
 	module::Channel<R>        *channel;
 	module::Channel<R>        *channel_a;
 	module::SISO<R>           *siso;
@@ -85,14 +85,14 @@ private:
 protected:
 	virtual void release_objects  ();
 
-	virtual module::Source<B>*         build_source     (              );
-	virtual module::Encoder<B>*        build_encoder    (              );
-	virtual module::Modulator<B,R,R>*  build_modulator  (              );
-	virtual module::Modulator<B,R,R>*  build_modulator_a(              );
-	virtual module::Channel<R>*        build_channel    (const int size);
-	virtual module::Channel<R>*        build_channel_a  (const int size);
-	virtual module::SISO<R>*           build_siso       (              );
-	        tools::Terminal_EXIT<B,R>* build_terminal   (              );
+	virtual module::Source<B>*         build_source   (              );
+	virtual module::Encoder<B>*        build_encoder  (              );
+	virtual module::Modem  <B,R,R>*    build_modem    (              );
+	virtual module::Modem  <B,R,R>*    build_modem_a  (              );
+	virtual module::Channel<R>*        build_channel  (const int size);
+	virtual module::Channel<R>*        build_channel_a(const int size);
+	virtual module::SISO<R>*           build_siso     (              );
+	        tools::Terminal_EXIT<B,R>* build_terminal (              );
 };
 }
 }

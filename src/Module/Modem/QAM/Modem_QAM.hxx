@@ -3,7 +3,7 @@
 #include <complex>
 #include <limits>
 
-#include "Modulator_QAM.hpp"
+#include "Modem_QAM.hpp"
 
 namespace aff3ct
 {
@@ -13,14 +13,14 @@ namespace module
  * Constructor / Destructor
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modulator_QAM<B,R,Q,MAX>
-::Modulator_QAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames,
-                const std::string name)
-: Modulator<B,R,Q>(N, 
-                   (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
-                   sigma,
-                   n_frames,
-                   name),
+Modem_QAM<B,R,Q,MAX>
+::Modem_QAM(const int N, const R sigma, const int bits_per_symbol, const bool disable_sig2, const int n_frames,
+            const std::string name)
+: Modem<B,R,Q>(N,
+               (int)std::ceil((float)N / (float)bits_per_symbol) * 2,
+               sigma,
+               n_frames,
+               name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sqrt_es        ((R)std::sqrt(2.0 * (this->nbr_symbols -1) / 3.0)),
@@ -28,7 +28,7 @@ Modulator_QAM<B,R,Q,MAX>
   constellation  (nbr_symbols)
 {
 	if (this->bits_per_symbol % 2)
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: \"bits_per_symbol\" has to be a multiple of 2.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: \"bits_per_symbol\" has to be a multiple of 2.");
 
 	mipp::vector<B> bits(this->bits_per_symbol);
 
@@ -42,8 +42,8 @@ Modulator_QAM<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modulator_QAM<B,R,Q,MAX>
-::~Modulator_QAM()
+Modem_QAM<B,R,Q,MAX>
+::~Modem_QAM()
 {
 }
 
@@ -51,7 +51,7 @@ Modulator_QAM<B,R,Q,MAX>
  * Mapping function
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-std::complex<R> Modulator_QAM<B,R,Q,MAX>
+std::complex<R> Modem_QAM<B,R,Q,MAX>
 ::bits_to_symbol(const B* bits) const
 {
 	auto bps = this->bits_per_symbol;
@@ -69,10 +69,10 @@ std::complex<R> Modulator_QAM<B,R,Q,MAX>
 }
 
 /*
- * Modulator
+ * Modem
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_QAM<B,R,Q,MAX>
+void Modem_QAM<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	auto size_in  = this->N;
@@ -112,7 +112,7 @@ void Modulator_QAM<B,R,Q,MAX>
  * Filter
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_QAM<B,R,Q,MAX>
+void Modem_QAM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
@@ -122,14 +122,14 @@ void Modulator_QAM<B,R,Q,MAX>
  * Demodulator
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_QAM<B,R,Q,MAX>
+void Modem_QAM<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"Q\" has to be float or double.");
 	
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
@@ -159,14 +159,14 @@ void Modulator_QAM<B,R,Q,MAX>
  * Demodulator
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_QAM<B,R,Q,MAX>
+void Modem_QAM<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)((Q)1.0 / (this->sigma * this->sigma));
@@ -196,14 +196,14 @@ void Modulator_QAM<B,R,Q,MAX>
 }
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_QAM<B,R,Q,MAX>
+void Modem_QAM<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
@@ -239,14 +239,14 @@ void Modulator_QAM<B,R,Q,MAX>
 }
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_QAM<B,R,Q,MAX>
+void Modem_QAM<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_QAM: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_QAM: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);

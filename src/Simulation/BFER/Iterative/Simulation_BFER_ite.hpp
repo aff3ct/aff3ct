@@ -8,7 +8,7 @@
 #include "Module/Source/Source.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Encoder/Encoder.hpp"
-#include "Module/Modulator/Modulator.hpp"
+#include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Coset/Coset.hpp"
@@ -34,7 +34,7 @@ protected:
 	std::vector<module::Source     <B    >*> source;
 	std::vector<module::CRC        <B    >*> crc;
 	std::vector<module::Encoder    <B    >*> encoder;
-	std::vector<module::Modulator  <B,R,Q>*> modulator;
+	std::vector<module::Modem      <B,R,Q>*> modem;
 	std::vector<module::Channel    <R    >*> channel;
 	std::vector<module::Quantizer  <R,Q  >*> quantizer;
 	std::vector<module::Interleaver<int  >*> interleaver;
@@ -58,7 +58,7 @@ protected:
 	virtual module::CRC        <B    >* build_crc        (const int tid = 0                    );
 	virtual module::Encoder    <B    >* build_encoder    (const int tid = 0, const int seed = 0);
 	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0);
-	virtual module::Modulator  <B,R,Q>* build_modulator  (const int tid = 0                    );
+	virtual module::Modem      <B,R,Q>* build_modem      (const int tid = 0                    );
 	virtual module::Channel    <R    >* build_channel    (const int tid = 0, const int seed = 0);
 	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int tid = 0                    );
 	virtual module::SISO       <Q    >* build_siso       (const int tid = 0                    );

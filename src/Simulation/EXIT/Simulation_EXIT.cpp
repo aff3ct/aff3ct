@@ -5,7 +5,7 @@
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -52,14 +52,14 @@ Simulation_EXIT<B,R>
   sigma    (0.f),
   snr      (0.f),
 
-  source     (nullptr),
-  encoder    (nullptr),
-  modulator  (nullptr),
-  modulator_a(nullptr),
-  channel    (nullptr),
-  channel_a  (nullptr),
-  siso       (nullptr),
-  terminal   (nullptr)
+  source   (nullptr),
+  encoder  (nullptr),
+  modem    (nullptr),
+  modem_a  (nullptr),
+  channel  (nullptr),
+  channel_a(nullptr),
+  siso     (nullptr),
+  terminal (nullptr)
 {
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
@@ -81,21 +81,21 @@ void Simulation_EXIT<B,R>
 	release_objects();
 
 	const auto N_mod = this->params.code.N_mod;
-	const auto K_mod = Factory_modulator<B,R>::get_buffer_size_after_modulation(params.modulator.type,
-	                                                                            params.code.K,
-	                                                                            params.modulator.bits_per_symbol,
-	                                                                            params.modulator.upsample_factor,
-	                                                                            params.modulator.cpm_L);
+	const auto K_mod = Factory_modem<B,R>::get_buffer_size_after_modulation(params.modulator.type,
+	                                                                        params.code.K,
+	                                                                        params.modulator.bits_per_symbol,
+	                                                                        params.modulator.upsample_factor,
+	                                                                        params.modulator.cpm_L);
 
 	// build the objects
-	source      = build_source     (     );
-	encoder     = build_encoder    (     );
-	modulator   = build_modulator  (     );
-	modulator_a = build_modulator_a(     );
-	channel     = build_channel    (N_mod);
-	channel_a   = build_channel_a  (K_mod);
-	siso        = build_siso       (     );
-	terminal    = build_terminal   (     );
+	source    = build_source     (     );
+	encoder   = build_encoder    (     );
+	modem     = build_modem  (     );
+	modem_a   = build_modem_a(     );
+	channel   = build_channel    (N_mod);
+	channel_a = build_channel_a  (K_mod);
+	siso      = build_siso       (     );
+	terminal  = build_terminal   (     );
 
 	if (siso->get_n_frames() > 1)
 		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
@@ -174,8 +174,8 @@ void Simulation_EXIT<B,R>
 		encoder->encode(B_K, X_N1);
 
 		// modulate
-		modulator_a->modulate(B_K,  X_K );
-		modulator  ->modulate(X_N1, X_N2);
+		modem_a->modulate(B_K,  X_K );
+		modem  ->modulate(X_N1, X_N2);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
@@ -183,26 +183,26 @@ void Simulation_EXIT<B,R>
 			// Rayleigh channel
 			if (params.channel.type.find("RAYLEIGH") != std::string::npos)
 			{
-				channel_a  ->add_noise            (X_K, La_K1, H_N       );
-				modulator_a->demodulate_with_gains(     La_K1, H_N, La_K2);
+				channel_a->add_noise            (X_K, La_K1, H_N       );
+				modem_a  ->demodulate_with_gains(     La_K1, H_N, La_K2);
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
-				channel_a  ->add_noise (X_K, La_K1       );
-				modulator_a->demodulate(     La_K1, La_K2);
+				channel_a->add_noise (X_K, La_K1       );
+				modem_a  ->demodulate(     La_K1, La_K2);
 			}
 		}
 
 		// Rayleigh channel
 		if (params.channel.type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel  ->add_noise            (X_N2, Lch_N1, H_N        );
-			modulator->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
+			channel->add_noise            (X_N2, Lch_N1, H_N        );
+			modem  ->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			channel  ->add_noise (X_N2, Lch_N1        );
-			modulator->demodulate(      Lch_N1, Lch_N2);
+			channel->add_noise (X_N2, Lch_N1        );
+			modem  ->demodulate(      Lch_N1, Lch_N2);
 		}
 
 		// extract systematic and parity information
@@ -396,14 +396,14 @@ template <typename B, typename R>
 void Simulation_EXIT<B,R>
 ::release_objects()
 {
-	if (source      != nullptr) { delete source;      source      = nullptr; }
-	if (encoder     != nullptr) { delete encoder;     encoder     = nullptr; }
-	if (modulator   != nullptr) { delete modulator;   modulator   = nullptr; }
-	if (modulator_a != nullptr) { delete modulator_a; modulator_a = nullptr; }
-	if (channel     != nullptr) { delete channel;     channel     = nullptr; }
-	if (channel_a   != nullptr) { delete channel_a;   channel_a   = nullptr; }
-	if (siso        != nullptr) { delete siso;        siso        = nullptr; }
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+	if (source    != nullptr) { delete source;    source    = nullptr; }
+	if (encoder   != nullptr) { delete encoder;   encoder   = nullptr; }
+	if (modem     != nullptr) { delete modem;     modem     = nullptr; }
+	if (modem_a   != nullptr) { delete modem_a;   modem_a   = nullptr; }
+	if (channel   != nullptr) { delete channel;   channel   = nullptr; }
+	if (channel_a != nullptr) { delete channel_a; channel_a = nullptr; }
+	if (siso      != nullptr) { delete siso;      siso      = nullptr; }
+	if (terminal  != nullptr) { delete terminal;  terminal  = nullptr; }
 }
 
 template <typename B, typename R>
@@ -435,45 +435,45 @@ Encoder<B>* Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Modulator<B,R,R>* Simulation_EXIT<B,R>
-::build_modulator()
+Modem<B,R,R>* Simulation_EXIT<B,R>
+::build_modem()
 {
-	return Factory_modulator<B,R>::build(this->params.modulator.type,
-	                                     this->params.code.N,
-	                                     this->sigma,
-	                                     this->params.demodulator.max,
-	                                     this->params.demodulator.psi,
-	                                     this->params.modulator.bits_per_symbol,
-	                                     this->params.modulator.const_path,
-	                                     this->params.modulator.upsample_factor,
-	                                     this->params.modulator.cpm_L,
-	                                     this->params.modulator.cpm_k,
-	                                     this->params.modulator.cpm_p,
-	                                     this->params.modulator.mapping,
-	                                     this->params.modulator.wave_shape,
-	                                     this->params.demodulator.no_sig2,
-	                                     this->params.demodulator.n_ite);
+	return Factory_modem<B,R>::build(this->params.modulator.type,
+	                                 this->params.code.N,
+	                                 this->sigma,
+	                                 this->params.demodulator.max,
+	                                 this->params.demodulator.psi,
+	                                 this->params.modulator.bits_per_symbol,
+	                                 this->params.modulator.const_path,
+	                                 this->params.modulator.upsample_factor,
+	                                 this->params.modulator.cpm_L,
+	                                 this->params.modulator.cpm_k,
+	                                 this->params.modulator.cpm_p,
+	                                 this->params.modulator.mapping,
+	                                 this->params.modulator.wave_shape,
+	                                 this->params.demodulator.no_sig2,
+	                                 this->params.demodulator.n_ite);
 }
 
 template <typename B, typename R>
-Modulator<B,R,R>* Simulation_EXIT<B,R>
-::build_modulator_a()
+Modem<B,R,R>* Simulation_EXIT<B,R>
+::build_modem_a()
 {
-	return Factory_modulator<B,R>::build(this->params.modulator.type,
-	                                     this->params.code.K,
-	                                     2.f / sig_a,
-	                                     this->params.demodulator.max,
-	                                     this->params.demodulator.psi,
-	                                     this->params.modulator.bits_per_symbol,
-	                                     this->params.modulator.const_path,
-	                                     this->params.modulator.upsample_factor,
-	                                     this->params.modulator.cpm_L,
-	                                     this->params.modulator.cpm_k,
-	                                     this->params.modulator.cpm_p,
-	                                     this->params.modulator.mapping,
-	                                     this->params.modulator.wave_shape,
-	                                     this->params.demodulator.no_sig2,
-	                                     this->params.demodulator.n_ite);
+	return Factory_modem<B,R>::build(this->params.modulator.type,
+	                                 this->params.code.K,
+	                                 2.f / sig_a,
+	                                 this->params.demodulator.max,
+	                                 this->params.demodulator.psi,
+	                                 this->params.modulator.bits_per_symbol,
+	                                 this->params.modulator.const_path,
+	                                 this->params.modulator.upsample_factor,
+	                                 this->params.modulator.cpm_L,
+	                                 this->params.modulator.cpm_k,
+	                                 this->params.modulator.cpm_p,
+	                                 this->params.modulator.mapping,
+	                                 this->params.modulator.wave_shape,
+	                                 this->params.demodulator.no_sig2,
+	                                 this->params.demodulator.n_ite);
 }
 
 template <typename B, typename R>

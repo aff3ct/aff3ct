@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iterator>
 
-#include "Modulator_user.hpp"
+#include "Modem_user.hpp"
 
 namespace aff3ct
 {
@@ -15,10 +15,10 @@ namespace module
  * Constructor / Destructor
  */
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modulator_user<B,R,Q,MAX>
-::Modulator_user(const int N, const R sigma, const int bits_per_symbol, const std::string const_path,
-                 const bool disable_sig2, const int n_frames, const std::string name)
-: Modulator<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), sigma, n_frames, name),
+Modem_user<B,R,Q,MAX>
+::Modem_user(const int N, const R sigma, const int bits_per_symbol, const std::string const_path,
+             const bool disable_sig2, const int n_frames, const std::string name)
+: Modem<B,R,Q>(N, (int)(std::ceil((float)N / (float)bits_per_symbol) * 2), sigma, n_frames, name),
   bits_per_symbol(bits_per_symbol),
   nbr_symbols    (1 << bits_per_symbol),
   sqrt_es        (0.0),
@@ -26,11 +26,11 @@ Modulator_user<B,R,Q,MAX>
   constellation  ()
 {
 	if (const_path.empty())
-		throw std::invalid_argument("aff3ct::module::Modulator_user: path to the constellation file should not "
+		throw std::invalid_argument("aff3ct::module::Modem_user: path to the constellation file should not "
 		                            "be empty.");
 
 	if (this->bits_per_symbol % 2)
-		throw std::invalid_argument("aff3ct::module::Modulator_user: \"bits_per_symbol\" has to be a multiple of 2.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: \"bits_per_symbol\" has to be a multiple of 2.");
 
 	std::fstream const_file(const_path, std::ios_base::in);
 
@@ -43,7 +43,7 @@ Modulator_user<B,R,Q,MAX>
 		std::vector<R> line((std::istream_iterator<R>(buffer)), std::istream_iterator<R>());
 
 		if (line.size() >= 3)
-			throw std::runtime_error("aff3ct::module::Modulator_user: \"line.size()\" has to be smaller than 3.");
+			throw std::runtime_error("aff3ct::module::Modem_user: \"line.size()\" has to be smaller than 3.");
 
 		if (line.size() == 2)
 			constellation.push_back(std::complex<R>(line[0],line[1]));
@@ -54,7 +54,7 @@ Modulator_user<B,R,Q,MAX>
 	sqrt_es = std::sqrt(sqrt_es/nbr_symbols);
 
 	if ((int)constellation.size() != nbr_symbols)
-		throw std::runtime_error("aff3ct::module::Modulator_user: \"constellation.size()\" has to be equal to "
+		throw std::runtime_error("aff3ct::module::Modem_user: \"constellation.size()\" has to be equal to "
 		                         "\"nbr_symbols\".");
 
 	for (auto i = 0; i < nbr_symbols; i++)
@@ -64,16 +64,16 @@ Modulator_user<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-Modulator_user<B,R,Q,MAX>
-::~Modulator_user()
+Modem_user<B,R,Q,MAX>
+::~Modem_user()
 {
 }
 
 /*
- * Modulator
+ * Modem
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_user<B,R,Q,MAX>
+void Modem_user<B,R,Q,MAX>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	auto size_in  = this->N;
@@ -108,7 +108,7 @@ void Modulator_user<B,R,Q,MAX>
  * Filter
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_user<B,R,Q,MAX>
+void Modem_user<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
@@ -118,14 +118,14 @@ void Modulator_user<B,R,Q,MAX>
  * Demodulator
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_user<B,R,Q,MAX>
+void Modem_user<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
@@ -156,14 +156,14 @@ void Modulator_user<B,R,Q,MAX>
  * Demodulator
  */
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_user<B,R,Q,MAX>
+void Modem_user<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
@@ -194,14 +194,14 @@ void Modulator_user<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_user<B,R,Q,MAX>
+void Modem_user<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
@@ -237,14 +237,14 @@ void Modulator_user<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modulator_user<B,R,Q,MAX>
+void Modem_user<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"R\" and \"Q\" have to be the same.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modulator_user: type \"Q\" has to be float or double.");
+		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);

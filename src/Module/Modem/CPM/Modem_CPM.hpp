@@ -1,5 +1,5 @@
-#ifndef MODULATOR_CPM_HPP_
-#define MODULATOR_CPM_HPP_
+#ifndef MODEM_CPM_HPP_
+#define MODEM_CPM_HPP_
 
 #include <cmath>
 #include <fstream>
@@ -9,7 +9,7 @@
 #include "Tools/params.h"
 #include "Tools/Math/max.h"
 
-#include "../Modulator.hpp"
+#include "../Modem.hpp"
 
 #include "CPM_parameters.hpp"
 #include "CPE/Encoder_CPE_Rimoldi.hpp"
@@ -21,7 +21,7 @@ namespace module
 {
 // TODO: warning: working for Rimoldi decomposition only!
 template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX = tools::max_star>
-class Modulator_CPM : public Modulator<B,R,Q>
+class Modem_CPM : public Modem<B,R,Q>
 {
 	using SIN  = B;
 	using SOUT = B;
@@ -43,25 +43,25 @@ protected:
 	CPM_BCJR<SIN,SOUT,Q,MAX>      bcjr;       // demodulator
 
 public:
-	Modulator_CPM(int  N,
-	              R    sigma,
-	              int  bits_per_symbol,
-	              int  sampling_factor,
-	              int  cpm_L,
-	              int  cpm_k,
-	              int  cpm_p,
-	              std::string mapping,
-	              std::string wave_shape,
-	              bool no_sig2,
-	              int  n_frames = 1,
-	              const std::string name = "Modulator_CPM");
-	virtual ~Modulator_CPM();
+	Modem_CPM(int  N,
+	          R    sigma,
+	          int  bits_per_symbol,
+	          int  sampling_factor,
+	          int  cpm_L,
+	          int  cpm_k,
+	          int  cpm_p,
+	          std::string mapping,
+	          std::string wave_shape,
+	          bool no_sig2,
+	          int  n_frames = 1,
+	          const std::string name = "Modem_CPM");
+	virtual ~Modem_CPM();
 
 	void set_sigma(const R sigma);
 
 	static int size_mod(const int N, const int bps, const int L, const int ups)
 	{
-		return Modulator<B,R,Q>::get_buffer_size_after_modulation(N, bps, L, ups, true);
+		return Modem<B,R,Q>::get_buffer_size_after_modulation(N, bps, L, ups, true);
 	}
 
 	static int size_fil(const int N, const int bps, const int L, const int p)
@@ -71,7 +71,7 @@ public:
 		int n_bits_wa = (int)std::ceil(std::log2(n_wa));
 		int max_wa_id = (int)(1 << n_bits_wa);
 
-		return Modulator<B,R,Q>::get_buffer_size_after_filtering(N, bps, L, max_wa_id, false);
+		return Modem<B,R,Q>::get_buffer_size_after_filtering(N, bps, L, max_wa_id, false);
 	}
 
 protected:
@@ -88,6 +88,6 @@ private:
 }
 }
 
-#include "Modulator_CPM.hxx"
+#include "Modem_CPM.hxx"
 
-#endif /* MODULATOR_CPM_HPP_ */
+#endif /* MODEM_CPM_HPP_ */

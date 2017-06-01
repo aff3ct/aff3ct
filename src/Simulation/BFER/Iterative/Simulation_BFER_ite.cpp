@@ -1,7 +1,7 @@
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Coset/Factory_coset_real.hpp"
@@ -24,7 +24,7 @@ Simulation_BFER_ite<B,R,Q>
   source     (params.simulation.n_threads, nullptr),
   crc        (params.simulation.n_threads, nullptr),
   encoder    (params.simulation.n_threads, nullptr),
-  modulator  (params.simulation.n_threads, nullptr),
+  modem      (params.simulation.n_threads, nullptr),
   channel    (params.simulation.n_threads, nullptr),
   quantizer  (params.simulation.n_threads, nullptr),
   interleaver(params.simulation.n_threads, nullptr),
@@ -59,7 +59,7 @@ void Simulation_BFER_ite<B,R,Q>
 	crc        [tid] = build_crc        (tid          );
 	encoder    [tid] = build_encoder    (tid, seed_enc);
 	interleaver[tid] = build_interleaver(tid, seed_itl);
-	modulator  [tid] = build_modulator  (tid          );
+	modem      [tid] = build_modem      (tid          );
 	channel    [tid] = build_channel    (tid, seed_chn);
 	quantizer  [tid] = build_quantizer  (tid          );
 	coset_real [tid] = build_coset_real (tid          );
@@ -83,7 +83,7 @@ void Simulation_BFER_ite<B,R,Q>
 	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (interleaver[i] != nullptr) { delete interleaver[i]; interleaver[i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (modulator  [i] != nullptr) { delete modulator  [i]; modulator  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (modem      [i] != nullptr) { delete modem      [i]; modem      [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (channel    [i] != nullptr) { delete channel    [i]; channel    [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (quantizer  [i] != nullptr) { delete quantizer  [i]; quantizer  [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (coset_real [i] != nullptr) { delete coset_real [i]; coset_real [i] = nullptr; }
@@ -156,25 +156,25 @@ Interleaver<int>* Simulation_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modulator<B,R,Q>* Simulation_BFER_ite<B,R,Q>
-::build_modulator(const int tid)
+Modem<B,R,Q>* Simulation_BFER_ite<B,R,Q>
+::build_modem(const int tid)
 {
-	return Factory_modulator<B,R,Q>::build(this->params.modulator.type,
-	                                       this->params.code.N,
-	                                       this->sigma,
-	                                       this->params.demodulator.max,
-	                                       this->params.demodulator.psi,
-	                                       this->params.modulator.bits_per_symbol,
-	                                       this->params.modulator.const_path,
-	                                       this->params.modulator.upsample_factor,
-	                                       this->params.modulator.cpm_L,
-	                                       this->params.modulator.cpm_k,
-	                                       this->params.modulator.cpm_p,
-	                                       this->params.modulator.mapping,
-	                                       this->params.modulator.wave_shape,
-	                                       this->params.demodulator.no_sig2,
-	                                       this->params.demodulator.n_ite,
-	                                       this->params.simulation.inter_frame_level);
+	return Factory_modem<B,R,Q>::build(this->params.modulator.type,
+	                                   this->params.code.N,
+	                                   this->sigma,
+	                                   this->params.demodulator.max,
+	                                   this->params.demodulator.psi,
+	                                   this->params.modulator.bits_per_symbol,
+	                                   this->params.modulator.const_path,
+	                                   this->params.modulator.upsample_factor,
+	                                   this->params.modulator.cpm_L,
+	                                   this->params.modulator.cpm_k,
+	                                   this->params.modulator.cpm_p,
+	                                   this->params.modulator.mapping,
+	                                   this->params.modulator.wave_shape,
+	                                   this->params.demodulator.no_sig2,
+	                                   this->params.demodulator.n_ite,
+	                                   this->params.simulation.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
