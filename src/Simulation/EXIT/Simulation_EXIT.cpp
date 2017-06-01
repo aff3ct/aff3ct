@@ -132,8 +132,6 @@ void Simulation_EXIT<B,R>
 			I_A = 0.0;
 			I_E = 0.0;
 
-			t_snr = std::chrono::steady_clock::now();
-
 			// allocate and build all the communication chain to generate EXIT chart
 			this->build_communication_chain();
 
@@ -520,7 +518,7 @@ template <typename B, typename R>
 Terminal_EXIT<B,R>* Simulation_EXIT<B,R>
 ::build_terminal()
 {
-	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
+	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation

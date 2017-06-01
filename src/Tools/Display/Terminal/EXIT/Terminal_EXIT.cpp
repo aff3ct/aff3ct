@@ -13,7 +13,6 @@ Terminal_EXIT<B,R>
 ::Terminal_EXIT(const int& N,
                 const R& snr,
                 const R& sig_a,
-                const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
                 const int& cur_t,
                 const int& trials,
                 double& I_A,
@@ -22,7 +21,7 @@ Terminal_EXIT<B,R>
   N(N),
   snr(snr),
   sig_a(sig_a),
-  t_snr(t_snr),
+  t_snr(std::chrono::steady_clock::now()),
   cur_t(cur_t),
   trials(trials),
   I_A(I_A),
@@ -123,6 +122,8 @@ void Terminal_EXIT<B,R>
 	auto et_format = get_time_format(et);
 
 	stream << " | " << std::setprecision(0) << std::fixed << std::setw(8) << et_format << "  " << std::endl;
+
+	t_snr = std::chrono::steady_clock::now();
 }
 
 // ==================================================================================== explicit template instantiation 

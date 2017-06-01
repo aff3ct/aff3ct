@@ -130,11 +130,12 @@ void Simulation_BFER_ite_threads<B,R,Q>
 ::simulation_loop(const int tid)
 {
 	using namespace std::chrono;
+	auto t_snr = steady_clock::now();
 
 	// simulation loop
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
 	        (this->params.simulation.stop_time == seconds(0) ||
-	         (steady_clock::now() - this->t_snr) < this->params.simulation.stop_time))
+	         (steady_clock::now() - t_snr) < this->params.simulation.stop_time))
 	{
 		if (this->params.source.type != "AZCW")
 		{
@@ -278,13 +279,14 @@ void Simulation_BFER_ite_threads<B,R,Q>
 ::simulation_loop_debug()
 {
 	using namespace std::chrono;
+	auto t_snr = steady_clock::now();
 
 	Frame_trace<B> ft(this->params.simulation.debug_limit, this->params.simulation.debug_precision); // frame trace to display the vectors
 
 	// simulation loop
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
 	       (this->params.simulation.stop_time == seconds(0) ||
-	        (steady_clock::now() - this->t_snr) < this->params.simulation.stop_time))
+	        (steady_clock::now() - t_snr) < this->params.simulation.stop_time))
 	{
 		std::cout << "-------------------------------" << std::endl;
 		std::cout << "New encoding/decoding session !" << std::endl;
@@ -587,7 +589,6 @@ Terminal* Simulation_BFER_ite_threads<B,R,Q>
 	                                  this->snr_s,
 	                                  this->snr_b,
 	                                  *this->monitor_red,
-	                                  this->t_snr,
 	                                  &d_dec);
 #endif
 }

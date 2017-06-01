@@ -119,8 +119,6 @@ void Simulation_BFER<B,R,Q>
 	// for each SNR to be simulated
 	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
-		t_snr = std::chrono::steady_clock::now();
-
 		auto info_bits = params.code.K;
 		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
 			info_bits -= params.crc.size;
@@ -355,8 +353,7 @@ Terminal* Simulation_BFER<B,R,Q>
 	                                  this->params.code.N_code,
 	                                  this->snr_s,
 	                                  this->snr_b,
-	                                  *this->monitor_red,
-	                                  this->t_snr);
+	                                  *this->monitor_red);
 }
 
 template <typename B, typename R, typename Q>

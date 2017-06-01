@@ -12,10 +12,9 @@ template <typename B>
 Terminal_BFER_legacy<B>
 ::Terminal_BFER_legacy(const int K,
                        const int N,
-                       const float &snr,
                        const Monitor<B> &monitor,
-                       const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr)
-: Terminal(), K(K), N(N), snr(snr), monitor(monitor), t_snr(t_snr), real_time_state(0)
+                       const float &snr)
+: Terminal(), K(K), N(N), snr(snr), monitor(monitor), t_snr(std::chrono::steady_clock::now()), real_time_state(0)
 {
 	if (K <= 0)
 		throw std::invalid_argument("aff3ct::tools::Terminal_BFER_legacy: \"K\" has to be greater than 0.");
@@ -114,6 +113,8 @@ void Terminal_BFER_legacy<B>::final_report(std::ostream &stream)
 
 	stream << " | RUNTIME = " << std::setprecision(0) << std::fixed << std::setw(8) << rt_format << "     "
 	       << std::endl;
+
+	t_snr = std::chrono::steady_clock::now();
 }
 
 // ==================================================================================== explicit template instantiation 

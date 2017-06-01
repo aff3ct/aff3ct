@@ -142,11 +142,12 @@ void Simulation_BFER_std_threads<B,R,Q>
 ::simulation_loop(const int tid)
 {
 	using namespace std::chrono;
+	auto t_snr = steady_clock::now();
 
 	// simulation loop
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
 	        (this->params.simulation.stop_time == seconds(0) ||
-	         (steady_clock::now() - this->t_snr) < this->params.simulation.stop_time))
+	         (steady_clock::now() - t_snr) < this->params.simulation.stop_time))
 	{
 		if (this->params.source.type != "AZCW")
 		{
@@ -455,7 +456,6 @@ Terminal* Simulation_BFER_std_threads<B,R,Q>
 	                                  this->snr_s,
 	                                  this->snr_b,
 	                                  *this->monitor_red,
-	                                  this->t_snr,
 	                                  &d_dec);
 #endif
 }

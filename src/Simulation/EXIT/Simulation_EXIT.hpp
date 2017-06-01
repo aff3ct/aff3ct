@@ -66,9 +66,6 @@ protected:
 	module::SISO<R>           *siso;
 	tools::Terminal_EXIT<B,R> *terminal;
 
-	// time points and durations
-	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
-
 public:
 	Simulation_EXIT(const tools::parameters& params, tools::Codec_SISO<B,R> &codec);
 	virtual ~Simulation_EXIT();

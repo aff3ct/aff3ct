@@ -56,8 +56,6 @@ protected:
 	tools::Terminal *terminal;
 
 	// time points and durations
-	std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_snr;
-
 	std::vector<std::map<std::pair<int, std::string>, std::chrono::nanoseconds>> durations;
 	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_red;
 	            std::map<std::pair<int, std::string>, std::chrono::nanoseconds>  durations_sum;

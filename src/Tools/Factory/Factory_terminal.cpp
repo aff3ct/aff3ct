@@ -16,11 +16,10 @@ Terminal* Factory_terminal<B>
         const float                                                                        &snr_s,
         const float                                                                        &snr_b,
         const Monitor<B>                                                                   &monitor,
-        const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
         const std::chrono::nanoseconds                                                     *d_decod_total)
 {
-	     if (type == "STD"   ) return new Terminal_BFER       <B>(K, N, snr_s, snr_b, monitor, t_snr, d_decod_total);
-	else if (type == "LEGACY") return new Terminal_BFER_legacy<B>(K, N,        snr_b, monitor, t_snr               );
+	     if (type == "STD"   ) return new Terminal_BFER       <B>(K, N, monitor, &snr_s, &snr_b, d_decod_total);
+	else if (type == "LEGACY") return new Terminal_BFER_legacy<B>(K, N, monitor,          snr_b               );
 
 	throw std::runtime_error("aff3ct::tools::Factory_terminal: the factory could not allocate the object.");
 }

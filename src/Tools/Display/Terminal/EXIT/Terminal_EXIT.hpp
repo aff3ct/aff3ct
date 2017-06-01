@@ -17,7 +17,7 @@ protected:
 	const int                                                                           N;
 	const R                                                                             snr;
 	const R                                                                             sig_a;
-	const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr;
+	      std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>  t_snr;
 	const int                                                                          &cur_t;
 	const int                                                                          &trials;
 	double                                                                             &I_A;
@@ -28,7 +28,6 @@ public:
 	Terminal_EXIT(const int& N,
 	              const R& snr,
 	              const R& sig_a,
-	              const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
 	              const int& cur_t,
 	              const int& trials,
 	              double& I_A,
