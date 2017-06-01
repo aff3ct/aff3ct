@@ -27,11 +27,6 @@ bool CRC_checker<B,R>
 {
 	if (ite >= start_crc_check_ite)
 	{
-//		// compute the hard decision (for the CRC)
-//		const auto loop_size = (int)s.size();
-//		for (auto i = 0; i < loop_size; i++)
-//			s[i] = (sys[i] + ext[i]) < 0;
-
 		// compute the hard decision (for the CRC): fast version
 		const auto loop_size1 = (int)s.size() / mipp::nElReg<R>();
 		for (auto i = 0; i < loop_size1; i++)
@@ -50,6 +45,32 @@ bool CRC_checker<B,R>
 	}
 
 	return false;
+}
+
+namespace aff3ct
+{
+namespace tools
+{
+template <>
+bool CRC_checker<long long, double>
+::siso_n(const int ite,
+         const mipp::vector<double   >& sys,
+               mipp::vector<double   >& ext,
+               mipp::vector<long long>& s)
+{
+	if (ite >= start_crc_check_ite)
+	{
+		// compute the hard decision (for the CRC)
+		const auto loop_size = (int)s.size();
+		for (auto i = 0; i < loop_size; i++)
+			s[i] = (sys[i] + ext[i]) < 0;
+
+		return crc.check(s, simd_inter_frame_level);
+	}
+
+	return false;
+}
+}
 }
 
 // ==================================================================================== explicit template instantiation 
