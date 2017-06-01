@@ -19,7 +19,7 @@ Encoder<B>* Factory_encoder_common<B>
         const int         seed,
         const int         n_frames)
 {
-	     if (type == "NO"   ) return new Encoder_NO   <B>(K, N,       n_frames);
+	     if (type == "NO"   ) return new Encoder_NO   <B>(K,          n_frames);
 	else if (type == "AZCW" ) return new Encoder_AZCW <B>(K, N,       n_frames);
 	else if (type == "COSET") return new Encoder_coset<B>(K, N, seed, n_frames);
 	else if (type == "USER" ) return new Encoder_user <B>(K, N, path, n_frames);

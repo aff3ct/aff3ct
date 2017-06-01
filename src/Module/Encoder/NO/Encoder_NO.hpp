@@ -11,10 +11,10 @@ template <typename B = int>
 class Encoder_NO : public Encoder<B>
 {
 public:
-	Encoder_NO(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_NO");
+	Encoder_NO(const int K, const int n_frames = 1, const std::string name = "Encoder_NO");
 	virtual ~Encoder_NO();
 
-	void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
+	void encode(const B *U_K, B *X_K); using Encoder<B>::encode;
 };
 }
 }

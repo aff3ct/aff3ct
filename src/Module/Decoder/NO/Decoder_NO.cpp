@@ -6,11 +6,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_NO<B,R>
-::Decoder_NO(const int K, const int N, const int n_frames, const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name)
+::Decoder_NO(const int K, const int n_frames, const std::string name)
+: Decoder_SISO<B,R>(K, K, n_frames, 1, name)
 {
-	if (N != K)
-		throw std::invalid_argument("aff3ct::module::Decoder_NO: \"K\" and \"N\" have to be equal.");
 }
 
 template <typename B, typename R>
@@ -21,19 +19,19 @@ Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_hard_decode(const R *Y_K, B *V_K, const int frame_id)
 {
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
 	auto vec_loop_size = (this->K / mipp::nElReg<R>()) * mipp::nElReg<R>();
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
 	{
-		const auto r_Y_N = mipp::Reg<R>(&Y_N[i]);
-		const auto r_s = mipp::cast<R,B>(r_Y_N.sign()) >> (sizeof(B) * 8 - 1); // s[i] = Y_N[i] < 0;
+		const auto r_Y_N = mipp::Reg<R>(&Y_K[i]);
+		const auto r_s = mipp::cast<R,B>(r_Y_N.sign()) >> (sizeof(B) * 8 - 1); // s[i] = Y_Ki] < 0;
 		r_s.store(&V_K[i]);
 	}
 	for (auto i = vec_loop_size; i < this->K; i++)
-		V_K[i] = Y_N[i] < 0;
+		V_K[i] = Y_K[i] < 0;
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_store_total += d_store;
@@ -48,9 +46,9 @@ void Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
+::_soft_decode(const R *Y_K1, R *Y_K2, const int frame_id)
 {
-	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
+	std::copy(Y_K1, Y_K1 + this->K, Y_K2);
 }
 
 // ==================================================================================== explicit template instantiation 

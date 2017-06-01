@@ -6,11 +6,9 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_NO<B>
-::Encoder_NO(const int K, const int N, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name)
+::Encoder_NO(const int K, const int n_frames, const std::string name)
+: Encoder<B>(K, K, n_frames, name)
 {
-	if (this->K != this->N)
-		throw std::length_error("aff3ct::module::Encoder_NO: \"K\" and \"N\" have to be equal.");
 }
 
 template <typename B>
@@ -21,9 +19,9 @@ Encoder_NO<B>
 
 template <typename B>
 void Encoder_NO<B>
-::encode(const B *U_K, B *X_N)
+::encode(const B *U_K, B *X_K)
 {
-	std::copy(U_K, U_K + this->N * this->n_frames, X_N);
+	std::copy(U_K, U_K + this->K * this->n_frames, X_K);
 }
 
 // ==================================================================================== explicit template instantiation 

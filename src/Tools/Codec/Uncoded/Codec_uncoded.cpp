@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
@@ -11,6 +13,8 @@ Codec_uncoded<B,Q>
 ::Codec_uncoded(const parameters& params)
 : Codec_SISO<B,Q>(params)
 {
+	if (params.code.K != params.code.N_code)
+		throw std::invalid_argument("aff3ct::tools::Codec_uncoded: \"K\" has to be equal to \"N_code\".");
 }
 
 template <typename B, typename Q>
@@ -24,7 +28,6 @@ Encoder<B>* Codec_uncoded<B,Q>
 ::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	return new Encoder_NO<B>(this->params.code.K,
-	                         this->params.code.N_code,
 	                         this->params.simulation.inter_frame_level);
 }
 
@@ -33,7 +36,6 @@ SISO<Q>* Codec_uncoded<B,Q>
 ::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return new Decoder_NO<B,Q>(this->params.code.K,
-	                           this->params.code.N_code,
 	                           this->params.simulation.inter_frame_level);
 }
 
@@ -42,7 +44,6 @@ Decoder<B,Q>* Codec_uncoded<B,Q>
 ::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return new Decoder_NO<B,Q>(this->params.code.K,
-	                           this->params.code.N_code,
 	                           this->params.simulation.inter_frame_level);
 }
 
@@ -51,9 +52,8 @@ void Codec_uncoded<B,Q>
 ::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
 {
 	const auto K = this->params.code.K;
-	const auto N = this->params.code.N_code;
 
-	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
+	if ((int)Y_N.size() != K * this->params.simulation.inter_frame_level)
 		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"Y_N\" size.");
 	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
 		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"sys\" size.");
