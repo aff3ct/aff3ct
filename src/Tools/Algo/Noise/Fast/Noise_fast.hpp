@@ -23,6 +23,7 @@ public:
 	Noise_fast(const int seed = 0);
 	virtual ~Noise_fast();
 
+	virtual void set_seed(const int seed);
 	virtual void generate(R *noise, const unsigned length, const R sigma);
 
 private:

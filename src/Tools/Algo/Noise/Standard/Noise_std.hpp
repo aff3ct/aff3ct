@@ -21,6 +21,7 @@ public:
 	Noise_std(const int seed = 0);
 	virtual ~Noise_std();
 
+	virtual void set_seed(const int seed);
 	virtual void generate(R *noise, const unsigned length, const R sigma);
 };
 }

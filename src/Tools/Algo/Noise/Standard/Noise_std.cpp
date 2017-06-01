@@ -10,13 +10,20 @@ Noise_std<R>
 ::Noise_std(const int seed)
 : Noise<R>()
 {
-	rd_engine.seed(seed);
+	this->set_seed(seed);
 }
 
 template <typename R>
 Noise_std<R>
 ::~Noise_std()
 {
+}
+
+template <typename R>
+void Noise_std<R>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
 }
 
 template <typename R>

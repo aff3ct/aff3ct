@@ -12,16 +12,23 @@ Noise_fast<R>
   mt19937(seed),
   mt19937_simd()
 {
-	mipp::vector<int> seeds(mipp::nElReg<int>());
-	for (auto i = 0; i < mipp::nElReg<int>(); i++)
-		seeds[i] = mt19937.rand();
-	mt19937_simd.seed(seeds.data());
+	this->set_seed(seed);
 }
 
 template <typename R>
 Noise_fast<R>
 ::~Noise_fast()
 {
+}
+
+template <typename R>
+void Noise_fast<R>
+::set_seed(const int seed)
+{
+	mipp::vector<int> seeds(mipp::nElReg<int>());
+	for (auto i = 0; i < mipp::nElReg<int>(); i++)
+		seeds[i] = mt19937.rand();
+	mt19937_simd.seed(seeds.data());
 }
 
 template <typename R>

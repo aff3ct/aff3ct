@@ -12,10 +12,17 @@ Noise_GSL<R>
 : Noise<R>(),
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
-	gsl_rng_set(rng, seed);
-
 	if (rng == nullptr)
 		throw std::runtime_error("aff3ct::module::Noise_GSL: \"rng\" can't be null.");
+
+	this->set_seed(seed);
+}
+
+template <typename R>
+void Noise_GSL<R>
+::set_seed(const int seed)
+{
+	gsl_rng_set(rng, seed);
 }
 
 template <typename R>

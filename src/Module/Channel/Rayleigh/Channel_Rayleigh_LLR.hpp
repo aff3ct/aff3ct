@@ -23,6 +23,8 @@ public:
 	Channel_Rayleigh_LLR(const int N, const R sigma, const bool complex,
 	                     tools::Noise<R> *noise_generator = new tools::Noise_std<R>(), const bool add_users = false,
 	                     const int n_frames = 1, const std::string name = "Channel_Rayleigh_LLR");
+	Channel_Rayleigh_LLR(const int N, const R sigma, const bool complex, const int seed, const bool add_users = false,
+	                     const int n_frames = 1, const std::string name = "Channel_Rayleigh_LLR");
 	virtual ~Channel_Rayleigh_LLR();
 
 	virtual void add_noise(const R *X_N, R *Y_N, R *H_N); using Channel<R>::add_noise;

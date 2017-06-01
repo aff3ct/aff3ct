@@ -9,20 +9,29 @@ using namespace aff3ct::tools;
 template <typename R>
 Noise_MKL<R>
 ::Noise_MKL(const int seed)
-: Noise<R>()
+: Noise<R>(), stream_state(nullptr)
 {
-	//vslNewStream(&stream_state, VSL_BRNG_MT2203, seed);
-	vslNewStream(&stream_state, VSL_BRNG_SFMT19937, seed);
-
-	if (stream_state == nullptr)
-		throw std::runtime_error("aff3ct::module::Noise_MKL: \"stream_state\" can't be null.");
+	this->set_seed(const int seed);
 }
 
 template <typename R>
 Noise_MKL<R>
 ::~Noise_MKL()
 {
-	vslDeleteStream(&stream_state);
+	vslDeleteStream(stream_state);
+}
+
+template <typename R>
+void Noise_std<R>
+::set_seed(const int seed)
+{
+	if (stream_state != nullptr) vslDeleteStream(stream_state);
+
+	//vslNewStream(stream_state, VSL_BRNG_MT2203, seed);
+	vslNewStream(stream_state, VSL_BRNG_SFMT19937, seed);
+
+	if (stream_state == nullptr)
+		throw std::runtime_error("aff3ct::module::Noise_MKL: \"stream_state\" can't be null.");
 }
 
 template <typename R>
@@ -42,14 +51,14 @@ void Noise_MKL<float>
 ::generate(float *noise, const unsigned length, const float sigma)
 {
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
-	              stream_state,
+	              *stream_state,
 	              length,
 	              noise,
 	              0.0,
 	              sigma);
 	/*
 	vsRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
-	              stream_state,
+	              *stream_state,
 	              length,
 	              noise,
 	              0.0,
@@ -68,14 +77,14 @@ void Noise_MKL<double>
 ::generate(double *noise, const unsigned length, const double sigma)
 {
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2,
-	              stream_state,
+	              *stream_state,
 	              length,
 	              noise,
 	              0.0,
 	              sigma);
 	/*
 	vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_ICDF,
-	              stream_state,
+	              *stream_state,
 	              length,
 	              noise,
 	              0.0,

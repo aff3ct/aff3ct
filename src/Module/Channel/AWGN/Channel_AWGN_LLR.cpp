@@ -19,6 +19,16 @@ Channel_AWGN_LLR<R>
 
 template <typename R>
 Channel_AWGN_LLR<R>
+::Channel_AWGN_LLR(const int N, const R sigma, const int seed, const bool add_users, const int n_frames,
+                   const std::string name)
+: Channel<R>(N, sigma, n_frames, name),
+  add_users(add_users),
+  noise_generator(new tools::Noise_std<R>(seed))
+{
+}
+
+template <typename R>
+Channel_AWGN_LLR<R>
 ::~Channel_AWGN_LLR()
 {
 	delete noise_generator;

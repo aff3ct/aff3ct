@@ -24,6 +24,20 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
+::Channel_Rayleigh_LLR(const int N, const R sigma, const bool complex, const int seed, const bool add_users,
+                       const int n_frames, const std::string name)
+: Channel<R>(N, sigma, n_frames, name),
+  complex(complex),
+  add_users(add_users),
+  gains(complex ? N * n_frames : 2 * N * n_frames),
+  noise_generator(new tools::Noise_std<R>(seed))
+{
+	if (complex && N % 2)
+		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"N\" has to be divisible by 2.");
+}
+
+template <typename R>
+Channel_Rayleigh_LLR<R>
 ::~Channel_Rayleigh_LLR()
 {
 	delete noise_generator;
