@@ -29,7 +29,7 @@ public:
 	               const int n_frames = 6, const std::string name = "Modulator_SCMA");
 	virtual ~Modulator_SCMA();
 
-	virtual void modulate             (const B* X_N1,               R* X_N2); using Modulator<B,R,Q>::modulate;
+	virtual void modulate             (const B* X_N1,               R *X_N2); using Modulator<B,R,Q>::modulate;
 	virtual void demodulate           (const Q *Y_N1,               Q *Y_N2); using Modulator<B,R,Q>::demodulate;
 	virtual void demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2); using Modulator<B,R,Q>::demodulate_with_gains;
 	virtual void filter               (const R *Y_N1,               R *Y_N2); using Modulator<B,R,Q>::filter;
