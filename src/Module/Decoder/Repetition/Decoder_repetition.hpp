@@ -4,15 +4,14 @@
 #include <vector>
 #include "Tools/Perf/MIPP/mipp.h"
 
-#include "../Decoder.hpp"
-#include "../SISO.hpp"
+#include "../Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_repetition : public Decoder<B,R>, public SISO<R>
+class Decoder_repetition : public Decoder_SISO<B,R>
 {
 protected:
 	const int rep_count; // number of repetitions

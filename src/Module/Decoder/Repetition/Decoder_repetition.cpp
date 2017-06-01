@@ -10,8 +10,7 @@ template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
                      const std::string name)
- : Decoder<B,R>(K, N, n_frames, 1, name),
-   SISO   <  R>(K, N, n_frames, 1, name + "_siso"),
+ : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
    rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	if (N % K)
@@ -66,13 +65,8 @@ void Decoder_repetition<B,R>
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
 	{
 		const auto r_ext = mipp::Reg<R>(&ext[i]);
+		const auto r_s = mipp::cast<R,B>(r_ext.sign()) >> (sizeof(B) * 8 - 1);
 
-		// s[i] = ext[i] < 0;
-#if defined(MIPP_NO_INTRINSICS) && defined(_MSC_VER) 
-		const auto r_s = mipp::Reg<B>((B)r_ext.sign().r) >> (sizeof(B) * 8 - 1);
-#else
-		const auto r_s = mipp::Reg<B>(r_ext.sign().r) >> (sizeof(B) * 8 - 1);
-#endif
 		r_s.store(&V_K[i]);
 	}
 	for (auto i = vec_loop_size; i < this->K; i++)
