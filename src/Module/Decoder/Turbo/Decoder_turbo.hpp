@@ -46,7 +46,6 @@ protected:
 	                                     mipp::vector<R>& ext)>> callbacks_siso_i;
 	std::vector<std::function<void(const int n_ite)>> callbacks_end;
 
-public:
 	Decoder_turbo(const int& K,
 	              const int& N,
 	              const int& n_ite,
@@ -57,6 +56,7 @@ public:
 	              const std::string name = "Decoder_turbo");
 	virtual ~Decoder_turbo();
 
+public:
 	void add_handler_siso_n(std::function<bool(const int,
 	                                           const mipp::vector<R>&,
 	                                                 mipp::vector<R>&,

@@ -22,7 +22,7 @@ private:
 	mipp::vector<R> constellation;
 
 public:
-	Modem_PAM(const int N, const R sigma, const int bits_per_symbol = 1, const bool disable_sig2 = false,
+	Modem_PAM(const int N, const R sigma = (R)1, const int bits_per_symbol = 1, const bool disable_sig2 = false,
 	          const int n_frames = 1, const std::string name = "Modem_PAM");
 	virtual ~Modem_PAM();
 

@@ -18,7 +18,6 @@ protected:
 	mipp::vector<R> beta [8]; // node metric (right to left)
 	mipp::vector<R> gamma[2]; // edge metric
 
-public:
 	Decoder_RSC_BCJR_seq(const int &K,
 	                     const std::vector<std::vector<int>> &trellis,
 	                     const bool buffered_encoding = true,

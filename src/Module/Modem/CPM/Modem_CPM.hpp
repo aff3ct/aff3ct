@@ -44,16 +44,16 @@ protected:
 
 public:
 	Modem_CPM(int  N,
-	          R    sigma,
-	          int  bits_per_symbol,
-	          int  sampling_factor,
-	          int  cpm_L,
-	          int  cpm_k,
-	          int  cpm_p,
-	          std::string mapping,
-	          std::string wave_shape,
-	          bool no_sig2,
-	          int  n_frames = 1,
+	          R    sigma             = (R)1,
+	          int  bits_per_symbol   = 1,
+	          int  sampling_factor   = 5,
+	          int  cpm_L             = 3,
+	          int  cpm_k             = 1,
+	          int  cpm_p             = 2,
+	          std::string mapping    = "NATURAL",
+	          std::string wave_shape = "GMSK",
+	          bool no_sig2           = false,
+	          int  n_frames          = 1,
 	          const std::string name = "Modem_CPM");
 	virtual ~Modem_CPM();
 

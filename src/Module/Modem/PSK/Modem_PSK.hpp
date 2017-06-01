@@ -22,7 +22,7 @@ private:
 	mipp::vector<std::complex<R>> constellation;
 
 public:
-	Modem_PSK(const int N, const R sigma, const int bits_per_symbol = 2, const bool disable_sig2 = false,
+	Modem_PSK(const int N, const R sigma = (R)1, const int bits_per_symbol = 2, const bool disable_sig2 = false,
 	          const int n_frames = 1, const std::string name = "Modem_PSK");
 	virtual ~Modem_PSK();
 

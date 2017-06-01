@@ -7,7 +7,7 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, const R sigma, tools::Noise<R> *noise_generator, const bool add_users,
+::Channel_AWGN_LLR(const int N, tools::Noise<R> *noise_generator, const bool add_users, const R sigma,
                    const int n_frames, const std::string name)
 : Channel<R>(N, sigma, n_frames, name),
   add_users(add_users),
@@ -19,7 +19,7 @@ Channel_AWGN_LLR<R>
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, const R sigma, const int seed, const bool add_users, const int n_frames,
+::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const R sigma, const int n_frames,
                    const std::string name)
 : Channel<R>(N, sigma, n_frames, name),
   add_users(add_users),

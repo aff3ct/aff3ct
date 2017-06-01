@@ -26,8 +26,8 @@ private:
 	const int                        n_ite;
 
 public:
-	Modem_SCMA(const int N, const R sigma, const int bps = 3, const bool disable_sig2 = false, const int n_ite = 1,
-	           const int n_frames = 6, const std::string name = "Modem_SCMA");
+	Modem_SCMA(const int N, const R sigma = (R)1, const int bps = 3, const bool disable_sig2 = false,
+	           const int n_ite = 1, const int n_frames = 6, const std::string name = "Modem_SCMA");
 	virtual ~Modem_SCMA();
 
 	virtual void modulate             (const B* X_N1,               R *X_N2); using Modem<B,R,Q>::modulate;

@@ -38,7 +38,6 @@ protected:
 	std::vector<mipp::vector<R>> C_to_V; // check    nodes to variable nodes messages
 	std::vector<mipp::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
-public:
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
 	                         const tools::AList_reader &alist_data,
 	                         const mipp::vector<B> &info_bits_pos,
@@ -48,7 +47,6 @@ public:
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
 
-protected:
 	// soft decode
 	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 

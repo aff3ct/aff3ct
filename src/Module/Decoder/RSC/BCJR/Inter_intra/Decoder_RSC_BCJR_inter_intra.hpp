@@ -17,7 +17,6 @@ protected:
 	mipp::vector<R> alpha; // node metric (left to right)
 	mipp::vector<R> gamma; // edge metric
 
-public:
 	Decoder_RSC_BCJR_inter_intra(const int &K,
 	                             const std::vector<std::vector<int>> &trellis,
 	                             const bool buffered_encoding = true,
@@ -25,6 +24,7 @@ public:
 	                             const std::string name = "Decoder_RSC_BCJR_inter_intra");
 	virtual ~Decoder_RSC_BCJR_inter_intra();
 
+public:
 	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
 	                 const int n_frames = -1);
 

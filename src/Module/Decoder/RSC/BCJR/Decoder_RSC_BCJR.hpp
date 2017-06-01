@@ -24,7 +24,6 @@ protected:
 	mipp::vector<R> ext;      // extrinsic LLRs
 	mipp::vector<B> s;        // hard decision
 
-public:
 	Decoder_RSC_BCJR(const int K,
 	                 const std::vector<std::vector<int>> &trellis,
 	                 const bool buffered_encoding = true,
@@ -33,6 +32,7 @@ public:
 	                 const std::string name = "Decoder_RSC_BCJR");
 	virtual ~Decoder_RSC_BCJR();
 
+public:
 	virtual int tail_length() const { return 2 * n_ff; }
 
 protected:

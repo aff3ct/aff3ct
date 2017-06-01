@@ -482,11 +482,11 @@ Channel<R>* Simulation_EXIT<B,R>
 	const auto add_users = this->params.modulator.type == "SCMA";
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 size,
-	                                 this->sigma,
 	                                 this->params.modulator.complex,
 	                                 add_users,
 	                                 this->params.channel.path,
 	                                 params.simulation.seed,
+	                                 this->sigma,
 	                                 this->params.simulation.inter_frame_level);
 }
 
@@ -497,11 +497,11 @@ Channel<R>* Simulation_EXIT<B,R>
 	const auto add_users = this->params.modulator.type == "SCMA";
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 size,
-	                                 2.f / sig_a,
 	                                 this->params.modulator.complex,
 	                                 add_users,
 	                                 this->params.channel.path,
 	                                 params.simulation.seed,
+	                                 2.f / sig_a,
 	                                 this->params.simulation.inter_frame_level);
 }
 

@@ -184,11 +184,11 @@ Channel<R>* Simulation_BFER_ite<B,R,Q>
 	const auto add_users = this->params.modulator.type == "SCMA";
 	return Factory_channel<R>::build(this->params.channel.type,
 	                                 this->params.code.N_mod,
-	                                 this->sigma,
 	                                 this->params.modulator.complex,
 	                                 add_users,
 	                                 this->params.channel.path,
 	                                 seed,
+	                                 this->sigma,
 	                                 this->params.simulation.inter_frame_level);
 }
 
