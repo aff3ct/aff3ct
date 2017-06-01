@@ -1,6 +1,7 @@
 #include <cmath>
 #include <algorithm>
 
+#include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Factory/Factory_source.hpp"
@@ -120,8 +121,8 @@ void Simulation_EXIT<B,R>
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		code_rate = 1.f;
-		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
-		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.modulator.bits_per_symbol),
+		                      params.modulator.upsample_factor);
 
 		codec.snr_precompute(sigma);
 

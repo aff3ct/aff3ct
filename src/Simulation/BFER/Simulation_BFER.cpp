@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <functional>
 
+#include "Tools/general_utils.h"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
 #include "Tools/Display/bash_tools.h"
@@ -129,14 +130,14 @@ void Simulation_BFER<B,R,Q>
 		if (params.simulation.snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = snr + 10.f * std::log10(code_rate * (float)params.modulator.bits_per_symbol);
+			snr_s = ebn0_to_esn0(snr_b, code_rate, params.modulator.bits_per_symbol);
 		}
 		else //if(params.simulation.snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = snr - 10.f * std::log10(code_rate * (float)params.modulator.bits_per_symbol);
+			snr_b = esn0_to_ebn0(snr_s, code_rate, params.modulator.bits_per_symbol);
 		}
-		sigma = std::sqrt((float)params.modulator.upsample_factor) / std::sqrt(2.f * std::pow(10.f, (snr_s / 10.f)));
+		sigma = esn0_to_sigma(snr_s, params.modulator.upsample_factor);
 
 		// dirty hack to override simulation params
 		if (this->params.monitor.err_track_revert)
