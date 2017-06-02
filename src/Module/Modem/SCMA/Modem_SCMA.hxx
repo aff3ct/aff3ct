@@ -169,18 +169,18 @@ void Modem_SCMA<B,R,Q,PSI>
 	// initial probability of each codeword/user
 	for (auto i = 0; i < 4; i++)
 	{
-		msg_user_res[0][1][i] = 0.25;
-		msg_user_res[0][3][i] = 0.25;
-		msg_user_res[1][0][i] = 0.25;
-		msg_user_res[1][2][i] = 0.25;
-		msg_user_res[2][0][i] = 0.25;
-		msg_user_res[2][1][i] = 0.25;
-		msg_user_res[3][2][i] = 0.25;
-		msg_user_res[3][3][i] = 0.25;
-		msg_user_res[4][0][i] = 0.25;
-		msg_user_res[4][3][i] = 0.25;
-		msg_user_res[5][1][i] = 0.25;
-		msg_user_res[5][2][i] = 0.25;
+		msg_user_res[0][1][i] = (Q)0.25;
+		msg_user_res[0][3][i] = (Q)0.25;
+		msg_user_res[1][0][i] = (Q)0.25;
+		msg_user_res[1][2][i] = (Q)0.25;
+		msg_user_res[2][0][i] = (Q)0.25;
+		msg_user_res[2][1][i] = (Q)0.25;
+		msg_user_res[3][2][i] = (Q)0.25;
+		msg_user_res[3][3][i] = (Q)0.25;
+		msg_user_res[4][0][i] = (Q)0.25;
+		msg_user_res[4][3][i] = (Q)0.25;
+		msg_user_res[5][1][i] = (Q)0.25;
+		msg_user_res[5][2][i] = (Q)0.25;
 	}
 
 	// starting iteration
@@ -190,18 +190,18 @@ void Modem_SCMA<B,R,Q,PSI>
 		// initialization
 		for (auto i = 0; i < 4; i++)
 		{
-			msg_res_user[0][1][i] = 0;
-			msg_res_user[0][2][i] = 0;
-			msg_res_user[0][4][i] = 0;
-			msg_res_user[1][0][i] = 0;
-			msg_res_user[1][2][i] = 0;
-			msg_res_user[1][5][i] = 0;
-			msg_res_user[2][1][i] = 0;
-			msg_res_user[2][3][i] = 0;
-			msg_res_user[2][5][i] = 0;
-			msg_res_user[3][0][i] = 0;
-			msg_res_user[3][3][i] = 0;
-			msg_res_user[3][4][i] = 0;
+			msg_res_user[0][1][i] = (Q)0;
+			msg_res_user[0][2][i] = (Q)0;
+			msg_res_user[0][4][i] = (Q)0;
+			msg_res_user[1][0][i] = (Q)0;
+			msg_res_user[1][2][i] = (Q)0;
+			msg_res_user[1][5][i] = (Q)0;
+			msg_res_user[2][1][i] = (Q)0;
+			msg_res_user[2][3][i] = (Q)0;
+			msg_res_user[2][5][i] = (Q)0;
+			msg_res_user[3][0][i] = (Q)0;
+			msg_res_user[3][3][i] = (Q)0;
+			msg_res_user[3][4][i] = (Q)0;
 		}
 
 		for (auto i = 0; i < 4; i++)  // codeword index
