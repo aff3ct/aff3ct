@@ -46,7 +46,7 @@ public:
 protected:
 	virtual void build_communication_chain(const int tid = 0);
 	virtual void _launch();
-	virtual tools::Terminal* build_terminal();
+	virtual tools::Terminal_BFER<B>* build_terminal();
 
 private:
 	void Monte_Carlo_method   (const int tid = 0);

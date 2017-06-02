@@ -6,7 +6,6 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Factory/Factory_monitor.hpp"
-#include "Tools/Factory/Factory_terminal.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
@@ -101,7 +100,12 @@ void Simulation_BFER<B,R,Q>
 ::build_communication_chain(const int tid)
 {
 	// build the terminal to display the BER/FER
-	this->terminal = this->build_terminal();
+	if (tid == 0)
+	{
+		this->terminal = this->build_terminal();
+		this->terminal->set_esn0(snr_s);
+		this->terminal->set_ebn0(snr_b);
+	}
 
 	for (auto& duration : this->durations[tid])
 		duration.second = std::chrono::nanoseconds(0);
@@ -345,15 +349,12 @@ Monitor<B>* Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Terminal* Simulation_BFER<B,R,Q>
+Terminal_BFER<B>* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return Factory_terminal<B>::build(this->params.terminal.type,
-	                                  this->params.code.K_info,
-	                                  this->params.code.N_code,
-	                                  this->snr_s,
-	                                  this->snr_b,
-	                                  *this->monitor_red);
+	return new Terminal_BFER<B>(this->params.code.K_info,
+	                            this->params.code.N_code,
+	                            *this->monitor_red);
 }
 
 template <typename B, typename R, typename Q>

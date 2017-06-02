@@ -41,7 +41,6 @@
 #include <Tools/Factory/Factory_quantizer.hpp>
 #include <Tools/Factory/Factory_channel.hpp>
 #include <Tools/Factory/Factory.hpp>
-#include <Tools/Factory/Factory_terminal.hpp>
 #include <Tools/Factory/RSC/Factory_decoder_RSC.hpp>
 #include <Tools/Factory/RSC/Factory_encoder_RSC.hpp>
 #include <Tools/Factory/Factory_interleaver.hpp>
@@ -140,7 +139,6 @@
 #include <Tools/Display/Dumper/Dumper_reduction.hpp>
 #include <Tools/Display/Terminal/Terminal.hpp>
 #include <Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp>
-#include <Tools/Display/Terminal/BFER/Terminal_BFER_legacy.hpp>
 #include <Tools/Display/Terminal/BFER/Terminal_BFER.hpp>
 #include <Tools/Codec/Polar/Codec_polar.hpp>
 #include <Tools/Codec/Codec_SISO.hpp>

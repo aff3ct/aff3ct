@@ -15,15 +15,15 @@ Terminal_BFER<B>
 ::Terminal_BFER(const int K,
                 const int N,
                 const Monitor<B> &monitor,
-                const float *esn0,
-                const float *ebn0,
                 const std::chrono::nanoseconds *d_decod_total)
 : Terminal       (                                ),
   K              (K                               ),
   N              (N                               ),
-  esn0           (esn0                            ),
-  ebn0           (ebn0                            ),
   monitor        (monitor                         ),
+  esn0           (0.f                             ),
+  ebn0           (0.f                             ),
+  is_esn0        (false                           ),
+  is_ebn0        (false                           ),
   t_snr          (std::chrono::steady_clock::now()),
   d_decod_total  (d_decod_total                   ),
   real_time_state(0                               )
@@ -40,21 +40,37 @@ template <typename B>
 Terminal_BFER<B>
 ::Terminal_BFER(const int K,
                 const Monitor<B> &monitor,
-                const float *esn0,
-                const float *ebn0,
                 const std::chrono::nanoseconds *d_decod_total)
 : Terminal       (                                ),
   K              (K                               ),
   N              (K                               ),
-  esn0           (esn0                            ),
-  ebn0           (ebn0                            ),
   monitor        (monitor                         ),
+  esn0           (0.f                             ),
+  ebn0           (0.f                             ),
+  is_esn0        (false                           ),
+  is_ebn0        (false                           ),
   t_snr          (std::chrono::steady_clock::now()),
   d_decod_total  (d_decod_total                   ),
   real_time_state(0                               )
 {
 	if (K <= 0)
 		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be greater than 0.");
+}
+
+template <typename B>
+void Terminal_BFER<B>
+::set_esn0(const float esn0)
+{
+	this->is_esn0 = true;
+	this->esn0    = esn0;
+}
+
+template <typename B>
+void Terminal_BFER<B>
+::set_ebn0(const float ebn0)
+{
+	this->is_ebn0 = true;
+	this->ebn0    = ebn0;
 }
 
 template <typename B>
@@ -173,16 +189,16 @@ void Terminal_BFER<B>
 	if (Monitor<B>::is_interrupt()) stream << "\r";
 
 	std::stringstream esn0_str;
-	if (esn0 == nullptr)
+	if (!is_esn0)
 		esn0_str << "   -  ";
 	else
-		esn0_str << setprecision(2) << fixed << setw(6) << *esn0;
+		esn0_str << setprecision(2) << fixed << setw(6) << esn0;
 
 	std::stringstream ebn0_str;
-	if (ebn0 == nullptr)
+	if (!is_ebn0)
 		ebn0_str << "  -  ";
 	else
-		ebn0_str << setprecision(2) << fixed << setw(5) << *ebn0;
+		ebn0_str << setprecision(2) << fixed << setw(5) << ebn0;
 
 #ifdef _WIN32
 	stringstream str_ber, str_fer;

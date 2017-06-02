@@ -7,7 +7,7 @@
 
 #include "Tools/params.h"
 #include "Tools/Threads/Barrier.hpp"
-#include "Tools/Display/Terminal/Terminal.hpp"
+#include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Module/Monitor/Monitor.hpp"
@@ -53,7 +53,7 @@ protected:
 	            tools::Dumper_reduction*  dumper_red;
 
 	// terminal (for the output of the code)
-	tools::Terminal *terminal;
+	tools::Terminal_BFER<B> *terminal;
 
 	// time points and durations
 	std::vector<std::map<std::pair<int, std::string>, std::chrono::nanoseconds>> durations;
@@ -73,8 +73,8 @@ protected:
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
-	        module::Monitor<B>* build_monitor (const int tid = 0);
-	virtual tools::Terminal   * build_terminal(                 );
+	        module::Monitor      <B>* build_monitor (const int tid = 0);
+	virtual tools ::Terminal_BFER<B>* build_terminal(                 );
 
 private:
 	void time_reduction(const bool is_snr_done = false  );

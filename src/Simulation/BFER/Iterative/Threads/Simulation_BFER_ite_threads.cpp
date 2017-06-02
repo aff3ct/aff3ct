@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Tools/Factory/Factory_terminal.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Simulation_BFER_ite_threads.hpp"
@@ -574,22 +573,19 @@ void Simulation_BFER_ite_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Terminal* Simulation_BFER_ite_threads<B,R,Q>
+Terminal_BFER<B>* Simulation_BFER_ite_threads<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI
-	Simulation_BFER<B,R,Q>::build_terminal();
+	return Simulation_BFER<B,R,Q>::build_terminal();
 #else
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
 
-	return Factory_terminal<B>::build(this->params.terminal.type,
-	                                  this->params.code.K_info,
-	                                  this->params.code.N_code,
-	                                  this->snr_s,
-	                                  this->snr_b,
-	                                  *this->monitor_red,
-	                                  &d_dec);
+	return new Terminal_BFER<B>(this->params.code.K_info,
+	                            this->params.code.N_code,
+	                            *this->monitor_red,
+	                            &d_dec);
 #endif
 }
 
