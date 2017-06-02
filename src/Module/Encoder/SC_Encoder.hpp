@@ -73,10 +73,14 @@ public:
 	SC_Encoder(const int K, const int N, const int n_frames = 1, const std::string name = "SC_Encoder")
 	: Encoder_i<B>(K, N, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Encoder() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } }
+	virtual ~SC_Encoder()
+	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+	}
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Encoder_module<B>(*this, this->name.c_str());
 	}
 };

@@ -76,10 +76,14 @@ public:
 	SC_Monitor(const int size, const int n_frames = 1, const std::string name = "SC_Monitor")
 	: Monitor_i<B>(size, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Monitor() {if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }};
+	virtual ~SC_Monitor()
+	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+	};
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Monitor_module<B>(*this, this->name.c_str());
 	}
 };

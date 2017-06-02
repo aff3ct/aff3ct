@@ -143,11 +143,13 @@ public:
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Channel_module<R>(*this, this->name.c_str());
 	}
 
 	void create_sc_module_wg()
 	{
+		if (sc_module_wg != nullptr) { delete sc_module_wg; sc_module_wg = nullptr; }
 		const std::string new_name = this->name + "_wg";
 		this->sc_module_wg = new SC_Channel_module_wg<R>(*this, new_name.c_str());
 	}

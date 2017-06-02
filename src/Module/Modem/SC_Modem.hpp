@@ -421,36 +421,42 @@ public:
 
 	void create_sc_module_modulator()
 	{
+		if (sc_module_mod != nullptr) { delete sc_module_mod; sc_module_mod = nullptr; }
 		const std::string new_name = this->name + "_mod";
 		this->sc_module_mod = new SC_Modem_module_modulator<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_filterer()
 	{
+		if (sc_module_filt != nullptr) { delete sc_module_filt; sc_module_filt = nullptr; }
 		const std::string new_name = this->name + "_filt";
 		this->sc_module_filt = new SC_Modem_module_filterer<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_demodulator()
 	{
+		if (sc_module_demod != nullptr) { delete sc_module_demod; sc_module_demod = nullptr; }
 		const std::string new_name = this->name + "_demod";
 		this->sc_module_demod = new SC_Modem_module_demodulator<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_demodulator_wg()
 	{
+		if (sc_module_demod_wg != nullptr) { delete sc_module_demod_wg; sc_module_demod_wg = nullptr; }
 		const std::string new_name = this->name + "_demod_wg";
 		this->sc_module_demod_wg = new SC_Modem_module_demodulator_wg<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_tdemodulator()
 	{
+		if (sc_module_tdemod != nullptr) { delete sc_module_tdemod; sc_module_tdemod = nullptr; }
 		const std::string new_name = this->name + "_tdemod";
 		this->sc_module_tdemod = new SC_Modem_module_tdemodulator<B,R,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_tdemodulator_wg()
 	{
+		if (sc_module_tdemod_wg != nullptr) { delete sc_module_tdemod_wg; sc_module_tdemod_wg = nullptr; }
 		const std::string new_name = this->name + "_tdemod_wg";
 		this->sc_module_tdemod_wg = new SC_Modem_module_tdemodulator_wg<B,R,Q>(*this, new_name.c_str());
 	}

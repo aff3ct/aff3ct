@@ -74,10 +74,14 @@ public:
 	        const std::string name = "SC_SISO")
 	: SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), sc_module_siso(nullptr) {}
 
-	virtual ~SC_SISO() { if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; } }
+	virtual ~SC_SISO()
+	{
+		if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; }
+	}
 
 	void create_sc_module_siso()
 	{
+		if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; }
 		this->sc_module_siso = new SC_SISO_module<R>(*this, this->name.c_str());
 	}
 };

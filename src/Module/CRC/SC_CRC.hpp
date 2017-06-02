@@ -121,12 +121,14 @@ public:
 
 	void create_sc_module_build()
 	{
+		if (sc_module_build != nullptr) { delete sc_module_build; sc_module_build = nullptr; }
 		const std::string new_name = this->name + "_build";
 		this->sc_module_build = new SC_CRC_module_build<B>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_extract()
 	{
+		if (sc_module_extract != nullptr) { delete sc_module_extract; sc_module_extract = nullptr; }
 		const std::string new_name = this->name + "_extract";
 		this->sc_module_extract = new SC_CRC_module_extract<B>(*this, new_name.c_str());
 	}

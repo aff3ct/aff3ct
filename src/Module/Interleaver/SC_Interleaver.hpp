@@ -170,12 +170,14 @@ public:
 
 	void create_sc_module_interleaver()
 	{
+		if (sc_module_inter != nullptr) { delete sc_module_inter; sc_module_inter = nullptr; }
 		const std::string new_name = this->name + "_inter";
 		this->sc_module_inter = new SC_Interleaver_module_interleaver<T>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_deinterleaver()
 	{
+		if (sc_module_deinter != nullptr) { delete sc_module_deinter; sc_module_deinter = nullptr; }
 		const std::string new_name = this->name + "_deinter";
 		this->sc_module_deinter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
 	}

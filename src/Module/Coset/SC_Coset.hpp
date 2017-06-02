@@ -95,6 +95,7 @@ public:
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Coset_module<B,D>(*this, this->name.c_str());
 	}
 };
