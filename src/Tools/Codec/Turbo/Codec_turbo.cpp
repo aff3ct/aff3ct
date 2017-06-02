@@ -39,14 +39,13 @@ Codec_turbo<B,Q,QD>
 		json_stream << "[" << std::endl;
 	}
 
-	auto encoder_RSC = this->build_sub_encoder();
-	if (encoder_RSC != nullptr)
-	{
-		trellis = encoder_RSC->get_trellis();
-		delete encoder_RSC;
-	}
-	else
-		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"trellis\" can't be created.");
+	auto encoder_RSC = Factory_encoder_RSC<B>::build("RSC",
+	                                                 this->params.code.K,
+	                                                (this->params.code.K * 2) + (this->params.code.tail_length / 2),
+	                                                 this->params.encoder.buffered,
+	                                                 this->params.encoder.poly);
+	trellis = encoder_RSC->get_trellis();
+	delete encoder_RSC;
 }
 
 template <typename B, typename Q, typename QD>

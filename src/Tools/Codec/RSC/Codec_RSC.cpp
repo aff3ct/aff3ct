@@ -13,14 +13,13 @@ Codec_RSC<B,Q,QD>
 ::Codec_RSC(const parameters& params)
 : Codec_SISO<B,Q>(params)
 {
-	auto encoder_RSC = this->build_encoder();
-	if (encoder_RSC != nullptr)
-	{
-		trellis = encoder_RSC->get_trellis();
-		delete encoder_RSC;
-	}
-	else
-		throw std::runtime_error("aff3ct::tools::Codec_RSC: \"trellis\" can't be created.");
+	auto encoder_RSC = Factory_encoder_RSC<B>::build("RSC",
+	                                                 this->params.code.K,
+	                                                 this->params.code.N_code,
+	                                                 this->params.encoder.buffered,
+	                                                 this->params.encoder.poly);
+	trellis = encoder_RSC->get_trellis();
+	delete encoder_RSC;
 }
 
 template <typename B, typename Q, typename QD>

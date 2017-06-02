@@ -125,7 +125,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);

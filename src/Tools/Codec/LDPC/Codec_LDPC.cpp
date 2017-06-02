@@ -1,5 +1,6 @@
 #include <numeric>
 #include <algorithm>
+#include <exception>
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
@@ -17,14 +18,16 @@ Codec_LDPC<B,Q>
   info_bits_pos(this->params.code.K),
   decoder_siso (params.simulation.n_threads, nullptr)
 {
-	auto encoder_LDPC = this->build_encoder();
-	if (encoder_LDPC != nullptr)
+	try
 	{
+		auto encoder_LDPC = this->build_encoder();
 		encoder_LDPC->get_info_bits_pos(info_bits_pos);
 		delete encoder_LDPC;
 	}
-	else
+	catch (std::exception const&)
+	{
 		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+	}
 }
 
 template <typename B, typename Q>
