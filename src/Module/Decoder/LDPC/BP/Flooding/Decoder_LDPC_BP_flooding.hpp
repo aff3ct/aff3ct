@@ -12,9 +12,6 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_flooding : public Decoder_SISO<B,R>
 {
-private:
-	int cur_frame;
-
 protected:
 	const int  n_ite;      // number of iterations to perform
 	const int  n_V_nodes;  // number of variable nodes (= N)
@@ -54,7 +51,7 @@ protected:
 	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
 
 	// BP functions for decoding
-	void BP_decode(const R *Y_N);
+	void BP_decode(const R *Y_N, const int frame_id);
 
 	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
 };

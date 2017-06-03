@@ -22,7 +22,6 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
                                      const int n_frames,
                                      const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                             ),
-  cur_wave         (0                                                                                   ),
   normalize_factor (normalize_factor                                                                    ),
   offset           (offset                                                                              ),
   contributions    (alist_data.get_CN_max_degree()                                                      ),
@@ -64,47 +63,48 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
-	this->_load(Y_N1);
+	this->_load(Y_N1, frame_id);
 
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->BP_decode<1>();
-		else if (normalize_factor == 0.250f) this->BP_decode<2>();
-		else if (normalize_factor == 0.375f) this->BP_decode<3>();
-		else if (normalize_factor == 0.500f) this->BP_decode<4>();
-		else if (normalize_factor == 0.625f) this->BP_decode<5>();
-		else if (normalize_factor == 0.750f) this->BP_decode<6>();
-		else if (normalize_factor == 0.875f) this->BP_decode<7>();
-		else if (normalize_factor == 1.000f) this->BP_decode<8>();
+		     if (normalize_factor == 0.125f) this->BP_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) this->BP_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) this->BP_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) this->BP_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) this->BP_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) this->BP_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else
 			throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"normalize_factor\" can "
 			                            "only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->BP_decode<8>();
-		else                            this->BP_decode<0>();
+		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		else                            this->BP_decode<0>(frame_id);
 	}
 
 	// prepare for next round by processing extrinsic information
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	for (auto i = 0; i < this->N; i++)
 		this->var_nodes[cur_wave][i] -= Y_N_reorderered[i];
 
 	std::vector<R*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N2 + f * this->N;
 	Reorderer_static<R,mipp::nElReg<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
-
-	cur_wave = (cur_wave +1) % this->n_dec_waves;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_load(const R *Y_N)
+::_load(const R *Y_N, const int frame_id)
 {
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+
 	// memory zones initialization
 	if (this->init_flag)
 	{
@@ -128,35 +128,35 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	this->_load(Y_N);
+	this->_load(Y_N, frame_id);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->BP_decode<1>();
-		else if (normalize_factor == 0.250f) this->BP_decode<2>();
-		else if (normalize_factor == 0.375f) this->BP_decode<3>();
-		else if (normalize_factor == 0.500f) this->BP_decode<4>();
-		else if (normalize_factor == 0.625f) this->BP_decode<5>();
-		else if (normalize_factor == 0.750f) this->BP_decode<6>();
-		else if (normalize_factor == 0.875f) this->BP_decode<7>();
-		else if (normalize_factor == 1.000f) this->BP_decode<8>();
+		     if (normalize_factor == 0.125f) this->BP_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) this->BP_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) this->BP_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) this->BP_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) this->BP_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) this->BP_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else
 			throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"normalize_factor\" can "
 			                            "only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->BP_decode<8>();
-		else                            this->BP_decode<0>();
+		if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
+		else                            this->BP_decode<0>(frame_id);
 	}
 
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	this->_store(V_K);
+	this->_store(V_K, frame_id);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;
@@ -166,8 +166,10 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_store(B *V_K)
+::_store(B *V_K, const int frame_id)
 {
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+
 	// take the hard decision
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto i = 0; i < this->K; i++)
@@ -180,18 +182,18 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_K + f * this->K;
 	Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_K_reorderered.data(), frames, this->K);
 
-	cur_wave = (cur_wave +1) % this->n_dec_waves;
-
 	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (cur_wave == 0) this->init_flag = true;
+	if (cur_wave == this->n_dec_waves -1) this->init_flag = true;
 }
 
 // BP algorithm
 template <typename B, typename R>
 template <int F>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::BP_decode()
+::BP_decode(const int frame_id)
 {
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+
 	auto cur_syndrome_depth = 0;
 
 	for (auto ite = 0; ite < this->n_ite; ite++)
@@ -199,7 +201,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		this->BP_process<F>(this->var_nodes[cur_wave], this->branches[cur_wave]);
 
 		// stop criterion
-		if (this->enable_syndrome && this->check_syndrome())
+		if (this->enable_syndrome && this->check_syndrome(frame_id))
 		{
 			cur_syndrome_depth++;
 			if (cur_syndrome_depth == this->syndrome_depth)
@@ -212,8 +214,9 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::check_syndrome()
+::check_syndrome(const int frame_id)
 {
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 	auto syndrome = mipp::Reg<B>((B)0);
 
 	auto k = 0;

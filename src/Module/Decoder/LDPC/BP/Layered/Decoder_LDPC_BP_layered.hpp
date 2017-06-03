@@ -12,9 +12,6 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_layered : public Decoder_SISO<B,R>
 {
-private:
-	int cur_frame;
-
 protected:
 	const int n_ite;     // number of iterations to perform
 	const int n_C_nodes; // number of check nodes (= N - K)
@@ -48,14 +45,14 @@ protected:
 	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 
 	// hard decoder (load -> decode -> store)
-	void _load       (const R *Y_N);
+	void _load       (const R *Y_N,         const int frame_id);
 	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
-	void _store      (B *V_K) const;
+	void _store      (              B *V_K, const int frame_id) const;
 
 	// BP functions for decoding
-	void BP_decode();
+	void BP_decode(const int frame_id);
 
-	bool check_syndrome();
+	bool check_syndrome(const int frame_id);
 
 	virtual void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches) = 0;
 };

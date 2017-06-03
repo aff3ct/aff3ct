@@ -20,7 +20,6 @@ Decoder_LDPC_BP_layered<B,R>
                           const int n_frames,
                           const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name                               ),
-  cur_frame        (0                                                     ),
   n_ite            (n_ite                                                 ),
   n_C_nodes        ((int)alist_data.get_n_CN()                            ),
   enable_syndrome  (enable_syndrome                                       ),
@@ -52,37 +51,35 @@ void Decoder_LDPC_BP_layered<B,R>
 ::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
-	this->_load(Y_N1);
+	this->_load(Y_N1, frame_id);
 
 	// actual decoding
-	this->BP_decode();
+	this->BP_decode(frame_id);
 
 	// prepare for next round by processing extrinsic information
 	for (auto i = 0; i < this->N; i++)
-		Y_N2[i] = this->var_nodes[cur_frame][i] - Y_N1[i];
+		Y_N2[i] = this->var_nodes[frame_id][i] - Y_N1[i];
 
 	// copy extrinsic information into var_nodes for next TURBO iteration
-	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[cur_frame].begin());
-
-	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
+	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[frame_id].begin());
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_load(const R *Y_N)
+::_load(const R *Y_N, const int frame_id)
 {
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->branches [cur_frame].begin(), this->branches [cur_frame].end(), (R)0);
-		std::fill(this->var_nodes[cur_frame].begin(), this->var_nodes[cur_frame].end(), (R)0);
+		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
+		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
 
-		if (cur_frame == Decoder<B,R>::n_frames -1)
+		if (frame_id == Decoder<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
 
-	for (auto i = 0; i < (int)var_nodes[cur_frame].size(); i++)
-		this->var_nodes[cur_frame][i] += Y_N[i]; // var_nodes contain previous extrinsic information
+	for (auto i = 0; i < (int)var_nodes[frame_id].size(); i++)
+		this->var_nodes[frame_id][i] += Y_N[i]; // var_nodes contain previous extrinsic information
 }
 
 template <typename B, typename R>
@@ -90,22 +87,20 @@ void Decoder_LDPC_BP_layered<B,R>
 ::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	this->_load(Y_N);
+	this->_load(Y_N, frame_id);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BP_decode();
+	this->BP_decode(frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (cur_frame == Decoder<B,R>::n_frames -1)
+	if (frame_id == Decoder<B,R>::n_frames -1)
 		this->init_flag = true;
 
-	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
-
-	this->_store(V_K);
+	this->_store(V_K, frame_id);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;
@@ -115,31 +110,29 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_store(B *V_K) const
+::_store(B *V_K, const int frame_id) const
 {
-	const auto past_frame = (cur_frame -1) < 0 ? Decoder<B,R>::n_frames -1 : cur_frame -1;
-
 	// take the hard decision
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
-		V_K[i] = !(this->var_nodes[past_frame][k] >= 0);
+		V_K[i] = !(this->var_nodes[frame_id][k] >= 0);
 	}
 }
 
 // BP algorithm
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::BP_decode()
+::BP_decode(const int frame_id)
 {
 	auto cur_syndrome_depth = 0;
 
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
-		this->BP_process(this->var_nodes[cur_frame], this->branches[cur_frame]);
+		this->BP_process(this->var_nodes[frame_id], this->branches[frame_id]);
 
 		// stop criterion
-		if (this->enable_syndrome && this->check_syndrome())
+		if (this->enable_syndrome && this->check_syndrome(frame_id))
 		{
 			cur_syndrome_depth++;
 			if (cur_syndrome_depth == this->syndrome_depth)
@@ -152,7 +145,7 @@ void Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 bool Decoder_LDPC_BP_layered<B,R>
-::check_syndrome()
+::check_syndrome(const int frame_id)
 {
 	auto syndrome = false;
 
@@ -164,7 +157,7 @@ bool Decoder_LDPC_BP_layered<B,R>
 		const auto n_VN = (int)this->CN_to_VN[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			const auto value = this->var_nodes[cur_frame][this->CN_to_VN[i][j]] - this->branches[cur_frame][k++];
+			const auto value = this->var_nodes[frame_id][this->CN_to_VN[i][j]] - this->branches[frame_id][k++];
 			const auto tmp_sign  = std::signbit((float)value) ? -1 : 0;
 
 			sign ^= tmp_sign;
