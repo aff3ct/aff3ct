@@ -196,8 +196,8 @@ void Simulation_BFER<B,R,Q>
 				}
 
 				if (this->params.simulation.mpi_rank == 0 &&
-					!this->params.terminal.disabled       &&
-					!this->params.simulation.benchs       &&
+				    !this->params.terminal.disabled       &&
+				    !this->params.simulation.benchs       &&
 					terminal != nullptr)
 				{
 					if (this->params.simulation.debug)
