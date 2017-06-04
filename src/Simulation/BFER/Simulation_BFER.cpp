@@ -24,6 +24,8 @@ Simulation_BFER<B,R,Q>
 ::Simulation_BFER(const parameters& params, Codec<B,Q> &codec)
 : Simulation(),
 
+  stop_terminal(false),
+
   codec(codec),
 
   params(params),
@@ -186,9 +188,11 @@ void Simulation_BFER<B,R,Q>
 				if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
 				    !this->params.simulation.benchs && !this->params.simulation.debug)
 				{
+					stop_terminal = true;
 					cond_terminal.notify_all();
 					// wait the terminal thread to finish
 					term_thread.join();
+					stop_terminal = false;
 				}
 
 				if (this->params.simulation.mpi_rank == 0 &&
@@ -365,7 +369,7 @@ void Simulation_BFER<B,R,Q>
 	{
 		const auto sleep_time = simu->params.terminal.frequency - std::chrono::milliseconds(0);
 
-		while (!simu->monitor_red->fe_limit_achieved() && !simu->monitor_red->is_interrupt())
+		while (!simu->stop_terminal)
 		{
 			std::unique_lock<std::mutex> lock(simu->mutex_terminal);
 			if (simu->cond_terminal.wait_for(lock, sleep_time) == std::cv_status::timeout)

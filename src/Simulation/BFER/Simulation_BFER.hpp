@@ -27,6 +27,7 @@ class Simulation_BFER : public Simulation
 private:
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
+	bool stop_terminal;
 
 protected:
 	tools::Codec<B,Q> &codec;
