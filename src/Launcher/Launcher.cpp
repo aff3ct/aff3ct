@@ -11,6 +11,7 @@
 #include <mpi.h>
 #endif
 
+#include "Tools/date.h"
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -517,6 +518,14 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	p.push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(params.simulation.mpi_comm_freq.count())));
 	p.push_back(std::make_pair("MPI size", std::to_string(params.simulation.mpi_size)));
 #endif
+
+	using namespace date;
+	using namespace std::chrono;
+
+	std::stringstream date;
+	date << system_clock::now();
+
+	p.push_back(std::make_pair("Date (UTC)", date.str()));
 
 	return p;
 }
