@@ -20,6 +20,11 @@ set (LIBRARY_OUTPUT_PATH lib/)
 # Generate the source files list
 file (GLOB_RECURSE source_files src/*)
 
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/git_sha1.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/git_sha1.cpp" @ONLY)
+list(APPEND source_files "${CMAKE_CURRENT_BINARY_DIR}/git_sha1.cpp")
+
 # Filters creation for IDEs (tested on Visual Studio and based on the "source_group" function)
 function(assign_source_group)
     foreach(_source IN ITEMS ${ARGN})
