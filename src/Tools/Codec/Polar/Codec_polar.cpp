@@ -114,7 +114,7 @@ Puncturer<B,Q>* Codec_polar<B,Q>
 
 template <typename B, typename Q>
 Encoder<B>* Codec_polar<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	return Factory_encoder_polar<B>::build(this->params.encoder.type,
 	                                       this->params.code.K,
@@ -126,7 +126,7 @@ Encoder<B>* Codec_polar<B,Q>
 
 template <typename B, typename Q>
 SISO<Q>* Codec_polar<B,Q>
-::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	decoder_siso[tid] = Factory_decoder_polar<B,Q>::build_siso(this->params.decoder.type,
 	                                                           this->params.decoder.implem,
@@ -141,7 +141,7 @@ SISO<Q>* Codec_polar<B,Q>
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_polar<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (decoder_siso[tid] != nullptr)
 	{

@@ -2,6 +2,7 @@
 #include <thread>
 #include <string>
 #include <stdexcept>
+#include <algorithm>
 #include <functional>
 
 #include "Tools/general_utils.h"

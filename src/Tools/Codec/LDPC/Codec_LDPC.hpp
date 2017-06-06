@@ -27,12 +27,16 @@ public:
 	virtual ~Codec_LDPC();
 
 	module::Encoder_LDPC<B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder_SISO<B,Q>* build_siso   (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	module::SISO<Q>*           build_siso   (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
 	                                                                  module::CRC        <B  >* crc = nullptr);
 	module::Decoder     <B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
 	                                                                  module::CRC        <B  >* crc = nullptr);
 
 	void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par);
+
+private:
+	module::Decoder_SISO<B, Q>* _build_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                 module::CRC        <B  >* crc = nullptr);
 };
 }
 }

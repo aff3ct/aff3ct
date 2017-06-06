@@ -9,13 +9,13 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_RA<B,R>
-::build(const std::string               type,
-        const std::string               implem,
-        const int                       K,
-        const int                       N,
-        const module::Interleaver<int> &itl,
-        const int                       n_ite,
-        const int                       n_frames)
+::build(const std::string       type,
+        const std::string       implem,
+        const int               K,
+        const int               N,
+        const Interleaver<int> &itl,
+        const int               n_ite,
+        const int               n_frames)
 {
 	if (type == "RA")
 	{

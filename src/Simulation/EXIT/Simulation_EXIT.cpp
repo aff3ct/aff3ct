@@ -18,7 +18,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 Simulation_EXIT<B,R>
-::Simulation_EXIT(const parameters& params, tools::Codec_SISO<B,R> &codec)
+::Simulation_EXIT(const parameters& params, Codec_SISO<B,R> &codec)
 : Simulation(),
 
   codec (codec),

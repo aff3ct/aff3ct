@@ -19,7 +19,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_std<B,R,Q>
-::Simulation_BFER_std(const parameters& params, tools::Codec<B,Q> &codec)
+::Simulation_BFER_std(const parameters& params, Codec<B,Q> &codec)
 : Simulation_BFER<B,R,Q>(params, codec),
 
   source     (params.simulation.n_threads, nullptr),

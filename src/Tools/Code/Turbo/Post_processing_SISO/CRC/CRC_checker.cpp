@@ -1,10 +1,11 @@
 #include "CRC_checker.hpp"
 
+using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>
 CRC_checker<B,R>
-::CRC_checker(module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
+::CRC_checker(CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
 : Post_processing_SISO<B,R>(),
   start_crc_check_ite   (start_crc_check_ite   ),
   simd_inter_frame_level(simd_inter_frame_level),

@@ -38,7 +38,7 @@ Codec_LDPC<B,Q>
 
 template <typename B, typename Q>
 Encoder_LDPC<B>* Codec_LDPC<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	return Factory_encoder_LDPC<B>::build(this->params.encoder.type,
 	                                      this->params.code.K,
@@ -49,7 +49,7 @@ Encoder_LDPC<B>* Codec_LDPC<B,Q>
 
 template <typename B, typename Q>
 Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
-::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::_build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(this->params.decoder.type,
 	                                                     this->params.decoder.implem,
@@ -68,8 +68,15 @@ Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
 }
 
 template <typename B, typename Q>
+SISO<Q>* Codec_LDPC<B, Q>
+::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+{
+	return this->_build_siso(tid, itl, crc);
+}
+
+template <typename B, typename Q>
 Decoder<B,Q>* Codec_LDPC<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (decoder_siso[tid] != nullptr)
 	{
@@ -79,7 +86,7 @@ Decoder<B,Q>* Codec_LDPC<B,Q>
 	}
 	else
 	{
-		auto decoder = this->build_siso(tid, itl, crc);
+		auto decoder = this->_build_siso(tid, itl, crc);
 		decoder_siso[tid] = nullptr;
 		return decoder;
 	}

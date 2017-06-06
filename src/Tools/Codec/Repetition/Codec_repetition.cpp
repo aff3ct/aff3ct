@@ -21,7 +21,7 @@ Codec_repetition<B,Q>
 
 template <typename B, typename Q>
 Encoder<B>* Codec_repetition<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	return Factory_encoder_repetition<B>::build(this->params.encoder.type,
 	                                            this->params.code.K,
@@ -32,7 +32,7 @@ Encoder<B>* Codec_repetition<B,Q>
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_repetition<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return Factory_decoder_repetition<B,Q>::build(this->params.decoder.type,
 	                                              this->params.decoder.implem,

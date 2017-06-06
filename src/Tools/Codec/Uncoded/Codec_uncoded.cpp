@@ -25,7 +25,7 @@ Codec_uncoded<B,Q>
 
 template <typename B, typename Q>
 Encoder<B>* Codec_uncoded<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	return new Encoder_NO<B>(this->params.code.K,
 	                         this->params.simulation.inter_frame_level);
@@ -33,7 +33,7 @@ Encoder<B>* Codec_uncoded<B,Q>
 
 template <typename B, typename Q>
 SISO<Q>* Codec_uncoded<B,Q>
-::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return new Decoder_NO<B,Q>(this->params.code.K,
 	                           this->params.simulation.inter_frame_level);
@@ -41,7 +41,7 @@ SISO<Q>* Codec_uncoded<B,Q>
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_uncoded<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return new Decoder_NO<B,Q>(this->params.code.K,
 	                           this->params.simulation.inter_frame_level);

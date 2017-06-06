@@ -16,7 +16,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_ite<B,R,Q>
-::Simulation_BFER_ite(const parameters& params, tools::Codec_SISO<B,Q> &codec)
+::Simulation_BFER_ite(const parameters& params, Codec_SISO<B,Q> &codec)
 : Simulation_BFER<B,R,Q>(params, codec),
 
   codec_siso(codec),

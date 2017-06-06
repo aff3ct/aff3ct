@@ -108,7 +108,7 @@ Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
 
 template <typename B, typename Q, typename QD>
 Encoder<B>* Codec_turbo<B,Q,QD>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	if (itl == nullptr)
 		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"itl\" should not be null.");
@@ -166,7 +166,7 @@ SISO<Q>* Codec_turbo<B,Q,QD>
 
 template <typename B, typename Q, typename QD>
 Decoder<B,Q>* Codec_turbo<B,Q,QD>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"itl\" should not be null.");
