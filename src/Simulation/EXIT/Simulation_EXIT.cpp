@@ -1,10 +1,12 @@
+#include <cmath>
 #include <algorithm>
 
+#include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -14,28 +16,28 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
-template <typename B, typename R, typename Q>
-Simulation_EXIT<B,R,Q>
-::Simulation_EXIT(const parameters& params)
+template <typename B, typename R>
+Simulation_EXIT<B,R>
+::Simulation_EXIT(const parameters& params, tools::Codec_SISO<B,R> &codec)
 : Simulation(),
 
+  codec (codec),
   params(params),
-  H_N        (params.code.N + params.code.tail_length                      ),
-  B_K        (params.code.K                                                ),
-  B_N        (params.code.N + params.code.tail_length                      ),
-  X_K1       (params.code.K                                                ),
-  X_N1       (params.code.N + params.code.tail_length                      ),
-  X_K2       (params.code.K                                                ),
-  X_N2       (params.code.N + params.code.tail_length                      ),
-  Y_N        (params.code.N + params.code.tail_length                      ),
-  Y_K        (params.code.K                                                ),
-  La_K1      (params.code.K                                                ),
-  Lch_N1     (params.code.N + params.code.tail_length                      ),
-  La_K2      (params.code.K                                                ),
-  Lch_N2     (params.code.N + params.code.tail_length                      ),
-  Le_K       (params.code.K                                                ),
-  sys        (params.code.K                                                ),
-  par        ((params.code.N - params.code.K) + (params.code.tail_length/2)),
+  H_N   (params.code.N),
+  B_K   (params.code.K),
+  B_N   (params.code.N),
+  X_N1  (params.code.N),
+  X_K   (params.code.K),
+  X_N2  (params.code.N),
+  Y_N   (params.code.N),
+  Y_K   (params.code.K),
+  La_K1 (params.code.K),
+  Lch_N1(params.code.N),
+  La_K2 (params.code.K),
+  Lch_N2(params.code.N),
+  Le_K  (params.code.K),
+  sys   (params.code.K                   +  params.code.tail_length / 2),
+  par   ((params.code.N - params.code.K) - (params.code.tail_length / 2)),
 
   B_buff (0),
   Le_buff(0),
@@ -51,82 +53,78 @@ Simulation_EXIT<B,R,Q>
   sigma    (0.f),
   snr      (0.f),
 
-  source     (nullptr),
-  encoder    (nullptr),
-  modulator  (nullptr),
-  modulator_a(nullptr),
-  channel    (nullptr),
-  channel_a  (nullptr),
-  siso       (nullptr),
-  terminal   (nullptr)
+  source   (nullptr),
+  encoder  (nullptr),
+  modem    (nullptr),
+  modem_a  (nullptr),
+  channel  (nullptr),
+  channel_a(nullptr),
+  siso     (nullptr),
+  terminal (nullptr)
 {
-	if (typeid(R) != typeid(Q))
-		std::clog << bold_yellow("(WW) EXIT simulation does not use fixed-point representation!") << std::endl;
-
 #ifdef ENABLE_MPI
 	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
 	          << bold_yellow("on each MPI processes.") << std::endl;
 #endif
 }
 
-template <typename B, typename R, typename Q>
-Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Simulation_EXIT<B,R>
 ::~Simulation_EXIT()
 {
 	release_objects();
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::build_communication_chain()
 {
 	release_objects();
 
+	const auto N_mod = this->params.code.N_mod;
+	const auto K_mod = Factory_modem<B,R>::get_buffer_size_after_modulation(params.modulator.type,
+	                                                                        params.code.K,
+	                                                                        params.modulator.bits_per_symbol,
+	                                                                        params.modulator.upsample_factor,
+	                                                                        params.modulator.cpm_L);
+
 	// build the objects
-	source      = build_source     (      ); check_errors(source     , "Source<B>"         );
-	encoder     = build_encoder    (      ); check_errors(encoder    , "Encoder<B>"        );
-	modulator   = build_modulator  (      ); check_errors(modulator  , "Modulator<B,R>"    );
-	modulator_a = build_modulator_a(      ); check_errors(modulator_a, "Modulator<B,R>"    );
-
-	const auto N     = params.code.N;
-	const auto tail  = params.code.tail_length;
-	const auto N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, N + tail);
-
-	channel     = build_channel    (N_mod ); check_errors(channel    , "Channel<R>"        );
-	channel_a   = build_channel_a  (N_mod ); check_errors(channel    , "Channel<R>"        );
-	siso        = build_siso       (      ); check_errors(siso       , "SISO<R>"           );
-	terminal    = build_terminal   (      ); check_errors(terminal   , "Terminal_EXIT<B,R>");
+	source    = build_source     (     );
+	encoder   = build_encoder    (     );
+	modem     = build_modem  (     );
+	modem_a   = build_modem_a(     );
+	channel   = build_channel    (N_mod);
+	channel_a = build_channel_a  (K_mod);
+	siso      = build_siso       (     );
+	terminal  = build_terminal   (     );
 
 	if (siso->get_n_frames() > 1)
 		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
 
-	// resize the modulation buffers
-	const auto K     = params.code.K;
-	const auto K_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params, K);
-	if (X_K2  .size() != (unsigned)  K_mod        ) X_K2  .resize(K_mod       );
-	if (X_N2  .size() != (unsigned) (N_mod + tail)) X_N2  .resize(N_mod + tail);
-	if (La_K1 .size() != (unsigned)  K_mod        ) La_K1 .resize(K_mod       );
-	if (Lch_N1.size() != (unsigned) (N_mod + tail)) Lch_N1.resize(N_mod + tail);
-	if (H_N   .size() != (unsigned) (N_mod + tail)) H_N   .resize(N_mod + tail);
+	if (X_K   .size() != (unsigned)K_mod) X_K   .resize(K_mod);
+	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);
+	if (La_K1 .size() != (unsigned)K_mod) La_K1 .resize(K_mod);
+	if (Lch_N1.size() != (unsigned)N_mod) Lch_N1.resize(N_mod);
+	if (H_N   .size() != (unsigned)N_mod) H_N   .resize(N_mod);
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::launch()
 {
 	bool first_loop = true;
 
-	launch_precompute();
+	codec.launch_precompute();
 
 	// for each channel SNR to be simulated	
 	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		code_rate = 1.f;
-		sigma     = std::sqrt((float)params.modulator.upsample_factor) /
-		            std::sqrt(2.f * code_rate * (float)params.modulator.bits_per_symbol * std::pow(10.f, (snr / 10.f)));
+		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.modulator.bits_per_symbol),
+		                      params.modulator.upsample_factor);
 
-		snr_precompute();
+		codec.snr_precompute(sigma);
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		for (sig_a = params.simulation.sig_a_min; sig_a <= params.simulation.sig_a_max; sig_a += params.simulation.sig_a_step)
@@ -134,16 +132,14 @@ void Simulation_EXIT<B,R,Q>
 			I_A = 0.0;
 			I_E = 0.0;
 
-			t_snr = std::chrono::steady_clock::now();
-
 			// allocate and build all the communication chain to generate EXIT chart
 			this->build_communication_chain();
 
 			// if sig_a = 0, La_K2 = 0
 			if (sig_a == 0)
-				std::fill(La_K2.begin(), La_K2.end(), params.channel.domain == "LLR" ? init_LLR<R>() : init_LR<R>());
+				std::fill(La_K2.begin(), La_K2.end(), init_LLR<R>());
 
-			if (!params.terminal.disabled && first_loop && !params.simulation.debug)
+			if (!params.terminal.disabled && first_loop)
 			{
 				terminal->legend(std::cout);
 				first_loop = false;
@@ -157,19 +153,17 @@ void Simulation_EXIT<B,R,Q>
 	}
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::simulation_loop()
 {
 	using namespace std::chrono;
-
-	// simulation loop
 	auto t_simu = steady_clock::now();
 
 	Le_buff.clear();
 	B_buff .clear();
 	La_buff.clear();
-	
+
 	for (cur_trial = 0; cur_trial < n_trials; cur_trial++) 
 	{
 		// generate a random binary value
@@ -178,12 +172,9 @@ void Simulation_EXIT<B,R,Q>
 		// encode
 		encoder->encode(B_K, X_N1);
 
-		// X_K used to generate La_K vector
-		X_K1 = B_K;
-
 		// modulate
-		modulator_a->modulate(X_K1, X_K2);
-		modulator  ->modulate(X_N1, X_N2);
+		modem_a->modulate(B_K,  X_K );
+		modem  ->modulate(X_N1, X_N2);
 
 		//if sig_a = 0, La_K = 0, no noise to add
 		if (sig_a != 0)
@@ -191,30 +182,34 @@ void Simulation_EXIT<B,R,Q>
 			// Rayleigh channel
 			if (params.channel.type.find("RAYLEIGH") != std::string::npos)
 			{
-				channel_a->add_noise(X_K2, La_K1, H_N);
-				modulator_a->demodulate_with_gains(La_K1, H_N, La_K2);
+				channel_a->add_noise            (X_K, La_K1, H_N       );
+				modem_a  ->demodulate_with_gains(     La_K1, H_N, La_K2);
 			}
 			else // additive channel (AWGN, USER, NO)
 			{
-				channel_a  ->add_noise (X_K2,  La_K1);
-				modulator_a->demodulate(La_K1, La_K2);
+				channel_a->add_noise (X_K, La_K1       );
+				modem_a  ->demodulate(     La_K1, La_K2);
 			}
 		}
 
 		// Rayleigh channel
 		if (params.channel.type.find("RAYLEIGH") != std::string::npos)
 		{
-			channel->add_noise(X_N2, Lch_N1, H_N);
-			modulator->demodulate_with_gains(Lch_N1, H_N, Lch_N2);
+			channel->add_noise            (X_N2, Lch_N1, H_N        );
+			modem  ->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
-			channel  ->add_noise (X_N2,   Lch_N1);
-			modulator->demodulate(Lch_N1, Lch_N2);
+			channel->add_noise (X_N2, Lch_N1        );
+			modem  ->demodulate(      Lch_N1, Lch_N2);
 		}
 
 		// extract systematic and parity information
-		extract_sys_par(Lch_N2, La_K2, sys, par);
+		codec.extract_sys_par(Lch_N2, sys, par);
+
+		// add other siso's extrinsic
+		for (auto k = 0; k < this->params.code.K; k++)
+			sys[k] += La_K2[k];
 
 		// decode
 		siso->soft_decode(sys, par, Le_K);
@@ -233,12 +228,12 @@ void Simulation_EXIT<B,R,Q>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = measure_mutual_info_avg  (La_buff, B_buff) / (params.code.K * n_trials);
-	I_E = measure_mutual_info_histo(Le_buff, B_buff, 1000);
+	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.code.K * n_trials);
+	I_E = Simulation_EXIT<B,R>::measure_mutual_info_histo(Le_buff, B_buff);
 }
 
-template <typename B, typename R, typename Q>
-double Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+double Simulation_EXIT<B,R>
 ::measure_mutual_info_avg(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
 	double I_A = 0;
@@ -247,17 +242,18 @@ double Simulation_EXIT<B,R,Q>
 	for (int j = 0; j < size; j++)
 	{
 		symb = -2 * (double)bits[j] +1;
-		I_A += (1 - log2(1 + std::exp(-symb * (double)llrs[j])));
+		I_A += (1 - std::log2(1 + std::exp(-symb * (double)llrs[j])));
 	}
 
 	return(I_A);
 }
 
-template <typename B, typename R, typename Q>
-double Simulation_EXIT<B,R,Q>
-::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits, const int N)
+template <typename B, typename R>
+double Simulation_EXIT<B,R>
+::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
-	const double Inf = 10000000;
+//	const double inf = 10000000;
+	const double inf = std::numeric_limits<double>::infinity();
 
 	int vec_length = (int)bits.size();
 
@@ -268,7 +264,7 @@ double Simulation_EXIT<B,R,Q>
 
 	double tmp;
 	double I_E = 0.0;
-	double bin_width = 0.0f;
+	double bin_width = 0.0;
 	double llr_0_variance = 0.0;
 	double llr_1_variance = 0.0;
 	double llr_0_max, llr_0_min, llr_1_max, llr_1_min;
@@ -285,8 +281,8 @@ double Simulation_EXIT<B,R,Q>
 	else
 	{
 		// determine the min and max value for llrs / 0 and llrs / 1
-		llr_0_max = llr_1_max = -Inf;
-		llr_0_min = llr_1_min = +Inf;
+		llr_0_max = llr_1_max = -inf;
+		llr_0_min = llr_1_min = +inf;
 
 		for (int i = 0; i < vec_length; i++)
 		{
@@ -308,7 +304,7 @@ double Simulation_EXIT<B,R,Q>
 		{
 			for (int i = 0; i < vec_length; i++)
 			{
-				if ((double)llrs[i] != -Inf && (double)llrs[i] != Inf)
+				if ((double)llrs[i] != -inf && (double)llrs[i] != inf)
 				{
 					if ((int)bits[i] == 0)
 						llr_0_mean = llr_0_mean + (double)llrs[i];
@@ -321,7 +317,7 @@ double Simulation_EXIT<B,R,Q>
 
 			for (int i = 0; i < vec_length; i++)
 			{
-				if ((double)llrs[i] != -Inf && (double)llrs[i] != Inf)
+				if ((double)llrs[i] != -inf && (double)llrs[i] != inf)
 				{
 					if ((int)bits[i] == 0)
 						llr_0_variance = llr_0_variance + std::pow(((double)llrs[i] - llr_0_mean), 2);
@@ -359,9 +355,9 @@ double Simulation_EXIT<B,R,Q>
 		std::vector<std::vector<double> > pdf(2, std::vector<double>(bin_count));
 		for (int i = 0; i < vec_length; i++)
 		{
-			if ((double)llrs[i] == -Inf)
+			if ((double)llrs[i] == -inf)
 				histogram[(int)bits[i]][0] += 1;
-			else if ((double)llrs[i] == Inf)
+			else if ((double)llrs[i] == inf)
 				histogram[(int)bits[i]][bin_count - 1] += 1;
 			else
 			{
@@ -395,91 +391,144 @@ double Simulation_EXIT<B,R,Q>
 
 // ---------------------------------------------------------------------------------------------------- virtual methods
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+void Simulation_EXIT<B,R>
 ::release_objects()
 {
-	if (source      != nullptr) { delete source;      source      = nullptr; }
-	if (encoder     != nullptr) { delete encoder;     encoder     = nullptr; }
-	if (modulator   != nullptr) { delete modulator;   modulator   = nullptr; }
-	if (modulator_a != nullptr) { delete modulator_a; modulator_a = nullptr; }
-	if (channel     != nullptr) { delete channel;     channel     = nullptr; }
-	if (channel_a   != nullptr) { delete channel_a;   channel_a   = nullptr; }
-	if (siso        != nullptr) { delete siso;        siso        = nullptr; }
-	if (terminal    != nullptr) { delete terminal;    terminal    = nullptr; }
+	if (source    != nullptr) { delete source;    source    = nullptr; }
+	if (encoder   != nullptr) { delete encoder;   encoder   = nullptr; }
+	if (modem     != nullptr) { delete modem;     modem     = nullptr; }
+	if (modem_a   != nullptr) { delete modem_a;   modem_a   = nullptr; }
+	if (channel   != nullptr) { delete channel;   channel   = nullptr; }
+	if (channel_a != nullptr) { delete channel_a; channel_a = nullptr; }
+	if (siso      != nullptr) { delete siso;      siso      = nullptr; }
+	if (terminal  != nullptr) { delete terminal;  terminal  = nullptr; }
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
-::launch_precompute()
-{
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_EXIT<B,R,Q>
-::snr_precompute()
-{
-}
-
-template <typename B, typename R, typename Q>
-Source<B>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
-	return Factory_source<B>::build(params);
+	return Factory_source<B>::build(this->params.source.type,
+	                                this->params.code.K_info,
+	                                this->params.source.path,
+	                                this->params.simulation.seed);
 }
 
-template <typename B, typename R, typename Q>
-Encoder<B>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Encoder<B>* Simulation_EXIT<B,R>
 ::build_encoder()
 {
-	return Factory_encoder_common<B>::build(params, params.simulation.seed);
+	try
+	{
+		return this->codec.build_encoder();
+	}
+	catch (std::exception const&)
+	{
+		return Factory_encoder_common<B>::build(this->params.encoder.type,
+		                                        this->params.code.K,
+		                                        this->params.code.N_code,
+		                                        this->params.encoder.path,
+		                                        this->params.simulation.seed);
+	}
 }
 
-template <typename B, typename R, typename Q>
-Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
-::build_modulator()
+template <typename B, typename R>
+Modem<B,R,R>* Simulation_EXIT<B,R>
+::build_modem()
 {
-	return Factory_modulator<B,R,R>::build(params, sigma);
+	return Factory_modem<B,R>::build(this->params.modulator.type,
+	                                 this->params.code.N,
+	                                 this->sigma,
+	                                 this->params.demodulator.max,
+	                                 this->params.demodulator.psi,
+	                                 this->params.modulator.bits_per_symbol,
+	                                 this->params.modulator.const_path,
+	                                 this->params.modulator.upsample_factor,
+	                                 this->params.modulator.cpm_L,
+	                                 this->params.modulator.cpm_k,
+	                                 this->params.modulator.cpm_p,
+	                                 this->params.modulator.mapping,
+	                                 this->params.modulator.wave_shape,
+	                                 this->params.demodulator.no_sig2,
+	                                 this->params.demodulator.n_ite);
 }
 
-template <typename B, typename R, typename Q>
-Modulator<B,R,R>* Simulation_EXIT<B,R,Q>
-::build_modulator_a()
+template <typename B, typename R>
+Modem<B,R,R>* Simulation_EXIT<B,R>
+::build_modem_a()
 {
-	return Factory_modulator<B,R,R>::build(params, 2.f / sig_a);
+	return Factory_modem<B,R>::build(this->params.modulator.type,
+	                                 this->params.code.K,
+	                                 2.f / sig_a,
+	                                 this->params.demodulator.max,
+	                                 this->params.demodulator.psi,
+	                                 this->params.modulator.bits_per_symbol,
+	                                 this->params.modulator.const_path,
+	                                 this->params.modulator.upsample_factor,
+	                                 this->params.modulator.cpm_L,
+	                                 this->params.modulator.cpm_k,
+	                                 this->params.modulator.cpm_p,
+	                                 this->params.modulator.mapping,
+	                                 this->params.modulator.wave_shape,
+	                                 this->params.demodulator.no_sig2,
+	                                 this->params.demodulator.n_ite);
 }
 
-template <typename B, typename R, typename Q>
-Channel<R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params, sigma, size, params.simulation.seed);
+	const auto add_users = this->params.modulator.type == "SCMA";
+	return Factory_channel<R>::build(this->params.channel.type,
+	                                 size,
+	                                 this->params.modulator.complex,
+	                                 add_users,
+	                                 this->params.channel.path,
+	                                 params.simulation.seed,
+	                                 this->sigma,
+	                                 this->params.simulation.inter_frame_level);
 }
 
-template <typename B, typename R, typename Q>
-Channel<R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params, 2.f / sig_a, size, params.simulation.seed);
+	const auto add_users = this->params.modulator.type == "SCMA";
+	return Factory_channel<R>::build(this->params.channel.type,
+	                                 size,
+	                                 this->params.modulator.complex,
+	                                 add_users,
+	                                 this->params.channel.path,
+	                                 params.simulation.seed,
+	                                 2.f / sig_a,
+	                                 this->params.simulation.inter_frame_level);
+}
+
+template <typename B, typename R>
+SISO<R>* Simulation_EXIT<B,R>
+::build_siso()
+{
+	return this->codec.build_siso();
 }
 
 // ------------------------------------------------------------------------------------------------- non-virtual method
 
-template <typename B, typename R, typename Q>
-Terminal_EXIT<B,R>* Simulation_EXIT<B,R,Q>
+template <typename B, typename R>
+Terminal_EXIT<B,R>* Simulation_EXIT<B,R>
 ::build_terminal()
 {
-	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, t_snr, cur_trial, n_trials, I_A, I_E);
+	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::Simulation_EXIT<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_EXIT<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_EXIT<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_EXIT<B_64,R_64,Q_64>;
+template class aff3ct::simulation::Simulation_EXIT<B_8,R_8>;
+template class aff3ct::simulation::Simulation_EXIT<B_16,R_16>;
+template class aff3ct::simulation::Simulation_EXIT<B_32,R_32>;
+template class aff3ct::simulation::Simulation_EXIT<B_64,R_64>;
 #else
-template class aff3ct::simulation::Simulation_EXIT<B,R,Q>;
+template class aff3ct::simulation::Simulation_EXIT<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

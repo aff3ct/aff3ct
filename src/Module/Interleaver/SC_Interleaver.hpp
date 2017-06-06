@@ -68,7 +68,7 @@ private:
 	                  sc_core::sc_time& t, 
 	                  mipp::vector<D> &interleaved_vec)
 	{
-		if (interleaver.get_size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
+		if (interleaver.get_size() * interleaver.get_n_frames() != (int)(trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
 		const auto natural_vec = (D*)trans.get_data_ptr();
@@ -134,7 +134,7 @@ private:
 	                  sc_core::sc_time& t, 
 	                  mipp::vector<D> &natural_vec)
 	{
-		if (interleaver.get_size() * interleaver.get_n_frames() != (trans.get_data_length() / sizeof(D)))
+		if (interleaver.get_size() * interleaver.get_n_frames() != (int)(trans.get_data_length() / sizeof(D)))
 			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
 
 		const auto interleaved_vec = (D*)trans.get_data_ptr();
@@ -158,8 +158,9 @@ public:
 	SC_Interleaver_module_deinterleaver<T> *sc_module_deinter;
 
 public:
-	SC_Interleaver(const int size, const int n_frames = 1, const std::string name = "SC_Interleaver")
-	: Interleaver_i<T>(size, n_frames, name), sc_module_inter(nullptr), sc_module_deinter(nullptr) {}
+	SC_Interleaver(const int size, const bool uniform = false, const int n_frames = 1,
+	               const std::string name = "SC_Interleaver")
+	: Interleaver_i<T>(size, uniform, n_frames, name), sc_module_inter(nullptr), sc_module_deinter(nullptr) {}
 
 	virtual ~SC_Interleaver() 
 	{
@@ -169,12 +170,14 @@ public:
 
 	void create_sc_module_interleaver()
 	{
+		if (sc_module_inter != nullptr) { delete sc_module_inter; sc_module_inter = nullptr; }
 		const std::string new_name = this->name + "_inter";
 		this->sc_module_inter = new SC_Interleaver_module_interleaver<T>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_deinterleaver()
 	{
+		if (sc_module_deinter != nullptr) { delete sc_module_deinter; sc_module_deinter = nullptr; }
 		const std::string new_name = this->name + "_deinter";
 		this->sc_module_deinter = new SC_Interleaver_module_deinterleaver<T>(*this, new_name.c_str());
 	}

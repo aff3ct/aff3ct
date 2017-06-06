@@ -1,6 +1,7 @@
 #include <iostream>
 
-#include "Simulation/EXIT/Code/Polar/Simulation_EXIT_polar.hpp"
+#include "Simulation/EXIT/Simulation_EXIT.hpp"
+#include "Tools/Codec/Polar/Codec_polar.hpp"
 
 #include "Launcher_EXIT_polar.hpp"
 
@@ -51,7 +52,7 @@ void Launcher_EXIT_polar<B,R,Q>
 	this->opt_args[{"cde-fb-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
-		 "GA, TV"};
+		 "GA, FILE, TV"};
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", POLAR";
@@ -97,7 +98,8 @@ template <typename B, typename R, typename Q>
 Simulation* Launcher_EXIT_polar<B,R,Q>
 ::build_simu()
 {
-	return new Simulation_EXIT_polar<B,R,Q>(this->params);
+	this->codec = new Codec_polar<B,R>(this->params);
+	return new Simulation_EXIT<B,R>(this->params, *this->codec);
 }
 
 template <typename B, typename R, typename Q>

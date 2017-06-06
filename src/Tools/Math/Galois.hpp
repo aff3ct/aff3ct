@@ -25,6 +25,8 @@ public:
 	void Generate_GF();
 	void Compute_BCH_Generator_Polynomial();
 
+	int get_m() const;
+
 	mipp::vector<int> alpha_to; // log table of GF(2**m)
 	mipp::vector<int> index_of; // antilog table of GF(2**m)
 	mipp::vector<int> p;        // coefficients of a primitive polynomial used to generate GF(2**m)

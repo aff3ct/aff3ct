@@ -3,12 +3,9 @@
 
 #include <string>
 
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo.hpp"
 #include "Module/Decoder/SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Module/CRC/CRC.hpp"
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor.hpp"
-#include "Tools/params.h"
 
 #include "../Factory.hpp"
 
@@ -19,12 +16,15 @@ namespace tools
 template <typename B = int, typename R = float>
 struct Factory_decoder_turbo : public Factory
 {
-	static module::Decoder<B,R>* build(const parameters                 &params,
-	                                   const module::Interleaver<int>   *interleaver,
-	                                         module::SISO<R>            *siso_n,
-	                                         module::SISO<R>            *siso_i,
-	                                         Scaling_factor<R>          *scaling_factor,
-	                                         module::CRC<B>             *crc = nullptr);
+	static module::Decoder_turbo<B,R>* build(const std::string               type,
+	                                         const std::string               implem,
+	                                         const int                       K,
+	                                         const int                       N,
+	                                         const int                       n_ite,
+	                                         const module::Interleaver<int> &itl,
+	                                               module::SISO<R>          &siso_n,
+	                                               module::SISO<R>          &siso_i,
+	                                         const bool                      buffered = true);
 };
 }
 }

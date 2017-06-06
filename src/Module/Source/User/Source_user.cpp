@@ -35,7 +35,7 @@ Source_user<B>
 			for (auto i = 0; i < n_src; i++)
 				for (auto j = 0; j < src_size; j++)
 				{
-					B bit;
+					int bit;
 					file >> bit;
 
 					this->source[i][j] = bit != 0;
@@ -65,7 +65,7 @@ Source_user<B>
 
 template <typename B>
 void Source_user<B>
-::_generate(B *U_K)
+::_generate(B *U_K, const int frame_id)
 {
 	std::copy(this->source[this->src_counter].begin(),
 	          this->source[this->src_counter].end  (),

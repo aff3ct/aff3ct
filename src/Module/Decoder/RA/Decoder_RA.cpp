@@ -9,7 +9,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, Interleaver<int>& interleaver, int max_iter, const int n_frames,
+::Decoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, int max_iter, const int n_frames,
              const std::string name)
 : Decoder<B,R>(K, N, n_frames, 1, name),
   rep_count(N/K),
@@ -46,7 +46,7 @@ Decoder_RA<B, R>
 
 template <typename B, typename R>
 void Decoder_RA<B, R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
@@ -83,7 +83,7 @@ void Decoder_RA<B, R>
 			Tu[i] = check_node(Fw[i - 1] + Y_N[i - 1], Bw[i] + Y_N[i]);
 
 		// Deinterleave
-		interleaver.deinterleave(Tu, Wu, false, 1);
+		interleaver.deinterleave(Tu.data(), Wu.data(), frame_id);
 
 		// U computation
 		R tmp;
@@ -98,7 +98,7 @@ void Decoder_RA<B, R>
 		}
 
 		// Interleaving
-		interleaver.interleave(Wd, Td, false, 1);
+		interleaver.interleave(Wd.data(), Td.data(), frame_id);
 	}
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 

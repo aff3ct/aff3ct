@@ -61,8 +61,8 @@ public:
 
 	virtual ~Decoder_polar_SCL_fast_sys();
 
-	virtual void _hard_decode(const R *Y_N, B *V_N);
-	virtual void _store      (              B *V_N) const;
+	virtual void _hard_decode(const R *Y_N, B *V_N, const int frame_id);
+	virtual void _store      (              B *V_N                    ) const;
 
 protected:
 	inline void recursive_decode(const R *Y_N, const int off_l, const int off_s, const int rev_depth, int &node_id);

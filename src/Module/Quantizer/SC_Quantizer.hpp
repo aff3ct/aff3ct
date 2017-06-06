@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_Quantizer_module::b_transport);
 	}
 
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -68,10 +73,14 @@ public:
 	SC_Quantizer(const int N, const int n_frames = 1, const std::string name = "SC_Quantizer")
 	: Quantizer_i<R,Q>(N, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Quantizer() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } };
+	virtual ~SC_Quantizer()
+	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+	};
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Quantizer_module<R,Q>(*this, this->name.c_str());
 	}
 };

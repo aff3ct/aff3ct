@@ -1,8 +1,9 @@
 #ifndef FACTORY_SOURCE_HPP
 #define FACTORY_SOURCE_HPP
 
+#include <string>
+
 #include "Module/Source/Source.hpp"
-#include "Tools/params.h"
 
 #include "Factory.hpp"
 
@@ -13,7 +14,11 @@ namespace tools
 template <typename B = int>
 struct Factory_source : public Factory
 {
-	static module::Source<B>* build(const parameters &params, const int seed = 0);
+	static module::Source<B>* build(const std::string type,
+	                                const int         K,
+	                                const std::string path     = "",
+	                                const int         seed     = 0,
+	                                const int         n_frames = 1);
 };
 }
 }

@@ -32,6 +32,9 @@ public:
 protected:
 	void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches);
 };
+
+template <typename B = int, typename R = float>
+using Decoder_LDPC_BP_layered_ONMS = Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>;
 }
 }
 

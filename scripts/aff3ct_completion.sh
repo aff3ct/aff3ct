@@ -44,16 +44,17 @@ _aff3ct() {
 	      ${codetype} == "POLAR"      && ${simutype} == "GEN" ]]
 	then
 		opts="$opts --sim-snr-min -m --snr-min-max -M --sim-snr-step -s       \
-		      --sim-snr-type -E --sim-stop-time --sim-threads -t --sim-domain \
+		      --sim-snr-type -E --sim-stop-time --sim-threads -t              \
 		      --sim-prec -p --sim-inter-lvl --cde-info-bits -K --cde-size -N  \
 		      --src-type --src-path --enc-type --enc-path --mod-type --mod-bps\
 		      --mod-ups --mod-cpm-ws --mod-cpm-map --mod-cpm-L --mod-cpm-p    \
-		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max           \
+		      --mod-cpm-k --mod-cpm-std --mod-const-path --dmod-max --dmod-psi\
+		      --dmod-ite                                                      \
 		      --dmod-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type   \
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --term-no --term-freq --sim-seed --sim-mpi-comm --sim-pyber     \
 		      --sim-no-colors --mnt-err-trk --mnt-err-trk-rev                 \
-		      --mnt-err-trk-path"
+		      --mnt-err-trk-path --sim-debug-prec"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -66,7 +67,7 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-benchs -b --sim-debug -d                           \
+		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe            \
 		--sim-debug-limit --snr-sim-trace-path --sim-time-report --cde-coset \
 		-c --mnt-max-fe -e  --term-type "
 	fi
@@ -84,9 +85,10 @@ _aff3ct() {
 	      ${codetype} == "LDPC"       && ${simutype} == "BFERI" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFERI" ]]
 	then
-		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-limit           \
+		opts="$opts --sim-benchs -b --sim-debug -d --sim-debug-fe              \
+		      --sim-debug-limit                                                \
 		      --snr-sim-trace-path --sim-time-report --cde-coset -c --itl-type \
-		      --itl-path --itl-cols --itl-uni --dmod-ite -I --mnt-max-fe -e    \
+		      --itl-path --itl-cols --itl-uni --sim-ite -I --mnt-max-fe -e     \
 		      --term-type"
 	fi
 
@@ -194,13 +196,13 @@ _aff3ct() {
 		--sim-snr-min | -m | --snr-min-max | -M | --sim-snr-min | -m |       \
 		--snr-min-max | -M | --sim-snr-step | -s | --sim-stop-time |         \
 		--sim-threads | -t | --sim-inter-lvl | --cde-info-bits | -K |        \
-		--cde-size | -N |                                                    \
+		--cde-size | -N | --dmod-ite |                                       \
 		--mod-bps | --mod-ups | --mod-cpm-L | --mod-cpm-p | --mod-cpm-k |    \
 		--qnt-dec | --qnt-bits | --qnt-range | --qnt-type |                  \
-		--sim-benchs | -b | --sim-debug-limit |                              \
+		--sim-benchs | -b | --sim-debug-limit | --sim-debug-prec |           \
 		--mnt-max-fe | -e |                                                  \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |   \
-		--dmod-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
+		--sim-ite | --cde-sigma | --dec-snr | --dec-ite |-i | --dec-lists |  \
 		-L | --sim-json-path | --dec-off | --dec-norm | --term-freq |        \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |      \
 		--itl-cols | --dec-synd-depth | --pct-pattern |                      \
@@ -210,7 +212,7 @@ _aff3ct() {
 
 		# awaiting nothing	
 		-v | --version | -h | --help | --dmod-no-sig2 | --term-no |        \
-		--sim-debug | -d | --sim-time-report |                             \
+		--sim-debug | -d | --sim-debug-fe | --sim-time-report |            \
 		--cde-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
 		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev | --itl-uni |       \
 		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )
@@ -293,17 +295,12 @@ _aff3ct() {
 
 		--cde-awgn-fb-path | --dec-gen-path | --sim-pb-path | --itl-path | \
 		--mod-const-path | --src-path | --enc-path | --chn-path |          \
-		--cde-alist-path | --sim-trace-path | --mnt-err-trk-path) 
+		--cde-alist-path | --mnt-err-trk-path) 
 			_filedir
 			;;
 		
 		--src-type)
 			local params="RAND RAND_FAST AZCW USER"
-			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
-			;;
-
-		--sim-domain)
-			local params="LR LLR"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -317,7 +314,8 @@ _aff3ct() {
 			;;
 
 		--chn-type)
-			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH USER ADD_USER"
+			local params="NO AWGN AWGN_FAST AWGN_GSL AWGN_MKL RAYLEIGH RAYLEIGH_FAST RAYLEIGH_GSL RAYLEIGH_MKL \
+			              USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -327,7 +325,7 @@ _aff3ct() {
 			;;
 
 		--crc-type)
-			local params="STD FAST"
+			local params="STD FAST INTER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 		
@@ -343,7 +341,7 @@ _aff3ct() {
 			;;
 
 		--dec-sf)
-			local params="NO LTE LTE_VEC ARRAY"
+			local params="LTE LTE_VEC ARRAY"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -363,12 +361,17 @@ _aff3ct() {
 			;;
 
 		--mod-type)
-			local params="BPSK BPSK_FAST PSK PAM QAM CPM USER"
+			local params="BPSK BPSK_FAST PSK PAM QAM CPM SCMA USER"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
 		--dmod-max)
 			local params="MAX MAXL MAXS MAXSS"
+			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
+			;;
+
+		--dmod-psi)
+			local params="PSI0 PSI1 PSI2 PSI3"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
@@ -388,7 +391,7 @@ _aff3ct() {
 			;;
 
 		--cde-fb-gen-method)
-			local params="GA TV"
+			local params="GA FILE TV"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 

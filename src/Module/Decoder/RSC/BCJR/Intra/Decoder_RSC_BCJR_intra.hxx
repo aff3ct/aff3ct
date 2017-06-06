@@ -118,7 +118,7 @@ void Decoder_RSC_BCJR_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_intra<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );

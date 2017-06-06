@@ -1,4 +1,4 @@
-#include "Tools/Factory/Factory_modulator.hpp"
+#include <stdexcept>
 
 #include "Module/Monitor/Standard/Monitor_std.hpp"
 
@@ -7,30 +7,26 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename R>
-Monitor<B,R>* Factory_monitor<B,R>
-::build(const parameters &params)
+template <typename B>
+Monitor<B>* Factory_monitor<B>
+::build(const std::string type,
+        const int         K,
+        const int         fe,
+        const int         n_frames)
 {
-	Monitor<B,R> *monitor = nullptr;
+	if (type == "STD") return new Monitor_std<B>(K, fe, n_frames);
 
-	// build the monitor
-	monitor = new Monitor_std<B,R>(params.code.K,
-	                               params.code.N + params.code.tail_length,
-	                               params.code.N_mod,
-	                               params.monitor.n_frame_errors,
-	                               params.simulation.inter_frame_level);
-
-	return monitor;
+	throw std::runtime_error("aff3ct::tools::Factory_monitor: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_monitor<B_8, R_8>;
-template struct aff3ct::tools::Factory_monitor<B_16,R_16>;
-template struct aff3ct::tools::Factory_monitor<B_32,R_32>;
-template struct aff3ct::tools::Factory_monitor<B_64,R_64>;
+template struct aff3ct::tools::Factory_monitor<B_8>;
+template struct aff3ct::tools::Factory_monitor<B_16>;
+template struct aff3ct::tools::Factory_monitor<B_32>;
+template struct aff3ct::tools::Factory_monitor<B_64>;
 #else
-template struct aff3ct::tools::Factory_monitor<B,R>;
+template struct aff3ct::tools::Factory_monitor<B>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -10,15 +10,15 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr)
 {
 	this->params.simulation .type             = "BFER";
 	this->params.simulation .benchs           = 0;
 	this->params.simulation .debug            = false;
+	this->params.simulation .debug_fe         = false;
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .debug_precision  = 5;
 	this->params.simulation .time_report      = false;
-	this->params.simulation .trace_path       = "";
 #if !defined(STARPU) && !defined(SYSTEMC)
 	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
@@ -36,6 +36,13 @@ Launcher_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Launcher_BFER<B,R,Q>
+::~Launcher_BFER()
+{
+	if (codec != nullptr) delete codec;
+}
+
+template <typename B, typename R, typename Q>
 void Launcher_BFER<B,R,Q>
 ::build_args()
 {
@@ -48,15 +55,17 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"sim-debug", "d"}] =
 		{"",
 		 "enable debug mode: print array values after each step."};
+#if !defined(STARPU) && !defined(SYSTEMC)
+	this->opt_args[{"sim-debug-fe"}] =
+		{"",
+		 "enable debug mode: print array values after each step (only when frame errors)."};
+#endif
 	this->opt_args[{"sim-debug-prec"}] =
 		{"positive_int",
 		 "set the precision of real elements when displayed in debug mode."};
 	this->opt_args[{"sim-debug-limit"}] =
 		{"positive_int",
 		 "set the max number of elements to display in the debug mode."};
-	this->opt_args[{"sim-trace-path"}] =
-		{"string",
-		 "traces array values in a CSV file."};
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
@@ -83,8 +92,6 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
-
-#if !defined(STARPU) && !defined(SYSTEMC)
 	this->opt_args[{"mnt-err-trk"}] =
 		{"",
 		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
@@ -94,7 +101,6 @@ void Launcher_BFER<B,R,Q>
 	this->opt_args[{"mnt-err-trk-path"}] =
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
-#endif
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
@@ -110,12 +116,16 @@ void Launcher_BFER<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-trace-path"         })) this->params.simulation.trace_path        = this->ar.get_arg    ({"sim-trace-path"     });
-	if(this->ar.exist_arg({"sim-benchs",         "b"})) this->params.simulation.benchs            = this->ar.get_arg_int({"sim-benchs",     "b"});
-	if(this->ar.exist_arg({"sim-snr-type",       "E"})) this->params.simulation.snr_type          = this->ar.get_arg    ({"sim-snr-type",   "E"});
-	if(this->ar.exist_arg({"sim-time-report"        })) this->params.simulation.time_report       = true;
-	if(this->ar.exist_arg({"sim-debug",          "d"})) this->params.simulation.debug             = true;
-	if(this->ar.exist_arg({"sim-debug-limit"        }))
+	if(this->ar.exist_arg({"sim-benchs",     "b"})) this->params.simulation.benchs      = this->ar.get_arg_int({"sim-benchs",   "b"});
+	if(this->ar.exist_arg({"sim-snr-type",   "E"})) this->params.simulation.snr_type    = this->ar.get_arg    ({"sim-snr-type", "E"});
+	if(this->ar.exist_arg({"sim-time-report"    })) this->params.simulation.time_report = true;
+	if(this->ar.exist_arg({"sim-debug",      "d"})) this->params.simulation.debug       = true;
+	if(this->ar.exist_arg({"sim-debug-fe"       }))
+	{
+		this->params.simulation.debug    = true;
+		this->params.simulation.debug_fe = true;
+	}
+	if(this->ar.exist_arg({"sim-debug-limit"    }))
 	{
 		this->params.simulation.debug = true;
 		this->params.simulation.debug_limit = this->ar.get_arg_int({"sim-debug-limit"});
@@ -243,7 +253,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 
 	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
 
-#if !defined(STARPU) && !defined(SYSTEMC)
 	std::string enable_track = (this->params.monitor.err_track_enable) ? "on" : "off";
 	p.push_back(std::make_pair("Bad frames tracking", enable_track));
 
@@ -255,7 +264,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
 		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,chn]");
 		p.push_back(std::make_pair("Bad frames base path", path));
 	}
-#endif
 
 	return p;
 }

@@ -28,8 +28,8 @@ public:
 	virtual ~Decoder_RSC_BCJR_seq_generic_std();
 
 protected:
-	virtual void _soft_decode(const R *sys, const R *par, R *ext);
-	virtual void _soft_decode(const R *Y_N1, R *Y_N2);
+	virtual void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
+	virtual void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par);
 	virtual void compute_alpha   (                          );

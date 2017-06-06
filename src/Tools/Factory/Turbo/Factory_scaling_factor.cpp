@@ -1,48 +1,37 @@
-#include "Tools/params.h"
+#include <stdexcept>
 
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_NO.hpp"
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_seq.hpp"
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_vec.hpp"
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_array.hpp"
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_array_fast.hpp"
-#include "Tools/Code/Turbo/Scaling_factor/Scaling_factor_constant.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_array.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_constant.hpp"
 
 #include "Factory_scaling_factor.hpp"
 
 using namespace aff3ct::tools;
 
-template<typename R>
-Scaling_factor<R>* Factory_scaling_factor<R>
-::build(const parameters &params)
+template<typename B, typename R>
+Scaling_factor<B,R>* Factory_scaling_factor<B,R>
+::build(const std::string         type,
+        const int                 n_ite,
+        const float               cst,
+        const mipp::vector<float> alpha_array)
 {
-	Scaling_factor<R> *scaling_factor = nullptr;
+	     if (type == "CST"    ) return new Scaling_factor_constant<B,R>(n_ite, cst        );
+	else if (type == "LTE_VEC") return new Scaling_factor_vec     <B,R>(n_ite             );
+	else if (type == "LTE"    ) return new Scaling_factor_seq     <B,R>(n_ite             );
+	else if (type == "ARRAY"  ) return new Scaling_factor_array   <B,R>(n_ite, alpha_array);
 
-	if (isdigit(params.decoder.scaling_factor[0]))
-		scaling_factor = new Scaling_factor_constant<R>(params.code.K, params.decoder.n_ite,
-		                                                stof(params.decoder.scaling_factor));
-	else if (params.decoder.scaling_factor.find("LTE_VEC") != std::string::npos)
-		scaling_factor = new Scaling_factor_vec<R>(params.code.K, params.decoder.n_ite);
-	else if (params.decoder.scaling_factor.find("LTE") != std::string::npos)
-		scaling_factor = new Scaling_factor_seq<R>(params.code.K, params.decoder.n_ite);
-	else if (params.decoder.scaling_factor.find("ARRAY") != std::string::npos)
-		if(params.decoder.implem.find("FAST") != std::string::npos)
-			scaling_factor = new Scaling_factor_array_fast<R>(params.code.K, params.decoder.n_ite);
-		else
-			scaling_factor = new Scaling_factor_array<R>(params.code.K, params.decoder.n_ite);
-	else if (params.decoder.scaling_factor.find("NO") != std::string::npos)
-		scaling_factor = new Scaling_factor_NO<R>(params.code.K, params.decoder.n_ite);
-
-	return scaling_factor;
+	throw std::runtime_error("aff3ct::tools::Factory_scaling_factor: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_scaling_factor<Q_8>;
-template struct aff3ct::tools::Factory_scaling_factor<Q_16>;
-template struct aff3ct::tools::Factory_scaling_factor<Q_32>;
-template struct aff3ct::tools::Factory_scaling_factor<Q_64>;
+template struct aff3ct::tools::Factory_scaling_factor<B_8,Q_8>;
+template struct aff3ct::tools::Factory_scaling_factor<B_16,Q_16>;
+template struct aff3ct::tools::Factory_scaling_factor<B_32,Q_32>;
+template struct aff3ct::tools::Factory_scaling_factor<B_64,Q_64>;
 #else
-template struct aff3ct::tools::Factory_scaling_factor<Q>;
+template struct aff3ct::tools::Factory_scaling_factor<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

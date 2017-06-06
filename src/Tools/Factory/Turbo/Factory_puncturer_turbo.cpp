@@ -1,29 +1,26 @@
-#include "Factory_puncturer_turbo.hpp"
+#include <stdexcept>
+
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
+
+#include "Factory_puncturer_turbo.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         K,
+        const int         N,
+        const int         tail_length,
+        const std::string pattern,
+        const bool        buffered,
+        const int         n_frames)
 {
-	Puncturer<B,Q> *puncturer = nullptr;
+	if (type == "TURBO") return new Puncturer_turbo<B,Q>(K, N, tail_length, pattern, buffered, n_frames);
 
-	if (params.code.N + params.code.tail_length != params.code.N_code + params.code.tail_length)
-		puncturer = new Puncturer_turbo<B,Q>(params.code.K,
-		                                     params.code.N,
-		                                     params.code.tail_length,
-		                                     params.puncturer.pattern,
-		                                     params.encoder.buffered,
-		                                     params.simulation.inter_frame_level);
-	else
-		puncturer = new Puncturer_NO<B,Q>(params.code.K,
-		                                  params.code.N + params.code.tail_length,
-		                                  params.simulation.inter_frame_level);
-
-	return puncturer;
+	throw std::runtime_error("aff3ct::tools::Factory_puncturer_turbo: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

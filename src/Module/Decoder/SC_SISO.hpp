@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_SISO_module::b_transport);
 	}
 
+	const mipp::vector<R>& get_Y_N()
+	{
+		return Y_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -69,10 +74,14 @@ public:
 	        const std::string name = "SC_SISO")
 	: SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), sc_module_siso(nullptr) {}
 
-	virtual ~SC_SISO() { if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; } }
+	virtual ~SC_SISO()
+	{
+		if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; }
+	}
 
 	void create_sc_module_siso()
 	{
+		if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; }
 		this->sc_module_siso = new SC_SISO_module<R>(*this, this->name.c_str());
 	}
 };

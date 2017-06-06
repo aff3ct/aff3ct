@@ -1,4 +1,4 @@
-#include <string>
+#include <stdexcept>
 
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
@@ -16,102 +16,39 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const parameters &params, const AList_reader &alist_data, const mipp::vector<B> &info_bits_pos)
+::build(const std::string      type,
+        const std::string      implem,
+        const int              K,
+        const int              N,
+        const int              n_ite,
+        const AList_reader    &H,
+        const mipp::vector<B> &info_bits_pos,
+        const std::string      simd_strategy,
+        const float            factor,
+        const R                offset,
+        const bool             synd,
+        const int              synd_depth,
+        const int              n_frames)
 {
-	Decoder_SISO<B,R> *decoder = nullptr;
-
-	if (params.encoder.systematic)
+	if ((type == "BP" || type == "BP_FLOODING") && simd_strategy.empty())
 	{
-		if ((params.decoder.type == "BP" || params.decoder.type == "BP_FLOODING") && params.decoder.simd_strategy.empty())
-		{
-			if (params.decoder.implem == "ONMS")
-				decoder = new Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>(params.code.K,
-				                                                                     params.code.N,
-				                                                                     params.decoder.n_ite,
-				                                                                     alist_data,
-				                                                                     info_bits_pos,
-				                                                                     params.decoder.normalize_factor,
-				                                                                     (R)params.decoder.offset,
-				                                                                     params.decoder.enable_syndrome,
-				                                                                     params.decoder.syndrome_depth,
-				                                                                     params.simulation.inter_frame_level);
-			else if (params.decoder.implem == "GALA")
-				decoder = new Decoder_LDPC_BP_flooding_Gallager_A<B,R>(params.code.K,
-				                                                       params.code.N,
-				                                                       params.decoder.n_ite,
-				                                                       alist_data,
-				                                                       info_bits_pos,
-				                                                       params.decoder.enable_syndrome,
-				                                                       params.decoder.syndrome_depth,
-				                                                       params.simulation.inter_frame_level);
-			else if (params.decoder.implem == "SPA")
-				decoder = new Decoder_LDPC_BP_flooding_sum_product<B,R>(params.code.K,
-				                                                        params.code.N,
-				                                                        params.decoder.n_ite,
-				                                                        alist_data,
-				                                                        info_bits_pos,
-				                                                        params.decoder.enable_syndrome,
-				                                                        params.decoder.syndrome_depth,
-				                                                        params.simulation.inter_frame_level);
-			else if (params.decoder.implem == "LSPA")
-				decoder = new Decoder_LDPC_BP_flooding_log_sum_product<B,R>(params.code.K,
-				                                                            params.code.N,
-				                                                            params.decoder.n_ite,
-				                                                            alist_data,
-				                                                            info_bits_pos,
-				                                                            params.decoder.enable_syndrome,
-				                                                            params.decoder.syndrome_depth,
-				                                                            params.simulation.inter_frame_level);
-		}
-		else if (params.decoder.type == "BP_LAYERED")
-		{
-			if (params.decoder.implem == "ONMS")
-			{
-				if (params.decoder.simd_strategy.empty())
-					decoder = new Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>(params.code.K,
-					                                                                    params.code.N,
-					                                                                    params.decoder.n_ite,
-					                                                                    alist_data,
-					                                                                    info_bits_pos,
-					                                                                    params.decoder.normalize_factor,
-					                                                                    (R)params.decoder.offset,
-					                                                                    params.decoder.enable_syndrome,
-					                                                                    params.decoder.syndrome_depth,
-					                                                                    params.simulation.inter_frame_level);
-				else if (params.decoder.simd_strategy == "INTER")
-					decoder = new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.code.K,
-					                                                      params.code.N,
-					                                                      params.decoder.n_ite,
-					                                                      alist_data,
-					                                                      info_bits_pos,
-					                                                      params.decoder.normalize_factor,
-					                                                      (R)params.decoder.offset,
-					                                                      params.decoder.enable_syndrome,
-					                                                      params.decoder.syndrome_depth,
-					                                                      params.simulation.inter_frame_level);
-			}
-			else if (params.decoder.implem == "SPA" && params.decoder.simd_strategy.empty())
-				decoder = new Decoder_LDPC_BP_layered_sum_product<B,R>(params.code.K,
-				                                                       params.code.N,
-				                                                       params.decoder.n_ite,
-				                                                       alist_data,
-				                                                       info_bits_pos,
-				                                                       params.decoder.enable_syndrome,
-				                                                       params.decoder.syndrome_depth,
-				                                                       params.simulation.inter_frame_level);
-			else if (params.decoder.implem == "LSPA" && params.decoder.simd_strategy.empty())
-				decoder = new Decoder_LDPC_BP_layered_log_sum_product<B,R>(params.code.K,
-				                                                           params.code.N,
-				                                                           params.decoder.n_ite,
-				                                                           alist_data,
-				                                                           info_bits_pos,
-				                                                           params.decoder.enable_syndrome,
-				                                                           params.decoder.syndrome_depth,
-				                                                           params.simulation.inter_frame_level);
-		}
+		     if (implem == "ONMS") return new Decoder_LDPC_BP_flooding_ONMS     <B,R>(K, N, n_ite, H, info_bits_pos, factor, offset, synd, synd_depth, n_frames);
+		else if (implem == "GALA") return new Decoder_LDPC_BP_flooding_GALA     <B,R>(K, N, n_ite, H, info_bits_pos,                 synd, synd_depth, n_frames);
+		else if (implem == "SPA" ) return new Decoder_LDPC_BP_flooding_SPA      <B,R>(K, N, n_ite, H, info_bits_pos,                 synd, synd_depth, n_frames);
+		else if (implem == "LSPA") return new Decoder_LDPC_BP_flooding_LSPA     <B,R>(K, N, n_ite, H, info_bits_pos,                 synd, synd_depth, n_frames);
+	}
+	else if (type == "BP_LAYERED" && simd_strategy.empty())
+	{
+		     if (implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS      <B,R>(K, N, n_ite, H, info_bits_pos, factor, offset, synd, synd_depth, n_frames);
+		else if (implem == "SPA" ) return new Decoder_LDPC_BP_layered_SPA       <B,R>(K, N, n_ite, H, info_bits_pos,                 synd, synd_depth, n_frames);
+		else if (implem == "LSPA") return new Decoder_LDPC_BP_layered_LSPA      <B,R>(K, N, n_ite, H, info_bits_pos,                 synd, synd_depth, n_frames);
+	}
+	else if (type == "BP_LAYERED" && simd_strategy == "INTER")
+	{
+		     if (implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(K, N, n_ite, H, info_bits_pos, factor, offset, synd, synd_depth, n_frames);
 	}
 
-	return decoder;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_LDPC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

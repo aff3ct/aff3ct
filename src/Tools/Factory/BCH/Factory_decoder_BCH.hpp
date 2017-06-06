@@ -5,7 +5,6 @@
 
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/SISO.hpp"
-#include "Tools/params.h"
 #include "Tools/Math/Galois.hpp"
 
 #include "../Factory.hpp"
@@ -17,7 +16,13 @@ namespace tools
 template <typename B = int, typename R = float>
 struct Factory_decoder_BCH : public Factory
 {
-	static module::Decoder<B,R>* build(const parameters &params, const Galois &GF);
+	static module::Decoder<B,R>* build(const std::string  type,
+	                                   const std::string  implem,
+	                                   const int          K,
+	                                   const int          N,
+	                                   const int          t,
+	                                   const Galois      &GF,
+	                                   const int          n_frames = 1);
 };
 }
 }

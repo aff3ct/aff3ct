@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_Channel_module::b_transport);
 	}
 
+	const mipp::vector<R>& get_Y_N()
+	{
+		return Y_N;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -70,7 +75,6 @@ public:
 
 private:
 	SC_Channel<R> &channel;
-	mipp::vector<R> X_N;
 	mipp::vector<R> Y_N;
 	mipp::vector<R> H_N;
 
@@ -83,6 +87,16 @@ public:
 	  H_N(channel.get_N() * channel.get_n_frames())
 	{
 		s_in.register_b_transport(this, &SC_Channel_module_wg::b_transport);
+	}
+
+	const mipp::vector<R>& get_Y_N()
+	{
+		return Y_N;
+	}
+
+	const mipp::vector<R>& get_H_N()
+	{
+		return H_N;
 	}
 
 private:
@@ -129,11 +143,13 @@ public:
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Channel_module<R>(*this, this->name.c_str());
 	}
 
 	void create_sc_module_wg()
 	{
+		if (sc_module_wg != nullptr) { delete sc_module_wg; sc_module_wg = nullptr; }
 		const std::string new_name = this->name + "_wg";
 		this->sc_module_wg = new SC_Channel_module_wg<R>(*this, new_name.c_str());
 	}

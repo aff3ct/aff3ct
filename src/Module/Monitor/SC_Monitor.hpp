@@ -16,10 +16,10 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B>
 class SC_Monitor;
 
-template <typename B = int, typename R = float>
+template <typename B = int>
 class SC_Monitor_module : public sc_core::sc_module
 {
 public:
@@ -27,12 +27,11 @@ public:
 	tlm_utils::simple_target_socket<SC_Monitor_module> s_in2;
 
 private:
-	SC_Monitor<B,R> &monitor;
+	SC_Monitor<B> &monitor;
 	B *U_K;
 
 public:
-	SC_Monitor_module(SC_Monitor<B,R> &monitor,
-	                  const sc_core::sc_module_name name = "SC_Monitor_module")
+	SC_Monitor_module(SC_Monitor<B> &monitor, const sc_core::sc_module_name name = "SC_Monitor_module")
 	: sc_module(name), s_in1("s_in1"), s_in2("s_in2"),
 	  monitor(monitor),
 	  U_K(nullptr)
@@ -44,7 +43,7 @@ public:
 private:
 	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
-		if (monitor.get_K() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
+		if (monitor.get_size() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
 
 		U_K = (B*)trans.get_data_ptr();
@@ -55,7 +54,7 @@ private:
 		if (U_K == nullptr)
 			throw std::runtime_error("aff3ct::module::Monitor: TLM \"U_K\" pointer can't be NULL.");
 
-		if (monitor.get_K() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
+		if (monitor.get_size() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
 			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
 
 		const auto V_K = (B*)trans.get_data_ptr();
@@ -67,26 +66,30 @@ private:
 	}
 };
 
-template <typename B, typename R>
-class SC_Monitor : public Monitor_i<B,R>
+template <typename B>
+class SC_Monitor : public Monitor_i<B>
 {
 public:
-	SC_Monitor_module<B,R> *sc_module;
+	SC_Monitor_module<B> *sc_module;
 
 public:
-	SC_Monitor(const int K, const int N, const int N_mod, const int n_frames = 1, const std::string name = "SC_Monitor")
-	: Monitor_i<B,R>(K, N, N_mod, n_frames, name), sc_module(nullptr) {}
+	SC_Monitor(const int size, const int n_frames = 1, const std::string name = "SC_Monitor")
+	: Monitor_i<B>(size, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Monitor() {if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }};
+	virtual ~SC_Monitor()
+	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+	};
 
 	void create_sc_module()
 	{
-		this->sc_module = new SC_Monitor_module<B,R>(*this, this->name.c_str());
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+		this->sc_module = new SC_Monitor_module<B>(*this, this->name.c_str());
 	}
 };
 
-template <typename B = int, typename R = float>
-using Monitor = SC_Monitor<B,R>;
+template <typename B = int>
+using Monitor = SC_Monitor<B>;
 }
 }
 #else

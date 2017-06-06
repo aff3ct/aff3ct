@@ -43,6 +43,11 @@ public:
 		s_in2.register_b_transport(this, &SC_Coset_module::b_transport_data);
 	}
 
+	const mipp::vector<D>& get_out_data()
+	{
+		return out_data;
+	}
+
 private:
 	void b_transport_ref(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -90,6 +95,7 @@ public:
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Coset_module<B,D>(*this, this->name.c_str());
 	}
 };

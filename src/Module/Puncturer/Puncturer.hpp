@@ -106,7 +106,8 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_puncture(X_N1 + f * this->N_code,
-			                X_N2 + f * this->N);
+			                X_N2 + f * this->N,
+			                f);
 	}
 
 	/*!
@@ -132,16 +133,17 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_depuncture(Y_N1 + f * this->N,
-			                  Y_N2 + f * this->N_code);
+			                  Y_N2 + f * this->N_code,
+			                  f);
 	}
 
 protected:
-	virtual void _puncture(const B *X_N1, B *X_N2) const
+	virtual void _puncture(const B *X_N1, B *X_N2, const int frame_id) const
 	{
 		throw std::runtime_error("aff3ct::module::Puncturer: \"_puncture\" is unimplemented.");
 	}
 
-	virtual void _depuncture(const Q *Y_N1, Q *Y_N2) const
+	virtual void _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 	{
 		throw std::runtime_error("aff3ct::module::Puncturer: \"_depuncture\" is unimplemented.");
 	}

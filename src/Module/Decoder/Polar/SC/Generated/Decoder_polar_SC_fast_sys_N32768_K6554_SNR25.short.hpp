@@ -2469,7 +2469,7 @@ public:
 		API_polar::template xo <   32>(s,    off_s+    0, off_s+   32,              off_s+    0,    32);
 	}
 
-	void _hard_decode(const R *Y_N, B *V_K)
+	void _hard_decode(const R *Y_N, B *V_K, const int frame_id)
 	{
 		using namespace tools;
 

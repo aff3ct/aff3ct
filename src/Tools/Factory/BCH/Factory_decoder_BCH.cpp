@@ -1,4 +1,4 @@
-#include <string>
+#include <stdexcept>
 
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 
@@ -9,20 +9,20 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_BCH<B,R>
-::build(const parameters &params, const Galois &GF)
+::build(const std::string  type,
+        const std::string  implem,
+        const int          K,
+        const int          N,
+        const int          t,
+        const Galois      &GF,
+        const int          n_frames)
 {
-	Decoder<B,R> *decoder = nullptr;
+	if (type == "ALGEBRAIC")
+	{
+		if (implem == "STD") return new Decoder_BCH<B,R>(K, N, t, GF, n_frames);
+	}
 
-	if (params.decoder.type == "ALGEBRAIC")
-		if (params.decoder.implem == "STD")
-			decoder = new Decoder_BCH<B,R>(params.code.K,
-			                               params.code.N,
-			                               params.code.m,
-			                               params.code.t,
-			                               GF,
-			                               params.simulation.inter_frame_level);
-
-	return decoder;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_BCH: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

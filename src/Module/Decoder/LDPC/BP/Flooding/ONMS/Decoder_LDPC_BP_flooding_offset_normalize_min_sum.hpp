@@ -30,6 +30,9 @@ protected:
 	// BP functions for decoding
 	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
 };
+
+template <typename B = int, typename R = float>
+using Decoder_LDPC_BP_flooding_ONMS = Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>;
 }
 }
 

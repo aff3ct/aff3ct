@@ -22,8 +22,9 @@ private:
 	static starpu_codelet spu_cl_deinterleave;
 
 public:
-	SPU_Interleaver(const int size, const int n_frames = 1, const std::string name = "SPU_Interleaver")
-	: Interleaver_i<T>(size, n_frames, name) {}
+	SPU_Interleaver(const int size, const bool uniform = false, const int n_frames = 1,
+	                const std::string name = "SPU_Interleaver")
+	: Interleaver_i<T>(size, uniform, n_frames, name) {}
 
 	virtual ~SPU_Interleaver() {}
 

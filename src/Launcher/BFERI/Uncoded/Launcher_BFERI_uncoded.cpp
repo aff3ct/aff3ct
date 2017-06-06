@@ -1,6 +1,11 @@
 #include <iostream>
 
-#include "Simulation/BFERI/Code/Uncoded/Simulation_BFERI_uncoded.hpp"
+#if defined(SYSTEMC)
+#include "Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp"
+#else
+#include "Simulation/BFER/Iterative/Threads/Simulation_BFER_ite_threads.hpp"
+#endif
+#include "Tools/Codec/Uncoded/Codec_uncoded.hpp"
 
 #include "Launcher_BFERI_uncoded.hpp"
 
@@ -46,7 +51,12 @@ template <typename B, typename R, typename Q>
 Simulation* Launcher_BFERI_uncoded<B,R,Q>
 ::build_simu()
 {
-	return new Simulation_BFERI_uncoded<B,R,Q>(this->params);
+	this->codec = new Codec_uncoded<B,Q>(this->params);
+#if defined(SYSTEMC)
+	return new SC_Simulation_BFER_ite     <B,R,Q>(this->params, *this->codec);
+#else
+	return new Simulation_BFER_ite_threads<B,R,Q>(this->params, *this->codec);
+#endif
 }
 
 // ==================================================================================== explicit template instantiation 

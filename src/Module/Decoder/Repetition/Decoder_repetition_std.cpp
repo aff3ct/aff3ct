@@ -20,7 +20,7 @@ Decoder_repetition_std<B,R>
 
 template <typename B, typename R>
 void Decoder_repetition_std<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext)
+::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i++)
 	{

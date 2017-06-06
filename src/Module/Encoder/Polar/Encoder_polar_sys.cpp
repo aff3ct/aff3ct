@@ -16,7 +16,7 @@ Encoder_polar_sys<B>
 
 template <typename B>
 void Encoder_polar_sys<B>
-::_encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	this->convert(U_K, X_N);
 

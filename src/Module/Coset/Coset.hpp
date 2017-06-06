@@ -95,11 +95,12 @@ public:
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_apply(ref      + f * this->size,
 			             in_data  + f * this->size,
-			             out_data + f * this->size);
+			             out_data + f * this->size,
+			             f);
 	}
 
 protected:
-	virtual void _apply(const B *ref, const D *in_data, D *out_data)
+	virtual void _apply(const B *ref, const D *in_data, D *out_data, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Coset: \"_apply\" is unimplemented.");
 	}

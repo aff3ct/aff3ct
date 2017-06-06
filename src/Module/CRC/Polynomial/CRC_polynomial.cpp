@@ -15,7 +15,7 @@ CRC_polynomial<B>
   polynomial       (0                                 ),
   polynomial_packed(CRC_polynomial<B>::value(poly_key)),
   poly_size        (0                                 ),
-  buff_crc         (n_frames * K                      )
+  buff_crc         (0                                 )
 {
 	if (poly_key.empty())
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"poly_key\" can't be empty, choose a CRC.");
@@ -44,8 +44,7 @@ CRC_polynomial<B>
 	for (auto i = 0; i < poly_size; i++)
 		polynomial.push_back((polynomial_packed >> ((poly_size -1) -i)) & 1);
 
-	if (K <= this->get_size())
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"K\" has to be greater than \"size\".");
+	buff_crc.resize((this->K + this->get_size()) * this->n_frames);
 }
 
 template <typename B>
@@ -109,9 +108,10 @@ int CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::_build(B *U_K)
+::_build(const B *U_K1, B *U_K2, const int frame_id)
 {
-	this->_generate(U_K, U_K, 0, this->K - this->get_size(), this->K - this->get_size());
+	std::copy(U_K1, U_K1 + this->K, U_K2);
+	this->_generate(U_K1, U_K2, 0, this->K, this->K);
 }
 
 template <typename B>
@@ -136,13 +136,20 @@ void CRC_polynomial<B>
 }
 
 template <typename B>
-bool CRC_polynomial<B>
-::_check(const B *V_K)
+void CRC_polynomial<B>
+::_extract(const B *V_K1, B *V_K2, const int frame_id)
 {
-	this->_generate(V_K, this->buff_crc.data(), 0, this->K - this->get_size(), this->K - this->get_size());
+	std::copy(V_K1, V_K1 + this->K, V_K2);
+}
+
+template <typename B>
+bool CRC_polynomial<B>
+::_check(const B *V_K, const int frame_id)
+{
+	this->_generate(V_K, this->buff_crc.data(), 0, this->K, this->K);
 
 	auto i = 0;
-	auto off = this->K - this->get_size();
+	auto off = this->K;
 	while ((i < this->get_size()) &&
 	       // because the position of the bit in a variable can vary,
 	       // the idea is to test: (this->buff_crc[off +i] == V_K[off +i])
@@ -154,12 +161,12 @@ bool CRC_polynomial<B>
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check_packed(const B *V_K)
+::_check_packed(const B *V_K, const int frame_id)
 {
-	mipp::vector<B> V_K_unpack(this->K);
-	std::copy(V_K, V_K + this->K, V_K_unpack.begin());
-	Bit_packer<B>::unpack(V_K_unpack, this->K);
-	return _check(V_K_unpack.data());
+	mipp::vector<B> V_K_unpack(this->K + this->get_size());
+	std::copy(V_K, V_K + this->K + this->get_size(), V_K_unpack.begin());
+	Bit_packer<B>::unpack(V_K_unpack, this->K + this->get_size());
+	return _check(V_K_unpack.data(), frame_id);
 }
 
 // ==================================================================================== explicit template instantiation 

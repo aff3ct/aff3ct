@@ -1,9 +1,9 @@
 #ifndef FACTORY_ENCODER_COMMON_HPP
 #define FACTORY_ENCODER_COMMON_HPP
 
-#include "Module/Encoder/Encoder.hpp"
+#include <string>
 
-#include "Tools/params.h"
+#include "Module/Encoder/Encoder.hpp"
 
 #include "Factory.hpp"
 
@@ -14,7 +14,12 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_common : public Factory
 {
-	static module::Encoder<B>* build(const parameters &params, const int seed = 0);
+	static module::Encoder<B>* build(const std::string type,
+	                                 const int         K,
+	                                 const int         N,
+	                                 const std::string path     = "",
+	                                 const int         seed     = 0,
+	                                 const int         n_frames = 1);
 };
 }
 }

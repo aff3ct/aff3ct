@@ -40,6 +40,11 @@ public:
 		s_in.register_b_transport(this, &SC_Puncturer_module_puncturer::b_transport);
 	}
 
+	const mipp::vector<B>& get_X_N()
+	{
+		return X_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -82,6 +87,11 @@ public:
 		s_in.register_b_transport(this, &SC_Puncturer_module_depuncturer::b_transport);
 	}
 
+	const mipp::vector<Q>& get_Y_N()
+	{
+		return Y_N2;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -122,12 +132,14 @@ public:
 
 	void create_sc_module_puncturer()
 	{
+		if (sc_module_punct != nullptr) { delete sc_module_punct; sc_module_punct = nullptr; }
 		const std::string new_name = this->name + "_punct";
 		this->sc_module_punct = new SC_Puncturer_module_puncturer<B,Q>(*this, new_name.c_str());
 	}
 
 	void create_sc_module_depuncturer()
 	{
+		if (sc_module_depunct != nullptr) { delete sc_module_depunct; sc_module_depunct = nullptr; }
 		const std::string new_name = this->name + "_depunct";
 		this->sc_module_depunct = new SC_Puncturer_module_depuncturer<B,Q>(*this, new_name.c_str());
 	}

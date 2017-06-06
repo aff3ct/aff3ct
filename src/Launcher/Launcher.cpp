@@ -11,7 +11,9 @@
 #include <mpi.h>
 #endif
 
-#include "Tools/Factory/Factory_modulator.hpp"
+#include "Tools/date.h"
+#include "Tools/general_utils.h"
+#include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher.hpp"
@@ -76,7 +78,8 @@ Launcher<B,R,Q>
 	params.modulator  .complex           = true;
 	params.demodulator.max               = "MAXSS";
 	params.demodulator.no_sig2           = false;
-	params.channel    .domain            = "LLR";
+	params.demodulator.psi               = "PSI0";
+	params.demodulator.n_ite             = 1;
 	params.channel    .type              = "AWGN";
 	params.channel    .path              = "";
 	params.channel    .block_fading      = "NO";
@@ -135,10 +138,6 @@ void Launcher<B,R,Q>
 		{"positive_int",
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
-	opt_args[{"sim-domain"}] =
-		{"string",
-		 "choose the domain in which you want to compute.",
-		 "LR, LLR"};
 #ifdef MULTI_PREC
 	opt_args[{"sim-prec", "p"}] =
 		{"positive_int",
@@ -187,7 +186,7 @@ void Launcher<B,R,Q>
 	opt_args[{"mod-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER"};
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER, SCMA"};
 	opt_args[{"mod-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
@@ -229,14 +228,21 @@ void Launcher<B,R,Q>
 	opt_args[{"dmod-no-sig2"}] =
 		{"",
 		 "turn off the division by sigma square in the demodulation."};
+	opt_args[{"dmod-psi"}] =
+		{"string",
+		 "select the type of the psi function to use in the SCMA demodulation.",
+		 "PSI0, PSI1, PSI2, PSI3"};
+	opt_args[{"dmod-ite"}] =
+		{"positive int",
+		 "select the number of iteration in the demodulator."};
 
 	// ------------------------------------------------------------------------------------------------------- channel
-	std::string chan_avail = "NO, USER, ADD_USER, AWGN, AWGN_FAST, RAYLEIGH";
+	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
 #ifdef CHANNEL_GSL
-	chan_avail += ", AWGN_GSL";
+	chan_avail += ", AWGN_GSL, RAYLEIGH_GSL";
 #endif 
 #ifdef CHANNEL_MKL
-	chan_avail += ", AWGN_MKL";
+	chan_avail += ", AWGN_MKL, RAYLEIGH_MKL";
 #endif
 	opt_args[{"chn-type"}] =
 		{"string",
@@ -306,13 +312,12 @@ void Launcher<B,R,Q>
 
 	params.simulation.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
-	if(ar.exist_arg({"sim-type"           })) params.simulation.type              = ar.get_arg      ({"sim-type"           });
-	if(ar.exist_arg({"sim-pyber"          })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"          });
-	if(ar.exist_arg({"sim-snr-step", "s"  })) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"  });
-	if(ar.exist_arg({"sim-domain"         })) params.channel.domain               = ar.get_arg      ({"sim-domain"         });
-	if(ar.exist_arg({"sim-inter-lvl"      })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"      });
-	if(ar.exist_arg({"sim-stop-time"      })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"      }));
-	if(ar.exist_arg({"sim-seed"           })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"           });
+	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
+	if(ar.exist_arg({"sim-pyber"        })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"        });
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
+	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
+	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
 
 	params.interleaver.seed = params.simulation.seed;
 
@@ -346,6 +351,7 @@ void Launcher<B,R,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
+	params.code.K_info = ar.get_arg_int({"cde-info-bits", "K"}); // required
 	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
 	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
@@ -397,10 +403,15 @@ void Launcher<B,R,Q>
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
 		params.modulator.bits_per_symbol = 1;
+	// force the number of bits per symbol to 3 when SCMA mod
+	if (params.modulator.type == "SCMA")
+		params.modulator.bits_per_symbol = 3;
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
-	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg({"dmod-max"});
+	if(ar.exist_arg({"dmod-ite"    })) params.demodulator.n_ite   = ar.get_arg_int({"dmod-ite"});
+	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg    ({"dmod-max"});
+	if(ar.exist_arg({"dmod-psi"    })) params.demodulator.psi     = ar.get_arg    ({"dmod-psi"});
 
 	// ------------------------------------------------------------------------------------------------------- channel
 	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
@@ -436,12 +447,17 @@ int Launcher<B,R,Q>
 	{
 		this->store_args();
 
-		params.code.N_mod = Factory_modulator<B,R,Q>::get_buffer_size_after_modulation(params,
-		                                                                               params.code.N +
-		                                                                               params.code.tail_length);
-		params.code.N_fil = Factory_modulator<B,R,Q>::get_buffer_size_after_filtering (params,
-		                                                                               params.code.N +
-		                                                                               params.code.tail_length);
+		params.code.K_info -= params.crc.size;
+		params.code.N_mod   = Factory_modem<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
+		                                                                             params.code.N,
+		                                                                             params.modulator.bits_per_symbol,
+		                                                                             params.modulator.upsample_factor,
+		                                                                             params.modulator.cpm_L);
+		params.code.N_fil   = Factory_modem<B,R,Q>::get_buffer_size_after_filtering (params.modulator.type,
+		                                                                             params.code.N,
+		                                                                             params.modulator.bits_per_symbol,
+		                                                                             params.modulator.cpm_L,
+		                                                                             params.modulator.cpm_p);
 
 		display_help = false;
 
@@ -504,6 +520,15 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	p.push_back(std::make_pair("MPI size", std::to_string(params.simulation.mpi_size)));
 #endif
 
+	using namespace date;
+	using namespace std::chrono;
+
+	std::stringstream date;
+	date << system_clock::now();
+
+	auto split_date = string_split(date.str(), '.');
+	p.push_back(std::make_pair("Date (UTC)", split_date[0]));
+
 	return p;
 }
 
@@ -513,7 +538,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	std::string N = std::to_string(params.code.N);
+	std::string N = std::to_string(params.code.N - params.code.tail_length);
 	if (params.code.tail_length > 0)
 		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
@@ -523,9 +548,13 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	else
 		K << params.code.K;
 
-	p.push_back(std::make_pair("Type",              params.code.type));
-	p.push_back(std::make_pair("Info. bits (K)",    K.str()         ));
-	p.push_back(std::make_pair("Codeword size (N)", N               ));
+	auto real_K = (float)params.code.K + (this->params.crc.inc_code_rate ? (float)params.crc.size : 0.f);
+	float code_rate = real_K / (float)params.code.N;
+
+	p.push_back(std::make_pair("Type",              params.code.type         ));
+	p.push_back(std::make_pair("Info. bits (K)",    K.str()                  ));
+	p.push_back(std::make_pair("Codeword size (N)", N                        ));
+	p.push_back(std::make_pair("Code rate (R)",     std::to_string(code_rate)));
 
 	return p;
 }
@@ -608,8 +637,7 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 {
 	std::vector<std::pair<std::string,std::string>> p;
 
-	p.push_back(std::make_pair("Type",   params.channel.type  ));
-	p.push_back(std::make_pair("Domain", params.channel.domain));
+	p.push_back(std::make_pair("Type", params.channel.type));
 
 	if (params.channel.type == "USER")
 		p.push_back(std::make_pair("Path", params.channel.path));
@@ -627,12 +655,20 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	std::vector<std::pair<std::string,std::string>> p;
 
 	std::string demod_sig2 = (params.demodulator.no_sig2) ? "off" : "on";
-	std::string demod_max  = (params.modulator.type == "BPSK") ||
-	                         (params.modulator.type == "BPSK_FAST") ?
+	std::string demod_max  = (params.modulator.type == "BPSK"     ) ||
+	                         (params.modulator.type == "BPSK_FAST") ||
+	                         (params.modulator.type == "SCMA"     ) ?
 	                         "unused" : params.demodulator.max;
+	std::string demod_ite  = std::to_string(params.demodulator.n_ite);
+	std::string demod_psi  = params.demodulator.psi;
 
 	p.push_back(std::make_pair("Sigma square", demod_sig2));
 	p.push_back(std::make_pair("Max type",     demod_max ));
+	if (params.modulator.type == "SCMA")
+	{
+		p.push_back(std::make_pair("Number of iterations", demod_ite));
+		p.push_back(std::make_pair("Psi function",         demod_psi));
+	}
 
 	return p;
 }

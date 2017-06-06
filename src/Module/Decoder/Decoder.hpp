@@ -143,11 +143,13 @@ public:
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
 			this->_hard_decode(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level);
+			                   V_K + w * this->K * this->simd_inter_frame_level,
+			                   w * simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
 			this->_hard_decode(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level);
+			                   V_K + w * this->K * this->simd_inter_frame_level,
+			                   w * simd_inter_frame_level);
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -155,7 +157,7 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_hard_decode(this->Y_N.data(), this->V_K.data());
+			this->_hard_decode(this->Y_N.data(), this->V_K.data(), w * simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
 			std::copy(this->V_K.begin(),
@@ -195,7 +197,7 @@ public:
 	}
 
 protected:
-	virtual void _hard_decode(const R *Y_N, B *V_K)
+	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Decoder: \"_hard_decode\" is unimplemented.");
 	}

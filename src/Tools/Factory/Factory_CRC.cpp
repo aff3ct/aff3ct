@@ -1,12 +1,9 @@
-#include <string>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <stdexcept>
 
 #include "Module/CRC/NO/CRC_NO.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
-#include "Module/CRC/Polynomial/CRC_polynomial_double.hpp"
 
 #include "Factory_CRC.hpp"
 
@@ -15,24 +12,18 @@ using namespace aff3ct::tools;
 
 template <typename B>
 CRC<B>* Factory_CRC<B>
-::build(const parameters &params)
+::build(const std::string type,
+        const int         K,
+        const int         size,
+        const std::string poly,
+        const int         n_frames)
 {
-	CRC<B> *crc = nullptr;
+	     if (type == "STD"  ) return new CRC_polynomial      <B>(K, poly, size, n_frames);
+	else if (type == "FAST" ) return new CRC_polynomial_fast <B>(K, poly, size, n_frames);
+	else if (type == "INTER") return new CRC_polynomial_inter<B>(K, poly, size, n_frames);
+	else if (type == "NO"   ) return new CRC_NO              <B>(K,             n_frames);
 
-	// build the crc
-	if (!params.crc.poly.empty() && params.decoder.simd_strategy == "INTER")
-		crc = new CRC_polynomial_inter<B>(params.code.K, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
-	else if (!params.crc.poly.empty())
-	{
-		if (params.crc.type == "FAST")
-			crc = new CRC_polynomial_fast<B>(params.code.K, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
-		else
-			crc = new CRC_polynomial<B>(params.code.K, params.crc.poly, params.crc.size, params.simulation.inter_frame_level);
-	}
-	else
-		crc = new CRC_NO<B>(params.code.K, params.simulation.inter_frame_level);
-
-	return crc;
+	throw std::runtime_error("aff3ct::tools::Factory_CRC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

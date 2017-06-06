@@ -64,7 +64,7 @@ void Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::_encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	for (unsigned i = 0; i < G.size(); i++)
 	{

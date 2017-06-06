@@ -16,7 +16,7 @@ Puncturer_turbo<B,Q>
                   const bool buff_enc,
                   const int n_frames,
                   const std::string name)
-: Puncturer<B,Q>(K, N + tail_bits, K * 3 + tail_bits, n_frames, name),
+: Puncturer<B,Q>(K, N, K * 3 + tail_bits, n_frames, name),
   pattern_bits(3), buff_enc(buff_enc), tail_bits(tail_bits)
 {
 	if (tail_bits < 0)
@@ -68,7 +68,7 @@ Puncturer_turbo<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
-::_puncture(const B *X_N1, B *X_N2) const
+::_puncture(const B *X_N1, B *X_N2, const int frame_id) const
 {
 	const auto period = pattern_bits[0].size();
 
@@ -105,7 +105,7 @@ void Puncturer_turbo<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
-::_depuncture(const Q *Y_N1, Q *Y_N2) const
+::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 {
 	const auto period = pattern_bits[0].size();
 

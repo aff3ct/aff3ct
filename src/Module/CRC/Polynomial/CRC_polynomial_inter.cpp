@@ -11,29 +11,29 @@ CRC_polynomial_inter<B>
 ::CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
 : CRC_polynomial<B>(K, poly_key, size, n_frames, name)
 {
-	if (mipp::nElReg<B>() != n_frames)
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
-		                            "\"mipp::nElReg<B>()\".");
+	this->buff_crc.resize((this->K + this->get_size()) * mipp::nElReg<B>());
 }
 
 template <typename B>
 bool CRC_polynomial_inter<B>
 ::check(const B *V_K, const int n_frames)
 {
-	if (n_frames != -1 && n_frames != this->n_frames)
+	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
+
+	if (real_n_frames != mipp::nElReg<B>())
 		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
-		                            "\"this->n_frames\".");
+		                            "\"mipp::nElReg<B>()\".");
 
 	this->_generate_INTER(V_K, this->buff_crc.data(),
 	                      0, 
-	                      int(this->buff_crc.size() - (this->n_frames * this->get_size())),
-	                      int(this->n_frames * (this->K - this->get_size())));
+	                      this->K * real_n_frames,
+	                      this->K * real_n_frames,
+	                      real_n_frames);
 
 	auto i = 0;
-	const auto off1 = this->buff_crc.size() - (this->n_frames * this->get_size());
-	const auto off2 = this->K               - (this->n_frames * this->get_size());
-	const auto total_crc_size = this->n_frames * this->get_size();
-	while ((i < total_crc_size) && (this->buff_crc[off1 +i] == V_K[off2 +i]))
+	const auto off = this->K * real_n_frames;
+	const auto total_crc_size = real_n_frames * this->get_size();
+	while ((i < total_crc_size) && (this->buff_crc[off +i] == V_K[off +i]))
 		i++;
 
 	return (i == total_crc_size);
@@ -45,30 +45,31 @@ void CRC_polynomial_inter<B>
                         B *U_out,
                   const int off_in, 
                   const int off_out, 
-                  const int loop_size)
+                  const int loop_size,
+                  const int n_frames)
 {
 	std::copy(U_in + off_in, U_in + off_in + loop_size, this->buff_crc.begin());
-	std::fill(this->buff_crc.end() - (this->n_frames * this->get_size()), this->buff_crc.end(), (B)0);
+	std::fill(this->buff_crc.end() - (n_frames * this->get_size()), this->buff_crc.end(), (B)0);
 
 	const auto r_zero = mipp::set0<B>();
 	const auto crc_size = this->get_size();
-	for (auto i = 0; i < loop_size; i += this->n_frames)
+	for (auto i = 0; i < loop_size; i += n_frames)
 	{
 		auto r_buff_crc = mipp::load <B>(&this->buff_crc[i]);
 		auto r_mask     = mipp::cmpeq<B>(r_buff_crc, r_zero);
 
 		for (auto j = 0; j <= crc_size; j++)
 		{
-			r_buff_crc = mipp::load  <B>(&this->buff_crc[i + this->n_frames * j]);
-			auto r_sav = mipp::andb  <B>(r_mask, r_buff_crc);
-			r_buff_crc = mipp::xorb  <B>(r_buff_crc, mipp::set1<B>(this->polynomial[j]));
-			r_buff_crc = mipp::andnb <B>(r_mask, r_buff_crc);
-			r_buff_crc = mipp::orb   <B>(r_sav, r_buff_crc);
-			mipp::store<B>(&this->buff_crc[i + this->n_frames * j], r_buff_crc);
+			r_buff_crc = mipp::load <B>(&this->buff_crc[i + n_frames * j]);
+			auto r_sav = mipp::andb <B>(r_mask, r_buff_crc);
+			r_buff_crc = mipp::xorb <B>(r_buff_crc, mipp::set1<B>(this->polynomial[j]));
+			r_buff_crc = mipp::andnb<B>(r_mask, r_buff_crc);
+			r_buff_crc = mipp::orb  <B>(r_sav, r_buff_crc);
+			mipp::store<B>(&this->buff_crc[i + n_frames * j], r_buff_crc);
 		}
 	}
 
-	std::copy(this->buff_crc.end() - this->n_frames * this->get_size(), this->buff_crc.end(), U_out + off_out);
+	std::copy(this->buff_crc.end() - n_frames * this->get_size(), this->buff_crc.end(), U_out + off_out);
 }
 
 // ==================================================================================== explicit template instantiation 

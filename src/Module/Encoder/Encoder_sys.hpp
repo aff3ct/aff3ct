@@ -72,11 +72,12 @@ public:
 	{
 		for (auto f = 0; f < this->n_frames; f++)
 			this->_encode_sys(U_K + f *            this->K,
-			                  par + f * (this->N - this->K));
+			                  par + f * (this->N - this->K),
+			                  f);
 	}
 
 protected:
-	virtual void _encode_sys(const B *U_K, B *par)
+	virtual void _encode_sys(const B *U_K, B *par, const int frame_id)
 	{
 		throw std::runtime_error("aff3ct::module::Encoder_sys: \"_encode_sys\" is unimplemented.");
 	}

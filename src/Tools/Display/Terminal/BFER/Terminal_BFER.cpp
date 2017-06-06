@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <stdexcept>
 
 #include "Tools/Display/bash_tools.h"
 
@@ -9,24 +10,71 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename R>
-Terminal_BFER<B,R>
-::Terminal_BFER(const R& snr_s,
-                const R& snr_b,
-                const Monitor<B,R> &monitor,
-                const std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> &t_snr,
+template <typename B>
+Terminal_BFER<B>
+::Terminal_BFER(const int K,
+                const int N,
+                const Monitor<B> &monitor,
                 const std::chrono::nanoseconds *d_decod_total)
-: snr_s          (snr_s        ),
-  snr_b          (snr_b        ),
-  monitor        (monitor      ),
-  t_snr          (t_snr        ),
-  d_decod_total  (d_decod_total),
-  real_time_state(0            )
+: Terminal       (                                ),
+  K              (K                               ),
+  N              (N                               ),
+  monitor        (monitor                         ),
+  esn0           (0.f                             ),
+  ebn0           (0.f                             ),
+  is_esn0        (false                           ),
+  is_ebn0        (false                           ),
+  t_snr          (std::chrono::steady_clock::now()),
+  d_decod_total  (d_decod_total                   ),
+  real_time_state(0                               )
 {
+	if (K <= 0)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be greater than 0.");
+	if (N <= 0)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"N\" has to be greater than 0.");
+	if (K > N)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be smaller than \"N\".");
 }
 
-template <typename B, typename R>
-std::string Terminal_BFER<B,R>
+template <typename B>
+Terminal_BFER<B>
+::Terminal_BFER(const int K,
+                const Monitor<B> &monitor,
+                const std::chrono::nanoseconds *d_decod_total)
+: Terminal       (                                ),
+  K              (K                               ),
+  N              (K                               ),
+  monitor        (monitor                         ),
+  esn0           (0.f                             ),
+  ebn0           (0.f                             ),
+  is_esn0        (false                           ),
+  is_ebn0        (false                           ),
+  t_snr          (std::chrono::steady_clock::now()),
+  d_decod_total  (d_decod_total                   ),
+  real_time_state(0                               )
+{
+	if (K <= 0)
+		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be greater than 0.");
+}
+
+template <typename B>
+void Terminal_BFER<B>
+::set_esn0(const float esn0)
+{
+	this->is_esn0 = true;
+	this->esn0    = esn0;
+}
+
+template <typename B>
+void Terminal_BFER<B>
+::set_ebn0(const float ebn0)
+{
+	this->is_ebn0 = true;
+	this->ebn0    = ebn0;
+}
+
+template <typename B>
+std::string Terminal_BFER<B>
 ::get_time_format(float secondes)
 {
 	auto ss = (int)secondes % 60;
@@ -45,12 +93,14 @@ std::string Terminal_BFER<B,R>
 	return time_format2;
 }
 
-template <typename B, typename R>
-void Terminal_BFER<B,R>
+template <typename B>
+void Terminal_BFER<B>
 ::legend(std::ostream &stream)
 {
+	const auto dec_perf = this->d_decod_total != nullptr;
+
 #ifdef _WIN32
-	if (this->d_decod_total == nullptr)
+	if (!dec_perf)
 	{
 		stream << "# " << bold("---------------------------------------------------------------------------||---------------------") << std::endl;
 		stream << "# " << bold("         Bit Error Rate (BER) and Frame Error Rate (FER) depending         ||  Global throughput  ") << std::endl;
@@ -73,7 +123,7 @@ void Terminal_BFER<B,R>
 		stream << "# " << bold("-------|-------|-----------|-----------|-----------|-----------|-----------||----------|----------|-----------||----------|----------") << std::endl;
 	}
 #else
-	if (this->d_decod_total == nullptr)
+	if (!dec_perf)
 	{
 		stream << "# " << bold("----------------------------------------------------------------------||---------------------") << std::endl;
 		stream << "# " << bold("      Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||  Global throughput  ") << std::endl;
@@ -98,24 +148,15 @@ void Terminal_BFER<B,R>
 #endif
 }
 
-template <typename B, typename R>
-void Terminal_BFER<B,R>
+template <typename B>
+void Terminal_BFER<B>
 ::_report(std::ostream &stream)
 {
 	using namespace std::chrono;
 	using namespace std;
 
-	auto ber = 0.f, fer = 0.f;
-	if (monitor.get_n_be() != 0 )
-	{
-		ber = (float)monitor.get_ber();
-		fer = (float)monitor.get_fer();
-	}
-	else
-	{
-		ber = (1.f) / ((float)monitor.get_n_analyzed_fra()) / monitor.get_K();
-		fer = (1.f) / ((float)monitor.get_n_analyzed_fra());
-	}
+	auto ber = monitor.get_ber();
+	auto fer = monitor.get_fer();
 	auto fra = monitor.get_n_analyzed_fra();
 	auto be  = monitor.get_n_be();
 	auto fe  = monitor.get_n_fe();
@@ -128,24 +169,36 @@ void Terminal_BFER<B,R>
 		auto decod_time_ms = (float)d_decod_total->count() * 0.000001f;
 		auto total_time = d_decod_total->count();
 
-		dec_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_fra()) /
+		dec_cthr = ((float)this->N * (float)monitor.get_n_analyzed_fra()) /
 		           (total_time * 0.000000001f); // = bps
 		dec_cthr /= 1000.f; // = kbps
 		dec_cthr /= 1000.f; // = mbps
 
-		dec_ithr = dec_cthr * ((float)monitor.get_K() / (float)monitor.get_N());
+		dec_ithr = dec_cthr * ((float)this->K / (float)this->N);
 
 		lat = decod_time_ms * 1000.f;
 		lat = (lat / (float) monitor.get_n_analyzed_fra()) * monitor.get_n_frames();
 	}
 
 	auto simu_time = (float)duration_cast<nanoseconds>(steady_clock::now() - t_snr).count() * 0.000000001f;
-	auto simu_cthr = ((float)monitor.get_N() * (float)monitor.get_n_analyzed_fra()) /
+	auto simu_cthr = ((float)this->N * (float)monitor.get_n_analyzed_fra()) /
 		              simu_time ; // = bps
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
-	if (Monitor<B,R>::is_interrupt()) stream << "\r";
+	if (Monitor<B>::is_interrupt()) stream << "\r";
+
+	std::stringstream esn0_str;
+	if (!is_esn0)
+		esn0_str << "   -  ";
+	else
+		esn0_str << setprecision(2) << fixed << setw(6) << esn0;
+
+	std::stringstream ebn0_str;
+	if (!is_ebn0)
+		ebn0_str << "  -  ";
+	else
+		ebn0_str << setprecision(2) << fixed << setw(5) << ebn0;
 
 #ifdef _WIN32
 	stringstream str_ber, str_fer;
@@ -156,8 +209,8 @@ void Terminal_BFER<B,R>
 	unsigned long long l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" | ");
-	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                           snr_b << bold(" | ");
+	stream <<                                                                                                     esn0_str.str()  << bold(" | ");
+	stream <<                                                                                                     ebn0_str.str()  << bold(" | ");
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << bold(" | ");
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << bold(" | ");
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << bold(" | ");
@@ -179,8 +232,8 @@ void Terminal_BFER<B,R>
 	unsigned long long l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream << setprecision(                 2) <<                            fixed  << setw(6) <<                           snr_s << bold(" | ");
-	stream << setprecision(                 2) <<                            fixed  << setw(5) <<                           snr_b << bold(" | ");
+	stream <<                                                                                                     esn0_str.str()  << bold(" | ");
+	stream <<                                                                                                     ebn0_str.str()  << bold(" | ");
 	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << bold(" | ");
 	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << bold(" | ");
 	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << bold(" | ");
@@ -196,8 +249,8 @@ void Terminal_BFER<B,R>
 #endif
 }
 
-template <typename B, typename R>
-void Terminal_BFER<B,R>
+template <typename B>
+void Terminal_BFER<B>
 ::temp_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -225,8 +278,8 @@ void Terminal_BFER<B,R>
 	stream.flush();
 }
 
-template <typename B, typename R>
-void Terminal_BFER<B,R>
+template <typename B>
+void Terminal_BFER<B>
 ::final_report(std::ostream &stream)
 {
 	using namespace std::chrono;
@@ -238,18 +291,20 @@ void Terminal_BFER<B,R>
 
 	stream << bold(" | ") << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
 
-	if (Monitor<B,R>::is_interrupt()) stream << " x" << std::endl;
+	if (Monitor<B>::is_interrupt()) stream << " x" << std::endl;
 	else                            stream << "  " << std::endl;
+
+	t_snr = std::chrono::steady_clock::now();
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::tools::Terminal_BFER<B_8,R_8>;
-template class aff3ct::tools::Terminal_BFER<B_16,R_16>;
-template class aff3ct::tools::Terminal_BFER<B_32,R_32>;
-template class aff3ct::tools::Terminal_BFER<B_64,R_64>;
+template class aff3ct::tools::Terminal_BFER<B_8>;
+template class aff3ct::tools::Terminal_BFER<B_16>;
+template class aff3ct::tools::Terminal_BFER<B_32>;
+template class aff3ct::tools::Terminal_BFER<B_64>;
 #else
-template class aff3ct::tools::Terminal_BFER<B,R>;
+template class aff3ct::tools::Terminal_BFER<B>;
 #endif
 // ==================================================================================== explicit template instantiation

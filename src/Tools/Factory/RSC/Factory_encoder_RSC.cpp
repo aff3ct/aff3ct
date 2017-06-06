@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
 
@@ -8,28 +10,18 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
-::build(const parameters &params, std::ostream &stream)
+::build(const std::string       type,
+        const int               K,
+        const int               N,
+        const bool              buffered,
+        const std::vector<int>  poly,
+              std::ostream     &stream,
+        const int               n_frames)
 {
-	Encoder_RSC_sys<B> *encoder = nullptr;
+	     if (type == "RSC_JSON") return new Encoder_RSC_generic_json_sys<B>(K, N, buffered, poly, stream, n_frames);
+	else if (type == "RSC"     ) return new Encoder_RSC_generic_sys     <B>(K, N, buffered, poly,         n_frames);
 
-	const auto N = (params.code.type.find("TURBO") != std::string::npos) ? 2*params.code.K : params.code.N;
-
-	// build the encoder
-	if (params.encoder.systematic)
-	{
-		if (params.encoder.type == "TURBO_JSON")
-		{
-			encoder = new Encoder_RSC_generic_json_sys<B>(params.code.K, N, params.simulation.inter_frame_level, params.encoder.buffered,
-			                                              params.encoder.poly, stream);
-		}
-		else
-		{
-			encoder = new Encoder_RSC_generic_sys<B>(params.code.K, N, params.simulation.inter_frame_level, params.encoder.buffered,
-			                                         params.encoder.poly);
-		}
-	}
-
-	return encoder;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_RSC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

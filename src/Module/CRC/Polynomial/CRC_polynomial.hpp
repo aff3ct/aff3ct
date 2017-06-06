@@ -31,9 +31,10 @@ public:
 	virtual int get_size() const;
 
 protected:
-	virtual void _build       (      B *U_K);
-	virtual bool _check       (const B *V_K);
-	virtual bool _check_packed(const B *V_K);
+	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);
+	virtual void _extract     (const B *V_K1, B *V_K2, const int frame_id);
+	virtual bool _check       (const B *V_K          , const int frame_id);
+	virtual bool _check_packed(const B *V_K          , const int frame_id);
 
 	void _generate(const B *U_in,
 	                     B *U_out,

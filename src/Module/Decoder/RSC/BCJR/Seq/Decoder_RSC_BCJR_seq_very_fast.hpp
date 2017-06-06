@@ -24,7 +24,7 @@ public:
 	virtual ~Decoder_RSC_BCJR_seq_very_fast();
 
 protected:
-	void _soft_decode(const R *sys, const R *par, R *ext);
+	void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par);
 	virtual void compute_alpha   (                          );

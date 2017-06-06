@@ -14,34 +14,32 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_turbo<B,R>
 ::Decoder_turbo(const int& K,
-                const int& N_without_tb,
+                const int& N,
                 const int& n_ite,
                 const Interleaver<int> &pi,
                 SISO<R> &siso_n,
                 SISO<R> &siso_i,
-                Scaling_factor<R> &scaling_factor,
                 const bool buffered_encoding,
                 const std::string name)
-: Decoder<B,R>(K, N_without_tb + siso_n.tail_length() + siso_i.tail_length(), siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
+: Decoder<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level(), name),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
   siso_n(siso_n),
   siso_i(siso_i),
-  scaling_factor(scaling_factor),
-  l_sn ((K                  + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_si ((K                  + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_sen((K                  + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_sei((K                  + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_pn (((N_without_tb-K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_pi (((N_without_tb-K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e1n((K                                              ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e2n((K                                              ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e1i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e2i((K                                              ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  s    ((K                                              ) * siso_n.get_simd_inter_frame_level())
+  l_sn ((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_si ((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_sen((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_sei((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_pn (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_pi (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e1n((K                                                                                    ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e2n((K                                                                                    ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e1i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  l_e2i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
+  s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
 {
-	if (N_without_tb != K * 3)
+	if (N - (siso_n.tail_length() + siso_i.tail_length()) != K * 3)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"N\" / \"K\" has to be equal to 3.");
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"n_ite\" has to be greater than 0.");
@@ -63,17 +61,41 @@ Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::_load(const R *Y_N)
+::add_handler_siso_n(std::function<bool(const int,
+                                        const mipp::vector<R>&,
+                                              mipp::vector<R>&,
+                                              mipp::vector<B>&)> callback)
 {
-	if (buffered_encoding)
-		this->buffered_load(Y_N);
-	else
-		this->standard_load(Y_N);
+	this->callbacks_siso_n.push_back(callback);
 }
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::buffered_load(const R *Y_N)
+::add_handler_siso_i(std::function<bool(const int, const mipp::vector<R>&, mipp::vector<R>&)> callback)
+{
+	this->callbacks_siso_i.push_back(callback);
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::add_handler_end(std::function<void(const int)> callback)
+{
+	this->callbacks_end.push_back(callback);
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::_load(const R *Y_N, const int frame_id)
+{
+	if (buffered_encoding)
+		this->buffered_load(Y_N, frame_id);
+	else
+		this->standard_load(Y_N, frame_id);
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::buffered_load(const R *Y_N, const int frame_id)
 {
 	const auto tail_n = siso_n.tail_length();
 	const auto tail_i = siso_i.tail_length();
@@ -86,7 +108,7 @@ void Decoder_turbo<B,R>
 		std::copy(Y_N                     , Y_N + this->K           , l_sn.begin());
 		std::copy(Y_N + this->K           , Y_N + this->K + 1*p_size, l_pn.begin());
 		std::copy(Y_N + this->K + 1*p_size, Y_N + this->K + 2*p_size, l_pi.begin());
-		pi.interleave(l_sn, l_si, false, this->get_simd_inter_frame_level());
+		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level());
 
 		// tails bit in the natural domain
 		std::copy(Y_N + N_without_tb           , Y_N + N_without_tb + tail_n/2, l_pn.begin() +p_size);
@@ -114,7 +136,7 @@ void Decoder_turbo<B,R>
 			frames[f] = Y_N + f*frame_size +this->K + p_size;
 		Reorderer<R>::apply(frames, l_pi.data(), p_size);
 
-		pi.interleave(l_sn, l_si, true, this->get_simd_inter_frame_level());
+		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 		// tails bit in the natural domain
 		for (auto f = 0; f < n_frames; f++)
@@ -139,7 +161,7 @@ void Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::standard_load(const R *Y_N)
+::standard_load(const R *Y_N, const int frame_id)
 {
 	const auto tail_n = siso_n.tail_length();
 	const auto tail_i = siso_i.tail_length();
@@ -152,7 +174,7 @@ void Decoder_turbo<B,R>
 			l_pn[i] = Y_N[i*3 +1];
 			l_pi[i] = Y_N[i*3 +2];
 		}
-		pi.interleave(l_sn, l_si, false, this->get_simd_inter_frame_level());
+		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level());
 
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
@@ -181,7 +203,7 @@ void Decoder_turbo<B,R>
 				l_pi[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +2];
 			}
 		}
-		pi.interleave(l_sn, l_si, true, this->get_simd_inter_frame_level());
+		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)

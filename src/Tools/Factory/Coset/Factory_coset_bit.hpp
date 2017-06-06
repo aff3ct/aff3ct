@@ -1,8 +1,9 @@
 #ifndef FACTORY_COSET_BIT_HPP
 #define FACTORY_COSET_BIT_HPP
 
+#include <string>
+
 #include "Module/Coset/Coset.hpp"
-#include "Tools/params.h"
 
 #include "../Factory.hpp"
 
@@ -13,7 +14,9 @@ namespace tools
 template <typename B = int>
 struct Factory_coset_bit : public Factory
 {
-	static module::Coset<B,B>* build(const parameters &params);
+	static module::Coset<B,B>* build(const std::string type,
+	                                 const int         K,
+	                                 const int         n_frames = 1);
 };
 }
 }

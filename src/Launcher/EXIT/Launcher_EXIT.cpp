@@ -9,9 +9,10 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_EXIT<B,R,Q>
 ::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr)
 {
 	this->params.simulation.type       = "EXIT";
+	this->params.simulation.debug      = false;
 	this->params.simulation.sig_a_min  = 0.0f;
 	this->params.simulation.sig_a_max  = 5.0f;
 	this->params.simulation.sig_a_step = 0.5f;
@@ -19,6 +20,13 @@ Launcher_EXIT<B,R,Q>
 	this->params.encoder   .type       = "";
 	this->params.encoder   .path       = "";
 	this->params.encoder   .systematic = true;
+}
+
+template <typename B, typename R, typename Q>
+Launcher_EXIT<B,R,Q>
+::~Launcher_EXIT()
+{
+	if (codec != nullptr) delete codec;
 }
 
 template <typename B, typename R, typename Q>

@@ -18,7 +18,6 @@ protected:
 	mipp::vector<R> beta [8]; // node metric (right to left)
 	mipp::vector<R> gamma[2]; // edge metric
 
-public:
 	Decoder_RSC_BCJR_inter(const int &K, 
 	                       const std::vector<std::vector<int>> &trellis, 
 	                       const bool buffered_encoding = true,
@@ -26,7 +25,6 @@ public:
 	                       const std::string name = "Decoder_RSC_BCJR_inter");
 	virtual ~Decoder_RSC_BCJR_inter();
 
-protected:
 	void _load (const R *Y_N);
 	void _store(      B *V_K) const;
 };

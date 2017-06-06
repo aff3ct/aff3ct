@@ -10,7 +10,7 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_BFERI<B,R,Q>
 ::Launcher_BFERI(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr)
 {
 	this->params.simulation .type             = "BFERI";
 	this->params.simulation .benchs           = 0;
@@ -18,7 +18,7 @@ Launcher_BFERI<B,R,Q>
 	this->params.simulation .debug_limit      = 0;
 	this->params.simulation .debug_precision  = 5;
 	this->params.simulation .time_report      = false;
-	this->params.simulation .trace_path       = "";
+	this->params.simulation .n_ite            = 15;
 #if !defined(STARPU) && !defined(SYSTEMC)
 	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
@@ -31,7 +31,6 @@ Launcher_BFERI<B,R,Q>
 	this->params.interleaver.n_cols           = 4;
 	this->params.interleaver.uniform          = false;
 	this->params.demodulator.max              = "MAX";
-	this->params.demodulator.n_ite            = 30;
 	this->params.monitor    .n_frame_errors   = 100;
 	this->params.monitor    .err_track_enable = false;
 	this->params.monitor    .err_track_revert = false;
@@ -58,9 +57,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"sim-debug-limit"}] =
 		{"positive_int",
 		 "set the max number of elements to display in the debug mode."};
-	this->opt_args[{"sim-trace-path"}] =
-		{"string",
-		 "traces array values in a CSV file."};
 	this->opt_args[{"sim-time-report"}] =
 		{"",
 		 "display time information about the simulation chain."};
@@ -68,6 +64,9 @@ void Launcher_BFERI<B,R,Q>
 		{"string",
 		 "select the type of SNR: symbol energy or information bit energy.",
 		 "ES, EB"};
+	this->opt_args[{"sim-ite", "I"}] =
+		{"positive_int",
+		 "number of global turbo iterations between the demodulator and the decoder."};
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	this->opt_args[{"cde-coset", "c"}] =
@@ -101,17 +100,10 @@ void Launcher_BFERI<B,R,Q>
 		{"",
 		 "enable the regeneration of the interleaver for each new frame."};
 
-	// --------------------------------------------------------------------------------------------------- demodulator
-	this->opt_args[{"dmod-ite", "I"}] =
-		{"positive_int",
-		 "number of iterations in the turbo demodulation."};
-
 	// ------------------------------------------------------------------------------------------------------- monitor
 	this->opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
-
-#if !defined(STARPU) && !defined(SYSTEMC)
 	this->opt_args[{"mnt-err-trk"}] =
 		{"",
 		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
@@ -121,7 +113,6 @@ void Launcher_BFERI<B,R,Q>
 	this->opt_args[{"mnt-err-trk-path"}] =
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
-#endif
 
 	// ------------------------------------------------------------------------------------------------------ terminal
 	this->opt_args[{"term-type"}] =
@@ -137,11 +128,11 @@ void Launcher_BFERI<B,R,Q>
 	Launcher<B,R,Q>::store_args();
 
 	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-trace-path"    })) this->params.simulation.trace_path   = this->ar.get_arg    ({"sim-trace-path"   });
-	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs       = this->ar.get_arg_int({"sim-benchs",   "b"});
-	if(this->ar.exist_arg({"sim-snr-type",  "E"})) this->params.simulation.snr_type     = this->ar.get_arg    ({"sim-snr-type", "E"});
-	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report  = true;
-	if(this->ar.exist_arg({"sim-debug",     "d"})) this->params.simulation.debug        = true;
+	if(this->ar.exist_arg({"sim-benchs",    "b"})) this->params.simulation.benchs      = this->ar.get_arg_int({"sim-benchs",   "b"});
+	if(this->ar.exist_arg({"sim-snr-type",  "E"})) this->params.simulation.snr_type    = this->ar.get_arg    ({"sim-snr-type", "E"});
+	if(this->ar.exist_arg({"sim-ite",       "I"})) this->params.simulation.n_ite       = this->ar.get_arg_int({"sim-ite",      "I"});
+	if(this->ar.exist_arg({"sim-time-report"   })) this->params.simulation.time_report = true;
+	if(this->ar.exist_arg({"sim-debug",     "d"})) this->params.simulation.debug       = true;
 	if(this->ar.exist_arg({"sim-debug-limit"   }))
 	{
 		this->params.simulation.debug = true;
@@ -179,12 +170,8 @@ void Launcher_BFERI<B,R,Q>
 	if(this->ar.exist_arg({"itl-cols"})) this->params.interleaver.n_cols  = this->ar.get_arg_int({"itl-cols"});
 	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.uniform = true;
 
-	// --------------------------------------------------------------------------------------------------- demodulator
-	if(this->ar.exist_arg({"dmod-ite", "I"})) this-> params.demodulator.n_ite = this->ar.get_arg_int({"dmod-ite", "I"});
-
 	// ------------------------------------------------------------------------------------------------------- monitor
-	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
-
+	if(this->ar.exist_arg({"mnt-max-fe",  "e"})) this->params.monitor.n_frame_errors   = this->ar.get_arg_int({"mnt-max-fe", "e"});
 	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
 	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
 	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = this->ar.get_arg({"mnt-err-trk-path"});
@@ -195,11 +182,13 @@ void Launcher_BFERI<B,R,Q>
 		this->params.source     .type = "USER";
 		this->params.encoder    .type = "USER";
 		this->params.channel    .type = "USER";
-		this->params.interleaver.type = "USER";
+		if (this->params.interleaver.uniform)
+			this->params.interleaver.type = "USER";
 		this->params.source     .path = this->params.monitor.err_track_path + std::string("_$snr.src");
 		this->params.encoder    .path = this->params.monitor.err_track_path + std::string("_$snr.enc");
 		this->params.channel    .path = this->params.monitor.err_track_path + std::string("_$snr.chn");
-		this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
+		if (this->params.interleaver.uniform)
+			this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
 		// the paths are set in the Simulation class
 	}
 
@@ -222,6 +211,7 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 	auto p = Launcher<B,R,Q>::header_simulation();
 
 	p.push_back(std::make_pair("Multi-threading (t)", threads));
+	p.push_back(std::make_pair("Global iterations (I)", std::to_string(this->params.simulation.n_ite)));
 
 	return p;
 }
@@ -278,17 +268,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 
 template <typename B, typename R, typename Q>
 std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
-::header_demodulator()
-{
-	auto p = Launcher<B,R,Q>::header_demodulator();
-
-	p.push_back(std::make_pair("Turbo demod. iterations (I)", std::to_string(this->params.demodulator.n_ite)));
-
-	return p;
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 ::header_decoder()
 {
 	auto p = Launcher<B,R,Q>::header_decoder();
@@ -307,7 +286,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 
 	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
 
-#if !defined(STARPU) && !defined(SYSTEMC)
 	std::string enable_track = (this->params.monitor.err_track_enable) ? "on" : "off";
 	p.push_back(std::make_pair("Bad frames tracking", enable_track));
 
@@ -319,7 +297,6 @@ std::vector<std::pair<std::string,std::string>> Launcher_BFERI<B,R,Q>
 		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,itl,chn]");
 		p.push_back(std::make_pair("Bad frames base path", path));
 	}
-#endif
 
 	return p;
 }

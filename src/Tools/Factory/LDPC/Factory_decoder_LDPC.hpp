@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "Tools/params.h"
 #include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
+#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
@@ -18,8 +18,19 @@ namespace tools
 template <typename B = int, typename R = float>
 struct Factory_decoder_LDPC : public Factory
 {
-	static module::Decoder_SISO<B,R>* build(const parameters &params, const AList_reader &alist_data,
-	                                        const mipp::vector<B> &info_bits_pos);
+	static module::Decoder_SISO<B,R>* build(const std::string      type,
+	                                        const std::string      implem,
+	                                        const int              K,
+	                                        const int              N,
+	                                        const int              n_ite,
+	                                        const AList_reader    &H,
+	                                        const mipp::vector<B> &info_bits_pos,
+	                                        const std::string      simd_strategy = "",
+	                                        const float            factor        = 1.f,
+	                                        const R                offset        = 0,
+	                                        const bool             synd          = true,
+	                                        const int              synd_depth    = 2,
+	                                        const int              n_frames      = 1);
 };
 }
 }

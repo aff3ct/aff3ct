@@ -1,11 +1,8 @@
 #include <string>
+#include <stdexcept>
 
 #include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
-#include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
-#include "Module/Decoder/Turbo/CRC/Decoder_turbo_naive_CA.hpp"
-#include "Module/Decoder/Turbo/CRC/Self_corrected/Decoder_turbo_naive_CA_self_corrected.hpp"
-#include "Module/Decoder/Turbo/CRC/Flip_and_check/Decoder_turbo_naive_CA_flip_and_check.hpp"
-#include "Module/Decoder/Turbo/CRC/Decoder_turbo_fast_CA.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
 
 #include "Factory_decoder_turbo.hpp"
 
@@ -13,86 +10,24 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>
-Decoder<B,R>* Factory_decoder_turbo<B,R>
-::build(const parameters          &params,
-        const Interleaver<int>    *interleaver,
-              SISO<R>             *siso_n, 
-              SISO<R>             *siso_i,
-              Scaling_factor<R>   *scaling_factor,
-              CRC<B>              *crc)
+Decoder_turbo<B,R>* Factory_decoder_turbo<B,R>
+::build(const std::string       type,
+        const std::string       implem,
+        const int               K,
+        const int               N,
+        const int               n_ite,
+        const Interleaver<int> &itl,
+              SISO<R>          &siso_n,
+              SISO<R>          &siso_i,
+        const bool              buffered)
 {
-	Decoder<B,R> *decoder = nullptr;
-
-	if (params.channel.domain == "LLR")
+	if (type == "TURBO")
 	{
-		if (typeid(B) == typeid(long long))
-		{
-			// there is a CRC
-			if (crc != nullptr && !params.crc.poly.empty())
-			{
-				if (params.decoder.self_corrected)
-					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i,
-					                                                         *scaling_factor, *crc,
-					                                                         params.encoder.buffered);
-				else if (params.decoder.fnc)
-					decoder = new Decoder_turbo_naive_CA_flip_and_check<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i,
-					                                                         *scaling_factor, *crc,
-					                                                         params.decoder.fnc_q,
-					                                                         params.decoder.fnc_ite_min,
-					                                                         params.decoder.fnc_ite_max,
-					                                                         params.decoder.fnc_ite_step,
-					                                                         params.encoder.buffered);
-				else
-					decoder = new Decoder_turbo_naive_CA<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-					                                          *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
-					                                          params.encoder.buffered);
-
-			}
-			// there is no CRC
-			else
-				decoder = new Decoder_turbo_naive<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-				                                       *interleaver, *siso_n, *siso_i, *scaling_factor, 
-				                                       params.encoder.buffered);
-		}
-		else
-		{
-			// there is a CRC
-			if (crc != nullptr && !params.crc.poly.empty())
-			{
-				if (params.decoder.self_corrected)
-					decoder = new Decoder_turbo_naive_CA_self_corrected<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite, *interleaver,
-					                                                         *siso_n, *siso_i, *scaling_factor, *crc,
-					                                                         params.encoder.buffered);
-				else if (params.decoder.fnc)
-					decoder = new Decoder_turbo_naive_CA_flip_and_check<B,R>(params.code.K, params.code.N_code,
-					                                                         params.decoder.n_ite,
-					                                                         *interleaver, *siso_n, *siso_i,
-					                                                         *scaling_factor, *crc,
-					                                                         params.decoder.fnc_q,
-					                                                         params.decoder.fnc_ite_min,
-					                                                         params.decoder.fnc_ite_max,
-					                                                         params.decoder.fnc_ite_step,
-					                                                         params.encoder.buffered);
-				else
-					decoder = new Decoder_turbo_fast_CA<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-					                                         *interleaver, *siso_n, *siso_i, *scaling_factor, *crc,
-					                                         params.encoder.buffered);
-
-			}
-			// there is no CRC
-			else
-				decoder = new Decoder_turbo_fast<B,R>(params.code.K, params.code.N_code, params.decoder.n_ite,
-				                                      *interleaver, *siso_n, *siso_i, *scaling_factor, 
-				                                      params.encoder.buffered);
-		}
+		     if (implem == "STD" ) return new Decoder_turbo_naive<B,R>(K, N, n_ite, itl, siso_n, siso_i, buffered);
+		else if (implem == "FAST") return new Decoder_turbo_fast <B,R>(K, N, n_ite, itl, siso_n, siso_i, buffered);
 	}
 
-	return decoder;
+	throw std::runtime_error("aff3ct::tools::Factory_decoder_turbo: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

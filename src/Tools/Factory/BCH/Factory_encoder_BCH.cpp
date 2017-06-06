@@ -1,21 +1,23 @@
-#include "Factory_encoder_BCH.hpp"
+#include <stdexcept>
 
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
+
+#include "Factory_encoder_BCH.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_BCH<B>
-::build(const parameters &params, const Galois &GF)
+::build(const std::string  type,
+        const int          K,
+        const int          N,
+        const Galois      &GF,
+        const int          n_frames)
 {
-	Encoder<B> *encoder = nullptr;
+	if (type == "BCH") return new Encoder_BCH<B>(K, N, GF, n_frames);
 
-	// build the encoder
-	if (params.encoder.systematic)
-		encoder = new Encoder_BCH<B>(params.code.K, params.code.N, params.code.m, GF, params.simulation.inter_frame_level);
-
-	return encoder;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_BCH: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

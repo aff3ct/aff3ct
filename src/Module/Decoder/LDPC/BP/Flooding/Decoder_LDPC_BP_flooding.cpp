@@ -21,7 +21,6 @@ Decoder_LDPC_BP_flooding<B,R>
                            const int n_frames,
                            const std::string name)
 : Decoder_SISO<B,R>      (K, N, n_frames, 1, name                    ),
-  cur_frame              (0                                          ),
   n_ite                  (n_ite                                      ),
   n_V_nodes              (N                                          ), // same as N but more explicit
   n_C_nodes              ((int)alist_data.get_n_CN()                 ),
@@ -57,47 +56,45 @@ Decoder_LDPC_BP_flooding<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2)
+::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->C_to_V[cur_frame].begin(), this->C_to_V[cur_frame].end(), (R)0);
+		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
 
-		if (cur_frame == Decoder<B,R>::n_frames -1)
+		if (frame_id == Decoder<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
 
 	// actual decoding
-	this->BP_decode(Y_N1);
+	this->BP_decode(Y_N1,frame_id);
 
 	// prepare for next round by processing extrinsic information
 	for (auto i = 0; i < this->N; i++)
 		Y_N2[i] = this->Lp_N[i] - Y_N1[i];
 
 	// saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
-
-	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
 	if (this->init_flag)
 	{
-		std::fill(this->C_to_V[cur_frame].begin(), this->C_to_V[cur_frame].end(), (R)0);
+		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
 
-		if (cur_frame == Decoder<B,R>::n_frames -1)
+		if (frame_id == Decoder<B,R>::n_frames -1)
 			this->init_flag = false;
 	}
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BP_decode(Y_N);
+	this->BP_decode(Y_N, frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -109,10 +106,9 @@ void Decoder_LDPC_BP_flooding<B,R>
 	}
 
 	// set the flag so C_to_V structure can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (cur_frame == Decoder<B,R>::n_frames -1)
+	if (frame_id == Decoder<B,R>::n_frames -1)
 		this->init_flag = true;
 
-	cur_frame = (cur_frame +1) % SISO<R>::n_frames;
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;
@@ -123,7 +119,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 // BP algorithm
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding<B,R>
-::BP_decode(const R *Y_N)
+::BP_decode(const R *Y_N, const int frame_id)
 {
 	auto cur_syndrome_depth = 0;
 
@@ -131,7 +127,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// specific inner code depending on the selected implementation (min-sum or sum-product for example)
-		auto syndrome = this->BP_process(Y_N, this->V_to_C[cur_frame], this->C_to_V[cur_frame]);
+		auto syndrome = this->BP_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
 		
 		// make a saturation
 		// saturate<R>(this->C_to_V, (R)-C_to_V_max, (R)C_to_V_max);
@@ -148,7 +144,7 @@ void Decoder_LDPC_BP_flooding<B,R>
 	}
 
 	// begining of the iteration upon all the matrix lines
-	R *C_to_V_ptr = this->C_to_V[cur_frame].data();
+	R *C_to_V_ptr = this->C_to_V[frame_id].data();
 	for (auto i = 0; i < this->n_V_nodes; i++) 
 	{
 		const auto length = this->n_parities_per_variable[i];

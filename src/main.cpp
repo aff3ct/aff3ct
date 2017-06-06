@@ -12,6 +12,7 @@
 #include <systemc>
 #endif
 
+#include "Tools/git_sha1.h"
 #include "Tools/types.h"
 #include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
@@ -89,9 +90,13 @@ void print_version()
 #endif
 	std::string affect_version = "1.1.0";
 
+	std::string git_sha1 = g_GIT_SHA1;
+
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
 	          << mipp::IntructionsType << ") " << affect_version << std::endl;
-	std::cout << "Copyright (c) 2016 - MIT license."                                           << std::endl;
+	if (git_sha1 != "GITDIR-NOTFOUND")
+		std::cout << "GIT SHA1: " << git_sha1 << std::endl;
+	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
 	exit(EXIT_SUCCESS);

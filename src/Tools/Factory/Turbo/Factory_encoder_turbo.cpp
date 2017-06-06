@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
 
@@ -8,25 +10,27 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_turbo<B>
-::build(const parameters         &params,
-              Interleaver<int>   *interleaver,
-              Encoder_sys<B>     *sub_encoder_n,
-              Encoder_sys<B>     *sub_encoder_i)
+::build(const std::string       type,
+        const int               K,
+        const int               N,
+        const Interleaver<int> &itl,
+              Encoder_sys<B>   *enc_n,
+              Encoder_sys<B>   *enc_i,
+        const bool              buffered,
+        const int               n_frames)
 {
-	Encoder<B> *encoder = nullptr;
+	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
 
-	// build the encoder
-	if (params.encoder.systematic)
+	if (buffered)
 	{
-		if (params.encoder.buffered)
-			encoder = new Encoder_turbo<B>(params.code.K, params.code.N_code, *interleaver, *sub_encoder_n, *sub_encoder_i,
-			                               params.simulation.inter_frame_level);
-		else
-			encoder = new Encoder_turbo_legacy<B>(params.code.K, params.code.N_code, *interleaver, *sub_encoder_n,
-			                                      params.simulation.inter_frame_level);
+		if (type == "TURBO") return new Encoder_turbo       <B>(K, N, itl, *enc_n, *enc_i, n_frames);
+	}
+	else if (enc_n == enc_i)
+	{
+		if (type == "TURBO") return new Encoder_turbo_legacy<B>(K, N, itl, *enc_n,         n_frames);
 	}
 
-	return encoder;
+	throw std::runtime_error("aff3ct::tools::Factory_encoder_turbo: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -56,7 +56,7 @@ void Encoder_LDPC<B>
 
 template <typename B>
 void Encoder_LDPC<B>
-::_encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	// Real General Matrix Multiplication
 	tools::rgemm(1, this->N, this->K, U_K, tG.data(), X_N);

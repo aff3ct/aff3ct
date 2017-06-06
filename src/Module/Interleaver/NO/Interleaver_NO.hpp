@@ -1,6 +1,8 @@
 #ifndef INTERLEAVER_NO_HPP
 #define	INTERLEAVER_NO_HPP
 
+#include <numeric>
+
 #include "../Interleaver.hpp"
 
 namespace aff3ct
@@ -12,12 +14,18 @@ class Interleaver_NO : public Interleaver<T>
 {
 public:
 	Interleaver_NO(int size, const int n_frames = 1, const std::string name = "Interleaver_NO")
-	: Interleaver<T>(size, n_frames, name) { gen_lookup_tables(); }
-
-	void gen_lookup_tables()
+	: Interleaver<T>(size, false, n_frames, name)
 	{
-		for (unsigned i = 0; i < this->pi.size(); i++)
-			this->pi_inv[i] = this->pi[i] = i;
+	}
+
+	virtual ~Interleaver_NO()
+	{
+	}
+
+protected:
+	void gen_lut(T *lut, const int frame_id)
+	{
+		std::iota(lut, lut + this->get_size(), 0);
 	}
 };
 }

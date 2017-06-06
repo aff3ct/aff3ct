@@ -29,6 +29,12 @@ Galois
 {
 }
 
+int Galois
+::get_m() const
+{
+	return m;
+}
+
 void Galois
 ::Select_Polynomial()
 {

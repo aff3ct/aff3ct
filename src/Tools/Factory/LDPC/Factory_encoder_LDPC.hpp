@@ -1,9 +1,9 @@
 #ifndef FACTORY_ENCODER_LDPC_HPP
 #define FACTORY_ENCODER_LDPC_HPP
 
-#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include <string>
 
-#include "Tools/params.h"
+#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 #include "../Factory.hpp"
 
@@ -14,7 +14,11 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_LDPC : public Factory
 {
-	static module::Encoder_LDPC<B>* build(const parameters &params, const int seed = 0);
+	static module::Encoder_LDPC<B>* build(const std::string type,
+	                                      const int         K,
+	                                      const int         N,
+	                                      const std::string path     = "",
+	                                      const int         n_frames = 1);
 };
 }
 }

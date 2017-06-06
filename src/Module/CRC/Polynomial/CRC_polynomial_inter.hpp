@@ -24,7 +24,8 @@ protected:
 	                           B *U_out,
 	                     const int off_in, 
 	                     const int off_out, 
-	                     const int loop_size);
+	                     const int loop_size,
+	                     const int n_frames);
 };
 }
 }

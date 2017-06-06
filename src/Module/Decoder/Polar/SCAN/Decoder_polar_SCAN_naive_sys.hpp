@@ -23,8 +23,8 @@ public:
 	virtual ~Decoder_polar_SCAN_naive_sys();
 
 protected:
-	void _soft_decode(const R *sys, const R *par, R *ext);
-	void _soft_decode(const R *Y_N1, R *Y_N2);
+	void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
+	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 	void _store(B *V_N) const;
 };
 }

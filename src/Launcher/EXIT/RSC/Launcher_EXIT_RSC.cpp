@@ -4,7 +4,8 @@
 #include <iostream>
 #include <sstream>
 
-#include "Simulation/EXIT/Code/RSC/Simulation_EXIT_RSC.hpp"
+#include "Simulation/EXIT/Simulation_EXIT.hpp"
+#include "Tools/Codec/RSC/Codec_RSC.hpp"
 
 #include "Launcher_EXIT_RSC.hpp"
 
@@ -98,13 +99,16 @@ void Launcher_EXIT_RSC<B,R,Q,QD>
 
 	this->params.code.tail_length = (int)(2 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
+	this->params.code.N += this->params.code.tail_length;
+	this->params.code.N_code = 2 * this->params.code.K + this->params.code.tail_length;
 }
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation* Launcher_EXIT_RSC<B,R,Q,QD>
 ::build_simu()
 {
-	return new Simulation_EXIT_RSC<B,R,Q,QD>(this->params);
+	this->codec = new Codec_RSC<B,R,R>(this->params);
+	return new Simulation_EXIT<B,R>(this->params, *this->codec);
 }
 
 template <typename B, typename R, typename Q, typename QD>

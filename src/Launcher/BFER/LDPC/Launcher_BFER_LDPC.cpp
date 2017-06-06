@@ -1,6 +1,13 @@
 #include <iostream>
 
-#include "Simulation/BFER/Code/LDPC/Simulation_BFER_LDPC.hpp"
+#if defined(SYSTEMC)
+#include "Simulation/BFER/Standard/SystemC/SC_Simulation_BFER_std.hpp"
+#elif defined(STARPU)
+#include "Simulation/BFER/Standard/StarPU/SPU_Simulation_BFER_std.hpp"
+#else
+#include "Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp"
+#endif
+#include "Tools/Codec/LDPC/Codec_LDPC.hpp"
 
 #include "Launcher_BFER_LDPC.hpp"
 
@@ -90,7 +97,14 @@ template <typename B, typename R, typename Q>
 Simulation* Launcher_BFER_LDPC<B,R,Q>
 ::build_simu()
 {
-	return new Simulation_BFER_LDPC<B,R,Q>(this->params);
+	this->codec = new Codec_LDPC<B,Q>(this->params);
+#if defined(SYSTEMC)
+	return new SC_Simulation_BFER_std     <B,R,Q>(this->params, *this->codec);
+#elif defined(STARPU)
+	return new SPU_Simulation_BFER_std    <B,R,Q>(this->params, *this->codec);
+#else
+	return new Simulation_BFER_std_threads<B,R,Q>(this->params, *this->codec);
+#endif
 }
 
 template <typename B, typename R, typename Q>

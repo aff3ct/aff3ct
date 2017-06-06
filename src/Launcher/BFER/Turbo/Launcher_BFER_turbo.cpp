@@ -5,7 +5,15 @@
 #include <sstream>
 
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
-#include "Simulation/BFER/Code/Turbo/Simulation_BFER_turbo.hpp"
+
+#if defined(SYSTEMC)
+#include "Simulation/BFER/Standard/SystemC/SC_Simulation_BFER_std.hpp"
+#elif defined(STARPU)
+#include "Simulation/BFER/Standard/StarPU/SPU_Simulation_BFER_std.hpp"
+#else
+#include "Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp"
+#endif
+#include "Tools/Codec/Turbo/Codec_turbo.hpp"
 
 #include "Launcher_BFER_turbo.hpp"
 
@@ -37,7 +45,7 @@ Launcher_BFER_turbo<B,R,Q,QD>
 	this->params.decoder    .implem         = "FAST";
 	this->params.decoder    .max            = "MAX";
 	this->params.decoder    .n_ite          = 6;
-	this->params.decoder    .scaling_factor = "LTE_VEC";
+	this->params.decoder    .scaling_factor = "";
 	this->params.decoder    .simd_strategy  = "";
 	this->params.decoder    .self_corrected = false;
 	this->params.decoder    .fnc            = false;
@@ -62,7 +70,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"crc-type"}] =
 		{"string",
 		 "select the CRC implementation you want to use.",
-		 "STD, FAST"};
+		 "STD, FAST, INTER"};
 
 	this->opt_args[{"crc-poly"}] =
 		{"string",
@@ -117,7 +125,7 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	this->opt_args[{"dec-sf"}] =
 		{"string",
 		 "scaling factor type.",
-		 "NO, LTE, LTE_VEC, ARRAY"};
+		 "LTE, LTE_VEC, ARRAY"};
 	this->opt_args[{"dec-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
@@ -152,8 +160,6 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 ::store_args()
 {
 	Launcher_BFER<B,R,Q>::store_args();
-
-	this->params.code.N_code = 3 * this->params.code.K;
 
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(this->ar.exist_arg({"sim-json-path"})) this->params.simulation.json_path = this->ar.get_arg({"sim-json-path"});
@@ -195,31 +201,28 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 	if(this->ar.exist_arg({"itl-cols"})) this->params.interleaver.n_cols  = this->ar.get_arg_int({"itl-cols"});
 	if(this->ar.exist_arg({"itl-uni" })) this->params.interleaver.uniform = true;
 
-	// ------------------------------------------------------------------------------------------------------- decoder
-	if(this->ar.exist_arg({"dec-ite", "i"})) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i"});
-	if(this->ar.exist_arg({"dec-sf"      })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"      });
-	if(this->ar.exist_arg({"dec-simd"    })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"    });
-	if(this->ar.exist_arg({"dec-max"     })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"     });
-
-	if (this->ar.exist_arg({"crc-poly"}))
+	if(this->params.monitor.err_track_revert)
 	{
-		if (this->ar.exist_arg({"dec-sc"}))
-			this->params.decoder.self_corrected = true;
-		else if (this->ar.exist_arg({"dec-fnc"}))
+		this->params.monitor.err_track_enable = false;
+		if (this->params.interleaver.uniform)
 		{
-			this->params.decoder.fnc = true;
-			if (this->ar.exist_arg({"dec-fnc-q"}))
-				this->params.decoder.fnc_q = this->ar.get_arg_int({"dec-fnc-q"});
-			if (this->ar.exist_arg({"dec-fnc-ite-m"}))
-				this->params.decoder.fnc_ite_min = this->ar.get_arg_int({"dec-fnc-ite-m"});
-			if (this->ar.exist_arg({"dec-fnc-ite-M"}))
-				this->params.decoder.fnc_ite_max = this->ar.get_arg_int({"dec-fnc-ite-M"});
-			else
-				this->params.decoder.fnc_ite_max = this->params.decoder.n_ite;
-			if (this->ar.exist_arg({"dec-fnc-ite-s"}))
-				this->params.decoder.fnc_ite_step = this->ar.get_arg_int({"dec-fnc-ite-s"});
+			this->params.interleaver.type = "USER";
+			this->params.interleaver.path = this->params.monitor.err_track_path + std::string("_$snr.itl");
 		}
 	}
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(this->ar.exist_arg({"dec-ite", "i" })) this->params.decoder.n_ite          = this->ar.get_arg_int({"dec-ite", "i" });
+	if(this->ar.exist_arg({"dec-sf"       })) this->params.decoder.scaling_factor = this->ar.get_arg    ({"dec-sf"       });
+	if(this->ar.exist_arg({"dec-simd"     })) this->params.decoder.simd_strategy  = this->ar.get_arg    ({"dec-simd"     });
+	if(this->ar.exist_arg({"dec-max"      })) this->params.decoder.max            = this->ar.get_arg    ({"dec-max"      });
+	if(this->ar.exist_arg({"dec-sc"       })) this->params.decoder.self_corrected = true;
+	if(this->ar.exist_arg({"dec-fnc"      })) this->params.decoder.fnc            = true;
+	if(this->ar.exist_arg({"dec-fnc-q"    })) this->params.decoder.fnc_q          = this->ar.get_arg_int({"dec-fnc-q"    });
+	if(this->ar.exist_arg({"dec-fnc-ite-s"})) this->params.decoder.fnc_ite_step   = this->ar.get_arg_int({"dec-fnc-ite-s"});
+	if(this->ar.exist_arg({"dec-fnc-ite-m"})) this->params.decoder.fnc_ite_min    = this->ar.get_arg_int({"dec-fnc-ite-m"});
+	if(this->ar.exist_arg({"dec-fnc-ite-M"})) this->params.decoder.fnc_ite_max    = this->ar.get_arg_int({"dec-fnc-ite-M"});
+	else                                      this->params.decoder.fnc_ite_max    = this->params.decoder.n_ite;
 
 	if (this->params.decoder.simd_strategy == "INTER" && !this->ar.exist_arg({"sim-inter-lvl"}))
 		this->params.simulation.inter_frame_level = mipp::nElReg<Q>();
@@ -258,13 +261,22 @@ void Launcher_BFER_turbo<B,R,Q,QD>
 
 	this->params.code.tail_length = (int)(4 * std::floor(std::log2((float)std::max(this->params.encoder.poly[0],
 	                                                                               this->params.encoder.poly[1]))));
+	this->params.code.N += this->params.code.tail_length;
+	this->params.code.N_code = 3 * this->params.code.K + this->params.code.tail_length;
 }
 
 template <typename B, typename R, typename Q, typename QD>
 Simulation* Launcher_BFER_turbo<B,R,Q,QD>
 ::build_simu()
 {
-	return new Simulation_BFER_turbo<B,R,Q,QD>(this->params);
+	this->codec = new Codec_turbo<B,Q,QD>(this->params);
+#if defined(SYSTEMC)
+	return new SC_Simulation_BFER_std     <B,R,Q>(this->params, *this->codec);
+#elif defined(STARPU)
+	return new SPU_Simulation_BFER_std    <B,R,Q>(this->params, *this->codec);
+#else
+	return new Simulation_BFER_std_threads<B,R,Q>(this->params, *this->codec);
+#endif
 }
 
 template <typename B, typename R, typename Q, typename QD>

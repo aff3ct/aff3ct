@@ -38,6 +38,11 @@ public:
 		SC_THREAD(sc_generate);
 	}
 
+	const mipp::vector<B>& get_U_K()
+	{
+		return U_K;
+	}
+
 private:
 	void sc_generate()
 	{
@@ -68,10 +73,14 @@ public:
 	SC_Source(const int K, const int n_frames = 1, const std::string name = "Source_SC")
 	: Source_i<B>(K, n_frames, name), sc_module(nullptr) {}
 
-	virtual ~SC_Source() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } };
+	virtual ~SC_Source()
+	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+	};
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Source_module<B>(*this, this->name.c_str());
 	}
 };

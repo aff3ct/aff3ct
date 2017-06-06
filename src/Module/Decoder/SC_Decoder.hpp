@@ -39,6 +39,11 @@ public:
 		s_in.register_b_transport(this, &SC_Decoder_module::b_transport);
 	}
 
+	const mipp::vector<B>& get_V_K()
+	{
+		return V_K;
+	}
+
 private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
@@ -69,10 +74,14 @@ public:
 	           const std::string name = "SC_Decoder")
 	: Decoder_i<B,R>(K, N, n_frames, simd_inter_frame_level, name), sc_module(nullptr) {}
 
-	virtual ~SC_Decoder() { if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; } }
+	virtual ~SC_Decoder()
+	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
+	}
 
 	void create_sc_module()
 	{
+		if (sc_module != nullptr) { delete sc_module; sc_module = nullptr; }
 		this->sc_module = new SC_Decoder_module<B,R>(*this, this->name.c_str());
 	}
 };

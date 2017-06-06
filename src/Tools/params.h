@@ -14,7 +14,6 @@ struct simulation_parameters
 	std::chrono::milliseconds mpi_comm_freq;
 	std::chrono::seconds      stop_time;
 	std::string               type;
-	std::string               trace_path;
 	std::string               bin_pb_path;
 	std::string               json_path;
 	std::string               pyber;
@@ -26,6 +25,7 @@ struct simulation_parameters
 	float                     sig_a_max;
 	float                     sig_a_step;
 	bool                      debug;
+	bool                      debug_fe;
 	bool                      time_report;
 	int                       benchs;
 	int                       debug_limit;
@@ -35,6 +35,7 @@ struct simulation_parameters
 	int                       seed;
 	int                       mpi_rank;
 	int                       mpi_size;
+	int                       n_ite; // number of demodulations/decoding sessions to perform in the BFERI simulations
 };
 
 struct code_parameters
@@ -45,6 +46,7 @@ struct code_parameters
 	std::string awgn_fb_path;
 	float       sigma; // not noise var, used to set a fixed snr value for frozen bits construction (in polar codes)
 	bool        coset; // true = enable coset approach
+	int         K_info;
 	int         K;
 	int         N;
 	int         N_code;
@@ -111,6 +113,7 @@ struct modulator_parameters
 struct demodulator_parameters
 {
 	std::string max;     // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
+	std::string psi;     // psi function to use in the SCMA demodulation (PSI0, PSI1, PSI2, PSI3)
 	bool        no_sig2; // do not divide by (sig^2) / 2 in the demodulation
 	int         n_ite;   // number of demodulations/decoding sessions to perform in the BFERI simulations
 };
@@ -118,7 +121,6 @@ struct demodulator_parameters
 struct channel_parameters
 {
 	std::string type;
-	std::string domain;
 	std::string path;
 	std::string block_fading;
 };

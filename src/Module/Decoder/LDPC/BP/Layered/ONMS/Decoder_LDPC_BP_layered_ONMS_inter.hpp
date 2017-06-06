@@ -13,7 +13,6 @@ template <typename B = int, typename R = float>
 class Decoder_LDPC_BP_layered_ONMS_inter : public Decoder_SISO<B,R>
 {
 private:
-	int cur_wave;
 	const float normalize_factor;
 	const R offset;
 	mipp::vector<mipp::Reg<R>> contributions;
@@ -54,18 +53,18 @@ public:
 
 protected:
 	// soft decode
-	void _soft_decode(const R *Y_N1, R *Y_N2);
+	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
 
 	// hard decoder (load -> decode -> store)
-	void _load       (const R *Y_N);
-	void _hard_decode(const R *Y_N, B *V_K);
-	void _store      (B *V_K);
+	void _load       (const R *Y_N,         const int frame_id);
+	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _store      (              B *V_K, const int frame_id);
 
 	// BP functions for decoding
 	template <int F = 1>
-	void BP_decode();
+	void BP_decode(const int frame_id);
 
-	bool check_syndrome();
+	bool check_syndrome(const int frame_id);
 
 	template <int F = 1>
 	void BP_process(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches);

@@ -6,10 +6,10 @@
 
 using namespace aff3ct::module;
 
-template <typename B, typename R>
-Monitor_std<B,R>
-::Monitor_std(const int& K, const int& N, const int& N_mod, const unsigned& max_fe, const int& n_frames, const std::string name)
-: Monitor<B,R>(K, N, N_mod, n_frames, name.c_str()),
+template <typename B>
+Monitor_std<B>
+::Monitor_std(const int size, const unsigned max_fe, const int n_frames, const std::string name)
+: Monitor<B>(size, n_frames, name.c_str()),
   max_fe(max_fe),
   n_bit_errors(0),
   n_frame_errors(0),
@@ -17,37 +17,19 @@ Monitor_std<B,R>
 {
 }
 
-template <typename B, typename R>
-bool Monitor_std<B,R>
+template <typename B>
+bool Monitor_std<B>
 ::fe_limit_achieved()
 {
-	return (get_n_fe() >= get_fe_limit()) || Monitor<B,R>::interrupt;
+	return (get_n_fe() >= get_fe_limit()) || Monitor<B>::interrupt;
 }
 
-template <typename B, typename R>
-void Monitor_std<B,R>
-::_check_and_track_errors(const B *U_K, const B *V_K, const B *X_N, const R *Y_N_mod)
-{
-	if (__check_errors(U_K, V_K, this->K)) copy_bad_frame(U_K, X_N, Y_N_mod);
-
-	n_analyzed_frames++;
-}
-
-template <typename B, typename R>
-void Monitor_std<B,R>
-::_check_errors(const B *U_K, const B *V_K)
-{
-	__check_errors(U_K, V_K, this->K);
-
-	n_analyzed_frames++;
-}
-
-template <typename B, typename R>
-bool Monitor_std<B,R>
-::__check_errors(const B* U, const B* V, const int length)
+template <typename B>
+void Monitor_std<B>
+::_check_errors(const B *U, const B *V, const int frame_id)
 {
 	auto bit_errors_count = 0;
-	for (auto b = 0; b < length; b++)
+	for (auto b = 0; b < this->size; b++)
 		bit_errors_count += !U[b] != !V[b];
 
 	if (bit_errors_count)
@@ -55,111 +37,118 @@ bool Monitor_std<B,R>
 		n_bit_errors += bit_errors_count;
 		n_frame_errors++;
 
-		return true;
+		for (auto c : this->callbacks_fe)
+			c(frame_id);
+
+		if (this->fe_limit_achieved() && frame_id == this->n_frames -1)
+			for (auto c : this->callbacks_fe_limit_achieved)
+				c();
 	}
 
-	return false;
+	n_analyzed_frames++;
+
+	if (frame_id == this->n_frames -1)
+		for (auto c : this->callbacks_check)
+			c();
 }
 
-template <typename B, typename R>
-unsigned Monitor_std<B,R>
+template <typename B>
+unsigned Monitor_std<B>
 ::get_fe_limit() const
 {
 	return max_fe;
 }
 
-template <typename B, typename R>
-unsigned long long Monitor_std<B,R>
+template <typename B>
+unsigned long long Monitor_std<B>
 ::get_n_analyzed_fra() const
 {
 	return n_analyzed_frames;
 }
 
-template <typename B, typename R>
-unsigned long long Monitor_std<B,R>
+template <typename B>
+unsigned long long Monitor_std<B>
 ::get_n_fe() const
 {
 	return n_frame_errors;
 }
 
-template <typename B, typename R>
-unsigned long long Monitor_std<B,R>
+template <typename B>
+unsigned long long Monitor_std<B>
 ::get_n_be() const
 {
 	return n_bit_errors;
 }
 
-template <typename B, typename R>
-float Monitor_std<B,R>
+template <typename B>
+float Monitor_std<B>
 ::get_fer() const
 {
-	auto t_fer = (float)get_n_fe() / (float)get_n_analyzed_fra();
+	auto t_fer = 0.f;
+	if (this->get_n_be() != 0)
+		t_fer = (float)this->get_n_fe() / (float)this->get_n_analyzed_fra();
+	else
+		t_fer = (1.f) / ((float)this->get_n_analyzed_fra());
+
 	return t_fer;
 }
 
-template <typename B, typename R>
-float Monitor_std<B,R>
+template <typename B>
+float Monitor_std<B>
 ::get_ber() const
 {
-	auto t_ber = (float)get_n_be() / (float)get_n_analyzed_fra() / (float)this->K;
+	auto t_ber = 0.f;
+	if (this->get_n_be() != 0)
+		t_ber = (float)this->get_n_be() / (float)this->get_n_analyzed_fra() / (float)this->get_size();
+	else
+		t_ber = (1.f) / ((float)this->get_n_analyzed_fra()) / this->get_size();
+
 	return t_ber;
 }
 
-template <typename B, typename R>
-void Monitor_std<B,R>
-::copy_bad_frame(const B* U_K, const B* X_N, const R* Y_N_mod)
+template <typename B>
+void Monitor_std<B>
+::add_handler_fe(std::function<void(int)> callback)
 {
-	buff_src.  push_back(mipp::vector<B>(this->K    ));
-	buff_enc.  push_back(mipp::vector<B>(this->N    ));
-	buff_noise.push_back(mipp::vector<R>(this->N_mod));
-
-	for (int b = 0; b < this->K; b++)
-		buff_src.back()[b] = U_K[b];
-
-	for (int b = 0; b < this->N; b++)
-		buff_enc.back()[b] = X_N[b];
-
-	for (int b = 0; b < this->N_mod; b++)
-		buff_noise.back()[b] = Y_N_mod[b];// - X_mod[b];
+	this->callbacks_fe.push_back(callback);
+}
+template <typename B>
+void Monitor_std<B>
+::add_handler_check(std::function<void(void)> callback)
+{
+	this->callbacks_check.push_back(callback);
 }
 
-template <typename B, typename R>
-void Monitor_std<B,R>
-::dump_bad_frames(const std::string& base_path, const float snr, mipp::vector<int> itl_pi)
+template <typename B>
+void Monitor_std<B>
+::add_handler_fe_limit_achieved(std::function<void(void)> callback)
 {
-	throw std::runtime_error("aff3ct::module::Monitor_std: \"dump_bad_frames\" is not defined in \"Monitor_std\" "
-	                         "class, please call this method on \"Monitor_reduction\" instead.");
+	this->callbacks_fe_limit_achieved.push_back(callback);
 }
 
-template <typename B, typename R>
-const std::vector<mipp::vector<B>> Monitor_std<B,R>
-::get_buff_src() const
+template <typename B>
+void Monitor_std<B>
+::reset()
 {
-	return buff_src;
-};
+	Monitor<B>::reset();
 
-template <typename B, typename R>
-const std::vector<mipp::vector<B>> Monitor_std<B,R>
-::get_buff_enc() const
-{
-	return buff_enc;
-};
+	this->n_bit_errors      = 0;
+	this->n_frame_errors    = 0;
+	this->n_analyzed_frames = 0;
 
-template <typename B, typename R>
-const std::vector<mipp::vector<R>> Monitor_std<B,R>
-::get_buff_noise() const
-{
-	return buff_noise;
-};
+	this->callbacks_fe               .clear();
+	this->callbacks_check            .clear();
+	this->callbacks_fe_limit_achieved.clear();
+}
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Monitor_std<B_8 ,R_8>;
-template class aff3ct::module::Monitor_std<B_16,R_16>;
-template class aff3ct::module::Monitor_std<B_32,R_32>;
-template class aff3ct::module::Monitor_std<B_64,R_64>;
+template class aff3ct::module::Monitor_std<B_8>;
+template class aff3ct::module::Monitor_std<B_16>;
+template class aff3ct::module::Monitor_std<B_32>;
+template class aff3ct::module::Monitor_std<B_64>;
 #else
-template class aff3ct::module::Monitor_std<B,R>;
+template class aff3ct::module::Monitor_std<B>;
 #endif
 // ==================================================================================== explicit template instantiation

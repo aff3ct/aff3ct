@@ -95,8 +95,12 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_idx      (L),
   l_tmp         (N)
 {
-	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
+//	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
+
+	if (API_polar::get_n_frames() != 1)
+		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: The inter-frame API_polar is "
+		                            "not supported.");
 
 	if (this->N < mipp::nElReg<R>() * 2)
 		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be equal or greater "
@@ -151,7 +155,7 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_idx      (L),
   l_tmp         (N)
 {
-	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
+//	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
 	if (this->N < mipp::nElReg<R>() * 2)
@@ -205,7 +209,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->init_buffers();

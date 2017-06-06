@@ -89,7 +89,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_hard_decode(const R *Y_N, B *V_K)
+::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
