@@ -1,5 +1,6 @@
 //find ./src/ -type f -follow -print | grep "[.]h$"
 #include <Tools/general_utils.h>
+#include <Tools/git_sha1.h>
 #include <Tools/types.h>
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/utils.h>
