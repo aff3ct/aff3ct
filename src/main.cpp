@@ -96,7 +96,7 @@ void print_version()
 	          << mipp::IntructionsType << ") " << affect_version << std::endl;
 	if (git_sha1 != "GITDIR-NOTFOUND")
 		std::cout << "GIT SHA1: " << git_sha1 << std::endl;
-	std::cout << "Copyright (c) 2016 - MIT license."                                           << std::endl;
+	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
 	exit(EXIT_SUCCESS);
