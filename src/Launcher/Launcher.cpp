@@ -12,6 +12,7 @@
 #endif
 
 #include "Tools/date.h"
+#include "Tools/general_utils.h"
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -525,7 +526,8 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	std::stringstream date;
 	date << system_clock::now();
 
-	p.push_back(std::make_pair("Date (UTC)", date.str()));
+	auto split_date = string_split(date.str(), '.');
+	p.push_back(std::make_pair("Date (UTC)", split_date[0]));
 
 	return p;
 }
