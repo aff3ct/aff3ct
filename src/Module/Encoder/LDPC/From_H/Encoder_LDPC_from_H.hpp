@@ -7,6 +7,7 @@
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../Encoder_LDPC.hpp"
+#include "Tools/Code/LDPC/G/LDPC_G.hpp"
 
 namespace aff3ct
 {
@@ -17,8 +18,8 @@ template <typename B = int>
 class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
 protected:
-	mipp::vector<unsigned> swapped;
-	std::vector<mipp::vector<unsigned>> G; // position of ones by column 
+	mipp::vector<unsigned> info_bits_pos;
+	tools::LDPC_G::sparse_matrix G; // position of ones by column
 
 public:
 	Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames = 1,

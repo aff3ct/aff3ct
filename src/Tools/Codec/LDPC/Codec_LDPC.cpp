@@ -44,6 +44,7 @@ Encoder_LDPC<B>* Codec_LDPC<B,Q>
 	                                      this->params.code.K,
 	                                      this->params.code.N_code,
 	                                      this->params.encoder.path,
+	                                      this->params.code.alist_path,
 	                                      this->params.simulation.inter_frame_level);
 }
 

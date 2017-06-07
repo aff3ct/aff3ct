@@ -17,7 +17,8 @@ struct Factory_encoder_LDPC : public Factory
 	static module::Encoder_LDPC<B>* build(const std::string type,
 	                                      const int         K,
 	                                      const int         N,
-	                                      const std::string path     = "",
+	                                      const std::string path_G   = "",
+	                                      const std::string path_H   = "",
 	                                      const int         n_frames = 1);
 };
 }
