@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
 #define DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 #include "../../../../Decoder_SISO.hpp"
 
@@ -30,7 +30,7 @@ protected:
 
 	const mipp::vector<B> &info_bits_pos;
 
-	const std::vector<std::vector<unsigned int>> &CN_to_VN;
+	const tools::Sparse_matrix &H;
 
 	// data structures for iterative decoding
 	std::vector<mipp::vector<mipp::Reg<R>>> var_nodes;
@@ -41,7 +41,7 @@ protected:
 
 public:
 	Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
-	                                   const tools::AList_reader &alist_data,
+	                                   const tools::Sparse_matrix &H,
 	                                   const mipp::vector<B> &info_bits_pos,
 	                                   const float normalize_factor = 1.f,
 	                                   const R offset = (R)0,

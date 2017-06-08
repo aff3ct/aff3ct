@@ -1,6 +1,9 @@
+#include <fstream>
 #include <numeric>
 #include <algorithm>
 #include <exception>
+
+#include "Tools/Code/LDPC/AList/AList.hpp"
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
@@ -14,10 +17,20 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::Codec_LDPC(const parameters& params)
 : Codec_SISO<B,Q>(params),
-  alist_data   (params.code.alist_path),
   info_bits_pos(this->params.code.K),
   decoder_siso (params.simulation.n_threads, nullptr)
 {
+	auto file_H = std::ifstream(params.code.alist_path, std::ifstream::in);
+	H = AList::read(file_H);
+	file_H.close();
+
+	if (!params.encoder.path.empty())
+	{
+		auto file_G = std::ifstream(params.encoder.path, std::ifstream::in);
+		G = AList::read(file_G);
+		file_G.close();
+	}
+
 	try
 	{
 		auto encoder_LDPC = this->build_encoder();
@@ -43,7 +56,8 @@ Encoder_LDPC<B>* Codec_LDPC<B,Q>
 	return Factory_encoder_LDPC<B>::build(this->params.encoder.type,
 	                                      this->params.code.K,
 	                                      this->params.code.N_code,
-	                                      this->params.encoder.path,
+	                                      G,
+	                                      H,
 	                                      this->params.simulation.inter_frame_level);
 }
 
@@ -56,7 +70,7 @@ Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
 	                                                     this->params.code.K,
 	                                                     this->params.code.N_code,
 	                                                     this->params.decoder.n_ite,
-	                                                     alist_data,
+	                                                     H,
 	                                                     info_bits_pos,
 	                                                     this->params.decoder.simd_strategy,
 	                                                     this->params.decoder.normalize_factor,

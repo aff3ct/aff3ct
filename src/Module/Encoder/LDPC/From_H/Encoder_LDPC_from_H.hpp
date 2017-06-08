@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../Encoder_LDPC.hpp"
@@ -18,10 +18,10 @@ class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
 protected:
 	mipp::vector<unsigned> swapped;
-	std::vector<mipp::vector<unsigned>> G; // position of ones by column 
+	std::vector<mipp::vector<unsigned>> G; // position of ones by column
 
 public:
-	Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames = 1,
+	Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1,
 	                    const std::string name = "Encoder_LDPC_from_H");
 	virtual ~Encoder_LDPC_from_H();
 

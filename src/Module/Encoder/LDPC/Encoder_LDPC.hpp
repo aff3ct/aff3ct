@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "../Encoder.hpp"
@@ -23,7 +23,7 @@ protected:
 	Encoder_LDPC(const int K, const int N, const int n_frames = 1, const std::string name = "Encoder_LDPC");
 
 public:
-	Encoder_LDPC(const int K, const int N, const tools::AList_reader &alist_G, const int n_frames = 1,
+	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames = 1,
 	             const std::string name = "Encoder_LDPC");
 	virtual ~Encoder_LDPC();
 

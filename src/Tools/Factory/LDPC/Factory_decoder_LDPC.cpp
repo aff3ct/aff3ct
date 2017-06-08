@@ -21,7 +21,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
         const int              K,
         const int              N,
         const int              n_ite,
-        const AList_reader    &H,
+        const Sparse_matrix   &H,
         const mipp::vector<B> &info_bits_pos,
         const std::string      simd_strategy,
         const float            factor,

@@ -16,23 +16,23 @@ using namespace module;
 
 template <typename B>
 Encoder_LDPC_from_H<B>
-::Encoder_LDPC_from_H(const int K, const int N, const tools::AList_reader &alist_H, const int n_frames,
+::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames,
                       const std::string name)
 : Encoder_LDPC<B>(K, N, n_frames, name)
 {
-	std::vector<mipp::vector<B>> H;
-	tools::LDPC_G::build_H(alist_H.get_n_CN(), alist_H.get_n_VN(), alist_H.get_CN_to_VN(), H);
-	tools::LDPC_G::triangularization_H(H, swapped);
+	std::vector<mipp::vector<B>> full_H;
+	tools::LDPC_G::build_H(H.get_n_cols(), H.get_n_rows(), H.get_col_to_rows(), full_H);
+	tools::LDPC_G::triangularization_H(full_H, swapped);
 
-	if ((int) H[0].size() != N)
+	if ((int) full_H[0].size() != N)
 		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"H[0].size()\" has to be equal to \"N\".");
 
-	if ((int)(H[0].size() - H.size()) != K)
+	if ((int)(full_H[0].size() - full_H.size()) != K)
 		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"H[0].size()\" - \"H.size()\"  has to be "
 		                        "equal to \"K\".");
 
-	tools::LDPC_G::identity_H(H);
-	tools::LDPC_G::transformation_H_to_G(H, G, swapped);
+	tools::LDPC_G::identity_H(full_H);
+	tools::LDPC_G::transformation_H_to_G(full_H, G, swapped);
 }
 
 template <typename B>
