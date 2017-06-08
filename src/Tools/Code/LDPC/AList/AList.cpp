@@ -117,7 +117,7 @@ Sparse_matrix AList
 				throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
 				                         "smaller or equal to \"rows_max_degree\".");
 
-			rows_degree[i] = (unsigned)n_connections;
+			rows_degree[i] = n_connections;
 		}
 
 		std::vector<unsigned> cols_degree(n_cols);
@@ -130,7 +130,7 @@ Sparse_matrix AList
 				throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
 				                         "smaller or equal to \"cols_max_degree\".");
 
-			cols_degree[i] = (unsigned)n_connections;
+			cols_degree[i] = n_connections;
 		}
 
 		for (unsigned i = 0; i < n_rows; i++)
