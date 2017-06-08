@@ -24,7 +24,7 @@ Codec_LDPC<B,Q>
 	H = AList::read(file_H);
 	file_H.close();
 
-	if (!params.encoder.path.empty())
+	if (!params.encoder.path.empty() && params.encoder.type == "LDPC")
 	{
 		auto file_G = std::ifstream(params.encoder.path, std::ifstream::in);
 		G = AList::read(file_G);
