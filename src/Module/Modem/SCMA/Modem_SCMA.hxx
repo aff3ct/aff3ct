@@ -121,7 +121,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
-	for (auto batch = 0 ; batch < this->N / 2 ; batch++)
+	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
 		// filling array_phi luts
 		for (auto i = 0; i < 4; i++)
@@ -141,7 +141,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	assert(typeid(R) == typeid(Q));
 	assert(typeid(Q) == typeid(float) || typeid(Q) == typeid(double));
 
-	for (auto batch = 0 ; batch < this->N / 2 ; batch++)
+	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
 		// filling array_phi luts
 		for (auto i = 0; i < 4; i++)
@@ -273,7 +273,7 @@ void Modem_SCMA<B,R,Q,PSI>
 	Y_N2[4 * this->N + batch *2 +0] = std::log(guess[4][0] + guess[4][2]) - std::log(guess[4][1] + guess[4][3]);
 	Y_N2[5 * this->N + batch *2 +0] = std::log(guess[5][0] + guess[5][2]) - std::log(guess[5][1] + guess[5][3]);
 
-	if((this->N % 2) != 1 || batch != ((this->N_mod * this->n_frames) / 8 - 1) )
+	if((this->N % 2) != 1 || batch != ((this->N /2 +1) -1))
 	{
 		Y_N2[0 * this->N + batch *2 +1] = std::log(guess[0][0] + guess[0][1]) - std::log(guess[0][2] + guess[0][3]);
 		Y_N2[1 * this->N + batch *2 +1] = std::log(guess[1][0] + guess[1][1]) - std::log(guess[1][2] + guess[1][3]);
