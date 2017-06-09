@@ -38,7 +38,7 @@ inline double normalize(const double val, const float factor)
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
-                                                    const AList_reader &alist_data,
+                                                    const Sparse_matrix &H,
                                                     const mipp::vector<B> &info_bits_pos,
                                                     const float normalize_factor,
                                                     const R offset,
@@ -46,7 +46,7 @@ Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
                                                     const int syndrome_depth,
                                                     const int n_frames,
                                                     const std::string name)
-: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
+: Decoder_LDPC_BP_flooding<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
   normalize_factor(normalize_factor), offset(offset)
 {
 	if (typeid(R) == typeid(signed char))

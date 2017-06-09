@@ -19,22 +19,22 @@ Encoder_LDPC<B>
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const tools::AList_reader &alist_G, const int n_frames,
+::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames,
                const std::string name)
 : Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
 {
-	if (K != (int)alist_G.get_n_CN() || N != (int)alist_G.get_n_VN())
-		throw std::invalid_argument("aff3ct::module::Encoder_LDPC: \"alist_G\" dimensions are not compatible with "
+	if (K != (int)G.get_n_cols() || N != (int)G.get_n_rows())
+		throw std::invalid_argument("aff3ct::module::Encoder_LDPC: \"G\" matrix dimensions are not compatible with "
 		                            "\"K\" and \"N\".");
 
-	auto CN_to_VN = alist_G.get_CN_to_VN();
+	auto CN_to_VN = G.get_col_to_rows();
 
-	mipp::vector<B> G(K * N,0);
+	mipp::vector<B> full_G(K * N,0);
 	for (auto i = 0; i < K; i++)
 		for (size_t j = 0; j < CN_to_VN[i].size(); ++j)
-			G[i * N + CN_to_VN[i][j]] = 1;
+			full_G[i * N + CN_to_VN[i][j]] = 1;
 
-	tools::real_transpose(K, N, G, tG); // transposed for computation matter
+	tools::real_transpose(K, N, full_G, tG); // transposed for computation matter
 }
 
 template <typename B>

@@ -1,8 +1,6 @@
 #ifndef DECODER_LDPC_BP_LAYERED_MIN_SUM_OFFSET_HPP_
 #define DECODER_LDPC_BP_LAYERED_MIN_SUM_OFFSET_HPP_
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
-
 #include "../Decoder_LDPC_BP_layered.hpp"
 
 namespace aff3ct
@@ -19,7 +17,7 @@ private:
 
 public:
 	Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
-	                                                 const tools::AList_reader &alist_data,
+	                                                 const tools::Sparse_matrix &H,
 	                                                 const mipp::vector<B> &info_bits_pos,
 	                                                 const float normalize_factor = 1.f,
 	                                                 const R offset = (R)0,

@@ -1,9 +1,8 @@
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
-
 #include "../../../Decoder_SISO.hpp"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
 {
@@ -26,9 +25,9 @@ protected:
 
 	const mipp::vector<B> &info_bits_pos;
 
-	const mipp::vector<unsigned char> n_variables_per_parity;
-	const mipp::vector<unsigned char> n_parities_per_variable;
-	const mipp::vector<unsigned int > transpose;
+	mipp::vector<unsigned char> n_variables_per_parity;
+	mipp::vector<unsigned char> n_parities_per_variable;
+	mipp::vector<unsigned int > transpose;
 
 	// data structures for iterative decoding
 	            mipp::vector<R>  Lp_N;   // a posteriori information
@@ -36,7 +35,7 @@ protected:
 	std::vector<mipp::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
-	                         const tools::AList_reader &alist_data,
+	                         const tools::Sparse_matrix &H,
 	                         const mipp::vector<B> &info_bits_pos,
 	                         const bool enable_syndrome = true,
 	                         const int syndrome_depth = 1,

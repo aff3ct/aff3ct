@@ -2,8 +2,8 @@
 #define FACTORY_DECODER_LDPC_HPP
 
 #include <string>
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Decoder/Decoder.hpp"
@@ -23,7 +23,7 @@ struct Factory_decoder_LDPC : public Factory
 	                                        const int              K,
 	                                        const int              N,
 	                                        const int              n_ite,
-	                                        const AList_reader    &H,
+	                                        const Sparse_matrix   &H,
 	                                        const mipp::vector<B> &info_bits_pos,
 	                                        const std::string      simd_strategy = "",
 	                                        const float            factor        = 1.f,

@@ -13,14 +13,14 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_sum_product<B,R>
 ::Decoder_LDPC_BP_layered_sum_product(const int &K, const int &N, const int& n_ite,
-                                      const AList_reader &alist_data,
+                                      const Sparse_matrix &H,
                                       const mipp::vector<B> &info_bits_pos,
                                       const bool enable_syndrome,
                                       const int syndrome_depth,
                                       const int n_frames,
                                       const std::string name)
-: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
-  contributions(alist_data.get_CN_max_degree()), values(alist_data.get_CN_max_degree())
+: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
+  contributions(H.get_cols_max_degree()), values(H.get_cols_max_degree())
 {
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
 		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_sum_product: this decoder only supports "
@@ -45,10 +45,10 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 		auto sign =    0;
 		auto prod = (R)1;
 
-		const auto n_VN = (int)this->CN_to_VN[i].size();
+		const auto n_VN = (int)this->H[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			contributions[j]  = var_nodes[this->CN_to_VN[i][j]] - branches[kr++];
+			contributions[j]  = var_nodes[this->H[i][j]] - branches[kr++];
 			const auto v_abs  = (R)std::abs(contributions[j]);
 			const auto res    = (R)std::tanh(v_abs * (R)0.5);
 			const auto c_sign = std::signbit((float)contributions[j]) ? -1 : 0;
@@ -68,7 +68,7 @@ void Decoder_LDPC_BP_layered_sum_product<B,R>
 			const auto v_res = (R)std::copysign(v_tan, v_sig);
 
 			branches[kw++] = v_res;
-			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
+			var_nodes[this->H[i][j]] = contributions[j] + v_res;
 		}
 	}
 }

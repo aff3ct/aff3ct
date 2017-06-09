@@ -2,10 +2,9 @@
 #define CODEC_LDPC_HPP_
 
 #include "Tools/Perf/MIPP/mipp.h"
-#include "Tools/Code/LDPC/AList_reader/AList_reader.hpp"
-
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 #include "../Codec_SISO.hpp"
 
@@ -17,7 +16,8 @@ template <typename B = int, typename Q = float>
 class Codec_LDPC : public Codec_SISO<B,Q>
 {
 protected:
-	AList_reader alist_data;
+	Sparse_matrix H;
+	Sparse_matrix G;
 	mipp::vector<B> info_bits_pos;
 
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
