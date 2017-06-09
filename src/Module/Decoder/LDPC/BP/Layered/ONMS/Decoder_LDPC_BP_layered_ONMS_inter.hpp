@@ -28,7 +28,7 @@ protected:
 	// reset so C_to_V and V_to_C structures can be cleared only at the beginning of the loop in iterative decoding
 	bool init_flag;
 
-	const mipp::vector<B> &info_bits_pos;
+	const std::vector<unsigned> &info_bits_pos;
 
 	const tools::Sparse_matrix &H;
 
@@ -42,7 +42,7 @@ protected:
 public:
 	Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
 	                                   const tools::Sparse_matrix &H,
-	                                   const mipp::vector<B> &info_bits_pos,
+	                                   const std::vector<unsigned> &info_bits_pos,
 	                                   const float normalize_factor = 1.f,
 	                                   const R offset = (R)0,
 	                                   const bool enable_syndrome = true,

@@ -19,7 +19,7 @@ class Codec_LDPC : public Codec_SISO<B,Q>
 protected:
 	Sparse_matrix H;
 	Sparse_matrix G;
-	mipp::vector<B> info_bits_pos;
+	std::vector<unsigned> info_bits_pos;
 
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 

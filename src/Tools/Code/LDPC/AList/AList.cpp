@@ -22,21 +22,22 @@ std::vector<std::string> split(const std::string &s)
 
 void getline(std::istream &file, std::string &line)
 {
+	if (file.eof() || file.fail() || file.bad())
+		throw std::runtime_error("aff3ct::tools::getline: something went wrong when getting a new line.");
+
 	while (std::getline(file, line))
 		if (line[0] != '#' && !std::all_of(line.begin(),line.end(),isspace))
 			break;
-
-	if (file.eof() || file.fail() || file.bad())
-		throw std::runtime_error("aff3ct::tools::getline: something went wrong when getting a new line.");
 }
 
 Sparse_matrix AList
 ::read(std::istream &stream)
 {
+	// save the init pos of the stream
+	auto init_pos = stream.tellg();
+
 	try
 	{
-		stream.clear();
-		stream.seekg(0, std::ios::beg);
 		return AList::read_format1(stream);
 	}
 	catch (std::exception const&)
@@ -44,13 +45,13 @@ Sparse_matrix AList
 		try
 		{
 			stream.clear();
-			stream.seekg(0, std::ios::beg);
+			stream.seekg(init_pos);
 			return AList::read_format2(stream);
 		}
 		catch (std::exception const&)
 		{
 			stream.clear();
-			stream.seekg(0, std::ios::beg);
+			stream.seekg(init_pos);
 			return AList::read_format3(stream);
 		}
 	}
@@ -90,6 +91,53 @@ void AList
 			stream << 0 << " ";
 		stream << std::endl;
 	}
+}
+
+std::vector<unsigned> AList
+::read_info_bits_pos(std::istream &stream, const int K)
+{
+	std::string line;
+
+	getline(stream, line);
+	auto values = split(line);
+	if (values.size() != 1)
+		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to 1.");
+
+	const unsigned size = std::stoi(values[0]);
+
+	if (K != -1 && size != (unsigned)K)
+		throw std::runtime_error("aff3ct::tools::AList: \"size\" has to be equal to \"K\".");
+
+	getline(stream, line);
+	values = split(line);
+	if (values.size() != size)
+		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to \"size\".");
+
+	std::vector<unsigned> info_bits_pos;
+	for (auto v : values)
+	{
+		const unsigned pos = std::stoi(v);
+
+		if (std::find(info_bits_pos.begin(), info_bits_pos.end(), pos) != info_bits_pos.end())
+			throw std::runtime_error("aff3ct::tools::AList: \"pos\" already exists in the \"info_bits_pos\" vector.");
+
+		if (K != -1 && pos >= (unsigned)K)
+			throw std::runtime_error("aff3ct::tools::AList: \"pos\" has to be smaller than \"K\".");
+
+		info_bits_pos.push_back(pos);
+	}
+
+	return info_bits_pos;
+}
+
+void AList
+::write_info_bits_pos(const std::vector<unsigned> &info_bits_pos, std::ostream &stream)
+{
+	stream << "# Position of the information bits in the codeword:" << std::endl;
+	stream << info_bits_pos.size() << std::endl;
+	for (auto pos : info_bits_pos)
+		stream << pos << " ";
+	stream << std::endl;
 }
 
 // perfect AList format

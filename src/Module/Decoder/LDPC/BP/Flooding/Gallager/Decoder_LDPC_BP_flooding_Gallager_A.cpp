@@ -12,7 +12,7 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const Sparse_matrix &H,
-                                      const mipp::vector<B> &info_bits_pos, const bool enable_syndrome,
+                                      const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames, const std::string name)
 
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name ),

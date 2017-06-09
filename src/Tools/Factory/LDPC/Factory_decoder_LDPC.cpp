@@ -16,19 +16,19 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const std::string      type,
-        const std::string      implem,
-        const int              K,
-        const int              N,
-        const int              n_ite,
-        const Sparse_matrix   &H,
-        const mipp::vector<B> &info_bits_pos,
-        const std::string      simd_strategy,
-        const float            factor,
-        const R                offset,
-        const bool             synd,
-        const int              synd_depth,
-        const int              n_frames)
+::build(const std::string            type,
+        const std::string            implem,
+        const int                    K,
+        const int                    N,
+        const int                    n_ite,
+        const Sparse_matrix         &H,
+        const std::vector<unsigned> &info_bits_pos,
+        const std::string            simd_strategy,
+        const float                  factor,
+        const R                      offset,
+        const bool                   synd,
+        const int                    synd_depth,
+        const int                    n_frames)
 {
 	if ((type == "BP" || type == "BP_FLOODING") && simd_strategy.empty())
 	{

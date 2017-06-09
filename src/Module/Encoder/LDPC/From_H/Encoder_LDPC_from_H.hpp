@@ -25,7 +25,7 @@ public:
 	                    const std::string name = "Encoder_LDPC_from_H");
 	virtual ~Encoder_LDPC_from_H();
 
-	virtual void get_info_bits_pos(mipp::vector<B>& info_bits_pos);
+	virtual void get_info_bits_pos(std::vector<unsigned>& info_bits_pos);
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
