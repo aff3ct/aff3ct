@@ -31,7 +31,11 @@ Sparse_matrix LDPC_matrix_handler
 ::transform_H_to_G(const Sparse_matrix& H, mipp::vector<unsigned>& info_bits_pos)
 {
 	LDPC_matrix_handler::Full_matrix mat;
-	LDPC_matrix_handler::sparse_to_full(H, mat);
+
+	if (H.get_n_rows() > H.get_n_cols())
+		LDPC_matrix_handler::sparse_to_full(H.transpose(), mat);
+	else
+		LDPC_matrix_handler::sparse_to_full(H, mat);
 
 	LDPC_matrix_handler::transform_H_to_G(mat, info_bits_pos);
 

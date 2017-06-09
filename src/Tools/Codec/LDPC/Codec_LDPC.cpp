@@ -85,7 +85,7 @@ Encoder_LDPC<B>* Codec_LDPC<B,Q>
 	                                      this->params.code.K,
 	                                      this->params.code.N_code,
 	                                      G,
-	                                      H.transpose(),
+	                                      H,
 	                                      this->params.simulation.inter_frame_level);
 }
 

@@ -121,8 +121,8 @@
 #include <Tools/Code/Polar/Patterns/Gen/SCL/Pattern_polar_SCL_std.hpp>
 #include <Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp>
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
-#include <Tools/Code/LDPC/G/LDPC_G.hpp>
-#include <Tools/Code/LDPC/AList_reader/AList_reader.hpp>
+#include <Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp>
+#include <Tools/Code/LDPC/AList/AList.hpp>
 #include <Tools/Code/SCMA/modem_SCMA_functions.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp>
