@@ -36,7 +36,7 @@ Encoder_LDPC_from_H<B>
 
 template <typename B>
 void Encoder_LDPC_from_H<B>
-::get_info_bits_pos(mipp::vector<B>& info_bits_pos)
+::get_info_bits_pos(std::vector<unsigned>& info_bits_pos)
 {
 	if (this->K != (int)info_bits_pos.size())
 		throw std::length_error("aff3ct::module::Encoder_LDPC_from_H: \"info_bits_pos.size()\" has to be equal "

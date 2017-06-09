@@ -17,7 +17,7 @@ private:
 public:
 	Decoder_LDPC_BP_flooding_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
 	                                                  const tools::Sparse_matrix &H,
-	                                                  const mipp::vector<B> &info_bits_pos,
+	                                                  const std::vector<unsigned> &info_bits_pos,
 	                                                  const float normalize_factor = 1.f,
 	                                                  const R offset = (R)0,
 	                                                  const bool enable_syndrome = true,

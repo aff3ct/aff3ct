@@ -42,7 +42,7 @@ template <typename B, typename R>
 Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
                                                    const Sparse_matrix &H,
-                                                   const mipp::vector<B> &info_bits_pos,
+                                                   const std::vector<unsigned> &info_bits_pos,
                                                    const float normalize_factor,
                                                    const R offset,
                                                    const bool enable_syndrome,
