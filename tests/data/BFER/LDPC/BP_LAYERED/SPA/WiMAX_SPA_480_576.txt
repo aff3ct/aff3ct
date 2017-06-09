@@ -1,0 +1,61 @@
+Run command:
+./bin/aff3ct --sim-type BFER --cde-type LDPC --src-type AZCW -K 480 -N 576 -m 2.50 -M 5.51 -s 0.50 -e 100 --dec-type BP_LAYERED --dec-implem SPA -i 40 --cde-alist-path ../conf/dec/LDPC/WIMAX_480_576.alist --dec-no-synd -p 32
+Curve name:
+LDPC WiMAX (576,480)
+Trace:
+# -------------------------------------------------
+# ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
+# -------------------------------------------------
+# Parameters:
+# * Simulation ------------------------------------
+#    ** Type                   = BFER
+#    ** SNR min (m)            = 2.500000 dB
+#    ** SNR max (M)            = 5.510000 dB
+#    ** SNR step (s)           = 0.500000 dB
+#    ** Type of bits           = int (32 bits)
+#    ** Type of reals          = float (32 bits)
+#    ** Multi-threading (t)    = 64 thread(s)
+# * Code ------------------------------------------
+#    ** Type                   = LDPC
+#    ** Info. bits (K)         = 480
+#    ** Codeword size (N)      = 576
+#    ** Coset approach (c)     = off
+#    ** AList file path        = ../conf/dec/LDPC/WIMAX_480_576.alist
+# * Source ----------------------------------------
+#    ** Type                   = AZCW
+# * Encoder ---------------------------------------
+#    ** Type                   = AZCW
+#    ** Systematic encoding    = on
+# * Modulator -------------------------------------
+#    ** Type                   = BPSK
+# * Channel ---------------------------------------
+#    ** Type                   = AWGN
+#    ** Domain                 = LLR
+# * Demodulator -----------------------------------
+#    ** Sigma square           = on
+#    ** Max type               = unused
+# * Decoder ---------------------------------------
+#    ** Type (D)               = BP_LAYERED
+#    ** Implementation         = SPA
+#    ** Num. of iterations (i) = 40
+#    ** Syndrome detection     = off
+# * Monitor ---------------------------------------
+#    ** Frame error count (e)  = 100
+#
+# The simulation is running...
+# ----------------------------------------------------------------------||--------------------------------||---------------------
+#       Bit Error Rate (BER) and Frame Error Rate (FER) depending       ||     Decoder throughput and     ||  Global throughput  
+#                    on the Signal Noise Ratio (SNR)                    ||      latency (per thread)      ||  and elapsed time   
+# ----------------------------------------------------------------------||--------------------------------||---------------------
+# -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+#  Es/N0 | Eb/N0 |      FRA |       BE |       FE |      BER |      FER ||     CTHR |     ITHR |  LATENCY || SIM_CTHR |    ET/RT 
+#   (dB) |  (dB) |          |          |          |          |          ||   (Mb/s) |   (Mb/s) |     (us) ||   (Mb/s) | (hhmmss) 
+# -------|-------|----------|----------|----------|----------|----------||----------|----------|----------||----------|----------
+    1.71 |  2.50 |      172 |     2509 |      143 | 3.04e-02 | 8.31e-01 ||     0.03 |     0.02 | 21113.54 ||     0.83 | 00h00'00  
+    2.21 |  3.00 |      359 |     1853 |      131 | 1.08e-02 | 3.65e-01 ||     0.03 |     0.03 | 18762.15 ||     1.18 | 00h00'00  
+    2.71 |  3.50 |     1628 |     1327 |      112 | 1.70e-03 | 6.88e-02 ||     0.05 |     0.04 | 12755.19 ||     2.32 | 00h00'00  
+    3.21 |  4.00 |    15083 |     1172 |      101 | 1.62e-04 | 6.70e-03 ||     0.06 |     0.05 |  9904.85 ||     3.57 | 00h00'02  
+    3.71 |  4.50 |   322654 |      719 |      100 | 4.64e-06 | 3.10e-04 ||     0.07 |     0.06 |  8676.68 ||     4.22 | 00h00'44 
+    4.21 |  5.00 |  3671581 |      376 |      100 | 2.13e-07 | 2.72e-05 ||     0.04 |     0.04 | 13300.11 ||     2.75 | 00h12'48 
+    4.71 |  5.50 | 29188568 |      342 |      100 | 2.44e-08 | 3.43e-06 ||     0.02 |     0.02 | 23276.61 ||     1.57 | 02h58'10  
+# End of the simulation.
