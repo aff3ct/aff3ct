@@ -28,7 +28,7 @@ Sparse_matrix LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::transform_H_to_G(const Sparse_matrix& H, mipp::vector<unsigned>& info_bits_pos)
+::transform_H_to_G(const Sparse_matrix& H, std::vector<unsigned>& info_bits_pos)
 {
 	LDPC_matrix_handler::Full_matrix mat;
 
@@ -43,7 +43,7 @@ Sparse_matrix LDPC_matrix_handler
 }
 
 void LDPC_matrix_handler
-::transform_H_to_G(Full_matrix& mat, mipp::vector<unsigned>& info_bits_pos)
+::transform_H_to_G(Full_matrix& mat, std::vector<unsigned>& info_bits_pos)
 {
 	unsigned n_row = (unsigned)mat.size();
 	unsigned n_col = (unsigned)mat.front().size();
@@ -52,7 +52,7 @@ void LDPC_matrix_handler
 		throw std::length_error("aff3ct::tools::LDPC_G::transform_H_to_G: matrix high \"mat.size()\" has to be smaller "
 		                        " than its width \"mat.front().size()\".");
 
-	mipp::vector<unsigned> swapped_cols;
+	std::vector<unsigned> swapped_cols;
 	LDPC_matrix_handler::create_diagonal(mat, swapped_cols);
 	LDPC_matrix_handler::create_identity(mat);
 
@@ -81,7 +81,7 @@ void LDPC_matrix_handler
 }
 
 void LDPC_matrix_handler
-::create_diagonal(Full_matrix& mat, mipp::vector<unsigned>& swapped_cols)
+::create_diagonal(Full_matrix& mat, std::vector<unsigned>& swapped_cols)
 {
 	unsigned n_row = (unsigned)mat.size();
 	unsigned n_col = (unsigned)mat.front().size();
@@ -156,4 +156,20 @@ void LDPC_matrix_handler
 		for (unsigned j = i; j > 0; j--)
 			if (mat[j-1][i])
 				std::transform (mat[j-1].begin(), mat[j-1].end(), mat[i].begin(), mat[j-1].begin(), std::not_equal_to<int8_t>());
+}
+
+float LDPC_matrix_handler
+::compute_density(Full_matrix& mat)
+{
+	unsigned n_rows = mat.size();
+	unsigned n_cols = mat.front().size();
+
+	unsigned nb_ones = 0;
+
+	for (unsigned i = 0; i < n_rows; i++)
+		for (unsigned j = 0; j < n_cols; j++)
+			if (mat[i][j])
+				nb_ones++;
+
+	return ((float)nb_ones/(float)(n_rows*n_cols));
 }

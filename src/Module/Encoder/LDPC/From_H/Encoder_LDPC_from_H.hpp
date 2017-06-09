@@ -18,7 +18,7 @@ template <typename B = int>
 class Encoder_LDPC_from_H : public Encoder_LDPC<B>
 {
 protected:
-	mipp::vector<unsigned> info_bits_pos;
+	std::vector<unsigned> info_bits_pos;
 	tools::Sparse_matrix G; // position of ones by column
 
 public:

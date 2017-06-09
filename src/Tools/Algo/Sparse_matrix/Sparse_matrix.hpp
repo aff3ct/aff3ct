@@ -34,6 +34,8 @@ public:
 
 	const std::vector<unsigned>& operator[](const size_t col_index) const;
 
+	bool at(const size_t row_index, const size_t col_index) const;
+
 	const std::vector<std::vector<unsigned int>>& get_row_to_cols() const;
 	const std::vector<std::vector<unsigned int>>& get_col_to_rows() const;
 
@@ -48,6 +50,11 @@ public:
 	 * Transpose internally this matrix
 	 */
 	void self_transpose();
+
+	/*
+	 * Return the density of ones in this matrix
+	 */
+	float compute_density() const;
 };
 }
 }

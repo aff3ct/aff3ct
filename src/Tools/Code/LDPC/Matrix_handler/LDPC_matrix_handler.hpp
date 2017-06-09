@@ -35,7 +35,7 @@ public:
 	 * swapped_cols is completed each time with couple of positions of the two swapped columns.
 	 * A column might be swapped several times.
 	 */
-	static void create_diagonal(Full_matrix& mat, mipp::vector<unsigned>& swapped_cols);
+	static void create_diagonal(Full_matrix& mat, std::vector<unsigned>& swapped_cols);
 
 	/*
 	 * Reorder rows and columns to create an identity of binary ones on the left part of the matrix.
@@ -44,15 +44,20 @@ public:
 	static void create_identity(Full_matrix& mat);
 
 	/*
+	 * Return the density of ones in the given matrix.
+	 */
+	static float compute_density(Full_matrix & mat);
+
+	/*
 	 * Compute a G matrix related to the given H matrix.
 	 * Warning G is transposed !
 	 * Return also the information bits positions in the returned G matrix.
 	 */
-	static Sparse_matrix transform_H_to_G(const Sparse_matrix& H, mipp::vector<unsigned>& info_bits_pos);
+	static Sparse_matrix transform_H_to_G(const Sparse_matrix& H, std::vector<unsigned>& info_bits_pos);
 
 protected :
 
-	static void transform_H_to_G(Full_matrix& mat, mipp::vector<unsigned>& info_bits_pos);
+	static void transform_H_to_G(Full_matrix& mat, std::vector<unsigned>& info_bits_pos);
 
 };
 }

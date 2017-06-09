@@ -74,6 +74,14 @@ const std::vector<unsigned>& Sparse_matrix
 	return this->get_rows_from_col(col_index);
 }
 
+bool Sparse_matrix
+::at(const size_t row_index, const size_t col_index) const
+{
+	auto it = std::find(this->row_to_cols[row_index].begin(), this->row_to_cols[row_index].end(), col_index);
+
+	return (it != this->row_to_cols[row_index].end());
+}
+
 const std::vector<std::vector<unsigned int>>& Sparse_matrix
 ::get_row_to_cols() const
 {
@@ -128,4 +136,10 @@ void Sparse_matrix
 	std::swap(this->n_rows,          this->n_cols         );
 	std::swap(this->rows_max_degree, this->cols_max_degree);
 	std::swap(this->row_to_cols,     this->col_to_rows    );
+}
+
+float Sparse_matrix
+::compute_density() const
+{
+	return ((float)n_connections/(float)(n_rows*n_cols));
 }
