@@ -8,8 +8,11 @@ using namespace aff3ct::tools;
 
 Galois
 ::Galois(const int& K, const int& N, const int& m, const int& t)
- : K(K), N(N), m(m), t(t), d(2 * t + 1), alpha_to(N + 1), index_of(N + 1), p(m + 1, 0), g(N - K + 1)
+ : K(K), N(N), m(m), t(t), d(2 * t + 1)
 {
+	if (K > N)
+		throw std::invalid_argument("aff3ct::tools::Galois: \"K\" has to be smaller or equal to \"N\".");
+
 	if (N >= 1048576) // 2^20
 		throw std::invalid_argument("aff3ct::tools::Galois: \"N\" has to be smaller than 1048576.");
 
@@ -18,6 +21,11 @@ Galois
 
 	if (N != ((1 << m) -1))
 		throw std::invalid_argument("aff3ct::tools::Galois: \"N\" has to be a power of 2 minus 1.");
+
+	alpha_to.resize(N +1);
+	index_of.resize(N +1);
+	p       .resize(m +1, 0);
+	g       .resize(N - K + 1);
 
 	Select_Polynomial();
 	Generate_GF();
