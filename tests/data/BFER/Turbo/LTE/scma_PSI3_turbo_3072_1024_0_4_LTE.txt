@@ -1,7 +1,7 @@
 Run command:
 ./bin/aff3ct --sim-type "BFER" --cde-type "TURBO" -K "1024" -N "3072" -m "0" -M "4.0" -s "0.25" --chn-type "AWGN_FAST" --mod-type "SCMA" --dmod-ite "5" -i "6" --mnt-max-fe "100" --sim-inter-lvl "6" --dec-type "LTE" --dec-implem "FAST" --sim-pyber "SCMA-PSI3 + Turbo" --dec-sf "LTE_VEC" --dmod-psi "PSI3" 
 Curve name:
-SCMA_ALI
+SCMA-PSI3 + Turbo
 # -------------------------------------------------
 # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
 # -------------------------------------------------

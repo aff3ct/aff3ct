@@ -1,7 +1,7 @@
 Run command:
 ./bin/aff3ct --sim-type "BFER" --cde-type "UNCODED" -K "12" -N "12" -m "0" -M "14" -s "0.5" --chn-type "AWGN_FAST" --mod-type "SCMA" --dmod-ite "6" --mnt-max-fe "10000" --sim-inter-lvl "6" --sim-pyber "8-SCMA" 
 Curve name:
-8-SCMA
+8-SCMA N=12
 # -------------------------------------------------
 # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
 # -------------------------------------------------
