@@ -28,7 +28,7 @@ Codec_LDPC<B,Q>
 
 		try
 		{
-			info_bits_pos = AList::read_info_bits_pos(file_G, params.code.K);
+			info_bits_pos = AList::read_info_bits_pos(file_G, params.code.K, params.code.N);
 			is_info_bits_pos = true;
 		}
 		catch (std::exception const&)
@@ -53,7 +53,7 @@ Codec_LDPC<B,Q>
 				delete encoder_LDPC;
 			}
 			else
-				info_bits_pos = AList::read_info_bits_pos(file_H, params.code.K);
+				info_bits_pos = AList::read_info_bits_pos(file_H, params.code.K, params.code.N);
 		}
 		catch (std::exception const&)
 		{
