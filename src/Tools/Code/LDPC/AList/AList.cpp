@@ -94,7 +94,7 @@ void AList
 }
 
 std::vector<unsigned> AList
-::read_info_bits_pos(std::istream &stream, const int K)
+::read_info_bits_pos(std::istream &stream)
 {
 	std::string line;
 
@@ -105,7 +105,38 @@ std::vector<unsigned> AList
 
 	const unsigned size = std::stoi(values[0]);
 
-	if (K != -1 && size != (unsigned)K)
+	getline(stream, line);
+	values = split(line);
+	if (values.size() != size)
+		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to \"size\".");
+
+	std::vector<unsigned> info_bits_pos;
+	for (auto v : values)
+	{
+		const unsigned pos = std::stoi(v);
+
+		if (std::find(info_bits_pos.begin(), info_bits_pos.end(), pos) != info_bits_pos.end())
+			throw std::runtime_error("aff3ct::tools::AList: \"pos\" already exists in the \"info_bits_pos\" vector.");
+
+		info_bits_pos.push_back(pos);
+	}
+
+	return info_bits_pos;
+}
+
+std::vector<unsigned> AList
+::read_info_bits_pos(std::istream &stream, const int K, const int N)
+{
+	std::string line;
+
+	getline(stream, line);
+	auto values = split(line);
+	if (values.size() != 1)
+		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to 1.");
+
+	const unsigned size = std::stoi(values[0]);
+
+	if (size != (unsigned)K)
 		throw std::runtime_error("aff3ct::tools::AList: \"size\" has to be equal to \"K\".");
 
 	getline(stream, line);
@@ -121,8 +152,8 @@ std::vector<unsigned> AList
 		if (std::find(info_bits_pos.begin(), info_bits_pos.end(), pos) != info_bits_pos.end())
 			throw std::runtime_error("aff3ct::tools::AList: \"pos\" already exists in the \"info_bits_pos\" vector.");
 
-		if (K != -1 && pos >= (unsigned)K)
-			throw std::runtime_error("aff3ct::tools::AList: \"pos\" has to be smaller than \"K\".");
+		if (pos >= (unsigned)N)
+			throw std::runtime_error("aff3ct::tools::AList: \"pos\" has to be smaller than \"N\".");
 
 		info_bits_pos.push_back(pos);
 	}
@@ -133,7 +164,7 @@ std::vector<unsigned> AList
 void AList
 ::write_info_bits_pos(const std::vector<unsigned> &info_bits_pos, std::ostream &stream)
 {
-	stream << "# Position of the information bits in the codeword:" << std::endl;
+	stream << "# Positions of the information bits in the codewords:" << std::endl;
 	stream << info_bits_pos.size() << std::endl;
 	for (auto pos : info_bits_pos)
 		stream << pos << " ";

@@ -1,6 +1,6 @@
 
-#ifndef LDPC_Matrix_Handler_HPP_
-#define LDPC_matrix_handler_HPP_
+#ifndef LDPC_MATRIX_HANDLER_HPP_
+#define LDPC_MATRIX_HANDLER_HPP_
 
 #include <vector>
 #include <algorithm>
@@ -63,4 +63,4 @@ protected :
 }
 }
 
-#endif /*LDPC_Matrix_Handler_HPP_ */
+#endif /* LDPC_MATRIX_HANDLER_HPP_ */
