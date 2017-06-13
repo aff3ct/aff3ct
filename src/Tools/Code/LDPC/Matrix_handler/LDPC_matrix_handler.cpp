@@ -1,3 +1,5 @@
+#include <functional>
+
 #include "LDPC_matrix_handler.hpp"
 
 using namespace aff3ct;
