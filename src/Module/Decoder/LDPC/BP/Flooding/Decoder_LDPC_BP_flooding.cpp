@@ -14,38 +14,69 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding<B,R>
 ::Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite,
-                           const AList_reader &alist_data,
-                           const mipp::vector<B> &info_bits_pos,
+                           const Sparse_matrix &H,
+                           const std::vector<unsigned> &info_bits_pos,
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder_SISO<B,R>      (K, N, n_frames, 1, name                    ),
-  n_ite                  (n_ite                                      ),
-  n_V_nodes              (N                                          ), // same as N but more explicit
-  n_C_nodes              ((int)alist_data.get_n_CN()                 ),
-  n_branches             ((int)alist_data.get_n_branches()           ),
-  enable_syndrome        (enable_syndrome                            ),
-  syndrome_depth         (syndrome_depth                             ),
-  init_flag              (true                                       ),
-
-  info_bits_pos          (info_bits_pos                              ),
-  n_variables_per_parity (alist_data.get_n_VN_per_CN()               ),
-  n_parities_per_variable(alist_data.get_n_CN_per_VN()               ),
-  transpose              (alist_data.get_branches_transpose()        ),
-
-  Lp_N                   (N,                                       -1), // -1 in order to fail when AZCW
-  C_to_V                 (n_frames, mipp::vector<R>(this->n_branches)),
-  V_to_C                 (n_frames, mipp::vector<R>(this->n_branches))
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name                   ),
+  n_ite            (n_ite                                     ),
+  n_V_nodes        (N                                         ), // same as N but more explicit
+  n_C_nodes        ((int)H.get_n_cols()                       ),
+  n_branches       ((int)H.get_n_connections()                ),
+  enable_syndrome  (enable_syndrome                           ),
+  syndrome_depth   (syndrome_depth                            ),
+  init_flag        (true                                      ),
+  info_bits_pos    (info_bits_pos                             ),
+  Lp_N             (N,                                       -1), // -1 in order to fail when AZCW
+  C_to_V           (n_frames, mipp::vector<R>(this->n_branches)),
+  V_to_C           (n_frames, mipp::vector<R>(this->n_branches))
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"n_ite\" has to be greater than 0.");
 	if (syndrome_depth <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"syndrome_depth\" has to be greater "
 		                            "than 0.");
-	if (N != (int)alist_data.get_n_VN())
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"N\" is not compatible with the alist "
-		                            "file.");
+	if (N != (int)H.get_n_rows())
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding: \"N\" is not compatible with the H "
+		                            "matrix.");
+
+	transpose.resize(this->n_branches);
+	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
+
+	const auto &CN_to_VN = H.get_col_to_rows();
+	const auto &VN_to_CN = H.get_row_to_cols();
+
+	auto k = 0;
+	for (auto i = 0; i < (int)CN_to_VN.size(); i++)
+	{
+		for (auto j = 0; j < (int)CN_to_VN[i].size(); j++)
+		{
+			auto id_V = CN_to_VN[i][j];
+
+			auto branch_id = 0;
+			for (auto ii = 0; ii < (int)id_V; ii++)
+				branch_id += (int)VN_to_CN[ii].size();
+			branch_id += connections[id_V];
+			connections[id_V]++;
+
+			if (connections[id_V] > (int)VN_to_CN[id_V].size())
+				throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding: \"connections[id_V]\" has to be "
+				                         "equal or smaller than \"VN_to_CN[id_V].size()\".");
+
+			transpose[k] = branch_id;
+			k++;
+		}
+	}
+
+	n_variables_per_parity.resize(H.get_n_cols());
+	for (auto i = 0; i < (int)H.get_n_cols(); i++)
+		n_variables_per_parity[i] = (unsigned char)CN_to_VN[i].size();
+
+	n_parities_per_variable.resize(H.get_n_rows());
+	for (auto i = 0; i < (int)H.get_n_rows(); i++)
+		n_parities_per_variable[i] = (unsigned char)VN_to_CN[i].size();
 }
 
 template <typename B, typename R>

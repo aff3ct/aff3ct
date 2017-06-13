@@ -41,16 +41,16 @@ inline double normalize(const double val, const float factor)
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
-                                                   const AList_reader &alist_data,
-                                                   const mipp::vector<B> &info_bits_pos,
+                                                   const Sparse_matrix &H,
+                                                   const std::vector<unsigned> &info_bits_pos,
                                                    const float normalize_factor,
                                                    const R offset,
                                                    const bool enable_syndrome,
                                                    const int syndrome_depth,
                                                    const int n_frames,
                                                    const std::string name)
-: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, alist_data, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
-  normalize_factor(normalize_factor), offset(offset), contributions(alist_data.get_CN_max_degree())
+: Decoder_LDPC_BP_layered<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames, name),
+  normalize_factor(normalize_factor), offset(offset), contributions(H.get_cols_max_degree())
 {
 	if (typeid(R) == typeid(signed char))
 		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_offset_normalize_min_sum: this decoder "
@@ -76,10 +76,10 @@ void Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 		auto min1 = std::numeric_limits<R>::max();
 		auto min2 = std::numeric_limits<R>::max();
 
-		const auto n_VN = (int)this->CN_to_VN[i].size();
+		const auto n_VN = (int)this->H[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			contributions[j]  = var_nodes[this->CN_to_VN[i][j]] - branches[kr++];
+			contributions[j]  = var_nodes[this->H[i][j]] - branches[kr++];
 			const auto v_abs  = (R)std::abs(contributions[j]);
 			const auto c_sign = std::signbit((float)contributions[j]) ? -1 : 0;
 			const auto v_temp = min1;
@@ -103,7 +103,7 @@ void Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 			           v_res = (R)std::copysign(v_res, v_sig);               // magnitude of v_res, sign of v_sig
 
 			branches[kw++] = v_res;
-			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
+			var_nodes[this->H[i][j]] = contributions[j] + v_res;
 		}
 	}
 }

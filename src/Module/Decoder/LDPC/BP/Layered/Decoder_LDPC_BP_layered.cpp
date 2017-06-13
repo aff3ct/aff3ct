@@ -13,31 +13,31 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered<B,R>
 ::Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
-                          const AList_reader &alist_data,
-                          const mipp::vector<B> &info_bits_pos,
+                          const Sparse_matrix &H,
+                          const std::vector<unsigned> &info_bits_pos,
                           const bool enable_syndrome,
                           const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name                               ),
-  n_ite            (n_ite                                                 ),
-  n_C_nodes        ((int)alist_data.get_n_CN()                            ),
-  enable_syndrome  (enable_syndrome                                       ),
-  syndrome_depth   (syndrome_depth                                        ),
-  init_flag        (true                                                  ),
-  info_bits_pos    (info_bits_pos                                         ),
-  CN_to_VN         (alist_data.get_CN_to_VN()                             ),
-  var_nodes        (n_frames, mipp::vector<R>(N                          )),
-  branches         (n_frames, mipp::vector<R>(alist_data.get_n_branches()))
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name                         ),
+  n_ite            (n_ite                                           ),
+  n_C_nodes        ((int)H.get_n_cols()                             ),
+  enable_syndrome  (enable_syndrome                                 ),
+  syndrome_depth   (syndrome_depth                                  ),
+  init_flag        (true                                            ),
+  info_bits_pos    (info_bits_pos                                   ),
+  H                (H                                               ),
+  var_nodes        (n_frames, mipp::vector<R>(N                    )),
+  branches         (n_frames, mipp::vector<R>(H.get_n_connections()))
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"n_ite\" has to be greater than 0.");
 	if (syndrome_depth <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"syndrome_depth\" has to be greater "
 		                            "than 0.");
-	if (N != (int)alist_data.get_n_VN())
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"N\" is not compatible with the alist "
-		                            "file.");
+	if (N != (int)H.get_n_rows())
+		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"N\" is not compatible with the H "
+		                            "matrix.");
 }
 
 template <typename B, typename R>
@@ -154,10 +154,10 @@ bool Decoder_LDPC_BP_layered<B,R>
 	{
 		auto sign = 0;
 
-		const auto n_VN = (int)this->CN_to_VN[i].size();
+		const auto n_VN = (int)this->H[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			const auto value = this->var_nodes[frame_id][this->CN_to_VN[i][j]] - this->branches[frame_id][k++];
+			const auto value = this->var_nodes[frame_id][this->H[i][j]] - this->branches[frame_id][k++];
 			const auto tmp_sign  = std::signbit((float)value) ? -1 : 0;
 
 			sign ^= tmp_sign;

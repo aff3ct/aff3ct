@@ -11,20 +11,20 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const AList_reader &H,
-                                      const mipp::vector<B> &info_bits_pos, const bool enable_syndrome,
+::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const Sparse_matrix &H,
+                                      const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames, const std::string name)
 
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name),
-  n_ite            (n_ite                  ),
-  H                (H                      ),
-  enable_syndrome  (enable_syndrome        ),
-  syndrome_depth   (syndrome_depth         ),
-  info_bits_pos    (info_bits_pos          ),
-  HY_N             (N                      ),
-  V_N              (N                      ),
-  C_to_V_messages  (H.get_n_branches(),   0),
-  V_to_C_messages  (H.get_n_branches(),   0)
+: Decoder_SISO<B,R>(K, N, n_frames, 1, name ),
+  n_ite            (n_ite                   ),
+  H                (H                       ),
+  enable_syndrome  (enable_syndrome         ),
+  syndrome_depth   (syndrome_depth          ),
+  info_bits_pos    (info_bits_pos           ),
+  HY_N             (N                       ),
+  V_N              (N                       ),
+  C_to_V_messages  (H.get_n_connections(), 0),
+  V_to_C_messages  (H.get_n_connections(), 0)
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"n_ite\" has to be "
@@ -32,9 +32,37 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	if (syndrome_depth <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"syndrome_depth\" has to "
 		                            "be greater than 0.");
-	if (N != (int)H.get_n_VN())
+	if (N != (int)H.get_n_rows())
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"N\" is not compatible "
-		                            "with the alist file.");
+		                            "with the H matrix.");
+
+	transpose.resize(H.get_n_connections());
+	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
+
+	const auto &CN_to_VN = H.get_col_to_rows();
+	const auto &VN_to_CN = H.get_row_to_cols();
+
+	auto k = 0;
+	for (auto i = 0; i < (int)CN_to_VN.size(); i++)
+	{
+		for (auto j = 0; j < (int)CN_to_VN[i].size(); j++)
+		{
+			auto id_V = CN_to_VN[i][j];
+
+			auto branch_id = 0;
+			for (auto ii = 0; ii < (int)id_V; ii++)
+				branch_id += (int)VN_to_CN[ii].size();
+			branch_id += connections[id_V];
+			connections[id_V]++;
+
+			if (connections[id_V] > (int)VN_to_CN[id_V].size())
+				throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"connections[id_V]\" "
+				                         "has to be equal or smaller than \"VN_to_CN[id_V].size()\".");
+
+			transpose[k] = branch_id;
+			k++;
+		}
+	}
 }
 
 template <typename B, typename R>
@@ -60,9 +88,9 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 		auto V_to_C_mess_ptr = V_to_C_messages.data();
 
 		// V -> C (for each variable nodes)
-		for (auto i = 0; i < (int)H.get_n_VN(); i++)
+		for (auto i = 0; i < (int)H.get_n_rows(); i++)
 		{
-			const auto node_degree = (int)H.get_VN_to_CN()[i].size();
+			const auto node_degree = (int)H.get_row_to_cols()[i].size();
 
 			for (auto j = 0; j < node_degree; j++)
 			{
@@ -86,10 +114,10 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 		// C -> V (for each check nodes)
 		auto syndrome = 0;
-		auto transpose_ptr = H.get_branches_transpose().data();
-		for (auto i = 0; i < (int)H.get_n_CN(); i++)
+		auto transpose_ptr = this->transpose.data();
+		for (auto i = 0; i < (int)H.get_n_cols(); i++)
 		{
-			const auto node_degree = (int)H.get_CN_to_VN()[i].size();
+			const auto node_degree = (int)H.get_col_to_rows()[i].size();
 
 			// accumulate the incoming information in CN
 			auto acc = 0;
@@ -123,7 +151,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	// for the K variable nodes (make a majority vote with the entering messages)
 	for (auto i = 0; i < this->N; i++)
 	{
-		const auto node_degree = (int)H.get_VN_to_CN()[i].size();
+		const auto node_degree = (int)H.get_row_to_cols()[i].size();
 		auto count = 0;
 
 		for (auto j = 0; j < node_degree; j++)

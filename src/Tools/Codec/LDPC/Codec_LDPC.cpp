@@ -1,6 +1,9 @@
+#include <fstream>
 #include <numeric>
 #include <algorithm>
 #include <exception>
+
+#include "Tools/Code/LDPC/AList/AList.hpp"
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
@@ -14,20 +17,58 @@ template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::Codec_LDPC(const parameters& params)
 : Codec_SISO<B,Q>(params),
-  alist_data   (params.code.alist_path),
   info_bits_pos(this->params.code.K),
   decoder_siso (params.simulation.n_threads, nullptr)
 {
-	try
+	bool is_info_bits_pos = false;
+	if (!params.encoder.path.empty() && params.encoder.type == "LDPC")
 	{
-		auto encoder_LDPC = this->build_encoder();
-		encoder_LDPC->get_info_bits_pos(info_bits_pos);
-		delete encoder_LDPC;
+		auto file_G = std::ifstream(params.encoder.path, std::ifstream::in);
+		G = AList::read(file_G);
+
+		try
+		{
+			info_bits_pos = AList::read_info_bits_pos(file_G, params.code.K, params.code.N);
+			is_info_bits_pos = true;
+		}
+		catch (std::exception const&)
+		{
+			// information bits positions are not in the G matrix file
+		}
+
+		file_G.close();
 	}
-	catch (std::exception const&)
+
+	auto file_H = std::ifstream(params.code.alist_path, std::ifstream::in);
+	H = AList::read(file_H);
+
+	if (!is_info_bits_pos)
 	{
-		std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+		try
+		{
+			if (params.encoder.type == "LDPC_H")
+			{
+				auto encoder_LDPC = this->build_encoder();
+				encoder_LDPC->get_info_bits_pos(info_bits_pos);
+				delete encoder_LDPC;
+			}
+			else
+				info_bits_pos = AList::read_info_bits_pos(file_H, params.code.K, params.code.N);
+		}
+		catch (std::exception const&)
+		{
+			std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+		}
 	}
+
+	file_H.close();
+
+//	// DEBUG
+//	auto file_H_bis = std::ofstream(params.code.alist_path + ".dbg", std::ifstream::out);
+//	AList::write(H, file_H_bis);
+//	file_H_bis << std::endl;
+//	AList::write_info_bits_pos(info_bits_pos, file_H_bis);
+//	file_H_bis.close();
 }
 
 template <typename B, typename Q>
@@ -43,7 +84,8 @@ Encoder_LDPC<B>* Codec_LDPC<B,Q>
 	return Factory_encoder_LDPC<B>::build(this->params.encoder.type,
 	                                      this->params.code.K,
 	                                      this->params.code.N_code,
-	                                      this->params.encoder.path,
+	                                      G,
+	                                      H,
 	                                      this->params.simulation.inter_frame_level);
 }
 
@@ -56,7 +98,7 @@ Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
 	                                                     this->params.code.K,
 	                                                     this->params.code.N_code,
 	                                                     this->params.decoder.n_ite,
-	                                                     alist_data,
+	                                                     H,
 	                                                     info_bits_pos,
 	                                                     this->params.decoder.simd_strategy,
 	                                                     this->params.decoder.normalize_factor,

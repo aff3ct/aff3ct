@@ -13,30 +13,30 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
-                                     const AList_reader &alist_data,
-                                     const mipp::vector<B> &info_bits_pos,
+                                     const Sparse_matrix &H,
+                                     const std::vector<unsigned> &info_bits_pos,
                                      const float normalize_factor,
                                      const R offset,
                                      const bool enable_syndrome,
                                      const int syndrome_depth,
                                      const int n_frames,
                                      const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                             ),
-  normalize_factor (normalize_factor                                                                    ),
-  offset           (offset                                                                              ),
-  contributions    (alist_data.get_CN_max_degree()                                                      ),
-  saturation       ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(alist_data.get_VN_max_degree()))) -1)),
-  n_ite            (n_ite                                                                               ),
-  n_C_nodes        ((int)alist_data.get_n_CN()                                                          ),
-  enable_syndrome  (enable_syndrome                                                                     ),
-  syndrome_depth   (syndrome_depth                                                                      ),
-  init_flag        (true                                                                                ),
-  info_bits_pos    (info_bits_pos                                                                       ),
-  CN_to_VN         (alist_data.get_CN_to_VN()                                                           ),
-  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N                          )          ),
-  branches         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(alist_data.get_n_branches())          ),
-  Y_N_reorderered  (N                                                                                   ),
-  V_K_reorderered  (K                                                                                   )
+: Decoder_SISO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                      ),
+  normalize_factor (normalize_factor                                                             ),
+  offset           (offset                                                                       ),
+  contributions    (H.get_cols_max_degree()                                                      ),
+  saturation       ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
+  n_ite            (n_ite                                                                        ),
+  n_C_nodes        ((int)H.get_n_cols()                                                          ),
+  enable_syndrome  (enable_syndrome                                                              ),
+  syndrome_depth   (syndrome_depth                                                               ),
+  init_flag        (true                                                                         ),
+  info_bits_pos    (info_bits_pos                                                                ),
+  H                (H                                                                            ),
+  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
+  branches         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
+  Y_N_reorderered  (N                                                                            ),
+  V_K_reorderered  (K                                                                            )
 {
 	if (n_ite <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"n_ite\" has to be greater "
@@ -44,9 +44,9 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	if (syndrome_depth <= 0)
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"syndrome_depth\" has to be "
 		                            "greater than 0.");
-	if (N != (int)alist_data.get_n_VN())
+	if (N != (int)H.get_n_rows())
 		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"N\" is not compatible with "
-		                            "the alist file.");
+		                            "the H matrix.");
 	if (typeid(R) == typeid(signed char))
 		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: this decoder does not work in "
 		                         "8-bit fixed-point (try in 16-bit).");
@@ -224,10 +224,10 @@ bool Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	{
 		auto sign = mipp::Reg<B>((B)0);
 
-		const auto n_VN = (int)this->CN_to_VN[i].size();
+		const auto n_VN = (int)this->H[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			const auto value = this->var_nodes[cur_wave][this->CN_to_VN[i][j]] - this->branches[cur_wave][k++];
+			const auto value = this->var_nodes[cur_wave][this->H[i][j]] - this->branches[cur_wave][k++];
 			sign ^= mipp::cast<R,B>(mipp::sign(value));
 		}
 
@@ -289,10 +289,10 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		auto min1 = mipp::Reg<R>(std::numeric_limits<R>::max());
 		auto min2 = mipp::Reg<R>(std::numeric_limits<R>::max());
 
-		const auto n_VN = (int)this->CN_to_VN[i].size();
+		const auto n_VN = (int)this->H[i].size();
 		for (auto j = 0; j < n_VN; j++)
 		{
-			contributions[j]  = var_nodes[this->CN_to_VN[i][j]] - branches[kr++];
+			contributions[j]  = var_nodes[this->H[i][j]] - branches[kr++];
 			const auto v_abs  = mipp::abs (contributions[j]);
 			const auto c_sign = mipp::sign(contributions[j]);
 			const auto v_temp = min1;
@@ -317,7 +317,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			           v_res = mipp::copysign(v_res, mipp::cast<B,R>(v_sig));
 
 			branches[kw++] = v_res;
-			var_nodes[this->CN_to_VN[i][j]] = contributions[j] + v_res;
+			var_nodes[this->H[i][j]] = contributions[j] + v_res;
 		}
 	}
 }
