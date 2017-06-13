@@ -101,14 +101,16 @@ std::vector<unsigned> AList
 	getline(stream, line);
 	auto values = split(line);
 	if (values.size() != 1)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to 1.");
+		throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+		                         " \"values.size()\" has to be equal to 1.");
 
 	const unsigned size = std::stoi(values[0]);
 
 	getline(stream, line);
 	values = split(line);
 	if (values.size() != size)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to \"size\".");
+		throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+		                         " \"values.size()\" has to be equal to \"size\".");
 
 	std::vector<unsigned> info_bits_pos;
 	for (auto v : values)
@@ -116,7 +118,8 @@ std::vector<unsigned> AList
 		const unsigned pos = std::stoi(v);
 
 		if (std::find(info_bits_pos.begin(), info_bits_pos.end(), pos) != info_bits_pos.end())
-			throw std::runtime_error("aff3ct::tools::AList: \"pos\" already exists in the \"info_bits_pos\" vector.");
+			throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+			                         " \"pos\" already exists in the \"info_bits_pos\" vector.");
 
 		info_bits_pos.push_back(pos);
 	}
@@ -132,17 +135,20 @@ std::vector<unsigned> AList
 	getline(stream, line);
 	auto values = split(line);
 	if (values.size() != 1)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to 1.");
+		throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+		                         " \"values.size()\" has to be equal to 1.");
 
 	const unsigned size = std::stoi(values[0]);
 
 	if (size != (unsigned)K)
-		throw std::runtime_error("aff3ct::tools::AList: \"size\" has to be equal to \"K\".");
+		throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+		                         " \"size\" has to be equal to \"K\".");
 
 	getline(stream, line);
 	values = split(line);
 	if (values.size() != size)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be equal to \"size\".");
+		throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+		                         " \"values.size()\" has to be equal to \"size\".");
 
 	std::vector<unsigned> info_bits_pos;
 	for (auto v : values)
@@ -150,10 +156,12 @@ std::vector<unsigned> AList
 		const unsigned pos = std::stoi(v);
 
 		if (std::find(info_bits_pos.begin(), info_bits_pos.end(), pos) != info_bits_pos.end())
-			throw std::runtime_error("aff3ct::tools::AList: \"pos\" already exists in the \"info_bits_pos\" vector.");
+			throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+			                         " \"pos\" already exists in the \"info_bits_pos\" vector.");
 
 		if (pos >= (unsigned)N)
-			throw std::runtime_error("aff3ct::tools::AList: \"pos\" has to be smaller than \"N\".");
+			throw std::runtime_error("aff3ct::tools::AList::read_info_bits_pos:"
+			                         " \"pos\" has to be smaller than \"N\".");
 
 		info_bits_pos.push_back(pos);
 	}
@@ -193,8 +201,8 @@ Sparse_matrix AList
 			stream >> n_connections;
 
 			if (n_connections <= 0 || n_connections > rows_max_degree)
-				throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
-				                         "smaller or equal to \"rows_max_degree\".");
+				throw std::runtime_error("aff3ct::tools::AList::read_format1: \"n_connections\" has to be greater than"
+				                         " 0 and smaller or equal to \"rows_max_degree\".");
 
 			rows_degree[i] = n_connections;
 		}
@@ -206,8 +214,8 @@ Sparse_matrix AList
 			stream >> n_connections;
 
 			if (n_connections <= 0 || n_connections > cols_max_degree)
-				throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
-				                         "smaller or equal to \"cols_max_degree\".");
+				throw std::runtime_error("aff3ct::tools::AList::read_format1: \"n_connections\" has to be greater than"
+				                         " 0 and smaller or equal to \"cols_max_degree\".");
 
 			cols_degree[i] = n_connections;
 		}
@@ -227,7 +235,7 @@ Sparse_matrix AList
 						matrix.add_connection(i, col_index -1);
 				}
 				else
-					throw std::runtime_error("aff3ct::tools::AList: \"col_index\" is wrong.");
+					throw std::runtime_error("aff3ct::tools::AList::read_format1: \"col_index\" is wrong.");
 			}
 		}
 
@@ -246,7 +254,8 @@ Sparse_matrix AList
 						try
 						{
 							matrix.add_connection(row_index -1, i);
-							throw std::runtime_error("aff3ct::tools::AList: the input AList file is not consistent.");
+							throw std::runtime_error("aff3ct::tools::AList::read_format1: the input AList file is not "
+							                         "consistent.");
 						}
 						catch (std::exception const&)
 						{
@@ -255,14 +264,14 @@ Sparse_matrix AList
 					}
 				}
 				else
-					throw std::runtime_error("aff3ct::tools::AList: \"row_index\" is wrong.");
+					throw std::runtime_error("aff3ct::tools::AList::read_format1: \"row_index\" is wrong.");
 			}
 		}
 
 		return matrix;
 	}
 	else
-		throw std::runtime_error("aff3ct::tools::AList: \"rows\", \"cols\", \"rows_max_degree\" and "
+		throw std::runtime_error("aff3ct::tools::AList::read_format1: \"rows\", \"cols\", \"rows_max_degree\" and "
 		                         "\"cols_max_degree\" have to be greater than 0.");
 }
 
@@ -275,7 +284,7 @@ Sparse_matrix AList
 	getline(stream, line);
 	auto values = split(line);
 	if (values.size() < 2)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater than 1.");
+		throw std::runtime_error("aff3ct::tools::AList::read_format2: \"values.size()\" has to be greater than 1.");
 
 	unsigned n_rows = 0, n_cols = 0, rows_max_degree = 0, cols_max_degree = 0;
 
@@ -283,26 +292,27 @@ Sparse_matrix AList
 	n_cols = std::stoi(values[1]);
 
 	if (n_rows <= 0 || n_cols <= 0)
-		throw std::runtime_error("aff3ct::tools::AList: \"rows\" and \"cols\" have to be greater than 0.");
+		throw std::runtime_error("aff3ct::tools::AList::read_format2: \"rows\" and \"cols\" have to be greater than 0.");
 
 	Sparse_matrix matrix(n_rows, n_cols);
 
 	getline(stream, line);
 	values = split(line);
 	if (values.size() < 2)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater than 1.");
+		throw std::runtime_error("aff3ct::tools::AList::read_format2: \"values.size()\" has to be greater than 1.");
 
 	rows_max_degree = std::stoi(values[0]);
 	cols_max_degree = std::stoi(values[1]);
 
 	if (rows_max_degree <= 0 || cols_max_degree <= 0)
-		throw std::runtime_error("aff3ct::tools::AList: \"rows_max_degree\" and \"cols_max_degree\" have to be "
-		                         "greater than 0.");
+		throw std::runtime_error("aff3ct::tools::AList::read_format2: \"rows_max_degree\" and \"cols_max_degree\" have"
+		                         " to be greater than 0.");
 
 	getline(stream, line);
 	values = split(line);
 	if (values.size() < n_rows)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater or equal to \"rows\".");
+		throw std::runtime_error("aff3ct::tools::AList::read_format2: \"values.size()\" has to be greater or equal to"
+		                         " \"rows\".");
 
 	std::vector<unsigned> rows_degree(n_rows);
 	for (unsigned i = 0; i < n_rows; i++)
@@ -311,14 +321,15 @@ Sparse_matrix AList
 		if (n_connections > 0 && n_connections <= rows_max_degree)
 			rows_degree[i] = n_connections;
 		else
-			throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
-			                         "smaller than \"rows_max_degree\".");
+			throw std::runtime_error("aff3ct::tools::AList::read_format2: \"n_connections\" has to be greater than 0 "
+			                         "and smaller than \"rows_max_degree\".");
 	}
 
 	getline(stream, line);
 	values = split(line);
 	if (values.size() < n_cols)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater or equal to \"cols\".");
+		throw std::runtime_error("aff3ct::tools::AList::read_format2: \"values.size()\" has to be greater or equal to"
+		                         " \"cols\".");
 
 	std::vector<unsigned> cols_degree(n_rows);
 	for (unsigned i = 0; i < n_cols; i++)
@@ -327,8 +338,8 @@ Sparse_matrix AList
 		if (n_connections > 0 && n_connections <= cols_max_degree)
 			cols_degree[i] = n_connections;
 		else
-			throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
-			                         "smaller than \"cols_max_degree\".");
+			throw std::runtime_error("aff3ct::tools::AList::read_format2: \"n_connections\" has to be greater than 0 "
+			                         " andsmaller than \"cols_max_degree\".");
 	}
 
 	for (unsigned i = 0; i < n_rows; i++)
@@ -337,8 +348,8 @@ Sparse_matrix AList
 		values = split(line);
 
 		if (values.size() < rows_degree[i])
-			throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater or equal "
-			                         "to \"rows_degree[i]\".");
+			throw std::runtime_error("aff3ct::tools::AList::read_format2: \"values.size()\" has to be greater or equal"
+			                         " to \"rows_degree[i]\".");
 
 		for (unsigned j = 0; j < rows_max_degree; j++)
 		{
@@ -350,7 +361,7 @@ Sparse_matrix AList
 					matrix.add_connection(i, col_index -1);
 			}
 			else
-				throw std::runtime_error("aff3ct::tools::AList: \"col_index\" is wrong.");
+				throw std::runtime_error("aff3ct::tools::AList::read_format2: \"col_index\" is wrong.");
 		}
 	}
 
@@ -360,7 +371,7 @@ Sparse_matrix AList
 		values = split(line);
 
 		if (values.size() < cols_degree[i])
-			throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater or equal "
+			throw std::runtime_error("aff3ct::tools::AList::read_format2: \"values.size()\" has to be greater or equal "
 			                         "to \"cols_degree[i]\".");
 
 		for (unsigned j = 0; j < cols_max_degree; j++)
@@ -374,7 +385,8 @@ Sparse_matrix AList
 					try
 					{
 						matrix.add_connection(row_index -1, i);
-						throw std::runtime_error("aff3ct::tools::AList: the input AList file is not consistent.");
+						throw std::runtime_error("aff3ct::tools::AList::read_format2: the input AList file is not"
+						                         " consistent.");
 					}
 					catch (std::exception const&)
 					{
@@ -383,7 +395,7 @@ Sparse_matrix AList
 				}
 			}
 			else
-				throw std::runtime_error("aff3ct::tools::AList: \"row_index\" is wrong.");
+				throw std::runtime_error("aff3ct::tools::AList::read_format2: \"row_index\" is wrong.");
 		}
 	}
 
@@ -399,7 +411,7 @@ Sparse_matrix AList
 	getline(stream, line);
 	auto values = split(line);
 	if (values.size() < 2)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater than 1.");
+		throw std::runtime_error("aff3ct::tools::AList::read_format3: \"values.size()\" has to be greater than 1.");
 
 	unsigned n_rows = 0, n_cols = 0;
 
@@ -407,14 +419,16 @@ Sparse_matrix AList
 	n_rows = std::stoi(values[1]);
 
 	if (n_rows <= 0 || n_cols <= 0)
-		throw std::runtime_error("aff3ct::tools::AList: \"n_rows\" and \"n_cols\" have to be greater than 0.");
+		throw std::runtime_error("aff3ct::tools::AList::read_format3: \"n_rows\" and \"n_cols\" have to be greater"
+		                         " than 0.");
 
 	Sparse_matrix matrix(n_rows, n_cols);
 
 	getline(stream, line);
 	values = split(line);
 	if (values.size() < n_cols)
-		throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater or equal to \"n_cols\".");
+		throw std::runtime_error("aff3ct::tools::AList::read_format3: \"values.size()\" has to be greater or equal"
+		                         " to \"n_cols\".");
 
 	std::vector<unsigned> cols_degree(n_cols);
 	for (unsigned i = 0; i < n_cols; i++)
@@ -423,8 +437,8 @@ Sparse_matrix AList
 		if (n_connections > 0 && n_connections <= n_rows)
 			cols_degree[i] = n_connections;
 		else
-			throw std::runtime_error("aff3ct::tools::AList: \"n_connections\" has to be greater than 0 and "
-			                         "smaller than \"n_rows\".");
+			throw std::runtime_error("aff3ct::tools::AList::read_format3: \"n_connections\" has to be greater than"
+			                         " 0 and smaller than \"n_rows\".");
 	}
 
 	for (unsigned i = 0; i < n_cols; i++)
@@ -433,8 +447,8 @@ Sparse_matrix AList
 		values = split(line);
 
 		if (values.size() < cols_degree[i])
-			throw std::runtime_error("aff3ct::tools::AList: \"values.size()\" has to be greater or equal "
-			                         "to \"cols_degree[i]\".");
+			throw std::runtime_error("aff3ct::tools::AList::read_format3: \"values.size()\" has to be greater or equal"
+			                         " to \"cols_degree[i]\".");
 
 		for (unsigned j = 0; j < cols_degree[i]; j++)
 		{

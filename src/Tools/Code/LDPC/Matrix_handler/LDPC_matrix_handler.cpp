@@ -173,3 +173,39 @@ float LDPC_matrix_handler
 
 	return ((float)nb_ones/(float)(n_rows*n_cols));
 }
+
+Sparse_matrix LDPC_matrix_handler
+::interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& new_cols_pos)
+{
+	if (mat.get_n_cols() != new_cols_pos.size())
+		throw std::length_error("aff3ct::tools::LDPC_G::interleave_matrix: matrix width \"mat.get_n_cols()\" has to be"
+		                        " equal to interleaver length \"new_cols_pos.size()\".");
+
+
+	Sparse_matrix itl_mat(mat.get_n_rows(), mat.get_n_cols());
+
+	for (unsigned i = 0; i < mat.get_n_cols(); i++)
+	{
+		for (unsigned j = 0; j < mat.get_rows_from_col(i).size(); j++)
+			itl_mat.add_connection(mat.get_rows_from_col(i)[j], new_cols_pos[i]);
+	}
+
+	return itl_mat;
+}
+
+std::vector<unsigned> LDPC_matrix_handler
+::interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos, std::vector<unsigned>& new_cols_pos)
+{
+	if (info_bits_pos.size() > new_cols_pos.size())
+		throw std::length_error("aff3ct::tools::LDPC_G::interleave_info_bits_pos: vector length \"vec.size()\" has to"
+		                        " be smaller than or equal to interleaver length \"new_cols_pos.size()\".");
+
+	std::vector<unsigned> itl_vec(info_bits_pos.size());
+
+	for (unsigned i = 0; i < info_bits_pos.size(); i++)
+	{
+		itl_vec[i] = new_cols_pos[info_bits_pos[i]];
+	}
+
+	return itl_vec;
+}

@@ -55,6 +55,19 @@ public:
 	 */
 	static Sparse_matrix transform_H_to_G(const Sparse_matrix& H, std::vector<unsigned>& info_bits_pos);
 
+	/*
+	 * integrate an interleaver inside the matrix to avoid this step.
+	 * new_cols_pos gives the new position of the matching column.
+	 * For ex. the column i will be set at position new_cols_pos[i]
+	 */
+	static Sparse_matrix interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& new_cols_pos);
+
+	/*
+	 * return the vector of the position of the info bits after interleaving.
+	 */
+	static std::vector<unsigned> interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos,
+	                                                      std::vector<unsigned>& new_cols_pos);
+
 protected :
 
 	static void transform_H_to_G(Full_matrix& mat, std::vector<unsigned>& info_bits_pos);
