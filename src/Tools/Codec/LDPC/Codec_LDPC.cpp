@@ -23,7 +23,7 @@ Codec_LDPC<B,Q>
 	bool is_info_bits_pos = false;
 	if (!params.encoder.path.empty() && params.encoder.type == "LDPC")
 	{
-		auto file_G = std::ifstream(params.encoder.path, std::ifstream::in);
+		std::ifstream file_G(params.encoder.path, std::ifstream::in);
 		G = AList::read(file_G);
 
 		try
@@ -39,7 +39,7 @@ Codec_LDPC<B,Q>
 		file_G.close();
 	}
 
-	auto file_H = std::ifstream(params.code.alist_path, std::ifstream::in);
+	std::ifstream file_H(params.code.alist_path, std::ifstream::in);
 	H = AList::read(file_H);
 
 	if (!is_info_bits_pos)
