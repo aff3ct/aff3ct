@@ -4,7 +4,7 @@
 	--sim-type     BFERI                                  \
 	--sim-prec     32                                     \
 	--sim-snr-min  1.0                                    \
-	--sim-snr-max  2.21                                   \
+	--sim-snr-max  3.0                                    \
 	--sim-snr-step 0.1                                    \
 	--mnt-max-fe   100                                    \
 	--src-type     RAND_FAST                              \
