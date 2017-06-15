@@ -1,5 +1,6 @@
 #include <exception>
 
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
@@ -128,7 +129,7 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 	{
 		return this->codec.build_encoder(tid, interleaver[tid]);
 	}
-	catch (std::exception const&)
+	catch (Cannot_allocate const&)
 	{
 		return Factory_encoder_common<B>::build(this->params.encoder.type,
 		                                        this->params.code.K,
@@ -147,7 +148,7 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 	{
 		return this->codec.build_puncturer(tid);
 	}
-	catch (std::exception const&)
+	catch (Cannot_allocate const&)
 	{
 		return new Puncturer_NO<B,Q>(this->params.code.K,
 		                             this->params.code.N,
@@ -163,7 +164,7 @@ Interleaver<int>* Simulation_BFER_std<B,R,Q>
 	{
 		return this->codec.build_interleaver(tid, seed);
 	}
-	catch (std::exception const&)
+	catch (Cannot_allocate const&)
 	{
 		return nullptr;
 	}

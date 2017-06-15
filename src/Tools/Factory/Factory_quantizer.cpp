@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Quantizer/Standard/Quantizer_standard.hpp"
 #include "Module/Quantizer/Fast/Quantizer_fast.hpp"
@@ -25,7 +25,7 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 	else if (type == "TRICKY"  ) return new Quantizer_tricky  <R,Q>(size, range,      n_bits, sigma, n_frames);
 	else if (type == "NO"      ) return new Quantizer_NO      <R,Q>(size,                            n_frames);
 
-	throw std::runtime_error("aff3ct::tools::Factory_quantizer: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_quantizer: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

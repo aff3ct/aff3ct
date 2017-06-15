@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Decoder/RA/Decoder_RA.hpp"
 
@@ -22,7 +22,7 @@ Decoder<B,R>* Factory_decoder_RA<B,R>
 		if (implem == "STD" ) return new Decoder_RA<B,R>(K, N, itl, n_ite, n_frames);
 	}
 
-	throw std::runtime_error("aff3ct::tools::Factory_decoder_RA: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_decoder_RA: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

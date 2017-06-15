@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Encoder/RA/Encoder_RA.hpp"
 
@@ -17,7 +17,7 @@ Encoder<B>* Factory_encoder_RA<B>
 {
 	if (type == "RA") return new Encoder_RA<B>(K, N, itl, n_frames);
 
-	throw std::runtime_error("aff3ct::tools::Factory_encoder_RA: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_encoder_RA: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

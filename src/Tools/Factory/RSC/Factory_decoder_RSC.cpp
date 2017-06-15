@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_std.hpp"
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_scan.hpp"
@@ -45,7 +45,7 @@ Decoder_SISO<B,R>* Factory_decoder_RSC<B,R,RD>
 		else if (implem == "SCAN"        ) return new Decoder_RSC_BCJR_seq_scan            <B,R,RD          >(K, trellis,        buffered,         n_frames);
 	}
 
-	throw std::runtime_error("aff3ct::tools::Factory_decoder_RSC: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_decoder_RSC: the factory could not allocate the object.");
 }
 
 template <typename B, typename R, typename RD>
@@ -100,7 +100,7 @@ Decoder_SISO<B,R>* Factory_decoder_RSC<B,R,RD>
 		}
 	}
 
-	throw std::runtime_error("aff3ct::tools::Factory_decoder_RSC: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_decoder_RSC: the factory could not allocate the object.");
 }
 
 template <typename B, typename R, typename RD>
@@ -129,7 +129,7 @@ Decoder_SISO<B,R>* Factory_decoder_RSC<B,R,RD>
 		else if (max_type == "MAXL") return _build_simd<max_linear_i<R>>(type, implem, K, trellis, simd_strategy, buffered, n_frames);
 	}
 
-	throw std::runtime_error("aff3ct::tools::Factory_decoder_RSC: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_decoder_RSC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

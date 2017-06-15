@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 /* // GENERATED DECODERS // */
 
@@ -787,7 +787,7 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 #endif
 	}
 
-	throw std::runtime_error("aff3ct::tools::Factory_decoder_polar_gen: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar_gen: the factory could not allocate the object.");
 }
 
 template <typename B, typename R>
@@ -895,7 +895,7 @@ Decoder<B,R>* Factory_decoder_polar_gen<B,R>
 		}
 	}
 
-	throw std::runtime_error("aff3ct::tools::Factory_decoder_polar_gen: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar_gen: the factory could not allocate the object.");
 }
 
 template <typename B, typename R>
@@ -1118,7 +1118,7 @@ void Factory_decoder_polar_gen<B,R>
 #endif
 
 	if (fb_ptr == nullptr)
-		throw std::runtime_error("aff3ct::tools::Factory_decoder_polar_gen: generated frozen bits does not exist.");
+		throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar_gen: generated frozen bits does not exist.");
 
 	for (auto i = 0; i < N; i++)
 		frozen_bits[i] = (B)fb_ptr[i];

@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Interleaver/Random_column/Interleaver_random_column.hpp"
 #include "Module/Interleaver/Row_column/Interleaver_row_column.hpp"
@@ -33,7 +33,7 @@ Interleaver<T>* Factory_interleaver<T>
 	else if (type == "USER"    ) return new Interleaver_user         <T>(size, path,                  n_frames);
 	else if (type == "NO"      ) return new Interleaver_NO           <T>(size,                        n_frames);
 
-	throw std::runtime_error("aff3ct::tools::Factory_interleaver: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_interleaver: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

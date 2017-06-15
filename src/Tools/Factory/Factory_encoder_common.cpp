@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
@@ -24,7 +24,7 @@ Encoder<B>* Factory_encoder_common<B>
 	else if (type == "COSET") return new Encoder_coset<B>(K, N, seed, n_frames);
 	else if (type == "USER" ) return new Encoder_user <B>(K, N, path, n_frames);
 
-	throw std::runtime_error("aff3ct::tools::Factory_encoder_common: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_encoder_common: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

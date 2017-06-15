@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Channel/NO/Channel_NO.hpp"
 #include "Module/Channel/User/Channel_user.hpp"
@@ -45,7 +45,7 @@ Channel<R>* Factory_channel<R>
 	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
 #endif
 
-	throw std::runtime_error("aff3ct::tools::Factory_channel: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_channel: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

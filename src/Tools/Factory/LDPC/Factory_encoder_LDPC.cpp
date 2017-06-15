@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
@@ -21,7 +21,7 @@ Encoder_LDPC<B>* Factory_encoder_LDPC<B>
 	else if (type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(K, N, H, n_frames);
 	else if (type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(K, N,    n_frames);
 
-	throw std::runtime_error("aff3ct::tools::Factory_encoder_LDPC: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_encoder_LDPC: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 

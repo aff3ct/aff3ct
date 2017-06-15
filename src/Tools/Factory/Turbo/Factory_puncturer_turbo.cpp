@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Tools/Exceptions/Cannot_allocate.hpp"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
@@ -20,7 +20,7 @@ Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
 {
 	if (type == "TURBO") return new Puncturer_turbo<B,Q>(K, N, tail_length, pattern, buffered, n_frames);
 
-	throw std::runtime_error("aff3ct::tools::Factory_puncturer_turbo: the factory could not allocate the object.");
+	throw Cannot_allocate("aff3ct::tools::Factory_puncturer_turbo: the factory could not allocate the object.");
 }
 
 // ==================================================================================== explicit template instantiation 
