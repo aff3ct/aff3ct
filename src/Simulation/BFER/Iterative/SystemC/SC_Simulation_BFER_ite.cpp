@@ -53,9 +53,9 @@ SC_Simulation_BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void SC_Simulation_BFER_ite<B,R,Q>
-::build_communication_chain(const int tid)
+::_build_communication_chain(const int tid)
 {
-	Simulation_BFER_ite<B,R,Q>::build_communication_chain(tid);
+	Simulation_BFER_ite<B,R,Q>::_build_communication_chain(tid);
 
 	if (*this->interleaver[tid] != *this->interleaver_e)
 		throw std::runtime_error("aff3ct::simulation::SC_Simulation_BFERI_ite: \"interleaver[tid]\" and "

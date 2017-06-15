@@ -41,7 +41,7 @@ public:
 	virtual ~Simulation_BFER_std_threads();
 
 protected:
-	virtual void build_communication_chain(const int tid = 0);
+	virtual void _build_communication_chain(const int tid = 0);
 	virtual void _launch();
 	virtual tools::Terminal_BFER<B>* build_terminal();
 

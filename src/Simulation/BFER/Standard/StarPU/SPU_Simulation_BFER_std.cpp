@@ -133,9 +133,9 @@ SPU_Simulation_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void SPU_Simulation_BFER_std<B,R,Q>
-::build_communication_chain(const int tid)
+::_build_communication_chain(const int tid)
 {
-	Simulation_BFER_std<B,R,Q>::build_communication_chain(tid);
+	Simulation_BFER_std<B,R,Q>::_build_communication_chain(tid);
 
 	if (this->params.source.type == "AZCW")
 	{

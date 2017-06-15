@@ -50,7 +50,7 @@ Simulation_BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER_ite<B,R,Q>
-::build_communication_chain(const int tid)
+::_build_communication_chain(const int tid)
 {
 	const auto seed_src =                                    rd_engine_seed[tid]();
 	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
@@ -73,8 +73,6 @@ void Simulation_BFER_ite<B,R,Q>
 	interleaver[tid]->init();
 	if (interleaver[tid]->is_uniform())
 		this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::refresh, this->interleaver[tid]));
-
-	Simulation_BFER<B,R,Q>::build_communication_chain(tid);
 }
 
 template <typename B, typename R, typename Q>

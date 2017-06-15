@@ -30,6 +30,9 @@ private:
 	bool stop_terminal;
 
 protected:
+	std::mutex mutex_exception;
+	std::string prev_err_message;
+
 	tools::Codec<B,Q> &codec;
 
 	// simulation parameters
@@ -69,7 +72,7 @@ public:
 	void launch();
 
 protected:
-	virtual void build_communication_chain(const int tid = 0);
+	virtual void _build_communication_chain(const int tid = 0);
 	virtual void release_objects();
 	virtual void _launch() = 0;
 
@@ -77,6 +80,7 @@ protected:
 	virtual tools ::Terminal_BFER<B>* build_terminal(                 );
 
 private:
+	void build_communication_chain(const int tid = 0);
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 

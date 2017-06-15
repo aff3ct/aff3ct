@@ -51,7 +51,7 @@ public:
 	virtual ~Simulation_BFER_std();
 
 protected:
-	virtual void build_communication_chain(const int tid = 0);
+	virtual void _build_communication_chain(const int tid = 0);
 	virtual void release_objects();
 
 	virtual module::Source     <B    >* build_source     (const int tid = 0, const int seed = 0);

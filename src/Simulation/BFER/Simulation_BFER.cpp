@@ -95,31 +95,54 @@ Simulation_BFER<B,R,Q>
 		if (monitor[tid] != nullptr) { delete monitor[tid]; monitor[tid] = nullptr; }
 		if (dumper [tid] != nullptr) { delete dumper [tid]; dumper [tid] = nullptr; }
 	}
+
+	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
 }
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::build_communication_chain(const int tid)
 {
-	// build the terminal to display the BER/FER
-	if (tid == 0)
+	try
 	{
-		this->terminal = this->build_terminal();
-		this->terminal->set_esn0(snr_s);
-		this->terminal->set_ebn0(snr_b);
+		this->_build_communication_chain(tid);
+
+		for (auto& duration : this->durations[tid])
+			duration.second = std::chrono::nanoseconds(0);
+
+		if (params.monitor.err_track_enable)
+			this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
 	}
+	catch (std::exception const& e)
+	{
+		Monitor<B>::stop();
 
-	for (auto& duration : this->durations[tid])
-		duration.second = std::chrono::nanoseconds(0);
+		mutex_exception.lock();
+		if (prev_err_message != e.what())
+		{
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
+			          << bold_red("communication chain (tid = " + std::to_string(tid) + ").") << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
 
-	if (params.monitor.err_track_enable)
-		this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
+			prev_err_message = e.what();
+		}
+		mutex_exception.unlock();
+	}
+}
+
+template <typename B, typename R, typename Q>
+void Simulation_BFER<B,R,Q>
+::_build_communication_chain(const int tid)
+{
+	// by default, do nothing
 }
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::launch()
 {
+	this->terminal = this->build_terminal();
+
 	codec.launch_precompute();
 
 	// for each SNR to be simulated
@@ -137,6 +160,9 @@ void Simulation_BFER<B,R,Q>
 		}
 		sigma = esn0_to_sigma(snr_s, params.modulator.upsample_factor);
 
+		this->terminal->set_esn0(snr_s);
+		this->terminal->set_ebn0(snr_b);
+
 		// dirty hack to override simulation params
 		if (this->params.monitor.err_track_revert)
 		{
@@ -151,83 +177,79 @@ void Simulation_BFER<B,R,Q>
 
 		codec.snr_precompute(this->sigma);
 
-		try
+		// build the communication chain in multi-threaded mode
+		std::vector<std::thread> threads(this->params.simulation.n_threads -1);
+		for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+			threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
+
+		Simulation_BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
+
+		// join the slave threads with the master thread
+		for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+			threads[tid -1].join();
+
+		if (!Monitor<B>::is_over())
 		{
-			// build the communication chain in multi-threaded mode
-			std::vector<std::thread> threads(this->params.simulation.n_threads -1);
-			for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
-				threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
-			Simulation_BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
-
-			// join the slave threads with the master thread
-			for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
-				threads[tid -1].join();
-		}
-		catch (std::exception const& e)
-		{
-			Monitor<B>::stop();
-
-			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
-			          << bold_red("communication chain.") << std::endl
-			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
-		}
-
-		if (params.simulation.mpi_rank == 0 && !params.terminal.disabled && snr == params.simulation.snr_min &&
-		    !params.simulation.debug && !this->params.simulation.benchs)
-			terminal->legend(std::cout);
-
-		// start the terminal to display BER/FER results
-		std::thread term_thread;
-		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
-		    !this->params.simulation.benchs && !this->params.simulation.debug)
-			// launch a thread dedicated to the terminal display
-			term_thread = std::thread(Simulation_BFER<B,R,Q>::start_thread_terminal, this);
-
-		try
-		{
-			this->_launch();
-		}
-		catch (std::exception const& e)
-		{
-			Monitor<B>::stop();
-
-			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
-			          << std::endl
-			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
-		}
-
-		// stop the terminal
-		if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
-		    !this->params.simulation.benchs && !this->params.simulation.debug)
-		{
-			stop_terminal = true;
-			cond_terminal.notify_all();
-			// wait the terminal thread to finish
-			term_thread.join();
-			stop_terminal = false;
-		}
-
-		if (this->params.simulation.mpi_rank == 0 &&
-		    !this->params.terminal.disabled       &&
-		    !this->params.simulation.benchs       &&
-		    terminal != nullptr)
-		{
-			if (this->params.simulation.debug)
+			if (params.simulation.mpi_rank == 0 && !params.terminal.disabled && snr == params.simulation.snr_min &&
+			    !params.simulation.debug && !this->params.simulation.benchs)
 				terminal->legend(std::cout);
-			time_reduction(true);
-			terminal->final_report(std::cout);
+
+			// start the terminal to display BER/FER results
+			std::thread term_thread;
+			if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
+			    !this->params.simulation.benchs && !this->params.simulation.debug)
+				// launch a thread dedicated to the terminal display
+				term_thread = std::thread(Simulation_BFER<B,R,Q>::start_thread_terminal, this);
+
+			try
+			{
+				this->_launch();
+			}
+			catch (std::exception const& e)
+			{
+				Monitor<B>::stop();
+
+				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
+				          << std::endl
+				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			}
+
+			// stop the terminal
+			if (!this->params.terminal.disabled && this->params.terminal.frequency != std::chrono::nanoseconds(0) &&
+			    !this->params.simulation.benchs && !this->params.simulation.debug)
+			{
+				stop_terminal = true;
+				cond_terminal.notify_all();
+				// wait the terminal thread to finish
+				term_thread.join();
+				stop_terminal = false;
+			}
+
+			if (this->params.simulation.mpi_rank == 0 &&
+			    !this->params.terminal.disabled       &&
+			    !this->params.simulation.benchs       &&
+			    terminal != nullptr)
+			{
+				if (this->params.simulation.debug && !Monitor<B>::is_over())
+					terminal->legend(std::cout);
+
+				time_reduction(true);
+
+				if (!Monitor<B>::is_over())
+					terminal->final_report(std::cout);
+			}
+
+			if (this->dumper_red != nullptr)
+			{
+				this->dumper_red->dump(this->params.monitor.err_track_path + "_" + std::to_string(snr_b));
+				this->dumper_red->clear();
+			}
+
+			this->monitor_red->reset();
 		}
 
-		if (this->dumper_red != nullptr)
-		{
-			this->dumper_red->dump(this->params.monitor.err_track_path + "_" + std::to_string(snr_b));
-			this->dumper_red->clear();
-		}
-
-		this->monitor_red->reset();
 		this->release_objects();
 
-		// exit simulation (double [ctrl+c])
 		if (Monitor<B>::is_over())
 			break;
 	}
@@ -242,7 +264,6 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER<B,R,Q>
 ::release_objects()
 {
-	if (terminal != nullptr) { delete terminal; terminal = nullptr; }
 }
 
 template <typename B, typename R, typename Q>

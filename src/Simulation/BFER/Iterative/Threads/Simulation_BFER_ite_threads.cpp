@@ -66,9 +66,9 @@ Simulation_BFER_ite_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Simulation_BFER_ite_threads<B,R,Q>
-::build_communication_chain(const int tid)
+::_build_communication_chain(const int tid)
 {
-	Simulation_BFER_ite<B,R,Q>::build_communication_chain(tid);
+	Simulation_BFER_ite<B,R,Q>::_build_communication_chain(tid);
 
 	if (this->params.source.type == "AZCW")
 	{
@@ -110,7 +110,24 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_ite_threads<B,R,Q>
 ::start_thread(Simulation_BFER_ite_threads<B,R,Q> *simu, const int tid)
 {
-	simu->Monte_Carlo_method(tid);
+	try
+	{
+		simu->Monte_Carlo_method(tid);
+	}
+	catch (std::exception const& e)
+	{
+		Monitor<B>::stop();
+
+		simu->mutex_exception.lock();
+		if (simu->prev_err_message != e.what())
+		{
+			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop (tid = ")
+			          << bold_red(std::to_string(tid) + ").") << std::endl
+			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			simu->prev_err_message = e.what();
+		}
+		simu->mutex_exception.unlock();
+	}
 }
 
 template <typename B, typename R, typename Q>
