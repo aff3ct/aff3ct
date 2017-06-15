@@ -177,37 +177,48 @@ float LDPC_matrix_handler
 }
 
 Sparse_matrix LDPC_matrix_handler
-::interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& new_cols_pos)
+::interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& old_cols_pos)
 {
-	if (mat.get_n_cols() != new_cols_pos.size())
+	if (mat.get_n_cols() != old_cols_pos.size())
 		throw std::length_error("aff3ct::tools::LDPC_G::interleave_matrix: matrix width \"mat.get_n_cols()\" has to be"
-		                        " equal to interleaver length \"new_cols_pos.size()\".");
+		                        " equal to interleaver length \"old_cols_pos.size()\".");
 
 
 	Sparse_matrix itl_mat(mat.get_n_rows(), mat.get_n_cols());
 
 	for (unsigned i = 0; i < mat.get_n_cols(); i++)
 	{
-		for (unsigned j = 0; j < mat.get_rows_from_col(i).size(); j++)
-			itl_mat.add_connection(mat.get_rows_from_col(i)[j], new_cols_pos[i]);
+		for (unsigned j = 0; j < mat.get_rows_from_col(old_cols_pos[i]).size(); j++)
+			itl_mat.add_connection(mat.get_rows_from_col(old_cols_pos[i])[j], i);
 	}
 
 	return itl_mat;
 }
 
 std::vector<unsigned> LDPC_matrix_handler
-::interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos, std::vector<unsigned>& new_cols_pos)
+::interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos, std::vector<unsigned>& old_cols_pos)
 {
-	if (info_bits_pos.size() > new_cols_pos.size())
+	if (info_bits_pos.size() > old_cols_pos.size())
 		throw std::length_error("aff3ct::tools::LDPC_G::interleave_info_bits_pos: vector length \"vec.size()\" has to"
-		                        " be smaller than or equal to interleaver length \"new_cols_pos.size()\".");
+		                        " be smaller than or equal to interleaver length \"old_cols_pos.size()\".");
 
 	std::vector<unsigned> itl_vec(info_bits_pos.size());
+	unsigned cnt = 0;
 
 	for (unsigned i = 0; i < info_bits_pos.size(); i++)
 	{
-		itl_vec[i] = new_cols_pos[info_bits_pos[i]];
+		auto it = std::find(old_cols_pos.begin(), old_cols_pos.end(), info_bits_pos[i]);
+
+		if (it != old_cols_pos.end())
+		{
+			itl_vec[i] = std::distance(old_cols_pos.begin(), it);
+			cnt++;
+		}
 	}
+
+	if (cnt != itl_vec.size())
+		throw std::runtime_error("aff3ct::tools::LDPC_G::interleave_info_bits_pos: the number of information bits pos"
+		                         "itions found in the old_cols_pos vector is less than the \"info_bits_pos.size()\".");
 
 	return itl_vec;
 }

@@ -57,16 +57,19 @@ public:
 
 	/*
 	 * integrate an interleaver inside the matrix to avoid this step.
-	 * new_cols_pos gives the new position of the matching column.
-	 * For ex. the column i will be set at position new_cols_pos[i]
+	 * old_cols_pos gives the old position of the matching column.
+	 * For ex. the column old_cols_pos[i] of mat will be set at position i
 	 */
-	static Sparse_matrix interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& new_cols_pos);
+	static Sparse_matrix interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& old_cols_pos);
 
 	/*
 	 * return the vector of the position of the info bits after interleaving.
+	 * old_cols_pos gives the old position of the matching column.
+	 * For ex. the bit position info_bits_pos[i] will be set at position j where
+	 * old_cols_pos[j] == info_bits_pos[i]
 	 */
 	static std::vector<unsigned> interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos,
-	                                                      std::vector<unsigned>& new_cols_pos);
+	                                                      std::vector<unsigned>& old_cols_pos);
 
 protected :
 
