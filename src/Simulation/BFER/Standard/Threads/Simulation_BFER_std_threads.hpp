@@ -17,9 +17,6 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER_std_threads : public Simulation_BFER_std<B,R,Q>
 {
 protected:
-	// array of threads
-	std::vector<std::thread> threads;
-
 	std::map<std::thread::id, int> thread_id;
 
 	std::mutex mutex_debug;

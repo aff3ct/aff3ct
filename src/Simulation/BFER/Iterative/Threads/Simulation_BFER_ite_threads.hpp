@@ -19,9 +19,6 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER_ite_threads : public Simulation_BFER_ite<B,R,Q>
 {
 protected:
-	// array of threads
-	std::vector<std::thread> threads;
-
 	// data vector
 	std::vector<mipp::vector<B>> U_K1; // information bit vector
 	std::vector<mipp::vector<B>> U_K2; // information bit vector + CRC bits
