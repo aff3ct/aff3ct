@@ -138,7 +138,7 @@ template <typename B, typename Q, typename QD>
 Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 ::build_puncturer(const int tid)
 {
-	const std::string type = (this->params.code.N == this->params.code.N_code) ? "NO" : "WANGLIU";
+	const std::string type = (this->params.code.N == this->params.code.N_code) ? "NO" : "TURBO";
 	return Factory_puncturer_turbo<B,Q>::build(type,
 	                                           this->params.code.K,
 	                                           this->params.code.N,
