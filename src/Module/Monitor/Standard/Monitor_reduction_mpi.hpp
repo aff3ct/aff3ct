@@ -30,7 +30,7 @@ private:
 
 public:
 	Monitor_reduction_mpi(const int size, const unsigned max_fe,
-	                      std::vector<Monitor<B,R>*> monitors,
+	                      std::vector<Monitor<B>*> monitors,
 	                      const std::thread::id master_thread_id,
 	                      const std::chrono::nanoseconds d_mpi_comm_frequency = std::chrono::milliseconds(1000),
 	                      const int n_frames = 1,
