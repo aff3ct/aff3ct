@@ -16,8 +16,6 @@ Simulation_BFER_std_threads<B,R,Q>
 ::Simulation_BFER_std_threads(const parameters& params, Codec<B,Q> &codec)
 : Simulation_BFER_std<B,R,Q>(params, codec),
 
-  threads(this->params.simulation.n_threads -1),
-
   U_K1(this->params.simulation.n_threads, mipp::vector<B>(params.code.K_info * params.simulation.inter_frame_level)),
   U_K2(this->params.simulation.n_threads, mipp::vector<B>(params.code.K      * params.simulation.inter_frame_level)),
   X_N1(this->params.simulation.n_threads, mipp::vector<B>(params.code.N_code * params.simulation.inter_frame_level)),
@@ -106,6 +104,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_std_threads<B,R,Q>
 ::_launch()
 {
+	std::vector<std::thread> threads(this->params.simulation.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER_std_threads<B,R,Q>::start_thread, this, tid);
