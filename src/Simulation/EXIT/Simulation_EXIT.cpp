@@ -49,7 +49,6 @@ Simulation_EXIT<B,R>
   I_A      (0.0),
   I_E      (0.0),
   sig_a    (0.f),
-  code_rate(0.f),
   sigma    (0.f),
   snr      (0.f),
 
@@ -120,7 +119,7 @@ void Simulation_EXIT<B,R>
 	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
-		code_rate = 1.f;
+		const auto code_rate = 1.f;
 		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.modulator.bits_per_symbol),
 		                      params.modulator.upsample_factor);
 

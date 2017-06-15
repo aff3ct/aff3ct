@@ -33,11 +33,10 @@ Simulation_BFER<B,R,Q>
 
   barrier(params.simulation.n_threads),
 
-  snr      (0.f),
-  snr_s    (0.f),
-  snr_b    (0.f),
-  code_rate(0.f),
-  sigma    (0.f),
+  snr  (0.f),
+  snr_s(0.f),
+  snr_b(0.f),
+  sigma(0.f),
 
   monitor    (params.simulation.n_threads, nullptr),
   monitor_red(                             nullptr),
@@ -126,21 +125,15 @@ void Simulation_BFER<B,R,Q>
 	// for each SNR to be simulated
 	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
 	{
-		auto info_bits = params.code.K;
-		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
-			info_bits -= params.crc.size;
-
-		code_rate = (float)(info_bits / (float)params.code.N);
-
 		if (params.simulation.snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, code_rate, params.modulator.bits_per_symbol);
+			snr_s = ebn0_to_esn0(snr_b, params.code.R, params.modulator.bits_per_symbol);
 		}
 		else //if(params.simulation.snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, code_rate, params.modulator.bits_per_symbol);
+			snr_b = esn0_to_ebn0(snr_s, params.code.R, params.modulator.bits_per_symbol);
 		}
 		sigma = esn0_to_sigma(snr_s, params.modulator.upsample_factor);
 

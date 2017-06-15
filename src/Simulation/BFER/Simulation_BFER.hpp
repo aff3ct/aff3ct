@@ -42,7 +42,6 @@ protected:
 	float snr;
 	float snr_s;
 	float snr_b;
-	float code_rate;
 	float sigma;
 
 	// the monitors of the the BFER simulation

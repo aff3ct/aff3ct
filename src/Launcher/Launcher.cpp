@@ -459,6 +459,12 @@ int Launcher<B,R,Q>
 		                                                                             params.modulator.cpm_L,
 		                                                                             params.modulator.cpm_p);
 
+		// compute the code rate R
+		auto real_K = params.code.K;
+		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
+			real_K -= params.crc.size;
+		params.code.R = real_K / (float)params.code.N;
+
 		display_help = false;
 
 		// print usage if there is "-h" or "--help" on the command line
@@ -548,13 +554,10 @@ std::vector<std::pair<std::string,std::string>> Launcher<B,R,Q>
 	else
 		K << params.code.K;
 
-	auto real_K = (float)params.code.K + (this->params.crc.inc_code_rate ? (float)params.crc.size : 0.f);
-	float code_rate = real_K / (float)params.code.N;
-
-	p.push_back(std::make_pair("Type",              params.code.type         ));
-	p.push_back(std::make_pair("Info. bits (K)",    K.str()                  ));
-	p.push_back(std::make_pair("Codeword size (N)", N                        ));
-	p.push_back(std::make_pair("Code rate (R)",     std::to_string(code_rate)));
+	p.push_back(std::make_pair("Type",              params.code.type             ));
+	p.push_back(std::make_pair("Info. bits (K)",    K.str()                      ));
+	p.push_back(std::make_pair("Codeword size (N)", N                            ));
+	p.push_back(std::make_pair("Code rate (R)",     std::to_string(params.code.R)));
 
 	return p;
 }

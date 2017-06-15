@@ -52,7 +52,6 @@ protected:
 
 	// code specifications
 	float sig_a;
-	float code_rate;
 	float sigma;
 	float snr;
 
