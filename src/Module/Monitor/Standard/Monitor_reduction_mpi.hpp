@@ -38,6 +38,8 @@ public:
 	virtual ~Monitor_reduction_mpi();
 
 	bool fe_limit_achieved();
+
+	void reset();
 };
 }
 }

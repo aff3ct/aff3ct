@@ -95,6 +95,14 @@ bool Monitor_reduction_mpi<B>
 	return is_fe_limit_achieved;
 }
 
+template <typename B>
+void Monitor_reduction_mpi<B>
+::reset()
+{
+	Monitor_reduction<B>::reset();
+	is_fe_limit_achieved = false;
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

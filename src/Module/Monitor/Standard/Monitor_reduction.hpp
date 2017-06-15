@@ -28,7 +28,7 @@ public:
 	unsigned long long get_n_fe                   () const;
 	unsigned long long get_n_be                   () const;
 
-	void reset();
+	virtual void reset();
 };
 }
 }
