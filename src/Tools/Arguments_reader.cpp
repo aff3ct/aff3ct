@@ -166,7 +166,7 @@ void Arguments_reader
 void Arguments_reader
 ::print_usage(std::vector<std::vector<std::string>> arg_groups)
 {
-	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::YELLOW | FG::Intensity::NORMAL;
+	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::YELLOW;
 
 	std::cout << "Usage: " << this->m_program_name;
 
@@ -276,7 +276,7 @@ void Arguments_reader
 	if (required)
 		arg_format |= FG::Color::RED;
 	else
-		arg_format |= FG::Color::BLUE | FG::Intensity::INTENSE;
+		arg_format |= FG::Color::BLUE;
 
 	if (values.size() >= 2 && !values[1].empty())
 	{

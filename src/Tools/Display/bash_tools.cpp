@@ -5,28 +5,64 @@
 
 bool aff3ct::tools::enable_bash_tools = true;
 
+// source : http://misc.flogisoft.com/bash/tip_colors_and_formatting
+
 std::vector<std::vector<std::string>> Style_table = {
 	// BASIC   BLINK   BOLD    DIM HIDDEN INVERT ITALIC UNDERL
 	{    "0",    "5",   "1",   "2",   "8",   "7",   "3",   "4"}, // SET
 	{    "0",   "25",  "21",  "22",  "28",  "27",  "23",  "24"}  // CLEAR
 	};
 
+//std::vector<std::vector<std::string>> Color_table_fg = {
+//	//DEFAULT  BLACK   BLUE   CYAN   GRAY  GREEN MAGENT ORANGE    RED  WHITE YELLOW
+//	{    "39",  "30",  "34",  "36",  "37",  "32",  "35",  "38",  "31",  "97",  "33"}, // NORMAL
+//	{    "39",  "30",  "94",  "96",  "90",  "92",  "95",  "98",  "91",  "97",  "93"}  // INTENSE
+//	};
+//
+//std::vector<std::vector<std::string>> Color_table_bg = {
+//	//DEFAULT  BLACK   BLUE   CYAN   GRAY  GREEN MAGENT ORANGE    RED  WHITE YELLOW
+//	{    "49",  "40",  "44",  "46",  "47",  "42",  "45",  "48",  "41", "107",  "43"}, // NORMAL
+//	{    "49",  "40", "104", "106", "100", "102", "105", "108", "101", "107", "103"}  // INTENSE
+//	};
+//
+//std::string reset_command = "\e[0m";
+//
+//std::string style_command_head  = "\e[";
+//std::string style_command_queue = "m";
+//
+//std::string fg_color_command_head  = "\e[";
+//std::string fg_color_command_queue = "m";
+//std::string fg_color_reset_command = "\e[39m";
+//
+//std::string bg_color_command_head  = "\e[";
+//std::string bg_color_command_queue = "m";
+//std::string bg_color_reset_command = "\e[49m";
+
 std::vector<std::vector<std::string>> Color_table_fg = {
-	//DEFAULT  BLACK   BLUE   CYAN   GRAY  GREEN MAGENT ORANGE    RED  WHITE YELLOW
-	{    "39",  "30",  "34",  "36",  "37",  "32",  "35",  "38",  "31",  "97",  "33"}, // NORMAL
-	{    "39",  "30",  "94",  "96",  "90",  "92",  "95",  "98",  "91",  "97",  "93"}  // INTENSE
+	//DEFAULT  BLACK   BLUE   CYAN    GRAY  GREEN MAGENT  ORANGE     RED  WHITE YELLOW
+	{   "256",   "0",  "33",  "39",  "244",   "2",   "5",  "208",    "1",  "256",  "220"}, // NORMAL
+	{   "256",   "0",  "21",  "51",  "251",  "10",  "13",  "214",  "196",  "256",  "226"}  // INTENSE
 	};
 
 std::vector<std::vector<std::string>> Color_table_bg = {
-	//DEFAULT  BLACK   BLUE   CYAN   GRAY  GREEN MAGENT ORANGE    RED  WHITE YELLOW
-	{    "49",  "40",  "44",  "46",  "47",  "42",  "45",  "48",  "41", "107",  "43"}, // NORMAL
-	{    "49",  "40", "104", "106", "100", "102", "105", "108", "101", "107", "103"}  // INTENSE
+	//DEFAULT  BLACK   BLUE   CYAN    GRAY  GREEN MAGENT  ORANGE    RED  WHITE YELLOW
+	{    "0",    "0",  "33",  "39",  "244",   "2",   "5",  "208",    "1",  "256",  "220"}, // NORMAL
+	{    "0",    "0",  "21",  "51",  "251",  "10",  "13",  "214",  "196",  "256",  "226"}  // INTENSE
 	};
 
-std::string reset_code = "0";
+std::string reset_command = "\e[0m";
 
-std::string command_head  = "\e[";
-std::string command_queue = "m";
+std::string style_command_head  = "\e[";
+std::string style_command_queue = "m";
+
+std::string fg_color_command_head  = "\e[38;5;";
+std::string fg_color_command_queue = "m";
+std::string fg_color_reset_command = "\e[39m";
+
+std::string bg_color_command_head  = "\e[48;5;";
+std::string bg_color_command_queue = "m";
+std::string bg_color_reset_command = "\e[49m";
+
 
 
 std::string aff3ct::tools::format(std::string str, Format f)
@@ -58,8 +94,8 @@ std::string aff3ct::tools::style(std::string str, Style s)
 		{
 			if(s & ((Format)1 << (i+20)))
 			{
-				head  += command_head + Style_table.at(0).at(i+1) + command_queue;
-				queue += command_head + Style_table.at(1).at(i+1) + command_queue;
+				head  += style_command_head + Style_table.at(0).at(i+1) + style_command_queue;
+				queue += style_command_head + Style_table.at(1).at(i+1) + style_command_queue;
 			}
 		}
 		return head + str + queue;
@@ -76,10 +112,10 @@ std::string aff3ct::tools::fg_color(std::string str, FG::Color c, FG::Intensity 
 	return str;
 #else
 
-	if (enable_bash_tools)
+	if (enable_bash_tools && c != 0)
 	{
-		std::string head  = command_head + Color_table_fg.at(i >> 8).at(c >> 0) + command_queue;
-		std::string queue = command_head + Color_table_fg.at(0).at(0) + command_queue;
+		std::string head  = fg_color_command_head + Color_table_fg.at(i >> 8).at(c >> 0) + fg_color_command_queue;
+		std::string queue = fg_color_reset_command;
 		return head + str + queue;
 	}
 	else
@@ -94,10 +130,10 @@ std::string aff3ct::tools::bg_color(std::string str, BG::Color c, BG::Intensity 
 	return str;
 #else
 
-	if (enable_bash_tools)
+	if (enable_bash_tools && c != 0)
 	{
-		std::string head  = command_head + Color_table_bg.at(i >> 18).at(c >> 10) + command_queue;
-		std::string queue = command_head + Color_table_bg.at(0).at(0) + command_queue;
+		std::string head  = bg_color_command_head + Color_table_bg.at(i >> 18).at(c >> 10) + bg_color_command_queue;
+		std::string queue = bg_color_reset_command;
 		return head + str + queue;
 	}
 	else
@@ -112,7 +148,7 @@ std::string aff3ct::tools::default_style(std::string str)
 	return str;
 #else
 	if (enable_bash_tools)
-		return command_head + reset_code + command_queue + str;
+		return reset_command + str;
 	else
 		return str;
 #endif
