@@ -4,12 +4,13 @@
 #ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
-#include <stdexcept>
+#include <sstream>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
@@ -52,7 +53,14 @@ private:
 	void b_transport_ref(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (coset.get_size() * coset.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
-			throw std::length_error("aff3ct::module::Coset: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'coset.get_size()' * 'coset.get_n_frames()' has to be equal to 'trans.get_data_length()' / "
+			           "'sizeof(B)' ('coset.get_size()' = " << coset.get_size()
+			        << ", 'coset.get_n_frames()' = " << coset.get_n_frames() << ", 'trans.get_data_length()' = "
+			        << trans.get_data_length() << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		ref = (B*)trans.get_data_ptr();
 	}
@@ -60,10 +68,17 @@ private:
 	void b_transport_data(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (ref == nullptr)
-			throw std::runtime_error("aff3ct::module::Coset: TLM \"ref\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'ref' pointer can't be NULL.");
 
 		if (coset.get_size() * coset.get_n_frames() != (int)(trans.get_data_length() / sizeof(D)))
-			throw std::length_error("aff3ct::module::Coset: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'coset.get_size()' * 'coset.get_n_frames()' has to be equal to 'trans.get_data_length()' / "
+			           "'sizeof(D)' ('coset.get_size()' = " << coset.get_size()
+			        << ", 'coset.get_n_frames()' = " << coset.get_n_frames() << ", 'trans.get_data_length()' = "
+			        << trans.get_data_length() << ", 'sizeof(D)' = " << sizeof(D) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto in_data = (D*)trans.get_data_ptr();
 

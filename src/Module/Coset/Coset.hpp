@@ -10,8 +10,9 @@
 
 #include <vector>
 #include <string>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -48,7 +49,11 @@ public:
 	: Module(n_frames, name), size(size)
 	{
 		if (size <= 0)
-			throw std::invalid_argument("aff3ct::module::Coset: \"size\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'size' has to be greater than 0. ('size' = " << size << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -75,17 +80,37 @@ public:
 	void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data)
 	{
 		if (ref.size() != in_data.size() || in_data.size() != out_data.size())
-			throw std::length_error("aff3ct::module::Coset: \"ref.size()\" has to be equal to \"in_data.size()\" and "
-			                        "\"out_data.size()\".");
+		{
+			std::stringstream message;
+			message << "'ref.size()' has to be equal to 'in_data.size()' and 'out_data.size()' ('ref.size()' = "
+			        << ref.size() << ", 'in_data.size()' = " << in_data.size() << ", 'out_data.size()' = "
+			        << out_data.size() << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->size * this->n_frames != (int)ref.size())
-			throw std::length_error("aff3ct::module::Coset: \"ref.size()\" has to be equal to "
-			                        "\"size\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'ref.size()' has to be equal to 'size' * 'n_frames' ('ref.size()' = " << ref.size()
+			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->size * this->n_frames != (int)in_data.size())
-			throw std::length_error("aff3ct::module::Coset: \"in_data.size()\" has to be equal to "
-			                        "\"size\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'in_data.size()' has to be equal to 'size' * 'n_frames' ('in_data.size()' = " << in_data.size()
+			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (this->size * this->n_frames != (int)out_data.size())
-			throw std::length_error("aff3ct::module::Coset: \"out_data.size()\" has to be equal to "
-			                        "\"size\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'out_data.size()' has to be equal to 'size' * 'n_frames' ('out_data.size()' = " << out_data.size()
+			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->apply(ref.data(), in_data.data(), out_data.data());
 	}
@@ -102,7 +127,7 @@ public:
 protected:
 	virtual void _apply(const B *ref, const D *in_data, D *out_data, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Coset: \"_apply\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }
