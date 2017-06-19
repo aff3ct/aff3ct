@@ -189,3 +189,23 @@ std::string aff3ct::tools::format_positive_info(std::string str)
 {
 	return format("(II) " + str, FG::Color::GREEN | FG::Intensity::NORMAL);
 }
+
+
+std::string aff3ct::tools::apply_on_each_line(const std::string& str, format_function fptr)
+{
+	std::string formated;
+
+	size_t pos = 0, old_pos = 0;
+	while((pos = str.find('\n', old_pos)) != str.npos)
+	{
+		formated += fptr(str.substr(old_pos, pos-old_pos)) + "\n";
+
+		old_pos = pos+1;
+	}
+
+	if (pos == str.npos && old_pos == 0)
+		formated = fptr(str);
+
+	return formated;
+}
+

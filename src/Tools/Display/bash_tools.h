@@ -95,6 +95,8 @@ std::string format_info            (std::string str);
 std::string format_critical_info   (std::string str);
 std::string format_positive_info   (std::string str);
 
+using format_function = std::add_pointer<std::string(std::string)>::type;
+std::string apply_on_each_line(const std::string& str, format_function fptr);
 }
 }
 

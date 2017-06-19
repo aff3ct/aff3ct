@@ -497,7 +497,7 @@ int Launcher<B,R,Q>
 	std::string error;
 	if (!ar.check_arguments(error))
 	{
-		std::cerr << format_error(error) << std::endl;
+		std::cerr << apply_on_each_line(error, format_error) << std::endl;
 		return EXIT_FAILURE;
 	}
 
