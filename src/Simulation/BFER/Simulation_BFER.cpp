@@ -120,9 +120,9 @@ void Simulation_BFER<B,R,Q>
 		mutex_exception.lock();
 		if (prev_err_message != e.what())
 		{
-			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
-			          << bold_red("communication chain (tid = " + std::to_string(tid) + ").") << std::endl
-			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			std::cerr << format_error("An issue was encountered when building the communication chain (tid = "
+			                          + std::to_string(tid) + ").") << std::endl
+			          << format_error(e.what()) << std::endl;
 
 			prev_err_message = e.what();
 		}
@@ -209,9 +209,8 @@ void Simulation_BFER<B,R,Q>
 			{
 				Monitor<B>::stop();
 
-				std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop.")
-				          << std::endl
-				          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+				std::cerr << format_error("An issue was encountered during the simulation loop.") << std::endl
+				          << format_error(e.what()) << std::endl;
 			}
 
 			// stop the terminal
@@ -300,7 +299,7 @@ void Simulation_BFER<B,R,Q>
 			max_chars = std::max(max_chars, (int)duration.first.second.length());
 
 		stream << "#" << std::endl;
-		stream << "# " << bold_underlined("Time report") << " (the time of the threads is cumulated)" << std::endl;
+		stream << "# " << format("Time report", Style::BOLD || Style::UNDERLINED) << " (the time of the threads is cumulated)" << std::endl;
 
 		auto prev_sec = 0.f;
 		for (auto& duration : durations_sum)
@@ -313,13 +312,13 @@ void Simulation_BFER<B,R,Q>
 				if (duration.first.second[0] != '-')
 				{
 					cur_pc  = (cur_sec / total_sec) * 100.f;
-					key = bold("* " + duration.first.second);
+					key = format("* " + duration.first.second, Style::BOLD);
 					prev_sec = cur_sec;
 				}
 				else
 				{
 					cur_pc  = (prev_sec != 0.f) ? (cur_sec / prev_sec) * 100.f : 0.f;
-					key = bold_italic("  " + duration.first.second);
+					key = format("  " + duration.first.second, Style::BOLD | Style::ITALIC);
 				}
 
 				const auto n_spaces = max_chars - (int)duration.first.second.length();
@@ -351,7 +350,7 @@ void Simulation_BFER<B,R,Q>
 		const auto n_spaces = max_chars - (int)total_str.length();
 		std::string str_spaces = "";
 		for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
-		stream << "# " << bold("* " + total_str) << str_spaces << ": "
+		stream << "# " << format("* " + total_str, Style::BOLD) << str_spaces << ": "
 		       << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
 		stream << "#" << std::endl;
 	}
@@ -395,7 +394,7 @@ void Simulation_BFER<B,R,Q>
 		}
 	}
 	else
-		std::clog << bold_yellow("(WW) Terminal is not allocated: the temporal report can't be called.") << std::endl;
+		std::clog << format_warning("Terminal is not allocated: the temporal report can't be called.") << std::endl;
 }
 
 template <typename B, typename R, typename Q>

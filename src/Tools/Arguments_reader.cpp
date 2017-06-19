@@ -8,8 +8,6 @@
 
 using namespace aff3ct::tools;
 
-using color_function = std::add_pointer<std::string(std::string)>::type;
-
 Arguments_reader
 ::Arguments_reader(const int argc, const char** argv)
 : m_argv(argc), max_n_char_arg(0)
@@ -168,7 +166,7 @@ void Arguments_reader
 void Arguments_reader
 ::print_usage(std::vector<std::vector<std::string>> arg_groups)
 {
-	color_function head_color = tools::bold_yellow;
+	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::YELLOW | FG::Intensity::NORMAL;
 
 	std::cout << "Usage: " << this->m_program_name;
 
@@ -217,7 +215,7 @@ void Arguments_reader
 
 		if (display)
 		{
-			std::cout << head_color(arg_groups[i][1] + ": ") << std::endl;
+			std::cout << format(arg_groups[i][1] + ": ", head_format) << std::endl;
 			if (arg_groups[i].size() > 2)
 				std::cout << arg_groups[i][2] << std::endl;
 
@@ -251,7 +249,7 @@ void Arguments_reader
 
 	if (!req_args_cpy.empty() || !opt_args_cpy.empty())
 	{
-		std::cout << head_color("Other parameter(s): ") << std::endl;
+		std::cout << format("Other parameter(s): ", head_format) << std::endl;
 		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); )
 		{
 			// gr->first is a prefix of it->first[0].
@@ -273,11 +271,12 @@ void Arguments_reader
 void Arguments_reader
 ::print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values, const bool required)
 {
-	color_function arg_color;
+	Format arg_format = 0;
+
 	if (required)
-		arg_color = tools::red;
+		arg_format |= FG::Color::RED;
 	else
-		arg_color = tools::blue;
+		arg_format |= FG::Color::BLUE | FG::Intensity::INTENSE;
 
 	if (values.size() >= 2 && !values[1].empty())
 	{
@@ -287,18 +286,18 @@ void Arguments_reader
 		std::cout << tab;
 		for (auto i = 0; i < (int)tags.size() -1; i++)
 		{
-			std::cout << arg_color(((tags[i].length() == 1) ? "-" : "--") + tags[i] + delimiter);
+			std::cout << format(((tags[i].length() == 1) ? "-" : "--") + tags[i] + delimiter, arg_format);
 			total_length += unsigned((tags[i].length() == 1 ? 1 : 2) + tags[i].length() + delimiter.length());
 		}
 		const auto last = tags.size() -1;
-		std::cout << arg_color(((tags[last].length() == 1) ? "-" : "--") + tags[last]);
+		std::cout << format(((tags[last].length() == 1) ? "-" : "--") + tags[last], arg_format);
 		total_length += unsigned((tags[last].length() == 1 ? 1 : 2) + tags[last].length());
 
-		for (unsigned i = 0; i < this->max_n_char_arg - total_length; i++) std::cout << arg_color(" ");
+		for (unsigned i = 0; i < this->max_n_char_arg - total_length; i++) std::cout << format(" ", arg_format);
 		if (values.size() < 3)
 		{
 			if (!values[0].empty())
-				std::cout << arg_color(" <" + values[0] + ">");
+				std::cout << format(" <" + values[0] + ">", arg_format);
 		}
 		else
 		{
@@ -308,12 +307,12 @@ void Arguments_reader
 				set += entries[i] + "|";
 			set += entries[entries.size() -1];
 
-			std::cout << arg_color(" <" + values[0] + "=" + set + ">");
+			std::cout << format(" <" + values[0] + "=" + set + ">", arg_format);
 		}
 		if (required)
-			std::cout << arg_color(" {REQUIRED}");
+			std::cout << format(" {REQUIRED}", arg_format);
 		std::cout << std::endl;
-		std::cout << arg_color(tab + values[1]) << std::endl;
+		std::cout << format(tab + values[1], arg_format) << std::endl;
 	}
 }
 

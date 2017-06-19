@@ -1,195 +1,155 @@
+#include <vector>
+#include <iostream>
+
 #include "bash_tools.h"
 
 bool aff3ct::tools::enable_bash_tools = true;
 
-std::string aff3ct::tools::bold(std::string str)
+std::vector<std::vector<std::string>> Style_table = {
+	// BASIC   BLINK   BOLD    DIM HIDDEN INVERT ITALIC UNDERL
+	{    "0",    "5",   "1",   "2",   "8",   "7",   "3",   "4"}, // SET
+	{    "0",   "25",  "21",  "22",  "28",  "27",  "23",  "24"}  // CLEAR
+	};
+
+std::vector<std::vector<std::string>> Color_table_fg = {
+	//DEFAULT  BLACK   BLUE   CYAN   GRAY  GREEN MAGENT ORANGE    RED  WHITE YELLOW
+	{    "39",  "30",  "34",  "36",  "37",  "32",  "35",  "38",  "31",  "97",  "33"}, // NORMAL
+	{    "39",  "30",  "94",  "96",  "90",  "92",  "95",  "98",  "91",  "97",  "93"}  // INTENSE
+	};
+
+std::vector<std::vector<std::string>> Color_table_bg = {
+	//DEFAULT  BLACK   BLUE   CYAN   GRAY  GREEN MAGENT ORANGE    RED  WHITE YELLOW
+	{    "49",  "40",  "44",  "46",  "47",  "42",  "45",  "48",  "41", "107",  "43"}, // NORMAL
+	{    "49",  "40", "104", "106", "100", "102", "105", "108", "101", "107", "103"}  // INTENSE
+	};
+
+std::string reset_code = "0";
+
+std::string command_head  = "\e[";
+std::string command_queue = "m";
+
+
+std::string aff3ct::tools::format(std::string str, Format f)
+{
+	constexpr Format style_mask = (((Format)1 << 31) + (((Format)1 << 31) -1)) ^ (((Format)1 << 20) -1);
+	str = style(str, (Style)(f & style_mask));
+
+	constexpr Format bg_intensity_mask = (((Format)1 << 20) -1) ^ (((Format)1 << 18) -1);
+	constexpr Format bg_color_mask     = (((Format)1 << 18) -1) ^ (((Format)1 << 10) -1);
+	str = bg_color(str, (BG::Color)(f & bg_color_mask), (BG::Intensity)(f & bg_intensity_mask));
+
+	constexpr Format fg_intensity_mask = (((Format)1 << 10) -1) ^ (((Format)1 << 8) -1);
+	constexpr Format fg_color_mask     = (((Format)1 <<  8) -1);
+	str = fg_color(str, (FG::Color)(f & fg_color_mask), (FG::Intensity)(f & fg_intensity_mask));
+
+	return str;
+}
+
+std::string aff3ct::tools::style(std::string str, Style s)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+
+	if (enable_bash_tools)
+	{
+		std::string head, queue;
+		for (unsigned i = 0; i < 12; ++i)
+		{
+			if(s & ((Format)1 << (i+20)))
+			{
+				head  += command_head + Style_table.at(0).at(i+1) + command_queue;
+				queue += command_head + Style_table.at(1).at(i+1) + command_queue;
+			}
+		}
+		return head + str + queue;
+	}
+	else
+		return str;
+
+#endif
+}
+
+std::string aff3ct::tools::fg_color(std::string str, FG::Color c, FG::Intensity i)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+
+	if (enable_bash_tools)
+	{
+		std::string head  = command_head + Color_table_fg.at(i >> 8).at(c >> 0) + command_queue;
+		std::string queue = command_head + Color_table_fg.at(0).at(0) + command_queue;
+		return head + str + queue;
+	}
+	else
+		return str;
+
+#endif
+}
+
+std::string aff3ct::tools::bg_color(std::string str, BG::Color c, BG::Intensity i)
+{
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
+
+	if (enable_bash_tools)
+	{
+		std::string head  = command_head + Color_table_bg.at(i >> 18).at(c >> 10) + command_queue;
+		std::string queue = command_head + Color_table_bg.at(0).at(0) + command_queue;
+		return head + str + queue;
+	}
+	else
+		return str;
+
+#endif
+}
+
+std::string aff3ct::tools::default_style(std::string str)
 {
 #ifndef ENABLE_COOL_BASH
 	return str;
 #else
 	if (enable_bash_tools)
-		return "\e[1m" + str + "\e[0m";
+		return command_head + reset_code + command_queue + str;
 	else
 		return str;
 #endif
 }
 
-std::string aff3ct::tools::italic(std::string str)
+
+std::string aff3ct::tools::format_error(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[3m" + str + "\e[0m";
-	else
-		return str;
-#endif
+	return format("(EE) " + str, FG::Color::RED | FG::Intensity::NORMAL);
 }
 
-std::string aff3ct::tools::bold_italic(std::string str)
+std::string aff3ct::tools::format_critical_error(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[3m" + str + "\e[0m";
-	else
-		return str;
-#endif
+	return format("(EE) " + str, FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::RED | BG::Intensity::INTENSE);
 }
 
-std::string aff3ct::tools::underlined(std::string str)
+std::string aff3ct::tools::format_warning(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[4m" + str + "\e[0m";
-	else
-		return str;
-#endif
+	return format("(WW) " + str, FG::Color::ORANGE | FG::Intensity::NORMAL);
 }
 
-std::string aff3ct::tools::bold_underlined(std::string str)
+std::string aff3ct::tools::format_critical_warning(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[4m" + str + "\e[0m";
-	else
-		return str;
-#endif
+	return format("(WW) " + str, FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::ORANGE | BG::Intensity::INTENSE);
 }
 
-std::string aff3ct::tools::inverted(std::string str)
+std::string aff3ct::tools::format_info(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[7m" + str + "\e[0m";
-	else
-		return str;
-#endif
+	return format("(II) " + str, FG::Color::BLUE | FG::Intensity::NORMAL);
 }
 
-std::string aff3ct::tools::red(std::string str)
+std::string aff3ct::tools::format_critical_info(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[31m" + str + "\e[39m";
-	else
-		return str;
-#endif
+	return format("(II) " + str, FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::BLUE | BG::Intensity::INTENSE);
 }
 
-std::string aff3ct::tools::bold_red(std::string str)
+std::string aff3ct::tools::format_positive_info(std::string str)
 {
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[31m" + str + "\e[39m\e[0m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::green(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[32m" + str + "\e[39m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::bold_green(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[32m" + str + "\e[39m\e[0m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::yellow(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[33m" + str + "\e[39m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::bold_yellow(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[33m" + str + "\e[39m\e[0m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::blue(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[94m" + str + "\e[39m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::bold_blue(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[94m" + str + "\e[39m\e[0m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::orange(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[38;5;208m" + str + "\e[39m";
-	else
-		return str;
-#endif
-}
-
-std::string aff3ct::tools::bold_orange(std::string str)
-{
-#ifndef ENABLE_COOL_BASH
-	return str;
-#else
-	if (enable_bash_tools)
-		return "\e[1m\e[38;5;208m" + str + "\e[39m\e[0m";
-	else
-		return str;
-#endif
+	return format("(II) " + str, FG::Color::GREEN | FG::Intensity::NORMAL);
 }

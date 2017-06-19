@@ -44,8 +44,8 @@ Generation_polar
   directory       (params.decoder.gen_path)
 {
 #ifdef ENABLE_MPI
-	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
-	          << bold_yellow("on each MPI processes.") << std::endl;
+	std::clog << format_warning("This simulation is not MPI ready, the same computations will be launched "
+	                            + "on each MPI processes.") << std::endl;
 #endif
 
 	// pattern allocations
@@ -99,7 +99,7 @@ Generation_polar
 	}
 	else
 	{
-		std::cerr << bold_red("(EE) Unsupported type of decoder, exiting.") << std::endl;
+		std::cerr << format_error("Unsupported type of decoder, exiting.") << std::endl;
 		std::exit(-1);
 	}
 }

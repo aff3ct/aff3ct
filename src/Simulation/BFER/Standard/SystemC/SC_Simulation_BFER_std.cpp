@@ -29,11 +29,11 @@ SC_Simulation_BFER_std<B,R,Q>
 		                            "the bench mode.");
 
 	if (params.simulation.time_report)
-		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
+		std::clog << format_warning("The time report is not available in the SystemC simulation.") << std::endl;
 
 #ifdef ENABLE_MPI
-	std::clog << bold_yellow("(WW) This simulation is not MPI ready, the same computations will be launched ")
-	          << bold_yellow("on each MPI processes.") << std::endl;
+	std::clog << format_warning("(WW) This simulation is not MPI ready, the same computations will be launched "
+	                            + "on each MPI processes.") << std::endl;
 #endif
 }
 

@@ -94,9 +94,8 @@ void Frozenbits_generator_TV<B>
 			cmd      += " --log-length=" + str_m;                  // m
 			cmd      += " -f=" + filename;                         // filename
 
-			std::clog << bold_blue("(II) Generating best channels positions file (\"")
-			          << bold_blue(filename)
-			          << bold_blue("\")...") << "\r";
+			std::clog << format("(II) Generating best channels positions file (\"" + filename + "\")...",
+			                    Style::BOLD | FG::Color::BLUE) << "\r";
 			fflush(stdout);
 
 			if (system(cmd.c_str()) == 0)

@@ -116,14 +116,14 @@ void Frame_trace<B>
 			value_string.append(prec+1, ' ');
 			if (value == 0)
 				if (ref == 0)
-					stream << tools::bold_green (value_string + "0") << "|";
+					stream << tools::format(value_string + "0", Style::BOLD | FG::Color::GREEN) << "|";
 				else
-					stream << tools::bold_orange(value_string + "0") << "|";
+					stream << tools::format(value_string + "0", Style::BOLD | FG::Color::ORANGE) << "|";
 			else
 				if (ref == 0)
-					stream << tools::bold_orange(value_string + "1") << "|";
+					stream << tools::format(value_string + "1", Style::BOLD | FG::Color::ORANGE) << "|";
 				else	
-					stream << tools::bold_green (value_string + "1") << "|";
+					stream << tools::format(value_string + "1", Style::BOLD | FG::Color::GREEN) << "|";
 			break;
 
 		case REAL:
@@ -137,14 +137,14 @@ void Frame_trace<B>
 
 			if (value >= 0)
 				if (ref == 0)
-					stream << tools::bold_green (value_string) << "|";
+					stream << tools::format(value_string, Style::BOLD | FG::Color::GREEN) << "|";
 				else 
-					stream << tools::bold_orange(value_string) << "|";
+					stream << tools::format(value_string, Style::BOLD | FG::Color::ORANGE) << "|";
 			else
 				if (ref == 0)
-					stream << tools::bold_orange(value_string) << "|";
+					stream << tools::format(value_string, Style::BOLD | FG::Color::ORANGE) << "|";
 				else
-					stream << tools::bold_green (value_string) << "|";
+					stream << tools::format(value_string, Style::BOLD | FG::Color::GREEN) << "|";
 			break;
 	}
 }

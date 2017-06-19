@@ -497,7 +497,7 @@ int Launcher<B,R,Q>
 	std::string error;
 	if (!ar.check_arguments(error))
 	{
-		std::cerr << bold_red("(EE) " + error) << std::endl;
+		std::cerr << format_error(error) << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -764,13 +764,13 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::print_parameters(std::string grp_name, std::vector<std::pair<std::string,std::string>> params)
 {
-	stream << "# * " << bold_underlined(grp_name) << " ";
+	stream << "# * " << style(style(grp_name, Style::BOLD), Style::UNDERLINED) << " ";
 	for (auto i = 0; i < 46 - (int)grp_name.length(); i++) std::cout << "-";
 	stream << std::endl;
 
 	for (auto i = 0; i < (int)params.size(); i++)
 	{
-		stream << "#    ** " << bold(params[i].first);
+		stream << "#    ** " << style(params[i].first, Style::BOLD);
 		for (auto j = 0; j < this->max_n_chars - (int)params[i].first.length(); j++) stream << " ";
 		stream << " = " << params[i].second << std::endl;
 	}
@@ -783,10 +783,10 @@ void Launcher<B,R,Q>
 	this->compute_max_n_chars();
 
 	// display configuration and simulation parameters
-	stream << "# " << bold("-------------------------------------------------") << std::endl;
-	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----") << std::endl;
-	stream << "# " << bold("-------------------------------------------------") << std::endl;
-	stream << "# " << bold_underlined("Parameters") << ":" << std::endl;
+	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
+	stream << "# " << style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", Style::BOLD) << std::endl;
+	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
+	stream << "# " << style(style("Parameters :", Style::BOLD), Style::UNDERLINED) << std::endl;
 
 	std::vector<std::pair<std::string,std::string>> params;
 	params = this->header_simulation();  if (params.size()) this->print_parameters("Simulation",  params);
@@ -841,20 +841,19 @@ void Launcher<B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
-		          << bold_red("simulation.") << std::endl
-		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		std::cerr << format_error("An issue was encountered when building the simulation.") << std::endl
+		          << format_error(e.what()) << std::endl;
 	}
 
 	if (simu != nullptr)
 	{
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
-			stream << "# " << bold_blue("The simulation is running...") << std::endl;
+			stream << "# " << format_info("The simulation is running...") << std::endl;
 		// print the warnings
 		if (params.simulation.mpi_rank == 0)
 			for (auto w = 0; w < (int)cmd_warn.size(); w++)
-				std::clog << bold_yellow("(WW) " + cmd_warn[w]) << std::endl;
+				std::clog << format_warning(cmd_warn[w]) << std::endl;
 
 		try
 		{
@@ -862,9 +861,8 @@ void Launcher<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when running the ")
-			          << bold_red("simulation.") << std::endl
-			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			std::cerr << format_error("An issue was encountered when running the simulation.") << std::endl
+			          << format_error(e.what()) << std::endl;
 		}
 	}
 
