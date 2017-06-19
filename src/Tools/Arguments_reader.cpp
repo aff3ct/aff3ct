@@ -273,10 +273,10 @@ void Arguments_reader
 {
 	Format arg_format = 0;
 
-	if (required)
-		arg_format |= FG::Color::RED;
-	else
-		arg_format |= FG::Color::BLUE;
+//	if (required)
+//		arg_format |= FG::Color::GREEN;
+	//else
+		//arg_format |= FG::Color::DEFAULT;
 
 	if (values.size() >= 2 && !values[1].empty())
 	{
@@ -286,11 +286,11 @@ void Arguments_reader
 		std::cout << tab;
 		for (auto i = 0; i < (int)tags.size() -1; i++)
 		{
-			std::cout << format(print_tag(tags[i]) + delimiter, arg_format);
+			std::cout << format(print_tag(tags[i]) + delimiter, arg_format | Style::BOLD);
 			total_length += unsigned((tags[i].length() == 1 ? 1 : 2) + tags[i].length() + delimiter.length());
 		}
 		const auto last = tags.size() -1;
-		std::cout << format(print_tag(tags[last]), arg_format);
+		std::cout << format(print_tag(tags[last]), arg_format | Style::BOLD);
 		total_length += unsigned((tags[last].length() == 1 ? 1 : 2) + tags[last].length());
 
 		for (unsigned i = 0; i < this->max_n_char_arg - total_length; i++) std::cout << format(" ", arg_format);
@@ -310,7 +310,7 @@ void Arguments_reader
 			std::cout << format(" <" + values[0] + "=" + set + ">", arg_format);
 		}
 		if (required)
-			std::cout << format(" {REQUIRED}", arg_format);
+			std::cout << format(" {REQUIRED}", arg_format | Style::BOLD | FG::Color::ORANGE);
 		std::cout << std::endl;
 		std::cout << format(tab + values[1], arg_format) << std::endl;
 	}
