@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/RA/Encoder_RA.hpp"
 

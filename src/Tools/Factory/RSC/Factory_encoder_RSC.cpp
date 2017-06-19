@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"

@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Quantizer/Standard/Quantizer_standard.hpp"
 #include "Module/Quantizer/Fast/Quantizer_fast.hpp"

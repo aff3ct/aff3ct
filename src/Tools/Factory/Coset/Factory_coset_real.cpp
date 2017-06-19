@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Coset/Real/Coset_real.hpp"
 

@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"

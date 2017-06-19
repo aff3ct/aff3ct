@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Interleaver/Random_column/Interleaver_random_column.hpp"
 #include "Module/Interleaver/Row_column/Interleaver_row_column.hpp"

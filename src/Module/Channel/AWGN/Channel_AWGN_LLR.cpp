@@ -1,5 +1,6 @@
 #include <algorithm>
-#include <stdexcept>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Channel_AWGN_LLR.hpp"
 
@@ -15,7 +16,7 @@ Channel_AWGN_LLR<R>
   noise_generator(noise_generator)
 {
 	if (noise_generator == nullptr)
-		throw std::invalid_argument("aff3ct::module::Channel_AWGN_LLR: \"noise_generator\" can't be NULL.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 }
 
 template <typename R>

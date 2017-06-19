@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"

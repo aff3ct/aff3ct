@@ -1,9 +1,12 @@
 #include <fstream>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Channel_user.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename R>
 Channel_user<R>
@@ -12,7 +15,7 @@ Channel_user<R>
 : Channel<R>(N, (R)1, n_frames, name), add_users(add_users), noise_buff(), noise_counter(0)
 {
 	if (filename.empty())
-		throw std::invalid_argument("aff3ct::module::Channel_user: path to the file should not be empty.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.is_open())
@@ -24,8 +27,12 @@ Channel_user<R>
 		file.read((char*)&fra_size, sizeof(fra_size));
 
 		if (n_fra <= 0 || fra_size <= 0)
-			throw std::runtime_error("aff3ct::module::Channel_user: \"n_fra\" and \"fra_size\" have to be "
-			                         "bigger than 0.");
+		{
+			std::stringstream message;
+			message << "'n_fra' and 'fra_size' have to be bigger than 0 ('n_fra' = "
+			        << n_fra << ", 'fra_size' = " << fra_size << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->noise_buff.resize(n_fra);
 		for (unsigned i = 0; i < (unsigned)n_fra; i++)
@@ -40,15 +47,16 @@ Channel_user<R>
 		{
 			file.close();
 
-			throw std::runtime_error("aff3ct::module::Channel_user: the frame size is wrong (read: " +
-			                         std::to_string(fra_size) + ", expected: " + std::to_string(this->N) + ").");
+			std::stringstream message;
+			message << "The frame size is wrong (read: " << fra_size << ", expected: " << this->N << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		file.close();
 	}
 	else
 	{
-		throw std::invalid_argument("aff3ct::module::Channel_user: can't open \"" + filename + "\" file");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file");
 	}
 }
 

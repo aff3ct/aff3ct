@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"

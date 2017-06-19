@@ -1,4 +1,4 @@
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"

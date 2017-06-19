@@ -1,7 +1,7 @@
 #ifndef CANNOT_ALLOCATE_HPP_
 #define CANNOT_ALLOCATE_HPP_
 
-#include "exception.hpp"
+#include "../exception.hpp"
 
 namespace aff3ct
 {

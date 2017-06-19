@@ -1,11 +1,12 @@
 #include <cmath>
-#include <stdexcept>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <string>
 using namespace std;
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Generator_polar.hpp"
 
@@ -413,8 +414,12 @@ unsigned long Generator_polar
 ::get_n_generated_nodes(int graph_depth) const
 {
 	if (graph_depth >= m +1)
-		throw std::runtime_error("aff3ct::generator::Generator_polar: \"graph_depth\" has to be smaller than "
-		                         "\"m\" +1.");
+	{
+		stringstream message;
+		message << "'graph_depth' has to be smaller than 'm' +1. ('graph_depth' = " << graph_depth
+		        << ", 'm' = " << m << ")";
+		throw aff3ct::tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	unsigned long sum_nodes = 0;
 
@@ -433,8 +438,12 @@ unsigned long Generator_polar
 ::get_n_generated_nodes_by_pattern(std::size_t pattern_hash, int graph_depth) const
 {
 	if (graph_depth >= m +1)
-		throw std::runtime_error("aff3ct::generator::Generator_polar: \"graph_depth\" has to be smaller than "
-		                         "\"m\" +1.");
+	{
+		stringstream message;
+		message << "'graph_depth' has to be smaller than 'm' +1. ('graph_depth' = " << graph_depth
+		        << ", 'm' = " << m << ")";
+		throw aff3ct::tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	unsigned long sum_nodes = 0;
 

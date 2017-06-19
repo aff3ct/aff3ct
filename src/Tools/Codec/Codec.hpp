@@ -1,7 +1,7 @@
 #ifndef CODEC_HPP_
 #define CODEC_HPP_
 
-#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/params.h"
 
 #include "Module/CRC/CRC.hpp"

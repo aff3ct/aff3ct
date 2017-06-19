@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
-#include <stdexcept>
 #include <functional>
 
 #ifdef ENABLE_MPI
@@ -15,6 +14,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
+#include "Tools/Exception/exception.hpp"
 
 #include "Launcher.hpp"
 
@@ -336,7 +336,12 @@ void Launcher<B,R,Q>
 	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 
 	if (max_n_threads_global <= 0)
-		throw std::invalid_argument("aff3ct::launcher::Launcher: \"max_n_threads_global\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'max_n_threads_global' has to be greater than 0 ('max_n_threads_global' = "
+		        << max_n_threads_global << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
 	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
@@ -386,7 +391,11 @@ void Launcher<B,R,Q>
 				params.modulator.wave_shape     = "GMSK";
 			}
 			else
-				throw std::invalid_argument("aff3ct::launcher::Launcher: unknown CPM standard.");
+			{
+				std::stringstream message;
+				message << "Unknown CPM standard ('cpm_std' = " << params.modulator.cpm_std << ").";
+				throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			}
 		}
 	}
 

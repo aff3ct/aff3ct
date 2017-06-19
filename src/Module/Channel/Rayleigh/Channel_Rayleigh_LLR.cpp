@@ -1,5 +1,7 @@
 #include <cmath>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Channel_Rayleigh_LLR.hpp"
 
@@ -17,10 +19,14 @@ Channel_Rayleigh_LLR<R>
   noise_generator(noise_generator)
 {
 	if (complex && N % 2)
-		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"N\" has to be divisible by 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (noise_generator == nullptr)
-		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"noise_generator\" can't be NULL.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 }
 
 template <typename R>
@@ -34,7 +40,11 @@ Channel_Rayleigh_LLR<R>
   noise_generator(new tools::Noise_std<R>(seed))
 {
 	if (complex && N % 2)
-		throw std::invalid_argument("aff3ct::module::Channel_Rayleigh_LLR: \"N\" has to be divisible by 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename R>
