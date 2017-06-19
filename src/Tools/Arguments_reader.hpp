@@ -179,9 +179,8 @@ private:
 	 *
 	 * \return true if the argument criteria are respected, false otherwise.
 	 */
-	bool check_argument(const std::vector<std::string> &tags,
-	                          std::map<std::vector<std::string>, std::vector<std::string>> &args,
-	                          std::string &error);
+	std::string check_argument(const std::vector<std::string> &tags,
+	                                 std::map<std::vector<std::string>, std::vector<std::string>> &args);
 
 	/*!
 	 * \brief Clears m_required_args, m_optional_args and m_args.
@@ -198,6 +197,8 @@ private:
 	 */
 	void print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values,
 	                 const bool required = false);
+
+	std::string print_tag(const std::string& tag);
 
 	/*!
 	 * \brief Splits a string in a vector of string, the delimiter is the comma.
