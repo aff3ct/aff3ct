@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
@@ -26,7 +26,7 @@ Decoder_turbo<B,R>* Factory_decoder_turbo<B,R>
 		else if (implem == "FAST") return new Decoder_turbo_fast <B,R>(K, N, n_ite, itl, siso_n, siso_i, buffered);
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_turbo: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

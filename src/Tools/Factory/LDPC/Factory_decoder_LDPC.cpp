@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/LSPA/Decoder_LDPC_BP_flooding_log_sum_product.hpp"
@@ -48,7 +48,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 		     if (implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(K, N, n_ite, H, info_bits_pos, factor, offset, synd, synd_depth, n_frames);
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_LDPC: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

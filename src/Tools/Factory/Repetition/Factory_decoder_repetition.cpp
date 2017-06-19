@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
@@ -23,7 +23,7 @@ Decoder<B,R>* Factory_decoder_repetition<B,R>
 		else if (implem == "FAST") return new Decoder_repetition_fast<B,R>(K, N, buffered, n_frames);
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_repetition: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

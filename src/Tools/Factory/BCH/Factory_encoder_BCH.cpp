@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
@@ -17,7 +17,7 @@ Encoder<B>* Factory_encoder_BCH<B>
 {
 	if (type == "BCH") return new Encoder_BCH<B>(K, N, GF, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_encoder_BCH: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

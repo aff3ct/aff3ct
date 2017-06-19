@@ -1,5 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
-
+#include "Tools/Exception/cannot_allocate.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
@@ -55,7 +54,7 @@ Decoder_SISO<B,R>* Factory_decoder_polar<B,R>
 	if (type == "SCAN" && sys_encoding)
 		if (implem == "NAIVE") return new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(K, N, n_ite, frozen_bits, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
@@ -113,7 +112,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 		}
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
@@ -150,7 +149,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 		}
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
@@ -296,7 +295,7 @@ Decoder<B,R>* Factory_decoder_polar<B,R>
 		return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_decoder_polar: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

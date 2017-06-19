@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/CRC/NO/CRC_NO.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
@@ -23,7 +23,7 @@ CRC<B>* Factory_CRC<B>
 	else if (type == "INTER") return new CRC_polynomial_inter<B>(K, poly, size, n_frames);
 	else if (type == "NO"   ) return new CRC_NO              <B>(K,             n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_CRC: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

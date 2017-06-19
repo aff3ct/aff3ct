@@ -62,13 +62,6 @@ Codec_LDPC<B,Q>
 	}
 
 	file_H.close();
-
-//	// DEBUG
-//	auto file_H_bis = std::ofstream(params.code.alist_path + ".dbg", std::ifstream::out);
-//	AList::write(H, file_H_bis);
-//	file_H_bis << std::endl;
-//	AList::write_info_bits_pos(info_bits_pos, file_H_bis);
-//	file_H_bis.close();
 }
 
 template <typename B, typename Q>

@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Monitor/Standard/Monitor_std.hpp"
 
@@ -16,7 +16,7 @@ Monitor<B>* Factory_monitor<B>
 {
 	if (type == "STD") return new Monitor_std<B>(K, fe, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_monitor: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Coset/Bit/Coset_bit.hpp"
 
@@ -15,7 +15,7 @@ Coset<B,B>* Factory_coset_bit<B>
 {
 	if (type == "STD") return new Coset_bit<B,B>(K, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_coset_bit: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

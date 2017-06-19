@@ -1,4 +1,5 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
+#include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
@@ -8,8 +9,6 @@
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 #include "Module/Modem/User/Modem_user.hpp"
-
-#include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
 #include "Factory_modem.hpp"
 
@@ -41,7 +40,7 @@ Modem<B,R,Q>* Factory_modem<B,R,Q>
 	else if (type == "USER"     ) return new Modem_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
 	else if (type == "CPM"      ) return new Modem_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_modem: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
@@ -60,7 +59,7 @@ Modem<B,R,Q>* Factory_modem<B,R,Q>
 	else if (psi_type == "PSI2") return new Modem_SCMA <B,R,Q,psi_2<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
 	else if (psi_type == "PSI3") return new Modem_SCMA <B,R,Q,psi_3<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_modem: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
@@ -94,7 +93,7 @@ Modem<B,R,Q>* Factory_modem<B,R,Q>
 		else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_modem: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
@@ -114,7 +113,7 @@ int Factory_modem<B,R,Q>
 	else if (type == "USER"     ) return Modem_user     <B,R,Q>::size_mod(N, bps            );
 	else if (type == "CPM"      ) return Modem_CPM      <B,R,Q>::size_mod(N, bps, cpm_L, upf);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_modem: unknown type of modem.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
@@ -134,7 +133,7 @@ int Factory_modem<B,R,Q>
 	else if (type == "USER"     ) return Modem_user     <B,R,Q>::size_fil(N, bps              );
 	else if (type == "CPM"      ) return Modem_CPM      <B,R,Q>::size_fil(N, bps, cpm_L, cpm_p);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_modem: unknown type of modem.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

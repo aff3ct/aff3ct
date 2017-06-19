@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
@@ -18,7 +18,7 @@ Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
 {
 	if (type == "WANGLIU") return new Puncturer_polar_wangliu<B,Q>(K, N, *fb_generator, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_puncturer_polar: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

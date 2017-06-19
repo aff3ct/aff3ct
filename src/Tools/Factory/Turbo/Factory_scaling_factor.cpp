@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
@@ -21,7 +21,7 @@ Scaling_factor<B,R>* Factory_scaling_factor<B,R>
 	else if (type == "LTE"    ) return new Scaling_factor_seq     <B,R>(n_ite             );
 	else if (type == "ARRAY"  ) return new Scaling_factor_array   <B,R>(n_ite, alpha_array);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_scaling_factor: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

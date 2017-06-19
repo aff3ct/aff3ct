@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
@@ -17,7 +17,7 @@ Encoder_sys<B>* Factory_encoder_repetition<B>
 {
 	if (type == "REPETITION") return new Encoder_repetition_sys<B>(K, N, buffered, n_frames);
 
-	throw Cannot_allocate("aff3ct::tools::Factory_encoder_repetition: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 

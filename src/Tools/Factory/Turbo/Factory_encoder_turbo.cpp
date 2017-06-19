@@ -1,4 +1,4 @@
-#include "Tools/Exceptions/Cannot_allocate.hpp"
+#include "Tools/Exception/cannot_allocate.hpp"
 
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
@@ -30,7 +30,7 @@ Encoder<B>* Factory_encoder_turbo<B>
 		if (type == "TURBO") return new Encoder_turbo_legacy<B>(K, N, itl, *enc_n,         n_frames);
 	}
 
-	throw Cannot_allocate("aff3ct::tools::Factory_encoder_turbo: the factory could not allocate the object.");
+	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation 
