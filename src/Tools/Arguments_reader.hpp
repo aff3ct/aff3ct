@@ -156,6 +156,12 @@ public:
 	 */
 	bool check_arguments(std::vector<std::string> &error);
 
+	/*
+	 * return the given tag with its command line argument format.
+	 * Add "-" before if tag is one letter length else "--".
+	 */
+	static std::string print_tag(const std::string& tag);
+
 private:
 	/*!
 	 * \brief Returns true if the argument "m_argv[pos_arg]" is in args.
@@ -197,8 +203,6 @@ private:
 	 */
 	void print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values,
 	                 const bool required = false);
-
-	std::string print_tag(const std::string& tag);
 
 	/*!
 	 * \brief Splits a string in a vector of string, the delimiter is the comma.

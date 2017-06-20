@@ -506,6 +506,16 @@ int Launcher<B,R,Q>
 		ar.print_usage(arg_grp);
 		error = true;
 	}
+	else if (error)
+	{
+		std::string message = "For more information please display the help (";
+		std::vector<std::string> help_tag = {"help", "h"};
+		for (unsigned i = 0; i < help_tag.size(); i++)
+			message += Arguments_reader::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
+
+		message += ").";
+		std::cerr << format_info(message) << std::endl;
+	}
 
 	return (error?EXIT_FAILURE:EXIT_SUCCESS);
 }
