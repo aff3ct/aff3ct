@@ -10,8 +10,9 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -47,7 +48,11 @@ public:
 	: Module(n_frames, name), K(K)
 	{
 		if (K <= 0)
-			throw std::invalid_argument("aff3ct::module::CRC: \"K\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'K' has to be greater than 0 ('K' = " << K << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -79,11 +84,21 @@ public:
 	void build(const mipp::vector<B>& U_K1, mipp::vector<B>& U_K2)
 	{
 		if (this->K * this->n_frames != (int)U_K1.size())
-			throw std::length_error("aff3ct::module::CRC: \"U_K1.size()\" has to be equal to \"K\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'U_K1.size()' has to be equal to 'K' * 'n_frames' ('U_K1.size()' = " << U_K1.size()
+			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if ((this->K + this->get_size()) * this->n_frames != (int)U_K2.size())
-			throw std::length_error("aff3ct::module::CRC: \"U_K2.size()\" has to be equal to "
-			                        "\"K + size\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'U_K2.size()' has to be equal to ('K' + 'get_size()') * 'n_frames' ('U_K2.size()' = "
+			        << U_K2.size() << ", 'K' = " << this->K << ", 'get_size()' = " << this->get_size()
+			        << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->build(U_K1.data(), U_K2.data());
 	}
@@ -99,11 +114,21 @@ public:
 	void extract(const mipp::vector<B>& V_K1, mipp::vector<B>& V_K2)
 	{
 		if ((this->K + this->get_size()) * this->n_frames != (int)V_K1.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K1.size()\" has to be equal to "
-			                        "\"K + size\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'V_K1.size()' has to be equal to ('K' + 'get_size()') * 'n_frames' ('V_K1.size()' = "
+			        << V_K1.size() << ", 'K' = " << this->K << ", 'get_size()' = " << this->get_size()
+			        << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->K * this->n_frames != (int)V_K2.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K2.size()\" has to be equal to \"K\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'V_K2.size()' has to be equal to 'K' * 'n_frames' ('V_K2.size()' = " << V_K2.size()
+			        << ", 'K' = " << this->K << ", 'n_frames' =  " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->extract(V_K1.data(), V_K2.data());
 	}
@@ -127,14 +152,22 @@ public:
 	 */
 	bool check(const mipp::vector<B>& V_K, const int n_frames = -1)
 	{
+		if (n_frames <= 0 && n_frames != -1)
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if ((this->K + (int)this->get_size()) *       n_frames != (int)V_K.size() &&
 		    (this->K + (int)this->get_size()) * this->n_frames != (int)V_K.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal to "
-			                        "\"K + size\" * \"n_frames\".");
-
-		if (n_frames <= 0 && n_frames != -1)
-			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
-			                            "to -1).");
+		{
+			std::stringstream message;
+			message << "'V_K.size()' has to be equal to ('K' + 'size') * 'n_frames' ('V_K.size()' = " << V_K.size()
+			        << ", 'K' = " << this->K
+			        << ", 'n_frames' = " << (n_frames != -1 ? n_frames : this->n_frames) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		return this->check(V_K.data(), n_frames);
 	}
@@ -161,14 +194,22 @@ public:
 	 */
 	bool check_packed(const mipp::vector<B>& V_K, const int n_frames = -1)
 	{
-		if ((this->K + this->get_size()) *       n_frames != (int)V_K.size() &&
-		    (this->K + this->get_size()) * this->n_frames != (int)V_K.size())
-			throw std::length_error("aff3ct::module::CRC: \"V_K.size()\" has to be equal to "
-			                        "\"K + size\" * \"n_frames\".");
-
 		if (n_frames <= 0 && n_frames != -1)
-			throw std::invalid_argument("aff3ct::module::CRC: \"n_frames\" has to be greater than 0 (or equal "
-			                            "to -1).");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if ((this->K + (int)this->get_size()) *       n_frames != (int)V_K.size() &&
+		    (this->K + (int)this->get_size()) * this->n_frames != (int)V_K.size())
+		{
+			std::stringstream message;
+			message << "'V_K.size()' has to be equal to ('K' + 'size') * 'n_frames' ('V_K.size()' = " << V_K.size()
+			        << ", 'K' = " << this->K
+			        << ", 'n_frames' = " << (n_frames != -1 ? n_frames : this->n_frames) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		return this->check_packed(V_K.data(), n_frames);
 	}
@@ -187,23 +228,23 @@ public:
 protected:
 	virtual void _build(const B *U_K1, B *U_K2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::CRC: \"_build\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
 	virtual void _extract(const B *V_K1, B *V_K2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::CRC: \"_extract\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
 	virtual bool _check(const B *V_K, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::CRC: \"_check\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 		return false;
 	}
 
 	virtual bool _check_packed(const B *V_K, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::CRC: \"_check_packed\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 		return false;
 	}
 };

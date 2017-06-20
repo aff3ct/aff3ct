@@ -1,5 +1,6 @@
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -18,14 +19,14 @@ CRC_polynomial<B>
   buff_crc         (0                                 )
 {
 	if (poly_key.empty())
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial: \"poly_key\" can't be empty, choose a CRC.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'poly_key' can't be empty, choose a CRC.");
 
 	if (!polynomial_packed)
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial: CRC \"" + poly_key + "\" is not supported.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "CRC '" + poly_key + "' is not supported.");
 
 	auto crc_name = CRC_polynomial<B>::name(poly_key);
 	if (size == 0 && crc_name.empty())
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial: please specify the CRC \"size\".");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "Please specify the CRC 'size'.");
 
 	if (size)
 		poly_size = size;

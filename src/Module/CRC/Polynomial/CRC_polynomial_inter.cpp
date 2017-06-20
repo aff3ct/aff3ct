@@ -1,10 +1,12 @@
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "CRC_polynomial_inter.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 CRC_polynomial_inter<B>
@@ -21,8 +23,12 @@ bool CRC_polynomial_inter<B>
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 	if (real_n_frames != mipp::nElReg<B>())
-		throw std::invalid_argument("aff3ct::module::CRC_polynomial_inter: \"n_frames\" has to be equal to "
-		                            "\"mipp::nElReg<B>()\".");
+	{
+		std::stringstream message;
+		message << "'real_n_frames' has to be equal to 'mipp::nElReg<B>()' ('real_n_frames' = " << real_n_frames
+		        << ", 'mipp::nElReg<B>()' = " << mipp::nElReg<B>() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->_generate_INTER(V_K, this->buff_crc.data(),
 	                      0, 
