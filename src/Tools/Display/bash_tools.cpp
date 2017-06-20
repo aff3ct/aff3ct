@@ -67,18 +67,27 @@ std::string bg_color_reset_command = "\e[49m";
 
 std::string aff3ct::tools::format(std::string str, Format f)
 {
-	constexpr Format style_mask = (((Format)1 << 31) + (((Format)1 << 31) -1)) ^ (((Format)1 << 20) -1);
-	str = style(str, (Style)(f & style_mask));
+#ifndef ENABLE_COOL_BASH
+	return str;
+#else
 
-	constexpr Format bg_intensity_mask = (((Format)1 << 20) -1) ^ (((Format)1 << 18) -1);
-	constexpr Format bg_color_mask     = (((Format)1 << 18) -1) ^ (((Format)1 << 10) -1);
-	str = bg_color(str, (BG::Color)(f & bg_color_mask), (BG::Intensity)(f & bg_intensity_mask));
+	if (enable_bash_tools)
+	{
+		constexpr Format style_mask = (((Format)1 << 31) + (((Format)1 << 31) -1)) ^ (((Format)1 << 20) -1);
+		str = style(str, (Style)(f & style_mask));
 
-	constexpr Format fg_intensity_mask = (((Format)1 << 10) -1) ^ (((Format)1 << 8) -1);
-	constexpr Format fg_color_mask     = (((Format)1 <<  8) -1);
-	str = fg_color(str, (FG::Color)(f & fg_color_mask), (FG::Intensity)(f & fg_intensity_mask));
+		constexpr Format bg_intensity_mask = (((Format)1 << 20) -1) ^ (((Format)1 << 18) -1);
+		constexpr Format bg_color_mask     = (((Format)1 << 18) -1) ^ (((Format)1 << 10) -1);
+		str = bg_color(str, (BG::Color)(f & bg_color_mask), (BG::Intensity)(f & bg_intensity_mask));
+
+		constexpr Format fg_intensity_mask = (((Format)1 << 10) -1) ^ (((Format)1 << 8) -1);
+		constexpr Format fg_color_mask     = (((Format)1 <<  8) -1);
+		str = fg_color(str, (FG::Color)(f & fg_color_mask), (FG::Intensity)(f & fg_intensity_mask));
+	}
 
 	return str;
+
+#endif
 }
 
 std::string aff3ct::tools::style(std::string str, Style s)
@@ -157,7 +166,7 @@ std::string aff3ct::tools::default_style(std::string str)
 
 std::string aff3ct::tools::format_error(std::string str)
 {
-	return format("(EE) " + str, FG::Color::RED | FG::Intensity::NORMAL);
+	return format("(EE) " + str, FG::Color::RED | FG::Intensity::INTENSE);
 }
 
 std::string aff3ct::tools::format_critical_error(std::string str)
@@ -203,8 +212,7 @@ std::string aff3ct::tools::apply_on_each_line(const std::string& str, format_fun
 		old_pos = pos+1;
 	}
 
-	if (pos == str.npos && old_pos == 0)
-		formated = fptr(str);
+	formated += fptr(str.substr(old_pos, pos-old_pos));
 
 	return formated;
 }

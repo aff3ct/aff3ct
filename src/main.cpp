@@ -168,10 +168,11 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		std::exit(EXIT_FAILURE);
 	}
 
-	std::string error;
+	std::vector<std::string> error;
 	if (!ar.check_arguments(error))
 	{
-		std::cerr << apply_on_each_line(error, format_error) << std::endl;
+		for (auto w = 0; w < (int)error.size(); w++)
+			std::cerr << format_error(error[w]) << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 }

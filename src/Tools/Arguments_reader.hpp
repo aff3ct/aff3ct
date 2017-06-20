@@ -154,7 +154,7 @@ public:
 	 *
 	 * \return true if the arguments criteria are respected, false otherwise.
 	 */
-	bool check_arguments(std::string &error);
+	bool check_arguments(std::vector<std::string> &error);
 
 private:
 	/*!

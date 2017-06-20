@@ -443,6 +443,8 @@ int Launcher<B,R,Q>
 	this->build_args();
 
 	auto display_help = true;
+
+	std::vector<std::string> cmd_warn;
 	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
 	{
 		this->store_args();
@@ -471,6 +473,17 @@ int Launcher<B,R,Q>
 		if(ar.exist_arg({"help", "h"})) display_help = true;
 	}
 
+	std::vector<std::string> cmd_error;
+	bool error = !ar.check_arguments(cmd_error);
+
+	for (unsigned e = 0; e < cmd_error.size(); e++)
+		std::cerr << format_error(cmd_error[e]) << std::endl;
+
+	// print the warnings
+	if (params.simulation.mpi_rank == 0)
+		for (unsigned w = 0; w < cmd_warn.size(); w++)
+			std::clog << format_warning(cmd_warn[w]) << std::endl;
+
 	if (display_help)
 	{
 		std::vector<std::vector<std::string>> arg_grp;
@@ -491,17 +504,10 @@ int Launcher<B,R,Q>
 		arg_grp.push_back({"term", "Terminal parameter(s)"   });
 
 		ar.print_usage(arg_grp);
-		return EXIT_FAILURE;
+		error = true;
 	}
 
-	std::string error;
-	if (!ar.check_arguments(error))
-	{
-		std::cerr << apply_on_each_line(error, format_error) << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	return 0;
+	return (error?EXIT_FAILURE:EXIT_SUCCESS);
 }
 
 template <typename B, typename R, typename Q>
@@ -820,7 +826,7 @@ void Launcher<B,R,Q>
 		simu = nullptr;
 	}
 
-	if (this->read_arguments())
+	if (this->read_arguments() == EXIT_FAILURE)
 		return;
 
 	// write the command and he curve name in the PyBER format
@@ -835,6 +841,7 @@ void Launcher<B,R,Q>
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
 
+
 	try
 	{
 		simu = this->build_simu();
@@ -845,15 +852,12 @@ void Launcher<B,R,Q>
 		          << format_error(e.what()) << std::endl;
 	}
 
+
 	if (simu != nullptr)
 	{
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
 			stream << "# " << format_info("The simulation is running...") << std::endl;
-		// print the warnings
-		if (params.simulation.mpi_rank == 0)
-			for (auto w = 0; w < (int)cmd_warn.size(); w++)
-				std::clog << format_warning(cmd_warn[w]) << std::endl;
 
 		try
 		{

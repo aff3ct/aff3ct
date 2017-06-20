@@ -317,7 +317,7 @@ void Arguments_reader
 }
 
 bool Arguments_reader
-::check_arguments(std::string &error)
+::check_arguments(std::vector<std::string> &error)
 {
 	for (auto it = this->m_args.begin(); it != this->m_args.end(); ++it)
 	{
@@ -332,11 +332,7 @@ bool Arguments_reader
 				arg_error += print_tag(it->first[i]) + ((i < (int)it->first.size()-1)?", ":"");
 
 		if (arg_error.size())
-		{
-			if(error.size())
-				error += "\n";
-			error += arg_error;
-		}
+			error.push_back(arg_error);
 	}
 
 	return error.size() == 0;
