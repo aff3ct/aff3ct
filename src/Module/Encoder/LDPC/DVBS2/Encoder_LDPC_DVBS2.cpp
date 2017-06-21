@@ -1,13 +1,14 @@
-#include <stdexcept>
 #include <iostream>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
 
 #include "Encoder_LDPC_DVBS2.hpp"
 
-using namespace aff3ct;
-using namespace module;
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC_DVBS2<B>
@@ -17,13 +18,27 @@ Encoder_LDPC_DVBS2<B>
 	build_dvbs2();
 
 	if (!dvbs2)
-		throw std::runtime_error("aff3ct::module::Encoder_LDPC_DVBS2: the given format does not match any known "
-		                         "generator matrix.");
+	{
+		std::stringstream message;
+		message << "The given format doesn't match any known generator matrix ('K' = " << K << ", 'N' = " << N << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (K != dvbs2->K_LDPC)
-		throw std::invalid_argument("aff3ct::module::Encoder_LDPC_DVBS2: \"K\" has to be equal to \"dvbs2->K_LDPC\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be equal to 'dvbs2->K_LDPC' ('K' = " << K
+		        << ", 'dvbs2->K_LDPC' = " << dvbs2->K_LDPC << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != dvbs2->N_LDPC)
-		throw std::invalid_argument("aff3ct::module::Encoder_LDPC_DVBS2: \"N\" has to be equal to \"dvbs2->N_LDPC\".");
+	{
+		std::stringstream message;
+		message << "'N' has to be equal to 'dvbs2->N_LDPC' ('N' = " << N
+		        << ", 'dvbs2->N_LDPC' = " << dvbs2->N_LDPC << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>

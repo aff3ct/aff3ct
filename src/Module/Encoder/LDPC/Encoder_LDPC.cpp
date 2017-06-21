@@ -1,14 +1,15 @@
 #include <numeric>
 #include <iostream>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/matrix.h"
 
 #include "Encoder_LDPC.hpp"
 
-using namespace aff3ct;
-using namespace module;
+using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC<B>
@@ -23,9 +24,21 @@ Encoder_LDPC<B>
                const std::string name)
 : Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
 {
-	if (K != (int)G.get_n_cols() || N != (int)G.get_n_rows())
-		throw std::invalid_argument("aff3ct::module::Encoder_LDPC: \"G\" matrix dimensions are not compatible with "
-		                            "\"K\" and \"N\".");
+	if (K != (int)G.get_n_cols())
+	{
+		std::stringstream message;
+		message << "The built G matrix has a dimension 'K' different than the given one ('K' = " << K
+		        << ", 'G.get_n_cols()' = " << G.get_n_cols() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (N != (int)G.get_n_rows())
+	{
+		std::stringstream message;
+		message << "The built G matrix has a dimension 'N' different than the given one ('N' = " << N
+		        << ", 'G.get_n_rows()' = " << G.get_n_rows() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto CN_to_VN = G.get_col_to_rows();
 
@@ -47,9 +60,13 @@ template <typename B>
 void Encoder_LDPC<B>
 ::get_info_bits_pos(std::vector<unsigned>& info_bits_pos)
 {
-	if (this->K > (int)info_bits_pos.size())
-		throw std::length_error("aff3ct::module::Encoder_LDPC: \"info_bits_pos.size()\" has to be equal or greater "
-		                        "than \"K\".");
+	if (this->K != (int)info_bits_pos.size())
+	{
+		std::stringstream message;
+		message << "'info_bits_pos.size()' has to be equal to 'K' ('info_bits_pos.size()' = " << info_bits_pos.size()
+		        << ", 'K' = " << this->K << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	std::iota(info_bits_pos.begin(), info_bits_pos.begin() + this->K, 0);
 }

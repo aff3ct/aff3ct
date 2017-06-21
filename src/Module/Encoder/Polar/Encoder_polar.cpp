@@ -1,6 +1,8 @@
-#include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder_polar.hpp"
 
@@ -13,8 +15,21 @@ Encoder_polar<B>
 : Encoder<B>(K, N, n_frames, name), m((int)std::log2(N)), frozen_bits(frozen_bits)
 {
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Encoder_polar: \"frozen_bits.size()\" has to be equal to "
-		                        "\"N\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
+	if (this->K != k)
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>

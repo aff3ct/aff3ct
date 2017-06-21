@@ -1,10 +1,13 @@
-#include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder_repetition_sys.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_repetition_sys<B>
@@ -12,7 +15,11 @@ Encoder_repetition_sys<B>
 : Encoder_sys<B>(K, N, n_frames, name), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
 	if (N % K)
-		throw std::invalid_argument("aff3ct::module::Encoder_repetition_sys: \"K\" has to be a multiple of \"N\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>
@@ -20,8 +27,7 @@ void Encoder_repetition_sys<B>
 ::_encode_sys(const B *U_K, B *par, const int frame_id)
 {
 	if (!buffered_encoding)
-		throw std::runtime_error("aff3ct::module::Encoder_repetition_sys: the \"_encode_sys\" method works only with "
-		                         "the \"buffered_encoding\" enabled.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "Works only with the 'buffered_encoding' enabled.");
 
 	for (auto i = 0; i < rep_count; i++) // parity bits
 		std::copy(U_K, U_K + this->K, par + i * this->K);

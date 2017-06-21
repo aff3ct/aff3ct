@@ -8,7 +8,9 @@
 #ifndef ENCODER_SYS_HPP_
 #define ENCODER_SYS_HPP_
 
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder.hpp"
 
@@ -58,12 +60,20 @@ public:
 	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
-			throw std::length_error("aff3ct::module::Encoder_sys: \"U_K.size()\" has to be equal to "
-			                        "\"K\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'U_K.size()' has to be equal to 'K' * 'n_frames' ('U_K.size()' = " << U_K.size()
+			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if ((this->N - this->K) * this->n_frames != (int)par.size())
-			throw std::length_error("aff3ct::module::Encoder_sys: \"par.size()\" has to be equal to "
-			                        "(\"N\" - \"K\") * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'par.size()' has to be equal to ('N' - 'K') * 'n_frames' ('par.size()' = " << par.size()
+			        << ", 'N' = " << this->N << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->encode_sys(U_K.data(), par.data());
 	}
@@ -79,7 +89,7 @@ public:
 protected:
 	virtual void _encode_sys(const B *U_K, B *par, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Encoder_sys: \"_encode_sys\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }

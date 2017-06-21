@@ -1,12 +1,14 @@
 #ifdef _MSC_VER
 #include <iterator>
 #endif
+#include <sstream>
 
-#include <stdexcept>
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder_RSC_sys.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_sys<B>
@@ -15,10 +17,20 @@ Encoder_RSC_sys<B>
 : Encoder_sys<B>(K, N, n_frames, name), n_ff(n_ff), n_states(1 << n_ff),
   buffered_encoding(buffered_encoding)
 {
-	if (N - 2*n_ff !=  2 * K)
-		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"N\" / \"K\" has to be a equal to 2.");
 	if (n_ff <= 0)
-		throw std::invalid_argument("aff3ct::module::Encoder_RSC_sys: \"n_ff\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_ff' has to be greater than 0 ('n_ff' = " << n_ff << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (N - 2 * n_ff !=  2 * K)
+	{
+		std::stringstream message;
+		message << "'N' - 2 * 'n_ff' has to be equal to 2 * 'K' ('N' = " << N << ", 'n_ff' = " << n_ff
+		        << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>
@@ -130,19 +142,32 @@ void Encoder_RSC_sys<B>
 	}
 
 	if (state != 0)
-		throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"state\" should be equal to 0.");
+	{
+		std::stringstream message;
+		message << "'state' should be equal to 0 ('state' = " <<  state << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (!only_parity)
 	{
 		if (j != this->N * stride)
-			throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"j\" should be equal to \"N\" * \"stride\".");
+		{
+			std::stringstream message;
+			message << "'j' should be equal to 'N' * 'stride' ('j' = " << j << ", 'N' = " << this->N
+			        << ", 'stride' = " << stride << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 	else
 	{
 		j += this->n_ff * stride;
 		if (j != (this->K + 2*this->n_ff) * stride)
-			throw std::runtime_error("aff3ct::module::Encoder_RSC_sys: \"j\" should be equal to "
-			                         "(\"K\" + 2 * \"n_ff\") * \"stride\".");
+		{
+			std::stringstream message;
+			message << "'j' should be equal to ('K' + 2 * 'n_ff') * 'stride' ('j' = " << j << ", 'K' = " << this->K
+			        << ", 'n_ff' = " << this->n_ff << ", 'stride' = " << stride << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 }
 

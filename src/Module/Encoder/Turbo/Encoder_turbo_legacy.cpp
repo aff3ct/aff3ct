@@ -1,10 +1,13 @@
-#include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder_turbo_legacy.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_turbo_legacy<B>
@@ -17,10 +20,21 @@ Encoder_turbo_legacy<B>
   X_N_n((2 * (K + sub_enc.tail_length()/2))*n_frames),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*n_frames)
 {
-	if (N - 2*sub_enc.tail_length() != 3 * K)
-		throw std::invalid_argument("aff3ct::module::Encoder_turbo_legacy: \"N\" / \"K\" has to be equal to 3.");
+	if (N - 2 * sub_enc.tail_length() != 3 * K)
+	{
+		std::stringstream message;
+		message << "'N' - 2 * 'sub_enc.tail_length()' has to be equal to 3 * 'K' ('N' = " << N
+		        << ", 'sub_enc.tail_length()' = " << sub_enc.tail_length() << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)pi.get_size() != K)
-		throw std::length_error("aff3ct::module::Encoder_turbo_legacy: \"pi.get_size()\" has to be equal to \"K\".");
+	{
+		std::stringstream message;
+		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
+		        << ", 'K' = " << K << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>

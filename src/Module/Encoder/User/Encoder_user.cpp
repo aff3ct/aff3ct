@@ -1,9 +1,12 @@
 #include <fstream>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder_user.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_user<B>
@@ -11,7 +14,7 @@ Encoder_user<B>
 : Encoder<B>(K, N, n_frames, name), codewords(), cw_counter(0)
 {
 	if (filename.empty())
-		throw std::invalid_argument("aff3ct::module::Encoder_user: path to the file should not be empty.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 	std::ifstream file(filename.c_str(), std::ios::in);
 
@@ -24,12 +27,20 @@ Encoder_user<B>
 		file >> src_size;
 
 		if (n_cw <= 0 || src_size <= 0 || cw_size <= 0)
-			throw std::runtime_error("aff3ct::module::Encoder_user: \"n_cw\", \"src_size\" and \"cw_size\" have to be "
-			                         "greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_cw', 'src_size' and 'cw_size' have to be greater than 0 ('n_cw' = " << n_cw
+			        << ", 'src_size' = " << src_size << ", 'cw_size' = " << cw_size << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (cw_size < src_size)
-			throw std::runtime_error("aff3ct::module::Encoder_user: \"cw_size\" has to be equal or greater than "
-			                         "\"src_size\".");
+		{
+			std::stringstream message;
+			message << "'cw_size' has to be equal or greater than 'src_size' ('cw_size' = " << cw_size
+			        << ", 'src_size' = " << src_size << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->codewords.resize(n_cw);
 		for (auto i = 0; i < n_cw; i++)
@@ -49,17 +60,20 @@ Encoder_user<B>
 		{
 			file.close();
 
-			throw std::runtime_error("aff3ct::module::Encoder_user: the number of information bits or the codeword "
-			                         "size is wrong (read: {" + std::to_string(src_size) + "," +
-			                         std::to_string(cw_size) + "}, expected: {" + std::to_string(this->K) + "," +
-			                         std::to_string(this->N) + "}).");
+			std::stringstream message;
+			message << "The number of information bits or the codeword size is wrong "
+			        << "(read: {" << src_size << "," << cw_size << "}, "
+			        << "expected: {" << this->K << "," << this->N << "}).";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		file.close();
 	}
 	else
 	{
-		throw std::invalid_argument("aff3ct::module::Encoder_user: can't open \"" + filename + "\" file.");
+		std::stringstream message;
+		message << "Can't open '" + filename + "' file.";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

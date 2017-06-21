@@ -10,8 +10,9 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -49,11 +50,25 @@ public:
 	: Module(n_frames, name), K(K), N(N)
 	{
 		if (K <= 0)
-			throw std::invalid_argument("aff3ct::module::Encoder: \"K\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'K' has to be greater than 0 ('K' = " << K << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Encoder: \"N\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N' has to be greater than 0 ('N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (K > N)
-			throw std::invalid_argument("aff3ct::module::Encoder: \"K\" has to be smaller than \"N\".");
+		{
+			std::stringstream message;
+			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -82,12 +97,21 @@ public:
 	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
-			throw std::length_error("aff3ct::module::Encoder: \"U_K.size()\" has to be equal to "
-			                        "\"K\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'U_K.size()' has to be equal to 'K' * 'n_frames' ('U_K.size()' = " << U_K.size()
+			        << ", 'K' = " << this->K
+			        << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->N * this->n_frames != (int)X_N.size())
-			throw std::length_error("aff3ct::module::Encoder: \"X_N.size()\" has to be equal to "
-			                        "\"N\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'X_N.size()' has to be equal to 'N' * 'n_frames' ('X_N.size()' = "
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->encode(U_K.data(), X_N.data());
 	}
@@ -113,7 +137,7 @@ public:
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Encoder: \"_encode\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }

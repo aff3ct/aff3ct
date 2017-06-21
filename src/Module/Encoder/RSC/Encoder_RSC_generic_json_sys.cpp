@@ -1,9 +1,13 @@
 #include <vector>
 #include <cmath>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Encoder_RSC_generic_json_sys.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_generic_json_sys<B>
@@ -13,7 +17,11 @@ Encoder_RSC_generic_json_sys<B>
   stream(stream), bit_counter(0), natural_domain(true), poly(poly)
 {
 	if (n_frames != 1)
-		throw std::invalid_argument("aff3ct::module::Encoder_RSC_generic_json_sys: \"n_frames\" has to be equal to 1.");
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to 1 ('n_frames' = " << n_frames << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>
