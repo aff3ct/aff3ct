@@ -1,10 +1,10 @@
 #ifndef INTERLEAVER_LTE_HPP
 #define	INTERLEAVER_LTE_HPP
 
-#include <stdexcept>
 #include <map>
+#include <sstream>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Exception/exception.hpp"
 
 #include "../Interleaver.hpp"
 
@@ -227,8 +227,9 @@ protected:
 		}
 		else
 		{
-			throw std::runtime_error("aff3ct::module::Interleaver_LTE: there is no LTE f_1 and f_2 parameters "
-			                         "for \"size\" = " + std::to_string(size) + ".");
+			std::stringstream message;
+			message << "There is no LTE f_1 and f_2 parameters for 'size' = " << size << ".";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 

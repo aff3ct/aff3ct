@@ -1,8 +1,10 @@
 #ifndef INTERLEAVER_USER_HPP
 #define INTERLEAVER_USER_HPP
 
-#include <stdexcept>
 #include <fstream>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "../Interleaver.hpp"
 
@@ -23,7 +25,7 @@ public:
 	: Interleaver<T>(size, false, n_frames, name), cur_itl_id(0)
 	{
 		if (filename.empty())
-			throw std::invalid_argument("aff3ct::module::Interleaver_user: path to the file should not be empty.");
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 		std::ifstream file(filename.c_str(), std::ios::in);
 
@@ -66,17 +68,21 @@ public:
 								else
 								{
 									file.close();
-									throw std::runtime_error("aff3ct::module::Interleaver_user: the interleaver "
-									                         "value is wrong, it already exists elsewhere "
-									                         "(read: " + std::to_string(val) + ").");
+
+									std::stringstream message;
+									message << "The interleaver value is wrong, it already exists elsewhere (read: "
+									        << val << ").";
+									throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 								}
 							}
 							else
 							{
 								file.close();
-								throw std::runtime_error("aff3ct::module::Interleaver_user: the interleaver "
-								                         "value is wrong (read: " + std::to_string(val) + ", "
-								                         "expected: < " + std::to_string(this->get_size()) + ").");
+
+								std::stringstream message;
+								message << "The interleaver value is wrong (read: " << val
+								        << ", expected: < " << this->get_size() << ").";
+								throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 							}
 						}
 					}
@@ -84,9 +90,11 @@ public:
 				else
 				{
 					file.close();
-					throw std::runtime_error("aff3ct::module::Interleaver_user: the interleaver value is "
-					                         "wrong (read: " + std::to_string(val) + ", expected: " +
-					                         std::to_string(this->get_size()) + ").");
+
+					std::stringstream message;
+					message << "The interleaver value is wrong (read: " << val << ", expected: "
+					        << this->get_size() << ").";
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 				}
 
 				file.close();
@@ -94,12 +102,17 @@ public:
 			else
 			{
 				file.close();
-				throw std::runtime_error("aff3ct::module::Interleaver_user: \"n_itl\" should be greater than 0.");
+
+				std::stringstream message;
+				message << "'n_itl' should be greater than 0 ('n_itl' = " << n_itl << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
 		else
 		{
-			throw std::invalid_argument("aff3ct::module::Interleaver_user: can't open \"" + filename + "\" file.");
+			std::stringstream message;
+			message << "Can't open '" + filename + "' file.";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 

@@ -4,12 +4,13 @@
 #ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
-#include <stdexcept>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
@@ -58,7 +59,7 @@ private:
 			case 4: _b_transport<int      >(trans, t, vec_4); break;
 			case 8: _b_transport<long long>(trans, t, vec_8); break;
 			default:
-				throw std::runtime_error("aff3ct::module::Interleaver: TLM unrecognized type of data.");
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unrecognized type of data.");
 				break;
 		}
 	}
@@ -69,7 +70,16 @@ private:
 	                  mipp::vector<D> &interleaved_vec)
 	{
 		if (interleaver.get_size() * interleaver.get_n_frames() != (int)(trans.get_data_length() / sizeof(D)))
-			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'interleaver.get_size()' * 'interleaver.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(D)' "
+			        << "('interleaver.get_size()' = " << interleaver.get_size()
+			        << ", 'interleaver.get_n_frames()' = " << interleaver.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(D)' = " << sizeof(D) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto natural_vec = (D*)trans.get_data_ptr();
 
@@ -124,7 +134,7 @@ private:
 			case 4: _b_transport<int      >(trans, t, vec_4); break;
 			case 8: _b_transport<long long>(trans, t, vec_8); break;
 			default:
-				throw std::runtime_error("aff3ct::module::Interleaver: TLM unrecognized type of data.");
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unrecognized type of data.");
 				break;
 		}
 	}
@@ -135,7 +145,16 @@ private:
 	                  mipp::vector<D> &natural_vec)
 	{
 		if (interleaver.get_size() * interleaver.get_n_frames() != (int)(trans.get_data_length() / sizeof(D)))
-			throw std::length_error("aff3ct::module::Interleaver: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'interleaver.get_size()' * 'interleaver.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(D)' "
+			        << "('interleaver.get_size()' = " << interleaver.get_size()
+			        << ", 'interleaver.get_n_frames()' = " << interleaver.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(D)' = " << sizeof(D) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto interleaved_vec = (D*)trans.get_data_ptr();
 

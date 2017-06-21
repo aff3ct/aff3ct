@@ -1,10 +1,12 @@
 #ifndef INTERLEAVER_RANDOM_COLUMN_HPP
 #define	INTERLEAVER_RANDOM_COLUMN_HPP
 
-#include <stdexcept>
 #include <algorithm>
 #include <time.h>
 #include <random>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "../Interleaver.hpp"
 
@@ -28,8 +30,12 @@ public:
 	  rd_engine(), n_cols(n_cols), col_size(size / n_cols)
 	{
 		if (col_size * n_cols != size)
-			throw std::invalid_argument("aff3ct::module::Interleaver_random_column: \"size\" has to be equal to "
-			                            "\"n_cols\" * \"col_size\".");
+		{
+			std::stringstream message;
+			message << "'size' has to be equal to 'n_cols' * 'col_size' ('size' = " << size
+			        << ", 'n_cols' = " << n_cols << ", 'col_size' = " << col_size << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		rd_engine.seed(seed);
 	}

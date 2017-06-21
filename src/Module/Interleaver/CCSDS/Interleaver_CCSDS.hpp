@@ -1,8 +1,10 @@
 #ifndef INTERLEAVER_CCSDS_HPP
 #define	INTERLEAVER_CCSDS_HPP
 
-#include <stdexcept>
 #include <map>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "../Interleaver.hpp"
 
@@ -41,9 +43,10 @@ protected:
 		}
 		else
 		{
-			throw std::runtime_error("aff3ct::module::Interleaver_CCSDS: there is no CCSDS k_1 and k_2 parameters "
-			                         "for \"size\" = " + std::to_string(size) + "(supported size are K = {1784, 3568, "
-			                         "7136, 8920}.");
+			std::stringstream message;
+			message << "There is no CCSDS k_1 and k_2 parameters for 'size' = " << size
+			        << "(supported sizes are 1784, 3568, 7136 and 8920).";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 

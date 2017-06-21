@@ -8,10 +8,12 @@
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 
-#include <stdexcept>
 #include <typeinfo>
 #include <string>
 #include <vector>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -54,7 +56,11 @@ public:
 	  size(size), uniform(uniform), pi(size * n_frames), pi_inv(size * n_frames), init_called(false)
 	{
 		if (size <= 0)
-			throw std::invalid_argument("aff3ct::module::Interleaver: \"size\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'size' has to be greater than 0 ('size' = " << size << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -117,12 +123,21 @@ public:
 	inline void interleave(const mipp::vector<D> &natural_vec, mipp::vector<D> &interleaved_vec) const
 	{
 		if (natural_vec.size() != interleaved_vec.size())
-			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal to "
-			                        "\"interleaved_vec.size()\".");
+		{
+			std::stringstream message;
+			message << "'natural_vec.size()' has to be equal to 'interleaved_vec.size()' ('natural_vec.size()' = "
+			        << natural_vec.size() << ", 'interleaved_vec.size()' = " << interleaved_vec.size() << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if ((int)natural_vec.size() < this->get_size() * this->n_frames)
-			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal or greater "
-			                        "than \"this->get_size()\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'natural_vec.size()' has to be equal or greater than 'get_size()' * 'n_frames' "
+			        << "('natural_vec.size()' = " << natural_vec.size() << ", 'get_size()' = " << this->get_size()
+			        << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->interleave(natural_vec.data(), interleaved_vec.data());
 	}
@@ -162,12 +177,21 @@ public:
 	inline void deinterleave(const mipp::vector<D> &interleaved_vec, mipp::vector<D> &natural_vec) const
 	{
 		if (natural_vec.size() != interleaved_vec.size())
-			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal to "
-			                        "\"interleaved_vec.size()\".");
+		{
+			std::stringstream message;
+			message << "'natural_vec.size()' has to be equal to 'interleaved_vec.size()' ('natural_vec.size()' = "
+			        << natural_vec.size() << ", 'interleaved_vec.size()' = " << interleaved_vec.size() << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if ((int)natural_vec.size() < this->get_size() * this->n_frames)
-			throw std::length_error("aff3ct::module::Interleaver: \"natural_vec.size()\" has to be equal or greater "
-			                        "than \"this->get_size()\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'natural_vec.size()' has to be equal or greater than 'get_size()' * 'n_frames' "
+			        << "('natural_vec.size()' = " << natural_vec.size() << ", 'get_size()' = " << this->get_size()
+			        << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->deinterleave(interleaved_vec.data(), natural_vec.data());
 	}
@@ -271,8 +295,10 @@ private:
 	                        const int  frame_id) const
 	{
 		if (!init_called)
-			throw std::length_error("aff3ct::module::Interleaver: \"init\" method has to be called first, before "
-			                        "trying to (de)interleave something.");
+		{
+			std::string message = "'init' method has to be called first, before trying to (de)interleave something.";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message);
+		}
 
 		if (frame_reordering)
 		{
