@@ -1,13 +1,14 @@
 #include <chrono>
 #include <algorithm>
-#include <stdexcept>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <numeric>
 #include <limits>
 #include <cmath>
 #include <map>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
@@ -95,32 +96,50 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_idx      (L),
   l_tmp         (N)
 {
-//	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
+//	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
 
 	if (API_polar::get_n_frames() != 1)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: The inter-frame API_polar is "
-		                            "not supported.");
-
-	if (this->N < mipp::nElReg<R>() * 2)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be equal or greater "
-		                            "than \"mipp::nElReg<R>() * 2\".");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The inter-frame API_polar is not supported.");
 
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be a power of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SCL_fast_sys: \"frozen_bits.size()\" has to be equal "
-		                        "to \"N\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->L <= 0 || !tools::is_power_of_2(this->L))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"L\" has to be positive and a power "
-		                            "of 2.");
+	{
+		std::stringstream message;
+		message << "'L' has to be a positive power of 2 ('L' = " << L << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->N < mipp::nElReg<R>() * 2)
+	{
+		std::stringstream message;
+		message << "'N' has to be equal or greater than 'mipp::nElReg<R>()' * 2 ('N' = " << N
+		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_fast_sys: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
@@ -155,28 +174,51 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
   best_idx      (L),
   l_tmp         (N)
 {
-//	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
-	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 
-	if (this->N < mipp::nElReg<R>() * 2)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be equal or greater "
-		                            "than \"mipp::nElReg<R>() * 2\".");
+	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
+//	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
+
+	if (API_polar::get_n_frames() != 1)
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The inter-frame API_polar is not supported.");
 
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"N\" has to be a power of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SCL_fast_sys: \"frozen_bits.size()\" has to be equal "
-		                        "to \"N\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->L <= 0 || !tools::is_power_of_2(this->L))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_fast_sys: \"L\" has to be positive and a power "
-		                            "of 2.");
+	{
+		std::stringstream message;
+		message << "'L' has to be a positive power of 2 ('L' = " << L << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->N < mipp::nElReg<R>() * 2)
+	{
+		std::stringstream message;
+		message << "'N' has to be equal or greater than 'mipp::nElReg<R>()' * 2 ('N' = " << N
+		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_fast_sys: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	metrics_vec[0].resize(L * 2);
 	metrics_vec[1].resize(L * 4);
@@ -659,7 +701,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		s[new_path][off_s + bit_flips[2 * old_path +1]] = !s[old_path][off_s + bit_flips[2 * old_path +1]] ? b : 0;
 		break;
 	default:
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_fast_sys: flip bits error on rate 1 node.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Flip bits error on rate 1 node.");
 		break;
 	}
 }
@@ -1091,7 +1133,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 			s[new_path][off_s + bit_flips[4 * old_path +3]] = s[old_path][off_s + bit_flips[4 * old_path +3]] ? 0 : b;
 		break;
 	default:
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_fast_sys: flip bits error on SPC node.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Flip bits error on SPC node.");
 		break;
 	}
 }

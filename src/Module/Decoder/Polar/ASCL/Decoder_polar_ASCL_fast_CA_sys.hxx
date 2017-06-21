@@ -1,5 +1,4 @@
 #include <chrono>
-#include <stdexcept>
 
 #include "Decoder_polar_ASCL_fast_CA_sys.hpp"
 
@@ -15,16 +14,6 @@ Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
   sc_decoder                                  (K, N       , frozen_bits,      n_frames, name),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
-	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_fast_CA_sys: \"N\" has to be a power of 2.");
-
-	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_ASCL_fast_CA_sys: \"frozen_bits.size()\" has to be "
-		                        "equal to \"N\".");
-
-	if (this->L_max <= 0 || !tools::is_power_of_2(this->L_max))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_fast_CA_sys: \"L_max\" has to be positive "
-		                            "and a power of 2.");
 }
 
 template <typename B, typename R, class API_polar>
@@ -37,16 +26,6 @@ Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
   sc_decoder                                  (K, N       , frozen_bits,                                      n_frames, name),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
-	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_fast_CA_sys: \"N\" has to be a power of 2.");
-
-	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_ASCL_fast_CA_sys: \"frozen_bits.size()\" has to be "
-		                        "equal to \"N\".");
-
-	if (this->L_max <= 0 || !tools::is_power_of_2(this->L_max))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_ASCL_fast_CA_sys: \"L_max\" has to be positive "
-		                            "and a power of 2.");
 }
 
 template <typename B, typename R, class API_polar>

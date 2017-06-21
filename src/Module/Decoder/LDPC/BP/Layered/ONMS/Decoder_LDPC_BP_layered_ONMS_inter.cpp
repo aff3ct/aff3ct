@@ -1,8 +1,10 @@
 #include <limits>
 #include <cmath>
+#include <sstream>
 #include <iostream>
 
 #include "Tools/Math/utils.h"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_LDPC_BP_layered_ONMS_inter.hpp"
@@ -39,20 +41,36 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
   V_K_reorderered  (K                                                                            )
 {
 	if (n_ite <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"n_ite\" has to be greater "
-		                            "than 0.");
+	{
+		std::stringstream message;
+		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (syndrome_depth <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"syndrome_depth\" has to be "
-		                            "greater than 0.");
+	{
+		std::stringstream message;
+		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != (int)H.get_n_rows())
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"N\" is not compatible with "
-		                            "the H matrix.");
+	{
+		std::stringstream message;
+		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
+		        << H.get_n_rows() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (typeid(R) == typeid(signed char))
-		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: this decoder does not work in "
-		                         "8-bit fixed-point (try in 16-bit).");
+		throw runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
+
 	if (saturation <= 0)
-		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"saturation\" has to be "
-		                         "greater than 0.");
+	{
+		std::stringstream message;
+		message << "'saturation' has to be greater than 0 ('saturation' = " << saturation << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>
@@ -80,8 +98,12 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
 		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else
-			throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"normalize_factor\" can "
-			                            "only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
+		{
+			std::stringstream message;
+			message << "'normalize_factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f"
+			        << " ('normalize_factor' = " << normalize_factor << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 	else // float or double
 	{
@@ -144,8 +166,12 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		else if (normalize_factor == 0.875f) this->BP_decode<7>(frame_id);
 		else if (normalize_factor == 1.000f) this->BP_decode<8>(frame_id);
 		else
-			throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered_ONMS_inter: \"normalize_factor\" can "
-			                            "only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
+		{
+			std::stringstream message;
+			message << "'normalize_factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f"
+			        << " ('normalize_factor' = " << normalize_factor << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 	else // float or double
 	{

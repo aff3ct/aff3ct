@@ -1,10 +1,11 @@
 #include <chrono>
-#include <stdexcept>
+#include <sstream>
 #include <iostream>
 #include <iomanip>
 #include <cmath>
 
-#include "Tools/Perf/Reorderer/Reorderer.hpp"
+#include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Decoder_polar_SCAN_naive.hpp"
 
@@ -29,21 +30,35 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
   soft_graph    (layers_count     )
 {
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"N\" has to be positive a power "
-		                            "of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SCAN_naive: \"frozen_bits.size()\" has to be equal to "
-		                        "\"N\".");
-
-	if (max_iter <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCAN_naive: \"max_iter\" has to be greater "
-		                            "than 0.");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SCAN_naive: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (max_iter <= 0)
+	{
+		std::stringstream message;
+		message << "'max_iter' has to be greater than 0 ('max_iter' = " << max_iter << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (auto t = 0; t < layers_count; t++)
 	{

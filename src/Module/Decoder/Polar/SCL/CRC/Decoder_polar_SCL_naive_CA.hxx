@@ -1,5 +1,6 @@
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Decoder_polar_SCL_naive_CA.hpp"
 
 namespace aff3ct
@@ -12,12 +13,13 @@ Decoder_polar_SCL_naive_CA<B,R,F,G>
                              const int n_frames, const std::string name)
 : Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames, name), crc(crc)
 {
-	if (!crc.get_size())
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive_CA: \"crc.get_size()\" has to be greater "
-		                            "than 0.");
 	if (crc.get_size() > K)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive_CA: \"crc.get_size()\" has to be equal or "
-		                            "smaller than K.");
+	{
+		std::stringstream message;
+		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		        << ", 'K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>

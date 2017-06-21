@@ -3,7 +3,9 @@
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_turbo.hpp"
@@ -40,17 +42,45 @@ Decoder_turbo<B,R>
   s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
 {
 	if (N - (siso_n.tail_length() + siso_i.tail_length()) != K * 3)
-		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"N\" / \"K\" has to be equal to 3.");
+	{
+		std::stringstream message;
+		message << "'N' - ('siso_n.tail_length()' + 'siso_i.tail_length()') has to be equal to 'K' * 3 ('N' = "
+		        << N << ", 'siso_n.tail_length()' = " << siso_n.tail_length()
+		        << ", 'siso_i.tail_length()' = " << siso_i.tail_length() << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (n_ite <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"n_ite\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)pi.get_size() != K)
-		throw std::length_error("aff3ct::module::Decoder_turbo: \"pi.get_size()\" has to be equal to \"K\".");
+	{
+		std::stringstream message;
+		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
+		        << ", 'K' = " << K << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (siso_n.get_n_frames() != siso_i.get_n_frames())
-		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"siso_n.get_n_frames()\" has to be equal to "
-		                            "\"siso_i.get_n_frames()\".");
+	{
+		std::stringstream message;
+		message << "'siso_n.get_n_frames()' has to be equal to 'siso_i.get_n_frames()' ('siso_n.get_n_frames()' = "
+		        << siso_n.get_n_frames() << ", 'siso_i.get_n_frames()' = " << siso_i.get_n_frames() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
-		throw std::invalid_argument("aff3ct::module::Decoder_turbo: \"siso_n.get_simd_inter_frame_level()\" has to "
-		                            "be equal to \"siso_i.get_simd_inter_frame_level()\".");
+	{
+		std::stringstream message;
+		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 'siso_i.get_simd_inter_frame_level()' "
+		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level()
+		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>

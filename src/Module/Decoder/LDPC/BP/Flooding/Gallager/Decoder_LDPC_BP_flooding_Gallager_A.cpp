@@ -1,7 +1,8 @@
 #include <chrono>
 #include <limits>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_Gallager_A.hpp"
@@ -27,14 +28,26 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
   V_to_C_messages  (H.get_n_connections(), 0)
 {
 	if (n_ite <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"n_ite\" has to be "
-		                            "greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (syndrome_depth <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"syndrome_depth\" has to "
-		                            "be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != (int)H.get_n_rows())
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"N\" is not compatible "
-		                            "with the H matrix.");
+	{
+		std::stringstream message;
+		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
+		        << H.get_n_rows() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	transpose.resize(H.get_n_connections());
 	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
@@ -56,8 +69,13 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 			connections[id_V]++;
 
 			if (connections[id_V] > (int)VN_to_CN[id_V].size())
-				throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_Gallager_A: \"connections[id_V]\" "
-				                         "has to be equal or smaller than \"VN_to_CN[id_V].size()\".");
+			{
+				std::stringstream message;
+				message << "'connections[id_V]' has to be equal or smaller than 'VN_to_CN[id_V].size()' "
+				        << "('id_V' = " << id_V << ", 'connections[id_V]' = " << connections[id_V]
+				        << ", 'VN_to_CN[id_V].size()' = " << VN_to_CN[id_V].size() << ")'.";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 
 			transpose[k] = branch_id;
 			k++;

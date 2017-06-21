@@ -1,8 +1,9 @@
 #include <chrono>
 #include <algorithm>
-#include <stdexcept>
+#include <sstream>
 
-#include "Tools/Perf/Reorderer/Reorderer.hpp"
+#include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Decoder_polar_SC_naive.hpp"
 
@@ -17,17 +18,28 @@ Decoder_polar_SC_naive<B,R,F,G,H>
 : Decoder<B,R>(K, N, n_frames, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SC_naive: \"N\" has to be positive a power "
-		                            "of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SC_naive: \"frozen_bits.size()\" has to be equal to "
-		                        "\"N\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_naive: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->recursive_allocate_nodes_contents(this->polar_tree.get_root(), this->N);
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
@@ -77,9 +89,6 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 {
 	auto k = 0;
 	this->recursive_store(this->polar_tree.get_root(), V_K, k);
-
-	if (k != this->K)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_naive: \"k\" should be equal to \"K\".");
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>

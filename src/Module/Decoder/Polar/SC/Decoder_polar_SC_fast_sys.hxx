@@ -1,14 +1,13 @@
 #include <chrono>
 #include <algorithm>
-#include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+#include "Tools/Math/utils.h"
 #include "Tools/Algo/Bit_packer.hpp"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"
-
-#include "Decoder_polar_SC_fast_sys.hpp"
 
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
@@ -19,6 +18,8 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
 #include "Tools/Code/Polar/fb_extract.h"
+
+#include "Decoder_polar_SC_fast_sys.hpp"
 
 namespace aff3ct
 {
@@ -144,19 +145,37 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	static_assert(sizeof(B) == sizeof(R), "");
 
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SC_fast_sys: \"N\" has to be a power of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"frozen_bits.size()\" has to be equal to "
-		                        "\"N\".");
-	if (m < static_level)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
-		                         "\"static_level\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (m < static_level)
+	{
+		std::stringstream message;
+		message << "'m' has to be equal or greater than 'static_level' ('m' = " << m << ", 'static_level' = "
+		        << static_level << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 }
 
 template <typename B, typename R, class API_polar>
@@ -176,20 +195,28 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 	static_assert(sizeof(B) == sizeof(R), "");
 
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SC_fast_sys: \"N\" has to be a power of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"frozen_bits.size()\" has to be equal to "
-		                        "\"N\".");
-
-	if (m < static_level)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: \"m\" has to be equal or greater than "
-		                         "\"static_level\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, class API_polar>
@@ -335,9 +362,12 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 			if (!(fast_deinterleave = tools::char_itranspose((signed char*)s.data(),
 			                                                 (signed char*)s_bis.data(),
 			                                                 (int)this->N)))
-				throw std::runtime_error("aff3ct::module::Decoder_polar_SC_fast_sys: unsupported \"N\" value for "
-				                         "itransposition (N have to be greater or equal to 128 for SSE/NEON or to "
-				                         "256 for AVX)");
+			{
+				std::stringstream message;
+				message << "Unsupported 'N' value for itransposition: 'N' has to be greater or equal to 128 for "
+				        << "SSE/NEON or to 256 for AVX ('N' = " << this->N << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 			else
 				tools::Bit_packer<B>::unpack(this->s_bis.data(), this->s.data(), this->N, n_frames);
 		}

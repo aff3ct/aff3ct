@@ -1,3 +1,6 @@
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Polar/fb_extract.h"
 
 #include "Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
@@ -13,12 +16,13 @@ Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 : Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames, name),
   fast_store(false), crc(crc), U_test(K)
 {
-	if (!crc.get_size())
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_CA_sys: \"crc.get_size()\" has to be "
-		                            "greater than 0.");
 	if (crc.get_size() > K)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_CA_sys: \"crc.get_size()\" has to be "
-		                            "equal or smaller than K.");
+	{
+		std::stringstream message;
+		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		        << ", 'K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, class API_polar>
@@ -30,12 +34,13 @@ Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 : Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, n_frames, name),
   fast_store(false), crc(crc), U_test(K)
 {
-	if (!crc.get_size())
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_CA_sys: \"crc.get_size()\" has to be "
-		                            "greater than 0.");
 	if (crc.get_size() > K)
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_MEM_fast_CA_sys: \"crc.get_size()\" has to be "
-		                            "equal or smaller than K.");
+	{
+		std::stringstream message;
+		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		        << ", 'K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, class API_polar>

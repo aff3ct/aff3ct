@@ -1,6 +1,7 @@
 #include <limits>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_RSC_BCJR_seq.hpp"
@@ -95,8 +96,7 @@ Decoder_RSC_BCJR_seq<B,R>
 
 	for (unsigned i = 0; i < req_trellis.size(); i++)
 		if (trellis[i] != req_trellis[i])
-			throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_seq: this decoder does not support "
-			                            "the input trellis.");
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Unsupported trellis.");
 
 	for (auto i = 0; i < 8; i++) alpha[i].resize(K +4);
 	for (auto i = 0; i < 8; i++) beta [i].resize(K +4);

@@ -1,4 +1,6 @@
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RSC_BCJR_intra_std.hpp"
 
@@ -16,11 +18,18 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
 : Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 	if (mipp::nElReg<R>() != 8)
-		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_intra_std: \"mipp::nElReg<R>()\" "
-		                         "has to be equal to 8.");
+	{
+		std::stringstream message;
+		message << "'mipp::nElReg<R>()' has to be equal to 8 ('mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (K % 8)
-		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_intra_std: \"K\" "
-		                            "has to be divisible by 8.");
+	{
+		std::stringstream message;
+		message << "'K' has to be divisible by 8 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>

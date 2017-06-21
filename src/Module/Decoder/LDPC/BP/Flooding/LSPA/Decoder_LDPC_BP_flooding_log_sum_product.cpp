@@ -1,7 +1,7 @@
-#include <stdexcept>
 #include <typeinfo>
 #include <limits>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_log_sum_product.hpp"
@@ -22,8 +22,7 @@ Decoder_LDPC_BP_flooding_log_sum_product<B,R>
   values(H.get_cols_max_degree())
 {
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
-		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_log_sum_product: this decoder only supports "
-		                         "floating-point numbers for the LLRs.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
 
 template <typename B, typename R>

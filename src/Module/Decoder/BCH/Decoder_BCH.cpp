@@ -1,5 +1,7 @@
 #include <chrono>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_BCH.hpp"
 
@@ -15,7 +17,11 @@ Decoder_BCH<B, R>
   index_of(N+1), YH_N(N), V_K(K)
 {
 	if (K <= 3)
-		throw std::invalid_argument("aff3ct::module::Decoder_BCH: \"K\" has to be greater than 3.");
+	{
+		std::stringstream message;
+		message << "'K' has to be greater than 3 ('K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	alpha_to = GF.alpha_to;
 	index_of = GF.index_of;

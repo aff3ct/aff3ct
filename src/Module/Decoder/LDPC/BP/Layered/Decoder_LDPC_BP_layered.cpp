@@ -31,13 +31,26 @@ Decoder_LDPC_BP_layered<B,R>
   branches         (n_frames, mipp::vector<R>(H.get_n_connections()))
 {
 	if (n_ite <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"n_ite\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (syndrome_depth <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"syndrome_depth\" has to be greater "
-		                            "than 0.");
+	{
+		std::stringstream message;
+		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != (int)H.get_n_rows())
-		throw std::invalid_argument("aff3ct::module::Decoder_LDPC_BP_layered: \"N\" is not compatible with the H "
-		                            "matrix.");
+	{
+		std::stringstream message;
+		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
+		        << H.get_n_rows() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>

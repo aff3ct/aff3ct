@@ -11,8 +11,9 @@
 #include <chrono>
 #include <string>
 #include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -73,14 +74,33 @@ public:
 	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
 	{
 		if (K <= 0)
-			throw std::invalid_argument("aff3ct::module::Decoder: \"K\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'K' has to be greater than 0 ('K' = " << K << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Decoder: \"N\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N' has to be greater than 0 ('N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (simd_inter_frame_level <= 0)
-			throw std::invalid_argument("aff3ct::module::Decoder: \"simd_inter_frame_level\" has to be greater "
-			                            "than 0.");
+		{
+			std::stringstream message;
+			message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
+			        << simd_inter_frame_level << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (K > N)
-			throw std::invalid_argument("aff3ct::module::Decoder: \"K\" has to be smaller than \"N\".");
+		{
+			std::stringstream message;
+			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -124,12 +144,20 @@ public:
 	void hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
-			throw std::length_error("aff3ct::module::Decoder: \"Y_N.size()\" has to be equal to "
-			                        "\"N\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N.size()' has to be equal to 'N' * 'n_frames' ('Y_N.size()' = " << Y_N.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->K * this->n_frames != (int)V_K.size())
-			throw std::length_error("aff3ct::module::Decoder: \"V_K.size()\" has to be equal to "
-			                        "\"K\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'V_K.size()' has to be equal to 'K' * 'n_frames' ('V_K.size()' = " << V_K.size()
+			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->hard_decode(Y_N.data(), V_K.data());
 	}
@@ -199,7 +227,7 @@ public:
 protected:
 	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Decoder: \"_hard_decode\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }

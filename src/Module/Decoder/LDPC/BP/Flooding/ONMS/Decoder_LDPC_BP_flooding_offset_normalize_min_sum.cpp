@@ -1,5 +1,7 @@
 #include <limits>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_flooding_offset_normalize_min_sum.hpp"
@@ -19,8 +21,12 @@ inline R normalize(const R val, const float factor)
 	else if (factor == 0.875f) return div2<R>(val) + div4<R>(val) + div8<R>(val);
 	else if (factor == 1.000f) return val;
 	else
-		throw std::invalid_argument("aff3ct::module::normalize: \"factor\" can only be 0.125f, 0.250f, "
-		                            "0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f.");
+	{
+		std::stringstream message;
+		message << "'factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f ('factor' = "
+		        << factor << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <>
@@ -50,8 +56,11 @@ Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
   normalize_factor(normalize_factor), offset(offset)
 {
 	if (typeid(R) == typeid(signed char))
-		throw std::runtime_error("aff3ct::module::Decoder_LDPC_BP_flooding_offset_normalize_min_sum: this decoder "
-		                         "does not work in 8-bit fixed-point (try in 16-bit).");
+	{
+		std::stringstream message;
+		message << "This decoder does not work in 8-bit fixed-point (try in 16-bit).";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>

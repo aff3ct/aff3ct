@@ -1,11 +1,14 @@
 #include <chrono>
-#include <stdexcept>
+#include <sstream>
 #include <algorithm>
 #include <cmath>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RA.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
@@ -26,11 +29,26 @@ Decoder_RA<B, R>
   interleaver(interleaver)
 {
 	if (max_iter <= 0)
-		throw std::invalid_argument("aff3ct::module::Decoder_RA: \"max_iter\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'max_iter' has to be greater than 0 ('max_iter' = " << max_iter << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N % K)
-		throw std::invalid_argument("aff3ct::module::Decoder_RA: \"K\" has to be a multiple of \"N\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)interleaver.get_size() != N)
-		throw std::length_error("aff3ct::module::Decoder_RA: \"interleaver.get_size()\" has to be equal to \"N\".");
+	{
+		std::stringstream message;
+		message << "'interleaver.get_size()' has to be equal to 'N' ('interleaver.get_size()' = "
+		        << interleaver.get_size() << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	Xd[0].resize(N);
 	Xd[1].resize(N);

@@ -1,13 +1,14 @@
 #include <chrono>
 #include <algorithm>
-#include <stdexcept>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <limits>
 #include <cmath>
 #include <map>
 
-#include "Tools/Perf/Reorderer/Reorderer.hpp"
+#include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 
 #include "Decoder_polar_SCL_naive.hpp"
 
@@ -26,20 +27,35 @@ Decoder_polar_SCL_naive<B,R,F,G>
   L(L)
 {
 	if (!tools::is_power_of_2(this->N))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive: \"N\" has to be a power of 2.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->N != (int)frozen_bits.size())
-		throw std::length_error("aff3ct::module::Decoder_polar_SCL_naive: \"frozen_bits.size()\" has to be equal to "
-		                        "\"N\".");
+	{
+		std::stringstream message;
+		message << "'frozen_bits.size()' has to be equal to 'N' ('frozen_bits.size()' = " << frozen_bits.size()
+		        << ", 'N' = " << N << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->L <= 0 || !tools::is_power_of_2(this->L))
-		throw std::invalid_argument("aff3ct::module::Decoder_polar_SCL_naive: \"L\" has to be positive and a power "
-		                            "of 2.");
+	{
+		std::stringstream message;
+		message << "'L' has to be a positive power of 2 ('L' = " << L << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
 	if (this->K != k)
-		throw std::runtime_error("aff3ct::module::Decoder_polar_SCL_naive: the number of information bits in the "
-		                         "\"frozen_bits\" is invalid.");
+	{
+		std::stringstream message;
+		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
+		        << k << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->active_paths.insert(0);
 	for (auto i = 0; i < L; i++)

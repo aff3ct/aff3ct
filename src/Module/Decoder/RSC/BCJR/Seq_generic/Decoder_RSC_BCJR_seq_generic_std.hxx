@@ -1,3 +1,7 @@
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
+
 #include "Decoder_RSC_BCJR_seq_generic_std.hpp"
 
 namespace aff3ct
@@ -295,8 +299,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	if (!this->buffered_encoding)
-		throw std::runtime_error("aff3ct::module::Decoder_RSC_BCJR_seq_generic_std: \"buffered_encoding\" has to be "
-		                         "enabled to use the \"_soft_decode\" method.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__,  "'buffered_encoding' has to be enabled.");
 
 	const R* sys          = Y_N1;
 	const R* par          = Y_N1 + 1 * this->K;

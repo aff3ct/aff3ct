@@ -10,8 +10,9 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -66,13 +67,33 @@ public:
 	  n_dec_waves_siso((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
 	{
 		if (K <= 0)
-			throw std::invalid_argument("aff3ct::module::SISO: \"K\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'K' has to be greater than 0 ('K' = " << K << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::SISO: \"N\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N' has to be greater than 0 ('N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (simd_inter_frame_level <= 0)
-			throw std::invalid_argument("aff3ct::module::SISO: \"simd_inter_frame_level\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
+			        << simd_inter_frame_level << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (K > N)
-			throw std::invalid_argument("aff3ct::module::SISO: \"K\" has to be smaller than \"N\".");
+		{
+			std::stringstream message;
+			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -117,22 +138,44 @@ public:
 	                         const int n_frames = -1)
 	{
 		if (n_frames != -1 && n_frames <= 0)
-			throw std::invalid_argument("aff3ct::module::SISO: \"n_frames\" has to be greater than 0 "
-			                            "(or equal to -1).");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
 		if ((this->K_siso + this->tail_length() / 2) * real_n_frames != (int)sys.size())
-			throw std::length_error("aff3ct::module::SISO: \"sys.size()\" has to be equal to "
-			                        "\"(K_siso + tail_length() / 2)\" * \"real_n_frames\".");
+		{
+			std::stringstream message;
+			message << "'sys.size()' has to be equal to ('K_siso' + 'tail_length()' / 2) * 'real_n_frames' "
+			        << "('sys.size()' = " << sys.size()
+			        << ", 'K_siso' = " << this->K_siso
+			        << ", 'tail_length()' = " << this->tail_length()
+			        << ", 'real_n_frames' = " << real_n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (((this->N_siso - this->K_siso) - this->tail_length() / 2) * real_n_frames != (int)par.size())
-			throw std::length_error("aff3ct::module::SISO: \"par.size()\" has to be equal to "
-			                        "\"((N_siso - K_siso) - tail_length() / 2)\" * \"real_n_frames\".");
+		{
+			std::stringstream message;
+			message << "'par.size()' has to be equal to (('N_siso' - 'K_siso') - 'tail_length()' / 2) * "
+			        << "'real_n_frames' ('par.size()' = " << par.size()
+			        << ", 'N_siso' = " << this->N_siso
+			        << ", 'K_siso' = " << this->K_siso
+			        << ", 'tail_length()' = " << this->tail_length()
+			        << ", 'real_n_frames' = " << real_n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->K_siso * real_n_frames != (int)ext.size())
-			throw std::length_error("aff3ct::module::SISO: \"ext.size()\" has to be equal to "
-			                        "\"K_siso\" * \"real_n_frames\".");
+		{
+			std::stringstream message;
+			message << "'ext.size()' has to be equal to 'K_siso' * 'real_n_frames' ('ext.size()' = " << ext.size()
+			        << ", 'K_siso' = " << this->K_siso << ", 'real_n_frames' = " << real_n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->soft_decode(sys.data(), par.data(), ext.data(), real_n_frames);
 	}
@@ -158,12 +201,20 @@ public:
 	void soft_decode(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
 	{
 		if (this->N_siso * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::SISO: \"Y_N1.size()\" has to be equal to "
-			                        "\"N_siso\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N1.size()' has to be equal to 'N_siso' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
+			        << ", 'N_siso' = " << this->N_siso << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->N_siso * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::SISO: \"Y_N2.size()\" has to be equal to "
-			                        "\"N_siso\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N2.size()' has to be equal to 'N_siso' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
+			        << ", 'N_siso' = " << this->N_siso << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->soft_decode(Y_N1.data(), Y_N2.data());
 	}
@@ -209,12 +260,12 @@ public:
 protected:
 	virtual void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
 	virtual void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::SISO: \"_soft_decode\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }

@@ -1,7 +1,8 @@
 #include <chrono>
 #include <limits>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
@@ -30,7 +31,11 @@ Decoder_RSC_BCJR<B,R>
   s  ( K       * simd_inter_frame_level + mipp::nElReg<B>())
 {
 	if (!tools::is_power_of_2(n_states))
-		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR: \"n_states\" has to be a power of 2.");
+	{
+		std::stringstream message;
+		message << "'n_states' has to be a power of 2 ('n_states' = " << n_states << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 }
 

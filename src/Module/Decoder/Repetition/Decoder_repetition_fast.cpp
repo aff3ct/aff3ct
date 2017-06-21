@@ -1,19 +1,26 @@
-#include <stdexcept>
 #include <algorithm>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_repetition_fast.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>
 ::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
                           const std::string name)
- : Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames, name)
+: Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames, name)
 {
 	if (this->K % mipp::nElReg<R>())
-		throw std::invalid_argument("aff3ct::module::Decoder_repetition_fast: \"K\" has to be a multiple of "
-		                            "\"mipp::nElReg<R>()\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be a multiple of 'mipp::nElReg<R>()' ('K' = " << K
+		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R>

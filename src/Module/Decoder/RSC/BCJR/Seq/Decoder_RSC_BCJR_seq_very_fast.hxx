@@ -1,4 +1,6 @@
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RSC_BCJR_seq_very_fast.hpp"
 
@@ -16,8 +18,12 @@ Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 : Decoder_RSC_BCJR_seq<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 	if (this->K % mipp::nElReg<R>())
-		throw std::invalid_argument("aff3ct::module::Decoder_RSC_BCJR_seq_very_fast: \"K\" "
-		                            "has to be divisible by \"mipp::nElReg<R>()\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be divisible by 'mipp::nElReg<R>()' ('K' = " << this->K
+		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
