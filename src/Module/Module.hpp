@@ -9,7 +9,9 @@
 #define MODULE_HPP_
 
 #include <string>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 namespace aff3ct
 {
@@ -36,7 +38,11 @@ public:
 	Module(const int n_frames = 1, const std::string name = "Module") : n_frames(n_frames), name(name)
 	{
 		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::module::Module: \"n_frames\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
