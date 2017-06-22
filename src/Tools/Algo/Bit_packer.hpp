@@ -9,7 +9,9 @@
 #define BIT_PACKER_HPP_
 
 #include <cmath>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Tools/Perf/MIPP/mipp.h"
 
@@ -38,13 +40,28 @@ struct Bit_packer
 	                        const bool rev = false)
 	{
 		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (vec_in.size() % n_frames)
-			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_in.size()\" has to be divisible by "
-			                        "\"n_frame\".");
+		{
+			std::stringstream message;
+			message << "'vec_in.size()' has to be divisible by 'n_frame' ('vec_in.size()' = " << vec_in.size()
+			        << ", 'n_frames' = " << n_frames << ").";
+			throw length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if ((int)vec_out.size() < (int)(std::ceil((float)vec_in.size() / (sizeof(B) * 8.f))))
-			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_out.size()\" has to be equal or greater than "
-			                        "\"ceil(vec_in.size() / (sizeof(B) * 8.f))\".");
+		{
+			std::stringstream message;
+			message << "'vec_out.size()' has to be equal or greater than ceil('vec_in.size()' / ('sizeof(B)' * 8.f)) "
+			        << "('vec_out.size()' = " << vec_out.size() << ", 'vec_in.size()' = " << vec_in.size()
+			        << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Bit_packer<B>::pack(vec_in.data(), vec_out.data(), (int)(vec_in.size() / n_frames), n_frames, rev);
 	}
@@ -72,10 +89,19 @@ struct Bit_packer
 	static inline void pack(mipp::vector<B> &vec, const int n_frames = 1, const bool rev = false)
 	{
 		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (vec.size() % n_frames)
-			throw std::length_error("aff3ct::tools::Bit_packer: \"vec.size()\" has to be divisible by "
-			                        "\"n_frame\".");
+		{
+			std::stringstream message;
+			message << "'vec.size()' has to be divisible by 'n_frame' ('vec.size()' = " << vec.size()
+			        << ", 'n_frames' = " << n_frames << ").";
+			throw length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Bit_packer<B>::pack(vec.data(), (int)(vec.size() / n_frames), n_frames, rev);
 	}
@@ -104,13 +130,28 @@ struct Bit_packer
 	                          const bool rev = false)
 	{
 		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (vec_out.size() % n_frames)
-			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_out.size()\" has to be divisible by "
-			                        "\"n_frame\".");
+		{
+			std::stringstream message;
+			message << "'vec_out.size()' has to be divisible by 'n_frame' ('vec_out.size()' = " << vec_out.size()
+			        << ", 'n_frames' = " << n_frames << ").";
+			throw length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if ((int)vec_in.size() < (int)(std::ceil((float)vec_out.size() / (sizeof(B) * 8.f))))
-			throw std::length_error("aff3ct::tools::Bit_packer: \"vec_in.size()\" has to be equal or greater than "
-			                        "\"ceil(vec_out.size() / (sizeof(B) * 8.f))\".");
+		{
+			std::stringstream message;
+			message << "'vec_in.size()' has to be equal or greater than ceil('vec_out.size()' / ('sizeof(B)' * 8.f)) "
+			        << "('vec_in.size()' = " << vec_in.size() << ", 'vec_out.size()' = " << vec_out.size()
+			        << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Bit_packer<B>::unpack(vec_in.data(), vec_out.data(), (int)(vec_out.size() / n_frames), n_frames, rev);
 	}
@@ -138,10 +179,19 @@ struct Bit_packer
 	static inline void unpack(mipp::vector<B> &vec, const int n_frames = 1, bool rev = false)
 	{
 		if (n_frames <= 0)
-			throw std::invalid_argument("aff3ct::tools::Bit_packer: \"n_frames\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (vec.size() % n_frames)
-			throw std::length_error("aff3ct::tools::Bit_packer: \"vec.size()\" has to be divisible by "
-			                        "\"n_frame\".");
+		{
+			std::stringstream message;
+			message << "'vec.size()' has to be divisible by 'n_frame' ('vec.size()' = " << vec.size()
+			        << ", 'n_frames' = " << n_frames << ").";
+			throw length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Bit_packer<B>::unpack(vec.data(), (int)(vec.size() / n_frames), n_frames, rev);
 	}

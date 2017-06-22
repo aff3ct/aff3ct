@@ -1,6 +1,6 @@
 #ifdef CHANNEL_MKL
 
-#include <stdexcept>
+#include "Tools/Exception/exception.hpp"
 
 #include "Noise_MKL.hpp"
 
@@ -38,8 +38,7 @@ template <typename R>
 void Noise_MKL<R>
 ::generate(R *noise, const unsigned length, const R sigma)
 {
-	throw std::runtime_error("aff3ct::module::Noise_MKL: adding white Gaussian noise is impossible on this "
-	                         "type of data.");
+	throw runtime_error(__FILE__, __LINE__, __func__, "Adding white Gaussian noise is impossible on this data type.");
 }
 
 namespace aff3ct

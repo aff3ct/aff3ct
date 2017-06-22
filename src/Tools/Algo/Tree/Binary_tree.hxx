@@ -1,5 +1,6 @@
-#include <stdexcept>
 #include <vector>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Binary_tree.hpp"
 
@@ -43,9 +44,9 @@ void Binary_tree<T>
 ::create_nodes(Binary_node<T>* cur_node, int cur_depth, std::vector<int> &lanes)
 {
 	if (cur_node->left != nullptr)
-		throw std::runtime_error("aff3ct::tools::Binary_tree: \"cur_node->left\" can't be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'cur_node->left' can't be null.");
 	if (cur_node->right != nullptr)
-		throw std::runtime_error("aff3ct::tools::Binary_tree: \"cur_node->right\" can't be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'cur_node->right' can't be null.");
 
 	if (cur_depth < this->depth)
 	{

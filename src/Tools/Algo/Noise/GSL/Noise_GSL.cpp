@@ -1,6 +1,6 @@
 #ifdef CHANNEL_GSL
 
-#include <stdexcept>
+#include "Tools/Exception/exception.hpp"
 
 #include "Noise_GSL.hpp"
 
@@ -13,7 +13,7 @@ Noise_GSL<R>
   rng(gsl_rng_alloc(gsl_rng_mt19937))
 {
 	if (rng == nullptr)
-		throw std::runtime_error("aff3ct::module::Noise_GSL: \"rng\" can't be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'rng' can't be null.");
 
 	this->set_seed(seed);
 }

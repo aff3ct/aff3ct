@@ -9,7 +9,9 @@
 #ifndef PREDICATE_ITE_HPP
 #define PREDICATE_ITE_HPP
 
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Predicate.hpp"
 
@@ -32,8 +34,12 @@ public:
 	Predicate_ite(const int n_ite) 
 	: n_ite(n_ite), cur_ite(0)
 	{
-		if (n_ite < 0)
-			throw std::invalid_argument("aff3ct::tools::Predicate_ite: \"n_ite\" has to be equal or greater than 0.");
+		if (n_ite <= 0)
+		{
+			std::stringstream message;
+			message << "'n_ite' has to be equal or greater than 0 ('n_ite' = " << n_ite << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Predicate_ite()

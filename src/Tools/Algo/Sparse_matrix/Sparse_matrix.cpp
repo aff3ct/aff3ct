@@ -2,7 +2,9 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Sparse_matrix.hpp"
 
@@ -98,18 +100,36 @@ void Sparse_matrix
 ::add_connection(const size_t row_index, const size_t col_index)
 {
 	if (col_index >= this->n_cols)
-		throw std::invalid_argument("aff3ct::tools::Sparse_matrix: \"col_index\" has to be smaller than \"cols\".");
+	{
+		std::stringstream message;
+		message << "'col_index' has to be smaller than 'n_cols' ('col_index' = " << col_index
+		        << ", 'n_cols' = " << this->n_cols << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (row_index >= this->n_rows)
-		throw std::invalid_argument("aff3ct::tools::Sparse_matrix: \"row_index\" has to be smaller than \"rows\".");
+	{
+		std::stringstream message;
+		message << "'row_index' has to be smaller than 'n_rows' ('row_index' = " << row_index
+		        << ", 'n_rows' = " << this->n_rows << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (size_t i = 0; i < this->row_to_cols[row_index].size(); i++)
 		if (this->row_to_cols[row_index][i] == col_index)
-			throw std::runtime_error("aff3ct::tools::Sparse_matrix: \"col_index\" already exists.");
+		{
+			std::stringstream message;
+			message << "'col_index' already exists ('col_index' = " << col_index << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 	for (size_t i = 0; i < this->col_to_rows[col_index].size(); i++)
 		if (this->col_to_rows[col_index][i] == row_index)
-			throw std::runtime_error("aff3ct::tools::Sparse_matrix: \"row_index\" already exists.");
+		{
+			std::stringstream message;
+			message << "'row_index' already exists ('row_index' = " << row_index << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 	this->row_to_cols[row_index].push_back((unsigned)col_index);
 	this->col_to_rows[col_index].push_back((unsigned)row_index);
@@ -141,5 +161,5 @@ void Sparse_matrix
 float Sparse_matrix
 ::compute_density() const
 {
-	return ((float)n_connections/(float)(n_rows*n_cols));
+	return ((float)n_connections / (float)(n_rows * n_cols));
 }

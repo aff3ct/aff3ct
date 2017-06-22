@@ -1,5 +1,6 @@
-#include <stdexcept>
 #include <cmath>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Noise_fast.hpp"
 
@@ -35,16 +36,14 @@ template <typename R>
 mipp::Reg<R> Noise_fast<R>
 ::get_random_simd()
 {
-	throw std::runtime_error("aff3ct::module::Noise_fast: the MT19937 random generator does not support "
-	                         "this type.");
+	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
 }
 
 template <typename R>
 R Noise_fast<R>
 ::get_random()
 {
-	throw std::runtime_error("aff3ct::module::Noise_fast: the MT19937 random generator does not support "
-	                         "this type.");
+	throw runtime_error(__FILE__, __LINE__, __func__, "The MT19937 random generator does not support this type.");
 }
 
 namespace aff3ct
