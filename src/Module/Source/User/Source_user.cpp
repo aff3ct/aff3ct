@@ -1,9 +1,12 @@
 #include <fstream>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Source_user.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Source_user<B>
@@ -11,7 +14,7 @@ Source_user<B>
 : Source<B>(K, n_frames, name), source(), src_counter(0)
 {
 	if (filename.empty())
-		throw std::invalid_argument("aff3ct::module::Source_user: path to the file should not be empty.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 	std::ifstream file(filename.c_str(), std::ios::in);
 
@@ -23,8 +26,12 @@ Source_user<B>
 		file >> src_size;
 
 		if (n_src <= 0 || src_size <= 0)
-			throw std::runtime_error("aff3ct::module::Source_user: \"n_src\", and \"src_size\" have to be "
-			                         "greater than 0.");
+		{
+			std::stringstream message;
+			message << "'n_src', and 'src_size' have to be greater than 0 ('n_src' = " << n_src
+			        << ", 'src_size' = " << src_size << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->source.resize(n_src);
 		for (auto i = 0; i < n_src; i++)
@@ -45,16 +52,15 @@ Source_user<B>
 		{
 			file.close();
 
-			throw std::runtime_error("aff3ct::module::Source_user: the size is wrong (read: " +
-			                         std::to_string(src_size) + ", expected: " + std::to_string(this->K) + ").");
+			std::stringstream message;
+			message << "The size is wrong (read: " << src_size << ", expected: " << this->K << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		file.close();
 	}
 	else
-	{
-		throw std::invalid_argument("aff3ct::module::Source_user: can't open \"" + filename + "\" file.");
-	}
+		throw invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file.");
 }
 
 template <typename B>

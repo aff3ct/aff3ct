@@ -10,8 +10,9 @@
 
 #include <vector>
 #include <string>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -47,7 +48,11 @@ public:
 	: Module(n_frames, name), K(K)
 	{
 		if (K <= 0)
-			throw std::invalid_argument("aff3ct::module::Source: \"K\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'K' has to be greater than 0 ('K' = " << K << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -70,8 +75,12 @@ public:
 	void generate(mipp::vector<B>& U_K)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
-			throw std::length_error("aff3ct::module::Source: \"U_K.size()\" has to be equal to "
-			                        "\"K\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'U_K.size()' has to be equal to 'K' * 'n_frames' ('U_K.size()' = " << U_K.size()
+			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->generate(U_K.data());
 	}
@@ -85,7 +94,7 @@ public:
 protected:
 	virtual void _generate(B *U_K, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Source: \"_generate\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }
