@@ -1,7 +1,8 @@
-#include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Quantizer_tricky.hpp"
@@ -52,8 +53,12 @@ Quantizer_tricky<R,Q>
   sigma(sigma)
 {
 	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
-		throw std::invalid_argument("aff3ct::module::Quantizer_tricky: \"saturation_pos\" has to be equal or smaller "
-		                            "than \"sizeof(Q)\" * 8.");
+	{
+		std::stringstream message;
+		message << "'saturation_pos' has to be equal or smaller than 'sizeof(Q)' * 8 ('saturation_pos' = "
+		        << saturation_pos << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 namespace aff3ct
@@ -124,8 +129,12 @@ Quantizer_tricky<R,Q>
   sigma(sigma)
 {
 	if (sizeof(Q) * 8 < (unsigned) saturation_pos)
-		throw std::invalid_argument("aff3ct::module::Quantizer_tricky: \"saturation_pos\" has to be equal or smaller "
-		                            "than \"sizeof(Q)\" * 8.");
+	{
+		std::stringstream message;
+		message << "'saturation_pos' has to be equal or smaller than 'sizeof(Q)' * 8 ('saturation_pos' = "
+		        << saturation_pos << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename R, typename Q>

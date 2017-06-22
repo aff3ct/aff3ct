@@ -1,7 +1,8 @@
-#include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Quantizer_standard.hpp"
@@ -19,8 +20,12 @@ Quantizer_standard<R,Q>
   factor(1 << fixed_point_pos)
 {
 	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
-		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"fixed_point_pos\" has to be smaller "
-		                            "than \"sizeof(Q)\" * 8.");
+	{
+		std::stringstream message;
+		message << "'fixed_point_pos' has to be smaller than 'sizeof(Q)' * 8 ('fixed_point_pos' = " << fixed_point_pos
+		        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 namespace aff3ct
@@ -56,22 +61,48 @@ Quantizer_standard<R,Q>
   factor(1 << fixed_point_pos)
 {
 	if (fixed_point_pos <= 0)
-		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"fixed_point_pos\" has to be greater than 0.");
-	if (saturation_pos <= 0)
-		throw std::invalid_argument("aff3ct::module::Quantizer_fast: \"saturation_pos\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'fixed_point_pos' has to be greater than 0 ('fixed_point_pos' = " << fixed_point_pos << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (saturation_pos < 2)
-		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"saturation_pos\" has to be equal or greater "
-		                            "than 2.");
+	{
+		std::stringstream message;
+		message << "'saturation_pos' has to be greater than 1 ('saturation_pos' = " << saturation_pos << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (fixed_point_pos > saturation_pos)
-		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"saturation_pos\" has to be equal or greater "
-		                            "than \"fixed_point_pos\".");
+	{
+		std::stringstream message;
+		message << "'saturation_pos' has to be equal or greater than 'fixed_point_pos' ('saturation_pos' = "
+		        << saturation_pos << ", 'fixed_point_pos' = " << fixed_point_pos << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (sizeof(Q) * 8 <= (unsigned) fixed_point_pos)
-		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"fixed_point_pos\" has to be smaller "
-		                            "than \"sizeof(Q)\" * 8.");
+	{
+		std::stringstream message;
+		message << "'fixed_point_pos' has to be smaller than 'sizeof(Q)' * 8 ('fixed_point_pos' = " << fixed_point_pos
+		        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (val_max > +(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
-		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"val_max\" value is invalid.");
+	{
+		std::stringstream message;
+		message << "'val_max' value is invalid ('val_max' = " << val_max << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (val_min < -(((1 << ((sizeof(Q) * 8) -2))) + ((1 << ((sizeof(Q) * 8) -2)) -1)))
-		throw std::invalid_argument("aff3ct::module::Quantizer_standard: \"val_min\" value is invalid.");
+	{
+		std::stringstream message;
+		message << "'val_min' value is invalid ('val_min' = " << val_min << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 namespace aff3ct

@@ -9,8 +9,9 @@
 #define QUANTIZER_HPP_
 
 #include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -48,7 +49,11 @@ public:
 	: Module(n_frames, name), N(N)
 	{
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Quantizer: \"N\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N' has to be greater than 0 ('N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -72,12 +77,21 @@ public:
 	void process(const mipp::vector<R>& Y_N1, mipp::vector<Q>& Y_N2)
 	{
 		if (this->N * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Quantizer: \"Y_N1.size()\" has to be equal to "
-			                        "\"N\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N1.size()' has to be equal to 'N' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->N * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Quantizer: \"Y_N2.size()\" has to be equal to "
-			                        "\"N\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N2.size()' has to be equal to 'N' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		this->process(Y_N1.data(), Y_N2.data());
 	}
 
@@ -92,7 +106,7 @@ public:
 protected:
 	virtual void _process(const R *Y_N1, Q *Y_N2, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Quantizer: \"_process\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }
