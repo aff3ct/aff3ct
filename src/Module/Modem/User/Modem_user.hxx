@@ -1,9 +1,11 @@
-#include <stdexcept>
 #include <cmath>
 #include <complex>
 #include <limits>
 #include <fstream>
 #include <iterator>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Modem_user.hpp"
 
@@ -26,11 +28,14 @@ Modem_user<B,R,Q,MAX>
   constellation  ()
 {
 	if (const_path.empty())
-		throw std::invalid_argument("aff3ct::module::Modem_user: path to the constellation file should not "
-		                            "be empty.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");
 
-	if (this->bits_per_symbol % 2)
-		throw std::invalid_argument("aff3ct::module::Modem_user: \"bits_per_symbol\" has to be a multiple of 2.");
+	if (bits_per_symbol % 2)
+	{
+		std::stringstream message;
+		message << "'bits_per_symbol' has to be a multiple of 2 ('bits_per_symbol' = " << bits_per_symbol << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	std::fstream const_file(const_path, std::ios_base::in);
 
@@ -43,7 +48,11 @@ Modem_user<B,R,Q,MAX>
 		std::vector<R> line((std::istream_iterator<R>(buffer)), std::istream_iterator<R>());
 
 		if (line.size() >= 3)
-			throw std::runtime_error("aff3ct::module::Modem_user: \"line.size()\" has to be smaller than 3.");
+		{
+			std::stringstream message;
+			message << "'line.size()' has to be smaller than 3 ('line.size()' = " << line.size() << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (line.size() == 2)
 			constellation.push_back(std::complex<R>(line[0],line[1]));
@@ -54,8 +63,12 @@ Modem_user<B,R,Q,MAX>
 	sqrt_es = std::sqrt(sqrt_es/nbr_symbols);
 
 	if ((int)constellation.size() != nbr_symbols)
-		throw std::runtime_error("aff3ct::module::Modem_user: \"constellation.size()\" has to be equal to "
-		                         "\"nbr_symbols\".");
+	{
+		std::stringstream message;
+		message << "'constellation.size()' has to be equal to 'nbr_symbols' ('constellation.size()' = "
+		        << constellation.size() << ", 'nbr_symbols' = " << nbr_symbols << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (auto i = 0; i < nbr_symbols; i++)
 		constellation[i] /= (std::complex<R>)sqrt_es;
@@ -122,10 +135,10 @@ void Modem_user<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
@@ -160,10 +173,10 @@ void Modem_user<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
@@ -198,10 +211,10 @@ void Modem_user<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
@@ -241,10 +254,10 @@ void Modem_user<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_user: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);

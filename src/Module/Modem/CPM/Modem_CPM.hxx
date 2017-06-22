@@ -2,12 +2,13 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <stdexcept>
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
 #include <ctgmath>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 #include "Modem_CPM.hpp"
 
@@ -53,8 +54,12 @@ Modem_CPM<B,R,Q,MAX>
   bcjr      (cpm, n_sy_tl                       )
 {
 	if (N % bits_per_symbol)
-		throw std::invalid_argument("aff3ct::module::Modem_CPM: \"bits_per_symbol\" has to be a multiple of "
-		                            "\"N\".");
+	{
+		std::stringstream message;
+		message << "'bits_per_symbol' has to be a multiple of 'N' ('bits_per_symbol' = " << bits_per_symbol
+		        << ", 'N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	// initialize CPM
 	cpe.generate_allowed_states    (cpm.allowed_states               );
@@ -156,8 +161,13 @@ void Modem_CPM<B,R,Q,MAX>
 ::generate_baseband()
 {
 	if ((int)baseband.size() != (cpm.max_wa_id * cpm.s_factor * 2))
-		throw std::length_error("aff3ct::module::Modem_CPM: \"baseband.size()\" has to be equal to "
-		                        "\"cpm.max_wa_id\" * \"cpm.s_factor\" * 2");
+	{
+		std::stringstream message;
+		message << "'baseband.size()' has to be equal to 'cpm.max_wa_id' * 'cpm.s_factor' * 2 ('baseband.size()' = "
+		        << baseband.size() << ", 'cpm.max_wa_id' = " << cpm.max_wa_id
+		        << ", 'cpm.s_factor' = " << cpm.s_factor << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	mipp::vector<R> phase_response(cpm.L*cpm.s_factor);
 
@@ -237,7 +247,8 @@ R Modem_CPM<B,R,Q,MAX>
 		return t_stamp / ((R)2.0 * cpm.L);
 	else
 	{
-		throw std::runtime_error("aff3ct::module::Modem_CPM: unknown CPM wave shape.");
+		std::string message = "Unknown CPM wave shape ('cpm.wave_shape' = " + cpm.wave_shape + ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
 	}
 }
 
@@ -246,8 +257,12 @@ void Modem_CPM<B,R,Q,MAX>
 ::generate_projection()
 {
 	if (projection.size() != baseband.size())
-		throw std::length_error("aff3ct::module::Modem_CPM: \"projection.size()\" and \"baseband.size()\" have "
-		                        "to be equal.");
+	{
+		std::stringstream message;
+		message << "'projection.size()' and 'baseband.size()' have to be equal ('projection.size()' = "
+		        << projection.size() << ", 'baseband.size()' = " << baseband.size() << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	R factor = (R)1;
 
@@ -266,7 +281,8 @@ void Modem_CPM<B,R,Q,MAX>
 	//}
 	else
 	{
-		throw std::runtime_error("aff3ct::module::Modem_CPM: unknown CPM filter bank type.");
+		std::string message = "Unknown CPM filter bank type ('cpm.filters_type' = " + cpm.filters_type + ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
 	}
 }
 }

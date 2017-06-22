@@ -1,7 +1,11 @@
 #include <cassert>
 #include <iomanip>
+#include <sstream>
 
-#include "Tools/Display/bash_tools.h"
+#include "Tools/Exception/exception.hpp"
+
+#include "Modem_SCMA.hpp"
+
 namespace aff3ct
 {
 namespace module
@@ -63,11 +67,25 @@ Modem_SCMA<B,R,Q,PSI>
   n_ite              (n_ite                   )
 {
 	if (n_frames != 6)
-		throw std::invalid_argument("aff3ct::module::Modem_SCMA: \"n_frames\" has to be equal to 6.");
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to 6 ('n_frames' = " << n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (bps != 3)
-		throw std::invalid_argument("aff3ct::module::Modem_SCMA: \"bps\" has to be equal to 3.");
+	{
+		std::stringstream message;
+		message << "'bps' has to be equal to 3 ('bps' = " << bps << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (n_ite <= 0)
-		throw std::invalid_argument("aff3ct::module::Modem_SCMA: \"n_ite\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>

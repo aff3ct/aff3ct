@@ -4,12 +4,13 @@
 #ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
-#include <stdexcept>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
@@ -49,7 +50,15 @@ private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (modulator.get_N() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(B)' ('modulator.get_N()' = " << modulator.get_N()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto X_N1 = (B*)trans.get_data_ptr();
 
@@ -96,7 +105,15 @@ private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (modulator.get_N_mod() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_mod()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(R)' ('modulator.get_N_mod()' = " << modulator.get_N_mod()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(R)' = " << sizeof(R) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto Y_N1 = (R*)trans.get_data_ptr();
 
@@ -143,7 +160,15 @@ private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_fil()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('modulator.get_N_fil()' = " << modulator.get_N_fil()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto Y_N1 = (Q*)trans.get_data_ptr();
 
@@ -194,7 +219,15 @@ private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_fil()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(R)' ('modulator.get_N_fil()' = " << modulator.get_N_fil()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(R)' = " << sizeof(R) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		H_N = (R*)trans.get_data_ptr();
 	}
@@ -202,10 +235,18 @@ private:
 	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (H_N == nullptr)
-			throw std::runtime_error("aff3ct::module::Modem: TLM \"H_N\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'H_N' pointer can't be NULL.");
 
 		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_fil()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('modulator.get_N_fil()' = " << modulator.get_N_fil()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto Y_N1 = (Q*)trans.get_data_ptr();
 
@@ -256,7 +297,15 @@ private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_fil()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('modulator.get_N_fil()' = " << modulator.get_N_fil()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Y_N1 = (Q*)trans.get_data_ptr();
 
@@ -273,10 +322,18 @@ private:
 	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (Y_N1 == nullptr)
-			throw std::runtime_error("aff3ct::module::Modem: TLM \"Y_N1\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' pointer can't be NULL.");
 
 		if (modulator.get_N() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('modulator.get_N()' = " << modulator.get_N()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto Y_N2 = (Q*)trans.get_data_ptr();
 
@@ -331,7 +388,15 @@ private:
 	void b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(R)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_fil()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(R)' ('modulator.get_N_fil()' = " << modulator.get_N_fil()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length() << ","
+			        << ", 'sizeof(R)' = " << sizeof(R) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		H_N = (R*)trans.get_data_ptr();
 	}
@@ -339,10 +404,18 @@ private:
 	void b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (H_N == nullptr)
-			throw std::runtime_error("aff3ct::module::Modem: TLM \"H_N\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'H_N' pointer can't be NULL.");
 
 		if (modulator.get_N_fil() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N_fil()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('modulator.get_N_fil()' = " << modulator.get_N_fil()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Y_N1 = (Q*)trans.get_data_ptr();
 
@@ -359,13 +432,21 @@ private:
 	void b_transport3(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (H_N == nullptr)
-			throw std::runtime_error("aff3ct::module::Modem: TLM \"H_N\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'H_N' pointer can't be NULL.");
 
 		if (Y_N1 == nullptr)
-			throw std::runtime_error("aff3ct::module::Modem: TLM \"Y_N1\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' pointer can't be NULL.");
 
 		if (modulator.get_N() * modulator.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Modem: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'modulator.get_N()' * 'modulator.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('modulator.get_N()' = " << modulator.get_N()
+			        << ", 'modulator.get_n_frames()' = " << modulator.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto Y_N2 = (Q*)trans.get_data_ptr();
 

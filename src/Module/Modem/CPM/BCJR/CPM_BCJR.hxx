@@ -2,8 +2,9 @@
 #include <cstdio>
 #include <cmath>
 #include <ctgmath>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "CPM_BCJR.hpp"
@@ -82,13 +83,21 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, mipp::vector<Q> &Le_N)
 {
-	if ((int)Lch_N.size() != chn_size)
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Lch_N.size()\" has to be equal to "
-		                        "\"n_symbols\" * \"cpm.max_wa_id\".");
+	if (Lch_N.size() != chn_size)
+	{
+		std::stringstream message;
+		message << "'Lch_N.size()' has to be equal to 'chn_size' ('Lch_N.size()' = " << Lch_N.size()
+		        << ", 'chn_size' = " << chn_size << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
-	if ((int)Le_N.size() != ext_size)
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" has to be equal to "
-		                        "(\"n_symbols\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
+	if (Le_N.size() != ext_size)
+	{
+		std::stringstream message;
+		message << "'Le_N.size()' has to be equal to 'ext_size' ('Le_N.size()' = " << Le_N.size()
+		        << ", 'ext_size' = " << ext_size << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->decode(Lch_N.data(), Le_N.data());
 }
@@ -109,17 +118,29 @@ template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
 ::decode(const mipp::vector<Q> &Lch_N, const mipp::vector<Q> &Ldec_N, mipp::vector<Q> &Le_N)
 {
-	if ((int)Lch_N.size() != chn_size)
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Lch_N.size()\" has to be equal to "
-		                        "\"n_symbols\" * \"cpm.max_wa_id\".");
+	if (Lch_N.size() != chn_size)
+	{
+		std::stringstream message;
+		message << "'Lch_N.size()' has to be equal to 'chn_size' ('Lch_N.size()' = " << Lch_N.size()
+		        << ", 'chn_size' = " << chn_size << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
-	if ((int)Ldec_N.size() != dec_size)
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Ldec_N.size()\" has to be equal to "
-		                        "(\"n_symbols\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
+	if (Ldec_N.size() != dec_size)
+	{
+		std::stringstream message;
+		message << "'Ldec_N.size()' has to be equal to 'dec_size' ('Ldec_N.size()' = " << Ldec_N.size()
+		        << ", 'dec_size' = " << dec_size << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
-	if ((int)Le_N.size() != ext_size)
-		throw std::length_error("aff3ct::module::CPM_BCJR: \"Le_N.size()\" has to be equal to "
-		                        "(\"n_symbols\" - \"cpm.tl\") * \"cpm.n_b_per_s\".");
+	if (Le_N.size() != ext_size)
+	{
+		std::stringstream message;
+		message << "'Le_N.size()' has to be equal to 'ext_size' ('Le_N.size()' = " << Le_N.size()
+		        << ", 'ext_size' = " << ext_size << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->decode(Lch_N.data(), Ldec_N.data(), Le_N.data());
 }

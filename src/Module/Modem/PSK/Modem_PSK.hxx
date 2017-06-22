@@ -1,7 +1,8 @@
-#include <stdexcept>
 #include <cmath>
 #include <complex>
 #include <limits>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Modem_PSK.hpp"
 
@@ -122,10 +123,10 @@ void Modem_PSK<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 	
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
@@ -159,10 +160,10 @@ void Modem_PSK<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)(1.0 / (this->sigma * this->sigma));
@@ -199,10 +200,10 @@ void Modem_PSK<B,R,Q,MAX>
 ::_demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
@@ -245,10 +246,10 @@ void Modem_PSK<B,R,Q,MAX>
 ::_demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	if (typeid(R) != typeid(Q))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"R\" and \"Q\" have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw std::invalid_argument("aff3ct::module::Modem_PSK: type \"Q\" has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	auto size       = this->N;
 	auto inv_sigma2 = disable_sig2 ? (Q)1.0 : (Q)1.0 / (this->sigma * this->sigma);
