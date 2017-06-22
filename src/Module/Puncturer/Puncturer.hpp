@@ -8,9 +8,11 @@
 #ifndef PUNCTURER_HPP_
 #define PUNCTURER_HPP_
 
-#include <stdexcept>
 #include <string>
 #include <vector>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -52,15 +54,39 @@ public:
 	: Module(n_frames, name), K(K), N(N), N_code(N_code)
 	{
 		if (K <= 0)
-			throw std::invalid_argument("aff3ct::module::Puncturer: \"K\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'K' has to be greater than 0 ('K' = " << K << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Puncturer: \"N\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N' has to be greater than 0 ('N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (N_code <= 0)
-			throw std::invalid_argument("aff3ct::module::Puncturer: \"N_code\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N_code' has to be greater than 0 ('N_code' = " << N_code << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (K > N)
-			throw std::invalid_argument("aff3ct::module::Puncturer: \"K\" has to be smaller than \"N\".");
+		{
+			std::stringstream message;
+			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (N > N_code)
-			throw std::invalid_argument("aff3ct::module::Puncturer: \"N_code\" has to be equal or greater than \"N\".");
+		{
+			std::stringstream message;
+			message << "'N' has to be smaller or equal to 'N_code' ('N' = " << N << ", 'N_code' = " << N_code << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	/*!
@@ -92,12 +118,20 @@ public:
 	void puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
 	{
 		if (this->N_code * this->n_frames != (int)X_N1.size())
-			throw std::length_error("aff3ct::module::Puncturer: \"X_N1.size()\" has to be equal to "
-			                        "\"N_code\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'X_N1.size()' has to be equal to 'N_code' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
+			        << ", 'N_code' = " << this->N_code << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->N * this->n_frames != (int)X_N2.size())
-			throw std::length_error("aff3ct::module::Puncturer: \"X_N2.size()\" has to be equal to "
-			                        "\"N\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'X_N2.size()' has to be equal to 'N' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->puncture(X_N1.data(), X_N2.data());
 	}
@@ -119,12 +153,20 @@ public:
 	void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
 	{
 		if (this->N * this->n_frames != (int)Y_N1.size())
-			throw std::length_error("aff3ct::module::Puncturer: \"Y_N1.size()\" has to be equal to "
-			                        "\"N\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N1.size()' has to be equal to 'N' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
+			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if (this->N_code * this->n_frames != (int)Y_N2.size())
-			throw std::length_error("aff3ct::module::Puncturer: \"Y_N2.size()\" has to be equal to "
-			                        "\"N_code\" * \"n_frames\".");
+		{
+			std::stringstream message;
+			message << "'Y_N2.size()' has to be equal to 'N_code' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
+			        << ", 'N_code' = " << this->N_code << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->depuncture(Y_N1.data(), Y_N2.data());
 	}
@@ -140,12 +182,12 @@ public:
 protected:
 	virtual void _puncture(const B *X_N1, B *X_N2, const int frame_id) const
 	{
-		throw std::runtime_error("aff3ct::module::Puncturer: \"_puncture\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
 	virtual void _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 	{
-		throw std::runtime_error("aff3ct::module::Puncturer: \"_depuncture\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 };
 }

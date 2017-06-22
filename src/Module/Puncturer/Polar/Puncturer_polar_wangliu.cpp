@@ -1,5 +1,7 @@
 #include <cmath>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Puncturer_polar_wangliu.hpp"
@@ -17,6 +19,21 @@ Puncturer_polar_wangliu<B,Q>
 : Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames, name),
   fb_generator(fb_generator)
 {
+	if (fb_generator.get_K() != K)
+	{
+		std::stringstream message;
+		message << "'fb_generator.get_K()' has to be equal to 'K' ('fb_generator.get_K()' = " << fb_generator.get_K()
+		        << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (fb_generator.get_N() != this->N_code)
+	{
+		std::stringstream message;
+		message << "'fb_generator.get_N()' has to be equal to 'N_code' ('fb_generator.get_N()' = "
+		        << fb_generator.get_N() << ", 'N_code' = " << this->N_code << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename Q>

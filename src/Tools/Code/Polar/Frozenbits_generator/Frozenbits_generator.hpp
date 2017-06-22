@@ -46,6 +46,16 @@ public:
 	 */
 	virtual ~Frozenbits_generator() {}
 
+	int get_K() const
+	{
+		return this->K;
+	}
+
+	int get_N() const
+	{
+		return this->N;
+	}
+
 	/*!
 	 * \brief Sets the AWGN channel sigma value.
 	 *
@@ -54,6 +64,11 @@ public:
 	void set_sigma(const float sigma)
 	{
 		this->sigma = sigma;
+	}
+
+	float get_sigma() const
+	{
+		return this->sigma;
 	}
 
 	/*!

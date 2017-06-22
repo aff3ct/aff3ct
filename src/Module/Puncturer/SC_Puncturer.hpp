@@ -4,12 +4,13 @@
 #ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
-#include <stdexcept>
+#include <sstream>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
@@ -49,7 +50,15 @@ private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (puncturer.get_N_code() * puncturer.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
-			throw std::length_error("aff3ct::module::Puncturer: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'puncturer.get_N_code()' * 'puncturer.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(B)' ('puncturer.get_N_code()' = " << puncturer.get_N_code()
+			        << ", 'puncturer.get_n_frames()' = " << puncturer.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto X_N1 = (B*)trans.get_data_ptr();
 
@@ -96,7 +105,15 @@ private:
 	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (puncturer.get_N() * puncturer.get_n_frames() != (int)(trans.get_data_length() / sizeof(Q)))
-			throw std::length_error("aff3ct::module::Puncturer: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'puncturer.get_N()' * 'puncturer.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(Q)' ('puncturer.get_N()' = " << puncturer.get_N()
+			        << ", 'puncturer.get_n_frames()' = " << puncturer.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto Y_N1 = (Q*)trans.get_data_ptr();
 
