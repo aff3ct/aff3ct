@@ -1,11 +1,14 @@
 #ifdef ENABLE_MPI
 
 #include <stddef.h>
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Monitor_reduction_mpi.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 struct monitor_vals
 {
@@ -50,16 +53,25 @@ Monitor_reduction_mpi<B>
 	blen[2] = 1; displacements[2] = offsetof(monitor_vals, n_fra); oldtypes[2] = MPI_UNSIGNED_LONG_LONG;
 
 	if (auto ret = MPI_Type_create_struct(3, blen, displacements, oldtypes, &MPI_monitor_vals))
-		throw std::runtime_error("aff3ct::module::Monitor_reduction_mpi: \"MPI_Type_create_struct\" returned \"" +
-		                         std::to_string(ret) + "\".");
+	{
+		std::stringstream message;
+		message << "'MPI_Type_create_struct' returned '" << ret << "' error code.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (auto ret = MPI_Type_commit(&MPI_monitor_vals))
-		throw std::runtime_error("aff3ct::module::Monitor_reduction_mpi: \"MPI_Type_create_struct\" returned \"" +
-		                         std::to_string(ret) + "\".");
+	{
+		std::stringstream message;
+		message << "'MPI_Type_commit' returned '" << ret << "' error code.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (auto ret = MPI_Op_create(MPI_SUM_monitor_vals_func, true, &MPI_SUM_monitor_vals))
-		throw std::runtime_error("aff3ct::module::Monitor_reduction_mpi: \"MPI_Op_create\" returned \"" +
-		                         std::to_string(ret) + "\".");
+	{
+		std::stringstream message;
+		message << "'MPI_Op_create' returned '" << ret << "' error code.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>

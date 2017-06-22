@@ -9,11 +9,13 @@
 #define MONITOR_HPP_
 
 #include <functional>
-#include <stdexcept>
 #include <csignal>
 #include <chrono>
 #include <vector>
 #include <string>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
@@ -54,8 +56,12 @@ public:
 	Monitor_i(const int size, int n_frames = 1, const std::string name = "Monitor_i")
 	: Module(n_frames, name), size(size)
 	{
-		if (this->size <= 0)
-			throw std::invalid_argument("aff3ct::module::Monitor: \"size\" has to be greater than 0.");
+		if (size <= 0)
+		{
+			std::stringstream message;
+			message << "'size' has to be greater than 0 ('size' = " << size << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		Monitor_i<B>::interrupt = false;
 
@@ -142,10 +148,20 @@ public:
 	void check_errors(const mipp::vector<B>& U, const mipp::vector<B>& V)
 	{
 		if ((int)U.size() != this->size * this->n_frames)
-			throw std::length_error("aff3ct::module::Monitor: \"U.size()\" has to be equal to \"size * n_frames\".");
+		{
+			std::stringstream message;
+			message << "'U.size()' has to be equal to 'size' * 'n_frames' ('U.size()' = " << U.size()
+			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		if ((int)V.size() != this->size * this->n_frames)
-			throw std::length_error("aff3ct::module::Monitor: \"V.size()\" has to be equal to \"size * n_frames\".");
+		{
+			std::stringstream message;
+			message << "'V.size()' has to be equal to 'size' * 'n_frames' ('V.size()' = " << V.size()
+			        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		this->check_errors(U.data(), V.data());
 	}
@@ -199,7 +215,7 @@ public:
 protected:
 	virtual void _check_errors(const B *U, const B *V, const int frame_id)
 	{
-		throw std::runtime_error("aff3ct::module::Monitor: \"_check_errors\" is unimplemented.");
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
 
 private:

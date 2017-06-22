@@ -4,12 +4,13 @@
 #ifdef SYSTEMC_MODULE
 #include <vector>
 #include <string>
-#include <stdexcept>
+#include <sstream>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
@@ -44,7 +45,15 @@ private:
 	void b_transport_source(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (monitor.get_size() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
-			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'monitor.get_size()' * 'monitor.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(B)' ('monitor.get_size()' = " << monitor.get_size()
+			        << ", 'monitor.get_n_frames()' = " << monitor.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		U_K = (B*)trans.get_data_ptr();
 	}
@@ -52,10 +61,18 @@ private:
 	void b_transport_decoder(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 	{
 		if (U_K == nullptr)
-			throw std::runtime_error("aff3ct::module::Monitor: TLM \"U_K\" pointer can't be NULL.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'U_K' pointer can't be NULL.");
 
 		if (monitor.get_size() * monitor.get_n_frames() != (int)(trans.get_data_length() / sizeof(B)))
-			throw std::length_error("aff3ct::module::Monitor: TLM input data size is invalid.");
+		{
+			std::stringstream message;
+			message << "'monitor.get_size()' * 'monitor.get_n_frames()' has to be equal to "
+			        << "'trans.get_data_length()' / 'sizeof(B)' ('monitor.get_size()' = " << monitor.get_size()
+			        << ", 'monitor.get_n_frames()' = " << monitor.get_n_frames()
+			        << ", 'trans.get_data_length()' = " << trans.get_data_length()
+			        << ", 'sizeof(B)' = " << sizeof(B) << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const auto V_K = (B*)trans.get_data_ptr();
 

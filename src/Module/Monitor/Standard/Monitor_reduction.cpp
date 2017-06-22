@@ -2,11 +2,14 @@
 #include <sys/stat.h>
 #include <sstream>
 #include <fstream>
-#include <exception>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Monitor_reduction.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template <typename B>
 Monitor_reduction<B>
@@ -17,11 +20,15 @@ Monitor_reduction<B>
   monitors                  (monitors                    )
 {
 	if (monitors.size() == 0)
-		throw std::length_error("aff3ct::module::Monitor_reduction: \"monitors.size()\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'monitors.size()' has to be greater than 0 ('monitors.size()' = " << monitors.size() << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (size_t i = 0; i < monitors.size(); ++i)
 		if (monitors[i] == nullptr)
-			throw std::logic_error("aff3ct::module::Monitor_reduction: \"monitors[i]\" can't be null.");
+			throw logic_error(__FILE__, __LINE__, __func__, "'monitors[i]' can't be null.");
 }
 
 template <typename B>
