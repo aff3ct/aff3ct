@@ -1,8 +1,8 @@
 #ifdef SYSTEMC
 
 #include <iostream>
-#include <stdexcept>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "SC_Simulation_BFER_std.hpp"
@@ -22,11 +22,9 @@ SC_Simulation_BFER_std<B,R,Q>
   dbg_Q     {nullptr, nullptr, nullptr}
 {
 	if (this->params.simulation.n_threads > 1)
-		throw std::invalid_argument("aff3ct::simulation::SC_Simulation_BFER_std: SystemC simulation does not support "
-		                            "multi-threading.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support multi-threading.");
 	if (params.simulation.benchs)
-		throw std::invalid_argument("aff3ct::simulation::SC_Simulation_BFER_std: SystemC simulation does not support "
-		                            "the bench mode.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;

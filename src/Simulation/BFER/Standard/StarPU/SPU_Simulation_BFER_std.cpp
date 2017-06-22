@@ -1,8 +1,8 @@
 #ifdef STARPU
 
 #include <iostream>
-#include <stdexcept>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "SPU_Simulation_BFER_std.hpp"
@@ -48,11 +48,9 @@ SPU_Simulation_BFER_std<B,R,Q>
   spu_V_K2(this->params.simulation.n_threads)
 {
 	if (params.simulation.debug)
-		throw std::invalid_argument("aff3ct::simulation::SPU_Simulation_BFER_std: StarPU simulation does not support "
-		                            "the debug mode.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the debug mode.");
 	if (params.simulation.benchs)
-		throw std::invalid_argument("aff3ct::simulation::SPU_Simulation_BFER_std: StarPU simulation does not support "
-		                            "the bench mode.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the bench mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the StarPU simulation.") << std::endl;

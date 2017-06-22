@@ -1,11 +1,12 @@
 #include <cmath>
 #include <thread>
 #include <string>
-#include <stdexcept>
+#include <sstream>
 #include <algorithm>
 #include <functional>
 
 #include "Tools/general_utils.h"
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
@@ -47,7 +48,11 @@ Simulation_BFER<B,R,Q>
   durations(params.simulation.n_threads)
 {
 	if (params.simulation.n_threads < 1)
-		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER: \"n_threads\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_threads' has to be greater than 0 ('n_threads' = " << params.simulation.n_threads << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (params.monitor.err_track_enable)
 	{

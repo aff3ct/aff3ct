@@ -1,8 +1,8 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include <stdexcept>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -33,8 +33,7 @@ Simulation_BFER_std_threads<B,R,Q>
 {
 #ifdef ENABLE_MPI
 	if (params.simulation.debug || params.simulation.benchs)
-		throw std::runtime_error("aff3ct::simulation::Simulation_BFER_std_threads: debug and bench modes are "
-		                         "unavailable in MPI.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
 	if (this->params.monitor.err_track_revert)

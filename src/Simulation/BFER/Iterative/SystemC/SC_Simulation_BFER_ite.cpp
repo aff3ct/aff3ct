@@ -1,7 +1,6 @@
 #ifdef SYSTEMC
 
-#include <stdexcept>
-
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Algo/Predicate_ite.hpp"
 
@@ -29,12 +28,11 @@ SC_Simulation_BFER_ite<B,R,Q>
   dbg_R      {nullptr, nullptr, nullptr},
   dbg_Q      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}
 {
-	if (this->params.simulation.n_threads > 1)
-		throw std::invalid_argument("aff3ct::simulation::SC_Simulation_BFERI_ite: SystemC simulation does not support "
-		                            "multi-threading.");
+	if (params.simulation.n_threads > 1)
+		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support multi-threading.");
+
 	if (params.simulation.benchs)
-		throw std::invalid_argument("aff3ct::simulation::SC_Simulation_BFERI_ite: SystemC simulation does not support "
-		                            "the bench mode.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench mode.");
 
 	if (params.simulation.time_report)
 		std::clog << bold_yellow("(WW) The time report is not available in the SystemC simulation.") << std::endl;
@@ -58,8 +56,7 @@ void SC_Simulation_BFER_ite<B,R,Q>
 	Simulation_BFER_ite<B,R,Q>::_build_communication_chain(tid);
 
 	if (*this->interleaver[tid] != *this->interleaver_e)
-		throw std::runtime_error("aff3ct::simulation::SC_Simulation_BFERI_ite: \"interleaver[tid]\" and "
-		                         "\"interleaver_e\" have to be equal.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'interleaver[tid]' and 'interleaver_e' have to be equal.");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source     [tid]->create_sc_module              ();

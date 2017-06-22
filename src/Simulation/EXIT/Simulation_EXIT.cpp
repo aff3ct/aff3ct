@@ -1,6 +1,7 @@
 #include <cmath>
 #include <algorithm>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
@@ -88,17 +89,17 @@ void Simulation_EXIT<B,R>
 	                                                                        params.modulator.cpm_L);
 
 	// build the objects
-	source    = build_source     (     );
-	encoder   = build_encoder    (     );
-	modem     = build_modem  (     );
-	modem_a   = build_modem_a(     );
-	channel   = build_channel    (N_mod);
-	channel_a = build_channel_a  (K_mod);
-	siso      = build_siso       (     );
-	terminal  = build_terminal   (     );
+	source    = build_source   (     );
+	encoder   = build_encoder  (     );
+	modem     = build_modem    (     );
+	modem_a   = build_modem_a  (     );
+	channel   = build_channel  (N_mod);
+	channel_a = build_channel_a(K_mod);
+	siso      = build_siso     (     );
+	terminal  = build_terminal (     );
 
 	if (siso->get_n_frames() > 1)
-		throw std::runtime_error("aff3ct::simulation::Simulation_EXIT: inter frame is not supported.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
 
 	if (X_K   .size() != (unsigned)K_mod) X_K   .resize(K_mod);
 	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);

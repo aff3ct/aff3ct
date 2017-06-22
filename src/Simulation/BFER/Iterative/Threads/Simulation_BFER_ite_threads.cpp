@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Simulation_BFER_ite_threads.hpp"
@@ -40,13 +41,11 @@ Simulation_BFER_ite_threads<B,R,Q>
 		          << std::endl;
 
 	if (params.simulation.benchs)
-		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER_ite_threads: the bench mode is not "
-		                            "supported.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
 
 #ifdef ENABLE_MPI
 	if (params.simulation.debug || params.simulation.benchs)
-		throw std::invalid_argument("aff3ct::simulation::Simulation_BFER_ite_threads: debug and bench modes are "
-		                            "unavailable in MPI.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
 	if (this->params.monitor.err_track_revert)
