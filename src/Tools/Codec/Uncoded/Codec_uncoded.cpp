@@ -79,7 +79,7 @@ void Codec_uncoded<B,Q>
 	if ((int)par.size() != 0)
 	{
 		std::stringstream message;
-		message << "'par.size()' has to be equal to 0 ('par.size()' = " << 'par.size()' << ").";
+		message << "'par.size()' has to be equal to 0 ('par.size()' = " << par.size() << ").";
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
