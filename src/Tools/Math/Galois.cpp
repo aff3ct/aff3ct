@@ -1,6 +1,8 @@
 #include <cmath>
-#include <stdexcept>
 #include <iostream>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Galois.hpp"
 
@@ -10,17 +12,47 @@ Galois
 ::Galois(const int& K, const int& N, const int& m, const int& t)
  : K(K), N(N), m(m), t(t), d(2 * t + 1)
 {
+	if (K <= 0)
+	{
+		std::stringstream message;
+		message << "'K' has to be greater than 0 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (N <= 0)
+	{
+		std::stringstream message;
+		message << "'N' has to be greater than 0 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (K > N)
-		throw std::invalid_argument("aff3ct::tools::Galois: \"K\" has to be smaller or equal to \"N\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (N >= 1048576) // 2^20
-		throw std::invalid_argument("aff3ct::tools::Galois: \"N\" has to be smaller than 1048576.");
+	{
+		std::stringstream message;
+		message << "'N' has to be smaller than 1048576 ('N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (m != (int)std::ceil(std::log2(N +1)))
-		throw std::invalid_argument("aff3ct::tools::Galois: \"m\" has to be equal to \"log2(N +1)\".");
+	{
+		std::stringstream message;
+		message << "'m' has to be equal to ceil(log2('N' +1)) ('m' = " << m << ", 'N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (N != ((1 << m) -1))
-		throw std::invalid_argument("aff3ct::tools::Galois: \"N\" has to be a power of 2 minus 1.");
+	{
+		std::stringstream message;
+		message << "'N' has to be a power of 2 minus 1 ('N' = " << N << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	alpha_to.resize(N +1);
 	index_of.resize(N +1);
@@ -177,7 +209,12 @@ void Galois
 		}
 
 	if (K > N - rdncy)
-		throw std::runtime_error("aff3ct::tools::Galois: \"K\" seems to be too big for this correction power \"t\".");
+	{
+		std::stringstream message;
+		message << "'K' seems to be too big for this correction power 't' ('K' = " << K << ", 't' = " << t
+		        << ", 'N' = " << N << ", 'rdncy' = " << rdncy << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	/* Compute the generator polynomial */
 	g[0] = alpha_to[zeros[1]];

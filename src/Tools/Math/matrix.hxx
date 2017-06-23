@@ -1,4 +1,6 @@
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "matrix.h"
 
@@ -13,11 +15,28 @@ inline void rgemm(const int M, const int N, const int K,
                         mipp::vector<T> &tC)
 {
 	if (A.size() != unsigned(M * K))
-		throw std::length_error("aff3ct::tools::rgemm: \"A.size()\" has to be equal to \"M\" * \"K\".");
+	{
+		std::stringstream message;
+		message << "'A.size()' has to be equal to 'M' * 'K' ('A.size()' = " << A.size()  << ", 'M' = " << M
+		        << ", 'K' = " << K << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tB.size() != unsigned(K * N))
-		throw std::length_error("aff3ct::tools::rgemm: \"tB.size()\" has to be equal to \"K\" * \"N\".");
+	{
+		std::stringstream message;
+		message << "'tB.size()' has to be equal to 'K' * 'N' ('tB.size()' = " << tB.size() << ", 'K' = " << K
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tC.size() != unsigned(M * N))
-		throw std::length_error("aff3ct::tools::rgemm: \"tC.size()\" has to be equal to \"M\" * \"N\".");
+	{
+		std::stringstream message;
+		message << "'tC.size()' has to be equal to 'M' * 'N' ('tC.size()' = " << tC.size() << ", 'M' = " << M
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	rgemm(M, N, K, A.data(), tB.data(), tC.data());
 }
@@ -46,11 +65,28 @@ inline void cgemm(const int M, const int N, const int K,
                         mipp::vector<T> &tC)
 {
 	if (A.size() != unsigned(M * K * 2))
-		throw std::length_error("aff3ct::tools::cgemm: \"A.size()\" has to be equal to \"M\" * \"K\" * \"2\".");
+	{
+		std::stringstream message;
+		message << "'A.size()' has to be equal to 'M' * 'K' * 2 ('A.size()' = " << A.size() << ", 'M' = " << M
+		        << ", 'K' = " << K << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tB.size() != unsigned(K * N * 2))
-		throw std::length_error("aff3ct::tools::cgemm: \"tB.size()\" has to be equal to \"K\" * \"N\" * \"2\".");
+	{
+		std::stringstream message;
+		message << "'tB.size()' has to be equal to 'K' * 'N' * 2 ('tB.size()' = " << tB.size() << ", 'K' = " << K
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tC.size() != unsigned(M * N * 2))
-		throw std::length_error("aff3ct::tools::cgemm: \"tC.size()\" has to be equal to \"M\" * \"N\" * \"2\".");
+	{
+		std::stringstream message;
+		message << "'tC.size()' has to be equal to 'M' * 'N' * 2 ('tC.size()' = " << tC.size() << ", 'M' = " << M
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	cgemm(M, N, K, A.data(), tB.data(), tC.data());
 }
@@ -92,11 +128,28 @@ inline void cgemm_r(const int M, const int N, const int K,
                           mipp::vector<T> &tC)
 {
 	if (A.size() != unsigned(M * K * 2))
-		throw std::length_error("aff3ct::tools::cgemm_r: \"A.size()\" has to be equal to \"M\" * \"K\" * \"2\".");
+	{
+		std::stringstream message;
+		message << "'A.size()' has to be equal to 'M' * 'K' * 2 ('A.size()' = " << A.size() << ", 'M' = " << M
+		        << ", 'K' = " << K << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tB.size() != unsigned(K * N * 2))
-		throw std::length_error("aff3ct::tools::cgemm_r: \"tB.size()\" has to be equal to \"K\" * \"N\" * \"2\".");
-	if (tC.size() != unsigned(M * N * 1)) // because we only store the real part
-		throw std::length_error("aff3ct::tools::cgemm_r: \"tC.size()\" has to be equal to \"M\" * \"N\" * \"1\".");
+	{
+		std::stringstream message;
+		message << "'tB.size()' has to be equal to 'K' * 'N' * 2 ('tB.size()' = " << tB.size() << ", 'K' = " << K
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (tC.size() != unsigned(M * N * 1))
+	{
+		std::stringstream message;
+		message << "'tC.size()' has to be equal to 'M' * 'N' * 1 ('tC.size()' = " << tC.size() << ", 'M' = " << M
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	cgemm_r(M, N, K, A.data(), tB.data(), tC.data());
 }
@@ -132,9 +185,20 @@ inline void real_transpose(const int M, const int N,
                                  mipp::vector<T> &B)
 {
 	if (A.size() != unsigned(M * N))
-		throw std::length_error("aff3ct::tools::real_transpose: \"A.size()\" has to be equal to \"M\" * \"N\".");
+	{
+		std::stringstream message;
+		message << "'A.size()' has to be equal to 'M' * 'N' ('A.size()' = " << A.size() << ", 'M' = " << M
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (B.size() != unsigned(N * M))
-		throw std::length_error("aff3ct::tools::real_transpose: \"B.size()\" has to be equal to \"N\" * \"M\".");
+	{
+		std::stringstream message;
+		message << "'B.size()' has to be equal to 'N' * 'M' ('B.size()' = " << B.size() << ", 'N' = " << N
+		        << ", 'M' = " << M << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	real_transpose(M, N, A.data(), B.data());
 }
@@ -155,11 +219,20 @@ inline void complex_transpose(const int M, const int N,
                                     mipp::vector<T> &B)
 {
 	if (A.size() != unsigned(M * N * 2))
-		throw std::length_error("aff3ct::tools::complex_transpose: \"A.size()\" has to be equal to "
-		                        "\"M\" * \"N\" * \"2\".");
+	{
+		std::stringstream message;
+		message << "'A.size()' has to be equal to 'M' * 'N' * 2 ('A.size()' = " << A.size() << ", 'M' = " << M
+		        << ", 'N' = " << N << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (B.size() != unsigned(N * M * 2))
-		throw std::length_error("aff3ct::tools::complex_transpose: \"B.size()\" has to be equal to "
-		                        "\"N\" * \"M\" * \"2\".");
+	{
+		std::stringstream message;
+		message << "'B.size()' has to be equal to 'N' * 'M' * 2 ('B.size()' = " << B.size() << ", 'N' = " << N
+		        << ", 'M' = " << M << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	complex_transpose(M, N, A.data(), B.data());
 }

@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "Tools/Exception/exception.hpp"
 
 /* // GENERATED DECODERS // */
@@ -1118,7 +1120,11 @@ void Factory_decoder_polar_gen<B,R>
 #endif
 
 	if (fb_ptr == nullptr)
-		throw cannot_allocate(__FILE__, __LINE__, __func__);
+	{
+		std::stringstream message;
+		message << "'implem' frozen bits does not exist ('implem' = " << implem << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (auto i = 0; i < N; i++)
 		frozen_bits[i] = (B)fb_ptr[i];

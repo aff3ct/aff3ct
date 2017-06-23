@@ -1,6 +1,8 @@
 #include <cmath>     // min(), fabs(), copysign()...
 #include <algorithm> // min()
 
+#include "Tools/Exception/exception.hpp"
+
 #include "max.h"
 
 namespace aff3ct
@@ -31,8 +33,7 @@ inline R max_star(const R& a, const R& b)
 template <typename R>
 inline R max_star_safe(const R& a, const R& b) 
 {
-	throw std::runtime_error("aff3ct::tools::max_star_safe: \"max_star_safe\" is not defined in fixed-point "
-	                         "arithmetic.");
+	throw runtime_error(__FILE__, __LINE__, __func__, "This method is not defined in fixed-point arithmetic.");
 
 	return (R)0;
 }

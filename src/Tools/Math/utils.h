@@ -1,10 +1,11 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
-#include <stdexcept>
+#include <sstream>
 #include <algorithm>
 #include <limits>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
@@ -75,9 +76,18 @@ template <typename R, typename function_type>
 inline R integral(function_type func, const R min, const R max, const int number_steps)
 {
 	if (max < min)
-		throw std::invalid_argument("aff3ct::tools::integral: \"max\" has to be equal or greater than min.");
+	{
+		std::stringstream message;
+		message << "'max' has to be equal or greater than 'min' ('max' = " << max << ", 'min' = " << min << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (number_steps <= 0)
-		throw std::invalid_argument("aff3ct::tools::integral: \"number_steps\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'number_steps' has to be greater than 0 ('number_steps' = " << number_steps << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	R step = (max - min) / number_steps; // width of rectangle
 	R area = (R)0;
