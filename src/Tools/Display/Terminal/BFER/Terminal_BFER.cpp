@@ -1,8 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <stdexcept>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Terminal_BFER.hpp"
@@ -29,11 +29,25 @@ Terminal_BFER<B>
   real_time_state(0                               )
 {
 	if (K <= 0)
-		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'K' has to be greater than 0 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N <= 0)
-		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"N\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'N' has to be greater than 0 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (K > N)
-		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be smaller than \"N\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>
@@ -54,7 +68,11 @@ Terminal_BFER<B>
   real_time_state(0                               )
 {
 	if (K <= 0)
-		throw std::invalid_argument("aff3ct::tools::Terminal_BFER: \"K\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'K' has to be greater than 0 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B>

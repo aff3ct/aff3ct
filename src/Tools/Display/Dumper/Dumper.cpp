@@ -2,7 +2,8 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
-#include <stdexcept>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Dumper.hpp"
 
@@ -13,7 +14,11 @@ Dumper
 : n_frames(n_frames)
 {
 	if (n_frames <= 0)
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"n_frames\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 Dumper
@@ -27,13 +32,24 @@ void Dumper
                 std::vector<unsigned> headers)
 {
 	if (ptr == nullptr)
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"ptr\" can't be null.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'ptr' can't be null.");
+
 	if (size <= 0)
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"size\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'size' has to be greater than 0 ('size' = " << size << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (file_ext.empty())
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"file_ext\" can't be empty.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'file_ext' can't be empty.");
+
 	if (n_frames <= 0 && n_frames != -1)
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"n_frames\" has to be greater than 0 (or equal to -1).");
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->buffer.push_back(std::vector<std::vector<char>>());
 
@@ -52,7 +68,11 @@ void Dumper
                 std::vector<unsigned> headers)
 {
 	if (n_frames <= 0 && n_frames != -1)
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"n_frames\" has to be greater than 0 (or equal to -1).");
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	};
 
 	this->register_data(data.data(), data.size() / this->n_frames, file_ext, binary_mode, headers);
 }
@@ -61,7 +81,12 @@ void Dumper
 ::add(const int frame_id)
 {
 	if (frame_id < 0 || frame_id >= this->n_frames)
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"frame_id\" is invalid.");
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be positive and smaller than 'n_frames' ('frame_id' = " << frame_id
+		        << ", 'n_frames' = " << this->n_frames << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (auto i = 0; i < (int)this->registered_data_ptr.size(); i++)
 	{
@@ -80,7 +105,7 @@ void Dumper
 ::dump(const std::string& base_path)
 {
 	if (base_path.empty())
-		throw std::invalid_argument("aff3ct::tools::Dumper: \"base_path\" can't be empty.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'base_path' can't be empty.");
 
 	for (auto i = 0; i < (int)this->registered_data_ptr.size(); i++)
 	{
@@ -152,7 +177,7 @@ void Dumper
 	else if (type == typeid(float      )) this->_write_body_text<float      >(file, buffer, size);
 	else if (type == typeid(double     )) this->_write_body_text<double     >(file, buffer, size);
 	else
-		throw std::invalid_argument("aff3ct::tools::Dumper: unsupported data type.");
+		throw invalid_argument(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
 
 template <typename T>
