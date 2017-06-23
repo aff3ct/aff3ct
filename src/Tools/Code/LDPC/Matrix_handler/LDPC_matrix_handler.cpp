@@ -1,9 +1,11 @@
 #include <functional>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "LDPC_matrix_handler.hpp"
 
-using namespace aff3ct;
-using namespace tools;
+using namespace aff3ct::tools;
 
 void LDPC_matrix_handler
 ::sparse_to_full(const Sparse_matrix& sparse, Full_matrix& full)
@@ -51,8 +53,12 @@ void LDPC_matrix_handler
 	unsigned n_col = (unsigned)mat.front().size();
 
 	if (n_row > n_col)
-		throw std::length_error("aff3ct::tools::LDPC_G::transform_H_to_G: matrix high \"mat.size()\" has to be smaller "
-		                        " than its width \"mat.front().size()\".");
+	{
+		std::stringstream message;
+		message << "'n_row' has to be smaller or equal to 'n_col' ('n_row' = " << n_row
+		        << ", 'n_col' = " << n_col << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	std::vector<unsigned> swapped_cols;
 	LDPC_matrix_handler::create_diagonal(mat, swapped_cols);
@@ -89,8 +95,12 @@ void LDPC_matrix_handler
 	unsigned n_col = (unsigned)mat.front().size();
 
 	if (n_row > n_col)
-		throw std::length_error("aff3ct::tools::LDPC_G::create_diagonal: matrix high \"mat.size()\" has to be smaller "
-		                        " than its width \"mat.front().size()\".");
+	{
+		std::stringstream message;
+		message << "'n_row' has to be smaller or equal to 'n_col' ('n_row' = " << n_row
+		        << ", 'n_col' = " << n_col << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	unsigned i = 0;
 	bool found = false;
@@ -151,8 +161,12 @@ void LDPC_matrix_handler
 	unsigned n_col = (unsigned)mat.front().size();
 
 	if (n_row > n_col)
-		throw std::length_error("aff3ct::tools::LDPC_G::create_identity: matrix high \"mat.size()\" has to be smaller "
-		                        " than its width \"mat.front().size()\".");
+	{
+		std::stringstream message;
+		message << "'n_row' has to be smaller or equal to 'n_col' ('n_row' = " << n_row
+		        << ", 'n_col' = " << n_col << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	for (unsigned i = n_row - 1 ; i > 0; i--)
 		for (unsigned j = i; j > 0; j--)
@@ -180,9 +194,13 @@ Sparse_matrix LDPC_matrix_handler
 ::interleave_matrix(const Sparse_matrix& mat, std::vector<unsigned>& old_cols_pos)
 {
 	if (mat.get_n_cols() != old_cols_pos.size())
-		throw std::length_error("aff3ct::tools::LDPC_G::interleave_matrix: matrix width \"mat.get_n_cols()\" has to be"
-		                        " equal to interleaver length \"old_cols_pos.size()\".");
-
+	{
+		std::stringstream message;
+		message << "'mat.get_n_cols()' has to be equal to interleaver length 'old_cols_pos.size()' "
+		        << "('mat.get_n_cols()' = " << mat.get_n_cols()
+		        << ", 'old_cols_pos.size()' = " << old_cols_pos.size() << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	Sparse_matrix itl_mat(mat.get_n_rows(), mat.get_n_cols());
 
@@ -199,8 +217,13 @@ std::vector<unsigned> LDPC_matrix_handler
 ::interleave_info_bits_pos(const std::vector<unsigned>& info_bits_pos, std::vector<unsigned>& old_cols_pos)
 {
 	if (info_bits_pos.size() > old_cols_pos.size())
-		throw std::length_error("aff3ct::tools::LDPC_G::interleave_info_bits_pos: vector length \"vec.size()\" has to"
-		                        " be smaller than or equal to interleaver length \"old_cols_pos.size()\".");
+	{
+		std::stringstream message;
+		message << "'info_bits_pos.size()' has to be smaller than or equal to interleaver length 'old_cols_pos.size()' "
+		        << " ('info_bits_pos.size()' = " << info_bits_pos.size()
+		        << ", 'old_cols_pos.size()' = " << old_cols_pos.size() << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	std::vector<unsigned> itl_vec(info_bits_pos.size());
 	unsigned cnt = 0;
@@ -217,8 +240,12 @@ std::vector<unsigned> LDPC_matrix_handler
 	}
 
 	if (cnt != itl_vec.size())
-		throw std::runtime_error("aff3ct::tools::LDPC_G::interleave_info_bits_pos: the number of information bits pos"
-		                         "itions found in the old_cols_pos vector is less than the \"info_bits_pos.size()\".");
+	{
+		std::stringstream message;
+		message << "'cnt' has to be equal to 'itl_vec.size()' ('cnt' = " << cnt
+		        << ", 'itl_vec.size()' = " << itl_vec.size() << ").";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	return itl_vec;
 }

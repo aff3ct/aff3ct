@@ -2,13 +2,13 @@
 #define PATTERN_POLAR_INTERFACE_HPP_
 
 #include <cmath>
-#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <string>
 #include <typeinfo>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Algo/Tree/Binary_node.hpp"
 
@@ -69,15 +69,29 @@ protected:
 	  max_level(max_level)
 	{
 		if (N <= 0)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"N\" has to be greater than 0.");
+		{
+			std::stringstream message;
+			message << "'N' has to be greater than 0 ('N' = " << N << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (node == nullptr)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"node\" can't be null.");
+			throw invalid_argument(__FILE__, __LINE__, __func__, "'node' can't be null.");
+
 		if (min_level < 0)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"min_level\" has to be equal or greater "
-			                            "than 0.");
+		{
+			std::stringstream message;
+			message << "'min_level' has to be equal or greater than 0 ('min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (max_level != -1 && (max_level < 0 || max_level < min_level))
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"max_level\" has to be equal or greater "
-			                            "than \"min_level\".");
+		{
+			std::stringstream message;
+			message << "'max_level' has to be equal or greater than 'min_level' ('max_level' = " << max_level
+			        << ", 'min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		const int *p_size = &size;
 		for (auto i = 0; i < node->get_depth(); i++) *const_cast<int*>(p_size) >>= 1;
@@ -98,11 +112,19 @@ public:
 	  id(0), key(""), min_level(min_level), max_level(max_level)
 	{
 		if (min_level < 0)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"min_level\" has to be equal or greater "
-			                            "than 0.");
+		{
+			std::stringstream message;
+			message << "'min_level' has to be equal or greater than 0 ('min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (max_level != -1 && (max_level < 0 || max_level < min_level))
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"max_level\" has to be equal or greater "
-			                            "than \"min_level\".");
+		{
+			std::stringstream message;
+			message << "'max_level' has to be equal or greater than 'min_level' ('max_level' = " << max_level
+			        << ", 'min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Pattern_polar_i() {}
@@ -150,10 +172,15 @@ public:
 	virtual int match(const int &reverse_graph_depth, const Binary_node<Pattern_polar_i>* node_curr)
 	{
 		if (reverse_graph_depth <= 0)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"reverse_graph_depth\" has to be "
-			                            "greater than 0.");
+		{
+			std::stringstream message;
+			message << "'reverse_graph_depth' has to be greater than 0 ('reverse_graph_depth' = "
+			        << reverse_graph_depth << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (node_curr == nullptr)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar: \"node_curr\" can't be null.");
+			throw invalid_argument(__FILE__, __LINE__, __func__, "'node_curr' can't be null.");
 
 		if ((reverse_graph_depth >= min_level) && (max_level == -1 || reverse_graph_depth <= max_level))
 			return _match(reverse_graph_depth, node_curr);

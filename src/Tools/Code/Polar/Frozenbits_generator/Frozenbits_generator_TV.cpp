@@ -6,14 +6,13 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-
 #include <cmath>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Frozenbits_generator_TV.hpp"
@@ -52,8 +51,9 @@ void Frozenbits_generator_TV<B>
 	DIR *dp;
 	if ((dp = opendir(awgn_codes_dir.c_str())) == nullptr)
 	{
-		throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_TV: the following directory does not exist: "
-		                            "\"" + awgn_codes_dir + "\".");
+		std::stringstream message;
+		message << "The following directory does not exist: '" + awgn_codes_dir + "'.";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 	else
 	{
@@ -74,8 +74,9 @@ void Frozenbits_generator_TV<B>
 			if ((ret = mkdir(sub_folder.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) != 0)
 			{
 #endif
-				throw std::runtime_error("aff3ct::tools::Frozenbits_generator_TV: impossible to create "
-				                         "\"" + sub_folder + "\".");
+				std::stringstream message;
+				message << "Impossible to create '" + sub_folder + "'.";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
 		else
@@ -102,15 +103,22 @@ void Frozenbits_generator_TV<B>
 			if (system(cmd.c_str()) == 0)
 			{
 				if (!this->load_channels_file(filename))
-					throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_TV: can't open \"" +
-					                            filename + "\" file.");
+				{
+					std::stringstream message;
+					message << "Can't open '" << filename << "' file.";
+					throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+				}
 			}
 			else
-				throw std::runtime_error("aff3ct::tools::Frozenbits_generator_TV: following command failed: \"" +
-				                         cmd + "\".");
+			{
+				std::stringstream message;
+				message << "The following command failed: '" << cmd << "'.";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 #else
-			throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_TV: can't open \"" +
-			                            filename + "\" file.");
+			std::stringstream message;
+			message << "Can't open '" << filename <<"' file.";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 #endif
 		}
 	}

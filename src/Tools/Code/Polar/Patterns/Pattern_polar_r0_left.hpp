@@ -1,12 +1,13 @@
 #ifndef PATTERN_POLAR_RATE_0_LEFT_HPP_
 #define PATTERN_POLAR_RATE_0_LEFT_HPP_
 
-#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <string>
 #include <typeinfo>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Pattern_polar_i.hpp"
 
@@ -24,8 +25,11 @@ protected:
 	: Pattern_polar_i(N, node, min_level, max_level)
 	{
 		if (min_level < 1)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar_r0_left: \"min_level\" has to be "
-			                            "equal or greater than 1.");
+		{
+			std::stringstream message;
+			message << "'min_level' has to be equal or greater than 1 ('min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 public:
@@ -33,8 +37,11 @@ public:
 	: Pattern_polar_i(min_level, max_level)
 	{
 		if (min_level < 1)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar_r0_left: \"min_level\" has to be "
-			                            "equal or greater than 1.");
+		{
+			std::stringstream message;
+			message << "'min_level' has to be equal or greater than 1 ('min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
@@ -59,7 +66,7 @@ public:
 		const Pattern_polar_i *pattern_left = node_curr->get_left()->get_contents();
 
 		if (pattern_left == nullptr)
-			throw std::runtime_error("aff3ct::module::Pattern_polar_r0_left: \"pattern_left\" can't be null.");
+			throw runtime_error(__FILE__, __LINE__, __func__, "'pattern_left' can't be null.");
 
 		int match_val = 0;
 

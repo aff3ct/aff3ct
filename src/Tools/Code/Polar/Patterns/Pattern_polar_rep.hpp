@@ -25,8 +25,11 @@ protected:
 	: Pattern_polar_i(N, node, min_level, max_level)
 	{
 		if (min_level < 1)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar_rep: \"min_level\" has to be "
-			                            "equal or greater than 1.");
+		{
+			std::stringstream message;
+			message << "'min_level' has to be equal or greater than 1 ('min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 public:
@@ -34,8 +37,11 @@ public:
 	: Pattern_polar_i(min_level, max_level)
 	{
 		if (min_level < 1)
-			throw std::invalid_argument("aff3ct::module::Pattern_polar_rep: \"min_level\" has to be "
-			                            "equal or greater than 1.");
+		{
+			std::stringstream message;
+			message << "'min_level' has to be equal or greater than 1 ('min_level' = " << min_level << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const

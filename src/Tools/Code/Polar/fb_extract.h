@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 namespace aff3ct
@@ -52,7 +53,7 @@ inline void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_
 				sk_idx += (n_elmts -1) * N_FRAMES;
 				break;
 			default:
-				throw std::runtime_error("aff3ct::tools::fb_extract: unknown polar node type.");
+				throw runtime_error(__FILE__, __LINE__, __func__,  "Unknown polar node type.");
 				break;
 		}
 		off_s += n_elmts;

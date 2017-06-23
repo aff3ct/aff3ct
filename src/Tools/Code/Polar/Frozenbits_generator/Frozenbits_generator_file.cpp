@@ -2,11 +2,12 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Frozenbits_generator_file.hpp"
 
@@ -37,10 +38,7 @@ void Frozenbits_generator_file<B>
 ::evaluate()
 {
 	if(!load_channels_file(filename))
-	{
-		throw std::invalid_argument("aff3ct::tools::Frozenbits_generator_file: \"" + filename + "\" file "
-		                            "does not exist.");
-	}
+		throw invalid_argument(__FILE__, __LINE__, __func__, "'" + filename + "' file does not exist.");
 }
 
 template <typename B>
@@ -55,7 +53,11 @@ bool Frozenbits_generator_file<B>
 		in_code >> trash; // N
 
 		if (std::stoi(trash) != this->N)
-			throw std::runtime_error("aff3ct::tools::Frozenbits_generator_file: \"trash\" has to be equal to \"N\".");
+		{
+			std::stringstream message;
+			message << "'trash' has to be equal to 'N' ('trash' = " << trash << ", 'N' = " << this->N << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		in_code >> trash; // type
 		in_code >> trash; // sigma
