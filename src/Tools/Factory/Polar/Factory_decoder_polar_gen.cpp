@@ -6,8 +6,11 @@
 
 #define ENABLE_SHORT_GENERATED_DECODERS
 
+// before to uncomment these next lines, make sure to run the script to generate the decoders
+// (see "scripts/generate_polar_decoders.sh")
+
 // RATE 1/2
-#define ENABLE_DECODER_SC_FAST_N4_K2_SNR25
+// #define ENABLE_DECODER_SC_FAST_N4_K2_SNR25
 // #define ENABLE_DECODER_SC_FAST_N8_K4_SNR25
 // #define ENABLE_DECODER_SC_FAST_N16_K8_SNR25
 // #define ENABLE_DECODER_SC_FAST_N32_K16_SNR25
@@ -30,7 +33,7 @@
 // #define ENABLE_DECODER_SC_FAST_N1048576_K524288_SNR25
 
 // RATE 5/6
-#define ENABLE_DECODER_SC_FAST_N4_K3_SNR40
+// #define ENABLE_DECODER_SC_FAST_N4_K3_SNR40
 // #define ENABLE_DECODER_SC_FAST_N8_K7_SNR40
 // #define ENABLE_DECODER_SC_FAST_N16_K13_SNR40
 // #define ENABLE_DECODER_SC_FAST_N32_K27_SNR40
@@ -84,7 +87,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 // RATE 1/2
-#define ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
+//#define ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
 
 // RATE ???
 //#define ENABLE_DECODER_SCL_FAST_CA_N2048_K1755_SNR35

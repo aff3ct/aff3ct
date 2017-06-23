@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 //#include "Tools/Algo/Sort/LC_sorter_simd.hpp"
