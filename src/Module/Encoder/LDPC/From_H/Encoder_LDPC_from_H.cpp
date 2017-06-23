@@ -15,7 +15,7 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC_from_H<B>
-::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames,
+::Encoder_LDPC_from_H(const int K, const int N, const Sparse_matrix &H, const int n_frames,
                       const std::string name)
 : Encoder_LDPC<B>(K, N, n_frames, name), G(tools::LDPC_matrix_handler::transform_H_to_G(H, info_bits_pos))
 {
