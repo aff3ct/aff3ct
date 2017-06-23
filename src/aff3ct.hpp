@@ -31,6 +31,7 @@
 
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
+#include <Tools/Exception/exception.hpp>
 #include <Tools/Threads/Barrier.hpp>
 #include <Tools/Math/Galois.hpp>
 #include <Tools/Factory/Factory_monitor.hpp>
