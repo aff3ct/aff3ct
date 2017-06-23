@@ -452,6 +452,8 @@ int Launcher<B,R,Q>
 	this->build_args();
 
 	auto display_help = true;
+
+	std::vector<std::string> cmd_warn;
 	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
 	{
 		this->store_args();
@@ -480,6 +482,17 @@ int Launcher<B,R,Q>
 		if(ar.exist_arg({"help", "h"})) display_help = true;
 	}
 
+	std::vector<std::string> cmd_error;
+	bool error = !ar.check_arguments(cmd_error);
+
+	for (unsigned e = 0; e < cmd_error.size(); e++)
+		std::cerr << format_error(cmd_error[e]) << std::endl;
+
+	// print the warnings
+	if (params.simulation.mpi_rank == 0)
+		for (unsigned w = 0; w < cmd_warn.size(); w++)
+			std::clog << format_warning(cmd_warn[w]) << std::endl;
+
 	if (display_help)
 	{
 		std::vector<std::vector<std::string>> arg_grp;
@@ -500,17 +513,20 @@ int Launcher<B,R,Q>
 		arg_grp.push_back({"term", "Terminal parameter(s)"   });
 
 		ar.print_usage(arg_grp);
-		return EXIT_FAILURE;
+		error = true;
 	}
-
-	std::string error;
-	if (!ar.check_arguments(error))
+	else if (error)
 	{
-		std::cerr << bold_red("(EE) " + error) << std::endl;
-		return EXIT_FAILURE;
+		std::string message = "For more information please display the help (";
+		std::vector<std::string> help_tag = {"help", "h"};
+		for (unsigned i = 0; i < help_tag.size(); i++)
+			message += Arguments_reader::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
+
+		message += ").";
+		std::cerr << format_info(message) << std::endl;
 	}
 
-	return 0;
+	return (error?EXIT_FAILURE:EXIT_SUCCESS);
 }
 
 template <typename B, typename R, typename Q>
@@ -773,13 +789,13 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::print_parameters(std::string grp_name, std::vector<std::pair<std::string,std::string>> params)
 {
-	stream << "# * " << bold_underlined(grp_name) << " ";
+	stream << "# * " << style(style(grp_name, Style::BOLD), Style::UNDERLINED) << " ";
 	for (auto i = 0; i < 46 - (int)grp_name.length(); i++) std::cout << "-";
 	stream << std::endl;
 
 	for (auto i = 0; i < (int)params.size(); i++)
 	{
-		stream << "#    ** " << bold(params[i].first);
+		stream << "#    ** " << style(params[i].first, Style::BOLD);
 		for (auto j = 0; j < this->max_n_chars - (int)params[i].first.length(); j++) stream << " ";
 		stream << " = " << params[i].second << std::endl;
 	}
@@ -792,10 +808,10 @@ void Launcher<B,R,Q>
 	this->compute_max_n_chars();
 
 	// display configuration and simulation parameters
-	stream << "# " << bold("-------------------------------------------------") << std::endl;
-	stream << "# " << bold("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----") << std::endl;
-	stream << "# " << bold("-------------------------------------------------") << std::endl;
-	stream << "# " << bold_underlined("Parameters") << ":" << std::endl;
+	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
+	stream << "# " << style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", Style::BOLD) << std::endl;
+	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
+	stream << "# " << style(style("Parameters :", Style::BOLD), Style::UNDERLINED) << std::endl;
 
 	std::vector<std::pair<std::string,std::string>> params;
 	params = this->header_simulation();  if (params.size()) this->print_parameters("Simulation",  params);
@@ -829,7 +845,7 @@ void Launcher<B,R,Q>
 		simu = nullptr;
 	}
 
-	if (this->read_arguments())
+	if (this->read_arguments() == EXIT_FAILURE)
 		return;
 
 	// write the command and he curve name in the PyBER format
@@ -844,26 +860,23 @@ void Launcher<B,R,Q>
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
 
+
 	try
 	{
 		simu = this->build_simu();
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when building the ")
-		          << bold_red("simulation.") << std::endl
-		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		std::cerr << format_error("An issue was encountered when building the simulation.") << std::endl
+		          << format_error(e.what()) << std::endl;
 	}
+
 
 	if (simu != nullptr)
 	{
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
-			stream << "# " << bold_blue("The simulation is running...") << std::endl;
-		// print the warnings
-		if (params.simulation.mpi_rank == 0)
-			for (auto w = 0; w < (int)cmd_warn.size(); w++)
-				std::clog << bold_yellow("(WW) " + cmd_warn[w]) << std::endl;
+			stream << "# " << format_info("The simulation is running...") << std::endl;
 
 		try
 		{
@@ -871,9 +884,8 @@ void Launcher<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when running the ")
-			          << bold_red("simulation.") << std::endl
-			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			std::cerr << format_error("An issue was encountered when running the simulation.") << std::endl
+			          << format_error(e.what()) << std::endl;
 		}
 	}
 

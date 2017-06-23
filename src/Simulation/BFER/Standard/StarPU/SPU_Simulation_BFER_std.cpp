@@ -53,7 +53,7 @@ SPU_Simulation_BFER_std<B,R,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the bench mode.");
 
 	if (params.simulation.time_report)
-		std::clog << bold_yellow("(WW) The time report is not available in the StarPU simulation.") << std::endl;
+		std::clog << format_warning("The time report is not available in the StarPU simulation.") << std::endl;
 
 	// initialize StarPU with default configuration
 	auto ret = starpu_init(NULL);

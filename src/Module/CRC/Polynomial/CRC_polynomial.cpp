@@ -34,11 +34,10 @@ CRC_polynomial<B>
 		poly_size = CRC_polynomial<B>::size(crc_name);
 
 	if (!crc_name.empty() && CRC_polynomial<B>::size(crc_name) != poly_size)
-		std::clog << bold_yellow("(WW) You specified \"")
-		          << bold_yellow(std::to_string(poly_size))
-		          << bold_yellow(" bits\" for your CRC size but the database advise you to use \"")
-		          << bold_yellow(std::to_string(std::get<1>(known_polynomials.at(crc_name))))
-		          << bold_yellow(" bits\", are you sure?")
+		std::clog << format_warning("You specified \"" + std::to_string(poly_size)
+		                            + " bits\" for your CRC size but the database advise you to use \""
+		                            + std::to_string(std::get<1>(known_polynomials.at(crc_name)))
+		                            + " bits\", are you sure?")
 		          << std::endl;
 
 	polynomial.push_back(1);

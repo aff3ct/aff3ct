@@ -324,10 +324,7 @@ std::vector<aff3ct::tools::Pattern_polar_i*> aff3ct::tools::nodes_parser(const s
 			}
 			else
 			{
-				std::clog << aff3ct::tools::bold_yellow("(WW) Unrecognized Polar node type (")
-				          << aff3ct::tools::bold_yellow(v_polar[i])
-				          << aff3ct::tools::bold_yellow(").")
-				          << std::endl;
+				std::clog << format_warning("Unrecognized Polar node type (" + v_polar[i] + ").") << std::endl;
 			}
 		}
 	}

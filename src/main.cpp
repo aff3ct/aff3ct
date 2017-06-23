@@ -168,10 +168,11 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 		std::exit(EXIT_FAILURE);
 	}
 
-	std::string error;
+	std::vector<std::string> error;
 	if (!ar.check_arguments(error))
 	{
-		std::cerr << bold_red("(EE) " + error) << std::endl;
+		for (auto w = 0; w < (int)error.size(); w++)
+			std::cerr << format_error(error[w]) << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 }
@@ -291,7 +292,7 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 
 			if (launcher == nullptr)
 			{
-				std::cerr << bold_red("(EE) Unsupported type of codes/simulation.") << std::endl;
+				std::cerr << format_error("Unsupported type of codes/simulation.") << std::endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -301,8 +302,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered when running the launcher.") << std::endl
-		          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+		std::cerr << format_error("An issue was encountered when running the launcher.") << std::endl
+		          << format_error(e.what()) << std::endl;
 	}
 }
 
@@ -335,7 +336,7 @@ int sc_main(int argc, char **argv)
 			start_simu<B_64,R_64,Q_64,QD_64>(argc, (const char**)argv, code_type, simu_type); break;
 #endif
 		default:
-			std::cerr << bold_red("(EE) Unsupported bit precision.") << std::endl;
+			std::cerr << format_error("Unsupported bit precision.") << std::endl;
 			return EXIT_FAILURE;
 			break;
 	}

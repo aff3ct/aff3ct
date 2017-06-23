@@ -154,7 +154,13 @@ public:
 	 *
 	 * \return true if the arguments criteria are respected, false otherwise.
 	 */
-	bool check_arguments(std::string &error);
+	bool check_arguments(std::vector<std::string> &error);
+
+	/*
+	 * return the given tag with its command line argument format.
+	 * Add "-" before if tag is one letter length else "--".
+	 */
+	static std::string print_tag(const std::string& tag);
 
 private:
 	/*!
@@ -179,9 +185,8 @@ private:
 	 *
 	 * \return true if the argument criteria are respected, false otherwise.
 	 */
-	bool check_argument(const std::vector<std::string> &tags,
-	                          std::map<std::vector<std::string>, std::vector<std::string>> &args,
-	                          std::string &error);
+	std::string check_argument(const std::vector<std::string> &tags,
+	                                 std::map<std::vector<std::string>, std::vector<std::string>> &args);
 
 	/*!
 	 * \brief Clears m_required_args, m_optional_args and m_args.

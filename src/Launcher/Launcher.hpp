@@ -41,7 +41,6 @@ private:
 	std::unordered_map<std::type_index,std::string> type_names;  /*!< An internal map to store a string associated to a type. */
 	simulation::Simulation                         *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                                     cmd_line;
-	std::vector<std::string>                        cmd_warn;
 
 protected:
 	tools::Arguments_reader                                      ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */

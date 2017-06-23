@@ -39,8 +39,8 @@ Simulation_BFER_std_threads<B,R,Q>
 	if (this->params.monitor.err_track_revert)
 	{
 		if (this->params.simulation.n_threads != 1)
-			std::clog << bold_yellow("(WW) Multi-threading detected with error tracking revert feature!")
-			          << bold_yellow(" Each thread will play the same frames. Please run with one thread.")
+			std::clog << format_warning("Multi-threading detected with error tracking revert feature!"
+			                            " Each thread will play the same frames. Please run with one thread.")
 			          << std::endl;
 	}
 
@@ -133,9 +133,9 @@ void Simulation_BFER_std_threads<B,R,Q>
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
 		{
-			std::cerr << bold_red("(EE) ") << bold_red("An issue was encountered during the simulation loop (tid = ")
-			          << bold_red(std::to_string(tid) + ").") << std::endl
-			          << bold_red("(EE) ") << bold_red(e.what()) << std::endl;
+			std::cerr << format_error("An issue was encountered during the simulation loop (tid = "
+			                         + std::to_string(tid) + ").") << std::endl
+			          << format_error(e.what()) << std::endl;
 			simu->prev_err_message = e.what();
 		}
 		simu->mutex_exception.unlock();
