@@ -1,7 +1,9 @@
 #include <string>
 #include <chrono>
-#include <stdexcept>
 #include <iostream>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Barrier.hpp"
 
@@ -12,7 +14,11 @@ Barrier
 : n_threads(n_threads), counter_barrier(n_threads), generation(0)
 {
 	if (n_threads <= 0)
-		throw std::invalid_argument("aff3ct::tools::Barrier: \"n_threads\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'n_threads' has to be greater than 0 ('n_threads' = " << n_threads << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 	
 Barrier
@@ -40,12 +46,11 @@ void Barrier
 			// release the lock
 			if (cond_barrier.wait_for(lock, std::chrono::milliseconds(6000)) == std::cv_status::timeout)
 			{
-				throw std::invalid_argument("aff3ct::tools::Barrier: some threads did not reach the barrier "
-				                            "(counter_barrier = " + std::to_string(counter_barrier) +
-				                            ", tid = " + std::to_string(tid) +
-				                            ", generation = " + std::to_string(generation) + ")." +
-				                            "This message should never happen: there is a bug in the "
-				                            "multithreaded code.");
+				std::stringstream message;
+				message << "aff3ct::tools::Barrier: some threads did not reach the barrier (counter_barrier = "
+				        << counter_barrier << ", tid = " << tid << ", generation = " << generation
+				        << "). " << "This message should never happen: there is a bug in the multithreaded code.";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
 	}

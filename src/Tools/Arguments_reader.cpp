@@ -1,7 +1,9 @@
 #include <iostream>
-#include <stdexcept>
+#include <sstream>
 #include <algorithm>
 using namespace std;
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Arguments_reader.hpp"
 
@@ -12,7 +14,11 @@ Arguments_reader
 : m_argv(argc), max_n_char_arg(0)
 {
 	if (argc <= 0)
-		throw std::invalid_argument("aff3ct::tools::Arguments_reader: \"argc\" has to be greater than 0.");
+	{
+		std::stringstream message;
+		message << "'argc' has to be greater than 0 ('argc' = " << argc << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	this->m_program_name = argv[0];
 
@@ -77,18 +83,30 @@ bool Arguments_reader
 ::sub_parse_arguments(map<vector<string>, vector<string>> &args, unsigned short pos_arg)
 {
 	if (pos_arg >= this->m_argv.size())
-		throw std::invalid_argument("aff3ct::tools::Arguments_reader: \"pos_arg\" has to be smaller than "
-		                            "\"this->m_argv.size()\".");
+	{
+		std::stringstream message;
+		message << "'pos_arg' has to be smaller than 'm_argv.size()' ('pos_arg' = " << pos_arg
+		        << ", 'm_argv.size()' = " << this->m_argv.size() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	auto is_found = false;
 	for (auto it = args.begin(); it != args.end(); ++it)
 	{
 		if (it->first.size() <= 0)
-			throw std::runtime_error("aff3ct::tools::Arguments_reader: \"it->first.size()\" has to be greater "
-			                         "than 0.");
+		{
+			std::stringstream message;
+			message << "'it->first.size()' has to be greater than 0 ('it->first.size()' = " << it->first.size() << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if (it->second.size() <= 0)
-			throw std::runtime_error("aff3ct::tools::Arguments_reader: \"it->second.size()\" has to be greater "
-			                         "than 0.");
+		{
+			std::stringstream message;
+			message << "'it->second.size()' has to be greater than 0 ('it->second.size()' = " << it->second.size()
+			        << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		// remember the biggest argument length to display the doc after
 		const string delimiter = ", ";
@@ -183,8 +201,12 @@ void Arguments_reader
 	for (auto i = 0; i < (int)arg_groups.size(); i++)
 	{
 		if (arg_groups[i].size() <= 1)
-			throw std::runtime_error("aff3ct::tools::Arguments_reader: \"arg_groups[i].size()\" has to be greater "
-			                         "than 1.");
+		{
+			std::stringstream message;
+			message << "'arg_groups[i].size()' has to be greater than 1 ('i' = " << i
+			        << ", 'arg_groups[i].size()' = " << arg_groups[i].size() << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		// detect if there is at least one argument of this group
 		auto display = false;

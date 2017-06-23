@@ -1,6 +1,7 @@
 #include <cmath>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
 #include "Reorderer.hpp"
@@ -137,7 +138,12 @@ void Reorderer_static<T,N_FRAMES>
 ::apply(const std::vector<const T*> in_data, T* out_data, const int data_length)
 {
 	if (in_data.size() != N_FRAMES)
-		throw std::length_error("aff3ct::tools::Reorderer_static: \"in_data.size()\" has to be equal to \"N_FRAMES\".");
+	{
+		std::stringstream message;
+		message << "'in_data.size()' has to be equal to 'N_FRAMES' ('in_data.size()' = " << in_data.size()
+		        << ", 'N_FRAMES' = " << N_FRAMES << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	constexpr int n_fra = N_FRAMES;
 
@@ -366,7 +372,12 @@ void Reorderer_static<T,N_FRAMES>
 ::apply_rev(const T* in_data, std::vector<T*> out_data, const int data_length)
 {
 	if (out_data.size() != N_FRAMES)
-		throw std::length_error("aff3ct::tools::Reorderer_static: \"out_data.size()\" has to be equal to \"N_FRAMES\".");
+	{
+		std::stringstream message;
+		message << "'out_data.size()' has to be equal to 'N_FRAMES' ('out_data.size()' = " << out_data.size()
+		        << ", 'N_FRAMES' = " << N_FRAMES << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	constexpr int n_fra   = N_FRAMES;
 	constexpr int n_fra_2 = N_FRAMES / 2;

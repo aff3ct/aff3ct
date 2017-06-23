@@ -1,11 +1,13 @@
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
 #include <math.h>
-#include <stdexcept>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <arm_neon.h>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "transpose_NEON.h"
 
@@ -42,10 +44,14 @@
 #define COMBINE_LOW(b,c)   (cast_64_to_8( vcombine_u64(vget_low_u64  (cast_8_to_64(b)),  vget_low_u64 (cast_8_to_64(c)))))
 #define COMBINE_HIGH(b,c)  (cast_64_to_8( vcombine_u64(vget_high_u64 (cast_8_to_64(b)), vget_high_u64 (cast_8_to_64(c)))))
 
-void uchar_transpose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
+void aff3ct::tools::uchar_transpose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
 {
 	if (n % 16)
-		throw std::invalid_argument("aff3ct::tools::uchar_transpose_neon: \"n\" has to be divisible by 16.");
+	{
+		std::stringstream message;
+		message << "'n' has to be divisible by 16 ('n' = " << n << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	const int N = n / 16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	t_u8x16 *p_input  = const_cast<DATA_TYPE*>(src);
@@ -208,10 +214,14 @@ void uchar_transpose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
 }
 
 
-void uchar_itranspose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
+void aff3ct::tools::uchar_itranspose_neon(const DATA_TYPE *src, DATA_TYPE *dst, int n)
 {
 	if (n % 16)
-		throw std::invalid_argument("aff3ct::tools::uchar_itranspose_neon: \"n\" has to be divisible by 16.");
+	{
+		std::stringstream message;
+		message << "'n' has to be divisible by 16 ('n' = " << n << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	const int N = n / 16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	t_u8x16 *p_input  = const_cast<DATA_TYPE*>(src);

@@ -1,6 +1,8 @@
 #ifdef __AVX2__
 
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "transpose_AVX.h"
 
@@ -38,8 +40,8 @@ inline void _MM_TRANSPOSE8_PS(__m256 &row0, __m256 &row1, __m256 &row2, __m256 &
 //
 // TRANPOSITION DE MATRICE DE TAILLE Nx4
 //
-void avx_trans_float(float *A, float *B, int n)
-{   
+void aff3ct::tools::avx_trans_float(float *A, float *B, int n)
+{
 	int i = n/8;
 	while( i-- ){
 		__m256 row1 = _mm256_load_ps(A        );
@@ -67,7 +69,7 @@ void avx_trans_float(float *A, float *B, int n)
 //
 // TRANPOSITION DE MATRICE DE TAILLE 4xN
 //
-void avx_itrans_float(float *A, float *B, int n)
+void aff3ct::tools::avx_itrans_float(float *A, float *B, int n)
 {
 	int i = n/8;
 	while( i-- ){
@@ -99,10 +101,14 @@ void avx_itrans_float(float *A, float *B, int n)
 #define _mm256_unpacklo_epi128(a,b) (_mm256_permute2x128_si256(a,b,0x20))
 #define _mm256_unpackhi_epi128(a,b) (_mm256_permute2x128_si256(a,b,0x31))
 
-void uchar_transpose_avx(const __m256i *src, __m256i *dst, int n)
+void aff3ct::tools::uchar_transpose_avx(const __m256i *src, __m256i *dst, int n)
 {
 	if (n % 32)
-		throw std::invalid_argument("aff3ct::tools::uchar_transpose_avx: \"n\" has to be divisible by 32.");
+	{
+		std::stringstream message;
+		message << "'n' has to be divisible by 32 ('n' = " << n << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	const int constN = n / 32; // NOMBRE DE PAQUET (256 bits) PAR TRAME
 	__m256i *p_input  = const_cast<__m256i*>(src);
@@ -383,10 +389,14 @@ void uchar_transpose_avx(const __m256i *src, __m256i *dst, int n)
 	}
 }
 
-void uchar_itranspose_avx(const __m256i *src, __m256i *dst, int n)
+void aff3ct::tools::uchar_itranspose_avx(const __m256i *src, __m256i *dst, int n)
 {
 	if (n % 32)
-		throw std::invalid_argument("aff3ct::tools::uchar_itranspose_avx: \"n\" has to be divisible by 32.");
+	{
+		std::stringstream message;
+		message << "'n' has to be divisible by 32 ('n' = " << n << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	const int constN = n /32; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	__m256i *p_input  = const_cast<__m256i*>(src);

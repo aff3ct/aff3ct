@@ -1,5 +1,6 @@
-#include <stdexcept>
 #include <iostream>
+
+#include "Tools/Exception/exception.hpp"
 
 #ifdef __AVX2__
 #include "transpose_AVX.h"
@@ -36,8 +37,8 @@ bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int
 		is_transposed = true;
 	}
 #else
-	throw std::runtime_error("aff3ct::tools::char_transpose: transposition does not support this architecture "
-	                         "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
+	throw runtime_error(__FILE__, __LINE__, __func__, "Transposition does not support this architecture "
+	                                                  "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
 #endif
 
 	return is_transposed;
@@ -67,8 +68,8 @@ bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, in
 		is_itransposed = true;
 	}
 #else
-	throw std::runtime_error("aff3ct::tools::char_itranspose: transposition inv. does not support this architecture "
-	                         "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
+	throw runtime_error(__FILE__, __LINE__, __func__, "Transposition inverse does not support this architecture "
+	                                                  "(supported architectures are: NEON, NEONv2, SSE4.1 and AVX2).");
 #endif
 
 	return is_itransposed;

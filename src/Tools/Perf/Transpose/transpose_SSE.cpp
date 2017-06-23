@@ -1,14 +1,18 @@
 #ifdef __SSE4_1__
 
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "transpose_SSE.h"
+
+using namespace aff3ct::tools;
 
 //
 // TRANPOSITION DE MATRICE DE TAILLE Nx4
 //
-void sse_trans_float(float *A, float *B, int n)
-{   
+void aff3ct::tools::sse_trans_float(float *A, float *B, int n)
+{
 	int i = n/4;
 	while( i-- ){
 		__m128 row1 = _mm_load_ps(A        );
@@ -28,7 +32,7 @@ void sse_trans_float(float *A, float *B, int n)
 //
 // TRANPOSITION DE MATRICE DE TAILLE 4xN
 //
-void sse_itrans_float(float *A, float *B, int n)
+void aff3ct::tools::sse_itrans_float(float *A, float *B, int n)
 {
 	int i = n/4;
 	while( i-- ){
@@ -49,10 +53,14 @@ void sse_itrans_float(float *A, float *B, int n)
 #define LOAD_SIMD_FX    _mm_load_si128
 #define STORE_SIMD_FX   _mm_store_si128
 
-void uchar_transpose_sse(const __m128i *src, __m128i *dst, int n)
+void aff3ct::tools::uchar_transpose_sse(const __m128i *src, __m128i *dst, int n)
 {
 	if (n % 16)
-		throw std::invalid_argument("aff3ct::tools::uchar_transpose_sse: \"n\" has to be divisible by 16.");
+	{
+		std::stringstream message;
+		message << "'n' has to be divisible by 16 ('n' = " << n << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	const int N = n /16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	__m128i *p_input = const_cast<__m128i*>(src);
@@ -180,10 +188,14 @@ void uchar_transpose_sse(const __m128i *src, __m128i *dst, int n)
 #define LOAD_SIMD_FX    _mm_load_si128
 #define STORE_SIMD_FX   _mm_store_si128
 
-void uchar_itranspose_sse(const __m128i *src, __m128i *dst, int n)
+void aff3ct::tools::uchar_itranspose_sse(const __m128i *src, __m128i *dst, int n)
 {
 	if (n % 16)
-		throw std::invalid_argument("aff3ct::tools::uchar_itranspose_sse: \"n\" has to be divisible by 16.");
+	{
+		std::stringstream message;
+		message << "'n' has to be divisible by 16 ('n' = " << n << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	const int N = n /16; // NOMBRE DE PAQUET (128 bits) PAR TRAME
 	__m128i *p_input  = const_cast<__m128i*>(src);
