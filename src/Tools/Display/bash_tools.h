@@ -10,7 +10,6 @@ namespace tools
 {
 extern bool enable_bash_tools;
 
-
 /*
  * Format type contains all the details to display correctly the text.
  * binary use is : 32 unused bits, 12 flags for the style,

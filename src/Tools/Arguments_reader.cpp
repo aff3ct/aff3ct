@@ -295,11 +295,6 @@ void Arguments_reader
 {
 	Format arg_format = 0;
 
-//	if (required)
-//		arg_format |= FG::Color::GREEN;
-	//else
-		//arg_format |= FG::Color::DEFAULT;
-
 	if (values.size() >= 2 && !values[1].empty())
 	{
 		const auto tab = "    ";
@@ -359,7 +354,6 @@ bool Arguments_reader
 
 	return error.size() == 0;
 }
-
 
 std::string Arguments_reader
 ::check_argument(const std::vector<std::string> &tags, std::map<std::vector<std::string>, std::vector<std::string>> &args)
@@ -436,7 +430,6 @@ std::string Arguments_reader
 	return ((tag.size() == 1) ? "-" : "--") + tag;
 }
 
-
 std::vector<std::string> Arguments_reader
 ::split(std::string str)
 {
@@ -463,7 +456,6 @@ std::vector<std::string> Arguments_reader
 
 	return str_splited;
 }
-
 
 void Arguments_reader
 ::clear_arguments()

@@ -227,17 +227,17 @@ void Terminal_BFER<B>
 	unsigned long long l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << format(" | ", Style::BOLD);
-	stream <<                                                                                                     ebn0_str.str()  << format(" | ", Style::BOLD);
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << format(" | ", Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << format(" | ", Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << format(" | ", Style::BOLD);
-	stream <<                                                                                                       str_ber.str() << format(" | ", Style::BOLD);
+	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
+	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(9) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
+	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(9) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
+	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(9) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
+	stream <<                                                                                                       str_ber.str() << format(" | ",  Style::BOLD);
 	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
 	if (this->d_decod_total != nullptr)
 	{
-		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_cthr << format(" | ", Style::BOLD);
-		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_ithr << format(" | ", Style::BOLD);
+		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_cthr << format(" | ",  Style::BOLD);
+		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_ithr << format(" | ",  Style::BOLD);
 		stream << setprecision(             2) << ((lat > l2) ? scientific : fixed) << setw(9) <<                             lat << format(" || ", Style::BOLD);
 	}
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
@@ -250,17 +250,17 @@ void Terminal_BFER<B>
 	unsigned long long l1 = 99999999;  // limit 1
 	auto               l2 = 99999.99f; // limit 2
 	stream << "  ";
-	stream <<                                                                                                     esn0_str.str()  << format(" | ", Style::BOLD);
-	stream <<                                                                                                     ebn0_str.str()  << format(" | ", Style::BOLD);
-	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << format(" | ", Style::BOLD);
-	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << format(" | ", Style::BOLD);
-	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << format(" | ", Style::BOLD);
-	stream <<                                                                                                       str_ber.str() << format(" | ", Style::BOLD);
+	stream <<                                                                                                     esn0_str.str()  << format(" | ",  Style::BOLD);
+	stream <<                                                                                                     ebn0_str.str()  << format(" | ",  Style::BOLD);
+	stream << setprecision((fra > l0) ? 2 : 0) << ((fra > l0) ? scientific : fixed) << setw(8) << ((fra > l0) ? (float)fra : fra) << format(" | ",  Style::BOLD);
+	stream << setprecision(( be > l1) ? 2 : 0) << ((be  > l1) ? scientific : fixed) << setw(8) << (( be > l1) ? (float) be :  be) << format(" | ",  Style::BOLD);
+	stream << setprecision(( fe > l1) ? 2 : 0) << ((fe  > l1) ? scientific : fixed) << setw(8) << (( fe > l1) ? (float) fe :  fe) << format(" | ",  Style::BOLD);
+	stream <<                                                                                                       str_ber.str() << format(" | ",  Style::BOLD);
 	stream <<                                                                                                       str_fer.str() << format(" || ", Style::BOLD);
 	if (this->d_decod_total != nullptr)
 	{
-		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_cthr << format(" | ", Style::BOLD);
-		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_ithr << format(" | ", Style::BOLD);
+		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_cthr << format(" | ",  Style::BOLD);
+		stream << setprecision(             2) <<                            fixed  << setw(8) <<                        dec_ithr << format(" | ",  Style::BOLD);
 		stream << setprecision(             2) << ((lat > l2) ? scientific : fixed) << setw(8) <<                             lat << format(" || ", Style::BOLD);
 	}
 	stream << setprecision(                 2) <<                            fixed  << setw(8) <<                       simu_cthr;
