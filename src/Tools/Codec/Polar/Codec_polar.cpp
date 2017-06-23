@@ -1,5 +1,6 @@
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 #include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
@@ -35,13 +36,17 @@ Codec_polar<B,Q>
 		                                                      this->params.simulation.bin_pb_path);
 
 		if (fb_generator == nullptr)
-			throw std::runtime_error("aff3ct::tools::Codec_polar: \"fb_generator\" can't be null.");
+			throw runtime_error(__FILE__, __LINE__, __func__, "'fb_generator' can't be null.");
 	}
 	else
 	{
 		if (this->params.code.N != this->params.code.N_code)
-			throw std::invalid_argument("aff3ct::tools::Codec_polar: \"params.code.N\" has to be equal "
-			                            "to \"params.code.N_code\".");
+		{
+			std::stringstream message;
+			message << "'N' has to be equal to 'N_code' ('N' = " << this->params.code.N
+			        << ", 'N_code' = " << this->params.code.N_code << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 }
 
@@ -187,11 +192,29 @@ void Codec_polar<B,Q>
 	const auto N = this->params.code.N_code;
 
 	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_polar: invalid \"Y_N\" size.");
+	{
+		std::stringstream message;
+		message << "'Y_N.size()' has to be equal to 'N' * 'inter_frame_level' ('Y_N.size()' = " << Y_N.size()
+		        << ", 'N' = " << N << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_polar: invalid \"sys\" size.");
+	{
+		std::stringstream message;
+		message << "'sys.size()' has to be equal to 'K' * 'inter_frame_level' ('sys.size()' = " << sys.size()
+		        << ", 'K' = " << K << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)par.size() != (N - K) * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_polar: invalid \"par\" size.");
+	{
+		std::stringstream message;
+		message << "'par.size()' has to be equal to ('N' - 'K') * 'inter_frame_level' ('par.size()' = " << par.size()
+		        << ", 'N' = " << N << ", 'K' = " << K << ", 'inter_frame_level' = "
+		        << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	// extract systematic and parity information
 	auto par_idx = 0, sys_idx = 0;

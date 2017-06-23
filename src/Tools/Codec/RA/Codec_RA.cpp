@@ -1,3 +1,4 @@
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RA/Factory_encoder_RA.hpp"
 #include "Tools/Factory/RA/Factory_decoder_RA.hpp"
@@ -38,7 +39,7 @@ Encoder<B>* Codec_RA<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	if (itl == nullptr)
-		throw std::runtime_error("aff3ct::tools::Codec_RA: \"itl\" should not be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
 	return Factory_encoder_RA<B>::build(this->params.encoder.type,
 	                                    this->params.code.K,
@@ -52,7 +53,7 @@ Decoder<B,Q>* Codec_RA<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (itl == nullptr)
-		throw std::runtime_error("aff3ct::tools::Codec_RA: \"itl\" should not be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
 	return Factory_decoder_RA<B,Q>::build(this->params.decoder.type,
 	                                      this->params.decoder.implem,

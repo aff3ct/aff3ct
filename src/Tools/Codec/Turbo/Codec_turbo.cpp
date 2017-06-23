@@ -1,7 +1,7 @@
 #include <functional>
-#include <stdexcept>
 #include <cctype>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
 #include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
@@ -31,8 +31,7 @@ Codec_turbo<B,Q,QD>
 	if (!params.simulation.json_path.empty())
 	{
 		if (this->params.simulation.n_threads != 1)
-			throw std::runtime_error("aff3ct::tools::Codec_turbo: only single-threaded simulation is "
-			                         "available with JSON trace.");
+			throw runtime_error(__FILE__, __LINE__, __func__, "JSON trace only supports single-threaded simulation.");
 
 		json_stream.open(params.simulation.json_path.c_str(), std::ios::out | std::ios::trunc);
 
@@ -111,7 +110,7 @@ Encoder<B>* Codec_turbo<B,Q,QD>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
 	if (itl == nullptr)
-		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"itl\" should not be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
 	if (sub_enc[tid] != nullptr)
 	{
@@ -122,7 +121,7 @@ Encoder<B>* Codec_turbo<B,Q,QD>
 	sub_enc[tid] = this->build_sub_encoder(tid);
 
 	if (sub_enc[tid] == nullptr)
-		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"sub_enc\" can't be created.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'sub_enc' can't be created.");
 
 	return Factory_encoder_turbo<B>::build(this->params.encoder.type,
 	                                       this->params.code.K,
@@ -169,7 +168,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (itl == nullptr)
-		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"itl\" should not be null.");
+		throw runtime_error(__FILE__, __LINE__, __func__,  "'itl' should not be null.");
 
 	clear_post_processing(tid);
 
@@ -182,7 +181,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 	siso[tid] = this->build_sub_siso(tid);
 
 	if (siso[tid] == nullptr)
-		throw std::runtime_error("aff3ct::tools::Codec_turbo: \"siso\" can't be created.");
+		throw runtime_error(__FILE__, __LINE__, __func__, "'siso' can't be created.");
 
 	auto decoder = Factory_decoder_turbo<B,Q>::build("TURBO",
 	                                                 typeid(B) == typeid(long long) ? "STD" : "FAST",
@@ -222,7 +221,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 			                                                        this->params.decoder.fnc_ite_step,
 			                                                        decoder->get_simd_inter_frame_level()));
 		else
-			throw std::runtime_error("aff3ct::tools::Codec_turbo: the Flip aNd Check requires a CRC.");
+			throw runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 	}
 	else if (crc != nullptr && crc->get_size() > 0)
 	{

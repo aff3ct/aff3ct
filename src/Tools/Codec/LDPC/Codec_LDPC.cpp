@@ -1,8 +1,9 @@
 #include <fstream>
+#include <sstream>
 #include <numeric>
 #include <algorithm>
-#include <exception>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Code/LDPC/AList/AList.hpp"
 
 #include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
@@ -135,11 +136,29 @@ void Codec_LDPC<B,Q>
 	const auto N = this->params.code.N_code;
 
 	if ((int)Y_N.size() != N * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_LDPC: invalid \"Y_N\" size.");
+	{
+		std::stringstream message;
+		message << "'Y_N.size()' has to be equal to 'N' * 'inter_frame_level' ('Y_N.size()' = " << Y_N.size()
+		        << ", 'N' = " << N << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_LDPC: invalid \"sys\" size.");
+	{
+		std::stringstream message;
+		message << "'sys.size()' has to be equal to 'K' * 'inter_frame_level' ('sys.size()' = " << sys.size()
+		        << ", 'K' = " << K << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)par.size() != (N - K) * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_LDPC: invalid \"par\" size.");
+	{
+		std::stringstream message;
+		message << "'par.size()' has to be equal to ('N' - 'K') * 'inter_frame_level' ('par.size()' = " << par.size()
+		        << ", 'N' = " << N << ", 'K' = " << K << ", 'inter_frame_level' = "
+		        << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	// extract systematic and parity information
 	auto sys_idx = 0;

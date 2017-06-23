@@ -1,4 +1,6 @@
-#include <stdexcept>
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/NO/Encoder_NO.hpp"
 #include "Module/Decoder/NO/Decoder_NO.hpp"
@@ -14,7 +16,12 @@ Codec_uncoded<B,Q>
 : Codec_SISO<B,Q>(params)
 {
 	if (params.code.K != params.code.N_code)
-		throw std::invalid_argument("aff3ct::tools::Codec_uncoded: \"K\" has to be equal to \"N_code\".");
+	{
+		std::stringstream message;
+		message << "'K' has to be equal to 'N_code' ('K' = " << params.code.K
+		        << ", 'N_code' = " << params.code.N_code << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename Q>
@@ -54,11 +61,27 @@ void Codec_uncoded<B,Q>
 	const auto K = this->params.code.K;
 
 	if ((int)Y_N.size() != K * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"Y_N\" size.");
+	{
+		std::stringstream message;
+		message << "'Y_N.size()' has to be equal to 'K' * 'inter_frame_level' ('Y_N.size()' = " << Y_N.size()
+		        << ", 'K' = " << K << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)sys.size() != K * this->params.simulation.inter_frame_level)
-		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"sys\" size.");
+	{
+		std::stringstream message;
+		message << "'sys.size()' has to be equal to 'K' * 'inter_frame_level' ('sys.size()' = " << sys.size()
+		        << ", 'K' = " << K << ", 'inter_frame_level' = " << this->params.simulation.inter_frame_level << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((int)par.size() != 0)
-		throw std::length_error("aff3ct::tools::Codec_uncoded: invalid \"par\" size.");
+	{
+		std::stringstream message;
+		message << "'par.size()' has to be equal to 0 ('par.size()' = " << 'par.size()' << ").";
+		throw length_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	std::copy(Y_N.begin(), Y_N.end(), sys.begin());
 }
