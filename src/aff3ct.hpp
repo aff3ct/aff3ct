@@ -16,11 +16,6 @@
 #include <Tools/Code/Polar/API/functions_polar_intra_32bit.h>
 #include <Tools/Code/Polar/decoder_polar_functions.h>
 #include <Tools/Code/Polar/fb_extract.h>
-#include <Tools/Perf/MIPP/math/sse_mathfun.h>
-#include <Tools/Perf/MIPP/math/avx_mathfun.h>
-#include <Tools/Perf/MIPP/math/neon_mathfun.h>
-#include <Tools/Perf/MIPP/mipp_scalar_op.h>
-#include <Tools/Perf/MIPP/mipp.h>
 #include <Tools/Perf/Transpose/transpose_AVX.h>
 #include <Tools/Perf/Transpose/transpose_SSE.h>
 #include <Tools/Perf/Transpose/transpose_selector.h>
