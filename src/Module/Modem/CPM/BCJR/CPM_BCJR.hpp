@@ -1,8 +1,10 @@
 #ifndef CPM_BCJR_HPP_
 #define CPM_BCJR_HPP_
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/max.h"
+
 #include "../CPM_parameters.hpp"
 
 namespace aff3ct

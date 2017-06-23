@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <string>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 namespace aff3ct
 {

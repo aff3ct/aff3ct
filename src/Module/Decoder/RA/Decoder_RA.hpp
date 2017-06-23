@@ -2,7 +2,7 @@
 #define DECODER_RA
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Decoder.hpp"
 #include "../../Interleaver/Interleaver.hpp"

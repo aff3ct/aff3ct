@@ -68,6 +68,16 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     include_directories (src/Tools/MSVC)
 endif()
 
+# MIPP wrapper includes
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
+    include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/")
+    message(STATUS "MIPP found")
+else ()
+    message(FATAL_ERROR "MIPP can't be found, try to init the submodules with the following cmd:\n"
+                        "$ git submodule update --init --recursive")
+endif ()
+
+
 # Object
 add_library (aff3ct-obj OBJECT ${source_files})
 

@@ -3,8 +3,8 @@
 
 #include <limits>
 #include <utility> // pair
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
 #ifndef _MSC_VER

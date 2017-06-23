@@ -1,7 +1,7 @@
+#include <mipp.h>
+
 #include "Decoder_RSC_BCJR_inter_fast.hpp"
 #include "Decoder_RSC_BCJR_inter_very_fast.hpp"
-
-#include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
 {

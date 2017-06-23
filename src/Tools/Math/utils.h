@@ -4,9 +4,9 @@
 #include <sstream>
 #include <algorithm>
 #include <limits>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
 {

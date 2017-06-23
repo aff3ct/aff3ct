@@ -3,8 +3,8 @@
 
 #include <map>
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"

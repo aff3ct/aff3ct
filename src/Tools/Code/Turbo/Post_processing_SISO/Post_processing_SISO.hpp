@@ -1,7 +1,7 @@
 #ifndef POST_PROCESSING_SISO_HPP
 #define POST_PROCESSING_SISO_HPP
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 namespace aff3ct
 {

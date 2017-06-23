@@ -3,8 +3,8 @@
 
 #include <complex>
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 
 #include "../Modem.hpp"

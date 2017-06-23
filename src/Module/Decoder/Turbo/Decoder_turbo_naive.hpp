@@ -2,8 +2,8 @@
 #define DECODER_TURBO_NAIVE_HPP
 
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "Decoder_turbo.hpp"

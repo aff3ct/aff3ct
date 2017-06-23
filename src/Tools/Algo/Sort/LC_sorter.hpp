@@ -5,8 +5,8 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
 
 template <typename T>

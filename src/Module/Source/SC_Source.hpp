@@ -7,8 +7,7 @@
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_initiator_socket.h>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 namespace aff3ct
 {

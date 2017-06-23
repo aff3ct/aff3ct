@@ -2,7 +2,7 @@
 #define DECODER_REPETITION
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Decoder_SISO.hpp"
 

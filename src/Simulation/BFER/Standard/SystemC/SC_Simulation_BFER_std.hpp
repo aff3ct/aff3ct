@@ -4,8 +4,7 @@
 #define SC_SIMULATION_BFER_STD_HPP_
 
 #include <vector>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "Tools/SystemC/SC_Debug.hpp"
 #include "Tools/SystemC/SC_Duplicator.hpp"

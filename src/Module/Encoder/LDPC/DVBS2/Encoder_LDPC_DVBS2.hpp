@@ -2,8 +2,7 @@
 #define ENCODER_LDPC_DVBS2_HPP_
 
 #include <vector>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Encoder_LDPC.hpp"
 

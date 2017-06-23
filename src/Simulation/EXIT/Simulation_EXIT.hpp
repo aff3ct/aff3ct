@@ -2,8 +2,8 @@
 #define SIMULATION_EXIT_HPP_
 
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 
 #include "Module/Source/Source.hpp"

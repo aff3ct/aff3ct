@@ -1,0 +1,3 @@
+[submodule "lib/MIPP"]
+	path = lib/MIPP
+	url = ../MIPP

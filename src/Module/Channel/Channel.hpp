@@ -12,9 +12,9 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Module/Module.hpp"
 

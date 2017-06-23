@@ -1,7 +1,8 @@
 #ifndef ENCODER_CPE_RIMOLDI_HPP_
 #define ENCODER_CPE_RIMOLDI_HPP_
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Encoder_CPE.hpp"
 
 namespace aff3ct

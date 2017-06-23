@@ -1,7 +1,7 @@
 #ifndef MAX_H
 #define MAX_H
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #ifndef _MSC_VER
 #ifndef __forceinline

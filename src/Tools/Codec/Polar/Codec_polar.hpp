@@ -1,7 +1,8 @@
 #ifndef CODEC_POLAR_HPP_
 #define CODEC_POLAR_HPP_
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "Module/Decoder/Decoder_SISO.hpp"

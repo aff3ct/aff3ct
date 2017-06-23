@@ -7,9 +7,9 @@
 #include <limits>
 #include <cmath>
 #include <map>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Math/utils.h"
 

@@ -2,7 +2,8 @@
 #define DECODER_RSC_BCJR_STD_GENERIC_SEQ_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/max.h"
 
 #include "Decoder_RSC_BCJR_seq_generic.hpp"

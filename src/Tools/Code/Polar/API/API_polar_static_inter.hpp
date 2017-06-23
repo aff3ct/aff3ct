@@ -2,10 +2,9 @@
 #define API_POLAR_STATIC_INTER_HPP_
 
 #include <algorithm>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/utils.h"
-
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "functions_polar_inter_intra.h"

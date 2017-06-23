@@ -2,7 +2,8 @@
 #define MODEM_PAM_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/max.h"
 
 #include "../Modem.hpp"

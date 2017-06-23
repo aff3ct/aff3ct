@@ -4,8 +4,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Simulation_BFER_std.hpp"
 

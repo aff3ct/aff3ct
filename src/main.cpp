@@ -3,6 +3,7 @@
 #include <exception>
 #include <map>
 #include <string>
+#include <mipp.h>
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
@@ -17,7 +18,6 @@
 #include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
-#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Launcher/Launcher.hpp"
 

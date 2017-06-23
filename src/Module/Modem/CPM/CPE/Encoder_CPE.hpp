@@ -1,7 +1,7 @@
 #ifndef ENCODER_CPE_HPP_
 #define ENCODER_CPE_HPP_
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../CPM_parameters.hpp"
 

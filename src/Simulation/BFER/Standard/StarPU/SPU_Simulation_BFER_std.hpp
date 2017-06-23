@@ -4,10 +4,8 @@
 #define SPU_SIMULATION_BFER_STD_HPP_
 
 #include <vector>
-
 #include <starpu.h>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Simulation_BFER_std.hpp"
 

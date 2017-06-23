@@ -9,9 +9,9 @@
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
 {

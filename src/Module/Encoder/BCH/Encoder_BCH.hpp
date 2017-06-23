@@ -2,7 +2,7 @@
 #define ENCODER_BCH_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Encoder.hpp"
 #include "Tools/Math/Galois.hpp"

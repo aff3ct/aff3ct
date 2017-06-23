@@ -2,7 +2,7 @@
 #define MODEM_BPSK_FAST_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Modem.hpp"
 

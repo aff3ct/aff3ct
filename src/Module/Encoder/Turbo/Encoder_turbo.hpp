@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../../Interleaver/Interleaver.hpp"
 

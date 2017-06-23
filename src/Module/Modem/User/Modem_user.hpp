@@ -3,8 +3,8 @@
 
 #include <complex>
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Math/max.h"
 
 #include "../Modem.hpp"

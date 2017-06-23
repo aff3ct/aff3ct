@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Monitor_std.hpp"
 
 namespace aff3ct

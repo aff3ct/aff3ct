@@ -6,8 +6,7 @@
 #include <chrono>
 #include <vector>
 #include <utility>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Simulation_BFER_ite.hpp"
 

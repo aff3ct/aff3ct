@@ -1,7 +1,7 @@
 #include <sstream>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 
 #include "CRC_polynomial_inter.hpp"
 

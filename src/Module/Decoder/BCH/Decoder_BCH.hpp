@@ -2,7 +2,8 @@
 #define DECODER_BCH
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/Galois.hpp"
 
 #include "../Decoder.hpp"

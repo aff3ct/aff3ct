@@ -2,9 +2,9 @@
 #define FACTORY_DECODER_LDPC_HPP
 
 #include <string>
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"

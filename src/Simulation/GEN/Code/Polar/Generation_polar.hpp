@@ -5,8 +5,8 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 #include "Tools/params.h"

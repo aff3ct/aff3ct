@@ -1,9 +1,9 @@
 #include <chrono>
 #include <limits>
 #include <sstream>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_RSC_BCJR.hpp"

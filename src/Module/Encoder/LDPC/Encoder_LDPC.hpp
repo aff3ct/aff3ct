@@ -2,9 +2,9 @@
 #define ENCODER_LDPC_HPP_
 
 #include <vector>
-#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 #include "../Encoder.hpp"
 

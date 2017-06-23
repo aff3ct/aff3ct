@@ -5,7 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct

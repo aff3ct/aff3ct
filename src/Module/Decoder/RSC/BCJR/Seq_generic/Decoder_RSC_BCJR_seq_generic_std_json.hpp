@@ -3,7 +3,8 @@
 
 #include <vector>
 #include <iostream>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/max.h"
 
 #include "Decoder_RSC_BCJR_seq_generic_std.hpp"

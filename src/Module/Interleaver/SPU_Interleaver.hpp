@@ -5,10 +5,8 @@
 #include <vector>
 #include <string>
 #include <cassert>
-
+#include <mipp.h>
 #include <starpu.h>
-
-#include "Tools/Perf/MIPP/mipp.h"
 
 namespace aff3ct
 {

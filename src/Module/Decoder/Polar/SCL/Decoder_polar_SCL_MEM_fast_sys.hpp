@@ -3,10 +3,10 @@
 
 #include <set>
 #include <vector>
+#include <mipp.h>
 
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../Decoder.hpp"

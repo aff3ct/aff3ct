@@ -2,7 +2,7 @@
 #define ENCODER_TURBO_LEGACY_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include <string>
 

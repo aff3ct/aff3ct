@@ -1,5 +1,6 @@
+#include <mipp.h>
+
 #include "Tools/Math/utils.h"
-#include "Tools/Perf/MIPP/mipp.h"
 
 #include "Scaling_factor_vec.hpp"
 

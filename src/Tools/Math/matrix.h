@@ -1,7 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #ifndef _MSC_VER
 #ifndef __forceinline

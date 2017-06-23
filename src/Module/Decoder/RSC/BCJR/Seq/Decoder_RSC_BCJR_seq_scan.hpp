@@ -2,7 +2,8 @@
 #define DECODER_RSC_BCJR_SEQ_SCAN_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/max.h"
 
 namespace aff3ct

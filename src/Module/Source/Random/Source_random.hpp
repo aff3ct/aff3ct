@@ -3,7 +3,7 @@
 
 #include <random>
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Source.hpp"
 

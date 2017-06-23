@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <string>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "../Coset.hpp"
 

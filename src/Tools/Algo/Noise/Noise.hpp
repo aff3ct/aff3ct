@@ -1,7 +1,7 @@
 #ifndef NOISE_HPP_
 #define NOISE_HPP_
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 namespace aff3ct
 {

@@ -2,8 +2,7 @@
 #define FACTORY_DECODER_POLAR_GEN_HPP
 
 #include <string>
-
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/CRC/CRC.hpp"

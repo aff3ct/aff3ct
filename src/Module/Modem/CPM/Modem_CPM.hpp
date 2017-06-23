@@ -4,8 +4,8 @@
 #include <cmath>
 #include <fstream>
 #include <string>
+#include <mipp.h>
 
-#include "Tools/Perf/MIPP/mipp.h"
 #include "Tools/params.h"
 #include "Tools/Math/max.h"
 

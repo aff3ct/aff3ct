@@ -2,7 +2,8 @@
 #define DECODER_RSC_BCJR_INTER_INTRA_FAST_X4_AVX_HPP_
 
 #include <vector>
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
+
 #include "Tools/Math/max.h"
 
 #include "Decoder_RSC_BCJR_inter_intra.hpp"

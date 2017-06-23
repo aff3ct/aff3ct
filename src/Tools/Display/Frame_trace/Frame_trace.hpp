@@ -8,7 +8,7 @@
 #ifndef FRAME_TRACE_HPP
 #define FRAME_TRACE_HPP
 
-#include "Tools/Perf/MIPP/mipp.h"
+#include <mipp.h>
 
 namespace aff3ct
 {
