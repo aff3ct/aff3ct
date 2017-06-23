@@ -184,7 +184,7 @@ void Arguments_reader
 void Arguments_reader
 ::print_usage(std::vector<std::vector<std::string>> arg_groups)
 {
-	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::YELLOW;
+	Format head_format = Style::BOLD | Style::ITALIC | FG::Color::MAGENTA | FG::INTENSE;
 
 	std::cout << "Usage: " << this->m_program_name;
 
@@ -237,7 +237,7 @@ void Arguments_reader
 
 		if (display)
 		{
-			std::cout << format(arg_groups[i][1] + ": ", head_format) << std::endl;
+			std::cout << format(arg_groups[i][1] + ":", head_format) << std::endl;
 			if (arg_groups[i].size() > 2)
 				std::cout << arg_groups[i][2] << std::endl;
 
@@ -271,7 +271,7 @@ void Arguments_reader
 
 	if (!req_args_cpy.empty() || !opt_args_cpy.empty())
 	{
-		std::cout << format("Other parameter(s): ", head_format) << std::endl;
+		std::cout << format("Other parameter(s):", head_format) << std::endl;
 		for (auto it = req_args_cpy.begin(); it != req_args_cpy.end(); )
 		{
 			// gr->first is a prefix of it->first[0].
@@ -314,7 +314,7 @@ void Arguments_reader
 		if (values.size() < 3)
 		{
 			if (!values[0].empty())
-				std::cout << format(" <" + values[0] + ">", arg_format);
+				std::cout << format(" <" + values[0] + ">", arg_format | FG::GRAY);
 		}
 		else
 		{
@@ -324,7 +324,7 @@ void Arguments_reader
 				set += entries[i] + "|";
 			set += entries[entries.size() -1];
 
-			std::cout << format(" <" + values[0] + "=" + set + ">", arg_format);
+			std::cout << format(" <" + values[0] + "=" + set + ">", arg_format | FG::GRAY);
 		}
 		if (required)
 			std::cout << format(" {REQUIRED}", arg_format | Style::BOLD | FG::Color::ORANGE);

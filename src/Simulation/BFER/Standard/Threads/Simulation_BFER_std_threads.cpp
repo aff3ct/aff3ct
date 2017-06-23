@@ -133,9 +133,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
 		{
-			std::cerr << format_error("An issue was encountered during the simulation loop (tid = "
-			                         + std::to_string(tid) + ").") << std::endl
-			          << format_error(e.what()) << std::endl;
+			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
 			simu->prev_err_message = e.what();
 		}
 		simu->mutex_exception.unlock();

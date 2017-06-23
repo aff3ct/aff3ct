@@ -485,14 +485,6 @@ int Launcher<B,R,Q>
 	std::vector<std::string> cmd_error;
 	bool error = !ar.check_arguments(cmd_error);
 
-	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << format_error(cmd_error[e]) << std::endl;
-
-	// print the warnings
-	if (params.simulation.mpi_rank == 0)
-		for (unsigned w = 0; w < cmd_warn.size(); w++)
-			std::clog << format_warning(cmd_warn[w]) << std::endl;
-
 	if (display_help)
 	{
 		std::vector<std::vector<std::string>> arg_grp;
@@ -515,7 +507,17 @@ int Launcher<B,R,Q>
 		ar.print_usage(arg_grp);
 		error = true;
 	}
-	else if (error)
+
+	// print the errors
+	for (unsigned e = 0; e < cmd_error.size(); e++)
+		std::cerr << format_error(cmd_error[e]) << std::endl;
+
+	// print the warnings
+	if (params.simulation.mpi_rank == 0)
+		for (unsigned w = 0; w < cmd_warn.size(); w++)
+			std::clog << format_warning(cmd_warn[w]) << std::endl;
+
+	if (error && !display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
@@ -860,23 +862,20 @@ void Launcher<B,R,Q>
 	if (params.simulation.mpi_rank == 0)
 		this->print_header();
 
-
 	try
 	{
 		simu = this->build_simu();
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << format_error("An issue was encountered when building the simulation.") << std::endl
-		          << format_error(e.what()) << std::endl;
+		std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
 	}
-
 
 	if (simu != nullptr)
 	{
 		// launch the simulation
 		if (params.simulation.mpi_rank == 0)
-			stream << "# " << format_info("The simulation is running...") << std::endl;
+			stream << "# " << "The simulation is running..." << std::endl;
 
 		try
 		{
@@ -884,8 +883,7 @@ void Launcher<B,R,Q>
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << format_error("An issue was encountered when running the simulation.") << std::endl
-			          << format_error(e.what()) << std::endl;
+			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
 		}
 	}
 

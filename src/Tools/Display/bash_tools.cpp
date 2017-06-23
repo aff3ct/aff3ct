@@ -139,37 +139,37 @@ std::string aff3ct::tools::default_style(std::string str)
 
 std::string aff3ct::tools::format_error(std::string str)
 {
-	return format("(EE) " + str, FG::Color::RED | FG::Intensity::INTENSE);
+	return format("(EE) ", FG::Color::RED | FG::Intensity::INTENSE | Style::BOLD) + str;
 }
 
 std::string aff3ct::tools::format_critical_error(std::string str)
 {
-	return format("(EE) " + str, FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::RED | BG::Intensity::INTENSE);
+	return format("(EE) ", FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::RED | BG::Intensity::INTENSE) + str;
 }
 
 std::string aff3ct::tools::format_warning(std::string str)
 {
-	return format("(WW) " + str, FG::Color::ORANGE | FG::Intensity::NORMAL);
+	return format("(WW) ", FG::Color::ORANGE | FG::Intensity::NORMAL | Style::BOLD) + str;
 }
 
 std::string aff3ct::tools::format_critical_warning(std::string str)
 {
-	return format("(WW) " + str, FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::ORANGE | BG::Intensity::INTENSE);
+	return format("(WW) ", FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::ORANGE | BG::Intensity::INTENSE) + str;
 }
 
 std::string aff3ct::tools::format_info(std::string str)
 {
-	return format("(II) " + str, FG::Color::BLUE | FG::Intensity::NORMAL);
+	return format("(II) ", FG::Color::BLUE | FG::Intensity::NORMAL | Style::BOLD) + str;
 }
 
 std::string aff3ct::tools::format_critical_info(std::string str)
 {
-	return format("(II) " + str, FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::BLUE | BG::Intensity::INTENSE);
+	return format("(II) ", FG::Color::WHITE | FG::Intensity::NORMAL | BG::Color::BLUE | BG::Intensity::INTENSE) + str;
 }
 
 std::string aff3ct::tools::format_positive_info(std::string str)
 {
-	return format("(II) " + str, FG::Color::GREEN | FG::Intensity::NORMAL);
+	return format("(II) ", FG::Color::GREEN | FG::Intensity::NORMAL) + str;
 }
 
 

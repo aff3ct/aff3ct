@@ -125,10 +125,7 @@ void Simulation_BFER<B,R,Q>
 		mutex_exception.lock();
 		if (prev_err_message != e.what())
 		{
-			std::cerr << format_error("An issue was encountered when building the communication chain (tid = "
-			                          + std::to_string(tid) + ").") << std::endl
-			          << format_error(e.what()) << std::endl;
-
+			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
 			prev_err_message = e.what();
 		}
 		mutex_exception.unlock();
@@ -213,9 +210,7 @@ void Simulation_BFER<B,R,Q>
 			catch (std::exception const& e)
 			{
 				Monitor<B>::stop();
-
-				std::cerr << format_error("An issue was encountered during the simulation loop.") << std::endl
-				          << format_error(e.what()) << std::endl;
+				std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
 			}
 
 			// stop the terminal
