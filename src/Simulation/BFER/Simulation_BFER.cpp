@@ -299,7 +299,7 @@ void Simulation_BFER<B,R,Q>
 			max_chars = std::max(max_chars, (int)duration.first.second.length());
 
 		stream << "#" << std::endl;
-		stream << "# " << format("Time report", Style::BOLD || Style::UNDERLINED) << " (the time of the threads is cumulated)" << std::endl;
+		stream << "# " << format("Time report", Style::BOLD | Style::UNDERLINED) << " (the time of the threads is cumulated)" << std::endl;
 
 		auto prev_sec = 0.f;
 		for (auto& duration : durations_sum)
