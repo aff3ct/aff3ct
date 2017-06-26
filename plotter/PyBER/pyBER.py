@@ -22,10 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import libs.pyqtgraph.console
-import libs.pyqtgraph as pg
-from libs.pyqtgraph.Qt import QtCore, QtGui
-from libs.pyqtgraph.dockarea import *
+import lib.pyqtgraph.pyqtgraph.console
+import lib.pyqtgraph.pyqtgraph as pg
+from lib.pyqtgraph.pyqtgraph.Qt import QtCore, QtGui
+from lib.pyqtgraph.pyqtgraph.dockarea import *
 import numpy as np
 import fileExplorer
 

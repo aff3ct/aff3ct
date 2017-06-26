@@ -24,9 +24,9 @@ import os
 import sys
 import reader
 import subprocess
-import libs.pyqtgraph as pg
-from libs.pyqtgraph.Qt import QtCore, QtGui
-from libs.pyqtgraph.dockarea import *
+import lib.pyqtgraph.pyqtgraph as pg
+from lib.pyqtgraph.pyqtgraph.Qt import QtCore, QtGui
+from lib.pyqtgraph.pyqtgraph.dockarea import *
 import numpy as np
 
 class AdvTreeView(QtGui.QTreeView):
