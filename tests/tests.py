@@ -3,7 +3,7 @@
 # =============================================================================
 # ================================================================== PARAMETERS
 
-PathTests     = "data"     # can be overrided by arg1 from the cmd line
+PathTests     = "refs"     # can be overrided by arg1 from the cmd line
 PathResults   = "results"  # can be overrided by arg2 from the cmd line
 PathBuild     = "../build"
 Sensibility   = 1.0

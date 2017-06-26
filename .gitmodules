@@ -4,3 +4,6 @@
 [submodule "conf"]
 	path = conf
 	url = ../configuration_files
+[submodule "tests/refs"]
+	path = tests/refs
+	url = ../error_rate_references
