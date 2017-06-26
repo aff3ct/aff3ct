@@ -1,9 +1,6 @@
 [submodule "lib/MIPP"]
 	path = lib/MIPP
 	url = ../MIPP
-[submodule "plotter/PyBER/lib/pyqtgraph"]
-	path = plotter/PyBER/lib/pyqtgraph
-	url = https://github.com/pyqtgraph/pyqtgraph.git
 [submodule "conf"]
 	path = conf
 	url = ../configuration_files
