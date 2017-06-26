@@ -74,7 +74,7 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
     message(STATUS "MIPP found")
 else ()
     message(FATAL_ERROR "MIPP can't be found, try to init the submodules with the following cmd:\n"
-                        "$ git submodule update --init --recursive")
+                        "$ git submodule update --init -- ../lib/MIPP/")
 endif ()
 
 
