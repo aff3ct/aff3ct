@@ -15,6 +15,12 @@ Download and install `cmake`: [https://cmake.org/files/v3.7/cmake-3.7.1-win64-x6
 
 Make sure to add the `cmake` program to the `PATH`.
 
+## Get the Git submodules
+
+AFF3CT depends on some other Git repositories (or submodules). It is highly recommended to get those submodules before trying to do anything else. Here is the command to get all the required submodules:
+
+    $ git submodule update --init --recursive
+
 ## Exemple of a Makefile project generation (with the C++ GNU compiler)
 
 Open a shell and type (from the `AFF3CT` root folder):
