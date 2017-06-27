@@ -95,38 +95,14 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
 ::demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
-	if (typeid(R) != typeid(Q))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	auto size = (unsigned int)(this->N_fil * this->n_frames);
-	if (disable_sig2)
-		for (unsigned i = 0; i < size; i++)
-			Y_N3[i] = Y_N1[i] + Y_N2[i];
-	else
-		for (unsigned i = 0; i < size; i++)
-			Y_N3[i] = (Y_N1[i] * (Q)two_on_square_sigma) + Y_N2[i];
+	this->demodulate(Y_N1,Y_N3);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
 ::demodulate_with_gains(const Q *Y_N1, const R *H_N, const Q *Y_N2, Q *Y_N3)
 {
-	if (typeid(R) != typeid(Q))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	auto size = (unsigned int)(this->N_fil * this->n_frames);
-	if (disable_sig2)
-		for (unsigned i = 0; i < size; i++)
-			Y_N3[i] = Y_N1[i] * (Q)H_N[i] + Y_N2[i];
-	else
-		for (unsigned i = 0; i < size; i++)
-			Y_N3[i] = (Y_N1[i] * (Q)H_N[i] * (Q)two_on_square_sigma) + Y_N2[i];
+	this->demodulate_with_gains(Y_N1, H_N, Y_N3);
 }
 
 // ==================================================================================== explicit template instantiation 
