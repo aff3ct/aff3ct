@@ -52,7 +52,13 @@ Decoder_SISO<B,R>* Factory_decoder_polar<B,R>
              const int              n_frames)
 {
 	if (type == "SCAN" && sys_encoding)
+	{
 		if (implem == "NAIVE") return new Decoder_polar_SCAN_naive_sys<B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(K, N, n_ite, frozen_bits, n_frames);
+	}
+	else if(type == "SCAN" && !sys_encoding)
+	{
+		if (implem == "NAIVE") return new Decoder_polar_SCAN_naive    <B, R, init_LLR<R>, f_LLR<R>, v_LLR<R>, h_LLR<B,R>>(K, N, n_ite, frozen_bits, n_frames);
+	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
