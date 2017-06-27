@@ -115,14 +115,14 @@ void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
 
-	constexpr int cmask_a0  [16] = { 0, 1, 6, 7, 8, 9,14,15, 2, 3, 4, 5,10,11,12,13}; // alpha trellis transitions 0.
-	constexpr int cmask_a1  [16] = { 2, 3, 4, 5,10,11,12,13, 0, 1, 6, 7, 8, 9,14,15}; // alpha trellis transitions 1.
-	constexpr int cmask_ga0 [16] = { 0, 2, 1, 3, 1, 3, 0, 2, 0, 2, 1, 3, 1, 3, 0, 2}; // mask0 to construct the gamma0/1 vector.
-	constexpr int cmask_ga1 [16] = { 4, 6, 5, 7, 5, 7, 4, 6, 4, 6, 5, 7, 5, 7, 4, 6}; // mask1 to construct the gamma0/1 vector.
-	constexpr int cmask_ga2 [16] = { 8,10, 9,11, 9,11, 8,10, 8,10, 9,11, 9,11, 8,10}; // mask2 to construct the gamma0/1 vector.
-	constexpr int cmask_ga3 [16] = {12,14,13,15,13,15,12,14,12,14,13,15,13,15,12,14}; // mask3 to construct the gamma0/1 vector.
-	constexpr int cmask_norm[16] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}; // mask to broadcast the first alpha value in the 
-	                                                                                  // normalization process.
+	constexpr unsigned cmask_a0  [16] = { 0, 1, 6, 7, 8, 9,14,15, 2, 3, 4, 5,10,11,12,13}; // alpha trellis transitions 0.
+	constexpr unsigned cmask_a1  [16] = { 2, 3, 4, 5,10,11,12,13, 0, 1, 6, 7, 8, 9,14,15}; // alpha trellis transitions 1.
+	constexpr unsigned cmask_ga0 [16] = { 0, 2, 1, 3, 1, 3, 0, 2, 0, 2, 1, 3, 1, 3, 0, 2}; // mask0 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_ga1 [16] = { 4, 6, 5, 7, 5, 7, 4, 6, 4, 6, 5, 7, 5, 7, 4, 6}; // mask1 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_ga2 [16] = { 8,10, 9,11, 9,11, 8,10, 8,10, 9,11, 9,11, 8,10}; // mask2 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_ga3 [16] = {12,14,13,15,13,15,12,14,12,14,13,15,13,15,12,14}; // mask3 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_norm[16] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}; // mask to broadcast the first alpha value in the
+	                                                                                       // normalization process.
 	const auto r_cmask_a0   = mipp::Reg<R>::cmask(cmask_a0  );
 	const auto r_cmask_a1   = mipp::Reg<R>::cmask(cmask_a1  );
 	const auto r_cmask_g0   = mipp::Reg<R>::cmask(cmask_ga0 );
@@ -179,14 +179,14 @@ void Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>
 {
 	constexpr auto n_frames = mipp::nElReg<R>() / 8;
 
-	constexpr int cmask_b0  [16] = { 0, 1, 8, 9,10,11, 2, 3, 4, 5,12,13,14,15, 6, 7}; // beta trellis transitions 0.
-	constexpr int cmask_b1  [16] = { 8, 9, 0, 1, 2, 3,10,11,12,13, 4, 5, 6, 7,14,15}; // beta trellis transitions 1.
-	constexpr int cmask_g0  [16] = { 0, 2, 0, 2, 1, 3, 1, 3, 1, 3, 1, 3, 0, 2, 0, 2}; // mask0 to construct the gamma0/1 vector.
-	constexpr int cmask_g1  [16] = { 4, 6, 4, 6, 5, 7, 5, 7, 5, 7, 5, 7, 4, 6, 4, 6}; // mask1 to construct the gamma0/1 vector.
-	constexpr int cmask_g2  [16] = { 8,10, 8,10, 9,11, 9,11, 9,11, 9,11, 8,10, 8,10}; // mask2 to construct the gamma0/1 vector.
-	constexpr int cmask_g3  [16] = {12,14,12,14,13,15,13,15,13,15,13,15,12,14,12,14}; // mask3 to construct the gamma0/1 vector.
-	constexpr int cmask_norm[16] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}; // mask to broadcast the first alpha value in the 
-	                                                                                  // normalization process.
+	constexpr unsigned cmask_b0  [16] = { 0, 1, 8, 9,10,11, 2, 3, 4, 5,12,13,14,15, 6, 7}; // beta trellis transitions 0.
+	constexpr unsigned cmask_b1  [16] = { 8, 9, 0, 1, 2, 3,10,11,12,13, 4, 5, 6, 7,14,15}; // beta trellis transitions 1.
+	constexpr unsigned cmask_g0  [16] = { 0, 2, 0, 2, 1, 3, 1, 3, 1, 3, 1, 3, 0, 2, 0, 2}; // mask0 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_g1  [16] = { 4, 6, 4, 6, 5, 7, 5, 7, 5, 7, 5, 7, 4, 6, 4, 6}; // mask1 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_g2  [16] = { 8,10, 8,10, 9,11, 9,11, 9,11, 9,11, 8,10, 8,10}; // mask2 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_g3  [16] = {12,14,12,14,13,15,13,15,13,15,13,15,12,14,12,14}; // mask3 to construct the gamma0/1 vector.
+	constexpr unsigned cmask_norm[16] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}; // mask to broadcast the first alpha value in the
+	                                                                                       // normalization process.
 	const auto r_cmask_b0   = mipp::Reg<R>::cmask(cmask_b0  );
 	const auto r_cmask_b1   = mipp::Reg<R>::cmask(cmask_b1  );
 	const auto r_cmask_norm = mipp::Reg<R>::cmask(cmask_norm);
