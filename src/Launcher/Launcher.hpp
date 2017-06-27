@@ -43,13 +43,15 @@ private:
 	std::string                                     cmd_line;
 
 protected:
-	tools::Arguments_reader                                      ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::parameters                                            params;   /*!< A structure of parameters to store and pass to the simulation. */
-	std::ostream                                                &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
-	std::map<std::vector<std::string>, std::vector<std::string>> req_args; /*!< List of the required arguments, syntax is the following:
-	                                                                        *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	std::map<std::vector<std::string>, std::vector<std::string>> opt_args; /*!< List of the optional arguments, syntax is the following:
-	                                                                        *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	tools::Arguments_reader          ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	tools::parameters                params;   /*!< A structure of parameters to store and pass to the simulation. */
+	std::ostream                    &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
+	tools::Arguments_reader::arg_map req_args; /*!< List of the required arguments, syntax is the following:
+	                                            *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	tools::Arguments_reader::arg_map opt_args; /*!< List of the optional arguments, syntax is the following:
+	                                            *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+
+	tools::Arguments_reader::arg_grp arg_group;/*!< List of the arguments groups */
 
 public:
 	/*!
@@ -89,6 +91,13 @@ protected:
 	 * This method can be overloaded to be extended.
 	 */
 	virtual void store_args();
+
+	/*!
+	 * \brief Gathers the arguments in separated groups
+	 *
+	 * This method can be overloaded to be extended.
+	 */
+	virtual void group_args();
 
 	/*!
 	 * \brief Returns a vector of simulation parameters to display in the header of the simulation.

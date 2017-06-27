@@ -26,6 +26,61 @@ CRC<B>* Factory_CRC<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B>
+void Factory_CRC<B>
+::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+{
+	// ----------------------------------------------------------------------------------------------------------- crc
+	opt_args[{"crc-type"}] =
+		{"string",
+		 "select the CRC implementation you want to use.",
+		 "STD, FAST"};
+
+	opt_args[{"crc-poly"}] =
+		{"string",
+		 "select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
+
+	opt_args[{"crc-size"}] =
+		{"positive_int",
+		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
+
+	opt_args[{"crc-rate"}] =
+		{"",
+		 "enable the CRC to be counted in the code rate computation."};
+}
+
+template <typename B>
+void Factory_CRC<B>
+::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+{
+	// -------------------------------------------------------------------------------------------- default parameters
+	params.crc       .type          = "FAST";
+
+	// ----------------------------------------------------------------------------------------------------------- crc
+	if(ar.exist_arg({"crc-type"})) params.crc.type = ar.get_arg    ({"crc-type"});
+	if(ar.exist_arg({"crc-poly"})) params.crc.poly = ar.get_arg    ({"crc-poly"});
+	if(ar.exist_arg({"crc-size"})) params.crc.size = ar.get_arg_int({"crc-size"});
+	if(ar.exist_arg({"crc-rate"})) params.crc.inc_code_rate = true;
+
+	if (!params.crc.poly.empty() && !params.crc.size)
+		params.crc.size = CRC_polynomial<B>::size(params.crc.poly);
+
+	// update the code rate R and K_info
+	auto real_K = params.code.K;
+	if (!params.crc.poly.empty() && !params.crc.inc_code_rate)
+		real_K -= params.crc.size;
+	params.code.R      = real_K / (float)params.code.N;
+	params.code.K_info = real_K;
+}
+
+template <typename B>
+void Factory_CRC<B>
+::group_args(tools::Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"crc",  "CRC parameter(s)"        });
+}
+
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

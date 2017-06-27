@@ -23,16 +23,20 @@ namespace tools
  */
 class Arguments_reader
 {
+public:
+	using arg_map = std::map<std::vector<std::string>, std::vector<std::string>>;
+	using arg_grp = std::vector<std::vector<std::string>>;
+
 private:
-	std::vector<std::string>                                     m_argv;          /*!< Copy of "char** argv". */
-	std::map<std::vector<std::string>, std::vector<std::string>> m_required_args; /*!< List of the required arguments, syntax is the following:
-	                                                                               *!< m_required_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	std::map<std::vector<std::string>, std::vector<std::string>> m_optional_args; /*!< List of the optional arguments, storage is made as following:
-	                                                                               *!< m_optional_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	std::map<std::vector<std::string>, std::string>              m_args;          /*!< List of the arguments and associate values (after parsing), storage is made as following:
-	                                                                               *!< m_args[{"key1", "key2", [...]}] = "value". */
-	std::string                                                  m_program_name;  /*!< Program binary name. */
-	unsigned int                                                 max_n_char_arg;  /*!< The number of characters of the largest argument name. */
+	std::vector<std::string>                        m_argv;          /*!< Copy of "char** argv". */
+	arg_map                                         m_required_args; /*!< List of the required arguments, syntax is the following:
+	                                                                  *!< m_required_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	arg_map                                         m_optional_args; /*!< List of the optional arguments, storage is made as following:
+	                                                                  *!< m_optional_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	std::map<std::vector<std::string>, std::string> m_args;          /*!< List of the arguments and associate values (after parsing), storage is made as following:
+	                                                                  *!< m_args[{"key1", "key2", [...]}] = "value". */
+	std::string                                     m_program_name;  /*!< Program binary name. */
+	unsigned int                                    max_n_char_arg;  /*!< The number of characters of the largest argument name. */
 
 public:
 	/*!
@@ -64,13 +68,11 @@ public:
 	 *
 	 * \return true if all the required arguments are in "m_argv", false otherwise.
 	 */
-	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
-	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
+	bool parse_arguments(const arg_map &required_args, const arg_map &optional_args,
 	                     const bool display_warnings = false);
 
-	bool parse_arguments(const std::map<std::vector<std::string>, std::vector<std::string>> &required_args,
-	                     const std::map<std::vector<std::string>, std::vector<std::string>> &optional_args,
-	                           std::vector<std::string>                                     &warnings);
+	bool parse_arguments(const arg_map &required_args, const arg_map &optional_args,
+	                     std::vector<std::string> &warnings);
 
 	/*!
 	 * \brief Searches if the tags exist.
@@ -79,14 +81,14 @@ public:
 	 *
 	 * \return true if the argument exists (to use after the parse_arguments method).
 	 */
-	bool exist_argument(const std::vector<std::string> &tags);
+	bool exist_argument(const std::vector<std::string> &tags) const;
 
 	/*!
 	 * \brief Alias of the exist_argument method.
 	 *
 	 * \copydoc Arguments_reader::exist_argument
 	 */
-	bool exist_arg(const std::vector<std::string> &tags)
+	bool exist_arg(const std::vector<std::string> &tags) const
 	{
 		return exist_argument(tags);
 	}
@@ -98,14 +100,14 @@ public:
 	 *
 	 * \return the string value of an argument with its tags (to use after the parse_arguments method).
 	 */
-	std::string get_argument(const std::vector<std::string> &tags);
+	std::string get_argument(const std::vector<std::string> &tags) const;
 
 	/*!
 	 * \brief Alias of the Arguments_reader::get_argument method.
 	 *
 	 * \copydoc Arguments_reader::get_argument
 	 */
-	std::string get_arg(const std::vector<std::string> &tags)
+	std::string get_arg(const std::vector<std::string> &tags) const
 	{
 		return get_argument(tags);
 	}
@@ -117,10 +119,7 @@ public:
 	 *
 	 * \return the integer value of an argument with its tags (to use after the parse_arguments method).
 	 */
-	int get_arg_int(const std::vector<std::string> &tags)
-	{
-		return std::stoi(get_argument(tags));
-	}
+	int get_arg_int(const std::vector<std::string> &tags) const;
 
 	/*!
 	 * \brief Returns the value for an argument.
@@ -129,15 +128,12 @@ public:
 	 *
 	 * \return the floating-point value of an argument with its tags (to use after the parse_arguments method).
 	 */
-	float get_arg_float(const std::vector<std::string> &tags)
-	{
-		return std::stof(get_argument(tags));
-	}
+	float get_arg_float(const std::vector<std::string> &tags) const;
 
 	/*!
 	 * \brief Prints the traditional usage.
 	 */
-	void print_usage();
+	void print_usage() const;
 
 	/*!
 	 * \brief Prints the traditional usage and group the arguments.
@@ -145,7 +141,7 @@ public:
 	 * \param arg_groups: group of argument based on a prefix,
 	 *                    arg_groups = {{"prefix1", "Group name1"}, {"prefix2", "Group name2"}, [...]}.
 	 */
-	void print_usage(std::vector<std::vector<std::string>> arg_groups);
+	void print_usage(arg_grp arg_groups) const;
 
 	/*!
 	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args.
@@ -154,7 +150,7 @@ public:
 	 *
 	 * \return true if the arguments criteria are respected, false otherwise.
 	 */
-	bool check_arguments(std::vector<std::string> &error);
+	bool check_arguments(std::vector<std::string> &error) const;
 
 	/*
 	 * return the given tag with its command line argument format.
@@ -172,8 +168,7 @@ private:
 	 *
 	 * \return true if the argument "m_argv[pos_arg]" is in args.
 	 */
-	bool sub_parse_arguments(std::map<std::vector<std::string>, std::vector<std::string>> &args,
-	                         unsigned short pos_arg);
+	bool sub_parse_arguments(arg_map &args, unsigned short pos_arg);
 
 	/*!
 	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args
@@ -185,8 +180,7 @@ private:
 	 *
 	 * \return true if the argument criteria are respected, false otherwise.
 	 */
-	std::string check_argument(const std::vector<std::string> &tags,
-	                                 std::map<std::vector<std::string>, std::vector<std::string>> &args);
+	std::string check_argument(const std::vector<std::string> &tags, const arg_map &args) const;
 
 	/*!
 	 * \brief Clears m_required_args, m_optional_args and m_args.
@@ -202,7 +196,7 @@ private:
 	 * \param required: true if this is a required parameter.
 	 */
 	void print_usage(const std::vector<std::string> &tags, const std::vector<std::string> &values,
-	                 const bool required = false);
+	                 const bool required = false) const;
 
 	/*!
 	 * \brief Splits a string in a vector of string, the delimiter is the comma.
@@ -211,7 +205,7 @@ private:
 	 *
 	 * \return A vector of split strings.
 	 */
-	std::vector<std::string> split(std::string str);
+	std::vector<std::string> split(std::string str) const;
 };
 }
 }

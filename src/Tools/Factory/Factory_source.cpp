@@ -26,6 +26,44 @@ Source<B>* Factory_source<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B>
+void Factory_source<B>
+::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+{
+	opt_args[{"src-type"}] =
+		{"string",
+		 "method used to generate the codewords.",
+		 "RAND, RAND_FAST, AZCW, USER"};
+
+	opt_args[{"src-path"}] =
+		{"string",
+		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
+}
+
+template <typename B>
+void Factory_source<B>
+::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+{
+	// -------------------------------------------------------------------------------------------- default parameters
+	params.source     .type              = "RAND";
+	params.source     .path              = "";
+
+	// -------------------------------------------------------------------------------------------------------- source
+	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
+
+	if (params.source.type == "AZCW")
+		params.code.azcw = true;
+
+	if(ar.exist_arg({"src-path"})) params.source.path = ar.get_arg({"src-path"});
+}
+
+template <typename B>
+void Factory_source<B>
+::group_args(tools::Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"src",  "Source parameter(s)"     });
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

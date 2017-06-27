@@ -48,6 +48,56 @@ Channel<R>* Factory_channel<R>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename R>
+void Factory_channel<R>
+::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+{
+	// ------------------------------------------------------------------------------------------------------- channel
+	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
+#ifdef CHANNEL_GSL
+	chan_avail += ", AWGN_GSL, RAYLEIGH_GSL";
+#endif
+#ifdef CHANNEL_MKL
+	chan_avail += ", AWGN_MKL, RAYLEIGH_MKL";
+#endif
+
+	opt_args[{"chn-type"}] =
+		{"string",
+		 "type of the channel to use in the simulation.",
+		 chan_avail};
+
+	opt_args[{"chn-path"}] =
+		{"string",
+		 "path to a noisy file, to use with \"--chn-type USER\"."};
+
+	opt_args[{"chn-blk-fad"}] =
+		{"string",
+		 "block fading policy.",
+		 "NO, FRAME, ONETAP"};
+}
+
+template <typename R>
+void Factory_channel<R>
+::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+{
+	// -------------------------------------------------------------------------------------------- default parameters
+	params.channel    .type              = "AWGN";
+	params.channel    .path              = "";
+	params.channel    .block_fading      = "NO";
+
+	// ------------------------------------------------------------------------------------------------------- channel
+	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
+	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"   });
+	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
+}
+
+template <typename R>
+void Factory_channel<R>
+::group_args(tools::Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"chn",  "Channel parameter(s)"    });
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

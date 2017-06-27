@@ -1,3 +1,5 @@
+#include <type_traits>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Quantizer/Standard/Quantizer_standard.hpp"
@@ -26,6 +28,63 @@ Quantizer<R,Q>* Factory_quantizer<R,Q>
 	else if (type == "NO"      ) return new Quantizer_NO      <R,Q>(size,                            n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename R, typename Q>
+void Factory_quantizer<R,Q>
+::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+{
+	// ----------------------------------------------------------------------------------------------------- quantizer
+	if (std::is_integral<Q>::value)
+	{
+		opt_args[{"qnt-type"}] =
+			{"string",
+			 "type of the quantizer to use in the simulation.",
+			 "STD, STD_FAST, TRICKY"};
+
+		opt_args[{"qnt-dec"}] =
+			{"positive_int",
+			 "the position of the fixed point in the quantified representation."};
+
+		opt_args[{"qnt-bits"}] =
+			{"positive_int",
+			 "the number of bits used for the quantizer."};
+
+		opt_args[{"qnt-range"}] =
+			{"positive_float",
+			 "the min/max bound for the tricky quantizer."};
+	}
+}
+
+template <typename R, typename Q>
+void Factory_quantizer<R,Q>
+::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+{
+	// -------------------------------------------------------------------------------------------- default parameters
+#ifdef MIPP_NO_INTRINSICS
+	params.quantizer  .type              = "STD";
+#else
+	params.quantizer  .type              = std::is_same<R,double>::value ? "STD" : "STD_FAST";
+#endif
+	params.quantizer  .range             = 0.f;
+	params.terminal   .disabled          = false;
+	params.terminal   .frequency         = std::chrono::milliseconds(500);
+
+	// ----------------------------------------------------------------------------------------------------- quantizer
+	if (std::is_integral<Q>::value)
+	{
+		if(ar.exist_arg({"qnt-type" })) params.quantizer.type       = ar.get_arg      ({"qnt-type" });
+		if(ar.exist_arg({"qnt-dec"  })) params.quantizer.n_decimals = ar.get_arg_int  ({"qnt-dec"  });
+		if(ar.exist_arg({"qnt-bits" })) params.quantizer.n_bits     = ar.get_arg_int  ({"qnt-bits" });
+		if(ar.exist_arg({"qnt-range"})) params.quantizer.range      = ar.get_arg_float({"qnt-range"});
+	}
+}
+
+template <typename R, typename Q>
+void Factory_quantizer<R,Q>
+::group_args(tools::Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"qnt",  "Quantizer parameter(s)"  });
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -136,6 +136,173 @@ int Factory_modem<B,R,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename R, typename Q>
+void Factory_modem<B,R,Q>
+::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+{
+	// ----------------------------------------------------------------------------------------------------- modulator
+	opt_args[{"mod-type"}] =
+		{"string",
+		 "type of the modulation to use in the simulation.",
+		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER, SCMA"};
+
+	opt_args[{"mod-bps"}] =
+		{"positive_int",
+		 "select the number of bits per symbol (default is 1)."};
+
+	opt_args[{"mod-ups"}] =
+		{"positive_int",
+		 "select the symbol sampling factor (default is 1)."};
+
+	opt_args[{"mod-const-path"}] =
+		{"string",
+		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
+
+	opt_args[{"mod-cpm-std"}] =
+		{"string",
+		 "the selection of a default CPM standard hardly implemented (any of those parameters is "
+		   "overwritten if the argument is given by the user)",
+		 "GSM"};
+
+	opt_args[{"mod-cpm-L"}] =
+		{"positive_int",
+		 "CPM pulse width or CPM memory (default is 2)"};
+
+	opt_args[{"mod-cpm-k"}] =
+		{"positive_int",
+		 "modulation index numerator (default is 1)"};
+
+	opt_args[{"mod-cpm-p"}] =
+		{"positive_int",
+		 "modulation index denominator (default is 2)"};
+
+	opt_args[{"mod-cpm-map"}] =
+		{"string",
+		 "symbols mapping layout (default is NATURAL)",
+		 "NATURAL, GRAY"};
+
+	opt_args[{"mod-cpm-ws"}] =
+		{"string",
+		 "wave shape (default is GMSK)",
+		 "GMSK, REC, RCOS"};
+
+	// --------------------------------------------------------------------------------------------------- demodulator
+	opt_args[{"dmod-max"}] =
+		{"string",
+		 "select the type of the max operation to use in the demodulation.",
+		 "MAX, MAXL, MAXS, MAXSS"};
+
+	opt_args[{"dmod-no-sig2"}] =
+		{"",
+		 "turn off the division by sigma square in the demodulation."};
+
+	opt_args[{"dmod-psi"}] =
+		{"string",
+		 "select the type of the psi function to use in the SCMA demodulation.",
+		 "PSI0, PSI1, PSI2, PSI3"};
+
+	opt_args[{"dmod-ite"}] =
+		{"positive int",
+		 "select the number of iteration in the demodulator."};
+}
+
+template <typename B, typename R, typename Q>
+void Factory_modem<B,R,Q>
+::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+{
+	// -------------------------------------------------------------------------------------------- default parameters
+	params.modulator  .type              = "BPSK";
+	params.modulator  .bits_per_symbol   = 1;
+	params.modulator  .upsample_factor   = 1;
+	params.modulator  .mapping           = "NATURAL";
+	params.modulator  .cpm_std           = "";
+	params.modulator  .cpm_L             = 2;
+	params.modulator  .cpm_k             = 1;
+	params.modulator  .cpm_p             = 2;
+	params.modulator  .wave_shape        = "GMSK";
+	params.modulator  .complex           = true;
+
+	params.demodulator.max               = "MAXSS";
+	params.demodulator.no_sig2           = false;
+	params.demodulator.psi               = "PSI0";
+	params.demodulator.n_ite             = 1;
+
+	// ----------------------------------------------------------------------------------------------------- modulator
+	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
+
+	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
+		params.modulator.complex = false;
+
+
+	if(ar.exist_arg({"mod-cpm-std"})) params.modulator.cpm_std = ar.get_arg({"mod-cpm-std"});
+	if (params.modulator.type == "CPM")
+	{
+		if (!params.modulator.cpm_std.empty())
+		{
+			if (params.modulator.cpm_std == "GSM")
+			{
+				params.modulator.cpm_L          = 3;
+				params.modulator.cpm_k          = 1;
+				params.modulator.cpm_p          = 2;
+				params.modulator.bits_per_symbol= 1;
+				params.modulator.upsample_factor= 5;
+				params.modulator.mapping        = "NATURAL";
+				params.modulator.wave_shape     = "GMSK";
+			}
+			else
+			{
+				std::stringstream message;
+				message << "Unknown CPM standard ('cpm_std' = " << params.modulator.cpm_std << ").";
+				throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			}
+		}
+	}
+
+	if(ar.exist_arg({"mod-bps"       })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
+	if(ar.exist_arg({"mod-ups"       })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
+	if(ar.exist_arg({"mod-const-path"})) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
+
+	if(ar.exist_arg({"mod-cpm-L"     })) params.modulator.cpm_L           = ar.get_arg_int({"mod-cpm-L"     });
+	if(ar.exist_arg({"mod-cpm-p"     })) params.modulator.cpm_p           = ar.get_arg_int({"mod-cpm-p"     });
+	if(ar.exist_arg({"mod-cpm-k"     })) params.modulator.cpm_k           = ar.get_arg_int({"mod-cpm-k"     });
+	if(ar.exist_arg({"mod-cpm-map"   })) params.modulator.mapping         = ar.get_arg    ({"mod-cpm-map"   });
+	if(ar.exist_arg({"mod-cpm-ws"    })) params.modulator.wave_shape      = ar.get_arg    ({"mod-cpm-ws"    });
+
+	// force the number of bits per symbol to 1 when BPSK mod
+	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
+		params.modulator.bits_per_symbol = 1;
+	// force the number of bits per symbol to 3 when SCMA mod
+	if (params.modulator.type == "SCMA")
+		params.modulator.bits_per_symbol = 3;
+
+
+	params.code.N_mod   = get_buffer_size_after_modulation(params.modulator.type,
+	                                                       params.code.N,
+	                                                       params.modulator.bits_per_symbol,
+	                                                       params.modulator.upsample_factor,
+	                                                       params.modulator.cpm_L);
+
+	params.code.N_fil   = get_buffer_size_after_filtering (params.modulator.type,
+	                                                       params.code.N,
+	                                                       params.modulator.bits_per_symbol,
+	                                                       params.modulator.cpm_L,
+	                                                       params.modulator.cpm_p);
+
+	// --------------------------------------------------------------------------------------------------- demodulator
+	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
+	if(ar.exist_arg({"dmod-ite"    })) params.demodulator.n_ite   = ar.get_arg_int({"dmod-ite"});
+	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg    ({"dmod-max"});
+	if(ar.exist_arg({"dmod-psi"    })) params.demodulator.psi     = ar.get_arg    ({"dmod-psi"});
+}
+
+template <typename B, typename R, typename Q>
+void Factory_modem<B,R,Q>
+::group_args(tools::Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"mod",  "Modulator parameter(s)"  });
+	ar.push_back({"dmod", "Demodulator parameter(s)"});
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

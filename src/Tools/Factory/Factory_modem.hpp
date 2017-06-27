@@ -4,6 +4,8 @@
 #include <string>
 
 #include "Tools/Math/max.h"
+#include "Tools/Arguments_reader.hpp"
+#include "Tools/params.h"
 
 #include "Module/Modem/Modem.hpp"
 
@@ -44,6 +46,10 @@ struct Factory_modem : public Factory
 	                                           const int         bps   = 1,
 	                                           const int         cpm_L = 3,
 	                                           const int         cpm_p = 2);
+
+	static void build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args);
+	static void store_args(const tools::Arguments_reader& ar, tools::parameters &params);
+	static void group_args(tools::Arguments_reader::arg_grp& ar);
 
 private:
 	template <proto_max<Q> MAX>

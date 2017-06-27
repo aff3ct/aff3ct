@@ -1,5 +1,3 @@
-#include <cmath>
-#include <chrono>
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
@@ -15,6 +13,12 @@
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
+
+#include "Tools/Factory/Factory_simulation.hpp"
+#include "Tools/Factory/Factory_source.hpp"
+#include "Tools/Factory/Factory_modem.hpp"
+#include "Tools/Factory/Factory_channel.hpp"
+#include "Tools/Factory/Factory_quantizer.hpp"
 
 #include "Launcher.hpp"
 
@@ -47,51 +51,6 @@ Launcher<B,R,Q>
 	type_names[typeid(float)]       = "float ("       + std::to_string(sizeof(float)*8)       + " bits)";
 	type_names[typeid(double)]      = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
 
-	// default parameters
-	params.simulation .snr_step          = 0.1f;
-	params.simulation .n_threads         = 1;
-	params.simulation .stop_time         = std::chrono::seconds(0);
-	params.simulation .inter_frame_level = 1;
-	params.simulation .mpi_rank          = 0;
-	params.simulation .mpi_size          = 1;
-	params.simulation .mpi_comm_freq     = std::chrono::milliseconds(1000);
-	params.simulation .pyber             = "";
-	params.simulation .snr_type          = "EB";
-	params.simulation .seed              = 0;
-	params.interleaver.seed              = 0;
-	params.interleaver.uniform           = false;
-	params.code       .tail_length       = 0;
-	params.source     .type              = "RAND";
-	params.source     .path              = "";
-	params.crc        .poly              = "";
-	params.crc        .size              = 0;
-	params.crc        .inc_code_rate     = false;
-	params.modulator  .type              = "BPSK";
-	params.modulator  .bits_per_symbol   = 1;
-	params.modulator  .upsample_factor   = 1;
-	params.modulator  .mapping           = "NATURAL";
-	params.modulator  .cpm_std           = "";
-	params.modulator  .cpm_L             = 2;
-	params.modulator  .cpm_k             = 1;
-	params.modulator  .cpm_p             = 2;
-	params.modulator  .wave_shape        = "GMSK";
-	params.modulator  .complex           = true;
-	params.demodulator.max               = "MAXSS";
-	params.demodulator.no_sig2           = false;
-	params.demodulator.psi               = "PSI0";
-	params.demodulator.n_ite             = 1;
-	params.channel    .type              = "AWGN";
-	params.channel    .path              = "";
-	params.channel    .block_fading      = "NO";
-#ifdef MIPP_NO_INTRINSICS
-	params.quantizer  .type              = "STD";
-#else
-	params.quantizer  .type              = (typeid(R) == typeid(double)) ? "STD" : "STD_FAST";
-#endif
-	params.quantizer  .range             = 0.f;
-	params.terminal   .disabled          = false;
-	params.terminal   .frequency         = std::chrono::milliseconds(500);
-
 #ifdef ENABLE_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &params.simulation.mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &params.simulation.mpi_rank);
@@ -109,340 +68,45 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::build_args()
 {
-	// ---------------------------------------------------------------------------------------------------- simulation
-	req_args[{"sim-snr-min", "m"}] =
-		{"float",
-		 "minimal signal/noise ratio to simulate."};
-	req_args[{"sim-snr-max", "M"}] =
-		{"float",
-		 "maximal signal/noise ratio to simulate."};
-	opt_args[{"sim-snr-step", "s"}] =
-		{"positive_float",
-		 "signal/noise ratio step between each simulation."};
-	opt_args[{"sim-type"}] =
-		{"string",
-		 "select the type of simulation to launch (default is BFER).",
-		 "BFER, BFERI, EXIT, GEN"};
-	opt_args[{"sim-pyber"}] =
-		{"string",
-		 "prepare the output for the PyBER plotter tool, takes the name of the curve in PyBER."};
-	opt_args[{"sim-stop-time"}] =
-		{"positive_int",
-		 "time in sec after what the current SNR iteration should stop."};
-#ifndef STARPU
-	opt_args[{"sim-threads", "t"}] =
-		{"positive_int",
-		 "enable multi-threaded mode and specify the number of threads."};
-#else
-	opt_args[{"sim-conc-tasks", "t"}] =
-		{"positive_int",
-		 "set the task concurrency level (default is 1, no concurrency)."};
-#endif
-#ifdef MULTI_PREC
-	opt_args[{"sim-prec", "p"}] =
-		{"positive_int",
-		 "the simulation precision in bit.",
-		 "8, 16, 32, 64"};
-#endif
-	opt_args[{"sim-inter-lvl"}] =
-		{"positive_int",
-		 "set the number of inter frame level to process in each modules."};
-	opt_args[{"sim-seed"}] =
-		{"positive_int",
-		 "seed used in the simulation to initialize the pseudo random generators in general."};
-#ifdef ENABLE_MPI
-	opt_args[{"sim-mpi-comm"}] =
-		{"positive_int",
-		 "MPI communication frequency between the nodes (in millisec)."};
-#endif
-#ifdef ENABLE_COOL_BASH
-	opt_args[{"sim-no-colors"}] =
-		{"",
-		 "disable the colors in the shell."};
-#endif
+	Factory_simulation    ::build_args(req_args, opt_args);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	req_args[{"cde-type"}] =
-		{"string",
-		 "select the code type you want to use.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED" };
-	req_args[{"cde-info-bits", "K"}] =
-		{"positive_int",
-		 "useful number of bit transmitted (only information bits)."};
-	req_args[{"cde-size", "N"}] =
-		{"positive_int",
-		 "total number of bit transmitted (includes parity bits)."};
+	Factory_source<B>     ::build_args(req_args, opt_args);
 
-	// -------------------------------------------------------------------------------------------------------- source
-	opt_args[{"src-type"}] =
-		{"string",
-		 "method used to generate the codewords.",
-		 "RAND, RAND_FAST, AZCW, USER"};
-	opt_args[{"src-path"}] =
-		{"string",
-		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
+	Factory_modem<B,R,Q>  ::build_args(req_args, opt_args);
 
-	// ----------------------------------------------------------------------------------------------------- modulator
-	opt_args[{"mod-type"}] =
-		{"string",
-		 "type of the modulation to use in the simulation.",
-		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER, SCMA"};
-	opt_args[{"mod-bps"}] =
-		{"positive_int",
-		 "select the number of bits per symbol (default is 1)."};
-	opt_args[{"mod-ups"}] =
-		{"positive_int",
-		 "select the symbol sampling factor (default is 1)."};
-	opt_args[{"mod-const-path"}] =
-		{"string",
-		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
+	Factory_channel<R>    ::build_args(req_args, opt_args);
 
-	opt_args[{"mod-cpm-std"}] =
-		{"string",
-		 std::string("the selection of a default CPM standard hardly implemented (any of those parameters is) ") +
-		 std::string("overwritten if the argument is given by the user"),
-		 "GSM"};
-	opt_args[{"mod-cpm-L"}] =
-		{"positive_int",
-		 "cpm pulse width or cpm memory (default is 2)"};
-	opt_args[{"mod-cpm-k"}] =
-		{"positive_int",
-		 "modulation index numerator (default is 1)"};
-	opt_args[{"mod-cpm-p"}] =
-		{"positive_int",
-		 "modulation index denumerator (default is 2)"};
-	opt_args[{"mod-cpm-map"}] =
-		{"string",
-		 "symbols mapping layout (default is NATURAL)",
-		 "NATURAL, GRAY"};
-	opt_args[{"mod-cpm-ws"}] =
-		{"string",
-		 "wave shape (default is GMSK)",
-		 "GMSK, REC, RCOS"};
-
-	// --------------------------------------------------------------------------------------------------- demodulator
-	opt_args[{"dmod-max"}] =
-		{"string",
-		 "select the type of the max operation to use in the demodulation.",
-		 "MAX, MAXL, MAXS, MAXSS"};
-	opt_args[{"dmod-no-sig2"}] =
-		{"",
-		 "turn off the division by sigma square in the demodulation."};
-	opt_args[{"dmod-psi"}] =
-		{"string",
-		 "select the type of the psi function to use in the SCMA demodulation.",
-		 "PSI0, PSI1, PSI2, PSI3"};
-	opt_args[{"dmod-ite"}] =
-		{"positive int",
-		 "select the number of iteration in the demodulator."};
-
-	// ------------------------------------------------------------------------------------------------------- channel
-	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
-#ifdef CHANNEL_GSL
-	chan_avail += ", AWGN_GSL, RAYLEIGH_GSL";
-#endif 
-#ifdef CHANNEL_MKL
-	chan_avail += ", AWGN_MKL, RAYLEIGH_MKL";
-#endif
-	opt_args[{"chn-type"}] =
-		{"string",
-		 "type of the channel to use in the simulation.",
-		 chan_avail};
-	opt_args[{"chn-path"}] =
-		{"string",
-		 "path to a noisy file, to use with \"--chn-type USER\"."};
-
-	opt_args[{"chn-blk-fad"}] =
-		{"string",
-		 "block fading policy.",
-		 "NO, FRAME, ONETAP"};
-
-	// ----------------------------------------------------------------------------------------------------- quantizer
-	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
-	{
-		opt_args[{"qnt-type"}] =
-			{"string",
-			 "type of the quantizer to use in the simulation.",
-			 "STD, STD_FAST, TRICKY"};
-		opt_args[{"qnt-dec"}] =
-			{"positive_int",
-			 "the position of the fixed point in the quantified representation."};
-		opt_args[{"qnt-bits"}] =
-			{"positive_int",
-			 "the number of bits used for the quantizer."};
-		opt_args[{"qnt-range"}] =
-			{"positive_float",
-			 "the min/max bound for the tricky quantizer."};
-	}
-
-	// ------------------------------------------------------------------------------------------------------- decoder
-	opt_args[{"dec-type", "D"}] =
-		{"string",
-		 "select the algorithm you want to decode the codeword."};
-	opt_args[{"dec-implem"}] =
-		{"string",
-		 "select the implementation of the algorithm to decode."};
-
-	// ------------------------------------------------------------------------------------------------------ terminal
-	opt_args[{"term-no"}] =
-		{"",
-		 "disable reporting for each iteration."};
-	opt_args[{"term-freq"}] =
-		{"positive_int",
-		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
-
-	// --------------------------------------------------------------------------------------------------------- other
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
+	Factory_quantizer<R,Q>::build_args(req_args, opt_args);
 }
 
 template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::store_args()
 {
-	using namespace std::chrono;
+	Factory_simulation    ::store_args(ar, params);
 
-	// ---------------------------------------------------------------------------------------------------- simulation
-	params.simulation.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
-	params.simulation.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
+	Factory_source<B>     ::store_args(ar, params);
 
-	params.simulation.snr_max += 0.0001f; // hack to avoid the miss of the last snr
+	Factory_modem<B,R,Q>  ::store_args(ar, params);
 
-	if(ar.exist_arg({"sim-type"         })) params.simulation.type              = ar.get_arg      ({"sim-type"         });
-	if(ar.exist_arg({"sim-pyber"        })) params.simulation.pyber             = ar.get_arg      ({"sim-pyber"        });
-	if(ar.exist_arg({"sim-snr-step", "s"})) params.simulation.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-inter-lvl"    })) params.simulation.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
-	if(ar.exist_arg({"sim-stop-time"    })) params.simulation.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
-	if(ar.exist_arg({"sim-seed"         })) params.simulation.seed              = ar.get_arg_int  ({"sim-seed"         });
+	Factory_channel<R>    ::store_args(ar, params);
 
-	params.interleaver.seed = params.simulation.seed;
+	Factory_quantizer<R,Q>::store_args(ar, params);
+}
 
-#ifndef STARPU
-	if (ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
-	if(ar.exist_arg({"sim-threads",    "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-threads",    "t"});
-#else
-	if(ar.exist_arg({"sim-conc-tasks", "t"})) params.simulation.n_threads         = ar.get_arg_int  ({"sim-conc-tasks", "t"});
-#endif
-#ifdef ENABLE_MPI
-	if(ar.exist_arg({"sim-mpi-comm"       })) params.simulation.mpi_comm_freq     = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
+template <typename B, typename R, typename Q>
+void Launcher<B,R,Q>
+::group_args()
+{
+	Factory_simulation    ::group_args(arg_group);
 
-	int max_n_threads_global;
-	int max_n_threads_local = params.simulation.n_threads;
+	Factory_source<B>     ::group_args(arg_group);
 
-	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+	Factory_modem<B,R,Q>  ::group_args(arg_group);
 
-	if (max_n_threads_global <= 0)
-	{
-		std::stringstream message;
-		message << "'max_n_threads_global' has to be greater than 0 ('max_n_threads_global' = "
-		        << max_n_threads_global << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+	Factory_channel<R>    ::group_args(arg_group);
 
-	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
-	params.simulation.seed = max_n_threads_global * params.simulation.mpi_rank + params.simulation.seed;
-#endif
-
-	// disable the cool bash mode for PyBER
-	if (!params.simulation.pyber.empty())
-		enable_bash_tools = false;
-#ifdef ENABLE_COOL_BASH
-	if (ar.exist_arg({"sim-no-colors"})) enable_bash_tools = false;
-#endif
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	params.code.type   = ar.get_arg    ({"cde-type"          }); // required
-	params.code.K_info = ar.get_arg_int({"cde-info-bits", "K"}); // required
-	params.code.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
-	params.code.N      = ar.get_arg_int({"cde-size",      "N"}); // required
-	params.code.N_code = ar.get_arg_int({"cde-size",      "N"});
-	params.code.m      = (int)std::ceil(std::log2(params.code.N));
-
-	// -------------------------------------------------------------------------------------------------------- source
-	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
-	if (params.source.type == "AZCW")
-		params.encoder.type = "AZCW";
-	if(ar.exist_arg({"src-path"})) params.source.path = ar.get_arg({"src-path"});
-
-	// ----------------------------------------------------------------------------------------------------- modulator
-	if(ar.exist_arg({"mod-type"})) params.modulator.type = ar.get_arg({"mod-type"});
-
-	if (params.modulator.type.find("BPSK") != std::string::npos || params.modulator.type == "PAM")
-		params.modulator.complex = false;
-
-
-	if(ar.exist_arg({"mod-cpm-std"})) params.modulator.cpm_std = ar.get_arg({"mod-cpm-std"});
-	if (params.modulator.type == "CPM")
-	{
-		if (!params.modulator.cpm_std.empty())
-		{
-			if (params.modulator.cpm_std == "GSM")
-			{
-				params.modulator.cpm_L          = 3;
-				params.modulator.cpm_k          = 1;
-				params.modulator.cpm_p          = 2;
-				params.modulator.bits_per_symbol= 1;
-				params.modulator.upsample_factor= 5;
-				params.modulator.mapping        = "NATURAL";
-				params.modulator.wave_shape     = "GMSK";
-			}
-			else
-			{
-				std::stringstream message;
-				message << "Unknown CPM standard ('cpm_std' = " << params.modulator.cpm_std << ").";
-				throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-			}
-		}
-	}
-
-	if(ar.exist_arg({"mod-bps"       })) params.modulator.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
-	if(ar.exist_arg({"mod-ups"       })) params.modulator.upsample_factor = ar.get_arg_int({"mod-ups"       });
-	if(ar.exist_arg({"mod-const-path"})) params.modulator.const_path      = ar.get_arg    ({"mod-const-path"});
-
-	if(ar.exist_arg({"mod-cpm-L"     })) params.modulator.cpm_L           = ar.get_arg_int({"mod-cpm-L"     });
-	if(ar.exist_arg({"mod-cpm-p"     })) params.modulator.cpm_p           = ar.get_arg_int({"mod-cpm-p"     });
-	if(ar.exist_arg({"mod-cpm-k"     })) params.modulator.cpm_k           = ar.get_arg_int({"mod-cpm-k"     });
-	if(ar.exist_arg({"mod-cpm-map"   })) params.modulator.mapping         = ar.get_arg    ({"mod-cpm-map"   });
-	if(ar.exist_arg({"mod-cpm-ws"    })) params.modulator.wave_shape      = ar.get_arg    ({"mod-cpm-ws"    });
-
-	// force the number of bits per symbol to 1 when BPSK mod
-	if (params.modulator.type == "BPSK" || params.modulator.type == "BPSK_FAST")
-		params.modulator.bits_per_symbol = 1;
-	// force the number of bits per symbol to 3 when SCMA mod
-	if (params.modulator.type == "SCMA")
-		params.modulator.bits_per_symbol = 3;
-
-	// --------------------------------------------------------------------------------------------------- demodulator
-	if(ar.exist_arg({"dmod-no-sig2"})) params.demodulator.no_sig2 = true;
-	if(ar.exist_arg({"dmod-ite"    })) params.demodulator.n_ite   = ar.get_arg_int({"dmod-ite"});
-	if(ar.exist_arg({"dmod-max"    })) params.demodulator.max     = ar.get_arg    ({"dmod-max"});
-	if(ar.exist_arg({"dmod-psi"    })) params.demodulator.psi     = ar.get_arg    ({"dmod-psi"});
-
-	// ------------------------------------------------------------------------------------------------------- channel
-	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
-	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"   });
-	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
-
-	// ----------------------------------------------------------------------------------------------------- quantizer
-	if ((typeid(Q) != typeid(float)) && (typeid(Q) != typeid(double)))
-	{
-		if(ar.exist_arg({"qnt-type" })) params.quantizer.type       = ar.get_arg      ({"qnt-type" });
-		if(ar.exist_arg({"qnt-dec"  })) params.quantizer.n_decimals = ar.get_arg_int  ({"qnt-dec"  });
-		if(ar.exist_arg({"qnt-bits" })) params.quantizer.n_bits     = ar.get_arg_int  ({"qnt-bits" });
-		if(ar.exist_arg({"qnt-range"})) params.quantizer.range      = ar.get_arg_float({"qnt-range"});
-	}
-
-	// ------------------------------------------------------------------------------------------------------- decoder
-	if(ar.exist_arg({"dec-type",  "D"})) params.decoder.type   = ar.get_arg({"dec-type",  "D"});
-	if(ar.exist_arg({"dec-implem"    })) params.decoder.implem = ar.get_arg({"dec-implem"    });
-
-	// ------------------------------------------------------------------------------------------------------ terminal
-	if(ar.exist_arg({"term-no"  })) params.terminal.disabled = true;
-	if(ar.exist_arg({"term-freq"})) params.terminal.frequency = milliseconds(ar.get_arg_int({"term-freq"}));
+	Factory_quantizer<R,Q>::group_args(arg_group);
 }
 
 template <typename B, typename R, typename Q>
@@ -451,73 +115,41 @@ int Launcher<B,R,Q>
 {
 	this->build_args();
 
-	auto display_help = true;
+	std::vector<std::string> cmd_warn, cmd_error;
 
-	std::vector<std::string> cmd_warn;
-	if (ar.parse_arguments(req_args, opt_args, cmd_warn))
+	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
+	bool error    = !ar.check_arguments(cmd_error);
+
+	this->store_args();
+
+	if (params.simulation.display_help)
 	{
-		this->store_args();
+		this->group_args();
 
-		params.code.K_info -= params.crc.size;
-		params.code.N_mod   = Factory_modem<B,R,Q>::get_buffer_size_after_modulation(params.modulator.type,
-		                                                                             params.code.N,
-		                                                                             params.modulator.bits_per_symbol,
-		                                                                             params.modulator.upsample_factor,
-		                                                                             params.modulator.cpm_L);
-		params.code.N_fil   = Factory_modem<B,R,Q>::get_buffer_size_after_filtering (params.modulator.type,
-		                                                                             params.code.N,
-		                                                                             params.modulator.bits_per_symbol,
-		                                                                             params.modulator.cpm_L,
-		                                                                             params.modulator.cpm_p);
+		arg_group.push_back({"itl",  "Interleaver parameter(s)"});
+		arg_group.push_back({"pct",  "Puncturer parameter(s)"  });
+		arg_group.push_back({"dpct", "Depuncturer parameter(s)"});
+		arg_group.push_back({"enc",  "Encoder parameter(s)"    });
+		arg_group.push_back({"mnt",  "Monitor parameter(s)"    });
 
-		// compute the code rate R
-		auto real_K = params.code.K;
-		if (!this->params.crc.poly.empty() && !this->params.crc.inc_code_rate)
-			real_K -= params.crc.size;
-		params.code.R = real_K / (float)params.code.N;
-
-		display_help = false;
-
-		// print usage if there is "-h" or "--help" on the command line
-		if(ar.exist_arg({"help", "h"})) display_help = true;
-	}
-
-	std::vector<std::string> cmd_error;
-	bool error = !ar.check_arguments(cmd_error);
-
-	if (display_help)
-	{
-		std::vector<std::vector<std::string>> arg_grp;
-		arg_grp.push_back({"sim",  "Simulation parameter(s)" });
-		arg_grp.push_back({"cde",  "Code parameter(s)"       });
-		arg_grp.push_back({"src",  "Source parameter(s)"     });
-		arg_grp.push_back({"crc",  "CRC parameter(s)"        });
-		arg_grp.push_back({"itl",  "Interleaver parameter(s)"});
-		arg_grp.push_back({"pct",  "Puncturer parameter(s)"  });
-		arg_grp.push_back({"dpct", "Depuncturer parameter(s)"});
-		arg_grp.push_back({"enc",  "Encoder parameter(s)"    });
-		arg_grp.push_back({"mod",  "Modulator parameter(s)"  });
-		arg_grp.push_back({"dmod", "Demodulator parameter(s)"});
-		arg_grp.push_back({"chn",  "Channel parameter(s)"    });
-		arg_grp.push_back({"qnt",  "Quantizer parameter(s)"  });
-		arg_grp.push_back({"dec",  "Decoder parameter(s)"    });
-		arg_grp.push_back({"mnt",  "Monitor parameter(s)"    });
-		arg_grp.push_back({"term", "Terminal parameter(s)"   });
-
-		ar.print_usage(arg_grp);
-		error = true;
+		ar.print_usage(arg_group);
+		error = true; // in order to exit at the end of this function
 	}
 
 	// print the errors
 	for (unsigned e = 0; e < cmd_error.size(); e++)
 		std::cerr << format_error(cmd_error[e]) << std::endl;
 
+	if(miss_arg)
+		std::cerr << format_error("A required argument is missing.") << std::endl;
+
 	// print the warnings
 	if (params.simulation.mpi_rank == 0)
 		for (unsigned w = 0; w < cmd_warn.size(); w++)
 			std::clog << format_warning(cmd_warn[w]) << std::endl;
 
-	if (error && !display_help)
+	// print the help tags
+	if ((miss_arg || error) && !params.simulation.display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
@@ -527,6 +159,8 @@ int Launcher<B,R,Q>
 		message += ").";
 		std::cerr << format_info(message) << std::endl;
 	}
+
+	std::exit(1);
 
 	return (error?EXIT_FAILURE:EXIT_SUCCESS);
 }

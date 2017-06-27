@@ -36,6 +36,8 @@ struct simulation_parameters
 	int                       mpi_rank;
 	int                       mpi_size;
 	int                       n_ite; // number of demodulations/decoding sessions to perform in the BFERI simulations
+	bool                      display_help;
+	bool                      display_version;
 };
 
 struct code_parameters
@@ -47,6 +49,7 @@ struct code_parameters
 	float       sigma; // not noise var, used to set a fixed snr value for frozen bits construction (in polar codes)
 	float       R;     // code rate
 	bool        coset; // true = enable coset approach
+	bool        azcw;  // true = enable AZCW approach
 	int         K_info;
 	int         K;
 	int         N;
