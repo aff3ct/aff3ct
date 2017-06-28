@@ -12,7 +12,7 @@ class Launcher_BFER_BCH : public Launcher_BFER<B,R,Q>
 {
 public:
 	Launcher_BFER_BCH(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_BFER_BCH() {};
+	virtual ~Launcher_BFER_BCH();
 
 protected:
 	virtual void build_args();

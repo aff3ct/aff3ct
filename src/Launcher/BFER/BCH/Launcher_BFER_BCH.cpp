@@ -24,9 +24,24 @@ Launcher_BFER_BCH<B,R,Q>
 ::Launcher_BFER_BCH(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
+	this->m_chain_params->enc = new typename Factory_encoder_BCH<B  >::encoder_parameters();
+	this->m_chain_params->dec = new typename Factory_decoder_BCH<B,Q>::decoder_parameters();
+
 	this->params.quantizer.n_bits     = 7;
 	this->params.quantizer.n_decimals = 2;
 }
+
+template <typename B, typename R, typename Q>
+Launcher_BFER_BCH<B,R,Q>
+::~Launcher_BFER_BCH()
+{
+	if (this->m_chain_params->enc != nullptr)
+		delete this->m_chain_params->enc;
+
+	if (this->m_chain_params->dec != nullptr)
+		delete this->m_chain_params->dec;
+}
+
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_BCH<B,R,Q>
@@ -44,8 +59,8 @@ void Launcher_BFER_BCH<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	Factory_encoder_BCH<B  >::store_args(this->ar, this->m_chain_params->enc);
-	Factory_decoder_BCH<B,Q>::store_args(this->ar, this->m_chain_params->dec);
+	Factory_encoder_BCH<B  >::store_args(this->ar, *this->m_chain_params->enc);
+	Factory_decoder_BCH<B,Q>::store_args(this->ar, *this->m_chain_params->dec);
 }
 
 template <typename B, typename R, typename Q>

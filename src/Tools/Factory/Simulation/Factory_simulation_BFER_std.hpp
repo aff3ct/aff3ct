@@ -35,8 +35,8 @@ struct Factory_simulation_BFER_std : Factory_simulation_BFER
 		typename Factory_modem         <B,R,Q>::modem_parameters         modem;
 		typename Factory_channel       <  R  >::channel_parameters       chn;
 		typename Factory_quantizer     <  R,Q>::quantizer_parameters     qua;
-		typename Factory_encoder_common<B    >::encoder_parameters       enc;
-		typename Factory_decoder_common       ::decoder_parameters       dec;
+		typename Factory_encoder_common<B    >::encoder_parameters      *enc;
+		typename Factory_decoder_common       ::decoder_parameters      *dec;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
