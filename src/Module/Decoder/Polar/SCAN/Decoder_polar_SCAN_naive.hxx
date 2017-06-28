@@ -27,7 +27,8 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
   layers_count  (this->m +1       ),
   frozen_bits   (frozen_bits      ),
   feedback_graph(layers_count     ),
-  soft_graph    (layers_count     )
+  soft_graph    (layers_count     ),
+  is_init       (false            )
 {
 	if (!tools::is_power_of_2(this->N))
 	{
@@ -92,6 +93,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	for (auto t = 0; t < layers_count -1; t++)
 		for (auto i = 0; i < this->N; i++)
 			soft_graph[t][i] = I();
+
+	this->is_init = true;
 }
 
 template <typename B, typename R,
@@ -99,7 +102,8 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 ::_load(const R *Y_N)
 {
-	_load_init();
+	if (!(this->is_init))
+		_load_init();
 
 	// init the softGraph (special case for the right most stage)
 	for (auto i = 0; i < this->N; i++)
@@ -159,6 +163,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 	this->d_load_total  += d_load;
 	this->d_decod_total += d_decod;
 	this->d_store_total += d_store;
+
+	this->is_init = false;
 }
 
 template <typename B, typename R,
@@ -174,7 +180,7 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 
 	// ---------------------------------------------------------------------------------------------------------- STORE
 	for (auto i = 0; i < this->N; i++)
-		Y_N2[i] = this->feedback_graph[0][i];
+		Y_N2[i] = this->feedback_graph[this->layers_count -1][i];
 }
 
 /********************************************************************/
