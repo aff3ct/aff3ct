@@ -17,6 +17,8 @@
 #include "Tools/types.h"
 #include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
+#include "Tools/Factory/Simulation/Factory_simulation.hpp"
 #include "Simulation/Simulation.hpp"
 
 namespace aff3ct
@@ -52,6 +54,9 @@ protected:
 	                                            *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 
 	tools::Arguments_reader::arg_grp arg_group;/*!< List of the arguments groups */
+
+	tools::Factory_simulation_main::chain_parameters *chain_params = nullptr;   /*!< A structure of parameters to store and pass to the simulation. */
+	tools::Factory_simulation     ::simu_parameters  *simu_params  = nullptr;
 
 public:
 	/*!

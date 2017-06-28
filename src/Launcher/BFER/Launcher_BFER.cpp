@@ -10,36 +10,21 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
 ::Launcher_BFER(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q>())
 {
-	this->params.simulation .type             = "BFER";
-	this->params.simulation .benchs           = 0;
-	this->params.simulation .debug            = false;
-	this->params.simulation .debug_fe         = false;
-	this->params.simulation .debug_limit      = 0;
-	this->params.simulation .debug_precision  = 5;
-	this->params.simulation .time_report      = false;
-#if !defined(STARPU) && !defined(SYSTEMC)
-	this->params.simulation .n_threads        = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
-#endif
-	this->params.code       .coset            = false;
-	this->params.encoder    .type             = "";
-	this->params.encoder    .path             = "";
-	this->params.encoder    .systematic       = true;
-	this->params.monitor    .n_frame_errors   = 100;
-	this->params.monitor    .err_track_enable = false;
-	this->params.monitor    .err_track_revert = false;
-	this->params.monitor    .err_track_path   = "error_tracker";
-	this->params.encoder    .systematic       = true;
-	this->params.demodulator.max              = "MAX";
-	this->params.terminal   .type             = "STD";
+	this->chain_params =  m_chain_params;
+	this->simu_params  = &m_chain_params->sim;
 }
 
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
 ::~Launcher_BFER()
 {
-	if (codec != nullptr) delete codec;
+	if (codec              != nullptr)
+		delete codec;
+
+	if (m_chain_params != nullptr)
+		delete m_chain_params;
 }
 
 template <typename B, typename R, typename Q>
@@ -48,65 +33,15 @@ void Launcher_BFER<B,R,Q>
 {
 	Launcher<B,R,Q>::build_args();
 
-	// ---------------------------------------------------------------------------------------------------- simulation
-	this->opt_args[{"sim-benchs", "b"}] =
-		{"positive_int",
-		 "enable special benchmark mode with a loop around the decoder."};
-	this->opt_args[{"sim-debug", "d"}] =
-		{"",
-		 "enable debug mode: print array values after each step."};
-#if !defined(STARPU) && !defined(SYSTEMC)
-	this->opt_args[{"sim-debug-fe"}] =
-		{"",
-		 "enable debug mode: print array values after each step (only when frame errors)."};
-#endif
-	this->opt_args[{"sim-debug-prec"}] =
-		{"positive_int",
-		 "set the precision of real elements when displayed in debug mode."};
-	this->opt_args[{"sim-debug-limit"}] =
-		{"positive_int",
-		 "set the max number of elements to display in the debug mode."};
-	this->opt_args[{"sim-time-report"}] =
-		{"",
-		 "display time information about the simulation chain."};
-	this->opt_args[{"sim-snr-type", "E"}] =
-		{"string",
-		 "select the type of SNR: symbol energy or information bit energy.",
-		 "ES, EB"};
+	Factory_simulation_BFER_std::build_args(this->req_args, this->opt_args);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	this->opt_args[{"cde-coset", "c"}] =
-		{"",
-		 "enable the coset approach."};
+	Factory_source<B>      ::build_args(this->req_args, this->opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
-	this->opt_args[{"enc-type"}] =
-		{"string",
-		 "select the type of encoder you want to use.",
-		 "AZCW, COSET, USER" };
-	this->opt_args[{"enc-path"}] =
-		{"string",
-		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
+	Factory_modem<B,R,Q>   ::build_args(this->req_args, this->opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- monitor
-	this->opt_args[{"mnt-max-fe", "e"}] =
-		{"positive_int",
-		 "max number of frame errors for each SNR simulation."};
-	this->opt_args[{"mnt-err-trk"}] =
-		{"",
-		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
-	this->opt_args[{"mnt-err-trk-rev"}] =
-		{"",
-		 "automatically replay the saved frames."};
-	this->opt_args[{"mnt-err-trk-path"}] =
-		{"string",
-		 "base path for the files where the bad frames will be stored or read."};
+	Factory_channel<R>     ::build_args(this->req_args, this->opt_args);
 
-	// ------------------------------------------------------------------------------------------------------ terminal
-	this->opt_args[{"term-type"}] =
-		{"string",
-		 "select the terminal you want.",
-		 "STD, LEGACY"};
+	Factory_quantizer<R,Q> ::build_args(this->req_args, this->opt_args);
 }
 
 template <typename B, typename R, typename Q>
@@ -115,72 +50,32 @@ void Launcher_BFER<B,R,Q>
 {
 	Launcher<B,R,Q>::store_args();
 
-	// ---------------------------------------------------------------------------------------------------- simulation
-	if(this->ar.exist_arg({"sim-benchs",     "b"})) this->params.simulation.benchs      = this->ar.get_arg_int({"sim-benchs",   "b"});
-	if(this->ar.exist_arg({"sim-snr-type",   "E"})) this->params.simulation.snr_type    = this->ar.get_arg    ({"sim-snr-type", "E"});
-	if(this->ar.exist_arg({"sim-time-report"    })) this->params.simulation.time_report = true;
-	if(this->ar.exist_arg({"sim-debug",      "d"})) this->params.simulation.debug       = true;
-	if(this->ar.exist_arg({"sim-debug-fe"       }))
-	{
-		this->params.simulation.debug    = true;
-		this->params.simulation.debug_fe = true;
-	}
-	if(this->ar.exist_arg({"sim-debug-limit"    }))
-	{
-		this->params.simulation.debug = true;
-		this->params.simulation.debug_limit = this->ar.get_arg_int({"sim-debug-limit"});
-	}
-	if(this->ar.exist_arg({"sim-debug-prec"}))
-	{
-		this->params.simulation.debug = true;
-		this->params.simulation.debug_precision = this->ar.get_arg_int({"sim-debug-prec"});
-	}
+	Factory_simulation_BFER_std::store_args(this->ar, m_chain_params->sim);
 
-	if (this->params.simulation.debug &&
-	    !(this->ar.exist_arg({"sim-threads", "t"}) && this->ar.get_arg_int({"sim-threads", "t"}) > 0))
-		// check if debug is asked and if n_thread kept its default value
-		this->params.simulation.n_threads = 1;
+	Factory_source<B>      ::store_args(this->ar, m_chain_params->src);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	if(this->ar.exist_arg({"cde-coset", "c"})) this->params.code.coset = true;
-	if (this->params.code.coset)
-		this->params.encoder.type = "COSET";
+	Factory_modem<B,R,Q>   ::store_args(this->ar, m_chain_params->modem, m_chain_params->sim.N);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
-	if(this->ar.exist_arg({"enc-type"})) this->params.encoder.type = this->ar.get_arg({"enc-type"});
-	if (this->params.encoder.type == "COSET")
-		this->params.code.coset = true;
-	if (this->params.encoder.type == "AZCW")
-		this->params.source.type = "AZCW";
-	if (this->params.encoder.type == "USER")
-		this->params.source.type = "USER";
-	if(this->ar.exist_arg({"enc-path"})) this->params.encoder.path = this->ar.get_arg({"enc-path"});
+	Factory_channel<R>     ::store_args(this->ar, m_chain_params->chn);
 
-	// ------------------------------------------------------------------------------------------------------- monitor
-	if(this->ar.exist_arg({"mnt-max-fe", "e"})) this->params.monitor.n_frame_errors = this->ar.get_arg_int({"mnt-max-fe", "e"});
+	Factory_quantizer<R,Q> ::store_args(this->ar, m_chain_params->qua);
+}
 
-	if(this->ar.exist_arg({"mnt-err-trk-rev" })) this->params.monitor.err_track_revert = true;
-	if(this->ar.exist_arg({"mnt-err-trk"     })) this->params.monitor.err_track_enable = true;
-	if(this->ar.exist_arg({"mnt-err-trk-path"})) this->params.monitor.err_track_path   = this->ar.get_arg({"mnt-err-trk-path"});
+template <typename B, typename R, typename Q>
+void Launcher_BFER<B,R,Q>
+::group_args()
+{
+	Launcher<B,R,Q>::group_args();
 
-	if(this->params.monitor.err_track_revert)
-	{
-		this->params.monitor.err_track_enable = false;
-		this->params.source. type = "USER";
-		this->params.encoder.type = "USER";
-		this->params.channel.type = "USER";
-		this->params.source. path = this->params.monitor.err_track_path + std::string("_$snr.src");
-		this->params.encoder.path = this->params.monitor.err_track_path + std::string("_$snr.enc");
-		this->params.channel.path = this->params.monitor.err_track_path + std::string("_$snr.chn");
-		// the paths are set in the Simulation class
-	}
+	Factory_simulation_BFER_std::group_args(this->arg_group);
 
-	if (this->params.monitor.err_track_revert &&
-	    !(this->ar.exist_arg({"sim-threads", "t"}) && this->ar.get_arg_int({"sim-threads", "t"}) > 0))
-		this->params.simulation.n_threads = 1;
+	Factory_source<B>      ::group_args(this->arg_group);
 
-	// ------------------------------------------------------------------------------------------------------ terminal
-	if(this->ar.exist_arg({"term-type"})) this->params.terminal.type = this->ar.get_arg({"term-type"});
+	Factory_modem<B,R,Q>   ::group_args(this->arg_group);
+
+	Factory_channel<R>     ::group_args(this->arg_group);
+
+	Factory_quantizer<R,Q> ::group_args(this->arg_group);
 }
 
 template <typename B, typename R, typename Q>

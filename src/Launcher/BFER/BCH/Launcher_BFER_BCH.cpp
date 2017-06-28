@@ -10,6 +10,8 @@
 #include "Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp"
 #endif
 #include "Tools/Codec/BCH/Codec_BCH.hpp"
+#include "Tools/Factory/BCH/Factory_encoder_BCH.hpp"
+#include "Tools/Factory/BCH/Factory_decoder_BCH.hpp"
 
 #include "Launcher_BFER_BCH.hpp"
 
@@ -22,12 +24,8 @@ Launcher_BFER_BCH<B,R,Q>
 ::Launcher_BFER_BCH(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	this->params.code     .type       = "BCH";
-	this->params.encoder  .type       = "BCH";
 	this->params.quantizer.n_bits     = 7;
 	this->params.quantizer.n_decimals = 2;
-	this->params.decoder  .type       = "ALGEBRAIC";
-	this->params.decoder  .implem     = "STD";
 }
 
 template <typename B, typename R, typename Q>
@@ -36,13 +34,8 @@ void Launcher_BFER_BCH<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::build_args();
 
-	// ------------------------------------------------------------------------------------------------------- encoder
-	this->opt_args[{"enc-type"}][2] += ", BCH";
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	this->opt_args[{"cde-corr-pow", "T"}] =
-		{"positive_int",
-		 "correction power of the BCH code."};
+	Factory_encoder_BCH<B  >::build_args(this->req_args, this->opt_args);
+	Factory_decoder_BCH<B,Q>::build_args(this->req_args, this->opt_args);
 }
 
 template <typename B, typename R, typename Q>
@@ -51,11 +44,18 @@ void Launcher_BFER_BCH<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	if (this->ar.exist_arg({"cde-corr-pow", "T"}))
-		this->params.code.t = this->ar.get_arg_int({"cde-corr-pow", "T"});
-	else
-		this->params.code.t = (this->params.code.N - this->params.code.K) / this->params.code.m;
+	Factory_encoder_BCH<B  >::store_args(this->ar, this->m_chain_params->enc);
+	Factory_decoder_BCH<B,Q>::store_args(this->ar, this->m_chain_params->dec);
+}
+
+template <typename B, typename R, typename Q>
+void Launcher_BFER_BCH<B,R,Q>
+::group_args()
+{
+	Launcher_BFER<B,R,Q>::group_args();
+
+	Factory_encoder_BCH<B  >::group_args(this->arg_group);
+	Factory_decoder_BCH<B,Q>::group_args(this->arg_group);
 }
 
 template <typename B, typename R, typename Q>

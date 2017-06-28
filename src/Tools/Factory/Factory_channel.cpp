@@ -30,19 +30,19 @@ Channel<R>* Factory_channel<R>
         const R           sigma,
         const int         n_frames)
 {
-	     if (type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(N,          new tools::Noise_std <R>(seed), add_users, sigma, n_frames);
-	else if (type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(N,          new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_std <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_fast<R>(seed), add_users, sigma, n_frames);
-	else if (type == "USER"         ) return new Channel_user        <R>(N, path,                                    add_users,        n_frames);
-	else if (type == "NO"           ) return new Channel_NO          <R>(N,                                          add_users,        n_frames);
+	     if (type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(N,          new Noise_std <R>(seed), add_users, sigma, n_frames);
+	else if (type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(N,          new Noise_fast<R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_std <R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_fast<R>(seed), add_users, sigma, n_frames);
+	else if (type == "USER"         ) return new Channel_user        <R>(N, path,                             add_users,        n_frames);
+	else if (type == "NO"           ) return new Channel_NO          <R>(N,                                   add_users,        n_frames);
 #ifdef CHANNEL_MKL
-	else if (type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(N,          new tools::Noise_MKL <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_MKL <R>(seed), add_users, sigma, n_frames);
+	else if (type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(N,          new Noise_MKL <R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_MKL <R>(seed), add_users, sigma, n_frames);
 #endif
 #ifdef CHANNEL_GSL
-	else if (type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(N,          new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new tools::Noise_GSL <R>(seed), add_users, sigma, n_frames);
+	else if (type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(N,          new Noise_GSL <R>(seed), add_users, sigma, n_frames);
+	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_GSL <R>(seed), add_users, sigma, n_frames);
 #endif
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -50,7 +50,7 @@ Channel<R>* Factory_channel<R>
 
 template <typename R>
 void Factory_channel<R>
-::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	// ------------------------------------------------------------------------------------------------------- channel
 	std::string chan_avail = "NO, USER, AWGN, AWGN_FAST, RAYLEIGH, RAYLEIGH_FAST";
@@ -78,24 +78,19 @@ void Factory_channel<R>
 
 template <typename R>
 void Factory_channel<R>
-::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+::store_args(const Arguments_reader& ar, channel_parameters &params)
 {
-	// -------------------------------------------------------------------------------------------- default parameters
-	params.channel    .type              = "AWGN";
-	params.channel    .path              = "";
-	params.channel    .block_fading      = "NO";
-
 	// ------------------------------------------------------------------------------------------------------- channel
-	if(ar.exist_arg({"chn-type"   })) params.channel.type         = ar.get_arg({"chn-type"   });
-	if(ar.exist_arg({"chn-path"   })) params.channel.path         = ar.get_arg({"chn-path"   });
-	if(ar.exist_arg({"chn-blk-fad"})) params.channel.block_fading = ar.get_arg({"chn-blk-fad"});
+	if(ar.exist_arg({"chn-type"   })) params.type         = ar.get_arg({"chn-type"   });
+	if(ar.exist_arg({"chn-path"   })) params.path         = ar.get_arg({"chn-path"   });
+	if(ar.exist_arg({"chn-blk-fad"})) params.block_fading = ar.get_arg({"chn-blk-fad"});
 }
 
 template <typename R>
 void Factory_channel<R>
-::group_args(tools::Arguments_reader::arg_grp& ar)
+::group_args(Arguments_reader::arg_grp& ar)
 {
-	ar.push_back({"chn",  "Channel parameter(s)"    });
+	ar.push_back({"chn", "Channel parameter(s)"});
 }
 
 // ==================================================================================== explicit template instantiation 

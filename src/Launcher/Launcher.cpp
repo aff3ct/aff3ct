@@ -14,11 +14,6 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
 
-#include "Tools/Factory/Factory_simulation.hpp"
-#include "Tools/Factory/Factory_source.hpp"
-#include "Tools/Factory/Factory_modem.hpp"
-#include "Tools/Factory/Factory_channel.hpp"
-#include "Tools/Factory/Factory_quantizer.hpp"
 
 #include "Launcher.hpp"
 
@@ -51,10 +46,6 @@ Launcher<B,R,Q>
 	type_names[typeid(float)]       = "float ("       + std::to_string(sizeof(float)*8)       + " bits)";
 	type_names[typeid(double)]      = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
 
-#ifdef ENABLE_MPI
-	MPI_Comm_size(MPI_COMM_WORLD, &params.simulation.mpi_size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &params.simulation.mpi_rank);
-#endif
 }
 
 template <typename B, typename R, typename Q>
@@ -68,45 +59,18 @@ template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::build_args()
 {
-	Factory_simulation    ::build_args(req_args, opt_args);
-
-	Factory_source<B>     ::build_args(req_args, opt_args);
-
-	Factory_modem<B,R,Q>  ::build_args(req_args, opt_args);
-
-	Factory_channel<R>    ::build_args(req_args, opt_args);
-
-	Factory_quantizer<R,Q>::build_args(req_args, opt_args);
 }
 
 template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::store_args()
 {
-	Factory_simulation    ::store_args(ar, params);
-
-	Factory_source<B>     ::store_args(ar, params);
-
-	Factory_modem<B,R,Q>  ::store_args(ar, params);
-
-	Factory_channel<R>    ::store_args(ar, params);
-
-	Factory_quantizer<R,Q>::store_args(ar, params);
 }
 
 template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::group_args()
 {
-	Factory_simulation    ::group_args(arg_group);
-
-	Factory_source<B>     ::group_args(arg_group);
-
-	Factory_modem<B,R,Q>  ::group_args(arg_group);
-
-	Factory_channel<R>    ::group_args(arg_group);
-
-	Factory_quantizer<R,Q>::group_args(arg_group);
 }
 
 template <typename B, typename R, typename Q>
@@ -122,15 +86,13 @@ int Launcher<B,R,Q>
 
 	this->store_args();
 
-	if (params.simulation.display_help)
+	if (simu_params->display_help)
 	{
 		this->group_args();
 
 		arg_group.push_back({"itl",  "Interleaver parameter(s)"});
 		arg_group.push_back({"pct",  "Puncturer parameter(s)"  });
 		arg_group.push_back({"dpct", "Depuncturer parameter(s)"});
-		arg_group.push_back({"enc",  "Encoder parameter(s)"    });
-		arg_group.push_back({"mnt",  "Monitor parameter(s)"    });
 
 		ar.print_usage(arg_group);
 		error = true; // in order to exit at the end of this function
@@ -144,12 +106,14 @@ int Launcher<B,R,Q>
 		std::cerr << format_error("A required argument is missing.") << std::endl;
 
 	// print the warnings
-	if (params.simulation.mpi_rank == 0)
+#ifdef ENABLE_MPI
+	if (simu_params->mpi_rank == 0)
+#endif
 		for (unsigned w = 0; w < cmd_warn.size(); w++)
 			std::clog << format_warning(cmd_warn[w]) << std::endl;
 
 	// print the help tags
-	if ((miss_arg || error) && !params.simulation.display_help)
+	if ((miss_arg || error) && !simu_params->display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};

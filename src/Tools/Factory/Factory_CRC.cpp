@@ -28,7 +28,7 @@ CRC<B>* Factory_CRC<B>
 
 template <typename B>
 void Factory_CRC<B>
-::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	// ----------------------------------------------------------------------------------------------------------- crc
 	opt_args[{"crc-type"}] =
@@ -51,33 +51,30 @@ void Factory_CRC<B>
 
 template <typename B>
 void Factory_CRC<B>
-::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+::store_args(const Arguments_reader& ar, CRC_params &params, const int K, const int N)
 {
-	// -------------------------------------------------------------------------------------------- default parameters
-	params.crc       .type          = "FAST";
-
 	// ----------------------------------------------------------------------------------------------------------- crc
-	if(ar.exist_arg({"crc-type"})) params.crc.type = ar.get_arg    ({"crc-type"});
-	if(ar.exist_arg({"crc-poly"})) params.crc.poly = ar.get_arg    ({"crc-poly"});
-	if(ar.exist_arg({"crc-size"})) params.crc.size = ar.get_arg_int({"crc-size"});
-	if(ar.exist_arg({"crc-rate"})) params.crc.inc_code_rate = true;
+	if(ar.exist_arg({"crc-type"})) params.type = ar.get_arg    ({"crc-type"});
+	if(ar.exist_arg({"crc-poly"})) params.poly = ar.get_arg    ({"crc-poly"});
+	if(ar.exist_arg({"crc-size"})) params.size = ar.get_arg_int({"crc-size"});
+	if(ar.exist_arg({"crc-rate"})) params.inc_code_rate = true;
 
-	if (!params.crc.poly.empty() && !params.crc.size)
-		params.crc.size = CRC_polynomial<B>::size(params.crc.poly);
+	if (!params.poly.empty() && !params.size)
+		params.size = CRC_polynomial<B>::size(params.poly);
 
 	// update the code rate R and K_info
-	auto real_K = params.code.K;
-	if (!params.crc.poly.empty() && !params.crc.inc_code_rate)
-		real_K -= params.crc.size;
-	params.code.R      = real_K / (float)params.code.N;
-	params.code.K_info = real_K;
+	auto real_K = K;
+	if (!params.poly.empty() && !params.inc_code_rate)
+		real_K -= params.size;
+	params.R      = real_K / (float)N;
+	params.K_info = real_K;
 }
 
 template <typename B>
 void Factory_CRC<B>
-::group_args(tools::Arguments_reader::arg_grp& ar)
+::group_args(Arguments_reader::arg_grp& ar)
 {
-	ar.push_back({"crc",  "CRC parameter(s)"        });
+	ar.push_back({"crc", "CRC parameter(s)"});
 }
 
 

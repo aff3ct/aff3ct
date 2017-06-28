@@ -40,6 +40,9 @@
 
 #include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
+#include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
+#include "Tools/params.h"
+
 using namespace aff3ct::launcher;
 using namespace aff3ct::tools;
 
@@ -109,72 +112,46 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 #endif
 {
 	using namespace std::chrono;
-
-	std::map<std::vector<std::string>, std::vector<std::string>> req_args, opt_args;
 	Arguments_reader ar(argc, argv);
 
-	// ---------------------------------------------------------------------------------------------------- simulation
-	opt_args[{"sim-type"}] =
-		{"string",
-		 "the type of simulation to run.",
-		 "BFER, BFERI, EXIT, GEN"};
-#ifdef MULTI_PREC
-	opt_args[{"sim-prec", "p"}] =
-		{"positive_int",
-		 "the simulation precision in bit.",
-		 "8, 16, 32, 64"};
-#endif
+	Arguments_reader::arg_map req_args, opt_args;
+	Arguments_reader::arg_grp arg_group;
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	req_args[{"cde-type"}] =
-		{"string",
-		 "the type of codes you want to simulate.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
+	std::vector<std::string> cmd_warn, cmd_error;
+	Factory_simulation_main::simu_parameters_main params;
 
-	// --------------------------------------------------------------------------------------------------------- other
-	opt_args[{"version", "v"}] =
-		{"",
-		 "print informations about the version of the code."};
-	opt_args[{"help", "h"}] =
-		{"",
-		 "print this help."};
+	Factory_simulation_main::build_args(req_args, opt_args);
 
-	auto display_help = true;
-	auto parsing = ar.parse_arguments(req_args, opt_args);
+	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
+	bool error    = !ar.check_arguments(cmd_error);
 
-	if (ar.exist_arg({"version", "v"}))
+	Factory_simulation_main::store_args(ar, params);
+
+
+	if (params.display_version)
 		print_version();
 
-	if (parsing)
+	if (miss_arg)
 	{
-		// required parameters
-		code_type = ar.get_arg({"cde-type"});
+		Factory_simulation_main::group_args(arg_group);
 
-		// facultative parameters
-		if(ar.exist_arg({"sim-type"})) simu_type = ar.get_arg({"sim-type"});
+		ar.print_usage(arg_group);
+		std::exit(EXIT_FAILURE);
+	}
+
+	if (error || miss_arg)
+	{
+		for (auto w = 0; w < (int)cmd_error.size(); w++)
+			std::cerr << format_error(cmd_error[w]) << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	code_type = params.cde_type;
+	simu_type = params.sim_type;
+
 #ifdef MULTI_PREC
-		if(ar.exist_arg({"sim-prec", "p"})) prec = ar.get_arg_int({"sim-prec", "p"});
+	prec = params.sim_prec;
 #endif
-
-		display_help = false;
-	}
-
-	if (display_help)
-	{
-		std::vector<std::vector<std::string>> arg_grp;
-		arg_grp.push_back({"sim", "Simulation parameter(s)"});
-		arg_grp.push_back({"cde", "Code parameter(s)"      });
-		ar.print_usage(arg_grp);
-		std::exit(EXIT_FAILURE);
-	}
-
-	std::vector<std::string> error;
-	if (!ar.check_arguments(error))
-	{
-		for (auto w = 0; w < (int)error.size(); w++)
-			std::cerr << format_error(error[w]) << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
 }
 
 template <typename B, typename R, typename Q, typename QD>

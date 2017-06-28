@@ -27,6 +27,45 @@ Encoder<B>* Factory_encoder_common<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B>
+void Factory_encoder_common<B>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	// ------------------------------------------------------------------------------------------------------- encoder
+	opt_args[{"enc-type"}] =
+		{"string",
+		 "select the type of encoder you want to use.",
+		 "AZCW, COSET, USER"};
+
+	opt_args[{"enc-path"}] =
+		{"string",
+		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
+}
+
+template <typename B>
+void Factory_encoder_common<B>
+::store_args(const Arguments_reader& ar, encoder_parameters &params)
+{
+	// ------------------------------------------------------------------------------------------------------- encoder
+	if(ar.exist_arg({"enc-type"})) params.type = ar.get_arg({"enc-type"});
+//	if (params.type == "COSET")
+//		params.code.coset = true;
+//	if (params.type == "AZCW")
+//		params.source.type = "AZCW";
+//	if (params.type == "USER")
+//		params.source.type = "USER";
+
+	if(ar.exist_arg({"enc-path"})) params.path = ar.get_arg({"enc-path"});
+}
+
+template <typename B>
+void Factory_encoder_common<B>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"enc", "Encoder parameter(s)"});
+}
+
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

@@ -36,6 +36,7 @@ struct simulation_parameters
 	int                       mpi_rank;
 	int                       mpi_size;
 	int                       n_ite; // number of demodulations/decoding sessions to perform in the BFERI simulations
+	int                       sim_prec;
 	bool                      display_help;
 	bool                      display_version;
 };

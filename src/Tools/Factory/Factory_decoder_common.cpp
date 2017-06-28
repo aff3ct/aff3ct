@@ -1,0 +1,29 @@
+#include "Factory_decoder_common.hpp"
+
+using namespace aff3ct;
+using namespace tools;
+
+void Factory_decoder_common::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	// ------------------------------------------------------------------------------------------------------- decoder
+	opt_args[{"dec-type", "D"}] =
+		{"string",
+		 "select the algorithm you want to decode the codeword."};
+
+	opt_args[{"dec-implem"}] =
+		{"string",
+		 "select the implementation of the algorithm to decode."};
+}
+
+void Factory_decoder_common::store_args(const Arguments_reader& ar, decoder_parameters &params)
+{
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(ar.exist_arg({"dec-type",  "D"})) params.type   = ar.get_arg({"dec-type",  "D"});
+	if(ar.exist_arg({"dec-implem"    })) params.implem = ar.get_arg({"dec-implem"    });
+}
+
+void Factory_decoder_common::group_args(Arguments_reader::arg_grp& ar)
+{
+	ar.push_back({"dec", "Decoder parameter(s)"});
+}
+

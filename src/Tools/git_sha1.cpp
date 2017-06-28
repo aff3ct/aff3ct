@@ -1,6 +1,6 @@
 #include "Tools/git_sha1.h"
 
-#define GIT_SHA1 "7d520f9b5cf79c6ed64bfcc3e19c7edb6c912410"
+#define GIT_SHA1 "14debae93d3bf4c019ef3985e5c2007ce795ccc6"
 
 namespace aff3ct
 {

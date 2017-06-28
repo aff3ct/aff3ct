@@ -28,7 +28,7 @@ Source<B>* Factory_source<B>
 
 template <typename B>
 void Factory_source<B>
-::build_args(tools::Arguments_reader::arg_map &req_args, tools::Arguments_reader::arg_map &opt_args)
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	opt_args[{"src-type"}] =
 		{"string",
@@ -42,26 +42,22 @@ void Factory_source<B>
 
 template <typename B>
 void Factory_source<B>
-::store_args(const tools::Arguments_reader& ar, tools::parameters &params)
+::store_args(const Arguments_reader& ar, source_parameters &params)
 {
-	// -------------------------------------------------------------------------------------------- default parameters
-	params.source     .type              = "RAND";
-	params.source     .path              = "";
-
 	// -------------------------------------------------------------------------------------------------------- source
-	if(ar.exist_arg({"src-type"})) params.source.type = ar.get_arg({"src-type"});
+	if(ar.exist_arg({"src-type"})) params.type = ar.get_arg({"src-type"});
 
-	if (params.source.type == "AZCW")
-		params.code.azcw = true;
+	if (params.type == "AZCW")
+		params.azcw = true;
 
-	if(ar.exist_arg({"src-path"})) params.source.path = ar.get_arg({"src-path"});
+	if(ar.exist_arg({"src-path"})) params.path = ar.get_arg({"src-path"});
 }
 
 template <typename B>
 void Factory_source<B>
-::group_args(tools::Arguments_reader::arg_grp& ar)
+::group_args(Arguments_reader::arg_grp& ar)
 {
-	ar.push_back({"src",  "Source parameter(s)"     });
+	ar.push_back({"src", "Source parameter(s)"});
 }
 
 // ==================================================================================== explicit template instantiation 
