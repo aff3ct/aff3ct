@@ -26,8 +26,8 @@ protected:
 
 	tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> * m_chain_params = nullptr;
 
-	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_mod, pl_demod,
-	                           pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter;
+	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
+	                           pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter, pl_pct, pl_depct;
 
 public:
 	Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream = std::cout);

@@ -51,7 +51,7 @@ void Factory_CRC<B>
 
 template <typename B>
 void Factory_CRC<B>
-::store_args(const Arguments_reader& ar, CRC_params &params, const int K, const int N)
+::store_args(const Arguments_reader& ar, CRC_parameters &params, const int K, const int N)
 {
 	// ----------------------------------------------------------------------------------------------------------- crc
 	if(ar.exist_arg({"crc-type"})) params.type = ar.get_arg    ({"crc-type"});
@@ -77,10 +77,9 @@ void Factory_CRC<B>
 	ar.push_back({"crc", "CRC parameter(s)"});
 }
 
-
 template <typename B>
 void Factory_CRC<B>
-::header(Header::params_list& head_crc, const CRC_params& params)
+::header(Header::params_list& head_crc, const CRC_parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------------- crc
 	if (!params.poly.empty())
@@ -102,6 +101,7 @@ void Factory_CRC<B>
 		head_crc.push_back(std::make_pair("Add CRC in the code rate", crc_inc_rate));
 	}
 }
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

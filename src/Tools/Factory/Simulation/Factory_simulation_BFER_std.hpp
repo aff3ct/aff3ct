@@ -36,7 +36,7 @@ struct Factory_simulation_BFER_std : Factory_simulation_BFER
 
 		Factory_simulation_BFER_std           ::simu_parameters_BFER_std sim;
 		typename Factory_source        <B    >::source_parameters        src;
-		typename Factory_CRC           <B    >::CRC_params               crc;
+		typename Factory_CRC           <B    >::CRC_parameters           crc;
 		typename Factory_modem         <B,R,Q>::modem_parameters         modem;
 		typename Factory_channel       <  R  >::channel_parameters       chn;
 		typename Factory_quantizer     <  R,Q>::quantizer_parameters     qua;

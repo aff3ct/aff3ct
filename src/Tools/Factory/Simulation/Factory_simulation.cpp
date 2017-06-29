@@ -74,11 +74,6 @@ void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters 
 
 	Factory_simulation_main::store_args(ar, params);
 
-	// -------------------------------------------------------------------------------------------- default parameters
-//
-//	params.interleaver.seed              = 0;
-//	params.interleaver.uniform           = false;
-
 	// ---------------------------------------------------------------------------------------------------- simulation
 	params.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
 	params.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required

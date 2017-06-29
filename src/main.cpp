@@ -23,6 +23,7 @@
 #include "Launcher/BCH/Launcher_BCH.hpp"
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
 #include "Launcher/Polar/Launcher_polar.hpp"
+#include "Launcher/RA/Launcher_RA.hpp"
 
 //#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
 //#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
@@ -238,11 +239,11 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 				launcher = new Launcher_BCH<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
-//		if (code_type == "RA")
-//		{
-//			if (simu_type == "BFER")
-//				launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
-//		}
+		if (code_type == "RA")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_RA<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		}
 
 		if (code_type == "LDPC")
 		{
