@@ -127,20 +127,14 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 
 	Factory_simulation_main::store_args(ar, params);
 
-
 	if (params.display_version)
 		print_version();
 
-	if (miss_arg)
-	{
-		Factory_simulation_main::group_args(arg_group);
-
-		ar.print_usage(arg_group);
-		std::exit(EXIT_FAILURE);
-	}
-
 	if (error || miss_arg)
 	{
+		Factory_simulation_main::group_args(arg_group);
+		ar.print_usage(arg_group);
+
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
 			std::cerr << format_error(cmd_error[w]) << std::endl;
 		std::exit(EXIT_FAILURE);
