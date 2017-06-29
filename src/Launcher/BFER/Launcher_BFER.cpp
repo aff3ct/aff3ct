@@ -42,6 +42,10 @@ void Launcher_BFER<B,R,Q>
 	Factory_channel<R>     ::build_args(this->req_args, this->opt_args);
 
 	Factory_quantizer<R,Q> ::build_args(this->req_args, this->opt_args);
+
+	Factory_monitor<B>     ::build_args(this->req_args, this->opt_args);
+
+	Factory_terminal_BFER  ::build_args(this->req_args, this->opt_args);
 }
 
 template <typename B, typename R, typename Q>
@@ -59,6 +63,10 @@ void Launcher_BFER<B,R,Q>
 	Factory_channel<R>     ::store_args(this->ar, m_chain_params->chn);
 
 	Factory_quantizer<R,Q> ::store_args(this->ar, m_chain_params->qua);
+
+	Factory_monitor<B>     ::store_args(this->ar, m_chain_params->mon);
+
+	Factory_terminal_BFER  ::store_args(this->ar, m_chain_params->ter);
 }
 
 template <typename B, typename R, typename Q>
@@ -76,92 +84,67 @@ void Launcher_BFER<B,R,Q>
 	Factory_channel<R>     ::group_args(this->arg_group);
 
 	Factory_quantizer<R,Q> ::group_args(this->arg_group);
+
+	Factory_monitor<B>     ::group_args(this->arg_group);
+
+	Factory_terminal_BFER  ::group_args(this->arg_group);
 }
 
 template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
-::header_simulation()
+void Launcher_BFER<B,R,Q>
+::print_header()
 {
-	std::string threads = "unused";
-	if (this->params.simulation.n_threads)
-		threads = std::to_string(this->params.simulation.n_threads) + " thread(s)";
+	Launcher<B,R,Q>::print_header();
 
-	auto p = Launcher<B,R,Q>::header_simulation();
+	Factory_simulation_BFER_std::header(sim, cde, m_chain_params->sim);
 
-#ifdef STARPU
-	p.push_back(std::make_pair("Task concurrency level (t)", std::to_string(this->params.simulation.n_threads)));
-#else
-	p.push_back(std::make_pair("Multi-threading (t)", threads));
-#endif
+	Factory_source<B>      ::header(src, m_chain_params->src);
 
-	return p;
+	Factory_modem<B,R,Q>   ::header(mod, demod, m_chain_params->modem);
+
+	Factory_channel<R>     ::header(chn, m_chain_params->chn);
+
+	Factory_quantizer<R,Q> ::header(qua, m_chain_params->qua);
+
+	Factory_monitor<B>     ::header(mon, m_chain_params->mon);
+
+	Factory_terminal_BFER  ::header(ter, m_chain_params->ter);
+
+	int max_n_chars = 0;
+	Header::compute_max_n_chars(sim, max_n_chars);
+	Header::compute_max_n_chars(cde, max_n_chars);
+	Header::compute_max_n_chars(src, max_n_chars);
+//	Header::compute_max_n_chars(crc, max_n_chars);
+	Header::compute_max_n_chars(enc, max_n_chars);
+//	Header::compute_max_n_chars(pct, max_n_chars);
+//	Header::compute_max_n_chars(itl, max_n_chars);
+	Header::compute_max_n_chars(mod, max_n_chars);
+	Header::compute_max_n_chars(chn, max_n_chars);
+	Header::compute_max_n_chars(demod, max_n_chars);
+//	Header::compute_max_n_chars(depct, max_n_chars);
+	Header::compute_max_n_chars(qua, max_n_chars);
+	Header::compute_max_n_chars(dec, max_n_chars);
+	Header::compute_max_n_chars(mon, max_n_chars);
+	Header::compute_max_n_chars(ter, max_n_chars);
+
+	if (sim.size()) Header::print_parameters("Simulation",  sim, max_n_chars, this->stream);
+	if (cde.size()) Header::print_parameters("Code",        cde, max_n_chars, this->stream);
+	if (src.size()) Header::print_parameters("Source",      src, max_n_chars, this->stream);
+//	if (crc.size()) Header::print_parameters("CRC",         crc, max_n_chars, this->stream);
+	if (enc.size()) Header::print_parameters("Encoder",     enc, max_n_chars, this->stream);
+//	if (pct.size()) Header::print_parameters("Puncturer",   pct, max_n_chars, this->stream);
+//	if (itl.size()) Header::print_parameters("Interleaver", itl, max_n_chars, this->stream);
+	if (mod.size()) Header::print_parameters("Modulator",   mod, max_n_chars, this->stream);
+	if (chn.size()) Header::print_parameters("Channel",     chn, max_n_chars, this->stream);
+	if (demod.size()) Header::print_parameters("Demodulator", demod, max_n_chars, this->stream);
+//	if (depct.size()) Header::print_parameters("Depuncturer", depct, max_n_chars, this->stream);
+	if (qua.size()) Header::print_parameters("Quantizer",   qua, max_n_chars, this->stream);
+	if (dec.size()) Header::print_parameters("Decoder",     dec, max_n_chars, this->stream);
+	if (mon.size()) Header::print_parameters("Monitor",     mon, max_n_chars, this->stream);
+	if (ter.size()) Header::print_parameters("Terminal",    ter, max_n_chars, this->stream);
+	this->stream << "#" << std::endl;
 }
 
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
-::header_code()
-{
-	std::string coset = this->params.code.coset ? "on" : "off";
-
-	auto p = Launcher<B,R,Q>::header_code();
-
-	p.push_back(std::make_pair("Coset approach (c)", coset));
-
-	return p;
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
-::header_encoder()
-{
-	std::string syst_enc = ((this->params.encoder.systematic) ? "on" : "off");
-
-	auto p = Launcher<B,R,Q>::header_encoder();
-
-	p.push_back(std::make_pair("Type", this->params.encoder.type));
-
-	if (this->params.encoder.type == "USER")
-		p.push_back(std::make_pair("Path", this->params.encoder.path));
-
-	p.push_back(std::make_pair("Systematic encoding", syst_enc));
-
-	return p;
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
-::header_decoder()
-{
-	auto p = Launcher<B,R,Q>::header_decoder();
-
-	p.push_back(std::make_pair("Type (D)",       this->params.decoder.type  ));
-	p.push_back(std::make_pair("Implementation", this->params.decoder.implem));
-
-	return p;
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER<B,R,Q>
-::header_monitor()
-{
-	auto p = Launcher<B,R,Q>::header_monitor();
-
-	p.push_back(std::make_pair("Frame error count (e)", std::to_string(this->params.monitor.n_frame_errors)));
-
-	std::string enable_track = (this->params.monitor.err_track_enable) ? "on" : "off";
-	p.push_back(std::make_pair("Bad frames tracking", enable_track));
-
-	std::string enable_rev_track = (this->params.monitor.err_track_revert) ? "on" : "off";
-	p.push_back(std::make_pair("Bad frames replay", enable_rev_track));
-
-	if (this->params.monitor.err_track_enable || this->params.monitor.err_track_revert)
-	{
-		std::string path = this->params.monitor.err_track_path + std::string("_$snr.[src,enc,chn]");
-		p.push_back(std::make_pair("Bad frames base path", path));
-	}
-
-	return p;
-}
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"

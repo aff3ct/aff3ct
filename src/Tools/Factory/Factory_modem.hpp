@@ -5,6 +5,7 @@
 
 #include "Tools/Math/max.h"
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Header.hpp"
 #include "Tools/params.h"
 
 #include "Module/Modem/Modem.hpp"
@@ -76,6 +77,8 @@ struct Factory_modem : public Factory
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, modem_parameters &params, const int N);
 	static void group_args(Arguments_reader::arg_grp& ar);
+
+	static void header(Header::params_list& head_mod, Header::params_list& head_demod, const modem_parameters& params);
 
 private:
 	template <proto_max<Q> MAX>

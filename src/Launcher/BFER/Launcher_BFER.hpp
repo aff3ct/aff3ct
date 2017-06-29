@@ -18,6 +18,8 @@ protected:
 
 	tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> * m_chain_params = nullptr;
 
+	tools::Header::params_list sim, cde, src, mod, demod, chn, qua, enc, dec, mon, ter;
+
 public:
 	Launcher_BFER(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_BFER();
@@ -27,11 +29,7 @@ protected:
 	virtual void store_args();
 	virtual void group_args();
 
-	virtual std::vector<std::pair<std::string,std::string>> header_simulation();
-	virtual std::vector<std::pair<std::string,std::string>> header_code      ();
-	virtual std::vector<std::pair<std::string,std::string>> header_encoder   ();
-	virtual std::vector<std::pair<std::string,std::string>> header_decoder   ();
-	virtual std::vector<std::pair<std::string,std::string>> header_monitor   ();
+	virtual void print_header();
 };
 }
 }

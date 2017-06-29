@@ -287,6 +287,47 @@ void Factory_modem<B,R,Q>
 	ar.push_back({"dmod", "Demodulator parameter(s)"});
 }
 
+template <typename B, typename R, typename Q>
+void Factory_modem<B,R,Q>
+::header(Header::params_list& head_mod, Header::params_list& head_demod, const modem_parameters& params)
+{
+	// ----------------------------------------------------------------------------------------------------- modulator
+	head_mod.push_back(std::make_pair("Type", params.type));
+	if (params.type == "CPM")
+	{
+		if(params.cpm_std.size())
+			head_mod.push_back(std::make_pair("CPM standard", params.cpm_std));
+
+		head_mod.push_back(std::make_pair("CPM L memory", std::to_string(params.cpm_L)    ));
+		head_mod.push_back(std::make_pair("CPM h index", (std::to_string(params.cpm_k) +
+		                                           std::string("/")                             +
+		                                           std::to_string(params.cpm_p))   ));
+		head_mod.push_back(std::make_pair("CPM wave shape",              params.wave_shape));
+		head_mod.push_back(std::make_pair("CPM mapping",                 params.mapping   ));
+	}
+
+	head_mod.push_back(std::make_pair("Bits per symbol", std::to_string(params.bits_per_symbol)));
+	head_mod.push_back(std::make_pair("Sampling factor", std::to_string(params.upsample_factor)));
+
+
+	// --------------------------------------------------------------------------------------------------- demodulator
+	std::string demod_sig2 = (params.no_sig2) ? "off" : "on";
+	std::string demod_max  = (params.type == "BPSK"     ) ||
+	                         (params.type == "BPSK_FAST") ||
+	                         (params.type == "SCMA"     ) ?
+	                         "unused" : params.max;
+	std::string demod_ite  = std::to_string(params.n_ite);
+	std::string demod_psi  = params.psi;
+
+	head_demod.push_back(std::make_pair("Sigma square", demod_sig2));
+	head_demod.push_back(std::make_pair("Max type",     demod_max ));
+	if (params.type == "SCMA")
+	{
+		head_demod.push_back(std::make_pair("Number of iterations", demod_ite));
+		head_demod.push_back(std::make_pair("Psi function",         demod_psi));
+	}
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

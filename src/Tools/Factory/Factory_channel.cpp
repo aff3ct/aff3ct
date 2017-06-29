@@ -93,6 +93,19 @@ void Factory_channel<R>
 	ar.push_back({"chn", "Channel parameter(s)"});
 }
 
+template <typename R>
+void Factory_channel<R>
+::header(Header::params_list& head_chn, const channel_parameters& params)
+{
+	// ------------------------------------------------------------------------------------------------------- channel
+	head_chn.push_back(std::make_pair("Type", params.type));
+
+	if (params.type == "USER")
+		head_chn.push_back(std::make_pair("Path", params.path));
+
+	if (params.type.find("RAYLEIGH") != std::string::npos)
+		head_chn.push_back(std::make_pair("Block fading policy", params.block_fading));
+}
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

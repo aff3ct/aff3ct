@@ -77,6 +77,27 @@ void Factory_quantizer<R,Q>
 	ar.push_back({"qnt", "Quantizer parameter(s)"});
 }
 
+template <typename R, typename Q>
+void Factory_quantizer<R,Q>
+::header(Header::params_list& head_qua, const quantizer_parameters& params)
+{
+	// ----------------------------------------------------------------------------------------------------- quantizer
+	if (std::is_integral<Q>::value)
+	{
+		std::string quantif = "unused";
+		if (! std::is_same<R,Q>::value)
+		{
+			if (params.type == "TRICKY")
+				quantif = "{"+std::to_string(params.n_bits)+", "+std::to_string(params.range)+"f}";
+			else
+				quantif = "{"+std::to_string(params.n_bits)+", "+std::to_string(params.n_decimals)+"}";
+		}
+
+		head_qua.push_back(std::make_pair("Type"               , params.type));
+		head_qua.push_back(std::make_pair("Fixed-point config.", quantif              ));
+	}
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

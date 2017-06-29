@@ -32,3 +32,9 @@ void Factory_simulation_BFER_std::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_simulation_BFER::group_args(ar);
 }
+
+void Factory_simulation_BFER_std::header(Header::params_list& head_sim, Header::params_list& head_cde,
+                                         const simu_parameters_BFER_std& params)
+{
+	Factory_simulation_BFER::header(head_sim, head_cde, params);
+}

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Module/Monitor/Monitor.hpp"
+#include "Tools/Header.hpp"
 
 #include "Tools/Arguments_reader.hpp"
 #include "Factory.hpp"
@@ -31,6 +32,8 @@ struct Factory_monitor : public Factory
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, monitor_parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
+
+	static void header(Header::params_list& head_mon, const monitor_parameters& params);
 };
 }
 }

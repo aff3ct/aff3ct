@@ -16,6 +16,7 @@ struct Factory_simulation_BFER : Factory_simulation
 {
 	struct simu_parameters_BFER : simu_parameters
 	{
+		// ---- simulation
 		int         benchs          = 0;
 		std::string snr_type        = "EB";
 		bool        time_report     = false;
@@ -23,12 +24,15 @@ struct Factory_simulation_BFER : Factory_simulation
 		int         debug_limit     = 0;
 		int         debug_precision = 5;
 
+		// ---- code
 		bool        coset           = false;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, simu_parameters_BFER &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
+
+	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const simu_parameters_BFER& params);
 };
 
 }

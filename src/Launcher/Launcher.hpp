@@ -10,13 +10,11 @@
 
 #include <map>
 #include <string>
-#include <typeinfo>
-#include <typeindex>
-#include <unordered_map>
 
 #include "Tools/types.h"
 #include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Header.hpp"
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
 #include "Tools/Factory/Simulation/Factory_simulation.hpp"
 #include "Simulation/Simulation.hpp"
@@ -39,8 +37,6 @@ template <typename B = int, typename R = float, typename Q = R>
 class Launcher
 {
 private:
-	int                                             max_n_chars; /*!< The number of characters of the largest parameter name. */
-	std::unordered_map<std::type_index,std::string> type_names;  /*!< An internal map to store a string associated to a type. */
 	simulation::Simulation                         *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string                                     cmd_line;
 
@@ -111,7 +107,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_simulation();
+	virtual tools::Header::params_list header_simulation() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Code parameters to display in the header of the simulation.
@@ -120,7 +116,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_code();
+	virtual tools::Header::params_list header_code() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of source parameters to display in the header of the simulation.
@@ -129,7 +125,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_source();
+	virtual tools::Header::params_list header_source() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of CRC parameters to display in the header of the simulation.
@@ -138,7 +134,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_crc();
+	virtual tools::Header::params_list header_crc() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of encoder parameters to display in the header of the simulation.
@@ -147,7 +143,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_encoder();
+	virtual tools::Header::params_list header_encoder() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of puncturer parameters to display in the header of the simulation.
@@ -156,7 +152,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_puncturer();
+	virtual tools::Header::params_list header_puncturer() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of interleaver parameters to display in the header of the simulation.
@@ -165,7 +161,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_interleaver();
+	virtual tools::Header::params_list header_interleaver() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of modulator parameters to display in the header of the simulation.
@@ -174,7 +170,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_modulator();
+	virtual tools::Header::params_list header_modulator() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of channel parameters to display in the header of the simulation.
@@ -183,7 +179,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_channel();
+	virtual tools::Header::params_list header_channel() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of demodulator parameters to display in the header of the simulation.
@@ -192,7 +188,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_demodulator();
+	virtual tools::Header::params_list header_demodulator() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of depuncturer parameters to display in the header of the simulation.
@@ -201,7 +197,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_depuncturer();
+	virtual tools::Header::params_list header_depuncturer() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of quantizer parameters to display in the header of the simulation.
@@ -210,7 +206,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_quantizer();
+	virtual tools::Header::params_list header_quantizer() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of decoder parameters to display in the header of the simulation.
@@ -219,7 +215,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_decoder();
+	virtual tools::Header::params_list header_decoder() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of monitor parameters to display in the header of the simulation.
@@ -228,7 +224,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_monitor();
+	virtual tools::Header::params_list header_monitor() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Returns a vector of terminal parameters to display in the header of the simulation.
@@ -237,7 +233,7 @@ protected:
 	 *
 	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
 	 */
-	virtual std::vector<std::pair<std::string,std::string>> header_terminal();
+	virtual tools::Header::params_list header_terminal() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Allocates a specific simulation.
@@ -248,10 +244,10 @@ protected:
 	 */
 	virtual simulation::Simulation* build_simu() = 0;
 
+	virtual void print_header();
+
 private:
 	int read_arguments();
-	void print_header();
-	void print_parameters(std::string grp_name, std::vector<std::pair<std::string,std::string>> params);
 	void compute_max_n_chars();
 };
 }

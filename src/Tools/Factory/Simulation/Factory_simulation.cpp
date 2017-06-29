@@ -141,7 +141,6 @@ void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters 
 	params.K_info = ar.get_arg_int({"cde-info-bits", "K"});
 	params.N      = ar.get_arg_int({"cde-size",      "N"}); // required
 	params.N_code = ar.get_arg_int({"cde-size",      "N"});
-	params.m      = (int)std::ceil(std::log2(params.N));
 
 	params.R = params.K / (float)params.N;
 }
@@ -149,4 +148,50 @@ void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters 
 void Factory_simulation::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_simulation_main::group_args(ar);
+}
+
+void Factory_simulation::header(Header::params_list& head_sim, Header::params_list& head_cde,
+                                const simu_parameters& params)
+{
+	Factory_simulation_main::header(head_sim, head_cde, params);
+
+	// ---------------------------------------------------------------------------------------------------- simulation
+	head_sim.push_back(std::make_pair("SNR min (m)",   std::to_string(params.snr_min)  + " dB"));
+	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));
+	head_sim.push_back(std::make_pair("SNR step (s)",  std::to_string(params.snr_step) + " dB"));
+
+	head_sim.push_back(std::make_pair("Inter frame level", std::to_string(params.inter_frame_level)));
+	head_sim.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+
+#ifdef ENABLE_MPI
+	head_sim.push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(params.mpi_comm_freq.count())));
+	head_sim.push_back(std::make_pair("MPI size",             std::to_string(params.mpi_size             )));
+#endif
+
+#ifdef STARPU
+	head_sim.push_back(std::make_pair("Task concurrency level (t)", std::to_string(params.n_threads)));
+#else
+	std::string threads = "unused";
+	if (params.n_threads)
+		threads = std::to_string(params.n_threads) + " thread(s)";
+
+	head_sim.push_back(std::make_pair("Multi-threading (t)", threads));
+#endif
+
+	// ---------------------------------------------------------------------------------------------------------- code
+
+//	std::string N = std::to_string(params.code.N - params.code.tail_length);
+//	if (params.code.tail_length > 0)
+//		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
+
+	std::stringstream K;
+//	if (!params.crc.poly.empty())
+//		K << (params.K - params.crc.size) << " + " << params.crc.size << " (CRC)";
+//	else
+		K << params.K;
+
+	head_cde.push_back(std::make_pair("Info. bits (K)",    K.str()                 ));
+	head_cde.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
+	head_cde.push_back(std::make_pair("Code rate (R)",     std::to_string(params.R)));
+
 }

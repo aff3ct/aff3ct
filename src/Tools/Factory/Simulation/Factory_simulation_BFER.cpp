@@ -76,3 +76,27 @@ void Factory_simulation_BFER::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_simulation::group_args(ar);
 }
+
+void Factory_simulation_BFER::header(Header::params_list& head_sim, Header::params_list& head_cde,
+                                     const simu_parameters_BFER& params)
+{
+	Factory_simulation::header(head_sim, head_cde, params);
+
+	// ---------------------------------------------------------------------------------------------------- simulation
+
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	std::string coset = params.coset ? "on" : "off";
+	head_cde.push_back(std::make_pair("Coset approach (c)", coset));
+
+//	std::string N = std::to_string(params.code.N - params.code.tail_length);
+//	if (params.code.tail_length > 0)
+//		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
+
+	std::stringstream K;
+//	if (!params.crc.poly.empty())
+//		K << (params.K - params.crc.size) << " + " << params.crc.size << " (CRC)";
+//	else
+		K << params.K;
+
+}

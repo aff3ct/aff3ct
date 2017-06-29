@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Module/CRC/CRC.hpp"
+#include "Tools/Header.hpp"
 #include "Tools/Arguments_reader.hpp"
 
 #include "Factory.hpp"

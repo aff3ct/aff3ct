@@ -10,8 +10,6 @@
 #include "Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp"
 #endif
 #include "Tools/Codec/BCH/Codec_BCH.hpp"
-#include "Tools/Factory/BCH/Factory_encoder_BCH.hpp"
-#include "Tools/Factory/BCH/Factory_decoder_BCH.hpp"
 
 #include "Launcher_BFER_BCH.hpp"
 
@@ -24,8 +22,11 @@ Launcher_BFER_BCH<B,R,Q>
 ::Launcher_BFER_BCH(const int argc, const char **argv, std::ostream &stream)
 : Launcher_BFER<B,R,Q>(argc, argv, stream)
 {
-	this->m_chain_params->enc = new typename Factory_encoder_BCH<B  >::encoder_parameters();
-	this->m_chain_params->dec = new typename Factory_decoder_BCH<B,Q>::decoder_parameters();
+	m_enc = new typename Factory_encoder_BCH<B  >::encoder_parameters    ();
+	m_dec = new typename Factory_decoder_BCH<B,Q>::decoder_parameters_BCH();
+
+	this->m_chain_params->enc = m_enc;
+	this->m_chain_params->dec = m_dec;
 
 	this->params.quantizer.n_bits     = 7;
 	this->params.quantizer.n_decimals = 2;
@@ -41,7 +42,6 @@ Launcher_BFER_BCH<B,R,Q>
 	if (this->m_chain_params->dec != nullptr)
 		delete this->m_chain_params->dec;
 }
-
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_BCH<B,R,Q>
@@ -59,8 +59,8 @@ void Launcher_BFER_BCH<B,R,Q>
 {
 	Launcher_BFER<B,R,Q>::store_args();
 
-	Factory_encoder_BCH<B  >::store_args(this->ar, *this->m_chain_params->enc);
-	Factory_decoder_BCH<B,Q>::store_args(this->ar, *this->m_chain_params->dec);
+	Factory_encoder_BCH<B  >::store_args(this->ar, *m_enc);
+	Factory_decoder_BCH<B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N);
 }
 
 template <typename B, typename R, typename Q>
@@ -71,6 +71,16 @@ void Launcher_BFER_BCH<B,R,Q>
 
 	Factory_encoder_BCH<B  >::group_args(this->arg_group);
 	Factory_decoder_BCH<B,Q>::group_args(this->arg_group);
+}
+
+template <typename B, typename R, typename Q>
+void Launcher_BFER_BCH<B,R,Q>
+::print_header()
+{
+	Factory_encoder_BCH<B  >::header(this->enc, *m_enc);
+	Factory_decoder_BCH<B,Q>::header(this->dec, this->cde, *m_dec);
+
+	Launcher_BFER<B,R,Q>::print_header();
 }
 
 template <typename B, typename R, typename Q>
@@ -85,18 +95,6 @@ Simulation* Launcher_BFER_BCH<B,R,Q>
 #else
 	return new Simulation_BFER_std_threads<B,R,Q>(this->params, *this->codec);
 #endif
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::pair<std::string,std::string>> Launcher_BFER_BCH<B,R,Q>
-::header_code()
-{
-	auto p = Launcher_BFER<B,R,Q>::header_code();
-
-	p.push_back(std::make_pair("Galois field order (m)", std::to_string(this->params.code.m)));
-	p.push_back(std::make_pair("Correction power (T)",   std::to_string(this->params.code.t)));
-
-	return p;
 }
 
 // ==================================================================================== explicit template instantiation 

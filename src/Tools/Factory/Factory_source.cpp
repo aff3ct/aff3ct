@@ -60,6 +60,16 @@ void Factory_source<B>
 	ar.push_back({"src", "Source parameter(s)"});
 }
 
+template <typename B>
+void Factory_source<B>
+::header(Header::params_list& head_src, const source_parameters& params)
+{
+	// -------------------------------------------------------------------------------------------------------- source
+	head_src.push_back(std::make_pair("Type", params.type));
+
+	if (params.type == "USER")
+		head_src.push_back(std::make_pair("Path", params.path));
+}
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

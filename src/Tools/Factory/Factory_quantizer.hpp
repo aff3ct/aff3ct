@@ -5,6 +5,7 @@
 
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/params.h"
+#include "Tools/Header.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
 
 #include "Factory.hpp"
@@ -39,6 +40,8 @@ struct Factory_quantizer : public Factory
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, quantizer_parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
+
+	static void header(Header::params_list& head_qua, const quantizer_parameters& params);
 };
 }
 }

@@ -28,12 +28,6 @@ void Factory_encoder_BCH<B>
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", BCH";
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	opt_args[{"cde-corr-pow", "T"}] =
-		{"positive_int",
-		 "correction power of the BCH code."};
-
 }
 
 template <typename B>
@@ -44,11 +38,6 @@ void Factory_encoder_BCH<B>
 
 	Factory_encoder_common<B>::store_args(ar, params);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-//	if (ar.exist_arg({"cde-corr-pow", "T"}))
-//		params.code.t = ar.get_arg_int({"cde-corr-pow", "T"});
-//	else
-//		params.code.t = (params.code.N - params.code.K) / params.code.m;
 }
 
 template <typename B>
@@ -58,7 +47,12 @@ void Factory_encoder_BCH<B>
 	Factory_encoder_common<B>::group_args(ar);
 }
 
-
+template <typename B>
+void Factory_encoder_BCH<B>
+::header(Header::params_list& head_enc, const typename Factory_encoder_common<B>::encoder_parameters& params)
+{
+	Factory_encoder_common<B>::header(head_enc, params);
+}
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

@@ -75,6 +75,26 @@ void Factory_monitor<B>
 	ar.push_back({"mnt", "Monitor parameter(s)"});
 }
 
+template <typename B>
+void Factory_monitor<B>
+::header(Header::params_list& head_mon, const monitor_parameters& params)
+{
+	// ------------------------------------------------------------------------------------------------------- monitor
+
+	head_mon.push_back(std::make_pair("Frame error count (e)", std::to_string(params.n_frame_errors)));
+
+	std::string enable_track = (params.err_track_enable) ? "on" : "off";
+	head_mon.push_back(std::make_pair("Bad frames tracking", enable_track));
+
+	std::string enable_rev_track = (params.err_track_revert) ? "on" : "off";
+	head_mon.push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	if (params.err_track_enable || params.err_track_revert)
+	{
+		std::string path = params.err_track_path + std::string("_$snr.[src,enc,chn]");
+		head_mon.push_back(std::make_pair("Bad frames base path", path));
+	}
+}
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"

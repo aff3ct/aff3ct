@@ -2,8 +2,13 @@
 #define FACTORY_SIMULATION_MAIN_H_
 
 #include <string>
+#include <vector>
+#include <typeinfo>
+#include <typeindex>
+#include <unordered_map>
 
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Header.hpp"
 #include "../Factory.hpp"
 
 namespace aff3ct
@@ -15,9 +20,14 @@ struct Factory_simulation_main : public Factory
 {
 	struct simu_parameters_main
 	{
-		std::string cde_type;
+		// ---- simulation
 		std::string sim_type        = "BFER";
 		int         sim_prec        = 32;
+
+		// ---- code
+		std::string cde_type;
+
+		// ---- others
 		bool        display_help    = false;
 		bool        display_version = false;
 	};
@@ -30,6 +40,8 @@ struct Factory_simulation_main : public Factory
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, simu_parameters_main& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
+
+	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const simu_parameters_main& params);
 };
 
 } /* namespace tools */

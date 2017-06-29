@@ -65,6 +65,19 @@ void Factory_encoder_common<B>
 	ar.push_back({"enc", "Encoder parameter(s)"});
 }
 
+template <typename B>
+void Factory_encoder_common<B>
+::header(Header::params_list& head_enc, const encoder_parameters& params)
+{
+	// ------------------------------------------------------------------------------------------------------- encoder
+	head_enc.push_back(std::make_pair("Type", params.type));
+
+	if (params.type == "USER")
+		head_enc.push_back(std::make_pair("Path", params.path));
+
+	std::string syst_enc = ((params.systematic) ? "on" : "off");
+	head_enc.push_back(std::make_pair("Systematic encoding", syst_enc));
+}
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
