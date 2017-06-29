@@ -26,6 +26,41 @@ Decoder<B,R>* Factory_decoder_repetition<B,R>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename Q>
+void Factory_decoder_repetition<B,Q>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	Factory_decoder_common::build_args(req_args, opt_args);
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	opt_args[{"dec-type", "D"}].push_back("REPETITION");
+	opt_args[{"dec-implem"   }].push_back("STD, FAST");
+}
+
+template <typename B, typename Q>
+void Factory_decoder_repetition<B,Q>
+::store_args(const Arguments_reader& ar, typename Factory_decoder_common::decoder_parameters &params)
+{
+	params.type   = "REPETITION";
+	params.implem = "STD";
+
+	Factory_decoder_common::store_args(ar, params);
+}
+
+template <typename B, typename Q>
+void Factory_decoder_repetition<B,Q>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	Factory_decoder_common::group_args(ar);
+}
+
+template <typename B, typename Q>
+void Factory_decoder_repetition<B,Q>
+::header(Header::params_list& head_dec, const typename Factory_decoder_common::decoder_parameters& params)
+{
+	Factory_decoder_common::header(head_dec, params);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

@@ -132,6 +132,111 @@ Decoder_SISO<B,R>* Factory_decoder_RSC<B,R,RD>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename Q, typename RD>
+void Factory_decoder_RSC<B,Q,RD>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	Factory_decoder_common::build_args(req_args, opt_args);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
+
+	opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
+
+	opt_args[{"dec-simd"}] =
+		{"string",
+		 "the SIMD strategy you want to use.",
+		 "INTRA, INTER"};
+
+	opt_args[{"dec-max"}] =
+		{"string",
+		 "the MAX implementation for the nodes.",
+		 "MAX, MAXL, MAXS"};
+
+	opt_args[{"cde-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+}
+
+template <typename B, typename Q, typename RD>
+void Factory_decoder_RSC<B,Q,RD>
+::store_args(const Arguments_reader& ar, decoder_parameters_RSC &params)
+{
+	params.type   = "BCJR";
+	params.implem = "FAST";
+
+	Factory_decoder_common::store_args(ar, params);
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(ar.exist_arg({"dec-simd"   })) params.simd_strategy = ar.get_arg({"dec-simd"});
+	if(ar.exist_arg({"dec-max"    })) params.max           = ar.get_arg({"dec-max" });
+
+//	if (params.simd_strategy == "INTER" && !ar.exist_arg({"sim-inter-lvl"}))
+//		params.inter_frame_level = mipp::nElReg<Q>();
+//	else if (params.simd_strategy == "INTRA" && !ar.exist_arg({"sim-inter-lvl"}))
+//		params.inter_frame_level = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+//	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
+//	params.N += params.tail_length;
+//	params.N_code = 2 * params.K + params.tail_length;
+
+	if (ar.exist_arg({"cde-poly"}))
+	{
+		auto poly_str = ar.get_arg({"cde-poly"});
+
+#ifdef _MSC_VER
+		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#else
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#endif
+	}
+
+	if (params.type == "LTE")
+	{
+		params.type = "BCJR";
+		params.poly = {013, 015};
+	}
+
+	if (params.type == "CCSDS")
+	{
+		params.type = "BCJR";
+		params.poly = {023, 033};
+	}
+
+	if (!(params.poly[0] == 013 && params.poly[1] == 015)) // if not LTE BCJR
+	{
+		params.type          = "BCJR";
+		params.implem        = "GENERIC";
+		params.simd_strategy = "";
+	}
+}
+
+template <typename B, typename Q, typename RD>
+void Factory_decoder_RSC<B,Q,RD>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	Factory_decoder_common::group_args(ar);
+}
+
+template <typename B, typename Q, typename RD>
+void Factory_decoder_RSC<B,Q,RD>
+::header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_RSC& params)
+{
+	Factory_decoder_common::header(head_dec, params);
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if (!params.simd_strategy.empty())
+		head_dec.push_back(std::make_pair(std::string("SIMD strategy"), params.simd_strategy));
+
+	head_dec.push_back(std::make_pair(std::string("Max type"), params.max));
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	std::stringstream poly;
+	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
+	head_cde.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

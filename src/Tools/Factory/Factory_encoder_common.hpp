@@ -23,8 +23,6 @@ struct Factory_encoder_common : public Factory
 		std::string      type       = "";
 		std::string      path       = "";
 		bool             systematic = true;
-//		bool             buffered;
-//		std::vector<int> poly;
 	};
 
 	static module::Encoder<B>* build(const std::string type,

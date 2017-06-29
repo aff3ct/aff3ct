@@ -24,6 +24,8 @@
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
 #include "Launcher/Polar/Launcher_polar.hpp"
 #include "Launcher/RA/Launcher_RA.hpp"
+#include "Launcher/RSC/Launcher_RSC.hpp"
+#include "Launcher/Repetition/Launcher_repetition.hpp"
 
 //#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
 //#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
@@ -213,25 +215,25 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 //				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
 		}
 
-//		if (code_type == "RSC")
-//		{
-//			if (simu_type == "BFER")
-//				launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
+		if (code_type == "RSC")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_RSC<Launcher_BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
 //			else if (simu_type == "BFERI")
 //				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
-//		}
+		}
 //
 //		if (code_type == "TURBO")
 //		{
 //			if (simu_type == "BFER")
 //				launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
 //		}
-//
-//		if (code_type == "REPETITION")
-//		{
-//			if (simu_type == "BFER")
-//				launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
-//		}
+
+		if (code_type == "REPETITION")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_repetition<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		}
 
 		if (code_type == "BCH")
 		{
