@@ -15,30 +15,33 @@
 
 #include "Tools/git_sha1.h"
 #include "Tools/types.h"
-#include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher/Launcher.hpp"
+#include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
+#include "Launcher/BCH/Launcher_BCH.hpp"
+#include "Launcher/LDPC/Launcher_LDPC.hpp"
+#include "Launcher/Polar/Launcher_polar.hpp"
 
-#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
-#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
-#include "Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp"
-#include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
-#include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
-#include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
-#include "Launcher/BFER/BCH/Launcher_BFER_BCH.hpp"
-#include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
-
-#include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
-#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
-#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
-#include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
-
-#include "Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp"
-#include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
-
-#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
+//#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
+//#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
+//#include "Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp"
+//#include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
+//#include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
+//#include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
+//#include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
+//
+//
+//#include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
+//#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
+//#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
+//#include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
+//
+//#include "Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp"
+//#include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
+//
+//#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
 #include "Tools/params.h"
@@ -147,50 +150,50 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	prec = params.sim_prec;
 #endif
 }
-
-template <typename B, typename R, typename Q, typename QD>
-Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
-{
-	return nullptr;
-}
-
-#if defined(MULTI_PREC) || defined(PREC_32_BIT)
-template <>
-Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc, 
-                                                                      const char  **argv, 
-                                                                      std::string   code_type, 
-                                                                      std::string   simu_type)
-{
-	if (code_type == "POLAR")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_polar<int,float,float>(argc, argv);
-
-	if (code_type == "RSC")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_RSC<int,float,float,float>(argc, argv);
-
-	return nullptr;
-}
-#endif
-
-#if defined(MULTI_PREC) || defined(PREC_64_BIT)
-template <>
-Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc, 
-                                                                                       const char  **argv, 
-                                                                                       std::string   code_type, 
-                                                                                       std::string   simu_type)
-{
-	if (code_type == "POLAR")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_polar<long long,double,double>(argc, argv);
-
-	if (code_type == "RSC")
-		if (simu_type == "EXIT")
-			return new Launcher_EXIT_RSC<long long,double,double,double>(argc, argv);
-
-	return nullptr;
-}
-#endif
+//
+//template <typename B, typename R, typename Q, typename QD>
+//Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
+//{
+//	return nullptr;
+//}
+//
+//#if defined(MULTI_PREC) || defined(PREC_32_BIT)
+//template <>
+//Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc,
+//                                                                      const char  **argv,
+//                                                                      std::string   code_type,
+//                                                                      std::string   simu_type)
+//{
+//	if (code_type == "POLAR")
+//		if (simu_type == "EXIT")
+//			return new Launcher_EXIT_polar<int,float,float>(argc, argv);
+//
+//	if (code_type == "RSC")
+//		if (simu_type == "EXIT")
+//			return new Launcher_EXIT_RSC<int,float,float,float>(argc, argv);
+//
+//	return nullptr;
+//}
+//#endif
+//
+//#if defined(MULTI_PREC) || defined(PREC_64_BIT)
+//template <>
+//Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc,
+//                                                                                       const char  **argv,
+//                                                                                       std::string   code_type,
+//                                                                                       std::string   simu_type)
+//{
+//	if (code_type == "POLAR")
+//		if (simu_type == "EXIT")
+//			return new Launcher_EXIT_polar<long long,double,double>(argc, argv);
+//
+//	if (code_type == "RSC")
+//		if (simu_type == "EXIT")
+//			return new Launcher_EXIT_RSC<long long,double,double,double>(argc, argv);
+//
+//	return nullptr;
+//}
+//#endif
 
 template <typename B, typename R, typename Q, typename QD>
 void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
@@ -202,68 +205,68 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		if (code_type == "POLAR")
 		{
 			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_polar<B,R,Q>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_polar<B,R,Q>(argc, argv);
-			else if (simu_type == "GEN")
-				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
+				launcher = new Launcher_polar<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+//			else if (simu_type == "BFERI")
+//				launcher = new Launcher_BFERI_polar<B,R,Q>(argc, argv);
+//			else if (simu_type == "GEN")
+//				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
 		}
 
-		if (code_type == "RSC")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
-		}
-
-		if (code_type == "TURBO")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
-		}
-
-		if (code_type == "REPETITION")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
-		}
+//		if (code_type == "RSC")
+//		{
+//			if (simu_type == "BFER")
+//				launcher = new Launcher_BFER_RSC<B,R,Q,QD>(argc, argv);
+//			else if (simu_type == "BFERI")
+//				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
+//		}
+//
+//		if (code_type == "TURBO")
+//		{
+//			if (simu_type == "BFER")
+//				launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
+//		}
+//
+//		if (code_type == "REPETITION")
+//		{
+//			if (simu_type == "BFER")
+//				launcher = new Launcher_BFER_repetition<B,R,Q>(argc, argv);
+//		}
 
 		if (code_type == "BCH")
 		{
 			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_BCH<B,R,Q>(argc, argv);
+				launcher = new Launcher_BCH<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
-		if (code_type == "RA")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
-		}
+//		if (code_type == "RA")
+//		{
+//			if (simu_type == "BFER")
+//				launcher = new Launcher_BFER_RA<B,R,Q>(argc, argv);
+//		}
 
 		if (code_type == "LDPC")
 		{
 			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_LDPC<B,R,Q>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
+				launcher = new Launcher_LDPC<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+//			else if (simu_type == "BFERI")
+//				launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
 		}
 
-		if (code_type == "UNCODED")
-		{
-			if (simu_type == "BFER")
-				launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
-			else if (simu_type == "BFERI")
-				launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
-		}
+//		if (code_type == "UNCODED")
+//		{
+//			if (simu_type == "BFER")
+//				launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
+//			else if (simu_type == "BFERI")
+//				launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
+//		}
 
 		if (launcher == nullptr)
 		{
-			launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
+//			launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
 
 			if (launcher == nullptr)
 			{
-				std::cerr << format_error("Unsupported type of codes/simulation.") << std::endl;
+				std::cerr << format_error("Unsupported code/simulation pair.") << std::endl;
 				exit(EXIT_FAILURE);
 			}
 		}

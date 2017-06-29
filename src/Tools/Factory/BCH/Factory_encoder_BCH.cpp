@@ -37,7 +37,6 @@ void Factory_encoder_BCH<B>
 	params.type = "BCH";
 
 	Factory_encoder_common<B>::store_args(ar, params);
-
 }
 
 template <typename B>
@@ -53,6 +52,7 @@ void Factory_encoder_BCH<B>
 {
 	Factory_encoder_common<B>::header(head_enc, params);
 }
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

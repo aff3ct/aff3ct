@@ -6,6 +6,7 @@
 
 using namespace aff3ct::tools;
 using namespace aff3ct::launcher;
+using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
@@ -20,7 +21,7 @@ template <typename B, typename R, typename Q>
 Launcher_BFER<B,R,Q>
 ::~Launcher_BFER()
 {
-	if (codec              != nullptr)
+	if (codec != nullptr)
 		delete codec;
 
 	if (m_chain_params != nullptr)
@@ -143,6 +144,21 @@ void Launcher_BFER<B,R,Q>
 	if (mon.size()) Header::print_parameters("Monitor",     mon, max_n_chars, this->stream);
 	if (ter.size()) Header::print_parameters("Terminal",    ter, max_n_chars, this->stream);
 	this->stream << "#" << std::endl;
+}
+
+template <typename B, typename R, typename Q>
+Simulation* Launcher_BFER<B,R,Q>
+::build_simu()
+{
+	this->build_codec();
+
+#if defined(SYSTEMC)
+	return new SC_Simulation_BFER_std     <B,R,Q>(this->params, *this->codec);
+#elif defined(STARPU)
+	return new SPU_Simulation_BFER_std    <B,R,Q>(this->params, *this->codec);
+#else
+	return new Simulation_BFER_std_threads<B,R,Q>(this->params, *this->codec);
+#endif
 }
 
 

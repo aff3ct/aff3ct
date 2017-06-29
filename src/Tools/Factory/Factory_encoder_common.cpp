@@ -40,6 +40,10 @@ void Factory_encoder_common<B>
 	opt_args[{"enc-path"}] =
 		{"string",
 		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
+
+	opt_args[{"enc-no-sys"}] =
+		{"",
+		 "disable the systematic encoding."};
 }
 
 template <typename B>
@@ -47,7 +51,7 @@ void Factory_encoder_common<B>
 ::store_args(const Arguments_reader& ar, encoder_parameters &params)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
-	if(ar.exist_arg({"enc-type"})) params.type = ar.get_arg({"enc-type"});
+	if(ar.exist_arg({"enc-type"  })) params.type = ar.get_arg({"enc-type"});
 //	if (params.type == "COSET")
 //		params.code.coset = true;
 //	if (params.type == "AZCW")
@@ -55,7 +59,9 @@ void Factory_encoder_common<B>
 //	if (params.type == "USER")
 //		params.source.type = "USER";
 
-	if(ar.exist_arg({"enc-path"})) params.path = ar.get_arg({"enc-path"});
+	if(ar.exist_arg({"enc-path"  })) params.path = ar.get_arg({"enc-path"});
+
+	if(ar.exist_arg({"enc-no-sys"})) params.systematic = false;
 }
 
 template <typename B>

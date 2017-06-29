@@ -78,6 +78,30 @@ void Factory_CRC<B>
 }
 
 
+template <typename B>
+void Factory_CRC<B>
+::header(Header::params_list& head_crc, const CRC_params& params)
+{
+	// ----------------------------------------------------------------------------------------------------------- crc
+	if (!params.poly.empty())
+	{
+		head_crc.push_back(std::make_pair("Type", params.type));
+
+		auto poly_name = CRC_polynomial<B>::name (params.poly);
+		if (!poly_name.empty())
+			head_crc.push_back(std::make_pair("Name", poly_name));
+
+		std::stringstream poly_val;
+		poly_val << "0x" << std::hex << CRC_polynomial<B>::value(params.poly);
+		head_crc.push_back(std::make_pair("Polynomial (hexadecimal)", poly_val.str()));
+
+		auto poly_size = CRC_polynomial<B>::size (params.poly);
+		head_crc.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : params.size)));
+
+		std::string crc_inc_rate = (params.inc_code_rate) ? "on" : "off";
+		head_crc.push_back(std::make_pair("Add CRC in the code rate", crc_inc_rate));
+	}
+}
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

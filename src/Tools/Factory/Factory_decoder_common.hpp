@@ -19,7 +19,7 @@ struct Factory_decoder_common : Factory
 		virtual ~decoder_parameters() {}
 
 		std::string type;
-		std::string implem = "BFER";
+		std::string implem;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

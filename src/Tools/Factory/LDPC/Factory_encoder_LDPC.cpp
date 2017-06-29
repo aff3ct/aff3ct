@@ -25,6 +25,42 @@ Encoder_LDPC<B>* Factory_encoder_LDPC<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B>
+void Factory_encoder_LDPC<B>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	Factory_encoder_common<B>::build_args(req_args, opt_args);
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	opt_args[{"enc-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
+}
+
+template <typename B>
+void Factory_encoder_LDPC<B>
+::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params)
+{
+	params.type = "AZCW";
+
+	Factory_encoder_common<B>::store_args(ar, params);
+}
+
+template <typename B>
+void Factory_encoder_LDPC<B>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	Factory_encoder_common<B>::group_args(ar);
+}
+
+template <typename B>
+void Factory_encoder_LDPC<B>
+::header(Header::params_list& head_enc, const typename Factory_encoder_common<B>::encoder_parameters& params)
+{
+	Factory_encoder_common<B>::header(head_enc, params);
+
+	if (params.type == "LDPC")
+		head_enc.push_back(std::make_pair("Path", params.path));
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

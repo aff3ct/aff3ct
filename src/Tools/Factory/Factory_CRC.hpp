@@ -2,6 +2,7 @@
 #define FACTORY_CRC_HPP
 
 #include <string>
+#include <sstream>
 
 #include "Module/CRC/CRC.hpp"
 #include "Tools/Header.hpp"
@@ -35,6 +36,8 @@ struct Factory_CRC : public Factory
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, CRC_params &params, const int K, const int N);
 	static void group_args(Arguments_reader::arg_grp& ar);
+
+	static void header(Header::params_list& head_crc, const CRC_params& params);
 };
 }
 }

@@ -93,7 +93,7 @@ int Launcher<B,R,Q>
 		std::cerr << format_error(cmd_error[e]) << std::endl;
 
 	if(miss_arg)
-		std::cerr << format_error("A required argument is missing.") << std::endl;
+		std::cerr << format_error("At least one required argument is missing.") << std::endl;
 
 	// print the warnings
 #ifdef ENABLE_MPI
@@ -114,44 +114,13 @@ int Launcher<B,R,Q>
 		std::cerr << format_info(message) << std::endl;
 	}
 
-	return (error?EXIT_FAILURE:EXIT_SUCCESS);
+	return ((miss_arg || error)?EXIT_FAILURE:EXIT_SUCCESS);
 }
-
-template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::compute_max_n_chars()
-{
-//	std::function<void (Header::params_list)> compute_max =
-//		[&](Header::params_list params)
-//	{
-//		for (auto i = 0; i < (int)params.size(); i++)
-//			this->max_n_chars = std::max(this->max_n_chars, (int)params[i].first.length());
-//	};
-
-//	compute_max(header_simulation ());
-//	compute_max(header_code       ());
-//	compute_max(header_source     ());
-//	compute_max(header_crc        ());
-//	compute_max(header_encoder    ());
-//	compute_max(header_puncturer  ());
-//	compute_max(header_interleaver());
-//	compute_max(header_modulator  ());
-//	compute_max(header_channel    ());
-//	compute_max(header_demodulator());
-//	compute_max(header_depuncturer());
-//	compute_max(header_quantizer  ());
-//	compute_max(header_decoder    ());
-//	compute_max(header_monitor    ());
-//	compute_max(header_terminal   ());
-}
-
 
 template <typename B, typename R, typename Q>
 void Launcher<B,R,Q>
 ::print_header()
 {
-//	this->compute_max_n_chars();
-
 	// display configuration and simulation parameters
 	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
 	stream << "# " << style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", Style::BOLD) << std::endl;

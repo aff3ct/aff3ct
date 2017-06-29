@@ -51,6 +51,107 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename Q>
+void Factory_decoder_LDPC<B,Q>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	Factory_decoder_common::build_args(req_args, opt_args);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	req_args[{"cde-alist-path"}] =
+		{"string",
+		 "path to the AList formated file."};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
+
+	opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA, GALA");
+
+	opt_args[{"dec-ite", "i"}] =
+		{"positive_int",
+		 "maximal number of iterations in the turbo decoder."};
+
+	opt_args[{"dec-off"}] =
+		{"float",
+		 "offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
+
+	opt_args[{"dec-norm"}] =
+		{"positive_float",
+		 "normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
+
+	opt_args[{"dec-no-synd"}] =
+		{"",
+		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
+
+	opt_args[{"dec-synd-depth"}] =
+		{"positive_int",
+		 "successive number of iterations to validate the syndrome detection."};
+
+	opt_args[{"dec-simd"}] =
+		{"string",
+		 "the SIMD strategy you want to use.",
+		 "INTER"};
+}
+
+template <typename B, typename Q>
+void Factory_decoder_LDPC<B,Q>
+::store_args(const Arguments_reader& ar, decoder_parameters_LDPC &params)
+{
+	params.type   = "BP_FLOODING";
+	params.implem = "SPA";
+
+	Factory_decoder_common::store_args(ar, params);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	if(ar.exist_arg({"cde-alist-path"})) params.alist_path = ar.get_arg({"cde-alist-path"});
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if(ar.exist_arg({"dec-ite",   "i"})) params.n_ite            = ar.get_arg_int  ({"dec-ite", "i"  });
+	if(ar.exist_arg({"dec-off"       })) params.offset           = ar.get_arg_float({"dec-off"       });
+	if(ar.exist_arg({"dec-norm"      })) params.normalize_factor = ar.get_arg_float({"dec-norm"      });
+	if(ar.exist_arg({"dec-synd-depth"})) params.syndrome_depth   = ar.get_arg_int  ({"dec-synd-depth"});
+	if(ar.exist_arg({"dec-no-synd"   })) params.enable_syndrome  = false;
+	if(ar.exist_arg({"dec-simd"      })) params.simd_strategy    = ar.get_arg      ({"dec-simd"      });
+
+//	if (params.simd_strategy == "INTER" && !ar.exist_arg({"sim-inter-lvl"}))
+//		params.simulation.inter_frame_level = mipp::nElReg<Q>();
+}
+
+template <typename B, typename Q>
+void Factory_decoder_LDPC<B,Q>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	Factory_decoder_common::group_args(ar);
+}
+
+template <typename B, typename Q>
+void Factory_decoder_LDPC<B,Q>
+::header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_LDPC& params)
+{
+	Factory_decoder_common::header(head_dec, params);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	head_cde.push_back(std::make_pair("AList file path", params.alist_path));
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	if (!params.simd_strategy.empty())
+		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));
+
+	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
+
+	if (params.implem == "ONMS")
+	{
+		head_dec.push_back(std::make_pair("Offset",           std::to_string(params.offset          )));
+		head_dec.push_back(std::make_pair("Normalize factor", std::to_string(params.normalize_factor)));
+	}
+
+	std::string syndrome = params.enable_syndrome ? "on" : "off";
+	head_dec.push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
+
+	if (params.enable_syndrome)
+		head_dec.push_back(std::make_pair("Stop criterion depth",  std::to_string(params.syndrome_depth)));
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

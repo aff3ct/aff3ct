@@ -27,7 +27,6 @@ struct Factory_simulation : Factory_simulation_main
 		int                       mpi_size          = 1;
 #endif
 		std::chrono::seconds      stop_time         = std::chrono::seconds(0);
-//		std::string               bin_pb_path;
 //		std::string               json_path;
 		std::string               pyber             = "";
 		float                     snr_min;
