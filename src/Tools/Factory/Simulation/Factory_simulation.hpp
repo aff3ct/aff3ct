@@ -31,9 +31,6 @@ struct Factory_simulation : Factory_simulation_main
 		float                     snr_min;
 		float                     snr_max;
 		float                     snr_step          = 0.1f;
-//		float                     sig_a_min;
-//		float                     sig_a_max;
-//		float                     sig_a_step;
 		int                       n_threads         = 1;
 		int                       inter_frame_level = 1;
 		int                       seed              = 0;

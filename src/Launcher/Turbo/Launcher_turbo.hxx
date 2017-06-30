@@ -44,7 +44,6 @@ void Launcher_turbo<cLauncher,B,R,Q,QD>
 {
 	cLauncher::build_args();
 
-	tools::Factory_CRC            <B  >::build_args(this->req_args, this->opt_args);
 	tools::Factory_puncturer_turbo<B,Q>::build_args(this->req_args, this->opt_args);
 	tools::Factory_encoder_turbo  <B  >::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_turbo  <B,Q>::build_args(this->req_args, this->opt_args);
@@ -56,7 +55,6 @@ void Launcher_turbo<cLauncher,B,R,Q,QD>
 {
 	cLauncher::store_args();
 
-	tools::Factory_CRC            <B  >::store_args(this->ar, this->m_chain_params->crc, this->m_chain_params->sim.K, this->m_chain_params->sim.N);
 	tools::Factory_puncturer_turbo<B,Q>::store_args(this->ar, *m_pct);
 	tools::Factory_encoder_turbo  <B  >::store_args(this->ar, *m_enc);
 	tools::Factory_decoder_turbo  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.seed);
@@ -68,7 +66,6 @@ void Launcher_turbo<cLauncher,B,R,Q,QD>
 {
 	cLauncher::group_args();
 
-	tools::Factory_CRC            <B  >::group_args(this->arg_group);
 	tools::Factory_puncturer_turbo<B,Q>::group_args(this->arg_group);
 	tools::Factory_encoder_turbo  <B  >::group_args(this->arg_group);
 	tools::Factory_decoder_turbo  <B,Q>::group_args(this->arg_group);
@@ -78,7 +75,6 @@ template <class cLauncher, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<cLauncher,B,R,Q,QD>
 ::print_header()
 {
-	tools::Factory_CRC            <B  >::header(this->pl_crc, this->m_chain_params->crc);
 	tools::Factory_puncturer_turbo<B,Q>::header(this->pl_pct, *m_pct);
 	tools::Factory_encoder_turbo  <B  >::header(this->pl_enc, *m_enc);
 	tools::Factory_decoder_turbo  <B,Q>::header(this->pl_dec, this->pl_cde, this->pl_itl, *m_dec, !this->pl_crc.empty());

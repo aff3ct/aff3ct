@@ -124,6 +124,38 @@ void Launcher<B,R,Q>
 	stream << "# " << style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", Style::BOLD) << std::endl;
 	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
 	stream << "# " << style(style("Parameters :", Style::BOLD), Style::UNDERLINED) << std::endl;
+
+	int max_n_chars = 0;
+	Header::compute_max_n_chars(pl_sim,   max_n_chars);
+	Header::compute_max_n_chars(pl_cde,   max_n_chars);
+	Header::compute_max_n_chars(pl_src,   max_n_chars);
+	Header::compute_max_n_chars(pl_crc,   max_n_chars);
+	Header::compute_max_n_chars(pl_enc,   max_n_chars);
+	Header::compute_max_n_chars(pl_pct,   max_n_chars);
+	Header::compute_max_n_chars(pl_itl,   max_n_chars);
+	Header::compute_max_n_chars(pl_mod,   max_n_chars);
+	Header::compute_max_n_chars(pl_chn,   max_n_chars);
+	Header::compute_max_n_chars(pl_demod, max_n_chars);
+	Header::compute_max_n_chars(pl_qua,   max_n_chars);
+	Header::compute_max_n_chars(pl_dec,   max_n_chars);
+	Header::compute_max_n_chars(pl_mon,   max_n_chars);
+	Header::compute_max_n_chars(pl_ter,   max_n_chars);
+
+	if (pl_sim  .size()) Header::print_parameters("Simulation",  pl_sim,   max_n_chars, this->stream);
+	if (pl_cde  .size()) Header::print_parameters("Code",        pl_cde,   max_n_chars, this->stream);
+	if (pl_src  .size()) Header::print_parameters("Source",      pl_src,   max_n_chars, this->stream);
+	if (pl_crc  .size()) Header::print_parameters("CRC",         pl_crc,   max_n_chars, this->stream);
+	if (pl_enc  .size()) Header::print_parameters("Encoder",     pl_enc,   max_n_chars, this->stream);
+	if (pl_pct  .size()) Header::print_parameters("Puncturer",   pl_pct,   max_n_chars, this->stream);
+	if (pl_itl  .size()) Header::print_parameters("Interleaver", pl_itl,   max_n_chars, this->stream);
+	if (pl_mod  .size()) Header::print_parameters("Modulator",   pl_mod,   max_n_chars, this->stream);
+	if (pl_chn  .size()) Header::print_parameters("Channel",     pl_chn,   max_n_chars, this->stream);
+	if (pl_demod.size()) Header::print_parameters("Demodulator", pl_demod, max_n_chars, this->stream);
+	if (pl_qua  .size()) Header::print_parameters("Quantizer",   pl_qua,   max_n_chars, this->stream);
+	if (pl_dec  .size()) Header::print_parameters("Decoder",     pl_dec,   max_n_chars, this->stream);
+	if (pl_mon  .size()) Header::print_parameters("Monitor",     pl_mon,   max_n_chars, this->stream);
+	if (pl_ter  .size()) Header::print_parameters("Terminal",    pl_ter,   max_n_chars, this->stream);
+	this->stream << "#" << std::endl;
 }
 
 template <typename B, typename R, typename Q>

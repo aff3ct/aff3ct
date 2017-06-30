@@ -37,22 +37,25 @@ template <typename B = int, typename R = float, typename Q = R>
 class Launcher
 {
 private:
-	simulation::Simulation                         *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
-	std::string                                     cmd_line;
+	simulation::Simulation *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
+	std::string            cmd_line;
 
 protected:
 	tools::Arguments_reader          ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::parameters                params;   /*!< A structure of parameters to store and pass to the simulation. */
-	std::ostream                    &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
 	tools::Arguments_reader::arg_map req_args; /*!< List of the required arguments, syntax is the following:
 	                                            *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 	tools::Arguments_reader::arg_map opt_args; /*!< List of the optional arguments, syntax is the following:
 	                                            *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-
 	tools::Arguments_reader::arg_grp arg_group;/*!< List of the arguments groups */
 
 	tools::Factory_simulation_main::chain_parameters *chain_params = nullptr;   /*!< A structure of parameters to store and pass to the simulation. */
 	tools::Factory_simulation     ::simu_parameters  *simu_params  = nullptr;
+
+	std  ::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
+	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
+	                           pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter, pl_pct;
+
+	tools::parameters params;   /*!< A structure of parameters to store and pass to the simulation. */
 
 public:
 	/*!
@@ -99,141 +102,6 @@ protected:
 	 * This method can be overloaded to be extended.
 	 */
 	virtual void group_args();
-
-	/*!
-	 * \brief Returns a vector of simulation parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_simulation() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Code parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_code() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of source parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_source() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of CRC parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_crc() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of encoder parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_encoder() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of puncturer parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_puncturer() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of interleaver parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_interleaver() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of modulator parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_modulator() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of channel parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_channel() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of demodulator parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_demodulator() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of depuncturer parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_depuncturer() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of quantizer parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_quantizer() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of decoder parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_decoder() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of monitor parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_monitor() {return tools::Header::params_list();}
-
-	/*!
-	 * \brief Returns a vector of terminal parameters to display in the header of the simulation.
-	 *
-	 * This method can be overloaded to be extended.
-	 *
-	 * \return a vector of pair containing the parameters to display (pair.first = "Key", pair.second = "Value")
-	 */
-	virtual tools::Header::params_list header_terminal() {return tools::Header::params_list();}
 
 	/*!
 	 * \brief Allocates a specific simulation.

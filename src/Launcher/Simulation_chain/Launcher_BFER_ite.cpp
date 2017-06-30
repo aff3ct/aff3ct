@@ -107,57 +107,25 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_ite<B,R,Q>
 ::print_header()
 {
+	Factory_simulation_BFER_ite::header(this->pl_sim, this->pl_cde, m_chain_params->sim);
+
+	Factory_source<B>          ::header(this->pl_src, m_chain_params->src);
+
+	Factory_CRC<B>             ::header(this->pl_crc, m_chain_params->crc);
+
+	Factory_interleaver<int>   ::header(this->pl_itl, m_chain_params->itl);
+
+	Factory_modem<B,R,Q>       ::header(this->pl_mod, this->pl_demod, m_chain_params->modem);
+
+	Factory_channel<R>         ::header(this->pl_chn, m_chain_params->chn);
+
+	Factory_quantizer<R,Q>     ::header(this->pl_qua, m_chain_params->qua);
+
+	Factory_monitor<B>         ::header(this->pl_mon, m_chain_params->mon);
+
+	Factory_terminal_BFER      ::header(this->pl_ter, m_chain_params->ter);
+
 	Launcher<B,R,Q>::print_header();
-
-	Factory_simulation_BFER_ite::header(pl_sim, pl_cde, m_chain_params->sim);
-
-	Factory_source<B>          ::header(pl_src, m_chain_params->src);
-
-	Factory_CRC<B>             ::header(pl_crc, m_chain_params->crc);
-
-	Factory_interleaver<int>   ::header(pl_itl, m_chain_params->itl);
-
-	Factory_modem<B,R,Q>       ::header(pl_mod, pl_demod, m_chain_params->modem);
-
-	Factory_channel<R>         ::header(pl_chn, m_chain_params->chn);
-
-	Factory_quantizer<R,Q>     ::header(pl_qua, m_chain_params->qua);
-
-	Factory_monitor<B>         ::header(pl_mon, m_chain_params->mon);
-
-	Factory_terminal_BFER      ::header(pl_ter, m_chain_params->ter);
-
-	int max_n_chars = 0;
-	Header::compute_max_n_chars(pl_sim,   max_n_chars);
-	Header::compute_max_n_chars(pl_cde,   max_n_chars);
-	Header::compute_max_n_chars(pl_src,   max_n_chars);
-	Header::compute_max_n_chars(pl_crc,   max_n_chars);
-	Header::compute_max_n_chars(pl_enc,   max_n_chars);
-	Header::compute_max_n_chars(pl_pct,   max_n_chars);
-	Header::compute_max_n_chars(pl_itl,   max_n_chars);
-	Header::compute_max_n_chars(pl_mod,   max_n_chars);
-	Header::compute_max_n_chars(pl_chn,   max_n_chars);
-	Header::compute_max_n_chars(pl_demod, max_n_chars);
-	Header::compute_max_n_chars(pl_qua,   max_n_chars);
-	Header::compute_max_n_chars(pl_dec,   max_n_chars);
-	Header::compute_max_n_chars(pl_mon,   max_n_chars);
-	Header::compute_max_n_chars(pl_ter,   max_n_chars);
-
-	if (pl_sim  .size()) Header::print_parameters("Simulation",  pl_sim,   max_n_chars, this->stream);
-	if (pl_cde  .size()) Header::print_parameters("Code",        pl_cde,   max_n_chars, this->stream);
-	if (pl_src  .size()) Header::print_parameters("Source",      pl_src,   max_n_chars, this->stream);
-	if (pl_crc  .size()) Header::print_parameters("CRC",         pl_crc,   max_n_chars, this->stream);
-	if (pl_enc  .size()) Header::print_parameters("Encoder",     pl_enc,   max_n_chars, this->stream);
-	if (pl_pct  .size()) Header::print_parameters("Puncturer",   pl_pct,   max_n_chars, this->stream);
-	if (pl_itl  .size()) Header::print_parameters("Interleaver", pl_itl,   max_n_chars, this->stream);
-	if (pl_mod  .size()) Header::print_parameters("Modulator",   pl_mod,   max_n_chars, this->stream);
-	if (pl_chn  .size()) Header::print_parameters("Channel",     pl_chn,   max_n_chars, this->stream);
-	if (pl_demod.size()) Header::print_parameters("Demodulator", pl_demod, max_n_chars, this->stream);
-	if (pl_qua  .size()) Header::print_parameters("Quantizer",   pl_qua,   max_n_chars, this->stream);
-	if (pl_dec  .size()) Header::print_parameters("Decoder",     pl_dec,   max_n_chars, this->stream);
-	if (pl_mon  .size()) Header::print_parameters("Monitor",     pl_mon,   max_n_chars, this->stream);
-	if (pl_ter  .size()) Header::print_parameters("Terminal",    pl_ter,   max_n_chars, this->stream);
-	this->stream << "#" << std::endl;
 }
 
 template <typename B, typename R, typename Q>

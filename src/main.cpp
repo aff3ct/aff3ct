@@ -21,6 +21,7 @@
 #include "Launcher/Launcher.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_ite.hpp"
+#include "Launcher/Simulation_chain/Launcher_EXIT.hpp"
 
 #include "Launcher/BCH/Launcher_BCH.hpp"
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
@@ -31,15 +32,6 @@
 #include "Launcher/Repetition/Launcher_repetition.hpp"
 #include "Launcher/Uncoded/Launcher_NO.hpp"
 
-
-//#include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
-//#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
-//#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
-//#include "Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp"
-//
-//#include "Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp"
-//#include "Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp"
-//
 //#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
@@ -149,50 +141,50 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	prec = params.sim_prec;
 #endif
 }
-//
-//template <typename B, typename R, typename Q, typename QD>
-//Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
-//{
-//	return nullptr;
-//}
-//
-//#if defined(MULTI_PREC) || defined(PREC_32_BIT)
-//template <>
-//Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc,
-//                                                                      const char  **argv,
-//                                                                      std::string   code_type,
-//                                                                      std::string   simu_type)
-//{
-//	if (code_type == "POLAR")
-//		if (simu_type == "EXIT")
-//			return new Launcher_EXIT_polar<int,float,float>(argc, argv);
-//
-//	if (code_type == "RSC")
-//		if (simu_type == "EXIT")
-//			return new Launcher_EXIT_RSC<int,float,float,float>(argc, argv);
-//
-//	return nullptr;
-//}
-//#endif
-//
-//#if defined(MULTI_PREC) || defined(PREC_64_BIT)
-//template <>
-//Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc,
-//                                                                                       const char  **argv,
-//                                                                                       std::string   code_type,
-//                                                                                       std::string   simu_type)
-//{
-//	if (code_type == "POLAR")
-//		if (simu_type == "EXIT")
-//			return new Launcher_EXIT_polar<long long,double,double>(argc, argv);
-//
-//	if (code_type == "RSC")
-//		if (simu_type == "EXIT")
-//			return new Launcher_EXIT_RSC<long long,double,double,double>(argc, argv);
-//
-//	return nullptr;
-//}
-//#endif
+
+template <typename B, typename R, typename Q, typename QD>
+Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
+{
+	return nullptr;
+}
+
+#if defined(MULTI_PREC) || defined(PREC_32_BIT)
+template <>
+Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc,
+                                                                      const char  **argv,
+                                                                      std::string   code_type,
+                                                                      std::string   simu_type)
+{
+	if (code_type == "POLAR")
+		if (simu_type == "EXIT")
+			return new Launcher_polar<Launcher_EXIT<int,float,float>,int,float,float>(argc, argv);
+
+	if (code_type == "RSC")
+		if (simu_type == "EXIT")
+			return new Launcher_RSC<Launcher_EXIT<int,float,float>,int,float,float,float>(argc, argv);
+
+	return nullptr;
+}
+#endif
+
+#if defined(MULTI_PREC) || defined(PREC_64_BIT)
+template <>
+Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc,
+                                                                                       const char  **argv,
+                                                                                       std::string   code_type,
+                                                                                       std::string   simu_type)
+{
+	if (code_type == "POLAR")
+		if (simu_type == "EXIT")
+			return new Launcher_polar<Launcher_EXIT<long long,double,double>,long long,double,double>(argc, argv);
+
+	if (code_type == "RSC")
+		if (simu_type == "EXIT")
+			return new Launcher_RSC<Launcher_EXIT<long long,double,double>,long long,double,double,double>(argc, argv);
+
+	return nullptr;
+}
+#endif
 
 template <typename B, typename R, typename Q, typename QD>
 void start_simu(const int argc, const char **argv, std::string code_type, std::string simu_type)
@@ -261,7 +253,7 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 
 		if (launcher == nullptr)
 		{
-//			launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
+			launcher = create_exit_simu<B,R,Q,QD>(argc, argv, code_type, simu_type);
 
 			if (launcher == nullptr)
 			{

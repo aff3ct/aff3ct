@@ -39,7 +39,6 @@ void Launcher_polar<cLauncher,B,R,Q>
 {
 	cLauncher::build_args();
 
-	tools::Factory_CRC          <B  >::build_args(this->req_args, this->opt_args);
 	tools::Factory_encoder_polar<B  >::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_polar<B,Q>::build_args(this->req_args, this->opt_args);
 }
@@ -50,7 +49,6 @@ void Launcher_polar<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_CRC          <B  >::store_args(this->ar, this->m_chain_params->crc, this->m_chain_params->sim.K, this->m_chain_params->sim.N);
 	tools::Factory_encoder_polar<B  >::store_args(this->ar, *m_enc);
 	tools::Factory_decoder_polar<B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.N);
 }
@@ -61,7 +59,6 @@ void Launcher_polar<cLauncher,B,R,Q>
 {
 	cLauncher::group_args();
 
-	tools::Factory_CRC          <B  >::group_args(this->arg_group);
 	tools::Factory_encoder_polar<B  >::group_args(this->arg_group);
 	tools::Factory_decoder_polar<B,Q>::group_args(this->arg_group);
 }
@@ -70,7 +67,6 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_polar<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_CRC          <B  >::header(this->pl_crc, this->m_chain_params->crc);
 	tools::Factory_encoder_polar<B  >::header(this->pl_enc, *m_enc);
 	tools::Factory_decoder_polar<B,Q>::header(this->pl_dec, this->pl_cde, *m_dec);
 

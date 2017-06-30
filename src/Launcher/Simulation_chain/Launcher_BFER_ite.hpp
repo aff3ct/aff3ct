@@ -2,7 +2,7 @@
 #define LAUNCHER_BFER_ITE_HPP_
 
 #include "Tools/Codec/Codec_SISO.hpp"
-#include "Tools/Factory/Simulation/Factory_simulation_BFER_ite.hpp"
+#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER_ite.hpp"
 
 #if defined(SYSTEMC)
 #include "Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp"
@@ -25,9 +25,6 @@ protected:
 	tools::Codec_SISO<B,Q> *codec = nullptr;
 
 	tools::Factory_simulation_BFER_ite::chain_parameters_BFER_ite<B,R,Q> * m_chain_params = nullptr;
-
-	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
-	                           pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter, pl_pct;
 
 public:
 	Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);

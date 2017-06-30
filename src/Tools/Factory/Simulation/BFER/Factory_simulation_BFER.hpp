@@ -4,7 +4,7 @@
 #include <string>
 #include <thread>
 
-#include "Factory_simulation.hpp"
+#include "../Factory_simulation.hpp"
 #include "Tools/Arguments_reader.hpp"
 
 namespace aff3ct
