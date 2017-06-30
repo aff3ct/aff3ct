@@ -13,8 +13,9 @@ template <typename B = int, typename Q = float>
 class Codec_SISO : public Codec<B,Q>
 {
 public:
-	Codec_SISO(const parameters& params)
-	: Codec<B,Q>(params)
+	Codec_SISO(const typename Factory_encoder_common<B  >::encoder_parameters &enc_params,
+	           const typename Factory_decoder_common     ::decoder_parameters &dec_params)
+	: Codec<B,Q>(enc_params, dec_params)
 	{
 	}
 

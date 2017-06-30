@@ -10,15 +10,10 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_polar<B>
-::build(const std::string      type,
-        const int              K,
-        const int              N,
-        const mipp::vector<B> &frozen_bits,
-        const bool             sys_encoding,
-        const int              n_frames)
+::build(const typename Factory_encoder_common<B>::encoder_parameters& params, const mipp::vector<B> &frozen_bits)
 {
-	     if (type == "POLAR" && !sys_encoding) return new Encoder_polar    <B>(K, N, frozen_bits, n_frames);
-	else if (type == "POLAR" &&  sys_encoding) return new Encoder_polar_sys<B>(K, N, frozen_bits, n_frames);
+	     if (params.type == "POLAR" && !params.systematic) return new Encoder_polar    <B>(params.K, params.N, frozen_bits, params.n_frames);
+	else if (params.type == "POLAR" &&  params.systematic) return new Encoder_polar_sys<B>(params.K, params.N, frozen_bits, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -42,17 +42,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Decoder_SISO<B,Q>* Factory_decoder_polar<B,Q>
-::build_siso(const std::string      type,
-             const std::string      implem,
-             const int              K,
-             const int              N,
-             const mipp::vector<B> &frozen_bits,
-             const bool             sys_encoding,
-             const int              n_ite,
-             const int              n_frames)
+::build_siso(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding)
 {
-	if (type == "SCAN" && sys_encoding)
-		if (implem == "NAIVE") return new Decoder_polar_SCAN_naive_sys<B, Q, init_LLR<Q>, f_LLR<Q>, v_LLR<Q>, h_LLR<B,Q>>(K, N, n_ite, frozen_bits, n_frames);
+	if (params.type == "SCAN" && sys_encoding)
+		if (params.implem == "NAIVE") return new Decoder_polar_SCAN_naive_sys<B, Q, init_LLR<Q>, f_LLR<Q>, v_LLR<Q>, h_LLR<B,Q>>(params.K, params.N, params.n_ite, frozen_bits, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -60,54 +53,43 @@ Decoder_SISO<B,Q>* Factory_decoder_polar<B,Q>
 template <typename B, typename Q>
 template <class API_polar>
 Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::_build(const std::string      type,
-         const std::string      implem,
-         const int              K,
-         const int              N,
-         const mipp::vector<B> &frozen_bits,
-         const bool             sys_encoding,
-         const std::string      polar_nodes,
-         const int              L,
-         const int              n_ite,
-               CRC<B>          *crc,
-         const bool             full_adaptive,
-         const int              n_frames)
+::_build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding, module::CRC<B> *crc)
 {
 	int idx_r0, idx_r1;
-	auto polar_patterns = nodes_parser(polar_nodes, idx_r0, idx_r1);
+	auto polar_patterns = nodes_parser(params.polar_nodes, idx_r0, idx_r1);
 
 	if (!sys_encoding) // non-systematic encoding
 	{
-		if (implem == "NAIVE")
+		if (params.implem == "NAIVE")
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 			{
-				     if (type == "SC"  ) return new Decoder_polar_SC_naive        <B,Q,            f_LLR<Q>,g_LLR<B,Q>,h_LLR<B,Q>>(K, N,        frozen_bits,       n_frames);
-				else if (type == "SCAN") return new Decoder_polar_SCAN_naive      <B,Q,init_LLR<Q>,f_LLR<Q>,v_LLR<  Q>,h_LLR<B,Q>>(K, N, n_ite, frozen_bits,       n_frames);
-				else if (type == "SCL" ) return new Decoder_polar_SCL_naive       <B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(K, N, L,     frozen_bits,       n_frames);
+				     if (params.type == "SC"  ) return new Decoder_polar_SC_naive        <B,Q,            f_LLR<Q>,g_LLR<B,Q>,h_LLR<B,Q>>(params.K, params.N,               frozen_bits,       params.n_frames);
+				else if (params.type == "SCAN") return new Decoder_polar_SCAN_naive      <B,Q,init_LLR<Q>,f_LLR<Q>,v_LLR<  Q>,h_LLR<B,Q>>(params.K, params.N, params.n_ite, frozen_bits,       params.n_frames);
+				else if (params.type == "SCL" ) return new Decoder_polar_SCL_naive       <B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(params.K, params.N, params.L,     frozen_bits,       params.n_frames);
 			}
 			else
-				     if (type == "SCL" ) return new Decoder_polar_SCL_naive_CA    <B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(K, N, L,     frozen_bits, *crc, n_frames);
+				     if (params.type == "SCL" ) return new Decoder_polar_SCL_naive_CA    <B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(params.K, params.N, params.L,     frozen_bits, *crc, params.n_frames);
 		}
 	}
 	else // systematic encoding
 	{
-		if (implem == "NAIVE")
+		if (params.implem == "NAIVE")
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 			{
-				     if (type == "SC"  ) return new Decoder_polar_SC_naive_sys    <B,Q,            f_LLR<Q>,g_LLR<B,Q>,h_LLR<B,Q>>(K, N,        frozen_bits,       n_frames);
-				else if (type == "SCAN") return new Decoder_polar_SCAN_naive_sys  <B,Q,init_LLR<Q>,f_LLR<Q>,v_LLR<  Q>,h_LLR<B,Q>>(K, N, n_ite, frozen_bits,       n_frames);
-				else if (type == "SCL" ) return new Decoder_polar_SCL_naive_sys   <B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(K, N, L,     frozen_bits,       n_frames);
+				     if (params.type == "SC"  ) return new Decoder_polar_SC_naive_sys    <B,Q,            f_LLR<Q>,g_LLR<B,Q>,h_LLR<B,Q>>(params.K, params.N,               frozen_bits,       params.n_frames);
+				else if (params.type == "SCAN") return new Decoder_polar_SCAN_naive_sys  <B,Q,init_LLR<Q>,f_LLR<Q>,v_LLR<  Q>,h_LLR<B,Q>>(params.K, params.N, params.n_ite, frozen_bits,       params.n_frames);
+				else if (params.type == "SCL" ) return new Decoder_polar_SCL_naive_sys   <B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(params.K, params.N, params.L,     frozen_bits,       params.n_frames);
 			}
 			else
-				     if (type == "SCL" ) return new Decoder_polar_SCL_naive_CA_sys<B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(K, N, L,     frozen_bits, *crc, n_frames);
+				     if (params.type == "SCL" ) return new Decoder_polar_SCL_naive_CA_sys<B,Q,            f_LLR<Q>,g_LLR<B,Q>           >(params.K, params.N, params.L,     frozen_bits, *crc, params.n_frames);
 		}
-		else if (implem == "FAST")
+		else if (params.implem == "FAST")
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 			{
-				     if (type == "SC"  ) return new Decoder_polar_SC_fast_sys<B, Q, API_polar>(K, N, frozen_bits, polar_patterns, idx_r0, idx_r1, n_frames);
+				     if (params.type == "SC"  ) return new Decoder_polar_SC_fast_sys<B, Q, API_polar>(params.K, params.N, frozen_bits, polar_patterns, idx_r0, idx_r1, params.n_frames);
 			}
 		}
 	}
@@ -118,34 +100,24 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 template <typename B, typename Q>
 template <class API_polar>
 Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::_build_scl_fast(const std::string      type,
-                  const std::string      implem,
-                  const int              K,
-                  const int              N,
-                  const mipp::vector<B> &frozen_bits,
-                  const bool             sys_encoding,
-                  const std::string      polar_nodes,
-                  const int              L,
-                        CRC<B>          *crc,
-                  const bool             full_adaptive,
-                  const int              n_frames)
+::_build_scl_fast(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding, module::CRC<B> *crc)
 {
 	int idx_r0, idx_r1;
-	auto polar_patterns = nodes_parser(polar_nodes, idx_r0, idx_r1);
+	auto polar_patterns = nodes_parser(params.polar_nodes, idx_r0, idx_r1);
 
-	if (implem == "FAST" && sys_encoding)
+	if (params.implem == "FAST" && sys_encoding)
 	{
 		if (crc != nullptr && crc->get_size() > 0)
 		{
-			     if (type == "ASCL"    ) return new Decoder_polar_ASCL_fast_CA_sys    <B, Q, API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, full_adaptive, n_frames);
-			else if (type == "ASCL_MEM") return new Decoder_polar_ASCL_MEM_fast_CA_sys<B, Q, API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, full_adaptive, n_frames);
-			else if (type == "SCL"     ) return new Decoder_polar_SCL_fast_CA_sys     <B, Q, API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                n_frames);
-			else if (type == "SCL_MEM" ) return new Decoder_polar_SCL_MEM_fast_CA_sys <B, Q, API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                n_frames);
+			     if (params.type == "ASCL"    ) return new Decoder_polar_ASCL_fast_CA_sys    <B, Q, API_polar>(params.K, params.N, params.L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, params.full_adaptive, params.n_frames);
+			else if (params.type == "ASCL_MEM") return new Decoder_polar_ASCL_MEM_fast_CA_sys<B, Q, API_polar>(params.K, params.N, params.L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, params.full_adaptive, params.n_frames);
+			else if (params.type == "SCL"     ) return new Decoder_polar_SCL_fast_CA_sys     <B, Q, API_polar>(params.K, params.N, params.L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                       params.n_frames);
+			else if (params.type == "SCL_MEM" ) return new Decoder_polar_SCL_MEM_fast_CA_sys <B, Q, API_polar>(params.K, params.N, params.L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                       params.n_frames);
 		}
 		else
 		{
-			     if (type == "SCL"     ) return new Decoder_polar_SCL_fast_sys        <B, Q, API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1,                      n_frames);
-			else if (type == "SCL_MEM" ) return new Decoder_polar_SCL_MEM_fast_sys    <B, Q, API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1,                      n_frames);
+			     if (params.type == "SCL"     ) return new Decoder_polar_SCL_fast_sys        <B, Q, API_polar>(params.K, params.N, params.L, frozen_bits, polar_patterns, idx_r0, idx_r1,                             params.n_frames);
+			else if (params.type == "SCL_MEM" ) return new Decoder_polar_SCL_MEM_fast_sys    <B, Q, API_polar>(params.K, params.N, params.L, frozen_bits, polar_patterns, idx_r0, idx_r1,                             params.n_frames);
 		}
 	}
 
@@ -154,23 +126,11 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 
 template <typename B, typename Q>
 Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::build(const std::string      type,
-        const std::string      implem,
-        const int              K,
-        const int              N,
-        const mipp::vector<B> &frozen_bits,
-        const std::string      simd_strategy,
-        const bool             sys_encoding,
-        const std::string      polar_nodes,
-        const int              L,
-        const int              n_ite,
-              CRC<B>          *crc,
-        const bool             full_adaptive,
-        const int              n_frames)
+::build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding, module::CRC<B> *crc)
 {
-	if (type.find("SCL") != std::string::npos && implem == "FAST")
+	if (params.type.find("SCL") != std::string::npos && params.implem == "FAST")
 	{
-		if (simd_strategy == "INTRA")
+		if (params.simd_strategy == "INTRA")
 		{
 			if (typeid(B) == typeid(signed char))
 			{
@@ -178,7 +138,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 
-				return _build_scl_fast<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, crc, full_adaptive, n_frames);
+				return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
 			}
 			else if (typeid(B) == typeid(short))
 			{
@@ -186,7 +146,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 
-				return _build_scl_fast<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, crc, full_adaptive, n_frames);
+				return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
 			}
 			else if (typeid(B) == typeid(int))
 			{
@@ -194,19 +154,19 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 
-				return _build_scl_fast<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, crc, full_adaptive, n_frames);
+				return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
 			}
 		}
-		else if (simd_strategy.empty())
+		else if (params.simd_strategy.empty())
 		{
 			using API_polar = API_polar_dynamic_seq
 			                  <B, Q, f_LLR<Q>, g_LLR<B,Q>, g0_LLR<Q>, h_LLR<B,Q>, xo_STD<B>>;
 
-			return _build_scl_fast<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, crc, full_adaptive, n_frames);
+			return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 	}
 
-	if (simd_strategy == "INTER" && type == "SC" && implem == "FAST")
+	if (params.simd_strategy == "INTER" && params.type == "SC" && params.implem == "FAST")
 	{
 		if (typeid(B) == typeid(signed char))
 		{
@@ -227,7 +187,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
 #endif
-			return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
+			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 		else
 		{
@@ -238,10 +198,10 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			using API_polar = API_polar_static_inter
 			                  <B, Q, f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
+			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 	}
-	else if (simd_strategy == "INTRA" && implem == "FAST")
+	else if (params.simd_strategy == "INTRA" && params.implem == "FAST")
 	{
 		if (typeid(B) == typeid(signed char))
 		{
@@ -254,7 +214,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 			                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
+			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 		else if (typeid(B) == typeid(short))
 		{
@@ -267,7 +227,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 			                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
+			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 		else if (typeid(B) == typeid(int))
 		{
@@ -280,10 +240,10 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 			                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
+			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 	}
-	else if (simd_strategy.empty())
+	else if (params.simd_strategy.empty())
 	{
 #ifdef API_POLAR_DYNAMIC
 		using API_polar = API_polar_dynamic_seq
@@ -292,7 +252,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 		using API_polar = API_polar_static_seq
 		                  <B, Q, f_LLR<Q>, g_LLR<B,Q>, g0_LLR<Q>, h_LLR<B,Q>, xo_STD<B>>;
 #endif
-		return _build<API_polar>(type, implem, K, N, frozen_bits, sys_encoding, polar_nodes, L, n_ite, crc, full_adaptive, n_frames);
+		return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -352,15 +312,15 @@ void Factory_decoder_polar<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_polar<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_polar &params, int N)
+::store_args(const Arguments_reader& ar, decoder_parameters_polar &params, int K, int N, int n_frames)
 {
 	params.type   = "SC";
 	params.implem = "FAST";
 
-	Factory_decoder_common::store_args(ar, params);
+	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	params.N_code = (int)std::exp2((int)std::ceil(std::log2(N)));
+	params.N_pct = (int)std::exp2((int)std::ceil(std::log2(N)));
 
 #ifdef ENABLE_POLAR_BOUNDS
 	if(ar.exist_arg({"cde-pb-path"})) params.bin_pb_path = ar.get_arg({"cde-pb-path"});

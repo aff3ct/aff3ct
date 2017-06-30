@@ -8,17 +8,11 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Decoder<B,Q>* Factory_decoder_BCH<B,Q>
-::build(const std::string  type,
-        const std::string  implem,
-        const int          K,
-        const int          N,
-        const int          t,
-        const Galois      &GF,
-        const int          n_frames)
+::build(const decoder_parameters_BCH &params, const Galois &GF)
 {
-	if (type == "ALGEBRAIC")
+	if (params.type == "ALGEBRAIC")
 	{
-		if (implem == "STD") return new Decoder_BCH<B,Q>(K, N, t, GF, n_frames);
+		if (params.implem == "STD") return new Decoder_BCH<B,Q>(params.K, params.N, params.t, GF, params.n_frames);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -38,12 +32,12 @@ void Factory_decoder_BCH<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_BCH<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_BCH &params, int K, int N)
+::store_args(const Arguments_reader& ar, decoder_parameters_BCH &params, int K, int N, int n_frames)
 {
-	params.type   = "ALGEBRAIC";
-	params.implem = "STD";
+	params.type     = "ALGEBRAIC";
+	params.implem   = "STD";
 
-	Factory_decoder_common::store_args(ar, params);
+	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.m = (int)std::ceil(std::log2(N));

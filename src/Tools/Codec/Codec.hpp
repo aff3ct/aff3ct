@@ -1,6 +1,8 @@
 #ifndef CODEC_HPP_
 #define CODEC_HPP_
 
+#include <sstream>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/params.h"
 
@@ -10,6 +12,9 @@
 #include "Module/Puncturer/Puncturer.hpp"
 #include "Module/Decoder/Decoder.hpp"
 
+#include "Tools/Factory/Factory_encoder_common.hpp"
+#include "Tools/Factory/Factory_decoder_common.hpp"
+
 namespace aff3ct
 {
 namespace tools
@@ -17,13 +22,30 @@ namespace tools
 template <typename B = int, typename Q = float>
 class Codec
 {
-protected:
-	const tools::parameters& params;
+protected :
+	const typename Factory_encoder_common<B  >::encoder_parameters &enc_params;
+	const typename Factory_decoder_common     ::decoder_parameters &dec_params;
 
 public:
-	Codec(const parameters& params)
-	: params(params)
+	Codec(const typename Factory_encoder_common<B  >::encoder_parameters &enc_params,
+	      const typename Factory_decoder_common     ::decoder_parameters &dec_params)
+	: enc_params(enc_params), dec_params(dec_params)
 	{
+		if (enc_params.K != dec_params.K)
+		{
+			std::stringstream message;
+			message << "The encoder dimension 'K' (=" << enc_params.K << ") is different than the decoder one's (="
+			        << dec_params.K << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (enc_params.N != dec_params.N)
+		{
+			std::stringstream message;
+			message << "The encoder dimension 'N' (=" << enc_params.N << ") is different than the decoder one's (="
+			        << dec_params.N << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	virtual ~Codec()

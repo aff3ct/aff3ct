@@ -15,11 +15,18 @@ void Factory_decoder_common::build_args(Arguments_reader::arg_map &req_args, Arg
 		 "select the implementation of the algorithm to decode."};
 }
 
-void Factory_decoder_common::store_args(const Arguments_reader& ar, decoder_parameters &params)
+void Factory_decoder_common::store_args(const Arguments_reader& ar, decoder_parameters &params, int K, int N, int n_frames)
 {
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(ar.exist_arg({"dec-type",  "D"})) params.type   = ar.get_arg({"dec-type",  "D"});
 	if(ar.exist_arg({"dec-implem"    })) params.implem = ar.get_arg({"dec-implem"    });
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	params.K = K;
+	params.N = N;
+
+	// ---------------------------------------------------------------------------------------------------------- simu
+	params.n_frames = n_frames;
 }
 
 void Factory_decoder_common::group_args(Arguments_reader::arg_grp& ar)

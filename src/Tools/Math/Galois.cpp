@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -9,8 +10,8 @@
 using namespace aff3ct::tools;
 
 Galois
-::Galois(const int& K, const int& N, const int& m, const int& t)
- : K(K), N(N), m(m), t(t), d(2 * t + 1)
+::Galois(const int& K, const int& N, const int& t)
+ : K(K), N(N), m((int)std::ceil(std::log2(N))), t(t), d(2 * t + 1)
 {
 	if (K <= 0)
 	{

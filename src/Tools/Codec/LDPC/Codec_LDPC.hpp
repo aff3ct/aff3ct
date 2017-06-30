@@ -6,6 +6,9 @@
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
+#include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
+#include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
+
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 #include "../Codec_SISO.hpp"
@@ -25,7 +28,8 @@ protected:
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Codec_LDPC(const parameters& params);
+	Codec_LDPC(const typename Factory_encoder_common<B  >::encoder_parameters      &enc_params,
+	           const typename Factory_decoder_LDPC  <B,Q>::decoder_parameters_LDPC &dec_params);
 	virtual ~Codec_LDPC();
 
 	module::Encoder_LDPC<B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);

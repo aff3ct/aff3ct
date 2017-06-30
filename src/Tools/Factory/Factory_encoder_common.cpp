@@ -48,7 +48,7 @@ void Factory_encoder_common<B>
 
 template <typename B>
 void Factory_encoder_common<B>
-::store_args(const Arguments_reader& ar, encoder_parameters &params)
+::store_args(const Arguments_reader& ar, encoder_parameters &params, int K, int N, int n_frames)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-type"  })) params.type = ar.get_arg({"enc-type"});
@@ -62,6 +62,13 @@ void Factory_encoder_common<B>
 	if(ar.exist_arg({"enc-path"  })) params.path = ar.get_arg({"enc-path"});
 
 	if(ar.exist_arg({"enc-no-sys"})) params.systematic = false;
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	params.K = K;
+	params.N = N;
+
+	// ---------------------------------------------------------------------------------------------------------- simu
+	params.n_frames = n_frames;
 }
 
 template <typename B>

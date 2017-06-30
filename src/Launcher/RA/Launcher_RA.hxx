@@ -49,8 +49,8 @@ void Launcher_RA<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_RA <B  >::store_args(this->ar, *m_enc);
-	tools::Factory_decoder_RA <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.seed);
+	tools::Factory_encoder_RA <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
+	tools::Factory_decoder_RA <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level, this->m_chain_params->sim.seed);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>

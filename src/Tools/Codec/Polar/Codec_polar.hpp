@@ -6,6 +6,7 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "Module/Decoder/Decoder_SISO.hpp"
+#include "Tools/Factory/Polar/Factory_decoder_polar.hpp"
 
 #include "../Codec_SISO.hpp"
 
@@ -23,8 +24,12 @@ protected:
 
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
+	const typename tools::Factory_decoder_polar <B,Q>::decoder_parameters_polar& dec_par;
+
 public:
-	Codec_polar(const parameters& params);
+	Codec_polar(const typename Factory_encoder_common<B  >::encoder_parameters       &enc_params,
+	            const typename Factory_decoder_polar <B,Q>::decoder_parameters_polar &dec_params,
+	            const int n_threads);
 	virtual ~Codec_polar();
 
 	void                    launch_precompute(                                                                );

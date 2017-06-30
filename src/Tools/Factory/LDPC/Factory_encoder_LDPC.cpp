@@ -11,16 +11,13 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC<B>* Factory_encoder_LDPC<B>
-::build(const std::string    type,
-        const int            K,
-        const int            N,
+::build(typename Factory_encoder_common<B>::encoder_parameters &params,
         const Sparse_matrix &G,
-        const Sparse_matrix &H,
-        const int            n_frames)
+        const Sparse_matrix &H)
 {
-	     if (type == "LDPC"      ) return new Encoder_LDPC       <B>(K, N, G, n_frames);
-	else if (type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(K, N, H, n_frames);
-	else if (type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(K, N,    n_frames);
+	     if (type == "LDPC"      ) return new Encoder_LDPC       <B>(params.K, params.N, G, params.n_frames);
+	else if (type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(params.K, params.N, H, params.n_frames);
+	else if (type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(params.K, params.N,    params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -37,11 +34,12 @@ void Factory_encoder_LDPC<B>
 
 template <typename B>
 void Factory_encoder_LDPC<B>
-::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params)
+::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params,
+             int K, int N, int n_frames)
 {
 	params.type = "AZCW";
 
-	Factory_encoder_common<B>::store_args(ar, params);
+	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
 }
 
 template <typename B>

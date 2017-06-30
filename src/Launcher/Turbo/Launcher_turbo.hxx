@@ -56,8 +56,8 @@ void Launcher_turbo<cLauncher,B,R,Q,QD>
 	cLauncher::store_args();
 
 	tools::Factory_puncturer_turbo<B,Q>::store_args(this->ar, *m_pct);
-	tools::Factory_encoder_turbo  <B  >::store_args(this->ar, *m_enc);
-	tools::Factory_decoder_turbo  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.seed);
+	tools::Factory_encoder_turbo  <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
+	tools::Factory_decoder_turbo  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level, this->m_chain_params->sim.seed);
 }
 
 template <class cLauncher, typename B, typename R, typename Q, typename QD>

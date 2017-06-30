@@ -15,12 +15,7 @@ namespace tools
 template <typename B = int>
 struct Factory_encoder_polar : public Factory_encoder_common<B>
 {
-	static module::Encoder<B>* build(const std::string      type,
-	                                 const int              K,
-	                                 const int              N,
-	                                 const mipp::vector<B> &frozen_bits,
-	                                 const bool             sys_encoding = true,
-	                                 const int              n_frames     = 1);
+	static module::Encoder<B>* build(const typename Factory_encoder_common<B>::encoder_parameters& params, const mipp::vector<B> &frozen_bits);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params);

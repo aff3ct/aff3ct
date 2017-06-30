@@ -18,7 +18,7 @@ protected:
 	const int d;
 
 public:
-	Galois(const int& K, const int& N, const int& m, const int& t);
+	Galois(const int& K, const int& N, const int& t);
 	virtual ~Galois();
 
 	void Select_Polynomial(); // move this private section
