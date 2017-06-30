@@ -19,7 +19,7 @@ struct Factory_decoder_RA : public Factory_decoder_common
 	{
 		virtual ~decoder_parameters_RA() {}
 		// ------- code
-		typename Factory_interleaver<int>::Interleaver_parameters itl;
+		typename Factory_interleaver<int>::interleaver_parameters itl;
 
 		// ------- decoder
 		int n_ite = 10;

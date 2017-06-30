@@ -16,7 +16,7 @@ namespace tools
 template <typename T = int>
 struct Factory_interleaver : public Factory
 {
-	struct Interleaver_parameters
+	struct interleaver_parameters
 	{
 		std::string type       = "RANDOM";
 		std::string path       = "";
@@ -34,10 +34,10 @@ struct Factory_interleaver : public Factory
 	                                     const int         n_frames = 1);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, Interleaver_parameters &params, const int seed);
+	static void store_args(const Arguments_reader& ar, interleaver_parameters &params, const int seed);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_itl, const Interleaver_parameters& params);
+	static void header(Header::params_list& head_itl, const interleaver_parameters& params);
 };
 }
 }

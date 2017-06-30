@@ -1,4 +1,4 @@
-#include <Launcher/Simulation_chain/Launcher_BFER_std.hpp>
+#include "Launcher_BFER_ite.hpp"
 #include <thread>
 #include <string>
 #include <iostream>
@@ -9,17 +9,17 @@ using namespace aff3ct::launcher;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Launcher_BFER_std<B,R,Q>
-::Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q>())
+Launcher_BFER_ite<B,R,Q>
+::Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream)
+: Launcher<B,R,Q>(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_ite::chain_parameters_BFER_ite<B,R,Q>())
 {
 	this->chain_params =  m_chain_params;
 	this->simu_params  = &m_chain_params->sim;
 }
 
 template <typename B, typename R, typename Q>
-Launcher_BFER_std<B,R,Q>
-::~Launcher_BFER_std()
+Launcher_BFER_ite<B,R,Q>
+::~Launcher_BFER_ite()
 {
 	if (codec != nullptr)
 		delete codec;
@@ -29,14 +29,18 @@ Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void Launcher_BFER_ite<B,R,Q>
 ::build_args()
 {
 	Launcher<B,R,Q>::build_args();
 
-	Factory_simulation_BFER_std::build_args(this->req_args, this->opt_args);
+	Factory_simulation_BFER_ite::build_args(this->req_args, this->opt_args);
 
 	Factory_source<B>          ::build_args(this->req_args, this->opt_args);
+
+	Factory_CRC<B>             ::build_args(this->req_args, this->opt_args);
+
+	Factory_interleaver<int>   ::build_args(this->req_args, this->opt_args);
 
 	Factory_modem<B,R,Q>       ::build_args(this->req_args, this->opt_args);
 
@@ -50,14 +54,18 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void Launcher_BFER_ite<B,R,Q>
 ::store_args()
 {
 	Launcher<B,R,Q>::store_args();
 
-	Factory_simulation_BFER_std::store_args(this->ar, m_chain_params->sim);
+	Factory_simulation_BFER_ite::store_args(this->ar, m_chain_params->sim);
 
 	Factory_source<B>          ::store_args(this->ar, m_chain_params->src);
+
+	Factory_CRC<B>             ::store_args(this->ar, m_chain_params->crc, m_chain_params->sim.K, m_chain_params->sim.N);
+
+	Factory_interleaver<int>   ::store_args(this->ar, m_chain_params->itl, m_chain_params->sim.seed);
 
 	Factory_modem<B,R,Q>       ::store_args(this->ar, m_chain_params->modem, m_chain_params->sim.N);
 
@@ -71,14 +79,18 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void Launcher_BFER_ite<B,R,Q>
 ::group_args()
 {
 	Launcher<B,R,Q>::group_args();
 
-	Factory_simulation_BFER_std::group_args(this->arg_group);
+	Factory_simulation_BFER_ite::group_args(this->arg_group);
 
 	Factory_source<B>          ::group_args(this->arg_group);
+
+	Factory_CRC<B>             ::group_args(this->arg_group);
+
+	Factory_interleaver<int>   ::group_args(this->arg_group);
 
 	Factory_modem<B,R,Q>       ::group_args(this->arg_group);
 
@@ -92,14 +104,18 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void Launcher_BFER_ite<B,R,Q>
 ::print_header()
 {
 	Launcher<B,R,Q>::print_header();
 
-	Factory_simulation_BFER_std::header(pl_sim, pl_cde, m_chain_params->sim);
+	Factory_simulation_BFER_ite::header(pl_sim, pl_cde, m_chain_params->sim);
 
 	Factory_source<B>          ::header(pl_src, m_chain_params->src);
+
+	Factory_CRC<B>             ::header(pl_crc, m_chain_params->crc);
+
+	Factory_interleaver<int>   ::header(pl_itl, m_chain_params->itl);
 
 	Factory_modem<B,R,Q>       ::header(pl_mod, pl_demod, m_chain_params->modem);
 
@@ -145,17 +161,17 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation* Launcher_BFER_std<B,R,Q>
+Simulation* Launcher_BFER_ite<B,R,Q>
 ::build_simu()
 {
 	this->build_codec();
 
 #if defined(SYSTEMC)
-	return new SC_Simulation_BFER_std     <B,R,Q>(this->params, *codec);
+	return new SC_Simulation_BFER_ite     <B,R,Q>(this->params, *codec);
 #elif defined(STARPU)
-	return new SPU_Simulation_BFER_std    <B,R,Q>(this->params, *codec);
+	return new SPU_Simulation_BFER_ite    <B,R,Q>(this->params, *codec);
 #else
-	return new Simulation_BFER_std_threads<B,R,Q>(this->params, *codec);
+	return new Simulation_BFER_ite_threads<B,R,Q>(this->params, *codec);
 #endif
 }
 
@@ -163,11 +179,11 @@ Simulation* Launcher_BFER_std<B,R,Q>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::launcher::Launcher_BFER_std<B_8,R_8,Q_8>;
-template class aff3ct::launcher::Launcher_BFER_std<B_16,R_16,Q_16>;
-template class aff3ct::launcher::Launcher_BFER_std<B_32,R_32,Q_32>;
-template class aff3ct::launcher::Launcher_BFER_std<B_64,R_64,Q_64>;
+template class aff3ct::launcher::Launcher_BFER_ite<B_8,R_8,Q_8>;
+template class aff3ct::launcher::Launcher_BFER_ite<B_16,R_16,Q_16>;
+template class aff3ct::launcher::Launcher_BFER_ite<B_32,R_32,Q_32>;
+template class aff3ct::launcher::Launcher_BFER_ite<B_64,R_64,Q_64>;
 #else
-template class aff3ct::launcher::Launcher_BFER_std<B,R,Q>;
+template class aff3ct::launcher::Launcher_BFER_ite<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

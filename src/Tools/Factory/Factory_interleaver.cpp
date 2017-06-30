@@ -61,7 +61,7 @@ void Factory_interleaver<B>
 
 template <typename B>
 void Factory_interleaver<B>
-::store_args(const Arguments_reader& ar, Interleaver_parameters &params, const int seed)
+::store_args(const Arguments_reader& ar, interleaver_parameters &params, const int seed)
 {
 	// --------------------------------------------------------------------------------------------------- interleaver
 	params.seed = seed;
@@ -91,7 +91,7 @@ void Factory_interleaver<B>
 
 template <typename B>
 void Factory_interleaver<B>
-::header(Header::params_list& head_itl, const Interleaver_parameters& params)
+::header(Header::params_list& head_itl, const interleaver_parameters& params)
 {
 	// --------------------------------------------------------------------------------------------------- interleaver
 	head_itl.push_back(std::make_pair("Type", params.type));

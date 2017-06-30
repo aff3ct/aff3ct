@@ -163,7 +163,7 @@ void Factory_decoder_RSC<B,Q,RD>
 ::store_args(const Arguments_reader& ar, decoder_parameters_RSC &params)
 {
 	params.type   = "BCJR";
-	params.implem = "FAST";
+	params.implem = "GENERIC";
 
 	Factory_decoder_common::store_args(ar, params);
 

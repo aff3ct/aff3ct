@@ -38,7 +38,7 @@ struct Factory_decoder_turbo : public Factory_decoder_common
 		std::vector<int> poly      = {013, 015};
 //		int         tail_length    = 4 * 3;
 
-		typename Factory_interleaver<int>::Interleaver_parameters itl;
+		typename Factory_interleaver<int>::interleaver_parameters itl;
 	};
 
 	static module::Decoder_turbo<B,R>* build(const std::string               type,

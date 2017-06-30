@@ -38,7 +38,7 @@ protected:
 	virtual void store_args();
 	virtual void group_args();
 
-	virtual void build_codec() {};
+	virtual void build_codec() = 0;
 
 	virtual simulation::Simulation* build_simu();
 

@@ -24,7 +24,7 @@ struct Factory_decoder_RSC : public Factory_decoder_common
 		virtual ~decoder_parameters_RSC() {}
 
 		// ------- decoder
-		std::string max              = "MAX";;
+		std::string max              = "MAXS";
 		std::string simd_strategy    = "";
 
 		// ------- code

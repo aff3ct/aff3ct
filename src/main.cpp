@@ -21,6 +21,7 @@
 #include "Launcher/Launcher.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_ite.hpp"
+
 #include "Launcher/BCH/Launcher_BCH.hpp"
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
 #include "Launcher/Polar/Launcher_polar.hpp"
@@ -204,8 +205,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		{
 			if (simu_type == "BFER")
 				launcher = new Launcher_polar<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-//			else if (simu_type == "BFERI")
-//				launcher = new Launcher_BFERI_polar<B,R,Q>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_polar<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 //			else if (simu_type == "GEN")
 //				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
 		}
@@ -214,8 +215,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		{
 			if (simu_type == "BFER")
 				launcher = new Launcher_RSC<Launcher_BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
-//			else if (simu_type == "BFERI")
-//				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_RSC<Launcher_BFER_ite<B,R,Q>,B,R,Q,QD>(argc, argv);
 		}
 
 		if (code_type == "TURBO")
@@ -246,16 +247,16 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		{
 			if (simu_type == "BFER")
 				launcher = new Launcher_LDPC<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-//			else if (simu_type == "BFERI")
-//				launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_LDPC<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
 		if (code_type == "UNCODED")
 		{
 			if (simu_type == "BFER")
 				launcher = new Launcher_NO<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
-//			else if (simu_type == "BFERI")
-//				launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
+			else if (simu_type == "BFERI")
+				launcher = new Launcher_NO<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
 		if (launcher == nullptr)
