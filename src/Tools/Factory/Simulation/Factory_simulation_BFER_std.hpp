@@ -13,6 +13,7 @@
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
+#include "Tools/Factory/Factory_puncturer.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
 #include "Tools/Factory/Factory_decoder_common.hpp"
 
@@ -42,6 +43,7 @@ struct Factory_simulation_BFER_std : Factory_simulation_BFER
 		typename Factory_quantizer     <  R,Q>::quantizer_parameters     qua;
 		typename Factory_monitor       <B    >::monitor_parameters       mon;
 		typename Factory_terminal_BFER        ::terminal_parameters_BFER ter;
+		typename Factory_puncturer            ::puncturer_parameters    *pct = nullptr;
 		typename Factory_encoder_common<B    >::encoder_parameters      *enc = nullptr;
 		typename Factory_decoder_common       ::decoder_parameters      *dec = nullptr;
 	};

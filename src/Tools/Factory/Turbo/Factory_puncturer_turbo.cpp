@@ -23,6 +23,47 @@ Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename Q>
+void Factory_puncturer_turbo<B,Q>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	Factory_puncturer::build_args(req_args, opt_args);
+
+	// ----------------------------------------------------------------------------------------------------- poncturer
+	opt_args[{"pct-pattern"}] =
+		{"string",
+		 "puncturing pattern for the turbo encoder (ex: \"11,10,01\")."};
+}
+
+template <typename B, typename Q>
+void Factory_puncturer_turbo<B,Q>
+::store_args(const Arguments_reader& ar, puncturer_parameters_turbo &params)
+{
+	params.type = "TURBO";
+
+	Factory_puncturer::store_args(ar, params);
+
+	// ----------------------------------------------------------------------------------------------------- poncturer
+	if(ar.exist_arg({"pct-pattern"})) params.pattern = ar.get_arg({"pct-pattern"});
+}
+
+template <typename B, typename Q>
+void Factory_puncturer_turbo<B,Q>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	Factory_puncturer::group_args(ar);
+}
+
+template <typename B, typename Q>
+void Factory_puncturer_turbo<B,Q>
+::header(Header::params_list& head_pct, const puncturer_parameters_turbo& params)
+{
+	Factory_puncturer::header(head_pct, params);
+
+	// ----------------------------------------------------------------------------------------------------- poncturer
+	head_pct.push_back(std::make_pair(std::string("Pattern"), std::string("{" + params.pattern) + "}"));
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC

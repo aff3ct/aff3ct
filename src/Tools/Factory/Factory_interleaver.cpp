@@ -86,7 +86,7 @@ template <typename B>
 void Factory_interleaver<B>
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	ar.push_back({"crc", "interleaver parameter(s)"});
+	ar.push_back({"itl","Interleaver parameter(s)"});
 }
 
 template <typename B>

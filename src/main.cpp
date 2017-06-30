@@ -20,22 +20,17 @@
 
 #include "Launcher/Launcher.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
+#include "Launcher/Simulation_chain/Launcher_BFER_ite.hpp"
 #include "Launcher/BCH/Launcher_BCH.hpp"
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
 #include "Launcher/Polar/Launcher_polar.hpp"
 #include "Launcher/RA/Launcher_RA.hpp"
 #include "Launcher/RSC/Launcher_RSC.hpp"
+#include "Launcher/Turbo/Launcher_turbo.hpp"
 #include "Launcher/Repetition/Launcher_repetition.hpp"
+#include "Launcher/Uncoded/Launcher_NO.hpp"
 
-//#include "Launcher/BFER/Polar/Launcher_BFER_polar.hpp"
-//#include "Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp"
-//#include "Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp"
-//#include "Launcher/BFER/RSC/Launcher_BFER_RSC.hpp"
-//#include "Launcher/BFER/RA/Launcher_BFER_RA.hpp"
-//#include "Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp"
-//#include "Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp"
-//
-//
+
 //#include "Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp"
 //#include "Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp"
 //#include "Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp"
@@ -222,12 +217,12 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 //			else if (simu_type == "BFERI")
 //				launcher = new Launcher_BFERI_RSC<B,R,Q,QD>(argc, argv);
 		}
-//
-//		if (code_type == "TURBO")
-//		{
-//			if (simu_type == "BFER")
-//				launcher = new Launcher_BFER_turbo<B,R,Q,QD>(argc, argv);
-//		}
+
+		if (code_type == "TURBO")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_turbo<Launcher_BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
+		}
 
 		if (code_type == "REPETITION")
 		{
@@ -255,13 +250,13 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 //				launcher = new Launcher_BFERI_LDPC<B,R,Q>(argc, argv);
 		}
 
-//		if (code_type == "UNCODED")
-//		{
-//			if (simu_type == "BFER")
-//				launcher = new Launcher_BFER_uncoded<B,R,Q>(argc, argv);
+		if (code_type == "UNCODED")
+		{
+			if (simu_type == "BFER")
+				launcher = new Launcher_NO<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 //			else if (simu_type == "BFERI")
 //				launcher = new Launcher_BFERI_uncoded<B,R,Q>(argc, argv);
-//		}
+		}
 
 		if (launcher == nullptr)
 		{

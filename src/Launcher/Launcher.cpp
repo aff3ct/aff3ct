@@ -80,8 +80,6 @@ int Launcher<B,R,Q>
 	{
 		this->group_args();
 
-		arg_group.push_back({"itl",  "Interleaver parameter(s)"});
-		arg_group.push_back({"pct",  "Puncturer parameter(s)"  });
 		arg_group.push_back({"dpct", "Depuncturer parameter(s)"});
 
 		ar.print_usage(arg_group);

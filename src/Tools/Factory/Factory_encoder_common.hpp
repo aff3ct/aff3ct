@@ -20,7 +20,7 @@ struct Factory_encoder_common : public Factory
 	{
 		virtual ~encoder_parameters() {}
 
-		std::string      type       = "";
+		std::string      type       = "NO";
 		std::string      path       = "";
 		bool             systematic = true;
 	};

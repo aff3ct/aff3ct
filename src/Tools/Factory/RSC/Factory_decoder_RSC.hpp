@@ -24,11 +24,12 @@ struct Factory_decoder_RSC : public Factory_decoder_common
 		virtual ~decoder_parameters_RSC() {}
 
 		// ------- decoder
-		std::string max           = "MAX";;
-		std::string simd_strategy = "";
+		std::string max              = "MAX";;
+		std::string simd_strategy    = "";
 
 		// ------- code
-		std::vector<int> poly = {013, 015};
+		std::vector<int> poly        = {013, 015};
+//		int         tail_length      = 2 * 3;
 	};
 
 	static module::Decoder_SISO<B,R>* build(const std::string                    type,

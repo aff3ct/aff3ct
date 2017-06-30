@@ -35,7 +35,7 @@ void Factory_encoder_common<B>
 	opt_args[{"enc-type"}] =
 		{"string",
 		 "select the type of encoder you want to use.",
-		 "AZCW, COSET, USER"};
+		 "NO, AZCW, COSET, USER"};
 
 	opt_args[{"enc-path"}] =
 		{"string",

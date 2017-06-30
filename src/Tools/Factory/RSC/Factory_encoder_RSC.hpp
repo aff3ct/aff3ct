@@ -2,8 +2,6 @@
 #define FACTORY_ENCODER_RSC_HPP
 
 #include <string>
-#include <vector>
-#include <iostream>
 
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 
