@@ -4,7 +4,6 @@
 #include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
 #include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
 #include "Tools/Factory/Turbo/Factory_puncturer_turbo.hpp"
-#include "Tools/Factory/Factory_CRC.hpp"
 
 namespace aff3ct
 {

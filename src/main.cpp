@@ -22,17 +22,17 @@
 #include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_ite.hpp"
 #include "Launcher/Simulation_chain/Launcher_EXIT.hpp"
+#include "Launcher/Simulation_chain/Launcher_GEN.hpp"
 
 #include "Launcher/BCH/Launcher_BCH.hpp"
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
 #include "Launcher/Polar/Launcher_polar.hpp"
+#include "Launcher/Polar/Launcher_polar_GEN.hpp"
 #include "Launcher/RA/Launcher_RA.hpp"
 #include "Launcher/RSC/Launcher_RSC.hpp"
 #include "Launcher/Turbo/Launcher_turbo.hpp"
 #include "Launcher/Repetition/Launcher_repetition.hpp"
 #include "Launcher/Uncoded/Launcher_NO.hpp"
-
-//#include "Launcher/GEN/Polar/Launcher_GEN_polar.hpp"
 
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
 #include "Tools/params.h"
@@ -199,8 +199,8 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 				launcher = new Launcher_polar<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 			else if (simu_type == "BFERI")
 				launcher = new Launcher_polar<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
-//			else if (simu_type == "GEN")
-//				launcher = new Launcher_GEN_polar<B,R,Q>(argc, argv);
+			else if (simu_type == "GEN")
+				launcher = new Launcher_polar_GEN<Launcher_GEN<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
 		if (code_type == "RSC")

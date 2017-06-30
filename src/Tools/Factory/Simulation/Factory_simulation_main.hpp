@@ -21,8 +21,8 @@ struct Factory_simulation_main : public Factory
 	struct simu_parameters_main
 	{
 		// ---- simulation
-		std::string sim_type        = "BFER";
-		int         sim_prec        = 32;
+		std::string sim_type = "BFER";
+		int         sim_prec = 32;
 
 		// ---- code
 		std::string cde_type;

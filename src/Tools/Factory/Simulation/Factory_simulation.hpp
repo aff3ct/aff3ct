@@ -40,7 +40,6 @@ struct Factory_simulation : Factory_simulation_main
 		int         K_info;
 		int         N;
 		int         N_code;
-//		float       sigma; // not noise var, used to set a fixed snr value for frozen bits construction (in polar codes)
 		float       R;     // code rate
 //		int         tail_length = 0;
 	};

@@ -3,7 +3,6 @@
 
 #include "Tools/Factory/Polar/Factory_decoder_polar.hpp"
 #include "Tools/Factory/Polar/Factory_encoder_polar.hpp"
-#include "Tools/Factory/Factory_CRC.hpp"
 
 namespace aff3ct
 {

@@ -1,8 +1,8 @@
-#include <Launcher/Simulation_chain/Launcher_BFER_std.hpp>
 #include <thread>
 #include <string>
 #include <iostream>
 
+#include "Launcher_BFER_std.hpp"
 
 using namespace aff3ct::tools;
 using namespace aff3ct::launcher;

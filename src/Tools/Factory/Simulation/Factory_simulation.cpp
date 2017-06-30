@@ -58,6 +58,7 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		 "disable the colors in the shell."};
 #endif
 
+
 	// ---------------------------------------------------------------------------------------------------------- code
 	req_args[{"cde-info-bits", "K"}] =
 		{"positive_int",
@@ -133,11 +134,11 @@ void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters 
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
-	params.K_info = ar.get_arg_int({"cde-info-bits", "K"});
 	params.N      = ar.get_arg_int({"cde-size",      "N"}); // required
-	params.N_code = ar.get_arg_int({"cde-size",      "N"});
 
-	params.R = params.K / (float)params.N;
+	params.K_info = params.K;
+	params.N_code = params.N;
+	params.R      = params.K / (float)params.N;
 }
 
 void Factory_simulation::group_args(Arguments_reader::arg_grp& ar)
@@ -179,14 +180,12 @@ void Factory_simulation::header(Header::params_list& head_sim, Header::params_li
 //	if (params.code.tail_length > 0)
 //		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
 
-	std::stringstream K;
+//	std::stringstream K;
 //	if (!params.crc.poly.empty())
 //		K << (params.K - params.crc.size) << " + " << params.crc.size << " (CRC)";
 //	else
-		K << params.K;
-
-	head_cde.push_back(std::make_pair("Info. bits (K)",    K.str()                 ));
-	head_cde.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
+//		K << params.K;
+	head_cde.push_back(std::make_pair("Info. bits (K)",    std::to_string(params.K_info)));
+	head_cde.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_code)));
 	head_cde.push_back(std::make_pair("Code rate (R)",     std::to_string(params.R)));
-
 }

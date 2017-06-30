@@ -131,5 +131,5 @@ void Factory_simulation_main::header(Header::params_list& head_sim, Header::para
 	head_sim.push_back(std::make_pair("Date (UTC)", split_date[0]));
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	head_cde.push_back(std::make_pair("Type", params.cde_type));
+	head_cde.push_back(std::make_pair("Type",              params.cde_type         ));
 }

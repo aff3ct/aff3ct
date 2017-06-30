@@ -1133,6 +1133,99 @@ void Factory_decoder_polar_gen<B,R>
 		frozen_bits[i] = (B)fb_ptr[i];
 }
 
+template <typename B, typename Q>
+void Factory_decoder_polar_gen<B,Q>
+::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
+{
+	Factory_decoder_common::build_args(req_args, opt_args);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+#ifdef ENABLE_POLAR_BOUNDS
+	opt_args[{"cde-pb-path"}] =
+		{"string",
+		 "path of the polar bounds code generator (generates best channels to use)."};
+#endif
+
+	opt_args[{"cde-awgn-fb-path"}] =
+		{"string",
+		 "path to a file or a directory containing the best channels to use for information bits."};
+
+	opt_args[{"cde-fb-gen-method"}] =
+		{"string",
+		 "select the frozen bits generation method.",
+		 "GA, TV"};
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	req_args[{"dec-snr"}] =
+		{"float",
+		 "signal/noise ratio for the frozen bits generation."};
+
+	opt_args[{"dec-gen-path"}] =
+		{"string",
+		 "directory where are located the generated decoders."};
+
+	opt_args[{"dec-type", "D"}].push_back("SC, SCL");
+
+	opt_args[{"dec-polar-nodes"}] =
+		{"string",
+		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP_2-8,REPL,SPC_4+})."};
+}
+
+template <typename B, typename Q>
+void Factory_decoder_polar_gen<B,Q>
+::store_args(const Arguments_reader& ar, decoder_parameters_polar_gen &params)
+{
+	params.type = "SC";
+
+	Factory_decoder_common::store_args(ar, params);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+#ifdef ENABLE_POLAR_BOUNDS
+	if(ar.exist_arg({"cde-pb-path"})) params.simulation.bin_pb_path  = ar.get_arg({"cde-pb-path"});
+#endif
+
+	if(ar.exist_arg({"cde-awgn-fb-path" })) params.awgn_fb_path  = ar.get_arg({"cde-awgn-fb-path" });
+
+	if(ar.exist_arg({"cde-fb-gen-method"})) params.fb_gen_method = ar.get_arg({"cde-fb-gen-method"});
+
+//	params.m      = (int)std::ceil(std::log2(params.N));
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	params.snr = ar.get_arg_float({"dec-snr"});
+
+	     if(params.type == "SCL") params.gen_path    = "../src/Module/Decoder/Polar/SCL/CRC/Generated";
+	else if(params.type == "SC" ) params.gen_path    = "../src/Module/Decoder/Polar/SC/Generated";
+
+	if(ar.exist_arg({"dec-gen-path"   })) params.gen_path    = ar.get_arg({"dec-gen-path"   });
+
+	if(ar.exist_arg({"dec-polar-nodes"})) params.polar_nodes = ar.get_arg({"dec-polar-nodes"});
+}
+
+template <typename B, typename Q>
+void Factory_decoder_polar_gen<B,Q>
+::group_args(Arguments_reader::arg_grp& ar)
+{
+	Factory_decoder_common::group_args(ar);
+}
+
+template <typename B, typename Q>
+void Factory_decoder_polar_gen<B,Q>
+::header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_polar_gen& params)
+{
+	Factory_decoder_common::header(head_dec, params);
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	head_cde.push_back(std::make_pair("Frozen bits gen. method", params.fb_gen_method));
+
+
+	// ------------------------------------------------------------------------------------------------------- decoder
+	head_dec.push_back(std::make_pair("SNR",     std::to_string(params.snr) + " dB"));
+	head_dec.push_back(std::make_pair("Generated decoder path", params.gen_path    ));
+	head_dec.push_back(std::make_pair("Type",                   params.type        ));
+	head_dec.push_back(std::make_pair("Polar node types",       params.polar_nodes ));
+
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
