@@ -12,17 +12,12 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_common<B>
-::build(const std::string type,
-        const int         K,
-        const int         N,
-        const std::string path,
-        const int         seed,
-        const int         n_frames)
+::build(const encoder_parameters &params, const int seed)
 {
-	     if (type == "NO"   ) return new Encoder_NO   <B>(K,          n_frames);
-	else if (type == "AZCW" ) return new Encoder_AZCW <B>(K, N,       n_frames);
-	else if (type == "COSET") return new Encoder_coset<B>(K, N, seed, n_frames);
-	else if (type == "USER" ) return new Encoder_user <B>(K, N, path, n_frames);
+	     if (params.type == "NO"   ) return new Encoder_NO   <B>(params.K,                        params.n_frames);
+	else if (params.type == "AZCW" ) return new Encoder_AZCW <B>(params.K, params.N,              params.n_frames);
+	else if (params.type == "COSET") return new Encoder_coset<B>(params.K, params.N, seed,        params.n_frames);
+	else if (params.type == "USER" ) return new Encoder_user <B>(params.K, params.N, params.path, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -48,7 +43,8 @@ void Factory_encoder_common<B>
 
 template <typename B>
 void Factory_encoder_common<B>
-::store_args(const Arguments_reader& ar, encoder_parameters &params, int K, int N, int n_frames)
+::store_args(const Arguments_reader& ar, encoder_parameters &params,
+             const int K, const int N, const int n_frames)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-type"  })) params.type = ar.get_arg({"enc-type"});

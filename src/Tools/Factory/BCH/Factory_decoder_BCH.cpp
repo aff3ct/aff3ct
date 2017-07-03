@@ -32,7 +32,8 @@ void Factory_decoder_BCH<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_BCH<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_BCH &params, int K, int N, int n_frames)
+::store_args(const Arguments_reader& ar, decoder_parameters_BCH &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type     = "ALGEBRAIC";
 	params.implem   = "STD";

@@ -18,23 +18,19 @@ struct Factory_decoder_RA : public Factory_decoder_common
 	struct decoder_parameters_RA : decoder_parameters
 	{
 		virtual ~decoder_parameters_RA() {}
-		// ------- code
+
+		// ------- interleaver
 		typename Factory_interleaver<int>::interleaver_parameters itl;
 
 		// ------- decoder
 		int n_ite = 10;
 	};
 
-	static module::Decoder<B,R>* build(const std::string               type,
-	                                   const std::string               implem,
-	                                   const int                       K,
-	                                   const int                       N,
-	                                   const module::Interleaver<int> &itl,
-	                                   const int                       n_ite,
-	                                   const int                       n_frames = 1);
+	static module::Decoder<B,R>* build(const decoder_parameters_RA &params, const module::Interleaver<int> &itl);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, decoder_parameters_RA &params, const int seed);
+	static void store_args(const Arguments_reader& ar, decoder_parameters_RA &params,
+	                       const int K, const int N, int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(Header::params_list& head_dec, Header::params_list& head_itl, const decoder_parameters_RA& params);

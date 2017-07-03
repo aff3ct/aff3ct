@@ -53,7 +53,8 @@ Decoder_SISO<B,Q>* Factory_decoder_polar<B,Q>
 template <typename B, typename Q>
 template <class API_polar>
 Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::_build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding, module::CRC<B> *crc)
+::_build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+         const bool sys_encoding, module::CRC<B> *crc)
 {
 	int idx_r0, idx_r1;
 	auto polar_patterns = nodes_parser(params.polar_nodes, idx_r0, idx_r1);
@@ -100,7 +101,8 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 template <typename B, typename Q>
 template <class API_polar>
 Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::_build_scl_fast(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding, module::CRC<B> *crc)
+::_build_scl_fast(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+                  const bool sys_encoding, module::CRC<B> *crc)
 {
 	int idx_r0, idx_r1;
 	auto polar_patterns = nodes_parser(params.polar_nodes, idx_r0, idx_r1);
@@ -126,7 +128,8 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 
 template <typename B, typename Q>
 Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding, module::CRC<B> *crc)
+::build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+        const bool sys_encoding, module::CRC<B> *crc)
 {
 	if (params.type.find("SCL") != std::string::npos && params.implem == "FAST")
 	{
@@ -312,7 +315,7 @@ void Factory_decoder_polar<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_polar<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_polar &params, int K, int N, int n_frames)
+::store_args(const Arguments_reader& ar, decoder_parameters_polar &params, const int K, const int N, const int n_frames)
 {
 	params.type   = "SC";
 	params.implem = "FAST";

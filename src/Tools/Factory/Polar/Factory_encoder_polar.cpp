@@ -30,11 +30,12 @@ void Factory_encoder_polar<B>
 
 template <typename B>
 void Factory_encoder_polar<B>
-::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params)
+::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type = "POLAR";
 
-	Factory_encoder_common<B>::store_args(ar, params);
+	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
 }
 
 template <typename B>

@@ -29,7 +29,7 @@ void Factory_encoder_BCH<B>
 template <typename B>
 void Factory_encoder_BCH<B>
 ::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params,
-             int K, int N, int n_frames)
+             const int K, const int N, const int n_frames)
 {
 	params.type = "BCH";
 

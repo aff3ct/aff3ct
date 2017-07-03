@@ -15,7 +15,8 @@ void Factory_decoder_common::build_args(Arguments_reader::arg_map &req_args, Arg
 		 "select the implementation of the algorithm to decode."};
 }
 
-void Factory_decoder_common::store_args(const Arguments_reader& ar, decoder_parameters &params, int K, int N, int n_frames)
+void Factory_decoder_common::store_args(const Arguments_reader& ar, decoder_parameters &params,
+                                        const int K, const int N, const int n_frames)
 {
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(ar.exist_arg({"dec-type",  "D"})) params.type   = ar.get_arg({"dec-type",  "D"});

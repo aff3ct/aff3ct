@@ -9,13 +9,9 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_RA<B>
-::build(const std::string       type,
-        const int               K,
-        const int               N,
-        const Interleaver<int> &itl,
-        const int               n_frames)
+::build(const typename Factory_encoder_common<B>::encoder_parameters& params, const Interleaver<int> &itl)
 {
-	if (type == "RA") return new Encoder_RA<B>(K, N, itl, n_frames);
+	if (params.type == "RA") return new Encoder_RA<B>(params.K, params.N, itl, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -32,11 +28,12 @@ void Factory_encoder_RA<B>
 
 template <typename B>
 void Factory_encoder_RA<B>
-::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params)
+::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params,
+             int K, int N, int n_frames)
 {
 	params.type = "RA";
 
-	Factory_encoder_common<B>::store_args(ar, params);
+	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
 }
 
 template <typename B>

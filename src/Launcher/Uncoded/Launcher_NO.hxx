@@ -77,7 +77,7 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_NO<cLauncher,B,R,Q>
 ::build_codec()
 {
-	this->codec = new tools::Codec_uncoded<B,Q>(this->params);
+	this->codec = new tools::Codec_uncoded<B,Q>(*m_enc, *m_dec);
 }
 }
 }

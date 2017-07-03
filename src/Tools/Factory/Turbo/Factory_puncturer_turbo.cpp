@@ -10,15 +10,11 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_turbo<B,Q>
-::build(const std::string type,
-        const int         K,
-        const int         N,
-        const int         tail_length,
-        const std::string pattern,
-        const bool        buffered,
-        const int         n_frames)
+::build(const puncturer_parameters_turbo &params,
+        const int                         tail_length,
+        const bool                        buffered)
 {
-	if (type == "TURBO") return new Puncturer_turbo<B,Q>(K, N, tail_length, pattern, buffered, n_frames);
+	if (params.type == "TURBO") return new Puncturer_turbo<B,Q>(params.K, params.N, tail_length, params.pattern, buffered, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -37,11 +33,12 @@ void Factory_puncturer_turbo<B,Q>
 
 template <typename B, typename Q>
 void Factory_puncturer_turbo<B,Q>
-::store_args(const Arguments_reader& ar, puncturer_parameters_turbo &params)
+::store_args(const Arguments_reader& ar, puncturer_parameters_turbo &params,
+             const int K, const int N, const int N_pct, const int n_frames)
 {
 	params.type = "TURBO";
 
-	Factory_puncturer::store_args(ar, params);
+	Factory_puncturer::store_args(ar, params, K, N, N_pct, n_frames);
 
 	// ----------------------------------------------------------------------------------------------------- poncturer
 	if(ar.exist_arg({"pct-pattern"})) params.pattern = ar.get_arg({"pct-pattern"});

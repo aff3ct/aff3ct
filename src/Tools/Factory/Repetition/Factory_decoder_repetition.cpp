@@ -10,17 +10,12 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_repetition<B,R>
-::build(const std::string type,
-        const std::string implem,
-        const int         K,
-        const int         N,
-        const bool        buffered,
-        const int         n_frames)
+::build(const typename Factory_decoder_common::decoder_parameters &params, const bool buffered = true)
 {
-	if (type == "REPETITION")
+	if (params.type == "REPETITION")
 	{
-		     if (implem == "STD" ) return new Decoder_repetition_std <B,R>(K, N, buffered, n_frames);
-		else if (implem == "FAST") return new Decoder_repetition_fast<B,R>(K, N, buffered, n_frames);
+		     if (params.implem == "STD" ) return new Decoder_repetition_std <B,R>(params.K, params.N, buffered, params.n_frames);
+		else if (params.implem == "FAST") return new Decoder_repetition_fast<B,R>(params.K, params.N, buffered, params.n_frames);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -39,12 +34,13 @@ void Factory_decoder_repetition<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_repetition<B,Q>
-::store_args(const Arguments_reader& ar, typename Factory_decoder_common::decoder_parameters &params)
+::store_args(const Arguments_reader& ar, typename Factory_decoder_common::decoder_parameters &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type   = "REPETITION";
 	params.implem = "STD";
 
-	Factory_decoder_common::store_args(ar, params);
+	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 }
 
 template <typename B, typename Q>

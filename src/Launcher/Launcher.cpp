@@ -80,8 +80,6 @@ int Launcher<B,R,Q>
 	{
 		this->group_args();
 
-		arg_group.push_back({"dpct", "Depuncturer parameter(s)"});
-
 		ar.print_usage(arg_group);
 		error = true; // in order to exit at the end of this function
 	}
@@ -206,7 +204,9 @@ void Launcher<B,R,Q>
 	if (simu != nullptr)
 	{
 		// launch the simulation
-		if (params.simulation.mpi_rank == 0)
+#ifdef ENABLE_MPI
+	if (simu_params->mpi_rank == 0)
+#endif
 			stream << "# " << "The simulation is running..." << std::endl;
 
 		try
@@ -219,7 +219,9 @@ void Launcher<B,R,Q>
 		}
 	}
 
-	if (params.simulation.mpi_rank == 0)
+#ifdef ENABLE_MPI
+	if (simu_params->mpi_rank == 0)
+#endif
 		stream << "# End of the simulation." << std::endl;
 }
 

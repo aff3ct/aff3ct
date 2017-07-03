@@ -19,13 +19,13 @@ template <typename B, typename Q>
 Codec_polar<B,Q>
 ::Codec_polar(const typename Factory_encoder_common<B  >::encoder_parameters       &enc_params,
               const typename Factory_decoder_polar <B,Q>::decoder_parameters_polar &dec_params,
+              const typename Factory_puncturer_polar<B,Q>::puncturer_parameters     &pct_params,
               const int n_threads)
-: Codec_SISO<B,Q>(enc_params, dec_params),
+: Codec_SISO<B,Q>(enc_params, dec_params), dec_par(dec_params), pct_par(pct_params),
   frozen_bits(dec_params.N),
   is_generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   fb_generator(nullptr),
-  decoder_siso(n_threads, nullptr),
-  dec_par(dec_params)
+  decoder_siso(n_threads, nullptr)
 {
 	if (!is_generated_decoder)
 	{
@@ -111,8 +111,10 @@ template <typename B, typename Q>
 Puncturer<B,Q>* Codec_polar<B,Q>
 ::build_puncturer(const int tid)
 {
-	const std::string type = (dec_par.N == dec_par.N_pct) ? "NO" : "WANGLIU";
-	return Factory_puncturer_polar<B,Q>::build(type, dec_par.K, dec_par.N_pct, fb_generator, dec_par.n_frames);
+	if(fb_generator == nullptr)
+		throw runtime_error(__FILE__, __LINE__, __func__, "Polar puncturer requires a frozen bits generator.");
+
+	return Factory_puncturer_polar<B,Q>::build(pct_par, *fb_generator);
 }
 
 template <typename B, typename Q>
@@ -143,18 +145,9 @@ Decoder<B,Q>* Codec_polar<B,Q>
 	else
 	{
 		if (is_generated_decoder)
-			return Factory_decoder_polar_gen<B,Q>::build(this->params.decoder.type,
-			                                             this->params.decoder.implem,
-			                                             this->params.code.K,
-			                                             this->params.code.N_code,
-			                                             frozen_bits,
-			                                             this->params.decoder.simd_strategy,
-			                                             this->params.encoder.systematic,
-			                                             this->params.decoder.L,
-			                                             crc,
-			                                             this->params.simulation.inter_frame_level);
+			return Factory_decoder_polar_gen<B,Q>::build(dec_par, frozen_bits, this->enc_params.systematic, crc);
 		else
-			return Factory_decoder_polar<B,Q>::build(dec_par, frozen_bits, crc);
+			return Factory_decoder_polar    <B,Q>::build(dec_par, frozen_bits, this->enc_params.systematic, crc);
 	}
 }
 

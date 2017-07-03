@@ -10,24 +10,20 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder_turbo<B>
-::build(const std::string       type,
-        const int               K,
-        const int               N,
+::build(const encoder_parameters_turbo &params,
         const Interleaver<int> &itl,
               Encoder_sys<B>   *enc_n,
-              Encoder_sys<B>   *enc_i,
-        const bool              buffered,
-        const int               n_frames)
+              Encoder_sys<B>   *enc_i)
 {
 	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
 
-	if (buffered)
+	if (params.buffered)
 	{
-		if (type == "TURBO") return new Encoder_turbo       <B>(K, N, itl, *enc_n, *enc_i, n_frames);
+		if (params.type == "TURBO") return new Encoder_turbo       <B>(params.K, params.N, itl, *enc_n, *enc_i, params.n_frames);
 	}
 	else if (enc_n == enc_i)
 	{
-		if (type == "TURBO") return new Encoder_turbo_legacy<B>(K, N, itl, *enc_n,         n_frames);
+		if (params.type == "TURBO") return new Encoder_turbo_legacy<B>(params.K, params.N, itl, *enc_n,         params.n_frames);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -39,6 +35,9 @@ void Factory_encoder_turbo<B>
 {
 	Factory_encoder_common<B>::build_args(req_args, opt_args);
 
+	// --------------------------------------------------------------------------------------------------- interleaver
+	Factory_interleaver<int>::build_args(req_args, opt_args);
+
 	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", TURBO";
 
@@ -46,25 +45,73 @@ void Factory_encoder_turbo<B>
 		{"",
 		 "disable the buffered encoding."};
 
-//	opt_args[{"sim-json-path"}] =
-//		{"string",
-//		 "path to store the encoder and decoder traces formated in JSON."};
+	// ---------------------------------------------------------------------------------------------------------- code
+	opt_args[{"cde-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	opt_args[{"cde-json-path"}] =
+		{"string",
+		 "path to store the encoder and decoder traces formated in JSON."};
+
+	opt_args[{"cde-std"}] =
+		{"string",
+		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
+		 "LTE, CCSDS"};
 }
 
 template <typename B>
 void Factory_encoder_turbo<B>
-::store_args(const Arguments_reader& ar, encoder_parameters_turbo &params)
+::store_args(const Arguments_reader& ar, encoder_parameters_turbo &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type = "TURBO";
 
-	Factory_encoder_common<B>::store_args(ar, params);
+	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
 
-//	if(ar.exist_arg({"sim-json-path"})) params.json_path = this->ar.get_arg({"sim-json-path"});
-//	if (!this->params.simulation.json_path.empty())
-//		this->params.encoder.type = "TURBO_JSON";
+
+	// --------------------------------------------------------------------------------------------------- interleaver
+	Factory_interleaver<int>::store_args(ar, params.itl, K, n_frames);
+
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	if(ar.exist_arg({"cde-std"})) params.standard = this->ar.get_arg({"cde-std"});
+
+	if(ar.exist_arg({"cde-json-path"})) params.json_path = this->ar.get_arg({"cde-json-path"});
+	if (!params.json_path.empty())
+		params.encoder.type = "TURBO_JSON";
+
+	if (params.standard == "LTE")
+	{
+		params.poly = {013, 015};
+		if (!ar.exist_arg({"itl-type"}))
+			params.itl.type = "LTE";
+	}
+
+	if (params.type == "CCSDS")
+	{
+		params.poly = {023, 033};
+		if (!ar.exist_arg({"itl-type"}))
+			params.itl.type = "CCSDS";
+	}
+
+	if (ar.exist_arg({"cde-poly"}))
+	{
+		auto poly_str = ar.get_arg({"cde-poly"});
+
+#ifdef _MSC_VER
+		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#else
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#endif
+	}
+
+	params.tail_length = (int)(4 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
+	params.N_pct       =     params.N + params.tail_length;
+	params.N           = 3 * params.K + params.tail_length;
 }
 
 template <typename B>
@@ -72,19 +119,30 @@ void Factory_encoder_turbo<B>
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_encoder_common<B>::group_args(ar);
+
+	// --------------------------------------------------------------------------------------------------- interleaver
+	Factory_interleaver<int>::group_args(ar);
 }
 
 template <typename B>
 void Factory_encoder_turbo<B>
-::header(Header::params_list& head_enc, const encoder_parameters_turbo& params)
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters_turbo& params)
 {
 	Factory_encoder_common<B>::header(head_enc, params);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 
-//	if (!params.json_path.empty())
-//		head_enc.push_back(std::make_pair("Path to the JSON file", params.json_path));
+	// ---------------------------------------------------------------------------------------------------------- code
+	if (!params.standard.empty())
+		head_cde.push_back(std::make_pair("Turbo standard", params.standard));
+
+	std::stringstream poly;
+	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
+	head_cde.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
+
+	if (!params.json_path.empty())
+		head_cde.push_back(std::make_pair("Path to the JSON file", params.json_path));
 }
 
 // ==================================================================================== explicit template instantiation 

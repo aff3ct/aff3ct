@@ -13,6 +13,7 @@
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
+#include "Tools/Factory/Factory_puncturer.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
 #include "Tools/Factory/Factory_decoder_common.hpp"
 
@@ -42,6 +43,7 @@ struct Factory_simulation_EXIT : Factory_simulation
 		typename Factory_source        <B    >::source_parameters        src;
 		typename Factory_modem         <B,R,Q>::modem_parameters         modem;
 		typename Factory_channel       <  R  >::channel_parameters       chn;
+		typename Factory_puncturer            ::puncturer_parameters    *pct = nullptr;
 		typename Factory_encoder_common<B    >::encoder_parameters      *enc = nullptr;
 		typename Factory_decoder_common       ::decoder_parameters      *dec = nullptr;
 		typename Factory_terminal_EXIT        ::terminal_parameters_EXIT ter;

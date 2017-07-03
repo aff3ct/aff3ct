@@ -9,13 +9,9 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_sys<B>* Factory_encoder_repetition<B>
-::build(const std::string type,
-        const int         K,
-        const int         N,
-        const bool        buffered,
-        const int         n_frames)
+::build(const encoder_parameters_repetition &params)
 {
-	if (type == "REPETITION") return new Encoder_repetition_sys<B>(K, N, buffered, n_frames);
+	if (params.type == "REPETITION") return new Encoder_repetition_sys<B>(params.K, params.N, params.buffered, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -36,11 +32,12 @@ void Factory_encoder_repetition<B>
 
 template <typename B>
 void Factory_encoder_repetition<B>
-::store_args(const Arguments_reader& ar, encoder_parameters_repetition &params)
+::store_args(const Arguments_reader& ar, encoder_parameters_repetition &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type = "REPETITION";
 
-	Factory_encoder_common<B>::store_args(ar, params);
+	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;

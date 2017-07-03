@@ -50,7 +50,7 @@ void Launcher_RA<cLauncher,B,R,Q>
 	cLauncher::store_args();
 
 	tools::Factory_encoder_RA <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
-	tools::Factory_decoder_RA <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level, this->m_chain_params->sim.seed);
+	tools::Factory_decoder_RA <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -77,7 +77,7 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_RA<cLauncher,B,R,Q>
 ::build_codec()
 {
-	this->codec = new tools::Codec_RA<B,Q>(this->params);
+	this->codec = new tools::Codec_RA<B,Q>(*m_enc, *m_dec);
 }
 }
 }

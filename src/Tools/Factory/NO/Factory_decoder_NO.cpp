@@ -31,12 +31,13 @@ void Factory_decoder_NO<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_NO<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters &params)
+::store_args(const Arguments_reader& ar, decoder_parameters &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type   = "NONE";
 	params.implem = "HARD_DECISION";
 
-	Factory_decoder_common::store_args(ar, params);
+	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 }
 
 template <typename B, typename Q>

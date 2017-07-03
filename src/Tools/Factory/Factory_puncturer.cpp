@@ -8,9 +8,17 @@ void Factory_puncturer::build_args(Arguments_reader::arg_map &req_args, Argument
 	// ----------------------------------------------------------------------------------------------------- poncturer
 }
 
-void Factory_puncturer::store_args(const Arguments_reader& ar, puncturer_parameters &params)
+void Factory_puncturer::store_args(const Arguments_reader& ar, puncturer_parameters &params,
+                                   const int K, const int N, const int N_pct, const int n_frames)
 {
+	params.K        = K;
+	params.N        = N;
+	params.N_pct    = N_pct;
+	params.n_frames = n_frames;
+
 	// ----------------------------------------------------------------------------------------------------- poncturer
+	if (params.N == params.N_pct)
+		params.type = "NO";
 }
 
 void Factory_puncturer::group_args(Arguments_reader::arg_grp& ar)

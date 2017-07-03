@@ -84,7 +84,8 @@ void Factory_decoder_LDPC<B,Q>
 
 template <typename B, typename Q>
 void Factory_decoder_LDPC<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_LDPC &params, int K, int N, int n_frames)
+::store_args(const Arguments_reader& ar, decoder_parameters_LDPC &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type   = "BP_FLOODING";
 	params.implem = "SPA";

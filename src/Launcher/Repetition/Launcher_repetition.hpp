@@ -11,6 +11,10 @@ namespace launcher
 template <class cLauncher, typename B = int, typename R = float, typename Q = R>
 class Launcher_repetition : public cLauncher
 {
+protected:
+	typename tools::Factory_encoder_repetition<B  >::encoder_parameters_repetition *m_enc = nullptr;
+	typename tools::Factory_decoder_repetition<B,Q>::decoder_parameters            *m_dec = nullptr;
+
 public:
 	Launcher_repetition(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_repetition();
@@ -22,9 +26,6 @@ protected:
 	virtual void print_header();
 
 	virtual void build_codec();
-
-	typename tools::Factory_encoder_repetition<B  >::encoder_parameters_repetition *m_enc = nullptr;
-	typename tools::Factory_decoder_repetition<B,Q>::decoder_parameters            *m_dec = nullptr;
 };
 }
 }

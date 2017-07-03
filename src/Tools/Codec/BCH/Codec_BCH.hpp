@@ -15,6 +15,8 @@ template <typename B = int, typename Q = float>
 class Codec_BCH : public Codec<B,Q>
 {
 protected:
+	const typename Factory_decoder_BCH <B,Q>::decoder_parameters_BCH& dec_par;
+
 	const tools::Galois GF;
 
 public:

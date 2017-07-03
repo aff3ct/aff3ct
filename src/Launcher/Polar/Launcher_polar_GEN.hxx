@@ -11,7 +11,7 @@ Launcher_polar_GEN<cLauncher,B,R,Q>
 ::Launcher_polar_GEN(const int argc, const char **argv, std::ostream &stream)
 : cLauncher(argc, argv, stream)
 {
-	m_dec = new typename tools::Factory_decoder_polar_gen<B,Q>::decoder_parameters_polar_gen();
+	m_dec = new typename tools::Factory_polar_generator<B,Q>::parameters_polar_generator();
 
 	this->m_chain_params->dec = m_dec;
 }
@@ -30,7 +30,7 @@ void Launcher_polar_GEN<cLauncher,B,R,Q>
 {
 	cLauncher::build_args();
 
-	tools::Factory_decoder_polar_gen<B,Q>::build_args(this->req_args, this->opt_args);
+	tools::Factory_polar_generator<B,Q>::build_args(this->req_args, this->opt_args);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -39,7 +39,7 @@ void Launcher_polar_GEN<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_decoder_polar_gen<B,Q>::store_args(this->ar, *m_dec);
+	tools::Factory_polar_generator<B,Q>::store_args(this->ar, *m_dec);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -48,14 +48,14 @@ void Launcher_polar_GEN<cLauncher,B,R,Q>
 {
 	cLauncher::group_args();
 
-	tools::Factory_decoder_polar_gen<B,Q>::group_args(this->arg_group);
+	tools::Factory_polar_generator<B,Q>::group_args(this->arg_group);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_polar_GEN<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_decoder_polar_gen<B,Q>::header(this->pl_dec, this->pl_cde, *m_dec);
+	tools::Factory_polar_generator<B,Q>::header(this->pl_dec, this->pl_cde, *m_dec);
 
 	cLauncher::print_header();
 }

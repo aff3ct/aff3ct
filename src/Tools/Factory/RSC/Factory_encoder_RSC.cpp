@@ -10,16 +10,10 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC<B>
-::build(const std::string       type,
-        const int               K,
-        const int               N,
-        const bool              buffered,
-        const std::vector<int>  poly,
-              std::ostream     &stream,
-        const int               n_frames)
+::build(const encoder_parameters_RSC &params, std::ostream &stream)
 {
-	     if (type == "RSC_JSON") return new Encoder_RSC_generic_json_sys<B>(K, N, buffered, poly, stream, n_frames);
-	else if (type == "RSC"     ) return new Encoder_RSC_generic_sys     <B>(K, N, buffered, poly,         n_frames);
+	     if (params.type == "RSC_JSON") return new Encoder_RSC_generic_json_sys<B>(params.K, params.N, params.buffered, params.poly, stream, params.n_frames);
+	else if (params.type == "RSC"     ) return new Encoder_RSC_generic_sys     <B>(params.K, params.N, params.buffered, params.poly,         params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -40,7 +34,8 @@ void Factory_encoder_RSC<B>
 
 template <typename B>
 void Factory_encoder_RSC<B>
-::store_args(const Arguments_reader& ar, encoder_parameters_RSC &params)
+::store_args(const Arguments_reader& ar, encoder_parameters_RSC &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type = "RSC";
 
@@ -48,6 +43,41 @@ void Factory_encoder_RSC<B>
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
+
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	if (ar.exist_arg({"cde-poly"}))
+	{
+		auto poly_str = ar.get_arg({"cde-poly"});
+
+#ifdef _MSC_VER
+		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#else
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#endif
+	}
+
+	if (params.type == "LTE")
+	{
+		params.type = "BCJR";
+		params.poly = {013, 015};
+	}
+
+	if (params.type == "CCSDS")
+	{
+		params.type = "BCJR";
+		params.poly = {023, 033};
+	}
+
+	if (!(params.poly[0] == 013 && params.poly[1] == 015)) // if not LTE BCJR
+	{
+		params.type          = "BCJR";
+		params.implem        = "GENERIC";
+		params.simd_strategy = "";
+	}
+
+	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
+	params.N += params.tail_length;
 }
 
 template <typename B>
@@ -59,12 +89,17 @@ void Factory_encoder_RSC<B>
 
 template <typename B>
 void Factory_encoder_RSC<B>
-::header(Header::params_list& head_enc, const encoder_parameters_RSC& params)
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters_RSC& params)
 {
 	Factory_encoder_common<B>::header(head_enc, params);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	std::stringstream poly;
+	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
+	head_cde.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -18,7 +18,6 @@ Launcher_RSC<cLauncher,B,R,Q,QD>
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
 
-//	this->params.code     .tail_length   = 2*3;
 //	this->params.quantizer.n_bits        = 6;
 //	this->params.quantizer.n_decimals    = 3;
 }
@@ -68,8 +67,8 @@ template <class cLauncher, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<cLauncher,B,R,Q,QD>
 ::print_header()
 {
-	tools::Factory_encoder_RSC<B     >::header(this->pl_enc, *m_enc);
-	tools::Factory_decoder_RSC<B,Q,QD>::header(this->pl_dec, this->pl_cde, *m_dec);
+	tools::Factory_encoder_RSC<B     >::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_decoder_RSC<B,Q,QD>::header(this->pl_dec, *m_dec);
 
 	cLauncher::print_header();
 }
@@ -78,7 +77,7 @@ template <class cLauncher, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<cLauncher,B,R,Q,QD>
 ::build_codec()
 {
-	this->codec = new tools::Codec_RSC<B,Q,QD>(this->params);
+	this->codec = new tools::Codec_RSC<B,Q,QD>(*m_enc, *m_dec);
 }
 }
 }

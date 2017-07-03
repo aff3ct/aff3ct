@@ -8,8 +8,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_repetition<B,Q>
-::Codec_repetition(const parameters& params)
-: Codec<B,Q>(params)
+::Codec_repetition(const typename Factory_encoder_repetition<B  >::encoder_parameters_repetition &enc_params,
+                   const typename Factory_decoder_repetition<B,Q>::decoder_parameters            &dec_params)
+: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params)
 {
 }
 
@@ -23,23 +24,14 @@ template <typename B, typename Q>
 Encoder<B>* Codec_repetition<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return Factory_encoder_repetition<B>::build(this->params.encoder.type,
-	                                            this->params.code.K,
-	                                            this->params.code.N_code,
-	                                            this->params.encoder.buffered,
-	                                            this->params.simulation.inter_frame_level);
+	return Factory_encoder_repetition<B>::build(enc_par);
 }
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_repetition<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	return Factory_decoder_repetition<B,Q>::build(this->params.decoder.type,
-	                                              this->params.decoder.implem,
-	                                              this->params.code.K,
-	                                              this->params.code.N_code,
-	                                              this->params.encoder.buffered,
-	                                              this->params.simulation.inter_frame_level);
+	return Factory_decoder_repetition<B,Q>::build(this->dec_params, enc_par.buffered);
 }
 
 // ==================================================================================== explicit template instantiation 

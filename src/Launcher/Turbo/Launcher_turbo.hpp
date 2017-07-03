@@ -12,6 +12,11 @@ namespace launcher
 template <class cLauncher, typename B = int, typename R = float, typename Q = R, typename QD = Q>
 class Launcher_turbo : public cLauncher
 {
+protected:
+	typename tools::Factory_encoder_turbo  <B  >::encoder_parameters_turbo   *m_enc = nullptr;
+	typename tools::Factory_puncturer_turbo<B,Q>::puncturer_parameters_turbo *m_pct = nullptr;
+	typename tools::Factory_decoder_turbo  <B,Q>::decoder_parameters_turbo   *m_dec = nullptr;
+
 public:
 	Launcher_turbo(const int argc, const char **argv, std::ostream &stream = std::cout);
 	virtual ~Launcher_turbo();
@@ -23,10 +28,6 @@ protected:
 	virtual void print_header();
 
 	virtual void build_codec();
-
-	typename tools::Factory_puncturer_turbo<B,Q>::puncturer_parameters_turbo *m_pct = nullptr;
-	typename tools::Factory_encoder_turbo  <B  >::encoder_parameters_turbo   *m_enc = nullptr;
-	typename tools::Factory_decoder_turbo  <B,Q>::decoder_parameters_turbo   *m_dec = nullptr;
 };
 }
 }

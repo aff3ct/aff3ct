@@ -38,7 +38,7 @@ class Launcher
 {
 private:
 	simulation::Simulation *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
-	std::string            cmd_line;
+	std::string             cmd_line;
 
 protected:
 	tools::Arguments_reader          ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
@@ -54,8 +54,6 @@ protected:
 	std  ::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
 	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
 	                           pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter, pl_pct;
-
-	tools::parameters params;   /*!< A structure of parameters to store and pass to the simulation. */
 
 public:
 	/*!

@@ -16,22 +16,16 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver<T>* Factory_interleaver<T>
-::build(const std::string type,
-        const int         size,
-        const std::string path,
-        const bool        uniform,
-        const int         n_cols,
-        const int         seed,
-        const int         n_frames)
+::build(const interleaver_parameters &params, const int seed)
 {
-	     if (type == "LTE"     ) return new Interleaver_LTE          <T>(size,                        n_frames);
-	else if (type == "CCSDS"   ) return new Interleaver_CCSDS        <T>(size,                        n_frames);
-	else if (type == "RANDOM"  ) return new Interleaver_random       <T>(size,         seed, uniform, n_frames);
-	else if (type == "RAND_COL") return new Interleaver_random_column<T>(size, n_cols, seed, uniform, n_frames);
-	else if (type == "ROW_COL" ) return new Interleaver_row_column   <T>(size, n_cols,                n_frames);
-	else if (type == "GOLDEN"  ) return new Interleaver_golden       <T>(size,         seed, uniform, n_frames);
-	else if (type == "USER"    ) return new Interleaver_user         <T>(size, path,                  n_frames);
-	else if (type == "NO"      ) return new Interleaver_NO           <T>(size,                        n_frames);
+	     if (params.type == "LTE"     ) return new Interleaver_LTE          <T>(params.size,                                      params.n_frames);
+	else if (params.type == "CCSDS"   ) return new Interleaver_CCSDS        <T>(params.size,                                      params.n_frames);
+	else if (params.type == "RANDOM"  ) return new Interleaver_random       <T>(params.size,                seed, params.uniform, params.n_frames);
+	else if (params.type == "RAND_COL") return new Interleaver_random_column<T>(params.size, params.n_cols, seed, params.uniform, params.n_frames);
+	else if (params.type == "ROW_COL" ) return new Interleaver_row_column   <T>(params.size, params.n_cols,                       params.n_frames);
+	else if (params.type == "GOLDEN"  ) return new Interleaver_golden       <T>(params.size,                seed, params.uniform, params.n_frames);
+	else if (params.type == "USER"    ) return new Interleaver_user         <T>(params.size, params.path,                         params.n_frames);
+	else if (params.type == "NO"      ) return new Interleaver_NO           <T>(params.size,                                      params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -61,10 +55,12 @@ void Factory_interleaver<B>
 
 template <typename B>
 void Factory_interleaver<B>
-::store_args(const Arguments_reader& ar, interleaver_parameters &params, const int seed)
+::store_args(const Arguments_reader& ar, interleaver_parameters &params,
+             const int size, const int n_frames)
 {
 	// --------------------------------------------------------------------------------------------------- interleaver
-	params.seed = seed;
+	params.size     = size;
+	params.n_frames = n_frames;
 
 	if(ar.exist_arg({"itl-type"})) params.type    = ar.get_arg    ({"itl-type"});
 	if(ar.exist_arg({"itl-path"})) params.path    = ar.get_arg    ({"itl-path"});

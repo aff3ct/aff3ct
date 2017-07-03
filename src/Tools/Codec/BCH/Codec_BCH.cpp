@@ -7,7 +7,7 @@ template <typename B, typename Q>
 Codec_BCH<B,Q>
 ::Codec_BCH(const typename Factory_encoder_common<B  >::encoder_parameters     &enc_params,
             const typename Factory_decoder_BCH   <B,Q>::decoder_parameters_BCH &dec_params)
-: Codec<B,Q>(enc_params, dec_params),
+: Codec<B,Q>(enc_params, dec_params), dec_par(dec_params),
   GF(dec_params.K, dec_params.N, dec_params.t)
 {
 	// assertion are made in the Galois Field (GF)
@@ -30,8 +30,7 @@ template <typename B, typename Q>
 Decoder<B,Q>* Codec_BCH<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	auto *dec_par = dynamic_cast<typename Factory_decoder_BCH<B,Q>::decoder_parameters_BCH*>(&this->dec_params);
-	return Factory_decoder_BCH<B,Q>::build(*dec_par, GF);
+	return Factory_decoder_BCH<B,Q>::build(dec_par, GF);
 }
 
 // ==================================================================================== explicit template instantiation 

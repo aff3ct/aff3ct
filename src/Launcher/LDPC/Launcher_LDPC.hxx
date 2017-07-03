@@ -74,7 +74,7 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_LDPC<cLauncher,B,R,Q>
 ::build_codec()
 {
-	this->codec = new tools::Codec_LDPC<B,Q>(this->params);
+	this->codec = new tools::Codec_LDPC<B,Q>(*m_enc, *m_dec, this->m_chain_params->sim.n_threads);
 }
 }
 }

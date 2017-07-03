@@ -14,10 +14,11 @@ using namespace aff3ct::tools;
 template <typename B, typename Q>
 Codec_LDPC<B,Q>
 ::Codec_LDPC(const typename Factory_encoder_common<B  >::encoder_parameters      &enc_params,
-             const typename Factory_decoder_LDPC  <B,Q>::decoder_parameters_LDPC &dec_params)
-: Codec_SISO<B,Q>(enc_params, dec_params),
+             const typename Factory_decoder_LDPC  <B,Q>::decoder_parameters_LDPC &dec_params,
+             const int n_threads)
+: Codec_SISO<B,Q>(enc_params, dec_params), dec_par(dec_params),
   info_bits_pos(enc_params.K),
-  decoder_siso (params.simulation.n_threads, nullptr)
+  decoder_siso (n_threads, nullptr)
 {
 	bool is_info_bits_pos = false;
 	if (!enc_params.path.empty() && enc_params.type == "LDPC")
@@ -80,8 +81,7 @@ template <typename B, typename Q>
 Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
 ::_build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	auto *dec_par = dynamic_cast<typename Factory_decoder_LDPC<B,Q>::decoder_parameters_LDPC*>(&this->dec_params);
-	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(*dec_par, H, info_bits_pos);
+	decoder_siso[tid] = Factory_decoder_LDPC<B,Q>::build(dec_par, H, info_bits_pos);
 	return decoder_siso[tid];
 }
 
@@ -144,7 +144,7 @@ void Codec_LDPC<B,Q>
 
 	// extract systematic and parity information
 	auto sys_idx = 0;
-	for (auto f = 0; f < this->params.simulation.n_frames; f++)
+	for (auto f = 0; f < this->enc_params.n_frames; f++)
 	{
 		for (auto i = 0; i < K; i++)
 			sys[f * K +i] = Y_N[f * N + info_bits_pos[i]];

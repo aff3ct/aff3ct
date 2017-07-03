@@ -10,6 +10,9 @@
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/SISO.hpp"
 
+#include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
+#include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
+
 #include "../Codec.hpp"
 
 namespace aff3ct
@@ -20,6 +23,13 @@ template <typename B = int, typename Q = float, typename QD = Q>
 class Codec_turbo : public Codec<B,Q>
 {
 protected:
+	const typename Factory_encoder_turbo  <B  >::encoder_parameters_turbo   &enc_par;
+	const typename Factory_decoder_turbo  <B,Q>::decoder_parameters_turbo   &dec_par;
+	const typename Factory_puncturer_turbo<B,Q>::puncturer_parameters_turbo &pct_par;
+
+	typename Factory_encoder_RSC<B     >::encoder_parameters_RSC enc_rsc_par;
+	typename Factory_decoder_RSC<B,Q,QD>::decoder_parameters_RSC dec_rsc_par;
+
 	// the trellis representation
 	std::vector<std::vector<int>>                               trellis;
 	std::vector<module::Encoder_RSC_sys<B>*>                    sub_enc;
@@ -28,7 +38,10 @@ protected:
 	std::ofstream                                               json_stream;
 
 public:
-	Codec_turbo(const parameters& params);
+	Codec_turbo(const typename Factory_encoder_turbo  <B  >::encoder_parameters_turbo   &enc_params,
+	            const typename Factory_decoder_turbo  <B,Q>::decoder_parameters_turbo   &dec_params,
+	            const typename Factory_puncturer_turbo<B,Q>::puncturer_parameters_turbo &pct_params,
+	            const int n_threads);
 	virtual ~Codec_turbo();
 
 	module::Interleaver    <int>* build_interleaver(const int tid = 0, const int seed = 0                           );
