@@ -23,12 +23,11 @@ struct Factory_simulation_GEN : Factory_simulation
 		// ---- code
 	};
 
-	template <typename B = int, typename R = float, typename Q = R>
 	struct chain_parameters_GEN : chain_parameters
 	{
 		virtual ~chain_parameters_GEN() {}
 
-		Factory_simulation_GEN         ::simu_parameters_GEN  sim;
+		Factory_simulation_GEN         ::simu_parameters_GEN *sim;
 		typename Factory_decoder_common::decoder_parameters  *dec = nullptr;
 	};
 

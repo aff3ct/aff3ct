@@ -21,9 +21,7 @@ using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 using namespace aff3ct::launcher;
 
-template <typename B, typename R, typename Q>
-Launcher<B,R,Q>
-::Launcher(const int argc, const char **argv, std::ostream &stream)
+Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
 : simu(nullptr), ar(argc, argv), stream(stream)
 {
 	cmd_line += std::string(argv[0]) + std::string(" ");
@@ -38,34 +36,24 @@ Launcher<B,R,Q>
 	}
 }
 
-template <typename B, typename R, typename Q>
-Launcher<B,R,Q>
-::~Launcher() 
+Launcher::~Launcher()
 {
 	if (simu != nullptr) delete simu;
 }
 
-template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::build_args()
+void Launcher::build_args()
 {
 }
 
-template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::store_args()
+void Launcher::store_args()
 {
 }
 
-template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::group_args()
+void Launcher::group_args()
 {
 }
 
-template <typename B, typename R, typename Q>
-int Launcher<B,R,Q>
-::read_arguments()
+int Launcher::read_arguments()
 {
 	this->build_args();
 
@@ -113,9 +101,7 @@ int Launcher<B,R,Q>
 	return ((miss_arg || error)?EXIT_FAILURE:EXIT_SUCCESS);
 }
 
-template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::print_header()
+void Launcher::print_header()
 {
 	// display configuration and simulation parameters
 	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
@@ -156,9 +142,7 @@ void Launcher<B,R,Q>
 	this->stream << "#" << std::endl;
 }
 
-template <typename B, typename R, typename Q>
-void Launcher<B,R,Q>
-::launch()
+void Launcher::launch()
 {
 	std::srand(simu_params->seed);
 
@@ -224,15 +208,3 @@ void Launcher<B,R,Q>
 #endif
 		stream << "# End of the simulation." << std::endl;
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::launcher::Launcher<B_8, R_8, Q_8 >;
-template class aff3ct::launcher::Launcher<B_16,R_16,Q_16>;
-template class aff3ct::launcher::Launcher<B_32,R_32,Q_32>;
-template class aff3ct::launcher::Launcher<B_64,R_64,Q_64>;
-#else
-template class aff3ct::launcher::Launcher<B,R,Q>;
-#endif
-// ==================================================================================== explicit template instantiation

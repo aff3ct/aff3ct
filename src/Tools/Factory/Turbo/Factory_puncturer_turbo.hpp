@@ -12,9 +12,9 @@ namespace aff3ct
 namespace tools
 {
 template <typename B = int, typename Q = float>
-struct Factory_puncturer_turbo : public Factory_puncturer
+struct Factory_puncturer_turbo : public Factory_puncturer<B,Q>
 {
-	struct puncturer_parameters_turbo : puncturer_parameters
+	struct puncturer_parameters_turbo : Factory_puncturer<B,Q>::puncturer_parameters
 	{
 		virtual ~puncturer_parameters_turbo() {}
 		std::string pattern = "111,111,111";

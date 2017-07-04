@@ -30,7 +30,7 @@ void Factory_encoder_common<B>
 	opt_args[{"enc-type"}] =
 		{"string",
 		 "select the type of encoder you want to use.",
-		 "NO, AZCW, COSET, USER"};
+		 "NO, COSET, USER"};
 
 	opt_args[{"enc-path"}] =
 		{"string",
@@ -39,6 +39,11 @@ void Factory_encoder_common<B>
 	opt_args[{"enc-no-sys"}] =
 		{"",
 		 "disable the systematic encoding."};
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	opt_args[{"cde-coset", "c"}] =
+		{"",
+		 "enable the coset approach."};
 }
 
 template <typename B>
@@ -48,8 +53,9 @@ void Factory_encoder_common<B>
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-type"  })) params.type = ar.get_arg({"enc-type"});
-//	if (params.type == "COSET")
-//		params.code.coset = true;
+	if (params.type == "COSET")
+		params.coset = true;
+
 //	if (params.type == "AZCW")
 //		params.source.type = "AZCW";
 //	if (params.type == "USER")
@@ -62,6 +68,8 @@ void Factory_encoder_common<B>
 	// ---------------------------------------------------------------------------------------------------------- code
 	params.K = K;
 	params.N = N;
+
+	if(ar.exist_arg({"cde-coset", "c"})) params.coset = true;
 
 	// ---------------------------------------------------------------------------------------------------------- simu
 	params.n_frames = n_frames;
@@ -76,7 +84,7 @@ void Factory_encoder_common<B>
 
 template <typename B>
 void Factory_encoder_common<B>
-::header(Header::params_list& head_enc, const encoder_parameters& params)
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Type", params.type));
@@ -84,8 +92,11 @@ void Factory_encoder_common<B>
 	if (params.type == "USER")
 		head_enc.push_back(std::make_pair("Path", params.path));
 
-	std::string syst_enc = ((params.systematic) ? "on" : "off");
-	head_enc.push_back(std::make_pair("Systematic encoding", syst_enc));
+	head_enc.push_back(std::make_pair("Systematic encoding", ((params.systematic) ? "on" : "off")));
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	head_cde.push_back(std::make_pair("Coset approach (c)", ((params.coset) ? "on" : "off")));
+
 }
 
 // ==================================================================================== explicit template instantiation 

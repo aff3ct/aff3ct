@@ -49,8 +49,8 @@ void Launcher_BCH<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_BCH<B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
-	tools::Factory_decoder_BCH<B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
+	tools::Factory_encoder_BCH<B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_decoder_BCH<B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -67,7 +67,7 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_BCH<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_BCH<B  >::header(this->pl_enc, *m_enc);
+	tools::Factory_encoder_BCH<B  >::header(this->pl_enc, this->pl_cde, *m_enc);
 	tools::Factory_decoder_BCH<B,Q>::header(this->pl_dec, this->pl_cde, *m_dec);
 
 	cLauncher::print_header();

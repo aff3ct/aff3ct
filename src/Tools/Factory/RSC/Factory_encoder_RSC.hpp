@@ -22,6 +22,7 @@ struct Factory_encoder_RSC : public Factory_encoder_common<B>
 		bool buffered = true;
 
 		// ------- code
+		std::string      standard;
 		std::vector<int> poly   = {013, 015};
 		int         tail_length = 2 * 3;
 	};

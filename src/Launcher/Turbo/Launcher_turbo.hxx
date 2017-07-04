@@ -55,13 +55,13 @@ void Launcher_turbo<cLauncher,B,R,Q,QD>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_turbo  <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim.K, this->m_chain_params->sim.N,               this->m_chain_params->sim.inter_frame_level);
+	tools::Factory_encoder_turbo  <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N,               this->m_chain_params->sim->inter_frame_level);
 
-	tools::Factory_puncturer_turbo<B,Q>::store_args(this->ar, *m_pct, this->m_chain_params->sim.K, this->m_chain_params->sim.N, m_enc->N_pct, this->m_chain_params->sim.inter_frame_level);
+	tools::Factory_puncturer_turbo<B,Q>::store_args(this->ar, *m_pct, this->m_chain_params->sim->K, this->m_chain_params->sim->N, m_enc->N_pct, this->m_chain_params->sim->inter_frame_level);
 
 	bool activate_simd = !this->ar.exist_arg({"sim-inter-lvl"});
 	bool activate_json = !m_enc->json_path.empty();
-	tools::Factory_decoder_turbo  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N,               this->m_chain_params->sim.inter_frame_level, activate_simd, activate_json);
+	tools::Factory_decoder_turbo  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N,               this->m_chain_params->sim->inter_frame_level, activate_simd, activate_json);
 
 }
 
@@ -80,9 +80,9 @@ template <class cLauncher, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<cLauncher,B,R,Q,QD>
 ::print_header()
 {
-	tools::Factory_encoder_turbo  <B  >::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_encoder_turbo  <B  >::header(this->pl_enc, this->pl_cde, this->pl_itl, *m_enc);
 	tools::Factory_puncturer_turbo<B,Q>::header(this->pl_pct, *m_pct);
-	tools::Factory_decoder_turbo  <B,Q>::header(this->pl_dec, this->pl_itl, *m_dec, !this->pl_crc.empty());
+	tools::Factory_decoder_turbo  <B,Q>::header(this->pl_dec, *m_dec, !this->pl_crc.empty());
 
 	cLauncher::print_header();
 }
@@ -91,7 +91,7 @@ template <class cLauncher, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<cLauncher,B,R,Q,QD>
 ::build_codec()
 {
-	this->codec = new tools::Codec_turbo<B,Q,QD>(*m_enc, *m_dec, *m_pct, this->m_chain_params->sim.n_threads);
+	this->codec = new tools::Codec_turbo<B,Q,QD>(*m_enc, *m_dec, *m_pct, this->m_chain_params->sim->n_threads);
 }
 }
 }

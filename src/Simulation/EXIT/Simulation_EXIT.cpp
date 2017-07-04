@@ -5,6 +5,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
+#include "Tools/Factory/Simulation/EXIT/Factory_simulation_EXIT.hpp"
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_encoder_common.hpp"
 #include "Tools/Factory/Factory_modem.hpp"
@@ -19,32 +20,32 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 Simulation_EXIT<B,R>
-::Simulation_EXIT(const parameters& params, Codec_SISO<B,R> &codec)
+::Simulation_EXIT(const typename tools::Factory_simulation_EXIT::chain_parameters_EXIT<B,R>& params, Codec_SISO<B,R> &codec)
 : Simulation(),
-
-  codec (codec),
   params(params),
-  H_N   (params.code.N),
-  B_K   (params.code.K),
-  B_N   (params.code.N),
-  X_N1  (params.code.N),
-  X_K   (params.code.K),
-  X_N2  (params.code.N),
-  Y_N   (params.code.N),
-  Y_K   (params.code.K),
-  La_K1 (params.code.K),
-  Lch_N1(params.code.N),
-  La_K2 (params.code.K),
-  Lch_N2(params.code.N),
-  Le_K  (params.code.K),
-  sys   (params.code.K                   +  params.code.tail_length / 2),
-  par   ((params.code.N - params.code.K) - (params.code.tail_length / 2)),
+  codec (codec),
+
+  H_N   (params.sim->N),
+  B_K   (params.sim->K),
+  B_N   (params.sim->N),
+  X_N1  (params.sim->N),
+  X_K   (params.sim->K),
+  X_N2  (params.sim->N),
+  Y_N   (params.sim->N),
+  Y_K   (params.sim->K),
+  La_K1 (params.sim->K),
+  Lch_N1(params.sim->N),
+  La_K2 (params.sim->K),
+  Lch_N2(params.sim->N),
+  Le_K  (params.sim->K),
+  sys   (params.sim->K                   +  params.sim->tail_length / 2),
+  par   ((params.sim->N - params.sim->K) - (params.sim->tail_length / 2)),
 
   B_buff (0),
   Le_buff(0),
   La_buff(0),
 
-  n_trials (200000 / params.code.K),
+  n_trials (200000 / params.sim->K),
   cur_trial(0),
 
   I_A      (0.0),
@@ -81,12 +82,12 @@ void Simulation_EXIT<B,R>
 {
 	release_objects();
 
-	const auto N_mod = this->params.code.N_mod;
-	const auto K_mod = Factory_modem<B,R>::get_buffer_size_after_modulation(params.modulator.type,
-	                                                                        params.code.K,
-	                                                                        params.modulator.bits_per_symbol,
-	                                                                        params.modulator.upsample_factor,
-	                                                                        params.modulator.cpm_L);
+	const auto N_mod = params.modem.N_mod;
+	const auto K_mod = Factory_modem<B,R>::get_buffer_size_after_modulation(params.modem.type,
+	                                                                        params.sim->K,
+	                                                                        params.modem.bps,
+	                                                                        params.modem.upf,
+	                                                                        params.modem.cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -117,17 +118,17 @@ void Simulation_EXIT<B,R>
 	codec.launch_precompute();
 
 	// for each channel SNR to be simulated	
-	for (snr = params.simulation.snr_min; snr <= params.simulation.snr_max; snr += params.simulation.snr_step)
+	for (snr = params.sim->snr_min; snr <= params.sim->snr_max; snr += params.sim->snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto code_rate = 1.f;
-		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.modulator.bits_per_symbol),
-		                      params.modulator.upsample_factor);
+		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.modem.bps),
+		                      params.modem.upf);
 
 		codec.snr_precompute(sigma);
 
 		// for each "a" standard deviation (sig_a) to be simulated
-		for (sig_a = params.simulation.sig_a_min; sig_a <= params.simulation.sig_a_max; sig_a += params.simulation.sig_a_step)
+		for (sig_a = params.sim->sig_a_min; sig_a <= params.sim->sig_a_max; sig_a += params.sim->sig_a_step)
 		{
 			I_A = 0.0;
 			I_E = 0.0;
@@ -139,7 +140,7 @@ void Simulation_EXIT<B,R>
 			if (sig_a == 0)
 				std::fill(La_K2.begin(), La_K2.end(), init_LLR<R>());
 
-			if (!params.terminal.disabled && first_loop)
+			if (!params.ter.disabled && first_loop)
 			{
 				terminal->legend(std::cout);
 				first_loop = false;
@@ -147,7 +148,7 @@ void Simulation_EXIT<B,R>
 
 			this->simulation_loop();
 
-			if (!params.terminal.disabled)
+			if (!params.ter.disabled)
 				terminal->final_report(std::cout);
 		}
 	}
@@ -180,7 +181,7 @@ void Simulation_EXIT<B,R>
 		if (sig_a != 0)
 		{
 			// Rayleigh channel
-			if (params.channel.type.find("RAYLEIGH") != std::string::npos)
+			if (params.chn.type.find("RAYLEIGH") != std::string::npos)
 			{
 				channel_a->add_noise            (X_K, La_K1, H_N       );
 				modem_a  ->demodulate_with_gains(     La_K1, H_N, La_K2);
@@ -193,7 +194,7 @@ void Simulation_EXIT<B,R>
 		}
 
 		// Rayleigh channel
-		if (params.channel.type.find("RAYLEIGH") != std::string::npos)
+		if (params.chn.type.find("RAYLEIGH") != std::string::npos)
 		{
 			channel->add_noise            (X_N2, Lch_N1, H_N        );
 			modem  ->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
@@ -208,7 +209,7 @@ void Simulation_EXIT<B,R>
 		codec.extract_sys_par(Lch_N2, sys, par);
 
 		// add other siso's extrinsic
-		for (auto k = 0; k < this->params.code.K; k++)
+		for (auto k = 0; k < params.sim->K; k++)
 			sys[k] += La_K2[k];
 
 		// decode
@@ -220,7 +221,7 @@ void Simulation_EXIT<B,R>
 		La_buff.insert(La_buff.end(), La_K2.begin(), La_K2.end());
 
 		// display statistics in terminal
-		if (!params.terminal.disabled && (steady_clock::now() - t_simu) >= params.terminal.frequency)
+		if (!params.ter.disabled && (steady_clock::now() - t_simu) >= params.ter.frequency)
 		{
 			terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();
@@ -228,7 +229,7 @@ void Simulation_EXIT<B,R>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.code.K * n_trials);
+	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.sim->K * n_trials);
 	I_E = Simulation_EXIT<B,R>::measure_mutual_info_histo(Le_buff, B_buff);
 }
 
@@ -409,10 +410,7 @@ template <typename B, typename R>
 Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
-	return Factory_source<B>::build(this->params.source.type,
-	                                this->params.code.K_info,
-	                                this->params.source.path,
-	                                this->params.simulation.seed);
+	return Factory_source<B>::build(params.src, params.sim->seed);
 }
 
 template <typename B, typename R>
@@ -425,11 +423,7 @@ Encoder<B>* Simulation_EXIT<B,R>
 	}
 	catch (std::exception const&)
 	{
-		return Factory_encoder_common<B>::build(this->params.encoder.type,
-		                                        this->params.code.K,
-		                                        this->params.code.N_code,
-		                                        this->params.encoder.path,
-		                                        this->params.simulation.seed);
+		return Factory_encoder_common<B>::build(*params.enc, params.sim->seed);
 	}
 }
 
@@ -437,72 +431,28 @@ template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem()
 {
-	return Factory_modem<B,R>::build(this->params.modulator.type,
-	                                 this->params.code.N,
-	                                 this->sigma,
-	                                 this->params.demodulator.max,
-	                                 this->params.demodulator.psi,
-	                                 this->params.modulator.bits_per_symbol,
-	                                 this->params.modulator.const_path,
-	                                 this->params.modulator.upsample_factor,
-	                                 this->params.modulator.cpm_L,
-	                                 this->params.modulator.cpm_k,
-	                                 this->params.modulator.cpm_p,
-	                                 this->params.modulator.mapping,
-	                                 this->params.modulator.wave_shape,
-	                                 this->params.demodulator.no_sig2,
-	                                 this->params.demodulator.n_ite);
+	return Factory_modem<B,R>::build(params.modem, this->sigma);
 }
 
 template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem_a()
 {
-	return Factory_modem<B,R>::build(this->params.modulator.type,
-	                                 this->params.code.K,
-	                                 2.f / sig_a,
-	                                 this->params.demodulator.max,
-	                                 this->params.demodulator.psi,
-	                                 this->params.modulator.bits_per_symbol,
-	                                 this->params.modulator.const_path,
-	                                 this->params.modulator.upsample_factor,
-	                                 this->params.modulator.cpm_L,
-	                                 this->params.modulator.cpm_k,
-	                                 this->params.modulator.cpm_p,
-	                                 this->params.modulator.mapping,
-	                                 this->params.modulator.wave_shape,
-	                                 this->params.demodulator.no_sig2,
-	                                 this->params.demodulator.n_ite);
+	return Factory_modem<B,R>::build(params.modem, 2.f / sig_a);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
-	const auto add_users = this->params.modulator.type == "SCMA";
-	return Factory_channel<R>::build(this->params.channel.type,
-	                                 size,
-	                                 this->params.modulator.complex,
-	                                 add_users,
-	                                 this->params.channel.path,
-	                                 params.simulation.seed,
-	                                 this->sigma,
-	                                 this->params.simulation.inter_frame_level);
+	return Factory_channel<R>::build(params.chn, params.sim->seed, this->sigma);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	const auto add_users = this->params.modulator.type == "SCMA";
-	return Factory_channel<R>::build(this->params.channel.type,
-	                                 size,
-	                                 this->params.modulator.complex,
-	                                 add_users,
-	                                 this->params.channel.path,
-	                                 params.simulation.seed,
-	                                 2.f / sig_a,
-	                                 this->params.simulation.inter_frame_level);
+	return Factory_channel<R>::build(params.chn, params.sim->seed, 2.f / sig_a);
 }
 
 template <typename B, typename R>
@@ -518,7 +468,7 @@ template <typename B, typename R>
 Terminal_EXIT<B,R>* Simulation_EXIT<B,R>
 ::build_terminal()
 {
-	return new Terminal_EXIT<B,R>(params.code.N, snr, sig_a, cur_trial, n_trials, I_A, I_E);
+	return new Terminal_EXIT<B,R>(params.sim->N, snr, sig_a, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation

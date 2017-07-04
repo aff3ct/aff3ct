@@ -140,16 +140,12 @@ void Factory_decoder_RSC<B,Q,QD>
 		{"string",
 		 "the MAX implementation for the nodes.",
 		 "MAX, MAXL, MAXS"};
-
-	opt_args[{"cde-poly"}] =
-		{"string",
-		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 }
 
 template <typename B, typename Q, typename QD>
 void Factory_decoder_RSC<B,Q,QD>
 ::store_args(const Arguments_reader& ar, decoder_parameters_RSC &params,
-             const int K, const int N, const int n_frames)
+             const int K, const int N, const int n_frames, const bool activate_simd)
 {
 	params.type   = "BCJR";
 	params.implem = "GENERIC";
@@ -160,10 +156,10 @@ void Factory_decoder_RSC<B,Q,QD>
 	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
 	if(ar.exist_arg({"dec-max" })) params.max           = ar.get_arg({"dec-max" });
 
-//	if (params.simd_strategy == "INTER" && !ar.exist_arg({"sim-inter-lvl"}))
-//		params.inter_frame_level = mipp::nElReg<Q>();
-//	else if (params.simd_strategy == "INTRA" && !ar.exist_arg({"sim-inter-lvl"}))
-//		params.inter_frame_level = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
+	if (params.simd_strategy == "INTER" && activate_simd)
+		params.n_frames = mipp::nElReg<Q>();
+	else if (params.simd_strategy == "INTRA" && activate_simd)
+		params.n_frames = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
 }
 
 template <typename B, typename Q, typename QD>
@@ -184,7 +180,6 @@ void Factory_decoder_RSC<B,Q,QD>
 		head_dec.push_back(std::make_pair(std::string("SIMD strategy"), params.simd_strategy));
 
 	head_dec.push_back(std::make_pair(std::string("Max type"), params.max));
-
 }
 
 // ==================================================================================== explicit template instantiation 

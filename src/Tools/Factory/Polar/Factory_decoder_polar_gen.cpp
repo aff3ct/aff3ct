@@ -773,7 +773,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 		if (params.implem == "N32768_K29491_SNR25"   ) return new Decoder_polar_SC_fast_sys_N32768_K29491_SNR25   <B, Q, API_polar>(params.K, params.N,    params.frozen_bits,       params.n_frames);
 #endif
 	}
-	else if (param.type == "SCL" && crc != nullptr && crc->get_size() > 0)
+	else if (params.type == "SCL" && crc != nullptr && crc->get_size() > 0)
 	{
 #ifdef ENABLE_DECODER_SCL_FAST_CA_N4_K2_SNR25
 		if (params.implem == "CA_N4_K2_SNR25"        ) return new Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25       <B, Q, API_polar>(params.K, params.N, L, params.frozen_bits, *crc, params.n_frames);
@@ -792,7 +792,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 template <typename B, typename Q>
 Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 ::build(const typename Factory_decoder_polar<B,Q>::decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
-        const bool sys_encoding = true, module::CRC<B> *crc)
+        const bool sys_encoding, module::CRC<B> *crc)
 {
 	if (sys_encoding)
 	{

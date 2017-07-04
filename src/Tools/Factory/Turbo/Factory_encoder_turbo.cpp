@@ -78,11 +78,11 @@ void Factory_encoder_turbo<B>
 
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	if(ar.exist_arg({"cde-std"})) params.standard = this->ar.get_arg({"cde-std"});
+	if(ar.exist_arg({"cde-std"})) params.standard = ar.get_arg({"cde-std"});
 
-	if(ar.exist_arg({"cde-json-path"})) params.json_path = this->ar.get_arg({"cde-json-path"});
+	if(ar.exist_arg({"cde-json-path"})) params.json_path = ar.get_arg({"cde-json-path"});
 	if (!params.json_path.empty())
-		params.encoder.type = "TURBO_JSON";
+		params.type = "TURBO_JSON";
 
 	if (params.standard == "LTE")
 	{
@@ -126,9 +126,12 @@ void Factory_encoder_turbo<B>
 
 template <typename B>
 void Factory_encoder_turbo<B>
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters_turbo& params)
+::header(Header::params_list& head_enc, Header::params_list& head_cde, Header::params_list& head_itl, const encoder_parameters_turbo& params)
 {
-	Factory_encoder_common<B>::header(head_enc, params);
+	Factory_encoder_common<B>::header(head_enc, head_cde, params);
+
+	// --------------------------------------------------------------------------------------------------- interleaver
+	Factory_interleaver<int>::header(head_itl, params.itl);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));

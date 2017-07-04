@@ -10,7 +10,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder<B,R>* Factory_decoder_repetition<B,R>
-::build(const typename Factory_decoder_common::decoder_parameters &params, const bool buffered = true)
+::build(const typename Factory_decoder_common::decoder_parameters &params, const bool buffered)
 {
 	if (params.type == "REPETITION")
 	{

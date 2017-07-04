@@ -12,16 +12,12 @@ using namespace aff3ct::tools;
 
 template <typename B>
 CRC<B>* Factory_CRC<B>
-::build(const std::string type,
-        const int         K,
-        const int         size,
-        const std::string poly,
-        const int         n_frames)
+::build(const CRC_parameters &params)
 {
-	     if (type == "STD"  ) return new CRC_polynomial      <B>(K, poly, size, n_frames);
-	else if (type == "FAST" ) return new CRC_polynomial_fast <B>(K, poly, size, n_frames);
-	else if (type == "INTER") return new CRC_polynomial_inter<B>(K, poly, size, n_frames);
-	else if (type == "NO"   ) return new CRC_NO              <B>(K,             n_frames);
+	     if (params.type == "STD"  ) return new CRC_polynomial      <B>(params.K, params.poly, params.size, params.n_frames);
+	else if (params.type == "FAST" ) return new CRC_polynomial_fast <B>(params.K, params.poly, params.size, params.n_frames);
+	else if (params.type == "INTER") return new CRC_polynomial_inter<B>(params.K, params.poly, params.size, params.n_frames);
+	else if (params.type == "NO"   ) return new CRC_NO              <B>(params.K,                           params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -51,8 +47,10 @@ void Factory_CRC<B>
 
 template <typename B>
 void Factory_CRC<B>
-::store_args(const Arguments_reader& ar, CRC_parameters &params, const int K, const int N)
+::store_args(const Arguments_reader& ar, CRC_parameters &params, const int K, const int N, const int n_frames)
 {
+	params.n_frames = n_frames;
+
 	// ----------------------------------------------------------------------------------------------------------- crc
 	if(ar.exist_arg({"crc-type"})) params.type = ar.get_arg    ({"crc-type"});
 	if(ar.exist_arg({"crc-poly"})) params.poly = ar.get_arg    ({"crc-poly"});
@@ -62,12 +60,15 @@ void Factory_CRC<B>
 	if (!params.poly.empty() && !params.size)
 		params.size = CRC_polynomial<B>::size(params.poly);
 
+	if (params.poly.empty())
+		params.type = "NO";
+
 	// update the code rate R and K_info
 	auto real_K = K;
 	if (!params.poly.empty() && !params.inc_code_rate)
 		real_K -= params.size;
-	params.R      = real_K / (float)N;
-	params.K_info = real_K;
+	params.R = real_K / (float)N;
+	params.K = real_K;
 }
 
 template <typename B>

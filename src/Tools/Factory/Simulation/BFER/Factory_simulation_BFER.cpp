@@ -32,12 +32,6 @@ void Factory_simulation_BFER::build_args(Arguments_reader::arg_map &req_args, Ar
 		{"string",
 		 "select the type of SNR: symbol energy or information bit energy.",
 		 "ES, EB"};
-
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	opt_args[{"cde-coset", "c"}] =
-		{"",
-		 "enable the coset approach."};
 }
 
 void Factory_simulation_BFER::store_args(const Arguments_reader& ar, simu_parameters_BFER &params)
@@ -68,8 +62,6 @@ void Factory_simulation_BFER::store_args(const Arguments_reader& ar, simu_parame
 		// check if debug is asked and if n_thread kept its default value
 		params.n_threads = 1;
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	if(ar.exist_arg({"cde-coset", "c"})) params.coset = true;
 }
 
 void Factory_simulation_BFER::group_args(Arguments_reader::arg_grp& ar)
@@ -86,9 +78,6 @@ void Factory_simulation_BFER::header(Header::params_list& head_sim, Header::para
 
 
 	// ---------------------------------------------------------------------------------------------------------- code
-	std::string coset = params.coset ? "on" : "off";
-	head_cde.push_back(std::make_pair("Coset approach (c)", coset));
-
 //	std::string N = std::to_string(params.code.N - params.code.tail_length);
 //	if (params.code.tail_length > 0)
 //		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";

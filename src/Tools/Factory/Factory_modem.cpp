@@ -18,79 +18,45 @@ using namespace aff3ct::tools;
 template <typename B, typename R, typename Q>
 template <proto_max<Q> MAX>
 Modem<B,R,Q>* Factory_modem<B,R,Q>
-::_build(const std::string type,
-         const int         N,
-         const float       sigma,
-         const int         bps,
-         const std::string path,
-         const int         upf,
-         const int         cpm_L,
-         const int         cpm_k,
-         const int         cpm_p,
-         const std::string mapping,
-         const std::string wave,
-         const bool        no_sig2,
-         const int         n_frames)
+::_build(const modem_parameters &params, const float sigma)
 {
-	     if (type == "BPSK"     ) return new Modem_BPSK     <B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
-	else if (type == "BPSK_FAST") return new Modem_BPSK_fast<B,R,Q    >(N, sigma,                                               no_sig2, n_frames);
-	else if (type == "PAM"      ) return new Modem_PAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-	else if (type == "QAM"      ) return new Modem_QAM      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-	else if (type == "PSK"      ) return new Modem_PSK      <B,R,Q,MAX>(N, sigma, bps,                                          no_sig2, n_frames);
-	else if (type == "USER"     ) return new Modem_user     <B,R,Q,MAX>(N, sigma, bps, path,                                    no_sig2, n_frames);
-	else if (type == "CPM"      ) return new Modem_CPM      <B,R,Q,MAX>(N, sigma, bps, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+	     if (params.type == "BPSK"     ) return new Modem_BPSK     <B,R,Q    >(params.N, sigma,                                                                                                      params.no_sig2, params.n_frames);
+	else if (params.type == "BPSK_FAST") return new Modem_BPSK_fast<B,R,Q    >(params.N, sigma,                                                                                                      params.no_sig2, params.n_frames);
+	else if (params.type == "PAM"      ) return new Modem_PAM      <B,R,Q,MAX>(params.N, sigma, params.bps,                                                                                          params.no_sig2, params.n_frames);
+	else if (params.type == "QAM"      ) return new Modem_QAM      <B,R,Q,MAX>(params.N, sigma, params.bps,                                                                                          params.no_sig2, params.n_frames);
+	else if (params.type == "PSK"      ) return new Modem_PSK      <B,R,Q,MAX>(params.N, sigma, params.bps,                                                                                          params.no_sig2, params.n_frames);
+	else if (params.type == "USER"     ) return new Modem_user     <B,R,Q,MAX>(params.N, sigma, params.bps, params.const_path,                                                                       params.no_sig2, params.n_frames);
+	else if (params.type == "CPM"      ) return new Modem_CPM      <B,R,Q,MAX>(params.N, sigma, params.bps, params.upf, params.cpm_L, params.cpm_k, params.cpm_p, params.mapping, params.wave_shape, params.no_sig2, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>* Factory_modem<B,R,Q>
-::_build_scma(const std::string type,
-              const int         N,
-              const float       sigma,
-              const int         bps,
-              const std::string psi_type,
-              const bool        no_sig2,
-              const int         n_ite,
-              const int         n_frames)
+::_build_scma(const modem_parameters &params, const float sigma)
 {
-	     if (psi_type == "PSI0") return new Modem_SCMA <B,R,Q,psi_0<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
-	else if (psi_type == "PSI1") return new Modem_SCMA <B,R,Q,psi_1<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
-	else if (psi_type == "PSI2") return new Modem_SCMA <B,R,Q,psi_2<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
-	else if (psi_type == "PSI3") return new Modem_SCMA <B,R,Q,psi_3<Q>>(N, sigma, bps, no_sig2, n_ite, n_frames);
+	     if (params.psi == "PSI0") return new Modem_SCMA <B,R,Q,psi_0<Q>>(params.N, sigma, params.bps, params.no_sig2, params.n_ite, params.n_frames);
+	else if (params.psi == "PSI1") return new Modem_SCMA <B,R,Q,psi_1<Q>>(params.N, sigma, params.bps, params.no_sig2, params.n_ite, params.n_frames);
+	else if (params.psi == "PSI2") return new Modem_SCMA <B,R,Q,psi_2<Q>>(params.N, sigma, params.bps, params.no_sig2, params.n_ite, params.n_frames);
+	else if (params.psi == "PSI3") return new Modem_SCMA <B,R,Q,psi_3<Q>>(params.N, sigma, params.bps, params.no_sig2, params.n_ite, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>* Factory_modem<B,R,Q>
-::build(const std::string type,
-        const int         N,
-        const float       sigma,
-        const std::string max_type,
-        const std::string psi_type,
-        const int         bps,
-        const std::string path,
-        const int         upf,
-        const int         cpm_L,
-        const int         cpm_k,
-        const int         cpm_p,
-        const std::string mapping,
-        const std::string wave,
-        const bool        no_sig2,
-        const int         n_ite,
-        const int         n_frames)
+::build(const modem_parameters &params, const float sigma)
 {
-	if (type == "SCMA")
+	if (params.type == "SCMA")
 	{
-		return _build_scma(type, N, sigma, bps, psi_type, no_sig2, n_ite, n_frames);
+		return _build_scma(params, sigma);
 	}
 	else
 	{
-		     if (max_type == "MAX"  ) return _build<max          <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
-		else if (max_type == "MAXL" ) return _build<max_linear   <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
-		else if (max_type == "MAXS" ) return _build<max_star     <Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
-		else if (max_type == "MAXSS") return _build<max_star_safe<Q>>(type, N, sigma, bps, path, upf, cpm_L, cpm_k, cpm_p, mapping, wave, no_sig2, n_frames);
+		     if (params.max == "MAX"  ) return _build<max          <Q>>(params, sigma);
+		else if (params.max == "MAXL" ) return _build<max_linear   <Q>>(params, sigma);
+		else if (params.max == "MAXS" ) return _build<max_star     <Q>>(params, sigma);
+		else if (params.max == "MAXSS") return _build<max_star_safe<Q>>(params, sigma);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -208,8 +174,9 @@ void Factory_modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Factory_modem<B,R,Q>
-::store_args(const Arguments_reader& ar, modem_parameters &params, const int N)
+::store_args(const Arguments_reader& ar, modem_parameters &params, const int N, const int n_frames)
 {
+	params.n_frames = n_frames;
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	if(ar.exist_arg({"mod-type"})) params.type = ar.get_arg({"mod-type"});
@@ -225,13 +192,13 @@ void Factory_modem<B,R,Q>
 		{
 			if (params.cpm_std == "GSM")
 			{
-				params.cpm_L          = 3;
-				params.cpm_k          = 1;
-				params.cpm_p          = 2;
-				params.bits_per_symbol= 1;
-				params.upsample_factor= 5;
-				params.mapping        = "NATURAL";
-				params.wave_shape     = "GMSK";
+				params.cpm_L      = 3;
+				params.cpm_k      = 1;
+				params.cpm_p      = 2;
+				params.bps        = 1;
+				params.upf        = 5;
+				params.mapping    = "NATURAL";
+				params.wave_shape = "GMSK";
 			}
 			else
 			{
@@ -242,8 +209,8 @@ void Factory_modem<B,R,Q>
 		}
 	}
 
-	if(ar.exist_arg({"mod-bps"       })) params.bits_per_symbol = ar.get_arg_int({"mod-bps"       });
-	if(ar.exist_arg({"mod-ups"       })) params.upsample_factor = ar.get_arg_int({"mod-ups"       });
+	if(ar.exist_arg({"mod-bps"       })) params.bps = ar.get_arg_int({"mod-bps"       });
+	if(ar.exist_arg({"mod-ups"       })) params.upf = ar.get_arg_int({"mod-ups"       });
 	if(ar.exist_arg({"mod-const-path"})) params.const_path      = ar.get_arg    ({"mod-const-path"});
 
 	if(ar.exist_arg({"mod-cpm-L"     })) params.cpm_L           = ar.get_arg_int({"mod-cpm-L"     });
@@ -254,21 +221,21 @@ void Factory_modem<B,R,Q>
 
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.type == "BPSK" || params.type == "BPSK_FAST")
-		params.bits_per_symbol = 1;
+		params.bps = 1;
 	// force the number of bits per symbol to 3 when SCMA mod
 	if (params.type == "SCMA")
-		params.bits_per_symbol = 3;
+		params.bps = 3;
 
 
 	params.N_mod   = get_buffer_size_after_modulation(params.type,
 	                                                  N,
-	                                                  params.bits_per_symbol,
-	                                                  params.upsample_factor,
+	                                                  params.bps,
+	                                                  params.upf,
 	                                                  params.cpm_L);
 
 	params.N_fil   = get_buffer_size_after_filtering (params.type,
 	                                                  N,
-	                                                  params.bits_per_symbol,
+	                                                  params.bps,
 	                                                  params.cpm_L,
 	                                                  params.cpm_p);
 
@@ -306,8 +273,8 @@ void Factory_modem<B,R,Q>
 		head_mod.push_back(std::make_pair("CPM mapping",                 params.mapping   ));
 	}
 
-	head_mod.push_back(std::make_pair("Bits per symbol", std::to_string(params.bits_per_symbol)));
-	head_mod.push_back(std::make_pair("Sampling factor", std::to_string(params.upsample_factor)));
+	head_mod.push_back(std::make_pair("Bits per symbol", std::to_string(params.bps)));
+	head_mod.push_back(std::make_pair("Sampling factor", std::to_string(params.upf)));
 
 
 	// --------------------------------------------------------------------------------------------------- demodulator

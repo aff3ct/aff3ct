@@ -10,10 +10,10 @@ namespace aff3ct
 namespace launcher
 {
 template <typename B = int, typename R = float, typename Q = R>
-class Launcher_GEN : public Launcher<B,R,Q>
+class Launcher_GEN : public Launcher
 {
 protected:
-	tools::Factory_simulation_GEN::chain_parameters_GEN<B,R,Q> * m_chain_params = nullptr;
+	tools::Factory_simulation_GEN::chain_parameters_GEN * m_chain_params = nullptr;
 
 public:
 	Launcher_GEN(const int argc, const char **argv, std::ostream &stream = std::cout);

@@ -17,6 +17,7 @@
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "Tools/Codec/Codec_SISO.hpp"
+#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER_ite.hpp"
 
 #include "../Simulation_BFER.hpp"
 
@@ -28,6 +29,8 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER_ite : public Simulation_BFER<B,R,Q>
 {
 protected:
+	const typename tools::Factory_simulation_BFER_ite::chain_parameters_BFER_ite<B,R,Q> &chain_params;
+	const typename tools::Factory_simulation_BFER_ite::simu_parameters_BFER_ite         &simu_params;
 	tools::Codec_SISO<B,Q> &codec_siso;
 
 	// communication chain
@@ -47,7 +50,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	Simulation_BFER_ite(const tools::parameters& params, tools::Codec_SISO<B,Q> &codec);
+	Simulation_BFER_ite(const typename tools::Factory_simulation_BFER_ite::chain_parameters_BFER_ite<B,R,Q> &chain_params, tools::Codec_SISO<B,Q> &codec);
 	virtual ~Simulation_BFER_ite();
 
 protected:
@@ -57,7 +60,7 @@ protected:
 	virtual module::Source     <B    >* build_source     (const int tid = 0, const int seed = 0);
 	virtual module::CRC        <B    >* build_crc        (const int tid = 0                    );
 	virtual module::Encoder    <B    >* build_encoder    (const int tid = 0, const int seed = 0);
-	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0);
+	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0, const int rd_seed = 0);
 	virtual module::Modem      <B,R,Q>* build_modem      (const int tid = 0                    );
 	virtual module::Channel    <R    >* build_channel    (const int tid = 0, const int seed = 0);
 	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int tid = 0                    );

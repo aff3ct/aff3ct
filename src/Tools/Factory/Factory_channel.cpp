@@ -21,28 +21,23 @@ using namespace aff3ct::tools;
 
 template <typename R>	
 Channel<R>* Factory_channel<R>
-::build(const std::string type,
-        const int         N,
-        const bool        complex,
-        const bool        add_users,
-        const std::string path,
-        const int         seed,
-        const R           sigma,
-        const int         n_frames)
+::build(const channel_parameters &params,
+        const int                 seed,
+        const R                   sigma)
 {
-	     if (type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(N,          new Noise_std <R>(seed), add_users, sigma, n_frames);
-	else if (type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(N,          new Noise_fast<R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_std <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_fast<R>(seed), add_users, sigma, n_frames);
-	else if (type == "USER"         ) return new Channel_user        <R>(N, path,                             add_users,        n_frames);
-	else if (type == "NO"           ) return new Channel_NO          <R>(N,                                   add_users,        n_frames);
+	     if (params.type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(params.N,                 new Noise_std <R>(seed), params.add_users, sigma, params.n_frames);
+	else if (params.type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(params.N,                 new Noise_fast<R>(seed), params.add_users, sigma, params.n_frames);
+	else if (params.type == "RAYLEIGH"     ) return new Channel_Rayleigh_LLR<R>(params.N, params.complex, new Noise_std <R>(seed), params.add_users, sigma, params.n_frames);
+	else if (params.type == "RAYLEIGH_FAST") return new Channel_Rayleigh_LLR<R>(params.N, params.complex, new Noise_fast<R>(seed), params.add_users, sigma, params.n_frames);
+	else if (params.type == "USER"         ) return new Channel_user        <R>(params.N, params.path,                             params.add_users,        params.n_frames);
+	else if (params.type == "NO"           ) return new Channel_NO          <R>(params.N,                                          params.add_users,        params.n_frames);
 #ifdef CHANNEL_MKL
-	else if (type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(N,          new Noise_MKL <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_MKL <R>(seed), add_users, sigma, n_frames);
+	else if (params.type == "AWGN_MKL"     ) return new Channel_AWGN_LLR    <R>(params.N,                 new Noise_MKL <R>(seed), params.add_users, sigma, params.n_frames);
+	else if (params.type == "RAYLEIGH_MKL" ) return new Channel_Rayleigh_LLR<R>(params.N, params.complex, new Noise_MKL <R>(seed), params.add_users, sigma, params.n_frames);
 #endif
 #ifdef CHANNEL_GSL
-	else if (type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(N,          new Noise_GSL <R>(seed), add_users, sigma, n_frames);
-	else if (type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(N, complex, new Noise_GSL <R>(seed), add_users, sigma, n_frames);
+	else if (params.type == "AWGN_GSL"     ) return new Channel_AWGN_LLR    <R>(params.N,                 new Noise_GSL <R>(seed), params.add_users, sigma, params.n_frames);
+	else if (params.type == "RAYLEIGH_GSL" ) return new Channel_Rayleigh_LLR<R>(params.N, params.complex, new Noise_GSL <R>(seed), params.add_users, sigma, params.n_frames);
 #endif
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -78,8 +73,13 @@ void Factory_channel<R>
 
 template <typename R>
 void Factory_channel<R>
-::store_args(const Arguments_reader& ar, channel_parameters &params)
+::store_args(const Arguments_reader& ar, channel_parameters &params,
+             const int N, const bool complex, const bool add_users, const int n_frames)
 {
+	params.N         = N;
+	params.n_frames  = n_frames;
+	params.add_users = add_users;
+	params.complex   = complex;
 	// ------------------------------------------------------------------------------------------------------- channel
 	if(ar.exist_arg({"chn-type"   })) params.type         = ar.get_arg({"chn-type"   });
 	if(ar.exist_arg({"chn-path"   })) params.path         = ar.get_arg({"chn-path"   });

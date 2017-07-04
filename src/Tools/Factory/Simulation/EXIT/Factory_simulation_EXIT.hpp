@@ -26,6 +26,8 @@ struct Factory_simulation_EXIT : Factory_simulation
 {
 	struct simu_parameters_EXIT : simu_parameters
 	{
+		virtual ~simu_parameters_EXIT() {}
+
 		// ---- simulation
 		std::string snr_type   = "ES";
 		float       sig_a_min  = 0.0f;
@@ -37,13 +39,25 @@ struct Factory_simulation_EXIT : Factory_simulation
 	template <typename B = int, typename R = float, typename Q = R>
 	struct chain_parameters_EXIT : chain_parameters
 	{
-		virtual ~chain_parameters_EXIT() {}
+		chain_parameters_EXIT()
+		{
+			if(this->sim == nullptr)
+				this->sim = new simu_parameters_EXIT();
+		}
 
-		Factory_simulation_EXIT               ::simu_parameters_EXIT     sim;
+		virtual ~chain_parameters_EXIT()
+		{
+			if(this->sim != nullptr)
+				delete this->sim;
+
+			this->sim = nullptr;
+		}
+
+		Factory_simulation_EXIT               ::simu_parameters_EXIT    *sim = nullptr;
 		typename Factory_source        <B    >::source_parameters        src;
 		typename Factory_modem         <B,R,Q>::modem_parameters         modem;
 		typename Factory_channel       <  R  >::channel_parameters       chn;
-		typename Factory_puncturer            ::puncturer_parameters    *pct = nullptr;
+		typename Factory_puncturer     <B,  Q>::puncturer_parameters    *pct = nullptr;
 		typename Factory_encoder_common<B    >::encoder_parameters      *enc = nullptr;
 		typename Factory_decoder_common       ::decoder_parameters      *dec = nullptr;
 		typename Factory_terminal_EXIT        ::terminal_parameters_EXIT ter;

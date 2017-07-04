@@ -16,40 +16,40 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_ite_threads<B,R,Q>
-::Simulation_BFER_ite_threads(const parameters& params, Codec_SISO<B,Q> &codec)
-: Simulation_BFER_ite<B,R,Q>(params,codec),
+::Simulation_BFER_ite_threads(const typename tools::Factory_simulation_BFER_ite::chain_parameters_BFER_ite<B,R,Q> &chain_params, Codec_SISO<B,Q> &codec)
+: Simulation_BFER_ite<B,R,Q>(chain_params,codec),
 
-  U_K1(this->params.simulation.n_threads, mipp::vector<B>(params.code.K_info * params.simulation.inter_frame_level)),
-  U_K2(this->params.simulation.n_threads, mipp::vector<B>(params.code.K      * params.simulation.inter_frame_level)),
-  X_N1(this->params.simulation.n_threads, mipp::vector<B>(params.code.N      * params.simulation.inter_frame_level)),
-  X_N2(this->params.simulation.n_threads, mipp::vector<B>(params.code.N      * params.simulation.inter_frame_level)),
-  X_N3(this->params.simulation.n_threads, mipp::vector<R>(params.code.N_mod  * params.simulation.inter_frame_level)),
-  H_N (this->params.simulation.n_threads, mipp::vector<R>(params.code.N_mod  * params.simulation.inter_frame_level)),
-  Y_N1(this->params.simulation.n_threads, mipp::vector<R>(params.code.N_mod  * params.simulation.inter_frame_level)),
-  Y_N2(this->params.simulation.n_threads, mipp::vector<R>(params.code.N_fil  * params.simulation.inter_frame_level)),
-  Y_N3(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N_fil  * params.simulation.inter_frame_level)),
-  Y_N4(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N      * params.simulation.inter_frame_level)),
-  Y_N5(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N      * params.simulation.inter_frame_level)),
-  Y_N6(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N      * params.simulation.inter_frame_level)),
-  Y_N7(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N      * params.simulation.inter_frame_level)),
-  V_K1(this->params.simulation.n_threads, mipp::vector<B>(params.code.K      * params.simulation.inter_frame_level)),
-  V_K2(this->params.simulation.n_threads, mipp::vector<B>(params.code.K_info * params.simulation.inter_frame_level))
+  U_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info * this->simu_params.inter_frame_level)),
+  U_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K      * this->simu_params.inter_frame_level)),
+  X_N1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  X_N2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  X_N3(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
+  H_N (this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
+  Y_N1(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
+  Y_N2(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_fil  * this->simu_params.inter_frame_level)),
+  Y_N3(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.modem.N_fil  * this->simu_params.inter_frame_level)),
+  Y_N4(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  Y_N5(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  Y_N6(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  Y_N7(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  V_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K      * this->simu_params.inter_frame_level)),
+  V_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info * this->simu_params.inter_frame_level))
 {
-	if (params.simulation.n_threads > 1 && params.simulation.debug)
+	if (this->simu_params.n_threads > 1 && this->simu_params.debug)
 		std::clog << format_warning("Debug mode will be disabled because you launched the simulation with more than"
 		             " 1 thread!") << std::endl;
 
-	if (params.simulation.benchs)
+	if (this->simu_params.benchs)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
 
 #ifdef ENABLE_MPI
-	if (params.simulation.debug || params.simulation.benchs)
+	if (this->simu_params.debug || this->simu_params.benchs)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
-	if (this->params.monitor.err_track_revert)
+	if (this->chain_params.mon.err_track_revert)
 	{
-		if (this->params.simulation.n_threads != 1)
+		if (this->simu_params.n_threads != 1)
 			std::clog << format_warning("Multi-threading detected with error tracking revert feature! "
 			                            "Each thread will play the same frames. Please run one thread.")
 			          << std::endl;
@@ -68,7 +68,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 {
 	Simulation_BFER_ite<B,R,Q>::_build_communication_chain(tid);
 
-	if (this->params.source.type == "AZCW")
+	if (this->chain_params.src.type == "AZCW")
 	{
 		std::fill(this->U_K1[tid].begin(), this->U_K1[tid].end(), (B)0);
 		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
@@ -77,10 +77,10 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
-	if (this->params.monitor.err_track_enable)
+	if (this->chain_params.mon.err_track_enable)
 	{
 		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
-		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K});
+		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->simu_params.K});
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 		if (this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
@@ -91,16 +91,16 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_ite_threads<B,R,Q>
 ::_launch()
 {
-	std::vector<std::thread> threads(this->params.simulation.n_threads -1);
+	std::vector<std::thread> threads(this->simu_params.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
-	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+	for (auto tid = 1; tid < this->simu_params.n_threads; tid++)
 		threads[tid -1] = std::thread(Simulation_BFER_ite_threads<B,R,Q>::start_thread, this, tid);
 
 	// launch the master thread
 	Simulation_BFER_ite_threads<B,R,Q>::start_thread(this, 0);
 
 	// join the slave threads with the master thread
-	for (auto tid = 1; tid < this->params.simulation.n_threads; tid++)
+	for (auto tid = 1; tid < this->simu_params.n_threads; tid++)
 		threads[tid -1].join();
 }
 
@@ -130,7 +130,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_ite_threads<B,R,Q>
 ::Monte_Carlo_method(const int tid)
 {
-	if (this->params.simulation.n_threads == 1 && this->params.simulation.debug)
+	if (this->simu_params.n_threads == 1 && this->simu_params.debug)
 		this->simulation_loop_debug();
 	else
 		this->simulation_loop(tid);
@@ -145,10 +145,10 @@ void Simulation_BFER_ite_threads<B,R,Q>
 
 	// simulation loop
 	while ((!this->monitor_red->fe_limit_achieved()) && // while max frame error count has not been reached
-	        (this->params.simulation.stop_time == seconds(0) ||
-	         (steady_clock::now() - t_snr) < this->params.simulation.stop_time))
+	        (this->simu_params.stop_time == seconds(0) ||
+	         (steady_clock::now() - t_snr) < this->simu_params.stop_time))
 	{
-		if (this->params.source.type != "AZCW")
+		if (this->chain_params.src.type != "AZCW")
 		{
 			// generate a random K bits vector U_K1
 			auto t_sourc = steady_clock::now();
@@ -176,7 +176,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		}
 
 		// Rayleigh channel
-		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+		if (this->chain_params.chn.type.find("RAYLEIGH") != std::string::npos)
 		{
 			// add noise
 			auto t_chann = steady_clock::now();
@@ -202,10 +202,10 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		this->durations[tid][std::make_pair(7, "Quantizer")] += steady_clock::now() - t_quant;
 
 		std::fill(this->Y_N7[tid].begin(), this->Y_N7[tid].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.simulation.n_ite; ite++)
+		for (auto ite = 0; ite <= this->simu_params.n_ite; ite++)
 		{
 			// Rayleigh channel
-			if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+			if (this->chain_params.chn.type.find("RAYLEIGH") != std::string::npos)
 			{
 				// demodulation
 				auto t_demod = steady_clock::now();
@@ -227,7 +227,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			this->durations[tid][std::make_pair(9, "Deinterlever")] += steady_clock::now() - t_deint;
 
 			// apply the coset: the decoder will believe to a AZCW
-			if (this->params.code.coset)
+			if (this->chain_params.enc->coset)
 			{
 				auto t_corea = steady_clock::now();
 				this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N5[tid], this->Y_N5[tid]);
@@ -235,7 +235,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			}
 
 			// soft decode
-			if (ite != this->params.simulation.n_ite)
+			if (ite != this->simu_params.n_ite)
 			{
 				// decode
 				auto t_decod = steady_clock::now();
@@ -243,7 +243,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 				this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
 
 				// apply the coset to recover the extrinsic information
-				if (this->params.code.coset)
+				if (this->chain_params.enc->coset)
 				{
 					auto t_corea = steady_clock::now();
 					this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N6[tid], this->Y_N6[tid]);
@@ -266,7 +266,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		}
 
 		// apply the coset to recover the real bits
-		if (this->params.code.coset)
+		if (this->chain_params.enc->coset)
 		{
 			auto t_cobit = steady_clock::now();
 			this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
@@ -292,19 +292,19 @@ void Simulation_BFER_ite_threads<B,R,Q>
 	using namespace std::chrono;
 	auto t_snr = steady_clock::now();
 
-	Frame_trace<B> ft(this->params.simulation.debug_limit, this->params.simulation.debug_precision); // frame trace to display the vectors
+	Frame_trace<B> ft(this->simu_params.debug_limit, this->simu_params.debug_precision); // frame trace to display the vectors
 
 	// simulation loop
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params.simulation.stop_time == seconds(0) ||
-	        (steady_clock::now() - t_snr) < this->params.simulation.stop_time))
+	       (this->simu_params.stop_time == seconds(0) ||
+	        (steady_clock::now() - t_snr) < this->simu_params.stop_time))
 	{
 		std::cout << "-------------------------------" << std::endl;
 		std::cout << "New encoding/decoding session !" << std::endl;
 		std::cout << "Frame n°" << this->monitor_red->get_n_analyzed_fra() << std::endl;
 		std::cout << "-------------------------------" << std::endl;
 
-		if (this->params.source.type != "AZCW")
+		if (this->chain_params.src.type != "AZCW")
 		{
 			// generate a random K bits vector U_K1
 			std::cout << "Generate random bits U_K1..." << std::endl;
@@ -385,7 +385,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		}
 
 		// Rayleigh channel
-		if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+		if (this->chain_params.chn.type.find("RAYLEIGH") != std::string::npos)
 		{
 			// add noise
 			std::cout << "Add noise from X_N3 to Y_N1..." << std::endl;
@@ -440,12 +440,12 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		std::cout << std::endl;
 
 		std::fill(this->Y_N7[0].begin(), this->Y_N7[0].end(), (Q)0);
-		for (auto ite = 0; ite <= this->params.simulation.n_ite; ite++)
+		for (auto ite = 0; ite <= this->simu_params.n_ite; ite++)
 		{
 			std::cout << "*** Turbo demodulation iteration n°" << ite << " ***" << std::endl << std::endl;
 
 			// Rayleigh channel
-			if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+			if (this->chain_params.chn.type.find("RAYLEIGH") != std::string::npos)
 			{
 				// demodulation
 				std::cout << "Demodulate from Y_N3 to Y_N4..." << std::endl;
@@ -484,7 +484,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			std::cout << std::endl;
 
 			// apply the coset: the decoder will believe to a AZCW
-			if (this->params.code.coset)
+			if (this->chain_params.enc->coset)
 			{
 				std::cout << "Apply the coset approach on Y_N5..." << std::endl;
 				auto t_corea = steady_clock::now();
@@ -498,7 +498,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			}
 
 			// soft decode
-			if (ite != this->params.simulation.n_ite)
+			if (ite != this->simu_params.n_ite)
 			{
 				// decode
 				std::cout << "Soft decode from Y_N5 to Y_N6..." << std::endl;
@@ -512,7 +512,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 				std::cout << std::endl;
 
 				// apply the coset to recover the extrinsic information
-				if (this->params.code.coset)
+				if (this->chain_params.enc->coset)
 				{
 					std::cout << "Reverse the coset approach on Y_N6..." << std::endl;
 					auto t_corea = steady_clock::now();
@@ -553,7 +553,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		}
 
 		// apply the coset to recover the real bits
-		if (this->params.code.coset)
+		if (this->chain_params.enc->coset)
 		{
 			std::cout << "Apply the coset approach on V_K1..." << std::endl;
 			auto t_cobit = steady_clock::now();
@@ -594,8 +594,8 @@ Terminal_BFER<B>* Simulation_BFER_ite_threads<B,R,Q>
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
 
-	return new Terminal_BFER<B>(this->params.code.K_info,
-	                            this->params.code.N_code,
+	return new Terminal_BFER<B>(this->simu_params.K_info,
+	                            this->simu_params.N_code,
 	                            *this->monitor_red,
 	                            &d_dec);
 #endif

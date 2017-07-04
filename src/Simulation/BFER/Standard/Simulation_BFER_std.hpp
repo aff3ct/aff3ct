@@ -20,6 +20,7 @@
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "../Simulation_BFER.hpp"
+#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER_std.hpp"
 
 namespace aff3ct
 {
@@ -29,12 +30,15 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER_std : public Simulation_BFER<B,R,Q>
 {
 protected:
+	const typename tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> &chain_params;
+	const typename tools::Factory_simulation_BFER_std::simu_parameters_BFER_std         &simu_params;
+
 	// communication chain
 	std::vector<module::Source     <B    >*> source;
 	std::vector<module::CRC        <B    >*> crc;
 	std::vector<module::Encoder    <B    >*> encoder;
 	std::vector<module::Puncturer  <B,Q  >*> puncturer;
-	std::vector<module::Modem      <B,R,R>*> modem;
+	std::vector<module::Modem      <B,R,Q>*> modem;
 	std::vector<module::Channel    <R    >*> channel;
 	std::vector<module::Quantizer  <R,Q  >*> quantizer;
 	std::vector<module::Coset      <B,Q  >*> coset_real;
@@ -46,7 +50,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	Simulation_BFER_std(const tools::parameters& params, tools::Codec<B,Q> &codec);
+	Simulation_BFER_std(const typename tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> &chain_params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER_std();
 
 protected:
@@ -56,9 +60,9 @@ protected:
 	virtual module::Source     <B    >* build_source     (const int tid = 0, const int seed = 0);
 	virtual module::CRC        <B    >* build_crc        (const int tid = 0                    );
 	virtual module::Encoder    <B    >* build_encoder    (const int tid = 0, const int seed = 0);
-	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0);
+	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0, const int rd_seed = 0);
 	virtual module::Puncturer  <B,Q  >* build_puncturer  (const int tid = 0                    );
-	virtual module::Modem      <B,R,R>* build_modem      (const int tid = 0                    );
+	virtual module::Modem      <B,R,Q>* build_modem      (const int tid = 0                    );
 	virtual module::Channel    <R    >* build_channel    (const int tid = 0, const int seed = 0);
 	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int tid = 0                    );
 	virtual module::Coset      <B,Q  >* build_coset_real (const int tid = 0                    );

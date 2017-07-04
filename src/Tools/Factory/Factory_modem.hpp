@@ -21,12 +21,15 @@ struct Factory_modem : public Factory
 {
 	struct modem_parameters
 	{
+		int         N;
+		int         n_frames;
+
 		// ------- modulator parameters
 		std::string type              = "BPSK";    // modulation type (PAM, QAM, ...)
 		std::string const_path        = "";        // PATH to constellation file (CSV file)
 		bool        complex           = true;      // true if the modulated signal is complex
-		int         bits_per_symbol   = 1;         // bits per symbol
-		int         upsample_factor   = 1;         // samples per symbol
+		int         bps               = 1;         // bits per symbol
+		int         upf               = 1;         // samples per symbol
 
 		std::string cpm_std           = "";        // the selection of a default cpm standard hardly implemented (GSM)
 		std::string mapping           = "NATURAL"; // symbol mapping layout (natural, gray)
@@ -45,22 +48,7 @@ struct Factory_modem : public Factory
 	};
 
 
-	static module::Modem<B,R,Q>* build(const std::string type,
-	                                   const int         N,
-	                                   const float       sigma,
-	                                   const std::string max_type = "MAX",
-	                                   const std::string psi_type = "PSI0",
-	                                   const int         bps      = 1,
-	                                   const std::string path     = "",
-	                                   const int         upf      = 5,
-	                                   const int         cpm_L    = 3,
-	                                   const int         cpm_k    = 1,
-	                                   const int         cpm_p    = 2,
-	                                   const std::string mapping  = "NATURAL",
-	                                   const std::string wave     = "GMSK",
-	                                   const bool        no_sig2  = false,
-	                                   const int         n_ite    = 1,
-	                                   const int         n_frames = 1);
+	static module::Modem<B,R,Q>* build(const modem_parameters &params, const float sigma);
 
 	static int get_buffer_size_after_modulation(const std::string type,
 	                                            const int         N,
@@ -75,35 +63,16 @@ struct Factory_modem : public Factory
 	                                           const int         cpm_p = 2);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, modem_parameters &params, const int N);
+	static void store_args(const Arguments_reader& ar, modem_parameters &params, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(Header::params_list& head_mod, Header::params_list& head_demod, const modem_parameters& params);
 
 private:
 	template <proto_max<Q> MAX>
-	static module::Modem<B,R,Q>* _build(const std::string type,
-	                                    const int         N,
-	                                    const float       sigma,
-	                                    const int         bps      = 1,
-	                                    const std::string path     = "",
-	                                    const int         upf      = 5,
-	                                    const int         cpm_L    = 3,
-	                                    const int         cpm_k    = 1,
-	                                    const int         cpm_p    = 2,
-	                                    const std::string mapping  = "NATURAL",
-	                                    const std::string wave     = "GMSK",
-	                                    const bool        no_sig2  = false,
-	                                    const int         n_frames = 1);
+	static module::Modem<B,R,Q>* _build(const modem_parameters &params, const float sigma);
 
-	static module::Modem<B,R,Q>* _build_scma(const std::string type,
-	                                         const int         N,
-	                                         const float       sigma,
-	                                         const int         bps      = 3,
-	                                         const std::string psi_type = "PSI0",
-	                                         const bool        no_sig2  = false,
-	                                         const int         n_ite    = 1,
-	                                         const int         n_frames = 6);
+	static module::Modem<B,R,Q>* _build_scma(const modem_parameters &params, const float sigma);
 };
 }
 }

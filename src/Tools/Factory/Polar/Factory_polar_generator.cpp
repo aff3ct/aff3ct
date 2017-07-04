@@ -1173,11 +1173,12 @@ void Factory_polar_generator<B,Q>
 
 template <typename B, typename Q>
 void Factory_polar_generator<B,Q>
-::store_args(const Arguments_reader& ar, parameters_polar_generator &params)
+::store_args(const Arguments_reader& ar, parameters_polar_generator &params,
+             const int K, const int N, const int n_frames)
 {
 	params.type = "SC";
 
-	Factory_decoder_common::store_args(ar, params);
+	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 
 	// ---------------------------------------------------------------------------------------------------------- code
 #ifdef ENABLE_POLAR_BOUNDS

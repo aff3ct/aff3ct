@@ -4,8 +4,6 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Tools/params.h"
-
 #include "Module/Source/Source.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Modem/Modem.hpp"
@@ -25,9 +23,8 @@ template <typename B = int, typename R = float>
 class Simulation_EXIT : public Simulation
 {
 protected:
+	const typename tools::Factory_simulation_EXIT::chain_parameters_EXIT<B,R> &params; // simulation parameters
 	tools::Codec_SISO<B,R> &codec;
-
-	const tools::parameters &params; // simulation parameters
 
 	// channel gains
 	mipp::vector<R> H_N;
@@ -66,7 +63,7 @@ protected:
 	tools::Terminal_EXIT<B,R> *terminal;
 
 public:
-	Simulation_EXIT(const tools::parameters& params, tools::Codec_SISO<B,R> &codec);
+	Simulation_EXIT(const typename tools::Factory_simulation_EXIT::chain_parameters_EXIT<B,R,R>& params, tools::Codec_SISO<B,R> &codec);
 	virtual ~Simulation_EXIT();
 	
 	void launch();

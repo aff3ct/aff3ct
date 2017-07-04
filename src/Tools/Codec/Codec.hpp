@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	virtual module::Interleaver<int>* build_interleaver(const int tid = 0, const int seed = 0)
+	virtual module::Interleaver<int>* build_interleaver(const int tid = 0, const int seed = 0, const int rd_seed = 0)
 	{
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
 	}

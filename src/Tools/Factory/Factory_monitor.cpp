@@ -9,12 +9,9 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Monitor<B>* Factory_monitor<B>
-::build(const std::string type,
-        const int         K,
-        const int         fe,
-        const int         n_frames)
+::build(const monitor_parameters& params)
 {
-	if (type == "STD") return new Monitor_std<B>(K, fe, n_frames);
+	if (params.type == "STD") return new Monitor_std<B>(params.size, params.n_frame_errors, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -43,8 +40,11 @@ void Factory_monitor<B>
 
 template <typename B>
 void Factory_monitor<B>
-::store_args(const Arguments_reader& ar, monitor_parameters &params)
+::store_args(const Arguments_reader& ar, monitor_parameters &params, const int size, const int n_frames)
 {
+	params.size     = size;
+	params.n_frames = n_frames;
+
 	// ------------------------------------------------------------------------------------------------------- monitor
 	if(ar.exist_arg({"mnt-max-fe", "e" })) params.n_frame_errors   = ar.get_arg_int({"mnt-max-fe", "e"});
 

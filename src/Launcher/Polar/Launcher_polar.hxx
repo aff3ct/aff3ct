@@ -52,9 +52,9 @@ void Launcher_polar<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_polar  <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
-	tools::Factory_decoder_polar  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim.K, this->m_chain_params->sim.N, this->m_chain_params->sim.inter_frame_level);
-	tools::Factory_puncturer_polar<B,Q>::store_args(this->ar, *m_pct, this->m_chain_params->sim.K, this->m_chain_params->sim.N, m_dec->N_pct, this->m_chain_params->sim.inter_frame_level);
+	tools::Factory_encoder_polar  <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_decoder_polar  <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_puncturer_polar<B,Q>::store_args(this->ar, *m_pct, this->m_chain_params->sim->K, this->m_chain_params->sim->N, m_dec->N_pct, this->m_chain_params->sim->inter_frame_level);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -72,7 +72,7 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_polar<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_polar  <B  >::header(this->pl_enc, *m_enc);
+	tools::Factory_encoder_polar  <B  >::header(this->pl_enc, this->pl_cde, *m_enc);
 	tools::Factory_puncturer_polar<B,Q>::header(this->pl_pct, *m_pct);
 	tools::Factory_decoder_polar  <B,Q>::header(this->pl_dec, this->pl_cde, *m_dec);
 
@@ -83,7 +83,7 @@ template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_polar<cLauncher,B,R,Q>
 ::build_codec()
 {
-	this->codec = new tools::Codec_polar<B,Q>(*m_enc, *m_dec, *m_pct, this->m_chain_params->sim.n_threads);
+	this->codec = new tools::Codec_polar<B,Q>(*m_enc, *m_dec, *m_pct, this->m_chain_params->sim->n_threads);
 }
 }
 }

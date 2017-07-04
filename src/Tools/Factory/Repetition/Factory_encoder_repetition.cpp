@@ -52,9 +52,9 @@ void Factory_encoder_repetition<B>
 
 template <typename B>
 void Factory_encoder_repetition<B>
-::header(Header::params_list& head_enc, const encoder_parameters_repetition& params)
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters_repetition& params)
 {
-	Factory_encoder_common<B>::header(head_enc, params);
+	Factory_encoder_common<B>::header(head_enc, head_cde, params);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));

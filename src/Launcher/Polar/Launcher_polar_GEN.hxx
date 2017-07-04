@@ -39,7 +39,7 @@ void Launcher_polar_GEN<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_polar_generator<B,Q>::store_args(this->ar, *m_dec);
+	tools::Factory_polar_generator<B,Q>::store_args(this->ar, *m_dec, this->simu_params->K, this->simu_params->N);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -64,7 +64,8 @@ template <class cLauncher, typename B, typename R, typename Q>
 simulation::Simulation* Launcher_polar_GEN<cLauncher,B,R,Q>
 ::build_simu()
 {
-	return new simulation::Generation_polar(this->params);
+//	return new simulation::Generation_polar(this->params);
+	return nullptr;
 }
 }
 }

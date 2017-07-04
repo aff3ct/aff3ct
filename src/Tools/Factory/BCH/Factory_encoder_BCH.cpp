@@ -45,9 +45,9 @@ void Factory_encoder_BCH<B>
 
 template <typename B>
 void Factory_encoder_BCH<B>
-::header(Header::params_list& head_enc, const typename Factory_encoder_common<B>::encoder_parameters& params)
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const typename Factory_encoder_common<B>::encoder_parameters& params)
 {
-	Factory_encoder_common<B>::header(head_enc, params);
+	Factory_encoder_common<B>::header(head_enc, head_cde, params);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -8,6 +8,7 @@
 #include "Module/Encoder/Encoder_sys.hpp"
 
 #include "../Factory_encoder_common.hpp"
+#include "Tools/Factory/Factory_interleaver.hpp"
 
 namespace aff3ct
 {
@@ -42,7 +43,7 @@ struct Factory_encoder_turbo : public Factory_encoder_common<B>
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters_turbo& params);
+	static void header(Header::params_list& head_enc, Header::params_list& head_cde, Header::params_list& head_itl, const encoder_parameters_turbo& params);
 };
 }
 }

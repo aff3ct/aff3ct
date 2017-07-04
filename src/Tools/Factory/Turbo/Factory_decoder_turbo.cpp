@@ -58,7 +58,7 @@ void Factory_decoder_turbo<B,Q>
 		 "enables the self corrected decoder (requires \"--crc-type\")."};
 
 	// ------------------------------------------------------------------------------------------------ flip_and_check
-	Flip_and_check<B,Q>::build_args(req_args, opt_args);
+	Factory_flip_and_check<B,Q>::build_args(req_args, opt_args);
 }
 
 template <typename B, typename Q>
@@ -98,7 +98,7 @@ void Factory_decoder_turbo<B,Q>
 	}
 
 	// ------------------------------------------------------------------------------------------------ flip_and_check
-	Flip_and_check<B,Q>::store_args(ar, params.flip_and_check, params.n_ite);
+	Factory_flip_and_check<B,Q>::store_args(ar, params.flip_and_check, params.n_ite, params.N, params.n_ite);
 }
 
 template <typename B, typename Q>
@@ -111,18 +111,14 @@ void Factory_decoder_turbo<B,Q>
 	Factory_scaling_factor<B,Q>::group_args(ar);
 
 	// ------------------------------------------------------------------------------------------------ flip_and_check
-	Flip_and_check<B,Q>::group_args(ar);
+	Factory_flip_and_check<B,Q>::group_args(ar);
 }
 
 template <typename B, typename Q>
 void Factory_decoder_turbo<B,Q>
-::header(Header::params_list& head_dec, Header::params_list& head_itl,
-         const decoder_parameters_turbo& params, bool crc_activated)
+::header(Header::params_list& head_dec, const decoder_parameters_turbo& params, bool crc_activated)
 {
 	Factory_decoder_common::header(head_dec, params);
-
-	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::header(head_itl, params.itl);
 
 	// ------------------------------------------------------------------------------------------------ scaling factor
 	Factory_scaling_factor<B,Q>::header(head_dec, params.scaling_factor);
@@ -139,7 +135,7 @@ void Factory_decoder_turbo<B,Q>
 		head_dec.push_back(std::make_pair("Self-corrected",       ((params.self_corrected) ? "on" : "off")));
 
 		// -------------------------------------------------------------------------------------------- flip_and_check
-		Flip_and_check<B,Q>::header(head_dec, params.flip_and_check);
+		Factory_flip_and_check<B,Q>::header(head_dec, params.flip_and_check);
 	}
 
 }

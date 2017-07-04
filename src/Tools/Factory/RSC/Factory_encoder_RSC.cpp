@@ -30,6 +30,16 @@ void Factory_encoder_RSC<B>
 	opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
+
+	// ---------------------------------------------------------------------------------------------------------- code
+	opt_args[{"cde-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	opt_args[{"cde-std"}] =
+		{"string",
+		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
+		 "LTE, CCSDS"};
 }
 
 template <typename B>
@@ -39,13 +49,25 @@ void Factory_encoder_RSC<B>
 {
 	params.type = "RSC";
 
-	Factory_encoder_common<B>::store_args(ar, params);
+	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
 
 
 	// ---------------------------------------------------------------------------------------------------------- code
+	if(ar.exist_arg({"cde-std"})) params.standard = ar.get_arg({"cde-std"});
+
+	if (params.type == "LTE")
+	{
+		params.poly = {013, 015};
+	}
+
+	if (params.type == "CCSDS")
+	{
+		params.poly = {023, 033};
+	}
+
 	if (ar.exist_arg({"cde-poly"}))
 	{
 		auto poly_str = ar.get_arg({"cde-poly"});
@@ -57,27 +79,8 @@ void Factory_encoder_RSC<B>
 #endif
 	}
 
-	if (params.type == "LTE")
-	{
-		params.type = "BCJR";
-		params.poly = {013, 015};
-	}
-
-	if (params.type == "CCSDS")
-	{
-		params.type = "BCJR";
-		params.poly = {023, 033};
-	}
-
-	if (!(params.poly[0] == 013 && params.poly[1] == 015)) // if not LTE BCJR
-	{
-		params.type          = "BCJR";
-		params.implem        = "GENERIC";
-		params.simd_strategy = "";
-	}
-
 	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
-	params.N += params.tail_length;
+	params.N          += params.tail_length;
 }
 
 template <typename B>
@@ -91,12 +94,15 @@ template <typename B>
 void Factory_encoder_RSC<B>
 ::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters_RSC& params)
 {
-	Factory_encoder_common<B>::header(head_enc, params);
+	Factory_encoder_common<B>::header(head_enc, head_cde, params);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 
 	// ---------------------------------------------------------------------------------------------------------- code
+	if (!params.standard.empty())
+		head_cde.push_back(std::make_pair("RSC standard", params.standard));
+
 	std::stringstream poly;
 	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
 	head_cde.push_back(std::make_pair(std::string("Polynomials"), poly.str()));

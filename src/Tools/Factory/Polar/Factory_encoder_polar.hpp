@@ -23,7 +23,7 @@ struct Factory_encoder_polar : public Factory_encoder_common<B>
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_enc, const typename Factory_encoder_common<B>::encoder_parameters& params);
+	static void header(Header::params_list& head_enc, Header::params_list& head_cde, const typename Factory_encoder_common<B>::encoder_parameters& params);
 };
 }
 }

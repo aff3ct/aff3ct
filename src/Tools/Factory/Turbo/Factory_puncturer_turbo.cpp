@@ -23,7 +23,7 @@ template <typename B, typename Q>
 void Factory_puncturer_turbo<B,Q>
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	Factory_puncturer::build_args(req_args, opt_args);
+	Factory_puncturer<B,Q>::build_args(req_args, opt_args);
 
 	// ----------------------------------------------------------------------------------------------------- poncturer
 	opt_args[{"pct-pattern"}] =
@@ -38,7 +38,7 @@ void Factory_puncturer_turbo<B,Q>
 {
 	params.type = "TURBO";
 
-	Factory_puncturer::store_args(ar, params, K, N, N_pct, n_frames);
+	Factory_puncturer<B,Q>::store_args(ar, params, K, N, N_pct, n_frames);
 
 	// ----------------------------------------------------------------------------------------------------- poncturer
 	if(ar.exist_arg({"pct-pattern"})) params.pattern = ar.get_arg({"pct-pattern"});
@@ -48,14 +48,14 @@ template <typename B, typename Q>
 void Factory_puncturer_turbo<B,Q>
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	Factory_puncturer::group_args(ar);
+	Factory_puncturer<B,Q>::group_args(ar);
 }
 
 template <typename B, typename Q>
 void Factory_puncturer_turbo<B,Q>
 ::header(Header::params_list& head_pct, const puncturer_parameters_turbo& params)
 {
-	Factory_puncturer::header(head_pct, params);
+	Factory_puncturer<B,Q>::header(head_pct, params);
 
 	// ----------------------------------------------------------------------------------------------------- poncturer
 	head_pct.push_back(std::make_pair(std::string("Pattern"), std::string("{" + params.pattern) + "}"));

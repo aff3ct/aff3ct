@@ -10,7 +10,7 @@ Flip_and_check<B,Q>* Factory_flip_and_check<B,Q>
 	if (!params.enable)
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
 
-	return new Flip_and_check<B,Q>(params.size, params.n_ite, *crc, params.start_crc_check_ite, params.q, params.ite_min, params.ite_max, params.ite_step, n_frames);
+	return new Flip_and_check<B,Q>(params.size, params.n_ite, crc, params.start_crc_check_ite, params.q, params.ite_min, params.ite_max, params.ite_step, n_frames);
 }
 
 template<typename B, typename Q>

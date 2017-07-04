@@ -1,6 +1,5 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
 #include "Factory_puncturer_polar.hpp"
@@ -10,7 +9,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_polar<B,Q>
-::build(const typename Factory_puncturer::puncturer_parameters &params,
+::build(const typename Factory_puncturer<B,Q>::puncturer_parameters &params,
         const Frozenbits_generator<B>                          &fb_generator)
 {
 	if (params.type == "WANGLIU") return new Puncturer_polar_wangliu<B,Q>(params.K, params.N, fb_generator, params.n_frames);
@@ -22,31 +21,31 @@ template <typename B, typename Q>
 void Factory_puncturer_polar<B,Q>
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	Factory_puncturer::build_args(req_args, opt_args);
+	Factory_puncturer<B,Q>::build_args(req_args, opt_args);
 }
 
 template <typename B, typename Q>
 void Factory_puncturer_polar<B,Q>
-::store_args(const Arguments_reader& ar, typename Factory_puncturer::puncturer_parameters &params,
+::store_args(const Arguments_reader& ar, typename Factory_puncturer<B,Q>::puncturer_parameters &params,
              const int K, const int N, const int N_pct, const int n_frames)
 {
 	params.type = "WANGLIU";
 
-	Factory_puncturer::store_args(ar, params, K, N, N_pct, n_frames);
+	Factory_puncturer<B,Q>::store_args(ar, params, K, N, N_pct, n_frames);
 }
 
 template <typename B, typename Q>
 void Factory_puncturer_polar<B,Q>
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	Factory_puncturer::group_args(ar);
+	Factory_puncturer<B,Q>::group_args(ar);
 }
 
 template <typename B, typename Q>
 void Factory_puncturer_polar<B,Q>
-::header(Header::params_list& head_pct, const typename Factory_puncturer::puncturer_parameters& params)
+::header(Header::params_list& head_pct, const typename Factory_puncturer<B,Q>::puncturer_parameters& params)
 {
-	Factory_puncturer::header(head_pct, params);
+	Factory_puncturer<B,Q>::header(head_pct, params);
 }
 
 // ==================================================================================== explicit template instantiation 

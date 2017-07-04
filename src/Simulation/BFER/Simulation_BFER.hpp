@@ -5,7 +5,6 @@
 #include <chrono>
 #include <vector>
 
-#include "Tools/params.h"
 #include "Tools/Threads/Barrier.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
@@ -14,6 +13,7 @@
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
 
 #include "Tools/Codec/Codec.hpp"
+#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER.hpp"
 
 #include "../Simulation.hpp"
 
@@ -25,18 +25,18 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER : public Simulation
 {
 private:
+	// parameters
+	const typename tools::Factory_simulation_BFER::chain_parameters_BFER<B,R,Q> &params;
+
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
 	bool stop_terminal;
 
 protected:
-	std::mutex mutex_exception;
+	std::mutex  mutex_exception;
 	std::string prev_err_message;
 
 	tools::Codec<B,Q> &codec;
-
-	// simulation parameters
-	const tools::parameters &params;
 
 	// a barrier to synchronize the threads
 	tools::Barrier barrier;
@@ -67,7 +67,7 @@ protected:
 	std::map<std::pair<int, std::string>, unsigned> data_sizes;
 
 public:
-	Simulation_BFER(const tools::parameters& params, tools::Codec<B,Q> &codec);
+	Simulation_BFER(const typename tools::Factory_simulation_BFER::chain_parameters_BFER<B,R,Q>& simu_params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER();
 	void launch();
 

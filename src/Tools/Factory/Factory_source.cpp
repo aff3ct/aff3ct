@@ -12,16 +12,12 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Source<B>* Factory_source<B>
-::build(const std::string type,
-        const int         K,
-        const std::string path,
-        const int         seed,
-        const int         n_frames)
+::build(const source_parameters& params, const int seed)
 {
-	     if (type == "RAND"     ) return new Source_random     <B>(K, seed, n_frames);
-	else if (type == "RAND_FAST") return new Source_random_fast<B>(K, seed, n_frames);
-	else if (type == "AZCW"     ) return new Source_AZCW       <B>(K,       n_frames);
-	else if (type == "USER"     ) return new Source_user       <B>(K, path, n_frames);
+	     if (params.type == "RAND"     ) return new Source_random     <B>(params.K,        seed, params.n_frames);
+	else if (params.type == "RAND_FAST") return new Source_random_fast<B>(params.K,        seed, params.n_frames);
+	else if (params.type == "AZCW"     ) return new Source_AZCW       <B>(params.K,              params.n_frames);
+	else if (params.type == "USER"     ) return new Source_user       <B>(params.K, params.path, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -42,8 +38,11 @@ void Factory_source<B>
 
 template <typename B>
 void Factory_source<B>
-::store_args(const Arguments_reader& ar, source_parameters &params)
+::store_args(const Arguments_reader& ar, source_parameters &params, const int K, const int n_frames)
 {
+	params.K        = K;
+	params.n_frames = n_frames;
+
 	// -------------------------------------------------------------------------------------------------------- source
 	if(ar.exist_arg({"src-type"})) params.type = ar.get_arg({"src-type"});
 

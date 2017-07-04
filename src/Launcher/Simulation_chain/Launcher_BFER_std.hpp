@@ -19,12 +19,13 @@ namespace aff3ct
 namespace launcher
 {
 template <typename B = int, typename R = float, typename Q = R>
-class Launcher_BFER_std : public Launcher<B,R,Q>
+class Launcher_BFER_std : public Launcher
 {
 protected:
 	tools::Codec<B,Q> *codec = nullptr;
 
-	tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> * m_chain_params = nullptr;
+	tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> *m_chain_params = nullptr;
+	tools::Factory_simulation_BFER_std::simu_parameters_BFER_std         *m_sim          = nullptr;
 
 public:
 	Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream = std::cout);

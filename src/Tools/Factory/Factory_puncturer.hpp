@@ -7,11 +7,14 @@
 #include "Tools/Header.hpp"
 #include "Factory.hpp"
 
+#include "Module/Puncturer/Puncturer.hpp"
+
 namespace aff3ct
 {
 namespace tools
 {
 
+template <typename B, typename Q>
 struct Factory_puncturer : Factory
 {
 	struct puncturer_parameters
@@ -23,6 +26,8 @@ struct Factory_puncturer : Factory
 		int N_pct;
 		int n_frames;
 	};
+
+	static module::Puncturer<B,Q>* build(const puncturer_parameters &params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, puncturer_parameters& params,

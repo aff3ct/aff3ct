@@ -5,10 +5,9 @@
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
+#include "Tools/Factory/Factory_puncturer.hpp"
 #include "Tools/Factory/Coset/Factory_coset_real.hpp"
 #include "Tools/Factory/Coset/Factory_coset_bit.hpp"
-
-#include "Module/Puncturer/NO/Puncturer_NO.hpp"
 
 #include "Simulation_BFER_std.hpp"
 
@@ -18,25 +17,27 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_std<B,R,Q>
-::Simulation_BFER_std(const parameters& params, Codec<B,Q> &codec)
-: Simulation_BFER<B,R,Q>(params, codec),
+::Simulation_BFER_std(const Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> &chain_params, Codec<B,Q> &codec)
+: Simulation_BFER<B,R,Q>(chain_params, codec),
+  chain_params(chain_params),
+  simu_params(*dynamic_cast<Factory_simulation_BFER_std::simu_parameters_BFER_std*>(chain_params.sim)),
 
-  source     (params.simulation.n_threads, nullptr),
-  crc        (params.simulation.n_threads, nullptr),
-  encoder    (params.simulation.n_threads, nullptr),
-  puncturer  (params.simulation.n_threads, nullptr),
-  modem      (params.simulation.n_threads, nullptr),
-  channel    (params.simulation.n_threads, nullptr),
-  quantizer  (params.simulation.n_threads, nullptr),
-  coset_real (params.simulation.n_threads, nullptr),
-  decoder    (params.simulation.n_threads, nullptr),
-  coset_bit  (params.simulation.n_threads, nullptr),
-  interleaver(params.simulation.n_threads, nullptr),
+  source     (simu_params.n_threads, nullptr),
+  crc        (simu_params.n_threads, nullptr),
+  encoder    (simu_params.n_threads, nullptr),
+  puncturer  (simu_params.n_threads, nullptr),
+  modem      (simu_params.n_threads, nullptr),
+  channel    (simu_params.n_threads, nullptr),
+  quantizer  (simu_params.n_threads, nullptr),
+  coset_real (simu_params.n_threads, nullptr),
+  decoder    (simu_params.n_threads, nullptr),
+  coset_bit  (simu_params.n_threads, nullptr),
+  interleaver(simu_params.n_threads, nullptr),
 
-  rd_engine_seed(params.simulation.n_threads)
+  rd_engine_seed(simu_params.n_threads)
 {
-	for (auto tid = 0; tid < params.simulation.n_threads; tid++)
-		rd_engine_seed[tid].seed(params.simulation.seed + tid);
+	for (auto tid = 0; tid < simu_params.n_threads; tid++)
+		rd_engine_seed[tid].seed(simu_params.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -49,15 +50,13 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_std<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
-	const auto seed_src =                                    rd_engine_seed[tid]();
-	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
-	const auto seed_enc =                                    rd_engine_seed[tid]();
-	const auto seed_chn =                                    rd_engine_seed[tid]();
+	const auto seed_src = rd_engine_seed[tid]();
+	const auto seed_enc = rd_engine_seed[tid]();
+	const auto seed_chn = rd_engine_seed[tid]();
 
 	// build the objects
 	source     [tid] = build_source     (tid, seed_src);
 	crc        [tid] = build_crc        (tid          );
-	interleaver[tid] = build_interleaver(tid, seed_itl);
 	encoder    [tid] = build_encoder    (tid, seed_enc);
 	puncturer  [tid] = build_puncturer  (tid          );
 	modem      [tid] = build_modem      (tid          );
@@ -66,6 +65,7 @@ void Simulation_BFER_std<B,R,Q>
 	coset_real [tid] = build_coset_real (tid          );
 	decoder    [tid] = build_decoder    (tid          );
 	coset_bit  [tid] = build_coset_bit  (tid          );
+	interleaver[tid] = build_interleaver(tid, simu_params.seed, rd_engine_seed[tid]());
 
 	if (interleaver[tid] != nullptr)
 	{
@@ -79,7 +79,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_std<B,R,Q>
 ::release_objects()
 {
-	const auto nthr = this->params.simulation.n_threads;
+	const auto nthr = simu_params.n_threads;
 	for (auto i = 0; i < nthr; i++) if (source     [i] != nullptr) { delete source     [i]; source     [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
@@ -99,22 +99,14 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER_std<B,R,Q>
 ::build_source(const int tid, const int seed)
 {
-	return Factory_source<B>::build(this->params.source.type,
-	                                this->params.code.K_info,
-	                                this->params.source.path,
-	                                seed,
-	                                this->params.simulation.inter_frame_level);
+	return Factory_source<B>::build(chain_params.src, seed);
 }
 
 template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC<B>::build(this->params.crc.poly.empty() ? "NO" : this->params.crc.type,
-	                             this->params.code.K_info,
-	                             this->params.crc.size,
-	                             this->params.crc.poly,
-	                             this->params.simulation.inter_frame_level);
+	return Factory_CRC<B>::build(chain_params.crc);
 }
 
 template <typename B, typename R, typename Q>
@@ -127,12 +119,7 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		return Factory_encoder_common<B>::build(this->params.encoder.type,
-		                                        this->params.code.K,
-		                                        this->params.code.N_code,
-		                                        this->params.encoder.path,
-		                                        seed,
-		                                        this->params.simulation.inter_frame_level);
+		return Factory_encoder_common<B>::build(*chain_params.enc, seed);
 	}
 }
 
@@ -146,19 +133,19 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		return new Puncturer_NO<B,Q>(this->params.code.K,
-		                             this->params.code.N,
-		                             this->params.simulation.inter_frame_level);
+		auto pct = *chain_params.pct;
+		pct.type = "NO";
+		return Factory_puncturer<B,Q>::build(pct);
 	}
 }
 
 template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_std<B,R,Q>
-::build_interleaver(const int tid, const int seed)
+::build_interleaver(const int tid, const int seed, const int rd_seed)
 {
 	try
 	{
-		return this->codec.build_interleaver(tid, seed);
+		return this->codec.build_interleaver(tid, seed, rd_seed);
 	}
 	catch (cannot_allocate const&)
 	{
@@ -167,62 +154,31 @@ Interleaver<int>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,R>* Simulation_BFER_std<B,R,Q>
+Modem<B,R,Q>* Simulation_BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return Factory_modem<B,R,R>::build(this->params.modulator.type,
-	                                   this->params.code.N,
-	                                   this->sigma,
-	                                   this->params.demodulator.max,
-	                                   this->params.demodulator.psi,
-	                                   this->params.modulator.bits_per_symbol,
-	                                   this->params.modulator.const_path,
-	                                   this->params.modulator.upsample_factor,
-	                                   this->params.modulator.cpm_L,
-	                                   this->params.modulator.cpm_k,
-	                                   this->params.modulator.cpm_p,
-	                                   this->params.modulator.mapping,
-	                                   this->params.modulator.wave_shape,
-	                                   this->params.demodulator.no_sig2,
-	                                   this->params.demodulator.n_ite,
-	                                   this->params.simulation.inter_frame_level);
+	return Factory_modem<B,R,Q>::build(chain_params.modem, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_std<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
-	const auto add_users = this->params.modulator.type == "SCMA";
-	return Factory_channel<R>::build(this->params.channel.type,
-	                                 this->params.code.N_mod,
-	                                 this->params.modulator.complex,
-	                                 add_users,
-	                                 this->params.channel.path,
-	                                 seed,
-	                                 this->sigma,
-	                                 this->params.simulation.inter_frame_level);
+	return Factory_channel<R>::build(chain_params.chn, seed, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build((typeid(R) == typeid(Q)) ? "NO" : this->params.quantizer.type,
-	                                     this->params.code.N,
-	                                     this->params.quantizer.n_decimals,
-	                                     this->params.quantizer.n_bits,
-	                                     this->sigma,
-	                                     this->params.quantizer.range,
-	                                     this->params.simulation.inter_frame_level);
+	return Factory_quantizer<R,Q>::build(chain_params.qua, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real<B,Q>::build("STD",
-	                                      this->params.code.N_code,
-	                                      this->params.simulation.inter_frame_level);
+	return Factory_coset_real<B,Q>::build("STD", chain_params.dec->N, simu_params.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
@@ -236,9 +192,7 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return Factory_coset_bit<B>::build("STD",
-	                                   this->params.code.K,
-	                                   this->params.simulation.inter_frame_level);
+	return Factory_coset_bit<B>::build("STD", chain_params.dec->K, simu_params.inter_frame_level);
 }
 
 // ==================================================================================== explicit template instantiation

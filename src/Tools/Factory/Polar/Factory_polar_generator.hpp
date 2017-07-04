@@ -52,7 +52,8 @@ struct Factory_polar_generator : public Factory_decoder_common
 	                                  mipp::vector<B> &frozen_bits);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters_polar_generator &params);
+	static void store_args(const Arguments_reader& ar, parameters_polar_generator &params,
+	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters_polar_generator& params);

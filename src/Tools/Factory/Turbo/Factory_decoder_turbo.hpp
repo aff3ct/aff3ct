@@ -9,7 +9,6 @@
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "../Factory_decoder_common.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
 #include "Tools/Factory/Turbo/Factory_scaling_factor.hpp"
 #include "Tools/Factory/Turbo/Factory_flip_and_check.hpp"
 
@@ -47,8 +46,7 @@ struct Factory_decoder_turbo : public Factory_decoder_common
 	                       const bool activate_simd = true, const bool activate_json = false);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, Header::params_list& head_itl,
-	                   const decoder_parameters_turbo& params, bool crc_activated);
+	static void header(Header::params_list& head_dec, const decoder_parameters_turbo& params, bool crc_activated);
 
 };
 }

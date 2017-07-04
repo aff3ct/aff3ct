@@ -14,18 +14,12 @@ using namespace aff3ct::tools;
 
 template <typename R, typename Q>
 Quantizer<R,Q>* Factory_quantizer<R,Q>
-::build(const std::string type,
-        const int         size,
-        const int         n_decimals,
-        const int         n_bits,
-        const float       sigma,
-        const float       range,
-        const int         n_frames)
+::build(const quantizer_parameters& params, const float sigma)
 {
-	     if (type == "STD"     ) return new Quantizer_standard<R,Q>(size, n_decimals, n_bits,        n_frames);
-	else if (type == "STD_FAST") return new Quantizer_fast    <R,Q>(size, n_decimals, n_bits,        n_frames);
-	else if (type == "TRICKY"  ) return new Quantizer_tricky  <R,Q>(size, range,      n_bits, sigma, n_frames);
-	else if (type == "NO"      ) return new Quantizer_NO      <R,Q>(size,                            n_frames);
+	     if (params.type == "STD"     ) return new Quantizer_standard<R,Q>(params.size, params.n_decimals, params.n_bits,        params.n_frames);
+	else if (params.type == "STD_FAST") return new Quantizer_fast    <R,Q>(params.size, params.n_decimals, params.n_bits,        params.n_frames);
+	else if (params.type == "TRICKY"  ) return new Quantizer_tricky  <R,Q>(params.size, params.range,      params.n_bits, sigma, params.n_frames);
+	else if (params.type == "NO"      ) return new Quantizer_NO      <R,Q>(params.size,                                          params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -58,8 +52,13 @@ void Factory_quantizer<R,Q>
 
 template <typename R, typename Q>
 void Factory_quantizer<R,Q>
-::store_args(const Arguments_reader& ar, quantizer_parameters &params)
+::store_args(const Arguments_reader& ar, quantizer_parameters &params,
+	                       const int size, const int n_frames)
 {
+	params.type     = std::is_same<R,double>::value ? "STD" : "STD_FAST";
+	params.size     = size;
+	params.n_frames = n_frames;
+
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	if (std::is_integral<Q>::value)
 	{
@@ -68,6 +67,8 @@ void Factory_quantizer<R,Q>
 		if(ar.exist_arg({"qnt-bits" })) params.n_bits     = ar.get_arg_int  ({"qnt-bits" });
 		if(ar.exist_arg({"qnt-range"})) params.range      = ar.get_arg_float({"qnt-range"});
 	}
+
+	params.type = std::is_same<R,Q>::value ? "NO" : params.type;
 }
 
 template <typename R, typename Q>

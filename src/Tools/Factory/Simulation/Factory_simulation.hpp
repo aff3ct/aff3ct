@@ -20,6 +20,8 @@ struct Factory_simulation : Factory_simulation_main
 {
 	struct simu_parameters : simu_parameters_main
 	{
+		virtual ~simu_parameters() {}
+
 		// ---- simulation
 #ifdef ENABLE_MPI
 		std::chrono::milliseconds mpi_comm_freq     = std::chrono::milliseconds(1000);
@@ -41,7 +43,7 @@ struct Factory_simulation : Factory_simulation_main
 		int         N;
 		int         N_code;
 		float       R;     // code rate
-//		int         tail_length = 0;
+		float       tail_length = 0;     // code rate
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

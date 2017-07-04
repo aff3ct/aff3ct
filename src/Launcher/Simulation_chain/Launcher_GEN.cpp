@@ -9,10 +9,10 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 Launcher_GEN<B,R,Q>
 ::Launcher_GEN(const int argc, const char **argv, std::ostream &stream)
-: Launcher<B,R,Q>(argc, argv, stream), m_chain_params(new Factory_simulation_GEN::chain_parameters_GEN<B,R,Q>())
+: Launcher(argc, argv, stream), m_chain_params(new Factory_simulation_GEN::chain_parameters_GEN())
 {
-	this->chain_params =  m_chain_params;
-	this->simu_params  = &m_chain_params->sim;
+	this->chain_params = m_chain_params;
+	this->simu_params  = m_chain_params->sim;
 }
 
 template <typename B, typename R, typename Q>
@@ -27,7 +27,7 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN<B,R,Q>
 ::build_args()
 {
-	Launcher<B,R,Q>::build_args();
+	Launcher::build_args();
 
 	Factory_simulation_GEN::build_args(this->req_args, this->opt_args);
 }
@@ -36,16 +36,16 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN<B,R,Q>
 ::store_args()
 {
-	Launcher<B,R,Q>::store_args();
+	Launcher::store_args();
 
-	Factory_simulation_GEN::store_args(this->ar, m_chain_params->sim);
+	Factory_simulation_GEN::store_args(this->ar, *m_chain_params->sim);
 }
 
 template <typename B, typename R, typename Q>
 void Launcher_GEN<B,R,Q>
 ::group_args()
 {
-	Launcher<B,R,Q>::group_args();
+	Launcher::group_args();
 
 	Factory_simulation_GEN::group_args(this->arg_group);
 }
@@ -54,9 +54,9 @@ template <typename B, typename R, typename Q>
 void Launcher_GEN<B,R,Q>
 ::print_header()
 {
-	Factory_simulation_GEN::header(this->pl_sim, this->pl_cde, m_chain_params->sim);
+	Factory_simulation_GEN::header(this->pl_sim, this->pl_cde, *m_chain_params->sim);
 
-	Launcher<B,R,Q>::print_header();
+	Launcher::print_header();
 }
 
 // ==================================================================================== explicit template instantiation
