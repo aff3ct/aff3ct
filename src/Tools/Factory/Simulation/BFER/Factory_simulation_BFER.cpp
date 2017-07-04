@@ -36,11 +36,11 @@ void Factory_simulation_BFER::build_args(Arguments_reader::arg_map &req_args, Ar
 
 void Factory_simulation_BFER::store_args(const Arguments_reader& ar, simu_parameters_BFER &params)
 {
-	Factory_simulation::store_args(ar, params);
-
 #if !defined(STARPU) && !defined(SYSTEMC)
 	params.n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
+
+	Factory_simulation::store_args(ar, params);
 
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(ar.exist_arg({"sim-benchs",     "b"})) params.benchs      = ar.get_arg_int({"sim-benchs",   "b"});

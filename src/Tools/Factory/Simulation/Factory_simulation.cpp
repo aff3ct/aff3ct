@@ -87,8 +87,6 @@ void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters 
 	if(ar.exist_arg({"sim-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
 	if(ar.exist_arg({"sim-seed"         })) params.seed              = ar.get_arg_int  ({"sim-seed"         });
 
-//	params.interleaver.seed = params.simulation.seed;
-
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
 		if(ar.exist_arg({"sim-threads", "t"})) params.n_threads = ar.get_arg_int({"sim-threads",    "t"});
@@ -97,11 +95,10 @@ void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters 
 #endif
 
 #ifdef ENABLE_MPI
-
 	MPI_Comm_size(MPI_COMM_WORLD, &params.mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &params.mpi_rank);
 
-	if(ar.exist_arg({"sim-mpi-comm"       })) params.mpi_comm_freq = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
+	if(ar.exist_arg({"sim-mpi-comm"})) params.mpi_comm_freq = milliseconds(ar.get_arg_int({"sim-mpi-comm"}));
 
 	int max_n_threads_global;
 	int max_n_threads_local = params.simulation.n_threads;
