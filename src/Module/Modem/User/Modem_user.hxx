@@ -245,7 +245,7 @@ void Modem_user<B,R,Q,MAX>
 				L1 = MAX(L1, -tempL);
 		}
 
-		Y_N3[n] = (L0 - L1) + Y_N2[n];
+		Y_N3[n] = (L0 - L1);
 	}
 }
 
@@ -290,7 +290,7 @@ void Modem_user<B,R,Q,MAX>
 				L1 = MAX(L1, -tempL);
 		}
 
-		Y_N3[n] = (L0 - L1) + Y_N2[n];
+		Y_N3[n] = (L0 - L1);
 	}
 }
 }

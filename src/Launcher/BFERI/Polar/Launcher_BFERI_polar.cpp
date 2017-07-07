@@ -63,6 +63,9 @@ void Launcher_BFERI_polar<B,R,Q>
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	this->opt_args[{"enc-type"}][2] += ", POLAR";
+	this->opt_args[{"enc-no-sys"}] =
+		{"",
+		 "disable the systematic encoding."};
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	this->opt_args[{"dec-type", "D"}].push_back("SCAN");
@@ -88,6 +91,9 @@ void Launcher_BFERI_polar<B,R,Q>
 	if(this->ar.exist_arg({"cde-sigma"        })) this->params.code.sigma         = this->ar.get_arg_float({"cde-sigma"});
 	if(this->ar.exist_arg({"cde-awgn-fb-path" })) this->params.code.awgn_fb_path  = this->ar.get_arg      ({"cde-awgn-fb-path" });
 	if(this->ar.exist_arg({"cde-fb-gen-method"})) this->params.code.fb_gen_method = this->ar.get_arg      ({"cde-fb-gen-method"});
+
+	// ------------------------------------------------------------------------------------------------------- encoder
+	if(this->ar.exist_arg({"enc-no-sys"}       )) this->params.encoder.systematic = false;
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(this->ar.exist_arg({"dec-ite",      "i"})) this->params.decoder.n_ite      = this->ar.get_arg_int  ({"dec-ite",    "i"});

@@ -179,36 +179,7 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::demodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3)
 {
-	if (typeid(R) != typeid(Q))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	auto size = (unsigned int)(this->N * this->n_frames);
-	if (disable_sig2)
-	{
-		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
-		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
-		{
-			auto y = mipp::add(mipp::Reg<Q>(&Y_N1[i]), mipp::Reg<Q>(&Y_N2[i]));
-			y.store(&Y_N3[i]);
-		}
-		for (unsigned i = vec_loop_size; i < size; i++)
-			Y_N3[i] = Y_N1[i] + Y_N2[i];
-	}
-	else
-	{
-		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
-		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
-		{
-			// mipp::fmadd(a, b, c) = a * b + c
-			auto y = mipp::fmadd(mipp::Reg<Q>(&Y_N1[i]), mipp::Reg<Q>((Q)two_on_square_sigma), mipp::Reg<Q>(&Y_N2[i]));
-			y.store(&Y_N3[i]);
-		}
-		for (unsigned i = vec_loop_size; i < size; i++)
-			Y_N3[i] = (Y_N1[i] * (Q)two_on_square_sigma) + Y_N2[i];
-	}
+	this->demodulate(Y_N1,Y_N3);
 }
 
 // ==================================================================================== explicit template instantiation 
