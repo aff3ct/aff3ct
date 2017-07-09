@@ -10,7 +10,7 @@
 using namespace aff3ct::tools;
 
 Dumper
-::Dumper(const int n_frames)
+::Dumper(const int32_t n_frames)
 : n_frames(n_frames)
 {
 	if (n_frames <= 0)
@@ -78,7 +78,7 @@ void Dumper
 }
 
 void Dumper
-::add(const int frame_id)
+::add(const int32_t frame_id)
 {
 	if (frame_id < 0 || frame_id >= this->n_frames)
 	{
@@ -88,7 +88,7 @@ void Dumper
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	for (auto i = 0; i < (int)this->registered_data_ptr.size(); i++)
+	for (auto i = 0; i < (int32_t)this->registered_data_ptr.size(); i++)
 	{
 		const auto ptr   = this->registered_data_ptr [i];
 		const auto bytes = this->registered_data_size[i] * this->registered_data_sizeof[i];
@@ -107,7 +107,7 @@ void Dumper
 	if (base_path.empty())
 		throw invalid_argument(__FILE__, __LINE__, __func__, "'base_path' can't be empty.");
 
-	for (auto i = 0; i < (int)this->registered_data_ptr.size(); i++)
+	for (auto i = 0; i < (int32_t)this->registered_data_ptr.size(); i++)
 	{
 		const auto size    = this->registered_data_size  [i];
 		const auto size_of = this->registered_data_sizeof[i];
@@ -170,12 +170,12 @@ void Dumper
 ::write_body_text(std::ofstream &file, const std::vector<std::vector<char>> &buffer, const unsigned size,
                   const std::type_index type)
 {
-	if      (type == typeid(signed char)) this->_write_body_text<signed char>(file, buffer, size);
-	else if (type == typeid(short      )) this->_write_body_text<short      >(file, buffer, size);
-	else if (type == typeid(int        )) this->_write_body_text<int        >(file, buffer, size);
-	else if (type == typeid(long long  )) this->_write_body_text<long long  >(file, buffer, size);
-	else if (type == typeid(float      )) this->_write_body_text<float      >(file, buffer, size);
-	else if (type == typeid(double     )) this->_write_body_text<double     >(file, buffer, size);
+	if      (type == typeid(int8_t )) this->_write_body_text<int8_t >(file, buffer, size);
+	else if (type == typeid(int16_t)) this->_write_body_text<int16_t>(file, buffer, size);
+	else if (type == typeid(int32_t)) this->_write_body_text<int32_t>(file, buffer, size);
+	else if (type == typeid(int64_t)) this->_write_body_text<int64_t>(file, buffer, size);
+	else if (type == typeid(float  )) this->_write_body_text<float  >(file, buffer, size);
+	else if (type == typeid(double )) this->_write_body_text<double >(file, buffer, size);
 	else
 		throw invalid_argument(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
@@ -211,24 +211,24 @@ void Dumper
 }
 
 // ==================================================================================== explicit template instantiation
-template void Dumper::register_data<signed char>(const signed char*, const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<short      >(const short*,       const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int        >(const int*,         const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<long long  >(const long long*,   const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<float      >(const float*,       const unsigned, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<double     >(const double*,      const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int8_t >(const int8_t*,  const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int16_t>(const int16_t*, const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int32_t>(const int32_t*, const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int64_t>(const int64_t*, const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<float  >(const float*,   const unsigned, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<double >(const double*,  const unsigned, const std::string, const bool, std::vector<unsigned>);
 
-template void Dumper::register_data<signed char>(const mipp::vector<signed char>&, const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<short      >(const mipp::vector<short>&,       const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<int        >(const mipp::vector<int>&,         const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<long long  >(const mipp::vector<long long>&,   const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<float      >(const mipp::vector<float>&,       const std::string, const bool, std::vector<unsigned>);
-template void Dumper::register_data<double     >(const mipp::vector<double>&,      const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int8_t >(const mipp::vector<int8_t>&,  const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int16_t>(const mipp::vector<int16_t>&, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int32_t>(const mipp::vector<int32_t>&, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<int64_t>(const mipp::vector<int64_t>&, const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<float  >(const mipp::vector<float>&,   const std::string, const bool, std::vector<unsigned>);
+template void Dumper::register_data<double >(const mipp::vector<double>&,  const std::string, const bool, std::vector<unsigned>);
 
-template void Dumper::_write_body_text<signed char>(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
-template void Dumper::_write_body_text<short      >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
-template void Dumper::_write_body_text<int        >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
-template void Dumper::_write_body_text<long long  >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
-template void Dumper::_write_body_text<float      >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
-template void Dumper::_write_body_text<double     >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
+template void Dumper::_write_body_text<int8_t >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
+template void Dumper::_write_body_text<int16_t>(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
+template void Dumper::_write_body_text<int32_t>(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
+template void Dumper::_write_body_text<int64_t>(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
+template void Dumper::_write_body_text<float  >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
+template void Dumper::_write_body_text<double >(std::ofstream&, const std::vector<std::vector<char>>&, const unsigned);
 // ==================================================================================== explicit template instantiation

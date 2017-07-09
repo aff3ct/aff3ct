@@ -27,7 +27,7 @@ void Decoder_NO<B,R>
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
 	{
 		const auto r_Y_N = mipp::Reg<R>(&Y_K[i]);
-		const auto r_s = mipp::cast<R,B>(r_Y_N.sign()) >> (sizeof(B) * 8 - 1); // s[i] = Y_Ki] < 0;
+		const auto r_s = mipp::cast<R,B>(r_Y_N) >> (sizeof(B) * 8 - 1); // s[i] = Y_Ki] < 0;
 		r_s.store(&V_K[i]);
 	}
 	for (auto i = vec_loop_size; i < this->K; i++)

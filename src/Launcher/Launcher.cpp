@@ -39,13 +39,16 @@ Launcher<B,R,Q>
 	}
 
 	// define type names
-	type_names[typeid(char)]        = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
-	type_names[typeid(signed char)] = "signed char (" + std::to_string(sizeof(signed char)*8) + " bits)";
-	type_names[typeid(short)]       = "short ("       + std::to_string(sizeof(short)*8)       + " bits)";
-	type_names[typeid(int)]         = "int ("         + std::to_string(sizeof(int)*8)         + " bits)";
-	type_names[typeid(long long)]   = "long long ("   + std::to_string(sizeof(long long)*8)   + " bits)";
-	type_names[typeid(float)]       = "float ("       + std::to_string(sizeof(float)*8)       + " bits)";
-	type_names[typeid(double)]      = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
+	type_names[typeid(int8_t)  ] = "int8";
+	type_names[typeid(uint8_t) ] = "uint8";
+	type_names[typeid(int16_t) ] = "int16";
+	type_names[typeid(uint16_t)] = "uint16";
+	type_names[typeid(int32_t) ] = "int32";
+	type_names[typeid(uint32_t)] = "uint32";
+	type_names[typeid(int64_t) ] = "int64";
+	type_names[typeid(uint64_t)] = "uint64";
+	type_names[typeid(float)   ] = "float32";
+	type_names[typeid(double)  ] = "float64";
 
 	// default parameters
 	params.simulation .snr_step          = 0.1f;

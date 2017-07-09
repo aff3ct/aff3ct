@@ -1,11 +1,17 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
+#include <cstdint>
+
 // type for the bits
-using B_8  = signed char;
-using B_16 = short;
-using B_32 = int;
-using B_64 = long long;
+//using B_8  = signed char;
+//using B_16 = short;
+//using B_32 = int;
+//using B_64 = long long;
+using B_8  = int8_t;
+using B_16 = int16_t;
+using B_32 = int32_t;
+using B_64 = int64_t;
 
 // type for the real numbers (before quantization)
 using R_8  = float;

@@ -184,7 +184,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 		throw runtime_error(__FILE__, __LINE__, __func__, "'siso' can't be created.");
 
 	auto decoder = Factory_decoder_turbo<B,Q>::build("TURBO",
-	                                                 typeid(B) == typeid(long long) ? "STD" : "FAST",
+	                                                 typeid(B) == typeid(int64_t) ? "STD" : "FAST",
 	                                                 this->params.code.K,
 	                                                 this->params.code.N_code,
 	                                                 this->params.decoder.n_ite,

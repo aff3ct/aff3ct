@@ -121,11 +121,8 @@ void Decoder_RSC_BCJR<B,R>
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 
 		// s[i] = post[i] < 0;
-#if defined(MIPP_NO_INTRINSICS) && defined(_MSC_VER) 
-		const auto r_s = mipp::Reg<B>((B)r_post.sign().r) >> (sizeof(B) * 8 -1);
-#else
-		const auto r_s = mipp::Reg<B>(r_post.sign().r) >> (sizeof(B) * 8 - 1);
-#endif
+		const auto r_s = mipp::cast<R,B>(r_post) >> (sizeof(B) * 8 - 1);
+
 		r_s.store(&s[i]);
 	}
 

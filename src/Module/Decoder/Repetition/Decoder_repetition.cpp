@@ -72,7 +72,7 @@ void Decoder_repetition<B,R>
 	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
 	{
 		const auto r_ext = mipp::Reg<R>(&ext[i]);
-		const auto r_s = mipp::cast<R,B>(r_ext.sign()) >> (sizeof(B) * 8 - 1);
+		const auto r_s = mipp::cast<R,B>(r_ext) >> (sizeof(B) * 8 - 1);
 
 		r_s.store(&V_K[i]);
 	}

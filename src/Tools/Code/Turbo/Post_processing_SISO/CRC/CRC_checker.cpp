@@ -35,7 +35,7 @@ bool CRC_checker<B,R>
 			const auto r_sys  = mipp::Reg<R>(&sys[i * mipp::nElReg<R>()]);
 			const auto r_ext  = mipp::Reg<R>(&ext[i * mipp::nElReg<R>()]);
 			const auto r_post = r_sys + r_ext;
-			const auto r_dec  = mipp::cast<R,B>(r_post.sign()) >> (sizeof(B) * 8 - 1);
+			const auto r_dec  = mipp::cast<R,B>(r_post) >> (sizeof(B) * 8 - 1);
 			r_dec.store(&s[i * mipp::nElReg<R>()]);
 		}
 		const auto loop_size2 = (int)s.size();
@@ -53,11 +53,11 @@ namespace aff3ct
 namespace tools
 {
 template <>
-bool CRC_checker<long long, double>
+bool CRC_checker<int64_t, double>
 ::siso_n(const int ite,
-         const mipp::vector<double   >& sys,
-               mipp::vector<double   >& ext,
-               mipp::vector<long long>& s)
+         const mipp::vector<double >& sys,
+               mipp::vector<double >& ext,
+               mipp::vector<int64_t>& s)
 {
 	if (ite >= start_crc_check_ite)
 	{

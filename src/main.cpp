@@ -93,7 +93,7 @@ void print_version()
 	std::string git_sha1 = g_GIT_SHA1;
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
-	          << mipp::IntructionsType << ") " << affect_version << std::endl;
+	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
 	if (git_sha1 != "GITDIR-NOTFOUND")
 		std::cout << "GIT SHA1: " << git_sha1 << std::endl;
 	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
@@ -185,18 +185,18 @@ Launcher<B,R,Q>* create_exit_simu(const int argc, const char **argv, std::string
 
 #if defined(MULTI_PREC) || defined(PREC_32_BIT)
 template <>
-Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int     argc, 
-                                                                      const char  **argv, 
-                                                                      std::string   code_type, 
-                                                                      std::string   simu_type)
+Launcher<int32_t,float,float>* create_exit_simu<int32_t, float, float, float>(const int     argc,
+                                                                              const char  **argv,
+                                                                              std::string   code_type,
+                                                                              std::string   simu_type)
 {
 	if (code_type == "POLAR")
 		if (simu_type == "EXIT")
-			return new Launcher_EXIT_polar<int,float,float>(argc, argv);
+			return new Launcher_EXIT_polar<int32_t,float,float>(argc, argv);
 
 	if (code_type == "RSC")
 		if (simu_type == "EXIT")
-			return new Launcher_EXIT_RSC<int,float,float,float>(argc, argv);
+			return new Launcher_EXIT_RSC<int32_t,float,float,float>(argc, argv);
 
 	return nullptr;
 }
@@ -204,18 +204,18 @@ Launcher<int,float,float>* create_exit_simu<int, float, float, float>(const int 
 
 #if defined(MULTI_PREC) || defined(PREC_64_BIT)
 template <>
-Launcher<long long,double,double>* create_exit_simu<long long, double, double, double>(const int     argc, 
-                                                                                       const char  **argv, 
-                                                                                       std::string   code_type, 
-                                                                                       std::string   simu_type)
+Launcher<int64_t,double,double>* create_exit_simu<int64_t, double, double, double>(const int     argc,
+                                                                                   const char  **argv,
+                                                                                   std::string   code_type,
+                                                                                   std::string   simu_type)
 {
 	if (code_type == "POLAR")
 		if (simu_type == "EXIT")
-			return new Launcher_EXIT_polar<long long,double,double>(argc, argv);
+			return new Launcher_EXIT_polar<int64_t,double,double>(argc, argv);
 
 	if (code_type == "RSC")
 		if (simu_type == "EXIT")
-			return new Launcher_EXIT_RSC<long long,double,double,double>(argc, argv);
+			return new Launcher_EXIT_RSC<int64_t,double,double,double>(argc, argv);
 
 	return nullptr;
 }
