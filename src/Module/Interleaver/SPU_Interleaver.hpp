@@ -91,10 +91,10 @@ private:
 
 		switch (STARPU_VARIABLE_GET_ELEMSIZE(buffers[0]))
 		{
-			case 1: _spu_kernel_interleave<char     >(buffers, itl); break;
-			case 2: _spu_kernel_interleave<short    >(buffers, itl); break;
-			case 4: _spu_kernel_interleave<int      >(buffers, itl); break;
-			case 8: _spu_kernel_interleave<long long>(buffers, itl); break;
+			case 1: _spu_kernel_interleave<int8_t >(buffers, itl); break;
+			case 2: _spu_kernel_interleave<int16_t>(buffers, itl); break;
+			case 4: _spu_kernel_interleave<int32_t>(buffers, itl); break;
+			case 8: _spu_kernel_interleave<int64_t>(buffers, itl); break;
 			default:
 				std::cerr << "(EE) Unrecognized type of data, exiting." << std::endl;
 				std::exit(-1);
@@ -108,10 +108,10 @@ private:
 
 		switch (STARPU_VARIABLE_GET_ELEMSIZE(buffers[0]))
 		{
-			case 1: _spu_kernel_deinterleave<char     >(buffers, itl); break;
-			case 2: _spu_kernel_deinterleave<short    >(buffers, itl); break;
-			case 4: _spu_kernel_deinterleave<int      >(buffers, itl); break;
-			case 8: _spu_kernel_deinterleave<long long>(buffers, itl); break;
+			case 1: _spu_kernel_deinterleave<int8_t >(buffers, itl); break;
+			case 2: _spu_kernel_deinterleave<int16_t>(buffers, itl); break;
+			case 4: _spu_kernel_deinterleave<int32_t>(buffers, itl); break;
+			case 8: _spu_kernel_deinterleave<int64_t>(buffers, itl); break;
 			default:
 				std::cerr << "(EE) Unrecognized type of data, exiting." << std::endl;
 				std::exit(-1);

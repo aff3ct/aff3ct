@@ -70,6 +70,7 @@ endif()
 
 # MIPP wrapper includes
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
+    add_definitions (-DMIPP_ENABLE_BACKTRACE)
     include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/")
     message(STATUS "MIPP found")
 else ()

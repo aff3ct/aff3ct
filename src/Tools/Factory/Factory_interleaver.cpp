@@ -101,8 +101,8 @@ void Factory_interleaver<B>
 	head_itl.push_back(std::make_pair("Uniform", (params.uniform ? "on" : "off")));
 }
 
-//==================================================================================== explicit template instantiation
-template struct aff3ct::tools::Factory_interleaver<short>;
-template struct aff3ct::tools::Factory_interleaver<int>;
-template struct aff3ct::tools::Factory_interleaver<long long>;
+// ==================================================================================== explicit template instantiation 
+template struct aff3ct::tools::Factory_interleaver<int16_t>;
+template struct aff3ct::tools::Factory_interleaver<int32_t>;
+template struct aff3ct::tools::Factory_interleaver<int64_t>;
 // ==================================================================================== explicit template instantiation

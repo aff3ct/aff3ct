@@ -165,7 +165,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 
 	auto decoder = Factory_decoder_turbo<B,Q>::build(dec_par, *itl, *siso[tid], *siso[tid], enc_par.buffered);
 
-// then add post processing modules
+	// then add post processing modules
 	if (!dec_par.scaling_factor.declaration.empty())
 	{
 		post_pros[tid].push_back(Factory_scaling_factor<B,Q>::build(dec_par.scaling_factor, dec_par.n_ite));

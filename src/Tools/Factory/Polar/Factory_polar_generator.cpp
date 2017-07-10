@@ -1182,7 +1182,7 @@ void Factory_polar_generator<B,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- code
 #ifdef ENABLE_POLAR_BOUNDS
-	if(ar.exist_arg({"cde-pb-path"})) params.simulation.bin_pb_path  = ar.get_arg({"cde-pb-path"});
+	if(ar.exist_arg({"cde-pb-path"})) params.bin_pb_path  = ar.get_arg({"cde-pb-path"});
 #endif
 
 	if(ar.exist_arg({"cde-awgn-fb-path" })) params.awgn_fb_path  = ar.get_arg({"cde-awgn-fb-path" });

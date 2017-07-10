@@ -67,7 +67,7 @@ void Factory_decoder_turbo<B,Q>
              const int K, const int N, const int n_frames,
              const bool activate_simd, const bool activate_json)
 {
-	params.turbo_implem = std::is_same<B,long long>::value ? "STD" : "FAST";
+	params.turbo_implem = std::is_same<B,int64_t>::value ? "STD" : "FAST";
 
 	// for the RSC
 	params.type   = "BCJR";

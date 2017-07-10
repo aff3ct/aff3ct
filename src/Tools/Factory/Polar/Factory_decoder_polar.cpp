@@ -45,7 +45,13 @@ Decoder_SISO<B,Q>* Factory_decoder_polar<B,Q>
 ::build_siso(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding)
 {
 	if (params.type == "SCAN" && sys_encoding)
+	{
 		if (params.implem == "NAIVE") return new Decoder_polar_SCAN_naive_sys<B, Q, init_LLR<Q>, f_LLR<Q>, v_LLR<Q>, h_LLR<B,Q>>(params.K, params.N, params.n_ite, frozen_bits, params.n_frames);
+	}
+	else if (params.type == "SCAN" && !sys_encoding)
+	{
+		if (params.implem == "NAIVE") return new Decoder_polar_SCAN_naive    <B, Q, init_LLR<Q>, f_LLR<Q>, v_LLR<Q>, h_LLR<B,Q>>(params.K, params.N, params.n_ite, frozen_bits, params.n_frames);
+	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }

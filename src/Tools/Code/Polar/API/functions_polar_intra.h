@@ -123,7 +123,8 @@ struct rep_intra
 			r_sum_l = mipp::add<R>(API_polar_inter_intra_saturate<R>::perform(r_lambda_a, r_sat), r_sum_l);
 		}
 
-		const auto r_r = HI(mipp::sum<R>(r_sum_l));
+//		const auto r_r = HI(mipp::sum<R>(r_sum_l));
+		const auto r_r = HI(mipp::reduction<R,mipp::add<R>>::apply(r_sum_l));
 		for (auto i = 0; i < N_ELMTS; i += stride)
 			mipp::store<B>(s_a +i, r_r);
 	}
@@ -145,7 +146,8 @@ struct rep_intra <B, R, HI, 0>
 			r_sum_l = mipp::add<R>(API_polar_inter_intra_saturate<R>::perform(r_lambda_a, r_sat), r_sum_l);
 		}
 
-		const auto r_r = HI(mipp::sum<R>(r_sum_l));
+//		const auto r_r = HI(mipp::sum<R>(r_sum_l));
+		const auto r_r = HI(mipp::reduction<R,mipp::add<R>>::apply(r_sum_l));
 		for (auto i = 0; i < n_elmts; i += stride)
 			mipp::store<B>(s_a +i, r_r);
 	}
