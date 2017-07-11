@@ -19,8 +19,6 @@ template <typename B, typename R, typename Q>
 Launcher_GEN<B,R,Q>
 ::~Launcher_GEN()
 {
-	if (m_chain_params != nullptr)
-		delete m_chain_params;
 }
 
 template <typename B, typename R, typename Q>

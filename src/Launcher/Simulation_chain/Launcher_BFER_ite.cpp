@@ -24,9 +24,6 @@ Launcher_BFER_ite<B,R,Q>
 {
 	if (codec != nullptr)
 		delete codec;
-
-	if (m_chain_params != nullptr)
-		delete m_chain_params;
 }
 
 template <typename B, typename R, typename Q>

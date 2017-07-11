@@ -17,7 +17,7 @@ Launcher_polar<cLauncher,B,R,Q>
 	m_dec = new typename tools::Factory_decoder_polar  <B,Q>::decoder_parameters_polar();
 
 	this->m_chain_params->enc = m_enc;
-//	this->m_chain_params->pct = m_pct;
+	this->m_chain_params->pct = m_pct;
 	this->m_chain_params->dec = m_dec;
 
 	//	this->params.quantizer .n_bits        = 6;
@@ -28,6 +28,9 @@ template <class cLauncher, typename B, typename R, typename Q>
 Launcher_polar<cLauncher,B,R,Q>
 ::~Launcher_polar()
 {
+	if (this->m_chain_params->pct != nullptr)
+		delete this->m_chain_params->pct;
+
 	if (this->m_chain_params->enc != nullptr)
 		delete this->m_chain_params->enc;
 

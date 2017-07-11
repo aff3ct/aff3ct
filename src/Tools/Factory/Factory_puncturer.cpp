@@ -19,7 +19,7 @@ template <typename B, typename Q>
 void Factory_puncturer<B,Q>
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	// ----------------------------------------------------------------------------------------------------- poncturer
+	// ----------------------------------------------------------------------------------------------------- puncturer
 }
 
 template <typename B, typename Q>
@@ -32,7 +32,7 @@ void Factory_puncturer<B,Q>
 	params.N_pct    = N_pct;
 	params.n_frames = n_frames;
 
-	// ----------------------------------------------------------------------------------------------------- poncturer
+	// ----------------------------------------------------------------------------------------------------- puncturer
 	if (params.N == params.N_pct)
 		params.type = "NO";
 }
@@ -48,7 +48,7 @@ template <typename B, typename Q>
 void Factory_puncturer<B,Q>
 ::header(Header::params_list& head_pct, const puncturer_parameters& params)
 {
-	// ----------------------------------------------------------------------------------------------------- poncturer
+	// ----------------------------------------------------------------------------------------------------- puncturer
 }
 
 

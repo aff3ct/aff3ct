@@ -176,6 +176,7 @@ template <typename B, typename R, typename Q>
 void Factory_modem<B,R,Q>
 ::store_args(const Arguments_reader& ar, modem_parameters &params, const int N, const int n_frames)
 {
+	params.N        = N;
 	params.n_frames = n_frames;
 
 	// ----------------------------------------------------------------------------------------------------- modulator

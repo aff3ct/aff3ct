@@ -42,29 +42,18 @@ template <typename B,typename R, typename Q>
 void Modem_BPSK<B,R,Q>
 ::filter(const R *Y_N1, R *Y_N2)
 {
-	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
+	if (disable_sig2)
+		std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
+	else
+		for (auto i = 0; i < this->N_fil * this->n_frames; i++)
+			Y_N2[i] = Y_N1[i] * two_on_square_sigma;
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK<B,R,Q>
 ::demodulate(const Q *Y_N1, Q *Y_N2)
 {
-	if (typeid(R) != typeid(Q))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (disable_sig2)
-		std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
-	else
-	{
-		auto size = (unsigned int)(this->N_fil * this->n_frames);
-		for (unsigned i = 0; i < size; i++)
-		{
-			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
-		}
-	}
+	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
@@ -77,18 +66,9 @@ void Modem_BPSK<B,R,Q>
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
 		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (disable_sig2)
-	{
-		auto size = (unsigned int)(this->N_fil * this->n_frames);
-		for (unsigned i = 0; i < size; i++)
-			Y_N2[i] = Y_N1[i] * (Q)H_N[i];
-	}
-	else
-	{
-		auto size = (unsigned int)(this->N_fil * this->n_frames);
-		for (unsigned i = 0; i < size; i++)
-			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma * (Q)H_N[i];
-	}
+	auto size = (unsigned int)(this->N_fil * this->n_frames);
+	for (unsigned i = 0; i < size; i++)
+		Y_N2[i] = Y_N1[i] * (Q)H_N[i];
 }
 
 template <typename B, typename R, typename Q>

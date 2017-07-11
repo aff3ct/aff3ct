@@ -14,7 +14,6 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
 
-
 #include "Launcher.hpp"
 
 using namespace aff3ct::tools;
@@ -38,7 +37,8 @@ Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
 
 Launcher::~Launcher()
 {
-	if (simu != nullptr) delete simu;
+	if (simu         != nullptr) { delete simu;         simu         = nullptr; };
+	if (chain_params != nullptr) { delete chain_params; chain_params = nullptr; };
 }
 
 void Launcher::build_args()
@@ -157,15 +157,15 @@ void Launcher::launch()
 		return;
 
 	// write the command and he curve name in the PyBER format
-	if (!simu_params->pyber.empty()
 #ifdef ENABLE_MPI
-			&& simu_params->mpi_rank == 0
+	if (!simu_params->pyber.empty() && simu_params->mpi_rank == 0)
+#else
+	if (!simu_params->pyber.empty())
 #endif
-	   )
 	{
-		stream << "Run command:"          << std::endl;
-		stream << cmd_line                << std::endl;
-		stream << "Curve name:"           << std::endl;
+		stream << "Run command:"     << std::endl;
+		stream << cmd_line           << std::endl;
+		stream << "Curve name:"      << std::endl;
 		stream << simu_params->pyber << std::endl;
 	}
 
@@ -173,8 +173,6 @@ void Launcher::launch()
 	if (simu_params->mpi_rank == 0)
 #endif
 		this->print_header();
-
-	std::exit(1);
 
 	try
 	{

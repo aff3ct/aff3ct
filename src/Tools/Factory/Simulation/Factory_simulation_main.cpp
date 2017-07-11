@@ -67,18 +67,17 @@ void Factory_simulation_main::header(Header::params_list& head_sim, Header::para
 {
 	std::unordered_map<std::type_index,std::string> type_names;
 	// define type names
-	type_names[typeid(char       )] = "char ("        + std::to_string(sizeof(char)*8)        + " bits)";
-	type_names[typeid(signed char)] = "signed char (" + std::to_string(sizeof(signed char)*8) + " bits)";
-	type_names[typeid(short      )] = "short ("       + std::to_string(sizeof(short)*8)       + " bits)";
-	type_names[typeid(int        )] = "int ("         + std::to_string(sizeof(int)*8)         + " bits)";
-	type_names[typeid(long long  )] = "long long ("   + std::to_string(sizeof(long long)*8)   + " bits)";
-	type_names[typeid(float      )] = "float ("       + std::to_string(sizeof(float)*8)       + " bits)";
-	type_names[typeid(double     )] = "double ("      + std::to_string(sizeof(double)*8)      + " bits)";
+	type_names[typeid(int8_t )] = "int8";
+	type_names[typeid(int16_t)] = "int16";
+	type_names[typeid(int32_t)] = "int32";
+	type_names[typeid(int64_t)] = "int64";
+	type_names[typeid(float  )] = "float32";
+	type_names[typeid(double )] = "float64";
 
 	// ---------------------------------------------------------------------------------------------------- simulation
 	head_sim.push_back(std::make_pair("Type", params.sim_type));
 
-	std::type_index id_B = typeid(char), id_R = typeid(char), id_Q = typeid(char);
+	std::type_index id_B = typeid(int32_t), id_R = typeid(float), id_Q = typeid(float);
 #ifdef MULTI_PREC
 	switch (params.sim_prec)
 	{

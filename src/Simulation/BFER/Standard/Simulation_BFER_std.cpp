@@ -133,8 +133,12 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		auto pct = *chain_params.pct;
-		pct.type = "NO";
+		typename Factory_puncturer<B,Q>::puncturer_parameters pct;
+		pct.K        = simu_params.K;
+		pct.N        = simu_params.N;
+		pct.N_pct    = simu_params.N;
+		pct.n_frames = simu_params.inter_frame_level;
+
 		return Factory_puncturer<B,Q>::build(pct);
 	}
 }

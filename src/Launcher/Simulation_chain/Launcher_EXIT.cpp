@@ -24,9 +24,6 @@ Launcher_EXIT<B,R>
 {
 	if (codec != nullptr)
 		delete codec;
-
-	if (m_chain_params != nullptr)
-		delete m_chain_params;
 }
 
 template <typename B, typename R>

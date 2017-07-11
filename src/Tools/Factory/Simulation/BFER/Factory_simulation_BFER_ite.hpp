@@ -9,6 +9,7 @@
 #include "Tools/Factory/Factory_CRC.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
+#include "Tools/Factory/Factory_puncturer.hpp"
 
 namespace aff3ct
 {
@@ -42,9 +43,10 @@ struct Factory_simulation_BFER_ite : Factory_simulation_BFER
 			this->sim = nullptr;
 		}
 
-		typename Factory_CRC           <B    >::CRC_parameters         crc;
-		typename Factory_quantizer     <  R,Q>::quantizer_parameters   qua;
-		typename Factory_interleaver   <int  >::interleaver_parameters itl;
+		typename Factory_CRC           <B    >::CRC_parameters          crc;
+		typename Factory_quantizer     <  R,Q>::quantizer_parameters    qua;
+		typename Factory_interleaver   <int  >::interleaver_parameters  itl;
+		typename Factory_puncturer     <B,  Q>::puncturer_parameters   *pct = nullptr;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
