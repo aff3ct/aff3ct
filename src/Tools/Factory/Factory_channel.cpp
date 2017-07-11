@@ -19,7 +19,7 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename R>	
+template <typename R>
 Channel<R>* Factory_channel<R>
 ::build(const channel_parameters &params,
         const int                 seed,

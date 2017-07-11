@@ -146,18 +146,34 @@ template <typename B,typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::filter(const R *Y_N1, R *Y_N2)
 {
-	if (disable_sig2)
-		std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
-	else
-		for (auto i = 0; i < this->N_fil * this->n_frames; i++)
-			Y_N2[i] = Y_N1[i] * two_on_square_sigma;
+	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::demodulate(const Q *Y_N1, Q *Y_N2)
 {
-	std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
+	if (disable_sig2)
+		std::copy(Y_N1, Y_N1 + this->N * this->n_frames, Y_N2);
+	else
+	{
+		if (typeid(R) != typeid(Q))
+			throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+
+		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
+			throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+
+		auto size = (unsigned int)(this->N * this->n_frames);
+		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
+		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
+		{
+			auto y = mipp::Reg<Q>(&Y_N1[i]) * (Q)two_on_square_sigma;
+			y.store(&Y_N2[i]);
+		}
+		for (unsigned i = vec_loop_size; i < size; i++)
+			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
+	}
+
 }
 
 template <typename B, typename R, typename Q>

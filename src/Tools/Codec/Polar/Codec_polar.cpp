@@ -19,7 +19,7 @@ template <typename B, typename Q>
 Codec_polar<B,Q>
 ::Codec_polar(const typename Factory_encoder_common<B  >::encoder_parameters       &enc_params,
               const typename Factory_decoder_polar <B,Q>::decoder_parameters_polar &dec_params,
-              const typename Factory_puncturer_polar<B,Q>::puncturer_parameters     &pct_params,
+              const typename Factory_puncturer_polar<B,Q>::puncturer_parameters    &pct_params,
               const int n_threads)
 : Codec_SISO<B,Q>(enc_params, dec_params), dec_par(dec_params), pct_par(pct_params),
   frozen_bits(dec_params.N),
