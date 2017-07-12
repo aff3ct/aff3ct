@@ -8,7 +8,7 @@
 
 #include "Tools/Factory/Factory_CRC.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
-#include "Tools/Factory/Factory_puncturer.hpp"
+#include "Tools/Factory/Code/Factory_puncturer.hpp"
 
 namespace aff3ct
 {

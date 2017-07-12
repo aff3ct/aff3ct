@@ -13,9 +13,9 @@
 #include "Tools/Factory/Factory_quantizer.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
-#include "Tools/Factory/Factory_puncturer.hpp"
-#include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/Factory_decoder_common.hpp"
+#include "Tools/Factory/Code/Factory_puncturer.hpp"
+#include "Tools/Factory/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Code/Factory_decoder.hpp"
 
 namespace aff3ct
 {
@@ -57,8 +57,8 @@ struct Factory_simulation_EXIT : Factory_simulation
 		Factory_modem          ::parameters  modem;
 		Factory_channel        ::parameters  chn;
 		Factory_puncturer      ::parameters *pct = nullptr;
-		Factory_encoder_common ::parameters *enc = nullptr;
-		Factory_decoder_common ::parameters *dec = nullptr;
+		Factory_encoder        ::parameters *enc = nullptr;
+		Factory_decoder        ::parameters *dec = nullptr;
 		Factory_terminal_EXIT  ::parameters  ter;
 	};
 

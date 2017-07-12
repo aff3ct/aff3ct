@@ -2,11 +2,8 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
-
-#include "Tools/Factory/Polar/Factory_frozenbits_generator.hpp"
-#include "Tools/Factory/Polar/Factory_puncturer_polar.hpp"
-#include "Tools/Factory/Polar/Factory_encoder_polar.hpp"
-#include "Tools/Factory/Polar/Factory_decoder_polar_gen.hpp"
+#include "Tools/Factory/Code/Polar/Factory_frozenbits_generator.hpp"
+#include "Tools/Factory/Code/Polar/Factory_decoder_polar_gen.hpp"
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 
@@ -17,7 +14,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_polar<B,Q>
-::Codec_polar(const Factory_encoder_common ::parameters &enc_params,
+::Codec_polar(const Factory_encoder        ::parameters &enc_params,
               const Factory_decoder_polar  ::parameters &dec_params,
               const Factory_puncturer_polar::parameters &pct_params,
               const int n_threads)
@@ -76,9 +73,7 @@ void Codec_polar<B,Q>
 		}
 	}
 	else
-		Factory_decoder_polar_gen::get_frozen_bits<B>(dec_par.implem,
-		                                              dec_par.N,
-		                                              frozen_bits);
+		Factory_decoder_polar_gen::get_frozen_bits<B>(dec_par.implem, dec_par.N, frozen_bits);
 }
 
 template <typename B, typename Q>

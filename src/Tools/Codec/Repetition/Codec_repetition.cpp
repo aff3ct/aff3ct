@@ -1,6 +1,3 @@
-#include "Tools/Factory/Repetition/Factory_encoder_repetition.hpp"
-#include "Tools/Factory/Repetition/Factory_decoder_repetition.hpp"
-
 #include "Codec_repetition.hpp"
 
 using namespace aff3ct::module;

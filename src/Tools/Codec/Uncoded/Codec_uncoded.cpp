@@ -12,8 +12,8 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_uncoded<B,Q>
-::Codec_uncoded(const typename Factory_encoder_common::parameters &enc_params,
-                const typename Factory_decoder_NO    ::parameters &dec_params)
+::Codec_uncoded(const typename Factory_encoder   ::parameters &enc_params,
+                const typename Factory_decoder_NO::parameters &dec_params)
 : Codec_SISO<B,Q>(enc_params, dec_params)
 {
 	if (enc_params.K != enc_params.N)

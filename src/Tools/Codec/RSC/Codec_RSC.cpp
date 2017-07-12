@@ -1,8 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/RSC/Factory_encoder_RSC.hpp"
-#include "Tools/Factory/RSC/Factory_decoder_RSC.hpp"
 
 #include "Codec_RSC.hpp"
 

@@ -7,7 +7,7 @@
 
 #include "Tools/Factory/Simulation/EXIT/Factory_simulation_EXIT.hpp"
 #include "Tools/Factory/Factory_source.hpp"
-#include "Tools/Factory/Factory_encoder_common.hpp"
+#include "Tools/Factory/Code/Factory_encoder.hpp"
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Display/bash_tools.h"
@@ -423,7 +423,7 @@ Encoder<B>* Simulation_EXIT<B,R>
 	}
 	catch (std::exception const&)
 	{
-		return Factory_encoder_common::build<B>(*params.enc, params.sim->seed);
+		return Factory_encoder::build<B>(*params.enc, params.sim->seed);
 	}
 }
 

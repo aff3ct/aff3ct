@@ -12,8 +12,8 @@
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_monitor.hpp"
 #include "Tools/Factory/Factory_terminal.hpp"
-#include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/Factory_decoder_common.hpp"
+#include "Tools/Factory/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Code/Factory_decoder.hpp"
 
 namespace aff3ct
 {
@@ -43,8 +43,8 @@ struct Factory_simulation_BFER : Factory_simulation
 		Factory_source         ::parameters  src;
 		Factory_modem          ::parameters  mdm;
 		Factory_channel        ::parameters  chn;
-		Factory_encoder_common ::parameters *enc = nullptr;
-		Factory_decoder_common ::parameters *dec = nullptr;
+		Factory_encoder        ::parameters *enc = nullptr;
+		Factory_decoder        ::parameters *dec = nullptr;
 		Factory_monitor        ::parameters  mnt;
 		Factory_terminal_BFER  ::parameters  ter;
 	};

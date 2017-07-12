@@ -6,8 +6,8 @@
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
-#include "Tools/Factory/LDPC/Factory_encoder_LDPC.hpp"
-#include "Tools/Factory/LDPC/Factory_decoder_LDPC.hpp"
+#include "Tools/Factory/Code/LDPC/Factory_encoder_LDPC.hpp"
+#include "Tools/Factory/Code/LDPC/Factory_decoder_LDPC.hpp"
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
@@ -30,8 +30,8 @@ protected:
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Codec_LDPC(const Factory_encoder_common::parameters &enc_params,
-	           const Factory_decoder_LDPC  ::parameters &dec_params,
+	Codec_LDPC(const Factory_encoder     ::parameters &enc_params,
+	           const Factory_decoder_LDPC::parameters &dec_params,
 	           const int n_threads);
 	virtual ~Codec_LDPC();
 

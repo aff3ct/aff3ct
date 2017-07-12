@@ -1,8 +1,10 @@
 #ifndef CODEC_RA_HPP_
 #define CODEC_RA_HPP_
 
+#include "Tools/Factory/Code/RA/Factory_encoder_RA.hpp"
+#include "Tools/Factory/Code/RA/Factory_decoder_RA.hpp"
+
 #include "../Codec.hpp"
-#include "Tools/Factory/RA/Factory_decoder_RA.hpp"
 
 namespace aff3ct
 {
@@ -15,8 +17,8 @@ protected :
 	const Factory_decoder_RA::parameters& dec_par;
 
 public:
-	Codec_RA(const typename Factory_encoder_common::parameters &enc_params,
-	         const typename Factory_decoder_RA    ::parameters &dec_params);
+	Codec_RA(const Factory_encoder   ::parameters &enc_params,
+	         const Factory_decoder_RA::parameters &dec_params);
 	virtual ~Codec_RA();
 
 	module::Interleaver<int>* build_interleaver(const int tid = 0, const int seed = 0);

@@ -2,8 +2,9 @@
 #define CODEC_UNCODED_HPP_
 
 #include "../Codec_SISO.hpp"
-#include "Tools/Factory/Factory_encoder_common.hpp"
-#include "Tools/Factory/NO/Factory_decoder_NO.hpp"
+
+#include "Tools/Factory/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Code/NO/Factory_decoder_NO.hpp"
 
 namespace aff3ct
 {
@@ -13,8 +14,8 @@ template <typename B = int, typename Q = float>
 class Codec_uncoded : public Codec_SISO<B,Q>
 {
 public:
-	Codec_uncoded(const typename Factory_encoder_common::parameters &enc_params,
-	              const typename Factory_decoder_NO    ::parameters &dec_params);
+	Codec_uncoded(const typename Factory_encoder   ::parameters &enc_params,
+	              const typename Factory_decoder_NO::parameters &dec_params);
 	virtual ~Codec_uncoded();
 
 	module::Encoder<B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);

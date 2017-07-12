@@ -6,8 +6,9 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "Module/Decoder/Decoder_SISO.hpp"
-#include "Tools/Factory/Polar/Factory_decoder_polar.hpp"
-#include "Tools/Factory/Polar/Factory_puncturer_polar.hpp"
+#include "Tools/Factory/Code/Polar/Factory_encoder_polar.hpp"
+#include "Tools/Factory/Code/Polar/Factory_decoder_polar.hpp"
+#include "Tools/Factory/Code/Polar/Factory_puncturer_polar.hpp"
 
 #include "../Codec_SISO.hpp"
 
@@ -29,7 +30,7 @@ protected:
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Codec_polar(const Factory_encoder_common ::parameters &enc_params,
+	Codec_polar(const Factory_encoder        ::parameters &enc_params,
 	            const Factory_decoder_polar  ::parameters &dec_params,
 	            const Factory_puncturer_polar::parameters &pct_params,
 	            const int n_threads);

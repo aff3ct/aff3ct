@@ -1,7 +1,5 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
-#include "Tools/Factory/RA/Factory_encoder_RA.hpp"
-#include "Tools/Factory/RA/Factory_decoder_RA.hpp"
 
 #include "Codec_RA.hpp"
 
@@ -10,8 +8,8 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_RA<B,Q>
-::Codec_RA(const Factory_encoder_common::parameters &enc_params,
-           const Factory_decoder_RA    ::parameters &dec_params)
+::Codec_RA(const Factory_encoder   ::parameters &enc_params,
+           const Factory_decoder_RA::parameters &dec_params)
 : Codec<B,Q>(enc_params, dec_params), dec_par(dec_params)
 {
 }

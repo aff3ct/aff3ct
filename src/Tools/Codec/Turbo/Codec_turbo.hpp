@@ -10,8 +10,11 @@
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/SISO.hpp"
 
-#include "Tools/Factory/Turbo/Factory_encoder_turbo.hpp"
-#include "Tools/Factory/Turbo/Factory_decoder_turbo.hpp"
+#include "Tools/Factory/Code/RSC/Factory_encoder_RSC.hpp"
+#include "Tools/Factory/Code/RSC/Factory_decoder_RSC.hpp"
+#include "Tools/Factory/Code/Turbo/Factory_encoder_turbo.hpp"
+#include "Tools/Factory/Code/Turbo/Factory_decoder_turbo.hpp"
+#include "Tools/Factory/Code/Turbo/Factory_puncturer_turbo.hpp"
 
 #include "../Codec.hpp"
 

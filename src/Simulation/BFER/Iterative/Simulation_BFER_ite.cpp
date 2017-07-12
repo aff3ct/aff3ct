@@ -1,7 +1,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Factory/Factory_source.hpp"
 #include "Tools/Factory/Factory_CRC.hpp"
-#include "Tools/Factory/Factory_encoder_common.hpp"
+#include "Tools/Factory/Code/Factory_encoder.hpp"
 #include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Factory/Factory_channel.hpp"
 #include "Tools/Factory/Factory_quantizer.hpp"
@@ -125,7 +125,7 @@ Encoder<B>* Simulation_BFER_ite<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		return Factory_encoder_common::build<B>(*chain_params.enc, seed);
+		return Factory_encoder::build<B>(*chain_params.enc, seed);
 	}
 }
 
