@@ -71,7 +71,7 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H>
 	for (auto i = 0; i < this->N; i++)
 	{
 		if (!this->frozen_bits[i]) // if i is not a frozen bit
-			V_N[k++] = (H(this->feedback_graph[this->layers_count -1][i]) == 0) ? (B)0 : (B)1;
+			V_N[k++] = (H(this->feedback_graph[this->layers_count -1][i] + this->soft_graph[this->layers_count -1][i]) == 0) ? (B)0 : (B)1;
 	}
 }
 }
