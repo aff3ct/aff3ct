@@ -23,14 +23,13 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename Q, typename QD>
-template <proto_max<Q> MAX1, proto_max<QD> MAX2>
-Decoder_SISO<B,Q>* Factory_decoder_RSC<B,Q,QD>
-::_build_seq(const decoder_parameters_RSC                                  &dec_par,
-             const typename Factory_encoder_RSC<B>::encoder_parameters_RSC &enc_par,
-             const std::vector<std::vector<int>>                           &trellis,
-                   std::ostream                                            &stream,
-             const int                                                      n_ite)
+template <typename B, typename Q, typename QD, proto_max<Q> MAX1, proto_max<QD> MAX2>
+Decoder_SISO<B,Q>* Factory_decoder_RSC
+::_build_seq(const parameters                      &dec_par,
+             const Factory_encoder_RSC::parameters &enc_par,
+             const std::vector<std::vector<int>>   &trellis,
+                   std::ostream                    &stream,
+             const int                              n_ite)
 {
 	if (dec_par.type == "BCJR")
 	{
@@ -45,12 +44,11 @@ Decoder_SISO<B,Q>* Factory_decoder_RSC<B,Q,QD>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q, typename QD>
-template <proto_max_i<Q> MAX>
-Decoder_SISO<B,Q>* Factory_decoder_RSC<B,Q,QD>
-::_build_simd(const decoder_parameters_RSC                                  &dec_par,
-              const typename Factory_encoder_RSC<B>::encoder_parameters_RSC &enc_par,
-              const std::vector<std::vector<int>>                           &trellis)
+template <typename B, typename Q, typename QD, proto_max_i<Q> MAX>
+Decoder_SISO<B,Q>* Factory_decoder_RSC
+::_build_simd(const parameters                      &dec_par,
+              const Factory_encoder_RSC::parameters &enc_par,
+              const std::vector<std::vector<int>>   &trellis)
 {
 	if (dec_par.type == "BCJR" && dec_par.simd_strategy == "INTER")
 	{
@@ -97,31 +95,30 @@ Decoder_SISO<B,Q>* Factory_decoder_RSC<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SISO<B,Q>* Factory_decoder_RSC<B,Q,QD>
-::build(const decoder_parameters_RSC                                  &dec_par,
-        const typename Factory_encoder_RSC<B>::encoder_parameters_RSC &enc_par,
-        const std::vector<std::vector<int>>                           &trellis,
-              std::ostream                                            &stream,
-        const int                                                      n_ite)
+Decoder_SISO<B,Q>* Factory_decoder_RSC
+::build(const parameters                      &dec_par,
+        const Factory_encoder_RSC::parameters &enc_par,
+        const std::vector<std::vector<int>>   &trellis,
+              std::ostream                    &stream,
+        const int                              n_ite)
 {
 	if (dec_par.simd_strategy.empty())
 	{
-		     if (dec_par.max == "MAX" ) return _build_seq<max       <Q>,max       <QD>>(dec_par, enc_par, trellis, stream, n_ite);
-		else if (dec_par.max == "MAXS") return _build_seq<max_star  <Q>,max_star  <QD>>(dec_par, enc_par, trellis, stream, n_ite);
-		else if (dec_par.max == "MAXL") return _build_seq<max_linear<Q>,max_linear<QD>>(dec_par, enc_par, trellis, stream, n_ite);
+		     if (dec_par.max == "MAX" ) return _build_seq<B,Q,QD,max       <Q>,max       <QD>>(dec_par, enc_par, trellis, stream, n_ite);
+		else if (dec_par.max == "MAXS") return _build_seq<B,Q,QD,max_star  <Q>,max_star  <QD>>(dec_par, enc_par, trellis, stream, n_ite);
+		else if (dec_par.max == "MAXL") return _build_seq<B,Q,QD,max_linear<Q>,max_linear<QD>>(dec_par, enc_par, trellis, stream, n_ite);
 	}
 	else
 	{
-		     if (dec_par.max == "MAX" ) return _build_simd<max_i       <Q>>(dec_par, enc_par, trellis);
-		else if (dec_par.max == "MAXS") return _build_simd<max_star_i  <Q>>(dec_par, enc_par, trellis);
-		else if (dec_par.max == "MAXL") return _build_simd<max_linear_i<Q>>(dec_par, enc_par, trellis);
+		     if (dec_par.max == "MAX" ) return _build_simd<B,Q,QD,max_i       <Q>>(dec_par, enc_par, trellis);
+		else if (dec_par.max == "MAXS") return _build_simd<B,Q,QD,max_star_i  <Q>>(dec_par, enc_par, trellis);
+		else if (dec_par.max == "MAXL") return _build_simd<B,Q,QD,max_linear_i<Q>>(dec_par, enc_par, trellis);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q, typename QD>
-void Factory_decoder_RSC<B,Q,QD>
+void Factory_decoder_RSC
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder_common::build_args(req_args, opt_args);
@@ -142,9 +139,8 @@ void Factory_decoder_RSC<B,Q,QD>
 		 "MAX, MAXL, MAXS"};
 }
 
-template <typename B, typename Q, typename QD>
-void Factory_decoder_RSC<B,Q,QD>
-::store_args(const Arguments_reader& ar, decoder_parameters_RSC &params,
+void Factory_decoder_RSC
+::store_args(const Arguments_reader& ar, parameters &params,
              const int K, const int N, const int n_frames, const bool activate_simd)
 {
 	params.type   = "BCJR";
@@ -156,22 +152,20 @@ void Factory_decoder_RSC<B,Q,QD>
 	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
 	if(ar.exist_arg({"dec-max" })) params.max           = ar.get_arg({"dec-max" });
 
-	if (params.simd_strategy == "INTER" && activate_simd)
-		params.n_frames = mipp::nElReg<Q>();
-	else if (params.simd_strategy == "INTRA" && activate_simd)
-		params.n_frames = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
+//	if (params.simd_strategy == "INTER" && activate_simd)
+//		params.n_frames = mipp::nElReg<Q>();
+//	else if (params.simd_strategy == "INTRA" && activate_simd)
+//		params.n_frames = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
 }
 
-template <typename B, typename Q, typename QD>
-void Factory_decoder_RSC<B,Q,QD>
+void Factory_decoder_RSC
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder_common::group_args(ar);
 }
 
-template <typename B, typename Q, typename QD>
-void Factory_decoder_RSC<B,Q,QD>
-::header(Header::params_list& head_dec, const decoder_parameters_RSC& params)
+void Factory_decoder_RSC
+::header(Header::params_list& head_dec, const parameters& params)
 {
 	Factory_decoder_common::header(head_dec, params);
 
@@ -182,14 +176,14 @@ void Factory_decoder_RSC<B,Q,QD>
 	head_dec.push_back(std::make_pair(std::string("Max type"), params.max));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_RSC<B_8,Q_8,QD_8>;
-template struct aff3ct::tools::Factory_decoder_RSC<B_16,Q_16,QD_16>;
-template struct aff3ct::tools::Factory_decoder_RSC<B_32,Q_32,QD_32>;
-template struct aff3ct::tools::Factory_decoder_RSC<B_64,Q_64,QD_64>;
+template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_RSC::build<B_8 ,Q_8 ,QD_8 >(const aff3ct::tools::Factory_decoder_RSC::parameters&, const aff3ct::tools::Factory_encoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::tools::Factory_decoder_RSC::build<B_16,Q_16,QD_16>(const aff3ct::tools::Factory_decoder_RSC::parameters&, const aff3ct::tools::Factory_encoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::tools::Factory_decoder_RSC::build<B_32,Q_32,QD_32>(const aff3ct::tools::Factory_decoder_RSC::parameters&, const aff3ct::tools::Factory_encoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::tools::Factory_decoder_RSC::build<B_64,Q_64,QD_64>(const aff3ct::tools::Factory_decoder_RSC::parameters&, const aff3ct::tools::Factory_encoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
 #else
-template struct aff3ct::tools::Factory_decoder_RSC<B,Q,QD>;
+template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::tools::Factory_decoder_RSC::build<B,Q,QD>(const aff3ct::tools::Factory_decoder_RSC::parameters&, const aff3ct::tools::Factory_encoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
 #endif
 // ==================================================================================== explicit template instantiation

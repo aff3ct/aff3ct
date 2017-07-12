@@ -13,10 +13,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
 struct Factory_source : public Factory
 {
-	struct source_parameters
+	struct parameters
 	{
 		std::string type = "RAND";
 		std::string path = "";
@@ -25,13 +24,14 @@ struct Factory_source : public Factory
 		int         n_frames;
 	};
 
-	static module::Source<B>* build(const source_parameters& params, const int seed = 0);
+	template <typename B = int>
+	static module::Source<B>* build(const parameters& params, const int seed = 0);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, source_parameters &params, const int K, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params, const int K, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_src, const source_parameters& params);
+	static void header(Header::params_list& head_src, const parameters& params);
 };
 }
 }

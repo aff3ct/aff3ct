@@ -572,11 +572,9 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename Q>
-template <class API_polar>
-Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
-::_build(const typename Factory_decoder_polar<B,Q>::decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
-        module::CRC<B> *crc)
+template <typename B, typename Q, class API_polar>
+Decoder<B,Q>* Factory_decoder_polar_gen
+::_build(const Factory_decoder_polar::parameters& params, const mipp::vector<B> &frozen_bits, module::CRC<B> *crc)
 {
 	if (params.type == "SC")
 	{
@@ -790,9 +788,9 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
-::build(const typename Factory_decoder_polar<B,Q>::decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
-        const bool sys_encoding, module::CRC<B> *crc)
+Decoder<B,Q>* Factory_decoder_polar_gen
+::build(const Factory_decoder_polar::parameters& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding,
+        module::CRC<B> *crc)
 {
 	if (sys_encoding)
 	{
@@ -817,7 +815,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 				                  <B, Q, f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
 #endif
-				return _build<API_polar>(params, frozen_bits, crc);
+				return _build<B,Q,API_polar>(params, frozen_bits, crc);
 			}
 			else
 			{
@@ -828,7 +826,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 				using API_polar = API_polar_static_inter
 				                  <B, Q, f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-				return _build<API_polar>(params, frozen_bits, crc);
+				return _build<B,Q,API_polar>(params, frozen_bits, crc);
 			}
 		}
 		else if (params.simd_strategy == "INTRA")
@@ -844,7 +842,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-				return _build<API_polar>(params, frozen_bits, crc);
+				return _build<B,Q,API_polar>(params, frozen_bits, crc);
 			}
 			else if (typeid(B) == typeid(short))
 			{
@@ -857,7 +855,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-				return _build<API_polar>(params, frozen_bits, crc);
+				return _build<B,Q,API_polar>(params, frozen_bits, crc);
 			}
 			else if (typeid(B) == typeid(int))
 			{
@@ -870,7 +868,7 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-				return _build<API_polar>(params, frozen_bits, crc);
+				return _build<B,Q,API_polar>(params, frozen_bits, crc);
 			}
 		}
 		else if (params.simd_strategy.empty())
@@ -882,15 +880,15 @@ Decoder<B,Q>* Factory_decoder_polar_gen<B,Q>
 			using API_polar = API_polar_static_seq
 			                  <B, Q, f_LLR<Q>, g_LLR<B,Q>, g0_LLR<Q>, h_LLR<B,Q>, xo_STD<B>>;
 #endif
-			return _build<API_polar>(params, frozen_bits, crc);
+			return _build<B,Q,API_polar>(params, frozen_bits, crc);
 		}
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar_gen<B,Q>
+template <typename B>
+void Factory_decoder_polar_gen
 ::get_frozen_bits(const std::string      implem,
                   const int              N,
                         mipp::vector<B> &frozen_bits)
@@ -1119,45 +1117,49 @@ void Factory_decoder_polar_gen<B,Q>
 		frozen_bits[i] = (B)fb_ptr[i];
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar_gen<B,Q>
+void Factory_decoder_polar_gen
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	Factory_decoder_polar<B,Q>::build_args(req_args, opt_args);
-
+	Factory_decoder_polar::build_args(req_args, opt_args);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar_gen<B,Q>
-::store_args(const Arguments_reader& ar, typename Factory_decoder_polar<B,Q>::decoder_parameters_polar &params,
+void Factory_decoder_polar_gen
+::store_args(const Arguments_reader& ar, Factory_decoder_polar::parameters &params,
              const int K, const int N, const int n_frames)
 {
-	Factory_decoder_polar<B,Q>::store_args(ar, params, K, N, n_frames);
+	Factory_decoder_polar::store_args(ar, params, K, N, n_frames);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar_gen<B,Q>
+void Factory_decoder_polar_gen
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	Factory_decoder_polar<B,Q>::group_args(ar);
+	Factory_decoder_polar::group_args(ar);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar_gen<B,Q>
+void Factory_decoder_polar_gen
 ::header(Header::params_list& head_dec, Header::params_list& head_cde,
-         const typename Factory_decoder_polar<B,Q>::decoder_parameters_polar& params)
+         const Factory_decoder_polar::parameters& params)
 {
-	Factory_decoder_polar<B,Q>::header(head_dec, head_cde, params);
+	Factory_decoder_polar::header(head_dec, head_cde, params);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_polar_gen<B_8,Q_8>;
-template struct aff3ct::tools::Factory_decoder_polar_gen<B_16,Q_16>;
-template struct aff3ct::tools::Factory_decoder_polar_gen<B_32,Q_32>;
-template struct aff3ct::tools::Factory_decoder_polar_gen<B_64,Q_64>;
+template aff3ct::module::Decoder<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_polar_gen::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_polar_gen::parameters&, const mipp::vector<B_8 >&, const bool, module::CRC<B_8 >*);
+template aff3ct::module::Decoder<B_16,Q_16>* aff3ct::tools::Factory_decoder_polar_gen::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_polar_gen::parameters&, const mipp::vector<B_16>&, const bool, module::CRC<B_16>*);
+template aff3ct::module::Decoder<B_32,Q_32>* aff3ct::tools::Factory_decoder_polar_gen::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_polar_gen::parameters&, const mipp::vector<B_32>&, const bool, module::CRC<B_32>*);
+template aff3ct::module::Decoder<B_64,Q_64>* aff3ct::tools::Factory_decoder_polar_gen::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_polar_gen::parameters&, const mipp::vector<B_64>&, const bool, module::CRC<B_64>*);
 #else
-template struct aff3ct::tools::Factory_decoder_polar_gen<B,Q>;
+template aff3ct::module::Decoder<B,Q>* aff3ct::tools::Factory_decoder_polar_gen::build<B,Q>(const aff3ct::tools::Factory_decoder_polar_gen::parameters&, const mipp::vector<B>&, const bool, module::CRC<B>*);
+#endif
+
+#ifdef MULTI_PREC
+template void aff3ct::tools::Factory_decoder_polar_gen::get_frozen_bits<B_8 >(const std::string, const int, mipp::vector<B_8 >&);
+template void aff3ct::tools::Factory_decoder_polar_gen::get_frozen_bits<B_16>(const std::string, const int, mipp::vector<B_16>&);
+template void aff3ct::tools::Factory_decoder_polar_gen::get_frozen_bits<B_32>(const std::string, const int, mipp::vector<B_32>&);
+template void aff3ct::tools::Factory_decoder_polar_gen::get_frozen_bits<B_64>(const std::string, const int, mipp::vector<B_64>&);
+#else
+template void aff3ct::tools::Factory_decoder_polar_gen::get_frozen_bits<B>(const std::string, const int, mipp::vector<B>&);
 #endif
 // ==================================================================================== explicit template instantiation

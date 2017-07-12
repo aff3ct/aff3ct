@@ -14,7 +14,7 @@ void Factory_simulation_BFER_std::build_args(Arguments_reader::arg_map &req_args
 #endif
 }
 
-void Factory_simulation_BFER_std::store_args(const Arguments_reader& ar, simu_parameters_BFER_std &params)
+void Factory_simulation_BFER_std::store_args(const Arguments_reader& ar, parameters &params)
 {
 	// need to be checked before that the default number of threads is set to 1 because debug mode is selected
 #if !defined(STARPU) && !defined(SYSTEMC)
@@ -34,7 +34,7 @@ void Factory_simulation_BFER_std::group_args(Arguments_reader::arg_grp& ar)
 }
 
 void Factory_simulation_BFER_std::header(Header::params_list& head_sim, Header::params_list& head_cde,
-                                         const simu_parameters_BFER_std& params)
+                                         const parameters& params)
 {
 	Factory_simulation_BFER::header(head_sim, head_cde, params);
 }

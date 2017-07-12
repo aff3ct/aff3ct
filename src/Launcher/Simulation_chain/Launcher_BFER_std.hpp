@@ -24,8 +24,8 @@ class Launcher_BFER_std : public Launcher
 protected:
 	tools::Codec<B,Q> *codec = nullptr;
 
-	tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> *m_chain_params = nullptr;
-	tools::Factory_simulation_BFER_std::simu_parameters_BFER_std         *m_sim          = nullptr;
+	tools::Factory_simulation_BFER_std::chain_parameters *m_chain_params = nullptr;
+	tools::Factory_simulation_BFER_std::parameters       *m_sim          = nullptr;
 
 public:
 	Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream = std::cout);

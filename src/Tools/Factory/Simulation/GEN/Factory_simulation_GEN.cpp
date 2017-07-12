@@ -11,7 +11,7 @@ void Factory_simulation_GEN::build_args(Arguments_reader::arg_map &req_args, Arg
 
 }
 
-void Factory_simulation_GEN::store_args(const Arguments_reader& ar, simu_parameters_GEN &params)
+void Factory_simulation_GEN::store_args(const Arguments_reader& ar, parameters &params)
 {
 	Factory_simulation_main::store_args(ar, params);
 
@@ -27,7 +27,7 @@ void Factory_simulation_GEN::group_args(Arguments_reader::arg_grp& ar)
 }
 
 void Factory_simulation_GEN::header(Header::params_list& head_sim, Header::params_list& head_cde,
-                                     const simu_parameters_GEN& params)
+                                     const parameters& params)
 {
 	Factory_simulation_main::header(head_sim, head_cde, params);
 

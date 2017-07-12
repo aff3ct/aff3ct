@@ -15,10 +15,9 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-template <typename B, typename R, typename Q>
-template <proto_max<Q> MAX>
-Modem<B,R,Q>* Factory_modem<B,R,Q>
-::_build(const modem_parameters &params, const float sigma)
+template <typename B, typename R, typename Q, proto_max<Q> MAX>
+Modem<B,R,Q>* Factory_modem
+::_build(const parameters &params, const float sigma)
 {
 	     if (params.type == "BPSK"     ) return new Modem_BPSK     <B,R,Q    >(params.N, sigma,                                                                                                      params.no_sig2, params.n_frames);
 	else if (params.type == "BPSK_FAST") return new Modem_BPSK_fast<B,R,Q    >(params.N, sigma,                                                                                                      params.no_sig2, params.n_frames);
@@ -32,8 +31,8 @@ Modem<B,R,Q>* Factory_modem<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>* Factory_modem<B,R,Q>
-::_build_scma(const modem_parameters &params, const float sigma)
+Modem<B,R,Q>* Factory_modem
+::_build_scma(const parameters &params, const float sigma)
 {
 	     if (params.psi == "PSI0") return new Modem_SCMA <B,R,Q,psi_0<Q>>(params.N, sigma, params.bps, params.no_sig2, params.n_ite, params.n_frames);
 	else if (params.psi == "PSI1") return new Modem_SCMA <B,R,Q,psi_1<Q>>(params.N, sigma, params.bps, params.no_sig2, params.n_ite, params.n_frames);
@@ -44,66 +43,63 @@ Modem<B,R,Q>* Factory_modem<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>* Factory_modem<B,R,Q>
-::build(const modem_parameters &params, const float sigma)
+Modem<B,R,Q>* Factory_modem
+::build(const parameters &params, const float sigma)
 {
 	if (params.type == "SCMA")
 	{
-		return _build_scma(params, sigma);
+		return _build_scma<B,R,Q>(params, sigma);
 	}
 	else
 	{
-		     if (params.max == "MAX"  ) return _build<max          <Q>>(params, sigma);
-		else if (params.max == "MAXL" ) return _build<max_linear   <Q>>(params, sigma);
-		else if (params.max == "MAXS" ) return _build<max_star     <Q>>(params, sigma);
-		else if (params.max == "MAXSS") return _build<max_star_safe<Q>>(params, sigma);
+		     if (params.max == "MAX"  ) return _build<B,R,Q,max          <Q>>(params, sigma);
+		else if (params.max == "MAXL" ) return _build<B,R,Q,max_linear   <Q>>(params, sigma);
+		else if (params.max == "MAXS" ) return _build<B,R,Q,max_star     <Q>>(params, sigma);
+		else if (params.max == "MAXSS") return _build<B,R,Q,max_star_safe<Q>>(params, sigma);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R, typename Q>
-int Factory_modem<B,R,Q>
+int Factory_modem
 ::get_buffer_size_after_modulation(const std::string type,
                                    const int         N,
                                    const int         bps,
                                    const int         upf,
                                    const int         cpm_L)
 {
-	     if (type == "BPSK"     ) return Modem_BPSK     <B,R,Q>::size_mod(N                 );
-	else if (type == "BPSK_FAST") return Modem_BPSK_fast<B,R,Q>::size_mod(N                 );
-	else if (type == "SCMA"     ) return Modem_SCMA     <B,R,Q>::size_mod(N, bps            );
-	else if (type == "PAM"      ) return Modem_PAM      <B,R,Q>::size_mod(N, bps            );
-	else if (type == "QAM"      ) return Modem_QAM      <B,R,Q>::size_mod(N, bps            );
-	else if (type == "PSK"      ) return Modem_PSK      <B,R,Q>::size_mod(N, bps            );
-	else if (type == "USER"     ) return Modem_user     <B,R,Q>::size_mod(N, bps            );
-	else if (type == "CPM"      ) return Modem_CPM      <B,R,Q>::size_mod(N, bps, cpm_L, upf);
+	     if (type == "BPSK"     ) return Modem_BPSK     <>::size_mod(N                 );
+	else if (type == "BPSK_FAST") return Modem_BPSK_fast<>::size_mod(N                 );
+	else if (type == "SCMA"     ) return Modem_SCMA     <>::size_mod(N, bps            );
+	else if (type == "PAM"      ) return Modem_PAM      <>::size_mod(N, bps            );
+	else if (type == "QAM"      ) return Modem_QAM      <>::size_mod(N, bps            );
+	else if (type == "PSK"      ) return Modem_PSK      <>::size_mod(N, bps            );
+	else if (type == "USER"     ) return Modem_user     <>::size_mod(N, bps            );
+	else if (type == "CPM"      ) return Modem_CPM      <>::size_mod(N, bps, cpm_L, upf);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R, typename Q>
-int Factory_modem<B,R,Q>
+int Factory_modem
 ::get_buffer_size_after_filtering(const std::string type,
                                   const int         N,
                                   const int         bps,
                                   const int         cpm_L,
                                   const int         cpm_p)
 {
-	     if (type == "BPSK"     ) return Modem_BPSK     <B,R,Q>::size_fil(N                   );
-	else if (type == "BPSK_FAST") return Modem_BPSK_fast<B,R,Q>::size_fil(N                   );
-	else if (type == "SCMA"     ) return Modem_SCMA     <B,R,Q>::size_fil(N, bps              );
-	else if (type == "PAM"      ) return Modem_PAM      <B,R,Q>::size_fil(N, bps              );
-	else if (type == "QAM"      ) return Modem_QAM      <B,R,Q>::size_fil(N, bps              );
-	else if (type == "PSK"      ) return Modem_PSK      <B,R,Q>::size_fil(N, bps              );
-	else if (type == "USER"     ) return Modem_user     <B,R,Q>::size_fil(N, bps              );
-	else if (type == "CPM"      ) return Modem_CPM      <B,R,Q>::size_fil(N, bps, cpm_L, cpm_p);
+	     if (type == "BPSK"     ) return Modem_BPSK     <>::size_fil(N                   );
+	else if (type == "BPSK_FAST") return Modem_BPSK_fast<>::size_fil(N                   );
+	else if (type == "SCMA"     ) return Modem_SCMA     <>::size_fil(N, bps              );
+	else if (type == "PAM"      ) return Modem_PAM      <>::size_fil(N, bps              );
+	else if (type == "QAM"      ) return Modem_QAM      <>::size_fil(N, bps              );
+	else if (type == "PSK"      ) return Modem_PSK      <>::size_fil(N, bps              );
+	else if (type == "USER"     ) return Modem_user     <>::size_fil(N, bps              );
+	else if (type == "CPM"      ) return Modem_CPM      <>::size_fil(N, bps, cpm_L, cpm_p);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R, typename Q>
-void Factory_modem<B,R,Q>
+void Factory_modem
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
@@ -172,9 +168,8 @@ void Factory_modem<B,R,Q>
 		 "select the number of iteration in the demodulator."};
 }
 
-template <typename B, typename R, typename Q>
-void Factory_modem<B,R,Q>
-::store_args(const Arguments_reader& ar, modem_parameters &params, const int N, const int n_frames)
+void Factory_modem
+::store_args(const Arguments_reader& ar, parameters &params, const int N, const int n_frames)
 {
 	params.N        = N;
 	params.n_frames = n_frames;
@@ -247,17 +242,15 @@ void Factory_modem<B,R,Q>
 	if(ar.exist_arg({"dmod-psi"    })) params.psi     = ar.get_arg    ({"dmod-psi"});
 }
 
-template <typename B, typename R, typename Q>
-void Factory_modem<B,R,Q>
+void Factory_modem
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	ar.push_back({"mod",  "Modulator parameter(s)"  });
 	ar.push_back({"dmod", "Demodulator parameter(s)"});
 }
 
-template <typename B, typename R, typename Q>
-void Factory_modem<B,R,Q>
-::header(Header::params_list& head_mod, Header::params_list& head_demod, const modem_parameters& params)
+void Factory_modem
+::header(Header::params_list& head_mod, Header::params_list& head_demod, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
 	head_mod.push_back(std::make_pair("Type", params.type));
@@ -296,19 +289,19 @@ void Factory_modem<B,R,Q>
 	}
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_modem<B_8,R_8,R_8>;
-template struct aff3ct::tools::Factory_modem<B_8,R_8,Q_8>;
-template struct aff3ct::tools::Factory_modem<B_16,R_16,R_16>;
-template struct aff3ct::tools::Factory_modem<B_16,R_16,Q_16>;
-template struct aff3ct::tools::Factory_modem<B_32,R_32,R_32>;
-template struct aff3ct::tools::Factory_modem<B_64,R_64,R_64>;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::tools::Factory_modem::build<B_8 ,R_8 ,Q_8 >(const aff3ct::tools::Factory_modem::parameters&, const float);
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::tools::Factory_modem::build<B_8 ,R_8 ,R_8 >(const aff3ct::tools::Factory_modem::parameters&, const float);
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::tools::Factory_modem::build<B_16,R_16,Q_16>(const aff3ct::tools::Factory_modem::parameters&, const float);
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::tools::Factory_modem::build<B_16,R_16,R_16>(const aff3ct::tools::Factory_modem::parameters&, const float);
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::tools::Factory_modem::build<B_32,R_32,Q_32>(const aff3ct::tools::Factory_modem::parameters&, const float);
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::tools::Factory_modem::build<B_64,R_64,Q_64>(const aff3ct::tools::Factory_modem::parameters&, const float);
 #else
-template struct aff3ct::tools::Factory_modem<B,R,Q>;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::tools::Factory_modem::build<B,R,Q>(const aff3ct::tools::Factory_modem::parameters&, const float);
 #if !defined(PREC_32_BIT) && !defined(PREC_64_BIT)
-template struct aff3ct::tools::Factory_modem<B,R,R>;
+template aff3ct::module::Modem<B,R,R>* aff3ct::tools::Factory_modem::build<B,R,R>(const aff3ct::tools::Factory_modem::parameters&, const float);
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

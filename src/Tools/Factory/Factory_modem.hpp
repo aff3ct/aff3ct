@@ -16,10 +16,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename R = float, typename Q = R>
 struct Factory_modem : public Factory
 {
-	struct modem_parameters
+	struct parameters
 	{
 		int         N;
 		int         n_frames;
@@ -48,7 +47,8 @@ struct Factory_modem : public Factory
 	};
 
 
-	static module::Modem<B,R,Q>* build(const modem_parameters &params, const float sigma);
+	template <typename B = int, typename R = float, typename Q = R>
+	static module::Modem<B,R,Q>* build(const parameters &params, const float sigma);
 
 	static int get_buffer_size_after_modulation(const std::string type,
 	                                            const int         N,
@@ -63,16 +63,17 @@ struct Factory_modem : public Factory
 	                                           const int         cpm_p = 2);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, modem_parameters &params, const int N, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_mod, Header::params_list& head_demod, const modem_parameters& params);
+	static void header(Header::params_list& head_mod, Header::params_list& head_demod, const parameters& params);
 
 private:
-	template <proto_max<Q> MAX>
-	static module::Modem<B,R,Q>* _build(const modem_parameters &params, const float sigma);
+	template <typename B = int, typename R = float, typename Q = R, proto_max<Q> MAX>
+	static module::Modem<B,R,Q>* _build(const parameters &params, const float sigma);
 
-	static module::Modem<B,R,Q>* _build_scma(const modem_parameters &params, const float sigma);
+	template <typename B = int, typename R = float, typename Q = R>
+	static module::Modem<B,R,Q>* _build_scma(const parameters &params, const float sigma);
 };
 }
 }

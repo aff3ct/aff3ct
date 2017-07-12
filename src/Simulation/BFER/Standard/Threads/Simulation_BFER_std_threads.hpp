@@ -30,14 +30,14 @@ protected:
 	std::vector<mipp::vector<R>> H_N;  // code gain for Rayleigh channels
 	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (after the channel noise)
 	std::vector<mipp::vector<R>> Y_N2; // noisy codeword (after the filtering)
-	std::vector<mipp::vector<Q>> Y_N3; // noisy codeword (after quantization)
+	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after quantization)
 	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after the demodulation)
 	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
 	std::vector<mipp::vector<B>> V_K1; // decoded bits + CRC bits
 	std::vector<mipp::vector<B>> V_K2; // decoded bits
 
 public:
-	Simulation_BFER_std_threads(const typename tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> &chain_params, tools::Codec<B,Q> &codec);
+	Simulation_BFER_std_threads(const tools::Factory_simulation_BFER_std::chain_parameters &chain_params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER_std_threads();
 
 protected:

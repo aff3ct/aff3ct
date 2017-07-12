@@ -13,9 +13,9 @@ template <class cLauncher, typename B = int, typename R = float, typename Q = R>
 class Launcher_polar : public cLauncher
 {
 protected:
-	typename tools::Factory_encoder_polar  <B  >::encoder_parameters       *m_enc = nullptr;
-	typename tools::Factory_puncturer_polar<B,Q>::puncturer_parameters     *m_pct = nullptr;
-	typename tools::Factory_decoder_polar  <B,Q>::decoder_parameters_polar *m_dec = nullptr;
+	tools::Factory_encoder_polar  ::parameters *m_enc = nullptr;
+	tools::Factory_puncturer_polar::parameters *m_pct = nullptr;
+	tools::Factory_decoder_polar  ::parameters *m_dec = nullptr;
 
 public:
 	Launcher_polar(const int argc, const char **argv, std::ostream &stream = std::cout);

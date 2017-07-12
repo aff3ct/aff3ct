@@ -15,7 +15,7 @@ void Factory_terminal::build_args(Arguments_reader::arg_map &req_args, Arguments
 		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
 }
 
-void Factory_terminal::store_args(const Arguments_reader& ar, terminal_parameters &params)
+void Factory_terminal::store_args(const Arguments_reader& ar, parameters &params)
 {
 	// ------------------------------------------------------------------------------------------------------ terminal
 	if(ar.exist_arg({"term-no"  })) params.disabled  = true;
@@ -27,7 +27,7 @@ void Factory_terminal::group_args(Arguments_reader::arg_grp& ar)
 	ar.push_back({"term", "Terminal parameter(s)"});
 }
 
-void Factory_terminal::header(Header::params_list& head_ter, const terminal_parameters& params)
+void Factory_terminal::header(Header::params_list& head_ter, const parameters& params)
 {
 
 }
@@ -46,7 +46,7 @@ void Factory_terminal_BFER::build_args(Arguments_reader::arg_map &req_args, Argu
 		 "STD, LEGACY"};
 }
 
-void Factory_terminal_BFER::store_args(const Arguments_reader& ar, terminal_parameters_BFER &params)
+void Factory_terminal_BFER::store_args(const Arguments_reader& ar, parameters &params)
 {
 	Factory_terminal::store_args(ar, params);
 
@@ -59,7 +59,7 @@ void Factory_terminal_BFER::group_args(Arguments_reader::arg_grp& ar)
 	Factory_terminal::group_args(ar);
 }
 
-void Factory_terminal_BFER::header(Header::params_list& head_ter, const terminal_parameters_BFER& params)
+void Factory_terminal_BFER::header(Header::params_list& head_ter, const parameters& params)
 {
 	Factory_terminal::header(head_ter, params);
 }
@@ -72,7 +72,7 @@ void Factory_terminal_EXIT::build_args(Arguments_reader::arg_map &req_args, Argu
 	Factory_terminal::build_args(req_args, opt_args);
 }
 
-void Factory_terminal_EXIT::store_args(const Arguments_reader& ar, terminal_parameters_EXIT &params)
+void Factory_terminal_EXIT::store_args(const Arguments_reader& ar, parameters &params)
 {
 	Factory_terminal::store_args(ar, params);
 }
@@ -82,7 +82,7 @@ void Factory_terminal_EXIT::group_args(Arguments_reader::arg_grp& ar)
 	Factory_terminal::group_args(ar);
 }
 
-void Factory_terminal_EXIT::header(Header::params_list& head_ter, const terminal_parameters_EXIT& params)
+void Factory_terminal_EXIT::header(Header::params_list& head_ter, const parameters& params)
 {
 	Factory_terminal::header(head_ter, params);
 }

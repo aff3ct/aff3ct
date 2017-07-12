@@ -39,7 +39,7 @@ void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Ar
 		 "print informations about the version of the code."};
 }
 
-void Factory_simulation_main::store_args(const Arguments_reader& ar, simu_parameters_main &params)
+void Factory_simulation_main::store_args(const Arguments_reader& ar, parameters &params)
 {
 	// ---------------------------------------------------------------------------------------------------- simulation
 	if(ar.exist_arg({"sim-type"})) params.sim_type = ar.get_arg({"sim-type"});
@@ -63,7 +63,7 @@ void Factory_simulation_main::group_args(Arguments_reader::arg_grp& ar)
 }
 
 void Factory_simulation_main::header(Header::params_list& head_sim, Header::params_list& head_cde,
-                                     const simu_parameters_main& params)
+                                     const parameters& params)
 {
 	std::unordered_map<std::type_index,std::string> type_names;
 	// define type names

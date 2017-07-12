@@ -11,9 +11,9 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 Launcher_BFER_std<B,R,Q>
 ::Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q>())
+: Launcher(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_std::chain_parameters())
 {
-	m_sim = dynamic_cast<Factory_simulation_BFER_std::simu_parameters_BFER_std*>(m_chain_params->sim);
+	m_sim = dynamic_cast<Factory_simulation_BFER_std::parameters*>(m_chain_params->sim);
 	this->chain_params = m_chain_params;
 	this->simu_params  = m_chain_params->sim;
 }
@@ -33,19 +33,12 @@ void Launcher_BFER_std<B,R,Q>
 	Launcher::build_args();
 
 	Factory_simulation_BFER_std::build_args(this->req_args, this->opt_args);
-
-	Factory_source<B>          ::build_args(this->req_args, this->opt_args);
-
-	Factory_CRC<B>             ::build_args(this->req_args, this->opt_args);
-
-	Factory_modem<B,R,Q>       ::build_args(this->req_args, this->opt_args);
-
-	Factory_channel<R>         ::build_args(this->req_args, this->opt_args);
-
-	Factory_quantizer<R,Q>     ::build_args(this->req_args, this->opt_args);
-
-	Factory_monitor<B>         ::build_args(this->req_args, this->opt_args);
-
+	Factory_source             ::build_args(this->req_args, this->opt_args);
+	Factory_CRC                ::build_args(this->req_args, this->opt_args);
+	Factory_modem              ::build_args(this->req_args, this->opt_args);
+	Factory_channel            ::build_args(this->req_args, this->opt_args);
+	Factory_quantizer          ::build_args(this->req_args, this->opt_args);
+	Factory_monitor            ::build_args(this->req_args, this->opt_args);
 	Factory_terminal_BFER      ::build_args(this->req_args, this->opt_args);
 }
 
@@ -56,22 +49,20 @@ void Launcher_BFER_std<B,R,Q>
 	Launcher::store_args();
 
 	Factory_simulation_BFER_std::store_args(this->ar, *m_sim);
-
-	Factory_source<B>          ::store_args(this->ar, m_chain_params->src,   m_sim->K,           m_sim->inter_frame_level);
-
-	Factory_CRC<B>             ::store_args(this->ar, m_chain_params->crc,   m_sim->K, m_sim->N, m_sim->inter_frame_level);
-
-	Factory_modem<B,R,Q>       ::store_args(this->ar, m_chain_params->modem,           m_sim->N, m_sim->inter_frame_level);
+	Factory_source             ::store_args(this->ar, m_chain_params->src,   m_sim->K,           m_sim->inter_frame_level);
+	Factory_CRC                ::store_args(this->ar, m_chain_params->crc,   m_sim->K, m_sim->N, m_sim->inter_frame_level);
+	Factory_modem              ::store_args(this->ar, m_chain_params->modem,           m_sim->N, m_sim->inter_frame_level);
 
 	bool complex   = m_chain_params->modem.complex;
 	bool add_users = (m_chain_params->modem.type == "SCMA");
-	Factory_channel<R>         ::store_args(this->ar, m_chain_params->chn,   m_sim->N, complex, add_users, m_sim->inter_frame_level);
 
-	Factory_quantizer<R,Q>     ::store_args(this->ar, m_chain_params->qua,             m_sim->N, m_sim->inter_frame_level);
-
-	Factory_monitor<B>         ::store_args(this->ar, m_chain_params->mon,   m_sim->K,           m_sim->inter_frame_level);
-
+	Factory_channel            ::store_args(this->ar, m_chain_params->chn,   m_sim->N, complex, add_users, m_sim->inter_frame_level);
+	Factory_quantizer          ::store_args(this->ar, m_chain_params->qua,             m_sim->N, m_sim->inter_frame_level);
+	Factory_monitor            ::store_args(this->ar, m_chain_params->mon,   m_sim->K,           m_sim->inter_frame_level);
 	Factory_terminal_BFER      ::store_args(this->ar, m_chain_params->ter);
+
+	if (!std::is_integral<Q>())
+		m_chain_params->qua.type = "NO";
 }
 
 template <typename B, typename R, typename Q>
@@ -81,19 +72,12 @@ void Launcher_BFER_std<B,R,Q>
 	Launcher::group_args();
 
 	Factory_simulation_BFER_std::group_args(this->arg_group);
-
-	Factory_source<B>          ::group_args(this->arg_group);
-
-	Factory_CRC<B>             ::group_args(this->arg_group);
-
-	Factory_modem<B,R,Q>       ::group_args(this->arg_group);
-
-	Factory_channel<R>         ::group_args(this->arg_group);
-
-	Factory_quantizer<R,Q>     ::group_args(this->arg_group);
-
-	Factory_monitor<B>         ::group_args(this->arg_group);
-
+	Factory_source             ::group_args(this->arg_group);
+	Factory_CRC                ::group_args(this->arg_group);
+	Factory_modem              ::group_args(this->arg_group);
+	Factory_channel            ::group_args(this->arg_group);
+	Factory_quantizer          ::group_args(this->arg_group);
+	Factory_monitor            ::group_args(this->arg_group);
 	Factory_terminal_BFER      ::group_args(this->arg_group);
 }
 
@@ -102,19 +86,12 @@ void Launcher_BFER_std<B,R,Q>
 ::print_header()
 {
 	Factory_simulation_BFER_std::header(this->pl_sim, this->pl_cde, *m_sim);
-
-	Factory_source<B>          ::header(this->pl_src, m_chain_params->src);
-
-	Factory_CRC<B>             ::header(this->pl_crc, m_chain_params->crc);
-
-	Factory_modem<B,R,Q>       ::header(this->pl_mod, this->pl_demod, m_chain_params->modem);
-
-	Factory_channel<R>         ::header(this->pl_chn, m_chain_params->chn);
-
-	Factory_quantizer<R,Q>     ::header(this->pl_qua, m_chain_params->qua);
-
-	Factory_monitor<B>         ::header(this->pl_mon, m_chain_params->mon);
-
+	Factory_source             ::header(this->pl_src, m_chain_params->src);
+	Factory_CRC                ::header(this->pl_crc, m_chain_params->crc);
+	Factory_modem              ::header(this->pl_mod, this->pl_demod, m_chain_params->modem);
+	Factory_channel            ::header(this->pl_chn, m_chain_params->chn);
+	Factory_quantizer          ::header(this->pl_qua, m_chain_params->qua);
+	Factory_monitor            ::header(this->pl_mon, m_chain_params->mon);
 	Factory_terminal_BFER      ::header(this->pl_ter, m_chain_params->ter);
 
 	Launcher::print_header();

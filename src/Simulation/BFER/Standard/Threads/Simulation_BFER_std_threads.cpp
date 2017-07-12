@@ -14,7 +14,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_std_threads<B,R,Q>
-::Simulation_BFER_std_threads(const typename tools::Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> &chain_params, Codec<B,Q> &codec)
+::Simulation_BFER_std_threads(const tools::Factory_simulation_BFER_std::chain_parameters &chain_params, Codec<B,Q> &codec)
 : Simulation_BFER_std<B,R,Q>(chain_params, codec),
 
   U_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info * this->simu_params.inter_frame_level)),
@@ -25,7 +25,7 @@ Simulation_BFER_std_threads<B,R,Q>
   H_N (this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
   Y_N1(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
   Y_N2(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_fil  * this->simu_params.inter_frame_level)),
-  Y_N3(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
+  Y_N3(this->simu_params.n_threads, mipp::vector<R>(this->simu_params.N      * this->simu_params.inter_frame_level)),
   Y_N4(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
   Y_N5(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N_code * this->simu_params.inter_frame_level)),
   V_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K      * this->simu_params.inter_frame_level)),
@@ -51,8 +51,8 @@ Simulation_BFER_std_threads<B,R,Q>
 	this->data_sizes[std::make_pair( 4, "Modulator"   )] = this->X_N3[0].size();
 	this->data_sizes[std::make_pair( 5, "Channel"     )] = this->Y_N1[0].size();
 	this->data_sizes[std::make_pair( 6, "Filter"      )] = this->Y_N2[0].size();
-	this->data_sizes[std::make_pair( 7, "Quantizer"   )] = this->Y_N3[0].size();
-	this->data_sizes[std::make_pair( 8, "Demodulator" )] = this->Y_N4[0].size();
+	this->data_sizes[std::make_pair( 7, "Demodulator" )] = this->Y_N3[0].size();
+	this->data_sizes[std::make_pair( 8, "Quantizer"   )] = this->Y_N4[0].size();
 	this->data_sizes[std::make_pair( 9, "Depuncturer" )] = this->Y_N5[0].size();
 	this->data_sizes[std::make_pair(10, "Coset real"  )] = this->Y_N5[0].size();
 	this->data_sizes[std::make_pair(11, "Decoder"     )] = this->V_K1[0].size();
@@ -203,15 +203,15 @@ void Simulation_BFER_std_threads<B,R,Q>
 			this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
 			this->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
-			// make the quantization
-			auto t_quant = steady_clock::now();
-			this->quantizer[tid]->process(this->Y_N2[tid], this->Y_N3[tid]);
-			this->durations[tid][std::make_pair(7, "Quantizer")] += steady_clock::now() - t_quant;
-
 			// demodulation
 			auto t_demod = steady_clock::now();
-			this->modem[tid]->demodulate_with_gains(this->Y_N3[tid], this->H_N[tid], this->Y_N4[tid]);
-			this->durations[tid][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
+			this->modem[tid]->demodulate_with_gains(this->Y_N2[tid], this->H_N[tid], this->Y_N3[tid]);
+			this->durations[tid][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
+
+			// make the quantization
+			auto t_quant = steady_clock::now();
+			this->quantizer[tid]->process(this->Y_N3[tid], this->Y_N4[tid]);
+			this->durations[tid][std::make_pair(8, "Quantizer")] += steady_clock::now() - t_quant;
 		}
 		else // additive channel (AWGN, USER, NO)
 		{
@@ -225,15 +225,15 @@ void Simulation_BFER_std_threads<B,R,Q>
 			this->modem[tid]->filter(this->Y_N1[tid], this->Y_N2[tid]);
 			this->durations[tid][std::make_pair(6, "Filter")] += steady_clock::now() - t_filte;
 
-			// make the quantization
-			auto t_quant = steady_clock::now();
-			this->quantizer[tid]->process(this->Y_N2[tid], this->Y_N3[tid]);
-			this->durations[tid][std::make_pair(7, "Quantizer")] += steady_clock::now() - t_quant;
-
 			// demodulation
 			auto t_demod = steady_clock::now();
-			this->modem[tid]->demodulate(this->Y_N3[tid], this->Y_N4[tid]);
-			this->durations[tid][std::make_pair(8, "Demodulator")] += steady_clock::now() - t_demod;
+			this->modem[tid]->demodulate(this->Y_N2[tid], this->Y_N3[tid]);
+			this->durations[tid][std::make_pair(7, "Demodulator")] += steady_clock::now() - t_demod;
+
+			// make the quantization
+			auto t_quant = steady_clock::now();
+			this->quantizer[tid]->process(this->Y_N3[tid], this->Y_N4[tid]);
+			this->durations[tid][std::make_pair(8, "Quantizer")] += steady_clock::now() - t_quant;
 		}
 
 

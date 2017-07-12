@@ -15,12 +15,11 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename R = float>
 struct Factory_decoder_LDPC : public Factory_decoder_common
 {
-	struct decoder_parameters_LDPC : decoder_parameters
+	struct parameters : Factory_decoder_common::parameters
 	{
-		virtual ~decoder_parameters_LDPC() {}
+		virtual ~parameters() {}
 
 		// ------- decoder
 		std::string simd_strategy    = "";
@@ -34,15 +33,16 @@ struct Factory_decoder_LDPC : public Factory_decoder_common
 		std::string alist_path = "";
 	};
 
-	static module::Decoder_SISO<B,R>* build(const decoder_parameters_LDPC& params, const Sparse_matrix &H,
+	template <typename B = int, typename R = float>
+	static module::Decoder_SISO<B,R>* build(const parameters& params, const Sparse_matrix &H,
 	                                        const std::vector<unsigned> &info_bits_pos);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, decoder_parameters_LDPC &params,
+	static void store_args(const Arguments_reader& ar, parameters &params,
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_LDPC& params);
+	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params);
 };
 }
 }

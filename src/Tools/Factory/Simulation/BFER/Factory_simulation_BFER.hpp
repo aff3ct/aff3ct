@@ -22,9 +22,9 @@ namespace tools
 
 struct Factory_simulation_BFER : Factory_simulation
 {
-	struct simu_parameters_BFER : simu_parameters
+	struct parameters : Factory_simulation::parameters
 	{
-		virtual ~simu_parameters_BFER() {}
+		virtual ~parameters() {}
 
 		// ---- simulation
 		int         benchs          = 0;
@@ -35,26 +35,25 @@ struct Factory_simulation_BFER : Factory_simulation
 		int         debug_precision = 5;
 	};
 
-	template <typename B = int, typename R = float, typename Q = R>
-	struct chain_parameters_BFER : chain_parameters
+	struct chain_parameters : Factory_simulation::chain_parameters
 	{
-		virtual ~chain_parameters_BFER() {}
+		virtual ~chain_parameters() {}
 
-		Factory_simulation_BFER               ::simu_parameters_BFER    *sim = nullptr;
-		typename Factory_source        <B    >::source_parameters        src;
-		typename Factory_modem         <B,R,Q>::modem_parameters         modem;
-		typename Factory_channel       <  R  >::channel_parameters       chn;
-		typename Factory_encoder_common<B    >::encoder_parameters      *enc = nullptr;
-		typename Factory_decoder_common       ::decoder_parameters      *dec = nullptr;
-		typename Factory_monitor       <B    >::monitor_parameters       mon;
-		typename Factory_terminal_BFER        ::terminal_parameters_BFER ter;
+		Factory_simulation_BFER::parameters *sim = nullptr;
+		Factory_source         ::parameters  src;
+		Factory_modem          ::parameters  modem;
+		Factory_channel        ::parameters  chn;
+		Factory_encoder_common ::parameters *enc = nullptr;
+		Factory_decoder_common ::parameters *dec = nullptr;
+		Factory_monitor        ::parameters  mon;
+		Factory_terminal_BFER  ::parameters  ter;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, simu_parameters_BFER &params);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const simu_parameters_BFER& params);
+	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const parameters& params);
 };
 
 }

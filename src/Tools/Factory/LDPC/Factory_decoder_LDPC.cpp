@@ -15,8 +15,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>
-Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
-::build(const decoder_parameters_LDPC& params, const Sparse_matrix &H,
+Decoder_SISO<B,R>* Factory_decoder_LDPC
+::build(const parameters& params, const Sparse_matrix &H,
         const std::vector<unsigned> &info_bits_pos)
 {
 	if ((params.type == "BP" || params.type == "BP_FLOODING") && params.simd_strategy.empty())
@@ -40,8 +40,7 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC<B,R>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_LDPC<B,Q>
+void Factory_decoder_LDPC
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder_common::build_args(req_args, opt_args);
@@ -82,9 +81,8 @@ void Factory_decoder_LDPC<B,Q>
 		 "INTER"};
 }
 
-template <typename B, typename Q>
-void Factory_decoder_LDPC<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_LDPC &params,
+void Factory_decoder_LDPC
+::store_args(const Arguments_reader& ar, parameters &params,
              const int K, const int N, const int n_frames)
 {
 	params.type   = "BP_FLOODING";
@@ -107,16 +105,14 @@ void Factory_decoder_LDPC<B,Q>
 //		params.simulation.inter_frame_level = mipp::nElReg<Q>();
 }
 
-template <typename B, typename Q>
-void Factory_decoder_LDPC<B,Q>
+void Factory_decoder_LDPC
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder_common::group_args(ar);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_LDPC<B,Q>
-::header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_LDPC& params)
+void Factory_decoder_LDPC
+::header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params)
 {
 	Factory_decoder_common::header(head_dec, params);
 
@@ -142,14 +138,14 @@ void Factory_decoder_LDPC<B,Q>
 		head_dec.push_back(std::make_pair("Stop criterion depth",  std::to_string(params.syndrome_depth)));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_LDPC<B_8,Q_8>;
-template struct aff3ct::tools::Factory_decoder_LDPC<B_16,Q_16>;
-template struct aff3ct::tools::Factory_decoder_LDPC<B_32,Q_32>;
-template struct aff3ct::tools::Factory_decoder_LDPC<B_64,Q_64>;
+template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_LDPC::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::tools::Factory_decoder_LDPC::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::tools::Factory_decoder_LDPC::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::tools::Factory_decoder_LDPC::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
 #else
-template struct aff3ct::tools::Factory_decoder_LDPC<B,Q>;
+template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::tools::Factory_decoder_LDPC::build<B,Q>(const aff3ct::tools::Factory_decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
 #endif
 // ==================================================================================== explicit template instantiation

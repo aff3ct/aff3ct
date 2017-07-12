@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
-Coset<B,Q>* Factory_coset_real<B,Q>
+Coset<B,Q>* Factory_coset_real
 ::build(const std::string type,
         const int         N,
         const int         n_frames)
@@ -18,14 +18,14 @@ Coset<B,Q>* Factory_coset_real<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_coset_real<B_8,  Q_8>;
-template struct aff3ct::tools::Factory_coset_real<B_16, Q_16>;
-template struct aff3ct::tools::Factory_coset_real<B_32, Q_32>;
-template struct aff3ct::tools::Factory_coset_real<B_64, Q_64>;
+template aff3ct::module::Coset<B_8 ,Q_8 >* aff3ct::tools::Factory_coset_real::build<B_8 ,Q_8 >(const std::string, const int, const int);
+template aff3ct::module::Coset<B_16,Q_16>* aff3ct::tools::Factory_coset_real::build<B_16,Q_16>(const std::string, const int, const int);
+template aff3ct::module::Coset<B_32,Q_32>* aff3ct::tools::Factory_coset_real::build<B_32,Q_32>(const std::string, const int, const int);
+template aff3ct::module::Coset<B_64,Q_64>* aff3ct::tools::Factory_coset_real::build<B_64,Q_64>(const std::string, const int, const int);
 #else
-template struct aff3ct::tools::Factory_coset_real<B,Q>;
+template aff3ct::module::Coset<B,Q>* aff3ct::tools::Factory_coset_real::build<B,Q>(const std::string, const int, const int);
 #endif
 // ==================================================================================== explicit template instantiation

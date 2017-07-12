@@ -14,10 +14,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
 struct Factory_CRC : public Factory
 {
-	struct CRC_parameters
+	struct parameters
 	{
 		std::string type          = "FAST";
 		std::string poly          = "";
@@ -28,13 +27,14 @@ struct Factory_CRC : public Factory
 		int         n_frames      = 1;
 	};
 
-	static module::CRC<B>* build(const CRC_parameters &params);
+	template <typename B = int>
+	static module::CRC<B>* build(const parameters &params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, CRC_parameters &params, const int K, const int N, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params, const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_crc, const CRC_parameters& params);
+	static void header(Header::params_list& head_crc, const parameters& params);
 };
 }
 }

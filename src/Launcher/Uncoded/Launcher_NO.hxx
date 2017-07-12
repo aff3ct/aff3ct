@@ -12,8 +12,8 @@ Launcher_NO<cLauncher,B,R,Q>
 ::Launcher_NO(const int argc, const char **argv, std::ostream &stream)
 : cLauncher(argc, argv, stream)
 {
-	m_enc = new typename tools::Factory_encoder_common<B  >::encoder_parameters();
-	m_dec = new typename tools::Factory_decoder_NO    <B,Q>::decoder_parameters();
+	m_enc = new tools::Factory_encoder_common::parameters();
+	m_dec = new tools::Factory_decoder_NO    ::parameters();
 
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
@@ -39,8 +39,8 @@ void Launcher_NO<cLauncher,B,R,Q>
 {
 	cLauncher::build_args();
 
-	tools::Factory_encoder_common<B  >::build_args(this->req_args, this->opt_args);
-	tools::Factory_decoder_NO    <B,Q>::build_args(this->req_args, this->opt_args);
+	tools::Factory_encoder_common::build_args(this->req_args, this->opt_args);
+	tools::Factory_decoder_NO    ::build_args(this->req_args, this->opt_args);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -49,8 +49,8 @@ void Launcher_NO<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_common<B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
-	tools::Factory_decoder_NO    <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_encoder_common::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_decoder_NO    ::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -59,16 +59,16 @@ void Launcher_NO<cLauncher,B,R,Q>
 {
 	cLauncher::group_args();
 
-	tools::Factory_encoder_common<B  >::group_args(this->arg_group);
-	tools::Factory_decoder_NO    <B,Q>::group_args(this->arg_group);
+	tools::Factory_encoder_common::group_args(this->arg_group);
+	tools::Factory_decoder_NO    ::group_args(this->arg_group);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_NO<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_common<B  >::header(this->pl_enc, this->pl_cde, *m_enc);
-	tools::Factory_decoder_NO    <B,Q>::header(this->pl_dec, *m_dec);
+	tools::Factory_encoder_common::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_decoder_NO    ::header(this->pl_dec, *m_dec);
 
 	cLauncher::print_header();
 }

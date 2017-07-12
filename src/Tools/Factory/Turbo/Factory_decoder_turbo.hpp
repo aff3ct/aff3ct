@@ -16,37 +16,37 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename Q = float>
 struct Factory_decoder_turbo : public Factory_decoder_common
 {
-	struct decoder_parameters_turbo : decoder_parameters
+	struct parameters : Factory_decoder_common::parameters
 	{
-		virtual ~decoder_parameters_turbo() {}
+		virtual ~parameters() {}
 
 		// ------- decoder
-		std::string max            = "MAX";;
+		std::string max            = "MAX";
 		std::string simd_strategy  = "";
 		std::string turbo_implem   = "";
 		bool        self_corrected = false;
 		int         n_ite          = 6;
 
-		typename Factory_scaling_factor<B,Q>::scaling_factor_parameters scaling_factor;
-		typename Factory_flip_and_check<B,Q>::flip_and_check_parameters flip_and_check;
+		Factory_scaling_factor::parameters scaling_factor;
+		Factory_flip_and_check::parameters flip_and_check;
 	};
 
-	static module::Decoder_turbo<B,Q>* build(const decoder_parameters_turbo &params,
+	template <typename B = int, typename Q = float>
+	static module::Decoder_turbo<B,Q>* build(const parameters               &params,
 	                                         const module::Interleaver<int> &itl,
 	                                               module::SISO<Q>          &siso_n,
 	                                               module::SISO<Q>          &siso_i,
 	                                         const bool                      buffered = true);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, decoder_parameters_turbo &params,
+	static void store_args(const Arguments_reader& ar, parameters &params,
 	                       const int K, const int N, const int n_frames = 1,
 	                       const bool activate_simd = true, const bool activate_json = false);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, const decoder_parameters_turbo& params, bool crc_activated);
+	static void header(Header::params_list& head_dec, const parameters& params, bool crc_activated);
 
 };
 }

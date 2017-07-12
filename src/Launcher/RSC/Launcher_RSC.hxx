@@ -12,8 +12,8 @@ Launcher_RSC<cLauncher,B,R,Q,QD>
 ::Launcher_RSC(const int argc, const char **argv, std::ostream &stream)
 : cLauncher(argc, argv, stream)
 {
-	m_enc = new typename tools::Factory_encoder_RSC<B     >::encoder_parameters_RSC();
-	m_dec = new typename tools::Factory_decoder_RSC<B,Q,QD>::decoder_parameters_RSC();
+	m_enc = new tools::Factory_encoder_RSC::parameters();
+	m_dec = new tools::Factory_decoder_RSC::parameters();
 
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
@@ -39,8 +39,8 @@ void Launcher_RSC<cLauncher,B,R,Q,QD>
 {
 	cLauncher::build_args();
 
-	tools::Factory_encoder_RSC<B     >::build_args(this->req_args, this->opt_args);
-	tools::Factory_decoder_RSC<B,Q,QD>::build_args(this->req_args, this->opt_args);
+	tools::Factory_encoder_RSC::build_args(this->req_args, this->opt_args);
+	tools::Factory_decoder_RSC::build_args(this->req_args, this->opt_args);
 }
 
 template <class cLauncher, typename B, typename R, typename Q, typename QD>
@@ -49,10 +49,10 @@ void Launcher_RSC<cLauncher,B,R,Q,QD>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_RSC<B     >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_encoder_RSC::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 
 	bool activate_simd = !this->ar.exist_arg({"sim-inter-lvl"});
-	tools::Factory_decoder_RSC<B,Q,QD>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level, activate_simd);
+	tools::Factory_decoder_RSC::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level, activate_simd);
 }
 
 template <class cLauncher, typename B, typename R, typename Q, typename QD>
@@ -61,16 +61,16 @@ void Launcher_RSC<cLauncher,B,R,Q,QD>
 {
 	cLauncher::group_args();
 
-	tools::Factory_encoder_RSC<B     >::group_args(this->arg_group);
-	tools::Factory_decoder_RSC<B,Q,QD>::group_args(this->arg_group);
+	tools::Factory_encoder_RSC::group_args(this->arg_group);
+	tools::Factory_decoder_RSC::group_args(this->arg_group);
 }
 
 template <class cLauncher, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<cLauncher,B,R,Q,QD>
 ::print_header()
 {
-	tools::Factory_encoder_RSC<B     >::header(this->pl_enc, this->pl_cde, *m_enc);
-	tools::Factory_decoder_RSC<B,Q,QD>::header(this->pl_dec, *m_dec);
+	tools::Factory_encoder_RSC::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_decoder_RSC::header(this->pl_dec, *m_dec);
 
 	cLauncher::print_header();
 }

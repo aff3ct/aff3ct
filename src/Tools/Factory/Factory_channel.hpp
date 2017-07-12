@@ -14,10 +14,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R = float>
 struct Factory_channel : public Factory
 {
-	struct channel_parameters
+	struct parameters
 	{
 		std::string type         = "AWGN";
 		std::string path         = "";
@@ -28,16 +27,17 @@ struct Factory_channel : public Factory
 		int         n_frames;
 	};
 
-	static module::Channel<R>* build(const channel_parameters &params,
-	                                 const int                 seed  = 0,
-	                                 const R                   sigma = (R)1);
+	template <typename R = float>
+	static module::Channel<R>* build(const parameters &params,
+	                                 const int         seed  = 0,
+	                                 const R           sigma = (R)1);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, channel_parameters &params,
+	static void store_args(const Arguments_reader& ar, parameters &params,
 	                       const int N, const bool complex, const bool add_users, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_chn, const channel_parameters& params);
+	static void header(Header::params_list& head_chn, const parameters& params);
 };
 }
 }

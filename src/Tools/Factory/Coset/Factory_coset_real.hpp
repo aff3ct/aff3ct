@@ -12,9 +12,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename Q = float>
 struct Factory_coset_real : public Factory
 {
+	template <typename B = int, typename Q = float>
 	static module::Coset<B,Q>* build(const std::string type,
 	                                 const int         N,
 	                                 const int         n_frames = 1);

@@ -15,12 +15,11 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int, typename Q = float>
 struct Factory_decoder_polar : public Factory_decoder_common
 {
-	struct decoder_parameters_polar : decoder_parameters
+	struct parameters : Factory_decoder_common::parameters
 	{
-		virtual ~decoder_parameters_polar() {}
+		virtual ~parameters() {}
 
 		// ------- decoder
 		std::string simd_strategy = "";
@@ -37,26 +36,28 @@ struct Factory_decoder_polar : public Factory_decoder_common
 		int         N_pct;               // size of the frame at the ouput of the poncturer
 	};
 
-	static module::Decoder_SISO<B,Q>* build_siso(const decoder_parameters_polar& params,
+	template <typename B = int, typename Q = float>
+	static module::Decoder_SISO<B,Q>* build_siso(const parameters& params,
 	                                             const mipp::vector<B> &frozen_bits, const bool sys_encoding = true);
 
-	static module::Decoder<B,Q>* build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+	template <typename B = int, typename Q = float>
+	static module::Decoder<B,Q>* build(const parameters& params, const mipp::vector<B> &frozen_bits,
 	                                   const bool sys_encoding = true, module::CRC<B> *crc = nullptr);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, decoder_parameters_polar &params,
+	static void store_args(const Arguments_reader& ar, parameters &params,
 	                       const int K, const int N, const int n_frames);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_polar& params);
+	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params);
 
 private:
-	template <class API_polar>
-	static module::Decoder<B,Q>* _build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+	template <typename B = int, typename Q = float, class API_polar>
+	static module::Decoder<B,Q>* _build(const parameters& params, const mipp::vector<B> &frozen_bits,
 	                                    const bool sys_encoding = true, module::CRC<B> *crc = nullptr);
 
-	template <class API_polar>
-	static module::Decoder<B,Q>* _build_scl_fast(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+	template <typename B = int, typename Q = float, class API_polar>
+	static module::Decoder<B,Q>* _build_scl_fast(const parameters& params, const mipp::vector<B> &frozen_bits,
 	                                             const bool sys_encoding = true, module::CRC<B> *crc = nullptr);
 };
 }

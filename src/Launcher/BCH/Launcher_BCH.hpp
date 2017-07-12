@@ -12,8 +12,8 @@ template <class cLauncher, typename B = int, typename R = float, typename Q = R>
 class Launcher_BCH : public cLauncher
 {
 protected :
-	typename tools::Factory_encoder_BCH<B  >::encoder_parameters     *m_enc = nullptr;
-	typename tools::Factory_decoder_BCH<B,Q>::decoder_parameters_BCH *m_dec = nullptr;
+	tools::Factory_encoder_BCH::parameters *m_enc = nullptr;
+	tools::Factory_decoder_BCH::parameters *m_dec = nullptr;
 
 public:
 	Launcher_BCH(const int argc, const char **argv, std::ostream &stream = std::cout);

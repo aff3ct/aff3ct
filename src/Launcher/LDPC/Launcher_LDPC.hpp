@@ -12,8 +12,8 @@ template <class cLauncher, typename B = int, typename R = float, typename Q = R>
 class Launcher_LDPC : public cLauncher
 {
 protected:
-	typename tools::Factory_encoder_LDPC<B  >::encoder_parameters      *m_enc = nullptr;
-	typename tools::Factory_decoder_LDPC<B,Q>::decoder_parameters_LDPC *m_dec = nullptr;
+	tools::Factory_encoder_common::parameters *m_enc = nullptr;
+	tools::Factory_decoder_LDPC  ::parameters *m_dec = nullptr;
 
 public:
 	Launcher_LDPC(const int argc, const char **argv, std::ostream &stream = std::cout);

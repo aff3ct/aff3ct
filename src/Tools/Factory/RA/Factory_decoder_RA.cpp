@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>
-Decoder<B,R>* Factory_decoder_RA<B,R>
-::build(const decoder_parameters_RA &params, const Interleaver<int> &itl)
+Decoder<B,R>* Factory_decoder_RA
+::build(const parameters &params, const Interleaver<int> &itl)
 {
 	if (params.type == "RA")
 	{
@@ -19,14 +19,13 @@ Decoder<B,R>* Factory_decoder_RA<B,R>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_RA<B,Q>
+void Factory_decoder_RA
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder_common::build_args(req_args, opt_args);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::build_args(req_args, opt_args);
+	Factory_interleaver::build_args(req_args, opt_args);
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	opt_args[{"dec-ite", "i"}] =
@@ -38,9 +37,8 @@ void Factory_decoder_RA<B,Q>
 	opt_args[{"dec-implem"   }].push_back("STD");
 }
 
-template <typename B, typename Q>
-void Factory_decoder_RA<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_RA &params, const int K, const int N, int n_frames)
+void Factory_decoder_RA
+::store_args(const Arguments_reader& ar, parameters &params, const int K, const int N, int n_frames)
 {
 	params.type   = "RA";
 	params.implem = "STD";
@@ -48,43 +46,41 @@ void Factory_decoder_RA<B,Q>
 	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::store_args(ar, params.itl, N, n_frames);
+	Factory_interleaver::store_args(ar, params.itl, N, n_frames);
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
 }
 
-template <typename B, typename Q>
-void Factory_decoder_RA<B,Q>
+void Factory_decoder_RA
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder_common::group_args(ar);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::group_args(ar);
+	Factory_interleaver::group_args(ar);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_RA<B,Q>
-::header(Header::params_list& head_dec, Header::params_list& head_itl, const decoder_parameters_RA& params)
+void Factory_decoder_RA
+::header(Header::params_list& head_dec, Header::params_list& head_itl, const parameters& params)
 {
 	Factory_decoder_common::header(head_dec, params);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::header(head_itl, params.itl);
+	Factory_interleaver::header(head_itl, params.itl);
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_RA<B_8,Q_8>;
-template struct aff3ct::tools::Factory_decoder_RA<B_16,Q_16>;
-template struct aff3ct::tools::Factory_decoder_RA<B_32,Q_32>;
-template struct aff3ct::tools::Factory_decoder_RA<B_64,Q_64>;
+template aff3ct::module::Decoder<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_RA::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_RA::parameters&, const Interleaver<int>&);
+template aff3ct::module::Decoder<B_16,Q_16>* aff3ct::tools::Factory_decoder_RA::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_RA::parameters&, const Interleaver<int>&);
+template aff3ct::module::Decoder<B_32,Q_32>* aff3ct::tools::Factory_decoder_RA::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_RA::parameters&, const Interleaver<int>&);
+template aff3ct::module::Decoder<B_64,Q_64>* aff3ct::tools::Factory_decoder_RA::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_RA::parameters&, const Interleaver<int>&);
 #else
-template struct aff3ct::tools::Factory_decoder_RA<B,Q>;
+template aff3ct::module::Decoder<B,Q>* aff3ct::tools::Factory_decoder_RA::build<B,Q>(const aff3ct::tools::Factory_decoder_RA::parameters&, const Interleaver<int>&);
 #endif
 // ==================================================================================== explicit template instantiation

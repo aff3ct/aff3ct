@@ -23,12 +23,12 @@ template <typename B = int, typename Q = float>
 class Codec
 {
 protected :
-	const typename Factory_encoder_common<B  >::encoder_parameters &enc_params;
-	const typename Factory_decoder_common     ::decoder_parameters &dec_params;
+	const Factory_encoder_common::parameters &enc_params;
+	const Factory_decoder_common::parameters &dec_params;
 
 public:
-	Codec(const typename Factory_encoder_common<B  >::encoder_parameters &enc_params,
-	      const typename Factory_decoder_common     ::decoder_parameters &dec_params)
+	Codec(const Factory_encoder_common::parameters &enc_params,
+	      const Factory_decoder_common::parameters &dec_params)
 	: enc_params(enc_params), dec_params(dec_params)
 	{
 		if (enc_params.K != dec_params.K)

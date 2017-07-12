@@ -13,11 +13,11 @@ template <typename B = int, typename Q = float>
 class Codec_repetition : public Codec<B,Q>
 {
 protected :
-	const typename Factory_encoder_repetition<B>::encoder_parameters_repetition& enc_par;
+	const Factory_encoder_repetition::parameters& enc_par;
 
 public:
-	Codec_repetition(const typename Factory_encoder_repetition<B  >::encoder_parameters_repetition &enc_params,
-	                 const typename Factory_decoder_repetition<B,Q>::decoder_parameters            &dec_params);
+	Codec_repetition(const Factory_encoder_repetition::parameters &enc_params,
+	                 const Factory_decoder_repetition::parameters &dec_params);
 
 	virtual ~Codec_repetition();
 

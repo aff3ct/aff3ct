@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
-Source<B>* Factory_source<B>
-::build(const source_parameters& params, const int seed)
+Source<B>* Factory_source
+::build(const parameters& params, const int seed)
 {
 	     if (params.type == "RAND"     ) return new Source_random     <B>(params.K,        seed, params.n_frames);
 	else if (params.type == "RAND_FAST") return new Source_random_fast<B>(params.K,        seed, params.n_frames);
@@ -22,8 +22,7 @@ Source<B>* Factory_source<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-void Factory_source<B>
+void Factory_source
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	opt_args[{"src-type"}] =
@@ -36,9 +35,8 @@ void Factory_source<B>
 		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
 }
 
-template <typename B>
-void Factory_source<B>
-::store_args(const Arguments_reader& ar, source_parameters &params, const int K, const int n_frames)
+void Factory_source
+::store_args(const Arguments_reader& ar, parameters &params, const int K, const int n_frames)
 {
 	params.K        = K;
 	params.n_frames = n_frames;
@@ -52,16 +50,14 @@ void Factory_source<B>
 	if(ar.exist_arg({"src-path"})) params.path = ar.get_arg({"src-path"});
 }
 
-template <typename B>
-void Factory_source<B>
+void Factory_source
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	ar.push_back({"src", "Source parameter(s)"});
 }
 
-template <typename B>
-void Factory_source<B>
-::header(Header::params_list& head_src, const source_parameters& params)
+void Factory_source
+::header(Header::params_list& head_src, const parameters& params)
 {
 	// -------------------------------------------------------------------------------------------------------- source
 	head_src.push_back(std::make_pair("Type", params.type));
@@ -69,14 +65,15 @@ void Factory_source<B>
 	if (params.type == "USER")
 		head_src.push_back(std::make_pair("Path", params.path));
 }
-// ==================================================================================== explicit template instantiation 
+
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_source<B_8>;
-template struct aff3ct::tools::Factory_source<B_16>;
-template struct aff3ct::tools::Factory_source<B_32>;
-template struct aff3ct::tools::Factory_source<B_64>;
+template aff3ct::module::Source<B_8 >* aff3ct::tools::Factory_source::build<B_8 >(const aff3ct::tools::Factory_source::parameters&, const int);
+template aff3ct::module::Source<B_16>* aff3ct::tools::Factory_source::build<B_16>(const aff3ct::tools::Factory_source::parameters&, const int);
+template aff3ct::module::Source<B_32>* aff3ct::tools::Factory_source::build<B_32>(const aff3ct::tools::Factory_source::parameters&, const int);
+template aff3ct::module::Source<B_64>* aff3ct::tools::Factory_source::build<B_64>(const aff3ct::tools::Factory_source::parameters&, const int);
 #else
-template struct aff3ct::tools::Factory_source<B>;
+template aff3ct::module::Source<B>* aff3ct::tools::Factory_source::build<B>(const aff3ct::tools::Factory_source::parameters&, const int);
 #endif
 // ==================================================================================== explicit template instantiation

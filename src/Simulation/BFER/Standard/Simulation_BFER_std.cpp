@@ -17,10 +17,10 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_std<B,R,Q>
-::Simulation_BFER_std(const Factory_simulation_BFER_std::chain_parameters_BFER_std<B,R,Q> &chain_params, Codec<B,Q> &codec)
+::Simulation_BFER_std(const Factory_simulation_BFER_std::chain_parameters &chain_params, Codec<B,Q> &codec)
 : Simulation_BFER<B,R,Q>(chain_params, codec),
   chain_params(chain_params),
-  simu_params(*dynamic_cast<Factory_simulation_BFER_std::simu_parameters_BFER_std*>(chain_params.sim)),
+  simu_params(*dynamic_cast<Factory_simulation_BFER_std::parameters*>(chain_params.sim)),
 
   source     (simu_params.n_threads, nullptr),
   crc        (simu_params.n_threads, nullptr),
@@ -99,14 +99,14 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER_std<B,R,Q>
 ::build_source(const int tid, const int seed)
 {
-	return Factory_source<B>::build(chain_params.src, seed);
+	return Factory_source::build<B>(chain_params.src, seed);
 }
 
 template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC<B>::build(chain_params.crc);
+	return Factory_CRC::build<B>(chain_params.crc);
 }
 
 template <typename B, typename R, typename Q>
@@ -119,7 +119,7 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		return Factory_encoder_common<B>::build(*chain_params.enc, seed);
+		return Factory_encoder_common::build<B>(*chain_params.enc, seed);
 	}
 }
 
@@ -133,13 +133,13 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		typename Factory_puncturer<B,Q>::puncturer_parameters pct;
+		Factory_puncturer::parameters pct;
 		pct.K        = simu_params.K;
 		pct.N        = simu_params.N;
 		pct.N_pct    = simu_params.N;
 		pct.n_frames = simu_params.inter_frame_level;
 
-		return Factory_puncturer<B,Q>::build(pct);
+		return Factory_puncturer::build<B,Q>(pct);
 	}
 }
 
@@ -158,31 +158,31 @@ Interleaver<int>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>* Simulation_BFER_std<B,R,Q>
+Modem<B,R,R>* Simulation_BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return Factory_modem<B,R,Q>::build(chain_params.modem, this->sigma);
+	return Factory_modem::build<B,R,R>(chain_params.modem, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_std<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
-	return Factory_channel<R>::build(chain_params.chn, seed, this->sigma);
+	return Factory_channel::build<R>(chain_params.chn, seed, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer<R,Q>::build(chain_params.qua, this->sigma);
+	return Factory_quantizer::build<R,Q>(chain_params.qua, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real<B,Q>::build("STD", chain_params.dec->N, simu_params.inter_frame_level);
+	return Factory_coset_real::build<B,Q>("STD", chain_params.dec->N, simu_params.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>
@@ -196,7 +196,7 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return Factory_coset_bit<B>::build("STD", chain_params.dec->K, simu_params.inter_frame_level);
+	return Factory_coset_bit::build<B>("STD", chain_params.dec->K, simu_params.inter_frame_level);
 }
 
 // ==================================================================================== explicit template instantiation

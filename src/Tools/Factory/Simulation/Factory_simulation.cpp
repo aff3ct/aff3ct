@@ -69,7 +69,7 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		 "total number of bit transmitted (includes parity bits)."};
 }
 
-void Factory_simulation::store_args(const Arguments_reader& ar, simu_parameters &params)
+void Factory_simulation::store_args(const Arguments_reader& ar, parameters &params)
 {
 	using namespace std::chrono;
 
@@ -144,7 +144,7 @@ void Factory_simulation::group_args(Arguments_reader::arg_grp& ar)
 }
 
 void Factory_simulation::header(Header::params_list& head_sim, Header::params_list& head_cde,
-                                const simu_parameters& params)
+                                const parameters& params)
 {
 	Factory_simulation_main::header(head_sim, head_cde, params);
 

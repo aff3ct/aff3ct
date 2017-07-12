@@ -5,8 +5,8 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_BCH<B,Q>
-::Codec_BCH(const typename Factory_encoder_common<B  >::encoder_parameters     &enc_params,
-            const typename Factory_decoder_BCH   <B,Q>::decoder_parameters_BCH &dec_params)
+::Codec_BCH(const Factory_encoder_common::parameters &enc_params,
+            const Factory_decoder_BCH   ::parameters &dec_params)
 : Codec<B,Q>(enc_params, dec_params), dec_par(dec_params),
   GF(dec_params.K, dec_params.N, dec_params.t)
 {
@@ -23,14 +23,14 @@ template <typename B, typename Q>
 Encoder<B>* Codec_BCH<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return Factory_encoder_BCH<B>::build(this->enc_params, GF);
+	return Factory_encoder_BCH::build<B>(this->enc_params, GF);
 }
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_BCH<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	return Factory_decoder_BCH<B,Q>::build(dec_par, GF);
+	return Factory_decoder_BCH::build<B,Q>(dec_par, GF);
 }
 
 // ==================================================================================== explicit template instantiation 

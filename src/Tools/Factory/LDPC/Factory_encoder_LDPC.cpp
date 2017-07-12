@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
-Encoder_LDPC<B>* Factory_encoder_LDPC<B>
-::build(const typename Factory_encoder_common<B>::encoder_parameters &params,
+Encoder_LDPC<B>* Factory_encoder_LDPC
+::build(const typename Factory_encoder_common::parameters &params,
         const Sparse_matrix &G,
         const Sparse_matrix &H)
 {
@@ -22,51 +22,47 @@ Encoder_LDPC<B>* Factory_encoder_LDPC<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-void Factory_encoder_LDPC<B>
+void Factory_encoder_LDPC
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	Factory_encoder_common<B>::build_args(req_args, opt_args);
+	Factory_encoder_common::build_args(req_args, opt_args);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
 }
 
-template <typename B>
-void Factory_encoder_LDPC<B>
-::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params,
+void Factory_encoder_LDPC
+::store_args(const Arguments_reader& ar, typename Factory_encoder_common::parameters &params,
              const int K, const int N, const int n_frames)
 {
 	params.type = "AZCW";
 
-	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
+	Factory_encoder_common::store_args(ar, params, K, N, n_frames);
 }
 
-template <typename B>
-void Factory_encoder_LDPC<B>
+void Factory_encoder_LDPC
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	Factory_encoder_common<B>::group_args(ar);
+	Factory_encoder_common::group_args(ar);
 }
 
-template <typename B>
-void Factory_encoder_LDPC<B>
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const typename Factory_encoder_common<B>::encoder_parameters& params)
+void Factory_encoder_LDPC
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const typename Factory_encoder_common::parameters& params)
 {
-	Factory_encoder_common<B>::header(head_enc, head_cde, params);
+	Factory_encoder_common::header(head_enc, head_cde, params);
 
 	if (params.type == "LDPC")
 		head_enc.push_back(std::make_pair("Path", params.path));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_encoder_LDPC<B_8>;
-template struct aff3ct::tools::Factory_encoder_LDPC<B_16>;
-template struct aff3ct::tools::Factory_encoder_LDPC<B_32>;
-template struct aff3ct::tools::Factory_encoder_LDPC<B_64>;
+template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::tools::Factory_encoder_LDPC::build<B_8 >(const aff3ct::tools::Factory_encoder_common::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
+template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::tools::Factory_encoder_LDPC::build<B_16>(const aff3ct::tools::Factory_encoder_common::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
+template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::tools::Factory_encoder_LDPC::build<B_32>(const aff3ct::tools::Factory_encoder_common::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
+template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::tools::Factory_encoder_LDPC::build<B_64>(const aff3ct::tools::Factory_encoder_common::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
 #else
-template struct aff3ct::tools::Factory_encoder_LDPC<B>;
+template aff3ct::module::Encoder_LDPC<B>* aff3ct::tools::Factory_encoder_LDPC::build<B>(const aff3ct::tools::Factory_encoder_common::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
 #endif
 // ==================================================================================== explicit template instantiation

@@ -41,8 +41,8 @@ using namespace aff3ct::tools;
 using namespace aff3ct::module;
 
 template <typename B, typename Q>
-Decoder_SISO<B,Q>* Factory_decoder_polar<B,Q>
-::build_siso(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding)
+Decoder_SISO<B,Q>* Factory_decoder_polar
+::build_siso(const parameters& params, const mipp::vector<B> &frozen_bits, const bool sys_encoding)
 {
 	if (params.type == "SCAN" && sys_encoding)
 	{
@@ -56,10 +56,9 @@ Decoder_SISO<B,Q>* Factory_decoder_polar<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-template <class API_polar>
-Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::_build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+template <typename B, typename Q, class API_polar>
+Decoder<B,Q>* Factory_decoder_polar
+::_build(const parameters& params, const mipp::vector<B> &frozen_bits,
          const bool sys_encoding, module::CRC<B> *crc)
 {
 	int idx_r0, idx_r1;
@@ -104,10 +103,9 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-template <class API_polar>
-Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::_build_scl_fast(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+template <typename B, typename Q, class API_polar>
+Decoder<B,Q>* Factory_decoder_polar
+::_build_scl_fast(const parameters& params, const mipp::vector<B> &frozen_bits,
                   const bool sys_encoding, module::CRC<B> *crc)
 {
 	int idx_r0, idx_r1;
@@ -133,8 +131,8 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Factory_decoder_polar<B,Q>
-::build(const decoder_parameters_polar& params, const mipp::vector<B> &frozen_bits,
+Decoder<B,Q>* Factory_decoder_polar
+::build(const parameters& params, const mipp::vector<B> &frozen_bits,
         const bool sys_encoding, module::CRC<B> *crc)
 {
 	if (params.type.find("SCL") != std::string::npos && params.implem == "FAST")
@@ -147,7 +145,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 
-				return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
+				return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 			}
 			else if (typeid(B) == typeid(short))
 			{
@@ -155,7 +153,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 
-				return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
+				return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 			}
 			else if (typeid(B) == typeid(int))
 			{
@@ -163,7 +161,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 				                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 				                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 
-				return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
+				return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 			}
 		}
 		else if (params.simd_strategy.empty())
@@ -171,7 +169,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			using API_polar = API_polar_dynamic_seq
 			                  <B, Q, f_LLR<Q>, g_LLR<B,Q>, g0_LLR<Q>, h_LLR<B,Q>, xo_STD<B>>;
 
-			return _build_scl_fast<API_polar>(params, frozen_bits, sys_encoding, crc);
+			return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 	}
 
@@ -196,7 +194,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
 #endif
-			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
+			return _build<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 		else
 		{
@@ -207,7 +205,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			using API_polar = API_polar_static_inter
 			                  <B, Q, f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
+			return _build<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 	}
 	else if (params.simd_strategy == "INTRA" && params.implem == "FAST")
@@ -223,7 +221,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 			                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
+			return _build<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 		else if (typeid(B) == typeid(short))
 		{
@@ -236,7 +234,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 			                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
+			return _build<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 		else if (typeid(B) == typeid(int))
 		{
@@ -249,7 +247,7 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 			                  <B, Q, f_LLR  <Q>, g_LLR  <B,Q>, g0_LLR  <Q>, h_LLR  <B,Q>, xo_STD  <B>,
 			                         f_LLR_i<Q>, g_LLR_i<B,Q>, g0_LLR_i<Q>, h_LLR_i<B,Q>, xo_STD_i<B>>;
 #endif
-			return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
+			return _build<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 		}
 	}
 	else if (params.simd_strategy.empty())
@@ -261,15 +259,13 @@ Decoder<B,Q>* Factory_decoder_polar<B,Q>
 		using API_polar = API_polar_static_seq
 		                  <B, Q, f_LLR<Q>, g_LLR<B,Q>, g0_LLR<Q>, h_LLR<B,Q>, xo_STD<B>>;
 #endif
-		return _build<API_polar>(params, frozen_bits, sys_encoding, crc);
+		return _build<B,Q,API_polar>(params, frozen_bits, sys_encoding, crc);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-
-template <typename B, typename Q>
-void Factory_decoder_polar<B,Q>
+void Factory_decoder_polar
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder_common::build_args(req_args, opt_args);
@@ -319,9 +315,8 @@ void Factory_decoder_polar<B,Q>
 		 "enable the partial adaptative mode for the ASCL decoder (by default full adaptative is selected)."};
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_polar &params, const int K, const int N, const int n_frames)
+void Factory_decoder_polar
+::store_args(const Arguments_reader& ar, parameters &params, const int K, const int N, const int n_frames)
 {
 	params.type   = "SC";
 	params.implem = "FAST";
@@ -353,16 +348,14 @@ void Factory_decoder_polar<B,Q>
 	if (params.type != "SCAN") params.n_ite = 1;
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar<B,Q>
+void Factory_decoder_polar
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder_common::group_args(ar);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_polar<B,Q>
-::header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_polar& params)
+void Factory_decoder_polar
+::header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params)
 {
 	Factory_decoder_common::header(head_dec, params);
 
@@ -400,14 +393,23 @@ void Factory_decoder_polar<B,Q>
 		head_dec.push_back(std::make_pair("Polar node types", params.polar_nodes));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_polar<B_8,Q_8>;
-template struct aff3ct::tools::Factory_decoder_polar<B_16,Q_16>;
-template struct aff3ct::tools::Factory_decoder_polar<B_32,Q_32>;
-template struct aff3ct::tools::Factory_decoder_polar<B_64,Q_64>;
+template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_polar::build_siso<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_8 >&, const bool);
+template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::tools::Factory_decoder_polar::build_siso<B_16,Q_16>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_16>&, const bool);
+template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::tools::Factory_decoder_polar::build_siso<B_32,Q_32>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_32>&, const bool);
+template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::tools::Factory_decoder_polar::build_siso<B_64,Q_64>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_64>&, const bool);
 #else
-template struct aff3ct::tools::Factory_decoder_polar<B,Q>;
+template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::tools::Factory_decoder_polar::build_siso<B,Q>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B>&, const bool);
+#endif
+
+#ifdef MULTI_PREC
+template aff3ct::module::Decoder<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_polar::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_8 >&, const bool, module::CRC<B_8 >*);
+template aff3ct::module::Decoder<B_16,Q_16>* aff3ct::tools::Factory_decoder_polar::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_16>&, const bool, module::CRC<B_16>*);
+template aff3ct::module::Decoder<B_32,Q_32>* aff3ct::tools::Factory_decoder_polar::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_32>&, const bool, module::CRC<B_32>*);
+template aff3ct::module::Decoder<B_64,Q_64>* aff3ct::tools::Factory_decoder_polar::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B_64>&, const bool, module::CRC<B_64>*);
+#else
+template aff3ct::module::Decoder<B,Q>* aff3ct::tools::Factory_decoder_polar::build<B,Q>(const aff3ct::tools::Factory_decoder_polar::parameters&, const mipp::vector<B>&, const bool, module::CRC<B>*);
 #endif
 // ==================================================================================== explicit template instantiation

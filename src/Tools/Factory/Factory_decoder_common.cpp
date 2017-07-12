@@ -15,7 +15,7 @@ void Factory_decoder_common::build_args(Arguments_reader::arg_map &req_args, Arg
 		 "select the implementation of the algorithm to decode."};
 }
 
-void Factory_decoder_common::store_args(const Arguments_reader& ar, decoder_parameters &params,
+void Factory_decoder_common::store_args(const Arguments_reader& ar, parameters &params,
                                         const int K, const int N, const int n_frames)
 {
 	// ------------------------------------------------------------------------------------------------------- decoder
@@ -35,7 +35,7 @@ void Factory_decoder_common::group_args(Arguments_reader::arg_grp& ar)
 	ar.push_back({"dec", "Decoder parameter(s)"});
 }
 
-void Factory_decoder_common::header(Header::params_list& head_dec, const decoder_parameters& params)
+void Factory_decoder_common::header(Header::params_list& head_dec, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- decoder
 	head_dec.push_back(std::make_pair("Type (D)",params.type));

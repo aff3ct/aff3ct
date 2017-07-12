@@ -12,8 +12,8 @@ Launcher_BCH<cLauncher,B,R,Q>
 ::Launcher_BCH(const int argc, const char **argv, std::ostream &stream)
 : cLauncher(argc, argv, stream)
 {
-	m_enc = new typename tools::Factory_encoder_BCH<B  >::encoder_parameters    ();
-	m_dec = new typename tools::Factory_decoder_BCH<B,Q>::decoder_parameters_BCH();
+	m_enc = new tools::Factory_encoder_BCH::parameters();
+	m_dec = new tools::Factory_decoder_BCH::parameters();
 
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
@@ -39,8 +39,8 @@ void Launcher_BCH<cLauncher,B,R,Q>
 {
 	cLauncher::build_args();
 
-	tools::Factory_encoder_BCH<B  >::build_args(this->req_args, this->opt_args);
-	tools::Factory_decoder_BCH<B,Q>::build_args(this->req_args, this->opt_args);
+	tools::Factory_encoder_BCH::build_args(this->req_args, this->opt_args);
+	tools::Factory_decoder_BCH::build_args(this->req_args, this->opt_args);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -49,8 +49,8 @@ void Launcher_BCH<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_BCH<B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
-	tools::Factory_decoder_BCH<B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_encoder_BCH::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_decoder_BCH::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -59,16 +59,16 @@ void Launcher_BCH<cLauncher,B,R,Q>
 {
 	cLauncher::group_args();
 
-	tools::Factory_encoder_BCH<B  >::group_args(this->arg_group);
-	tools::Factory_decoder_BCH<B,Q>::group_args(this->arg_group);
+	tools::Factory_encoder_BCH::group_args(this->arg_group);
+	tools::Factory_decoder_BCH::group_args(this->arg_group);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_BCH<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_BCH<B  >::header(this->pl_enc, this->pl_cde, *m_enc);
-	tools::Factory_decoder_BCH<B,Q>::header(this->pl_dec, this->pl_cde, *m_dec);
+	tools::Factory_encoder_BCH::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_decoder_BCH::header(this->pl_dec, this->pl_cde, *m_dec);
 
 	cLauncher::print_header();
 }

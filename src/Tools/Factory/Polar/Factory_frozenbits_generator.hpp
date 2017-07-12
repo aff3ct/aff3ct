@@ -9,9 +9,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
 struct Factory_frozenbits_generator : public Factory
 {
+	template <typename B = int>
 	static Frozenbits_generator<B>* build(const std::string type,
 	                                      const int         K,
 	                                      const int         N,

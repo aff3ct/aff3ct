@@ -23,12 +23,12 @@ template <typename B = int, typename Q = float, typename QD = Q>
 class Codec_turbo : public Codec<B,Q>
 {
 protected:
-	const typename Factory_encoder_turbo  <B  >::encoder_parameters_turbo   &enc_par;
-	const typename Factory_decoder_turbo  <B,Q>::decoder_parameters_turbo   &dec_par;
-	const typename Factory_puncturer_turbo<B,Q>::puncturer_parameters_turbo &pct_par;
+	const Factory_encoder_turbo  ::parameters &enc_par;
+	const Factory_decoder_turbo  ::parameters &dec_par;
+	const Factory_puncturer_turbo::parameters &pct_par;
 
-	typename Factory_encoder_RSC<B     >::encoder_parameters_RSC enc_rsc_par;
-	typename Factory_decoder_RSC<B,Q,QD>::decoder_parameters_RSC dec_rsc_par;
+	Factory_encoder_RSC::parameters enc_rsc_par;
+	Factory_decoder_RSC::parameters dec_rsc_par;
 
 	// the trellis representation
 	std::vector<std::vector<int>>                               trellis;
@@ -38,9 +38,9 @@ protected:
 	std::ofstream                                               json_stream;
 
 public:
-	Codec_turbo(const typename Factory_encoder_turbo  <B  >::encoder_parameters_turbo   &enc_params,
-	            const typename Factory_decoder_turbo  <B,Q>::decoder_parameters_turbo   &dec_params,
-	            const typename Factory_puncturer_turbo<B,Q>::puncturer_parameters_turbo &pct_params,
+	Codec_turbo(const Factory_encoder_turbo  ::parameters &enc_params,
+	            const Factory_decoder_turbo  ::parameters &dec_params,
+	            const Factory_puncturer_turbo::parameters &pct_params,
 	            const int n_threads);
 	virtual ~Codec_turbo();
 

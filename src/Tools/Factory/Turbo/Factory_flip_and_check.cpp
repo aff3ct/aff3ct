@@ -4,8 +4,8 @@
 using namespace aff3ct::tools;
 
 template<typename B, typename Q>
-Flip_and_check<B,Q>* Factory_flip_and_check<B,Q>
-::build(const flip_and_check_parameters& params, module::CRC<B> &crc, const int n_frames)
+Flip_and_check<B,Q>* Factory_flip_and_check
+::build(const parameters& params, module::CRC<B> &crc, const int n_frames)
 {
 	if (!params.enable)
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -13,8 +13,7 @@ Flip_and_check<B,Q>* Factory_flip_and_check<B,Q>
 	return new Flip_and_check<B,Q>(params.size, params.n_ite, crc, params.start_crc_check_ite, params.q, params.ite_min, params.ite_max, params.ite_step, n_frames);
 }
 
-template<typename B, typename Q>
-void Factory_flip_and_check<B,Q>
+void Factory_flip_and_check
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	opt_args[{"dec-fnc"}] =
@@ -38,9 +37,8 @@ void Factory_flip_and_check<B,Q>
 		 "set iteration step for the fnc algorithm."};
 }
 
-template<typename B, typename Q>
-void Factory_flip_and_check<B,Q>
-::store_args(const Arguments_reader& ar, flip_and_check_parameters &params,
+void Factory_flip_and_check
+::store_args(const Arguments_reader& ar, parameters &params,
              const int size, const int n_ite, const int start_crc_check_ite)
 {
 	if(ar.exist_arg({"dec-fnc"      })) params.enable   = true;
@@ -55,16 +53,13 @@ void Factory_flip_and_check<B,Q>
 	params.start_crc_check_ite = start_crc_check_ite;
 }
 
-template<typename B, typename Q>
-void Factory_flip_and_check<B,Q>
+void Factory_flip_and_check
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-
 }
 
-template<typename B, typename Q>
-void Factory_flip_and_check<B,Q>
-::header(Header::params_list& head_fnc, const flip_and_check_parameters& params)
+void Factory_flip_and_check
+::header(Header::params_list& head_fnc, const parameters& params)
 {
 	if (params.enable)
 	{
@@ -75,14 +70,15 @@ void Factory_flip_and_check<B,Q>
 		head_fnc.push_back(std::make_pair("FNC ite step",  std::to_string(params.ite_step)));
 	}
 }
-// ==================================================================================== explicit template instantiation 
+
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_flip_and_check<B_8,Q_8>;
-template struct aff3ct::tools::Factory_flip_and_check<B_16,Q_16>;
-template struct aff3ct::tools::Factory_flip_and_check<B_32,Q_32>;
-template struct aff3ct::tools::Factory_flip_and_check<B_64,Q_64>;
+template aff3ct::tools::Flip_and_check<B_8 ,Q_8 >* aff3ct::tools::Factory_flip_and_check::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_flip_and_check::parameters&, module::CRC<B_8 >&, const int);
+template aff3ct::tools::Flip_and_check<B_16,Q_16>* aff3ct::tools::Factory_flip_and_check::build<B_16,Q_16>(const aff3ct::tools::Factory_flip_and_check::parameters&, module::CRC<B_16>&, const int);
+template aff3ct::tools::Flip_and_check<B_32,Q_32>* aff3ct::tools::Factory_flip_and_check::build<B_32,Q_32>(const aff3ct::tools::Factory_flip_and_check::parameters&, module::CRC<B_32>&, const int);
+template aff3ct::tools::Flip_and_check<B_64,Q_64>* aff3ct::tools::Factory_flip_and_check::build<B_64,Q_64>(const aff3ct::tools::Factory_flip_and_check::parameters&, module::CRC<B_64>&, const int);
 #else
-template struct aff3ct::tools::Factory_flip_and_check<B,Q>;
+template aff3ct::tools::Flip_and_check<B,Q>* aff3ct::tools::Factory_flip_and_check::build<B,Q>(const aff3ct::tools::Factory_flip_and_check::parameters&, module::CRC<B>&, const int);
 #endif
 // ==================================================================================== explicit template instantiation

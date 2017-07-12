@@ -8,7 +8,7 @@
 using namespace aff3ct::tools;
 
 template <typename B>
-Frozenbits_generator<B>* Factory_frozenbits_generator<B>
+Frozenbits_generator<B>* Factory_frozenbits_generator
 ::build(const std::string type,
         const int         K,
         const int         N,
@@ -23,17 +23,17 @@ Frozenbits_generator<B>* Factory_frozenbits_generator<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_frozenbits_generator<B_8>;
-template struct aff3ct::tools::Factory_frozenbits_generator<B_16>;
-template struct aff3ct::tools::Factory_frozenbits_generator<B_32>;
-template struct aff3ct::tools::Factory_frozenbits_generator<B_64>;
+template aff3ct::tools::Frozenbits_generator<B_8 >* aff3ct::tools::Factory_frozenbits_generator::build<B_8 >(const std::string, const int, const int, const float, const std::string, const std::string);
+template aff3ct::tools::Frozenbits_generator<B_16>* aff3ct::tools::Factory_frozenbits_generator::build<B_16>(const std::string, const int, const int, const float, const std::string, const std::string);
+template aff3ct::tools::Frozenbits_generator<B_32>* aff3ct::tools::Factory_frozenbits_generator::build<B_32>(const std::string, const int, const int, const float, const std::string, const std::string);
+template aff3ct::tools::Frozenbits_generator<B_64>* aff3ct::tools::Factory_frozenbits_generator::build<B_64>(const std::string, const int, const int, const float, const std::string, const std::string);
 #else
-template struct aff3ct::tools::Factory_frozenbits_generator<B>;
+template aff3ct::tools::Frozenbits_generator<B>* aff3ct::tools::Factory_frozenbits_generator::build<B>(const std::string, const int, const int, const float, const std::string, const std::string);
 #ifndef PREC_32_BIT
-template struct aff3ct::tools::Factory_frozenbits_generator<B_32>;
+template aff3ct::tools::Frozenbits_generator<B_32>* aff3ct::tools::Factory_frozenbits_generator::build<B_32>(const std::string, const int, const int, const float, const std::string, const std::string);
 #endif
 #endif
 // ==================================================================================== explicit template instantiation

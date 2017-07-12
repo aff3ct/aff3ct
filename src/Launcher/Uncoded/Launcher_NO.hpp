@@ -12,8 +12,8 @@ template <class cLauncher, typename B = int, typename R = float, typename Q = R>
 class Launcher_NO : public cLauncher
 {
 protected:
-	typename tools::Factory_encoder_common<B  >::encoder_parameters *m_enc = nullptr;
-	typename tools::Factory_decoder_NO    <B,Q>::decoder_parameters *m_dec = nullptr;
+	tools::Factory_encoder_common::parameters *m_enc = nullptr;
+	tools::Factory_decoder_NO    ::parameters *m_dec = nullptr;
 
 public:
 	Launcher_NO(const int argc, const char **argv, std::ostream &stream = std::cout);

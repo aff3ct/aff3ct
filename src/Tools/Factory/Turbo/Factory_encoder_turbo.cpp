@@ -9,8 +9,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
-Encoder<B>* Factory_encoder_turbo<B>
-::build(const encoder_parameters_turbo &params,
+Encoder<B>* Factory_encoder_turbo
+::build(const parameters       &params,
         const Interleaver<int> &itl,
               Encoder_sys<B>   *enc_n,
               Encoder_sys<B>   *enc_i)
@@ -29,14 +29,13 @@ Encoder<B>* Factory_encoder_turbo<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-void Factory_encoder_turbo<B>
+void Factory_encoder_turbo
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	Factory_encoder_common<B>::build_args(req_args, opt_args);
+	Factory_encoder_common::build_args(req_args, opt_args);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::build_args(req_args, opt_args);
+	Factory_interleaver::build_args(req_args, opt_args);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", TURBO";
@@ -60,22 +59,20 @@ void Factory_encoder_turbo<B>
 		 "LTE, CCSDS"};
 }
 
-template <typename B>
-void Factory_encoder_turbo<B>
-::store_args(const Arguments_reader& ar, encoder_parameters_turbo &params,
+void Factory_encoder_turbo
+::store_args(const Arguments_reader& ar, parameters &params,
              const int K, const int N, const int n_frames)
 {
 	params.type = "TURBO";
 
-	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
+	Factory_encoder_common::store_args(ar, params, K, N, n_frames);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
 
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::store_args(ar, params.itl, K, n_frames);
-
+	Factory_interleaver::store_args(ar, params.itl, K, n_frames);
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(ar.exist_arg({"cde-std"})) params.standard = ar.get_arg({"cde-std"});
@@ -114,24 +111,22 @@ void Factory_encoder_turbo<B>
 	params.N           = 3 * params.K + params.tail_length;
 }
 
-template <typename B>
-void Factory_encoder_turbo<B>
+void Factory_encoder_turbo
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	Factory_encoder_common<B>::group_args(ar);
+	Factory_encoder_common::group_args(ar);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::group_args(ar);
+	Factory_interleaver::group_args(ar);
 }
 
-template <typename B>
-void Factory_encoder_turbo<B>
-::header(Header::params_list& head_enc, Header::params_list& head_cde, Header::params_list& head_itl, const encoder_parameters_turbo& params)
+void Factory_encoder_turbo
+::header(Header::params_list& head_enc, Header::params_list& head_cde, Header::params_list& head_itl, const parameters& params)
 {
-	Factory_encoder_common<B>::header(head_enc, head_cde, params);
+	Factory_encoder_common::header(head_enc, head_cde, params);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver<int>::header(head_itl, params.itl);
+	Factory_interleaver::header(head_itl, params.itl);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
@@ -148,14 +143,14 @@ void Factory_encoder_turbo<B>
 		head_cde.push_back(std::make_pair("Path to the JSON file", params.json_path));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_encoder_turbo<B_8>;
-template struct aff3ct::tools::Factory_encoder_turbo<B_16>;
-template struct aff3ct::tools::Factory_encoder_turbo<B_32>;
-template struct aff3ct::tools::Factory_encoder_turbo<B_64>;
+template aff3ct::module::Encoder<B_8 >* aff3ct::tools::Factory_encoder_turbo::build<B_8 >(const aff3ct::tools::Factory_encoder_turbo::parameters&, const Interleaver<int>&, Encoder_sys<B_8 >*, Encoder_sys<B_8 >*);
+template aff3ct::module::Encoder<B_16>* aff3ct::tools::Factory_encoder_turbo::build<B_16>(const aff3ct::tools::Factory_encoder_turbo::parameters&, const Interleaver<int>&, Encoder_sys<B_16>*, Encoder_sys<B_16>*);
+template aff3ct::module::Encoder<B_32>* aff3ct::tools::Factory_encoder_turbo::build<B_32>(const aff3ct::tools::Factory_encoder_turbo::parameters&, const Interleaver<int>&, Encoder_sys<B_32>*, Encoder_sys<B_32>*);
+template aff3ct::module::Encoder<B_64>* aff3ct::tools::Factory_encoder_turbo::build<B_64>(const aff3ct::tools::Factory_encoder_turbo::parameters&, const Interleaver<int>&, Encoder_sys<B_64>*, Encoder_sys<B_64>*);
 #else
-template struct aff3ct::tools::Factory_encoder_turbo<B>;
+template aff3ct::module::Encoder<B>* aff3ct::tools::Factory_encoder_turbo::build<B>(const aff3ct::tools::Factory_encoder_turbo::parameters&, const Interleaver<int>&, Encoder_sys<B>*, Encoder_sys<B>*);
 #endif
 // ==================================================================================== explicit template instantiation

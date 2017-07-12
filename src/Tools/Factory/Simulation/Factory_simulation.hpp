@@ -18,9 +18,9 @@ namespace tools
 {
 struct Factory_simulation : Factory_simulation_main
 {
-	struct simu_parameters : simu_parameters_main
+	struct parameters : Factory_simulation_main::parameters
 	{
-		virtual ~simu_parameters() {}
+		virtual ~parameters() {}
 
 		// ---- simulation
 #ifdef ENABLE_MPI
@@ -47,10 +47,10 @@ struct Factory_simulation : Factory_simulation_main
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, simu_parameters &params);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const simu_parameters& params);
+	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const parameters& params);
 };
 }
 }

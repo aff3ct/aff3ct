@@ -12,8 +12,8 @@ Launcher_RA<cLauncher,B,R,Q>
 ::Launcher_RA(const int argc, const char **argv, std::ostream &stream)
 : cLauncher(argc, argv, stream)
 {
-	m_enc = new typename tools::Factory_encoder_RA<B  >::encoder_parameters    ();
-	m_dec = new typename tools::Factory_decoder_RA<B,Q>::decoder_parameters_RA();
+	m_enc = new tools::Factory_encoder_RA::parameters();
+	m_dec = new tools::Factory_decoder_RA::parameters();
 
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
@@ -39,8 +39,8 @@ void Launcher_RA<cLauncher,B,R,Q>
 {
 	cLauncher::build_args();
 
-	tools::Factory_encoder_RA <B  >::build_args(this->req_args, this->opt_args);
-	tools::Factory_decoder_RA <B,Q>::build_args(this->req_args, this->opt_args);
+	tools::Factory_encoder_RA::build_args(this->req_args, this->opt_args);
+	tools::Factory_decoder_RA::build_args(this->req_args, this->opt_args);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -49,8 +49,8 @@ void Launcher_RA<cLauncher,B,R,Q>
 {
 	cLauncher::store_args();
 
-	tools::Factory_encoder_RA <B  >::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
-	tools::Factory_decoder_RA <B,Q>::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_encoder_RA::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	tools::Factory_decoder_RA::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
@@ -59,16 +59,16 @@ void Launcher_RA<cLauncher,B,R,Q>
 {
 	cLauncher::group_args();
 
-	tools::Factory_encoder_RA <B  >::group_args(this->arg_group);
-	tools::Factory_decoder_RA <B,Q>::group_args(this->arg_group);
+	tools::Factory_encoder_RA::group_args(this->arg_group);
+	tools::Factory_decoder_RA::group_args(this->arg_group);
 }
 
 template <class cLauncher, typename B, typename R, typename Q>
 void Launcher_RA<cLauncher,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_RA <B  >::header(this->pl_enc, this->pl_cde, *m_enc);
-	tools::Factory_decoder_RA <B,Q>::header(this->pl_dec, this->pl_itl, *m_dec);
+	tools::Factory_encoder_RA::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_decoder_RA::header(this->pl_dec, this->pl_itl, *m_dec);
 
 	cLauncher::print_header();
 }

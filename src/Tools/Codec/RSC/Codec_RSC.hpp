@@ -17,15 +17,15 @@ template <typename B = int, typename Q = float, typename QD = Q>
 class Codec_RSC : public Codec_SISO<B,Q>
 {
 protected:
-	const typename Factory_encoder_RSC<B     >::encoder_parameters_RSC& enc_par;
-	const typename Factory_decoder_RSC<B,Q,QD>::decoder_parameters_RSC& dec_par;
+	const Factory_encoder_RSC::parameters& enc_par;
+	const Factory_decoder_RSC::parameters& dec_par;
 
 	// the trellis representation
 	std::vector<std::vector<int>> trellis;
 
 public:
-	Codec_RSC(const typename Factory_encoder_RSC<B     >::encoder_parameters_RSC &enc_params,
-	          const typename Factory_decoder_RSC<B,Q,QD>::decoder_parameters_RSC &dec_params);
+	Codec_RSC(const Factory_encoder_RSC::parameters &enc_params,
+	          const Factory_decoder_RSC::parameters &dec_params);
 	virtual ~Codec_RSC();
 
 	module::Encoder_RSC_sys<B  >* build_encoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr);

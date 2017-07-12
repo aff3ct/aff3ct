@@ -34,7 +34,7 @@ void Factory_simulation_BFER::build_args(Arguments_reader::arg_map &req_args, Ar
 		 "ES, EB"};
 }
 
-void Factory_simulation_BFER::store_args(const Arguments_reader& ar, simu_parameters_BFER &params)
+void Factory_simulation_BFER::store_args(const Arguments_reader& ar, parameters &params)
 {
 #if !defined(STARPU) && !defined(SYSTEMC)
 	params.n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
@@ -70,7 +70,7 @@ void Factory_simulation_BFER::group_args(Arguments_reader::arg_grp& ar)
 }
 
 void Factory_simulation_BFER::header(Header::params_list& head_sim, Header::params_list& head_cde,
-                                     const simu_parameters_BFER& params)
+                                     const parameters& params)
 {
 	Factory_simulation::header(head_sim, head_cde, params);
 

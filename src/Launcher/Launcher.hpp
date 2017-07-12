@@ -48,7 +48,7 @@ protected:
 	tools::Arguments_reader::arg_grp arg_group;/*!< List of the arguments groups */
 
 	tools::Factory_simulation_main::chain_parameters *chain_params = nullptr;   /*!< A structure of parameters to store and pass to the simulation. */
-	tools::Factory_simulation     ::simu_parameters  *simu_params  = nullptr;
+	tools::Factory_simulation     ::parameters       *simu_params  = nullptr;
 
 	std  ::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
 	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,

@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
-Encoder<B>* Factory_encoder_common<B>
-::build(const encoder_parameters &params, const int seed)
+Encoder<B>* Factory_encoder_common
+::build(const parameters &params, const int seed)
 {
 	     if (params.type == "NO"   ) return new Encoder_NO   <B>(params.K,                        params.n_frames);
 	else if (params.type == "AZCW" ) return new Encoder_AZCW <B>(params.K, params.N,              params.n_frames);
@@ -22,8 +22,7 @@ Encoder<B>* Factory_encoder_common<B>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-void Factory_encoder_common<B>
+void Factory_encoder_common
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
@@ -46,9 +45,8 @@ void Factory_encoder_common<B>
 		 "enable the coset approach."};
 }
 
-template <typename B>
-void Factory_encoder_common<B>
-::store_args(const Arguments_reader& ar, encoder_parameters &params,
+void Factory_encoder_common
+::store_args(const Arguments_reader& ar, parameters &params,
              const int K, const int N, const int n_frames)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
@@ -75,16 +73,14 @@ void Factory_encoder_common<B>
 	params.n_frames = n_frames;
 }
 
-template <typename B>
-void Factory_encoder_common<B>
+void Factory_encoder_common
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	ar.push_back({"enc", "Encoder parameter(s)"});
 }
 
-template <typename B>
-void Factory_encoder_common<B>
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const encoder_parameters& params)
+void Factory_encoder_common
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Type", params.type));
@@ -99,14 +95,14 @@ void Factory_encoder_common<B>
 
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_encoder_common<B_8>;
-template struct aff3ct::tools::Factory_encoder_common<B_16>;
-template struct aff3ct::tools::Factory_encoder_common<B_32>;
-template struct aff3ct::tools::Factory_encoder_common<B_64>;
+template aff3ct::module::Encoder<B_8 >* aff3ct::tools::Factory_encoder_common::build<B_8 >(const aff3ct::tools::Factory_encoder_common::parameters&, int);
+template aff3ct::module::Encoder<B_16>* aff3ct::tools::Factory_encoder_common::build<B_16>(const aff3ct::tools::Factory_encoder_common::parameters&, int);
+template aff3ct::module::Encoder<B_32>* aff3ct::tools::Factory_encoder_common::build<B_32>(const aff3ct::tools::Factory_encoder_common::parameters&, int);
+template aff3ct::module::Encoder<B_64>* aff3ct::tools::Factory_encoder_common::build<B_64>(const aff3ct::tools::Factory_encoder_common::parameters&, int);
 #else
-template struct aff3ct::tools::Factory_encoder_common<B>;
+template aff3ct::module::Encoder<B>* aff3ct::tools::Factory_encoder_common::build<B>(const aff3ct::tools::Factory_encoder_common::parameters&, int);
 #endif
 // ==================================================================================== explicit template instantiation

@@ -18,7 +18,7 @@ namespace tools
 
 struct Factory_simulation_main : public Factory
 {
-	struct simu_parameters_main
+	struct parameters
 	{
 		// ---- simulation
 		std::string sim_type = "BFER";
@@ -38,10 +38,10 @@ struct Factory_simulation_main : public Factory
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, simu_parameters_main& params);
+	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const simu_parameters_main& params);
+	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const parameters& params);
 };
 
 } /* namespace tools */

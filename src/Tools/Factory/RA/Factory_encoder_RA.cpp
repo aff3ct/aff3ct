@@ -8,56 +8,52 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B>
-Encoder<B>* Factory_encoder_RA<B>
-::build(const typename Factory_encoder_common<B>::encoder_parameters& params, const Interleaver<int> &itl)
+Encoder<B>* Factory_encoder_RA
+::build(const Factory_encoder_common::parameters& params, const Interleaver<int> &itl)
 {
 	if (params.type == "RA") return new Encoder_RA<B>(params.K, params.N, itl, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-void Factory_encoder_RA<B>
+void Factory_encoder_RA
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	Factory_encoder_common<B>::build_args(req_args, opt_args);
+	Factory_encoder_common::build_args(req_args, opt_args);
 
 	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", RA";
 }
 
-template <typename B>
-void Factory_encoder_RA<B>
-::store_args(const Arguments_reader& ar, typename Factory_encoder_common<B>::encoder_parameters &params,
+void Factory_encoder_RA
+::store_args(const Arguments_reader& ar, Factory_encoder_common::parameters &params,
              int K, int N, int n_frames)
 {
 	params.type = "RA";
 
-	Factory_encoder_common<B>::store_args(ar, params, K, N, n_frames);
+	Factory_encoder_common::store_args(ar, params, K, N, n_frames);
 }
 
-template <typename B>
-void Factory_encoder_RA<B>
+void Factory_encoder_RA
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-	Factory_encoder_common<B>::group_args(ar);
+	Factory_encoder_common::group_args(ar);
 }
 
-template <typename B>
-void Factory_encoder_RA<B>
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const typename Factory_encoder_common<B>::encoder_parameters& params)
+void Factory_encoder_RA
+::header(Header::params_list& head_enc, Header::params_list& head_cde, const Factory_encoder_common::parameters& params)
 {
-	Factory_encoder_common<B>::header(head_enc, head_cde, params);
+	Factory_encoder_common::header(head_enc, head_cde, params);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_encoder_RA<B_8>;
-template struct aff3ct::tools::Factory_encoder_RA<B_16>;
-template struct aff3ct::tools::Factory_encoder_RA<B_32>;
-template struct aff3ct::tools::Factory_encoder_RA<B_64>;
+template aff3ct::module::Encoder<B_8 >* aff3ct::tools::Factory_encoder_RA::build<B_8 >(const aff3ct::tools::Factory_encoder_common::parameters&, const Interleaver<int>&);
+template aff3ct::module::Encoder<B_16>* aff3ct::tools::Factory_encoder_RA::build<B_16>(const aff3ct::tools::Factory_encoder_common::parameters&, const Interleaver<int>&);
+template aff3ct::module::Encoder<B_32>* aff3ct::tools::Factory_encoder_RA::build<B_32>(const aff3ct::tools::Factory_encoder_common::parameters&, const Interleaver<int>&);
+template aff3ct::module::Encoder<B_64>* aff3ct::tools::Factory_encoder_RA::build<B_64>(const aff3ct::tools::Factory_encoder_common::parameters&, const Interleaver<int>&);
 #else
-template struct aff3ct::tools::Factory_encoder_RA<B>;
+template aff3ct::module::Encoder<B>* aff3ct::tools::Factory_encoder_RA::build<B>(const aff3ct::tools::Factory_encoder_common::parameters&, const Interleaver<int>&);
 #endif
 // ==================================================================================== explicit template instantiation

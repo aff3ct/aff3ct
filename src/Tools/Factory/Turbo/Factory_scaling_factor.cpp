@@ -10,8 +10,8 @@
 using namespace aff3ct::tools;
 
 template<typename B, typename Q>
-Scaling_factor<B,Q>* Factory_scaling_factor<B,Q>
-::build(const scaling_factor_parameters& params, const int n_ite)
+Scaling_factor<B,Q>* Factory_scaling_factor
+::build(const parameters& params, const int n_ite)
 {
 	     if (params.type == "CST"    ) return new Scaling_factor_constant<B,Q>(n_ite, params.cst        );
 	else if (params.type == "LTE_VEC") return new Scaling_factor_vec     <B,Q>(n_ite                    );
@@ -21,8 +21,7 @@ Scaling_factor<B,Q>* Factory_scaling_factor<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template<typename B, typename Q>
-void Factory_scaling_factor<B,Q>
+void Factory_scaling_factor
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	opt_args[{"dec-sf"}] =
@@ -31,9 +30,8 @@ void Factory_scaling_factor<B,Q>
 		 "CST, LTE, LTE_VEC, ARRAY"};
 }
 
-template<typename B, typename Q>
-void Factory_scaling_factor<B,Q>
-::store_args(const Arguments_reader& ar, scaling_factor_parameters &params)
+void Factory_scaling_factor
+::store_args(const Arguments_reader& ar, parameters &params)
 {
 	if(ar.exist_arg({"dec-sf"}))
 	{
@@ -49,28 +47,26 @@ void Factory_scaling_factor<B,Q>
 	}
 }
 
-template<typename B, typename Q>
-void Factory_scaling_factor<B,Q>
+void Factory_scaling_factor
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 
 }
 
-template<typename B, typename Q>
-void Factory_scaling_factor<B,Q>
-::header(Header::params_list& head_sf, const scaling_factor_parameters& params)
+void Factory_scaling_factor
+::header(Header::params_list& head_sf, const parameters& params)
 {
 	head_sf.push_back(std::make_pair("Scaling factor", params.declaration));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_scaling_factor<B_8,Q_8>;
-template struct aff3ct::tools::Factory_scaling_factor<B_16,Q_16>;
-template struct aff3ct::tools::Factory_scaling_factor<B_32,Q_32>;
-template struct aff3ct::tools::Factory_scaling_factor<B_64,Q_64>;
+template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::tools::Factory_scaling_factor::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
+template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::tools::Factory_scaling_factor::build<B_16,Q_16>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
+template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::tools::Factory_scaling_factor::build<B_32,Q_32>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
+template aff3ct::tools::Scaling_factor<B_64,Q_64>* aff3ct::tools::Factory_scaling_factor::build<B_64,Q_64>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
 #else
-template struct aff3ct::tools::Factory_scaling_factor<B,Q>;
+template aff3ct::tools::Scaling_factor<B,Q>* aff3ct::tools::Factory_scaling_factor::build<B,Q>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
 #endif
 // ==================================================================================== explicit template instantiation

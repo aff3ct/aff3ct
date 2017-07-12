@@ -14,7 +14,7 @@ void Factory_simulation_BFER_ite::build_args(Arguments_reader::arg_map &req_args
 
 }
 
-void Factory_simulation_BFER_ite::store_args(const Arguments_reader& ar, simu_parameters_BFER_ite &params)
+void Factory_simulation_BFER_ite::store_args(const Arguments_reader& ar, parameters &params)
 {
 	Factory_simulation_BFER::store_args(ar, params);
 
@@ -28,7 +28,7 @@ void Factory_simulation_BFER_ite::group_args(Arguments_reader::arg_grp& ar)
 }
 
 void Factory_simulation_BFER_ite::header(Header::params_list& head_sim, Header::params_list& head_cde,
-                                         const simu_parameters_BFER_ite& params)
+                                         const parameters& params)
 {
 	Factory_simulation_BFER::header(head_sim, head_cde, params);
 

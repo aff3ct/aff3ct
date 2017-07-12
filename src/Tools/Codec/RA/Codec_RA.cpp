@@ -10,8 +10,8 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_RA<B,Q>
-::Codec_RA(const typename Factory_encoder_common<B  >::encoder_parameters    &enc_params,
-           const typename Factory_decoder_RA    <B,Q>::decoder_parameters_RA &dec_params)
+::Codec_RA(const Factory_encoder_common::parameters &enc_params,
+           const Factory_decoder_RA    ::parameters &dec_params)
 : Codec<B,Q>(enc_params, dec_params), dec_par(dec_params)
 {
 }
@@ -26,7 +26,7 @@ template <typename B, typename Q>
 Interleaver<int>* Codec_RA<B,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	return Factory_interleaver<int>::build(dec_par.itl);
+	return Factory_interleaver::build<int>(dec_par.itl);
 }
 
 template <typename B, typename Q>
@@ -36,7 +36,7 @@ Encoder<B>* Codec_RA<B,Q>
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
-	return Factory_encoder_RA<B>::build(this->enc_params, *itl);
+	return Factory_encoder_RA::build<B>(this->enc_params, *itl);
 }
 
 template <typename B, typename Q>
@@ -46,7 +46,7 @@ Decoder<B,Q>* Codec_RA<B,Q>
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
-	return Factory_decoder_RA<B,Q>::build(dec_par, *itl);
+	return Factory_decoder_RA::build<B,Q>(dec_par, *itl);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -24,8 +24,8 @@ class Launcher_BFER_ite : public Launcher
 protected:
 	tools::Codec_SISO<B,Q> *codec = nullptr;
 
-	tools::Factory_simulation_BFER_ite::chain_parameters_BFER_ite<B,R,Q> *m_chain_params = nullptr;
-	tools::Factory_simulation_BFER_ite::simu_parameters_BFER_ite         *m_sim          = nullptr;
+	tools::Factory_simulation_BFER_ite::chain_parameters *m_chain_params = nullptr;
+	tools::Factory_simulation_BFER_ite::parameters       *m_sim          = nullptr;
 
 public:
 	Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);

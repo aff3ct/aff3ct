@@ -23,7 +23,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
-::Simulation_BFER(const typename Factory_simulation_BFER::chain_parameters_BFER<B,R,Q>& params, Codec<B,Q> &codec)
+::Simulation_BFER(const typename Factory_simulation_BFER::chain_parameters& params, Codec<B,Q> &codec)
 : Simulation(),
   params(params),
 
@@ -167,7 +167,7 @@ void Simulation_BFER<B,R,Q>
 		// dirty hack to override simulation params
 		if (params.mon.err_track_revert)
 		{
-			auto *params_writable = const_cast<typename Factory_simulation_BFER::chain_parameters_BFER<B,R,Q>*>(&params);
+			auto *params_writable = const_cast<typename Factory_simulation_BFER::chain_parameters*>(&params);
 			const auto base_path = params.mon.err_track_path;
 			params_writable->src. path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
@@ -369,7 +369,7 @@ template <typename B, typename R, typename Q>
 Monitor<B>* Simulation_BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor<B>::build(params.mon);
+	return Factory_monitor::build<B>(params.mon);
 }
 
 template <typename B, typename R, typename Q>

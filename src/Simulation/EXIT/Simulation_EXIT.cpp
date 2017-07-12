@@ -20,7 +20,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 Simulation_EXIT<B,R>
-::Simulation_EXIT(const typename tools::Factory_simulation_EXIT::chain_parameters_EXIT<B,R>& params, Codec_SISO<B,R> &codec)
+::Simulation_EXIT(const tools::Factory_simulation_EXIT::chain_parameters& params, Codec_SISO<B,R> &codec)
 : Simulation(),
   params(params),
   codec (codec),
@@ -83,11 +83,11 @@ void Simulation_EXIT<B,R>
 	release_objects();
 
 	const auto N_mod = params.modem.N_mod;
-	const auto K_mod = Factory_modem<B,R>::get_buffer_size_after_modulation(params.modem.type,
-	                                                                        params.sim->K,
-	                                                                        params.modem.bps,
-	                                                                        params.modem.upf,
-	                                                                        params.modem.cpm_L);
+	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.modem.type,
+	                                                                   params.sim->K,
+	                                                                   params.modem.bps,
+	                                                                   params.modem.upf,
+	                                                                   params.modem.cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -410,7 +410,7 @@ template <typename B, typename R>
 Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
-	return Factory_source<B>::build(params.src, params.sim->seed);
+	return Factory_source::build<B>(params.src, params.sim->seed);
 }
 
 template <typename B, typename R>
@@ -423,7 +423,7 @@ Encoder<B>* Simulation_EXIT<B,R>
 	}
 	catch (std::exception const&)
 	{
-		return Factory_encoder_common<B>::build(*params.enc, params.sim->seed);
+		return Factory_encoder_common::build<B>(*params.enc, params.sim->seed);
 	}
 }
 
@@ -431,28 +431,28 @@ template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem()
 {
-	return Factory_modem<B,R>::build(params.modem, this->sigma);
+	return Factory_modem::build<B,R>(params.modem, this->sigma);
 }
 
 template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem_a()
 {
-	return Factory_modem<B,R>::build(params.modem, 2.f / sig_a);
+	return Factory_modem::build<B,R>(params.modem, 2.f / sig_a);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
-	return Factory_channel<R>::build(params.chn, params.sim->seed, this->sigma);
+	return Factory_channel::build<R>(params.chn, params.sim->seed, this->sigma);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	return Factory_channel<R>::build(params.chn, params.sim->seed, 2.f / sig_a);
+	return Factory_channel::build<R>(params.chn, params.sim->seed, 2.f / sig_a);
 }
 
 template <typename B, typename R>

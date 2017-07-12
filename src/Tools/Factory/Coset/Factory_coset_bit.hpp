@@ -11,9 +11,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
 struct Factory_coset_bit : public Factory
 {
+	template <typename B = int>
 	static module::Coset<B,B>* build(const std::string type,
 	                                 const int         K,
 	                                 const int         n_frames = 1);

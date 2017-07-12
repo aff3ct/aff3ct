@@ -7,7 +7,7 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
-Decoder<B,Q>* Factory_decoder_NO<B,Q>
+Decoder<B,Q>* Factory_decoder_NO
 ::build(const std::string  type,
         const std::string  implem,
         const int          K,
@@ -18,8 +18,7 @@ Decoder<B,Q>* Factory_decoder_NO<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_NO<B,Q>
+void Factory_decoder_NO
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder_common::build_args(req_args, opt_args);
@@ -29,9 +28,8 @@ void Factory_decoder_NO<B,Q>
 	opt_args[{"dec-implem"   }].push_back("HARD_DECISION");
 }
 
-template <typename B, typename Q>
-void Factory_decoder_NO<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters &params,
+void Factory_decoder_NO
+::store_args(const Arguments_reader& ar, Factory_decoder_common::parameters &params,
              const int K, const int N, const int n_frames)
 {
 	params.type   = "NONE";
@@ -40,28 +38,26 @@ void Factory_decoder_NO<B,Q>
 	Factory_decoder_common::store_args(ar, params, K, N, n_frames);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_NO<B,Q>
+void Factory_decoder_NO
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder_common::group_args(ar);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_NO<B,Q>
-::header(Header::params_list& head_dec, const decoder_parameters& params)
+void Factory_decoder_NO
+::header(Header::params_list& head_dec, const Factory_decoder_common::parameters& params)
 {
 	Factory_decoder_common::header(head_dec, params);
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_NO<B_8,Q_8>;
-template struct aff3ct::tools::Factory_decoder_NO<B_16,Q_16>;
-template struct aff3ct::tools::Factory_decoder_NO<B_32,Q_32>;
-template struct aff3ct::tools::Factory_decoder_NO<B_64,Q_64>;
+template aff3ct::module::Decoder<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_NO::build<B_8 ,Q_8 >(const std::string, const std::string, const int, const int);
+template aff3ct::module::Decoder<B_16,Q_16>* aff3ct::tools::Factory_decoder_NO::build<B_16,Q_16>(const std::string, const std::string, const int, const int);
+template aff3ct::module::Decoder<B_32,Q_32>* aff3ct::tools::Factory_decoder_NO::build<B_32,Q_32>(const std::string, const std::string, const int, const int);
+template aff3ct::module::Decoder<B_64,Q_64>* aff3ct::tools::Factory_decoder_NO::build<B_64,Q_64>(const std::string, const std::string, const int, const int);
 #else
-template struct aff3ct::tools::Factory_decoder_NO<B,Q>;
+template aff3ct::module::Decoder<B,Q>* aff3ct::tools::Factory_decoder_NO::build<B,Q>(const std::string, const std::string, const int, const int);
 #endif
 // ==================================================================================== explicit template instantiation

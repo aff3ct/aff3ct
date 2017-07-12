@@ -17,9 +17,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_polar<B,Q>
-::Codec_polar(const typename Factory_encoder_common<B  >::encoder_parameters       &enc_params,
-              const typename Factory_decoder_polar <B,Q>::decoder_parameters_polar &dec_params,
-              const typename Factory_puncturer_polar<B,Q>::puncturer_parameters    &pct_params,
+::Codec_polar(const Factory_encoder_common ::parameters &enc_params,
+              const Factory_decoder_polar  ::parameters &dec_params,
+              const Factory_puncturer_polar::parameters &pct_params,
               const int n_threads)
 : Codec_SISO<B,Q>(enc_params, dec_params), dec_par(dec_params), pct_par(pct_params),
   frozen_bits(dec_params.N),
@@ -30,7 +30,7 @@ Codec_polar<B,Q>
 	if (!is_generated_decoder)
 	{
 		// build the frozen bits generator
-		fb_generator = Factory_frozenbits_generator<B>::build(dec_par.fb_gen_method,
+		fb_generator = Factory_frozenbits_generator::build<B>(dec_par.fb_gen_method,
 		                                                      dec_par.K,
 		                                                      dec_par.N,
 		                                                      dec_par.sigma,
@@ -76,9 +76,9 @@ void Codec_polar<B,Q>
 		}
 	}
 	else
-		Factory_decoder_polar_gen<B,Q>::get_frozen_bits(dec_par.implem,
-		                                                dec_par.N,
-		                                                frozen_bits);
+		Factory_decoder_polar_gen::get_frozen_bits<B>(dec_par.implem,
+		                                              dec_par.N,
+		                                              frozen_bits);
 }
 
 template <typename B, typename Q>
@@ -114,21 +114,21 @@ Puncturer<B,Q>* Codec_polar<B,Q>
 	if(fb_generator == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "Polar puncturer requires a frozen bits generator.");
 
-	return Factory_puncturer_polar<B,Q>::build(pct_par, *fb_generator);
+	return Factory_puncturer_polar::build<B,Q>(pct_par, *fb_generator);
 }
 
 template <typename B, typename Q>
 Encoder<B>* Codec_polar<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return Factory_encoder_polar<B>::build(this->enc_params, frozen_bits);
+	return Factory_encoder_polar::build<B>(this->enc_params, frozen_bits);
 }
 
 template <typename B, typename Q>
 SISO<Q>* Codec_polar<B,Q>
 ::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	decoder_siso[tid] = Factory_decoder_polar<B,Q>::build_siso(dec_par, frozen_bits);
+	decoder_siso[tid] = Factory_decoder_polar::build_siso<B,Q>(dec_par, frozen_bits);
 	return decoder_siso[tid];
 }
 
@@ -145,9 +145,9 @@ Decoder<B,Q>* Codec_polar<B,Q>
 	else
 	{
 		if (is_generated_decoder)
-			return Factory_decoder_polar_gen<B,Q>::build(dec_par, frozen_bits, this->enc_params.systematic, crc);
+			return Factory_decoder_polar_gen::build<B,Q>(dec_par, frozen_bits, this->enc_params.systematic, crc);
 		else
-			return Factory_decoder_polar    <B,Q>::build(dec_par, frozen_bits, this->enc_params.systematic, crc);
+			return Factory_decoder_polar    ::build<B,Q>(dec_par, frozen_bits, this->enc_params.systematic, crc);
 	}
 }
 

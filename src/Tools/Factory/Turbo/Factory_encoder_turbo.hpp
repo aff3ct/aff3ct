@@ -14,12 +14,11 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
-struct Factory_encoder_turbo : public Factory_encoder_common<B>
+struct Factory_encoder_turbo : public Factory_encoder_common
 {
-	struct encoder_parameters_turbo : Factory_encoder_common<B>::encoder_parameters
+	struct parameters : Factory_encoder_common::parameters
 	{
-		virtual ~encoder_parameters_turbo() {}
+		virtual ~parameters() {}
 
 		bool buffered = true;
 		std::string json_path = "";
@@ -30,20 +29,21 @@ struct Factory_encoder_turbo : public Factory_encoder_common<B>
 		int              tail_length = 4 * 3;
 		int              N_pct;
 
-		typename Factory_interleaver<int>::interleaver_parameters itl;
+		typename Factory_interleaver::parameters itl;
 	};
 
-	static module::Encoder<B>* build(const encoder_parameters_turbo &params,
+	template <typename B = int>
+	static module::Encoder<B>* build(const parameters               &params,
 	                                 const module::Interleaver<int> &itl,
 	                                       module::Encoder_sys<B>   *enc_n,
 	                                       module::Encoder_sys<B>   *enc_i = nullptr);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, encoder_parameters_turbo &params,
+	static void store_args(const Arguments_reader& ar, parameters &params,
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_enc, Header::params_list& head_cde, Header::params_list& head_itl, const encoder_parameters_turbo& params);
+	static void header(Header::params_list& head_enc, Header::params_list& head_cde, Header::params_list& head_itl, const parameters& params);
 };
 }
 }

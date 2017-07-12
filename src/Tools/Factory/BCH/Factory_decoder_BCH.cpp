@@ -7,8 +7,8 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
-Decoder<B,Q>* Factory_decoder_BCH<B,Q>
-::build(const decoder_parameters_BCH &params, const Galois &GF)
+Decoder<B,Q>* Factory_decoder_BCH
+::build(const parameters &params, const Galois &GF)
 {
 	if (params.type == "ALGEBRAIC")
 	{
@@ -18,8 +18,7 @@ Decoder<B,Q>* Factory_decoder_BCH<B,Q>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_BCH<B,Q>
+void Factory_decoder_BCH
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder_common::build_args(req_args, opt_args);
@@ -30,9 +29,8 @@ void Factory_decoder_BCH<B,Q>
 		 "correction power of the BCH code."};
 }
 
-template <typename B, typename Q>
-void Factory_decoder_BCH<B,Q>
-::store_args(const Arguments_reader& ar, decoder_parameters_BCH &params,
+void Factory_decoder_BCH
+::store_args(const Arguments_reader& ar, parameters &params,
              const int K, const int N, const int n_frames)
 {
 	params.type     = "ALGEBRAIC";
@@ -55,16 +53,14 @@ void Factory_decoder_BCH<B,Q>
 		params.t = (N - K) / params.m;
 }
 
-template <typename B, typename Q>
-void Factory_decoder_BCH<B,Q>
+void Factory_decoder_BCH
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder_common::group_args(ar);
 }
 
-template <typename B, typename Q>
-void Factory_decoder_BCH<B,Q>
-::header(Header::params_list& head_dec, Header::params_list& head_cde, const decoder_parameters_BCH& params)
+void Factory_decoder_BCH
+::header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params)
 {
 	Factory_decoder_common::header(head_dec, params);
 
@@ -73,14 +69,15 @@ void Factory_decoder_BCH<B,Q>
 	head_cde.push_back(std::make_pair("Correction power (T)",   std::to_string(params.t)));
 }
 
-// ==================================================================================== explicit template instantiation 
+// ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_decoder_BCH<B_8,Q_8>;
-template struct aff3ct::tools::Factory_decoder_BCH<B_16,Q_16>;
-template struct aff3ct::tools::Factory_decoder_BCH<B_32,Q_32>;
-template struct aff3ct::tools::Factory_decoder_BCH<B_64,Q_64>;
+template aff3ct::module::Decoder<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_BCH::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_BCH::parameters&, const aff3ct::tools::Galois&);
+template aff3ct::module::Decoder<B_16,Q_16>* aff3ct::tools::Factory_decoder_BCH::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_BCH::parameters&, const aff3ct::tools::Galois&);
+template aff3ct::module::Decoder<B_32,Q_32>* aff3ct::tools::Factory_decoder_BCH::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_BCH::parameters&, const aff3ct::tools::Galois&);
+template aff3ct::module::Decoder<B_64,Q_64>* aff3ct::tools::Factory_decoder_BCH::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_BCH::parameters&, const aff3ct::tools::Galois&);
 #else
-template struct aff3ct::tools::Factory_decoder_BCH<B,Q>;
+template aff3ct::module::Decoder<B,Q>* aff3ct::tools::Factory_decoder_BCH::build<B,Q>(const aff3ct::tools::Factory_decoder_BCH::parameters&, const aff3ct::tools::Galois&);
 #endif
 // ==================================================================================== explicit template instantiation
+

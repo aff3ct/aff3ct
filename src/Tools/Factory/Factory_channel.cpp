@@ -20,10 +20,10 @@ using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename R>
-Channel<R>* Factory_channel<R>
-::build(const channel_parameters &params,
-        const int                 seed,
-        const R                   sigma)
+Channel<R>* Factory_channel
+::build(const parameters &params,
+        const int         seed,
+        const R           sigma)
 {
 	     if (params.type == "AWGN"         ) return new Channel_AWGN_LLR    <R>(params.N,                 new Noise_std <R>(seed), params.add_users, sigma, params.n_frames);
 	else if (params.type == "AWGN_FAST"    ) return new Channel_AWGN_LLR    <R>(params.N,                 new Noise_fast<R>(seed), params.add_users, sigma, params.n_frames);
@@ -43,8 +43,7 @@ Channel<R>* Factory_channel<R>
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename R>
-void Factory_channel<R>
+void Factory_channel
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	// ------------------------------------------------------------------------------------------------------- channel
@@ -71,9 +70,8 @@ void Factory_channel<R>
 		 "NO, FRAME, ONETAP"};
 }
 
-template <typename R>
-void Factory_channel<R>
-::store_args(const Arguments_reader& ar, channel_parameters &params,
+void Factory_channel
+::store_args(const Arguments_reader& ar, parameters &params,
              const int N, const bool complex, const bool add_users, const int n_frames)
 {
 	params.N         = N;
@@ -86,16 +84,14 @@ void Factory_channel<R>
 	if(ar.exist_arg({"chn-blk-fad"})) params.block_fading = ar.get_arg({"chn-blk-fad"});
 }
 
-template <typename R>
-void Factory_channel<R>
+void Factory_channel
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	ar.push_back({"chn", "Channel parameter(s)"});
 }
 
-template <typename R>
-void Factory_channel<R>
-::header(Header::params_list& head_chn, const channel_parameters& params)
+void Factory_channel
+::header(Header::params_list& head_chn, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- channel
 	head_chn.push_back(std::make_pair("Type", params.type));
@@ -109,9 +105,10 @@ void Factory_channel<R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template struct aff3ct::tools::Factory_channel<R_32>;
-template struct aff3ct::tools::Factory_channel<R_64>;
+template aff3ct::module::Channel<R_32>* aff3ct::tools::Factory_channel::build<R_32>(const aff3ct::tools::Factory_channel::parameters&, const int, const R_32);
+template aff3ct::module::Channel<R_64>* aff3ct::tools::Factory_channel::build<R_64>(const aff3ct::tools::Factory_channel::parameters&, const int, const R_64);
 #else
 template struct aff3ct::tools::Factory_channel<R>;
+template aff3ct::module::Channel<R>* aff3ct::tools::Factory_channel::build<R>(const aff3ct::tools::Factory_channel::parameters&, const int, const R);
 #endif
 // ==================================================================================== explicit template instantiation

@@ -22,12 +22,10 @@
 #include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
 #include "Launcher/Simulation_chain/Launcher_BFER_ite.hpp"
 #include "Launcher/Simulation_chain/Launcher_EXIT.hpp"
-#include "Launcher/Simulation_chain/Launcher_GEN.hpp"
 
 #include "Launcher/BCH/Launcher_BCH.hpp"
 #include "Launcher/LDPC/Launcher_LDPC.hpp"
 #include "Launcher/Polar/Launcher_polar.hpp"
-#include "Launcher/Polar/Launcher_polar_GEN.hpp"
 #include "Launcher/RA/Launcher_RA.hpp"
 #include "Launcher/RSC/Launcher_RSC.hpp"
 #include "Launcher/Turbo/Launcher_turbo.hpp"
@@ -112,7 +110,7 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	Arguments_reader::arg_grp arg_group;
 
 	std::vector<std::string> cmd_warn, cmd_error;
-	Factory_simulation_main::simu_parameters_main params;
+	Factory_simulation_main::parameters params;
 
 	Factory_simulation_main::build_args(req_args, opt_args);
 
@@ -199,8 +197,6 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 				launcher = new Launcher_polar<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 			else if (simu_type == "BFERI")
 				launcher = new Launcher_polar<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
-			else if (simu_type == "GEN")
-				launcher = new Launcher_polar_GEN<Launcher_GEN<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
 		if (code_type == "RSC")
