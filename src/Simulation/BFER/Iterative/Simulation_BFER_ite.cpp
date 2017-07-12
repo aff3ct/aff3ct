@@ -140,7 +140,7 @@ template <typename B, typename R, typename Q>
 Modem<B,R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	return Factory_modem::build<B,R,Q>(chain_params.modem, this->sigma);
+	return Factory_modem::build<B,R,Q>(chain_params.mdm, this->sigma);
 }
 
 template <typename B, typename R, typename Q>
@@ -154,7 +154,7 @@ template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer::build<R,Q>(chain_params.qua, this->sigma);
+	return Factory_quantizer::build<R,Q>(chain_params.qnt, this->sigma);
 }
 
 template <typename B, typename R, typename Q>

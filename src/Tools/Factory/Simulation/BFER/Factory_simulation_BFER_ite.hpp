@@ -43,7 +43,7 @@ struct Factory_simulation_BFER_ite : Factory_simulation_BFER
 		}
 
 		Factory_CRC        ::parameters  crc;
-		Factory_quantizer  ::parameters  qua;
+		Factory_quantizer  ::parameters  qnt;
 		Factory_interleaver::parameters  itl;
 		Factory_puncturer  ::parameters *pct = nullptr;
 	};

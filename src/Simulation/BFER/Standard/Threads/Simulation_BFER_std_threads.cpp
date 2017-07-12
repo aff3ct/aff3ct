@@ -17,26 +17,26 @@ Simulation_BFER_std_threads<B,R,Q>
 ::Simulation_BFER_std_threads(const tools::Factory_simulation_BFER_std::chain_parameters &chain_params, Codec<B,Q> &codec)
 : Simulation_BFER_std<B,R,Q>(chain_params, codec),
 
-  U_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info * this->simu_params.inter_frame_level)),
-  U_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K      * this->simu_params.inter_frame_level)),
-  X_N1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N_code * this->simu_params.inter_frame_level)),
-  X_N2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N      * this->simu_params.inter_frame_level)),
-  X_N3(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
-  H_N (this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
-  Y_N1(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_mod  * this->simu_params.inter_frame_level)),
-  Y_N2(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.modem.N_fil  * this->simu_params.inter_frame_level)),
-  Y_N3(this->simu_params.n_threads, mipp::vector<R>(this->simu_params.N      * this->simu_params.inter_frame_level)),
-  Y_N4(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N      * this->simu_params.inter_frame_level)),
-  Y_N5(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N_code * this->simu_params.inter_frame_level)),
-  V_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K      * this->simu_params.inter_frame_level)),
-  V_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info * this->simu_params.inter_frame_level))
+  U_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info     * this->simu_params.inter_frame_level)),
+  U_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K          * this->simu_params.inter_frame_level)),
+  X_N1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N_code     * this->simu_params.inter_frame_level)),
+  X_N2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N          * this->simu_params.inter_frame_level)),
+  X_N3(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_mod * this->simu_params.inter_frame_level)),
+  H_N (this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_mod * this->simu_params.inter_frame_level)),
+  Y_N1(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_mod * this->simu_params.inter_frame_level)),
+  Y_N2(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_fil * this->simu_params.inter_frame_level)),
+  Y_N3(this->simu_params.n_threads, mipp::vector<R>(this->simu_params.N          * this->simu_params.inter_frame_level)),
+  Y_N4(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N          * this->simu_params.inter_frame_level)),
+  Y_N5(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N_code     * this->simu_params.inter_frame_level)),
+  V_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K          * this->simu_params.inter_frame_level)),
+  V_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info     * this->simu_params.inter_frame_level))
 {
 #ifdef ENABLE_MPI
 	if (simu_params.debug || simu_params.benchs)
 		throw runtime_error(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
-	if (this->chain_params.mon.err_track_revert)
+	if (this->chain_params.mnt.err_track_revert)
 	{
 		if (this->simu_params.n_threads != 1)
 			std::clog << format_warning("Multi-threading detected with error tracking revert feature!"
@@ -82,7 +82,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
-	if (this->chain_params.mon.err_track_enable)
+	if (this->chain_params.mnt.err_track_enable)
 	{
 		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
 		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->simu_params.K});

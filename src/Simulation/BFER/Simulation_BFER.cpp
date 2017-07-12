@@ -53,7 +53,7 @@ Simulation_BFER<B,R,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (params.mon.err_track_enable)
+	if (params.mnt.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.sim->n_threads; tid++)
 			dumper[tid] = new Dumper(params.sim->inter_frame_level);
@@ -71,7 +71,7 @@ Simulation_BFER<B,R,Q>
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
 	this->monitor_red = new Monitor_reduction_mpi<B>(params.sim->K_info,
-	                                                 params.mon.n_frame_errors,
+	                                                 params.mnt.n_frame_errors,
 	                                                 this->monitor,
 	                                                 std::this_thread::get_id(),
 	                                                 params.sim->mpi_comm_freq,
@@ -79,7 +79,7 @@ Simulation_BFER<B,R,Q>
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
 	this->monitor_red = new Monitor_reduction<B>(params.sim->K_info,
-	                                             params.mon.n_frame_errors,
+	                                             params.mnt.n_frame_errors,
 	                                             this->monitor,
 	                                             params.sim->inter_frame_level);
 #endif
@@ -114,7 +114,7 @@ void Simulation_BFER<B,R,Q>
 		for (auto& duration : this->durations[tid])
 			duration.second = std::chrono::nanoseconds(0);
 
-		if (params.mon.err_track_enable)
+		if (params.mnt.err_track_enable)
 			this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
 	}
 	catch (std::exception const& e)
@@ -152,23 +152,23 @@ void Simulation_BFER<B,R,Q>
 		if (params.sim->snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, params.sim->R, params.modem.bps);
+			snr_s = ebn0_to_esn0(snr_b, params.sim->R, params.mdm.bps);
 		}
 		else //if(params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, params.sim->R, params.modem.bps);
+			snr_b = esn0_to_ebn0(snr_s, params.sim->R, params.mdm.bps);
 		}
-		sigma = esn0_to_sigma(snr_s, params.modem.upf);
+		sigma = esn0_to_sigma(snr_s, params.mdm.upf);
 
 		this->terminal->set_esn0(snr_s);
 		this->terminal->set_ebn0(snr_b);
 
 		// dirty hack to override simulation params
-		if (params.mon.err_track_revert)
+		if (params.mnt.err_track_revert)
 		{
 			auto *params_writable = const_cast<typename Factory_simulation_BFER::chain_parameters*>(&params);
-			const auto base_path = params.mon.err_track_path;
+			const auto base_path = params.mnt.err_track_path;
 			params_writable->src. path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
 			params_writable->chn. path = base_path + "_" + std::to_string(snr_b) + ".chn";
@@ -246,7 +246,7 @@ void Simulation_BFER<B,R,Q>
 
 			if (this->dumper_red != nullptr)
 			{
-				this->dumper_red->dump(params.mon.err_track_path + "_" + std::to_string(snr_b));
+				this->dumper_red->dump(params.mnt.err_track_path + "_" + std::to_string(snr_b));
 				this->dumper_red->clear();
 			}
 
@@ -369,7 +369,7 @@ template <typename B, typename R, typename Q>
 Monitor<B>* Simulation_BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor::build<B>(params.mon);
+	return Factory_monitor::build<B>(params.mnt);
 }
 
 template <typename B, typename R, typename Q>

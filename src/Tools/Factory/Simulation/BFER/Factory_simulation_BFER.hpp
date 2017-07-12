@@ -41,11 +41,11 @@ struct Factory_simulation_BFER : Factory_simulation
 
 		Factory_simulation_BFER::parameters *sim = nullptr;
 		Factory_source         ::parameters  src;
-		Factory_modem          ::parameters  modem;
+		Factory_modem          ::parameters  mdm;
 		Factory_channel        ::parameters  chn;
 		Factory_encoder_common ::parameters *enc = nullptr;
 		Factory_decoder_common ::parameters *dec = nullptr;
-		Factory_monitor        ::parameters  mon;
+		Factory_monitor        ::parameters  mnt;
 		Factory_terminal_BFER  ::parameters  ter;
 	};
 
