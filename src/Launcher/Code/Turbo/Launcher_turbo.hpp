@@ -9,8 +9,8 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class cLauncher, typename B = int, typename R = float, typename Q = R, typename QD = Q>
-class Launcher_turbo : public cLauncher
+template <class C, typename B = int, typename R = float, typename Q = R, typename QD = Q>
+class Launcher_turbo : public C
 {
 protected:
 	tools::Factory_encoder_turbo  ::parameters *m_enc = nullptr;

@@ -7,10 +7,10 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class cLauncher, typename B, typename R, typename Q>
-Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+Launcher_NO<C,B,R,Q>
 ::Launcher_NO(const int argc, const char **argv, std::ostream &stream)
-: cLauncher(argc, argv, stream)
+: C(argc, argv, stream)
 {
 	m_enc = new tools::Factory_encoder   ::parameters();
 	m_dec = new tools::Factory_decoder_NO::parameters();
@@ -22,8 +22,8 @@ Launcher_NO<cLauncher,B,R,Q>
 //	this->params.quantizer.n_decimals = 2;
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+Launcher_NO<C,B,R,Q>
 ::~Launcher_NO()
 {
 	if (this->m_chain_params->enc != nullptr)
@@ -33,48 +33,48 @@ Launcher_NO<cLauncher,B,R,Q>
 		delete this->m_chain_params->dec;
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_NO<C,B,R,Q>
 ::build_args()
 {
-	cLauncher::build_args();
+	C::build_args();
 
 	tools::Factory_encoder   ::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_NO::build_args(this->req_args, this->opt_args);
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_NO<C,B,R,Q>
 ::store_args()
 {
-	cLauncher::store_args();
+	C::store_args();
 
 	tools::Factory_encoder   ::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 	tools::Factory_decoder_NO::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_NO<C,B,R,Q>
 ::group_args()
 {
-	cLauncher::group_args();
+	C::group_args();
 
 	tools::Factory_encoder   ::group_args(this->arg_group);
 	tools::Factory_decoder_NO::group_args(this->arg_group);
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_NO<C,B,R,Q>
 ::print_header()
 {
 	tools::Factory_encoder   ::header(this->pl_enc, this->pl_cde, *m_enc);
 	tools::Factory_decoder_NO::header(this->pl_dec, *m_dec);
 
-	cLauncher::print_header();
+	C::print_header();
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_NO<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_NO<C,B,R,Q>
 ::build_codec()
 {
 	this->codec = new tools::Codec_uncoded<B,Q>(*m_enc, *m_dec);

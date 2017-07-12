@@ -7,10 +7,10 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class cLauncher, typename B, typename R, typename Q>
-Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+Launcher_polar<C,B,R,Q>
 ::Launcher_polar(const int argc, const char **argv, std::ostream &stream)
-: cLauncher(argc, argv, stream)
+: C(argc, argv, stream)
 {
 	m_enc = new tools::Factory_encoder_polar  ::parameters();
 	m_pct = new tools::Factory_puncturer_polar::parameters();
@@ -24,8 +24,8 @@ Launcher_polar<cLauncher,B,R,Q>
 	//	this->params.quantizer .n_decimals    = 1;
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+Launcher_polar<C,B,R,Q>
 ::~Launcher_polar()
 {
 	if (this->m_chain_params->pct != nullptr)
@@ -38,52 +38,52 @@ Launcher_polar<cLauncher,B,R,Q>
 		delete this->m_chain_params->dec;
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_polar<C,B,R,Q>
 ::build_args()
 {
-	cLauncher::build_args();
+	C::build_args();
 
 	tools::Factory_encoder_polar  ::build_args(this->req_args, this->opt_args);
 	tools::Factory_puncturer_polar::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_polar  ::build_args(this->req_args, this->opt_args);
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_polar<C,B,R,Q>
 ::store_args()
 {
-	cLauncher::store_args();
+	C::store_args();
 
 	tools::Factory_encoder_polar  ::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 	tools::Factory_decoder_polar  ::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 	tools::Factory_puncturer_polar::store_args(this->ar, *m_pct, this->m_chain_params->sim->K, this->m_chain_params->sim->N, m_dec->N_pct, this->m_chain_params->sim->inter_frame_level);
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_polar<C,B,R,Q>
 ::group_args()
 {
-	cLauncher::group_args();
+	C::group_args();
 
 	tools::Factory_encoder_polar  ::group_args(this->arg_group);
 	tools::Factory_puncturer_polar::group_args(this->arg_group);
 	tools::Factory_decoder_polar  ::group_args(this->arg_group);
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_polar<C,B,R,Q>
 ::print_header()
 {
 	tools::Factory_encoder_polar  ::header(this->pl_enc, this->pl_cde, *m_enc);
 	tools::Factory_puncturer_polar::header(this->pl_pct, *m_pct);
 	tools::Factory_decoder_polar  ::header(this->pl_dec, this->pl_cde, *m_dec);
 
-	cLauncher::print_header();
+	C::print_header();
 }
 
-template <class cLauncher, typename B, typename R, typename Q>
-void Launcher_polar<cLauncher,B,R,Q>
+template <class C, typename B, typename R, typename Q>
+void Launcher_polar<C,B,R,Q>
 ::build_codec()
 {
 	this->codec = new tools::Codec_polar<B,Q>(*m_enc, *m_dec, *m_pct, this->m_chain_params->sim->n_threads);

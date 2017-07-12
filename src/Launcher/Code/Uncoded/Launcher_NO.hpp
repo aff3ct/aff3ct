@@ -8,8 +8,8 @@ namespace aff3ct
 {
 namespace launcher
 {
-template <class cLauncher, typename B = int, typename R = float, typename Q = R>
-class Launcher_NO : public cLauncher
+template <class C, typename B = int, typename R = float, typename Q = R>
+class Launcher_NO : public C
 {
 protected:
 	tools::Factory_encoder   ::parameters *m_enc = nullptr;
