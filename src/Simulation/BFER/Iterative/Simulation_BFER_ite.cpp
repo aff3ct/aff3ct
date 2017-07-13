@@ -127,7 +127,9 @@ Encoder<B>* Simulation_BFER_ite<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		return Factory_encoder::build<B>(*chain_params.enc, seed);
+		auto enc_cpy = *chain_params.enc;
+		enc_cpy.seed = seed;
+		return Factory_encoder::build<B>(enc_cpy);
 	}
 }
 

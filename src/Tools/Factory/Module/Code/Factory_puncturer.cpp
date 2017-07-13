@@ -41,11 +41,11 @@ void Factory_puncturer
 {
 	params.K = ar.get_arg_int({"pct-info-bits", "K"});
 	params.N = ar.get_arg_int({"pct-fra-size", "N"});
-	params.N_code = params.N;
+	params.N_cw = params.N;
 	if(ar.exist_arg({"pct-fra", "F"})) params.n_frames = ar.get_arg_int({"pct-fra", "F"});
 	if(ar.exist_arg({"pct-type"})) params.type = ar.get_arg({"pct-type"});
 
-//	if (params.N == params.N_code)
+//	if (params.N == params.N_cw)
 //		params.type = "NO";
 }
 
@@ -61,7 +61,7 @@ void Factory_puncturer
 	head_pct.push_back(std::make_pair("Type", params.type));
 	head_pct.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 	head_pct.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
-	head_pct.push_back(std::make_pair("Code size", std::to_string(params.N_code)));
+	head_pct.push_back(std::make_pair("Codeword size", std::to_string(params.N_cw)));
 	head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 

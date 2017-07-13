@@ -28,7 +28,7 @@ Codec_LDPC<B,Q>
 
 		try
 		{
-			info_bits_pos = AList::read_info_bits_pos(file_G, enc_params.K, enc_params.N);
+			info_bits_pos = AList::read_info_bits_pos(file_G, enc_params.K, enc_params.N_cw);
 			is_info_bits_pos = true;
 		}
 		catch (std::exception const&)
@@ -53,7 +53,7 @@ Codec_LDPC<B,Q>
 				delete encoder_LDPC;
 			}
 			else
-				info_bits_pos = AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N);
+				info_bits_pos = AList::read_info_bits_pos(file_H, enc_params.K, enc_params.N_cw);
 		}
 		catch (std::exception const&)
 		{
@@ -115,7 +115,7 @@ void Codec_LDPC<B,Q>
 ::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
 {
 	const auto K = this->enc_params.K;
-	const auto N = this->enc_params.N;
+	const auto N = this->enc_params.N_cw;
 
 	if ((int)Y_N.size() != N * this->enc_params.n_frames)
 	{

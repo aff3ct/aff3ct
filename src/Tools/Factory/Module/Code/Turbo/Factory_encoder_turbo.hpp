@@ -21,14 +21,11 @@ struct Factory_encoder_turbo : public Factory_encoder
 	{
 		virtual ~parameters() {}
 
-		bool buffered = true;
-		std::string json_path = "";
-
-		// ------- code
-		std::string      standard;
+		std::string      json_path   = "";
+		std::string      standard    = "LTE";
 		std::vector<int> poly        = {013, 015};
 		int              tail_length = 4 * 3;
-		int              N_pct;
+		bool             buffered    = true;
 
 		typename Factory_interleaver::parameters itl;
 	};
@@ -40,11 +37,10 @@ struct Factory_encoder_turbo : public Factory_encoder
 	                                       module::Encoder_sys<B>   *enc_i = nullptr);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params,
-	                       const int K, const int N, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_enc, params_list& head_cde, params_list& head_itl, const parameters& params);
+	static void header(params_list& head_enc, params_list& head_itl, const parameters& params);
 };
 }
 }

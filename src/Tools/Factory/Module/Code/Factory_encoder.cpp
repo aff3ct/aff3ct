@@ -12,12 +12,12 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder<B>* Factory_encoder
-::build(const parameters &params, const int seed)
+::build(const parameters &params)
 {
-	     if (params.type == "NO"   ) return new Encoder_NO   <B>(params.K,                        params.n_frames);
-	else if (params.type == "AZCW" ) return new Encoder_AZCW <B>(params.K, params.N,              params.n_frames);
-	else if (params.type == "COSET") return new Encoder_coset<B>(params.K, params.N, seed,        params.n_frames);
-	else if (params.type == "USER" ) return new Encoder_user <B>(params.K, params.N, params.path, params.n_frames);
+	     if (params.type == "NO"   ) return new Encoder_NO   <B>(params.K,                           params.n_frames);
+	else if (params.type == "AZCW" ) return new Encoder_AZCW <B>(params.K, params.N_cw,              params.n_frames);
+	else if (params.type == "COSET") return new Encoder_coset<B>(params.K, params.N_cw, params.seed, params.n_frames);
+	else if (params.type == "USER" ) return new Encoder_user <B>(params.K, params.N_cw, params.path, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -25,7 +25,14 @@ Encoder<B>* Factory_encoder
 void Factory_encoder
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	// ------------------------------------------------------------------------------------------------------- encoder
+	req_args[{"enc-info-bits", "K"}] =
+		{"positive_int",
+		 "useful number of bit transmitted (information bits)."};
+
+	req_args[{"enc-cw-size", "N"}] =
+		{"positive_int",
+		 "the codeword size."};
+
 	opt_args[{"enc-type"}] =
 		{"string",
 		 "select the type of encoder you want to use.",
@@ -39,18 +46,27 @@ void Factory_encoder
 		{"",
 		 "disable the systematic encoding."};
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	opt_args[{"cde-coset", "c"}] =
+	opt_args[{"enc-coset", "c"}] =
 		{"",
 		 "enable the coset approach."};
+
+	opt_args[{"enc-seed", "S"}] =
+		{"positive_int",
+		 "seed used to initialize the pseudo random generators."};
 }
 
 void Factory_encoder
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
-	// ------------------------------------------------------------------------------------------------------- encoder
-	if(ar.exist_arg({"enc-type"  })) params.type = ar.get_arg({"enc-type"});
+	params.K    = ar.get_arg_int({"enc-info-bits", "K"});
+	params.N_cw = ar.get_arg_int({"enc-cw-size", "N"});
+	if(ar.exist_arg({"enc-fra", "F"})) params.n_frames = ar.get_arg_int({"enc-fra", "F"});
+	if(ar.exist_arg({"enc-type"})) params.type = ar.get_arg({"enc-type"});
+	if(ar.exist_arg({"enc-path"})) params.path = ar.get_arg({"enc-path"});
+	if(ar.exist_arg({"enc-no-sys"})) params.systematic = false;
+	if(ar.exist_arg({"enc-coset", "c"})) params.coset = true;
+	if(ar.exist_arg({"enc-seed", "S"})) params.seed = ar.get_arg_int({"enc-seed", "S"});
+
 	if (params.type == "COSET")
 		params.coset = true;
 
@@ -58,19 +74,6 @@ void Factory_encoder
 //		params.source.type = "AZCW";
 //	if (params.type == "USER")
 //		params.source.type = "USER";
-
-	if(ar.exist_arg({"enc-path"  })) params.path = ar.get_arg({"enc-path"});
-
-	if(ar.exist_arg({"enc-no-sys"})) params.systematic = false;
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	params.K = K;
-	params.N = N;
-
-	if(ar.exist_arg({"cde-coset", "c"})) params.coset = true;
-
-	// ---------------------------------------------------------------------------------------------------------- simu
-	params.n_frames = n_frames;
 }
 
 void Factory_encoder
@@ -80,29 +83,28 @@ void Factory_encoder
 }
 
 void Factory_encoder
-::header(params_list& head_enc, params_list& head_cde, const parameters& params)
+::header(params_list& head_enc, const parameters& params)
 {
-	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Type", params.type));
-
+	head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+	head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
+	head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	head_enc.push_back(std::make_pair("Systematic encoding", ((params.systematic) ? "on" : "off")));
 	if (params.type == "USER")
 		head_enc.push_back(std::make_pair("Path", params.path));
-
-	head_enc.push_back(std::make_pair("Systematic encoding", ((params.systematic) ? "on" : "off")));
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	head_cde.push_back(std::make_pair("Coset approach (c)", ((params.coset) ? "on" : "off")));
+	if (params.type == "COSET")
+		head_enc.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Encoder<B_8 >* aff3ct::tools::Factory_encoder::build<B_8 >(const aff3ct::tools::Factory_encoder::parameters&, int);
-template aff3ct::module::Encoder<B_16>* aff3ct::tools::Factory_encoder::build<B_16>(const aff3ct::tools::Factory_encoder::parameters&, int);
-template aff3ct::module::Encoder<B_32>* aff3ct::tools::Factory_encoder::build<B_32>(const aff3ct::tools::Factory_encoder::parameters&, int);
-template aff3ct::module::Encoder<B_64>* aff3ct::tools::Factory_encoder::build<B_64>(const aff3ct::tools::Factory_encoder::parameters&, int);
+template aff3ct::module::Encoder<B_8 >* aff3ct::tools::Factory_encoder::build<B_8 >(const aff3ct::tools::Factory_encoder::parameters&);
+template aff3ct::module::Encoder<B_16>* aff3ct::tools::Factory_encoder::build<B_16>(const aff3ct::tools::Factory_encoder::parameters&);
+template aff3ct::module::Encoder<B_32>* aff3ct::tools::Factory_encoder::build<B_32>(const aff3ct::tools::Factory_encoder::parameters&);
+template aff3ct::module::Encoder<B_64>* aff3ct::tools::Factory_encoder::build<B_64>(const aff3ct::tools::Factory_encoder::parameters&);
 #else
-template aff3ct::module::Encoder<B>* aff3ct::tools::Factory_encoder::build<B>(const aff3ct::tools::Factory_encoder::parameters&, int);
+template aff3ct::module::Encoder<B>* aff3ct::tools::Factory_encoder::build<B>(const aff3ct::tools::Factory_encoder::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation

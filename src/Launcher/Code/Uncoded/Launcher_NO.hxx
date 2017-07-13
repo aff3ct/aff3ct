@@ -49,7 +49,11 @@ void Launcher_NO<C,B,R,Q>
 {
 	C::store_args();
 
-	tools::Factory_encoder   ::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	m_enc->K        = this->m_chain_params->sim->K;
+	m_enc->N_cw     = this->m_chain_params->sim->N;
+	m_enc->n_frames = this->m_chain_params->sim->inter_frame_level;
+
+	tools::Factory_encoder   ::store_args(this->ar, *m_enc);
 	tools::Factory_decoder_NO::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
 }
 
@@ -67,7 +71,7 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_NO<C,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder   ::header(this->pl_enc, this->pl_cde, *m_enc);
+	tools::Factory_encoder   ::header(this->pl_enc, *m_enc);
 	tools::Factory_decoder_NO::header(this->pl_dec, *m_dec);
 
 	C::print_header();

@@ -12,8 +12,8 @@ template <typename B>
 Encoder_RSC_sys<B>* Factory_encoder_RSC
 ::build(const parameters &params, std::ostream &stream)
 {
-	     if (params.type == "RSC_JSON") return new Encoder_RSC_generic_json_sys<B>(params.K, params.N, params.buffered, params.poly, stream, params.n_frames);
-	else if (params.type == "RSC"     ) return new Encoder_RSC_generic_sys     <B>(params.K, params.N, params.buffered, params.poly,         params.n_frames);
+	     if (params.type == "RSC_JSON") return new Encoder_RSC_generic_json_sys<B>(params.K, params.N_cw, params.buffered, params.poly, stream, params.n_frames);
+	else if (params.type == "RSC"     ) return new Encoder_RSC_generic_sys     <B>(params.K, params.N_cw, params.buffered, params.poly,         params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -23,52 +23,42 @@ void Factory_encoder_RSC
 {
 	Factory_encoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", RSC";
 
 	opt_args[{"enc-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	opt_args[{"cde-poly"}] =
+	opt_args[{"enc-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 
-	opt_args[{"cde-std"}] =
+	opt_args[{"enc-std"}] =
 		{"string",
 		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
 		 "LTE, CCSDS"};
 }
 
 void Factory_encoder_RSC
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
 	params.type = "RSC";
 
-	Factory_encoder::store_args(ar, params, K, N, n_frames);
+	Factory_encoder::store_args(ar, params);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
 
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	if(ar.exist_arg({"cde-std"})) params.standard = ar.get_arg({"cde-std"});
+	if(ar.exist_arg({"enc-std"})) params.standard = ar.get_arg({"enc-std"});
 
 	if (params.type == "LTE")
-	{
 		params.poly = {013, 015};
-	}
 
 	if (params.type == "CCSDS")
-	{
 		params.poly = {023, 033};
-	}
 
-	if (ar.exist_arg({"cde-poly"}))
+	if (ar.exist_arg({"enc-poly"}))
 	{
-		auto poly_str = ar.get_arg({"cde-poly"});
+		auto poly_str = ar.get_arg({"enc-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
@@ -78,7 +68,7 @@ void Factory_encoder_RSC
 	}
 
 	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
-	params.N          += params.tail_length;
+	params.N_cw       += params.tail_length;
 }
 
 void Factory_encoder_RSC
@@ -88,20 +78,18 @@ void Factory_encoder_RSC
 }
 
 void Factory_encoder_RSC
-::header(params_list& head_enc, params_list& head_cde, const parameters& params)
+::header(params_list& head_enc, const parameters& params)
 {
-	Factory_encoder::header(head_enc, head_cde, params);
+	Factory_encoder::header(head_enc, params);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 
-	// ---------------------------------------------------------------------------------------------------------- code
 	if (!params.standard.empty())
-		head_cde.push_back(std::make_pair("RSC standard", params.standard));
+		head_enc.push_back(std::make_pair("Standard", params.standard));
 
 	std::stringstream poly;
 	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
-	head_cde.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
+	head_enc.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 }
 
 // ==================================================================================== explicit template instantiation

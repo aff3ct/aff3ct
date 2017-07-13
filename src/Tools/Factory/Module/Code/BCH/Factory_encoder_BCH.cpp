@@ -11,7 +11,7 @@ template <typename B>
 Encoder<B>* Factory_encoder_BCH
 ::build(const typename Factory_encoder::parameters &params, const Galois &GF)
 {
-	if (params.type == "BCH") return new Encoder_BCH<B>(params.K, params.N, GF, params.n_frames);
+	if (params.type == "BCH") return new Encoder_BCH<B>(params.K, params.N_cw, GF, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -21,17 +21,15 @@ void Factory_encoder_BCH
 {
 	Factory_encoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", BCH";
 }
 
 void Factory_encoder_BCH
-::store_args(const Arguments_reader& ar, typename Factory_encoder::parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, Factory_encoder::parameters &params)
 {
 	params.type = "BCH";
 
-	Factory_encoder::store_args(ar, params, K, N, n_frames);
+	Factory_encoder::store_args(ar, params);
 }
 
 void Factory_encoder_BCH
@@ -41,9 +39,9 @@ void Factory_encoder_BCH
 }
 
 void Factory_encoder_BCH
-::header(params_list& head_enc, params_list& head_cde, const typename Factory_encoder::parameters& params)
+::header(params_list& head_enc, const Factory_encoder::parameters& params)
 {
-	Factory_encoder::header(head_enc, head_cde, params);
+	Factory_encoder::header(head_enc, params);
 }
 
 // ==================================================================================== explicit template instantiation

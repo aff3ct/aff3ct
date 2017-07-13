@@ -28,10 +28,12 @@ void Factory_puncturer_polar
 void Factory_puncturer_polar
 ::store_args(const Arguments_reader& ar, Factory_puncturer::parameters &params)
 {
-	Factory_puncturer::store_args(ar, params);
-	params.N_code = (int)std::exp2((int)std::ceil(std::log2(params.N)));
+	params.type = "WANGLIU";
 
-	if (params.N == params.N_code)
+	Factory_puncturer::store_args(ar, params);
+	params.N_cw = (int)std::exp2((int)std::ceil(std::log2(params.N)));
+
+	if (params.N == params.N_cw)
 		params.type = "NO";
 }
 

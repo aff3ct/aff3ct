@@ -55,7 +55,11 @@ void Launcher_turbo<C,B,R,Q,QD>
 {
 	C::store_args();
 
-	tools::Factory_encoder_turbo  ::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N,               this->m_chain_params->sim->inter_frame_level);
+	m_enc->K        = this->m_chain_params->sim->K;
+	m_enc->N_cw     = this->m_chain_params->sim->N;
+	m_enc->n_frames = this->m_chain_params->sim->inter_frame_level;
+
+	tools::Factory_encoder_turbo::store_args(this->ar, *m_enc);
 
 	m_pct->K = this->m_chain_params->sim->K;
 	m_pct->N = this->m_chain_params->sim->N;
@@ -84,7 +88,7 @@ template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<C,B,R,Q,QD>
 ::print_header()
 {
-	tools::Factory_encoder_turbo  ::header(this->pl_enc, this->pl_cde, this->pl_itl, *m_enc);
+	tools::Factory_encoder_turbo  ::header(this->pl_enc, this->pl_itl, *m_enc);
 	tools::Factory_puncturer_turbo::header(this->pl_pct, *m_pct);
 	tools::Factory_decoder_turbo  ::header(this->pl_dec, *m_dec, !this->pl_crc.empty());
 

@@ -19,11 +19,10 @@ struct Factory_encoder_RA : public Factory_encoder
 	                                 const module::Interleaver<int> &itl);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, Factory_encoder::parameters &params,
-	                       int K, int N, int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, Factory_encoder::parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_enc, params_list& head_cde, const Factory_encoder::parameters& params);
+	static void header(params_list& head_enc, const Factory_encoder::parameters& params);
 };
 }
 }

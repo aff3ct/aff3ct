@@ -40,7 +40,7 @@ Codec_turbo<B,Q,QD>
 	// fill RSC encoder/decoder parameters structures
 	enc_rsc_par.type     = "RSC";
 	enc_rsc_par.K        = enc_par.K;
-	enc_rsc_par.N        = (enc_par.K * 2) + (enc_par.tail_length / 2);
+	enc_rsc_par.N_cw     = (enc_par.K * 2) + (enc_par.tail_length / 2);
 	enc_rsc_par.buffered = enc_par.buffered;
 	enc_rsc_par.poly     = enc_par.poly;
 	enc_rsc_par.n_frames = enc_par.n_frames;

@@ -11,7 +11,7 @@ template <typename B>
 Encoder_sys<B>* Factory_encoder_repetition
 ::build(const parameters &params)
 {
-	if (params.type == "REPETITION") return new Encoder_repetition_sys<B>(params.K, params.N, params.buffered, params.n_frames);
+	if (params.type == "REPETITION") return new Encoder_repetition_sys<B>(params.K, params.N_cw, params.buffered, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -21,7 +21,6 @@ void Factory_encoder_repetition
 {
 	Factory_encoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", REPETITION";
 
 	opt_args[{"enc-no-buff"}] =
@@ -30,14 +29,12 @@ void Factory_encoder_repetition
 }
 
 void Factory_encoder_repetition
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
 	params.type = "REPETITION";
 
-	Factory_encoder::store_args(ar, params, K, N, n_frames);
+	Factory_encoder::store_args(ar, params);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
 }
 
@@ -48,11 +45,10 @@ void Factory_encoder_repetition
 }
 
 void Factory_encoder_repetition
-::header(params_list& head_enc, params_list& head_cde, const parameters& params)
+::header(params_list& head_enc, const parameters& params)
 {
-	Factory_encoder::header(head_enc, head_cde, params);
+	Factory_encoder::header(head_enc, params);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 }
 

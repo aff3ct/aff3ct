@@ -16,11 +16,11 @@ Codec_uncoded<B,Q>
                 const typename Factory_decoder_NO::parameters &dec_params)
 : Codec_SISO<B,Q>(enc_params, dec_params)
 {
-	if (enc_params.K != enc_params.N)
+	if (enc_params.K != enc_params.N_cw)
 	{
 		std::stringstream message;
 		message << "'K' has to be equal to 'N' ('K' = " << enc_params.K
-		        << ", 'N' = " << enc_params.N << ").";
+		        << ", 'N' = " << enc_params.N_cw << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }

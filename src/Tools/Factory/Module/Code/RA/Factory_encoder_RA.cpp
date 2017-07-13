@@ -11,7 +11,7 @@ template <typename B>
 Encoder<B>* Factory_encoder_RA
 ::build(const Factory_encoder::parameters& params, const Interleaver<int> &itl)
 {
-	if (params.type == "RA") return new Encoder_RA<B>(params.K, params.N, itl, params.n_frames);
+	if (params.type == "RA") return new Encoder_RA<B>(params.K, params.N_cw, itl, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -21,17 +21,15 @@ void Factory_encoder_RA
 {
 	Factory_encoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", RA";
 }
 
 void Factory_encoder_RA
-::store_args(const Arguments_reader& ar, Factory_encoder::parameters &params,
-             int K, int N, int n_frames)
+::store_args(const Arguments_reader& ar, Factory_encoder::parameters &params)
 {
 	params.type = "RA";
 
-	Factory_encoder::store_args(ar, params, K, N, n_frames);
+	Factory_encoder::store_args(ar, params);
 }
 
 void Factory_encoder_RA
@@ -41,9 +39,9 @@ void Factory_encoder_RA
 }
 
 void Factory_encoder_RA
-::header(params_list& head_enc, params_list& head_cde, const Factory_encoder::parameters& params)
+::header(params_list& head_enc, const Factory_encoder::parameters& params)
 {
-	Factory_encoder::header(head_enc, head_cde, params);
+	Factory_encoder::header(head_enc, params);
 }
 
 // ==================================================================================== explicit template instantiation

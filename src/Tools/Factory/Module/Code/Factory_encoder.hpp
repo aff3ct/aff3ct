@@ -19,28 +19,25 @@ struct Factory_encoder : public Factory
 	{
 		virtual ~parameters() {}
 
+		int         K          = -1;
+		int         N_cw       = -1;
+
 		std::string type       = "NO";
 		std::string path       = "";
 		bool        systematic = true;
-
-		// ------- code
-		int         K;
-		int         N;
 		bool        coset      = false;
-
-		// ------- simu
 		int         n_frames   = 1;
+		int         seed       = 0;
 	};
 
 	template <typename B = int>
-	static module::Encoder<B>* build(const parameters &params, const int seed = 0);
+	static module::Encoder<B>* build(const parameters &params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params,
-	                       const int K, const int N, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_enc, params_list& head_cde, const parameters& params);
+	static void header(params_list& head_enc, const parameters& params);
 };
 }
 }

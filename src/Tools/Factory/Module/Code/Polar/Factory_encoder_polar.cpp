@@ -12,8 +12,8 @@ template <typename B>
 Encoder<B>* Factory_encoder_polar
 ::build(const Factory_encoder::parameters& params, const mipp::vector<B> &frozen_bits)
 {
-	     if (params.type == "POLAR" && !params.systematic) return new Encoder_polar    <B>(params.K, params.N, frozen_bits, params.n_frames);
-	else if (params.type == "POLAR" &&  params.systematic) return new Encoder_polar_sys<B>(params.K, params.N, frozen_bits, params.n_frames);
+	     if (params.type == "POLAR" && !params.systematic) return new Encoder_polar    <B>(params.K, params.N_cw, frozen_bits, params.n_frames);
+	else if (params.type == "POLAR" &&  params.systematic) return new Encoder_polar_sys<B>(params.K, params.N_cw, frozen_bits, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -28,12 +28,11 @@ void Factory_encoder_polar
 }
 
 void Factory_encoder_polar
-::store_args(const Arguments_reader& ar, Factory_encoder::parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, Factory_encoder::parameters &params)
 {
 	params.type = "POLAR";
 
-	Factory_encoder::store_args(ar, params, K, N, n_frames);
+	Factory_encoder::store_args(ar, params);
 }
 
 void Factory_encoder_polar
@@ -43,9 +42,9 @@ void Factory_encoder_polar
 }
 
 void Factory_encoder_polar
-::header(params_list& head_enc, params_list& head_cde, const Factory_encoder::parameters& params)
+::header(params_list& head_enc, const Factory_encoder::parameters& params)
 {
-	Factory_encoder::header(head_enc, head_cde, params);
+	Factory_encoder::header(head_enc, params);
 }
 
 // ==================================================================================== explicit template instantiation

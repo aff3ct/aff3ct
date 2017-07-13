@@ -24,7 +24,7 @@ struct Factory_puncturer : Factory
 		int         N        = -1;
 
 		std::string type     = "NO";
-		int         N_code   = -1;
+		int         N_cw     = -1;
 		int         n_frames = 1;
 	};
 

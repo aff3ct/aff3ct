@@ -121,7 +121,9 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		return Factory_encoder::build<B>(*chain_params.enc, seed);
+		auto enc_cpy = *chain_params.enc;
+		enc_cpy.seed = seed;
+		return Factory_encoder::build<B>(enc_cpy);
 	}
 }
 
@@ -138,7 +140,7 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 		Factory_puncturer::parameters pct;
 		pct.K        = simu_params.K;
 		pct.N        = simu_params.N;
-		pct.N_code    = simu_params.N;
+		pct.N_cw     = simu_params.N;
 		pct.n_frames = simu_params.inter_frame_level;
 
 		return Factory_puncturer::build<B,Q>(pct);

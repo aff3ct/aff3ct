@@ -424,7 +424,9 @@ Encoder<B>* Simulation_EXIT<B,R>
 	}
 	catch (std::exception const&)
 	{
-		return Factory_encoder::build<B>(*params.enc, params.sim->seed);
+		auto enc_cpy = *params.enc;
+		enc_cpy.seed = params.sim->seed;
+		return Factory_encoder::build<B>(enc_cpy);
 	}
 }
 

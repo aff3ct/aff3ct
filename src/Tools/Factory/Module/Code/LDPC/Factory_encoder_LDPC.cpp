@@ -11,13 +11,13 @@ using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_LDPC<B>* Factory_encoder_LDPC
-::build(const typename Factory_encoder::parameters &params,
-        const Sparse_matrix &G,
-        const Sparse_matrix &H)
+::build(const Factory_encoder::parameters &params,
+        const Sparse_matrix               &G,
+        const Sparse_matrix               &H)
 {
-	     if (params.type == "LDPC"      ) return new Encoder_LDPC       <B>(params.K, params.N, G, params.n_frames);
-	else if (params.type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(params.K, params.N, H, params.n_frames);
-	else if (params.type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(params.K, params.N,    params.n_frames);
+	     if (params.type == "LDPC"      ) return new Encoder_LDPC       <B>(params.K, params.N_cw, G, params.n_frames);
+	else if (params.type == "LDPC_H"    ) return new Encoder_LDPC_from_H<B>(params.K, params.N_cw, H, params.n_frames);
+	else if (params.type == "LDPC_DVBS2") return new Encoder_LDPC_DVBS2 <B>(params.K, params.N_cw,    params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -27,17 +27,15 @@ void Factory_encoder_LDPC
 {
 	Factory_encoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
 }
 
 void Factory_encoder_LDPC
-::store_args(const Arguments_reader& ar, typename Factory_encoder::parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, typename Factory_encoder::parameters &params)
 {
 	params.type = "AZCW";
 
-	Factory_encoder::store_args(ar, params, K, N, n_frames);
+	Factory_encoder::store_args(ar, params);
 }
 
 void Factory_encoder_LDPC
@@ -47,9 +45,9 @@ void Factory_encoder_LDPC
 }
 
 void Factory_encoder_LDPC
-::header(params_list& head_enc, params_list& head_cde, const typename Factory_encoder::parameters& params)
+::header(params_list& head_enc, const Factory_encoder::parameters& params)
 {
-	Factory_encoder::header(head_enc, head_cde, params);
+	Factory_encoder::header(head_enc, params);
 
 	if (params.type == "LDPC")
 		head_enc.push_back(std::make_pair("Path", params.path));

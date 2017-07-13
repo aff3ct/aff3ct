@@ -40,15 +40,17 @@ void Factory_puncturer_turbo
 void Factory_puncturer_turbo
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
+	params.type = "TURBO";
+
 	Factory_puncturer::store_args(ar, params);
 
 	if(ar.exist_arg({"pct-pattern"})) params.pattern = ar.get_arg({"pct-pattern"});
 	if(ar.exist_arg({"pct-tail-length"})) params.tail_length = ar.get_arg_int({"pct-tail-length"});
 	if(ar.exist_arg({"pct-no-buff"})) params.buffered = false;
 
-	params.N_code = 3 * params.K + params.tail_length;
+	params.N_cw = 3 * params.K + params.tail_length;
 
-	if (params.N == params.N_code)
+	if (params.N == params.N_cw)
 		params.type = "NO";
 }
 
