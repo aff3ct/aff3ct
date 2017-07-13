@@ -19,9 +19,9 @@
 #include "Tools/Display/bash_tools.h"
 
 #include "Launcher/Launcher.hpp"
-#include "Launcher/Simulation_chain/Launcher_BFER_std.hpp"
-#include "Launcher/Simulation_chain/Launcher_BFER_ite.hpp"
-#include "Launcher/Simulation_chain/Launcher_EXIT.hpp"
+#include "Launcher/Simulation/Launcher_BFER_std.hpp"
+#include "Launcher/Simulation/Launcher_BFER_ite.hpp"
+#include "Launcher/Simulation/Launcher_EXIT.hpp"
 
 #include "Launcher/Code/BCH/Launcher_BCH.hpp"
 #include "Launcher/Code/LDPC/Launcher_LDPC.hpp"

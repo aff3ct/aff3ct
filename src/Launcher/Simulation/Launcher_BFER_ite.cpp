@@ -1,8 +1,8 @@
-#include "Launcher_BFER_ite.hpp"
 #include <thread>
 #include <string>
 #include <iostream>
 
+#include "Launcher_BFER_ite.hpp"
 
 using namespace aff3ct::tools;
 using namespace aff3ct::launcher;
