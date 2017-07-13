@@ -19,19 +19,20 @@ struct Factory_puncturer : Factory
 	struct parameters
 	{
 		virtual ~parameters() {}
-		std::string type = "NO";
-		int K;
-		int N;
-		int N_pct;
-		int n_frames;
+
+		int         K        = -1;
+		int         N        = -1;
+
+		std::string type     = "NO";
+		int         N_code   = -1;
+		int         n_frames = 1;
 	};
 
 	template <typename B, typename Q>
 	static module::Puncturer<B,Q>* build(const parameters &params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters& params,
-	                       const int K, const int N, const int N_pct, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_pct, const parameters& params);

@@ -54,7 +54,7 @@ struct Factory_simulation_EXIT : Factory_simulation
 
 		Factory_simulation_EXIT::parameters *sim = nullptr;
 		Factory_source         ::parameters  src;
-		Factory_modem          ::parameters  modem;
+		Factory_modem          ::parameters  mdm;
 		Factory_channel        ::parameters  chn;
 		Factory_puncturer      ::parameters *pct = nullptr;
 		Factory_encoder        ::parameters *enc = nullptr;

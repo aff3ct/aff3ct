@@ -29,6 +29,10 @@ void Factory_source
 		{"positive_int",
 		 "number of generated bits (information bits)."};
 
+	opt_args[{"src-fra", "F"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process."};
+
 	opt_args[{"src-type"}] =
 		{"string",
 		 "method used to generate the codewords.",
@@ -37,10 +41,6 @@ void Factory_source
 	opt_args[{"src-path"}] =
 		{"string",
 		 "path to a file containing one or a set of pre-computed source bits, to use with \"--src-type USER\"."};
-
-	opt_args[{"src-fra", "F"}] =
-		{"positive_int",
-		 "set the number of inter frame level to process."};
 
 	opt_args[{"src-seed", "S"}] =
 		{"positive_int",
@@ -51,9 +51,9 @@ void Factory_source
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
 	params.K = ar.get_arg_int({"src-info-bits", "K"});
+	if(ar.exist_arg({"src-fra", "F"})) params.n_frames = ar.get_arg_int({"src-fra", "F"});
 	if(ar.exist_arg({"src-type"})) params.type = ar.get_arg({"src-type"});
 	if(ar.exist_arg({"src-path"})) params.path = ar.get_arg({"src-path"});
-	if(ar.exist_arg({"src-fra", "F"})) params.n_frames = ar.get_arg_int({"src-fra", "F"});
 	if(ar.exist_arg({"src-seed", "S"})) params.seed = ar.get_arg_int({"src-seed", "S"});
 
 	if (params.type == "AZCW")

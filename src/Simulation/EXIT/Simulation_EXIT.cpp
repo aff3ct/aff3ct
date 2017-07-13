@@ -82,12 +82,12 @@ void Simulation_EXIT<B,R>
 {
 	release_objects();
 
-	const auto N_mod = params.modem.N_mod;
-	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.modem.type,
+	const auto N_mod = params.mdm.N_mod;
+	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.mdm.type,
 	                                                                   params.sim->K,
-	                                                                   params.modem.bps,
-	                                                                   params.modem.upf,
-	                                                                   params.modem.cpm_L);
+	                                                                   params.mdm.bps,
+	                                                                   params.mdm.upf,
+	                                                                   params.mdm.cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -122,8 +122,8 @@ void Simulation_EXIT<B,R>
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto code_rate = 1.f;
-		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.modem.bps),
-		                      params.modem.upf);
+		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.mdm.bps),
+		                      params.mdm.upf);
 
 		codec.snr_precompute(sigma);
 
@@ -432,28 +432,42 @@ template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem()
 {
-	return Factory_modem::build<B,R>(params.modem, this->sigma);
+	auto mdm_cpy = params.mdm;
+	if (params.mdm.sigma == -1.f)
+		mdm_cpy.sigma = this->sigma;
+	return Factory_modem::build<B,R>(mdm_cpy);
 }
 
 template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem_a()
 {
-	return Factory_modem::build<B,R>(params.modem, 2.f / sig_a);
+	auto mdm_cpy = params.mdm;
+	mdm_cpy.sigma = 2.f / sig_a;
+	return Factory_modem::build<B,R>(mdm_cpy);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
-	return Factory_channel::build<R>(params.chn, params.sim->seed, this->sigma);
+	auto chn_cpy = params.chn;
+	if (params.chn.sigma == -1.f)
+		chn_cpy.sigma = this->sigma;
+	chn_cpy.seed = params.sim->seed;
+
+	return Factory_channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	return Factory_channel::build<R>(params.chn, params.sim->seed, 2.f / sig_a);
+	auto chn_cpy = params.chn;
+	chn_cpy.sigma = 2.f / sig_a;
+	chn_cpy.seed = params.sim->seed;
+
+	return Factory_channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R>

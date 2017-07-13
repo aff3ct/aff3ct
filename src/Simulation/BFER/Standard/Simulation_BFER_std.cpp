@@ -138,7 +138,7 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 		Factory_puncturer::parameters pct;
 		pct.K        = simu_params.K;
 		pct.N        = simu_params.N;
-		pct.N_pct    = simu_params.N;
+		pct.N_code    = simu_params.N;
 		pct.n_frames = simu_params.inter_frame_level;
 
 		return Factory_puncturer::build<B,Q>(pct);
@@ -163,21 +163,33 @@ template <typename B, typename R, typename Q>
 Modem<B,R,R>* Simulation_BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
-	return Factory_modem::build<B,R,R>(chain_params.mdm, this->sigma);
+	auto mdm_cpy = chain_params.mdm;
+	if (chain_params.mdm.sigma == -1.f)
+		mdm_cpy.sigma = this->sigma;
+	return Factory_modem::build<B,R,R>(mdm_cpy);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_std<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
-	return Factory_channel::build<R>(chain_params.chn, seed, this->sigma);
+	auto chn_cpy = chain_params.chn;
+	if (chain_params.chn.sigma == -1.f)
+		chn_cpy.sigma = this->sigma;
+	chn_cpy.seed = seed;
+
+	return Factory_channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer::build<R,Q>(chain_params.qnt, this->sigma);
+	auto qnt_cpy = chain_params.qnt;
+	if (chain_params.qnt.sigma == -1.f)
+		qnt_cpy.sigma = this->sigma;
+
+	return Factory_quantizer::build<R,Q>(qnt_cpy);
 }
 
 template <typename B, typename R, typename Q>

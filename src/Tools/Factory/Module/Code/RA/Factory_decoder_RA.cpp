@@ -46,7 +46,9 @@ void Factory_decoder_RA
 	Factory_decoder::store_args(ar, params, K, N, n_frames);
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver::store_args(ar, params.itl, N, n_frames);
+	params.itl.size = params.N;
+	params.itl.n_frames = params.n_frames;
+	Factory_interleaver::store_args(ar, params.itl);
 
 	// ------------------------------------------------------------------------------------------------------- decoder
 	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});

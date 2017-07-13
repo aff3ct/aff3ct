@@ -18,8 +18,7 @@ struct Factory_puncturer_polar : public Factory_puncturer
 	                                     const Frozenbits_generator<B>       &fb_generator);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, Factory_puncturer::parameters& params,
-	                       const int K, const int N, const int N_pct, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, Factory_puncturer::parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_pct, const Factory_puncturer::parameters& params);

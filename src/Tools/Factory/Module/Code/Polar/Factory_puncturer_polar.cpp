@@ -21,15 +21,18 @@ void Factory_puncturer_polar
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_puncturer::build_args(req_args, opt_args);
+
+	opt_args[{"pct-type"}][2] += ", WANGLIU";
 }
 
 void Factory_puncturer_polar
-::store_args(const Arguments_reader& ar, Factory_puncturer::parameters &params,
-             const int K, const int N, const int N_pct, const int n_frames)
+::store_args(const Arguments_reader& ar, Factory_puncturer::parameters &params)
 {
-	params.type = "WANGLIU";
+	Factory_puncturer::store_args(ar, params);
+	params.N_code = (int)std::exp2((int)std::ceil(std::log2(params.N)));
 
-	Factory_puncturer::store_args(ar, params, K, N, N_pct, n_frames);
+	if (params.N == params.N_code)
+		params.type = "NO";
 }
 
 void Factory_puncturer_polar

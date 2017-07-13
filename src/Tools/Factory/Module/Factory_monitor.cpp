@@ -19,7 +19,14 @@ Monitor<B>* Factory_monitor
 void Factory_monitor
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	// ------------------------------------------------------------------------------------------------------- monitor
+	req_args[{"mnt-size", "K"}] =
+		{"positive_int",
+		 "number of bits to check."};
+
+	opt_args[{"mnt-fra", "F"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process."};
+
 	opt_args[{"mnt-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
@@ -38,12 +45,10 @@ void Factory_monitor
 }
 
 void Factory_monitor
-::store_args(const Arguments_reader& ar, parameters &params, const int size, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.size     = size;
-	params.n_frames = n_frames;
-
-	// ------------------------------------------------------------------------------------------------------- monitor
+	params.size = ar.get_arg_int({"mnt-size", "K"});
+	if(ar.exist_arg({"mnt-fra", "F"})) params.n_frames = ar.get_arg_int({"mnt-fra", "F"});
 	if(ar.exist_arg({"mnt-max-fe", "e" })) params.n_frame_errors   = ar.get_arg_int({"mnt-max-fe", "e"});
 
 	if(ar.exist_arg({"mnt-err-trk-rev" })) params.err_track_revert = true;
@@ -75,9 +80,9 @@ void Factory_monitor
 void Factory_monitor
 ::header(params_list& head_mon, const parameters& params)
 {
-	// ------------------------------------------------------------------------------------------------------- monitor
-
 	head_mon.push_back(std::make_pair("Frame error count (e)", std::to_string(params.n_frame_errors)));
+	head_mon.push_back(std::make_pair("Size (K)", std::to_string(params.size)));
+	head_mon.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 
 	std::string enable_track = (params.err_track_enable) ? "on" : "off";
 	head_mon.push_back(std::make_pair("Bad frames tracking", enable_track));

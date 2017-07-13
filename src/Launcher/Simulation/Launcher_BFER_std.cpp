@@ -56,15 +56,34 @@ void Launcher_BFER_std<B,R,Q>
 
 	Factory_source::store_args(this->ar, m_chain_params->src);
 
-	Factory_CRC                ::store_args(this->ar, m_chain_params->crc,   m_sim->K, m_sim->N, m_sim->inter_frame_level);
-	Factory_modem              ::store_args(this->ar, m_chain_params->mdm,   m_sim->N,           m_sim->inter_frame_level);
+	m_chain_params->crc.K        = m_chain_params->sim->K;
+	m_chain_params->crc.n_frames = m_chain_params->sim->inter_frame_level;
 
-	bool complex   = m_chain_params->mdm.complex;
-	bool add_users = (m_chain_params->mdm.type == "SCMA");
+	Factory_CRC::store_args(this->ar, m_chain_params->crc);
 
-	Factory_channel            ::store_args(this->ar, m_chain_params->chn,   m_sim->N, complex, add_users, m_sim->inter_frame_level);
-	Factory_quantizer          ::store_args(this->ar, m_chain_params->qnt,   m_sim->N,                     m_sim->inter_frame_level);
-	Factory_monitor            ::store_args(this->ar, m_chain_params->mnt,   m_sim->K,                     m_sim->inter_frame_level);
+	m_chain_params->sim->R = (float)(m_chain_params->sim->K + m_chain_params->crc.size) / (float)m_chain_params->sim->N;
+
+	m_chain_params->mdm.N = m_chain_params->sim->N;
+	m_chain_params->mdm.n_frames = m_chain_params->sim->inter_frame_level;
+
+	Factory_modem::store_args(this->ar, m_chain_params->mdm);
+
+	m_chain_params->chn.N = m_chain_params->mdm.N_mod;
+	m_chain_params->chn.n_frames = m_chain_params->sim->inter_frame_level;
+	m_chain_params->chn.complex = m_chain_params->mdm.complex;
+	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
+
+	Factory_channel::store_args(this->ar, m_chain_params->chn);
+
+	m_chain_params->qnt.size = m_chain_params->sim->N;
+	m_chain_params->qnt.n_frames = m_chain_params->sim->inter_frame_level;
+
+	Factory_quantizer::store_args(this->ar, m_chain_params->qnt);
+
+	m_chain_params->mnt.size     = m_chain_params->sim->K;
+	m_chain_params->mnt.n_frames = m_chain_params->sim->inter_frame_level;
+	Factory_monitor::store_args(this->ar, m_chain_params->mnt);
+
 	Factory_terminal_BFER      ::store_args(this->ar, m_chain_params->ter);
 
 	if (!std::is_integral<Q>())

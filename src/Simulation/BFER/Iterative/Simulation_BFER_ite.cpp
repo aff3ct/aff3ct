@@ -142,21 +142,33 @@ template <typename B, typename R, typename Q>
 Modem<B,R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	return Factory_modem::build<B,R,Q>(chain_params.mdm, this->sigma);
+	auto mdm_cpy = chain_params.mdm;
+	if (chain_params.mdm.sigma == -1.f)
+		mdm_cpy.sigma = this->sigma;
+	return Factory_modem::build<B,R,Q>(mdm_cpy);
 }
 
 template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_ite<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
-	return Factory_channel::build<R>(chain_params.chn, seed, this->sigma);
+	auto chn_cpy = chain_params.chn;
+	if (chain_params.chn.sigma == -1.f)
+		chn_cpy.sigma = this->sigma;
+	chn_cpy.seed = seed;
+
+	return Factory_channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return Factory_quantizer::build<R,Q>(chain_params.qnt, this->sigma);
+	auto qnt_cpy = chain_params.qnt;
+	if (chain_params.qnt.sigma == -1.f)
+		qnt_cpy.sigma = this->sigma;
+
+	return Factory_quantizer::build<R,Q>(qnt_cpy);
 }
 
 template <typename B, typename R, typename Q>

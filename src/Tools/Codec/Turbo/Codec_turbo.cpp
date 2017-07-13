@@ -95,7 +95,10 @@ template <typename B, typename Q, typename QD>
 Interleaver<int>* Codec_turbo<B,Q,QD>
 ::build_interleaver(const int tid, const int seed)
 {
-	return Factory_interleaver::build<int>(enc_par.itl, seed);
+	auto itl_cpy = enc_par.itl;
+	itl_cpy.seed = seed;
+
+	return Factory_interleaver::build<int>(itl_cpy);
 }
 
 template <typename B, typename Q, typename QD>
@@ -130,7 +133,7 @@ template <typename B, typename Q, typename QD>
 Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 ::build_puncturer(const int tid)
 {
-	return Factory_puncturer_turbo::build<B,Q>(pct_par, enc_par.tail_length, enc_par.buffered);
+	return Factory_puncturer_turbo::build<B,Q>(pct_par);
 }
 
 template <typename B, typename Q, typename QD>

@@ -57,7 +57,11 @@ void Launcher_turbo<C,B,R,Q,QD>
 
 	tools::Factory_encoder_turbo  ::store_args(this->ar, *m_enc, this->m_chain_params->sim->K, this->m_chain_params->sim->N,               this->m_chain_params->sim->inter_frame_level);
 
-	tools::Factory_puncturer_turbo::store_args(this->ar, *m_pct, this->m_chain_params->sim->K, this->m_chain_params->sim->N, m_enc->N_pct, this->m_chain_params->sim->inter_frame_level);
+	m_pct->K = this->m_chain_params->sim->K;
+	m_pct->N = this->m_chain_params->sim->N;
+	m_pct->n_frames = this->m_chain_params->sim->inter_frame_level;
+
+	tools::Factory_puncturer_turbo::store_args(this->ar, *m_pct);
 
 	bool activate_simd = !this->ar.exist_arg({"sim-inter-lvl"});
 	bool activate_json = !m_enc->json_path.empty();

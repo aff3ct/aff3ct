@@ -38,7 +38,7 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
 
-	opt_args[{"sim-inter-lvl"}] =
+	opt_args[{"sim-inter-lvl", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process in each modules."};
 
@@ -81,11 +81,11 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 
 	params.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
-	if(ar.exist_arg({"sim-pyber"        })) params.pyber             = ar.get_arg      ({"sim-pyber"        });
-	if(ar.exist_arg({"sim-snr-step", "s"})) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-inter-lvl"    })) params.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
-	if(ar.exist_arg({"sim-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
-	if(ar.exist_arg({"sim-seed", "S"    })) params.seed              = ar.get_arg_int  ({"sim-seed", "S"    });
+	if(ar.exist_arg({"sim-pyber"         })) params.pyber             = ar.get_arg      ({"sim-pyber"         });
+	if(ar.exist_arg({"sim-snr-step", "s" })) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s" });
+	if(ar.exist_arg({"sim-inter-lvl", "F"})) params.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl", "F"});
+	if(ar.exist_arg({"sim-stop-time"     })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"     }));
+	if(ar.exist_arg({"sim-seed", "S"     })) params.seed              = ar.get_arg_int  ({"sim-seed", "S"     });
 
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
@@ -135,7 +135,7 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 
 	params.K_info = params.K;
 	params.N_code = params.N;
-	params.R      = params.K / (float)params.N;
+	params.R      = (float)params.K / (float)params.N;
 }
 
 void Factory_simulation::group_args(Arguments_reader::arg_grp& ar)

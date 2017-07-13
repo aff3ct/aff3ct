@@ -52,12 +52,18 @@ void Launcher_EXIT<B,R>
 
 	Factory_source::store_args(this->ar, m_chain_params->src);
 
-	Factory_modem          ::store_args(this->ar, m_chain_params->modem,           m_sim->N, m_sim->inter_frame_level);
+	m_chain_params->mdm.N = m_chain_params->sim->N;
+	m_chain_params->mdm.n_frames = m_chain_params->sim->inter_frame_level;
 
-	bool complex   = m_chain_params->modem.complex;
-	bool add_users = (m_chain_params->modem.type == "SCMA");
+	Factory_modem::store_args(this->ar, m_chain_params->mdm);
 
-	Factory_channel        ::store_args(this->ar, m_chain_params->chn,   m_sim->N, complex, add_users, m_sim->inter_frame_level);
+	m_chain_params->chn.N = m_chain_params->mdm.N_mod;
+	m_chain_params->chn.n_frames = m_chain_params->sim->inter_frame_level;
+	m_chain_params->chn.complex = m_chain_params->mdm.complex;
+	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
+
+	Factory_channel::store_args(this->ar, m_chain_params->chn);
+
 	Factory_terminal_EXIT  ::store_args(this->ar, m_chain_params->ter);
 }
 
@@ -80,7 +86,7 @@ void Launcher_EXIT<B,R>
 {
 	Factory_simulation_EXIT::header(this->pl_sim, this->pl_cde, *m_sim);
 	Factory_source         ::header(this->pl_src, m_chain_params->src);
-	Factory_modem          ::header(this->pl_mod, this->pl_demod, m_chain_params->modem);
+	Factory_modem          ::header(this->pl_mod, this->pl_demod, m_chain_params->mdm);
 	Factory_channel        ::header(this->pl_chn, m_chain_params->chn);
 	Factory_terminal_EXIT  ::header(this->pl_ter, m_chain_params->ter);
 

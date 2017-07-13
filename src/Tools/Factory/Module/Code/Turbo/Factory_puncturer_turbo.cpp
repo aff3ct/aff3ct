@@ -10,11 +10,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer<B,Q>* Factory_puncturer_turbo
-::build(const parameters &params,
-        const int         tail_length,
-        const bool        buffered)
+::build(const parameters &params)
 {
-	if (params.type == "TURBO") return new Puncturer_turbo<B,Q>(params.K, params.N, tail_length, params.pattern, buffered, params.n_frames);
+	if (params.type == "TURBO") return new Puncturer_turbo<B,Q>(params.K, params.N, params.tail_length, params.pattern, params.buffered, params.n_frames);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -24,22 +22,34 @@ void Factory_puncturer_turbo
 {
 	Factory_puncturer::build_args(req_args, opt_args);
 
-	// ----------------------------------------------------------------------------------------------------- poncturer
+	opt_args[{"pct-type"}][2] += ", TURBO";
+
 	opt_args[{"pct-pattern"}] =
 		{"string",
 		 "puncturing pattern for the turbo encoder (ex: \"11,10,01\")."};
+
+	opt_args[{"pct-tail-length"}] =
+		{"positive_int",
+		 "total number of tail bits at the end of the frame."};
+
+	opt_args[{"pct-no-buff"}] =
+		{"",
+		 "does not suppose a buffered encoding."};
 }
 
 void Factory_puncturer_turbo
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int N_pct, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.type = "TURBO";
+	Factory_puncturer::store_args(ar, params);
 
-	Factory_puncturer::store_args(ar, params, K, N, N_pct, n_frames);
-
-	// ----------------------------------------------------------------------------------------------------- poncturer
 	if(ar.exist_arg({"pct-pattern"})) params.pattern = ar.get_arg({"pct-pattern"});
+	if(ar.exist_arg({"pct-tail-length"})) params.tail_length = ar.get_arg_int({"pct-tail-length"});
+	if(ar.exist_arg({"pct-no-buff"})) params.buffered = false;
+
+	params.N_code = 3 * params.K + params.tail_length;
+
+	if (params.N == params.N_code)
+		params.type = "NO";
 }
 
 void Factory_puncturer_turbo
@@ -53,18 +63,22 @@ void Factory_puncturer_turbo
 {
 	Factory_puncturer::header(head_pct, params);
 
-	// ----------------------------------------------------------------------------------------------------- poncturer
-	head_pct.push_back(std::make_pair(std::string("Pattern"), std::string("{" + params.pattern) + "}"));
+	if (params.type != "NO")
+	{
+		head_pct.push_back(std::make_pair(std::string("Pattern"), std::string("{" + params.pattern) + "}"));
+		head_pct.push_back(std::make_pair(std::string("Tail length"), std::to_string(params.tail_length)));
+		head_pct.push_back(std::make_pair(std::string("Buffered"), params.buffered ? "on" : "off"));
+	}
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::tools::Factory_puncturer_turbo::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_puncturer_turbo::parameters&, const int, const bool);
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::tools::Factory_puncturer_turbo::build<B_16,Q_16>(const aff3ct::tools::Factory_puncturer_turbo::parameters&, const int, const bool);
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::tools::Factory_puncturer_turbo::build<B_32,Q_32>(const aff3ct::tools::Factory_puncturer_turbo::parameters&, const int, const bool);
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::tools::Factory_puncturer_turbo::build<B_64,Q_64>(const aff3ct::tools::Factory_puncturer_turbo::parameters&, const int, const bool);
+template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::tools::Factory_puncturer_turbo::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_puncturer_turbo::parameters&);
+template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::tools::Factory_puncturer_turbo::build<B_16,Q_16>(const aff3ct::tools::Factory_puncturer_turbo::parameters&);
+template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::tools::Factory_puncturer_turbo::build<B_32,Q_32>(const aff3ct::tools::Factory_puncturer_turbo::parameters&);
+template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::tools::Factory_puncturer_turbo::build<B_64,Q_64>(const aff3ct::tools::Factory_puncturer_turbo::parameters&);
 #else
-template aff3ct::module::Puncturer<B,Q>* aff3ct::tools::Factory_puncturer_turbo::build<B,Q>(const aff3ct::tools::Factory_puncturer_turbo::parameters&, const int, const bool);
+template aff3ct::module::Puncturer<B,Q>* aff3ct::tools::Factory_puncturer_turbo::build<B,Q>(const aff3ct::tools::Factory_puncturer_turbo::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation

@@ -17,21 +17,21 @@ struct Factory_quantizer : public Factory
 {
 	struct parameters
 	{
+		int         size       = -1;
+
 		std::string type       = "STD";
 		float       range      = 0.f;
 		int         n_bits     = 8;
 		int         n_decimals = 3;
-
-		int         size;
-		int         n_frames;
+		int         n_frames   = 1;
+		float       sigma      = -1.f;
 	};
 
 	template <typename R = float, typename Q = R>
-	static module::Quantizer<R,Q>* build(const parameters& params, const float sigma = 0.f);
+	static module::Quantizer<R,Q>* build(const parameters& params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params,
-	                       const int size, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_qua, const parameters& params);

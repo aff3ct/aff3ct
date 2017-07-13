@@ -42,8 +42,8 @@ struct Factory_simulation : Factory_simulation_main
 		int         K_info;
 		int         N;
 		int         N_code;
-		float       R;     // code rate
-		float       tail_length = 0;     // code rate
+		float       R;
+		float       tail_length = 0;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

@@ -18,21 +18,35 @@ Puncturer<B,Q>* Factory_puncturer
 void Factory_puncturer
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	// ----------------------------------------------------------------------------------------------------- puncturer
+	req_args[{"pct-info-bits", "K"}] =
+		{"positive_int",
+		 "useful number of bit transmitted (information bits)."};
+
+	req_args[{"pct-fra-size", "N"}] =
+		{"positive_int",
+		 "total number of bit transmitted (frame size)."};
+
+	opt_args[{"pct-type"}] =
+		{"string",
+		 "code puncturer type.",
+		 "NO"};
+
+	opt_args[{"pct-fra", "F"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process."};
 }
 
 void Factory_puncturer
-::store_args(const Arguments_reader& ar, parameters &params,
-                                   const int K, const int N, const int N_pct, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K        = K;
-	params.N        = N;
-	params.N_pct    = N_pct;
-	params.n_frames = n_frames;
+	params.K = ar.get_arg_int({"pct-info-bits", "K"});
+	params.N = ar.get_arg_int({"pct-fra-size", "N"});
+	params.N_code = params.N;
+	if(ar.exist_arg({"pct-fra", "F"})) params.n_frames = ar.get_arg_int({"pct-fra", "F"});
+	if(ar.exist_arg({"pct-type"})) params.type = ar.get_arg({"pct-type"});
 
-	// ----------------------------------------------------------------------------------------------------- puncturer
-	if (params.N == params.N_pct)
-		params.type = "NO";
+//	if (params.N == params.N_code)
+//		params.type = "NO";
 }
 
 void Factory_puncturer
@@ -44,7 +58,11 @@ void Factory_puncturer
 void Factory_puncturer
 ::header(params_list& head_pct, const parameters& params)
 {
-	// ----------------------------------------------------------------------------------------------------- puncturer
+	head_pct.push_back(std::make_pair("Type", params.type));
+	head_pct.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+	head_pct.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
+	head_pct.push_back(std::make_pair("Code size", std::to_string(params.N_code)));
+	head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 
 // ==================================================================================== explicit template instantiation

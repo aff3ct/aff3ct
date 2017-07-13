@@ -17,23 +17,23 @@ struct Factory_channel : public Factory
 {
 	struct parameters
 	{
+		int         N            = -1;
+
 		std::string type         = "AWGN";
 		std::string path         = "";
 		std::string block_fading = "NO";
 		bool        add_users    = false;
-		bool        complex;
-		int         N;
-		int         n_frames;
+		bool        complex      = false;
+		int         n_frames     = 1;
+		int         seed         = 0;
+		float       sigma        = -1.f;
 	};
 
 	template <typename R = float>
-	static module::Channel<R>* build(const parameters &params,
-	                                 const int         seed  = 0,
-	                                 const R           sigma = (R)1);
+	static module::Channel<R>* build(const parameters &params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params,
-	                       const int N, const bool complex, const bool add_users, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_chn, const parameters& params);

@@ -16,7 +16,7 @@ struct Factory_source : public Factory
 {
 	struct parameters
 	{
-		int         K;
+		int         K        = -1;
 
 		std::string type     = "RAND";
 		std::string path     = "";

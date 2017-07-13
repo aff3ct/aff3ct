@@ -72,7 +72,9 @@ void Factory_encoder_turbo
 
 
 	// --------------------------------------------------------------------------------------------------- interleaver
-	Factory_interleaver::store_args(ar, params.itl, K, n_frames);
+	params.itl.size = params.K;
+	params.itl.n_frames = params.n_frames;
+	Factory_interleaver::store_args(ar, params.itl);
 
 	// ---------------------------------------------------------------------------------------------------------- code
 	if(ar.exist_arg({"cde-std"})) params.standard = ar.get_arg({"cde-std"});
