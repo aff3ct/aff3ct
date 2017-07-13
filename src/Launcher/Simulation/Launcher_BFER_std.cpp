@@ -49,16 +49,22 @@ void Launcher_BFER_std<B,R,Q>
 	Launcher::store_args();
 
 	Factory_simulation_BFER_std::store_args(this->ar, *m_sim);
-	Factory_source             ::store_args(this->ar, m_chain_params->src,   m_sim->K,           m_sim->inter_frame_level);
+
+	m_chain_params->src.K        = m_chain_params->sim->K;
+	m_chain_params->src.seed     = m_chain_params->sim->seed;
+	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
+
+	Factory_source::store_args(this->ar, m_chain_params->src);
+
 	Factory_CRC                ::store_args(this->ar, m_chain_params->crc,   m_sim->K, m_sim->N, m_sim->inter_frame_level);
-	Factory_modem              ::store_args(this->ar, m_chain_params->mdm,           m_sim->N, m_sim->inter_frame_level);
+	Factory_modem              ::store_args(this->ar, m_chain_params->mdm,   m_sim->N,           m_sim->inter_frame_level);
 
 	bool complex   = m_chain_params->mdm.complex;
 	bool add_users = (m_chain_params->mdm.type == "SCMA");
 
 	Factory_channel            ::store_args(this->ar, m_chain_params->chn,   m_sim->N, complex, add_users, m_sim->inter_frame_level);
-	Factory_quantizer          ::store_args(this->ar, m_chain_params->qnt,             m_sim->N, m_sim->inter_frame_level);
-	Factory_monitor            ::store_args(this->ar, m_chain_params->mnt,   m_sim->K,           m_sim->inter_frame_level);
+	Factory_quantizer          ::store_args(this->ar, m_chain_params->qnt,   m_sim->N,                     m_sim->inter_frame_level);
+	Factory_monitor            ::store_args(this->ar, m_chain_params->mnt,   m_sim->K,                     m_sim->inter_frame_level);
 	Factory_terminal_BFER      ::store_args(this->ar, m_chain_params->ter);
 
 	if (!std::is_integral<Q>())

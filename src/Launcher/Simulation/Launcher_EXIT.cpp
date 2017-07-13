@@ -44,9 +44,14 @@ void Launcher_EXIT<B,R>
 ::store_args()
 {
 	Launcher::store_args();
-
 	Factory_simulation_EXIT::store_args(this->ar, *m_sim);
-	Factory_source         ::store_args(this->ar, m_chain_params->src,   m_sim->K,           m_sim->inter_frame_level);
+
+	m_chain_params->src.K        = m_chain_params->sim->K;
+	m_chain_params->src.seed     = m_chain_params->sim->seed;
+	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
+
+	Factory_source::store_args(this->ar, m_chain_params->src);
+
 	Factory_modem          ::store_args(this->ar, m_chain_params->modem,           m_sim->N, m_sim->inter_frame_level);
 
 	bool complex   = m_chain_params->modem.complex;

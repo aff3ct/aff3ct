@@ -33,7 +33,13 @@ void Launcher_BFER_ite<B,R,Q>
 	Launcher::build_args();
 
 	Factory_simulation_BFER_ite::build_args(this->req_args, this->opt_args);
-	Factory_source             ::build_args(this->req_args, this->opt_args);
+
+	m_chain_params->src.K        = m_chain_params->sim->K;
+	m_chain_params->src.seed     = m_chain_params->sim->seed;
+	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
+
+	Factory_source::build_args(this->req_args, this->opt_args);
+
 	Factory_CRC                ::build_args(this->req_args, this->opt_args);
 	Factory_interleaver        ::build_args(this->req_args, this->opt_args);
 	Factory_modem              ::build_args(this->req_args, this->opt_args);
@@ -49,8 +55,12 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
+	m_chain_params->src.K        = m_chain_params->sim->K;
+	m_chain_params->src.seed     = m_chain_params->sim->seed;
+	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
+
 	Factory_simulation_BFER_ite::store_args(this->ar, *m_sim);
-	Factory_source             ::store_args(this->ar, m_chain_params->src,   m_sim->K,           m_sim->inter_frame_level);
+	Factory_source             ::store_args(this->ar, m_chain_params->src);
 	Factory_CRC                ::store_args(this->ar, m_chain_params->crc,   m_sim->K, m_sim->N, m_sim->inter_frame_level);
 	Factory_interleaver        ::store_args(this->ar, m_chain_params->itl,             m_sim->N, m_sim->inter_frame_level);
 	Factory_modem              ::store_args(this->ar, m_chain_params->mdm,           m_sim->N, m_sim->inter_frame_level);

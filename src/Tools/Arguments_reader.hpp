@@ -168,7 +168,7 @@ private:
 	 *
 	 * \return true if the argument "m_argv[pos_arg]" is in args.
 	 */
-	bool sub_parse_arguments(arg_map &args, unsigned short pos_arg);
+	unsigned sub_parse_arguments(arg_map &args, unsigned short pos_arg);
 
 	/*!
 	 * \brief Checks if the values from the command line respect the criteria given by required_args and optional_args

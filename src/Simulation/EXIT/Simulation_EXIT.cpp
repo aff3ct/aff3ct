@@ -410,7 +410,8 @@ template <typename B, typename R>
 Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
-	return Factory_source::build<B>(params.src, params.sim->seed);
+
+	return Factory_source::build<B>(params.src);
 }
 
 template <typename B, typename R>

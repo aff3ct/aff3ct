@@ -16,18 +16,20 @@ struct Factory_source : public Factory
 {
 	struct parameters
 	{
-		std::string type = "RAND";
-		std::string path = "";
-		bool        azcw = false;
 		int         K;
-		int         n_frames;
+
+		std::string type     = "RAND";
+		std::string path     = "";
+		bool        azcw     = false;
+		int         n_frames = 1;
+		int         seed     = 0;
 	};
 
 	template <typename B = int>
-	static module::Source<B>* build(const parameters& params, const int seed = 0);
+	static module::Source<B>* build(const parameters& params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params, const int K, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_src, const parameters& params);

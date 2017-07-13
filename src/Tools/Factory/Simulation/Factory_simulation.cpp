@@ -42,7 +42,7 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		{"positive_int",
 		 "set the number of inter frame level to process in each modules."};
 
-	opt_args[{"sim-seed"}] =
+	opt_args[{"sim-seed", "S"}] =
 		{"positive_int",
 		 "seed used in the simulation to initialize the pseudo random generators in general."};
 
@@ -85,7 +85,7 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 	if(ar.exist_arg({"sim-snr-step", "s"})) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
 	if(ar.exist_arg({"sim-inter-lvl"    })) params.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl"    });
 	if(ar.exist_arg({"sim-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
-	if(ar.exist_arg({"sim-seed"         })) params.seed              = ar.get_arg_int  ({"sim-seed"         });
+	if(ar.exist_arg({"sim-seed", "S"    })) params.seed              = ar.get_arg_int  ({"sim-seed", "S"    });
 
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)

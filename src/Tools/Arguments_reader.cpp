@@ -48,7 +48,7 @@ bool Arguments_reader
 bool Arguments_reader
 ::parse_arguments(const arg_map &required_args, const arg_map &optional_args, std::vector<std::string> &warnings)
 {
-	unsigned short int n_req_arg = 0;
+	unsigned n_req_arg = 0;
 
 	this->clear_arguments();
 
@@ -60,10 +60,10 @@ bool Arguments_reader
 	{
 		// try to find word m_argv[i] inside the arguments list
 		bool valid_arg = false;
-		if (this->sub_parse_arguments(this->m_required_args, i))
+		if (auto n_found = this->sub_parse_arguments(this->m_required_args, i))
 		{
+			n_req_arg += n_found;
 			valid_arg = true;
-			n_req_arg++;
 		}
 		else
 			valid_arg = this->sub_parse_arguments(this->m_optional_args, i);
@@ -84,7 +84,7 @@ bool Arguments_reader
 	return n_req_arg >= required_args.size();
 }
 
-bool Arguments_reader
+unsigned Arguments_reader
 ::sub_parse_arguments(arg_map &args, unsigned short pos_arg)
 {
 	if (pos_arg >= this->m_argv.size())
@@ -95,7 +95,7 @@ bool Arguments_reader
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto is_found = false;
+	auto n_found = 0;
 	for (auto it = args.begin(); it != args.end(); ++it)
 	{
 		if (it->first.size() <= 0)
@@ -135,22 +135,22 @@ bool Arguments_reader
 					if(pos_arg != (this->m_argv.size() -1))
 					{
 						this->m_args[it->first] = this->m_argv[pos_arg +1];
-						is_found = true;
+						n_found++;
 					}
 				}
 				else
 				{
 					this->m_args[it->first] = "";
-					is_found = true;
+					n_found++;
 				}
 			}
 
 			i++;
 		}
-		while( !is_found && i < (int)it->first.size());
+		while(i < (int)it->first.size());
 	}
 
-	return is_found;
+	return n_found;
 }
 
 bool Arguments_reader

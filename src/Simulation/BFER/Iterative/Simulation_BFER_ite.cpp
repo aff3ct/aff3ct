@@ -105,7 +105,9 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER_ite<B,R,Q>
 ::build_source(const int tid, const int seed)
 {
-	return Factory_source::build<B>(chain_params.src, seed);
+	auto src_cpy = chain_params.src;
+	src_cpy.seed = seed;
+	return Factory_source::build<B>(src_cpy);
 }
 
 template <typename B, typename R, typename Q>
