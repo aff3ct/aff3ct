@@ -3,13 +3,14 @@
 
 #include <string>
 
-#include "Factory_simulation_BFER.hpp"
 #include "Tools/Arguments_reader.hpp"
 
-#include "Tools/Factory/Factory_CRC.hpp"
-#include "Tools/Factory/Factory_quantizer.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
-#include "Tools/Factory/Code/Factory_puncturer.hpp"
+#include "Tools/Factory/Module/Factory_CRC.hpp"
+#include "Tools/Factory/Module/Factory_quantizer.hpp"
+#include "Tools/Factory/Module/Factory_interleaver.hpp"
+#include "Tools/Factory/Module/Code/Factory_puncturer.hpp"
+
+#include "Factory_simulation_BFER.hpp"
 
 namespace aff3ct
 {

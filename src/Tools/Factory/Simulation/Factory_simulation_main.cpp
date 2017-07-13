@@ -1,9 +1,11 @@
 #include <sstream>
-#include "Factory_simulation_main.hpp"
+
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/types.h"
 #include "Tools/date.h"
+
+#include "Factory_simulation_main.hpp"
 
 using namespace aff3ct;
 using namespace tools;

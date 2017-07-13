@@ -2,8 +2,8 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
-#include "Tools/Factory/Code/Polar/Factory_frozenbits_generator.hpp"
-#include "Tools/Factory/Code/Polar/Factory_decoder_polar_gen.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_frozenbits_generator.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_decoder_polar_gen.hpp"
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
 

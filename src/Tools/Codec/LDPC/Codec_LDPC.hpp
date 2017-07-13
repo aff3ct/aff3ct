@@ -6,8 +6,8 @@
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
-#include "Tools/Factory/Code/LDPC/Factory_encoder_LDPC.hpp"
-#include "Tools/Factory/Code/LDPC/Factory_decoder_LDPC.hpp"
+#include "Tools/Factory/Module/Code/LDPC/Factory_encoder_LDPC.hpp"
+#include "Tools/Factory/Module/Code/LDPC/Factory_decoder_LDPC.hpp"
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 

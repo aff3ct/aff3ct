@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_BCH_HPP_
 #define LAUNCHER_BCH_HPP_
 
-#include "Tools/Factory/Code/BCH/Factory_decoder_BCH.hpp"
-#include "Tools/Factory/Code/BCH/Factory_encoder_BCH.hpp"
+#include "Tools/Factory/Module/Code/BCH/Factory_decoder_BCH.hpp"
+#include "Tools/Factory/Module/Code/BCH/Factory_encoder_BCH.hpp"
 
 namespace aff3ct
 {

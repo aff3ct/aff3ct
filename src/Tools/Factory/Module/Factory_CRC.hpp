@@ -8,7 +8,7 @@
 
 #include "Tools/Arguments_reader.hpp"
 
-#include "Factory.hpp"
+#include "../Factory.hpp"
 
 namespace aff3ct
 {

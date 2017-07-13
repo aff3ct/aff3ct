@@ -5,8 +5,9 @@
 
 #include "Module/Decoder/Decoder.hpp"
 
+#include "Tools/Factory/Module/Factory_interleaver.hpp"
+
 #include "../Factory_decoder.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
 
 namespace aff3ct
 {

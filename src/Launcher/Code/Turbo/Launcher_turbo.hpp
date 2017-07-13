@@ -1,9 +1,9 @@
 #ifndef LAUNCHER_TURBO_HPP_
 #define LAUNCHER_TURBO_HPP_
 
-#include "Tools/Factory/Code/Turbo/Factory_decoder_turbo.hpp"
-#include "Tools/Factory/Code/Turbo/Factory_encoder_turbo.hpp"
-#include "Tools/Factory/Code/Turbo/Factory_puncturer_turbo.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_decoder_turbo.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_encoder_turbo.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_puncturer_turbo.hpp"
 
 namespace aff3ct
 {

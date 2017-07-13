@@ -11,8 +11,8 @@
 #include "Module/Puncturer/Puncturer.hpp"
 #include "Module/Decoder/Decoder.hpp"
 
-#include "Tools/Factory/Code/Factory_encoder.hpp"
-#include "Tools/Factory/Code/Factory_decoder.hpp"
+#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Module/Code/Factory_decoder.hpp"
 
 namespace aff3ct
 {

@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_RSC_HPP_
 #define LAUNCHER_RSC_HPP_
 
-#include "Tools/Factory/Code/RSC/Factory_decoder_RSC.hpp"
-#include "Tools/Factory/Code/RSC/Factory_encoder_RSC.hpp"
+#include "Tools/Factory/Module/Code/RSC/Factory_decoder_RSC.hpp"
+#include "Tools/Factory/Module/Code/RSC/Factory_encoder_RSC.hpp"
 
 namespace aff3ct
 {

@@ -1,9 +1,9 @@
 #ifndef LAUNCHER_POLAR_HPP_
 #define LAUNCHER_POLAR_HPP_
 
-#include "Tools/Factory/Code/Polar/Factory_decoder_polar.hpp"
-#include "Tools/Factory/Code/Polar/Factory_puncturer_polar.hpp"
-#include "Tools/Factory/Code/Polar/Factory_encoder_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_decoder_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_puncturer_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_encoder_polar.hpp"
 
 namespace aff3ct
 {

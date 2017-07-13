@@ -4,16 +4,17 @@
 #include <string>
 #include <thread>
 
-#include "../Factory_simulation.hpp"
 #include "Tools/Arguments_reader.hpp"
 
-#include "Tools/Factory/Factory_source.hpp"
-#include "Tools/Factory/Factory_modem.hpp"
-#include "Tools/Factory/Factory_channel.hpp"
-#include "Tools/Factory/Factory_monitor.hpp"
-#include "Tools/Factory/Factory_terminal.hpp"
-#include "Tools/Factory/Code/Factory_encoder.hpp"
-#include "Tools/Factory/Code/Factory_decoder.hpp"
+#include "Tools/Factory/Module/Factory_source.hpp"
+#include "Tools/Factory/Module/Factory_modem.hpp"
+#include "Tools/Factory/Module/Factory_channel.hpp"
+#include "Tools/Factory/Module/Factory_monitor.hpp"
+#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Module/Code/Factory_decoder.hpp"
+#include "Tools/Factory/Simulation/BFER/Factory_terminal_BFER.hpp"
+
+#include "../Factory_simulation.hpp"
 
 namespace aff3ct
 {

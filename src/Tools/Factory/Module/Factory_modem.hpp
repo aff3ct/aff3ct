@@ -8,7 +8,7 @@
 
 #include "Module/Modem/Modem.hpp"
 
-#include "Factory.hpp"
+#include "../Factory.hpp"
 
 namespace aff3ct
 {

@@ -2,8 +2,8 @@
 #define CODEC_BCH_HPP_
 
 #include "Tools/Math/Galois.hpp"
-#include "Tools/Factory/Code/BCH/Factory_encoder_BCH.hpp"
-#include "Tools/Factory/Code/BCH/Factory_decoder_BCH.hpp"
+#include "Tools/Factory/Module/Code/BCH/Factory_encoder_BCH.hpp"
+#include "Tools/Factory/Module/Code/BCH/Factory_decoder_BCH.hpp"
 
 #include "../Codec.hpp"
 

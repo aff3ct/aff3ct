@@ -1,9 +1,9 @@
 #ifndef LAUNCHER_RA_HPP_
 #define LAUNCHER_RA_HPP_
 
-#include "Tools/Factory/Code/RA/Factory_decoder_RA.hpp"
-#include "Tools/Factory/Code/RA/Factory_encoder_RA.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
+#include "Tools/Factory/Module/Code/RA/Factory_decoder_RA.hpp"
+#include "Tools/Factory/Module/Code/RA/Factory_encoder_RA.hpp"
+#include "Tools/Factory/Module/Factory_interleaver.hpp"
 
 namespace aff3ct
 {

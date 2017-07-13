@@ -10,7 +10,6 @@
 
 #include "Tools/date.h"
 #include "Tools/general_utils.h"
-#include "Tools/Factory/Factory_modem.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
 

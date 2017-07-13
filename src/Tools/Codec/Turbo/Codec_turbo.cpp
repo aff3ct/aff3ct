@@ -2,9 +2,9 @@
 #include <cctype>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
-#include "Tools/Factory/Code/Turbo/Factory_scaling_factor.hpp"
-#include "Tools/Factory/Code/Turbo/Factory_flip_and_check.hpp"
+#include "Tools/Factory/Module/Factory_interleaver.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_scaling_factor.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_flip_and_check.hpp"
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"

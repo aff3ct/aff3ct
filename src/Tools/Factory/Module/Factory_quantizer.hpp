@@ -7,7 +7,7 @@
 
 #include "Module/Quantizer/Quantizer.hpp"
 
-#include "Factory.hpp"
+#include "../Factory.hpp"
 
 namespace aff3ct
 {

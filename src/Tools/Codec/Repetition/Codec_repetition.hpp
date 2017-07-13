@@ -1,8 +1,8 @@
 #ifndef CODEC_REPETITION_HPP_
 #define CODEC_REPETITION_HPP_
 
-#include "Tools/Factory/Code/Repetition/Factory_encoder_repetition.hpp"
-#include "Tools/Factory/Code/Repetition/Factory_decoder_repetition.hpp"
+#include "Tools/Factory/Module/Code/Repetition/Factory_encoder_repetition.hpp"
+#include "Tools/Factory/Module/Code/Repetition/Factory_decoder_repetition.hpp"
 
 #include "../Codec.hpp"
 

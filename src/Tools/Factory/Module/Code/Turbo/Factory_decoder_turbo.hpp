@@ -8,8 +8,8 @@
 #include "Module/Decoder/SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "Tools/Factory/Code/Turbo/Factory_scaling_factor.hpp"
-#include "Tools/Factory/Code/Turbo/Factory_flip_and_check.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_scaling_factor.hpp"
+#include "Tools/Factory/Module/Code/Turbo/Factory_flip_and_check.hpp"
 
 #include "../Factory_decoder.hpp"
 

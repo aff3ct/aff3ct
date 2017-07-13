@@ -3,8 +3,8 @@
 
 #include "../Codec_SISO.hpp"
 
-#include "Tools/Factory/Code/Factory_encoder.hpp"
-#include "Tools/Factory/Code/NO/Factory_decoder_NO.hpp"
+#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Module/Code/NO/Factory_decoder_NO.hpp"
 
 namespace aff3ct
 {

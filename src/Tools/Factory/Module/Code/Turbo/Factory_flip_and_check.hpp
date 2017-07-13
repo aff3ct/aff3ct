@@ -6,7 +6,7 @@
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
 #include "Tools/Arguments_reader.hpp"
 
-#include "../../Factory.hpp"
+#include "../../../Factory.hpp"
 
 namespace aff3ct
 {

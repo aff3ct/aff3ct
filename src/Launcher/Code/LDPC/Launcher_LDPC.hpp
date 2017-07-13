@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_LDPC_HPP_
 #define LAUNCHER_LDPC_HPP_
 
-#include "Tools/Factory/Code/LDPC/Factory_decoder_LDPC.hpp"
-#include "Tools/Factory/Code/LDPC/Factory_encoder_LDPC.hpp"
+#include "Tools/Factory/Module/Code/LDPC/Factory_decoder_LDPC.hpp"
+#include "Tools/Factory/Module/Code/LDPC/Factory_encoder_LDPC.hpp"
 
 namespace aff3ct
 {

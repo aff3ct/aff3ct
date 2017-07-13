@@ -7,8 +7,9 @@
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Encoder/Encoder_sys.hpp"
 
+#include "Tools/Factory/Module/Factory_interleaver.hpp"
+
 #include "../Factory_encoder.hpp"
-#include "Tools/Factory/Factory_interleaver.hpp"
 
 namespace aff3ct
 {

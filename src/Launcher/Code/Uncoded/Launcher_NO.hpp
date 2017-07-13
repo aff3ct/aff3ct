@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_NO_HPP_
 #define LAUNCHER_NO_HPP_
 
-#include "Tools/Factory/Code/NO/Factory_decoder_NO.hpp"
-#include "Tools/Factory/Code/Factory_encoder.hpp"
+#include "Tools/Factory/Module/Code/NO/Factory_decoder_NO.hpp"
+#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
 
 namespace aff3ct
 {

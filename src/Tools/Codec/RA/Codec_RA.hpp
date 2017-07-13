@@ -1,8 +1,8 @@
 #ifndef CODEC_RA_HPP_
 #define CODEC_RA_HPP_
 
-#include "Tools/Factory/Code/RA/Factory_encoder_RA.hpp"
-#include "Tools/Factory/Code/RA/Factory_decoder_RA.hpp"
+#include "Tools/Factory/Module/Code/RA/Factory_encoder_RA.hpp"
+#include "Tools/Factory/Module/Code/RA/Factory_decoder_RA.hpp"
 
 #include "../Codec.hpp"
 

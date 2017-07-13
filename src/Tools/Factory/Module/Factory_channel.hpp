@@ -7,7 +7,7 @@
 
 #include "Module/Channel/Channel.hpp"
 
-#include "Factory.hpp"
+#include "../Factory.hpp"
 
 namespace aff3ct
 {

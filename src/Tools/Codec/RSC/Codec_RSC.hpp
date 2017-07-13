@@ -4,8 +4,8 @@
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
 
-#include "Tools/Factory/Code/RSC/Factory_encoder_RSC.hpp"
-#include "Tools/Factory/Code/RSC/Factory_decoder_RSC.hpp"
+#include "Tools/Factory/Module/Code/RSC/Factory_encoder_RSC.hpp"
+#include "Tools/Factory/Module/Code/RSC/Factory_decoder_RSC.hpp"
 
 #include "../Codec_SISO.hpp"
 

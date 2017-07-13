@@ -6,9 +6,9 @@
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
 #include "Module/Decoder/Decoder_SISO.hpp"
-#include "Tools/Factory/Code/Polar/Factory_encoder_polar.hpp"
-#include "Tools/Factory/Code/Polar/Factory_decoder_polar.hpp"
-#include "Tools/Factory/Code/Polar/Factory_puncturer_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_encoder_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_decoder_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_puncturer_polar.hpp"
 
 #include "../Codec_SISO.hpp"
 
