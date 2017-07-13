@@ -4,8 +4,7 @@
 #include <string>
 
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/params.h"
-#include "Tools/Header.hpp"
+
 #include "Module/Quantizer/Quantizer.hpp"
 
 #include "Factory.hpp"
@@ -35,7 +34,7 @@ struct Factory_quantizer : public Factory
 	                       const int size, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_qua, const parameters& params);
+	static void header(params_list& head_qua, const parameters& params);
 };
 }
 }

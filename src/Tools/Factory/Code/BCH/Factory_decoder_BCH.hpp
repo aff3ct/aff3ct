@@ -33,7 +33,7 @@ struct Factory_decoder_BCH : public Factory_decoder
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params);
+	static void header(params_list& head_dec, params_list& head_cde, const parameters& params);
 };
 }
 }

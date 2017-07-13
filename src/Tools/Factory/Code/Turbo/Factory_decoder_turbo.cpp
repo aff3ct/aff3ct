@@ -111,7 +111,7 @@ void Factory_decoder_turbo
 }
 
 void Factory_decoder_turbo
-::header(Header::params_list& head_dec, const parameters& params, bool crc_activated)
+::header(params_list& head_dec, const parameters& params, bool crc_activated)
 {
 	Factory_decoder::header(head_dec, params);
 

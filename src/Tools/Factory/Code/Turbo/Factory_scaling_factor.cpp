@@ -54,7 +54,7 @@ void Factory_scaling_factor
 }
 
 void Factory_scaling_factor
-::header(Header::params_list& head_sf, const parameters& params)
+::header(params_list& head_sf, const parameters& params)
 {
 	head_sf.push_back(std::make_pair("Scaling factor", params.declaration));
 }

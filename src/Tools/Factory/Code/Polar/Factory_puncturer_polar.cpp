@@ -39,7 +39,7 @@ void Factory_puncturer_polar
 }
 
 void Factory_puncturer_polar
-::header(Header::params_list& head_pct, const Factory_puncturer::parameters& params)
+::header(params_list& head_pct, const Factory_puncturer::parameters& params)
 {
 	Factory_puncturer::header(head_pct, params);
 }

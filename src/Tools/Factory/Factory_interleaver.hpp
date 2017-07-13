@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Tools/Header.hpp"
+
 #include "Tools/Arguments_reader.hpp"
 
 #include "Factory.hpp"
@@ -33,7 +33,7 @@ struct Factory_interleaver : public Factory
 	                       const int size, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_itl, const parameters& params);
+	static void header(params_list& head_itl, const parameters& params);
 };
 }
 }

@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Module/Coset/Coset.hpp"
-#include "Tools/params.h"
 
 #include "../Factory.hpp"
 

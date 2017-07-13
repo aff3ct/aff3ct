@@ -62,7 +62,7 @@ void Factory_simulation_main::group_args(Arguments_reader::arg_grp& ar)
 	ar.push_back({"cde", "Code parameter(s)"      });
 }
 
-void Factory_simulation_main::header(Header::params_list& head_sim, Header::params_list& head_cde,
+void Factory_simulation_main::header(params_list& head_sim, params_list& head_cde,
                                      const parameters& params)
 {
 	std::unordered_map<std::type_index,std::string> type_names;

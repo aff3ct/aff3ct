@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Module/CRC/CRC.hpp"
-#include "Tools/Header.hpp"
+
 #include "Tools/Arguments_reader.hpp"
 
 #include "Factory.hpp"
@@ -34,7 +34,7 @@ struct Factory_CRC : public Factory
 	static void store_args(const Arguments_reader& ar, parameters &params, const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_crc, const parameters& params);
+	static void header(params_list& head_crc, const parameters& params);
 };
 }
 }

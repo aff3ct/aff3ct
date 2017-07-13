@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
+
 #include "Factory.hpp"
 
 namespace aff3ct
@@ -25,7 +25,7 @@ struct Factory_terminal : Factory
 	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_ter, const parameters& params);
+	static void header(params_list& head_ter, const parameters& params);
 };
 
 struct Factory_terminal_BFER : Factory_terminal
@@ -39,7 +39,7 @@ struct Factory_terminal_BFER : Factory_terminal
 	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_ter, const parameters& params);
+	static void header(params_list& head_ter, const parameters& params);
 };
 
 struct Factory_terminal_EXIT : Factory_terminal::Factory_terminal
@@ -52,7 +52,7 @@ struct Factory_terminal_EXIT : Factory_terminal::Factory_terminal
 	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_ter, const parameters& params);
+	static void header(params_list& head_ter, const parameters& params);
 };
 
 } /* namespace tools */

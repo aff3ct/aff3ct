@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
+
 #include "Module/Encoder/Encoder.hpp"
 
 #include "../Factory.hpp"
@@ -40,7 +40,7 @@ struct Factory_encoder : public Factory
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_enc, Header::params_list& head_cde, const parameters& params);
+	static void header(params_list& head_enc, params_list& head_cde, const parameters& params);
 };
 }
 }

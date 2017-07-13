@@ -27,7 +27,7 @@ void Factory_terminal::group_args(Arguments_reader::arg_grp& ar)
 	ar.push_back({"term", "Terminal parameter(s)"});
 }
 
-void Factory_terminal::header(Header::params_list& head_ter, const parameters& params)
+void Factory_terminal::header(params_list& head_ter, const parameters& params)
 {
 
 }
@@ -59,7 +59,7 @@ void Factory_terminal_BFER::group_args(Arguments_reader::arg_grp& ar)
 	Factory_terminal::group_args(ar);
 }
 
-void Factory_terminal_BFER::header(Header::params_list& head_ter, const parameters& params)
+void Factory_terminal_BFER::header(params_list& head_ter, const parameters& params)
 {
 	Factory_terminal::header(head_ter, params);
 }
@@ -82,7 +82,7 @@ void Factory_terminal_EXIT::group_args(Arguments_reader::arg_grp& ar)
 	Factory_terminal::group_args(ar);
 }
 
-void Factory_terminal_EXIT::header(Header::params_list& head_ter, const parameters& params)
+void Factory_terminal_EXIT::header(params_list& head_ter, const parameters& params)
 {
 	Factory_terminal::header(head_ter, params);
 }

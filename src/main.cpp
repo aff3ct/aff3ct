@@ -33,7 +33,6 @@
 #include "Launcher/Code/Uncoded/Launcher_NO.hpp"
 
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
-#include "Tools/params.h"
 
 using namespace aff3ct::launcher;
 using namespace aff3ct::tools;

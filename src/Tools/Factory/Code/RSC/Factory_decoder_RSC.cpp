@@ -165,7 +165,7 @@ void Factory_decoder_RSC
 }
 
 void Factory_decoder_RSC
-::header(Header::params_list& head_dec, const parameters& params)
+::header(params_list& head_dec, const parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
 

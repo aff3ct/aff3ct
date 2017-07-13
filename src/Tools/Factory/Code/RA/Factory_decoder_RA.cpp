@@ -62,7 +62,7 @@ void Factory_decoder_RA
 }
 
 void Factory_decoder_RA
-::header(Header::params_list& head_dec, Header::params_list& head_itl, const parameters& params)
+::header(params_list& head_dec, params_list& head_itl, const parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
 

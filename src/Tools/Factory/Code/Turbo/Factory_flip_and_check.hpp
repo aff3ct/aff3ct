@@ -5,7 +5,6 @@
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
 
 #include "../../Factory.hpp"
 
@@ -36,7 +35,7 @@ struct Factory_flip_and_check : public Factory
 	                       const int size, const int n_ite, const int start_crc_check_ite = 2);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_fnc, const parameters& params);
+	static void header(params_list& head_fnc, const parameters& params);
 
 };
 }

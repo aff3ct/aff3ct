@@ -67,7 +67,7 @@ void Factory_quantizer
 }
 
 void Factory_quantizer
-::header(Header::params_list& head_qua, const parameters& params)
+::header(params_list& head_qua, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------- quantizer
 	std::string quantif = "unused";

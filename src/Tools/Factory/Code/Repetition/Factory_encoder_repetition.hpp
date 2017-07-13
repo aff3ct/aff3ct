@@ -28,7 +28,7 @@ struct Factory_encoder_repetition : public Factory_encoder
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_enc, Header::params_list& head_cde, const parameters& params);
+	static void header(params_list& head_enc, params_list& head_cde, const parameters& params);
 };
 }
 }

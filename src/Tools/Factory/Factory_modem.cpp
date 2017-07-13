@@ -250,7 +250,7 @@ void Factory_modem
 }
 
 void Factory_modem
-::header(Header::params_list& head_mod, Header::params_list& head_demod, const parameters& params)
+::header(params_list& head_mod, params_list& head_demod, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
 	head_mod.push_back(std::make_pair("Type", params.type));

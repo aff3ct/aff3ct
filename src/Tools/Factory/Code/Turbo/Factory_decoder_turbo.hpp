@@ -47,7 +47,7 @@ struct Factory_decoder_turbo : public Factory_decoder
 	                       const bool activate_simd = true, const bool activate_json = false);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, const parameters& params, bool crc_activated);
+	static void header(params_list& head_dec, const parameters& params, bool crc_activated);
 
 };
 }

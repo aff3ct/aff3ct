@@ -57,7 +57,7 @@ void Factory_source
 }
 
 void Factory_source
-::header(Header::params_list& head_src, const parameters& params)
+::header(params_list& head_src, const parameters& params)
 {
 	// -------------------------------------------------------------------------------------------------------- source
 	head_src.push_back(std::make_pair("Type", params.type));

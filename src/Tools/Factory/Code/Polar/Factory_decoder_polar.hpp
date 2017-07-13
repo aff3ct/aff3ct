@@ -49,7 +49,7 @@ struct Factory_decoder_polar : public Factory_decoder
 	                       const int K, const int N, const int n_frames);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, Header::params_list& head_cde, const parameters& params);
+	static void header(params_list& head_dec, params_list& head_cde, const parameters& params);
 
 private:
 	template <typename B = int, typename Q = float, class API_polar>

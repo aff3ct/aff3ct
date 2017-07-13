@@ -6,7 +6,6 @@
 #include <string>
 #include <mipp.h>
 
-#include "Tools/params.h"
 #include "Tools/Math/max.h"
 
 #include "../Modem.hpp"

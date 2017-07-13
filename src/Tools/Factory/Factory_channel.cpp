@@ -91,7 +91,7 @@ void Factory_channel
 }
 
 void Factory_channel
-::header(Header::params_list& head_chn, const parameters& params)
+::header(params_list& head_chn, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- channel
 	head_chn.push_back(std::make_pair("Type", params.type));

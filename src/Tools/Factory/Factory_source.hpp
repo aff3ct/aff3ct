@@ -5,7 +5,6 @@
 
 #include "Module/Source/Source.hpp"
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
 
 #include "Factory.hpp"
 
@@ -31,7 +30,7 @@ struct Factory_source : public Factory
 	static void store_args(const Arguments_reader& ar, parameters &params, const int K, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_src, const parameters& params);
+	static void header(params_list& head_src, const parameters& params);
 };
 }
 }

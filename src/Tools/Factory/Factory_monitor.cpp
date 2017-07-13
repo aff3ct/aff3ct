@@ -73,7 +73,7 @@ void Factory_monitor
 }
 
 void Factory_monitor
-::header(Header::params_list& head_mon, const parameters& params)
+::header(params_list& head_mon, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- monitor
 

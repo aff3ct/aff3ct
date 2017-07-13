@@ -40,7 +40,7 @@ struct Factory_decoder_RSC : public Factory_decoder
 	                       const int K, const int N, const int n_frames = 1, const bool activate_simd = true);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, const parameters& params);
+	static void header(params_list& head_dec, const parameters& params);
 
 private:
 	template <typename B = int, typename Q = float, typename QD = Q, proto_max<Q> MAX1, proto_max<QD> MAX2>

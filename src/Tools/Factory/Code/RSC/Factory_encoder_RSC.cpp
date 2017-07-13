@@ -88,7 +88,7 @@ void Factory_encoder_RSC
 }
 
 void Factory_encoder_RSC
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const parameters& params)
+::header(params_list& head_enc, params_list& head_cde, const parameters& params)
 {
 	Factory_encoder::header(head_enc, head_cde, params);
 

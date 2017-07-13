@@ -83,7 +83,7 @@ void Factory_interleaver
 }
 
 void Factory_interleaver
-::header(Header::params_list& head_itl, const parameters& params)
+::header(params_list& head_itl, const parameters& params)
 {
 	// --------------------------------------------------------------------------------------------------- interleaver
 	head_itl.push_back(std::make_pair("Type", params.type));
@@ -98,7 +98,6 @@ void Factory_interleaver
 }
 
 // ==================================================================================== explicit template instantiation 
-template aff3ct::module::Interleaver<int8_t >* aff3ct::tools::Factory_interleaver::build<int8_t >(const aff3ct::tools::Factory_interleaver::parameters&, int);
 template aff3ct::module::Interleaver<int16_t>* aff3ct::tools::Factory_interleaver::build<int16_t>(const aff3ct::tools::Factory_interleaver::parameters&, int);
 template aff3ct::module::Interleaver<int32_t>* aff3ct::tools::Factory_interleaver::build<int32_t>(const aff3ct::tools::Factory_interleaver::parameters&, int);
 template aff3ct::module::Interleaver<int64_t>* aff3ct::tools::Factory_interleaver::build<int64_t>(const aff3ct::tools::Factory_interleaver::parameters&, int);

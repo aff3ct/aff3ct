@@ -66,7 +66,7 @@ struct Factory_simulation_EXIT : Factory_simulation
 	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_sim, Header::params_list& head_cde, const parameters& params);
+	static void header(params_list& head_sim, params_list& head_cde, const parameters& params);
 };
 
 }

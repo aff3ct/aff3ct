@@ -27,7 +27,7 @@ void Factory_simulation_BFER_ite::group_args(Arguments_reader::arg_grp& ar)
 	Factory_simulation_BFER::group_args(ar);
 }
 
-void Factory_simulation_BFER_ite::header(Header::params_list& head_sim, Header::params_list& head_cde,
+void Factory_simulation_BFER_ite::header(params_list& head_sim, params_list& head_cde,
                                          const parameters& params)
 {
 	Factory_simulation_BFER::header(head_sim, head_cde, params);

@@ -43,7 +43,7 @@ void Factory_encoder_polar
 }
 
 void Factory_encoder_polar
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const Factory_encoder::parameters& params)
+::header(params_list& head_enc, params_list& head_cde, const Factory_encoder::parameters& params)
 {
 	Factory_encoder::header(head_enc, head_cde, params);
 }

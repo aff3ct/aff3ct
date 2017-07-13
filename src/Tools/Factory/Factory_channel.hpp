@@ -4,8 +4,7 @@
 #include <string>
 
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/params.h"
-#include "Tools/Header.hpp"
+
 #include "Module/Channel/Channel.hpp"
 
 #include "Factory.hpp"
@@ -37,7 +36,7 @@ struct Factory_channel : public Factory
 	                       const int N, const bool complex, const bool add_users, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_chn, const parameters& params);
+	static void header(params_list& head_chn, const parameters& params);
 };
 }
 }

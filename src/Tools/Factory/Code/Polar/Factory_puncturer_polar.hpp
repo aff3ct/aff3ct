@@ -22,7 +22,7 @@ struct Factory_puncturer_polar : public Factory_puncturer
 	                       const int K, const int N, const int N_pct, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_pct, const Factory_puncturer::parameters& params);
+	static void header(params_list& head_pct, const Factory_puncturer::parameters& params);
 };
 }
 }

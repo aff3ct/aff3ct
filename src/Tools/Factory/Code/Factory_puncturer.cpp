@@ -42,7 +42,7 @@ void Factory_puncturer
 }
 
 void Factory_puncturer
-::header(Header::params_list& head_pct, const parameters& params)
+::header(params_list& head_pct, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------- puncturer
 }

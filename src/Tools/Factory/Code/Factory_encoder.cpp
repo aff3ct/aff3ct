@@ -80,7 +80,7 @@ void Factory_encoder
 }
 
 void Factory_encoder
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const parameters& params)
+::header(params_list& head_enc, params_list& head_cde, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- encoder
 	head_enc.push_back(std::make_pair("Type", params.type));

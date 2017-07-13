@@ -39,7 +39,7 @@ void Factory_simulation_EXIT::group_args(Arguments_reader::arg_grp& ar)
 	Factory_simulation::group_args(ar);
 }
 
-void Factory_simulation_EXIT::header(Header::params_list& head_sim, Header::params_list& head_cde,
+void Factory_simulation_EXIT::header(params_list& head_sim, params_list& head_cde,
                                      const parameters& params)
 {
 	Factory_simulation::header(head_sim, head_cde, params);

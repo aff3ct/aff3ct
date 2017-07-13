@@ -59,7 +59,7 @@ void Factory_flip_and_check
 }
 
 void Factory_flip_and_check
-::header(Header::params_list& head_fnc, const parameters& params)
+::header(params_list& head_fnc, const parameters& params)
 {
 	if (params.enable)
 	{

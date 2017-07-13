@@ -45,7 +45,7 @@ void Factory_decoder_NO
 }
 
 void Factory_decoder_NO
-::header(Header::params_list& head_dec, const Factory_decoder::parameters& params)
+::header(params_list& head_dec, const Factory_decoder::parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
 }

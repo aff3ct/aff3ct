@@ -1137,7 +1137,7 @@ void Factory_decoder_polar_gen
 }
 
 void Factory_decoder_polar_gen
-::header(Header::params_list& head_dec, Header::params_list& head_cde,
+::header(params_list& head_dec, params_list& head_cde,
          const Factory_decoder_polar::parameters& params)
 {
 	Factory_decoder_polar::header(head_dec, head_cde, params);

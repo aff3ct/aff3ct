@@ -35,7 +35,7 @@ void Factory_decoder::group_args(Arguments_reader::arg_grp& ar)
 	ar.push_back({"dec", "Decoder parameter(s)"});
 }
 
-void Factory_decoder::header(Header::params_list& head_dec, const parameters& params)
+void Factory_decoder::header(params_list& head_dec, const parameters& params)
 {
 	// ------------------------------------------------------------------------------------------------------- decoder
 	head_dec.push_back(std::make_pair("Type (D)",params.type));

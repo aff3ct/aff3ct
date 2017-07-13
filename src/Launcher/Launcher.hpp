@@ -12,9 +12,7 @@
 #include <string>
 
 #include "Tools/types.h"
-#include "Tools/params.h"
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
 #include "Tools/Factory/Simulation/Factory_simulation.hpp"
 #include "Simulation/Simulation.hpp"
@@ -51,8 +49,8 @@ protected:
 	tools::Factory_simulation     ::parameters       *simu_params  = nullptr;
 
 	std  ::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
-	tools::Header::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
-	                           pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter, pl_pct;
+	tools::Factory::params_list pl_sim, pl_cde, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
+	                            pl_chn, pl_qua, pl_enc, pl_dec, pl_mon, pl_ter, pl_pct;
 
 public:
 	/*!

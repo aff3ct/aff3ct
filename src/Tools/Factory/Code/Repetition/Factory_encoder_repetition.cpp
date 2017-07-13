@@ -48,7 +48,7 @@ void Factory_encoder_repetition
 }
 
 void Factory_encoder_repetition
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const parameters& params)
+::header(params_list& head_enc, params_list& head_cde, const parameters& params)
 {
 	Factory_encoder::header(head_enc, head_cde, params);
 

@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
 
 #include "Module/Puncturer/Puncturer.hpp"
 
@@ -35,7 +34,7 @@ struct Factory_puncturer : Factory
 	                       const int K, const int N, const int N_pct, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_pct, const parameters& params);
+	static void header(params_list& head_pct, const parameters& params);
 };
 
 } /* namespace tools */

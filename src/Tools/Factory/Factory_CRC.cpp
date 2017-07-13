@@ -76,7 +76,7 @@ void Factory_CRC
 }
 
 void Factory_CRC
-::header(Header::params_list& head_crc, const parameters& params)
+::header(params_list& head_crc, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------------- crc
 	if (!params.poly.empty())

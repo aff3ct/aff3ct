@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
 
 #include "../Factory.hpp"
 
@@ -34,7 +33,7 @@ struct Factory_decoder : Factory
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, const parameters& params);
+	static void header(params_list& head_dec, const parameters& params);
 };
 
 } /* namespace tools */

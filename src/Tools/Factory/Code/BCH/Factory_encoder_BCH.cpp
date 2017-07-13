@@ -41,7 +41,7 @@ void Factory_encoder_BCH
 }
 
 void Factory_encoder_BCH
-::header(Header::params_list& head_enc, Header::params_list& head_cde, const typename Factory_encoder::parameters& params)
+::header(params_list& head_enc, params_list& head_cde, const typename Factory_encoder::parameters& params)
 {
 	Factory_encoder::header(head_enc, head_cde, params);
 }

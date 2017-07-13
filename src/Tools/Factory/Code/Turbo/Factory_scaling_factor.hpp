@@ -5,7 +5,6 @@
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Header.hpp"
 
 #include "../../Factory.hpp"
 
@@ -37,7 +36,7 @@ struct Factory_scaling_factor : public Factory
 	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_sf, const parameters& params);
+	static void header(params_list& head_sf, const parameters& params);
 };
 }
 }

@@ -49,7 +49,7 @@ void Factory_puncturer_turbo
 }
 
 void Factory_puncturer_turbo
-::header(Header::params_list& head_pct, const parameters& params)
+::header(params_list& head_pct, const parameters& params)
 {
 	Factory_puncturer::header(head_pct, params);
 

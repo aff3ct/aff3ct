@@ -31,7 +31,7 @@ struct Factory_decoder_polar_gen : public Factory_decoder_polar
 	                       const int K, const int N, const int n_frames = 1);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(Header::params_list& head_dec, Header::params_list& head_cde,
+	static void header(params_list& head_dec, params_list& head_cde,
 	                   const Factory_decoder_polar::parameters& params);
 
 private:

@@ -4,7 +4,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/params.h"
 
 #include "Module/CRC/CRC.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
