@@ -21,20 +21,20 @@ Decoder_SISO<B,R>* Factory_decoder_LDPC
 {
 	if ((params.type == "BP" || params.type == "BP_FLOODING") && params.simd_strategy.empty())
 	{
-		     if (params.implem == "ONMS") return new Decoder_LDPC_BP_flooding_ONMS     <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "GALA") return new Decoder_LDPC_BP_flooding_GALA     <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "SPA" ) return new Decoder_LDPC_BP_flooding_SPA      <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "LSPA") return new Decoder_LDPC_BP_flooding_LSPA     <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		     if (params.implem == "ONMS") return new Decoder_LDPC_BP_flooding_ONMS     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "GALA") return new Decoder_LDPC_BP_flooding_GALA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "SPA" ) return new Decoder_LDPC_BP_flooding_SPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "LSPA") return new Decoder_LDPC_BP_flooding_LSPA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
 	else if (params.type == "BP_LAYERED" && params.simd_strategy.empty())
 	{
-		     if (params.implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS      <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "SPA" ) return new Decoder_LDPC_BP_layered_SPA       <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "LSPA") return new Decoder_LDPC_BP_layered_LSPA      <B,R>(params.K, params.N, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		     if (params.implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "SPA" ) return new Decoder_LDPC_BP_layered_SPA       <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "LSPA") return new Decoder_LDPC_BP_layered_LSPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
 	else if (params.type == "BP_LAYERED" && params.simd_strategy == "INTER")
 	{
-		     if (params.implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.K, params.N, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		     if (params.implem == "ONMS") return new Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -45,15 +45,13 @@ void Factory_decoder_LDPC
 {
 	Factory_decoder::build_args(req_args, opt_args);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	req_args[{"cde-alist-path"}] =
+	req_args[{"dec-h-path"}] =
 		{"string",
-		 "path to the AList formated file."};
+		 "path to the H matrix (AList formated file)."};
 
-	// ------------------------------------------------------------------------------------------------------- decoder
 	opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
 
-	opt_args[{"dec-implem"   }].push_back("ONMS, SPA, LSPA, GALA");
+	opt_args[{"dec-implem"}].push_back("ONMS, SPA, LSPA, GALA");
 
 	opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
@@ -82,27 +80,20 @@ void Factory_decoder_LDPC
 }
 
 void Factory_decoder_LDPC
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
 	params.type   = "BP_FLOODING";
 	params.implem = "SPA";
 
-	Factory_decoder::store_args(ar, params, K, N, n_frames);
+	Factory_decoder::store_args(ar, params);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	if(ar.exist_arg({"cde-alist-path"})) params.alist_path = ar.get_arg({"cde-alist-path"});
-
-	// ------------------------------------------------------------------------------------------------------- decoder
-	if(ar.exist_arg({"dec-ite",   "i"})) params.n_ite            = ar.get_arg_int  ({"dec-ite", "i"  });
-	if(ar.exist_arg({"dec-off"       })) params.offset           = ar.get_arg_float({"dec-off"       });
-	if(ar.exist_arg({"dec-norm"      })) params.norm_factor = ar.get_arg_float({"dec-norm"      });
-	if(ar.exist_arg({"dec-synd-depth"})) params.syndrome_depth   = ar.get_arg_int  ({"dec-synd-depth"});
-	if(ar.exist_arg({"dec-no-synd"   })) params.enable_syndrome  = false;
-	if(ar.exist_arg({"dec-simd"      })) params.simd_strategy    = ar.get_arg      ({"dec-simd"      });
-
-//	if (params.simd_strategy == "INTER" && !ar.exist_arg({"sim-inter-lvl"}))
-//		params.simulation.inter_frame_level = mipp::nElReg<Q>();
+	if(ar.exist_arg({"dec-h-path"})) params.H_alist_path = ar.get_arg({"dec-h-path"});
+	if(ar.exist_arg({"dec-ite","i"})) params.n_ite = ar.get_arg_int  ({"dec-ite", "i"});
+	if(ar.exist_arg({"dec-off"})) params.offset = ar.get_arg_float({"dec-off"});
+	if(ar.exist_arg({"dec-norm"})) params.norm_factor = ar.get_arg_float({"dec-norm"});
+	if(ar.exist_arg({"dec-synd-depth"})) params.syndrome_depth = ar.get_arg_int({"dec-synd-depth"});
+	if(ar.exist_arg({"dec-no-synd"})) params.enable_syndrome = false;
+	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
 }
 
 void Factory_decoder_LDPC
@@ -112,14 +103,12 @@ void Factory_decoder_LDPC
 }
 
 void Factory_decoder_LDPC
-::header(params_list& head_dec, params_list& head_cde, const parameters& params)
+::header(params_list& head_dec, const parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	head_cde.push_back(std::make_pair("AList file path", params.alist_path));
+	head_dec.push_back(std::make_pair("H matrix path", params.H_alist_path));
 
-	// ------------------------------------------------------------------------------------------------------- decoder
 	if (!params.simd_strategy.empty())
 		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));
 
@@ -127,7 +116,7 @@ void Factory_decoder_LDPC
 
 	if (params.implem == "ONMS")
 	{
-		head_dec.push_back(std::make_pair("Offset",           std::to_string(params.offset          )));
+		head_dec.push_back(std::make_pair("Offset", std::to_string(params.offset)));
 		head_dec.push_back(std::make_pair("Normalize factor", std::to_string(params.norm_factor)));
 	}
 
@@ -135,7 +124,7 @@ void Factory_decoder_LDPC
 	head_dec.push_back(std::make_pair("Stop criterion (syndrome)", syndrome));
 
 	if (params.enable_syndrome)
-		head_dec.push_back(std::make_pair("Stop criterion depth",  std::to_string(params.syndrome_depth)));
+		head_dec.push_back(std::make_pair("Stop criterion depth", std::to_string(params.syndrome_depth)));
 }
 
 // ==================================================================================== explicit template instantiation

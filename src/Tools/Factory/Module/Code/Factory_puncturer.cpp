@@ -42,11 +42,9 @@ void Factory_puncturer
 	params.K = ar.get_arg_int({"pct-info-bits", "K"});
 	params.N = ar.get_arg_int({"pct-fra-size", "N"});
 	params.N_cw = params.N;
+	params.R = (float)params.K / (float)params.N_cw;
 	if(ar.exist_arg({"pct-fra", "F"})) params.n_frames = ar.get_arg_int({"pct-fra", "F"});
 	if(ar.exist_arg({"pct-type"})) params.type = ar.get_arg({"pct-type"});
-
-//	if (params.N == params.N_cw)
-//		params.type = "NO";
 }
 
 void Factory_puncturer

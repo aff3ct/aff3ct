@@ -17,20 +17,18 @@ struct Factory_decoder : Factory
 	{
 		virtual ~parameters() {}
 
-		std::string type   = "";
-		std::string implem = "";
+		int         K          = -1;
+		int         N_cw       = -1;
 
-		// ------- code
-		int K;
-		int N;
-
-		// ------- simu
-		int n_frames = 1;
+		std::string type       = "";
+		std::string implem     = "";
+		float       R          = -1.f;
+		bool        systematic = true;
+		int         n_frames   = 1;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters& params,
-	                       const int K, const int N, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_dec, const parameters& params);

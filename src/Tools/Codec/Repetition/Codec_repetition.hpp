@@ -15,6 +15,7 @@ class Codec_repetition : public Codec<B,Q>
 {
 protected :
 	const Factory_encoder_repetition::parameters& enc_par;
+	const Factory_decoder_repetition::parameters& dec_par;
 
 public:
 	Codec_repetition(const Factory_encoder_repetition::parameters &enc_params,

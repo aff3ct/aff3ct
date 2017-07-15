@@ -49,6 +49,7 @@ void Factory_puncturer_turbo
 	if(ar.exist_arg({"pct-no-buff"})) params.buffered = false;
 
 	params.N_cw = 3 * params.K + params.tail_length;
+	params.R = (float)params.K / (float)params.N_cw;
 
 	if (params.N == params.N_cw)
 		params.type = "NO";

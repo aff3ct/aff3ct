@@ -19,19 +19,16 @@ struct Factory_decoder_RA : public Factory_decoder
 	{
 		virtual ~parameters() {}
 
-		// ------- interleaver
-		Factory_interleaver::parameters itl;
-
-		// ------- decoder
 		int n_ite = 10;
+
+		Factory_interleaver::parameters itl;
 	};
 
 	template <typename B = int, typename R = float>
 	static module::Decoder<B,R>* build(const parameters &params, const module::Interleaver<int> &itl);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params,
-	                       const int K, const int N, int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_dec, params_list& head_itl, const parameters& params);

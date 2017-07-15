@@ -54,7 +54,12 @@ void Launcher_RA<C,B,R,Q>
 	m_enc->n_frames = this->m_chain_params->sim->inter_frame_level;
 
 	tools::Factory_encoder_RA::store_args(this->ar, *m_enc);
-	tools::Factory_decoder_RA::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+
+	m_dec->K        = this->m_chain_params->sim->K;
+	m_dec->N_cw     = this->m_chain_params->sim->N;
+	m_dec->n_frames = this->m_chain_params->sim->inter_frame_level;
+
+	tools::Factory_decoder_RA::store_args(this->ar, *m_dec);
 }
 
 template <class C, typename B, typename R, typename Q>

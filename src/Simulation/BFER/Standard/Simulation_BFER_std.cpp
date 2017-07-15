@@ -198,7 +198,7 @@ template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real::build<B,Q>("STD", chain_params.dec->N, simu_params.inter_frame_level);
+	return Factory_coset_real::build<B,Q>("STD", chain_params.dec->N_cw, simu_params.inter_frame_level);
 }
 
 template <typename B, typename R, typename Q>

@@ -2,7 +2,6 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
-#include "Tools/Factory/Module/Code/Polar/Factory_frozenbits_generator.hpp"
 #include "Tools/Factory/Module/Code/Polar/Factory_decoder_polar_gen.hpp"
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"
@@ -14,12 +13,17 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_polar<B,Q>
-::Codec_polar(const Factory_encoder        ::parameters &enc_params,
-              const Factory_decoder_polar  ::parameters &dec_params,
-              const Factory_puncturer_polar::parameters &pct_params,
+::Codec_polar(const Factory_frozenbits_generator::parameters &fb_params,
+              const Factory_puncturer_polar     ::parameters &pct_params,
+              const Factory_encoder_polar       ::parameters &enc_params,
+              const Factory_decoder_polar       ::parameters &dec_params,
               const int n_threads)
-: Codec_SISO<B,Q>(enc_params, dec_params), dec_par(dec_params), pct_par(pct_params),
-  frozen_bits(dec_params.N),
+: Codec_SISO<B,Q>(enc_params, dec_params),
+  fb_par(fb_params),
+  pct_par(pct_params),
+  enc_par(enc_params),
+  dec_par(dec_params),
+  frozen_bits(fb_par.N_cw),
   is_generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   fb_generator(nullptr),
   decoder_siso(n_threads, nullptr)
@@ -27,23 +31,18 @@ Codec_polar<B,Q>
 	if (!is_generated_decoder)
 	{
 		// build the frozen bits generator
-		fb_generator = Factory_frozenbits_generator::build<B>(dec_par.fb_gen_method,
-		                                                      dec_par.K,
-		                                                      dec_par.N,
-		                                                      dec_par.sigma,
-		                                                      dec_par.awgn_fb_path,
-		                                                      dec_par.bin_pb_path);
+		fb_generator = Factory_frozenbits_generator::build<B>(fb_par);
 
 		if (fb_generator == nullptr)
 			throw runtime_error(__FILE__, __LINE__, __func__, "'fb_generator' can't be null.");
 	}
 	else
 	{
-		if (dec_par.N != dec_par.N_pct)
+		if (dec_par.N_cw != pct_par.N)
 		{
 			std::stringstream message;
-			message << "'N' has to be equal to 'N_pct' ('N' = " << dec_par.N
-			        << ", 'N_pct' = " << dec_par.N_pct << ").";
+			message << "'N_cw' has to be equal to 'N' ('N_cw' = " << dec_par.N_cw
+			        << ", 'N' = " << pct_par.N << ").";
 			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
@@ -62,18 +61,18 @@ void Codec_polar<B,Q>
 {
 	if (!is_generated_decoder)
 	{
-		if (dec_par.sigma != 0.f)
+		if (fb_par.sigma != -1.f)
 		{
 			fb_generator->generate(frozen_bits);
-			if (dec_par.N != dec_par.N_pct)
+			if (dec_par.N_cw != pct_par.N)
 			{
-				Puncturer_polar_wangliu<B,Q> punct(dec_par.K, dec_par.N_pct, *fb_generator);
+				Puncturer_polar_wangliu<B,Q> punct(pct_par.K, pct_par.N, *fb_generator);
 				punct.gen_frozen_bits(frozen_bits);
 			}
 		}
 	}
 	else
-		Factory_decoder_polar_gen::get_frozen_bits<B>(dec_par.implem, dec_par.N, frozen_bits);
+		Factory_decoder_polar_gen::get_frozen_bits<B>(dec_par.implem, dec_par.N_cw, frozen_bits);
 }
 
 template <typename B, typename Q>
@@ -81,14 +80,14 @@ void Codec_polar<B,Q>
 ::snr_precompute(const float sigma)
 {
 	// adaptative frozen bits generation
-	if (dec_par.sigma == 0.f && !is_generated_decoder)
+	if (fb_par.sigma == -1.f && !is_generated_decoder)
 	{
 		fb_generator->set_sigma(sigma);
 		fb_generator->generate(frozen_bits);
 
-		if (dec_par.N != dec_par.N_pct)
+		if (dec_par.N_cw != pct_par.N)
 		{
-			Puncturer_polar_wangliu<B,Q> punct(dec_par.K, dec_par.N_pct, *fb_generator);
+			Puncturer_polar_wangliu<B,Q> punct(pct_par.K, pct_par.N, *fb_generator);
 			punct.gen_frozen_bits(frozen_bits);
 		}
 	}
@@ -140,9 +139,9 @@ Decoder<B,Q>* Codec_polar<B,Q>
 	else
 	{
 		if (is_generated_decoder)
-			return Factory_decoder_polar_gen::build<B,Q>(dec_par, frozen_bits, this->enc_params.systematic, crc);
+			return Factory_decoder_polar_gen::build<B,Q>(dec_par, frozen_bits, crc);
 		else
-			return Factory_decoder_polar    ::build<B,Q>(dec_par, frozen_bits, this->enc_params.systematic, crc);
+			return Factory_decoder_polar    ::build<B,Q>(dec_par, frozen_bits, crc);
 	}
 }
 
@@ -151,7 +150,7 @@ void Codec_polar<B,Q>
 ::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
 {
 	const auto K = dec_par.K;
-	const auto N = dec_par.N;
+	const auto N = dec_par.N_cw;
 
 	if ((int)Y_N.size() != N * dec_par.n_frames)
 	{

@@ -55,7 +55,11 @@ void Launcher_BCH<C,B,R,Q>
 
 	tools::Factory_encoder_BCH::store_args(this->ar, *m_enc);
 
-	tools::Factory_decoder_BCH::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level);
+	m_dec->K        = this->m_chain_params->sim->K;
+	m_dec->N_cw     = this->m_chain_params->sim->N;
+	m_dec->n_frames = this->m_chain_params->sim->inter_frame_level;
+
+	tools::Factory_decoder_BCH::store_args(this->ar, *m_dec);
 }
 
 template <class C, typename B, typename R, typename Q>
@@ -73,7 +77,7 @@ void Launcher_BCH<C,B,R,Q>
 ::print_header()
 {
 	tools::Factory_encoder_BCH::header(this->pl_enc, *m_enc);
-	tools::Factory_decoder_BCH::header(this->pl_dec, this->pl_cde, *m_dec);
+	tools::Factory_decoder_BCH::header(this->pl_dec, *m_dec);
 
 	C::print_header();
 }

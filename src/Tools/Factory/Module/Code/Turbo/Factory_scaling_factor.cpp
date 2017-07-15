@@ -11,12 +11,12 @@ using namespace aff3ct::tools;
 
 template<typename B, typename Q>
 Scaling_factor<B,Q>* Factory_scaling_factor
-::build(const parameters& params, const int n_ite)
+::build(const parameters& params)
 {
-	     if (params.type == "CST"    ) return new Scaling_factor_constant<B,Q>(n_ite, params.cst        );
-	else if (params.type == "LTE_VEC") return new Scaling_factor_vec     <B,Q>(n_ite                    );
-	else if (params.type == "LTE"    ) return new Scaling_factor_seq     <B,Q>(n_ite                    );
-	else if (params.type == "ARRAY"  ) return new Scaling_factor_array   <B,Q>(n_ite, params.alpha_array);
+	     if (params.type == "CST"    ) return new Scaling_factor_constant<B,Q>(params.n_ite, params.cst        );
+	else if (params.type == "LTE_VEC") return new Scaling_factor_vec     <B,Q>(params.n_ite                    );
+	else if (params.type == "LTE"    ) return new Scaling_factor_seq     <B,Q>(params.n_ite                    );
+	else if (params.type == "ARRAY"  ) return new Scaling_factor_array   <B,Q>(params.n_ite, params.alpha_array);
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -35,38 +35,40 @@ void Factory_scaling_factor
 {
 	if(ar.exist_arg({"dec-sf"}))
 	{
-		params.declaration = ar.get_arg({"dec-sf"});
+		params.type = ar.get_arg({"dec-sf"});
 
-		params.type = params.declaration;
-
-		if (std::isdigit(params.declaration[0]))
+		if (std::isdigit(params.type[0]))
 		{
+			params.cst  = std::stof(params.type);
 			params.type = "CST";
-			params.cst  = std::stof(params.declaration);
 		}
 	}
+
+	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
 }
 
 void Factory_scaling_factor
 ::group_args(Arguments_reader::arg_grp& ar)
 {
-
 }
 
 void Factory_scaling_factor
 ::header(params_list& head_sf, const parameters& params)
 {
-	head_sf.push_back(std::make_pair("Scaling factor", params.declaration));
+	head_sf.push_back(std::make_pair("Scaling factor (SF)", params.type));
+	head_sf.push_back(std::make_pair("SF iterations", std::to_string(params.n_ite)));
+	if (params.type == "CST")
+		head_sf.push_back(std::make_pair("SF constant", std::to_string(params.cst)));
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::tools::Factory_scaling_factor::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
-template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::tools::Factory_scaling_factor::build<B_16,Q_16>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
-template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::tools::Factory_scaling_factor::build<B_32,Q_32>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
-template aff3ct::tools::Scaling_factor<B_64,Q_64>* aff3ct::tools::Factory_scaling_factor::build<B_64,Q_64>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
+template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::tools::Factory_scaling_factor::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_scaling_factor::parameters&);
+template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::tools::Factory_scaling_factor::build<B_16,Q_16>(const aff3ct::tools::Factory_scaling_factor::parameters&);
+template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::tools::Factory_scaling_factor::build<B_32,Q_32>(const aff3ct::tools::Factory_scaling_factor::parameters&);
+template aff3ct::tools::Scaling_factor<B_64,Q_64>* aff3ct::tools::Factory_scaling_factor::build<B_64,Q_64>(const aff3ct::tools::Factory_scaling_factor::parameters&);
 #else
-template aff3ct::tools::Scaling_factor<B,Q>* aff3ct::tools::Factory_scaling_factor::build<B,Q>(const aff3ct::tools::Factory_scaling_factor::parameters&, const int);
+template aff3ct::tools::Scaling_factor<B,Q>* aff3ct::tools::Factory_scaling_factor::build<B,Q>(const aff3ct::tools::Factory_scaling_factor::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation

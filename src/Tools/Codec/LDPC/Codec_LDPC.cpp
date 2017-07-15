@@ -13,17 +13,17 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_LDPC<B,Q>
-::Codec_LDPC(const Factory_encoder     ::parameters &enc_params,
+::Codec_LDPC(const Factory_encoder_LDPC::parameters &enc_params,
              const Factory_decoder_LDPC::parameters &dec_params,
              const int n_threads)
-: Codec_SISO<B,Q>(enc_params, dec_params), dec_par(dec_params),
+: Codec_SISO<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params),
   info_bits_pos(enc_params.K),
   decoder_siso (n_threads, nullptr)
 {
 	bool is_info_bits_pos = false;
-	if (!enc_params.path.empty() && enc_params.type == "LDPC")
+	if (!enc_par.H_alist_path.empty() && enc_params.type == "LDPC")
 	{
-		std::ifstream file_G(enc_params.path, std::ifstream::in);
+		std::ifstream file_G(enc_par.H_alist_path, std::ifstream::in);
 		G = AList::read(file_G);
 
 		try
@@ -39,7 +39,7 @@ Codec_LDPC<B,Q>
 		file_G.close();
 	}
 
-	std::ifstream file_H(dec_params.alist_path, std::ifstream::in);
+	std::ifstream file_H(dec_params.H_alist_path, std::ifstream::in);
 	H = AList::read(file_H);
 
 	if (!is_info_bits_pos)
@@ -74,7 +74,7 @@ template <typename B, typename Q>
 Encoder_LDPC<B>* Codec_LDPC<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return Factory_encoder_LDPC::build<B>(this->enc_params, G, H);
+	return Factory_encoder_LDPC::build<B>(enc_par, G, H);
 }
 
 template <typename B, typename Q>

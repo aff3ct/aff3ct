@@ -18,7 +18,6 @@ struct Factory_decoder_polar_gen : public Factory_decoder_polar
 	template <typename B = int, typename Q = float>
 	static module::Decoder<B,Q>* build(const Factory_decoder_polar::parameters &params,
 	                                   const mipp::vector<B>                   &frozen_bits,
-	                                   const bool                               sys_encoding = true,
 	                                         module::CRC<B>                    *crc = nullptr);
 
 	template <typename B>
@@ -27,12 +26,10 @@ struct Factory_decoder_polar_gen : public Factory_decoder_polar
 	                                  mipp::vector<B> &frozen_bits);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, Factory_decoder_polar::parameters &params,
-	                       const int K, const int N, const int n_frames = 1);
+	static void store_args(const Arguments_reader& ar, Factory_decoder_polar::parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_dec, params_list& head_cde,
-	                   const Factory_decoder_polar::parameters& params);
+	static void header(params_list& head_dec, const Factory_decoder_polar::parameters& params);
 
 private:
 	template <typename B = int, typename Q = float, class API_polar>

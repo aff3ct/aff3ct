@@ -60,7 +60,7 @@ void Codec_RSC<B,Q,QD>
 ::extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par)
 {
 	const auto K    = dec_par.K;
-	const auto N    = dec_par.N;
+	const auto N    = dec_par.N_cw;
 	const auto tb_2 = enc_par.tail_length / 2;
 
 	if ((int)Y_N.size() != N * dec_par.n_frames)

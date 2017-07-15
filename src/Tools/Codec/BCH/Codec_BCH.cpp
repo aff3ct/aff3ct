@@ -8,7 +8,7 @@ Codec_BCH<B,Q>
 ::Codec_BCH(const Factory_encoder    ::parameters &enc_params,
             const Factory_decoder_BCH::parameters &dec_params)
 : Codec<B,Q>(enc_params, dec_params), dec_par(dec_params),
-  GF(dec_params.K, dec_params.N, dec_params.t)
+  GF(dec_params.K, dec_params.N_cw, dec_params.t)
 {
 	// assertion are made in the Galois Field (GF)
 }

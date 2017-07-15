@@ -32,6 +32,7 @@ void Factory_puncturer_polar
 
 	Factory_puncturer::store_args(ar, params);
 	params.N_cw = (int)std::exp2((int)std::ceil(std::log2(params.N)));
+	params.R = (float)params.K / (float)params.N_cw;
 
 	if (params.N == params.N_cw)
 		params.type = "NO";

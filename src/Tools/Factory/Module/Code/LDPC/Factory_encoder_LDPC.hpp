@@ -14,15 +14,23 @@ namespace tools
 {
 struct Factory_encoder_LDPC : public Factory_encoder
 {
+	struct parameters : Factory_encoder::parameters
+	{
+		virtual ~parameters() {}
+
+		std::string H_alist_path = "";
+		std::string G_alist_path = "";
+	};
+
 	template <typename B = int>
-	static module::Encoder_LDPC<B>* build(const typename Factory_encoder::parameters &params,
+	static module::Encoder_LDPC<B>* build(const parameters &params,
 	                                      const Sparse_matrix &G, const Sparse_matrix &H);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, Factory_encoder::parameters &params);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_enc, const Factory_encoder::parameters& params);
+	static void header(params_list& head_enc, const parameters& params);
 };
 }
 }

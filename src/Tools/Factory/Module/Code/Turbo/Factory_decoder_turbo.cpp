@@ -13,14 +13,13 @@ Decoder_turbo<B,Q>* Factory_decoder_turbo
 ::build(const parameters       &params,
         const Interleaver<int> &itl,
               SISO<Q>          &siso_n,
-              SISO<Q>          &siso_i,
-        const bool              buffered)
+              SISO<Q>          &siso_i)
 {
 	std::string implem = std::is_same<B,int64_t>::value ? "STD" : "FAST";
 	if (params.type == "TURBO")
 	{
-		     if (implem == "STD" ) return new Decoder_turbo_naive<B,Q>(params.K, params.N, params.n_ite, itl, siso_n, siso_i, buffered);
-		else if (implem == "FAST") return new Decoder_turbo_fast <B,Q>(params.K, params.N, params.n_ite, itl, siso_n, siso_i, buffered);
+		     if (implem == "STD" ) return new Decoder_turbo_naive<B,Q>(params.K, params.N_cw, params.n_ite, itl, siso_n, siso_i, params.buffered);
+		else if (implem == "FAST") return new Decoder_turbo_fast <B,Q>(params.K, params.N_cw, params.n_ite, itl, siso_n, siso_i, params.buffered);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -31,17 +30,13 @@ void Factory_decoder_turbo
 {
 	Factory_decoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------ scaling factor
-	Factory_scaling_factor::build_args(req_args, opt_args);
-
-	// ------------------------------------------------------------------------------------------------------- decoder
 	opt_args[{"dec-type", "D"}].push_back("BCJR");
 
-	opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
+	opt_args[{"dec-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
 
 	opt_args[{"dec-ite", "i"}] =
 		{"positive_int",
-		 "maximal number of iterations in the turbo "};
+		 "maximal number of iterations in the turbo."};
 
 	opt_args[{"dec-simd"}] =
 		{"string",
@@ -57,92 +52,78 @@ void Factory_decoder_turbo
 		{"",
 		 "enables the self corrected decoder (requires \"--crc-type\")."};
 
-	// ------------------------------------------------------------------------------------------------ flip_and_check
+	opt_args[{"dec-no-buff"}] =
+		{"",
+		 "does not suppose a buffered encoding."};
+
+	opt_args[{"dec-json"}] =
+		{"",
+		 "enable the json output trace."};
+
+	Factory_scaling_factor::build_args(req_args, opt_args);
 	Factory_flip_and_check::build_args(req_args, opt_args);
 }
 
 void Factory_decoder_turbo
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames,
-             const bool activate_simd, const bool activate_json)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
 	// for the RSC
 	params.type   = "BCJR";
 	params.implem = "GENERIC";
 
-	Factory_decoder::store_args(ar, params, K, N, n_frames);
+	Factory_decoder::store_args(ar, params);
 
-	// ------------------------------------------------------------------------------------------------ scaling factor
-	Factory_scaling_factor::store_args(ar, params.scaling_factor);
+	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
+	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
+	if(ar.exist_arg({"dec-max"})) params.max = ar.get_arg({"dec-max"});
+	if(ar.exist_arg({"dec-sc"})) params.self_corrected = true;
+	if(ar.exist_arg({"dec-json"})) params.enable_json = true;
+	if(ar.exist_arg({"dec-no-buff"})) params.buffered = false;
 
-	// ------------------------------------------------------------------------------------------------------- decoder
-	if(ar.exist_arg({"dec-ite", "i" })) params.n_ite          = ar.get_arg_int({"dec-ite", "i" });
-	if(ar.exist_arg({"dec-simd"     })) params.simd_strategy  = ar.get_arg    ({"dec-simd"     });
-	if(ar.exist_arg({"dec-max"      })) params.max            = ar.get_arg    ({"dec-max"      });
-
-	if(ar.exist_arg({"dec-sc"       })) params.self_corrected = true;
-
-//	if (params.simd_strategy == "INTER" && activate_simd)
-//		params.n_frames = mipp::nElReg<Q>();
-//	else if (params.simd_strategy == "INTRA" && activate_simd)
-//		params.n_frames = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
-
-	if (activate_json)
+	if (params.enable_json)
 	{
 		params.type          = "BCJR";
 		params.implem        = "GENERIC_JSON";
 		params.simd_strategy = "";
 	}
 
-	// ------------------------------------------------------------------------------------------------ flip_and_check
-	Factory_flip_and_check::store_args(ar, params.flip_and_check, params.n_ite, params.N, params.n_ite);
+	Factory_scaling_factor::store_args(ar, params.scaling_factor);
+	Factory_flip_and_check::store_args(ar, params.flip_and_check);
 }
 
 void Factory_decoder_turbo
 ::group_args(Arguments_reader::arg_grp& ar)
 {
 	Factory_decoder::group_args(ar);
-
-	// ------------------------------------------------------------------------------------------------ scaling factor
 	Factory_scaling_factor::group_args(ar);
-
-	// ------------------------------------------------------------------------------------------------ flip_and_check
 	Factory_flip_and_check::group_args(ar);
 }
 
 void Factory_decoder_turbo
-::header(params_list& head_dec, const parameters& params, bool crc_activated)
+::header(params_list& head_dec, const parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
 
-	// ------------------------------------------------------------------------------------------------ scaling factor
-	Factory_scaling_factor::header(head_dec, params.scaling_factor);
-
-	// ------------------------------------------------------------------------------------------------------- decoder
 	if (!params.simd_strategy.empty())
 		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));
-
 	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
-	head_dec.push_back(std::make_pair("Max type",               params.max                  ));
+	head_dec.push_back(std::make_pair("Max type", params.max));
+	head_dec.push_back(std::make_pair("Enable json", ((params.enable_json) ? "on" : "off")));
+	head_dec.push_back(std::make_pair("Buffered", ((params.buffered) ? "on" : "off")));
+	head_dec.push_back(std::make_pair("Self-corrected", ((params.self_corrected) ? "on" : "off")));
 
-	if (crc_activated)
-	{
-		head_dec.push_back(std::make_pair("Self-corrected",       ((params.self_corrected) ? "on" : "off")));
-
-		// -------------------------------------------------------------------------------------------- flip_and_check
-		Factory_flip_and_check::header(head_dec, params.flip_and_check);
-	}
-
+	Factory_scaling_factor::header(head_dec, params.scaling_factor);
+	Factory_flip_and_check::header(head_dec, params.flip_and_check);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_turbo<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_turbo::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_8 >&, SISO<Q_8 >&, const bool);
-template aff3ct::module::Decoder_turbo<B_16,Q_16>* aff3ct::tools::Factory_decoder_turbo::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_16>&, SISO<Q_16>&, const bool);
-template aff3ct::module::Decoder_turbo<B_32,Q_32>* aff3ct::tools::Factory_decoder_turbo::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_32>&, SISO<Q_32>&, const bool);
-template aff3ct::module::Decoder_turbo<B_64,Q_64>* aff3ct::tools::Factory_decoder_turbo::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_64>&, SISO<Q_64>&, const bool);
+template aff3ct::module::Decoder_turbo<B_8 ,Q_8 >* aff3ct::tools::Factory_decoder_turbo::build<B_8 ,Q_8 >(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_8 >&, SISO<Q_8 >&);
+template aff3ct::module::Decoder_turbo<B_16,Q_16>* aff3ct::tools::Factory_decoder_turbo::build<B_16,Q_16>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_16>&, SISO<Q_16>&);
+template aff3ct::module::Decoder_turbo<B_32,Q_32>* aff3ct::tools::Factory_decoder_turbo::build<B_32,Q_32>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_32>&, SISO<Q_32>&);
+template aff3ct::module::Decoder_turbo<B_64,Q_64>* aff3ct::tools::Factory_decoder_turbo::build<B_64,Q_64>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q_64>&, SISO<Q_64>&);
 #else
-template aff3ct::module::Decoder_turbo<B,Q>* aff3ct::tools::Factory_decoder_turbo::build<B,Q>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q>&, SISO<Q>&, const bool);
+template aff3ct::module::Decoder_turbo<B,Q>* aff3ct::tools::Factory_decoder_turbo::build<B,Q>(const aff3ct::tools::Factory_decoder_turbo::parameters&, const Interleaver<int>&, SISO<Q>&, SISO<Q>&);
 #endif
 // ==================================================================================== explicit template instantiation

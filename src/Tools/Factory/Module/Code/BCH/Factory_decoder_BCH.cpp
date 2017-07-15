@@ -12,7 +12,7 @@ Decoder<B,Q>* Factory_decoder_BCH
 {
 	if (params.type == "ALGEBRAIC")
 	{
-		if (params.implem == "STD") return new Decoder_BCH<B,Q>(params.K, params.N, params.t, GF, params.n_frames);
+		if (params.implem == "STD") return new Decoder_BCH<B,Q>(params.K, params.N_cw, params.t, GF, params.n_frames);
 	}
 
 	throw cannot_allocate(__FILE__, __LINE__, __func__);
@@ -23,34 +23,31 @@ void Factory_decoder_BCH
 {
 	Factory_decoder::build_args(req_args, opt_args);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	opt_args[{"cde-corr-pow", "T"}] =
+	opt_args[{"dec-corr-pow", "T"}] =
 		{"positive_int",
 		 "correction power of the BCH code."};
 }
 
 void Factory_decoder_BCH
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.type     = "ALGEBRAIC";
-	params.implem   = "STD";
+	params.type   = "ALGEBRAIC";
+	params.implem = "STD";
 
-	Factory_decoder::store_args(ar, params, K, N, n_frames);
+	Factory_decoder::store_args(ar, params);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	params.m = (int)std::ceil(std::log2(N));
+	params.m = (int)std::ceil(std::log2(params.N_cw));
 	if (params.m == 0)
 	{
 		std::stringstream message;
-		message << "The Gallois Field order is null (because N = " << N << ").";
+		message << "The Gallois Field order is null (because N_cw = " << params.N_cw << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (ar.exist_arg({"cde-corr-pow", "T"}))
-		params.t = ar.get_arg_int({"cde-corr-pow", "T"});
+	if (ar.exist_arg({"dec-corr-pow", "T"}))
+		params.t = ar.get_arg_int({"dec-corr-pow", "T"});
 	else
-		params.t = (N - K) / params.m;
+		params.t = (params.N_cw - params.K) / params.m;
 }
 
 void Factory_decoder_BCH
@@ -60,13 +57,12 @@ void Factory_decoder_BCH
 }
 
 void Factory_decoder_BCH
-::header(params_list& head_dec, params_list& head_cde, const parameters& params)
+::header(params_list& head_dec, const parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	head_cde.push_back(std::make_pair("Galois field order (m)", std::to_string(params.m)));
-	head_cde.push_back(std::make_pair("Correction power (T)",   std::to_string(params.t)));
+	head_dec.push_back(std::make_pair("Galois field order (m)", std::to_string(params.m)));
+	head_dec.push_back(std::make_pair("Correction power (T)",   std::to_string(params.t)));
 }
 
 // ==================================================================================== explicit template instantiation

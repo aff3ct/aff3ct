@@ -23,8 +23,11 @@ void Factory_encoder_polar
 {
 	Factory_encoder::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------- encoder
 	opt_args[{"enc-type"}][2] += ", POLAR";
+
+	opt_args[{"enc-no-sys"}] =
+		{"",
+		 "disable the systematic encoding."};
 }
 
 void Factory_encoder_polar

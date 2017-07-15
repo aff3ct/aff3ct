@@ -38,11 +38,11 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (enc_params.N_cw != dec_params.N)
+		if (enc_params.N_cw != dec_params.N_cw)
 		{
 			std::stringstream message;
-			message << "The encoder dimension 'N' (=" << enc_params.N_cw << ") is different than the decoder one's (="
-			        << dec_params.N << ").";
+			message << "The encoder dimension 'N_cw' (=" << enc_params.N_cw << ") is different than the decoder one's"
+			           " (=" << dec_params.N_cw << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}

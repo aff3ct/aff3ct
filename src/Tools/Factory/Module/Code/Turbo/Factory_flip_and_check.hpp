@@ -16,23 +16,23 @@ struct Factory_flip_and_check : public Factory
 {
 	struct parameters
 	{
+		int  size                = -1;
+
 		bool enable              = false;
 		int  q                   = 10;
+		int  n_ite               = 6;
 		int  ite_min             = 3;
 		int  ite_max             = 10;
 		int  ite_step            = 1;
 		int  start_crc_check_ite = 2;
-		int  size;
-		int  n_ite;
-		int  n_frames;
+		int  n_frames            = 1;
 	};
 
 	template <typename B = int, typename Q = float>
-	static Flip_and_check<B,Q>* build(const parameters& params, module::CRC<B> &crc, const int n_frames = 1);
+	static Flip_and_check<B,Q>* build(const parameters& params, module::CRC<B> &crc);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
-	static void store_args(const Arguments_reader& ar, parameters &params,
-	                       const int size, const int n_ite, const int start_crc_check_ite = 2);
+	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
 	static void header(params_list& head_fnc, const parameters& params);

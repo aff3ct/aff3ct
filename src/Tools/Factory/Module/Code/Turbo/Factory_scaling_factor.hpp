@@ -16,8 +16,8 @@ struct Factory_scaling_factor : public Factory
 {
 	struct parameters
 	{
-		std::string         declaration;
-		std::string         type;
+		std::string         type        = "LTE_VEC";
+		int                 n_ite       = 6;
 		float               cst         = 0.75f;
 		mipp::vector<float> alpha_array = {0.15f, 0.15f,  // ite 1
 		                                   0.25f, 0.25f,  // ite 2
@@ -30,7 +30,7 @@ struct Factory_scaling_factor : public Factory
 	};
 
 	template <typename B = int, typename Q = float>
-	static Scaling_factor<B,Q>* build(const parameters& params, const int n_ite);
+	static Scaling_factor<B,Q>* build(const parameters& params);
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, parameters &params);

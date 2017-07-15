@@ -7,7 +7,7 @@ template <typename B, typename Q>
 Codec_repetition<B,Q>
 ::Codec_repetition(const Factory_encoder_repetition::parameters &enc_params,
                    const Factory_decoder_repetition::parameters &dec_params)
-: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params)
+: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params)
 {
 }
 
@@ -28,7 +28,7 @@ template <typename B, typename Q>
 Decoder<B,Q>* Codec_repetition<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	return Factory_decoder_repetition::build<B,Q>(this->dec_params, enc_par.buffered);
+	return Factory_decoder_repetition::build<B,Q>(dec_par);
 }
 
 // ==================================================================================== explicit template instantiation 

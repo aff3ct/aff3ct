@@ -12,7 +12,7 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_LDPC : public C
 {
 protected:
-	tools::Factory_encoder     ::parameters *m_enc = nullptr;
+	tools::Factory_encoder_LDPC::parameters *m_enc = nullptr;
 	tools::Factory_decoder_LDPC::parameters *m_dec = nullptr;
 
 public:

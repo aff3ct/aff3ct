@@ -21,6 +21,7 @@ template <typename B = int, typename Q = float>
 class Codec_LDPC : public Codec_SISO<B,Q>
 {
 protected:
+	const Factory_encoder_LDPC::parameters &enc_par;
 	const Factory_decoder_LDPC::parameters &dec_par;
 
 	Sparse_matrix H;
@@ -30,7 +31,7 @@ protected:
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Codec_LDPC(const Factory_encoder     ::parameters &enc_params,
+	Codec_LDPC(const Factory_encoder_LDPC::parameters &enc_params,
 	           const Factory_decoder_LDPC::parameters &dec_params,
 	           const int n_threads);
 	virtual ~Codec_LDPC();

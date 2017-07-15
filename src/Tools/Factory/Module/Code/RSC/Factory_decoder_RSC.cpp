@@ -123,10 +123,9 @@ void Factory_decoder_RSC
 {
 	Factory_decoder::build_args(req_args, opt_args);
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS"             );
+	opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS");
 
-	opt_args[{"dec-implem"   }].push_back("GENERIC, STD, FAST, VERY_FAST");
+	opt_args[{"dec-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
 
 	opt_args[{"dec-simd"}] =
 		{"string",
@@ -140,22 +139,15 @@ void Factory_decoder_RSC
 }
 
 void Factory_decoder_RSC
-::store_args(const Arguments_reader& ar, parameters &params,
-             const int K, const int N, const int n_frames, const bool activate_simd)
+::store_args(const Arguments_reader& ar, parameters &params)
 {
 	params.type   = "BCJR";
 	params.implem = "GENERIC";
 
-	Factory_decoder::store_args(ar, params, K, N, n_frames);
+	Factory_decoder::store_args(ar, params);
 
-	// ------------------------------------------------------------------------------------------------------- decoder
 	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
-	if(ar.exist_arg({"dec-max" })) params.max           = ar.get_arg({"dec-max" });
-
-//	if (params.simd_strategy == "INTER" && activate_simd)
-//		params.n_frames = mipp::nElReg<Q>();
-//	else if (params.simd_strategy == "INTRA" && activate_simd)
-//		params.n_frames = (int)std::ceil(mipp::nElReg<Q>() / 8.f);
+	if(ar.exist_arg({"dec-max" })) params.max = ar.get_arg({"dec-max" });
 }
 
 void Factory_decoder_RSC
@@ -169,7 +161,6 @@ void Factory_decoder_RSC
 {
 	Factory_decoder::header(head_dec, params);
 
-	// ------------------------------------------------------------------------------------------------------- decoder
 	if (!params.simd_strategy.empty())
 		head_dec.push_back(std::make_pair(std::string("SIMD strategy"), params.simd_strategy));
 

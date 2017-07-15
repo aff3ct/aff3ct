@@ -55,8 +55,11 @@ void Launcher_RSC<C,B,R,Q,QD>
 
 	tools::Factory_encoder_RSC::store_args(this->ar, *m_enc);
 
-	bool activate_simd = !this->ar.exist_arg({"sim-inter-lvl"});
-	tools::Factory_decoder_RSC::store_args(this->ar, *m_dec, this->m_chain_params->sim->K, this->m_chain_params->sim->N, this->m_chain_params->sim->inter_frame_level, activate_simd);
+	m_dec->K        = this->m_chain_params->sim->K;
+	m_dec->N_cw     = this->m_chain_params->sim->N;
+	m_dec->n_frames = this->m_chain_params->sim->inter_frame_level;
+
+	tools::Factory_decoder_RSC::store_args(this->ar, *m_dec);
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>

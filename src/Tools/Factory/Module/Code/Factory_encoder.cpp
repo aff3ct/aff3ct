@@ -33,18 +33,18 @@ void Factory_encoder
 		{"positive_int",
 		 "the codeword size."};
 
+	opt_args[{"enc-fra", "F"}] =
+		{"positive_int",
+		 "set the number of inter frame level to process."};
+
 	opt_args[{"enc-type"}] =
 		{"string",
 		 "select the type of encoder you want to use.",
-		 "NO, COSET, USER"};
+		 "NO, AZCW, COSET, USER"};
 
 	opt_args[{"enc-path"}] =
 		{"string",
 		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
-
-	opt_args[{"enc-no-sys"}] =
-		{"",
-		 "disable the systematic encoding."};
 
 	opt_args[{"enc-coset", "c"}] =
 		{"",
@@ -58,8 +58,9 @@ void Factory_encoder
 void Factory_encoder
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K    = ar.get_arg_int({"enc-info-bits", "K"});
+	params.K = ar.get_arg_int({"enc-info-bits", "K"});
 	params.N_cw = ar.get_arg_int({"enc-cw-size", "N"});
+	params.R = (float)params.K / (float)params.N_cw;
 	if(ar.exist_arg({"enc-fra", "F"})) params.n_frames = ar.get_arg_int({"enc-fra", "F"});
 	if(ar.exist_arg({"enc-type"})) params.type = ar.get_arg({"enc-type"});
 	if(ar.exist_arg({"enc-path"})) params.path = ar.get_arg({"enc-path"});
@@ -69,11 +70,6 @@ void Factory_encoder
 
 	if (params.type == "COSET")
 		params.coset = true;
-
-//	if (params.type == "AZCW")
-//		params.source.type = "AZCW";
-//	if (params.type == "USER")
-//		params.source.type = "USER";
 }
 
 void Factory_encoder
@@ -89,7 +85,7 @@ void Factory_encoder
 	head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 	head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
 	head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
-	head_enc.push_back(std::make_pair("Systematic encoding", ((params.systematic) ? "on" : "off")));
+	head_enc.push_back(std::make_pair("Systematic", ((params.systematic) ? "on" : "off")));
 	if (params.type == "USER")
 		head_enc.push_back(std::make_pair("Path", params.path));
 	if (params.type == "COSET")

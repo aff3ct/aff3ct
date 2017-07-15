@@ -9,6 +9,7 @@
 #include "Tools/Factory/Module/Code/Polar/Factory_encoder_polar.hpp"
 #include "Tools/Factory/Module/Code/Polar/Factory_decoder_polar.hpp"
 #include "Tools/Factory/Module/Code/Polar/Factory_puncturer_polar.hpp"
+#include "Tools/Factory/Module/Code/Polar/Factory_frozenbits_generator.hpp"
 
 #include "../Codec_SISO.hpp"
 
@@ -20,8 +21,10 @@ template <typename B = int, typename Q = float>
 class Codec_polar : public Codec_SISO<B,Q>
 {
 protected:
-	const Factory_decoder_polar  ::parameters &dec_par;
-	const Factory_puncturer_polar::parameters &pct_par;
+	const Factory_frozenbits_generator::parameters &fb_par;
+	const Factory_puncturer_polar     ::parameters &pct_par;
+	const Factory_encoder_polar       ::parameters &enc_par;
+	const Factory_decoder_polar       ::parameters &dec_par;
 
 	mipp::vector<B> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool is_generated_decoder;
@@ -30,9 +33,10 @@ protected:
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Codec_polar(const Factory_encoder        ::parameters &enc_params,
-	            const Factory_decoder_polar  ::parameters &dec_params,
-	            const Factory_puncturer_polar::parameters &pct_params,
+	Codec_polar(const Factory_frozenbits_generator::parameters &fb_par,
+	            const Factory_puncturer_polar     ::parameters &pct_par,
+	            const Factory_encoder_polar       ::parameters &enc_par,
+	            const Factory_decoder_polar       ::parameters &dec_par,
 	            const int n_threads);
 	virtual ~Codec_polar();
 
