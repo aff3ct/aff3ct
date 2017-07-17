@@ -37,7 +37,7 @@ Interleaver<T>* Factory_interleaver<T>
 }
 
 // ==================================================================================== explicit template instantiation 
-template struct aff3ct::tools::Factory_interleaver<short>;
-template struct aff3ct::tools::Factory_interleaver<int>;
-template struct aff3ct::tools::Factory_interleaver<long long>;
+template struct aff3ct::tools::Factory_interleaver<int16_t>;
+template struct aff3ct::tools::Factory_interleaver<int32_t>;
+template struct aff3ct::tools::Factory_interleaver<int64_t>;
 // ==================================================================================== explicit template instantiation

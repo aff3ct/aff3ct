@@ -29,10 +29,10 @@ public:
 
 private:
 	SC_Interleaver<T> &interleaver;
-	mipp::vector<char     > vec_1;
-	mipp::vector<short    > vec_2;
-	mipp::vector<int      > vec_4;
-	mipp::vector<long long> vec_8;
+	mipp::vector<int8_t > vec_1;
+	mipp::vector<int16_t> vec_2;
+	mipp::vector<int32_t> vec_4;
+	mipp::vector<int64_t> vec_8;
 
 public:
 	SC_Interleaver_module_interleaver(SC_Interleaver<T> &interleaver,
@@ -54,10 +54,10 @@ private:
 
 		switch (size_of_data)
 		{
-			case 1: _b_transport<char     >(trans, t, vec_1); break;
-			case 2: _b_transport<short    >(trans, t, vec_2); break;
-			case 4: _b_transport<int      >(trans, t, vec_4); break;
-			case 8: _b_transport<long long>(trans, t, vec_8); break;
+			case 1: _b_transport<int8_t >(trans, t, vec_1); break;
+			case 2: _b_transport<int16_t>(trans, t, vec_2); break;
+			case 4: _b_transport<int32_t>(trans, t, vec_4); break;
+			case 8: _b_transport<int64_t>(trans, t, vec_8); break;
 			default:
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unrecognized type of data.");
 				break;
@@ -105,10 +105,10 @@ public:
 
 private:
 	SC_Interleaver<T> &interleaver;
-	mipp::vector<char     > vec_1;
-	mipp::vector<short    > vec_2;
-	mipp::vector<int      > vec_4;
-	mipp::vector<long long> vec_8;
+	mipp::vector<int8_t > vec_1;
+	mipp::vector<int16_t> vec_2;
+	mipp::vector<int32_t> vec_4;
+	mipp::vector<int64_t> vec_8;
 
 public:
 	SC_Interleaver_module_deinterleaver(SC_Interleaver<T> &interleaver, 
@@ -129,10 +129,10 @@ private:
 		int size_of_data = trans.get_data_length() / (interleaver.get_size() * interleaver.get_n_frames());
 		switch (size_of_data)
 		{
-			case 1: _b_transport<char     >(trans, t, vec_1); break;
-			case 2: _b_transport<short    >(trans, t, vec_2); break;
-			case 4: _b_transport<int      >(trans, t, vec_4); break;
-			case 8: _b_transport<long long>(trans, t, vec_8); break;
+			case 1: _b_transport<int8_t >(trans, t, vec_1); break;
+			case 2: _b_transport<int16_t>(trans, t, vec_2); break;
+			case 4: _b_transport<int32_t>(trans, t, vec_4); break;
+			case 8: _b_transport<int64_t>(trans, t, vec_8); break;
 			default:
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unrecognized type of data.");
 				break;

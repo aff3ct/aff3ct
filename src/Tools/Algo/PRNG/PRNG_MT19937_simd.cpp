@@ -18,7 +18,7 @@ constexpr unsigned DIFF   = SIZE-PERIOD;
 
 #define UNROLL(expr) \
 	y = M32(MT[i]) | L31(MT[i+1]); \
-	m = ((y & 1) == 1) & 0x9908b0df; \
+	m = mipp::cvt_reg<int>((y & 1) == 1) & 0x9908b0df; \
 	MT[i] = MT[expr] ^ (y >> 1) ^ m; \
 	++i;
 
@@ -139,7 +139,7 @@ void PRNG_MT19937_simd::generate_numbers()
 
 	// i = 623
 	y = M32(MT[SIZE-1]) | L31(MT[0]);
-	m = ((y & 1) == 1) & 0x9908b0df;
+	m = mipp::cvt_reg<int>((y & 1) == 1) & 0x9908b0df;
 	MT[SIZE-1] = MT[PERIOD-1] ^ (y >> 1) ^ m;
 }
 

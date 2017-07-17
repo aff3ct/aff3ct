@@ -137,7 +137,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 	}
 
 	const R m1e[8] = {1, 0, 0, 0, 0, 0, 0, 0};
-	const auto r_m1e = mipp::Reg<R>(1) == mipp::Reg<R>(m1e);
+	const auto r_m1e = mipp::cvt_reg<R>(mipp::Reg<R>(1) == mipp::Reg<R>(m1e));
 
 	// compute beta values and the extrinsic values [trellis backward traversal <-] (vectorized)
 	auto r_g4 = mipp::Reg<R>((R)0);
@@ -163,7 +163,7 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 			const auto r_max1 = mipp::Reduction<R,MAX>::apply(r_a + r_b1 - r_g);
 			const auto r_post = r_m1e & (r_max0 - r_max1);
 
-			r_buffer_post = r_buffer_post.rot() ^ r_post;
+			r_buffer_post = r_buffer_post.rrot() ^ r_post;
 		}
 
 		// saturate r_buffer_post if the computation are made in 8-bit, do nothing else.
