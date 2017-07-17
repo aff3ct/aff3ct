@@ -46,13 +46,11 @@ void Launcher_EXIT<B,R>
 	Launcher::store_args();
 	Factory_simulation_EXIT::store_args(this->ar, *m_sim);
 
-	m_chain_params->src.K        = m_chain_params->sim->K;
 	m_chain_params->src.seed     = m_chain_params->sim->seed;
 	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_source::store_args(this->ar, m_chain_params->src);
 
-	m_chain_params->mdm.N = m_chain_params->sim->N;
 	m_chain_params->mdm.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_modem::store_args(this->ar, m_chain_params->mdm);
@@ -84,11 +82,11 @@ template <typename B, typename R>
 void Launcher_EXIT<B,R>
 ::print_header()
 {
-	Factory_simulation_EXIT::header(this->pl_sim, this->pl_cde, *m_sim);
-	Factory_source         ::header(this->pl_src, m_chain_params->src);
+	Factory_simulation_EXIT::header(this->pl_sim,                *m_sim);
+	Factory_source         ::header(this->pl_src,                 m_chain_params->src);
 	Factory_modem          ::header(this->pl_mod, this->pl_demod, m_chain_params->mdm);
-	Factory_channel        ::header(this->pl_chn, m_chain_params->chn);
-	Factory_terminal_EXIT  ::header(this->pl_ter, m_chain_params->ter);
+	Factory_channel        ::header(this->pl_chn,                 m_chain_params->chn);
+	Factory_terminal_EXIT  ::header(this->pl_ter,                 m_chain_params->ter);
 
 	Launcher::print_header();
 }

@@ -19,16 +19,17 @@ struct Factory_encoder : public Factory
 	{
 		virtual ~parameters() {}
 
-		int         K          = -1;
-		int         N_cw       = -1;
+		int         K           = -1;
+		int         N_cw        = -1;
 
-		std::string type       = "NO";
-		std::string path       = "";
-		float       R          = -1.f;
-		bool        systematic = true;
-		bool        coset      = false;
-		int         n_frames   = 1;
-		int         seed       = 0;
+		std::string type        = "NO";
+		std::string path        = "";
+		float       R           = -1.f;
+		bool        systematic  = true;
+		bool        coset       = false;
+		int         n_frames    = 1;
+		int         seed        = 0;
+		int         tail_length = 0;
 	};
 
 	template <typename B = int>

@@ -136,6 +136,19 @@ void Factory_decoder_RSC
 		{"string",
 		 "the MAX implementation for the nodes.",
 		 "MAX, MAXL, MAXS"};
+
+	opt_args[{"dec-no-buff"}] =
+		{"",
+		 "does not suppose a buffered encoding."};
+
+	opt_args[{"dec-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	opt_args[{"dec-std"}] =
+		{"string",
+		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
+		 "LTE, CCSDS"};
 }
 
 void Factory_decoder_RSC
@@ -147,7 +160,29 @@ void Factory_decoder_RSC
 	Factory_decoder::store_args(ar, params);
 
 	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
-	if(ar.exist_arg({"dec-max" })) params.max = ar.get_arg({"dec-max" });
+	if(ar.exist_arg({"dec-max" })) params.max = ar.get_arg({"dec-max"});
+	if(ar.exist_arg({"dec-no-buff"})) params.buffered = false;
+	if(ar.exist_arg({"dec-std"})) params.standard = ar.get_arg({"dec-std"});
+
+	if (params.type == "LTE")
+		params.poly = {013, 015};
+
+	if (params.type == "CCSDS")
+		params.poly = {023, 033};
+
+	if (ar.exist_arg({"dec-poly"}))
+	{
+		auto poly_str = ar.get_arg({"dec-poly"});
+
+#ifdef _MSC_VER
+		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#else
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#endif
+	}
+
+	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
+	params.N_cw       += params.tail_length;
 }
 
 void Factory_decoder_RSC
@@ -160,6 +195,18 @@ void Factory_decoder_RSC
 ::header(params_list& head_dec, const parameters& params)
 {
 	Factory_decoder::header(head_dec, params);
+
+	if (params.tail_length)
+		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
+
+	head_dec.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
+
+	if (!params.standard.empty())
+		head_dec.push_back(std::make_pair("Standard", params.standard));
+
+	std::stringstream poly;
+	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
+	head_dec.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 
 	if (!params.simd_strategy.empty())
 		head_dec.push_back(std::make_pair(std::string("SIMD strategy"), params.simd_strategy));

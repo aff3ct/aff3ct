@@ -7,7 +7,6 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 {
 	Factory_simulation_main::build_args(req_args, opt_args);
 
-	// ---------------------------------------------------------------------------------------------------- simulation
 	req_args[{"sim-snr-min", "m"}] =
 		{"float",
 		 "minimal signal/noise ratio to simulate."};
@@ -38,7 +37,7 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
 
-	opt_args[{"sim-inter-lvl", "F"}] =
+	opt_args[{"sim-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process in each modules."};
 
@@ -57,16 +56,6 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		{"",
 		 "disable the colors in the shell."};
 #endif
-
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	req_args[{"cde-info-bits", "K"}] =
-		{"positive_int",
-		 "useful number of bit transmitted (only information bits)."};
-
-	req_args[{"cde-size", "N"}] =
-		{"positive_int",
-		 "total number of bit transmitted (includes parity bits)."};
 }
 
 void Factory_simulation::store_args(const Arguments_reader& ar, parameters &params)
@@ -75,17 +64,16 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 
 	Factory_simulation_main::store_args(ar, params);
 
-	// ---------------------------------------------------------------------------------------------------- simulation
 	params.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
 	params.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
 
 	params.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
-	if(ar.exist_arg({"sim-pyber"         })) params.pyber             = ar.get_arg      ({"sim-pyber"         });
-	if(ar.exist_arg({"sim-snr-step", "s" })) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s" });
-	if(ar.exist_arg({"sim-inter-lvl", "F"})) params.inter_frame_level = ar.get_arg_int  ({"sim-inter-lvl", "F"});
-	if(ar.exist_arg({"sim-stop-time"     })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"     }));
-	if(ar.exist_arg({"sim-seed", "S"     })) params.seed              = ar.get_arg_int  ({"sim-seed", "S"     });
+	if(ar.exist_arg({"sim-pyber"        })) params.pyber             = ar.get_arg      ({"sim-pyber"        });
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"sim-fra", "F"     })) params.inter_frame_level = ar.get_arg_int  ({"sim-fra", "F"     });
+	if(ar.exist_arg({"sim-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
+	if(ar.exist_arg({"sim-seed", "S"    })) params.seed              = ar.get_arg_int  ({"sim-seed", "S"    });
 
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
@@ -109,7 +97,7 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 	{
 		std::stringstream message;
 		message << "'max_n_threads_global' has to be greater than 0 ('max_n_threads_global' = "
-				<< max_n_threads_global << ").";
+		        << max_n_threads_global << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -128,14 +116,6 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 #ifdef MULTI_PREC
 	if(ar.exist_arg({"sim-prec", "p"})) params.sim_prec = ar.get_arg_int({"sim-prec", "p"});
 #endif
-
-	// ---------------------------------------------------------------------------------------------------------- code
-	params.K      = ar.get_arg_int({"cde-info-bits", "K"}); // required
-	params.N      = ar.get_arg_int({"cde-size",      "N"}); // required
-
-	params.K_info = params.K;
-	params.N_code = params.N;
-	params.R      = (float)params.K / (float)params.N;
 }
 
 void Factory_simulation::group_args(Arguments_reader::arg_grp& ar)
@@ -143,12 +123,10 @@ void Factory_simulation::group_args(Arguments_reader::arg_grp& ar)
 	Factory_simulation_main::group_args(ar);
 }
 
-void Factory_simulation::header(params_list& head_sim, params_list& head_cde,
-                                const parameters& params)
+void Factory_simulation::header(params_list& head_sim, const parameters& params)
 {
-	Factory_simulation_main::header(head_sim, head_cde, params);
+	Factory_simulation_main::header(head_sim, params);
 
-	// ---------------------------------------------------------------------------------------------------- simulation
 	head_sim.push_back(std::make_pair("SNR min (m)",   std::to_string(params.snr_min)  + " dB"));
 	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));
 	head_sim.push_back(std::make_pair("SNR step (s)",  std::to_string(params.snr_step) + " dB"));
@@ -170,19 +148,4 @@ void Factory_simulation::header(params_list& head_sim, params_list& head_cde,
 
 	head_sim.push_back(std::make_pair("Multi-threading (t)", threads));
 #endif
-
-	// ---------------------------------------------------------------------------------------------------------- code
-
-//	std::string N = std::to_string(params.code.N - params.code.tail_length);
-//	if (params.code.tail_length > 0)
-//		N += " + " + std::to_string(params.code.tail_length) + " (tail bits)";
-
-//	std::stringstream K;
-//	if (!params.crc.poly.empty())
-//		K << (params.K - params.crc.size) << " + " << params.crc.size << " (CRC)";
-//	else
-//		K << params.K;
-	head_cde.push_back(std::make_pair("Info. bits (K)",    std::to_string(params.K_info)));
-	head_cde.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_code)));
-	head_cde.push_back(std::make_pair("Code rate (R)",     std::to_string(params.R)));
 }

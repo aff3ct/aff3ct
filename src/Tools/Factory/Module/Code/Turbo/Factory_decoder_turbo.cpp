@@ -60,6 +60,15 @@ void Factory_decoder_turbo
 		{"",
 		 "enable the json output trace."};
 
+	opt_args[{"dec-poly"}] =
+		{"string",
+		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
+
+	opt_args[{"dec-std"}] =
+		{"string",
+		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
+		 "LTE, CCSDS"};
+
 	Factory_scaling_factor::build_args(req_args, opt_args);
 	Factory_flip_and_check::build_args(req_args, opt_args);
 }
@@ -86,6 +95,28 @@ void Factory_decoder_turbo
 		params.implem        = "GENERIC_JSON";
 		params.simd_strategy = "";
 	}
+
+	if(ar.exist_arg({"dec-std"})) params.standard = ar.get_arg({"dec-std"});
+
+	if (params.type == "LTE")
+		params.poly = {013, 015};
+
+	if (params.type == "CCSDS")
+		params.poly = {023, 033};
+
+	if (ar.exist_arg({"dec-poly"}))
+	{
+		auto poly_str = ar.get_arg({"dec-poly"});
+
+#ifdef _MSC_VER
+		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#else
+		std::sscanf(poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
+#endif
+	}
+
+	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
+	params.N_cw       += params.tail_length;
 
 	Factory_scaling_factor::store_args(ar, params.scaling_factor);
 	Factory_flip_and_check::store_args(ar, params.flip_and_check);

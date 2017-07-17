@@ -33,13 +33,7 @@ void Launcher_BFER_ite<B,R,Q>
 	Launcher::build_args();
 
 	Factory_simulation_BFER_ite::build_args(this->req_args, this->opt_args);
-
-	m_chain_params->src.K        = m_chain_params->sim->K;
-	m_chain_params->src.seed     = m_chain_params->sim->seed;
-	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
-
-	Factory_source::build_args(this->req_args, this->opt_args);
-
+	Factory_source             ::build_args(this->req_args, this->opt_args);
 	Factory_CRC                ::build_args(this->req_args, this->opt_args);
 	Factory_interleaver        ::build_args(this->req_args, this->opt_args);
 	Factory_modem              ::build_args(this->req_args, this->opt_args);
@@ -57,25 +51,19 @@ void Launcher_BFER_ite<B,R,Q>
 
 	Factory_simulation_BFER_ite::store_args(this->ar, *m_sim);
 
-	m_chain_params->src.K        = m_chain_params->sim->K;
 	m_chain_params->src.seed     = m_chain_params->sim->seed;
 	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_source::store_args(this->ar, m_chain_params->src);
 
-	m_chain_params->crc.K        = m_chain_params->sim->K;
 	m_chain_params->crc.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_CRC::store_args(this->ar, m_chain_params->crc);
 
-	m_chain_params->sim->R = (float)(m_chain_params->sim->K + m_chain_params->crc.size) / (float)m_chain_params->sim->N;
-
-	m_chain_params->itl.size     = m_chain_params->sim->N;
 	m_chain_params->itl.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_interleaver::store_args(this->ar, m_chain_params->itl);
 
-	m_chain_params->mdm.N = m_chain_params->sim->N;
 	m_chain_params->mdm.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_modem::store_args(this->ar, m_chain_params->mdm);
@@ -87,12 +75,10 @@ void Launcher_BFER_ite<B,R,Q>
 
 	Factory_channel::store_args(this->ar, m_chain_params->chn);
 
-	m_chain_params->qnt.size = m_chain_params->sim->N;
 	m_chain_params->qnt.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_quantizer::store_args(this->ar, m_chain_params->qnt);
 
-	m_chain_params->mnt.size     = m_chain_params->sim->K;
 	m_chain_params->mnt.n_frames = m_chain_params->sim->inter_frame_level;
 
 	Factory_monitor::store_args(this->ar, m_chain_params->mnt);
@@ -124,7 +110,7 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_ite<B,R,Q>
 ::print_header()
 {
-	Factory_simulation_BFER_ite::header(this->pl_sim, this->pl_cde, *m_sim);
+	Factory_simulation_BFER_ite::header(this->pl_sim, *m_sim);
 	Factory_source             ::header(this->pl_src, m_chain_params->src);
 	Factory_CRC                ::header(this->pl_crc, m_chain_params->crc);
 	Factory_interleaver        ::header(this->pl_itl, m_chain_params->itl);

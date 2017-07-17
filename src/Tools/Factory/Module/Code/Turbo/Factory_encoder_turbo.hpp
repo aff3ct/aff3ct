@@ -24,10 +24,9 @@ struct Factory_encoder_turbo : public Factory_encoder
 		std::string      json_path   = "";
 		std::string      standard    = "LTE";
 		std::vector<int> poly        = {013, 015};
-		int              tail_length = 4 * 3;
 		bool             buffered    = true;
 
-		typename Factory_interleaver::parameters itl;
+		Factory_interleaver::parameters itl;
 	};
 
 	template <typename B = int>

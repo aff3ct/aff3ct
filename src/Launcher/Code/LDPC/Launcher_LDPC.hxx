@@ -46,16 +46,7 @@ void Launcher_LDPC<C,B,R,Q>
 {
 	C::store_args();
 
-	m_enc->K        = this->m_chain_params->sim->K;
-	m_enc->N_cw     = this->m_chain_params->sim->N;
-	m_enc->n_frames = this->m_chain_params->sim->inter_frame_level;
-
 	tools::Factory_encoder_LDPC::store_args(this->ar, *m_enc);
-
-	m_dec->K        = this->m_chain_params->sim->K;
-	m_dec->N_cw     = this->m_chain_params->sim->N;
-	m_dec->n_frames = this->m_chain_params->sim->inter_frame_level;
-
 	tools::Factory_decoder_LDPC::store_args(this->ar, *m_dec);
 }
 

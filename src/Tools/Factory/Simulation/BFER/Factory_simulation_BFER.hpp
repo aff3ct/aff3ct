@@ -27,13 +27,12 @@ struct Factory_simulation_BFER : Factory_simulation
 	{
 		virtual ~parameters() {}
 
-		// ---- simulation
-		int         benchs          = 0;
 		std::string snr_type        = "EB";
 		bool        time_report     = false;
 		bool        debug           = false;
 		int         debug_limit     = 0;
 		int         debug_precision = 5;
+		int         benchs          = 0;
 	};
 
 	struct chain_parameters : Factory_simulation::chain_parameters
@@ -54,7 +53,7 @@ struct Factory_simulation_BFER : Factory_simulation
 	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_sim, params_list& head_cde, const parameters& params);
+	static void header(params_list& head_sim, const parameters& params);
 };
 
 }

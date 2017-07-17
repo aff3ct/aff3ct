@@ -78,7 +78,7 @@ Simulation_BFER<B,R,Q>
 	                                                 params.sim->inter_frame_level);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new Monitor_reduction<B>(params.sim->K_info,
+	this->monitor_red = new Monitor_reduction<B>(params.src.K,
 	                                             params.mnt.n_frame_errors,
 	                                             this->monitor,
 	                                             params.sim->inter_frame_level);
@@ -152,12 +152,12 @@ void Simulation_BFER<B,R,Q>
 		if (params.sim->snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, params.sim->R, params.mdm.bps);
+			snr_s = ebn0_to_esn0(snr_b, params.enc->R, params.mdm.bps);
 		}
 		else //if(params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, params.sim->R, params.mdm.bps);
+			snr_b = esn0_to_ebn0(snr_s, params.enc->R, params.mdm.bps);
 		}
 		sigma = esn0_to_sigma(snr_s, params.mdm.upf);
 
@@ -376,8 +376,8 @@ template <typename B, typename R, typename Q>
 Terminal_BFER<B>* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return new Terminal_BFER<B>(params.sim->K_info,
-	                            params.sim->N_code,
+	return new Terminal_BFER<B>(params.src.K,
+	                            params.enc->N_cw,
 	                            *this->monitor_red);
 }
 

@@ -138,9 +138,10 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 	catch (cannot_allocate const&)
 	{
 		Factory_puncturer::parameters pct;
-		pct.K        = simu_params.K;
-		pct.N        = simu_params.N;
-		pct.N_cw     = simu_params.N;
+		pct.type     = "NO";
+		pct.K        = chain_params.enc->K;
+		pct.N        = chain_params.enc->N_cw;
+		pct.N_cw     = chain_params.enc->N_cw;
 		pct.n_frames = simu_params.inter_frame_level;
 
 		return Factory_puncturer::build<B,Q>(pct);

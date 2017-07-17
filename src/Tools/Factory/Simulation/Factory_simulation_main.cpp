@@ -12,7 +12,11 @@ using namespace tools;
 
 void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	// ---------------------------------------------------------------------------------------------------- simulation
+	req_args[{"sim-cde-type"}] =
+		{"string",
+		 "select the code type you want to use.",
+		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
+
 	opt_args[{"sim-type"}] =
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
@@ -25,13 +29,6 @@ void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Ar
 		 "8, 16, 32, 64"};
 #endif
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	req_args[{"cde-type"}] =
-		{"string",
-		 "select the code type you want to use.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
-
-	// -------------------------------------------------------------------------------------------------------- others
 	opt_args[{"help", "h"}] =
 		{"",
 		 "print this help."};
@@ -43,17 +40,14 @@ void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Ar
 
 void Factory_simulation_main::store_args(const Arguments_reader& ar, parameters &params)
 {
-	// ---------------------------------------------------------------------------------------------------- simulation
+	params.cde_type = ar.get_arg({"sim-cde-type"}); // required
+
 	if(ar.exist_arg({"sim-type"})) params.sim_type = ar.get_arg({"sim-type"});
 
 #ifdef MULTI_PREC
 	if(ar.exist_arg({"sim-prec", "p"})) params.sim_prec = ar.get_arg_int({"sim-prec", "p"});
 #endif
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	params.cde_type = ar.get_arg({"cde-type"}); // required
-
-	// -------------------------------------------------------------------------------------------------------- others
 	if(ar.exist_arg({"help",    "h"})) params.display_help    = true;
 	if(ar.exist_arg({"version", "v"})) params.display_version = true;
 }
@@ -64,8 +58,7 @@ void Factory_simulation_main::group_args(Arguments_reader::arg_grp& ar)
 	ar.push_back({"cde", "Code parameter(s)"      });
 }
 
-void Factory_simulation_main::header(params_list& head_sim, params_list& head_cde,
-                                     const parameters& params)
+void Factory_simulation_main::header(params_list& head_sim, const parameters& params)
 {
 	std::unordered_map<std::type_index,std::string> type_names;
 	// define type names
@@ -76,7 +69,6 @@ void Factory_simulation_main::header(params_list& head_sim, params_list& head_cd
 	type_names[typeid(float  )] = "float32";
 	type_names[typeid(double )] = "float64";
 
-	// ---------------------------------------------------------------------------------------------------- simulation
 	head_sim.push_back(std::make_pair("Type", params.sim_type));
 
 	std::type_index id_B = typeid(int32_t), id_R = typeid(float), id_Q = typeid(float);
@@ -131,6 +123,5 @@ void Factory_simulation_main::header(params_list& head_sim, params_list& head_cd
 	auto split_date = string_split(date.str(), '.');
 	head_sim.push_back(std::make_pair("Date (UTC)", split_date[0]));
 
-	// ---------------------------------------------------------------------------------------------------------- code
-	head_cde.push_back(std::make_pair("Type",              params.cde_type         ));
+	head_sim.push_back(std::make_pair("Code type", params.cde_type));
 }

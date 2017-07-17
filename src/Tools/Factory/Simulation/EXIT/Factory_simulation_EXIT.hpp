@@ -28,7 +28,6 @@ struct Factory_simulation_EXIT : Factory_simulation
 	{
 		virtual ~parameters() {}
 
-		// ---- simulation
 		std::string snr_type   = "ES";
 		float       sig_a_min  = 0.0f;
 		float       sig_a_max  = 5.0f;
@@ -66,7 +65,7 @@ struct Factory_simulation_EXIT : Factory_simulation
 	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_sim, params_list& head_cde, const parameters& params);
+	static void header(params_list& head_sim, const parameters& params);
 };
 
 }

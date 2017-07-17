@@ -23,12 +23,14 @@ struct Factory_decoder_turbo : public Factory_decoder
 	{
 		virtual ~parameters() {}
 
-		std::string max            = "MAX";
-		std::string simd_strategy  = "";
-		bool        self_corrected = false;
-		bool        buffered       = true;
-		bool        enable_json    = false;
-		int         n_ite          = 6;
+		std::string      max            = "MAX";
+		std::string      simd_strategy  = "";
+		std::string      standard       = "LTE";
+		bool             self_corrected = false;
+		bool             buffered       = true;
+		bool             enable_json    = false;
+		std::vector<int> poly           = {013, 015};
+		int              n_ite          = 6;
 
 		Factory_scaling_factor::parameters scaling_factor;
 		Factory_flip_and_check::parameters flip_and_check;

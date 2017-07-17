@@ -19,21 +19,21 @@ Simulation_BFER_ite_threads<B,R,Q>
 ::Simulation_BFER_ite_threads(const tools::Factory_simulation_BFER_ite::chain_parameters &chain_params, Codec_SISO<B,Q> &codec)
 : Simulation_BFER_ite<B,R,Q>(chain_params,codec),
 
-  U_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info     * this->simu_params.inter_frame_level)),
-  U_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K          * this->simu_params.inter_frame_level)),
-  X_N1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N          * this->simu_params.inter_frame_level)),
-  X_N2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.N          * this->simu_params.inter_frame_level)),
-  X_N3(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_mod * this->simu_params.inter_frame_level)),
-  H_N (this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_mod * this->simu_params.inter_frame_level)),
-  Y_N1(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_mod * this->simu_params.inter_frame_level)),
-  Y_N2(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm.N_fil * this->simu_params.inter_frame_level)),
-  Y_N3(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.mdm.N_fil * this->simu_params.inter_frame_level)),
-  Y_N4(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N          * this->simu_params.inter_frame_level)),
-  Y_N5(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N          * this->simu_params.inter_frame_level)),
-  Y_N6(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N          * this->simu_params.inter_frame_level)),
-  Y_N7(this->simu_params.n_threads, mipp::vector<Q>(this->simu_params.N          * this->simu_params.inter_frame_level)),
-  V_K1(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K          * this->simu_params.inter_frame_level)),
-  V_K2(this->simu_params.n_threads, mipp::vector<B>(this->simu_params.K_info     * this->simu_params.inter_frame_level))
+  U_K1(this->simu_params.n_threads, mipp::vector<B>(this->chain_params.src. K     * this->chain_params.src .n_frames)),
+  U_K2(this->simu_params.n_threads, mipp::vector<B>(this->chain_params.enc->K     * this->chain_params.enc->n_frames)),
+  X_N1(this->simu_params.n_threads, mipp::vector<B>(this->chain_params.enc->N_cw  * this->chain_params.enc->n_frames)),
+  X_N2(this->simu_params.n_threads, mipp::vector<B>(this->chain_params.itl .size  * this->chain_params.itl .n_frames)),
+  X_N3(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm .N_mod * this->chain_params.mdm .n_frames)),
+  H_N (this->simu_params.n_threads, mipp::vector<R>(this->chain_params.chn .N     * this->chain_params.chn .n_frames)),
+  Y_N1(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.chn .N     * this->chain_params.chn .n_frames)),
+  Y_N2(this->simu_params.n_threads, mipp::vector<R>(this->chain_params.mdm .N_fil * this->chain_params.mdm .n_frames)),
+  Y_N3(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.qnt .size  * this->chain_params.qnt .n_frames)),
+  Y_N4(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.mdm .N     * this->chain_params.mdm .n_frames)),
+  Y_N5(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.itl .size  * this->chain_params.itl .n_frames)),
+  Y_N6(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.dec->N_cw  * this->chain_params.dec->n_frames)),
+  Y_N7(this->simu_params.n_threads, mipp::vector<Q>(this->chain_params.itl. size  * this->chain_params.itl .n_frames)),
+  V_K1(this->simu_params.n_threads, mipp::vector<B>(this->chain_params.dec->K     * this->chain_params.dec->n_frames)),
+  V_K2(this->simu_params.n_threads, mipp::vector<B>(this->chain_params.src. K     * this->chain_params.src .n_frames))
 {
 	if (this->simu_params.n_threads > 1 && this->simu_params.debug)
 		std::clog << format_warning("Debug mode will be disabled because you launched the simulation with more than"
@@ -80,7 +80,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 	if (this->chain_params.mnt.err_track_enable)
 	{
 		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
-		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->simu_params.K});
+		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->chain_params.enc->K});
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 		if (this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
@@ -594,8 +594,8 @@ Terminal_BFER<B>* Simulation_BFER_ite_threads<B,R,Q>
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
 
-	return new Terminal_BFER<B>(this->simu_params.K_info,
-	                            this->simu_params.N_code,
+	return new Terminal_BFER<B>(this->chain_params.src.K,
+	                            this->chain_params.dec->N_cw,
 	                            *this->monitor_red,
 	                            &d_dec);
 #endif

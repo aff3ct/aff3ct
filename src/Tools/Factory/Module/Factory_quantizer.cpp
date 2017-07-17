@@ -78,7 +78,6 @@ void Factory_quantizer
 void Factory_quantizer
 ::header(params_list& head_gnt, const parameters& params)
 {
-	// ----------------------------------------------------------------------------------------------------- quantizer
 	std::string quantif = "unused";
 	if (params.type == "TRICKY")
 		quantif = "{"+std::to_string(params.n_bits)+", "+std::to_string(params.range)+"f}";

@@ -20,14 +20,10 @@ struct Factory_simulation_main : public Factory
 {
 	struct parameters
 	{
-		// ---- simulation
-		std::string sim_type = "BFER";
-		int         sim_prec = 32;
-
-		// ---- code
 		std::string cde_type;
 
-		// ---- others
+		std::string sim_type        = "BFER";
+		int         sim_prec        = 32;
 		bool        display_help    = false;
 		bool        display_version = false;
 	};
@@ -41,7 +37,7 @@ struct Factory_simulation_main : public Factory
 	static void store_args(const Arguments_reader& ar, parameters& params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_sim, params_list& head_cde, const parameters& params);
+	static void header(params_list& head_sim, const parameters& params);
 };
 
 } /* namespace tools */

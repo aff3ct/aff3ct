@@ -20,7 +20,6 @@ struct Factory_encoder_RSC : public Factory_encoder
 		bool             buffered    = true;
 		std::string      standard    = "LTE";
 		std::vector<int> poly        = {013, 015};
-		int              tail_length = 2 * 3;
 	};
 
 	template <typename B = int>

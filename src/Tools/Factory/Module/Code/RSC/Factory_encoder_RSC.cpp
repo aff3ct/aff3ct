@@ -82,6 +82,9 @@ void Factory_encoder_RSC
 {
 	Factory_encoder::header(head_enc, params);
 
+	if (params.tail_length)
+		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
+
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 
 	if (!params.standard.empty())

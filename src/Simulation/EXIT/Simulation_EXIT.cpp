@@ -25,27 +25,27 @@ Simulation_EXIT<B,R>
   params(params),
   codec (codec),
 
-  H_N   (params.sim->N),
-  B_K   (params.sim->K),
-  B_N   (params.sim->N),
-  X_N1  (params.sim->N),
-  X_K   (params.sim->K),
-  X_N2  (params.sim->N),
-  Y_N   (params.sim->N),
-  Y_K   (params.sim->K),
-  La_K1 (params.sim->K),
-  Lch_N1(params.sim->N),
-  La_K2 (params.sim->K),
-  Lch_N2(params.sim->N),
-  Le_K  (params.sim->K),
-  sys   (params.sim->K                   +  params.sim->tail_length / 2),
-  par   ((params.sim->N - params.sim->K) - (params.sim->tail_length / 2)),
+  H_N   (params.dec->N_cw),
+  B_K   (params.dec->K   ),
+  B_N   (params.dec->N_cw),
+  X_N1  (params.dec->N_cw),
+  X_K   (params.dec->K   ),
+  X_N2  (params.dec->N_cw),
+  Y_N   (params.dec->N_cw),
+  Y_K   (params.dec->K   ),
+  La_K1 (params.dec->K   ),
+  Lch_N1(params.dec->N_cw),
+  La_K2 (params.dec->K   ),
+  Lch_N2(params.dec->N_cw),
+  Le_K  (params.dec->K   ),
+  sys   (params.dec->K                      +  params.dec->tail_length / 2),
+  par   ((params.dec->N_cw - params.dec->K) - (params.dec->tail_length / 2)),
 
   B_buff (0),
   Le_buff(0),
   La_buff(0),
 
-  n_trials (200000 / params.sim->K),
+  n_trials (200000 / params.dec->K),
   cur_trial(0),
 
   I_A      (0.0),
@@ -84,7 +84,7 @@ void Simulation_EXIT<B,R>
 
 	const auto N_mod = params.mdm.N_mod;
 	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.mdm.type,
-	                                                                   params.sim->K,
+	                                                                   params.enc->K,
 	                                                                   params.mdm.bps,
 	                                                                   params.mdm.upf,
 	                                                                   params.mdm.cpm_L);
@@ -209,7 +209,7 @@ void Simulation_EXIT<B,R>
 		codec.extract_sys_par(Lch_N2, sys, par);
 
 		// add other siso's extrinsic
-		for (auto k = 0; k < params.sim->K; k++)
+		for (auto k = 0; k < params.enc->K; k++)
 			sys[k] += La_K2[k];
 
 		// decode
@@ -229,7 +229,7 @@ void Simulation_EXIT<B,R>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.sim->K * n_trials);
+	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.enc->K * n_trials);
 	I_E = Simulation_EXIT<B,R>::measure_mutual_info_histo(Le_buff, B_buff);
 }
 
@@ -485,7 +485,7 @@ template <typename B, typename R>
 Terminal_EXIT<B,R>* Simulation_EXIT<B,R>
 ::build_terminal()
 {
-	return new Terminal_EXIT<B,R>(params.sim->N, snr, sig_a, cur_trial, n_trials, I_A, I_E);
+	return new Terminal_EXIT<B,R>(params.enc->N_cw, snr, sig_a, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation

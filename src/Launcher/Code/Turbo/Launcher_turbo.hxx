@@ -55,24 +55,9 @@ void Launcher_turbo<C,B,R,Q,QD>
 {
 	C::store_args();
 
-	m_enc->K        = this->m_chain_params->sim->K;
-	m_enc->N_cw     = this->m_chain_params->sim->N;
-	m_enc->n_frames = this->m_chain_params->sim->inter_frame_level;
-
-	tools::Factory_encoder_turbo::store_args(this->ar, *m_enc);
-
-	m_pct->K = this->m_chain_params->sim->K;
-	m_pct->N = this->m_chain_params->sim->N;
-	m_pct->n_frames = this->m_chain_params->sim->inter_frame_level;
-
+	tools::Factory_encoder_turbo  ::store_args(this->ar, *m_enc);
 	tools::Factory_puncturer_turbo::store_args(this->ar, *m_pct);
-
-	m_dec->K    = this->m_chain_params->sim->K;
-	m_dec->N_cw = this->m_chain_params->sim->N;
-	m_dec->n_frames = this->m_chain_params->sim->inter_frame_level;
-
 	tools::Factory_decoder_turbo  ::store_args(this->ar, *m_dec);
-
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>

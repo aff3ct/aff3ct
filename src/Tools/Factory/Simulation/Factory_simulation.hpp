@@ -36,21 +36,13 @@ struct Factory_simulation : Factory_simulation_main
 		int                       n_threads         = 1;
 		int                       inter_frame_level = 1;
 		int                       seed              = 0;
-
-		// ---- code
-		int         K;
-		int         K_info;
-		int         N;
-		int         N_code;
-		float       R;
-		float       tail_length = 0;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);
 	static void store_args(const Arguments_reader& ar, parameters &params);
 	static void group_args(Arguments_reader::arg_grp& ar);
 
-	static void header(params_list& head_sim, params_list& head_cde, const parameters& params);
+	static void header(params_list& head_sim, const parameters& params);
 };
 }
 }

@@ -17,14 +17,15 @@ struct Factory_decoder : Factory
 	{
 		virtual ~parameters() {}
 
-		int         K          = -1;
-		int         N_cw       = -1;
+		int         K           = -1;
+		int         N_cw        = -1;
 
-		std::string type       = "";
-		std::string implem     = "";
-		float       R          = -1.f;
-		bool        systematic = true;
-		int         n_frames   = 1;
+		std::string type        = "";
+		std::string implem      = "";
+		float       R           = -1.f;
+		bool        systematic  = true;
+		int         n_frames    = 1;
+		int         tail_length = 0;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

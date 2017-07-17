@@ -23,8 +23,11 @@ struct Factory_decoder_RSC : public Factory_decoder
 	{
 		virtual ~parameters() {}
 
-		std::string max           = "MAXS";
-		std::string simd_strategy = "";
+		std::string      max           = "MAXS";
+		std::string      simd_strategy = "";
+		std::string      standard      = "LTE";
+		bool             buffered      = true;
+		std::vector<int> poly          = {013, 015};
 	};
 
 	template <typename B = int, typename Q = float, typename QD = Q>
