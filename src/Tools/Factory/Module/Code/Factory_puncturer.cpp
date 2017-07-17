@@ -39,12 +39,13 @@ void Factory_puncturer
 void Factory_puncturer
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K = ar.get_arg_int({"pct-info-bits", "K"});
-	params.N = ar.get_arg_int({"pct-fra-size", "N"});
+	if(ar.exist_arg({"pct-info-bits", "K"})) params.K        = ar.get_arg_int({"pct-info-bits", "K"});
+	if(ar.exist_arg({"pct-fra-size",  "N"})) params.N        = ar.get_arg_int({"pct-fra-size",  "N"});
+	if(ar.exist_arg({"pct-fra",       "F"})) params.n_frames = ar.get_arg_int({"pct-fra",       "F"});
+	if(ar.exist_arg({"pct-type"          })) params.type     = ar.get_arg    ({"pct-type"          });
+
 	params.N_cw = params.N;
 	params.R = (float)params.K / (float)params.N;
-	if(ar.exist_arg({"pct-fra", "F"})) params.n_frames = ar.get_arg_int({"pct-fra", "F"});
-	if(ar.exist_arg({"pct-type"})) params.type = ar.get_arg({"pct-type"});
 }
 
 void Factory_puncturer

@@ -58,18 +58,15 @@ void Factory_encoder
 void Factory_encoder
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K = ar.get_arg_int({"enc-info-bits", "K"});
-	params.N_cw = ar.get_arg_int({"enc-cw-size", "N"});
-	params.R = (float)params.K / (float)params.N_cw;
-	if(ar.exist_arg({"enc-fra", "F"})) params.n_frames = ar.get_arg_int({"enc-fra", "F"});
-	if(ar.exist_arg({"enc-type"})) params.type = ar.get_arg({"enc-type"});
-	if(ar.exist_arg({"enc-path"})) params.path = ar.get_arg({"enc-path"});
-	if(ar.exist_arg({"enc-no-sys"})) params.systematic = false;
-	if(ar.exist_arg({"enc-coset", "c"})) params.coset = true;
-	if(ar.exist_arg({"enc-seed", "S"})) params.seed = ar.get_arg_int({"enc-seed", "S"});
+	if(ar.exist_arg({"enc-info-bits", "K"})) params.K          = ar.get_arg_int({"enc-info-bits", "K"});
+	if(ar.exist_arg({"enc-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({"enc-cw-size",   "N"});
+	if(ar.exist_arg({"enc-fra",       "F"})) params.n_frames   = ar.get_arg_int({"enc-fra",       "F"});
+	if(ar.exist_arg({"enc-seed",      "S"})) params.seed       = ar.get_arg_int({"enc-seed",      "S"});
+	if(ar.exist_arg({"enc-type"          })) params.type       = ar.get_arg    ({"enc-type"          });
+	if(ar.exist_arg({"enc-path"          })) params.path       = ar.get_arg    ({"enc-path"          });
+	if(ar.exist_arg({"enc-no-sys"        })) params.systematic = false;
 
-	if (params.type == "COSET")
-		params.coset = true;
+	params.R = (float)params.K / (float)params.N_cw;
 }
 
 void Factory_encoder

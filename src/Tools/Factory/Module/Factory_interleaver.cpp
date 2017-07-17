@@ -66,23 +66,13 @@ void Factory_interleaver
 void Factory_interleaver
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.size = ar.get_arg_int({"itl-size", "N"});
-	if(ar.exist_arg({"itl-fra", "F"})) params.n_frames = ar.get_arg_int({"itl-fra", "F"});
-	if(ar.exist_arg({"itl-type"})) params.type = ar.get_arg({"itl-type"});
-	if(ar.exist_arg({"itl-path"})) params.path = ar.get_arg({"itl-path"});
-	if(ar.exist_arg({"itl-cols"})) params.n_cols = ar.get_arg_int({"itl-cols"});
-	if(ar.exist_arg({"itl-seed", "S"})) params.seed = ar.get_arg_int({"itl-seed", "S"});
-	if(ar.exist_arg({"itl-uni" })) params.uniform = true;
-
-//	if(params.monitor.err_track_revert)
-//	{
-//		params.monitor.err_track_enable = false;
-//		if (params.interleaver.uniform)
-//		{
-//			params.interleaver.type = "USER";
-//			params.interleaver.path = params.monitor.err_track_path + std::string("_$snr.itl");
-//		}
-//	}
+	if(ar.exist_arg({"itl-size", "N"})) params.size     = ar.get_arg_int({"itl-size", "N"});
+	if(ar.exist_arg({"itl-fra",  "F"})) params.n_frames = ar.get_arg_int({"itl-fra",  "F"});
+	if(ar.exist_arg({"itl-type"     })) params.type     = ar.get_arg    ({"itl-type"     });
+	if(ar.exist_arg({"itl-path"     })) params.path     = ar.get_arg    ({"itl-path"     });
+	if(ar.exist_arg({"itl-cols"     })) params.n_cols   = ar.get_arg_int({"itl-cols"     });
+	if(ar.exist_arg({"itl-seed", "S"})) params.seed     = ar.get_arg_int({"itl-seed", "S"});
+	if(ar.exist_arg({"itl-uni"      })) params.uniform  = true;
 }
 
 void Factory_interleaver

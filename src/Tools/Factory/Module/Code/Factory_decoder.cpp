@@ -28,13 +28,14 @@ void Factory_decoder::build_args(Arguments_reader::arg_map &req_args, Arguments_
 
 void Factory_decoder::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K = ar.get_arg_int({"dec-info-bits", "K"});
-	params.N_cw = ar.get_arg_int({"dec-cw-size", "N"});
+	if(ar.exist_arg({"dec-info-bits", "K"})) params.K          = ar.get_arg_int({"dec-info-bits", "K"});
+	if(ar.exist_arg({"dec-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({"dec-cw-size",   "N"});
+	if(ar.exist_arg({"dec-fra",       "F"})) params.n_frames   = ar.get_arg_int({"dec-fra",       "F"});
+	if(ar.exist_arg({"dec-type",      "D"})) params.type       = ar.get_arg    ({"dec-type",      "D"});
+	if(ar.exist_arg({"dec-implem"        })) params.implem     = ar.get_arg    ({"dec-implem"        });
+	if(ar.exist_arg({"enc-no-sys"        })) params.systematic = false;
+
 	params.R = (float)params.K / (float)params.N_cw;
-	if(ar.exist_arg({"dec-fra", "F"})) params.n_frames = ar.get_arg_int({"dec-fra", "F"});
-	if(ar.exist_arg({"dec-type", "D"})) params.type = ar.get_arg({"dec-type", "D"});
-	if(ar.exist_arg({"dec-implem"})) params.implem = ar.get_arg({"dec-implem"});
-	if(ar.exist_arg({"enc-no-sys"})) params.systematic = false;
 }
 
 void Factory_decoder::group_args(Arguments_reader::arg_grp& ar)

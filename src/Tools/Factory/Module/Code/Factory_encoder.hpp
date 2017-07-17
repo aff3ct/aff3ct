@@ -26,7 +26,6 @@ struct Factory_encoder : public Factory
 		std::string path        = "";
 		float       R           = -1.f;
 		bool        systematic  = true;
-		bool        coset       = false;
 		int         n_frames    = 1;
 		int         seed        = 0;
 		int         tail_length = 0;

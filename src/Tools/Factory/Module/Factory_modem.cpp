@@ -184,15 +184,22 @@ void Factory_modem
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
-	params.N = ar.get_arg_int({"mod-fra-size", "N"});
-	if(ar.exist_arg({"mod-fra", "F"})) params.n_frames = ar.get_arg_int({"mod-fra", "F"});
-	if(ar.exist_arg({"mod-type"})) params.type = ar.get_arg({"mod-type"});
+	if(ar.exist_arg({"mod-fra-size", "N"})) params.N          = ar.get_arg_int({"mod-fra-size", "N"});
+	if(ar.exist_arg({"mod-fra",      "F"})) params.n_frames   = ar.get_arg_int({"mod-fra",      "F"});
+	if(ar.exist_arg({"mod-type"         })) params.type       = ar.get_arg    ({"mod-type"         });
+	if(ar.exist_arg({"mod-cpm-std"      })) params.cpm_std    = ar.get_arg    ({"mod-cpm-std"      });
+	if(ar.exist_arg({"mod-bps"          })) params.bps        = ar.get_arg_int({"mod-bps"          });
+	if(ar.exist_arg({"mod-ups"          })) params.upf        = ar.get_arg_int({"mod-ups"          });
+	if(ar.exist_arg({"mod-const-path"   })) params.const_path = ar.get_arg    ({"mod-const-path"   });
+	if(ar.exist_arg({"mod-cpm-L"        })) params.cpm_L      = ar.get_arg_int({"mod-cpm-L"        });
+	if(ar.exist_arg({"mod-cpm-p"        })) params.cpm_p      = ar.get_arg_int({"mod-cpm-p"        });
+	if(ar.exist_arg({"mod-cpm-k"        })) params.cpm_k      = ar.get_arg_int({"mod-cpm-k"        });
+	if(ar.exist_arg({"mod-cpm-map"      })) params.mapping    = ar.get_arg    ({"mod-cpm-map"      });
+	if(ar.exist_arg({"mod-cpm-ws"       })) params.wave_shape = ar.get_arg    ({"mod-cpm-ws"       });
 
 	if (params.type.find("BPSK") != std::string::npos || params.type == "PAM")
 		params.complex = false;
 
-
-	if(ar.exist_arg({"mod-cpm-std"})) params.cpm_std = ar.get_arg({"mod-cpm-std"});
 	if (params.type == "CPM")
 	{
 		if (!params.cpm_std.empty())
@@ -216,16 +223,6 @@ void Factory_modem
 		}
 	}
 
-	if(ar.exist_arg({"mod-bps"})) params.bps = ar.get_arg_int({"mod-bps"});
-	if(ar.exist_arg({"mod-ups"})) params.upf = ar.get_arg_int({"mod-ups"});
-	if(ar.exist_arg({"mod-const-path"})) params.const_path = ar.get_arg({"mod-const-path"});
-
-	if(ar.exist_arg({"mod-cpm-L"})) params.cpm_L = ar.get_arg_int({"mod-cpm-L"});
-	if(ar.exist_arg({"mod-cpm-p"})) params.cpm_p = ar.get_arg_int({"mod-cpm-p"});
-	if(ar.exist_arg({"mod-cpm-k"})) params.cpm_k = ar.get_arg_int({"mod-cpm-k"});
-	if(ar.exist_arg({"mod-cpm-map"})) params.mapping = ar.get_arg({"mod-cpm-map"});
-	if(ar.exist_arg({"mod-cpm-ws"})) params.wave_shape = ar.get_arg({"mod-cpm-ws"});
-
 	// force the number of bits per symbol to 1 when BPSK mod
 	if (params.type == "BPSK" || params.type == "BPSK_FAST")
 		params.bps = 1;
@@ -247,10 +244,10 @@ void Factory_modem
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(ar.exist_arg({"dmod-no-sig2"})) params.no_sig2 = true;
-	if(ar.exist_arg({"dmod-sigma"})) params.sigma = ar.get_arg_float({"dmod-sigma"});
-	if(ar.exist_arg({"dmod-ite"})) params.n_ite = ar.get_arg_int({"dmod-ite"});
-	if(ar.exist_arg({"dmod-max"})) params.max = ar.get_arg({"dmod-max"});
-	if(ar.exist_arg({"dmod-psi"})) params.psi = ar.get_arg({"dmod-psi"});
+	if(ar.exist_arg({"dmod-sigma"  })) params.sigma   = ar.get_arg_float({"dmod-sigma"});
+	if(ar.exist_arg({"dmod-ite"    })) params.n_ite   = ar.get_arg_int  ({"dmod-ite"  });
+	if(ar.exist_arg({"dmod-max"    })) params.max     = ar.get_arg      ({"dmod-max"  });
+	if(ar.exist_arg({"dmod-psi"    })) params.psi     = ar.get_arg      ({"dmod-psi"  });
 }
 
 void Factory_modem

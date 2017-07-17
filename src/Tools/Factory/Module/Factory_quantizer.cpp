@@ -60,13 +60,13 @@ void Factory_quantizer
 void Factory_quantizer
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.size = ar.get_arg_int({"qnt-size", "N"});
-	if(ar.exist_arg({"qnt-fra", "F"})) params.n_frames = ar.get_arg_int({"qnt-fra", "F"});
-	if(ar.exist_arg({"qnt-type"})) params.type = ar.get_arg({"qnt-type"});
-	if(ar.exist_arg({"qnt-dec"})) params.n_decimals = ar.get_arg_int({"qnt-dec"});
-	if(ar.exist_arg({"qnt-bits"})) params.n_bits = ar.get_arg_int({"qnt-bits"});
-	if(ar.exist_arg({"qnt-range"})) params.range = ar.get_arg_float({"qnt-range"});
-	if(ar.exist_arg({"qnt-sigma"})) params.sigma = ar.get_arg_float({"qnt-sigma"});
+	if(ar.exist_arg({"qnt-size", "N"})) params.size       = ar.get_arg_int  ({"qnt-size", "N"});
+	if(ar.exist_arg({"qnt-fra",  "F"})) params.n_frames   = ar.get_arg_int  ({"qnt-fra",  "F"});
+	if(ar.exist_arg({"qnt-type"     })) params.type       = ar.get_arg      ({"qnt-type"     });
+	if(ar.exist_arg({"qnt-dec"      })) params.n_decimals = ar.get_arg_int  ({"qnt-dec"      });
+	if(ar.exist_arg({"qnt-bits"     })) params.n_bits     = ar.get_arg_int  ({"qnt-bits"     });
+	if(ar.exist_arg({"qnt-range"    })) params.range      = ar.get_arg_float({"qnt-range"    });
+	if(ar.exist_arg({"qnt-sigma"    })) params.sigma      = ar.get_arg_float({"qnt-sigma"    });
 }
 
 void Factory_quantizer

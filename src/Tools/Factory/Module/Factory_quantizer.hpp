@@ -21,10 +21,10 @@ struct Factory_quantizer : public Factory
 
 		std::string type       = "STD";
 		float       range      = 0.f;
+		float       sigma      = -1.f;
 		int         n_bits     = 8;
 		int         n_decimals = 3;
 		int         n_frames   = 1;
-		float       sigma      = -1.f;
 	};
 
 	template <typename R = float, typename Q = R>

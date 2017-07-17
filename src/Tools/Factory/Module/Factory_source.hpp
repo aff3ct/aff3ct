@@ -20,7 +20,6 @@ struct Factory_source : public Factory
 
 		std::string type     = "RAND";
 		std::string path     = "";
-		bool        azcw     = false;
 		int         n_frames = 1;
 		int         seed     = 0;
 	};

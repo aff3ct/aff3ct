@@ -56,16 +56,16 @@ void Factory_flip_and_check
 void Factory_flip_and_check
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	if(ar.exist_arg({"dec-fnc"})) params.enable = true;
-	if(ar.exist_arg({"dec-fnc-size"})) params.size = ar.get_arg_int({"dec-fnc-size"});
-	if(ar.exist_arg({"dec-fnc-q"})) params.q = ar.get_arg_int({"dec-fnc-q"});
-	if(ar.exist_arg({"dec-fnc-ite-s"})) params.ite_step = ar.get_arg_int({"dec-fnc-ite-s"});
-	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
-	if(ar.exist_arg({"dec-fnc-ite-m"})) params.ite_min = ar.get_arg_int({"dec-fnc-ite-m"});
-	if(ar.exist_arg({"dec-fnc-ite-M"})) params.ite_max = ar.get_arg_int({"dec-fnc-ite-M"});
-	else                                params.ite_max = params.n_ite;
-	if(ar.exist_arg({"dec-crc-ite"})) params.start_crc_check_ite = ar.get_arg_int({"dec-crc-ite"});
-	if(ar.exist_arg({"dec-fra", "F"})) params.n_frames = ar.get_arg_int({"dec-fra", "F"});
+	if(ar.exist_arg({"dec-fnc"      })) params.enable              = true;
+	if(ar.exist_arg({"dec-fnc-size" })) params.size                = ar.get_arg_int({"dec-fnc-size" });
+	if(ar.exist_arg({"dec-fnc-q"    })) params.q                   = ar.get_arg_int({"dec-fnc-q"    });
+	if(ar.exist_arg({"dec-fnc-ite-s"})) params.ite_step            = ar.get_arg_int({"dec-fnc-ite-s"});
+	if(ar.exist_arg({"dec-ite",  "i"})) params.n_ite               = ar.get_arg_int({"dec-ite",  "i"});
+	if(ar.exist_arg({"dec-fnc-ite-m"})) params.ite_min             = ar.get_arg_int({"dec-fnc-ite-m"});
+	if(ar.exist_arg({"dec-fnc-ite-M"})) params.ite_max             = ar.get_arg_int({"dec-fnc-ite-M"});
+	else                                params.ite_max             = params.n_ite;
+	if(ar.exist_arg({"dec-crc-ite"  })) params.start_crc_check_ite = ar.get_arg_int({"dec-crc-ite"  });
+	if(ar.exist_arg({"dec-fra",  "F"})) params.n_frames            = ar.get_arg_int({"dec-fra", "F" });
 }
 
 void Factory_flip_and_check

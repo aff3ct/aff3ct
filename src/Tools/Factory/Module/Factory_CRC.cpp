@@ -54,25 +54,18 @@ void Factory_CRC
 void Factory_CRC
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K = ar.get_arg_int({"src-info-bits", "K"});
-	if(ar.exist_arg({"src-fra", "F"})) params.n_frames = ar.get_arg_int({"src-fra", "F"});
-	if(ar.exist_arg({"crc-type"})) params.type = ar.get_arg    ({"crc-type"});
-	if(ar.exist_arg({"crc-poly"})) params.poly = ar.get_arg    ({"crc-poly"});
-	if(ar.exist_arg({"crc-size"})) params.size = ar.get_arg_int({"crc-size"});
-	if(ar.exist_arg({"crc-rate"})) params.inc_code_rate = true;
+	if(ar.exist_arg({"src-info-bits", "K"})) params.K             = ar.get_arg_int({"src-info-bits", "K"});
+	if(ar.exist_arg({"src-fra",       "F"})) params.n_frames      = ar.get_arg_int({"src-fra",       "F"});
+	if(ar.exist_arg({"crc-type"          })) params.type          = ar.get_arg    ({"crc-type"          });
+	if(ar.exist_arg({"crc-poly"          })) params.poly          = ar.get_arg    ({"crc-poly"          });
+	if(ar.exist_arg({"crc-size"          })) params.size          = ar.get_arg_int({"crc-size"          });
+	if(ar.exist_arg({"crc-rate"          })) params.inc_code_rate = true;
 
 	if (!params.poly.empty() && !params.size)
 		params.size = CRC_polynomial<>::size(params.poly);
 
 	if (params.poly.empty())
 		params.type = "NO";
-
-//	// update the code rate R and K_info
-//	auto real_K = K;
-//	if (!params.poly.empty() && !params.inc_code_rate)
-//		real_K -= params.size;
-//	params.R = real_K / (float)N;
-//	params.K = real_K;
 }
 
 void Factory_CRC

@@ -50,14 +50,11 @@ void Factory_source
 void Factory_source
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.K = ar.get_arg_int({"src-info-bits", "K"});
-	if(ar.exist_arg({"src-fra", "F"})) params.n_frames = ar.get_arg_int({"src-fra", "F"});
-	if(ar.exist_arg({"src-type"})) params.type = ar.get_arg({"src-type"});
-	if(ar.exist_arg({"src-path"})) params.path = ar.get_arg({"src-path"});
-	if(ar.exist_arg({"src-seed", "S"})) params.seed = ar.get_arg_int({"src-seed", "S"});
-
-	if (params.type == "AZCW")
-		params.azcw = true;
+	if(ar.exist_arg({"src-info-bits", "K"})) params.K        = ar.get_arg_int({"src-info-bits", "K"});
+	if(ar.exist_arg({"src-fra",       "F"})) params.n_frames = ar.get_arg_int({"src-fra",       "F"});
+	if(ar.exist_arg({"src-type"          })) params.type     = ar.get_arg    ({"src-type"          });
+	if(ar.exist_arg({"src-path"          })) params.path     = ar.get_arg    ({"src-path"          });
+	if(ar.exist_arg({"src-seed",      "S"})) params.seed     = ar.get_arg_int({"src-seed",      "S"});
 }
 
 void Factory_source

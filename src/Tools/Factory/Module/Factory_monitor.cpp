@@ -47,28 +47,15 @@ void Factory_monitor
 void Factory_monitor
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.size = ar.get_arg_int({"mnt-size", "K"});
-	if(ar.exist_arg({"mnt-fra", "F"})) params.n_frames = ar.get_arg_int({"mnt-fra", "F"});
-	if(ar.exist_arg({"mnt-max-fe", "e" })) params.n_frame_errors   = ar.get_arg_int({"mnt-max-fe", "e"});
-
+	if(ar.exist_arg({"mnt-size",    "K"})) params.size             = ar.get_arg_int({"mnt-size",    "K"});
+	if(ar.exist_arg({"mnt-fra",     "F"})) params.n_frames         = ar.get_arg_int({"mnt-fra",     "F"});
+	if(ar.exist_arg({"mnt-max-fe",  "e"})) params.n_frame_errors   = ar.get_arg_int({"mnt-max-fe",  "e"});
+	if(ar.exist_arg({"mnt-err-trk-path"})) params.err_track_path   = ar.get_arg    ({"mnt-err-trk-path"});
 	if(ar.exist_arg({"mnt-err-trk-rev" })) params.err_track_revert = true;
 	if(ar.exist_arg({"mnt-err-trk"     })) params.err_track_enable = true;
-	if(ar.exist_arg({"mnt-err-trk-path"})) params.err_track_path   = ar.get_arg({"mnt-err-trk-path"});
 
 	if(params.err_track_revert)
-	{
 		params.err_track_enable = false;
-//		params.source. type = "USER";
-//		params.encoder.type = "USER";
-//		params.channel.type = "USER";
-//		params.source. path = params.err_track_path + std::string("_$snr.src");
-//		params.encoder.path = params.err_track_path + std::string("_$snr.enc");
-//		params.channel.path = params.err_track_path + std::string("_$snr.chn");
-		// the paths are set in the Simulation class
-	}
-
-//	if (params.err_track_revert && !(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0))
-//		params.simulation.n_threads = 1;
 }
 
 void Factory_monitor

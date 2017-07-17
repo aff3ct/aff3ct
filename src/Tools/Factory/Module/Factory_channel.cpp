@@ -94,15 +94,15 @@ void Factory_channel
 void Factory_channel
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.N = ar.get_arg_int({"chn-fra-size", "N"});
-	if(ar.exist_arg({"chn-fra", "F"})) params.n_frames = ar.get_arg_int({"chn-fra", "F"});
-	if(ar.exist_arg({"chn-type"})) params.type = ar.get_arg({"chn-type"});
-	if(ar.exist_arg({"chn-path"})) params.path = ar.get_arg({"chn-path"});
-	if(ar.exist_arg({"chn-blk-fad"})) params.block_fading = ar.get_arg({"chn-blk-fad"});
-	if(ar.exist_arg({"chn-sigma"})) params.sigma = ar.get_arg_float({"chn-sigma"});
-	if(ar.exist_arg({"chn-seed", "S"})) params.seed = ar.get_arg_int({"chn-seed", "S"});
-	if(ar.exist_arg({"chn-add-users"})) params.add_users = true;
-	if(ar.exist_arg({"chn-complex"})) params.complex = true;
+	if(ar.exist_arg({"chn-fra-size", "N"})) params.N            = ar.get_arg_int  ({"chn-fra-size", "N"});
+	if(ar.exist_arg({"chn-fra",      "F"})) params.n_frames     = ar.get_arg_int  ({"chn-fra",      "F"});
+	if(ar.exist_arg({"chn-type"         })) params.type         = ar.get_arg      ({"chn-type"         });
+	if(ar.exist_arg({"chn-path"         })) params.path         = ar.get_arg      ({"chn-path"         });
+	if(ar.exist_arg({"chn-blk-fad"      })) params.block_fading = ar.get_arg      ({"chn-blk-fad"      });
+	if(ar.exist_arg({"chn-sigma"        })) params.sigma        = ar.get_arg_float({"chn-sigma"        });
+	if(ar.exist_arg({"chn-seed",     "S"})) params.seed         = ar.get_arg_int  ({"chn-seed",     "S"});
+	if(ar.exist_arg({"chn-add-users"    })) params.add_users    = true;
+	if(ar.exist_arg({"chn-complex"      })) params.complex      = true;
 }
 
 void Factory_channel
