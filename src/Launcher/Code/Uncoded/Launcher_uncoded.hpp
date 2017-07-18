@@ -9,15 +9,15 @@ namespace aff3ct
 namespace launcher
 {
 template <class C, typename B = int, typename R = float, typename Q = R>
-class Launcher_NO : public C
+class Launcher_uncoded : public C
 {
 protected:
 	tools::Factory_encoder   ::parameters *params_enc = nullptr;
 	tools::Factory_decoder_NO::parameters *params_dec = nullptr;
 
 public:
-	Launcher_NO(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_NO();
+	Launcher_uncoded(const int argc, const char **argv, std::ostream &stream = std::cout);
+	virtual ~Launcher_uncoded();
 
 protected:
 	virtual void build_args();

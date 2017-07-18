@@ -241,9 +241,9 @@ void start_simu(const int argc, const char **argv, std::string code_type, std::s
 		if (code_type == "UNCODED")
 		{
 			if (simu_type == "BFER")
-				launcher = new Launcher_NO<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+				launcher = new Launcher_uncoded<Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 			else if (simu_type == "BFERI")
-				launcher = new Launcher_NO<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+				launcher = new Launcher_uncoded<Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 		}
 
 		if (launcher == nullptr)

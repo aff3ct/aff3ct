@@ -9,8 +9,8 @@ namespace aff3ct
 namespace launcher
 {
 template <class C, typename B, typename R, typename Q>
-Launcher_NO<C,B,R,Q>
-::Launcher_NO(const int argc, const char **argv, std::ostream &stream)
+Launcher_uncoded<C,B,R,Q>
+::Launcher_uncoded(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
 	params_enc = new tools::Factory_encoder   ::parameters();
@@ -21,13 +21,13 @@ Launcher_NO<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-Launcher_NO<C,B,R,Q>
-::~Launcher_NO()
+Launcher_uncoded<C,B,R,Q>
+::~Launcher_uncoded()
 {
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_NO<C,B,R,Q>
+void Launcher_uncoded<C,B,R,Q>
 ::build_args()
 {
 	tools::Factory_encoder   ::build_args(this->req_args, this->opt_args);
@@ -37,7 +37,7 @@ void Launcher_NO<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_NO<C,B,R,Q>
+void Launcher_uncoded<C,B,R,Q>
 ::store_args()
 {
 	tools::Factory_encoder   ::store_args(this->ar, *params_enc);
@@ -47,7 +47,7 @@ void Launcher_NO<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_NO<C,B,R,Q>
+void Launcher_uncoded<C,B,R,Q>
 ::group_args()
 {
 	tools::Factory_encoder   ::group_args(this->arg_group);
@@ -57,7 +57,7 @@ void Launcher_NO<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_NO<C,B,R,Q>
+void Launcher_uncoded<C,B,R,Q>
 ::print_header()
 {
 	tools::Factory_encoder   ::header(this->pl_enc, *params_enc);
@@ -67,7 +67,7 @@ void Launcher_NO<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_NO<C,B,R,Q>
+void Launcher_uncoded<C,B,R,Q>
 ::build_codec()
 {
 	this->codec = new tools::Codec_uncoded<B,Q>(*params_enc, *params_dec);
