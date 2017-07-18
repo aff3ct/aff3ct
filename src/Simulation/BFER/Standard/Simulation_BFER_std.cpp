@@ -142,7 +142,7 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 		pct.K        = chain_params.enc->K;
 		pct.N        = chain_params.enc->N_cw;
 		pct.N_cw     = chain_params.enc->N_cw;
-		pct.n_frames = simu_params.inter_frame_level;
+		pct.n_frames = chain_params.src.n_frames;
 
 		return Factory_puncturer::build<B,Q>(pct);
 	}
@@ -199,7 +199,7 @@ template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real::build<B,Q>("STD", chain_params.dec->N_cw, simu_params.inter_frame_level);
+	return Factory_coset_real::build<B,Q>("STD", chain_params.dec->N_cw, chain_params.src.n_frames);
 }
 
 template <typename B, typename R, typename Q>
@@ -213,7 +213,7 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return Factory_coset_bit::build<B>("STD", chain_params.dec->K, simu_params.inter_frame_level);
+	return Factory_coset_bit::build<B>("STD", chain_params.dec->K, chain_params.src.n_frames);
 }
 
 // ==================================================================================== explicit template instantiation

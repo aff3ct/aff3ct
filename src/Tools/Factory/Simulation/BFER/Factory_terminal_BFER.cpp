@@ -7,18 +7,16 @@ void Factory_terminal_BFER::build_args(Arguments_reader::arg_map &req_args, Argu
 {
 	Factory_terminal::build_args(req_args, opt_args);
 
-	// ------------------------------------------------------------------------------------------------------ terminal
 	opt_args[{"term-type"}] =
 		{"string",
 		 "select the terminal type you want.",
-		 "STD, LEGACY"};
+		 "STD"};
 }
 
 void Factory_terminal_BFER::store_args(const Arguments_reader& ar, parameters &params)
 {
 	Factory_terminal::store_args(ar, params);
 
-	// ------------------------------------------------------------------------------------------------------ terminal
 	if(ar.exist_arg({"term-type"})) params.type = ar.get_arg({"term-type"});
 }
 

@@ -61,6 +61,7 @@ void Factory_puncturer
 	head_pct.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 	head_pct.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
 	head_pct.push_back(std::make_pair("Codeword size", std::to_string(params.N_cw)));
+	head_pct.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
 	head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 

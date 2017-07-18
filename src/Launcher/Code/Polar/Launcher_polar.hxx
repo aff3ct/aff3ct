@@ -20,9 +20,6 @@ Launcher_polar<C,B,R,Q>
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->pct = m_pct;
 	this->m_chain_params->dec = m_dec;
-
-//	this->params.quantizer .n_bits        = 6;
-//	this->params.quantizer .n_decimals    = 1;
 }
 
 template <class C, typename B, typename R, typename Q>
@@ -58,36 +55,61 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::build_args()
 {
-	C::build_args();
-
 	tools::Factory_frozenbits_generator::build_args(this->req_args, this->opt_args);
 	tools::Factory_encoder_polar       ::build_args(this->req_args, this->opt_args);
 	tools::Factory_puncturer_polar     ::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_polar       ::build_args(this->req_args, this->opt_args);
+
+	this->opt_args.erase({"pct-fra",       "F"});
+	this->req_args.erase({"enc-cw-size",   "N"});
+	this->req_args.erase({"enc-info-bits", "K"});
+	this->req_args.erase({"enc-info-bits", "K"});
+	this->opt_args.erase({"enc-fra",       "F"});
+	this->opt_args.erase({"enc-fb-sigma"      });
+	this->opt_args.erase({"enc-seed",      "S"});
+	this->req_args.erase({"dec-cw-size",   "N"});
+	this->req_args.erase({"dec-info-bits", "K"});
+	this->opt_args.erase({"dec-fra",       "F"});
+	this->opt_args.erase({"dec-no-sys"        });
+
+	C::build_args();
 }
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::store_args()
 {
-	C::store_args();
+	tools::Factory_puncturer_polar::store_args(this->ar, *m_pct);
+
+	m_fb->K    = m_pct->K;
+	m_fb->N_cw = m_pct->N_cw;
 
 	tools::Factory_frozenbits_generator::store_args(this->ar, *m_fb);
-	tools::Factory_encoder_polar       ::store_args(this->ar, *m_enc);
-	tools::Factory_decoder_polar       ::store_args(this->ar, *m_dec);
-	tools::Factory_puncturer_polar     ::store_args(this->ar, *m_pct);
+
+	m_enc->K    = m_pct->K;
+	m_enc->N_cw = m_pct->N_cw;
+
+	tools::Factory_encoder_polar::store_args(this->ar, *m_enc);
+
+	m_dec->K          = m_pct->K;
+	m_dec->N_cw       = m_pct->N_cw;
+	m_dec->systematic = m_enc->systematic;
+
+	tools::Factory_decoder_polar::store_args(this->ar, *m_dec);
+
+	C::store_args();
 }
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::group_args()
 {
-	C::group_args();
-
 	tools::Factory_frozenbits_generator::group_args(this->arg_group);
 	tools::Factory_puncturer_polar     ::group_args(this->arg_group);
 	tools::Factory_encoder_polar       ::group_args(this->arg_group);
 	tools::Factory_decoder_polar       ::group_args(this->arg_group);
+
+	C::group_args();
 }
 
 template <class C, typename B, typename R, typename Q>

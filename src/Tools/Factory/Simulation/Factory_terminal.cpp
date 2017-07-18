@@ -5,7 +5,6 @@ using namespace tools;
 
 void Factory_terminal::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	// ------------------------------------------------------------------------------------------------------ terminal
 	opt_args[{"term-no"}] =
 		{"",
 		 "disable reporting for each iteration."};
@@ -17,7 +16,6 @@ void Factory_terminal::build_args(Arguments_reader::arg_map &req_args, Arguments
 
 void Factory_terminal::store_args(const Arguments_reader& ar, parameters &params)
 {
-	// ------------------------------------------------------------------------------------------------------ terminal
 	if(ar.exist_arg({"term-no"  })) params.disabled  = true;
 	if(ar.exist_arg({"term-freq"})) params.frequency = std::chrono::milliseconds(ar.get_arg_int({"term-freq"}));
 }

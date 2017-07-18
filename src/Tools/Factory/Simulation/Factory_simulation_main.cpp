@@ -40,16 +40,14 @@ void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Ar
 
 void Factory_simulation_main::store_args(const Arguments_reader& ar, parameters &params)
 {
-	params.cde_type = ar.get_arg({"sim-cde-type"}); // required
-
-	if(ar.exist_arg({"sim-type"})) params.sim_type = ar.get_arg({"sim-type"});
+	if(ar.exist_arg({"sim-cde-type"})) params.cde_type        = ar.get_arg({"sim-cde-type"}); // required
+	if(ar.exist_arg({"sim-type"    })) params.sim_type        = ar.get_arg({"sim-type"    });
+	if(ar.exist_arg({"help",    "h"})) params.display_help    = true;
+	if(ar.exist_arg({"version", "v"})) params.display_version = true;
 
 #ifdef MULTI_PREC
 	if(ar.exist_arg({"sim-prec", "p"})) params.sim_prec = ar.get_arg_int({"sim-prec", "p"});
 #endif
-
-	if(ar.exist_arg({"help",    "h"})) params.display_help    = true;
-	if(ar.exist_arg({"version", "v"})) params.display_version = true;
 }
 
 void Factory_simulation_main::group_args(Arguments_reader::arg_grp& ar)

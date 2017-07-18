@@ -46,10 +46,6 @@ void Factory_encoder
 		{"string",
 		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
 
-	opt_args[{"enc-coset", "c"}] =
-		{"",
-		 "enable the coset approach."};
-
 	opt_args[{"enc-seed", "S"}] =
 		{"positive_int",
 		 "seed used to initialize the pseudo random generators."};
@@ -81,6 +77,7 @@ void Factory_encoder
 	head_enc.push_back(std::make_pair("Type", params.type));
 	head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 	head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
+	head_enc.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
 	head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	head_enc.push_back(std::make_pair("Systematic", ((params.systematic) ? "on" : "off")));
 	if (params.type == "USER")

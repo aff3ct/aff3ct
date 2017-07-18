@@ -44,25 +44,15 @@ void Launcher_EXIT<B,R>
 ::store_args()
 {
 	Launcher::store_args();
+
 	Factory_simulation_EXIT::store_args(this->ar, *m_sim);
+	Factory_source         ::store_args(this->ar, m_chain_params->src);
+	Factory_modem          ::store_args(this->ar, m_chain_params->mdm);
+	Factory_channel        ::store_args(this->ar, m_chain_params->chn);
+	Factory_terminal_EXIT  ::store_args(this->ar, m_chain_params->ter);
 
-	m_chain_params->src.seed     = m_chain_params->sim->seed;
-	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
-
-	Factory_source::store_args(this->ar, m_chain_params->src);
-
-	m_chain_params->mdm.n_frames = m_chain_params->sim->inter_frame_level;
-
-	Factory_modem::store_args(this->ar, m_chain_params->mdm);
-
-	m_chain_params->chn.N = m_chain_params->mdm.N_mod;
-	m_chain_params->chn.n_frames = m_chain_params->sim->inter_frame_level;
 	m_chain_params->chn.complex = m_chain_params->mdm.complex;
 	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
-
-	Factory_channel::store_args(this->ar, m_chain_params->chn);
-
-	Factory_terminal_EXIT  ::store_args(this->ar, m_chain_params->ter);
 }
 
 template <typename B, typename R>

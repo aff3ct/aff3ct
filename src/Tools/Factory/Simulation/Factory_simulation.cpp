@@ -37,10 +37,6 @@ void Factory_simulation::build_args(Arguments_reader::arg_map &req_args, Argumen
 		 "set the task concurrency level (default is 1, no concurrency)."};
 #endif
 
-	opt_args[{"sim-fra", "F"}] =
-		{"positive_int",
-		 "set the number of inter frame level to process in each modules."};
-
 	opt_args[{"sim-seed", "S"}] =
 		{"positive_int",
 		 "seed used in the simulation to initialize the pseudo random generators in general."};
@@ -71,9 +67,8 @@ void Factory_simulation::store_args(const Arguments_reader& ar, parameters &para
 
 	if(ar.exist_arg({"sim-pyber"        })) params.pyber             = ar.get_arg      ({"sim-pyber"        });
 	if(ar.exist_arg({"sim-snr-step", "s"})) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
-	if(ar.exist_arg({"sim-fra", "F"     })) params.inter_frame_level = ar.get_arg_int  ({"sim-fra", "F"     });
 	if(ar.exist_arg({"sim-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
-	if(ar.exist_arg({"sim-seed", "S"    })) params.seed              = ar.get_arg_int  ({"sim-seed", "S"    });
+	if(ar.exist_arg({"sim-seed",     "S"})) params.seed              = ar.get_arg_int  ({"sim-seed",     "S"});
 
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)
@@ -131,7 +126,6 @@ void Factory_simulation::header(params_list& head_sim, const parameters& params)
 	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));
 	head_sim.push_back(std::make_pair("SNR step (s)",  std::to_string(params.snr_step) + " dB"));
 
-	head_sim.push_back(std::make_pair("Inter frame level", std::to_string(params.inter_frame_level)));
 	head_sim.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 
 #ifdef ENABLE_MPI

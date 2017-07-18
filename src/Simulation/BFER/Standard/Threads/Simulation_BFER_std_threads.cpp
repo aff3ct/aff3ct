@@ -295,7 +295,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 	auto t_stop = std::chrono::steady_clock::now(); // stop time
 
 	auto frames   = (float)this->simu_params.benchs *
-	                (float)this->simu_params.inter_frame_level *
+	                (float)this->chain_params.src.n_frames *
 	                (float)this->simu_params.n_threads;
 	auto bits     = (float)frames * (float)this->chain_params.dec->K;
 	auto duration = t_stop - t_start;

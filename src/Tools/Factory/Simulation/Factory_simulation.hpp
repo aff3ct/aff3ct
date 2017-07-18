@@ -22,20 +22,19 @@ struct Factory_simulation : Factory_simulation_main
 	{
 		virtual ~parameters() {}
 
-		// ---- simulation
-#ifdef ENABLE_MPI
-		std::chrono::milliseconds mpi_comm_freq     = std::chrono::milliseconds(1000);
-		int                       mpi_rank          = 0;
-		int                       mpi_size          = 1;
-#endif
-		std::chrono::seconds      stop_time         = std::chrono::seconds(0);
-		std::string               pyber             = "";
 		float                     snr_min;
 		float                     snr_max;
-		float                     snr_step          = 0.1f;
-		int                       n_threads         = 1;
-		int                       inter_frame_level = 1;
-		int                       seed              = 0;
+
+#ifdef ENABLE_MPI
+		std::chrono::milliseconds mpi_comm_freq = std::chrono::milliseconds(1000);
+		int                       mpi_rank      = 0;
+		int                       mpi_size      = 1;
+#endif
+		std::chrono::seconds      stop_time     = std::chrono::seconds(0);
+		std::string               pyber         = "";
+		float                     snr_step      = 0.1f;
+		int                       n_threads     = 1;
+		int                       seed          = 0;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

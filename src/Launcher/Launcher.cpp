@@ -110,7 +110,6 @@ void Launcher::print_header()
 
 	int max_n_chars = 0;
 	Factory::Header::compute_max_n_chars(pl_sim,   max_n_chars);
-	Factory::Header::compute_max_n_chars(pl_cde,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_src,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_crc,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_enc,   max_n_chars);
@@ -119,13 +118,12 @@ void Launcher::print_header()
 	Factory::Header::compute_max_n_chars(pl_mod,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_chn,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_demod, max_n_chars);
-	Factory::Header::compute_max_n_chars(pl_qua,   max_n_chars);
+	Factory::Header::compute_max_n_chars(pl_qnt,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_dec,   max_n_chars);
-	Factory::Header::compute_max_n_chars(pl_mon,   max_n_chars);
+	Factory::Header::compute_max_n_chars(pl_mnt,   max_n_chars);
 	Factory::Header::compute_max_n_chars(pl_ter,   max_n_chars);
 
 	if (pl_sim  .size()) Factory::Header::print_parameters("Simulation",  pl_sim,   max_n_chars, this->stream);
-	if (pl_cde  .size()) Factory::Header::print_parameters("Code",        pl_cde,   max_n_chars, this->stream);
 	if (pl_src  .size()) Factory::Header::print_parameters("Source",      pl_src,   max_n_chars, this->stream);
 	if (pl_crc  .size()) Factory::Header::print_parameters("CRC",         pl_crc,   max_n_chars, this->stream);
 	if (pl_enc  .size()) Factory::Header::print_parameters("Encoder",     pl_enc,   max_n_chars, this->stream);
@@ -134,9 +132,9 @@ void Launcher::print_header()
 	if (pl_mod  .size()) Factory::Header::print_parameters("Modulator",   pl_mod,   max_n_chars, this->stream);
 	if (pl_chn  .size()) Factory::Header::print_parameters("Channel",     pl_chn,   max_n_chars, this->stream);
 	if (pl_demod.size()) Factory::Header::print_parameters("Demodulator", pl_demod, max_n_chars, this->stream);
-	if (pl_qua  .size()) Factory::Header::print_parameters("Quantizer",   pl_qua,   max_n_chars, this->stream);
+	if (pl_qnt  .size()) Factory::Header::print_parameters("Quantizer",   pl_qnt,   max_n_chars, this->stream);
 	if (pl_dec  .size()) Factory::Header::print_parameters("Decoder",     pl_dec,   max_n_chars, this->stream);
-	if (pl_mon  .size()) Factory::Header::print_parameters("Monitor",     pl_mon,   max_n_chars, this->stream);
+	if (pl_mnt  .size()) Factory::Header::print_parameters("Monitor",     pl_mnt,   max_n_chars, this->stream);
 	if (pl_ter  .size()) Factory::Header::print_parameters("Terminal",    pl_ter,   max_n_chars, this->stream);
 	this->stream << "#" << std::endl;
 }

@@ -56,13 +56,13 @@ Simulation_BFER<B,R,Q>
 	if (params.mnt.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.sim->n_threads; tid++)
-			dumper[tid] = new Dumper(params.sim->inter_frame_level);
+			dumper[tid] = new Dumper(params.src.n_frames);
 
 		std::vector<Dumper*> dumpers;
 		for (auto tid = 0; tid < params.sim->n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new Dumper_reduction(dumpers, params.sim->inter_frame_level);
+		dumper_red = new Dumper_reduction(dumpers, params.src.n_frames);
 	}
 
 	for (auto tid = 0; tid < params.sim->n_threads; tid++)
@@ -81,7 +81,7 @@ Simulation_BFER<B,R,Q>
 	this->monitor_red = new Monitor_reduction<B>(params.src.K,
 	                                             params.mnt.n_frame_errors,
 	                                             this->monitor,
-	                                             params.sim->inter_frame_level);
+	                                             params.src.n_frames);
 #endif
 }
 
@@ -152,12 +152,12 @@ void Simulation_BFER<B,R,Q>
 		if (params.sim->snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, params.enc->R, params.mdm.bps);
+			snr_s = ebn0_to_esn0(snr_b, params.pct->R, params.mdm.bps);
 		}
 		else //if(params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, params.enc->R, params.mdm.bps);
+			snr_b = esn0_to_ebn0(snr_s, params.pct->R, params.mdm.bps);
 		}
 		sigma = esn0_to_sigma(snr_s, params.mdm.upf);
 
@@ -340,10 +340,10 @@ void Simulation_BFER<B,R,Q>
 
 				if (data_sizes.find(duration.first) != data_sizes.end())
 				{
-					const auto n_bits_per_fra = data_sizes[duration.first] / params.sim->inter_frame_level;
+					const auto n_bits_per_fra = data_sizes[duration.first] / params.src.n_frames;
 					const auto n_fra = this->monitor_red->get_n_analyzed_fra_historic();
 					const auto mbps = ((float)(n_bits_per_fra * n_fra) / cur_sec) * 0.000001f;
-					const auto inter_lvl = (float)params.sim->inter_frame_level;
+					const auto inter_lvl = (float)params.src.n_frames;
 					const auto lat = (((float)duration.second.count() * 0.001f) / (float)n_fra) * inter_lvl;
 
 					stream << " - " << std::setw(9) << mbps << " Mb/s"

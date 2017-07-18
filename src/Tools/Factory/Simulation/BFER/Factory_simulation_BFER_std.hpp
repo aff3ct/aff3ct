@@ -5,10 +5,6 @@
 
 #include "Tools/Arguments_reader.hpp"
 
-#include "Tools/Factory/Module/Factory_CRC.hpp"
-#include "Tools/Factory/Module/Factory_quantizer.hpp"
-#include "Tools/Factory/Module/Code/Factory_puncturer.hpp"
-
 #include "Factory_simulation_BFER.hpp"
 
 namespace aff3ct
@@ -29,21 +25,17 @@ struct Factory_simulation_BFER_std : Factory_simulation_BFER
 	{
 		chain_parameters()
 		{
-			if(this->sim == nullptr)
+			if (this->sim == nullptr)
 				this->sim = new parameters();
 		}
 
 		virtual ~chain_parameters()
 		{
-			if(this->sim != nullptr)
+			if (this->sim != nullptr)
 				delete this->sim;
 
 			this->sim = nullptr;
 		}
-
-		Factory_CRC      ::parameters  crc;
-		Factory_quantizer::parameters  qnt;
-		Factory_puncturer::parameters *pct = nullptr;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

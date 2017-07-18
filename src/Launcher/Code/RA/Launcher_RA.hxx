@@ -17,9 +17,6 @@ Launcher_RA<C,B,R,Q>
 
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
-
-//	this->params.quantizer  .n_bits     = 7;
-//	this->params.quantizer  .n_decimals = 2;
 }
 
 template <class C, typename B, typename R, typename Q>
@@ -37,30 +34,31 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::build_args()
 {
-	C::build_args();
-
 	tools::Factory_encoder_RA::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_RA::build_args(this->req_args, this->opt_args);
+
+	C::build_args();
 }
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::store_args()
 {
-	C::store_args();
-
 	tools::Factory_encoder_RA::store_args(this->ar, *m_enc);
 	tools::Factory_decoder_RA::store_args(this->ar, *m_dec);
+
+	C::store_args();
+
 }
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::group_args()
 {
-	C::group_args();
-
 	tools::Factory_encoder_RA::group_args(this->arg_group);
 	tools::Factory_decoder_RA::group_args(this->arg_group);
+
+	C::group_args();
 }
 
 template <class C, typename B, typename R, typename Q>

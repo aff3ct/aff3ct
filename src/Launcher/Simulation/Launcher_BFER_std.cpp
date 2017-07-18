@@ -40,6 +40,25 @@ void Launcher_BFER_std<B,R,Q>
 	Factory_quantizer          ::build_args(this->req_args, this->opt_args);
 	Factory_monitor            ::build_args(this->req_args, this->opt_args);
 	Factory_terminal_BFER      ::build_args(this->req_args, this->opt_args);
+
+	this->req_args.erase({"src-info-bits", "K"});
+	this->opt_args.erase({"src-seed",      "S"});
+	this->req_args.erase({"crc-info-bits", "K"});
+	this->opt_args.erase({"crc-fra",       "F"});
+	this->req_args.erase({"mod-fra-size",  "N"});
+	this->opt_args.erase({"mod-fra",       "F"});
+	this->opt_args.erase({"dmod-sigma"        });
+	this->req_args.erase({"chn-fra-size",  "N"});
+	this->opt_args.erase({"chn-fra",       "F"});
+	this->opt_args.erase({"chn-sigma"         });
+	this->opt_args.erase({"chn-seed",      "S"});
+	this->opt_args.erase({"chn-add-users"     });
+	this->opt_args.erase({"chn-complex"       });
+	this->req_args.erase({"qnt-size",      "N"});
+	this->opt_args.erase({"qnt-fra",       "F"});
+	this->opt_args.erase({"qnt-sigma"         });
+	this->req_args.erase({"mnt-size",      "K"});
+	this->opt_args.erase({"mnt-fra",       "F"});
 }
 
 template <typename B, typename R, typename Q>
@@ -50,37 +69,42 @@ void Launcher_BFER_std<B,R,Q>
 
 	Factory_simulation_BFER_std::store_args(this->ar, *m_sim);
 
-	m_chain_params->src.seed     = m_chain_params->sim->seed;
-	m_chain_params->src.n_frames = m_chain_params->sim->inter_frame_level;
-
 	Factory_source::store_args(this->ar, m_chain_params->src);
-
-	m_chain_params->crc.n_frames = m_chain_params->sim->inter_frame_level;
-
 	Factory_CRC::store_args(this->ar, m_chain_params->crc);
 
-	m_chain_params->mdm.n_frames = m_chain_params->sim->inter_frame_level;
+	m_chain_params->crc.K = m_chain_params->enc->K - m_chain_params->crc.size;
+	m_chain_params->src.K = m_chain_params->crc.K;
+	m_chain_params->mdm.N = m_chain_params->pct->N;
 
 	Factory_modem::store_args(this->ar, m_chain_params->mdm);
 
-	m_chain_params->chn.N = m_chain_params->mdm.N_mod;
-	m_chain_params->chn.n_frames = m_chain_params->sim->inter_frame_level;
-	m_chain_params->chn.complex = m_chain_params->mdm.complex;
+	m_chain_params->chn.N         = m_chain_params->mdm.N_mod;
+	m_chain_params->chn.complex   = m_chain_params->mdm.complex;
 	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
 
 	Factory_channel::store_args(this->ar, m_chain_params->chn);
 
-	m_chain_params->qnt.n_frames = m_chain_params->sim->inter_frame_level;
+	m_chain_params->qnt.size = m_chain_params->mdm.N;
 
 	Factory_quantizer::store_args(this->ar, m_chain_params->qnt);
 
-	m_chain_params->mnt.n_frames = m_chain_params->sim->inter_frame_level;
+	m_chain_params->mnt.size = m_chain_params->src.K;
+
 	Factory_monitor::store_args(this->ar, m_chain_params->mnt);
 
-	Factory_terminal_BFER      ::store_args(this->ar, m_chain_params->ter);
+	Factory_terminal_BFER::store_args(this->ar, m_chain_params->ter);
 
 	if (!std::is_integral<Q>())
 		m_chain_params->qnt.type = "NO";
+
+	m_chain_params->crc. n_frames = m_chain_params->src.n_frames;
+	m_chain_params->enc->n_frames = m_chain_params->src.n_frames;
+	m_chain_params->pct->n_frames = m_chain_params->src.n_frames;
+	m_chain_params->mdm. n_frames = m_chain_params->src.n_frames;
+	m_chain_params->chn. n_frames = m_chain_params->src.n_frames;
+	m_chain_params->qnt. n_frames = m_chain_params->src.n_frames;
+	m_chain_params->dec->n_frames = m_chain_params->src.n_frames;
+	m_chain_params->mnt. n_frames = m_chain_params->src.n_frames;
 }
 
 template <typename B, typename R, typename Q>
@@ -108,8 +132,8 @@ void Launcher_BFER_std<B,R,Q>
 	Factory_CRC                ::header(this->pl_crc,                 m_chain_params->crc);
 	Factory_modem              ::header(this->pl_mod, this->pl_demod, m_chain_params->mdm);
 	Factory_channel            ::header(this->pl_chn,                 m_chain_params->chn);
-	Factory_quantizer          ::header(this->pl_qua,                 m_chain_params->qnt);
-	Factory_monitor            ::header(this->pl_mon,                 m_chain_params->mnt);
+	Factory_quantizer          ::header(this->pl_qnt,                 m_chain_params->qnt);
+	Factory_monitor            ::header(this->pl_mnt,                 m_chain_params->mnt);
 	Factory_terminal_BFER      ::header(this->pl_ter,                 m_chain_params->ter);
 
 	Launcher::print_header();

@@ -71,7 +71,7 @@ void Factory_channel
 
 	opt_args[{"chn-blk-fad"}] =
 		{"string",
-		 "block fading policy.",
+		 "block fading policy for the RAYLEIGH channel.",
 		 "NO, FRAME, ONETAP"};
 
 	opt_args[{"chn-sigma"}] =

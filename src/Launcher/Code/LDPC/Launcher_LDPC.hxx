@@ -34,30 +34,34 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_LDPC<C,B,R,Q>
 ::build_args()
 {
-	C::build_args();
-
 	tools::Factory_encoder_LDPC::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_LDPC::build_args(this->req_args, this->opt_args);
+
+	C::build_args();
 }
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_LDPC<C,B,R,Q>
 ::store_args()
 {
-	C::store_args();
-
 	tools::Factory_encoder_LDPC::store_args(this->ar, *m_enc);
+
+	m_dec->K    = m_enc->K;
+	m_dec->N_cw = m_enc->N_cw;
+
 	tools::Factory_decoder_LDPC::store_args(this->ar, *m_dec);
+
+	C::store_args();
 }
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_LDPC<C,B,R,Q>
 ::group_args()
 {
-	C::group_args();
-
 	tools::Factory_encoder_LDPC::group_args(this->arg_group);
 	tools::Factory_decoder_LDPC::group_args(this->arg_group);
+
+	C::group_args();
 }
 
 template <class C, typename B, typename R, typename Q>

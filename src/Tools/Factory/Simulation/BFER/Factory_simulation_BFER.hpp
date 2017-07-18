@@ -6,12 +6,16 @@
 
 #include "Tools/Arguments_reader.hpp"
 
+#include "Tools/Factory/Module/Factory_CRC.hpp"
 #include "Tools/Factory/Module/Factory_source.hpp"
 #include "Tools/Factory/Module/Factory_modem.hpp"
 #include "Tools/Factory/Module/Factory_channel.hpp"
+#include "Tools/Factory/Module/Factory_quantizer.hpp"
 #include "Tools/Factory/Module/Factory_monitor.hpp"
+#include "Tools/Factory/Module/Code/Factory_puncturer.hpp"
 #include "Tools/Factory/Module/Code/Factory_encoder.hpp"
 #include "Tools/Factory/Module/Code/Factory_decoder.hpp"
+#include "Tools/Factory/Module/Code/Factory_puncturer.hpp"
 #include "Tools/Factory/Simulation/BFER/Factory_terminal_BFER.hpp"
 
 #include "../Factory_simulation.hpp"
@@ -41,10 +45,13 @@ struct Factory_simulation_BFER : Factory_simulation
 
 		Factory_simulation_BFER::parameters *sim = nullptr;
 		Factory_source         ::parameters  src;
+		Factory_CRC            ::parameters  crc;
 		Factory_modem          ::parameters  mdm;
 		Factory_channel        ::parameters  chn;
+		Factory_quantizer      ::parameters  qnt;
 		Factory_encoder        ::parameters *enc = nullptr;
 		Factory_decoder        ::parameters *dec = nullptr;
+		Factory_puncturer      ::parameters *pct = nullptr;
 		Factory_monitor        ::parameters  mnt;
 		Factory_terminal_BFER  ::parameters  ter;
 	};

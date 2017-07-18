@@ -44,12 +44,12 @@ void Factory_puncturer_turbo
 
 	Factory_puncturer::store_args(ar, params);
 
-	if(ar.exist_arg({"pct-pattern"})) params.pattern = ar.get_arg({"pct-pattern"});
+	if(ar.exist_arg({"pct-pattern"    })) params.pattern     = ar.get_arg    ({"pct-pattern"    });
 	if(ar.exist_arg({"pct-tail-length"})) params.tail_length = ar.get_arg_int({"pct-tail-length"});
-	if(ar.exist_arg({"pct-no-buff"})) params.buffered = false;
+	if(ar.exist_arg({"pct-no-buff"    })) params.buffered    = false;
 
 	params.N_cw = 3 * params.K + params.tail_length;
-	params.R = (float)params.K / (float)params.N_cw;
+	params.R = (float)params.K / (float)params.N;
 
 	if (params.N == params.N_cw)
 		params.type = "NO";

@@ -7,7 +7,6 @@ void Factory_simulation_BFER::build_args(Arguments_reader::arg_map &req_args, Ar
 {
 	Factory_simulation::build_args(req_args, opt_args);
 
-	// ---------------------------------------------------------------------------------------------------- simulation
 	opt_args[{"sim-benchs", "b"}] =
 		{"positive_int",
 		 "enable special benchmark mode with a loop around the decoder."};

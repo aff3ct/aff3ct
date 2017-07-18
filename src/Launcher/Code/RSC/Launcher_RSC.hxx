@@ -17,9 +17,6 @@ Launcher_RSC<C,B,R,Q,QD>
 
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->dec = m_dec;
-
-//	this->params.quantizer.n_bits        = 6;
-//	this->params.quantizer.n_decimals    = 3;
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
@@ -37,30 +34,30 @@ template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<C,B,R,Q,QD>
 ::build_args()
 {
-	C::build_args();
-
 	tools::Factory_encoder_RSC::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_RSC::build_args(this->req_args, this->opt_args);
+
+	C::build_args();
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<C,B,R,Q,QD>
 ::store_args()
 {
-	C::store_args();
-
 	tools::Factory_encoder_RSC::store_args(this->ar, *m_enc);
 	tools::Factory_decoder_RSC::store_args(this->ar, *m_dec);
+
+	C::store_args();
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<C,B,R,Q,QD>
 ::group_args()
 {
-	C::group_args();
-
 	tools::Factory_encoder_RSC::group_args(this->arg_group);
 	tools::Factory_decoder_RSC::group_args(this->arg_group);
+
+	C::group_args();
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>

@@ -19,9 +19,6 @@ Launcher_turbo<C,B,R,Q,QD>
 	this->m_chain_params->enc = m_enc;
 	this->m_chain_params->pct = m_pct;
 	this->m_chain_params->dec = m_dec;
-
-//	this->params.quantizer  .n_bits         = 6;
-//	this->params.quantizer  .n_decimals     = (typeid(Q) == typeid(short)) ? 3 : 2;
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
@@ -42,33 +39,33 @@ template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<C,B,R,Q,QD>
 ::build_args()
 {
-	C::build_args();
-
 	tools::Factory_encoder_turbo  ::build_args(this->req_args, this->opt_args);
 	tools::Factory_puncturer_turbo::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_turbo  ::build_args(this->req_args, this->opt_args);
+
+	C::build_args();
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<C,B,R,Q,QD>
 ::store_args()
 {
-	C::store_args();
-
 	tools::Factory_encoder_turbo  ::store_args(this->ar, *m_enc);
 	tools::Factory_puncturer_turbo::store_args(this->ar, *m_pct);
 	tools::Factory_decoder_turbo  ::store_args(this->ar, *m_dec);
+
+	C::store_args();
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<C,B,R,Q,QD>
 ::group_args()
 {
-	C::group_args();
-
 	tools::Factory_encoder_turbo  ::group_args(this->arg_group);
 	tools::Factory_puncturer_turbo::group_args(this->arg_group);
 	tools::Factory_decoder_turbo  ::group_args(this->arg_group);
+
+	C::group_args();
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>

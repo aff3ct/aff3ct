@@ -22,7 +22,6 @@ struct Factory_CRC : public Factory
 
 		std::string type          = "FAST";
 		std::string poly          = "";
-		bool        inc_code_rate = false;
 		int         size          = 0;
 		int         n_frames      = 1;
 	};
