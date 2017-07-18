@@ -23,7 +23,7 @@ template <typename B = int, typename R = float>
 class Simulation_EXIT : public Simulation
 {
 protected:
-	const tools::Factory_simulation_EXIT::chain_parameters &params; // simulation parameters
+	const tools::Factory_simulation_EXIT::parameters &params; // simulation parameters
 	tools::Codec_SISO<B,R> &codec;
 
 	// channel gains
@@ -63,7 +63,7 @@ protected:
 	tools::Terminal_EXIT<B,R> *terminal;
 
 public:
-	Simulation_EXIT(const tools::Factory_simulation_EXIT::chain_parameters& params, tools::Codec_SISO<B,R> &codec);
+	Simulation_EXIT(const tools::Factory_simulation_EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);
 	virtual ~Simulation_EXIT();
 	
 	void launch();

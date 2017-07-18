@@ -18,28 +18,20 @@ struct Factory_simulation_BFER_ite : Factory_simulation_BFER
 {
 	struct parameters : Factory_simulation_BFER::parameters
 	{
-		virtual ~parameters() {}
+		parameters()
+		: Factory_simulation_BFER::parameters(),
+		  itl(new Factory_interleaver::parameters())
+		{
+		}
+
+		virtual ~parameters()
+		{
+			if (this->itl != nullptr) { delete this->itl; this->itl = nullptr; }
+		}
 
 		int n_ite = 15;
-	};
 
-	struct chain_parameters : Factory_simulation_BFER::chain_parameters
-	{
-		chain_parameters()
-		{
-			if (this->sim == nullptr)
-				this->sim = new parameters();
-		}
-
-		virtual ~chain_parameters()
-		{
-			if (this->sim != nullptr)
-				delete this->sim;
-
-			this->sim = nullptr;
-		}
-
-		Factory_interleaver::parameters itl;
+		Factory_interleaver::parameters *itl;
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

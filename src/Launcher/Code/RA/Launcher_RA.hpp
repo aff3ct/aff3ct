@@ -13,8 +13,8 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_RA : public C
 {
 protected:
-	tools::Factory_encoder_RA::parameters *m_enc = nullptr;
-	tools::Factory_decoder_RA::parameters *m_dec = nullptr;
+	tools::Factory_encoder_RA::parameters *params_enc = nullptr;
+	tools::Factory_decoder_RA::parameters *params_dec = nullptr;
 
 public:
 	Launcher_RA(const int argc, const char **argv, std::ostream &stream = std::cout);

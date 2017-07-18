@@ -11,11 +11,9 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 Launcher_BFER_ite<B,R,Q>
 ::Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_ite::chain_parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new Factory_simulation_BFER_ite::parameters())
 {
-	m_sim = dynamic_cast<Factory_simulation_BFER_ite::parameters*>(m_chain_params->sim);
-	this->chain_params = m_chain_params;
-	this->simu_params  = m_chain_params->sim;
+	Launcher::params = params;
 }
 
 template <typename B, typename R, typename Q>
@@ -49,21 +47,21 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
-	Factory_simulation_BFER_ite::store_args(this->ar, *m_sim);
-	Factory_source             ::store_args(this->ar, m_chain_params->src);
-	Factory_CRC                ::store_args(this->ar, m_chain_params->crc);
-	Factory_interleaver        ::store_args(this->ar, m_chain_params->itl);
-	Factory_modem              ::store_args(this->ar, m_chain_params->mdm);
-	Factory_channel            ::store_args(this->ar, m_chain_params->chn);
-	Factory_quantizer          ::store_args(this->ar, m_chain_params->qnt);
-	Factory_monitor            ::store_args(this->ar, m_chain_params->mnt);
-	Factory_terminal_BFER      ::store_args(this->ar, m_chain_params->ter);
+	Factory_simulation_BFER_ite::store_args(this->ar, *params     );
+	Factory_source             ::store_args(this->ar, *params->src);
+	Factory_CRC                ::store_args(this->ar, *params->crc);
+	Factory_interleaver        ::store_args(this->ar, *params->itl);
+	Factory_modem              ::store_args(this->ar, *params->mdm);
+	Factory_channel            ::store_args(this->ar, *params->chn);
+	Factory_quantizer          ::store_args(this->ar, *params->qnt);
+	Factory_monitor            ::store_args(this->ar, *params->mnt);
+	Factory_terminal_BFER      ::store_args(this->ar, *params->ter);
 
-	m_chain_params->chn.complex = m_chain_params->mdm.complex;
-	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
+	params->chn->complex   = params->mdm->complex;
+	params->chn->add_users = params->mdm->type == "SCMA";
 
 	if (!std::is_integral<Q>())
-		m_chain_params->qnt.type = "NO";
+		params->qnt->type = "NO";
 }
 
 template <typename B, typename R, typename Q>
@@ -87,15 +85,15 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_ite<B,R,Q>
 ::print_header()
 {
-	Factory_simulation_BFER_ite::header(this->pl_sim, *m_sim);
-	Factory_source             ::header(this->pl_src, m_chain_params->src);
-	Factory_CRC                ::header(this->pl_crc, m_chain_params->crc);
-	Factory_interleaver        ::header(this->pl_itl, m_chain_params->itl);
-	Factory_modem              ::header(this->pl_mod, this->pl_demod, m_chain_params->mdm);
-	Factory_channel            ::header(this->pl_chn, m_chain_params->chn);
-	Factory_quantizer          ::header(this->pl_qnt, m_chain_params->qnt);
-	Factory_monitor            ::header(this->pl_mnt, m_chain_params->mnt);
-	Factory_terminal_BFER      ::header(this->pl_ter, m_chain_params->ter);
+	Factory_simulation_BFER_ite::header(this->pl_sim,                 *params);
+	Factory_source             ::header(this->pl_src,                 *params->src);
+	Factory_CRC                ::header(this->pl_crc,                 *params->crc);
+	Factory_interleaver        ::header(this->pl_itl,                 *params->itl);
+	Factory_modem              ::header(this->pl_mod, this->pl_demod, *params->mdm);
+	Factory_channel            ::header(this->pl_chn,                 *params->chn);
+	Factory_quantizer          ::header(this->pl_qnt,                 *params->qnt);
+	Factory_monitor            ::header(this->pl_mnt,                 *params->mnt);
+	Factory_terminal_BFER      ::header(this->pl_ter,                 *params->ter);
 
 	Launcher::print_header();
 }
@@ -107,11 +105,11 @@ Simulation* Launcher_BFER_ite<B,R,Q>
 	this->build_codec();
 
 #if defined(SYSTEMC)
-	return new SC_Simulation_BFER_ite     <B,R,Q>(*m_chain_params, *codec);
+	return new SC_Simulation_BFER_ite     <B,R,Q>(*params, *codec);
 #elif defined(STARPU)
-	return new SPU_Simulation_BFER_ite    <B,R,Q>(*m_chain_params, *codec);
+	return new SPU_Simulation_BFER_ite    <B,R,Q>(*params, *codec);
 #else
-	return new Simulation_BFER_ite_threads<B,R,Q>(*m_chain_params, *codec);
+	return new Simulation_BFER_ite_threads<B,R,Q>(*params, *codec);
 #endif
 }
 

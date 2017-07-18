@@ -20,7 +20,7 @@ using namespace aff3ct::simulation;
 using namespace aff3ct::launcher;
 
 Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
-: simu(nullptr), ar(argc, argv), stream(stream)
+: simu(nullptr), ar(argc, argv), params(nullptr), stream(stream)
 {
 	cmd_line += std::string(argv[0]) + std::string(" ");
 	for (auto i = 1; i < argc; i++)
@@ -36,8 +36,7 @@ Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
 
 Launcher::~Launcher()
 {
-	if (simu         != nullptr) { delete simu;         simu         = nullptr; };
-	if (chain_params != nullptr) { delete chain_params; chain_params = nullptr; };
+	if (params != nullptr) { delete params; params = nullptr; };
 }
 
 void Launcher::build_args()
@@ -63,7 +62,7 @@ int Launcher::read_arguments()
 
 	this->store_args();
 
-	if (simu_params->display_help)
+	if (params->display_help)
 	{
 		this->group_args();
 
@@ -86,7 +85,7 @@ int Launcher::read_arguments()
 			std::clog << format_warning(cmd_warn[w]) << std::endl;
 
 	// print the help tags
-	if ((miss_arg || error) && !simu_params->display_help)
+	if ((miss_arg || error) && !params->display_help)
 	{
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
@@ -141,7 +140,7 @@ void Launcher::print_header()
 
 void Launcher::launch()
 {
-	std::srand(simu_params->seed);
+	std::srand(this->params->seed);
 
 	// in case of the user call launch multiple times
 	if (simu != nullptr)
@@ -155,15 +154,15 @@ void Launcher::launch()
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
-	if (!simu_params->pyber.empty() && simu_params->mpi_rank == 0)
+	if (!params_sim->pyber.empty() && params_sim->mpi_rank == 0)
 #else
-	if (!simu_params->pyber.empty())
+	if (!this->params->pyber.empty())
 #endif
 	{
-		stream << "Run command:"     << std::endl;
-		stream << cmd_line           << std::endl;
-		stream << "Curve name:"      << std::endl;
-		stream << simu_params->pyber << std::endl;
+		stream << "Run command:"      << std::endl;
+		stream << cmd_line            << std::endl;
+		stream << "Curve name:"       << std::endl;
+		stream << this->params->pyber << std::endl;
 	}
 
 #ifdef ENABLE_MPI
@@ -202,4 +201,7 @@ void Launcher::launch()
 	if (simu_params->mpi_rank == 0)
 #endif
 		stream << "# End of the simulation." << std::endl;
+
+	if (simu != nullptr)
+		delete simu;
 }

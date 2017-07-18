@@ -26,7 +26,7 @@ class Simulation_BFER : public Simulation
 {
 private:
 	// parameters
-	const typename tools::Factory_simulation_BFER::chain_parameters &params;
+	const tools::Factory_simulation_BFER::parameters &params;
 
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
@@ -67,7 +67,7 @@ protected:
 	std::map<std::pair<int, std::string>, unsigned> data_sizes;
 
 public:
-	Simulation_BFER(const typename tools::Factory_simulation_BFER::chain_parameters& simu_params, tools::Codec<B,Q> &codec);
+	Simulation_BFER(const typename tools::Factory_simulation_BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER();
 	void launch();
 

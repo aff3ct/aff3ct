@@ -12,8 +12,8 @@ template <class C, typename B = int, typename R = float, typename Q = R, typenam
 class Launcher_RSC : public C
 {
 protected:
-	tools::Factory_encoder_RSC::parameters *m_enc = nullptr;
-	tools::Factory_decoder_RSC::parameters *m_dec = nullptr;
+	tools::Factory_encoder_RSC::parameters *params_enc = nullptr;
+	tools::Factory_decoder_RSC::parameters *params_dec = nullptr;
 
 public:
 	Launcher_RSC(const int argc, const char **argv, std::ostream &stream = std::cout);

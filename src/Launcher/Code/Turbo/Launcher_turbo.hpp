@@ -13,9 +13,9 @@ template <class C, typename B = int, typename R = float, typename Q = R, typenam
 class Launcher_turbo : public C
 {
 protected:
-	tools::Factory_encoder_turbo  ::parameters *m_enc = nullptr;
-	tools::Factory_puncturer_turbo::parameters *m_pct = nullptr;
-	tools::Factory_decoder_turbo  ::parameters *m_dec = nullptr;
+	tools::Factory_encoder_turbo  ::parameters *params_enc = nullptr;
+	tools::Factory_puncturer_turbo::parameters *params_pct = nullptr;
+	tools::Factory_decoder_turbo  ::parameters *params_dec = nullptr;
 
 public:
 	Launcher_turbo(const int argc, const char **argv, std::ostream &stream = std::cout);

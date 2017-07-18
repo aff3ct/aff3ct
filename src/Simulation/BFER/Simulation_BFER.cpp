@@ -23,7 +23,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
-::Simulation_BFER(const typename Factory_simulation_BFER::chain_parameters& params, Codec<B,Q> &codec)
+::Simulation_BFER(const Factory_simulation_BFER::parameters& params, Codec<B,Q> &codec)
 : Simulation(),
   params(params),
 
@@ -31,41 +31,41 @@ Simulation_BFER<B,R,Q>
 
   codec(codec),
 
-  barrier(params.sim->n_threads),
+  barrier(params.n_threads),
 
   snr  (0.f),
   snr_s(0.f),
   snr_b(0.f),
   sigma(0.f),
 
-  monitor    (params.sim->n_threads, nullptr),
-  monitor_red(                       nullptr),
-  dumper     (params.sim->n_threads, nullptr),
-  dumper_red (                       nullptr),
-  terminal   (                       nullptr),
+  monitor    (params.n_threads, nullptr),
+  monitor_red(                  nullptr),
+  dumper     (params.n_threads, nullptr),
+  dumper_red (                  nullptr),
+  terminal   (                  nullptr),
 
-  durations(params.sim->n_threads)
+  durations(params.n_threads)
 {
-	if (params.sim->n_threads < 1)
+	if (params.n_threads < 1)
 	{
 		std::stringstream message;
-		message << "'n_threads' has to be greater than 0 ('n_threads' = " << params.sim->n_threads << ").";
+		message << "'n_threads' has to be greater than 0 ('n_threads' = " << params.n_threads << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (params.mnt.err_track_enable)
+	if (params.mnt->err_track_enable)
 	{
-		for (auto tid = 0; tid < params.sim->n_threads; tid++)
-			dumper[tid] = new Dumper(params.src.n_frames);
+		for (auto tid = 0; tid < params.n_threads; tid++)
+			dumper[tid] = new Dumper(params.src->n_frames);
 
 		std::vector<Dumper*> dumpers;
-		for (auto tid = 0; tid < params.sim->n_threads; tid++)
+		for (auto tid = 0; tid < params.n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new Dumper_reduction(dumpers, params.src.n_frames);
+		dumper_red = new Dumper_reduction(dumpers, params.src->n_frames);
 	}
 
-	for (auto tid = 0; tid < params.sim->n_threads; tid++)
+	for (auto tid = 0; tid < params.n_threads; tid++)
 		this->monitor[tid] = this->build_monitor(tid);
 
 #ifdef ENABLE_MPI
@@ -78,10 +78,10 @@ Simulation_BFER<B,R,Q>
 	                                                 params.sim->inter_frame_level);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new Monitor_reduction<B>(params.src.K,
-	                                             params.mnt.n_frame_errors,
+	this->monitor_red = new Monitor_reduction<B>(params.src->K,
+	                                             params.mnt->n_frame_errors,
 	                                             this->monitor,
-	                                             params.src.n_frames);
+	                                             params.src->n_frames);
 #endif
 }
 
@@ -94,7 +94,7 @@ Simulation_BFER<B,R,Q>
 	if (monitor_red != nullptr) { delete monitor_red; monitor_red = nullptr; }
 	if (dumper_red  != nullptr) { delete dumper_red;  dumper_red  = nullptr; }
 
-	for (auto tid = 0; tid < params.sim->n_threads; tid++)
+	for (auto tid = 0; tid < params.n_threads; tid++)
 	{
 		if (monitor[tid] != nullptr) { delete monitor[tid]; monitor[tid] = nullptr; }
 		if (dumper [tid] != nullptr) { delete dumper [tid]; dumper [tid] = nullptr; }
@@ -114,7 +114,7 @@ void Simulation_BFER<B,R,Q>
 		for (auto& duration : this->durations[tid])
 			duration.second = std::chrono::nanoseconds(0);
 
-		if (params.mnt.err_track_enable)
+		if (params.mnt->err_track_enable)
 			this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
 	}
 	catch (std::exception const& e)
@@ -147,31 +147,31 @@ void Simulation_BFER<B,R,Q>
 	codec.launch_precompute();
 
 	// for each SNR to be simulated
-	for (snr = params.sim->snr_min; snr <= params.sim->snr_max; snr += params.sim->snr_step)
+	for (snr = params.snr_min; snr <= params.snr_max; snr += params.snr_step)
 	{
-		if (params.sim->snr_type == "EB")
+		if (params.snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, params.pct->R, params.mdm.bps);
+			snr_s = ebn0_to_esn0(snr_b, params.pct->R, params.mdm->bps);
 		}
 		else //if(params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, params.pct->R, params.mdm.bps);
+			snr_b = esn0_to_ebn0(snr_s, params.pct->R, params.mdm->bps);
 		}
-		sigma = esn0_to_sigma(snr_s, params.mdm.upf);
+		sigma = esn0_to_sigma(snr_s, params.mdm->upf);
 
 		this->terminal->set_esn0(snr_s);
 		this->terminal->set_ebn0(snr_b);
 
 		// dirty hack to override simulation params
-		if (params.mnt.err_track_revert)
+		if (params.mnt->err_track_revert)
 		{
-			auto *params_writable = const_cast<typename Factory_simulation_BFER::chain_parameters*>(&params);
-			const auto base_path = params.mnt.err_track_path;
-			params_writable->src. path = base_path + "_" + std::to_string(snr_b) + ".src";
+			auto *params_writable = const_cast<Factory_simulation_BFER::parameters*>(&params);
+			const auto base_path = params.mnt->err_track_path;
+			params_writable->src->path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
-			params_writable->chn. path = base_path + "_" + std::to_string(snr_b) + ".chn";
+			params_writable->chn->path = base_path + "_" + std::to_string(snr_b) + ".chn";
 //			if (params.itl.uniform)
 //				params_writable->itl.path = base_path + "_" + std::to_string(snr_b) + ".itl";
 		}
@@ -179,30 +179,29 @@ void Simulation_BFER<B,R,Q>
 		codec.snr_precompute(this->sigma);
 
 		// build the communication chain in multi-threaded mode
-		std::vector<std::thread> threads(params.sim->n_threads -1);
-		for (auto tid = 1; tid < params.sim->n_threads; tid++)
+		std::vector<std::thread> threads(params.n_threads -1);
+		for (auto tid = 1; tid < params.n_threads; tid++)
 			threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
 
 		Simulation_BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
 
 		// join the slave threads with the master thread
-		for (auto tid = 1; tid < params.sim->n_threads; tid++)
+		for (auto tid = 1; tid < params.n_threads; tid++)
 			threads[tid -1].join();
 
 		if (!Monitor<B>::is_over())
 		{
-			if (!params.ter.disabled && snr == params.sim->snr_min &&
-			    !params.sim->debug   && !params.sim->benchs
+			if (!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs
 #ifdef ENABLE_MPI
-				&& simu_params->mpi_rank == 0
+			    && simu_params->mpi_rank == 0
 #endif
-			)
+			    )
 				terminal->legend(std::cout);
 
 			// start the terminal to display BER/FER results
 			std::thread term_thread;
-			if (!params.ter.disabled && params.ter.frequency != std::chrono::nanoseconds(0) &&
-			    !params.sim->benchs && !params.sim->debug)
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
+			    !params.benchs   && !params.debug)
 				// launch a thread dedicated to the terminal display
 				term_thread = std::thread(Simulation_BFER<B,R,Q>::start_thread_terminal, this);
 
@@ -217,8 +216,8 @@ void Simulation_BFER<B,R,Q>
 			}
 
 			// stop the terminal
-			if (!params.ter.disabled && params.ter.frequency != std::chrono::nanoseconds(0) &&
-			    !params.sim->benchs && !params.sim->debug)
+			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
+			    !params.benchs && !params.debug)
 			{
 				stop_terminal = true;
 				cond_terminal.notify_all();
@@ -227,15 +226,13 @@ void Simulation_BFER<B,R,Q>
 				stop_terminal = false;
 			}
 
-			if (!params.ter.disabled &&
-			    !params.sim->benchs       &&
-			    terminal != nullptr
+			if (!params.ter->disabled && !params.benchs && terminal != nullptr
 #ifdef ENABLE_MPI
 				 && params.sim->mpi_rank == 0
 #endif
-				)
+			   )
 			{
-				if (params.sim->debug && !Monitor<B>::is_over())
+				if (params.debug && !Monitor<B>::is_over())
 					terminal->legend(std::cout);
 
 				time_reduction(true);
@@ -246,7 +243,7 @@ void Simulation_BFER<B,R,Q>
 
 			if (this->dumper_red != nullptr)
 			{
-				this->dumper_red->dump(params.mnt.err_track_path + "_" + std::to_string(snr_b));
+				this->dumper_red->dump(params.mnt->err_track_path + "_" + std::to_string(snr_b));
 				this->dumper_red->clear();
 			}
 
@@ -259,12 +256,11 @@ void Simulation_BFER<B,R,Q>
 			break;
 	}
 
-	if (params.sim->time_report &&
-	    !params.sim->benchs
+	if (params.time_report && !params.benchs
 #ifdef ENABLE_MPI
-		&& params.sim->mpi_rank == 0
+	    && params.sim->mpi_rank == 0
 #endif
-		)
+	   )
 		time_report();
 }
 
@@ -281,12 +277,12 @@ void Simulation_BFER<B,R,Q>
 	for (auto& duration : durations_red)
 		duration.second = std::chrono::nanoseconds(0);
 
-	for (auto tid = 0; tid < params.sim->n_threads; tid++)
+	for (auto tid = 0; tid < params.n_threads; tid++)
 		for (auto& duration : durations[tid])
 			durations_red[duration.first] += duration.second;
 
 	if (is_snr_done)
-		for (auto tid = 0; tid < params.sim->n_threads; tid++)
+		for (auto tid = 0; tid < params.n_threads; tid++)
 			for (auto& duration : durations[tid])
 				durations_sum[duration.first] += duration.second;
 }
@@ -340,10 +336,10 @@ void Simulation_BFER<B,R,Q>
 
 				if (data_sizes.find(duration.first) != data_sizes.end())
 				{
-					const auto n_bits_per_fra = data_sizes[duration.first] / params.src.n_frames;
+					const auto n_bits_per_fra = data_sizes[duration.first] / params.src->n_frames;
 					const auto n_fra = this->monitor_red->get_n_analyzed_fra_historic();
 					const auto mbps = ((float)(n_bits_per_fra * n_fra) / cur_sec) * 0.000001f;
-					const auto inter_lvl = (float)params.src.n_frames;
+					const auto inter_lvl = (float)params.src->n_frames;
 					const auto lat = (((float)duration.second.count() * 0.001f) / (float)n_fra) * inter_lvl;
 
 					stream << " - " << std::setw(9) << mbps << " Mb/s"
@@ -369,14 +365,14 @@ template <typename B, typename R, typename Q>
 Monitor<B>* Simulation_BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor::build<B>(params.mnt);
+	return Factory_monitor::build<B>(*params.mnt);
 }
 
 template <typename B, typename R, typename Q>
 Terminal_BFER<B>* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return new Terminal_BFER<B>(params.src.K,
+	return new Terminal_BFER<B>(params.src->K,
 	                            params.enc->N_cw,
 	                            *this->monitor_red);
 }
@@ -387,7 +383,7 @@ void Simulation_BFER<B,R,Q>
 {
 	if (simu->terminal != nullptr && simu->monitor_red != nullptr)
 	{
-		const auto sleep_time = simu->params.ter.frequency - std::chrono::milliseconds(0);
+		const auto sleep_time = simu->params.ter->frequency - std::chrono::milliseconds(0);
 
 		while (!simu->stop_terminal)
 		{

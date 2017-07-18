@@ -17,9 +17,7 @@ class Launcher_EXIT : public Launcher
 {
 protected:
 	tools::Codec_SISO<B,R> *codec = nullptr;
-
-	tools::Factory_simulation_EXIT::chain_parameters *m_chain_params = nullptr;
-	tools::Factory_simulation_EXIT::parameters       *m_sim          = nullptr;
+	tools::Factory_simulation_EXIT::parameters *params;
 
 public:
 	Launcher_EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);

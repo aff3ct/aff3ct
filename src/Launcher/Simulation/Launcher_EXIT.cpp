@@ -11,11 +11,9 @@ using namespace aff3ct::simulation;
 template <typename B, typename R>
 Launcher_EXIT<B,R>
 ::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_EXIT::chain_parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new Factory_simulation_EXIT::parameters())
 {
-	m_sim = dynamic_cast<Factory_simulation_EXIT::parameters*>(m_sim);
-	this->chain_params = m_chain_params;
-	this->simu_params  = m_sim;
+	Launcher::params = params;
 }
 
 template <typename B, typename R>
@@ -45,14 +43,14 @@ void Launcher_EXIT<B,R>
 {
 	Launcher::store_args();
 
-	Factory_simulation_EXIT::store_args(this->ar, *m_sim);
-	Factory_source         ::store_args(this->ar, m_chain_params->src);
-	Factory_modem          ::store_args(this->ar, m_chain_params->mdm);
-	Factory_channel        ::store_args(this->ar, m_chain_params->chn);
-	Factory_terminal_EXIT  ::store_args(this->ar, m_chain_params->ter);
+	Factory_simulation_EXIT::store_args(this->ar, *params);
+	Factory_source         ::store_args(this->ar, *params->src);
+	Factory_modem          ::store_args(this->ar, *params->mdm);
+	Factory_channel        ::store_args(this->ar, *params->chn);
+	Factory_terminal_EXIT  ::store_args(this->ar, *params->ter);
 
-	m_chain_params->chn.complex = m_chain_params->mdm.complex;
-	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
+	params->chn->complex   = params->mdm->complex;
+	params->chn->add_users = params->mdm->type == "SCMA";
 }
 
 template <typename B, typename R>
@@ -72,11 +70,11 @@ template <typename B, typename R>
 void Launcher_EXIT<B,R>
 ::print_header()
 {
-	Factory_simulation_EXIT::header(this->pl_sim,                *m_sim);
-	Factory_source         ::header(this->pl_src,                 m_chain_params->src);
-	Factory_modem          ::header(this->pl_mod, this->pl_demod, m_chain_params->mdm);
-	Factory_channel        ::header(this->pl_chn,                 m_chain_params->chn);
-	Factory_terminal_EXIT  ::header(this->pl_ter,                 m_chain_params->ter);
+	Factory_simulation_EXIT::header(this->pl_sim,                 *params);
+	Factory_source         ::header(this->pl_src,                 *params->src);
+	Factory_modem          ::header(this->pl_mod, this->pl_demod, *params->mdm);
+	Factory_channel        ::header(this->pl_chn,                 *params->chn);
+	Factory_terminal_EXIT  ::header(this->pl_ter,                 *params->ter);
 
 	Launcher::print_header();
 }
@@ -87,7 +85,7 @@ Simulation* Launcher_EXIT<B,R>
 {
 	this->build_codec();
 
-	return new Simulation_EXIT<B,R>(*m_chain_params, *codec);
+	return new Simulation_EXIT<B,R>(*params, *codec);
 	return nullptr;
 }
 

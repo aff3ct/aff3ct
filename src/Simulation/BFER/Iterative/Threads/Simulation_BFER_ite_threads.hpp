@@ -37,7 +37,7 @@ protected:
 	std::vector<mipp::vector<B>> V_K2; // decoded bits
 
 public:
-	Simulation_BFER_ite_threads(const tools::Factory_simulation_BFER_ite::chain_parameters &chain_params, tools::Codec_SISO<B,Q> &codec);
+	Simulation_BFER_ite_threads(const tools::Factory_simulation_BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec);
 	virtual ~Simulation_BFER_ite_threads();
 
 protected:

@@ -16,26 +16,11 @@ struct Factory_simulation_BFER_std : Factory_simulation_BFER
 {
 	struct parameters : Factory_simulation_BFER::parameters
 	{
+		parameters() : Factory_simulation_BFER::parameters() {}
+
 		virtual ~parameters() {}
 
 		bool debug_fe = false;
-	};
-
-	struct chain_parameters : Factory_simulation_BFER::chain_parameters
-	{
-		chain_parameters()
-		{
-			if (this->sim == nullptr)
-				this->sim = new parameters();
-		}
-
-		virtual ~chain_parameters()
-		{
-			if (this->sim != nullptr)
-				delete this->sim;
-
-			this->sim = nullptr;
-		}
 	};
 
 	static void build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args);

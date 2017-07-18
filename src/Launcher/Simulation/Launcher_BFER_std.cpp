@@ -11,11 +11,9 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 Launcher_BFER_std<B,R,Q>
 ::Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), m_chain_params(new Factory_simulation_BFER_std::chain_parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new Factory_simulation_BFER_std::parameters())
 {
-	m_sim = dynamic_cast<Factory_simulation_BFER_std::parameters*>(m_chain_params->sim);
-	this->chain_params = m_chain_params;
-	this->simu_params  = m_chain_params->sim;
+	Launcher::params = params;
 }
 
 template <typename B, typename R, typename Q>
@@ -67,44 +65,44 @@ void Launcher_BFER_std<B,R,Q>
 {
 	Launcher::store_args();
 
-	Factory_simulation_BFER_std::store_args(this->ar, *m_sim);
+	Factory_simulation_BFER_std::store_args(this->ar, *params);
 
-	Factory_source::store_args(this->ar, m_chain_params->src);
-	Factory_CRC::store_args(this->ar, m_chain_params->crc);
+	Factory_source::store_args(this->ar, *params->src);
+	Factory_CRC::store_args(this->ar, *params->crc);
 
-	m_chain_params->crc.K = m_chain_params->enc->K - m_chain_params->crc.size;
-	m_chain_params->src.K = m_chain_params->crc.K;
-	m_chain_params->mdm.N = m_chain_params->pct->N;
+	params->crc->K = params->enc->K - params->crc->size;
+	params->src->K = params->crc->K;
+	params->mdm->N = params->pct->N;
 
-	Factory_modem::store_args(this->ar, m_chain_params->mdm);
+	Factory_modem::store_args(this->ar, *params->mdm);
 
-	m_chain_params->chn.N         = m_chain_params->mdm.N_mod;
-	m_chain_params->chn.complex   = m_chain_params->mdm.complex;
-	m_chain_params->chn.add_users = m_chain_params->mdm.type == "SCMA";
+	params->chn->N         = params->mdm->N_mod;
+	params->chn->complex   = params->mdm->complex;
+	params->chn->add_users = params->mdm->type == "SCMA";
 
-	Factory_channel::store_args(this->ar, m_chain_params->chn);
+	Factory_channel::store_args(this->ar, *params->chn);
 
-	m_chain_params->qnt.size = m_chain_params->mdm.N;
+	params->qnt->size = params->mdm->N;
 
-	Factory_quantizer::store_args(this->ar, m_chain_params->qnt);
+	Factory_quantizer::store_args(this->ar, *params->qnt);
 
-	m_chain_params->mnt.size = m_chain_params->src.K;
+	params->mnt->size = params->src->K;
 
-	Factory_monitor::store_args(this->ar, m_chain_params->mnt);
+	Factory_monitor::store_args(this->ar, *params->mnt);
 
-	Factory_terminal_BFER::store_args(this->ar, m_chain_params->ter);
+	Factory_terminal_BFER::store_args(this->ar, *params->ter);
 
 	if (!std::is_integral<Q>())
-		m_chain_params->qnt.type = "NO";
+		params->qnt->type = "NO";
 
-	m_chain_params->crc. n_frames = m_chain_params->src.n_frames;
-	m_chain_params->enc->n_frames = m_chain_params->src.n_frames;
-	m_chain_params->pct->n_frames = m_chain_params->src.n_frames;
-	m_chain_params->mdm. n_frames = m_chain_params->src.n_frames;
-	m_chain_params->chn. n_frames = m_chain_params->src.n_frames;
-	m_chain_params->qnt. n_frames = m_chain_params->src.n_frames;
-	m_chain_params->dec->n_frames = m_chain_params->src.n_frames;
-	m_chain_params->mnt. n_frames = m_chain_params->src.n_frames;
+	params->crc->n_frames = params->src->n_frames;
+	params->enc->n_frames = params->src->n_frames;
+	params->pct->n_frames = params->src->n_frames;
+	params->mdm->n_frames = params->src->n_frames;
+	params->chn->n_frames = params->src->n_frames;
+	params->qnt->n_frames = params->src->n_frames;
+	params->dec->n_frames = params->src->n_frames;
+	params->mnt->n_frames = params->src->n_frames;
 }
 
 template <typename B, typename R, typename Q>
@@ -127,14 +125,14 @@ template <typename B, typename R, typename Q>
 void Launcher_BFER_std<B,R,Q>
 ::print_header()
 {
-	Factory_simulation_BFER_std::header(this->pl_sim,                *m_sim);
-	Factory_source             ::header(this->pl_src,                 m_chain_params->src);
-	Factory_CRC                ::header(this->pl_crc,                 m_chain_params->crc);
-	Factory_modem              ::header(this->pl_mod, this->pl_demod, m_chain_params->mdm);
-	Factory_channel            ::header(this->pl_chn,                 m_chain_params->chn);
-	Factory_quantizer          ::header(this->pl_qnt,                 m_chain_params->qnt);
-	Factory_monitor            ::header(this->pl_mnt,                 m_chain_params->mnt);
-	Factory_terminal_BFER      ::header(this->pl_ter,                 m_chain_params->ter);
+	Factory_simulation_BFER_std::header(this->pl_sim,                 *params);
+	Factory_source             ::header(this->pl_src,                 *params->src);
+	Factory_CRC                ::header(this->pl_crc,                 *params->crc);
+	Factory_modem              ::header(this->pl_mod, this->pl_demod, *params->mdm);
+	Factory_channel            ::header(this->pl_chn,                 *params->chn);
+	Factory_quantizer          ::header(this->pl_qnt,                 *params->qnt);
+	Factory_monitor            ::header(this->pl_mnt,                 *params->mnt);
+	Factory_terminal_BFER      ::header(this->pl_ter,                 *params->ter);
 
 	Launcher::print_header();
 }
@@ -146,11 +144,11 @@ Simulation* Launcher_BFER_std<B,R,Q>
 	this->build_codec();
 
 #if defined(SYSTEMC)
-	return new SC_Simulation_BFER_std     <B,R,Q>(*m_chain_params, *codec);
+	return new SC_Simulation_BFER_std     <B,R,Q>(*params, *codec);
 #elif defined(STARPU)
-	return new SPU_Simulation_BFER_std    <B,R,Q>(*m_chain_params, *codec);
+	return new SPU_Simulation_BFER_std    <B,R,Q>(*params, *codec);
 #else
-	return new Simulation_BFER_std_threads<B,R,Q>(*m_chain_params, *codec);
+	return new Simulation_BFER_std_threads<B,R,Q>(*params, *codec);
 #endif
 }
 

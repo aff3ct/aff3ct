@@ -20,7 +20,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 Simulation_EXIT<B,R>
-::Simulation_EXIT(const tools::Factory_simulation_EXIT::chain_parameters& params, Codec_SISO<B,R> &codec)
+::Simulation_EXIT(const tools::Factory_simulation_EXIT::parameters& params, Codec_SISO<B,R> &codec)
 : Simulation(),
   params(params),
   codec (codec),
@@ -82,12 +82,12 @@ void Simulation_EXIT<B,R>
 {
 	release_objects();
 
-	const auto N_mod = params.mdm.N_mod;
-	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.mdm.type,
+	const auto N_mod = params.mdm->N_mod;
+	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.mdm->type,
 	                                                                   params.enc->K,
-	                                                                   params.mdm.bps,
-	                                                                   params.mdm.upf,
-	                                                                   params.mdm.cpm_L);
+	                                                                   params.mdm->bps,
+	                                                                   params.mdm->upf,
+	                                                                   params.mdm->cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -118,17 +118,16 @@ void Simulation_EXIT<B,R>
 	codec.launch_precompute();
 
 	// for each channel SNR to be simulated	
-	for (snr = params.sim->snr_min; snr <= params.sim->snr_max; snr += params.sim->snr_step)
+	for (snr = params.snr_min; snr <= params.snr_max; snr += params.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto code_rate = 1.f;
-		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.mdm.bps),
-		                      params.mdm.upf);
+		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.mdm->bps), params.mdm->upf);
 
 		codec.snr_precompute(sigma);
 
 		// for each "a" standard deviation (sig_a) to be simulated
-		for (sig_a = params.sim->sig_a_min; sig_a <= params.sim->sig_a_max; sig_a += params.sim->sig_a_step)
+		for (sig_a = params.sig_a_min; sig_a <= params.sig_a_max; sig_a += params.sig_a_step)
 		{
 			I_A = 0.0;
 			I_E = 0.0;
@@ -140,7 +139,7 @@ void Simulation_EXIT<B,R>
 			if (sig_a == 0)
 				std::fill(La_K2.begin(), La_K2.end(), init_LLR<R>());
 
-			if (!params.ter.disabled && first_loop)
+			if (!params.ter->disabled && first_loop)
 			{
 				terminal->legend(std::cout);
 				first_loop = false;
@@ -148,7 +147,7 @@ void Simulation_EXIT<B,R>
 
 			this->simulation_loop();
 
-			if (!params.ter.disabled)
+			if (!params.ter->disabled)
 				terminal->final_report(std::cout);
 		}
 	}
@@ -181,7 +180,7 @@ void Simulation_EXIT<B,R>
 		if (sig_a != 0)
 		{
 			// Rayleigh channel
-			if (params.chn.type.find("RAYLEIGH") != std::string::npos)
+			if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 			{
 				channel_a->add_noise            (X_K, La_K1, H_N       );
 				modem_a  ->demodulate_with_gains(     La_K1, H_N, La_K2);
@@ -194,7 +193,7 @@ void Simulation_EXIT<B,R>
 		}
 
 		// Rayleigh channel
-		if (params.chn.type.find("RAYLEIGH") != std::string::npos)
+		if (params.chn->type.find("RAYLEIGH") != std::string::npos)
 		{
 			channel->add_noise            (X_N2, Lch_N1, H_N        );
 			modem  ->demodulate_with_gains(      Lch_N1, H_N, Lch_N2);
@@ -221,7 +220,7 @@ void Simulation_EXIT<B,R>
 		La_buff.insert(La_buff.end(), La_K2.begin(), La_K2.end());
 
 		// display statistics in terminal
-		if (!params.ter.disabled && (steady_clock::now() - t_simu) >= params.ter.frequency)
+		if (!params.ter->disabled && (steady_clock::now() - t_simu) >= params.ter->frequency)
 		{
 			terminal->temp_report(std::clog);
 			t_simu = steady_clock::now();
@@ -411,7 +410,7 @@ Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
 
-	return Factory_source::build<B>(params.src);
+	return Factory_source::build<B>(*params.src);
 }
 
 template <typename B, typename R>
@@ -425,7 +424,7 @@ Encoder<B>* Simulation_EXIT<B,R>
 	catch (std::exception const&)
 	{
 		auto enc_cpy = *params.enc;
-		enc_cpy.seed = params.sim->seed;
+		enc_cpy.seed = params.seed;
 		return Factory_encoder::build<B>(enc_cpy);
 	}
 }
@@ -434,8 +433,8 @@ template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem()
 {
-	auto mdm_cpy = params.mdm;
-	if (params.mdm.sigma == -1.f)
+	auto mdm_cpy = *params.mdm;
+	if (params.mdm->sigma == -1.f)
 		mdm_cpy.sigma = this->sigma;
 	return Factory_modem::build<B,R>(mdm_cpy);
 }
@@ -444,7 +443,7 @@ template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem_a()
 {
-	auto mdm_cpy = params.mdm;
+	auto mdm_cpy = *params.mdm;
 	mdm_cpy.sigma = 2.f / sig_a;
 	return Factory_modem::build<B,R>(mdm_cpy);
 }
@@ -453,10 +452,10 @@ template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel(const int size)
 {
-	auto chn_cpy = params.chn;
-	if (params.chn.sigma == -1.f)
+	auto chn_cpy = *params.chn;
+	if (params.chn->sigma == -1.f)
 		chn_cpy.sigma = this->sigma;
-	chn_cpy.seed = params.sim->seed;
+	chn_cpy.seed = params.seed;
 
 	return Factory_channel::build<R>(chn_cpy);
 }
@@ -465,9 +464,9 @@ template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	auto chn_cpy = params.chn;
+	auto chn_cpy = *params.chn;
 	chn_cpy.sigma = 2.f / sig_a;
-	chn_cpy.seed = params.sim->seed;
+	chn_cpy.seed = params.seed;
 
 	return Factory_channel::build<R>(chn_cpy);
 }

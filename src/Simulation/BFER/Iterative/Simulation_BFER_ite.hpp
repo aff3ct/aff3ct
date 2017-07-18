@@ -29,8 +29,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER_ite : public Simulation_BFER<B,R,Q>
 {
 protected:
-	const tools::Factory_simulation_BFER_ite::chain_parameters &chain_params;
-	const tools::Factory_simulation_BFER_ite::parameters       &simu_params;
+	const tools::Factory_simulation_BFER_ite::parameters &params;
 	tools::Codec_SISO<B,Q> &codec_siso;
 
 	// communication chain
@@ -50,7 +49,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	Simulation_BFER_ite(const tools::Factory_simulation_BFER_ite::chain_parameters &chain_params, tools::Codec_SISO<B,Q> &codec);
+	Simulation_BFER_ite(const tools::Factory_simulation_BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec);
 	virtual ~Simulation_BFER_ite();
 
 protected:

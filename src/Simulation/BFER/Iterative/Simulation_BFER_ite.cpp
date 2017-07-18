@@ -17,29 +17,28 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_ite<B,R,Q>
-::Simulation_BFER_ite(const tools::Factory_simulation_BFER_ite::chain_parameters &chain_params, Codec_SISO<B,Q> &codec)
-: Simulation_BFER<B,R,Q>(chain_params, codec),
-  chain_params(chain_params),
-  simu_params(*dynamic_cast<Factory_simulation_BFER_ite::parameters*>(chain_params.sim)),
+::Simulation_BFER_ite(const tools::Factory_simulation_BFER_ite::parameters &params, Codec_SISO<B,Q> &codec)
+: Simulation_BFER<B,R,Q>(params, codec),
+  params(params),
 
   codec_siso(codec),
 
-  source     (simu_params.n_threads, nullptr),
-  crc        (simu_params.n_threads, nullptr),
-  encoder    (simu_params.n_threads, nullptr),
-  modem      (simu_params.n_threads, nullptr),
-  channel    (simu_params.n_threads, nullptr),
-  quantizer  (simu_params.n_threads, nullptr),
-  interleaver(simu_params.n_threads, nullptr),
-  coset_real (simu_params.n_threads, nullptr),
-  siso       (simu_params.n_threads, nullptr),
-  decoder    (simu_params.n_threads, nullptr),
-  coset_bit  (simu_params.n_threads, nullptr),
+  source     (params.n_threads, nullptr),
+  crc        (params.n_threads, nullptr),
+  encoder    (params.n_threads, nullptr),
+  modem      (params.n_threads, nullptr),
+  channel    (params.n_threads, nullptr),
+  quantizer  (params.n_threads, nullptr),
+  interleaver(params.n_threads, nullptr),
+  coset_real (params.n_threads, nullptr),
+  siso       (params.n_threads, nullptr),
+  decoder    (params.n_threads, nullptr),
+  coset_bit  (params.n_threads, nullptr),
 
-  rd_engine_seed(simu_params.n_threads)
+  rd_engine_seed(params.n_threads)
 {
-	for (auto tid = 0; tid < simu_params.n_threads; tid++)
-		rd_engine_seed[tid].seed(simu_params.seed + tid);
+	for (auto tid = 0; tid < params.n_threads; tid++)
+		rd_engine_seed[tid].seed(params.seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -67,7 +66,7 @@ void Simulation_BFER_ite<B,R,Q>
 	siso       [tid] = build_siso       (tid          );
 	decoder    [tid] = build_decoder    (tid          );
 	coset_bit  [tid] = build_coset_bit  (tid          );
-	interleaver[tid] = build_interleaver(tid, simu_params.seed, rd_engine_seed[tid]());
+	interleaver[tid] = build_interleaver(tid, params.seed, rd_engine_seed[tid]());
 
 	interleaver[tid]->init();
 	if (interleaver[tid]->is_uniform())
@@ -78,7 +77,7 @@ template <typename B, typename R, typename Q>
 void Simulation_BFER_ite<B,R,Q>
 ::release_objects()
 {
-	const auto nthr = simu_params.n_threads;
+	const auto nthr = params.n_threads;
 	for (auto i = 0; i < nthr; i++) if (source     [i] != nullptr) { delete source     [i]; source     [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
@@ -105,7 +104,7 @@ template <typename B, typename R, typename Q>
 Source<B>* Simulation_BFER_ite<B,R,Q>
 ::build_source(const int tid, const int seed)
 {
-	auto src_cpy = chain_params.src;
+	auto src_cpy = *params.src;
 	src_cpy.seed = seed;
 	return Factory_source::build<B>(src_cpy);
 }
@@ -114,7 +113,7 @@ template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER_ite<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC::build<B>(chain_params.crc);
+	return Factory_CRC::build<B>(*params.crc);
 }
 
 template <typename B, typename R, typename Q>
@@ -127,7 +126,7 @@ Encoder<B>* Simulation_BFER_ite<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		auto enc_cpy = *chain_params.enc;
+		auto enc_cpy = *params.enc;
 		enc_cpy.seed = seed;
 		return Factory_encoder::build<B>(enc_cpy);
 	}
@@ -144,8 +143,8 @@ template <typename B, typename R, typename Q>
 Modem<B,R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
-	auto mdm_cpy = chain_params.mdm;
-	if (chain_params.mdm.sigma == -1.f)
+	auto mdm_cpy = *params.mdm;
+	if (params.mdm->sigma == -1.f)
 		mdm_cpy.sigma = this->sigma;
 	return Factory_modem::build<B,R,Q>(mdm_cpy);
 }
@@ -154,8 +153,8 @@ template <typename B, typename R, typename Q>
 Channel<R>* Simulation_BFER_ite<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
-	auto chn_cpy = chain_params.chn;
-	if (chain_params.chn.sigma == -1.f)
+	auto chn_cpy = *params.chn;
+	if (params.chn->sigma == -1.f)
 		chn_cpy.sigma = this->sigma;
 	chn_cpy.seed = seed;
 
@@ -166,8 +165,8 @@ template <typename B, typename R, typename Q>
 Quantizer<R,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	auto qnt_cpy = chain_params.qnt;
-	if (chain_params.qnt.sigma == -1.f)
+	auto qnt_cpy = *params.qnt;
+	if (params.qnt->sigma == -1.f)
 		qnt_cpy.sigma = this->sigma;
 
 	return Factory_quantizer::build<R,Q>(qnt_cpy);
@@ -185,7 +184,7 @@ template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real::build<B,Q>("STD", chain_params.dec->N_cw, chain_params.src.n_frames);
+	return Factory_coset_real::build<B,Q>("STD", params.dec->N_cw, params.src->n_frames);
 }
 
 template <typename B, typename R, typename Q>
@@ -199,7 +198,7 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_ite<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return Factory_coset_bit::build<B>("STD", chain_params.dec->K, chain_params.src.n_frames);
+	return Factory_coset_bit::build<B>("STD", params.dec->K, params.src->n_frames);
 }
 
 // ==================================================================================== explicit template instantiation
