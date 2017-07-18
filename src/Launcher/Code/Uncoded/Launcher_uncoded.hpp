@@ -30,6 +30,6 @@ protected:
 }
 }
 
-#include "Launcher_NO.hxx"
+#include "Launcher_uncoded.hxx"
 
 #endif /* LAUNCHER_NO_HPP_ */

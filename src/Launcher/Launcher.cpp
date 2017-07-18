@@ -203,5 +203,8 @@ void Launcher::launch()
 		stream << "# End of the simulation." << std::endl;
 
 	if (simu != nullptr)
+	{
 		delete simu;
+		simu = nullptr;
+	}
 }

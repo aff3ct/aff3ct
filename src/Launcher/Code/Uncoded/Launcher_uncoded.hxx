@@ -1,7 +1,8 @@
 #include <iostream>
 
 #include "Tools/Codec/Uncoded/Codec_uncoded.hpp"
-#include "Launcher_NO.hpp"
+
+#include "Launcher_uncoded.hpp"
 
 namespace aff3ct
 {

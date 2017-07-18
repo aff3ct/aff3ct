@@ -30,7 +30,7 @@
 #include "Launcher/Code/RSC/Launcher_RSC.hpp"
 #include "Launcher/Code/Turbo/Launcher_turbo.hpp"
 #include "Launcher/Code/Repetition/Launcher_repetition.hpp"
-#include "Launcher/Code/Uncoded/Launcher_NO.hpp"
+#include "Launcher/Code/Uncoded/Launcher_uncoded.hpp"
 
 #include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
 
