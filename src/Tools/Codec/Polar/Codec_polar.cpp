@@ -91,14 +91,6 @@ void Codec_polar<B,Q>
 			punct.gen_frozen_bits(frozen_bits);
 		}
 	}
-
-//	if (this->params.simulation.debug)
-//	{
-//		std::clog << std::endl << "Frozen bits:" << std::endl;
-//		Frame_trace<B> ft(this->params.simulation.debug_limit);
-//		ft.display_bit_vector(frozen_bits);
-//		std::clog << std::endl;
-//	}
 }
 
 template <typename B, typename Q>

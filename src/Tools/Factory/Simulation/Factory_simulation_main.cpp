@@ -12,7 +12,7 @@ using namespace tools;
 
 void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	req_args[{"sim-cde-type"}] =
+	req_args[{"sim-cde-type", "C"}] =
 		{"string",
 		 "select the code type you want to use.",
 		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
@@ -40,10 +40,10 @@ void Factory_simulation_main::build_args(Arguments_reader::arg_map &req_args, Ar
 
 void Factory_simulation_main::store_args(const Arguments_reader& ar, parameters &params)
 {
-	if(ar.exist_arg({"sim-cde-type"})) params.cde_type        = ar.get_arg({"sim-cde-type"}); // required
-	if(ar.exist_arg({"sim-type"    })) params.sim_type        = ar.get_arg({"sim-type"    });
-	if(ar.exist_arg({"help",    "h"})) params.display_help    = true;
-	if(ar.exist_arg({"version", "v"})) params.display_version = true;
+	if(ar.exist_arg({"sim-cde-type", "C"})) params.cde_type        = ar.get_arg({"sim-cde-type", "C"}); // required
+	if(ar.exist_arg({"sim-type"         })) params.sim_type        = ar.get_arg({"sim-type"         });
+	if(ar.exist_arg({"help",         "h"})) params.display_help    = true;
+	if(ar.exist_arg({"version",      "v"})) params.display_version = true;
 
 #ifdef MULTI_PREC
 	if(ar.exist_arg({"sim-prec", "p"})) params.sim_prec = ar.get_arg_int({"sim-prec", "p"});
@@ -121,5 +121,5 @@ void Factory_simulation_main::header(params_list& head_sim, const parameters& pa
 	auto split_date = string_split(date.str(), '.');
 	head_sim.push_back(std::make_pair("Date (UTC)", split_date[0]));
 
-	head_sim.push_back(std::make_pair("Code type", params.cde_type));
+	head_sim.push_back(std::make_pair("Code type (C)", params.cde_type));
 }
