@@ -46,7 +46,6 @@ void Launcher_polar<C,B,R,Q>
 	this->req_args.erase({"enc-cw-size",   "N"});
 	this->req_args.erase({"enc-info-bits", "K"});
 	this->opt_args.erase({"enc-fra",       "F"});
-	this->opt_args.erase({"enc-fb-sigma"      });
 	this->opt_args.erase({"enc-seed",      "S"});
 	this->req_args.erase({"dec-cw-size",   "N"});
 	this->req_args.erase({"dec-info-bits", "K"});

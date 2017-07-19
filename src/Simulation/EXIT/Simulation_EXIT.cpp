@@ -443,8 +443,9 @@ template <typename B, typename R>
 Modem<B,R,R>* Simulation_EXIT<B,R>
 ::build_modem_a()
 {
-	auto mdm_cpy = *params.mdm;
+	auto mdm_cpy  = *params.mdm;
 	mdm_cpy.sigma = 2.f / sig_a;
+	mdm_cpy.N     = params.enc->K;
 	return Factory_modem::build<B,R>(mdm_cpy);
 }
 
@@ -456,7 +457,6 @@ Channel<R>* Simulation_EXIT<B,R>
 	if (params.chn->sigma == -1.f)
 		chn_cpy.sigma = this->sigma;
 	chn_cpy.seed = params.seed;
-
 	return Factory_channel::build<R>(chn_cpy);
 }
 
@@ -464,10 +464,14 @@ template <typename B, typename R>
 Channel<R>* Simulation_EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	auto chn_cpy = *params.chn;
+	auto chn_cpy  = *params.chn;
 	chn_cpy.sigma = 2.f / sig_a;
-	chn_cpy.seed = params.seed;
-
+	chn_cpy.seed  = params.seed;
+	chn_cpy.N     = Factory_modem::get_buffer_size_after_modulation(params.mdm->type,
+	                                                                params.enc->K,
+	                                                                params.mdm->bps,
+	                                                                params.mdm->upf,
+ 	                                                                params.mdm->cpm_L);
 	return Factory_channel::build<R>(chn_cpy);
 }
 

@@ -35,6 +35,20 @@ void Launcher_EXIT<B,R>
 	Factory_modem          ::build_args(this->req_args, this->opt_args);
 	Factory_channel        ::build_args(this->req_args, this->opt_args);
 	Factory_terminal_EXIT  ::build_args(this->req_args, this->opt_args);
+
+	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
+	    this->req_args.find({"pct-info-bits", "K"}) != this->req_args.end())
+		this->req_args.erase({"src-info-bits", "K"});
+	this->opt_args.erase({"src-seed",     "S"});
+	this->req_args.erase({"mod-fra-size", "N"});
+	this->opt_args.erase({"mod-fra",      "F"});
+	this->opt_args.erase({"dmod-sigma"       });
+	this->req_args.erase({"chn-fra-size", "N"});
+	this->opt_args.erase({"chn-fra",      "F"});
+	this->opt_args.erase({"chn-sigma"        });
+	this->opt_args.erase({"chn-seed",     "S"});
+	this->opt_args.erase({"chn-add-users"    });
+	this->opt_args.erase({"chn-complex"      });
 }
 
 template <typename B, typename R>
@@ -44,13 +58,36 @@ void Launcher_EXIT<B,R>
 	Launcher::store_args();
 
 	Factory_simulation_EXIT::store_args(this->ar, *params);
-	Factory_source         ::store_args(this->ar, *params->src);
-	Factory_modem          ::store_args(this->ar, *params->mdm);
-	Factory_channel        ::store_args(this->ar, *params->chn);
-	Factory_terminal_EXIT  ::store_args(this->ar, *params->ter);
 
+	Factory_source::store_args(this->ar, *params->src);
+
+	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
+	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
+
+	params->src->K = params->src->K == 0 ? K : params->src->K;
+	params->mdm->N = N;
+
+	Factory_modem::store_args(this->ar, *params->mdm);
+
+	params->chn->N         = params->mdm->N_mod;
 	params->chn->complex   = params->mdm->complex;
 	params->chn->add_users = params->mdm->type == "SCMA";
+
+	Factory_channel::store_args(this->ar, *params->chn);
+
+	Factory_terminal_EXIT::store_args(this->ar, *params->ter);
+
+	if (params->src->type == "AZCW" || params->enc->type == "AZCW")
+	{
+		params->src->type = "AZCW";
+		params->enc->type = "AZCW";
+	}
+
+	params->enc->n_frames = params->src->n_frames;
+	params->pct->n_frames = params->src->n_frames;
+	params->mdm->n_frames = params->src->n_frames;
+	params->chn->n_frames = params->src->n_frames;
+	params->dec->n_frames = params->src->n_frames;
 }
 
 template <typename B, typename R>

@@ -4,7 +4,7 @@ cd ../build
 
 ./bin/aff3ct                     \
     --sim-type       EXIT        \
-    --cde-type       POLAR       \
+    --sim-cde-type   POLAR       \
     -K               1194        \
     -N               2048        \
     --sim-snr-min    -3          \
@@ -15,5 +15,5 @@ cd ../build
     --chn-type       AWGN        \
     --dec-type       SCAN        \
     --dec-implem     NAIVE       \
-    --cde-sigma      0.8         \
+    --enc-fb-sigma   0.8         \
     $*
