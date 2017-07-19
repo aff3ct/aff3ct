@@ -22,6 +22,8 @@ void Factory_decoder_RA
 {
 	Factory_decoder::build_args(req_args, opt_args);
 	Factory_interleaver::build_args(req_args, opt_args);
+	req_args.erase({"itl-size"    });
+	opt_args.erase({"itl-fra", "F"});
 
 	opt_args[{"dec-type", "D"}].push_back("RA");
 	opt_args[{"dec-implem"}].push_back("STD");
@@ -39,7 +41,7 @@ void Factory_decoder_RA
 
 	Factory_decoder::store_args(ar, params);
 
-	params.itl.size = params.N_cw;
+	params.itl.size     = params.N_cw;
 	params.itl.n_frames = params.n_frames;
 	Factory_interleaver::store_args(ar, params.itl);
 

@@ -21,9 +21,9 @@ Codec_LDPC<B,Q>
   decoder_siso (n_threads, nullptr)
 {
 	bool is_info_bits_pos = false;
-	if (!enc_par.H_alist_path.empty() && enc_params.type == "LDPC")
+	if (!enc_par.G_alist_path.empty() && enc_params.type == "LDPC")
 	{
-		std::ifstream file_G(enc_par.H_alist_path, std::ifstream::in);
+		std::ifstream file_G(enc_par.G_alist_path, std::ifstream::in);
 		G = AList::read(file_G);
 
 		try

@@ -59,7 +59,7 @@ protected:
 	virtual module::Source     <B    >* build_source     (const int tid = 0, const int seed = 0);
 	virtual module::CRC        <B    >* build_crc        (const int tid = 0                    );
 	virtual module::Encoder    <B    >* build_encoder    (const int tid = 0, const int seed = 0);
-	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0, const int rd_seed = 0);
+	virtual module::Interleaver<int  >* build_interleaver(const int tid = 0, const int seed = 0);
 	virtual module::Modem      <B,R,Q>* build_modem      (const int tid = 0                    );
 	virtual module::Channel    <R    >* build_channel    (const int tid = 0, const int seed = 0);
 	virtual module::Quantizer  <R,Q  >* build_quantizer  (const int tid = 0                    );

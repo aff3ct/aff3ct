@@ -29,6 +29,7 @@ void Factory_decoder_turbo
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_decoder::build_args(req_args, opt_args);
+	req_args.erase({"dec-cw-size", "N"});
 
 	opt_args[{"dec-type", "D"}].push_back("BCJR");
 
@@ -71,6 +72,7 @@ void Factory_decoder_turbo
 
 	Factory_scaling_factor::build_args(req_args, opt_args);
 	Factory_flip_and_check::build_args(req_args, opt_args);
+	req_args.erase({"dec-fnc-size", "K"});
 }
 
 void Factory_decoder_turbo
@@ -78,16 +80,17 @@ void Factory_decoder_turbo
 {
 	// for the RSC
 	params.type   = "BCJR";
-	params.implem = "GENERIC";
+	params.implem = "STD";
 
 	Factory_decoder::store_args(ar, params);
 
-	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
-	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
-	if(ar.exist_arg({"dec-max"})) params.max = ar.get_arg({"dec-max"});
-	if(ar.exist_arg({"dec-sc"})) params.self_corrected = true;
-	if(ar.exist_arg({"dec-json"})) params.enable_json = true;
-	if(ar.exist_arg({"dec-no-buff"})) params.buffered = false;
+	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite          = ar.get_arg_int({"dec-ite", "i"});
+	if(ar.exist_arg({"dec-simd"    })) params.simd_strategy  = ar.get_arg    ({"dec-simd"    });
+	if(ar.exist_arg({"dec-max"     })) params.max            = ar.get_arg    ({"dec-max"     });
+	if(ar.exist_arg({"dec-std"     })) params.standard       = ar.get_arg    ({"dec-std"     });
+	if(ar.exist_arg({"dec-sc"      })) params.self_corrected = true;
+	if(ar.exist_arg({"dec-json"    })) params.enable_json    = true;
+	if(ar.exist_arg({"dec-no-buff" })) params.buffered       = false;
 
 	if (params.enable_json)
 	{
@@ -96,12 +99,10 @@ void Factory_decoder_turbo
 		params.simd_strategy = "";
 	}
 
-	if(ar.exist_arg({"dec-std"})) params.standard = ar.get_arg({"dec-std"});
-
-	if (params.type == "LTE")
+	if (params.standard == "LTE")
 		params.poly = {013, 015};
 
-	if (params.type == "CCSDS")
+	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
 	if (ar.exist_arg({"dec-poly"}))
@@ -115,11 +116,18 @@ void Factory_decoder_turbo
 #endif
 	}
 
-	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
-	params.N_cw       += params.tail_length;
+	if (params.poly[0] != 013 || params.poly[1] != 015)
+		params.implem = "GENERIC";
 
-	Factory_scaling_factor::store_args(ar, params.scaling_factor);
-	Factory_flip_and_check::store_args(ar, params.flip_and_check);
+	params.tail_length = (int)(4 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
+	params.N_cw        = 3 * params.K + params.tail_length;
+	params.R           = (float)params.K / (float)params.N_cw;
+
+	Factory_scaling_factor::store_args(ar, params.sf);
+
+	params.fnc.size     = params.K;
+	params.fnc.n_frames = params.n_frames;
+	Factory_flip_and_check::store_args(ar, params.fnc);
 }
 
 void Factory_decoder_turbo
@@ -135,16 +143,23 @@ void Factory_decoder_turbo
 {
 	Factory_decoder::header(head_dec, params);
 
+	if (!params.standard.empty())
+		head_dec.push_back(std::make_pair("Standard", params.standard));
+	std::stringstream poly;
+	poly << "{0" << std::oct << params.poly[0] << ",0" << std::oct << params.poly[1] << "}";
+	head_dec.push_back(std::make_pair(std::string("Polynomials"), poly.str()));
 	if (!params.simd_strategy.empty())
 		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));
 	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
+	if (params.tail_length)
+		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
 	head_dec.push_back(std::make_pair("Max type", params.max));
 	head_dec.push_back(std::make_pair("Enable json", ((params.enable_json) ? "on" : "off")));
 	head_dec.push_back(std::make_pair("Buffered", ((params.buffered) ? "on" : "off")));
 	head_dec.push_back(std::make_pair("Self-corrected", ((params.self_corrected) ? "on" : "off")));
 
-	Factory_scaling_factor::header(head_dec, params.scaling_factor);
-	Factory_flip_and_check::header(head_dec, params.flip_and_check);
+	Factory_scaling_factor::header(head_dec, params.sf);
+	Factory_flip_and_check::header(head_dec, params.fnc);
 }
 
 // ==================================================================================== explicit template instantiation

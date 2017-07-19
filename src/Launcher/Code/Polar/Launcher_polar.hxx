@@ -45,7 +45,6 @@ void Launcher_polar<C,B,R,Q>
 	this->opt_args.erase({"pct-fra",       "F"});
 	this->req_args.erase({"enc-cw-size",   "N"});
 	this->req_args.erase({"enc-info-bits", "K"});
-	this->req_args.erase({"enc-info-bits", "K"});
 	this->opt_args.erase({"enc-fra",       "F"});
 	this->opt_args.erase({"enc-fb-sigma"      });
 	this->opt_args.erase({"enc-seed",      "S"});
@@ -79,6 +78,9 @@ void Launcher_polar<C,B,R,Q>
 
 	tools::Factory_decoder_polar::store_args(this->ar, *params_dec);
 
+	if (params_dec->simd_strategy == "INTER")
+		this->params->src->n_frames = mipp::N<Q>();
+
 	C::store_args();
 }
 
@@ -98,10 +100,12 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_polar       ::header(this->pl_enc, *params_enc);
-	tools::Factory_puncturer_polar     ::header(this->pl_pct, *params_pct);
+	if (params_enc->type != "NO")
+		tools::Factory_encoder_polar::header(this->pl_enc, *params_enc);
+	if (params_pct->type != "NO")
+		tools::Factory_puncturer_polar::header(this->pl_pct, *params_pct);
 	tools::Factory_frozenbits_generator::header(this->pl_enc, *params_fb);
-	tools::Factory_decoder_polar       ::header(this->pl_dec, *params_dec);
+	tools::Factory_decoder_polar::header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }

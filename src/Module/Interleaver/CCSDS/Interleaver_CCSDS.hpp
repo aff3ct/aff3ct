@@ -45,7 +45,7 @@ protected:
 		{
 			std::stringstream message;
 			message << "There is no CCSDS k_1 and k_2 parameters for 'size' = " << size
-			        << "(supported sizes are 1784, 3568, 7136 and 8920).";
+			        << " (supported sizes are 1784, 3568, 7136 and 8920).";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}

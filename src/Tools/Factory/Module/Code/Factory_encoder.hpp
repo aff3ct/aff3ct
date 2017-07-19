@@ -19,8 +19,8 @@ struct Factory_encoder : public Factory
 	{
 		virtual ~parameters() {}
 
-		int         K           = -1;
-		int         N_cw        = -1;
+		int         K           = 0;
+		int         N_cw        = 0;
 
 		std::string type        = "NO";
 		std::string path        = "";

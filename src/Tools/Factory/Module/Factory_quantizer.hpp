@@ -17,7 +17,7 @@ struct Factory_quantizer : public Factory
 {
 	struct parameters
 	{
-		int         size       = -1;
+		int         size       = 0;
 
 		std::string type       = "STD";
 		float       range      = 0.f;

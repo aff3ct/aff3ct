@@ -23,7 +23,7 @@ struct Factory_decoder_RSC : public Factory_decoder
 	{
 		virtual ~parameters() {}
 
-		std::string      max           = "MAXS";
+		std::string      max           = "MAX";
 		std::string      simd_strategy = "";
 		std::string      standard      = "LTE";
 		bool             buffered      = true;

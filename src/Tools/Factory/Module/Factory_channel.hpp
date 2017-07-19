@@ -17,7 +17,7 @@ struct Factory_channel : public Factory
 {
 	struct parameters
 	{
-		int         N            = -1;
+		int         N            = 0;
 
 		std::string type         = "AWGN";
 		std::string path         = "";

@@ -52,10 +52,13 @@ void Simulation_BFER_std<B,R,Q>
 	const auto seed_src = rd_engine_seed[tid]();
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_chn = rd_engine_seed[tid]();
+//	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
+	const auto seed_itl = rd_engine_seed[tid]();
 
 	// build the objects
 	source     [tid] = build_source     (tid, seed_src);
 	crc        [tid] = build_crc        (tid          );
+	interleaver[tid] = build_interleaver(tid, seed_itl);
 	encoder    [tid] = build_encoder    (tid, seed_enc);
 	puncturer  [tid] = build_puncturer  (tid          );
 	modem      [tid] = build_modem      (tid          );
@@ -64,7 +67,6 @@ void Simulation_BFER_std<B,R,Q>
 	coset_real [tid] = build_coset_real (tid          );
 	decoder    [tid] = build_decoder    (tid          );
 	coset_bit  [tid] = build_coset_bit  (tid          );
-	interleaver[tid] = build_interleaver(tid, params.seed, rd_engine_seed[tid]());
 
 	if (interleaver[tid] != nullptr)
 	{
@@ -149,11 +151,11 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_std<B,R,Q>
-::build_interleaver(const int tid, const int seed, const int rd_seed)
+::build_interleaver(const int tid, const int seed)
 {
 	try
 	{
-		return this->codec.build_interleaver(tid, seed, rd_seed);
+		return this->codec.build_interleaver(tid, seed);
 	}
 	catch (cannot_allocate const&)
 	{

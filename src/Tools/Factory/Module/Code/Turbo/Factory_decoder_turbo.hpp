@@ -32,8 +32,8 @@ struct Factory_decoder_turbo : public Factory_decoder
 		std::vector<int> poly           = {013, 015};
 		int              n_ite          = 6;
 
-		Factory_scaling_factor::parameters scaling_factor;
-		Factory_flip_and_check::parameters flip_and_check;
+		Factory_scaling_factor::parameters sf;
+		Factory_flip_and_check::parameters fnc;
 	};
 
 	template <typename B = int, typename Q = float>

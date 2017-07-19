@@ -54,6 +54,8 @@ void Simulation_BFER_ite<B,R,Q>
 	const auto seed_src = rd_engine_seed[tid]();
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_chn = rd_engine_seed[tid]();
+//	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
+	const auto seed_itl = rd_engine_seed[tid]();
 
 	// build the objects
 	source     [tid] = build_source     (tid, seed_src);
@@ -66,7 +68,7 @@ void Simulation_BFER_ite<B,R,Q>
 	siso       [tid] = build_siso       (tid          );
 	decoder    [tid] = build_decoder    (tid          );
 	coset_bit  [tid] = build_coset_bit  (tid          );
-	interleaver[tid] = build_interleaver(tid, params.seed, rd_engine_seed[tid]());
+	interleaver[tid] = build_interleaver(tid, seed_itl);
 
 	interleaver[tid]->init();
 	if (interleaver[tid]->is_uniform())
@@ -134,9 +136,9 @@ Encoder<B>* Simulation_BFER_ite<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_ite<B,R,Q>
-::build_interleaver(const int tid, const int seed, const int rd_seed)
+::build_interleaver(const int tid, const int seed)
 {
-	return this->codec.build_interleaver(tid, seed, rd_seed);
+	return this->codec.build_interleaver(tid, seed);
 }
 
 template <typename B, typename R, typename Q>

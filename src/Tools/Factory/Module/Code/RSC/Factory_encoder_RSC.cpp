@@ -22,6 +22,7 @@ void Factory_encoder_RSC
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_encoder::build_args(req_args, opt_args);
+	req_args.erase({"enc-cw-size", "N"});
 
 	opt_args[{"enc-type"}][2] += ", RSC";
 
@@ -50,10 +51,10 @@ void Factory_encoder_RSC
 
 	if(ar.exist_arg({"enc-std"})) params.standard = ar.get_arg({"enc-std"});
 
-	if (params.type == "LTE")
+	if (params.standard == "LTE")
 		params.poly = {013, 015};
 
-	if (params.type == "CCSDS")
+	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
 	if (ar.exist_arg({"enc-poly"}))
@@ -68,7 +69,8 @@ void Factory_encoder_RSC
 	}
 
 	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
-	params.N_cw       += params.tail_length;
+	params.N_cw        = 2 * params.K + params.tail_length;
+	params.R           = (float)params.K / (float)params.N_cw;
 }
 
 void Factory_encoder_RSC

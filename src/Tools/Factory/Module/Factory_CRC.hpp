@@ -18,7 +18,7 @@ struct Factory_CRC : public Factory
 {
 	struct parameters
 	{
-		int         K             = -1;
+		int         K             = 0;
 
 		std::string type          = "FAST";
 		std::string poly          = "";

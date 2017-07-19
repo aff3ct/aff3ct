@@ -35,6 +35,7 @@ void Factory_scaling_factor
 {
 	if(ar.exist_arg({"dec-sf"}))
 	{
+		params.enable = true;
 		params.type = ar.get_arg({"dec-sf"});
 
 		if (std::isdigit(params.type[0]))
@@ -55,10 +56,13 @@ void Factory_scaling_factor
 void Factory_scaling_factor
 ::header(params_list& head_sf, const parameters& params)
 {
-	head_sf.push_back(std::make_pair("Scaling factor (SF)", params.type));
-	head_sf.push_back(std::make_pair("SF iterations", std::to_string(params.n_ite)));
-	if (params.type == "CST")
-		head_sf.push_back(std::make_pair("SF constant", std::to_string(params.cst)));
+	if (params.enable)
+	{
+		head_sf.push_back(std::make_pair("Scaling factor (SF)", params.type));
+		head_sf.push_back(std::make_pair("SF iterations", std::to_string(params.n_ite)));
+		if (params.type == "CST")
+			head_sf.push_back(std::make_pair("SF constant", std::to_string(params.cst)));
+	}
 }
 
 // ==================================================================================== explicit template instantiation

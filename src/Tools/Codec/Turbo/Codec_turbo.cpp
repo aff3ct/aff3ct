@@ -163,20 +163,23 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 	if (siso[tid] == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'siso' can't be created.");
 
-	auto decoder = Factory_decoder_turbo::build<B,Q>(dec_par, *itl, *siso[tid], *siso[tid]);
+	auto dec_cpy = dec_par;
+	dec_cpy.type = "TURBO";
+	dec_cpy.implem = typeid(B) == typeid(int64_t) ? "STD" : "FAST";
+	auto decoder = Factory_decoder_turbo::build<B,Q>(dec_cpy, *itl, *siso[tid], *siso[tid]);
 
 	// then add post processing modules
-	if (!dec_par.scaling_factor.type.empty())
+	if (dec_par.sf.enable)
 	{
-		post_pros[tid].push_back(Factory_scaling_factor::build<B,Q>(dec_par.scaling_factor));
+		post_pros[tid].push_back(Factory_scaling_factor::build<B,Q>(dec_par.sf));
 	}
 
-	if (dec_par.flip_and_check.enable)
+	if (dec_par.fnc.enable)
 	{
 		if(crc == nullptr || crc->get_size() == 0)
 			throw runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-		post_pros[tid].push_back(Factory_flip_and_check::build<B,Q>(dec_par.flip_and_check, *crc));
+		post_pros[tid].push_back(Factory_flip_and_check::build<B,Q>(dec_par.fnc, *crc));
 	}
 	else if (crc != nullptr && crc->get_size() > 0)
 	{

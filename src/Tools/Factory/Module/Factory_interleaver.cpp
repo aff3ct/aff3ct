@@ -33,7 +33,7 @@ Interleaver<T>* Factory_interleaver
 void Factory_interleaver
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
-	req_args[{"itl-size", "N"}] =
+	req_args[{"itl-size"}] =
 		{"positive_int",
 		 "number of symbols to interleave."};
 
@@ -66,7 +66,7 @@ void Factory_interleaver
 void Factory_interleaver
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
-	if(ar.exist_arg({"itl-size", "N"})) params.size     = ar.get_arg_int({"itl-size", "N"});
+	if(ar.exist_arg({"itl-size"     })) params.size     = ar.get_arg_int({"itl-size"     });
 	if(ar.exist_arg({"itl-fra",  "F"})) params.n_frames = ar.get_arg_int({"itl-fra",  "F"});
 	if(ar.exist_arg({"itl-type"     })) params.type     = ar.get_arg    ({"itl-type"     });
 	if(ar.exist_arg({"itl-path"     })) params.path     = ar.get_arg    ({"itl-path"     });
@@ -85,7 +85,7 @@ void Factory_interleaver
 ::header(params_list& head_itl, const parameters& params)
 {
 	head_itl.push_back(std::make_pair("Type", params.type));
-	head_itl.push_back(std::make_pair("Size (N)", std::to_string(params.size)));
+	head_itl.push_back(std::make_pair("Size", std::to_string(params.size)));
 	head_itl.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "USER")
 		head_itl.push_back(std::make_pair("Path", params.path));
@@ -94,7 +94,7 @@ void Factory_interleaver
 	if (params.type == "RANDOM" || params.type == "GOLDEN" || params.type == "RAND_COL")
 	{
 		head_itl.push_back(std::make_pair("Seed", std::to_string(params.seed)));
-		head_itl.push_back(std::make_pair("Uniform", (params.uniform ? "on" : "off")));
+		head_itl.push_back(std::make_pair("Uniform", (params.uniform ? "yes" : "no")));
 	}
 }
 

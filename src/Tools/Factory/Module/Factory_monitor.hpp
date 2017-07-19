@@ -17,7 +17,7 @@ struct Factory_monitor : public Factory
 {
 	struct parameters
 	{
-		int         size             = -1;
+		int         size             = 0;
 
 		std::string type             = "STD";
 		std::string err_track_path   = "error_tracker";

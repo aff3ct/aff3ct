@@ -20,12 +20,12 @@ struct Factory_puncturer : Factory
 	{
 		virtual ~parameters() {}
 
-		int         K        = -1;
-		int         N        = -1;
+		int         K        = 0;
+		int         N        = 0;
 
 		std::string type     = "NO";
 		float       R        = -1.f;
-		int         N_cw     = -1;
+		int         N_cw     = 0;
 		int         n_frames = 1;
 	};
 

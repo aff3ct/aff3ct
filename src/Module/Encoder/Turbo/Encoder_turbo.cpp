@@ -46,7 +46,7 @@ template <typename B>
 void Encoder_turbo<B>
 ::encode(const B *U_K, B *X_N)
 {
-	pi.interleave(U_K, U_K_i.data());
+	pi.interleave(U_K, U_K_i.data(), 0, this->n_frames);
 
 	enco_n.encode_sys(U_K,          par_n.data());
 	enco_i.encode_sys(U_K_i.data(), par_i.data());

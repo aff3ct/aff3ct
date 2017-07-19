@@ -32,6 +32,13 @@ void Launcher_LDPC<C,B,R,Q>
 	tools::Factory_encoder_LDPC::build_args(this->req_args, this->opt_args);
 	tools::Factory_decoder_LDPC::build_args(this->req_args, this->opt_args);
 
+	this->opt_args.erase({"enc-fra",       "F"});
+	this->opt_args.erase({"enc-seed",      "S"});
+	this->opt_args.erase({"enc-h-path",       });
+	this->req_args.erase({"dec-cw-size",   "N"});
+	this->req_args.erase({"dec-info-bits", "K"});
+	this->opt_args.erase({"dec-fra",       "F"});
+
 	C::build_args();
 }
 
@@ -45,6 +52,17 @@ void Launcher_LDPC<C,B,R,Q>
 	params_dec->N_cw = params_enc->N_cw;
 
 	tools::Factory_decoder_LDPC::store_args(this->ar, *params_dec);
+
+	params_enc->H_alist_path = params_dec->H_alist_path;
+
+	this->params->pct->type = "NO";
+	this->params->pct->K    = params_enc->K;
+	this->params->pct->N    = params_enc->N_cw;
+	this->params->pct->N_cw = this->params->pct->N;
+	this->params->pct->R    = (float)this->params->pct->K / (float)this->params->pct->N;
+
+	if (params_dec->simd_strategy == "INTER")
+		this->params->src->n_frames = mipp::N<Q>();
 
 	C::store_args();
 }
@@ -63,7 +81,8 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_LDPC<C,B,R,Q>
 ::print_header()
 {
-	tools::Factory_encoder_LDPC::header(this->pl_enc, *params_enc);
+	if (params_enc->type != "NO")
+		tools::Factory_encoder_LDPC::header(this->pl_enc, *params_enc);
 	tools::Factory_decoder_LDPC::header(this->pl_dec, *params_dec);
 
 	C::print_header();

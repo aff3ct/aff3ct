@@ -51,6 +51,6 @@ void Factory_decoder::header(params_list& head_dec, const parameters& params)
 	head_dec.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 	head_dec.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
 	head_dec.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
-	head_dec.push_back(std::make_pair("Systematic", ((params.systematic) ? "on" : "off")));
+	head_dec.push_back(std::make_pair("Systematic", ((params.systematic) ? "yes" : "no")));
 	head_dec.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }

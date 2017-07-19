@@ -79,7 +79,7 @@ void Factory_encoder
 	head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
 	head_enc.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
 	head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
-	head_enc.push_back(std::make_pair("Systematic", ((params.systematic) ? "on" : "off")));
+	head_enc.push_back(std::make_pair("Systematic", ((params.systematic) ? "yes" : "no")));
 	if (params.type == "USER")
 		head_enc.push_back(std::make_pair("Path", params.path));
 	if (params.type == "COSET")

@@ -33,7 +33,11 @@ void Factory_encoder_turbo
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_encoder::build_args(req_args, opt_args);
+	req_args.erase({"enc-cw-size", "N"});
+
 	Factory_interleaver::build_args(req_args, opt_args);
+	req_args.erase({"itl-size"    });
+	opt_args.erase({"itl-fra", "F"});
 
 	opt_args[{"enc-type"}][2] += ", TURBO";
 
@@ -62,9 +66,10 @@ void Factory_encoder_turbo
 
 	Factory_encoder::store_args(ar, params);
 
-	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
-	if(ar.exist_arg({"enc-std"})) params.standard = ar.get_arg({"enc-std"});
+	if(ar.exist_arg({"enc-std"      })) params.standard  = ar.get_arg({"enc-std"      });
 	if(ar.exist_arg({"enc-json-path"})) params.json_path = ar.get_arg({"enc-json-path"});
+	if(ar.exist_arg({"enc-no-buff"  })) params.buffered  = false;
+
 	if (!params.json_path.empty())
 		params.type = "TURBO_JSON";
 
@@ -75,7 +80,7 @@ void Factory_encoder_turbo
 			params.itl.type = "LTE";
 	}
 
-	if (params.type == "CCSDS")
+	if (params.standard == "CCSDS")
 	{
 		params.poly = {023, 033};
 		if (!ar.exist_arg({"itl-type"}))
@@ -94,9 +99,10 @@ void Factory_encoder_turbo
 	}
 
 	params.tail_length = (int)(4 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
-	params.N_cw       += params.tail_length;
+	params.N_cw        = 3 * params.K + params.tail_length;
+	params.R           = (float)params.K / (float)params.N_cw;
 
-	params.itl.size = params.K;
+	params.itl.size     = params.K;
 	params.itl.n_frames = params.n_frames;
 	Factory_interleaver::store_args(ar, params.itl);
 }
@@ -113,6 +119,9 @@ void Factory_encoder_turbo
 {
 	Factory_encoder    ::header(head_enc, params);
 	Factory_interleaver::header(head_itl, params.itl);
+
+	if (params.tail_length)
+		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
 
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 	if (!params.standard.empty())

@@ -1,3 +1,4 @@
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
@@ -21,6 +22,7 @@ void Factory_puncturer_turbo
 ::build_args(Arguments_reader::arg_map &req_args, Arguments_reader::arg_map &opt_args)
 {
 	Factory_puncturer::build_args(req_args, opt_args);
+	req_args.erase({"pct-fra-size", "N"});
 
 	opt_args[{"pct-type"}][2] += ", TURBO";
 
@@ -37,6 +39,75 @@ void Factory_puncturer_turbo
 		 "does not suppose a buffered encoding."};
 }
 
+int compute_N(const int K, const int tail_bits,  const std::string pattern)
+{
+	std::vector<std::vector<bool>> pattern_bits(3);
+
+	if (tail_bits < 0)
+	{
+		std::stringstream message;
+		message << "'tail_bits' has to be positive ('tail_bits' = " << tail_bits << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto str_array = string_split(pattern, ',');
+
+	if (str_array.size() != 3)
+	{
+		std::stringstream message;
+		message << "'pattern' should give 3 different set delimited by a comma ('pattern' = " << pattern
+		        << ", 'str_array.size()' = " << str_array.size() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (str_array[0].size() != str_array[1].size() || str_array[0].size() != str_array[2].size())
+	{
+		std::stringstream message;
+		message << "'pattern' sets have to contains an equal number of bits ('pattern' = " << pattern
+		        << ", 'str_array[0].size()' = " << str_array[0].size()
+		        << ", 'str_array[1].size()' = " << str_array[1].size()
+		        << ", 'str_array[2].size()' = " << str_array[2].size() << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto all_one = true;
+	for (auto i = 0; i < 3; i++)
+		for (auto j = 0; j < (int)str_array[i].size(); j++)
+			all_one = str_array[i][j] != '1' ? false : all_one;
+	if (all_one)
+		return 3 * K + tail_bits;
+
+	auto period = (int)str_array[0].size();
+
+	if (K % period)
+	{
+		std::stringstream message;
+		message << "'period' has to be a multiple of 'K' ('period' = " << period << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	pattern_bits[0].resize(period);
+	pattern_bits[1].resize(period);
+	pattern_bits[2].resize(period);
+
+	for (auto i = 0; i < 3; i++)
+		for (auto j = 0; j < period; j++)
+		{
+			char c[2] = {str_array[i][j], '\0'};
+			pattern_bits[i][j] = std::stoi(std::string(c)) ? true : false;
+		}
+
+	auto bit_sys_count = 0; for (auto j = 0; j < period; j++) bit_sys_count += pattern_bits[0][j] ? 1 : 0;
+	auto bit_pa1_count = 0; for (auto j = 0; j < period; j++) bit_pa1_count += pattern_bits[1][j] ? 1 : 0;
+	auto bit_pa2_count = 0; for (auto j = 0; j < period; j++) bit_pa2_count += pattern_bits[2][j] ? 1 : 0;
+
+	auto bit_count = bit_sys_count + bit_pa1_count + bit_pa2_count;
+
+	auto N = (K / period) * bit_count + tail_bits;
+
+	return N;
+}
+
 void Factory_puncturer_turbo
 ::store_args(const Arguments_reader& ar, parameters &params)
 {
@@ -49,7 +120,8 @@ void Factory_puncturer_turbo
 	if(ar.exist_arg({"pct-no-buff"    })) params.buffered    = false;
 
 	params.N_cw = 3 * params.K + params.tail_length;
-	params.R = (float)params.K / (float)params.N;
+	params.N    = compute_N(params.K, params.tail_length, params.pattern);
+	params.R    = (float)params.K / (float)params.N;
 
 	if (params.N == params.N_cw)
 		params.type = "NO";

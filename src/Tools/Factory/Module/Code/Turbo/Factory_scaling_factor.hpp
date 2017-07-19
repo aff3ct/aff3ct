@@ -18,6 +18,7 @@ struct Factory_scaling_factor : public Factory
 	{
 		std::string         type        = "LTE_VEC";
 		int                 n_ite       = 6;
+		bool                enable      = false;
 		float               cst         = 0.75f;
 		mipp::vector<float> alpha_array = {0.15f, 0.15f,  // ite 1
 		                                   0.25f, 0.25f,  // ite 2

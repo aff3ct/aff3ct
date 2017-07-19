@@ -17,7 +17,7 @@ struct Factory_interleaver : public Factory
 {
 	struct parameters
 	{
-		int         size       = -1;
+		int         size       = 0;
 
 		std::string type       = "RANDOM";
 		std::string path       = "";

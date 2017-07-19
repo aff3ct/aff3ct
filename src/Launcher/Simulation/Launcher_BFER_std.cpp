@@ -35,11 +35,14 @@ void Launcher_BFER_std<B,R,Q>
 	Factory_CRC                ::build_args(this->req_args, this->opt_args);
 	Factory_modem              ::build_args(this->req_args, this->opt_args);
 	Factory_channel            ::build_args(this->req_args, this->opt_args);
-	Factory_quantizer          ::build_args(this->req_args, this->opt_args);
+	if (std::is_integral<Q>())
+		Factory_quantizer      ::build_args(this->req_args, this->opt_args);
 	Factory_monitor            ::build_args(this->req_args, this->opt_args);
 	Factory_terminal_BFER      ::build_args(this->req_args, this->opt_args);
 
-	this->req_args.erase({"src-info-bits", "K"});
+	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
+	    this->req_args.find({"pct-info-bits", "K"}) != this->req_args.end())
+		this->req_args.erase({"src-info-bits", "K"});
 	this->opt_args.erase({"src-seed",      "S"});
 	this->req_args.erase({"crc-info-bits", "K"});
 	this->opt_args.erase({"crc-fra",       "F"});
@@ -68,11 +71,15 @@ void Launcher_BFER_std<B,R,Q>
 	Factory_simulation_BFER_std::store_args(this->ar, *params);
 
 	Factory_source::store_args(this->ar, *params->src);
+
+	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
+	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
+
 	Factory_CRC::store_args(this->ar, *params->crc);
 
-	params->crc->K = params->enc->K - params->crc->size;
-	params->src->K = params->crc->K;
-	params->mdm->N = params->pct->N;
+	params->crc->K = K - params->crc->size;
+	params->src->K = params->src->K == 0 ? params->crc->K : params->src->K;
+	params->mdm->N = N;
 
 	Factory_modem::store_args(this->ar, *params->mdm);
 
@@ -84,7 +91,8 @@ void Launcher_BFER_std<B,R,Q>
 
 	params->qnt->size = params->mdm->N;
 
-	Factory_quantizer::store_args(this->ar, *params->qnt);
+	if (std::is_integral<Q>())
+		Factory_quantizer::store_args(this->ar, *params->qnt);
 
 	params->mnt->size = params->src->K;
 
@@ -94,6 +102,12 @@ void Launcher_BFER_std<B,R,Q>
 
 	if (!std::is_integral<Q>())
 		params->qnt->type = "NO";
+
+	if (params->src->type == "AZCW" || params->enc->type == "AZCW")
+	{
+		params->src->type = "AZCW";
+		params->enc->type = "AZCW";
+	}
 
 	params->crc->n_frames = params->src->n_frames;
 	params->enc->n_frames = params->src->n_frames;
@@ -116,7 +130,8 @@ void Launcher_BFER_std<B,R,Q>
 	Factory_CRC                ::group_args(this->arg_group);
 	Factory_modem              ::group_args(this->arg_group);
 	Factory_channel            ::group_args(this->arg_group);
-	Factory_quantizer          ::group_args(this->arg_group);
+	if (std::is_integral<Q>())
+		Factory_quantizer      ::group_args(this->arg_group);
 	Factory_monitor            ::group_args(this->arg_group);
 	Factory_terminal_BFER      ::group_args(this->arg_group);
 }
@@ -130,7 +145,8 @@ void Launcher_BFER_std<B,R,Q>
 	Factory_CRC                ::header(this->pl_crc,                 *params->crc);
 	Factory_modem              ::header(this->pl_mod, this->pl_demod, *params->mdm);
 	Factory_channel            ::header(this->pl_chn,                 *params->chn);
-	Factory_quantizer          ::header(this->pl_qnt,                 *params->qnt);
+	if (std::is_integral<Q>())
+		Factory_quantizer      ::header(this->pl_qnt,                 *params->qnt);
 	Factory_monitor            ::header(this->pl_mnt,                 *params->mnt);
 	Factory_terminal_BFER      ::header(this->pl_ter,                 *params->ter);
 

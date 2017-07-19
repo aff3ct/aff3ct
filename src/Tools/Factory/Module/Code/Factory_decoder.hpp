@@ -17,8 +17,8 @@ struct Factory_decoder : Factory
 	{
 		virtual ~parameters() {}
 
-		int         K           = -1;
-		int         N_cw        = -1;
+		int         K           = 0;
+		int         N_cw        = 0;
 
 		std::string type        = "";
 		std::string implem      = "";
