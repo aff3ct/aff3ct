@@ -242,7 +242,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 		this->durations[tid][std::make_pair(9, "Depuncturer")] += steady_clock::now() - t_depun;
 
 		// apply the coset: the decoder will believe to a AZCW
-		if (this->params.enc->type == "COSET")
+		if (this->params.coset)
 		{
 			auto t_corea = steady_clock::now();
 			this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N5[tid], this->Y_N5[tid]);
@@ -258,7 +258,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 		this->durations[tid][std::make_pair(14, "- store" )] += this->decoder[tid]->get_store_duration();
 
 		// apply the coset to recover the real bits
-		if (this->params.enc->type == "COSET")
+		if (this->params.coset)
 		{
 			auto t_cobit = steady_clock::now();
 			this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
@@ -436,7 +436,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 
 	std::cout << "Decode Y_N5 and generate V_K1..." << std::endl
 	          << "V_K1:" << std::endl;
-	if (this->params.enc->type == "COSET")
+	if (this->params.coset)
 		ft.display_bit_vector(this->V_K1[tid]);
 	else
 		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);

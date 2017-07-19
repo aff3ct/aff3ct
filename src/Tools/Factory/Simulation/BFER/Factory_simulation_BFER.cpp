@@ -31,6 +31,10 @@ void Factory_simulation_BFER::build_args(Arguments_reader::arg_map &req_args, Ar
 		{"string",
 		 "select the type of SNR: symbol energy or information bit energy.",
 		 "ES, EB"};
+
+	opt_args[{"sim-coset", "c"}] =
+		{"",
+		 "enable the coset approach."};
 }
 
 void Factory_simulation_BFER::store_args(const Arguments_reader& ar, parameters &params)
@@ -45,6 +49,7 @@ void Factory_simulation_BFER::store_args(const Arguments_reader& ar, parameters 
 	if(ar.exist_arg({"sim-snr-type",   "E"})) params.snr_type    = ar.get_arg    ({"sim-snr-type", "E"});
 	if(ar.exist_arg({"sim-time-report"    })) params.time_report = true;
 	if(ar.exist_arg({"sim-debug",      "d"})) params.debug       = true;
+	if(ar.exist_arg({"sim-coset",      "c"})) params.coset       = true;
 	if(ar.exist_arg({"sim-debug-limit"}))
 	{
 		params.debug = true;
@@ -70,4 +75,17 @@ void Factory_simulation_BFER::group_args(Arguments_reader::arg_grp& ar)
 void Factory_simulation_BFER::header(params_list& head_sim, const parameters& params)
 {
 	Factory_simulation::header(head_sim, params);
+
+	if (params.benchs)
+		head_sim.push_back(std::make_pair("Number of benchs", std::to_string(params.benchs)));
+	head_sim.push_back(std::make_pair("SNR type", params.snr_type));
+	head_sim.push_back(std::make_pair("Time report", params.time_report ? "on" : "off"));
+	head_sim.push_back(std::make_pair("Debug mode", params.debug ? "on" : "off"));
+	if (params.debug)
+	{
+		head_sim.push_back(std::make_pair("Debug precision", std::to_string(params.debug_precision)));
+		if (params.debug_limit)
+			head_sim.push_back(std::make_pair("Debug limit", std::to_string(params.debug_limit)));
+	}
+	head_sim.push_back(std::make_pair("Coset approach (c)", params.coset ? "yes" : "no"));
 }

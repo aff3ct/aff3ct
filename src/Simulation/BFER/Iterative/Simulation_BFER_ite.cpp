@@ -138,7 +138,9 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* Simulation_BFER_ite<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	return this->codec.build_interleaver(tid, seed);
+	auto itl_cpy = *params.itl;
+	itl_cpy.seed = seed;
+	return Factory_interleaver::build<int>(itl_cpy);
 }
 
 template <typename B, typename R, typename Q>

@@ -103,6 +103,9 @@ void Launcher_BFER_std<B,R,Q>
 	if (!std::is_integral<Q>())
 		params->qnt->type = "NO";
 
+	if (params->coset)
+		params->enc->type = "COSET";
+
 	if (params->src->type == "AZCW" || params->enc->type == "AZCW")
 	{
 		params->src->type = "AZCW";

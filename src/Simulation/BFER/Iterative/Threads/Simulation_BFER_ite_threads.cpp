@@ -226,7 +226,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			this->durations[tid][std::make_pair(9, "Deinterlever")] += steady_clock::now() - t_deint;
 
 			// apply the coset: the decoder will believe to a AZCW
-			if (this->params.enc->type == "COSET")
+			if (this->params.coset)
 			{
 				auto t_corea = steady_clock::now();
 				this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N5[tid], this->Y_N5[tid]);
@@ -242,7 +242,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 				this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
 
 				// apply the coset to recover the extrinsic information
-				if (this->params.enc->type == "COSET")
+				if (this->params.coset)
 				{
 					auto t_corea = steady_clock::now();
 					this->coset_real[tid]->apply(this->X_N1[tid], this->Y_N6[tid], this->Y_N6[tid]);
@@ -265,7 +265,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		}
 
 		// apply the coset to recover the real bits
-		if (this->params.enc->type == "COSET")
+		if (this->params.coset)
 		{
 			auto t_cobit = steady_clock::now();
 			this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
@@ -483,7 +483,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 			std::cout << std::endl;
 
 			// apply the coset: the decoder will believe to a AZCW
-			if (this->params.enc->type == "COSET")
+			if (this->params.coset)
 			{
 				std::cout << "Apply the coset approach on Y_N5..." << std::endl;
 				auto t_corea = steady_clock::now();
@@ -511,7 +511,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 				std::cout << std::endl;
 
 				// apply the coset to recover the extrinsic information
-				if (this->params.enc->type == "COSET")
+				if (this->params.coset)
 				{
 					std::cout << "Reverse the coset approach on Y_N6..." << std::endl;
 					auto t_corea = steady_clock::now();
@@ -552,7 +552,7 @@ void Simulation_BFER_ite_threads<B,R,Q>
 		}
 
 		// apply the coset to recover the real bits
-		if (this->params.enc->type == "COSET")
+		if (this->params.coset)
 		{
 			std::cout << "Apply the coset approach on V_K1..." << std::endl;
 			auto t_cobit = steady_clock::now();
