@@ -1,0 +1,46 @@
+#ifndef FACTORY_DECODER_LDPC_HPP
+#define FACTORY_DECODER_LDPC_HPP
+
+#include <string>
+#include <mipp.h>
+
+#include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
+
+#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
+
+#include "../Decoder.hpp"
+
+namespace aff3ct
+{
+namespace factory
+{
+struct Decoder_LDPC : public Decoder
+{
+	struct parameters : Decoder::parameters
+	{
+		virtual ~parameters() {}
+
+		std::string H_alist_path     = "";
+		std::string simd_strategy    = "";
+		float       norm_factor      = 1.f;
+		float       offset           = 0.f;
+		bool        enable_syndrome  = true;
+		int         syndrome_depth   = 2;
+		int         n_ite            = 10;
+	};
+
+	template <typename B = int, typename R = float>
+	static module::Decoder_SISO<B,R>* build(const parameters& params, const tools::Sparse_matrix &H,
+	                                        const std::vector<unsigned> &info_bits_pos);
+
+	static void build_args(arg_map &req_args, arg_map &opt_args);
+	static void store_args(const tools::Arguments_reader& ar, parameters &params);
+	static void group_args(arg_grp& ar);
+
+	static void header(params_list& head_dec, const parameters& params);
+};
+}
+}
+
+#endif /* FACTORY_DECODER_LDPC_HPP */

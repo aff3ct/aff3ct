@@ -13,8 +13,10 @@
 
 #include "Tools/types.h"
 #include "Tools/Arguments_reader.hpp"
-#include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
-#include "Tools/Factory/Simulation/Factory_simulation.hpp"
+
+#include "Factory/Simulation/Simulation.hpp"
+#include "Factory/Simulation/Simulation_main.hpp"
+
 #include "Simulation/Simulation.hpp"
 
 namespace aff3ct
@@ -45,11 +47,11 @@ protected:
 	                                            *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
 	tools::Arguments_reader::arg_grp arg_group;/*!< List of the arguments groups */
 
-	tools::Factory_simulation::parameters *params; /*!< A structure of parameters to store and pass to the simulation. */
+	factory::Simulation::parameters *params; /*!< A structure of parameters to store and pass to the simulation. */
 
-	std  ::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
-	tools::Factory::params_list pl_sim, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
-	                            pl_chn, pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
+	std::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
+	factory::Factory::params_list pl_sim, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
+	                              pl_chn, pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
 
 public:
 	/*!

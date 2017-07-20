@@ -11,8 +11,8 @@
 #include "Module/Puncturer/Puncturer.hpp"
 #include "Module/Decoder/Decoder.hpp"
 
-#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
-#include "Tools/Factory/Module/Code/Factory_decoder.hpp"
+#include "Factory/Module/Code/Encoder.hpp"
+#include "Factory/Module/Code/Decoder.hpp"
 
 namespace aff3ct
 {
@@ -22,12 +22,12 @@ template <typename B = int, typename Q = float>
 class Codec
 {
 protected :
-	const Factory_encoder::parameters &enc_params;
-	const Factory_decoder::parameters &dec_params;
+	const factory::Encoder::parameters &enc_params;
+	const factory::Decoder::parameters &dec_params;
 
 public:
-	Codec(const Factory_encoder::parameters &enc_params,
-	      const Factory_decoder::parameters &dec_params)
+	Codec(const factory::Encoder::parameters &enc_params,
+	      const factory::Decoder::parameters &dec_params)
 	: enc_params(enc_params), dec_params(dec_params)
 	{
 		if (enc_params.K != dec_params.K)

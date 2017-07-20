@@ -2,15 +2,14 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Display/bash_tools.h"
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 
-#include "Tools/Factory/Simulation/EXIT/Factory_simulation_EXIT.hpp"
-#include "Tools/Factory/Module/Factory_source.hpp"
-#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
-#include "Tools/Factory/Module/Factory_modem.hpp"
-#include "Tools/Factory/Module/Factory_channel.hpp"
-#include "Tools/Display/bash_tools.h"
+#include "Factory/Module/Source.hpp"
+#include "Factory/Module/Code/Encoder.hpp"
+#include "Factory/Module/Modem.hpp"
+#include "Factory/Module/Channel.hpp"
 
 #include "Simulation_EXIT.hpp"
 
@@ -20,7 +19,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 Simulation_EXIT<B,R>
-::Simulation_EXIT(const tools::Factory_simulation_EXIT::parameters& params, Codec_SISO<B,R> &codec)
+::Simulation_EXIT(const factory::Simulation_EXIT::parameters& params, Codec_SISO<B,R> &codec)
 : Simulation(),
   params(params),
   codec (codec),
@@ -83,11 +82,11 @@ void Simulation_EXIT<B,R>
 	release_objects();
 
 	const auto N_mod = params.mdm->N_mod;
-	const auto K_mod = Factory_modem::get_buffer_size_after_modulation(params.mdm->type,
-	                                                                   params.enc->K,
-	                                                                   params.mdm->bps,
-	                                                                   params.mdm->upf,
-	                                                                   params.mdm->cpm_L);
+	const auto K_mod = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
+	                                                                    params.enc->K,
+	                                                                    params.mdm->bps,
+	                                                                    params.mdm->upf,
+	                                                                    params.mdm->cpm_L);
 
 	// build the objects
 	source    = build_source   (     );
@@ -409,8 +408,7 @@ template <typename B, typename R>
 Source<B>* Simulation_EXIT<B,R>
 ::build_source()
 {
-
-	return Factory_source::build<B>(*params.src);
+	return factory::Source::build<B>(*params.src);
 }
 
 template <typename B, typename R>
@@ -425,7 +423,7 @@ Encoder<B>* Simulation_EXIT<B,R>
 	{
 		auto enc_cpy = *params.enc;
 		enc_cpy.seed = params.seed;
-		return Factory_encoder::build<B>(enc_cpy);
+		return factory::Encoder::build<B>(enc_cpy);
 	}
 }
 
@@ -436,7 +434,7 @@ Modem<B,R,R>* Simulation_EXIT<B,R>
 	auto mdm_cpy = *params.mdm;
 	if (params.mdm->sigma == -1.f)
 		mdm_cpy.sigma = this->sigma;
-	return Factory_modem::build<B,R>(mdm_cpy);
+	return factory::Modem::build<B,R>(mdm_cpy);
 }
 
 template <typename B, typename R>
@@ -446,7 +444,7 @@ Modem<B,R,R>* Simulation_EXIT<B,R>
 	auto mdm_cpy  = *params.mdm;
 	mdm_cpy.sigma = 2.f / sig_a;
 	mdm_cpy.N     = params.enc->K;
-	return Factory_modem::build<B,R>(mdm_cpy);
+	return factory::Modem::build<B,R>(mdm_cpy);
 }
 
 template <typename B, typename R>
@@ -457,7 +455,7 @@ Channel<R>* Simulation_EXIT<B,R>
 	if (params.chn->sigma == -1.f)
 		chn_cpy.sigma = this->sigma;
 	chn_cpy.seed = params.seed;
-	return Factory_channel::build<R>(chn_cpy);
+	return factory::Channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R>
@@ -467,12 +465,12 @@ Channel<R>* Simulation_EXIT<B,R>
 	auto chn_cpy  = *params.chn;
 	chn_cpy.sigma = 2.f / sig_a;
 	chn_cpy.seed  = params.seed;
-	chn_cpy.N     = Factory_modem::get_buffer_size_after_modulation(params.mdm->type,
-	                                                                params.enc->K,
-	                                                                params.mdm->bps,
-	                                                                params.mdm->upf,
- 	                                                                params.mdm->cpm_L);
-	return Factory_channel::build<R>(chn_cpy);
+	chn_cpy.N     = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
+	                                                                 params.enc->K,
+	                                                                 params.mdm->bps,
+	                                                                 params.mdm->upf,
+ 	                                                                 params.mdm->cpm_L);
+	return factory::Channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R>

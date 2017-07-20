@@ -13,8 +13,8 @@ Launcher_uncoded<C,B,R,Q>
 ::Launcher_uncoded(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
-	params_enc = new tools::Factory_encoder   ::parameters();
-	params_dec = new tools::Factory_decoder_NO::parameters();
+	params_enc = new factory::Encoder   ::parameters();
+	params_dec = new factory::Decoder_NO::parameters();
 
 	if (this->params->enc != nullptr) { delete this->params->enc; this->params->enc = params_enc; }
 	if (this->params->dec != nullptr) { delete this->params->dec; this->params->dec = params_dec; }
@@ -61,8 +61,8 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_uncoded<C,B,R,Q>
 ::group_args()
 {
-	tools::Factory_encoder   ::group_args(this->arg_group);
-	tools::Factory_decoder_NO::group_args(this->arg_group);
+	factory::Encoder   ::group_args(this->arg_group);
+	factory::Decoder_NO::group_args(this->arg_group);
 
 	C::group_args();
 }
@@ -72,8 +72,8 @@ void Launcher_uncoded<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		tools::Factory_encoder::header(this->pl_enc, *params_enc);
-	tools::Factory_decoder_NO::header(this->pl_dec, *params_dec);
+		factory::Encoder::header(this->pl_enc, *params_enc);
+	factory::Decoder_NO::header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }

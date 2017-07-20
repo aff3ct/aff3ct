@@ -2,7 +2,8 @@
 #define LAUNCHER_BFER_ITE_HPP_
 
 #include "Tools/Codec/Codec_SISO.hpp"
-#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER_ite.hpp"
+
+#include "Factory/Simulation/BFER/Simulation_BFER_ite.hpp"
 
 #if defined(SYSTEMC)
 #include "Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp"
@@ -23,7 +24,7 @@ class Launcher_BFER_ite : public Launcher
 {
 protected:
 	tools::Codec_SISO<B,Q> *codec = nullptr;
-	tools::Factory_simulation_BFER_ite::parameters *params;
+	factory::Simulation_BFER_ite::parameters *params;
 
 public:
 	Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);

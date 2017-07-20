@@ -10,11 +10,11 @@
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Decoder/SISO.hpp"
 
-#include "Tools/Factory/Module/Code/RSC/Factory_encoder_RSC.hpp"
-#include "Tools/Factory/Module/Code/RSC/Factory_decoder_RSC.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_encoder_turbo.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_decoder_turbo.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_puncturer_turbo.hpp"
+#include "Factory/Module/Code/RSC/Encoder_RSC.hpp"
+#include "Factory/Module/Code/RSC/Decoder_RSC.hpp"
+#include "Factory/Module/Code/Turbo/Encoder_turbo.hpp"
+#include "Factory/Module/Code/Turbo/Decoder_turbo.hpp"
+#include "Factory/Module/Code/Turbo/Puncturer_turbo.hpp"
 
 #include "../Codec.hpp"
 
@@ -26,12 +26,12 @@ template <typename B = int, typename Q = float, typename QD = Q>
 class Codec_turbo : public Codec<B,Q>
 {
 protected:
-	const Factory_encoder_turbo  ::parameters &enc_par;
-	const Factory_decoder_turbo  ::parameters &dec_par;
-	const Factory_puncturer_turbo::parameters &pct_par;
+	const factory::Encoder_turbo  ::parameters &enc_par;
+	const factory::Decoder_turbo  ::parameters &dec_par;
+	const factory::Puncturer_turbo::parameters &pct_par;
 
-	Factory_encoder_RSC::parameters enc_rsc_par;
-	Factory_decoder_RSC::parameters dec_rsc_par;
+	factory::Encoder_RSC::parameters enc_rsc_par;
+	factory::Decoder_RSC::parameters dec_rsc_par;
 
 	// the trellis representation
 	std::vector<std::vector<int>>                               trellis;
@@ -41,9 +41,9 @@ protected:
 	std::ofstream                                               json_stream;
 
 public:
-	Codec_turbo(const Factory_encoder_turbo  ::parameters &enc_params,
-	            const Factory_decoder_turbo  ::parameters &dec_params,
-	            const Factory_puncturer_turbo::parameters &pct_params,
+	Codec_turbo(const factory::Encoder_turbo  ::parameters &enc_params,
+	            const factory::Decoder_turbo  ::parameters &dec_params,
+	            const factory::Puncturer_turbo::parameters &pct_params,
 	            const int n_threads);
 	virtual ~Codec_turbo();
 

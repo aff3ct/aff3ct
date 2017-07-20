@@ -19,8 +19,9 @@
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
+#include "Factory/Simulation/BFER/Simulation_BFER_std.hpp"
+
 #include "../Simulation_BFER.hpp"
-#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER_std.hpp"
 
 namespace aff3ct
 {
@@ -30,7 +31,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class Simulation_BFER_std : public Simulation_BFER<B,R,Q>
 {
 protected:
-	const tools::Factory_simulation_BFER_std::parameters &params;
+	const factory::Simulation_BFER_std::parameters &params;
 
 	// communication chain
 	std::vector<module::Source     <B    >*> source;
@@ -49,7 +50,7 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	Simulation_BFER_std(const tools::Factory_simulation_BFER_std::parameters &params, tools::Codec<B,Q> &codec);
+	Simulation_BFER_std(const factory::Simulation_BFER_std::parameters &params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER_std();
 
 protected:

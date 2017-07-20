@@ -16,7 +16,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_ite_threads<B,R,Q>
-::Simulation_BFER_ite_threads(const tools::Factory_simulation_BFER_ite::parameters &chain_params, Codec_SISO<B,Q> &codec)
+::Simulation_BFER_ite_threads(const factory::Simulation_BFER_ite::parameters &chain_params, Codec_SISO<B,Q> &codec)
 : Simulation_BFER_ite<B,R,Q>(chain_params,codec),
 
   U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),

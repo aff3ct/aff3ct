@@ -1,8 +1,8 @@
 #ifndef CODEC_REPETITION_HPP_
 #define CODEC_REPETITION_HPP_
 
-#include "Tools/Factory/Module/Code/Repetition/Factory_encoder_repetition.hpp"
-#include "Tools/Factory/Module/Code/Repetition/Factory_decoder_repetition.hpp"
+#include "Factory/Module/Code/Repetition/Encoder_repetition.hpp"
+#include "Factory/Module/Code/Repetition/Decoder_repetition.hpp"
 
 #include "../Codec.hpp"
 
@@ -13,13 +13,13 @@ namespace tools
 template <typename B = int, typename Q = float>
 class Codec_repetition : public Codec<B,Q>
 {
-protected :
-	const Factory_encoder_repetition::parameters& enc_par;
-	const Factory_decoder_repetition::parameters& dec_par;
+protected:
+	const factory::Encoder_repetition::parameters& enc_par;
+	const factory::Decoder_repetition::parameters& dec_par;
 
 public:
-	Codec_repetition(const Factory_encoder_repetition::parameters &enc_params,
-	                 const Factory_decoder_repetition::parameters &dec_params);
+	Codec_repetition(const factory::Encoder_repetition::parameters &enc_params,
+	                 const factory::Decoder_repetition::parameters &dec_params);
 
 	virtual ~Codec_repetition();
 

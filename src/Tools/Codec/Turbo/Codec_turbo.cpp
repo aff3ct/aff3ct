@@ -2,14 +2,14 @@
 #include <cctype>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/Module/Factory_interleaver.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_scaling_factor.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_flip_and_check.hpp"
-
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp"
+
+#include "Factory/Module/Interleaver.hpp"
+#include "Factory/Module/Code/Turbo/Scaling_factor.hpp"
+#include "Factory/Module/Code/Turbo/Flip_and_check.hpp"
 
 #include "Codec_turbo.hpp"
 
@@ -18,9 +18,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
 Codec_turbo<B,Q,QD>
-::Codec_turbo(const Factory_encoder_turbo  ::parameters &enc_params,
-              const Factory_decoder_turbo  ::parameters &dec_params,
-              const Factory_puncturer_turbo::parameters &pct_params,
+::Codec_turbo(const factory::Encoder_turbo  ::parameters &enc_params,
+              const factory::Decoder_turbo  ::parameters &dec_params,
+              const factory::Puncturer_turbo::parameters &pct_params,
               const int n_threads)
 : Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params), pct_par(pct_params),
   sub_enc  (n_threads, nullptr),
@@ -45,7 +45,7 @@ Codec_turbo<B,Q,QD>
 	enc_rsc_par.poly     = enc_par.poly;
 	enc_rsc_par.n_frames = enc_par.n_frames;
 
-	auto encoder_RSC = Factory_encoder_RSC::build<B>(enc_rsc_par);
+	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_rsc_par);
 	trellis = encoder_RSC->get_trellis();
 	delete encoder_RSC;
 
@@ -98,14 +98,14 @@ Interleaver<int>* Codec_turbo<B,Q,QD>
 	auto itl_cpy = enc_par.itl;
 	itl_cpy.seed = seed;
 
-	return Factory_interleaver::build<int>(itl_cpy);
+	return factory::Interleaver::build<int>(itl_cpy);
 }
 
 template <typename B, typename Q, typename QD>
 Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
 ::build_sub_encoder(const int tid)
 {
-	return Factory_encoder_RSC::build<B>(enc_rsc_par, json_stream);
+	return factory::Encoder_RSC::build<B>(enc_rsc_par, json_stream);
 }
 
 template <typename B, typename Q, typename QD>
@@ -126,21 +126,21 @@ Encoder<B>* Codec_turbo<B,Q,QD>
 	if (sub_enc[tid] == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'sub_enc' can't be created.");
 
-	return Factory_encoder_turbo::build<B>(enc_par, *itl, sub_enc[tid], sub_enc[tid]);
+	return factory::Encoder_turbo::build<B>(enc_par, *itl, sub_enc[tid], sub_enc[tid]);
 }
 
 template <typename B, typename Q, typename QD>
 Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 ::build_puncturer(const int tid)
 {
-	return Factory_puncturer_turbo::build<B,Q>(pct_par);
+	return factory::Puncturer_turbo::build<B,Q>(pct_par);
 }
 
 template <typename B, typename Q, typename QD>
 SISO<Q>* Codec_turbo<B,Q,QD>
 ::build_sub_siso(const int tid)
 {
-	return Factory_decoder_RSC::build<B,Q,QD>(dec_rsc_par, enc_rsc_par, trellis, json_stream, dec_par.n_ite);
+	return factory::Decoder_RSC::build<B,Q,QD>(dec_rsc_par, trellis, json_stream, dec_par.n_ite);
 }
 
 template <typename B, typename Q, typename QD>
@@ -166,12 +166,12 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 	auto dec_cpy = dec_par;
 	dec_cpy.type = "TURBO";
 	dec_cpy.implem = typeid(B) == typeid(int64_t) ? "STD" : "FAST";
-	auto decoder = Factory_decoder_turbo::build<B,Q>(dec_cpy, *itl, *siso[tid], *siso[tid]);
+	auto decoder = factory::Decoder_turbo::build<B,Q>(dec_cpy, *itl, *siso[tid], *siso[tid]);
 
 	// then add post processing modules
 	if (dec_par.sf.enable)
 	{
-		post_pros[tid].push_back(Factory_scaling_factor::build<B,Q>(dec_par.sf));
+		post_pros[tid].push_back(factory::Scaling_factor::build<B,Q>(dec_par.sf));
 	}
 
 	if (dec_par.fnc.enable)
@@ -179,7 +179,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 		if(crc == nullptr || crc->get_size() == 0)
 			throw runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-		post_pros[tid].push_back(Factory_flip_and_check::build<B,Q>(dec_par.fnc, *crc));
+		post_pros[tid].push_back(factory::Flip_and_check::build<B,Q>(dec_par.fnc, *crc));
 	}
 	else if (crc != nullptr && crc->get_size() > 0)
 	{

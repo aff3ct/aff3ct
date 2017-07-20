@@ -9,14 +9,14 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
 Codec_RSC<B,Q,QD>
-::Codec_RSC(const Factory_encoder_RSC::parameters &enc_params,
-            const Factory_decoder_RSC::parameters &dec_params)
+::Codec_RSC(const factory::Encoder_RSC::parameters &enc_params,
+            const factory::Decoder_RSC::parameters &dec_params)
 : Codec_SISO<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params)
 {
 	auto enc_cpy = enc_params;
 	enc_cpy.type = "RSC";
 
-	auto encoder_RSC = Factory_encoder_RSC::build<B>(enc_cpy);
+	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_cpy);
 	trellis = encoder_RSC->get_trellis();
 	delete encoder_RSC;
 }
@@ -31,14 +31,14 @@ template <typename B, typename Q, typename QD>
 Encoder_RSC_sys<B>* Codec_RSC<B,Q,QD>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return Factory_encoder_RSC::build<B>(enc_par, std::cout);
+	return factory::Encoder_RSC::build<B>(enc_par, std::cout);
 }
 
 template <typename B, typename Q, typename QD>
 Decoder_SISO<B,Q>* Codec_RSC<B,Q,QD>
 ::build_decoder_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	return Factory_decoder_RSC::build<B,Q,QD>(dec_par, enc_par, trellis, std::cout);
+	return factory::Decoder_RSC::build<B,Q,QD>(dec_par, trellis, std::cout);
 }
 
 template <typename B, typename Q, typename QD>

@@ -1,9 +1,9 @@
 #ifndef LAUNCHER_TURBO_HPP_
 #define LAUNCHER_TURBO_HPP_
 
-#include "Tools/Factory/Module/Code/Turbo/Factory_decoder_turbo.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_encoder_turbo.hpp"
-#include "Tools/Factory/Module/Code/Turbo/Factory_puncturer_turbo.hpp"
+#include "Factory/Module/Code/Turbo/Decoder_turbo.hpp"
+#include "Factory/Module/Code/Turbo/Encoder_turbo.hpp"
+#include "Factory/Module/Code/Turbo/Puncturer_turbo.hpp"
 
 namespace aff3ct
 {
@@ -13,9 +13,9 @@ template <class C, typename B = int, typename R = float, typename Q = R, typenam
 class Launcher_turbo : public C
 {
 protected:
-	tools::Factory_encoder_turbo  ::parameters *params_enc = nullptr;
-	tools::Factory_puncturer_turbo::parameters *params_pct = nullptr;
-	tools::Factory_decoder_turbo  ::parameters *params_dec = nullptr;
+	factory::Encoder_turbo  ::parameters *params_enc = nullptr;
+	factory::Puncturer_turbo::parameters *params_pct = nullptr;
+	factory::Decoder_turbo  ::parameters *params_dec = nullptr;
 
 public:
 	Launcher_turbo(const int argc, const char **argv, std::ostream &stream = std::cout);

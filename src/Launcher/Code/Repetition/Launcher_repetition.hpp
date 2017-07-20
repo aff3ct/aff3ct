@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_REPETITION_HPP_
 #define LAUNCHER_REPETITION_HPP_
 
-#include "Tools/Factory/Module/Code/Repetition/Factory_decoder_repetition.hpp"
-#include "Tools/Factory/Module/Code/Repetition/Factory_encoder_repetition.hpp"
+#include "Factory/Module/Code/Repetition/Decoder_repetition.hpp"
+#include "Factory/Module/Code/Repetition/Encoder_repetition.hpp"
 
 namespace aff3ct
 {
@@ -12,8 +12,8 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_repetition : public C
 {
 protected:
-	tools::Factory_encoder_repetition::parameters *params_enc = nullptr;
-	tools::Factory_decoder_repetition::parameters *params_dec = nullptr;
+	factory::Encoder_repetition::parameters *params_enc = nullptr;
+	factory::Decoder_repetition::parameters *params_dec = nullptr;
 
 public:
 	Launcher_repetition(const int argc, const char **argv, std::ostream &stream = std::cout);

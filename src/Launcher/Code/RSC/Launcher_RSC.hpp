@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_RSC_HPP_
 #define LAUNCHER_RSC_HPP_
 
-#include "Tools/Factory/Module/Code/RSC/Factory_decoder_RSC.hpp"
-#include "Tools/Factory/Module/Code/RSC/Factory_encoder_RSC.hpp"
+#include "Factory/Module/Code/RSC/Decoder_RSC.hpp"
+#include "Factory/Module/Code/RSC/Encoder_RSC.hpp"
 
 namespace aff3ct
 {
@@ -12,8 +12,8 @@ template <class C, typename B = int, typename R = float, typename Q = R, typenam
 class Launcher_RSC : public C
 {
 protected:
-	tools::Factory_encoder_RSC::parameters *params_enc = nullptr;
-	tools::Factory_decoder_RSC::parameters *params_dec = nullptr;
+	factory::Encoder_RSC::parameters *params_enc = nullptr;
+	factory::Decoder_RSC::parameters *params_dec = nullptr;
 
 public:
 	Launcher_RSC(const int argc, const char **argv, std::ostream &stream = std::cout);

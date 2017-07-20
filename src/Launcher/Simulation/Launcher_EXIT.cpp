@@ -11,7 +11,7 @@ using namespace aff3ct::simulation;
 template <typename B, typename R>
 Launcher_EXIT<B,R>
 ::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new Factory_simulation_EXIT::parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_EXIT::parameters())
 {
 	Launcher::params = params;
 }
@@ -30,11 +30,11 @@ void Launcher_EXIT<B,R>
 {
 	Launcher::build_args();
 
-	Factory_simulation_EXIT::build_args(this->req_args, this->opt_args);
-	Factory_source         ::build_args(this->req_args, this->opt_args);
-	Factory_modem          ::build_args(this->req_args, this->opt_args);
-	Factory_channel        ::build_args(this->req_args, this->opt_args);
-	Factory_terminal_EXIT  ::build_args(this->req_args, this->opt_args);
+	factory::Simulation_EXIT::build_args(this->req_args, this->opt_args);
+	factory::Source         ::build_args(this->req_args, this->opt_args);
+	factory::Modem          ::build_args(this->req_args, this->opt_args);
+	factory::Channel        ::build_args(this->req_args, this->opt_args);
+	factory::Terminal_EXIT  ::build_args(this->req_args, this->opt_args);
 
 	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
 	    this->req_args.find({"pct-info-bits", "K"}) != this->req_args.end())
@@ -57,9 +57,9 @@ void Launcher_EXIT<B,R>
 {
 	Launcher::store_args();
 
-	Factory_simulation_EXIT::store_args(this->ar, *params);
+	factory::Simulation_EXIT::store_args(this->ar, *params);
 
-	Factory_source::store_args(this->ar, *params->src);
+	factory::Source::store_args(this->ar, *params->src);
 
 	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
 	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
@@ -67,15 +67,15 @@ void Launcher_EXIT<B,R>
 	params->src->K = params->src->K == 0 ? K : params->src->K;
 	params->mdm->N = N;
 
-	Factory_modem::store_args(this->ar, *params->mdm);
+	factory::Modem::store_args(this->ar, *params->mdm);
 
 	params->chn->N         = params->mdm->N_mod;
 	params->chn->complex   = params->mdm->complex;
 	params->chn->add_users = params->mdm->type == "SCMA";
 
-	Factory_channel::store_args(this->ar, *params->chn);
+	factory::Channel::store_args(this->ar, *params->chn);
 
-	Factory_terminal_EXIT::store_args(this->ar, *params->ter);
+	factory::Terminal_EXIT::store_args(this->ar, *params->ter);
 
 	if (params->src->type == "AZCW" || params->enc->type == "AZCW")
 	{
@@ -96,22 +96,22 @@ void Launcher_EXIT<B,R>
 {
 	Launcher::group_args();
 
-	Factory_simulation_EXIT::group_args(this->arg_group);
-	Factory_source         ::group_args(this->arg_group);
-	Factory_modem          ::group_args(this->arg_group);
-	Factory_channel        ::group_args(this->arg_group);
-	Factory_terminal_EXIT  ::group_args(this->arg_group);
+	factory::Simulation_EXIT::group_args(this->arg_group);
+	factory::Source         ::group_args(this->arg_group);
+	factory::Modem          ::group_args(this->arg_group);
+	factory::Channel        ::group_args(this->arg_group);
+	factory::Terminal_EXIT  ::group_args(this->arg_group);
 }
 
 template <typename B, typename R>
 void Launcher_EXIT<B,R>
 ::print_header()
 {
-	Factory_simulation_EXIT::header(this->pl_sim,                 *params);
-	Factory_source         ::header(this->pl_src,                 *params->src);
-	Factory_modem          ::header(this->pl_mod, this->pl_demod, *params->mdm);
-	Factory_channel        ::header(this->pl_chn,                 *params->chn);
-	Factory_terminal_EXIT  ::header(this->pl_ter,                 *params->ter);
+	factory::Simulation_EXIT::header(this->pl_sim,                 *params);
+	factory::Source         ::header(this->pl_src,                 *params->src);
+	factory::Modem          ::header(this->pl_mod, this->pl_demod, *params->mdm);
+	factory::Channel        ::header(this->pl_chn,                 *params->chn);
+	factory::Terminal_EXIT  ::header(this->pl_ter,                 *params->ter);
 
 	Launcher::print_header();
 }

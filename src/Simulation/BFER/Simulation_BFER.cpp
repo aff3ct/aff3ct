@@ -7,13 +7,14 @@
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/Module/Factory_monitor.hpp"
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #ifdef ENABLE_MPI
 #include "Module/Monitor/Standard/Monitor_reduction_mpi.hpp"
 #endif
+
+#include "Factory/Module/Monitor.hpp"
 
 #include "Simulation_BFER.hpp"
 
@@ -23,7 +24,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER<B,R,Q>
-::Simulation_BFER(const Factory_simulation_BFER::parameters& params, Codec<B,Q> &codec)
+::Simulation_BFER(const factory::Simulation_BFER::parameters& params, Codec<B,Q> &codec)
 : Simulation(),
   params(params),
 
@@ -167,7 +168,7 @@ void Simulation_BFER<B,R,Q>
 		// dirty hack to override simulation params
 		if (params.mnt->err_track_revert)
 		{
-			auto *params_writable = const_cast<Factory_simulation_BFER::parameters*>(&params);
+			auto *params_writable = const_cast<factory::Simulation_BFER::parameters*>(&params);
 			const auto base_path = params.mnt->err_track_path;
 			params_writable->src->path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
@@ -365,7 +366,7 @@ template <typename B, typename R, typename Q>
 Monitor<B>* Simulation_BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
-	return Factory_monitor::build<B>(*params.mnt);
+	return factory::Monitor::build<B>(*params.mnt);
 }
 
 template <typename B, typename R, typename Q>

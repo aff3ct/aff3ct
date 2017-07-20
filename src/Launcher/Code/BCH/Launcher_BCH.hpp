@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_BCH_HPP_
 #define LAUNCHER_BCH_HPP_
 
-#include "Tools/Factory/Module/Code/BCH/Factory_decoder_BCH.hpp"
-#include "Tools/Factory/Module/Code/BCH/Factory_encoder_BCH.hpp"
+#include "Factory/Module/Code/BCH/Decoder_BCH.hpp"
+#include "Factory/Module/Code/BCH/Encoder_BCH.hpp"
 
 namespace aff3ct
 {
@@ -12,8 +12,8 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_BCH : public C
 {
 protected :
-	tools::Factory_encoder_BCH::parameters *params_enc = nullptr;
-	tools::Factory_decoder_BCH::parameters *params_dec = nullptr;
+	factory::Encoder_BCH::parameters *params_enc = nullptr;
+	factory::Decoder_BCH::parameters *params_dec = nullptr;
 
 public:
 	Launcher_BCH(const int argc, const char **argv, std::ostream &stream = std::cout);

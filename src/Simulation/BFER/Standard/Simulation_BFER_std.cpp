@@ -1,13 +1,14 @@
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Factory/Module/Factory_source.hpp"
-#include "Tools/Factory/Module/Factory_CRC.hpp"
-#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
-#include "Tools/Factory/Module/Factory_modem.hpp"
-#include "Tools/Factory/Module/Factory_channel.hpp"
-#include "Tools/Factory/Module/Factory_quantizer.hpp"
-#include "Tools/Factory/Module/Code/Factory_puncturer.hpp"
-#include "Tools/Factory/Module/Coset/Factory_coset_real.hpp"
-#include "Tools/Factory/Module/Coset/Factory_coset_bit.hpp"
+
+#include "Factory/Module/Source.hpp"
+#include "Factory/Module/CRC.hpp"
+#include "Factory/Module/Code/Encoder.hpp"
+#include "Factory/Module/Modem.hpp"
+#include "Factory/Module/Channel.hpp"
+#include "Factory/Module/Quantizer.hpp"
+#include "Factory/Module/Code/Puncturer.hpp"
+#include "Factory/Module/Coset/Coset_real.hpp"
+#include "Factory/Module/Coset/Coset_bit.hpp"
 
 #include "Simulation_BFER_std.hpp"
 
@@ -17,7 +18,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_std<B,R,Q>
-::Simulation_BFER_std(const Factory_simulation_BFER_std::parameters &params, Codec<B,Q> &codec)
+::Simulation_BFER_std(const factory::Simulation_BFER_std::parameters &params, Codec<B,Q> &codec)
 : Simulation_BFER<B,R,Q>(params, codec),
   params(params),
 
@@ -102,14 +103,14 @@ Source<B>* Simulation_BFER_std<B,R,Q>
 {
 	auto src_cpy = *params.src;
 	src_cpy.seed = seed;
-	return Factory_source::build<B>(src_cpy);
+	return factory::Source::build<B>(src_cpy);
 }
 
 template <typename B, typename R, typename Q>
 CRC<B>* Simulation_BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
-	return Factory_CRC::build<B>(*params.crc);
+	return factory::CRC::build<B>(*params.crc);
 }
 
 template <typename B, typename R, typename Q>
@@ -124,7 +125,7 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 	{
 		auto enc_cpy = *params.enc;
 		enc_cpy.seed = seed;
-		return Factory_encoder::build<B>(enc_cpy);
+		return factory::Encoder::build<B>(enc_cpy);
 	}
 }
 
@@ -138,14 +139,7 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		Factory_puncturer::parameters pct;
-		pct.type     = "NO";
-		pct.K        = params.enc->K;
-		pct.N        = params.enc->N_cw;
-		pct.N_cw     = params.enc->N_cw;
-		pct.n_frames = params.src->n_frames;
-
-		return Factory_puncturer::build<B,Q>(pct);
+		return factory::Puncturer::build<B,Q>(*params.pct);
 	}
 }
 
@@ -170,7 +164,7 @@ Modem<B,R,R>* Simulation_BFER_std<B,R,Q>
 	auto mdm_cpy = *params.mdm;
 	if (params.mdm->sigma == -1.f)
 		mdm_cpy.sigma = this->sigma;
-	return Factory_modem::build<B,R,R>(mdm_cpy);
+	return factory::Modem::build<B,R,R>(mdm_cpy);
 }
 
 template <typename B, typename R, typename Q>
@@ -182,7 +176,7 @@ Channel<R>* Simulation_BFER_std<B,R,Q>
 		chn_cpy.sigma = this->sigma;
 	chn_cpy.seed = seed;
 
-	return Factory_channel::build<R>(chn_cpy);
+	return factory::Channel::build<R>(chn_cpy);
 }
 
 template <typename B, typename R, typename Q>
@@ -193,14 +187,14 @@ Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
 	if (params.qnt->sigma == -1.f)
 		qnt_cpy.sigma = this->sigma;
 
-	return Factory_quantizer::build<R,Q>(qnt_cpy);
+	return factory::Quantizer::build<R,Q>(qnt_cpy);
 }
 
 template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return Factory_coset_real::build<B,Q>("STD", params.dec->N_cw, params.src->n_frames);
+	return factory::Coset_real::build<B,Q>("STD", params.dec->N_cw, params.src->n_frames);
 }
 
 template <typename B, typename R, typename Q>
@@ -214,7 +208,7 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return Factory_coset_bit::build<B>("STD", params.dec->K, params.src->n_frames);
+	return factory::Coset_bit::build<B>("STD", params.dec->K, params.src->n_frames);
 }
 
 // ==================================================================================== explicit template instantiation

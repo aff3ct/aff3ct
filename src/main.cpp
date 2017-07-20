@@ -32,8 +32,9 @@
 #include "Launcher/Code/Repetition/Launcher_repetition.hpp"
 #include "Launcher/Code/Uncoded/Launcher_uncoded.hpp"
 
-#include "Tools/Factory/Simulation/Factory_simulation_main.hpp"
+#include "Factory/Simulation/Simulation_main.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::launcher;
 using namespace aff3ct::tools;
 
@@ -109,21 +110,21 @@ void read_arguments(const int argc, const char** argv, std::string &code_type, s
 	Arguments_reader::arg_grp arg_group;
 
 	std::vector<std::string> cmd_warn, cmd_error;
-	Factory_simulation_main::parameters params;
+	factory::Simulation_main::parameters params;
 
-	Factory_simulation_main::build_args(req_args, opt_args);
+	factory::Simulation_main::build_args(req_args, opt_args);
 
 	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
 	bool error    = !ar.check_arguments(cmd_error);
 
-	Factory_simulation_main::store_args(ar, params);
+	factory::Simulation_main::store_args(ar, params);
 
 	if (params.display_version)
 		print_version();
 
 	if (error || miss_arg)
 	{
-		Factory_simulation_main::group_args(arg_group);
+		factory::Simulation_main::group_args(arg_group);
 		ar.print_usage(arg_group);
 
 		for (auto w = 0; w < (int)cmd_error.size(); w++)

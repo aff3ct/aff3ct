@@ -9,11 +9,12 @@
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
+#include "Tools/Codec/Codec.hpp"
+
 #include "Module/Monitor/Monitor.hpp"
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
 
-#include "Tools/Codec/Codec.hpp"
-#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER.hpp"
+#include "Factory/Simulation/BFER/Simulation_BFER.hpp"
 
 #include "../Simulation.hpp"
 
@@ -26,7 +27,7 @@ class Simulation_BFER : public Simulation
 {
 private:
 	// parameters
-	const tools::Factory_simulation_BFER::parameters &params;
+	const factory::Simulation_BFER::parameters &params;
 
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
@@ -67,7 +68,7 @@ protected:
 	std::map<std::pair<int, std::string>, unsigned> data_sizes;
 
 public:
-	Simulation_BFER(const typename tools::Factory_simulation_BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
+	Simulation_BFER(const factory::Simulation_BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER();
 	void launch();
 

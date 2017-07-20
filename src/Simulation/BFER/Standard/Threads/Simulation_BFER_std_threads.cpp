@@ -14,7 +14,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_BFER_std_threads<B,R,Q>
-::Simulation_BFER_std_threads(const tools::Factory_simulation_BFER_std::parameters &params, Codec<B,Q> &codec)
+::Simulation_BFER_std_threads(const factory::Simulation_BFER_std::parameters &params, Codec<B,Q> &codec)
 : Simulation_BFER_std<B,R,Q>(params, codec),
 
   U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),

@@ -12,8 +12,8 @@ Launcher_RA<C,B,R,Q>
 ::Launcher_RA(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
-	params_enc = new tools::Factory_encoder_RA::parameters();
-	params_dec = new tools::Factory_decoder_RA::parameters();
+	params_enc = new factory::Encoder_RA::parameters();
+	params_dec = new factory::Decoder_RA::parameters();
 
 	if (this->params->enc != nullptr) { delete this->params->enc; this->params->enc = params_enc; }
 	if (this->params->dec != nullptr) { delete this->params->dec; this->params->dec = params_dec; }
@@ -29,8 +29,8 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::build_args()
 {
-	tools::Factory_encoder_RA::build_args(this->req_args, this->opt_args);
-	tools::Factory_decoder_RA::build_args(this->req_args, this->opt_args);
+	factory::Encoder_RA::build_args(this->req_args, this->opt_args);
+	factory::Decoder_RA::build_args(this->req_args, this->opt_args);
 
 	this->opt_args.erase({"enc-fra",       "F"});
 	this->opt_args.erase({"enc-seed",      "S"});
@@ -48,12 +48,12 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::store_args()
 {
-	tools::Factory_encoder_RA::store_args(this->ar, *params_enc);
+	factory::Encoder_RA::store_args(this->ar, *params_enc);
 
 	params_dec->K    = params_enc->K;
 	params_dec->N_cw = params_enc->N_cw;
 
-	tools::Factory_decoder_RA::store_args(this->ar, *params_dec);
+	factory::Decoder_RA::store_args(this->ar, *params_dec);
 
 	this->params->pct->type = "NO";
 	this->params->pct->K    = params_enc->K;
@@ -69,8 +69,8 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::group_args()
 {
-	tools::Factory_encoder_RA::group_args(this->arg_group);
-	tools::Factory_decoder_RA::group_args(this->arg_group);
+	factory::Encoder_RA::group_args(this->arg_group);
+	factory::Decoder_RA::group_args(this->arg_group);
 
 	C::group_args();
 }
@@ -80,8 +80,8 @@ void Launcher_RA<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		tools::Factory_encoder_RA::header(this->pl_enc, *params_enc);
-	tools::Factory_decoder_RA::header(this->pl_dec, this->pl_itl, *params_dec);
+		factory::Encoder_RA::header(this->pl_enc, *params_enc);
+	factory::Decoder_RA::header(this->pl_dec, this->pl_itl, *params_dec);
 
 	C::print_header();
 }

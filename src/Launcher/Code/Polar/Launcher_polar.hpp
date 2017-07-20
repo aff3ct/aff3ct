@@ -1,10 +1,10 @@
 #ifndef LAUNCHER_POLAR_HPP_
 #define LAUNCHER_POLAR_HPP_
 
-#include "Tools/Factory/Module/Code/Polar/Factory_frozenbits_generator.hpp"
-#include "Tools/Factory/Module/Code/Polar/Factory_puncturer_polar.hpp"
-#include "Tools/Factory/Module/Code/Polar/Factory_decoder_polar.hpp"
-#include "Tools/Factory/Module/Code/Polar/Factory_encoder_polar.hpp"
+#include "Factory/Module/Code/Polar/Frozenbits_generator.hpp"
+#include "Factory/Module/Code/Polar/Puncturer_polar.hpp"
+#include "Factory/Module/Code/Polar/Decoder_polar.hpp"
+#include "Factory/Module/Code/Polar/Encoder_polar.hpp"
 
 namespace aff3ct
 {
@@ -14,10 +14,10 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_polar : public C
 {
 protected:
-	tools::Factory_frozenbits_generator::parameters *params_fb  = nullptr;
-	tools::Factory_puncturer_polar     ::parameters *params_pct = nullptr;
-	tools::Factory_encoder_polar       ::parameters *params_enc = nullptr;
-	tools::Factory_decoder_polar       ::parameters *params_dec = nullptr;
+	factory::Frozenbits_generator::parameters *params_fb  = nullptr;
+	factory::Puncturer_polar     ::parameters *params_pct = nullptr;
+	factory::Encoder_polar       ::parameters *params_enc = nullptr;
+	factory::Decoder_polar       ::parameters *params_dec = nullptr;
 
 public:
 	Launcher_polar(const int argc, const char **argv, std::ostream &stream = std::cout);

@@ -6,8 +6,8 @@
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
-#include "Tools/Factory/Module/Code/LDPC/Factory_encoder_LDPC.hpp"
-#include "Tools/Factory/Module/Code/LDPC/Factory_decoder_LDPC.hpp"
+#include "Factory/Module/Code/LDPC/Encoder_LDPC.hpp"
+#include "Factory/Module/Code/LDPC/Decoder_LDPC.hpp"
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
@@ -21,8 +21,8 @@ template <typename B = int, typename Q = float>
 class Codec_LDPC : public Codec_SISO<B,Q>
 {
 protected:
-	const Factory_encoder_LDPC::parameters &enc_par;
-	const Factory_decoder_LDPC::parameters &dec_par;
+	const factory::Encoder_LDPC::parameters &enc_par;
+	const factory::Decoder_LDPC::parameters &dec_par;
 
 	Sparse_matrix H;
 	Sparse_matrix G;
@@ -31,8 +31,8 @@ protected:
 	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
 
 public:
-	Codec_LDPC(const Factory_encoder_LDPC::parameters &enc_params,
-	           const Factory_decoder_LDPC::parameters &dec_params,
+	Codec_LDPC(const factory::Encoder_LDPC::parameters &enc_params,
+	           const factory::Decoder_LDPC::parameters &dec_params,
 	           const int n_threads);
 	virtual ~Codec_LDPC();
 

@@ -12,10 +12,10 @@ Launcher_polar<C,B,R,Q>
 ::Launcher_polar(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
-	params_fb  = new tools::Factory_frozenbits_generator::parameters();
-	params_pct = new tools::Factory_puncturer_polar     ::parameters();
-	params_enc = new tools::Factory_encoder_polar       ::parameters();
-	params_dec = new tools::Factory_decoder_polar       ::parameters();
+	params_fb  = new factory::Frozenbits_generator::parameters();
+	params_pct = new factory::Puncturer_polar     ::parameters();
+	params_enc = new factory::Encoder_polar       ::parameters();
+	params_dec = new factory::Decoder_polar       ::parameters();
 
 	if (this->params->enc != nullptr) { delete this->params->enc; this->params->enc = params_enc; }
 	if (this->params->pct != nullptr) { delete this->params->pct; this->params->pct = params_pct; }
@@ -37,10 +37,10 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::build_args()
 {
-	tools::Factory_frozenbits_generator::build_args(this->req_args, this->opt_args);
-	tools::Factory_encoder_polar       ::build_args(this->req_args, this->opt_args);
-	tools::Factory_puncturer_polar     ::build_args(this->req_args, this->opt_args);
-	tools::Factory_decoder_polar       ::build_args(this->req_args, this->opt_args);
+	factory::Frozenbits_generator::build_args(this->req_args, this->opt_args);
+	factory::Encoder_polar       ::build_args(this->req_args, this->opt_args);
+	factory::Puncturer_polar     ::build_args(this->req_args, this->opt_args);
+	factory::Decoder_polar       ::build_args(this->req_args, this->opt_args);
 
 	this->opt_args.erase({"pct-fra",       "F"});
 	this->req_args.erase({"enc-cw-size",   "N"});
@@ -59,23 +59,23 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::store_args()
 {
-	tools::Factory_puncturer_polar::store_args(this->ar, *params_pct);
+	factory::Puncturer_polar::store_args(this->ar, *params_pct);
 
 	params_fb->K    = params_pct->K;
 	params_fb->N_cw = params_pct->N_cw;
 
-	tools::Factory_frozenbits_generator::store_args(this->ar, *params_fb);
+	factory::Frozenbits_generator::store_args(this->ar, *params_fb);
 
 	params_enc->K    = params_pct->K;
 	params_enc->N_cw = params_pct->N_cw;
 
-	tools::Factory_encoder_polar::store_args(this->ar, *params_enc);
+	factory::Encoder_polar::store_args(this->ar, *params_enc);
 
 	params_dec->K          = params_pct->K;
 	params_dec->N_cw       = params_pct->N_cw;
 	params_dec->systematic = params_enc->systematic;
 
-	tools::Factory_decoder_polar::store_args(this->ar, *params_dec);
+	factory::Decoder_polar::store_args(this->ar, *params_dec);
 
 	if (params_dec->simd_strategy == "INTER")
 		this->params->src->n_frames = mipp::N<Q>();
@@ -87,10 +87,10 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::group_args()
 {
-	tools::Factory_frozenbits_generator::group_args(this->arg_group);
-	tools::Factory_puncturer_polar     ::group_args(this->arg_group);
-	tools::Factory_encoder_polar       ::group_args(this->arg_group);
-	tools::Factory_decoder_polar       ::group_args(this->arg_group);
+	factory::Frozenbits_generator::group_args(this->arg_group);
+	factory::Puncturer_polar     ::group_args(this->arg_group);
+	factory::Encoder_polar       ::group_args(this->arg_group);
+	factory::Decoder_polar       ::group_args(this->arg_group);
 
 	C::group_args();
 }
@@ -100,11 +100,11 @@ void Launcher_polar<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		tools::Factory_encoder_polar::header(this->pl_enc, *params_enc);
+		factory::Encoder_polar::header(this->pl_enc, *params_enc);
 	if (params_pct->type != "NO")
-		tools::Factory_puncturer_polar::header(this->pl_pct, *params_pct);
-	tools::Factory_frozenbits_generator::header(this->pl_enc, *params_fb);
-	tools::Factory_decoder_polar::header(this->pl_dec, *params_dec);
+		factory::Puncturer_polar::header(this->pl_pct, *params_pct);
+	factory::Frozenbits_generator::header(this->pl_enc, *params_fb);
+	factory::Decoder_polar::header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }

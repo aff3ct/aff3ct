@@ -1,8 +1,8 @@
 #ifndef LAUNCHER_NO_HPP_
 #define LAUNCHER_NO_HPP_
 
-#include "Tools/Factory/Module/Code/NO/Factory_decoder_NO.hpp"
-#include "Tools/Factory/Module/Code/Factory_encoder.hpp"
+#include "Factory/Module/Code/NO/Decoder_NO.hpp"
+#include "Factory/Module/Code/Encoder.hpp"
 
 namespace aff3ct
 {
@@ -12,8 +12,8 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_uncoded : public C
 {
 protected:
-	tools::Factory_encoder   ::parameters *params_enc = nullptr;
-	tools::Factory_decoder_NO::parameters *params_dec = nullptr;
+	factory::Encoder   ::parameters *params_enc = nullptr;
+	factory::Decoder_NO::parameters *params_dec = nullptr;
 
 public:
 	Launcher_uncoded(const int argc, const char **argv, std::ostream &stream = std::cout);

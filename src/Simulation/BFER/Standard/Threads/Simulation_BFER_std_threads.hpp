@@ -7,7 +7,6 @@
 #include <mipp.h>
 
 #include "../Simulation_BFER_std.hpp"
-#include "Tools/Factory/Simulation/BFER/Factory_simulation_BFER_std.hpp"
 
 namespace aff3ct
 {
@@ -37,7 +36,7 @@ protected:
 	std::vector<mipp::vector<B>> V_K2; // decoded bits
 
 public:
-	Simulation_BFER_std_threads(const tools::Factory_simulation_BFER_std::parameters &params, tools::Codec<B,Q> &codec);
+	Simulation_BFER_std_threads(const factory::Simulation_BFER_std::parameters &params, tools::Codec<B,Q> &codec);
 	virtual ~Simulation_BFER_std_threads();
 
 protected:

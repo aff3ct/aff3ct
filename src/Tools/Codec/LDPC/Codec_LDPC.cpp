@@ -13,8 +13,8 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_LDPC<B,Q>
-::Codec_LDPC(const Factory_encoder_LDPC::parameters &enc_params,
-             const Factory_decoder_LDPC::parameters &dec_params,
+::Codec_LDPC(const factory::Encoder_LDPC::parameters &enc_params,
+             const factory::Decoder_LDPC::parameters &dec_params,
              const int n_threads)
 : Codec_SISO<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params),
   info_bits_pos(enc_params.K),
@@ -74,14 +74,14 @@ template <typename B, typename Q>
 Encoder_LDPC<B>* Codec_LDPC<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return Factory_encoder_LDPC::build<B>(enc_par, G, H);
+	return factory::Encoder_LDPC::build<B>(enc_par, G, H);
 }
 
 template <typename B, typename Q>
 Decoder_SISO<B,Q>* Codec_LDPC<B,Q>
 ::_build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	decoder_siso[tid] = Factory_decoder_LDPC::build<B,Q>(dec_par, H, info_bits_pos);
+	decoder_siso[tid] = factory::Decoder_LDPC::build<B,Q>(dec_par, H, info_bits_pos);
 	return decoder_siso[tid];
 }
 

@@ -11,7 +11,7 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 Launcher_BFER_ite<B,R,Q>
 ::Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new Factory_simulation_BFER_ite::parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_BFER_ite::parameters())
 {
 	Launcher::params = params;
 }
@@ -30,16 +30,16 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::build_args();
 
-	Factory_simulation_BFER_ite::build_args(this->req_args, this->opt_args);
-	Factory_source             ::build_args(this->req_args, this->opt_args);
-	Factory_CRC                ::build_args(this->req_args, this->opt_args);
-	Factory_interleaver        ::build_args(this->req_args, this->opt_args);
-	Factory_modem              ::build_args(this->req_args, this->opt_args);
-	Factory_channel            ::build_args(this->req_args, this->opt_args);
+	factory::Simulation_BFER_ite::build_args(this->req_args, this->opt_args);
+	factory::Source             ::build_args(this->req_args, this->opt_args);
+	factory::CRC                ::build_args(this->req_args, this->opt_args);
+	factory::Interleaver        ::build_args(this->req_args, this->opt_args);
+	factory::Modem              ::build_args(this->req_args, this->opt_args);
+	factory::Channel            ::build_args(this->req_args, this->opt_args);
 	if (std::is_integral<Q>())
-		Factory_quantizer      ::build_args(this->req_args, this->opt_args);
-	Factory_monitor            ::build_args(this->req_args, this->opt_args);
-	Factory_terminal_BFER      ::build_args(this->req_args, this->opt_args);
+		factory::Quantizer      ::build_args(this->req_args, this->opt_args);
+	factory::Monitor            ::build_args(this->req_args, this->opt_args);
+	factory::Terminal_BFER      ::build_args(this->req_args, this->opt_args);
 
 	if (this->req_args.find({"enc-info-bits", "K"}) != this->req_args.end() ||
 	    this->req_args.find({"pct-info-bits", "K"}) != this->req_args.end())
@@ -72,42 +72,42 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
-	Factory_simulation_BFER_ite::store_args(this->ar, *params);
+	factory::Simulation_BFER_ite::store_args(this->ar, *params);
 
-	Factory_source::store_args(this->ar, *params->src);
+	factory::Source::store_args(this->ar, *params->src);
 
 	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
 	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
 
-	Factory_CRC::store_args(this->ar, *params->crc);
+	factory::CRC::store_args(this->ar, *params->crc);
 
 	params->crc->K = K - params->crc->size;
 	params->src->K = params->src->K == 0 ? params->crc->K : params->src->K;
 
 	params->itl->size = N;
 
-	Factory_interleaver::store_args(this->ar, *params->itl);
+	factory::Interleaver::store_args(this->ar, *params->itl);
 
 	params->mdm->N = N;
 
-	Factory_modem::store_args(this->ar, *params->mdm);
+	factory::Modem::store_args(this->ar, *params->mdm);
 
 	params->chn->N         = params->mdm->N_mod;
 	params->chn->complex   = params->mdm->complex;
 	params->chn->add_users = params->mdm->type == "SCMA";
 
-	Factory_channel::store_args(this->ar, *params->chn);
+	factory::Channel::store_args(this->ar, *params->chn);
 
 	params->qnt->size = params->mdm->N_fil;
 
 	if (std::is_integral<Q>())
-		Factory_quantizer::store_args(this->ar, *params->qnt);
+		factory::Quantizer::store_args(this->ar, *params->qnt);
 
 	params->mnt->size = params->src->K;
 
-	Factory_monitor::store_args(this->ar, *params->mnt);
+	factory::Monitor::store_args(this->ar, *params->mnt);
 
-	Factory_terminal_BFER::store_args(this->ar, *params->ter);
+	factory::Terminal_BFER::store_args(this->ar, *params->ter);
 
 	if (!std::is_integral<Q>())
 		params->qnt->type = "NO";
@@ -138,32 +138,32 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::group_args();
 
-	Factory_simulation_BFER_ite::group_args(this->arg_group);
-	Factory_source             ::group_args(this->arg_group);
-	Factory_CRC                ::group_args(this->arg_group);
-	Factory_interleaver        ::group_args(this->arg_group);
-	Factory_modem              ::group_args(this->arg_group);
-	Factory_channel            ::group_args(this->arg_group);
+	factory::Simulation_BFER_ite::group_args(this->arg_group);
+	factory::Source             ::group_args(this->arg_group);
+	factory::CRC                ::group_args(this->arg_group);
+	factory::Interleaver        ::group_args(this->arg_group);
+	factory::Modem              ::group_args(this->arg_group);
+	factory::Channel            ::group_args(this->arg_group);
 	if (std::is_integral<Q>())
-		Factory_quantizer      ::group_args(this->arg_group);
-	Factory_monitor            ::group_args(this->arg_group);
-	Factory_terminal_BFER      ::group_args(this->arg_group);
+		factory::Quantizer      ::group_args(this->arg_group);
+	factory::Monitor            ::group_args(this->arg_group);
+	factory::Terminal_BFER      ::group_args(this->arg_group);
 }
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_ite<B,R,Q>
 ::print_header()
 {
-	Factory_simulation_BFER_ite::header(this->pl_sim,                 *params);
-	Factory_source             ::header(this->pl_src,                 *params->src);
-	Factory_CRC                ::header(this->pl_crc,                 *params->crc);
-	Factory_interleaver        ::header(this->pl_itl,                 *params->itl);
-	Factory_modem              ::header(this->pl_mod, this->pl_demod, *params->mdm);
-	Factory_channel            ::header(this->pl_chn,                 *params->chn);
+	factory::Simulation_BFER_ite::header(this->pl_sim,                 *params);
+	factory::Source             ::header(this->pl_src,                 *params->src);
+	factory::CRC                ::header(this->pl_crc,                 *params->crc);
+	factory::Interleaver        ::header(this->pl_itl,                 *params->itl);
+	factory::Modem              ::header(this->pl_mod, this->pl_demod, *params->mdm);
+	factory::Channel            ::header(this->pl_chn,                 *params->chn);
 	if (std::is_integral<Q>())
-		Factory_quantizer      ::header(this->pl_qnt,                 *params->qnt);
-	Factory_monitor            ::header(this->pl_mnt,                 *params->mnt);
-	Factory_terminal_BFER      ::header(this->pl_ter,                 *params->ter);
+		factory::Quantizer      ::header(this->pl_qnt,                 *params->qnt);
+	factory::Monitor            ::header(this->pl_mnt,                 *params->mnt);
+	factory::Terminal_BFER      ::header(this->pl_ter,                 *params->ter);
 
 	Launcher::print_header();
 }

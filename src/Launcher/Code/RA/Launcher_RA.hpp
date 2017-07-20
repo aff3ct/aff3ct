@@ -1,9 +1,8 @@
 #ifndef LAUNCHER_RA_HPP_
 #define LAUNCHER_RA_HPP_
 
-#include "Tools/Factory/Module/Code/RA/Factory_decoder_RA.hpp"
-#include "Tools/Factory/Module/Code/RA/Factory_encoder_RA.hpp"
-#include "Tools/Factory/Module/Factory_interleaver.hpp"
+#include "Factory/Module/Code/RA/Decoder_RA.hpp"
+#include "Factory/Module/Code/RA/Encoder_RA.hpp"
 
 namespace aff3ct
 {
@@ -13,8 +12,8 @@ template <class C, typename B = int, typename R = float, typename Q = R>
 class Launcher_RA : public C
 {
 protected:
-	tools::Factory_encoder_RA::parameters *params_enc = nullptr;
-	tools::Factory_decoder_RA::parameters *params_dec = nullptr;
+	factory::Encoder_RA::parameters *params_enc = nullptr;
+	factory::Decoder_RA::parameters *params_dec = nullptr;
 
 public:
 	Launcher_RA(const int argc, const char **argv, std::ostream &stream = std::cout);
