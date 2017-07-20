@@ -6,8 +6,7 @@
 #include "Factory/Module/Modem.hpp"
 #include "Factory/Module/Channel.hpp"
 #include "Factory/Module/Quantizer.hpp"
-#include "Factory/Module/Coset/Coset_real.hpp"
-#include "Factory/Module/Coset/Coset_bit.hpp"
+#include "Factory/Module/Coset.hpp"
 #include "Factory/Module/Interleaver.hpp"
 
 #include "Simulation_BFER_ite.hpp"
@@ -189,7 +188,10 @@ template <typename B, typename R, typename Q>
 Coset<B,Q>* Simulation_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	return factory::Coset_real::build<B,Q>("STD", params.dec->N_cw, params.src->n_frames);
+	factory::Coset::parameters cst_params;
+	cst_params.size = params.dec->N_cw;
+	cst_params.n_frames = params.src->n_frames;
+	return factory::Coset::build<B,Q>(cst_params);
 }
 
 template <typename B, typename R, typename Q>
@@ -203,7 +205,10 @@ template <typename B, typename R, typename Q>
 Coset<B,B>* Simulation_BFER_ite<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	return factory::Coset_bit::build<B>("STD", params.dec->K, params.src->n_frames);
+	factory::Coset::parameters cst_params;
+	cst_params.size = params.dec->K;
+	cst_params.n_frames = params.src->n_frames;
+	return factory::Coset::build<B>(cst_params);
 }
 
 // ==================================================================================== explicit template instantiation
