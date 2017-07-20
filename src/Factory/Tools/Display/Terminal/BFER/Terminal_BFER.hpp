@@ -4,6 +4,9 @@
 #include <string>
 #include <chrono>
 
+#include "Module/Monitor/Monitor.hpp"
+#include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+
 #include "Tools/Arguments_reader.hpp"
 
 #include "../Terminal.hpp"
@@ -16,8 +19,15 @@ struct Terminal_BFER : Terminal
 {
 	struct parameters : Terminal::parameters
 	{
-		std::string type = "STD";
+		int         K     = 0;
+
+		std::string type  = "STD";
+		int         N     = 0;
 	};
+
+	template <typename B = int>
+	static tools::Terminal_BFER<B>* build(const parameters &params, const module::Monitor<B> &monitor,
+	                                      const std::chrono::nanoseconds *d_decod_total = nullptr);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args);
 	static void store_args(const tools::Arguments_reader& ar, parameters& params);

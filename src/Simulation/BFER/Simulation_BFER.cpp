@@ -15,6 +15,7 @@
 #endif
 
 #include "Factory/Module/Monitor.hpp"
+#include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
 #include "Simulation_BFER.hpp"
 
@@ -373,9 +374,10 @@ template <typename B, typename R, typename Q>
 Terminal_BFER<B>* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	return new Terminal_BFER<B>(params.src->K,
-	                            params.enc->N_cw,
-	                            *this->monitor_red);
+	factory::Terminal_BFER::parameters params_term;
+	params_term.K = params.src->K;
+	params_term.N = params.enc->N_cw;
+	return factory::Terminal_BFER::build<B>(params_term, *this->monitor_red);
 }
 
 template <typename B, typename R, typename Q>

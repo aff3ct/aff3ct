@@ -10,6 +10,7 @@
 #include "Factory/Module/Code/Encoder.hpp"
 #include "Factory/Module/Modem.hpp"
 #include "Factory/Module/Channel.hpp"
+#include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "Simulation_EXIT.hpp"
 
@@ -483,10 +484,14 @@ SISO<R>* Simulation_EXIT<B,R>
 // ------------------------------------------------------------------------------------------------- non-virtual method
 
 template <typename B, typename R>
-Terminal_EXIT<B,R>* Simulation_EXIT<B,R>
+Terminal_EXIT* Simulation_EXIT<B,R>
 ::build_terminal()
 {
-	return new Terminal_EXIT<B,R>(params.enc->N_cw, snr, sig_a, cur_trial, n_trials, I_A, I_E);
+	factory::Terminal_EXIT::parameters params_term;
+	params_term.N     = params.enc->N_cw;
+	params_term.snr   = snr;
+	params_term.sig_a = sig_a;
+	return factory::Terminal_EXIT::build(params_term, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation

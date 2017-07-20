@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "../Terminal.hpp"
 
@@ -16,7 +17,15 @@ struct Terminal_EXIT : Terminal
 {
 	struct parameters : Terminal::parameters
 	{
+		int   N           = 0;
+		float snr         = -1.f;
+		float sig_a       = -1.f;
+
+		std::string type  = "STD";
 	};
+
+	static tools::Terminal_EXIT* build(const parameters &params, const int &cur_t, const int &trials,
+	                                   const double &I_A, const double &I_E);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args);
 	static void store_args(const tools::Arguments_reader& ar, parameters& params);

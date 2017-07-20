@@ -26,4 +26,6 @@ void Terminal::group_args(arg_grp& ar)
 
 void Terminal::header(params_list& head_ter, const parameters& params)
 {
+	head_ter.push_back(std::make_pair("Enabled", params.disabled ? "no" : "yes"));
+	head_ter.push_back(std::make_pair("Frequency (ms)", std::to_string(params.frequency.count())));
 }

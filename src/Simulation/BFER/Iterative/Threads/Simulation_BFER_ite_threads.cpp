@@ -8,6 +8,8 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
+#include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
+
 #include "Simulation_BFER_ite_threads.hpp"
 
 using namespace aff3ct::module;
@@ -590,13 +592,14 @@ Terminal_BFER<B>* Simulation_BFER_ite_threads<B,R,Q>
 #ifdef ENABLE_MPI
 	return Simulation_BFER<B,R,Q>::build_terminal();
 #else
+	factory::Terminal_BFER::parameters params_term;
+	params_term.K = this->params.src->K;
+	params_term.N = this->params.enc->N_cw;
+
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];
 
-	return new Terminal_BFER<B>(this->params.src->K,
-	                            this->params.dec->N_cw,
-	                            *this->monitor_red,
-	                            &d_dec);
+	return factory::Terminal_BFER::build<B>(params_term, *this->monitor_red, &d_dec);
 #endif
 }
 

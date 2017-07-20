@@ -60,6 +60,8 @@ void Launcher_BFER_std<B,R,Q>
 	this->opt_args.erase({"qnt-sigma"         });
 	this->req_args.erase({"mnt-size",      "K"});
 	this->opt_args.erase({"mnt-fra",       "F"});
+	this->req_args.erase({"term-info-bits","K"});
+	this->opt_args.erase({"term-cw-size",  "N"});
 }
 
 template <typename B, typename R, typename Q>

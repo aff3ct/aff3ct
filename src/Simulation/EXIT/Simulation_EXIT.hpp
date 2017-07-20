@@ -62,7 +62,7 @@ protected:
 	module::Channel<R>        *channel;
 	module::Channel<R>        *channel_a;
 	module::SISO<R>           *siso;
-	tools::Terminal_EXIT<B,R> *terminal;
+	tools::Terminal_EXIT      *terminal;
 
 public:
 	Simulation_EXIT(const factory::Simulation_EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);
@@ -87,7 +87,7 @@ protected:
 	virtual module::Channel<R>*        build_channel  (const int size);
 	virtual module::Channel<R>*        build_channel_a(const int size);
 	virtual module::SISO<R>*           build_siso     (              );
-	        tools::Terminal_EXIT<B,R>* build_terminal (              );
+	        tools::Terminal_EXIT*      build_terminal (              );
 };
 }
 }
