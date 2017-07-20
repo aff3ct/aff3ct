@@ -8,8 +8,8 @@
 #include "Tools/Code/Turbo/Post_processing_SISO/Self_corrected/Self_corrected.hpp"
 
 #include "Factory/Module/Interleaver.hpp"
-#include "Factory/Module/Code/Turbo/Scaling_factor.hpp"
-#include "Factory/Module/Code/Turbo/Flip_and_check.hpp"
+#include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
+#include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
 
 #include "Codec_turbo.hpp"
 

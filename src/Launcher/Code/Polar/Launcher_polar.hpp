@@ -1,10 +1,10 @@
 #ifndef LAUNCHER_POLAR_HPP_
 #define LAUNCHER_POLAR_HPP_
 
-#include "Factory/Module/Code/Polar/Frozenbits_generator.hpp"
 #include "Factory/Module/Code/Polar/Puncturer_polar.hpp"
 #include "Factory/Module/Code/Polar/Decoder_polar.hpp"
 #include "Factory/Module/Code/Polar/Encoder_polar.hpp"
+#include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
 
 namespace aff3ct
 {

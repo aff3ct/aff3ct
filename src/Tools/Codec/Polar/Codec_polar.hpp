@@ -10,7 +10,7 @@
 #include "Factory/Module/Code/Polar/Encoder_polar.hpp"
 #include "Factory/Module/Code/Polar/Decoder_polar.hpp"
 #include "Factory/Module/Code/Polar/Puncturer_polar.hpp"
-#include "Factory/Module/Code/Polar/Frozenbits_generator.hpp"
+#include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
 
 #include "../Codec_SISO.hpp"
 

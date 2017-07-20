@@ -12,10 +12,9 @@
 #include "Factory/Module/Monitor.hpp"
 #include "Factory/Module/Quantizer.hpp"
 #include "Factory/Module/Source.hpp"
+#include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "Tools/Arguments_reader.hpp"
-
-#include "Terminal_EXIT.hpp"
 
 #include "../Simulation.hpp"
 
