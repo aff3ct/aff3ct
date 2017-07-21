@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 #include "../Decoder.hpp"
 
@@ -14,7 +14,7 @@ namespace factory
 struct Decoder_NO : public Decoder
 {
 	template <typename B = int, typename Q = float>
-	static module::Decoder<B,Q>* build(parameters &params);
+	static module::Decoder_SISO<B,Q>* build(const parameters &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args);
 	static void store_args(const tools::Arguments_reader& ar, parameters &params);

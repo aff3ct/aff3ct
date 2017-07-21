@@ -14,8 +14,8 @@ template <typename B = int, typename Q = float>
 class Codec_uncoded : public Codec_SISO<B,Q>
 {
 public:
-	Codec_uncoded(const factory::Encoder   ::parameters &enc_params,
-	              const factory::Decoder_NO::parameters &dec_params);
+	Codec_uncoded(const factory::Encoder::parameters &enc_params,
+	              const factory::Decoder::parameters &dec_params);
 	virtual ~Codec_uncoded();
 
 	module::Encoder<B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);

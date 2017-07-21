@@ -2,9 +2,6 @@
 
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Encoder/NO/Encoder_NO.hpp"
-#include "Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "Codec_uncoded.hpp"
 
 using namespace aff3ct::module;
@@ -12,8 +9,8 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_uncoded<B,Q>
-::Codec_uncoded(const factory::Encoder   ::parameters &enc_params,
-                const factory::Decoder_NO::parameters &dec_params)
+::Codec_uncoded(const factory::Encoder::parameters &enc_params,
+                const factory::Decoder::parameters &dec_params)
 : Codec_SISO<B,Q>(enc_params, dec_params)
 {
 	if (enc_params.K != enc_params.N_cw)
@@ -35,21 +32,21 @@ template <typename B, typename Q>
 Encoder<B>* Codec_uncoded<B,Q>
 ::build_encoder(const int tid, const Interleaver<int>* itl)
 {
-	return new Encoder_NO<B>(this->enc_params.K, this->enc_params.n_frames);
+	return factory::Encoder::build<B>(this->enc_params);
 }
 
 template <typename B, typename Q>
 SISO<Q>* Codec_uncoded<B,Q>
 ::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	return new Decoder_NO<B,Q>(this->dec_params.K, this->dec_params.n_frames);
+	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }
 
 template <typename B, typename Q>
 Decoder<B,Q>* Codec_uncoded<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
-	return new Decoder_NO<B,Q>(this->dec_params.K, this->dec_params.n_frames);
+	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }
 
 template <typename B, typename Q>

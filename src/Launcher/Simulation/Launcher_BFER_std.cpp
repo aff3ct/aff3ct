@@ -100,8 +100,8 @@ void Launcher_BFER_std<B,R,Q>
 
 	factory::Monitor::store_args(this->ar, *params->mnt);
 
-	params->ter->K = params->dec->K;
-	params->ter->N = params->dec->N_cw;
+	params->ter->K = K;
+	params->ter->N = N;
 
 	factory::Terminal_BFER::store_args(this->ar, *params->ter);
 

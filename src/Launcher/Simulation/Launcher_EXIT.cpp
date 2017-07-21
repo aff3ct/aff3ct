@@ -78,7 +78,7 @@ void Launcher_EXIT<B,R>
 
 	factory::Channel::store_args(this->ar, *params->chn);
 
-	params->ter->N = params->dec->N_cw;
+	params->ter->N = N;
 
 	factory::Terminal_EXIT::store_args(this->ar, *params->ter);
 
