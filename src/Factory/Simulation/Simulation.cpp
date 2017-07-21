@@ -64,10 +64,10 @@ void Simulation::store_args(const tools::Arguments_reader& ar, parameters &param
 
 	params.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
-	if(ar.exist_arg({"sim-pyber"        })) params.pyber             = ar.get_arg      ({"sim-pyber"        });
-	if(ar.exist_arg({"sim-snr-step", "s"})) params.snr_step          = ar.get_arg_float({"sim-snr-step", "s"});
+	if(ar.exist_arg({"sim-pyber"        })) params.pyber     =         ar.get_arg      ({"sim-pyber"        });
+	if(ar.exist_arg({"sim-snr-step", "s"})) params.snr_step  =         ar.get_arg_float({"sim-snr-step", "s"});
 	if(ar.exist_arg({"sim-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({"sim-stop-time"    }));
-	if(ar.exist_arg({"sim-seed",     "S"})) params.seed              = ar.get_arg_int  ({"sim-seed",     "S"});
+	if(ar.exist_arg({"sim-seed",     "S"})) params.seed      =         ar.get_arg_int  ({"sim-seed",     "S"});
 
 #ifndef STARPU
 	if(ar.exist_arg({"sim-threads", "t"}) && ar.get_arg_int({"sim-threads", "t"}) > 0)

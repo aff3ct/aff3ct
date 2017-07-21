@@ -24,7 +24,6 @@ void Simulation_BFER_ite::build_args(arg_map &req_args, arg_map &opt_args)
 	opt_args[{"sim-ite", "I"}] =
 		{"positive_int",
 		 "number of global iterations between the demodulator and the decoder."};
-
 }
 
 void Simulation_BFER_ite::store_args(const tools::Arguments_reader& ar, parameters &params)
