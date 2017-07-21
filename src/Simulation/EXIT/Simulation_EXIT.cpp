@@ -487,11 +487,10 @@ template <typename B, typename R>
 Terminal_EXIT* Simulation_EXIT<B,R>
 ::build_terminal()
 {
-	factory::Terminal_EXIT::parameters params_term;
-	params_term.N     = params.enc->N_cw;
-	params_term.snr   = snr;
-	params_term.sig_a = sig_a;
-	return factory::Terminal_EXIT::build(params_term, cur_trial, n_trials, I_A, I_E);
+	auto term_cpy = *params.ter;
+	term_cpy.snr   = snr;
+	term_cpy.sig_a = sig_a;
+	return factory::Terminal_EXIT::build(term_cpy, cur_trial, n_trials, I_A, I_E);
 }
 
 // ==================================================================================== explicit template instantiation

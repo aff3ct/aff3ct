@@ -56,6 +56,4 @@ void Terminal_EXIT::header(params_list& head_ter, const parameters& params)
 
 	head_ter.push_back(std::make_pair("Type", params.type));
 	head_ter.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
-	head_ter.push_back(std::make_pair("SNR (dB)", std::to_string(params.snr)));
-	head_ter.push_back(std::make_pair("Sigma A", std::to_string(params.sig_a)));
 }

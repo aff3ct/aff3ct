@@ -49,6 +49,9 @@ void Launcher_EXIT<B,R>
 	this->opt_args.erase({"chn-seed",     "S"});
 	this->opt_args.erase({"chn-add-users"    });
 	this->opt_args.erase({"chn-complex"      });
+	this->req_args.erase({"term-cw-size", "N"});
+	this->req_args.erase({"term-sig-a"       });
+	this->req_args.erase({"term-snr"         });
 }
 
 template <typename B, typename R>
@@ -74,6 +77,8 @@ void Launcher_EXIT<B,R>
 	params->chn->add_users = params->mdm->type == "SCMA";
 
 	factory::Channel::store_args(this->ar, *params->chn);
+
+	params->ter->N = params->dec->N_cw;
 
 	factory::Terminal_EXIT::store_args(this->ar, *params->ter);
 

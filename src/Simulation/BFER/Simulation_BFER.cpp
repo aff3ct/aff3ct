@@ -374,10 +374,7 @@ template <typename B, typename R, typename Q>
 Terminal_BFER<B>* Simulation_BFER<B,R,Q>
 ::build_terminal()
 {
-	factory::Terminal_BFER::parameters params_term;
-	params_term.K = params.src->K;
-	params_term.N = params.enc->N_cw;
-	return factory::Terminal_BFER::build<B>(params_term, *this->monitor_red);
+	return factory::Terminal_BFER::build<B>(*params.ter, *this->monitor_red);
 }
 
 template <typename B, typename R, typename Q>
