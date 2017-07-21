@@ -5,14 +5,6 @@
 
 #include "Factory/Simulation/BFER/Simulation_BFER_ite.hpp"
 
-#if defined(SYSTEMC)
-#include "Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp"
-#elif defined(STARPU)
-#include "Simulation/BFER/Iterative/StarPU/SPU_Simulation_BFER_ite.hpp"
-#else
-#include "Simulation/BFER/Iterative/Threads/Simulation_BFER_ite_threads.hpp"
-#endif
-
 #include "../Launcher.hpp"
 
 namespace aff3ct

@@ -55,14 +55,14 @@ protected:
 	float snr;
 
 	// communication chain
-	module::Source<B>         *source;
-	module::Encoder<B>        *encoder;
-	module::Modem<B,R,R>      *modem;
-	module::Modem<B,R,R>      *modem_a;
-	module::Channel<R>        *channel;
-	module::Channel<R>        *channel_a;
-	module::SISO<R>           *siso;
-	tools::Terminal_EXIT      *terminal;
+	module::Source<B>    *source;
+	module::Encoder<B>   *encoder;
+	module::Modem<B,R,R> *modem;
+	module::Modem<B,R,R> *modem_a;
+	module::Channel<R>   *channel;
+	module::Channel<R>   *channel_a;
+	module::SISO<R>      *siso;
+	tools::Terminal_EXIT *terminal;
 
 public:
 	Simulation_EXIT(const factory::Simulation_EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);

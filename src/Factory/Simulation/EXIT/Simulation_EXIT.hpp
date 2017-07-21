@@ -15,8 +15,18 @@
 #include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
 #include "Tools/Arguments_reader.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 #include "../Simulation.hpp"
+
+namespace aff3ct
+{
+namespace simulation
+{
+template <typename B, typename R>
+class Simulation_EXIT;
+}
+}
 
 namespace aff3ct
 {
@@ -63,6 +73,9 @@ struct Simulation_EXIT : Simulation
 		Decoder      ::parameters *dec = nullptr;
 		Terminal_EXIT::parameters *ter = nullptr;
 	};
+
+	template <typename B = int, typename R = float>
+	static simulation::Simulation_EXIT<B,R>* build(const parameters &params, tools::Codec_SISO<B,R> &codec);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args);
 	static void store_args(const tools::Arguments_reader& ar, parameters &params);

@@ -4,7 +4,7 @@ using namespace aff3ct::factory;
 
 void Simulation::build_args(arg_map &req_args, arg_map &opt_args)
 {
-	Simulation_main::build_args(req_args, opt_args);
+	Launcher::build_args(req_args, opt_args);
 
 	req_args[{"sim-snr-min", "m"}] =
 		{"float",
@@ -57,7 +57,7 @@ void Simulation::store_args(const tools::Arguments_reader& ar, parameters &param
 {
 	using namespace std::chrono;
 
-	Simulation_main::store_args(ar, params);
+	Launcher::store_args(ar, params);
 
 	params.snr_min = ar.get_arg_float({"sim-snr-min", "m"}); // required
 	params.snr_max = ar.get_arg_float({"sim-snr-max", "M"}); // required
@@ -114,12 +114,12 @@ void Simulation::store_args(const tools::Arguments_reader& ar, parameters &param
 
 void Simulation::group_args(arg_grp& ar)
 {
-	Simulation_main::group_args(ar);
+	Launcher::group_args(ar);
 }
 
 void Simulation::header(params_list& head_sim, const parameters& params)
 {
-	Simulation_main::header(head_sim, params);
+	Launcher::header(head_sim, params);
 
 	head_sim.push_back(std::make_pair("SNR min (m)",   std::to_string(params.snr_min)  + " dB"));
 	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));

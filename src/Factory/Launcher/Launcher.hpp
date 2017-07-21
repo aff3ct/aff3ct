@@ -13,9 +13,17 @@
 
 namespace aff3ct
 {
+namespace launcher
+{
+class Launcher;
+}
+}
+
+namespace aff3ct
+{
 namespace factory
 {
-struct Simulation_main : public Factory
+struct Launcher : public Factory
 {
 	struct parameters
 	{
@@ -27,11 +35,18 @@ struct Simulation_main : public Factory
 		bool        display_version = false;
 	};
 
+	template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
+	static launcher::Launcher* build(const parameters &params, const int argc, const char **argv);
+
 	static void build_args(arg_map &req_args, arg_map &opt_args);
 	static void store_args(const tools::Arguments_reader& ar, parameters& params);
 	static void group_args(arg_grp& ar);
 
 	static void header(params_list& head_sim, const parameters& params);
+
+private:
+	template <typename B = int, typename R = float, typename Q = R, typename QD = Q>
+	static launcher::Launcher* build_exit(const parameters &params, const int argc, const char **argv);
 };
 }
 }

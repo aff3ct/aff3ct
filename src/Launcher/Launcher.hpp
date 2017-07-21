@@ -15,7 +15,6 @@
 #include "Tools/Arguments_reader.hpp"
 
 #include "Factory/Simulation/Simulation.hpp"
-#include "Factory/Simulation/Simulation_main.hpp"
 
 #include "Simulation/Simulation.hpp"
 
@@ -50,8 +49,8 @@ protected:
 	factory::Simulation::parameters *params; /*!< A structure of parameters to store and pass to the simulation. */
 
 	std::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
-	factory::Factory::params_list pl_sim, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
-	                              pl_chn, pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
+	factory::params_list pl_sim, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
+	                     pl_chn, pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
 
 public:
 	/*!

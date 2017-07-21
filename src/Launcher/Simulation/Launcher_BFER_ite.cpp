@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+#include "Simulation/BFER/Iterative/Simulation_BFER_ite.hpp"
+
 #include "Launcher_BFER_ite.hpp"
 
 using namespace aff3ct::tools;
@@ -178,16 +180,8 @@ Simulation* Launcher_BFER_ite<B,R,Q>
 ::build_simu()
 {
 	this->build_codec();
-
-#if defined(SYSTEMC)
-	return new SC_Simulation_BFER_ite     <B,R,Q>(*params, *codec);
-#elif defined(STARPU)
-	return new SPU_Simulation_BFER_ite    <B,R,Q>(*params, *codec);
-#else
-	return new Simulation_BFER_ite_threads<B,R,Q>(*params, *codec);
-#endif
+	return factory::Simulation_BFER_ite::build<B,R,Q>(*params, *codec);
 }
-
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"

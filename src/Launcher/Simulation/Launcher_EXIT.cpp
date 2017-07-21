@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+#include "Simulation/EXIT/Simulation_EXIT.hpp"
+
 #include "Launcher_EXIT.hpp"
 
 using namespace aff3ct::tools;
@@ -126,11 +128,8 @@ Simulation* Launcher_EXIT<B,R>
 ::build_simu()
 {
 	this->build_codec();
-
-	return new Simulation_EXIT<B,R>(*params, *codec);
-	return nullptr;
+	return factory::Simulation_EXIT::build<B,R>(*params, *codec);
 }
-
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"

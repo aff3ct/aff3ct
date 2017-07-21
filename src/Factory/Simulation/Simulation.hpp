@@ -11,15 +11,15 @@
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
-#include "Simulation_main.hpp"
+#include "Factory/Launcher/Launcher.hpp"
 
 namespace aff3ct
 {
 namespace factory
 {
-struct Simulation : Simulation_main
+struct Simulation : Launcher
 {
-	struct parameters : Simulation_main::parameters
+	struct parameters : Launcher::parameters
 	{
 		virtual ~parameters() {}
 

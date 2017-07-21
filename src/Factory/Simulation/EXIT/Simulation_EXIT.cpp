@@ -1,6 +1,16 @@
+#include "Simulation/EXIT/Simulation_EXIT.hpp"
+
 #include "Simulation_EXIT.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::factory;
+
+template <typename B, typename R>
+simulation::Simulation_EXIT<B,R>* Simulation_EXIT
+::build(const parameters &params, tools::Codec_SISO<B,R> &codec)
+{
+	return new simulation::Simulation_EXIT<B,R>(params, codec);
+}
 
 void Simulation_EXIT::build_args(arg_map &req_args, arg_map &opt_args)
 {
@@ -43,3 +53,15 @@ void Simulation_EXIT::header(params_list& head_sim, const parameters& params)
 	head_sim.push_back(std::make_pair("Sigma-a max (A)", std::to_string(params.sig_a_max )));
 	head_sim.push_back(std::make_pair("Sigma-a step",    std::to_string(params.sig_a_step)));
 }
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::simulation::Simulation_EXIT<B_8 ,R_8 >* aff3ct::factory::Simulation_EXIT::build<B_8 ,R_8 >(const aff3ct::factory::Simulation_EXIT::parameters&, aff3ct::tools::Codec_SISO<B_8 ,R_8 >&);
+template aff3ct::simulation::Simulation_EXIT<B_16,R_16>* aff3ct::factory::Simulation_EXIT::build<B_16,R_16>(const aff3ct::factory::Simulation_EXIT::parameters&, aff3ct::tools::Codec_SISO<B_16,R_16>&);
+template aff3ct::simulation::Simulation_EXIT<B_32,R_32>* aff3ct::factory::Simulation_EXIT::build<B_32,R_32>(const aff3ct::factory::Simulation_EXIT::parameters&, aff3ct::tools::Codec_SISO<B_32,R_32>&);
+template aff3ct::simulation::Simulation_EXIT<B_64,R_64>* aff3ct::factory::Simulation_EXIT::build<B_64,R_64>(const aff3ct::factory::Simulation_EXIT::parameters&, aff3ct::tools::Codec_SISO<B_64,R_64>&);
+#else
+template aff3ct::simulation::Simulation_EXIT<B,R>* aff3ct::factory::Simulation_EXIT::build<B,R>(const aff3ct::factory::Simulation_EXIT::parameters&, aff3ct::tools::Codec_SISO<B,R>&);
+#endif
+// ==================================================================================== explicit template instantiation

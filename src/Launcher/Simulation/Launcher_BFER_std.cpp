@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+#include "Simulation/BFER/Standard/Simulation_BFER_std.hpp"
+
 #include "Launcher_BFER_std.hpp"
 
 using namespace aff3ct::tools;
@@ -166,16 +168,8 @@ Simulation* Launcher_BFER_std<B,R,Q>
 ::build_simu()
 {
 	this->build_codec();
-
-#if defined(SYSTEMC)
-	return new SC_Simulation_BFER_std     <B,R,Q>(*params, *codec);
-#elif defined(STARPU)
-	return new SPU_Simulation_BFER_std    <B,R,Q>(*params, *codec);
-#else
-	return new Simulation_BFER_std_threads<B,R,Q>(*params, *codec);
-#endif
+	return factory::Simulation_BFER_std::build<B,R,Q>(*params, *codec);
 }
-
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
