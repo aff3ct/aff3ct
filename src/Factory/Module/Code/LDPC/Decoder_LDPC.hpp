@@ -17,6 +17,9 @@ namespace factory
 {
 struct Decoder_LDPC : public Decoder
 {
+	static const std::string name;
+	static const std::string prefix;
+
 	struct parameters : Decoder::parameters
 	{
 		virtual ~parameters() {}
@@ -34,10 +37,8 @@ struct Decoder_LDPC : public Decoder
 	static module::Decoder_SISO<B,R>* build(const parameters& params, const tools::Sparse_matrix &H,
 	                                        const std::vector<unsigned> &info_bits_pos);
 
-	static void build_args(arg_map &req_args, arg_map &opt_args);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params);
-	static void group_args(arg_grp& ar);
-
+	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
+	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_dec, const parameters& params);
 };
 }

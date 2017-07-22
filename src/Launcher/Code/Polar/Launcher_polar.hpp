@@ -26,7 +26,6 @@ public:
 protected:
 	virtual void build_args();
 	virtual void store_args();
-	virtual void group_args();
 	virtual void print_header();
 
 	virtual void build_codec();

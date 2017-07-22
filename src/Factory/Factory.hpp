@@ -9,6 +9,9 @@
 #define FACTORY_HPP
 
 #include <iostream>
+#include <utility>
+#include <vector>
+#include <map>
 
 #include "Tools/Display/bash_tools.h"
 

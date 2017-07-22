@@ -6,6 +6,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Simulation_BFER_ite::name   = "Simulation BFER iterative";
+const std::string aff3ct::factory::Simulation_BFER_ite::prefix = "sim";
+
 template <typename B, typename R, typename Q>
 simulation::Simulation_BFER_ite<B,R,Q>* Simulation_BFER_ite
 ::build(const parameters &params, tools::Codec_SISO<B,Q> &codec)
@@ -17,25 +20,20 @@ simulation::Simulation_BFER_ite<B,R,Q>* Simulation_BFER_ite
 #endif
 }
 
-void Simulation_BFER_ite::build_args(arg_map &req_args, arg_map &opt_args)
+void Simulation_BFER_ite::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Simulation_BFER::build_args(req_args, opt_args);
 
-	opt_args[{"sim-ite", "I"}] =
+	opt_args[{p+"-ite", "I"}] =
 		{"positive_int",
 		 "number of global iterations between the demodulator and the decoder."};
 }
 
-void Simulation_BFER_ite::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Simulation_BFER_ite::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	Simulation_BFER::store_args(ar, params);
 
-	if(ar.exist_arg({"sim-ite", "I"})) params.n_ite = ar.get_arg_int({"sim-ite", "I"});
-}
-
-void Simulation_BFER_ite::group_args(arg_grp& ar)
-{
-	Simulation_BFER::group_args(ar);
+	if(ar.exist_arg({p+"-ite", "I"})) params.n_ite = ar.get_arg_int({p+"-ite", "I"});
 }
 
 void Simulation_BFER_ite::header(params_list& head_sim, const parameters& params)

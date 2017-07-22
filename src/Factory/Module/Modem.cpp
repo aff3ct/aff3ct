@@ -15,6 +15,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Modem::name   = "Modem";
+const std::string aff3ct::factory::Modem::prefix = "mdm";
+
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem
 ::_build(const parameters &params)
@@ -100,102 +103,102 @@ int Modem
 }
 
 void Modem
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
-	req_args[{"mod-fra-size", "N"}] =
+	req_args[{p+"-fra-size", "N"}] =
 		{"positive_int",
 		 "number of symbols by frame."};
 
-	opt_args[{"mod-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"mod-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "type of the modulation to use in the simulation.",
 		 "BPSK, BPSK_FAST, PSK, PAM, QAM, CPM, USER, SCMA"};
 
-	opt_args[{"mod-bps"}] =
+	opt_args[{p+"-bps"}] =
 		{"positive_int",
 		 "select the number of bits per symbol (default is 1)."};
 
-	opt_args[{"mod-ups"}] =
+	opt_args[{p+"-ups"}] =
 		{"positive_int",
 		 "select the symbol sampling factor (default is 1)."};
 
-	opt_args[{"mod-const-path"}] =
+	opt_args[{p+"-const-path"}] =
 		{"string",
 		 "path to the ordered modulation symbols (constellation), to use with \"--mod-type USER\"."};
 
-	opt_args[{"mod-cpm-std"}] =
+	opt_args[{p+"-cpm-std"}] =
 		{"string",
 		 "the selection of a default CPM standard hardly implemented (any of those parameters is "
 		   "overwritten if the argument is given by the user)",
 		 "GSM"};
 
-	opt_args[{"mod-cpm-L"}] =
+	opt_args[{p+"-cpm-L"}] =
 		{"positive_int",
 		 "CPM pulse width or CPM memory (default is 2)"};
 
-	opt_args[{"mod-cpm-k"}] =
+	opt_args[{p+"-cpm-k"}] =
 		{"positive_int",
 		 "modulation index numerator (default is 1)"};
 
-	opt_args[{"mod-cpm-p"}] =
+	opt_args[{p+"-cpm-p"}] =
 		{"positive_int",
 		 "modulation index denominator (default is 2)"};
 
-	opt_args[{"mod-cpm-map"}] =
+	opt_args[{p+"-cpm-map"}] =
 		{"string",
 		 "symbols mapping layout (default is NATURAL)",
 		 "NATURAL, GRAY"};
 
-	opt_args[{"mod-cpm-ws"}] =
+	opt_args[{p+"-cpm-ws"}] =
 		{"string",
 		 "wave shape (default is GMSK)",
 		 "GMSK, REC, RCOS"};
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	opt_args[{"dmod-max"}] =
+	opt_args[{p+"-max"}] =
 		{"string",
 		 "select the type of the max operation to use in the demodulation.",
 		 "MAX, MAXL, MAXS, MAXSS"};
 
-	opt_args[{"dmod-sigma"}] =
+	opt_args[{p+"-sigma"}] =
 		{"posive_float",
 		 "noise variance value."};
 
-	opt_args[{"dmod-no-sig2"}] =
+	opt_args[{p+"-no-sig2"}] =
 		{"",
 		 "turn off the division by sigma square in the demodulation."};
 
-	opt_args[{"dmod-psi"}] =
+	opt_args[{p+"-psi"}] =
 		{"string",
 		 "select the type of the psi function to use in the SCMA demodulation.",
 		 "PSI0, PSI1, PSI2, PSI3"};
 
-	opt_args[{"dmod-ite"}] =
+	opt_args[{p+"-ite"}] =
 		{"positive int",
 		 "select the number of iteration in the demodulator."};
 }
 
 void Modem
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(ar.exist_arg({"mod-fra-size", "N"})) params.N          = ar.get_arg_int({"mod-fra-size", "N"});
-	if(ar.exist_arg({"mod-fra",      "F"})) params.n_frames   = ar.get_arg_int({"mod-fra",      "F"});
-	if(ar.exist_arg({"mod-type"         })) params.type       = ar.get_arg    ({"mod-type"         });
-	if(ar.exist_arg({"mod-cpm-std"      })) params.cpm_std    = ar.get_arg    ({"mod-cpm-std"      });
-	if(ar.exist_arg({"mod-bps"          })) params.bps        = ar.get_arg_int({"mod-bps"          });
-	if(ar.exist_arg({"mod-ups"          })) params.upf        = ar.get_arg_int({"mod-ups"          });
-	if(ar.exist_arg({"mod-const-path"   })) params.const_path = ar.get_arg    ({"mod-const-path"   });
-	if(ar.exist_arg({"mod-cpm-L"        })) params.cpm_L      = ar.get_arg_int({"mod-cpm-L"        });
-	if(ar.exist_arg({"mod-cpm-p"        })) params.cpm_p      = ar.get_arg_int({"mod-cpm-p"        });
-	if(ar.exist_arg({"mod-cpm-k"        })) params.cpm_k      = ar.get_arg_int({"mod-cpm-k"        });
-	if(ar.exist_arg({"mod-cpm-map"      })) params.mapping    = ar.get_arg    ({"mod-cpm-map"      });
-	if(ar.exist_arg({"mod-cpm-ws"       })) params.wave_shape = ar.get_arg    ({"mod-cpm-ws"       });
+	if(ar.exist_arg({p+"-fra-size", "N"})) params.N          = ar.get_arg_int({p+"-fra-size", "N"});
+	if(ar.exist_arg({p+"-fra",      "F"})) params.n_frames   = ar.get_arg_int({p+"-fra",      "F"});
+	if(ar.exist_arg({p+"-type"         })) params.type       = ar.get_arg    ({p+"-type"         });
+	if(ar.exist_arg({p+"-cpm-std"      })) params.cpm_std    = ar.get_arg    ({p+"-cpm-std"      });
+	if(ar.exist_arg({p+"-bps"          })) params.bps        = ar.get_arg_int({p+"-bps"          });
+	if(ar.exist_arg({p+"-ups"          })) params.upf        = ar.get_arg_int({p+"-ups"          });
+	if(ar.exist_arg({p+"-const-path"   })) params.const_path = ar.get_arg    ({p+"-const-path"   });
+	if(ar.exist_arg({p+"-cpm-L"        })) params.cpm_L      = ar.get_arg_int({p+"-cpm-L"        });
+	if(ar.exist_arg({p+"-cpm-p"        })) params.cpm_p      = ar.get_arg_int({p+"-cpm-p"        });
+	if(ar.exist_arg({p+"-cpm-k"        })) params.cpm_k      = ar.get_arg_int({p+"-cpm-k"        });
+	if(ar.exist_arg({p+"-cpm-map"      })) params.mapping    = ar.get_arg    ({p+"-cpm-map"      });
+	if(ar.exist_arg({p+"-cpm-ws"       })) params.wave_shape = ar.get_arg    ({p+"-cpm-ws"       });
 
 	if (params.type.find("BPSK") != std::string::npos || params.type == "PAM")
 		params.complex = false;
@@ -243,42 +246,34 @@ void Modem
 	                                                params.cpm_p);
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	if(ar.exist_arg({"dmod-no-sig2"})) params.no_sig2 = true;
-	if(ar.exist_arg({"dmod-sigma"  })) params.sigma   = ar.get_arg_float({"dmod-sigma"});
-	if(ar.exist_arg({"dmod-ite"    })) params.n_ite   = ar.get_arg_int  ({"dmod-ite"  });
-	if(ar.exist_arg({"dmod-max"    })) params.max     = ar.get_arg      ({"dmod-max"  });
-	if(ar.exist_arg({"dmod-psi"    })) params.psi     = ar.get_arg      ({"dmod-psi"  });
+	if(ar.exist_arg({p+"-no-sig2"})) params.no_sig2 = true;
+	if(ar.exist_arg({p+"-sigma"  })) params.sigma   = ar.get_arg_float({p+"-sigma"});
+	if(ar.exist_arg({p+"-ite"    })) params.n_ite   = ar.get_arg_int  ({p+"-ite"  });
+	if(ar.exist_arg({p+"-max"    })) params.max     = ar.get_arg      ({p+"-max"  });
+	if(ar.exist_arg({p+"-psi"    })) params.psi     = ar.get_arg      ({p+"-psi"  });
 }
 
 void Modem
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"mod",  "Modulator parameter(s)"  });
-	ar.push_back({"dmod", "Demodulator parameter(s)"});
-}
-
-void Modem
-::header(params_list& head_mod, params_list& head_demod, const parameters& params)
+::header(params_list& head_mdm, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
-	head_mod.push_back(std::make_pair("Type", params.type));
-	head_mod.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
-	head_mod.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	head_mdm.push_back(std::make_pair("Type", params.type));
+	head_mdm.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
+	head_mdm.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "CPM")
 	{
 		if(params.cpm_std.size())
-			head_mod.push_back(std::make_pair("CPM standard", params.cpm_std));
+			head_mdm.push_back(std::make_pair("CPM standard", params.cpm_std));
 
-		head_mod.push_back(std::make_pair("CPM L memory", std::to_string(params.cpm_L)));
-		head_mod.push_back(std::make_pair("CPM h index", (std::to_string(params.cpm_k) + std::string("/") +
+		head_mdm.push_back(std::make_pair("CPM L memory", std::to_string(params.cpm_L)));
+		head_mdm.push_back(std::make_pair("CPM h index", (std::to_string(params.cpm_k) + std::string("/") +
 		                                                  std::to_string(params.cpm_p))));
-		head_mod.push_back(std::make_pair("CPM wave shape", params.wave_shape));
-		head_mod.push_back(std::make_pair("CPM mapping", params.mapping));
+		head_mdm.push_back(std::make_pair("CPM wave shape", params.wave_shape));
+		head_mdm.push_back(std::make_pair("CPM mapping", params.mapping));
 	}
 
-	head_mod.push_back(std::make_pair("Bits per symbol", std::to_string(params.bps)));
-	head_mod.push_back(std::make_pair("Sampling factor", std::to_string(params.upf)));
-
+	head_mdm.push_back(std::make_pair("Bits per symbol", std::to_string(params.bps)));
+	head_mdm.push_back(std::make_pair("Sampling factor", std::to_string(params.upf)));
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	std::string demod_sig2 = (params.no_sig2) ? "off" : "on";
@@ -290,13 +285,13 @@ void Modem
 	std::string demod_psi  = params.psi;
 
 	if (params.sigma != -1.f)
-		head_demod.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
-	head_demod.push_back(std::make_pair("Sigma square", demod_sig2));
-	head_demod.push_back(std::make_pair("Max type", demod_max));
+		head_mdm.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
+	head_mdm.push_back(std::make_pair("Sigma square", demod_sig2));
+	head_mdm.push_back(std::make_pair("Max type", demod_max));
 	if (params.type == "SCMA")
 	{
-		head_demod.push_back(std::make_pair("Number of iterations", demod_ite));
-		head_demod.push_back(std::make_pair("Psi function", demod_psi));
+		head_mdm.push_back(std::make_pair("Number of iterations", demod_ite));
+		head_mdm.push_back(std::make_pair("Psi function", demod_psi));
 	}
 }
 

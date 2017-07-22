@@ -2,44 +2,42 @@
 
 using namespace aff3ct::factory;
 
-void Decoder::build_args(arg_map &req_args, arg_map &opt_args)
+const std::string aff3ct::factory::Decoder::name   = "Decoder";
+const std::string aff3ct::factory::Decoder::prefix = "dec";
+
+void Decoder::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"dec-info-bits", "K"}] =
+	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (information bits)."};
 
-	req_args[{"dec-cw-size", "N"}] =
+	req_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
 		 "the codeword size."};
 
-	opt_args[{"dec-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"dec-type", "D"}] =
+	opt_args[{p+"-type", "D"}] =
 		{"string",
 		 "select the algorithm you want to decode the codeword."};
 
-	opt_args[{"dec-implem"}] =
+	opt_args[{p+"-implem"}] =
 		{"string",
 		 "select the implementation of the algorithm to decode."};
 }
 
-void Decoder::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Decoder::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"dec-info-bits", "K"})) params.K          = ar.get_arg_int({"dec-info-bits", "K"});
-	if(ar.exist_arg({"dec-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({"dec-cw-size",   "N"});
-	if(ar.exist_arg({"dec-fra",       "F"})) params.n_frames   = ar.get_arg_int({"dec-fra",       "F"});
-	if(ar.exist_arg({"dec-type",      "D"})) params.type       = ar.get_arg    ({"dec-type",      "D"});
-	if(ar.exist_arg({"dec-implem"        })) params.implem     = ar.get_arg    ({"dec-implem"        });
-	if(ar.exist_arg({"enc-no-sys"        })) params.systematic = false;
+	if(ar.exist_arg({p+"-info-bits", "K"})) params.K          = ar.get_arg_int({p+"-info-bits", "K"});
+	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({p+"-cw-size",   "N"});
+	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames   = ar.get_arg_int({p+"-fra",       "F"});
+	if(ar.exist_arg({p+"-type",      "D"})) params.type       = ar.get_arg    ({p+"-type",      "D"});
+	if(ar.exist_arg({p+"-implem"        })) params.implem     = ar.get_arg    ({p+"-implem"        });
+	if(ar.exist_arg({p+"-no-sys"        })) params.systematic = false;
 
 	params.R = (float)params.K / (float)params.N_cw;
-}
-
-void Decoder::group_args(arg_grp& ar)
-{
-	ar.push_back({"dec", "Decoder parameter(s)"});
 }
 
 void Decoder::header(params_list& head_dec, const parameters& params)

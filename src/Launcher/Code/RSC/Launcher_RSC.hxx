@@ -74,16 +74,6 @@ void Launcher_RSC<C,B,R,Q,QD>
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<C,B,R,Q,QD>
-::group_args()
-{
-	factory::Encoder_RSC::group_args(this->arg_group);
-	factory::Decoder_RSC::group_args(this->arg_group);
-
-	C::group_args();
-}
-
-template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_RSC<C,B,R,Q,QD>
 ::print_header()
 {
 	if (params_enc->type != "NO")

@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder_turbo::name   = "Encoder Turbo";
+const std::string aff3ct::factory::Encoder_turbo::prefix = "enc";
+
 template <typename B>
 module::Encoder<B>* Encoder_turbo
 ::build(const parameters               &params,
@@ -30,45 +33,45 @@ module::Encoder<B>* Encoder_turbo
 }
 
 void Encoder_turbo
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Encoder::build_args(req_args, opt_args);
-	req_args.erase({"enc-cw-size", "N"});
+	req_args.erase({p+"-cw-size", "N"});
 
-	Interleaver::build_args(req_args, opt_args);
+	Interleaver::build_args(req_args, opt_args, "itl");
 	req_args.erase({"itl-size"    });
 	opt_args.erase({"itl-fra", "F"});
 
-	opt_args[{"enc-type"}][2] += ", TURBO";
+	opt_args[{p+"-type"}][2] += ", TURBO";
 
-	opt_args[{"enc-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
 
-	opt_args[{"enc-poly"}] =
+	opt_args[{p+"-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 
-	opt_args[{"enc-json-path"}] =
+	opt_args[{p+"-json-path"}] =
 		{"string",
 		 "path to store the encoder and decoder traces formated in JSON."};
 
-	opt_args[{"enc-std"}] =
+	opt_args[{p+"-std"}] =
 		{"string",
 		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
 		 "LTE, CCSDS"};
 }
 
 void Encoder_turbo
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "TURBO";
 
 	Encoder::store_args(ar, params);
 
-	if(ar.exist_arg({"enc-std"      })) params.standard  = ar.get_arg({"enc-std"      });
-	if(ar.exist_arg({"enc-json-path"})) params.json_path = ar.get_arg({"enc-json-path"});
-	if(ar.exist_arg({"enc-no-buff"  })) params.buffered  = false;
+	if(ar.exist_arg({p+"-std"      })) params.standard  = ar.get_arg({p+"-std"      });
+	if(ar.exist_arg({p+"-json-path"})) params.json_path = ar.get_arg({p+"-json-path"});
+	if(ar.exist_arg({p+"-no-buff"  })) params.buffered  = false;
 
 	if (!params.json_path.empty())
 		params.type = "TURBO_JSON";
@@ -87,9 +90,9 @@ void Encoder_turbo
 			params.itl.type = "CCSDS";
 	}
 
-	if (ar.exist_arg({"enc-poly"}))
+	if (ar.exist_arg({p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({"enc-poly"});
+		auto poly_str = ar.get_arg({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
@@ -104,14 +107,7 @@ void Encoder_turbo
 
 	params.itl.size     = params.K;
 	params.itl.n_frames = params.n_frames;
-	Interleaver::store_args(ar, params.itl);
-}
-
-void Encoder_turbo
-::group_args(arg_grp& ar)
-{
-	Encoder    ::group_args(ar);
-	Interleaver::group_args(ar);
+	Interleaver::store_args(ar, params.itl, "itl");
 }
 
 void Encoder_turbo

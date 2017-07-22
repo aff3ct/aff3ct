@@ -5,7 +5,7 @@
 
 #include "Module/Decoder/Decoder.hpp"
 
-#include "../../Interleaver.hpp"
+#include "Factory/Module/Interleaver.hpp"
 
 #include "../Decoder.hpp"
 
@@ -15,6 +15,9 @@ namespace factory
 {
 struct Decoder_RA : public Decoder
 {
+	static const std::string name;
+	static const std::string prefix;
+
 	struct parameters : Decoder::parameters
 	{
 		virtual ~parameters() {}
@@ -27,10 +30,8 @@ struct Decoder_RA : public Decoder
 	template <typename B = int, typename R = float>
 	static module::Decoder<B,R>* build(const parameters &params, const module::Interleaver<int> &itl);
 
-	static void build_args(arg_map &req_args, arg_map &opt_args);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params);
-	static void group_args(arg_grp& ar);
-
+	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
+	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_dec, params_list& head_itl, const parameters& params);
 };
 }

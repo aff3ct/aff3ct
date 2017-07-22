@@ -10,6 +10,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::CRC::name   = "CRC";
+const std::string aff3ct::factory::CRC::prefix = "crc";
+
 template <typename B>
 module::CRC<B>* CRC
 ::build(const parameters &params)
@@ -23,50 +26,44 @@ module::CRC<B>* CRC
 }
 
 void CRC
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"crc-info-bits", "K"}] =
+	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "number of generated bits (information bits, the CRC is not included)."};
 
-	opt_args[{"crc-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"crc-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the CRC implementation you want to use.",
 		 "NO, STD, FAST, INTER"};
 
-	opt_args[{"crc-poly"}] =
+	opt_args[{p+"-poly"}] =
 		{"string",
 		 "select the CRC polynomial you want to use (ex: \"8-DVB-S2\": 0xD5, \"16-IBM\": 0x8005, \"24-LTEA\": 0x864CFB, \"32-GZIP\": 0x04C11DB7)."};
 
-	opt_args[{"crc-size"}] =
+	opt_args[{p+"-size"}] =
 		{"positive_int",
 		 "size of the CRC (divisor size in bit -1), required if you selected an unknown CRC."};
 }
 
 void CRC
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"crc-info-bits", "K"})) params.K        = ar.get_arg_int({"crc-info-bits", "K"});
-	if(ar.exist_arg({"crc-fra",       "F"})) params.n_frames = ar.get_arg_int({"crc-fra",       "F"});
-	if(ar.exist_arg({"crc-type"          })) params.type     = ar.get_arg    ({"crc-type"          });
-	if(ar.exist_arg({"crc-poly"          })) params.poly     = ar.get_arg    ({"crc-poly"          });
-	if(ar.exist_arg({"crc-size"          })) params.size     = ar.get_arg_int({"crc-size"          });
+	if(ar.exist_arg({p+"-info-bits", "K"})) params.K        = ar.get_arg_int({p+"-info-bits", "K"});
+	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames = ar.get_arg_int({p+"-fra",       "F"});
+	if(ar.exist_arg({p+"-type"          })) params.type     = ar.get_arg    ({p+"-type"          });
+	if(ar.exist_arg({p+"-poly"          })) params.poly     = ar.get_arg    ({p+"-poly"          });
+	if(ar.exist_arg({p+"-size"          })) params.size     = ar.get_arg_int({p+"-size"          });
 
 	if (!params.poly.empty() && !params.size)
 		params.size = module::CRC_polynomial<>::size(params.poly);
 
 	if (params.poly.empty())
 		params.type = "NO";
-}
-
-void CRC
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"crc", "CRC parameter(s)"});
 }
 
 void CRC

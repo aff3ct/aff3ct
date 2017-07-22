@@ -14,6 +14,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_LDPC::name   = "Decoder LDPC";
+const std::string aff3ct::factory::Decoder_LDPC::prefix = "dec";
+
 template <typename B, typename R>
 module::Decoder_SISO<B,R>* Decoder_LDPC
 ::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos)
@@ -40,65 +43,59 @@ module::Decoder_SISO<B,R>* Decoder_LDPC
 }
 
 void Decoder_LDPC
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
 
-	req_args[{"dec-h-path"}] =
+	req_args[{p+"-h-path"}] =
 		{"string",
 		 "path to the H matrix (AList formated file)."};
 
-	opt_args[{"dec-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
+	opt_args[{p+"-type", "D"}].push_back("BP, BP_FLOODING, BP_LAYERED");
 
-	opt_args[{"dec-implem"}].push_back("ONMS, SPA, LSPA, GALA");
+	opt_args[{p+"-implem"}].push_back("ONMS, SPA, LSPA, GALA");
 
-	opt_args[{"dec-ite", "i"}] =
+	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the turbo decoder."};
 
-	opt_args[{"dec-off"}] =
+	opt_args[{p+"-off"}] =
 		{"float",
 		 "offset used in the offset min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
 
-	opt_args[{"dec-norm"}] =
+	opt_args[{p+"-norm"}] =
 		{"positive_float",
 		 "normalization factor used in the normalized min-sum BP algorithm (works only with \"--dec-implem ONMS\")."};
 
-	opt_args[{"dec-no-synd"}] =
+	opt_args[{p+"-no-synd"}] =
 		{"",
 		 "disable the syndrome detection (disable the stop criterion in the LDPC decoders)."};
 
-	opt_args[{"dec-synd-depth"}] =
+	opt_args[{p+"-synd-depth"}] =
 		{"positive_int",
 		 "successive number of iterations to validate the syndrome detection."};
 
-	opt_args[{"dec-simd"}] =
+	opt_args[{p+"-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTER"};
 }
 
 void Decoder_LDPC
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "BP_FLOODING";
 	params.implem = "SPA";
 
 	Decoder::store_args(ar, params);
 
-	if(ar.exist_arg({"dec-h-path"})) params.H_alist_path = ar.get_arg({"dec-h-path"});
-	if(ar.exist_arg({"dec-ite","i"})) params.n_ite = ar.get_arg_int  ({"dec-ite", "i"});
-	if(ar.exist_arg({"dec-off"})) params.offset = ar.get_arg_float({"dec-off"});
-	if(ar.exist_arg({"dec-norm"})) params.norm_factor = ar.get_arg_float({"dec-norm"});
-	if(ar.exist_arg({"dec-synd-depth"})) params.syndrome_depth = ar.get_arg_int({"dec-synd-depth"});
-	if(ar.exist_arg({"dec-no-synd"})) params.enable_syndrome = false;
-	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
-}
-
-void Decoder_LDPC
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
+	if(ar.exist_arg({p+"-h-path"    })) params.H_alist_path    = ar.get_arg      ({p+"-h-path"    });
+	if(ar.exist_arg({p+"-ite",   "i"})) params.n_ite           = ar.get_arg_int  ({p+"-ite",   "i"});
+	if(ar.exist_arg({p+"-off"       })) params.offset          = ar.get_arg_float({p+"-off"       });
+	if(ar.exist_arg({p+"-norm"      })) params.norm_factor     = ar.get_arg_float({p+"-norm"      });
+	if(ar.exist_arg({p+"-synd-depth"})) params.syndrome_depth  = ar.get_arg_int  ({p+"-synd-depth"});
+	if(ar.exist_arg({p+"-simd"      })) params.simd_strategy   = ar.get_arg      ({p+"-simd"      });
+	if(ar.exist_arg({p+"-no-synd"   })) params.enable_syndrome = false;
 }
 
 void Decoder_LDPC

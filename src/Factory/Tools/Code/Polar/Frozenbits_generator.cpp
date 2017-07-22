@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Frozenbits_generator::name   = "Frozen bits generator";
+const std::string aff3ct::factory::Frozenbits_generator::prefix = "fbg";
+
 template <typename B>
 tools::Frozenbits_generator<B>* Frozenbits_generator
 ::build(const parameters &params)
@@ -20,53 +23,48 @@ tools::Frozenbits_generator<B>* Frozenbits_generator
 }
 
 void Frozenbits_generator
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"enc-info-bits", "K"}] =
+	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (information bits)."};
 
-	req_args[{"enc-cw-size", "N"}] =
+	req_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
 		 "the codeword size."};
 
-	opt_args[{"enc-fb-sigma"}] =
+	opt_args[{p+"-sigma"}] =
 		{"positive_float",
 		 "sigma value for the polar codes generation (adaptative frozen bits if sigma is not set)."};
 
-	opt_args[{"enc-fb-gen-method"}] =
+	opt_args[{p+"-gen-method"}] =
 		{"string",
 		 "select the frozen bits generation method.",
 		 "GA, FILE, TV"};
 
-	opt_args[{"enc-fb-awgn-path"}] =
+	opt_args[{p+"-awgn-path"}] =
 		{"string",
 		 "path to a file or a directory containing the best channels to use for information bits."};
 
 #ifdef ENABLE_POLAR_BOUNDS
-	opt_args[{"enc-fb-pb-path"}] =
+	opt_args[{p+"-pb-path"}] =
 		{"string",
 		 "path of the polar bounds code generator (generates best channels to use)."};
 #endif
 }
 
 void Frozenbits_generator
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"enc-info-bits", "K"})) params.K       = ar.get_arg_int  ({"enc-info-bits", "K"});
-	if(ar.exist_arg({"enc-cw-size",   "N"})) params.N_cw    = ar.get_arg_int  ({"enc-cw-size",   "N"});
-	if(ar.exist_arg({"enc-fb-sigma"      })) params.sigma   = ar.get_arg_float({"enc-fb-sigma"      });
-	if(ar.exist_arg({"enc-fb-awgn-path"  })) params.path_fb = ar.get_arg      ({"enc-fb-awgn-path"  });
-	if(ar.exist_arg({"enc-fb-gen-method" })) params.type    = ar.get_arg      ({"enc-fb-gen-method" });
+	if(ar.exist_arg({p+"-info-bits", "K"})) params.K       = ar.get_arg_int  ({p+"-info-bits", "K"});
+	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N_cw    = ar.get_arg_int  ({p+"-cw-size",   "N"});
+	if(ar.exist_arg({p+"-sigma"         })) params.sigma   = ar.get_arg_float({p+"-sigma"         });
+	if(ar.exist_arg({p+"-awgn-path"     })) params.path_fb = ar.get_arg      ({p+"-awgn-path"     });
+	if(ar.exist_arg({p+"-gen-method"    })) params.type    = ar.get_arg      ({p+"-gen-method"    });
 
 #ifdef ENABLE_POLAR_BOUNDS
-	if(ar.exist_arg({"enc-fb-pb-path"})) params.path_pb = ar.get_arg({"enc-fb-pb-path"});
+	if(ar.exist_arg({p+"-pb-path"})) params.path_pb = ar.get_arg({p+"-pb-path"});
 #endif
-}
-
-void Frozenbits_generator
-::group_args(arg_grp& ar)
-{
 }
 
 void Frozenbits_generator

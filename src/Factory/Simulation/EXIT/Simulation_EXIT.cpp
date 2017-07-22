@@ -5,6 +5,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Simulation_EXIT::name   = "Simulation EXIT";
+const std::string aff3ct::factory::Simulation_EXIT::prefix = "sim";
+
 template <typename B, typename R>
 simulation::Simulation_EXIT<B,R>* Simulation_EXIT
 ::build(const parameters &params, tools::Codec_SISO<B,R> &codec)
@@ -12,37 +15,32 @@ simulation::Simulation_EXIT<B,R>* Simulation_EXIT
 	return new simulation::Simulation_EXIT<B,R>(params, codec);
 }
 
-void Simulation_EXIT::build_args(arg_map &req_args, arg_map &opt_args)
+void Simulation_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Simulation::build_args(req_args, opt_args);
 
-	req_args[{"sim-siga-min", "a"}] =
+	req_args[{p+"-siga-min", "a"}] =
 		{"positive_float",
 		 "sigma min value used in EXIT charts."};
 
-	req_args[{"sim-siga-max", "A"}] =
+	req_args[{p+"-siga-max", "A"}] =
 		{"positive_float",
 		 "sigma max value used in EXIT charts."};
 
-	opt_args[{"sim-siga-step"}] =
+	opt_args[{p+"-siga-step"}] =
 		{"positive_float",
 		 "sigma step value used in EXIT charts."};
 
-	opt_args[{"sim-inter-lvl"}].push_back("1");
+	opt_args[{p+"-inter-lvl"}].push_back("1");
 }
 
-void Simulation_EXIT::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Simulation_EXIT::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	Simulation::store_args(ar, params);
 
-	if(ar.exist_arg({"sim-siga-min", "a"})) params.sig_a_min  = ar.get_arg_float({"sim-siga-min", "a"});
-	if(ar.exist_arg({"sim-siga-max", "A"})) params.sig_a_max  = ar.get_arg_float({"sim-siga-max", "A"});
-	if(ar.exist_arg({"sim-siga-step"    })) params.sig_a_step = ar.get_arg_float({"sim-siga-step"    });
-}
-
-void Simulation_EXIT::group_args(arg_grp& ar)
-{
-	Simulation::group_args(ar);
+	if(ar.exist_arg({p+"-siga-min", "a"})) params.sig_a_min  = ar.get_arg_float({p+"-siga-min", "a"});
+	if(ar.exist_arg({p+"-siga-max", "A"})) params.sig_a_max  = ar.get_arg_float({p+"-siga-max", "A"});
+	if(ar.exist_arg({p+"-siga-step"    })) params.sig_a_step = ar.get_arg_float({p+"-siga-step"    });
 }
 
 void Simulation_EXIT::header(params_list& head_sim, const parameters& params)

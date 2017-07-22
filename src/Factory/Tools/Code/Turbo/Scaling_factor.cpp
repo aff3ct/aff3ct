@@ -10,6 +10,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Scaling_factor::name   = "Scaling factor";
+const std::string aff3ct::factory::Scaling_factor::prefix = "sf";
+
 template<typename B, typename Q>
 tools::Scaling_factor<B,Q>* Scaling_factor
 ::build(const parameters& params)
@@ -23,21 +26,25 @@ tools::Scaling_factor<B,Q>* Scaling_factor
 }
 
 void Scaling_factor
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	opt_args[{"dec-sf"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "scaling factor type.",
 		 "CST, LTE, LTE_VEC, ARRAY"};
+
+	opt_args[{p+"-ite"}] =
+		{"positive_int",
+		 "number of iterations."};
 }
 
 void Scaling_factor
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"dec-sf"}))
+	if(ar.exist_arg({p+"-type"}))
 	{
 		params.enable = true;
-		params.type = ar.get_arg({"dec-sf"});
+		params.type = ar.get_arg({p+"-type"});
 
 		if (std::isdigit(params.type[0]))
 		{
@@ -46,12 +53,7 @@ void Scaling_factor
 		}
 	}
 
-	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
-}
-
-void Scaling_factor
-::group_args(arg_grp& ar)
-{
+	if(ar.exist_arg({p+"-ite", "i"})) params.n_ite = ar.get_arg_int({p+"-ite", "i"});
 }
 
 void Scaling_factor

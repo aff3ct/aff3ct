@@ -40,6 +40,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_polar::name   = "Decoder Polar";
+const std::string aff3ct::factory::Decoder_polar::prefix = "dec";
+
 template <typename B, typename Q>
 module::Decoder_SISO<B,Q>* Decoder_polar
 ::build_siso(const parameters& params, const mipp::vector<B> &frozen_bits)
@@ -263,60 +266,54 @@ module::Decoder<B,Q>* Decoder_polar
 }
 
 void Decoder_polar
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
 
-	opt_args[{"dec-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
+	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
 
-	opt_args[{"dec-ite", "i"}] =
+	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the SCAN decoder."};
 
-	opt_args[{"dec-lists", "L"}] =
+	opt_args[{p+"-lists", "L"}] =
 		{"positive_int",
 		 "maximal number of paths in the SCL decoder."};
 
-	opt_args[{"dec-simd"}] =
+	opt_args[{p+"-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTRA, INTER"};
 
-	opt_args[{"dec-polar-nodes"}] =
+	opt_args[{p+"-polar-nodes"}] =
 		{"string",
 		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP_2-8,REPL,SPC_4+})."};
 
-	opt_args[{"dec-partial-adaptive"}] =
+	opt_args[{p+"-partial-adaptive"}] =
 		{"",
 		 "enable the partial adaptive mode for the ASCL decoder (by default full adaptive is selected)."};
 
-	opt_args[{"dec-no-sys"}] =
+	opt_args[{p+"-no-sys"}] =
 		{"",
 		 "does not suppose a systematic encoding."};
 }
 
 void Decoder_polar
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "SC";
 	params.implem = "FAST";
 
 	Decoder::store_args(ar, params);
 
-	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
-	if(ar.exist_arg({"dec-lists", "L"})) params.L = ar.get_arg_int({"dec-lists", "L"});
-	if(ar.exist_arg({"dec-simd"})) params.simd_strategy = ar.get_arg({"dec-simd"});
-	if(ar.exist_arg({"dec-polar-nodes"})) params.polar_nodes = ar.get_arg({"dec-polar-nodes"});
-	if(ar.exist_arg({"dec-partial-adaptive"})) params.full_adaptive = false;
+	if(ar.exist_arg({p+"-ite",         "i"})) params.n_ite         = ar.get_arg_int({p+"-ite",    "i"});
+	if(ar.exist_arg({p+"-lists",       "L"})) params.L             = ar.get_arg_int({p+"-lists",  "L"});
+	if(ar.exist_arg({p+"-simd"            })) params.simd_strategy = ar.get_arg    ({p+"-simd"       });
+	if(ar.exist_arg({p+"-polar-nodes"     })) params.polar_nodes   = ar.get_arg    ({p+"-polar-nodes"});
+	if(ar.exist_arg({p+"-partial-adaptive"})) params.full_adaptive  = false;
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (params.type != "SCAN") params.n_ite = 1;
-}
-
-void Decoder_polar
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
 }
 
 void Decoder_polar

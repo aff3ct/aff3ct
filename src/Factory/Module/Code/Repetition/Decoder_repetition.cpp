@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_repetition::name   = "Decoder Repetition";
+const std::string aff3ct::factory::Decoder_repetition::prefix = "dec";
+
 template <typename B, typename R>
 module::Decoder<B,R>* Decoder_repetition
 ::build(const parameters &params)
@@ -22,33 +25,27 @@ module::Decoder<B,R>* Decoder_repetition
 }
 
 void Decoder_repetition
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
 
-	opt_args[{"dec-type", "D"}].push_back("REPETITION");
-	opt_args[{"dec-implem"}].push_back("STD, FAST");
+	opt_args[{p+"-type", "D"}].push_back("REPETITION");
+	opt_args[{p+"-implem"   }].push_back("STD, FAST");
 
-	opt_args[{"dec-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "does not suppose a buffered encoding."};
 }
 
 void Decoder_repetition
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "REPETITION";
 	params.implem = "STD";
 
 	Decoder::store_args(ar, params);
 
-	if(ar.exist_arg({"dec-no-buff"})) params.buffered = false;
-}
-
-void Decoder_repetition
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
+	if(ar.exist_arg({p+"-no-buff"})) params.buffered = false;
 }
 
 void Decoder_repetition

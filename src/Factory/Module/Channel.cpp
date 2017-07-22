@@ -19,6 +19,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Channel::name   = "Channel";
+const std::string aff3ct::factory::Channel::prefix = "chn";
+
 template <typename R>
 module::Channel<R>* Channel
 ::build(const parameters &params)
@@ -42,13 +45,13 @@ module::Channel<R>* Channel
 }
 
 void Channel
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"chn-fra-size", "N"}] =
+	req_args[{p+"-fra-size", "N"}] =
 		{"positive_int",
 		 "number of symbols by frame."};
 
-	opt_args[{"chn-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
@@ -60,55 +63,49 @@ void Channel
 	chan_avail += ", AWGN_MKL, RAYLEIGH_MKL";
 #endif
 
-	opt_args[{"chn-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "type of the channel to use in the simulation.",
 		 chan_avail};
 
-	opt_args[{"chn-path"}] =
+	opt_args[{p+"-path"}] =
 		{"string",
 		 "path to a noisy file, to use with \"--chn-type USER\"."};
 
-	opt_args[{"chn-blk-fad"}] =
+	opt_args[{p+"-blk-fad"}] =
 		{"string",
 		 "block fading policy for the RAYLEIGH channel.",
 		 "NO, FRAME, ONETAP"};
 
-	opt_args[{"chn-sigma"}] =
+	opt_args[{p+"-sigma"}] =
 		{"positive_float",
 		 "noise variance value."};
 
-	opt_args[{"chn-seed", "S"}] =
+	opt_args[{p+"-seed", "S"}] =
 		{"positive_int",
 		 "seed used to initialize the pseudo random generators."};
 
-	opt_args[{"chn-add-users"}] =
+	opt_args[{p+"-add-users"}] =
 		{"",
 		 "add all the users (= frames) before generating the noise."};
 
-	opt_args[{"chn-complex"}] =
+	opt_args[{p+"-complex"}] =
 		{"",
 		 "enable complex noise generation."};
 }
 
 void Channel
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"chn-fra-size", "N"})) params.N            = ar.get_arg_int  ({"chn-fra-size", "N"});
-	if(ar.exist_arg({"chn-fra",      "F"})) params.n_frames     = ar.get_arg_int  ({"chn-fra",      "F"});
-	if(ar.exist_arg({"chn-type"         })) params.type         = ar.get_arg      ({"chn-type"         });
-	if(ar.exist_arg({"chn-path"         })) params.path         = ar.get_arg      ({"chn-path"         });
-	if(ar.exist_arg({"chn-blk-fad"      })) params.block_fading = ar.get_arg      ({"chn-blk-fad"      });
-	if(ar.exist_arg({"chn-sigma"        })) params.sigma        = ar.get_arg_float({"chn-sigma"        });
-	if(ar.exist_arg({"chn-seed",     "S"})) params.seed         = ar.get_arg_int  ({"chn-seed",     "S"});
-	if(ar.exist_arg({"chn-add-users"    })) params.add_users    = true;
-	if(ar.exist_arg({"chn-complex"      })) params.complex      = true;
-}
-
-void Channel
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"chn", "Channel parameter(s)"});
+	if(ar.exist_arg({p+"-fra-size", "N"})) params.N            = ar.get_arg_int  ({p+"-fra-size", "N"});
+	if(ar.exist_arg({p+"-fra",      "F"})) params.n_frames     = ar.get_arg_int  ({p+"-fra",      "F"});
+	if(ar.exist_arg({p+"-type"         })) params.type         = ar.get_arg      ({p+"-type"         });
+	if(ar.exist_arg({p+"-path"         })) params.path         = ar.get_arg      ({p+"-path"         });
+	if(ar.exist_arg({p+"-blk-fad"      })) params.block_fading = ar.get_arg      ({p+"-blk-fad"      });
+	if(ar.exist_arg({p+"-sigma"        })) params.sigma        = ar.get_arg_float({p+"-sigma"        });
+	if(ar.exist_arg({p+"-seed",     "S"})) params.seed         = ar.get_arg_int  ({p+"-seed",     "S"});
+	if(ar.exist_arg({p+"-add-users"    })) params.add_users    = true;
+	if(ar.exist_arg({p+"-complex"      })) params.complex      = true;
 }
 
 void Channel

@@ -5,6 +5,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Puncturer::name   = "Puncturer";
+const std::string aff3ct::factory::Puncturer::prefix = "pct";
+
 template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer
 ::build(const parameters &params)
@@ -15,42 +18,36 @@ module::Puncturer<B,Q>* Puncturer
 }
 
 void Puncturer
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"pct-info-bits", "K"}] =
+	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (information bits)."};
 
-	req_args[{"pct-fra-size", "N"}] =
+	req_args[{p+"-fra-size", "N"}] =
 		{"positive_int",
 		 "total number of bit transmitted (frame size)."};
 
-	opt_args[{"pct-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "code puncturer type.",
 		 "NO"};
 
-	opt_args[{"pct-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 }
 
 void Puncturer
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"pct-info-bits", "K"})) params.K        = ar.get_arg_int({"pct-info-bits", "K"});
-	if(ar.exist_arg({"pct-fra-size",  "N"})) params.N        = ar.get_arg_int({"pct-fra-size",  "N"});
-	if(ar.exist_arg({"pct-fra",       "F"})) params.n_frames = ar.get_arg_int({"pct-fra",       "F"});
-	if(ar.exist_arg({"pct-type"          })) params.type     = ar.get_arg    ({"pct-type"          });
+	if(ar.exist_arg({p+"-info-bits", "K"})) params.K        = ar.get_arg_int({p+"-info-bits", "K"});
+	if(ar.exist_arg({p+"-fra-size",  "N"})) params.N        = ar.get_arg_int({p+"-fra-size",  "N"});
+	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames = ar.get_arg_int({p+"-fra",       "F"});
+	if(ar.exist_arg({p+"-type"          })) params.type     = ar.get_arg    ({p+"-type"          });
 
 	params.N_cw = params.N;
 	params.R = (float)params.K / (float)params.N;
-}
-
-void Puncturer
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"pct","Puncturer parameter(s)"});
 }
 
 void Puncturer

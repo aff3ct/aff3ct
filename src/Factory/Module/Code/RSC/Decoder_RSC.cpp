@@ -23,6 +23,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_RSC::name   = "Decoder RSC";
+const std::string aff3ct::factory::Decoder_RSC::prefix = "dec";
+
 template <typename B, typename Q, typename QD, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
 module::Decoder_SISO<B,Q>* Decoder_RSC
 ::_build_seq(const parameters                    &dec_par,
@@ -116,51 +119,51 @@ module::Decoder_SISO<B,Q>* Decoder_RSC
 }
 
 void Decoder_RSC
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
-	req_args.erase({"dec-cw-size", "N"});
+	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{"dec-type", "D"}].push_back("BCJR, LTE, CCSDS");
+	opt_args[{p+"-type", "D"}].push_back("BCJR, LTE, CCSDS");
 
-	opt_args[{"dec-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
+	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
 
-	opt_args[{"dec-simd"}] =
+	opt_args[{p+"-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTRA, INTER"};
 
-	opt_args[{"dec-max"}] =
+	opt_args[{p+"-max"}] =
 		{"string",
 		 "the MAX implementation for the nodes.",
 		 "MAX, MAXL, MAXS"};
 
-	opt_args[{"dec-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "does not suppose a buffered encoding."};
 
-	opt_args[{"dec-poly"}] =
+	opt_args[{p+"-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 
-	opt_args[{"dec-std"}] =
+	opt_args[{p+"-std"}] =
 		{"string",
 		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
 		 "LTE, CCSDS"};
 }
 
 void Decoder_RSC
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "BCJR";
 	params.implem = "STD";
 
 	Decoder::store_args(ar, params);
 
-	if(ar.exist_arg({"dec-simd"   })) params.simd_strategy = ar.get_arg({"dec-simd"});
-	if(ar.exist_arg({"dec-max"    })) params.max           = ar.get_arg({"dec-max" });
-	if(ar.exist_arg({"dec-std"    })) params.standard      = ar.get_arg({"dec-std" });
-	if(ar.exist_arg({"dec-no-buff"})) params.buffered      = false;
+	if(ar.exist_arg({p+"-simd"   })) params.simd_strategy = ar.get_arg({p+"-simd"});
+	if(ar.exist_arg({p+"-max"    })) params.max           = ar.get_arg({p+"-max" });
+	if(ar.exist_arg({p+"-std"    })) params.standard      = ar.get_arg({p+"-std" });
+	if(ar.exist_arg({p+"-no-buff"})) params.buffered      = false;
 
 	if (params.standard == "LTE")
 		params.poly = {013, 015};
@@ -168,9 +171,9 @@ void Decoder_RSC
 	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
-	if (ar.exist_arg({"dec-poly"}))
+	if (ar.exist_arg({p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({"dec-poly"});
+		auto poly_str = ar.get_arg({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
@@ -185,12 +188,6 @@ void Decoder_RSC
 	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
 	params.N_cw        = 2 * params.K + params.tail_length;
 	params.R           = (float)params.K / (float)params.N_cw;
-}
-
-void Decoder_RSC
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
 }
 
 void Decoder_RSC

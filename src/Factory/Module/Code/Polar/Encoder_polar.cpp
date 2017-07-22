@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder_polar::name   = "Encoder Polar";
+const std::string aff3ct::factory::Encoder_polar::prefix = "enc";
+
 template <typename B>
 module::Encoder<B>* Encoder_polar
 ::build(const parameters& params, const mipp::vector<B> &frozen_bits)
@@ -19,29 +22,23 @@ module::Encoder<B>* Encoder_polar
 }
 
 void Encoder_polar
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Encoder::build_args(req_args, opt_args);
 
-	opt_args[{"enc-type"}][2] += ", POLAR";
+	opt_args[{p+"-type"}][2] += ", POLAR";
 
-	opt_args[{"enc-no-sys"}] =
+	opt_args[{p+"-no-sys"}] =
 		{"",
 		 "disable the systematic encoding."};
 }
 
 void Encoder_polar
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "POLAR";
 
 	Encoder::store_args(ar, params);
-}
-
-void Encoder_polar
-::group_args(arg_grp& ar)
-{
-	Encoder::group_args(ar);
 }
 
 void Encoder_polar

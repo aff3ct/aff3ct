@@ -191,7 +191,7 @@ Coset<B,Q>* Simulation_BFER_ite<B,R,Q>
 	factory::Coset::parameters cst_params;
 	cst_params.size = params.dec->N_cw;
 	cst_params.n_frames = params.src->n_frames;
-	return factory::Coset::build<B,Q>(cst_params);
+	return factory::Coset::build_real<B,Q>(cst_params);
 }
 
 template <typename B, typename R, typename Q>
@@ -208,7 +208,7 @@ Coset<B,B>* Simulation_BFER_ite<B,R,Q>
 	factory::Coset::parameters cst_params;
 	cst_params.size = params.dec->K;
 	cst_params.n_frames = params.src->n_frames;
-	return factory::Coset::build<B>(cst_params);
+	return factory::Coset::build_bit<B>(cst_params);
 }
 
 // ==================================================================================== explicit template instantiation

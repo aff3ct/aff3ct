@@ -8,6 +8,7 @@
 #include "Module/Decoder/SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
+#include "Factory/Module/Interleaver.hpp"
 #include "Factory/Tools/Code/Turbo/Flip_and_check.hpp"
 #include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
 
@@ -19,6 +20,9 @@ namespace factory
 {
 struct Decoder_turbo : public Decoder
 {
+	static const std::string name;
+	static const std::string prefix;
+
 	struct parameters : Decoder::parameters
 	{
 		virtual ~parameters() {}
@@ -32,6 +36,7 @@ struct Decoder_turbo : public Decoder
 		std::vector<int> poly           = {013, 015};
 		int              n_ite          = 6;
 
+		Interleaver::parameters itl;
 		Scaling_factor::parameters sf;
 		Flip_and_check::parameters fnc;
 	};
@@ -42,11 +47,9 @@ struct Decoder_turbo : public Decoder
 	                                               module::SISO<Q>          &siso_n,
 	                                               module::SISO<Q>          &siso_i);
 
-	static void build_args(arg_map &req_args, arg_map &opt_args);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params);
-	static void group_args(arg_grp& ar);
-
-	static void header(params_list& head_dec, const parameters& params);
+	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
+	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void header(params_list& head_dec, params_list& head_itl, const parameters& params);
 
 };
 }

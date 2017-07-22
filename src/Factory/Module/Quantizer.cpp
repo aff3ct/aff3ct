@@ -12,6 +12,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Quantizer::name   = "Quantizer";
+const std::string aff3ct::factory::Quantizer::prefix = "qnt";
+
 template <typename R, typename Q>
 module::Quantizer<R,Q>* Quantizer
 ::build(const parameters& params)
@@ -25,54 +28,48 @@ module::Quantizer<R,Q>* Quantizer
 }
 
 void Quantizer
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"qnt-size", "N"}] =
+	req_args[{p+"-size", "N"}] =
 		{"positive_int",
 		 "number of real to quantize."};
 
-	opt_args[{"qnt-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"qnt-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "type of the quantizer to use in the simulation.",
 		 "STD, STD_FAST, TRICKY"};
 
-	opt_args[{"qnt-dec"}] =
+	opt_args[{p+"-dec"}] =
 		{"positive_int",
 		 "the position of the fixed point in the quantified representation."};
 
-	opt_args[{"qnt-bits"}] =
+	opt_args[{p+"-bits"}] =
 		{"positive_int",
 		 "the number of bits used for the quantizer."};
 
-	opt_args[{"qnt-range"}] =
+	opt_args[{p+"-range"}] =
 		{"positive_float",
 		 "the min/max bound for the tricky quantizer."};
 
-	opt_args[{"qnt-sigma"}] =
+	opt_args[{p+"-sigma"}] =
 		{"posive_float",
 		 "noise variance value."};
 }
 
 void Quantizer
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"qnt-size", "N"})) params.size       = ar.get_arg_int  ({"qnt-size", "N"});
-	if(ar.exist_arg({"qnt-fra",  "F"})) params.n_frames   = ar.get_arg_int  ({"qnt-fra",  "F"});
-	if(ar.exist_arg({"qnt-type"     })) params.type       = ar.get_arg      ({"qnt-type"     });
-	if(ar.exist_arg({"qnt-dec"      })) params.n_decimals = ar.get_arg_int  ({"qnt-dec"      });
-	if(ar.exist_arg({"qnt-bits"     })) params.n_bits     = ar.get_arg_int  ({"qnt-bits"     });
-	if(ar.exist_arg({"qnt-range"    })) params.range      = ar.get_arg_float({"qnt-range"    });
-	if(ar.exist_arg({"qnt-sigma"    })) params.sigma      = ar.get_arg_float({"qnt-sigma"    });
-}
-
-void Quantizer
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"qnt", "Quantizer parameter(s)"});
+	if(ar.exist_arg({p+"-size", "N"})) params.size       = ar.get_arg_int  ({p+"-size", "N"});
+	if(ar.exist_arg({p+"-fra",  "F"})) params.n_frames   = ar.get_arg_int  ({p+"-fra",  "F"});
+	if(ar.exist_arg({p+"-type"     })) params.type       = ar.get_arg      ({p+"-type"     });
+	if(ar.exist_arg({p+"-dec"      })) params.n_decimals = ar.get_arg_int  ({p+"-dec"      });
+	if(ar.exist_arg({p+"-bits"     })) params.n_bits     = ar.get_arg_int  ({p+"-bits"     });
+	if(ar.exist_arg({p+"-range"    })) params.range      = ar.get_arg_float({p+"-range"    });
+	if(ar.exist_arg({p+"-sigma"    })) params.sigma      = ar.get_arg_float({p+"-sigma"    });
 }
 
 void Quantizer

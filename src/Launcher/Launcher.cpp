@@ -13,6 +13,18 @@
 #include "Tools/Display/bash_tools.h"
 #include "Tools/Exception/exception.hpp"
 
+#include "Factory/Module/Source.hpp"
+#include "Factory/Module/CRC.hpp"
+#include "Factory/Module/Code/Encoder.hpp"
+#include "Factory/Module/Code/Puncturer.hpp"
+#include "Factory/Module/Interleaver.hpp"
+#include "Factory/Module/Modem.hpp"
+#include "Factory/Module/Channel.hpp"
+#include "Factory/Module/Quantizer.hpp"
+#include "Factory/Module/Code/Decoder.hpp"
+#include "Factory/Module/Monitor.hpp"
+#include "Factory/Tools/Display/Terminal/Terminal.hpp"
+
 #include "Launcher.hpp"
 
 using namespace aff3ct::tools;
@@ -108,33 +120,31 @@ void Launcher::print_header()
 	stream << "# " << style(style("Parameters :", Style::BOLD), Style::UNDERLINED) << std::endl;
 
 	int max_n_chars = 0;
-	factory::Header::compute_max_n_chars(pl_sim,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_src,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_crc,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_enc,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_pct,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_itl,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_mod,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_chn,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_demod, max_n_chars);
-	factory::Header::compute_max_n_chars(pl_qnt,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_dec,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_mnt,   max_n_chars);
-	factory::Header::compute_max_n_chars(pl_ter,   max_n_chars);
+	factory::Header::compute_max_n_chars(pl_sim, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_src, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_crc, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_enc, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_pct, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_itl, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_mdm, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_chn, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_qnt, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_dec, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_mnt, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_ter, max_n_chars);
 
-	if (pl_sim  .size()) factory::Header::print_parameters("Simulation",  pl_sim,   max_n_chars, this->stream);
-	if (pl_src  .size()) factory::Header::print_parameters("Source",      pl_src,   max_n_chars, this->stream);
-	if (pl_crc  .size()) factory::Header::print_parameters("CRC",         pl_crc,   max_n_chars, this->stream);
-	if (pl_enc  .size()) factory::Header::print_parameters("Encoder",     pl_enc,   max_n_chars, this->stream);
-	if (pl_pct  .size()) factory::Header::print_parameters("Puncturer",   pl_pct,   max_n_chars, this->stream);
-	if (pl_itl  .size()) factory::Header::print_parameters("Interleaver", pl_itl,   max_n_chars, this->stream);
-	if (pl_mod  .size()) factory::Header::print_parameters("Modulator",   pl_mod,   max_n_chars, this->stream);
-	if (pl_chn  .size()) factory::Header::print_parameters("Channel",     pl_chn,   max_n_chars, this->stream);
-	if (pl_demod.size()) factory::Header::print_parameters("Demodulator", pl_demod, max_n_chars, this->stream);
-	if (pl_qnt  .size()) factory::Header::print_parameters("Quantizer",   pl_qnt,   max_n_chars, this->stream);
-	if (pl_dec  .size()) factory::Header::print_parameters("Decoder",     pl_dec,   max_n_chars, this->stream);
-	if (pl_mnt  .size()) factory::Header::print_parameters("Monitor",     pl_mnt,   max_n_chars, this->stream);
-	if (pl_ter  .size()) factory::Header::print_parameters("Terminal",    pl_ter,   max_n_chars, this->stream);
+	if (pl_sim.size()) factory::Header::print_parameters(factory::Simulation ::name, pl_sim, max_n_chars, this->stream);
+	if (pl_src.size()) factory::Header::print_parameters(factory::Source     ::name, pl_src, max_n_chars, this->stream);
+	if (pl_crc.size()) factory::Header::print_parameters(factory::CRC        ::name, pl_crc, max_n_chars, this->stream);
+	if (pl_enc.size()) factory::Header::print_parameters(factory::Encoder    ::name, pl_enc, max_n_chars, this->stream);
+	if (pl_pct.size()) factory::Header::print_parameters(factory::Puncturer  ::name, pl_pct, max_n_chars, this->stream);
+	if (pl_itl.size()) factory::Header::print_parameters(factory::Interleaver::name, pl_itl, max_n_chars, this->stream);
+	if (pl_mdm.size()) factory::Header::print_parameters(factory::Modem      ::name, pl_mdm, max_n_chars, this->stream);
+	if (pl_chn.size()) factory::Header::print_parameters(factory::Channel    ::name, pl_chn, max_n_chars, this->stream);
+	if (pl_qnt.size()) factory::Header::print_parameters(factory::Quantizer  ::name, pl_qnt, max_n_chars, this->stream);
+	if (pl_dec.size()) factory::Header::print_parameters(factory::Decoder    ::name, pl_dec, max_n_chars, this->stream);
+	if (pl_mnt.size()) factory::Header::print_parameters(factory::Monitor    ::name, pl_mnt, max_n_chars, this->stream);
+	if (pl_ter.size()) factory::Header::print_parameters(factory::Terminal   ::name, pl_ter, max_n_chars, this->stream);
 	this->stream << "#" << std::endl;
 }
 

@@ -7,6 +7,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Puncturer_polar::name   = "Puncturer Polar";
+const std::string aff3ct::factory::Puncturer_polar::prefix = "pct";
+
 template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_polar
 ::build(const parameters                     &params,
@@ -18,15 +21,15 @@ module::Puncturer<B,Q>* Puncturer_polar
 }
 
 void Puncturer_polar
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Puncturer::build_args(req_args, opt_args);
 
-	opt_args[{"pct-type"}][2] += ", WANGLIU";
+	opt_args[{p+"-type"}][2] += ", WANGLIU";
 }
 
 void Puncturer_polar
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "WANGLIU";
 
@@ -36,12 +39,6 @@ void Puncturer_polar
 
 	if (params.N == params.N_cw)
 		params.type = "NO";
-}
-
-void Puncturer_polar
-::group_args(arg_grp& ar)
-{
-	Puncturer::group_args(ar);
 }
 
 void Puncturer_polar

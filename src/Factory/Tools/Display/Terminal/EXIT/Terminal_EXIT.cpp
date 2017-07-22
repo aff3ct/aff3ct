@@ -5,6 +5,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Terminal_EXIT::name   = "Terminal EXIT";
+const std::string aff3ct::factory::Terminal_EXIT::prefix = "ter";
+
 tools::Terminal_EXIT* Terminal_EXIT
 ::build(const parameters &params, const int &cur_t, const int &trials, const double &I_A, const double &I_E)
 {
@@ -13,41 +16,36 @@ tools::Terminal_EXIT* Terminal_EXIT
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args)
+void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Terminal::build_args(req_args, opt_args);
 
-	req_args[{"term-cw-size", "N"}] =
+	req_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
 		 "number of bits in the codeword."};
 
-	req_args[{"term-snr"}] =
+	req_args[{p+"-snr"}] =
 		{"float",
 		 "SNR value in dB."};
 
-	req_args[{"term-sig-a"}] =
+	req_args[{p+"-sig-a"}] =
 		{"positive_float",
 		 "noise variance."};
 
-	opt_args[{"term-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the terminal type you want.",
 		 "STD"};
 }
 
-void Terminal_EXIT::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Terminal_EXIT::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	Terminal::store_args(ar, params);
 
-	if(ar.exist_arg({"term-cw-size",   "N"})) params.N     = ar.get_arg_int  ({"term-cw-size",   "N"});
-	if(ar.exist_arg({"term-snr"           })) params.snr   = ar.get_arg_float({"term-snr"           });
-	if(ar.exist_arg({"term-sig-a"         })) params.sig_a = ar.get_arg_float({"term-sig-a"         });
-	if(ar.exist_arg({"term-type"          })) params.type  = ar.get_arg      ({"term-type"          });
-}
-
-void Terminal_EXIT::group_args(arg_grp& ar)
-{
-	Terminal::group_args(ar);
+	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N     = ar.get_arg_int  ({p+"-cw-size",   "N"});
+	if(ar.exist_arg({p+"-snr"           })) params.snr   = ar.get_arg_float({p+"-snr"           });
+	if(ar.exist_arg({p+"-sig-a"         })) params.sig_a = ar.get_arg_float({p+"-sig-a"         });
+	if(ar.exist_arg({p+"-type"          })) params.type  = ar.get_arg      ({p+"-type"          });
 }
 
 void Terminal_EXIT::header(params_list& head_ter, const parameters& params)

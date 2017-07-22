@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder_RSC::name   = "Encoder RSC";
+const std::string aff3ct::factory::Encoder_RSC::prefix = "enc";
+
 template <typename B>
 module::Encoder_RSC_sys<B>* Encoder_RSC
 ::build(const parameters &params, std::ostream &stream)
@@ -19,37 +22,37 @@ module::Encoder_RSC_sys<B>* Encoder_RSC
 }
 
 void Encoder_RSC
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Encoder::build_args(req_args, opt_args);
-	req_args.erase({"enc-cw-size", "N"});
+	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{"enc-type"}][2] += ", RSC";
+	opt_args[{p+"-type"}][2] += ", RSC";
 
-	opt_args[{"enc-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
 
-	opt_args[{"enc-poly"}] =
+	opt_args[{p+"-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 
-	opt_args[{"enc-std"}] =
+	opt_args[{p+"-std"}] =
 		{"string",
 		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
 		 "LTE, CCSDS"};
 }
 
 void Encoder_RSC
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "RSC";
 
 	Encoder::store_args(ar, params);
 
-	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
+	if(ar.exist_arg({p+"-no-buff"})) params.buffered = false;
 
-	if(ar.exist_arg({"enc-std"})) params.standard = ar.get_arg({"enc-std"});
+	if(ar.exist_arg({p+"-std"})) params.standard = ar.get_arg({"enc-std"});
 
 	if (params.standard == "LTE")
 		params.poly = {013, 015};
@@ -57,9 +60,9 @@ void Encoder_RSC
 	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
-	if (ar.exist_arg({"enc-poly"}))
+	if (ar.exist_arg({p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({"enc-poly"});
+		auto poly_str = ar.get_arg({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
@@ -71,12 +74,6 @@ void Encoder_RSC
 	params.tail_length = (int)(2 * std::floor(std::log2((float)std::max(params.poly[0], params.poly[1]))));
 	params.N_cw        = 2 * params.K + params.tail_length;
 	params.R           = (float)params.K / (float)params.N_cw;
-}
-
-void Encoder_RSC
-::group_args(arg_grp& ar)
-{
-	Encoder::group_args(ar);
 }
 
 void Encoder_RSC

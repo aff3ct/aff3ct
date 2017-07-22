@@ -66,16 +66,6 @@ void Launcher_BCH<C,B,R,Q>
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_BCH<C,B,R,Q>
-::group_args()
-{
-	factory::Encoder_BCH::group_args(this->arg_group);
-	factory::Decoder_BCH::group_args(this->arg_group);
-
-	C::group_args();
-}
-
-template <class C, typename B, typename R, typename Q>
-void Launcher_BCH<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")

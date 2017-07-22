@@ -9,6 +9,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder_LDPC::name   = "Encoder LDPC";
+const std::string aff3ct::factory::Encoder_LDPC::prefix = "enc";
+
 template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC
 ::build(const parameters           &params,
@@ -23,36 +26,30 @@ module::Encoder_LDPC<B>* Encoder_LDPC
 }
 
 void Encoder_LDPC
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Encoder::build_args(req_args, opt_args);
 
-	opt_args[{"enc-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
+	opt_args[{p+"-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
 
-	opt_args[{"enc-h-path"}] =
+	opt_args[{p+"-h-path"}] =
 		{"string",
 		 "path to the H matrix (AList formated file, required by the \"LDPC_H\" encoder)."};
 
-	opt_args[{"enc-g-path"}] =
+	opt_args[{p+"-g-path"}] =
 		{"string",
 		 "path to the G matrix (AList formated file, required by the \"LDPC\" encoder)."};
 }
 
 void Encoder_LDPC
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "AZCW";
 
 	Encoder::store_args(ar, params);
 
-	if(ar.exist_arg({"enc-h-path"})) params.H_alist_path = ar.get_arg({"enc-h-path"});
-	if(ar.exist_arg({"enc-g-path"})) params.G_alist_path = ar.get_arg({"enc-g-path"});
-}
-
-void Encoder_LDPC
-::group_args(arg_grp& ar)
-{
-	Encoder::group_args(ar);
+	if(ar.exist_arg({p+"-h-path"})) params.H_alist_path = ar.get_arg({p+"-h-path"});
+	if(ar.exist_arg({p+"-g-path"})) params.G_alist_path = ar.get_arg({p+"-g-path"});
 }
 
 void Encoder_LDPC

@@ -69,16 +69,6 @@ void Launcher_LDPC<C,B,R,Q>
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_LDPC<C,B,R,Q>
-::group_args()
-{
-	factory::Encoder_LDPC::group_args(this->arg_group);
-	factory::Decoder_LDPC::group_args(this->arg_group);
-
-	C::group_args();
-}
-
-template <class C, typename B, typename R, typename Q>
-void Launcher_LDPC<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")

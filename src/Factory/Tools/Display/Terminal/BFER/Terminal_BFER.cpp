@@ -3,6 +3,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Terminal_BFER::name   = "Terminal BFER";
+const std::string aff3ct::factory::Terminal_BFER::prefix = "ter";
+
 template <typename B>
 tools::Terminal_BFER<B>* Terminal_BFER
 ::build(const parameters &params, const module::Monitor<B> &monitor, const std::chrono::nanoseconds *d_decod_total)
@@ -12,36 +15,31 @@ tools::Terminal_BFER<B>* Terminal_BFER
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-void Terminal_BFER::build_args(arg_map &req_args, arg_map &opt_args)
+void Terminal_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Terminal::build_args(req_args, opt_args);
 
-	req_args[{"term-info-bits", "K"}] =
+	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "number of information bits."};
 
-	opt_args[{"term-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the terminal type you want.",
 		 "STD"};
 
-	opt_args[{"term-cw-size", "N"}] =
+	opt_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
 		 "number of bits in the codeword."};
 }
 
-void Terminal_BFER::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Terminal_BFER::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	Terminal::store_args(ar, params);
 
-	if(ar.exist_arg({"term-info-bits", "K"})) params.K    = ar.get_arg_int({"term-info-bits", "K"});
-	if(ar.exist_arg({"term-cw-size",   "N"})) params.N    = ar.get_arg_int({"term-cw-size",   "N"});
-	if(ar.exist_arg({"term-type"          })) params.type = ar.get_arg    ({"term-type"          });
-}
-
-void Terminal_BFER::group_args(arg_grp& ar)
-{
-	Terminal::group_args(ar);
+	if(ar.exist_arg({p+"-info-bits", "K"})) params.K    = ar.get_arg_int({p+"-info-bits", "K"});
+	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N    = ar.get_arg_int({p+"-cw-size",   "N"});
+	if(ar.exist_arg({p+"-type"          })) params.type = ar.get_arg    ({p+"-type"          });
 }
 
 void Terminal_BFER::header(params_list& head_ter, const parameters& params)

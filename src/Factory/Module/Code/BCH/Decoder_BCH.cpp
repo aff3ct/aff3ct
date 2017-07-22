@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_BCH::name   = "Decoder BCH";
+const std::string aff3ct::factory::Decoder_BCH::prefix = "dec";
+
 template <typename B, typename Q>
 module::Decoder<B,Q>* Decoder_BCH
 ::build(const parameters &params, const tools::Galois &GF)
@@ -21,17 +24,17 @@ module::Decoder<B,Q>* Decoder_BCH
 }
 
 void Decoder_BCH
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
 
-	opt_args[{"dec-corr-pow", "T"}] =
+	opt_args[{p+"-corr-pow", "T"}] =
 		{"positive_int",
 		 "correction power of the BCH code."};
 }
 
 void Decoder_BCH
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "ALGEBRAIC";
 	params.implem = "STD";
@@ -46,16 +49,10 @@ void Decoder_BCH
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (ar.exist_arg({"dec-corr-pow", "T"}))
-		params.t = ar.get_arg_int({"dec-corr-pow", "T"});
+	if (ar.exist_arg({p+"-corr-pow", "T"}))
+		params.t = ar.get_arg_int({p+"-corr-pow", "T"});
 	else
 		params.t = (params.N_cw - params.K) / params.m;
-}
-
-void Decoder_BCH
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
 }
 
 void Decoder_BCH

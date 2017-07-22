@@ -16,6 +16,9 @@ namespace factory
 {
 struct Modem : public Factory
 {
+	static const std::string name;
+	static const std::string prefix;
+
 	struct parameters
 	{
 		int         N          = 0;
@@ -62,11 +65,9 @@ struct Modem : public Factory
 	                                           const int         cpm_L = 3,
 	                                           const int         cpm_p = 2);
 
-	static void build_args(arg_map &req_args, arg_map &opt_args);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params);
-	static void group_args(arg_grp& ar);
-
-	static void header(params_list& head_mod, params_list& head_demod, const parameters& params);
+	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
+	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void header(params_list& head_mdm, const parameters& params);
 
 private:
 	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>

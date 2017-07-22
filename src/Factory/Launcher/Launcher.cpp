@@ -25,6 +25,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Launcher::name   = "Launcher";
+const std::string aff3ct::factory::Launcher::prefix = "lch";
+
 template <typename B, typename R, typename Q, typename QD>
 launcher::Launcher* Launcher
 ::build_exit(const parameters &params, const int argc, const char **argv)
@@ -135,26 +138,26 @@ launcher::Launcher* Launcher
 	return build_exit<B,R,Q,QD>(params, argc, argv);
 }
 
-void Launcher::build_args(arg_map &req_args, arg_map &opt_args)
+void Launcher::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"sim-cde-type", "C"}] =
+	req_args[{p+"-cde-type", "C"}] =
 		{"string",
 		 "select the code type you want to use.",
 		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
 
-	opt_args[{"sim-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the type of simulation to launch (default is BFER).",
 		 "BFER, BFERI, EXIT, GEN"};
 
 #ifdef MULTI_PREC
-	opt_args[{"sim-prec", "p"}] =
+	opt_args[{p+"-prec", "p"}] =
 		{"positive_int",
 		 "the simulation precision in bit.",
 		 "8, 16, 32"};
 
 #if defined(__x86_64) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__)
-	opt_args[{"sim-prec", "p"}][2] += ", 64";
+	opt_args[{p+"-prec", "p"}][2] += ", 64";
 #endif
 #endif
 
@@ -167,22 +170,16 @@ void Launcher::build_args(arg_map &req_args, arg_map &opt_args)
 		 "print informations about the version of the code."};
 }
 
-void Launcher::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Launcher::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"sim-cde-type", "C"})) params.cde_type        = ar.get_arg({"sim-cde-type", "C"}); // required
-	if(ar.exist_arg({"sim-type"         })) params.sim_type        = ar.get_arg({"sim-type"         });
+	if(ar.exist_arg({p+"-cde-type",  "C"})) params.cde_type        = ar.get_arg({p+"-cde-type", "C"}); // required
+	if(ar.exist_arg({p+"-type"          })) params.sim_type        = ar.get_arg({p+"-type"         });
 	if(ar.exist_arg({"help",         "h"})) params.display_help    = true;
 	if(ar.exist_arg({"version",      "v"})) params.display_version = true;
 
 #ifdef MULTI_PREC
 	if(ar.exist_arg({"sim-prec", "p"})) params.sim_prec = ar.get_arg_int({"sim-prec", "p"});
 #endif
-}
-
-void Launcher::group_args(arg_grp& ar)
-{
-	ar.push_back({"sim", "Simulation parameter(s)"});
-	ar.push_back({"cde", "Code parameter(s)"      });
 }
 
 void Launcher::header(params_list& head_sim, const parameters& params)

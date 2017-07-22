@@ -67,21 +67,13 @@ void Launcher_RA<C,B,R,Q>
 
 template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
-::group_args()
-{
-	factory::Encoder_RA::group_args(this->arg_group);
-	factory::Decoder_RA::group_args(this->arg_group);
-
-	C::group_args();
-}
-
-template <class C, typename B, typename R, typename Q>
-void Launcher_RA<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_RA::header(this->pl_enc, *params_enc);
-	factory::Decoder_RA::header(this->pl_dec, this->pl_itl, *params_dec);
+		factory::Encoder_RA::header(this->pl_enc, this->pl_itl, *params_enc);
+
+	factory::params_list trash;
+	factory::Decoder_RA::header(this->pl_dec, trash, *params_dec);
 
 	C::print_header();
 }

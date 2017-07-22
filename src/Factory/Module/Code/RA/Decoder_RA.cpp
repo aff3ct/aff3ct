@@ -7,6 +7,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_RA::name   = "Decoder RA";
+const std::string aff3ct::factory::Decoder_RA::prefix = "dec";
+
 template <typename B, typename R>
 module::Decoder<B,R>* Decoder_RA
 ::build(const parameters &params, const module::Interleaver<int> &itl)
@@ -18,23 +21,23 @@ module::Decoder<B,R>* Decoder_RA
 }
 
 void Decoder_RA
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
-	Interleaver::build_args(req_args, opt_args);
+	Interleaver::build_args(req_args, opt_args, "itl");
 	req_args.erase({"itl-size"    });
 	opt_args.erase({"itl-fra", "F"});
 
-	opt_args[{"dec-type", "D"}].push_back("RA");
-	opt_args[{"dec-implem"}].push_back("STD");
+	opt_args[{p+"-type", "D"}].push_back("RA");
+	opt_args[{p+"-implem"   }].push_back("STD");
 
-	opt_args[{"dec-ite", "i"}] =
+	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the decoder."};
 }
 
 void Decoder_RA
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "RA";
 	params.implem = "STD";
@@ -43,16 +46,9 @@ void Decoder_RA
 
 	params.itl.size     = params.N_cw;
 	params.itl.n_frames = params.n_frames;
-	Interleaver::store_args(ar, params.itl);
+	Interleaver::store_args(ar, params.itl, "itl");
 
-	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite = ar.get_arg_int({"dec-ite", "i"});
-}
-
-void Decoder_RA
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
-	Interleaver::group_args(ar);
+	if(ar.exist_arg({p+"-ite", "i"})) params.n_ite = ar.get_arg_int({p+"-ite", "i"});
 }
 
 void Decoder_RA

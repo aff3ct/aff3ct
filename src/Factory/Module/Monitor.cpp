@@ -7,6 +7,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Monitor::name   = "Monitor";
+const std::string aff3ct::factory::Monitor::prefix = "mnt";
+
 template <typename B>
 module::Monitor<B>* Monitor
 ::build(const parameters& params)
@@ -17,51 +20,45 @@ module::Monitor<B>* Monitor
 }
 
 void Monitor
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"mnt-size", "K"}] =
+	req_args[{p+"-size", "K"}] =
 		{"positive_int",
 		 "number of bits to check."};
 
-	opt_args[{"mnt-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"mnt-max-fe", "e"}] =
+	opt_args[{p+"-max-fe", "e"}] =
 		{"positive_int",
 		 "max number of frame errors for each SNR simulation."};
 
-	opt_args[{"mnt-err-trk"}] =
+	opt_args[{p+"-err-trk"}] =
 		{"",
 		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
 
-	opt_args[{"mnt-err-trk-rev"}] =
+	opt_args[{p+"-err-trk-rev"}] =
 		{"",
 		 "automatically replay the saved frames."};
 
-	opt_args[{"mnt-err-trk-path"}] =
+	opt_args[{p+"-err-trk-path"}] =
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
 }
 
 void Monitor
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"mnt-size",    "K"})) params.size             = ar.get_arg_int({"mnt-size",    "K"});
-	if(ar.exist_arg({"mnt-fra",     "F"})) params.n_frames         = ar.get_arg_int({"mnt-fra",     "F"});
-	if(ar.exist_arg({"mnt-max-fe",  "e"})) params.n_frame_errors   = ar.get_arg_int({"mnt-max-fe",  "e"});
-	if(ar.exist_arg({"mnt-err-trk-path"})) params.err_track_path   = ar.get_arg    ({"mnt-err-trk-path"});
-	if(ar.exist_arg({"mnt-err-trk-rev" })) params.err_track_revert = true;
-	if(ar.exist_arg({"mnt-err-trk"     })) params.err_track_enable = true;
+	if(ar.exist_arg({p+"-size",    "K"})) params.size             = ar.get_arg_int({p+"-size",    "K"});
+	if(ar.exist_arg({p+"-fra",     "F"})) params.n_frames         = ar.get_arg_int({p+"-fra",     "F"});
+	if(ar.exist_arg({p+"-max-fe",  "e"})) params.n_frame_errors   = ar.get_arg_int({p+"-max-fe",  "e"});
+	if(ar.exist_arg({p+"-err-trk-path"})) params.err_track_path   = ar.get_arg    ({p+"-err-trk-path"});
+	if(ar.exist_arg({p+"-err-trk-rev" })) params.err_track_revert = true;
+	if(ar.exist_arg({p+"-err-trk"     })) params.err_track_enable = true;
 
 	if(params.err_track_revert)
 		params.err_track_enable = false;
-}
-
-void Monitor
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"mnt", "Monitor parameter(s)"});
 }
 
 void Monitor

@@ -37,20 +37,22 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::build_args()
 {
-	factory::Frozenbits_generator::build_args(this->req_args, this->opt_args);
+	factory::Frozenbits_generator::build_args(this->req_args, this->opt_args, "enc-fb");
 	factory::Encoder_polar       ::build_args(this->req_args, this->opt_args);
 	factory::Puncturer_polar     ::build_args(this->req_args, this->opt_args);
 	factory::Decoder_polar       ::build_args(this->req_args, this->opt_args);
 
-	this->opt_args.erase({"pct-fra",       "F"});
-	this->req_args.erase({"enc-cw-size",   "N"});
-	this->req_args.erase({"enc-info-bits", "K"});
-	this->opt_args.erase({"enc-fra",       "F"});
-	this->opt_args.erase({"enc-seed",      "S"});
-	this->req_args.erase({"dec-cw-size",   "N"});
-	this->req_args.erase({"dec-info-bits", "K"});
-	this->opt_args.erase({"dec-fra",       "F"});
-	this->opt_args.erase({"dec-no-sys"        });
+	this->opt_args.erase({"pct-fra",          "F"});
+	this->req_args.erase({"enc-cw-size",      "N"});
+	this->req_args.erase({"enc-info-bits",    "K"});
+	this->opt_args.erase({"enc-fra",          "F"});
+	this->opt_args.erase({"enc-seed",         "S"});
+	this->req_args.erase({"dec-cw-size",      "N"});
+	this->req_args.erase({"dec-info-bits",    "K"});
+	this->opt_args.erase({"dec-fra",          "F"});
+	this->opt_args.erase({"dec-no-sys"           });
+	this->req_args.erase({"enc-fb-cw-size",   "N"});
+	this->req_args.erase({"enc-fb-info-bits", "K"});
 
 	C::build_args();
 }
@@ -64,7 +66,7 @@ void Launcher_polar<C,B,R,Q>
 	params_fb->K    = params_pct->K;
 	params_fb->N_cw = params_pct->N_cw;
 
-	factory::Frozenbits_generator::store_args(this->ar, *params_fb);
+	factory::Frozenbits_generator::store_args(this->ar, *params_fb, "enc-fb");
 
 	params_enc->K    = params_pct->K;
 	params_enc->N_cw = params_pct->N_cw;
@@ -81,18 +83,6 @@ void Launcher_polar<C,B,R,Q>
 		this->params->src->n_frames = mipp::N<Q>();
 
 	C::store_args();
-}
-
-template <class C, typename B, typename R, typename Q>
-void Launcher_polar<C,B,R,Q>
-::group_args()
-{
-	factory::Frozenbits_generator::group_args(this->arg_group);
-	factory::Puncturer_polar     ::group_args(this->arg_group);
-	factory::Encoder_polar       ::group_args(this->arg_group);
-	factory::Decoder_polar       ::group_args(this->arg_group);
-
-	C::group_args();
 }
 
 template <class C, typename B, typename R, typename Q>

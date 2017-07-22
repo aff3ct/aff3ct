@@ -9,6 +9,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_NO::name   = "Decoder NO";
+const std::string aff3ct::factory::Decoder_NO::prefix = "dec";
+
 template <typename B, typename Q>
 module::Decoder_SISO<B,Q>* Decoder_NO
 ::build(const parameters &params)
@@ -19,27 +22,21 @@ module::Decoder_SISO<B,Q>* Decoder_NO
 }
 
 void Decoder_NO
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
 
-	opt_args[{"dec-type", "D"}].push_back("NONE");
-	opt_args[{"dec-implem"}].push_back("HARD_DECISION");
+	opt_args[{p+"-type", "D"}].push_back("NONE");
+	opt_args[{p+"-implem"   }].push_back("HARD_DECISION");
 }
 
 void Decoder_NO
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type   = "NONE";
 	params.implem = "HARD_DECISION";
 
 	Decoder::store_args(ar, params);
-}
-
-void Decoder_NO
-::group_args(arg_grp& ar)
-{
-	Decoder::group_args(ar);
 }
 
 void Decoder_NO

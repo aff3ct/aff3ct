@@ -9,9 +9,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Codec_RA<B,Q>
-::Codec_RA(const factory::Encoder   ::parameters &enc_params,
+::Codec_RA(const factory::Encoder_RA::parameters &enc_params,
            const factory::Decoder_RA::parameters &dec_params)
-: Codec<B,Q>(enc_params, dec_params), dec_par(dec_params)
+: Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params)
 {
 }
 
@@ -35,7 +35,7 @@ Encoder<B>* Codec_RA<B,Q>
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
 
-	return factory::Encoder_RA::build<B>(this->enc_params, *itl);
+	return factory::Encoder_RA::build<B>(enc_par, *itl);
 }
 
 template <typename B, typename Q>

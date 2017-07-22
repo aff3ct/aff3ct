@@ -83,24 +83,15 @@ void Launcher_turbo<C,B,R,Q,QD>
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<C,B,R,Q,QD>
-::group_args()
-{
-	factory::Encoder_turbo  ::group_args(this->arg_group);
-	factory::Puncturer_turbo::group_args(this->arg_group);
-	factory::Decoder_turbo  ::group_args(this->arg_group);
-
-	C::group_args();
-}
-
-template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_turbo<C,B,R,Q,QD>
 ::print_header()
 {
 	if (params_enc->type != "NO")
 		factory::Encoder_turbo::header(this->pl_enc, this->pl_itl, *params_enc);
 	if (params_pct->type != "NO")
 		factory::Puncturer_turbo::header(this->pl_pct, *params_pct);
-	factory::Decoder_turbo::header(this->pl_dec, *params_dec);
+
+	factory::params_list trash;
+	factory::Decoder_turbo::header(this->pl_dec, trash, *params_dec);
 
 	C::print_header();
 }

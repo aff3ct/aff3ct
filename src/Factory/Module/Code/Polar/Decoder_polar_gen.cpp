@@ -572,6 +572,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_polar_gen::name   = "Decoder Polar generated";
+const std::string aff3ct::factory::Decoder_polar_gen::prefix = "dec";
+
 template <typename B, typename Q, class API_polar>
 module::Decoder<B,Q>* Decoder_polar_gen
 ::_build(const Decoder_polar::parameters& params, const mipp::vector<B> &frozen_bits, module::CRC<B> *crc)
@@ -1117,21 +1120,15 @@ void Decoder_polar_gen
 }
 
 void Decoder_polar_gen
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder_polar::build_args(req_args, opt_args);
 }
 
 void Decoder_polar_gen
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	Decoder_polar::store_args(ar, params);
-}
-
-void Decoder_polar_gen
-::group_args(arg_grp& ar)
-{
-	Decoder_polar::group_args(ar);
 }
 
 void Decoder_polar_gen

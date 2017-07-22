@@ -95,19 +95,19 @@ void read_arguments(const int argc, const char** argv, factory::Launcher::parame
 
 	std::vector<std::string> cmd_warn, cmd_error;
 
-	factory::Launcher::build_args(req_args, opt_args);
+	factory::Launcher::build_args(req_args, opt_args, "sim");
 
 	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
 	bool error    = !ar.check_arguments(cmd_error);
 
-	factory::Launcher::store_args(ar, params);
+	factory::Launcher::store_args(ar, params, "sim");
 
 	if (params.display_version)
 		print_version();
 
 	if (error || miss_arg)
 	{
-		factory::Launcher::group_args(arg_group);
+		arg_group.push_back({"sim", "Simulation parameter(s)"});
 		ar.print_usage(arg_group);
 
 		for (auto w = 0; w < (int)cmd_error.size(); w++)
@@ -146,16 +146,15 @@ int sc_main(int argc, char **argv)
 #else
 		launcher = factory::Launcher::build<B,R,Q,QD>(params, argc, (const char**)argv);
 #endif
+		if (launcher != nullptr)
+		{
+			launcher->launch();
+			delete launcher;
+		}
 	}
 	catch(std::exception const& e)
 	{
 		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
-	}
-
-	if (launcher != nullptr)
-	{
-		launcher->launch();
-		delete launcher;
 	}
 
 #ifdef ENABLE_MPI

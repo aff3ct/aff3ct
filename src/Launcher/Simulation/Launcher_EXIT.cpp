@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+#include "Factory/Module/Interleaver.hpp"
+
 #include "Simulation/EXIT/Simulation_EXIT.hpp"
 
 #include "Launcher_EXIT.hpp"
@@ -42,18 +44,18 @@ void Launcher_EXIT<B,R>
 	    this->req_args.find({"pct-info-bits", "K"}) != this->req_args.end())
 		this->req_args.erase({"src-info-bits", "K"});
 	this->opt_args.erase({"src-seed",     "S"});
-	this->req_args.erase({"mod-fra-size", "N"});
-	this->opt_args.erase({"mod-fra",      "F"});
-	this->opt_args.erase({"dmod-sigma"       });
+	this->req_args.erase({"mdm-fra-size", "N"});
+	this->opt_args.erase({"mdm-fra",      "F"});
+	this->opt_args.erase({"mdm-sigma"       });
 	this->req_args.erase({"chn-fra-size", "N"});
 	this->opt_args.erase({"chn-fra",      "F"});
 	this->opt_args.erase({"chn-sigma"        });
 	this->opt_args.erase({"chn-seed",     "S"});
 	this->opt_args.erase({"chn-add-users"    });
 	this->opt_args.erase({"chn-complex"      });
-	this->req_args.erase({"term-cw-size", "N"});
-	this->req_args.erase({"term-sig-a"       });
-	this->req_args.erase({"term-snr"         });
+	this->req_args.erase({"ter-cw-size", "N"});
+	this->req_args.erase({"ter-sig-a"       });
+	this->req_args.erase({"ter-snr"         });
 }
 
 template <typename B, typename R>
@@ -103,22 +105,26 @@ void Launcher_EXIT<B,R>
 {
 	Launcher::group_args();
 
-	factory::Simulation_EXIT::group_args(this->arg_group);
-	factory::Source         ::group_args(this->arg_group);
-	factory::Modem          ::group_args(this->arg_group);
-	factory::Channel        ::group_args(this->arg_group);
-	factory::Terminal_EXIT  ::group_args(this->arg_group);
+	this->arg_group.push_back({factory::Simulation ::prefix, factory::Simulation ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Source     ::prefix, factory::Source     ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Encoder    ::prefix, factory::Encoder    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Interleaver::prefix, factory::Interleaver::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Modem      ::prefix, factory::Modem      ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Channel    ::prefix, factory::Channel    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Decoder    ::prefix, factory::Decoder    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Monitor    ::prefix, factory::Monitor    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Terminal   ::prefix, factory::Terminal   ::name + " parameter(s)"});
 }
 
 template <typename B, typename R>
 void Launcher_EXIT<B,R>
 ::print_header()
 {
-	factory::Simulation_EXIT::header(this->pl_sim,                 *params);
-	factory::Source         ::header(this->pl_src,                 *params->src);
-	factory::Modem          ::header(this->pl_mod, this->pl_demod, *params->mdm);
-	factory::Channel        ::header(this->pl_chn,                 *params->chn);
-	factory::Terminal_EXIT  ::header(this->pl_ter,                 *params->ter);
+	factory::Simulation_EXIT::header(this->pl_sim, *params);
+	factory::Source         ::header(this->pl_src, *params->src);
+	factory::Modem          ::header(this->pl_mdm, *params->mdm);
+	factory::Channel        ::header(this->pl_chn, *params->chn);
+	factory::Terminal_EXIT  ::header(this->pl_ter, *params->ter);
 
 	Launcher::print_header();
 }

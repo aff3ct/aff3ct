@@ -27,30 +27,26 @@ namespace launcher
  *
  * \brief Collects the command line parameters and launches the simulation.
  *        Describes and provides tools to make a working launcher.
- *
- * \tparam B: type of the bits in the simulation.
- * \tparam R: type of the reals (floating-point representation) in the simulation.
- * \tparam Q: type of the quantified reals (fixed-point representation) in the simulation.
  */
 class Launcher
 {
 private:
-	simulation::Simulation *simu;        /*!< A generic simulation pointer to allocate a specific simulation. */
+	simulation::Simulation *simu;               /*!< A generic simulation pointer to allocate a specific simulation. */
 	std::string             cmd_line;
 
 protected:
-	tools::Arguments_reader          ar;       /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::Arguments_reader::arg_map req_args; /*!< List of the required arguments, syntax is the following:
-	                                            *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	tools::Arguments_reader::arg_map opt_args; /*!< List of the optional arguments, syntax is the following:
-	                                            *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	tools::Arguments_reader::arg_grp arg_group;/*!< List of the arguments groups */
+	tools::Arguments_reader          ar;        /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	tools::Arguments_reader::arg_map req_args;  /*!< List of the required arguments, syntax is the following:
+	                                             *!< req_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	tools::Arguments_reader::arg_map opt_args;  /*!< List of the optional arguments, syntax is the following:
+	                                             *!< opt_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	tools::Arguments_reader::arg_grp arg_group; /*!< List of the arguments groups */
 
-	factory::Simulation::parameters *params; /*!< A structure of parameters to store and pass to the simulation. */
+	factory::Simulation::parameters *params;    /*!< A structure of parameters to store and pass to the simulation. */
 
-	std::ostream &stream;   /*!< The dedicated stream in which the Launcher writes the parameters. */
-	factory::params_list pl_sim, pl_src, pl_crc, pl_itl, pl_mod, pl_demod,
-	                     pl_chn, pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
+	std::ostream &stream;                       /*!< The dedicated stream in which the Launcher writes the parameters. */
+	factory::params_list pl_sim, pl_src, pl_crc, pl_itl, pl_mdm, pl_chn,
+	                     pl_qnt, pl_enc, pl_dec, pl_mnt, pl_ter, pl_pct;
 
 public:
 	/*!

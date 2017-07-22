@@ -52,9 +52,9 @@ void Launcher_BFER_ite<B,R,Q>
 	this->req_args.erase({"itl-size"          });
 	this->opt_args.erase({"itl-fra",       "F"});
 	this->opt_args.erase({"itl-seed",      "S"});
-	this->req_args.erase({"mod-fra-size",  "N"});
-	this->opt_args.erase({"mod-fra",       "F"});
-	this->opt_args.erase({"dmod-sigma"        });
+	this->req_args.erase({"mdm-fra-size",  "N"});
+	this->opt_args.erase({"mdm-fra",       "F"});
+	this->opt_args.erase({"mdm-sigma"        });
 	this->req_args.erase({"chn-fra-size",  "N"});
 	this->opt_args.erase({"chn-fra",       "F"});
 	this->opt_args.erase({"chn-sigma"         });
@@ -66,8 +66,8 @@ void Launcher_BFER_ite<B,R,Q>
 	this->opt_args.erase({"qnt-sigma"         });
 	this->req_args.erase({"mnt-size",      "K"});
 	this->opt_args.erase({"mnt-fra",       "F"});
-	this->req_args.erase({"term-info-bits","K"});
-	this->opt_args.erase({"term-cw-size",  "N"});
+	this->req_args.erase({"ter-info-bits","K"});
+	this->opt_args.erase({"ter-cw-size",  "N"});
 }
 
 template <typename B, typename R, typename Q>
@@ -145,32 +145,33 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::group_args();
 
-	factory::Simulation_BFER_ite::group_args(this->arg_group);
-	factory::Source             ::group_args(this->arg_group);
-	factory::CRC                ::group_args(this->arg_group);
-	factory::Interleaver        ::group_args(this->arg_group);
-	factory::Modem              ::group_args(this->arg_group);
-	factory::Channel            ::group_args(this->arg_group);
-	if (std::is_integral<Q>())
-		factory::Quantizer      ::group_args(this->arg_group);
-	factory::Monitor            ::group_args(this->arg_group);
-	factory::Terminal_BFER      ::group_args(this->arg_group);
+	this->arg_group.push_back({factory::Simulation ::prefix, factory::Simulation ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Source     ::prefix, factory::Source     ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::CRC        ::prefix, factory::CRC        ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Encoder    ::prefix, factory::Encoder    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Interleaver::prefix, factory::Interleaver::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Puncturer  ::prefix, factory::Puncturer  ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Modem      ::prefix, factory::Modem      ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Channel    ::prefix, factory::Channel    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Quantizer  ::prefix, factory::Quantizer  ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Decoder    ::prefix, factory::Decoder    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Monitor    ::prefix, factory::Monitor    ::name + " parameter(s)"});
+	this->arg_group.push_back({factory::Terminal   ::prefix, factory::Terminal   ::name + " parameter(s)"});
 }
 
 template <typename B, typename R, typename Q>
 void Launcher_BFER_ite<B,R,Q>
 ::print_header()
 {
-	factory::Simulation_BFER_ite::header(this->pl_sim,                 *params);
-	factory::Source             ::header(this->pl_src,                 *params->src);
-	factory::CRC                ::header(this->pl_crc,                 *params->crc);
-	factory::Interleaver        ::header(this->pl_itl,                 *params->itl);
-	factory::Modem              ::header(this->pl_mod, this->pl_demod, *params->mdm);
-	factory::Channel            ::header(this->pl_chn,                 *params->chn);
-	if (std::is_integral<Q>())
-		factory::Quantizer      ::header(this->pl_qnt,                 *params->qnt);
-	factory::Monitor            ::header(this->pl_mnt,                 *params->mnt);
-	factory::Terminal_BFER      ::header(this->pl_ter,                 *params->ter);
+	factory::Simulation_BFER_ite::header(this->pl_sim, *params);
+	factory::Source             ::header(this->pl_src, *params->src);
+	factory::CRC                ::header(this->pl_crc, *params->crc);
+	factory::Interleaver        ::header(this->pl_itl, *params->itl);
+	factory::Modem              ::header(this->pl_mdm, *params->mdm);
+	factory::Channel            ::header(this->pl_chn, *params->chn);
+	factory::Quantizer          ::header(this->pl_qnt, *params->qnt);
+	factory::Monitor            ::header(this->pl_mnt, *params->mnt);
+	factory::Terminal_BFER      ::header(this->pl_ter, *params->ter);
 
 	Launcher::print_header();
 }

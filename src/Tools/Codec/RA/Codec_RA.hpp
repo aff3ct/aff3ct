@@ -14,10 +14,11 @@ template <typename B = int, typename Q = float>
 class Codec_RA : public Codec<B,Q>
 {
 protected :
+	const factory::Encoder_RA::parameters& enc_par;
 	const factory::Decoder_RA::parameters& dec_par;
 
 public:
-	Codec_RA(const factory::Encoder   ::parameters &enc_params,
+	Codec_RA(const factory::Encoder_RA::parameters &enc_params,
 	         const factory::Decoder_RA::parameters &dec_params);
 	virtual ~Codec_RA();
 

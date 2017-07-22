@@ -9,6 +9,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Puncturer_turbo::name   = "Puncturer Turbo";
+const std::string aff3ct::factory::Puncturer_turbo::prefix = "pct";
+
 template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_turbo
 ::build(const parameters &params)
@@ -19,22 +22,22 @@ module::Puncturer<B,Q>* Puncturer_turbo
 }
 
 void Puncturer_turbo
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Puncturer::build_args(req_args, opt_args);
-	req_args.erase({"pct-fra-size", "N"});
+	req_args.erase({p+"-fra-size", "N"});
 
-	opt_args[{"pct-type"}][2] += ", TURBO";
+	opt_args[{p+"-type"}][2] += ", TURBO";
 
-	opt_args[{"pct-pattern"}] =
+	opt_args[{p+"-pattern"}] =
 		{"string",
 		 "puncturing pattern for the turbo encoder (ex: \"11,10,01\")."};
 
-	opt_args[{"pct-tail-length"}] =
+	opt_args[{p+"-tail-length"}] =
 		{"positive_int",
 		 "total number of tail bits at the end of the frame."};
 
-	opt_args[{"pct-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "does not suppose a buffered encoding."};
 }
@@ -109,15 +112,15 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 }
 
 void Puncturer_turbo
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "TURBO";
 
 	Puncturer::store_args(ar, params);
 
-	if(ar.exist_arg({"pct-pattern"    })) params.pattern     = ar.get_arg    ({"pct-pattern"    });
-	if(ar.exist_arg({"pct-tail-length"})) params.tail_length = ar.get_arg_int({"pct-tail-length"});
-	if(ar.exist_arg({"pct-no-buff"    })) params.buffered    = false;
+	if(ar.exist_arg({p+"-pattern"    })) params.pattern     = ar.get_arg    ({p+"-pattern"    });
+	if(ar.exist_arg({p+"-tail-length"})) params.tail_length = ar.get_arg_int({p+"-tail-length"});
+	if(ar.exist_arg({p+"-no-buff"    })) params.buffered    = false;
 
 	params.N_cw = 3 * params.K + params.tail_length;
 	params.N    = compute_N(params.K, params.tail_length, params.pattern);
@@ -125,12 +128,6 @@ void Puncturer_turbo
 
 	if (params.N == params.N_cw)
 		params.type = "NO";
-}
-
-void Puncturer_turbo
-::group_args(arg_grp& ar)
-{
-	Puncturer::group_args(ar);
 }
 
 void Puncturer_turbo

@@ -8,6 +8,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Decoder_turbo::name   = "Decoder Turbo";
+const std::string aff3ct::factory::Decoder_turbo::prefix = "dec";
+
 template <typename B, typename Q>
 module::Decoder_turbo<B,Q>* Decoder_turbo
 ::build(const parameters               &params,
@@ -26,57 +29,65 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
 }
 
 void Decoder_turbo
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Decoder::build_args(req_args, opt_args);
-	req_args.erase({"dec-cw-size", "N"});
+	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{"dec-type", "D"}].push_back("BCJR");
+	Interleaver::build_args(req_args, opt_args, "itl");
+	req_args.erase({"itl-size"    });
+	opt_args.erase({"itl-fra", "F"});
 
-	opt_args[{"dec-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
+	opt_args[{p+"-type", "D"}].push_back("BCJR");
 
-	opt_args[{"dec-ite", "i"}] =
+	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
+
+	opt_args[{p+"-ite", "i"}] =
 		{"positive_int",
 		 "maximal number of iterations in the turbo."};
 
-	opt_args[{"dec-simd"}] =
+	opt_args[{p+"-simd"}] =
 		{"string",
 		 "the SIMD strategy you want to use.",
 		 "INTRA, INTER"};
 
-	opt_args[{"dec-max"}] =
+	opt_args[{p+"-max"}] =
 		{"string",
 		 "the MAX implementation for the nodes.",
 		 "MAX, MAXS, MAXL"};
 
-	opt_args[{"dec-sc"}] =
+	opt_args[{p+"-sc"}] =
 		{"",
 		 "enables the self corrected decoder (requires \"--crc-type\")."};
 
-	opt_args[{"dec-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "does not suppose a buffered encoding."};
 
-	opt_args[{"dec-json"}] =
+	opt_args[{p+"-json"}] =
 		{"",
 		 "enable the json output trace."};
 
-	opt_args[{"dec-poly"}] =
+	opt_args[{p+"-poly"}] =
 		{"string",
 		 "the polynomials describing RSC code, should be of the form \"{A,B}\"."};
 
-	opt_args[{"dec-std"}] =
+	opt_args[{p+"-std"}] =
 		{"string",
 		 "select a standard and set automatically some parameters (overwritten with user given arguments).",
 		 "LTE, CCSDS"};
 
-	Scaling_factor::build_args(req_args, opt_args);
-	Flip_and_check::build_args(req_args, opt_args);
-	req_args.erase({"dec-fnc-size", "K"});
+	Scaling_factor::build_args(req_args, opt_args, p+"-sf" );
+	opt_args.erase({p+"-sf-ite"});
+
+	Flip_and_check::build_args(req_args, opt_args, p+"-fnc");
+	req_args.erase({p+"-fnc-size", "K"});
+	opt_args.erase({p+"-fnc-fra",  "F"});
+	opt_args.erase({p+"-fnc-ite",  "i"});
 }
 
 void Decoder_turbo
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	// for the RSC
 	params.type   = "BCJR";
@@ -84,13 +95,13 @@ void Decoder_turbo
 
 	Decoder::store_args(ar, params);
 
-	if(ar.exist_arg({"dec-ite", "i"})) params.n_ite          = ar.get_arg_int({"dec-ite", "i"});
-	if(ar.exist_arg({"dec-simd"    })) params.simd_strategy  = ar.get_arg    ({"dec-simd"    });
-	if(ar.exist_arg({"dec-max"     })) params.max            = ar.get_arg    ({"dec-max"     });
-	if(ar.exist_arg({"dec-std"     })) params.standard       = ar.get_arg    ({"dec-std"     });
-	if(ar.exist_arg({"dec-sc"      })) params.self_corrected = true;
-	if(ar.exist_arg({"dec-json"    })) params.enable_json    = true;
-	if(ar.exist_arg({"dec-no-buff" })) params.buffered       = false;
+	if(ar.exist_arg({p+"-ite", "i"})) params.n_ite          = ar.get_arg_int({p+"-ite", "i"});
+	if(ar.exist_arg({p+"-simd"    })) params.simd_strategy  = ar.get_arg    ({p+"-simd"    });
+	if(ar.exist_arg({p+"-max"     })) params.max            = ar.get_arg    ({p+"-max"     });
+	if(ar.exist_arg({p+"-std"     })) params.standard       = ar.get_arg    ({p+"-std"     });
+	if(ar.exist_arg({p+"-sc"      })) params.self_corrected = true;
+	if(ar.exist_arg({p+"-json"    })) params.enable_json    = true;
+	if(ar.exist_arg({p+"-no-buff" })) params.buffered       = false;
 
 	if (params.enable_json)
 	{
@@ -105,9 +116,9 @@ void Decoder_turbo
 	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
-	if (ar.exist_arg({"dec-poly"}))
+	if (ar.exist_arg({p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({"dec-poly"});
+		auto poly_str = ar.get_arg({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
@@ -123,25 +134,24 @@ void Decoder_turbo
 	params.N_cw        = 3 * params.K + params.tail_length;
 	params.R           = (float)params.K / (float)params.N_cw;
 
-	Scaling_factor::store_args(ar, params.sf);
+	params.itl.size     = params.K;
+	params.itl.n_frames = params.n_frames;
+	Interleaver::store_args(ar, params.itl, "itl");
+
+	params.sf.n_ite = params.n_ite;
+	Scaling_factor::store_args(ar, params.sf, p+"-sf");
 
 	params.fnc.size     = params.K;
 	params.fnc.n_frames = params.n_frames;
-	Flip_and_check::store_args(ar, params.fnc);
+	params.fnc.n_ite    = params.n_ite;
+	Flip_and_check::store_args(ar, params.fnc, p+"-fnc");
 }
 
 void Decoder_turbo
-::group_args(arg_grp& ar)
+::header(params_list& head_dec, params_list& head_itl, const parameters& params)
 {
-	Decoder::group_args(ar);
-	Scaling_factor::group_args(ar);
-	Flip_and_check::group_args(ar);
-}
-
-void Decoder_turbo
-::header(params_list& head_dec, const parameters& params)
-{
-	Decoder::header(head_dec, params);
+	Decoder    ::header(head_dec, params);
+	Interleaver::header(head_itl, params.itl);
 
 	if (!params.standard.empty())
 		head_dec.push_back(std::make_pair("Standard", params.standard));

@@ -7,6 +7,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder_repetition::name   = "Encoder Repetiton";
+const std::string aff3ct::factory::Encoder_repetition::prefix = "enc";
+
 template <typename B>
 module::Encoder_sys<B>* Encoder_repetition
 ::build(const parameters &params)
@@ -17,31 +20,25 @@ module::Encoder_sys<B>* Encoder_repetition
 }
 
 void Encoder_repetition
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Encoder::build_args(req_args, opt_args);
 
-	opt_args[{"enc-type"}][2] += ", REPETITION";
+	opt_args[{p+"-type"}][2] += ", REPETITION";
 
-	opt_args[{"enc-no-buff"}] =
+	opt_args[{p+"-no-buff"}] =
 		{"",
 		 "disable the buffered encoding."};
 }
 
 void Encoder_repetition
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	params.type = "REPETITION";
 
 	Encoder::store_args(ar, params);
 
-	if(ar.exist_arg({"enc-no-buff"})) params.buffered = false;
-}
-
-void Encoder_repetition
-::group_args(arg_grp& ar)
-{
-	Encoder::group_args(ar);
+	if(ar.exist_arg({p+"-no-buff"})) params.buffered = false;
 }
 
 void Encoder_repetition

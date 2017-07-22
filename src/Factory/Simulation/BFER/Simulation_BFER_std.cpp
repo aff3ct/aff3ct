@@ -7,6 +7,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Simulation_BFER_std::name   = "Simulation BFER standard";
+const std::string aff3ct::factory::Simulation_BFER_std::prefix = "sim";
+
 template <typename B, typename R, typename Q>
 simulation::Simulation_BFER_std<B,R,Q>* Simulation_BFER_std
 ::build(const parameters &params, tools::Codec<B,Q> &codec)
@@ -20,22 +23,22 @@ simulation::Simulation_BFER_std<B,R,Q>* Simulation_BFER_std
 #endif
 }
 
-void Simulation_BFER_std::build_args(arg_map &req_args, arg_map &opt_args)
+void Simulation_BFER_std::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Simulation_BFER::build_args(req_args, opt_args);
 
 #if !defined(STARPU) && !defined(SYSTEMC)
-	opt_args[{"sim-debug-fe"}] =
+	opt_args[{p+"-debug-fe"}] =
 		{"",
 		 "enable debug mode: print array values after each step (only when frame errors)."};
 #endif
 }
 
-void Simulation_BFER_std::store_args(const tools::Arguments_reader& ar, parameters &params)
+void Simulation_BFER_std::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
 	// need to be checked before that the default number of threads is set to 1 because debug mode is selected
 #if !defined(STARPU) && !defined(SYSTEMC)
-	if(ar.exist_arg({"sim-debug-fe"}))
+	if(ar.exist_arg({p+"-debug-fe"}))
 	{
 		params.debug    = true;
 		params.debug_fe = true;
@@ -43,11 +46,6 @@ void Simulation_BFER_std::store_args(const tools::Arguments_reader& ar, paramete
 #endif
 
 	Simulation_BFER::store_args(ar, params);
-}
-
-void Simulation_BFER_std::group_args(arg_grp& ar)
-{
-	Simulation_BFER::group_args(ar);
 }
 
 void Simulation_BFER_std::header(params_list& head_sim, const parameters& params)

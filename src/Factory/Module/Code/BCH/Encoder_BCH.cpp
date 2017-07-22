@@ -7,6 +7,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder_BCH::name   = "Encoder BCH";
+const std::string aff3ct::factory::Encoder_BCH::prefix = "enc";
+
 template <typename B>
 module::Encoder<B>* Encoder_BCH
 ::build(const parameters &params, const tools::Galois &GF)
@@ -17,25 +20,19 @@ module::Encoder<B>* Encoder_BCH
 }
 
 void Encoder_BCH
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Encoder::build_args(req_args, opt_args);
 
-	opt_args[{"enc-type"}][2] += ", BCH";
+	opt_args[{p+"-type"}][2] += ", BCH";
 }
 
 void Encoder_BCH
-::store_args(const tools::Arguments_reader& ar, Encoder::parameters &params)
+::store_args(const tools::Arguments_reader& ar, Encoder::parameters &params, const std::string p)
 {
 	params.type = "BCH";
 
 	Encoder::store_args(ar, params);
-}
-
-void Encoder_BCH
-::group_args(arg_grp& ar)
-{
-	Encoder::group_args(ar);
 }
 
 void Encoder_BCH

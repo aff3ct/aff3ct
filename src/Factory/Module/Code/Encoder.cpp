@@ -10,6 +10,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Encoder::name   = "Encoder";
+const std::string aff3ct::factory::Encoder::prefix = "enc";
+
 template <typename B>
 module::Encoder<B>* Encoder
 ::build(const parameters &params)
@@ -23,52 +26,46 @@ module::Encoder<B>* Encoder
 }
 
 void Encoder
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"enc-info-bits", "K"}] =
+	req_args[{p+"-info-bits", "K"}] =
 		{"positive_int",
 		 "useful number of bit transmitted (information bits)."};
 
-	req_args[{"enc-cw-size", "N"}] =
+	req_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
 		 "the codeword size."};
 
-	opt_args[{"enc-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"enc-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "select the type of encoder you want to use.",
 		 "NO, AZCW, COSET, USER"};
 
-	opt_args[{"enc-path"}] =
+	opt_args[{p+"-path"}] =
 		{"string",
 		 "path to a file containing one or a set of pre-computed codewords, to use with \"--enc-type USER\"."};
 
-	opt_args[{"enc-seed", "S"}] =
+	opt_args[{p+"-seed", "S"}] =
 		{"positive_int",
 		 "seed used to initialize the pseudo random generators."};
 }
 
 void Encoder
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"enc-info-bits", "K"})) params.K          = ar.get_arg_int({"enc-info-bits", "K"});
-	if(ar.exist_arg({"enc-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({"enc-cw-size",   "N"});
-	if(ar.exist_arg({"enc-fra",       "F"})) params.n_frames   = ar.get_arg_int({"enc-fra",       "F"});
-	if(ar.exist_arg({"enc-seed",      "S"})) params.seed       = ar.get_arg_int({"enc-seed",      "S"});
-	if(ar.exist_arg({"enc-type"          })) params.type       = ar.get_arg    ({"enc-type"          });
-	if(ar.exist_arg({"enc-path"          })) params.path       = ar.get_arg    ({"enc-path"          });
-	if(ar.exist_arg({"enc-no-sys"        })) params.systematic = false;
+	if(ar.exist_arg({p+"-info-bits", "K"})) params.K          = ar.get_arg_int({p+"-info-bits", "K"});
+	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({p+"-cw-size",   "N"});
+	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames   = ar.get_arg_int({p+"-fra",       "F"});
+	if(ar.exist_arg({p+"-seed",      "S"})) params.seed       = ar.get_arg_int({p+"-seed",      "S"});
+	if(ar.exist_arg({p+"-type"          })) params.type       = ar.get_arg    ({p+"-type"          });
+	if(ar.exist_arg({p+"-path"          })) params.path       = ar.get_arg    ({p+"-path"          });
+	if(ar.exist_arg({p+"-no-sys"        })) params.systematic = false;
 
 	params.R = (float)params.K / (float)params.N_cw;
-}
-
-void Encoder
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"enc", "Encoder parameter(s)"});
 }
 
 void Encoder

@@ -14,6 +14,9 @@
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
+const std::string aff3ct::factory::Interleaver::name   = "Interleaver";
+const std::string aff3ct::factory::Interleaver::prefix = "itl";
+
 template <typename T>
 module::Interleaver<T>* Interleaver
 ::build(const parameters &params)
@@ -31,54 +34,48 @@ module::Interleaver<T>* Interleaver
 }
 
 void Interleaver
-::build_args(arg_map &req_args, arg_map &opt_args)
+::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	req_args[{"itl-size"}] =
+	req_args[{p+"-size"}] =
 		{"positive_int",
 		 "number of symbols to interleave."};
 
-	opt_args[{"itl-fra", "F"}] =
+	opt_args[{p+"-fra", "F"}] =
 		{"positive_int",
 		 "set the number of inter frame level to process."};
 
-	opt_args[{"itl-type"}] =
+	opt_args[{p+"-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
 		 "LTE, CCSDS, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
 
-	opt_args[{"itl-path"}] =
+	opt_args[{p+"-path"}] =
 		{"string",
 		 "specify the path to the interleaver file (to use with \"--itl-type USER\")."};
 
-	opt_args[{"itl-cols"}] =
+	opt_args[{p+"-cols"}] =
 		{"positive_int",
 		 "specify the number of columns used for the RAND_COL or ROW_COL interleaver."};
 
-	opt_args[{"itl-uni"}] =
+	opt_args[{p+"-uni"}] =
 		{"",
 		 "enable the regeneration of the interleaver at each new frame."};
 
-	opt_args[{"itl-seed", "S"}] =
+	opt_args[{p+"-seed", "S"}] =
 		{"positive_int",
 		 "seed used to initialize the pseudo random generators."};
 }
 
 void Interleaver
-::store_args(const tools::Arguments_reader& ar, parameters &params)
+::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({"itl-size"     })) params.size     = ar.get_arg_int({"itl-size"     });
-	if(ar.exist_arg({"itl-fra",  "F"})) params.n_frames = ar.get_arg_int({"itl-fra",  "F"});
-	if(ar.exist_arg({"itl-type"     })) params.type     = ar.get_arg    ({"itl-type"     });
-	if(ar.exist_arg({"itl-path"     })) params.path     = ar.get_arg    ({"itl-path"     });
-	if(ar.exist_arg({"itl-cols"     })) params.n_cols   = ar.get_arg_int({"itl-cols"     });
-	if(ar.exist_arg({"itl-seed", "S"})) params.seed     = ar.get_arg_int({"itl-seed", "S"});
-	if(ar.exist_arg({"itl-uni"      })) params.uniform  = true;
-}
-
-void Interleaver
-::group_args(arg_grp& ar)
-{
-	ar.push_back({"itl","Interleaver parameter(s)"});
+	if(ar.exist_arg({p+"-size"     })) params.size     = ar.get_arg_int({p+"-size"     });
+	if(ar.exist_arg({p+"-fra",  "F"})) params.n_frames = ar.get_arg_int({p+"-fra",  "F"});
+	if(ar.exist_arg({p+"-type"     })) params.type     = ar.get_arg    ({p+"-type"     });
+	if(ar.exist_arg({p+"-path"     })) params.path     = ar.get_arg    ({p+"-path"     });
+	if(ar.exist_arg({p+"-cols"     })) params.n_cols   = ar.get_arg_int({p+"-cols"     });
+	if(ar.exist_arg({p+"-seed", "S"})) params.seed     = ar.get_arg_int({p+"-seed", "S"});
+	if(ar.exist_arg({p+"-uni"      })) params.uniform  = true;
 }
 
 void Interleaver

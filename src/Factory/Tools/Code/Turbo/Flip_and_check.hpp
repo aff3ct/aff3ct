@@ -14,6 +14,9 @@ namespace factory
 {
 struct Flip_and_check : public Factory
 {
+	static const std::string name;
+	static const std::string prefix;
+
 	struct parameters
 	{
 		int  size                = -1;
@@ -31,10 +34,8 @@ struct Flip_and_check : public Factory
 	template <typename B = int, typename Q = float>
 	static tools::Flip_and_check<B,Q>* build(const parameters& params, module::CRC<B> &crc);
 
-	static void build_args(arg_map &req_args, arg_map &opt_args);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params);
-	static void group_args(arg_grp& ar);
-
+	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
+	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_fnc, const parameters& params);
 
 };
