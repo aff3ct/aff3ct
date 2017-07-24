@@ -16,10 +16,10 @@ void Terminal::build_args(arg_map &req_args, arg_map &opt_args, const std::strin
 		 "display frequency in ms (refresh time step for each iteration, 0 = disable display refresh)."};
 }
 
-void Terminal::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Terminal::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-no"  })) params.disabled  = true;
-	if(ar.exist_arg({p+"-freq"})) params.frequency = std::chrono::milliseconds(ar.get_arg_int({p+"-freq"}));
+	if(exist(vals, {p+"-no"  })) params.disabled  = true;
+	if(exist(vals, {p+"-freq"})) params.frequency = std::chrono::milliseconds(std::stoi(vals.at({p+"-freq"})));
 }
 
 void Terminal::header(params_list& head_ter, const parameters& params)

@@ -39,12 +39,12 @@ void Scaling_factor
 }
 
 void Scaling_factor
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-type"}))
+	if(exist(vals, {p+"-type"}))
 	{
 		params.enable = true;
-		params.type = ar.get_arg({p+"-type"});
+		params.type = vals.at({p+"-type"});
 
 		if (std::isdigit(params.type[0]))
 		{
@@ -53,7 +53,7 @@ void Scaling_factor
 		}
 	}
 
-	if(ar.exist_arg({p+"-ite", "i"})) params.n_ite = ar.get_arg_int({p+"-ite", "i"});
+	if(exist(vals, {p+"-ite", "i"})) params.n_ite = std::stoi(vals.at({p+"-ite", "i"}));
 }
 
 void Scaling_factor

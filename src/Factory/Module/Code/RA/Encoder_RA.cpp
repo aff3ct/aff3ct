@@ -31,15 +31,15 @@ void Encoder_RA
 }
 
 void Encoder_RA
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "RA";
 
-	Encoder::store_args(ar, params);
+	Encoder::store_args(vals, params);
 
 	params.itl.size     = params.N_cw;
 	params.itl.n_frames = params.n_frames;
-	Interleaver::store_args(ar, params.itl, "itl");
+	Interleaver::store_args(vals, params.itl, "itl");
 }
 
 void Encoder_RA

@@ -42,14 +42,14 @@ void Encoder_LDPC
 }
 
 void Encoder_LDPC
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "AZCW";
 
-	Encoder::store_args(ar, params);
+	Encoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-h-path"})) params.H_alist_path = ar.get_arg({p+"-h-path"});
-	if(ar.exist_arg({p+"-g-path"})) params.G_alist_path = ar.get_arg({p+"-g-path"});
+	if(exist(vals, {p+"-h-path"})) params.H_alist_path = vals.at({p+"-h-path"});
+	if(exist(vals, {p+"-g-path"})) params.G_alist_path = vals.at({p+"-g-path"});
 }
 
 void Encoder_LDPC

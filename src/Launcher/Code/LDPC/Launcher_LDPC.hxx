@@ -46,12 +46,12 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_LDPC<C,B,R,Q>
 ::store_args()
 {
-	factory::Encoder_LDPC::store_args(this->ar, *params_enc);
+	factory::Encoder_LDPC::store_args(this->ar.get_args(), *params_enc);
 
 	params_dec->K    = params_enc->K;
 	params_dec->N_cw = params_enc->N_cw;
 
-	factory::Decoder_LDPC::store_args(this->ar, *params_dec);
+	factory::Decoder_LDPC::store_args(this->ar.get_args(), *params_dec);
 
 	params_enc->H_alist_path = params_dec->H_alist_path;
 

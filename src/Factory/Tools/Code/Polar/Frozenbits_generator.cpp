@@ -54,16 +54,16 @@ void Frozenbits_generator
 }
 
 void Frozenbits_generator
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-info-bits", "K"})) params.K       = ar.get_arg_int  ({p+"-info-bits", "K"});
-	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N_cw    = ar.get_arg_int  ({p+"-cw-size",   "N"});
-	if(ar.exist_arg({p+"-sigma"         })) params.sigma   = ar.get_arg_float({p+"-sigma"         });
-	if(ar.exist_arg({p+"-awgn-path"     })) params.path_fb = ar.get_arg      ({p+"-awgn-path"     });
-	if(ar.exist_arg({p+"-gen-method"    })) params.type    = ar.get_arg      ({p+"-gen-method"    });
+	if(exist(vals, {p+"-info-bits", "K"})) params.K       = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-cw-size",   "N"})) params.N_cw    = std::stoi(vals.at({p+"-cw-size",   "N"}));
+	if(exist(vals, {p+"-sigma"         })) params.sigma   = std::stof(vals.at({p+"-sigma"         }));
+	if(exist(vals, {p+"-awgn-path"     })) params.path_fb =           vals.at({p+"-awgn-path"     });
+	if(exist(vals, {p+"-gen-method"    })) params.type    =           vals.at({p+"-gen-method"    });
 
 #ifdef ENABLE_POLAR_BOUNDS
-	if(ar.exist_arg({p+"-pb-path"})) params.path_pb = ar.get_arg({p+"-pb-path"});
+	if(exist(vals, {p+"-pb-path"})) params.path_pb = vals.at({p+"-pb-path"});
 #endif
 }
 

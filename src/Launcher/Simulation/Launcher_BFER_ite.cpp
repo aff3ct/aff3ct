@@ -76,45 +76,45 @@ void Launcher_BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
-	factory::Simulation_BFER_ite::store_args(this->ar, *params);
+	factory::Simulation_BFER_ite::store_args(this->ar.get_args(), *params);
 
-	factory::Source::store_args(this->ar, *params->src);
+	factory::Source::store_args(this->ar.get_args(), *params->src);
 
 	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
 	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
 
-	factory::CRC::store_args(this->ar, *params->crc);
+	factory::CRC::store_args(this->ar.get_args(), *params->crc);
 
 	params->crc->K = K - params->crc->size;
 	params->src->K = params->src->K == 0 ? params->crc->K : params->src->K;
 
 	params->itl->size = N;
 
-	factory::Interleaver::store_args(this->ar, *params->itl);
+	factory::Interleaver::store_args(this->ar.get_args(), *params->itl);
 
 	params->mdm->N = N;
 
-	factory::Modem::store_args(this->ar, *params->mdm);
+	factory::Modem::store_args(this->ar.get_args(), *params->mdm);
 
 	params->chn->N         = params->mdm->N_mod;
 	params->chn->complex   = params->mdm->complex;
 	params->chn->add_users = params->mdm->type == "SCMA";
 
-	factory::Channel::store_args(this->ar, *params->chn);
+	factory::Channel::store_args(this->ar.get_args(), *params->chn);
 
 	params->qnt->size = params->mdm->N_fil;
 
 	if (std::is_integral<Q>())
-		factory::Quantizer::store_args(this->ar, *params->qnt);
+		factory::Quantizer::store_args(this->ar.get_args(), *params->qnt);
 
 	params->mnt->size = params->src->K;
 
-	factory::Monitor::store_args(this->ar, *params->mnt);
+	factory::Monitor::store_args(this->ar.get_args(), *params->mnt);
 
 	params->ter->K = K;
 	params->ter->N = N;
 
-	factory::Terminal_BFER::store_args(this->ar, *params->ter);
+	factory::Terminal_BFER::store_args(this->ar.get_args(), *params->ter);
 
 	if (!std::is_integral<Q>())
 		params->qnt->type = "NO";

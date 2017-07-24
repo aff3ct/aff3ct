@@ -34,12 +34,12 @@ void Decoder_BCH
 }
 
 void Decoder_BCH
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "ALGEBRAIC";
 	params.implem = "STD";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 
 	params.m = (int)std::ceil(std::log2(params.N_cw));
 	if (params.m == 0)
@@ -49,8 +49,8 @@ void Decoder_BCH
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (ar.exist_arg({p+"-corr-pow", "T"}))
-		params.t = ar.get_arg_int({p+"-corr-pow", "T"});
+	if (exist(vals, {p+"-corr-pow", "T"}))
+		params.t = std::stoi(vals.at({p+"-corr-pow", "T"}));
 	else
 		params.t = (params.N_cw - params.K) / params.m;
 }

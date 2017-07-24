@@ -48,7 +48,7 @@ template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_RSC<C,B,R,Q,QD>
 ::store_args()
 {
-	factory::Encoder_RSC::store_args(this->ar, *params_enc);
+	factory::Encoder_RSC::store_args(this->ar.get_args(), *params_enc);
 
 	params_dec->K        = params_enc->K;
 	params_dec->N_cw     = params_enc->N_cw;
@@ -56,7 +56,7 @@ void Launcher_RSC<C,B,R,Q,QD>
 	params_dec->poly     = params_enc->poly;
 	params_dec->standard = params_enc->standard;
 
-	factory::Decoder_RSC::store_args(this->ar, *params_dec);
+	factory::Decoder_RSC::store_args(this->ar.get_args(), *params_dec);
 
 	this->params->pct->type = "NO";
 	this->params->pct->K    = params_enc->K;

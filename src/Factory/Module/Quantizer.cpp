@@ -61,15 +61,15 @@ void Quantizer
 }
 
 void Quantizer
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-size", "N"})) params.size       = ar.get_arg_int  ({p+"-size", "N"});
-	if(ar.exist_arg({p+"-fra",  "F"})) params.n_frames   = ar.get_arg_int  ({p+"-fra",  "F"});
-	if(ar.exist_arg({p+"-type"     })) params.type       = ar.get_arg      ({p+"-type"     });
-	if(ar.exist_arg({p+"-dec"      })) params.n_decimals = ar.get_arg_int  ({p+"-dec"      });
-	if(ar.exist_arg({p+"-bits"     })) params.n_bits     = ar.get_arg_int  ({p+"-bits"     });
-	if(ar.exist_arg({p+"-range"    })) params.range      = ar.get_arg_float({p+"-range"    });
-	if(ar.exist_arg({p+"-sigma"    })) params.sigma      = ar.get_arg_float({p+"-sigma"    });
+	if(exist(vals, {p+"-size", "N"})) params.size       = std::stoi(vals.at({p+"-size", "N"}));
+	if(exist(vals, {p+"-fra",  "F"})) params.n_frames   = std::stoi(vals.at({p+"-fra",  "F"}));
+	if(exist(vals, {p+"-type"     })) params.type       =           vals.at({p+"-type"     });
+	if(exist(vals, {p+"-dec"      })) params.n_decimals = std::stoi(vals.at({p+"-dec"      }));
+	if(exist(vals, {p+"-bits"     })) params.n_bits     = std::stoi(vals.at({p+"-bits"     }));
+	if(exist(vals, {p+"-range"    })) params.range      = std::stof(vals.at({p+"-range"    }));
+	if(exist(vals, {p+"-sigma"    })) params.sigma      = std::stof(vals.at({p+"-sigma"    }));
 }
 
 void Quantizer

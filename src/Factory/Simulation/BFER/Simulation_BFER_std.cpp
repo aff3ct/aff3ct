@@ -34,18 +34,18 @@ void Simulation_BFER_std::build_args(arg_map &req_args, arg_map &opt_args, const
 #endif
 }
 
-void Simulation_BFER_std::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Simulation_BFER_std::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	// need to be checked before that the default number of threads is set to 1 because debug mode is selected
 #if !defined(STARPU) && !defined(SYSTEMC)
-	if(ar.exist_arg({p+"-debug-fe"}))
+	if(exist(vals, {p+"-debug-fe"}))
 	{
 		params.debug    = true;
 		params.debug_fe = true;
 	}
 #endif
 
-	Simulation_BFER::store_args(ar, params);
+	Simulation_BFER::store_args(vals, params);
 }
 
 void Simulation_BFER_std::header(params_list& head_sim, const parameters& params)

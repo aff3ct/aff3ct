@@ -61,23 +61,23 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_polar<C,B,R,Q>
 ::store_args()
 {
-	factory::Puncturer_polar::store_args(this->ar, *params_pct);
+	factory::Puncturer_polar::store_args(this->ar.get_args(), *params_pct);
 
 	params_fb->K    = params_pct->K;
 	params_fb->N_cw = params_pct->N_cw;
 
-	factory::Frozenbits_generator::store_args(this->ar, *params_fb, "enc-fb");
+	factory::Frozenbits_generator::store_args(this->ar.get_args(), *params_fb, "enc-fb");
 
 	params_enc->K    = params_pct->K;
 	params_enc->N_cw = params_pct->N_cw;
 
-	factory::Encoder_polar::store_args(this->ar, *params_enc);
+	factory::Encoder_polar::store_args(this->ar.get_args(), *params_enc);
 
 	params_dec->K          = params_pct->K;
 	params_dec->N_cw       = params_pct->N_cw;
 	params_dec->systematic = params_enc->systematic;
 
-	factory::Decoder_polar::store_args(this->ar, *params_dec);
+	factory::Decoder_polar::store_args(this->ar.get_args(), *params_dec);
 
 	if (params_dec->simd_strategy == "INTER")
 		this->params->src->n_frames = mipp::N<Q>();

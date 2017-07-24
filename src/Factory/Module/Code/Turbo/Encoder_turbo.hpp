@@ -39,7 +39,7 @@ struct Encoder_turbo : public Encoder
 	                                       module::Encoder_sys<B>   *enc_i = nullptr);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_enc, params_list& head_itl, const parameters& params);
 };
 }

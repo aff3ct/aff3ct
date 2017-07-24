@@ -31,7 +31,7 @@ struct Decoder_RA : public Decoder
 	static module::Decoder<B,R>* build(const parameters &params, const module::Interleaver<int> &itl);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_dec, params_list& head_itl, const parameters& params);
 };
 }

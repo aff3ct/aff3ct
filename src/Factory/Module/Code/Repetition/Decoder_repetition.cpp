@@ -38,14 +38,14 @@ void Decoder_repetition
 }
 
 void Decoder_repetition
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "REPETITION";
 	params.implem = "STD";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-no-buff"})) params.buffered = false;
+	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
 }
 
 void Decoder_repetition

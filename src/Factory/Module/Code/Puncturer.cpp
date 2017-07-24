@@ -39,12 +39,12 @@ void Puncturer
 }
 
 void Puncturer
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-info-bits", "K"})) params.K        = ar.get_arg_int({p+"-info-bits", "K"});
-	if(ar.exist_arg({p+"-fra-size",  "N"})) params.N        = ar.get_arg_int({p+"-fra-size",  "N"});
-	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames = ar.get_arg_int({p+"-fra",       "F"});
-	if(ar.exist_arg({p+"-type"          })) params.type     = ar.get_arg    ({p+"-type"          });
+	if(exist(vals, {p+"-info-bits", "K"})) params.K        = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-fra-size",  "N"})) params.N        = std::stoi(vals.at({p+"-fra-size",  "N"}));
+	if(exist(vals, {p+"-fra",       "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-type"          })) params.type     =           vals.at({p+"-type"          });
 
 	params.N_cw = params.N;
 	params.R = (float)params.K / (float)params.N;

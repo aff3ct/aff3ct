@@ -184,21 +184,21 @@ void Modem
 }
 
 void Modem
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(ar.exist_arg({p+"-fra-size", "N"})) params.N          = ar.get_arg_int({p+"-fra-size", "N"});
-	if(ar.exist_arg({p+"-fra",      "F"})) params.n_frames   = ar.get_arg_int({p+"-fra",      "F"});
-	if(ar.exist_arg({p+"-type"         })) params.type       = ar.get_arg    ({p+"-type"         });
-	if(ar.exist_arg({p+"-cpm-std"      })) params.cpm_std    = ar.get_arg    ({p+"-cpm-std"      });
-	if(ar.exist_arg({p+"-bps"          })) params.bps        = ar.get_arg_int({p+"-bps"          });
-	if(ar.exist_arg({p+"-ups"          })) params.upf        = ar.get_arg_int({p+"-ups"          });
-	if(ar.exist_arg({p+"-const-path"   })) params.const_path = ar.get_arg    ({p+"-const-path"   });
-	if(ar.exist_arg({p+"-cpm-L"        })) params.cpm_L      = ar.get_arg_int({p+"-cpm-L"        });
-	if(ar.exist_arg({p+"-cpm-p"        })) params.cpm_p      = ar.get_arg_int({p+"-cpm-p"        });
-	if(ar.exist_arg({p+"-cpm-k"        })) params.cpm_k      = ar.get_arg_int({p+"-cpm-k"        });
-	if(ar.exist_arg({p+"-cpm-map"      })) params.mapping    = ar.get_arg    ({p+"-cpm-map"      });
-	if(ar.exist_arg({p+"-cpm-ws"       })) params.wave_shape = ar.get_arg    ({p+"-cpm-ws"       });
+	if(exist(vals, {p+"-fra-size", "N"})) params.N          = std::stoi(vals.at({p+"-fra-size", "N"}));
+	if(exist(vals, {p+"-fra",      "F"})) params.n_frames   = std::stoi(vals.at({p+"-fra",      "F"}));
+	if(exist(vals, {p+"-type"         })) params.type       =           vals.at({p+"-type"         });
+	if(exist(vals, {p+"-cpm-std"      })) params.cpm_std    =           vals.at({p+"-cpm-std"      });
+	if(exist(vals, {p+"-bps"          })) params.bps        = std::stoi(vals.at({p+"-bps"          }));
+	if(exist(vals, {p+"-ups"          })) params.upf        = std::stoi(vals.at({p+"-ups"          }));
+	if(exist(vals, {p+"-const-path"   })) params.const_path =           vals.at({p+"-const-path"   });
+	if(exist(vals, {p+"-cpm-L"        })) params.cpm_L      = std::stoi(vals.at({p+"-cpm-L"        }));
+	if(exist(vals, {p+"-cpm-p"        })) params.cpm_p      = std::stoi(vals.at({p+"-cpm-p"        }));
+	if(exist(vals, {p+"-cpm-k"        })) params.cpm_k      = std::stoi(vals.at({p+"-cpm-k"        }));
+	if(exist(vals, {p+"-cpm-map"      })) params.mapping    =           vals.at({p+"-cpm-map"      });
+	if(exist(vals, {p+"-cpm-ws"       })) params.wave_shape =           vals.at({p+"-cpm-ws"       });
 
 	if (params.type.find("BPSK") != std::string::npos || params.type == "PAM")
 		params.complex = false;
@@ -246,11 +246,11 @@ void Modem
 	                                                params.cpm_p);
 
 	// --------------------------------------------------------------------------------------------------- demodulator
-	if(ar.exist_arg({p+"-no-sig2"})) params.no_sig2 = true;
-	if(ar.exist_arg({p+"-sigma"  })) params.sigma   = ar.get_arg_float({p+"-sigma"});
-	if(ar.exist_arg({p+"-ite"    })) params.n_ite   = ar.get_arg_int  ({p+"-ite"  });
-	if(ar.exist_arg({p+"-max"    })) params.max     = ar.get_arg      ({p+"-max"  });
-	if(ar.exist_arg({p+"-psi"    })) params.psi     = ar.get_arg      ({p+"-psi"  });
+	if(exist(vals, {p+"-no-sig2"})) params.no_sig2 = true;
+	if(exist(vals, {p+"-sigma"  })) params.sigma   = std::stof(vals.at({p+"-sigma"}));
+	if(exist(vals, {p+"-ite"    })) params.n_ite   = std::stoi(vals.at({p+"-ite"  }));
+	if(exist(vals, {p+"-max"    })) params.max     =           vals.at({p+"-max"  });
+	if(exist(vals, {p+"-psi"    })) params.psi     =           vals.at({p+"-psi"  });
 }
 
 void Modem

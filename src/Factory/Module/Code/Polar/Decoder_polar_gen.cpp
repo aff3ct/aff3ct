@@ -1126,9 +1126,9 @@ void Decoder_polar_gen
 }
 
 void Decoder_polar_gen
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Decoder_polar::store_args(ar, params);
+	Decoder_polar::store_args(vals, params);
 }
 
 void Decoder_polar_gen

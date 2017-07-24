@@ -34,13 +34,13 @@ void Simulation_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std
 	opt_args[{p+"-inter-lvl"}].push_back("1");
 }
 
-void Simulation_EXIT::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Simulation_EXIT::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Simulation::store_args(ar, params);
+	Simulation::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-siga-min", "a"})) params.sig_a_min  = ar.get_arg_float({p+"-siga-min", "a"});
-	if(ar.exist_arg({p+"-siga-max", "A"})) params.sig_a_max  = ar.get_arg_float({p+"-siga-max", "A"});
-	if(ar.exist_arg({p+"-siga-step"    })) params.sig_a_step = ar.get_arg_float({p+"-siga-step"    });
+	if(exist(vals, {p+"-siga-min", "a"})) params.sig_a_min  = std::stof(vals.at({p+"-siga-min", "a"}));
+	if(exist(vals, {p+"-siga-max", "A"})) params.sig_a_max  = std::stof(vals.at({p+"-siga-max", "A"}));
+	if(exist(vals, {p+"-siga-step"    })) params.sig_a_step = std::stof(vals.at({p+"-siga-step"    }));
 }
 
 void Simulation_EXIT::header(params_list& head_sim, const parameters& params)

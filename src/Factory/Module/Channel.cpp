@@ -95,17 +95,17 @@ void Channel
 }
 
 void Channel
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-fra-size", "N"})) params.N            = ar.get_arg_int  ({p+"-fra-size", "N"});
-	if(ar.exist_arg({p+"-fra",      "F"})) params.n_frames     = ar.get_arg_int  ({p+"-fra",      "F"});
-	if(ar.exist_arg({p+"-type"         })) params.type         = ar.get_arg      ({p+"-type"         });
-	if(ar.exist_arg({p+"-path"         })) params.path         = ar.get_arg      ({p+"-path"         });
-	if(ar.exist_arg({p+"-blk-fad"      })) params.block_fading = ar.get_arg      ({p+"-blk-fad"      });
-	if(ar.exist_arg({p+"-sigma"        })) params.sigma        = ar.get_arg_float({p+"-sigma"        });
-	if(ar.exist_arg({p+"-seed",     "S"})) params.seed         = ar.get_arg_int  ({p+"-seed",     "S"});
-	if(ar.exist_arg({p+"-add-users"    })) params.add_users    = true;
-	if(ar.exist_arg({p+"-complex"      })) params.complex      = true;
+	if(exist(vals, {p+"-fra-size", "N"})) params.N            = std::stoi(vals.at({p+"-fra-size", "N"}));
+	if(exist(vals, {p+"-fra",      "F"})) params.n_frames     = std::stoi(vals.at({p+"-fra",      "F"}));
+	if(exist(vals, {p+"-type"         })) params.type         =           vals.at({p+"-type"         });
+	if(exist(vals, {p+"-path"         })) params.path         =           vals.at({p+"-path"         });
+	if(exist(vals, {p+"-blk-fad"      })) params.block_fading =           vals.at({p+"-blk-fad"      });
+	if(exist(vals, {p+"-sigma"        })) params.sigma        = std::stof(vals.at({p+"-sigma"        }));
+	if(exist(vals, {p+"-seed",     "S"})) params.seed         = std::stoi(vals.at({p+"-seed",     "S"}));
+	if(exist(vals, {p+"-add-users"    })) params.add_users    = true;
+	if(exist(vals, {p+"-complex"      })) params.complex      = true;
 }
 
 void Channel

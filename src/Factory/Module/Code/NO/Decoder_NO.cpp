@@ -31,12 +31,12 @@ void Decoder_NO
 }
 
 void Decoder_NO
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "NONE";
 	params.implem = "HARD_DECISION";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 }
 
 void Decoder_NO

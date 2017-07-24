@@ -48,12 +48,12 @@ template <class C, typename B, typename R, typename Q>
 void Launcher_RA<C,B,R,Q>
 ::store_args()
 {
-	factory::Encoder_RA::store_args(this->ar, *params_enc);
+	factory::Encoder_RA::store_args(this->ar.get_args(), *params_enc);
 
 	params_dec->K    = params_enc->K;
 	params_dec->N_cw = params_enc->N_cw;
 
-	factory::Decoder_RA::store_args(this->ar, *params_dec);
+	factory::Decoder_RA::store_args(this->ar.get_args(), *params_dec);
 
 	this->params->pct->type = "NO";
 	this->params->pct->K    = params_enc->K;

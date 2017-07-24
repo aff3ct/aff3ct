@@ -1,5 +1,9 @@
-#include <sstream>
+#include <vector>
 #include <cstdint>
+#include <sstream>
+#include <typeinfo>
+#include <typeindex>
+#include <unordered_map>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
@@ -170,15 +174,15 @@ void Launcher::build_args(arg_map &req_args, arg_map &opt_args, const std::strin
 		 "print informations about the version of the code."};
 }
 
-void Launcher::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Launcher::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-cde-type",  "C"})) params.cde_type        = ar.get_arg({p+"-cde-type", "C"}); // required
-	if(ar.exist_arg({p+"-type"          })) params.sim_type        = ar.get_arg({p+"-type"         });
-	if(ar.exist_arg({"help",         "h"})) params.display_help    = true;
-	if(ar.exist_arg({"version",      "v"})) params.display_version = true;
+	if(exist(vals, {p+"-cde-type",  "C"})) params.cde_type        = vals.at({p+"-cde-type", "C"}); // required
+	if(exist(vals, {p+"-type"          })) params.sim_type        = vals.at({p+"-type"         });
+	if(exist(vals, {"help",         "h"})) params.display_help    = true;
+	if(exist(vals, {"version",      "v"})) params.display_version = true;
 
 #ifdef MULTI_PREC
-	if(ar.exist_arg({"sim-prec", "p"})) params.sim_prec = ar.get_arg_int({"sim-prec", "p"});
+	if(exist(vals, {"sim-prec", "p"})) params.sim_prec = std::stoi(vals.at({"sim-prec", "p"}));
 #endif
 }
 

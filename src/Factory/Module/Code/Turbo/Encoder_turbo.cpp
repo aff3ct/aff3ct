@@ -63,15 +63,15 @@ void Encoder_turbo
 }
 
 void Encoder_turbo
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "TURBO";
 
-	Encoder::store_args(ar, params);
+	Encoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-std"      })) params.standard  = ar.get_arg({p+"-std"      });
-	if(ar.exist_arg({p+"-json-path"})) params.json_path = ar.get_arg({p+"-json-path"});
-	if(ar.exist_arg({p+"-no-buff"  })) params.buffered  = false;
+	if(exist(vals, {p+"-std"      })) params.standard  = vals.at({p+"-std"      });
+	if(exist(vals, {p+"-json-path"})) params.json_path = vals.at({p+"-json-path"});
+	if(exist(vals, {p+"-no-buff"  })) params.buffered  = false;
 
 	if (!params.json_path.empty())
 		params.type = "TURBO_JSON";
@@ -79,20 +79,20 @@ void Encoder_turbo
 	if (params.standard == "LTE")
 	{
 		params.poly = {013, 015};
-		if (!ar.exist_arg({"itl-type"}))
+		if (!exist(vals, {"itl-type"}))
 			params.itl.type = "LTE";
 	}
 
 	if (params.standard == "CCSDS")
 	{
 		params.poly = {023, 033};
-		if (!ar.exist_arg({"itl-type"}))
+		if (!exist(vals, {"itl-type"}))
 			params.itl.type = "CCSDS";
 	}
 
-	if (ar.exist_arg({p+"-poly"}))
+	if (exist(vals, {p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({p+"-poly"});
+		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);
@@ -107,7 +107,7 @@ void Encoder_turbo
 
 	params.itl.size     = params.K;
 	params.itl.n_frames = params.n_frames;
-	Interleaver::store_args(ar, params.itl, "itl");
+	Interleaver::store_args(vals, params.itl, "itl");
 }
 
 void Encoder_turbo

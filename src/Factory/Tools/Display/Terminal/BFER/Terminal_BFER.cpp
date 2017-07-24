@@ -33,13 +33,13 @@ void Terminal_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::
 		 "number of bits in the codeword."};
 }
 
-void Terminal_BFER::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Terminal_BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Terminal::store_args(ar, params);
+	Terminal::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-info-bits", "K"})) params.K    = ar.get_arg_int({p+"-info-bits", "K"});
-	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N    = ar.get_arg_int({p+"-cw-size",   "N"});
-	if(ar.exist_arg({p+"-type"          })) params.type = ar.get_arg    ({p+"-type"          });
+	if(exist(vals, {p+"-info-bits", "K"})) params.K    = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-cw-size",   "N"})) params.N    = std::stoi(vals.at({p+"-cw-size",   "N"}));
+	if(exist(vals, {p+"-type"          })) params.type =           vals.at({p+"-type"          });
 }
 
 void Terminal_BFER::header(params_list& head_ter, const parameters& params)

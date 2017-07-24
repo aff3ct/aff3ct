@@ -44,15 +44,15 @@ void Encoder_RSC
 }
 
 void Encoder_RSC
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "RSC";
 
-	Encoder::store_args(ar, params);
+	Encoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-no-buff"})) params.buffered = false;
+	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
 
-	if(ar.exist_arg({p+"-std"})) params.standard = ar.get_arg({"enc-std"});
+	if(exist(vals, {p+"-std"})) params.standard = vals.at({"enc-std"});
 
 	if (params.standard == "LTE")
 		params.poly = {013, 015};
@@ -60,9 +60,9 @@ void Encoder_RSC
 	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
-	if (ar.exist_arg({p+"-poly"}))
+	if (exist(vals, {p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({p+"-poly"});
+		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);

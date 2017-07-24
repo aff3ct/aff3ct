@@ -14,7 +14,6 @@
 #include "Factory/Module/Source.hpp"
 #include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
-#include "Tools/Arguments_reader.hpp"
 #include "Tools/Codec/Codec_SISO.hpp"
 
 #include "../Simulation.hpp"
@@ -81,7 +80,7 @@ struct Simulation_EXIT : Simulation
 	static simulation::Simulation_EXIT<B,R>* build(const parameters &params, tools::Codec_SISO<B,R> &codec);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_sim, const parameters& params);
 };
 }

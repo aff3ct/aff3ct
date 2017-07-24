@@ -51,13 +51,13 @@ void CRC
 }
 
 void CRC
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-info-bits", "K"})) params.K        = ar.get_arg_int({p+"-info-bits", "K"});
-	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames = ar.get_arg_int({p+"-fra",       "F"});
-	if(ar.exist_arg({p+"-type"          })) params.type     = ar.get_arg    ({p+"-type"          });
-	if(ar.exist_arg({p+"-poly"          })) params.poly     = ar.get_arg    ({p+"-poly"          });
-	if(ar.exist_arg({p+"-size"          })) params.size     = ar.get_arg_int({p+"-size"          });
+	if(exist(vals, {p+"-info-bits", "K"})) params.K        = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-fra",       "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-type"          })) params.type     =           vals.at({p+"-type"          });
+	if(exist(vals, {p+"-poly"          })) params.poly     =           vals.at({p+"-poly"          });
+	if(exist(vals, {p+"-size"          })) params.size     = std::stoi(vals.at({p+"-size"          }));
 
 	if (!params.poly.empty() && !params.size)
 		params.size = module::CRC_polynomial<>::size(params.poly);

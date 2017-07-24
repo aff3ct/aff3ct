@@ -41,31 +41,31 @@ void Simulation_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std
 		 "enable the coset approach."};
 }
 
-void Simulation_BFER::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Simulation_BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 #if !defined(STARPU) && !defined(SYSTEMC)
 	params.n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 
-	Simulation::store_args(ar, params);
+	Simulation::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-benchs",     "b"})) params.benchs      = ar.get_arg_int({p+"-benchs",   "b"});
-	if(ar.exist_arg({p+"-snr-type",   "E"})) params.snr_type    = ar.get_arg    ({p+"-snr-type", "E"});
-	if(ar.exist_arg({p+"-time-report"    })) params.time_report = true;
-	if(ar.exist_arg({p+"-debug",      "d"})) params.debug       = true;
-	if(ar.exist_arg({p+"-coset",      "c"})) params.coset       = true;
-	if(ar.exist_arg({p+"-debug-limit"}))
+	if(exist(vals, {p+"-benchs",     "b"})) params.benchs      = std::stoi(vals.at({p+"-benchs",   "b"}));
+	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type    =           vals.at({p+"-snr-type", "E"});
+	if(exist(vals, {p+"-time-report"    })) params.time_report = true;
+	if(exist(vals, {p+"-debug",      "d"})) params.debug       = true;
+	if(exist(vals, {p+"-coset",      "c"})) params.coset       = true;
+	if(exist(vals, {p+"-debug-limit"}))
 	{
 		params.debug = true;
-		params.debug_limit = ar.get_arg_int({p+"-debug-limit"});
+		params.debug_limit = std::stoi(vals.at({p+"-debug-limit"}));
 	}
-	if(ar.exist_arg({p+"-debug-prec"}))
+	if(exist(vals, {p+"-debug-prec"}))
 	{
 		params.debug = true;
-		params.debug_precision = ar.get_arg_int({p+"-debug-prec"});
+		params.debug_precision = std::stoi(vals.at({p+"-debug-prec"}));
 	}
 
-	if (params.debug && !(ar.exist_arg({p+"-threads", "t"}) && ar.get_arg_int({p+"-threads", "t"}) > 0))
+	if (params.debug && !(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0))
 		// check if debug is asked and if n_thread kept its default value
 		params.n_threads = 1;
 

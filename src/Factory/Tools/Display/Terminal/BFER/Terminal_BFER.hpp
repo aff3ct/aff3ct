@@ -7,8 +7,6 @@
 #include "Module/Monitor/Monitor.hpp"
 #include "Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
-#include "Tools/Arguments_reader.hpp"
-
 #include "../Terminal.hpp"
 
 namespace aff3ct
@@ -33,7 +31,7 @@ struct Terminal_BFER : Terminal
 	                                      const std::chrono::nanoseconds *d_decod_total = nullptr);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters& params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_ter, const parameters& params);
 };
 }

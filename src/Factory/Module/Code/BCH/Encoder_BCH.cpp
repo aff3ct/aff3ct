@@ -28,11 +28,11 @@ void Encoder_BCH
 }
 
 void Encoder_BCH
-::store_args(const tools::Arguments_reader& ar, Encoder::parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "BCH";
 
-	Encoder::store_args(ar, params);
+	Encoder::store_args(vals, params);
 }
 
 void Encoder_BCH

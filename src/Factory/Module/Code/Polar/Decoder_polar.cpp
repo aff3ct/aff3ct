@@ -299,18 +299,18 @@ void Decoder_polar
 }
 
 void Decoder_polar
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "SC";
 	params.implem = "FAST";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-ite",         "i"})) params.n_ite         = ar.get_arg_int({p+"-ite",    "i"});
-	if(ar.exist_arg({p+"-lists",       "L"})) params.L             = ar.get_arg_int({p+"-lists",  "L"});
-	if(ar.exist_arg({p+"-simd"            })) params.simd_strategy = ar.get_arg    ({p+"-simd"       });
-	if(ar.exist_arg({p+"-polar-nodes"     })) params.polar_nodes   = ar.get_arg    ({p+"-polar-nodes"});
-	if(ar.exist_arg({p+"-partial-adaptive"})) params.full_adaptive  = false;
+	if(exist(vals, {p+"-ite",         "i"})) params.n_ite         = std::stoi(vals.at({p+"-ite",    "i"}));
+	if(exist(vals, {p+"-lists",       "L"})) params.L             = std::stoi(vals.at({p+"-lists",  "L"}));
+	if(exist(vals, {p+"-simd"            })) params.simd_strategy =           vals.at({p+"-simd"       });
+	if(exist(vals, {p+"-polar-nodes"     })) params.polar_nodes   =           vals.at({p+"-polar-nodes"});
+	if(exist(vals, {p+"-partial-adaptive"})) params.full_adaptive = false;
 
 	// force 1 iteration max if not SCAN (and polar code)
 	if (params.type != "SCAN") params.n_ite = 1;

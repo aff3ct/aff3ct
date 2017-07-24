@@ -24,19 +24,20 @@ namespace tools
 class Arguments_reader
 {
 public:
-	using arg_map = std::map<std::vector<std::string>, std::vector<std::string>>;
-	using arg_grp = std::vector<std::vector<std::string>>;
+	using arg_map     = std::map<std::vector<std::string>, std::vector<std::string>>;
+	using arg_grp     = std::vector<std::vector<std::string>>;
+	using arg_val_map = std::map<std::vector<std::string>, std::string>;
 
 private:
-	std::vector<std::string>                        m_argv;          /*!< Copy of "char** argv". */
-	arg_map                                         m_required_args; /*!< List of the required arguments, syntax is the following:
-	                                                                  *!< m_required_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	arg_map                                         m_optional_args; /*!< List of the optional arguments, storage is made as following:
-	                                                                  *!< m_optional_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
-	std::map<std::vector<std::string>, std::string> m_args;          /*!< List of the arguments and associate values (after parsing), storage is made as following:
-	                                                                  *!< m_args[{"key1", "key2", [...]}] = "value". */
-	std::string                                     m_program_name;  /*!< Program binary name. */
-	unsigned int                                    max_n_char_arg;  /*!< The number of characters of the largest argument name. */
+	std::vector<std::string> m_argv;          /*!< Copy of "char** argv". */
+	arg_map                  m_required_args; /*!< List of the required arguments, syntax is the following:
+	                                           *!< m_required_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	arg_map                  m_optional_args; /*!< List of the optional arguments, storage is made as following:
+	                                           *!< m_optional_args[{"key1", "key2", [...]}] = {"type", ["doc"], ["possible choices separated by a comma"]}. */
+	arg_val_map              m_args;          /*!< List of the arguments and associate values (after parsing), storage is made as following:
+	                                           *!< m_args[{"key1", "key2", [...]}] = "value". */
+	std::string              m_program_name;  /*!< Program binary name. */
+	unsigned int             max_n_char_arg;  /*!< The number of characters of the largest argument name. */
 
 public:
 	/*!
@@ -91,6 +92,16 @@ public:
 	bool exist_arg(const std::vector<std::string> &tags) const
 	{
 		return exist_argument(tags);
+	}
+
+	const arg_val_map& get_arguments() const
+	{
+		return this->m_args;
+	}
+
+	const arg_val_map& get_args() const
+	{
+		return get_arguments();
 	}
 
 	/*!

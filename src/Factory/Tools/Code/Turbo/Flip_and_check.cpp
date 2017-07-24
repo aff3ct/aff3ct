@@ -59,18 +59,18 @@ void Flip_and_check
 }
 
 void Flip_and_check
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p             })) params.enable              = true;
-	if(ar.exist_arg({p+"-size"     })) params.size                = ar.get_arg_int({p+"-size"     });
-	if(ar.exist_arg({p+"-q"        })) params.q                   = ar.get_arg_int({p+"-q"        });
-	if(ar.exist_arg({p+"-ite-s"    })) params.ite_step            = ar.get_arg_int({p+"-ite-s"    });
-	if(ar.exist_arg({p+"-ite",  "i"})) params.n_ite               = ar.get_arg_int({p+"-ite",  "i"});
-	if(ar.exist_arg({p+"-ite-m"    })) params.ite_min             = ar.get_arg_int({p+"-ite-m"    });
-	if(ar.exist_arg({p+"-ite-M"    })) params.ite_max             = ar.get_arg_int({p+"-ite-M"    });
-	else                               params.ite_max             = params.n_ite;
-	if(ar.exist_arg({p+"-crc-ite"  })) params.start_crc_check_ite = ar.get_arg_int({p+"-crc-ite"  });
-	if(ar.exist_arg({p+"-fra",  "F"})) params.n_frames            = ar.get_arg_int({p+"-fra", "F" });
+	if(exist(vals, {p             })) params.enable              = true;
+	if(exist(vals, {p+"-size"     })) params.size                = std::stoi(vals.at({p+"-size"     }));
+	if(exist(vals, {p+"-q"        })) params.q                   = std::stoi(vals.at({p+"-q"        }));
+	if(exist(vals, {p+"-ite-s"    })) params.ite_step            = std::stoi(vals.at({p+"-ite-s"    }));
+	if(exist(vals, {p+"-ite",  "i"})) params.n_ite               = std::stoi(vals.at({p+"-ite",  "i"}));
+	if(exist(vals, {p+"-ite-m"    })) params.ite_min             = std::stoi(vals.at({p+"-ite-m"    }));
+	if(exist(vals, {p+"-ite-M"    })) params.ite_max             = std::stoi(vals.at({p+"-ite-M"    }));
+	else                              params.ite_max             = params.n_ite;
+	if(exist(vals, {p+"-crc-ite"  })) params.start_crc_check_ite = std::stoi(vals.at({p+"-crc-ite"  }));
+	if(exist(vals, {p+"-fra",  "F"})) params.n_frames            = std::stoi(vals.at({p+"-fra", "F" }));
 }
 
 void Flip_and_check

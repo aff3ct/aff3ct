@@ -48,14 +48,14 @@ void Monitor
 }
 
 void Monitor
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-size",    "K"})) params.size             = ar.get_arg_int({p+"-size",    "K"});
-	if(ar.exist_arg({p+"-fra",     "F"})) params.n_frames         = ar.get_arg_int({p+"-fra",     "F"});
-	if(ar.exist_arg({p+"-max-fe",  "e"})) params.n_frame_errors   = ar.get_arg_int({p+"-max-fe",  "e"});
-	if(ar.exist_arg({p+"-err-trk-path"})) params.err_track_path   = ar.get_arg    ({p+"-err-trk-path"});
-	if(ar.exist_arg({p+"-err-trk-rev" })) params.err_track_revert = true;
-	if(ar.exist_arg({p+"-err-trk"     })) params.err_track_enable = true;
+	if(exist(vals, {p+"-size",    "K"})) params.size             = std::stoi(vals.at({p+"-size",    "K"}));
+	if(exist(vals, {p+"-fra",     "F"})) params.n_frames         = std::stoi(vals.at({p+"-fra",     "F"}));
+	if(exist(vals, {p+"-max-fe",  "e"})) params.n_frame_errors   = std::stoi(vals.at({p+"-max-fe",  "e"}));
+	if(exist(vals, {p+"-err-trk-path"})) params.err_track_path   =           vals.at({p+"-err-trk-path"});
+	if(exist(vals, {p+"-err-trk-rev" })) params.err_track_revert = true;
+	if(exist(vals, {p+"-err-trk"     })) params.err_track_enable = true;
 
 	if(params.err_track_revert)
 		params.err_track_enable = false;

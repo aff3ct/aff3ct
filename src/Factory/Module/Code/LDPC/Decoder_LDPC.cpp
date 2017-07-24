@@ -82,20 +82,20 @@ void Decoder_LDPC
 }
 
 void Decoder_LDPC
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "BP_FLOODING";
 	params.implem = "SPA";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-h-path"    })) params.H_alist_path    = ar.get_arg      ({p+"-h-path"    });
-	if(ar.exist_arg({p+"-ite",   "i"})) params.n_ite           = ar.get_arg_int  ({p+"-ite",   "i"});
-	if(ar.exist_arg({p+"-off"       })) params.offset          = ar.get_arg_float({p+"-off"       });
-	if(ar.exist_arg({p+"-norm"      })) params.norm_factor     = ar.get_arg_float({p+"-norm"      });
-	if(ar.exist_arg({p+"-synd-depth"})) params.syndrome_depth  = ar.get_arg_int  ({p+"-synd-depth"});
-	if(ar.exist_arg({p+"-simd"      })) params.simd_strategy   = ar.get_arg      ({p+"-simd"      });
-	if(ar.exist_arg({p+"-no-synd"   })) params.enable_syndrome = false;
+	if(exist(vals, {p+"-h-path"    })) params.H_alist_path    =           vals.at({p+"-h-path"    });
+	if(exist(vals, {p+"-ite",   "i"})) params.n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));
+	if(exist(vals, {p+"-off"       })) params.offset          = std::stof(vals.at({p+"-off"       }));
+	if(exist(vals, {p+"-norm"      })) params.norm_factor     = std::stof(vals.at({p+"-norm"      }));
+	if(exist(vals, {p+"-synd-depth"})) params.syndrome_depth  = std::stoi(vals.at({p+"-synd-depth"}));
+	if(exist(vals, {p+"-simd"      })) params.simd_strategy   =           vals.at({p+"-simd"      });
+	if(exist(vals, {p+"-no-synd"   })) params.enable_syndrome = false;
 }
 
 void Decoder_LDPC

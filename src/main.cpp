@@ -13,8 +13,8 @@
 #include <systemc>
 #endif
 
-#include "Tools/git_sha1.h"
 #include "Tools/types.h"
+#include "Tools/git_sha1.h"
 #include "Tools/Arguments_reader.hpp"
 #include "Tools/Display/bash_tools.h"
 
@@ -100,7 +100,7 @@ void read_arguments(const int argc, const char** argv, factory::Launcher::parame
 	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
 	bool error    = !ar.check_arguments(cmd_error);
 
-	factory::Launcher::store_args(ar, params, "sim");
+	factory::Launcher::store_args(ar.get_args(), params, "sim");
 
 	if (params.display_version)
 		print_version();

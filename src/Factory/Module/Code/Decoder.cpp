@@ -28,14 +28,14 @@ void Decoder::build_args(arg_map &req_args, arg_map &opt_args, const std::string
 		 "select the implementation of the algorithm to decode."};
 }
 
-void Decoder::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Decoder::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-info-bits", "K"})) params.K          = ar.get_arg_int({p+"-info-bits", "K"});
-	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N_cw       = ar.get_arg_int({p+"-cw-size",   "N"});
-	if(ar.exist_arg({p+"-fra",       "F"})) params.n_frames   = ar.get_arg_int({p+"-fra",       "F"});
-	if(ar.exist_arg({p+"-type",      "D"})) params.type       = ar.get_arg    ({p+"-type",      "D"});
-	if(ar.exist_arg({p+"-implem"        })) params.implem     = ar.get_arg    ({p+"-implem"        });
-	if(ar.exist_arg({p+"-no-sys"        })) params.systematic = false;
+	if(exist(vals, {p+"-info-bits", "K"})) params.K          = std::stoi(vals.at({p+"-info-bits", "K"}));
+	if(exist(vals, {p+"-cw-size",   "N"})) params.N_cw       = std::stoi(vals.at({p+"-cw-size",   "N"}));
+	if(exist(vals, {p+"-fra",       "F"})) params.n_frames   = std::stoi(vals.at({p+"-fra",       "F"}));
+	if(exist(vals, {p+"-type",      "D"})) params.type       =           vals.at({p+"-type",      "D"});
+	if(exist(vals, {p+"-implem"        })) params.implem     =           vals.at({p+"-implem"        });
+	if(exist(vals, {p+"-no-sys"        })) params.systematic = false;
 
 	params.R = (float)params.K / (float)params.N_cw;
 }

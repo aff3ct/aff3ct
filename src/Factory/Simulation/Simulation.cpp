@@ -57,33 +57,33 @@ void Simulation::build_args(arg_map &req_args, arg_map &opt_args, const std::str
 #endif
 }
 
-void Simulation::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Simulation::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	using namespace std::chrono;
 
-	Launcher::store_args(ar, params, p);
+	Launcher::store_args(vals, params, p);
 
-	if(ar.exist_arg({p+"-snr-min",  "m"})) params.snr_min =           ar.get_arg_float({p+"-snr-min",  "m"});
-	if(ar.exist_arg({p+"-snr-max",  "M"})) params.snr_max =           ar.get_arg_float({p+"-snr-max",  "M"});
-	if(ar.exist_arg({p+"-pyber"        })) params.pyber     =         ar.get_arg      ({p+"-pyber"        });
-	if(ar.exist_arg({p+"-snr-step", "s"})) params.snr_step  =         ar.get_arg_float({p+"-snr-step", "s"});
-	if(ar.exist_arg({p+"-stop-time"    })) params.stop_time = seconds(ar.get_arg_int  ({p+"-stop-time"    }));
-	if(ar.exist_arg({p+"-seed",     "S"})) params.seed      =         ar.get_arg_int  ({p+"-seed",     "S"});
+	if(exist(vals, {p+"-snr-min",  "m"})) params.snr_min =           std::stof(vals.at({p+"-snr-min",  "m"}));
+	if(exist(vals, {p+"-snr-max",  "M"})) params.snr_max =           std::stof(vals.at({p+"-snr-max",  "M"}));
+	if(exist(vals, {p+"-pyber"        })) params.pyber     =                   vals.at({p+"-pyber"        });
+	if(exist(vals, {p+"-snr-step", "s"})) params.snr_step  =         std::stof(vals.at({p+"-snr-step", "s"}));
+	if(exist(vals, {p+"-stop-time"    })) params.stop_time = seconds(std::stoi(vals.at({p+"-stop-time"    })));
+	if(exist(vals, {p+"-seed",     "S"})) params.seed      =         std::stoi(vals.at({p+"-seed",     "S"}));
 
 	params.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
 #ifndef STARPU
-	if(ar.exist_arg({p+"-threads", "t"}) && ar.get_arg_int({p+"-threads", "t"}) > 0)
-		if(ar.exist_arg({p+"-threads", "t"})) params.n_threads = ar.get_arg_int({p+"-threads",    "t"});
+	if(exist(vals, {p+"-threads", "t"}) && std::stoi(vals.at({p+"-threads", "t"})) > 0)
+		if(exist(vals, {p+"-threads", "t"})) params.n_threads = std::stoi(vals.at({p+"-threads",    "t"}));
 #else
-	if(ar.exist_arg({p+"-conc-tasks", "t"})) params.n_threads  = ar.get_arg_int({p+"-conc-tasks", "t"});
+	if(exist(vals, {p+"-conc-tasks", "t"})) params.n_threads  = std::stoi(vals.at({p+"-conc-tasks", "t"}));
 #endif
 
 #ifdef ENABLE_MPI
 	MPI_Comm_size(MPI_COMM_WORLD, &params.mpi_size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &params.mpi_rank);
 
-	if(ar.exist_arg({p+"-mpi-comm"})) params.mpi_comm_freq = milliseconds(ar.get_arg_int({p+"-mpi-comm"}));
+	if(exist(vals, {p+"-mpi-comm"})) params.mpi_comm_freq = milliseconds(std::stoi(vals.at({p+"-mpi-comm"})));
 
 	int max_n_threads_global;
 	int max_n_threads_local = params.simulation.n_threads;
@@ -107,11 +107,11 @@ void Simulation::store_args(const tools::Arguments_reader& ar, parameters &param
 	if (!params.pyber.empty())
 		tools::enable_bash_tools = false;
 
-	if (ar.exist_arg({p+"-no-colors"})) tools::enable_bash_tools = false;
+	if (exist(vals, {p+"-no-colors"})) tools::enable_bash_tools = false;
 #endif
 
 #ifdef MULTI_PREC
-	if(ar.exist_arg({p+"-prec", "p"})) params.sim_prec = ar.get_arg_int({p+"-prec", "p"});
+	if(exist(vals, {p+"-prec", "p"})) params.sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
 #endif
 }
 

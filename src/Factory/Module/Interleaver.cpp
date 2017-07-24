@@ -67,15 +67,15 @@ void Interleaver
 }
 
 void Interleaver
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	if(ar.exist_arg({p+"-size"     })) params.size     = ar.get_arg_int({p+"-size"     });
-	if(ar.exist_arg({p+"-fra",  "F"})) params.n_frames = ar.get_arg_int({p+"-fra",  "F"});
-	if(ar.exist_arg({p+"-type"     })) params.type     = ar.get_arg    ({p+"-type"     });
-	if(ar.exist_arg({p+"-path"     })) params.path     = ar.get_arg    ({p+"-path"     });
-	if(ar.exist_arg({p+"-cols"     })) params.n_cols   = ar.get_arg_int({p+"-cols"     });
-	if(ar.exist_arg({p+"-seed", "S"})) params.seed     = ar.get_arg_int({p+"-seed", "S"});
-	if(ar.exist_arg({p+"-uni"      })) params.uniform  = true;
+	if(exist(vals, {p+"-size"     })) params.size     = std::stoi(vals.at({p+"-size"     }));
+	if(exist(vals, {p+"-fra",  "F"})) params.n_frames = std::stoi(vals.at({p+"-fra",  "F"}));
+	if(exist(vals, {p+"-type"     })) params.type     =           vals.at({p+"-type"     });
+	if(exist(vals, {p+"-path"     })) params.path     =           vals.at({p+"-path"     });
+	if(exist(vals, {p+"-cols"     })) params.n_cols   = std::stoi(vals.at({p+"-cols"     }));
+	if(exist(vals, {p+"-seed", "S"})) params.seed     = std::stoi(vals.at({p+"-seed", "S"}));
+	if(exist(vals, {p+"-uni"      })) params.uniform  = true;
 }
 
 void Interleaver

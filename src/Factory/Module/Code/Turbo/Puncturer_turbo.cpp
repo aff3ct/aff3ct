@@ -112,15 +112,15 @@ int compute_N(const int K, const int tail_bits,  const std::string pattern)
 }
 
 void Puncturer_turbo
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "TURBO";
 
-	Puncturer::store_args(ar, params);
+	Puncturer::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-pattern"    })) params.pattern     = ar.get_arg    ({p+"-pattern"    });
-	if(ar.exist_arg({p+"-tail-length"})) params.tail_length = ar.get_arg_int({p+"-tail-length"});
-	if(ar.exist_arg({p+"-no-buff"    })) params.buffered    = false;
+	if(exist(vals, {p+"-pattern"    })) params.pattern     =           vals.at({p+"-pattern"    });
+	if(exist(vals, {p+"-tail-length"})) params.tail_length = std::stoi(vals.at({p+"-tail-length"}));
+	if(exist(vals, {p+"-no-buff"    })) params.buffered    = false;
 
 	params.N_cw = 3 * params.K + params.tail_length;
 	params.N    = compute_N(params.K, params.tail_length, params.pattern);

@@ -38,14 +38,14 @@ void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::
 		 "STD"};
 }
 
-void Terminal_EXIT::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Terminal_EXIT::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Terminal::store_args(ar, params);
+	Terminal::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-cw-size",   "N"})) params.N     = ar.get_arg_int  ({p+"-cw-size",   "N"});
-	if(ar.exist_arg({p+"-snr"           })) params.snr   = ar.get_arg_float({p+"-snr"           });
-	if(ar.exist_arg({p+"-sig-a"         })) params.sig_a = ar.get_arg_float({p+"-sig-a"         });
-	if(ar.exist_arg({p+"-type"          })) params.type  = ar.get_arg      ({p+"-type"          });
+	if(exist(vals, {p+"-cw-size", "N"})) params.N     = std::stoi(vals.at({p+"-cw-size", "N"}));
+	if(exist(vals, {p+"-snr"         })) params.snr   = std::stof(vals.at({p+"-snr"         }));
+	if(exist(vals, {p+"-sig-a"       })) params.sig_a = std::stof(vals.at({p+"-sig-a"       }));
+	if(exist(vals, {p+"-type"        })) params.type  =           vals.at({p+"-type"        });
 }
 
 void Terminal_EXIT::header(params_list& head_ter, const parameters& params)

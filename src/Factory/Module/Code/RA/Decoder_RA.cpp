@@ -37,18 +37,18 @@ void Decoder_RA
 }
 
 void Decoder_RA
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "RA";
 	params.implem = "STD";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 
 	params.itl.size     = params.N_cw;
 	params.itl.n_frames = params.n_frames;
-	Interleaver::store_args(ar, params.itl, "itl");
+	Interleaver::store_args(vals, params.itl, "itl");
 
-	if(ar.exist_arg({p+"-ite", "i"})) params.n_ite = ar.get_arg_int({p+"-ite", "i"});
+	if(exist(vals, {p+"-ite", "i"})) params.n_ite = std::stoi(vals.at({p+"-ite", "i"}));
 }
 
 void Decoder_RA

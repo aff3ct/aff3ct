@@ -29,11 +29,11 @@ void Simulation_BFER_ite::build_args(arg_map &req_args, arg_map &opt_args, const
 		 "number of global iterations between the demodulator and the decoder."};
 }
 
-void Simulation_BFER_ite::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+void Simulation_BFER_ite::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Simulation_BFER::store_args(ar, params);
+	Simulation_BFER::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-ite", "I"})) params.n_ite = ar.get_arg_int({p+"-ite", "I"});
+	if(exist(vals, {p+"-ite", "I"})) params.n_ite = std::stoi(vals.at({p+"-ite", "I"}));
 }
 
 void Simulation_BFER_ite::header(params_list& head_sim, const parameters& params)

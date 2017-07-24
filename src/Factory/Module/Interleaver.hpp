@@ -5,8 +5,6 @@
 
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "Tools/Arguments_reader.hpp"
-
 #include "../Factory.hpp"
 
 namespace aff3ct
@@ -34,7 +32,7 @@ struct Interleaver : public Factory
 	static module::Interleaver<T>* build(const parameters &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_itl, const parameters& params);
 };
 }

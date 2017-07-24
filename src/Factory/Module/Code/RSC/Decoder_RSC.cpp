@@ -153,17 +153,17 @@ void Decoder_RSC
 }
 
 void Decoder_RSC
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type   = "BCJR";
 	params.implem = "STD";
 
-	Decoder::store_args(ar, params);
+	Decoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-simd"   })) params.simd_strategy = ar.get_arg({p+"-simd"});
-	if(ar.exist_arg({p+"-max"    })) params.max           = ar.get_arg({p+"-max" });
-	if(ar.exist_arg({p+"-std"    })) params.standard      = ar.get_arg({p+"-std" });
-	if(ar.exist_arg({p+"-no-buff"})) params.buffered      = false;
+	if(exist(vals, {p+"-simd"   })) params.simd_strategy = vals.at({p+"-simd"});
+	if(exist(vals, {p+"-max"    })) params.max           = vals.at({p+"-max" });
+	if(exist(vals, {p+"-std"    })) params.standard      = vals.at({p+"-std" });
+	if(exist(vals, {p+"-no-buff"})) params.buffered      = false;
 
 	if (params.standard == "LTE")
 		params.poly = {013, 015};
@@ -171,9 +171,9 @@ void Decoder_RSC
 	if (params.standard == "CCSDS")
 		params.poly = {023, 033};
 
-	if (ar.exist_arg({p+"-poly"}))
+	if (exist(vals, {p+"-poly"}))
 	{
-		auto poly_str = ar.get_arg({p+"-poly"});
+		auto poly_str = vals.at({p+"-poly"});
 
 #ifdef _MSC_VER
 		sscanf_s   (poly_str.c_str(), "{%o,%o}", &params.poly[0], &params.poly[1]);

@@ -32,13 +32,13 @@ void Encoder_repetition
 }
 
 void Encoder_repetition
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "REPETITION";
 
-	Encoder::store_args(ar, params);
+	Encoder::store_args(vals, params);
 
-	if(ar.exist_arg({p+"-no-buff"})) params.buffered = false;
+	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
 }
 
 void Encoder_repetition

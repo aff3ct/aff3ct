@@ -29,11 +29,11 @@ void Puncturer_polar
 }
 
 void Puncturer_polar
-::store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p)
+::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 	params.type = "WANGLIU";
 
-	Puncturer::store_args(ar, params);
+	Puncturer::store_args(vals, params);
 	params.N_cw = (int)std::exp2((int)std::ceil(std::log2(params.N)));
 	params.R = (float)params.K / (float)params.N;
 

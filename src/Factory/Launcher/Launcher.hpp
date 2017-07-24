@@ -2,12 +2,6 @@
 #define FACTORY_SIMULATION_MAIN_H_
 
 #include <string>
-#include <vector>
-#include <typeinfo>
-#include <typeindex>
-#include <unordered_map>
-
-#include "Tools/Arguments_reader.hpp"
 
 #include "../Factory.hpp"
 
@@ -42,7 +36,7 @@ struct Launcher : public Factory
 	static launcher::Launcher* build(const parameters &params, const int argc, const char **argv);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters& params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_sim, const parameters& params);
 
 private:

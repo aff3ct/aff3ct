@@ -5,7 +5,6 @@
 
 #include "Factory/Module/Interleaver.hpp"
 
-#include "Tools/Arguments_reader.hpp"
 #include "Tools/Codec/Codec_SISO.hpp"
 
 #include "Simulation_BFER.hpp"
@@ -50,7 +49,7 @@ struct Simulation_BFER_ite : Simulation_BFER
 	static simulation::Simulation_BFER_ite<B,R,Q>* build(const parameters &params, tools::Codec_SISO<B,Q> &codec);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
-	static void store_args(const tools::Arguments_reader& ar, parameters &params, const std::string p = prefix);
+	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
 	static void header(params_list& head_sim, const parameters& params);
 };
 }

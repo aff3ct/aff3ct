@@ -64,9 +64,9 @@ void Launcher_EXIT<B,R>
 {
 	Launcher::store_args();
 
-	factory::Simulation_EXIT::store_args(this->ar, *params);
+	factory::Simulation_EXIT::store_args(this->ar.get_args(), *params);
 
-	factory::Source::store_args(this->ar, *params->src);
+	factory::Source::store_args(this->ar.get_args(), *params->src);
 
 	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
 	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
@@ -74,17 +74,17 @@ void Launcher_EXIT<B,R>
 	params->src->K = params->src->K == 0 ? K : params->src->K;
 	params->mdm->N = N;
 
-	factory::Modem::store_args(this->ar, *params->mdm);
+	factory::Modem::store_args(this->ar.get_args(), *params->mdm);
 
 	params->chn->N         = params->mdm->N_mod;
 	params->chn->complex   = params->mdm->complex;
 	params->chn->add_users = params->mdm->type == "SCMA";
 
-	factory::Channel::store_args(this->ar, *params->chn);
+	factory::Channel::store_args(this->ar.get_args(), *params->chn);
 
 	params->ter->N = N;
 
-	factory::Terminal_EXIT::store_args(this->ar, *params->ter);
+	factory::Terminal_EXIT::store_args(this->ar.get_args(), *params->ter);
 
 	if (params->src->type == "AZCW" || params->enc->type == "AZCW")
 	{

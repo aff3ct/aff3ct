@@ -56,14 +56,14 @@ template <class C, typename B, typename R, typename Q, typename QD>
 void Launcher_turbo<C,B,R,Q,QD>
 ::store_args()
 {
-	factory::Encoder_turbo::store_args(this->ar, *params_enc);
+	factory::Encoder_turbo::store_args(this->ar.get_args(), *params_enc);
 
 	params_pct->K           = params_enc->K;
 	params_pct->N_cw        = params_enc->N_cw;
 	params_pct->buffered    = params_enc->buffered;
 	params_pct->tail_length = params_enc->tail_length;
 
-	factory::Puncturer_turbo::store_args(this->ar, *params_pct);
+	factory::Puncturer_turbo::store_args(this->ar.get_args(), *params_pct);
 
 	params_dec->K        = params_enc->K;
 	params_dec->N_cw     = params_enc->N_cw;
@@ -71,7 +71,7 @@ void Launcher_turbo<C,B,R,Q,QD>
 	params_dec->poly     = params_enc->poly;
 	params_dec->standard = params_enc->standard;
 
-	factory::Decoder_turbo::store_args(this->ar, *params_dec);
+	factory::Decoder_turbo::store_args(this->ar.get_args(), *params_dec);
 
 	if (params_dec->simd_strategy == "INTER")
 		this->params->src->n_frames = mipp::N<Q>();
