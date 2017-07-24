@@ -71,10 +71,10 @@ void RA<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_RA::header(this->pl_enc, this->pl_itl, *params_enc);
+		factory::Encoder_RA::make_header(this->pl_enc, this->pl_itl, *params_enc);
 
 	factory::params_list trash;
-	factory::Decoder_RA::header(this->pl_dec, trash, *params_dec);
+	factory::Decoder_RA::make_header(this->pl_dec, trash, *params_dec);
 
 	C::print_header();
 }

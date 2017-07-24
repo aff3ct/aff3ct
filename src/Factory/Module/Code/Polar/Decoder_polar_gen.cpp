@@ -1132,9 +1132,9 @@ void Decoder_polar_gen
 }
 
 void Decoder_polar_gen
-::header(params_list& head_dec, const Decoder_polar::parameters& params)
+::make_header(params_list& head_dec, const Decoder_polar::parameters& params)
 {
-	Decoder_polar::header(head_dec, params);
+	Decoder_polar::make_header(head_dec, params);
 }
 
 // ==================================================================================== explicit template instantiation

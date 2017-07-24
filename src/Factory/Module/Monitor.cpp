@@ -62,7 +62,7 @@ void Monitor
 }
 
 void Monitor
-::header(params_list& head_mon, const parameters& params)
+::make_header(params_list& head_mon, const parameters& params)
 {
 	head_mon.push_back(std::make_pair("Frame error count (e)", std::to_string(params.n_frame_errors)));
 	head_mon.push_back(std::make_pair("Size (K)", std::to_string(params.size)));

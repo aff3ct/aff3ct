@@ -43,9 +43,9 @@ void EXIT::store_args(const arg_val_map &vals, parameters &params, const std::st
 	if(exist(vals, {p+"-siga-step"    })) params.sig_a_step = std::stof(vals.at({p+"-siga-step"    }));
 }
 
-void EXIT::header(params_list& head_sim, const parameters& params)
+void EXIT::make_header(params_list& head_sim, const parameters& params)
 {
-	Simulation::header(head_sim, params);
+	Simulation::make_header(head_sim, params);
 
 	head_sim.push_back(std::make_pair("Sigma-a min (a)", std::to_string(params.sig_a_min )));
 	head_sim.push_back(std::make_pair("Sigma-a max (A)", std::to_string(params.sig_a_max )));

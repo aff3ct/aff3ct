@@ -148,10 +148,10 @@ void Decoder_turbo
 }
 
 void Decoder_turbo
-::header(params_list& head_dec, params_list& head_itl, const parameters& params)
+::make_header(params_list& head_dec, params_list& head_itl, const parameters& params)
 {
-	Decoder    ::header(head_dec, params);
-	Interleaver::header(head_itl, params.itl);
+	Decoder    ::make_header(head_dec, params);
+	Interleaver::make_header(head_itl, params.itl);
 
 	if (!params.standard.empty())
 		head_dec.push_back(std::make_pair("Standard", params.standard));
@@ -168,8 +168,8 @@ void Decoder_turbo
 	head_dec.push_back(std::make_pair("Buffered", ((params.buffered) ? "on" : "off")));
 	head_dec.push_back(std::make_pair("Self-corrected", ((params.self_corrected) ? "on" : "off")));
 
-	Scaling_factor::header(head_dec, params.sf);
-	Flip_and_check::header(head_dec, params.fnc);
+	Scaling_factor::make_header(head_dec, params.sf);
+	Flip_and_check::make_header(head_dec, params.fnc);
 }
 
 // ==================================================================================== explicit template instantiation

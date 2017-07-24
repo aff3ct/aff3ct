@@ -40,7 +40,7 @@ void Decoder::store_args(const arg_val_map &vals, parameters &params, const std:
 	params.R = (float)params.K / (float)params.N_cw;
 }
 
-void Decoder::header(params_list& head_dec, const parameters& params)
+void Decoder::make_header(params_list& head_dec, const parameters& params)
 {
 	head_dec.push_back(std::make_pair("Type (D)",params.type));
 	if(params.implem.size())

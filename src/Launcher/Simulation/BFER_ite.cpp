@@ -162,15 +162,15 @@ template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
 ::print_header()
 {
-	factory::BFER_ite::header(this->pl_sim, *params);
-	factory::Source             ::header(this->pl_src, *params->src);
-	factory::CRC                ::header(this->pl_crc, *params->crc);
-	factory::Interleaver        ::header(this->pl_itl, *params->itl);
-	factory::Modem              ::header(this->pl_mdm, *params->mdm);
-	factory::Channel            ::header(this->pl_chn, *params->chn);
-	factory::Quantizer          ::header(this->pl_qnt, *params->qnt);
-	factory::Monitor            ::header(this->pl_mnt, *params->mnt);
-	factory::Terminal_BFER      ::header(this->pl_ter, *params->ter);
+	factory::BFER_ite     ::make_header(this->pl_sim, *params);
+	factory::Source       ::make_header(this->pl_src, *params->src);
+	factory::CRC          ::make_header(this->pl_crc, *params->crc);
+	factory::Interleaver  ::make_header(this->pl_itl, *params->itl);
+	factory::Modem        ::make_header(this->pl_mdm, *params->mdm);
+	factory::Channel      ::make_header(this->pl_chn, *params->chn);
+	factory::Quantizer    ::make_header(this->pl_qnt, *params->qnt);
+	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt);
+	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter);
 
 	Launcher::print_header();
 }

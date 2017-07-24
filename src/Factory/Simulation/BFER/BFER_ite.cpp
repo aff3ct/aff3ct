@@ -36,9 +36,9 @@ void BFER_ite::store_args(const arg_val_map &vals, parameters &params, const std
 	if(exist(vals, {p+"-ite", "I"})) params.n_ite = std::stoi(vals.at({p+"-ite", "I"}));
 }
 
-void BFER_ite::header(params_list& head_sim, const parameters& params)
+void BFER_ite::make_header(params_list& head_sim, const parameters& params)
 {
-	BFER::header(head_sim, params);
+	BFER::make_header(head_sim, params);
 
 	head_sim.push_back(std::make_pair("Global iterations (I)", std::to_string(params.n_ite)));
 }

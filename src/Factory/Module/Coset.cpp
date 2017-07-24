@@ -53,7 +53,7 @@ void Coset
 }
 
 void Coset
-::header(params_list& head_pct, const parameters& params)
+::make_header(params_list& head_pct, const parameters& params)
 {
 	head_pct.push_back(std::make_pair("Type", params.type));
 	head_pct.push_back(std::make_pair("Size (N)", std::to_string(params.size)));

@@ -191,9 +191,9 @@ void Decoder_RSC
 }
 
 void Decoder_RSC
-::header(params_list& head_dec, const parameters& params)
+::make_header(params_list& head_dec, const parameters& params)
 {
-	Decoder::header(head_dec, params);
+	Decoder::make_header(head_dec, params);
 
 	if (params.tail_length)
 		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));

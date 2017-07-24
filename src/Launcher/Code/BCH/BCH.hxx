@@ -70,8 +70,8 @@ void BCH<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_BCH::header(this->pl_enc, *params_enc);
-	factory::Decoder_BCH::header(this->pl_dec, *params_dec);
+		factory::Encoder_BCH::make_header(this->pl_enc, *params_enc);
+	factory::Decoder_BCH::make_header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }

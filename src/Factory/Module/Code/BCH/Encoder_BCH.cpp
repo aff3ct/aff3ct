@@ -36,9 +36,9 @@ void Encoder_BCH
 }
 
 void Encoder_BCH
-::header(params_list& head_enc, const Encoder::parameters& params)
+::make_header(params_list& head_enc, const Encoder::parameters& params)
 {
-	Encoder::header(head_enc, params);
+	Encoder::make_header(head_enc, params);
 }
 
 // ==================================================================================== explicit template instantiation

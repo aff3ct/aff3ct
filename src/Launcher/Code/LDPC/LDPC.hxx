@@ -73,8 +73,8 @@ void LDPC<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_LDPC::header(this->pl_enc, *params_enc);
-	factory::Decoder_LDPC::header(this->pl_dec, *params_dec);
+		factory::Encoder_LDPC::make_header(this->pl_enc, *params_enc);
+	factory::Decoder_LDPC::make_header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }

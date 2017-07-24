@@ -22,7 +22,7 @@ void Terminal::store_args(const arg_val_map &vals, parameters &params, const std
 	if(exist(vals, {p+"-freq"})) params.frequency = std::chrono::milliseconds(std::stoi(vals.at({p+"-freq"})));
 }
 
-void Terminal::header(params_list& head_ter, const parameters& params)
+void Terminal::make_header(params_list& head_ter, const parameters& params)
 {
 	head_ter.push_back(std::make_pair("Enabled", params.disabled ? "no" : "yes"));
 	head_ter.push_back(std::make_pair("Frequency (ms)", std::to_string(params.frequency.count())));

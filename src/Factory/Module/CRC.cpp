@@ -67,7 +67,7 @@ void CRC
 }
 
 void CRC
-::header(params_list& head_crc, const parameters& params)
+::make_header(params_list& head_crc, const parameters& params)
 {
 	if (!params.poly.empty())
 	{

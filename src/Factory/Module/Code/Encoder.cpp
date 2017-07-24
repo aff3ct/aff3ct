@@ -69,7 +69,7 @@ void Encoder
 }
 
 void Encoder
-::header(params_list& head_enc, const parameters& params)
+::make_header(params_list& head_enc, const parameters& params)
 {
 	head_enc.push_back(std::make_pair("Type", params.type));
 	head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));

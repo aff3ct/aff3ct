@@ -74,7 +74,7 @@ void Flip_and_check
 }
 
 void Flip_and_check
-::header(params_list& head_fnc, const parameters& params)
+::make_header(params_list& head_fnc, const parameters& params)
 {
 	if (params.enable)
 	{

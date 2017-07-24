@@ -57,7 +57,7 @@ void Scaling_factor
 }
 
 void Scaling_factor
-::header(params_list& head_sf, const parameters& params)
+::make_header(params_list& head_sf, const parameters& params)
 {
 	if (params.enable)
 	{

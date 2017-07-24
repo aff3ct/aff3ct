@@ -79,7 +79,7 @@ void Interleaver
 }
 
 void Interleaver
-::header(params_list& head_itl, const parameters& params)
+::make_header(params_list& head_itl, const parameters& params)
 {
 	head_itl.push_back(std::make_pair("Type", params.type));
 	head_itl.push_back(std::make_pair("Size", std::to_string(params.size)));

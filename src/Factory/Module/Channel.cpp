@@ -109,7 +109,7 @@ void Channel
 }
 
 void Channel
-::header(params_list& head_chn, const parameters& params)
+::make_header(params_list& head_chn, const parameters& params)
 {
 	head_chn.push_back(std::make_pair("Type", params.type));
 	head_chn.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));

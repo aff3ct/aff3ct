@@ -254,7 +254,7 @@ void Modem
 }
 
 void Modem
-::header(params_list& head_mdm, const parameters& params)
+::make_header(params_list& head_mdm, const parameters& params)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
 	head_mdm.push_back(std::make_pair("Type", params.type));

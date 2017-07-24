@@ -131,9 +131,9 @@ void Puncturer_turbo
 }
 
 void Puncturer_turbo
-::header(params_list& head_pct, const parameters& params)
+::make_header(params_list& head_pct, const parameters& params)
 {
-	Puncturer::header(head_pct, params);
+	Puncturer::make_header(head_pct, params);
 
 	if (params.type != "NO")
 	{

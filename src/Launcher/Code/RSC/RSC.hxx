@@ -78,8 +78,8 @@ void RSC<C,B,R,Q,QD>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_RSC::header(this->pl_enc, *params_enc);
-	factory::Decoder_RSC::header(this->pl_dec, *params_dec);
+		factory::Encoder_RSC::make_header(this->pl_enc, *params_enc);
+	factory::Decoder_RSC::make_header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }

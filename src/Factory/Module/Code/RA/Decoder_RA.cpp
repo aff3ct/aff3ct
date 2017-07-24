@@ -52,10 +52,10 @@ void Decoder_RA
 }
 
 void Decoder_RA
-::header(params_list& head_dec, params_list& head_itl, const parameters& params)
+::make_header(params_list& head_dec, params_list& head_itl, const parameters& params)
 {
-	Decoder::header(head_dec, params);
-	Interleaver::header(head_itl, params.itl);
+	Decoder::make_header(head_dec, params);
+	Interleaver::make_header(head_itl, params.itl);
 
 	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
 }

@@ -51,7 +51,7 @@ void Puncturer
 }
 
 void Puncturer
-::header(params_list& head_pct, const parameters& params)
+::make_header(params_list& head_pct, const parameters& params)
 {
 	head_pct.push_back(std::make_pair("Type", params.type));
 	head_pct.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));

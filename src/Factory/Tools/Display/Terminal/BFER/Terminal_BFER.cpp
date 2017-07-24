@@ -42,7 +42,7 @@ void Terminal_BFER::store_args(const arg_val_map &vals, parameters &params, cons
 	if(exist(vals, {p+"-type"          })) params.type =           vals.at({p+"-type"          });
 }
 
-void Terminal_BFER::header(params_list& head_ter, const parameters& params)
+void Terminal_BFER::make_header(params_list& head_ter, const parameters& params)
 {
 	head_ter.push_back(std::make_pair("Type", params.type));
 	head_ter.push_back(std::make_pair("Info bits (K)", std::to_string(params.K)));
@@ -50,7 +50,7 @@ void Terminal_BFER::header(params_list& head_ter, const parameters& params)
 	if (params.N)
 		head_ter.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
 
-	Terminal::header(head_ter, params);
+	Terminal::make_header(head_ter, params);
 }
 
 // ==================================================================================== explicit template instantiation

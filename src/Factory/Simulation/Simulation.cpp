@@ -115,9 +115,9 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 #endif
 }
 
-void Simulation::header(params_list& head_sim, const parameters& params)
+void Simulation::make_header(params_list& head_sim, const parameters& params)
 {
-	Launcher::header(head_sim, params);
+	Launcher::make_header(head_sim, params);
 
 	head_sim.push_back(std::make_pair("SNR min (m)",   std::to_string(params.snr_min)  + " dB"));
 	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));

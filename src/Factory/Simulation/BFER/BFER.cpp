@@ -71,9 +71,9 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 
 }
 
-void BFER::header(params_list& head_sim, const parameters& params)
+void BFER::make_header(params_list& head_sim, const parameters& params)
 {
-	Simulation::header(head_sim, params);
+	Simulation::make_header(head_sim, params);
 
 	if (params.benchs)
 		head_sim.push_back(std::make_pair("Number of benchs", std::to_string(params.benchs)));

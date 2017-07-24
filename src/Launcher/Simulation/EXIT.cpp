@@ -119,11 +119,11 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::print_header()
 {
-	factory::EXIT::header(this->pl_sim, *params);
-	factory::Source         ::header(this->pl_src, *params->src);
-	factory::Modem          ::header(this->pl_mdm, *params->mdm);
-	factory::Channel        ::header(this->pl_chn, *params->chn);
-	factory::Terminal_EXIT  ::header(this->pl_ter, *params->ter);
+	factory::EXIT         ::make_header(this->pl_sim, *params);
+	factory::Source       ::make_header(this->pl_src, *params->src);
+	factory::Modem        ::make_header(this->pl_mdm, *params->mdm);
+	factory::Channel      ::make_header(this->pl_chn, *params->chn);
+	factory::Terminal_EXIT::make_header(this->pl_ter, *params->ter);
 
 	Launcher::print_header();
 }

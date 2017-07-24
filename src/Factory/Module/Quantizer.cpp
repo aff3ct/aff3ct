@@ -73,7 +73,7 @@ void Quantizer
 }
 
 void Quantizer
-::header(params_list& head_gnt, const parameters& params)
+::make_header(params_list& head_gnt, const parameters& params)
 {
 	std::string quantif = "unused";
 	if (params.type == "TRICKY")

@@ -49,9 +49,9 @@ void Decoder_repetition
 }
 
 void Decoder_repetition
-::header(params_list& head_dec, const parameters& params)
+::make_header(params_list& head_dec, const parameters& params)
 {
-	Decoder::header(head_dec, params);
+	Decoder::make_header(head_dec, params);
 
 	head_dec.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 }

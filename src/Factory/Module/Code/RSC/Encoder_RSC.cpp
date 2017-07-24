@@ -77,9 +77,9 @@ void Encoder_RSC
 }
 
 void Encoder_RSC
-::header(params_list& head_enc, const parameters& params)
+::make_header(params_list& head_enc, const parameters& params)
 {
-	Encoder::header(head_enc, params);
+	Encoder::make_header(head_enc, params);
 
 	if (params.tail_length)
 		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));

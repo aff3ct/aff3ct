@@ -68,7 +68,7 @@ void Frozenbits_generator
 }
 
 void Frozenbits_generator
-::header(params_list& head_fb, const parameters& params)
+::make_header(params_list& head_fb, const parameters& params)
 {
 	head_fb.push_back(std::make_pair("Fb gen. method", params.type));
 	head_fb.push_back(std::make_pair("Fb info. bits (K)", std::to_string(params.K)));

@@ -111,10 +111,10 @@ void Encoder_turbo
 }
 
 void Encoder_turbo
-::header(params_list& head_enc, params_list& head_itl, const parameters& params)
+::make_header(params_list& head_enc, params_list& head_itl, const parameters& params)
 {
-	Encoder    ::header(head_enc, params);
-	Interleaver::header(head_itl, params.itl);
+	Encoder    ::make_header(head_enc, params);
+	Interleaver::make_header(head_itl, params.itl);
 
 	if (params.tail_length)
 		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
