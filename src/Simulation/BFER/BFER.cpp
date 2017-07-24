@@ -17,15 +17,15 @@
 #include "Factory/Module/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
-#include "Simulation_BFER.hpp"
+#include "BFER.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Simulation_BFER<B,R,Q>
-::Simulation_BFER(const factory::Simulation_BFER::parameters& params, Codec<B,Q> &codec)
+BFER<B,R,Q>
+::BFER(const factory::BFER::parameters& params, Codec<B,Q> &codec)
 : Simulation(),
   params(params),
 
@@ -88,8 +88,8 @@ Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation_BFER<B,R,Q>
-::~Simulation_BFER()
+BFER<B,R,Q>
+::~BFER()
 {
 	release_objects();
 
@@ -106,7 +106,7 @@ Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
+void BFER<B,R,Q>
 ::build_communication_chain(const int tid)
 {
 	try
@@ -134,14 +134,14 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
+void BFER<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
 	// by default, do nothing
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
+void BFER<B,R,Q>
 ::launch()
 {
 	this->terminal = this->build_terminal();
@@ -169,7 +169,7 @@ void Simulation_BFER<B,R,Q>
 		// dirty hack to override simulation params
 		if (params.mnt->err_track_revert)
 		{
-			auto *params_writable = const_cast<factory::Simulation_BFER::parameters*>(&params);
+			auto *params_writable = const_cast<factory::BFER::parameters*>(&params);
 			const auto base_path = params.mnt->err_track_path;
 			params_writable->src->path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
@@ -183,9 +183,9 @@ void Simulation_BFER<B,R,Q>
 		// build the communication chain in multi-threaded mode
 		std::vector<std::thread> threads(params.n_threads -1);
 		for (auto tid = 1; tid < params.n_threads; tid++)
-			threads[tid -1] = std::thread(Simulation_BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
+			threads[tid -1] = std::thread(BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
 
-		Simulation_BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
+		BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
 
 		// join the slave threads with the master thread
 		for (auto tid = 1; tid < params.n_threads; tid++)
@@ -205,7 +205,7 @@ void Simulation_BFER<B,R,Q>
 			if (!params.ter->disabled && params.ter->frequency != std::chrono::nanoseconds(0) &&
 			    !params.benchs   && !params.debug)
 				// launch a thread dedicated to the terminal display
-				term_thread = std::thread(Simulation_BFER<B,R,Q>::start_thread_terminal, this);
+				term_thread = std::thread(BFER<B,R,Q>::start_thread_terminal, this);
 
 			try
 			{
@@ -267,13 +267,13 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
+void BFER<B,R,Q>
 ::release_objects()
 {
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
+void BFER<B,R,Q>
 ::time_reduction(const bool is_snr_done)
 {
 	for (auto& duration : durations_red)
@@ -290,7 +290,7 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
+void BFER<B,R,Q>
 ::time_report(std::ostream &stream)
 {
 	if (durations_sum.size() >= 1)
@@ -364,22 +364,22 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Monitor<B>* Simulation_BFER<B,R,Q>
+Monitor<B>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
 	return factory::Monitor::build<B>(*params.mnt);
 }
 
 template <typename B, typename R, typename Q>
-Terminal_BFER<B>* Simulation_BFER<B,R,Q>
+Terminal_BFER<B>* BFER<B,R,Q>
 ::build_terminal()
 {
 	return factory::Terminal_BFER::build<B>(*params.ter, *this->monitor_red);
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
-::start_thread_terminal(Simulation_BFER<B,R,Q> *simu)
+void BFER<B,R,Q>
+::start_thread_terminal(BFER<B,R,Q> *simu)
 {
 	if (simu->terminal != nullptr && simu->monitor_red != nullptr)
 	{
@@ -400,8 +400,8 @@ void Simulation_BFER<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER<B,R,Q>
-::start_thread_build_comm_chain(Simulation_BFER<B,R,Q> *simu, const int tid)
+void BFER<B,R,Q>
+::start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid)
 {
 	simu->build_communication_chain(tid);
 }
@@ -409,11 +409,11 @@ void Simulation_BFER<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::Simulation_BFER<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_BFER<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_BFER<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_BFER<B_64,R_64,Q_64>;
+template class aff3ct::simulation::BFER<B_8,R_8,Q_8>;
+template class aff3ct::simulation::BFER<B_16,R_16,Q_16>;
+template class aff3ct::simulation::BFER<B_32,R_32,Q_32>;
+template class aff3ct::simulation::BFER<B_64,R_64,Q_64>;
 #else
-template class aff3ct::simulation::Simulation_BFER<B,R,Q>;
+template class aff3ct::simulation::BFER<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

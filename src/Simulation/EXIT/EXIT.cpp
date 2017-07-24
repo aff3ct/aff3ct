@@ -12,15 +12,15 @@
 #include "Factory/Module/Channel.hpp"
 #include "Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 
-#include "Simulation_EXIT.hpp"
+#include "EXIT.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R>
-Simulation_EXIT<B,R>
-::Simulation_EXIT(const factory::Simulation_EXIT::parameters& params, Codec_SISO<B,R> &codec)
+EXIT<B,R>
+::EXIT(const factory::EXIT::parameters& params, Codec_SISO<B,R> &codec)
 : Simulation(),
   params(params),
   codec (codec),
@@ -70,14 +70,14 @@ Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Simulation_EXIT<B,R>
-::~Simulation_EXIT()
+EXIT<B,R>
+::~EXIT()
 {
 	release_objects();
 }
 
 template <typename B, typename R>
-void Simulation_EXIT<B,R>
+void EXIT<B,R>
 ::build_communication_chain()
 {
 	release_objects();
@@ -110,7 +110,7 @@ void Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Simulation_EXIT<B,R>
+void EXIT<B,R>
 ::launch()
 {
 	bool first_loop = true;
@@ -154,7 +154,7 @@ void Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Simulation_EXIT<B,R>
+void EXIT<B,R>
 ::simulation_loop()
 {
 	using namespace std::chrono;
@@ -228,12 +228,12 @@ void Simulation_EXIT<B,R>
 	}
 
 	// measure mutual information and store it in I_A, I_E, sig_a_array
-	I_A = Simulation_EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.enc->K * n_trials);
-	I_E = Simulation_EXIT<B,R>::measure_mutual_info_histo(Le_buff, B_buff);
+	I_A = EXIT<B,R>::measure_mutual_info_avg  (La_buff, B_buff) / (params.enc->K * n_trials);
+	I_E = EXIT<B,R>::measure_mutual_info_histo(Le_buff, B_buff);
 }
 
 template <typename B, typename R>
-double Simulation_EXIT<B,R>
+double EXIT<B,R>
 ::measure_mutual_info_avg(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
 	double I_A = 0;
@@ -249,7 +249,7 @@ double Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-double Simulation_EXIT<B,R>
+double EXIT<B,R>
 ::measure_mutual_info_histo(const mipp::vector<R>& llrs, const mipp::vector<B>& bits)
 {
 //	const double inf = 10000000;
@@ -392,7 +392,7 @@ double Simulation_EXIT<B,R>
 // ---------------------------------------------------------------------------------------------------- virtual methods
 
 template <typename B, typename R>
-void Simulation_EXIT<B,R>
+void EXIT<B,R>
 ::release_objects()
 {
 	if (source    != nullptr) { delete source;    source    = nullptr; }
@@ -406,14 +406,14 @@ void Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Source<B>* Simulation_EXIT<B,R>
+Source<B>* EXIT<B,R>
 ::build_source()
 {
 	return factory::Source::build<B>(*params.src);
 }
 
 template <typename B, typename R>
-Encoder<B>* Simulation_EXIT<B,R>
+Encoder<B>* EXIT<B,R>
 ::build_encoder()
 {
 	try
@@ -429,7 +429,7 @@ Encoder<B>* Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Modem<B,R,R>* Simulation_EXIT<B,R>
+Modem<B,R,R>* EXIT<B,R>
 ::build_modem()
 {
 	auto mdm_cpy = *params.mdm;
@@ -439,7 +439,7 @@ Modem<B,R,R>* Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Modem<B,R,R>* Simulation_EXIT<B,R>
+Modem<B,R,R>* EXIT<B,R>
 ::build_modem_a()
 {
 	auto mdm_cpy  = *params.mdm;
@@ -449,7 +449,7 @@ Modem<B,R,R>* Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Channel<R>* Simulation_EXIT<B,R>
+Channel<R>* EXIT<B,R>
 ::build_channel(const int size)
 {
 	auto chn_cpy = *params.chn;
@@ -460,7 +460,7 @@ Channel<R>* Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Channel<R>* Simulation_EXIT<B,R>
+Channel<R>* EXIT<B,R>
 ::build_channel_a(const int size)
 {
 	auto chn_cpy  = *params.chn;
@@ -475,7 +475,7 @@ Channel<R>* Simulation_EXIT<B,R>
 }
 
 template <typename B, typename R>
-SISO<R>* Simulation_EXIT<B,R>
+SISO<R>* EXIT<B,R>
 ::build_siso()
 {
 	return this->codec.build_siso();
@@ -484,7 +484,7 @@ SISO<R>* Simulation_EXIT<B,R>
 // ------------------------------------------------------------------------------------------------- non-virtual method
 
 template <typename B, typename R>
-Terminal_EXIT* Simulation_EXIT<B,R>
+Terminal_EXIT* EXIT<B,R>
 ::build_terminal()
 {
 	auto term_cpy = *params.ter;
@@ -496,11 +496,11 @@ Terminal_EXIT* Simulation_EXIT<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::Simulation_EXIT<B_8,R_8>;
-template class aff3ct::simulation::Simulation_EXIT<B_16,R_16>;
-template class aff3ct::simulation::Simulation_EXIT<B_32,R_32>;
-template class aff3ct::simulation::Simulation_EXIT<B_64,R_64>;
+template class aff3ct::simulation::EXIT<B_8,R_8>;
+template class aff3ct::simulation::EXIT<B_16,R_16>;
+template class aff3ct::simulation::EXIT<B_32,R_32>;
+template class aff3ct::simulation::EXIT<B_64,R_64>;
 #else
-template class aff3ct::simulation::Simulation_EXIT<B,R>;
+template class aff3ct::simulation::EXIT<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

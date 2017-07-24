@@ -8,16 +8,16 @@
 
 #include "Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp"
 
-#include "Simulation_BFER_std_threads.hpp"
+#include "BFER_std_threads.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Simulation_BFER_std_threads<B,R,Q>
-::Simulation_BFER_std_threads(const factory::Simulation_BFER_std::parameters &params, Codec<B,Q> &codec)
-: Simulation_BFER_std<B,R,Q>(params, codec),
+BFER_std_threads<B,R,Q>
+::BFER_std_threads(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+: BFER_std<B,R,Q>(params, codec),
 
   U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),
   U_K2(this->params.n_threads, mipp::vector<B>(this->params.enc->K     * this->params.enc->n_frames)),
@@ -64,16 +64,16 @@ Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation_BFER_std_threads<B,R,Q>
-::~Simulation_BFER_std_threads()
+BFER_std_threads<B,R,Q>
+::~BFER_std_threads()
 {
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
+void BFER_std_threads<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
-	Simulation_BFER_std<B,R,Q>::_build_communication_chain(tid);
+	BFER_std<B,R,Q>::_build_communication_chain(tid);
 
 	if (this->params.src->type == "AZCW")
 	{
@@ -96,23 +96,23 @@ void Simulation_BFER_std_threads<B,R,Q>
 	if (this->params.debug)
 	{
 		if (this->params.debug_fe)
-			this->monitor[tid]->add_handler_fe   (std::bind(&Simulation_BFER_std_threads::display_debug, this));
+			this->monitor[tid]->add_handler_fe   (std::bind(&BFER_std_threads::display_debug, this));
 		else
-			this->monitor[tid]->add_handler_check(std::bind(&Simulation_BFER_std_threads::display_debug, this));
+			this->monitor[tid]->add_handler_check(std::bind(&BFER_std_threads::display_debug, this));
 	}
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
+void BFER_std_threads<B,R,Q>
 ::_launch()
 {
 	std::vector<std::thread> threads(this->params.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
-		threads[tid -1] = std::thread(Simulation_BFER_std_threads<B,R,Q>::start_thread, this, tid);
+		threads[tid -1] = std::thread(BFER_std_threads<B,R,Q>::start_thread, this, tid);
 
 	// launch the master thread
-	Simulation_BFER_std_threads<B,R,Q>::start_thread(this, 0);
+	BFER_std_threads<B,R,Q>::start_thread(this, 0);
 
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < this->params.n_threads; tid++)
@@ -120,8 +120,8 @@ void Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
-::start_thread(Simulation_BFER_std_threads<B,R,Q> *simu, const int tid)
+void BFER_std_threads<B,R,Q>
+::start_thread(BFER_std_threads<B,R,Q> *simu, const int tid)
 {
 	try
 	{
@@ -143,7 +143,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
+void BFER_std_threads<B,R,Q>
 ::Monte_Carlo_method(const int tid)
 {
 	if (this->params.benchs)
@@ -153,7 +153,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
+void BFER_std_threads<B,R,Q>
 ::simulation_loop(const int tid)
 {
 	using namespace std::chrono;
@@ -280,7 +280,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
+void BFER_std_threads<B,R,Q>
 ::simulation_loop_bench(const int tid)
 {
 	using namespace std::chrono;
@@ -318,7 +318,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std_threads<B,R,Q>
+void BFER_std_threads<B,R,Q>
 ::display_debug()
 {
 	this->mutex_debug.lock();
@@ -461,7 +461,7 @@ void Simulation_BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Terminal_BFER<B>* Simulation_BFER_std_threads<B,R,Q>
+Terminal_BFER<B>* BFER_std_threads<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI
@@ -477,11 +477,11 @@ Terminal_BFER<B>* Simulation_BFER_std_threads<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::Simulation_BFER_std_threads<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_BFER_std_threads<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_BFER_std_threads<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_BFER_std_threads<B_64,R_64,Q_64>;
+template class aff3ct::simulation::BFER_std_threads<B_8,R_8,Q_8>;
+template class aff3ct::simulation::BFER_std_threads<B_16,R_16,Q_16>;
+template class aff3ct::simulation::BFER_std_threads<B_32,R_32,Q_32>;
+template class aff3ct::simulation::BFER_std_threads<B_64,R_64,Q_64>;
 #else
-template class aff3ct::simulation::Simulation_BFER_std_threads<B,R,Q>;
+template class aff3ct::simulation::BFER_std_threads<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -1,9 +1,9 @@
 #ifndef LAUNCHER_BFER_STD_HPP_
 #define LAUNCHER_BFER_STD_HPP_
 
-#include "Tools/Codec/Codec.hpp"
+#include "Factory/Simulation/BFER/BFER_std.hpp"
 
-#include "Factory/Simulation/BFER/Simulation_BFER_std.hpp"
+#include "Tools/Codec/Codec.hpp"
 
 #include "../Launcher.hpp"
 
@@ -16,7 +16,7 @@ class BFER_std : public Launcher
 {
 protected:
 	tools::Codec<B,Q> *codec = nullptr;
-	factory::Simulation_BFER_std::parameters *params;
+	factory::BFER_std::parameters *params;
 
 public:
 	BFER_std(const int argc, const char **argv, std::ostream &stream = std::cout);

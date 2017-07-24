@@ -1,13 +1,13 @@
 #include <thread>
 
-#include "Simulation_BFER.hpp"
+#include "BFER.hpp"
 
 using namespace aff3ct::factory;
 
-const std::string aff3ct::factory::Simulation_BFER::name   = "Simulation BFER";
-const std::string aff3ct::factory::Simulation_BFER::prefix = "sim";
+const std::string aff3ct::factory::BFER::name   = "Simulation BFER";
+const std::string aff3ct::factory::BFER::prefix = "sim";
 
-void Simulation_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
+void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
 	Simulation::build_args(req_args, opt_args);
 
@@ -41,7 +41,7 @@ void Simulation_BFER::build_args(arg_map &req_args, arg_map &opt_args, const std
 		 "enable the coset approach."};
 }
 
-void Simulation_BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
+void BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
 #if !defined(STARPU) && !defined(SYSTEMC)
 	params.n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
@@ -71,7 +71,7 @@ void Simulation_BFER::store_args(const arg_val_map &vals, parameters &params, co
 
 }
 
-void Simulation_BFER::header(params_list& head_sim, const parameters& params)
+void BFER::header(params_list& head_sim, const parameters& params)
 {
 	Simulation::header(head_sim, params);
 

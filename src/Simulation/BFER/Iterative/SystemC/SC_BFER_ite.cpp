@@ -7,7 +7,7 @@
 #include "Tools/Factory/Coset/Factory_coset_real.hpp"
 #include "Tools/Factory/Factory_interleaver.hpp"
 
-#include "SC_Simulation_BFER_ite.hpp"
+#include "SC_BFER_ite.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;

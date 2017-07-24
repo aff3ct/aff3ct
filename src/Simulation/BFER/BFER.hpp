@@ -14,7 +14,7 @@
 #include "Module/Monitor/Monitor.hpp"
 #include "Module/Monitor/Standard/Monitor_reduction.hpp"
 
-#include "Factory/Simulation/BFER/Simulation_BFER.hpp"
+#include "Factory/Simulation/BFER/BFER.hpp"
 
 #include "../Simulation.hpp"
 
@@ -23,11 +23,11 @@ namespace aff3ct
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class Simulation_BFER : public Simulation
+class BFER : public Simulation
 {
 private:
 	// parameters
-	const factory::Simulation_BFER::parameters &params;
+	const factory::BFER::parameters &params;
 
 	std::mutex mutex_terminal;
 	std::condition_variable cond_terminal;
@@ -68,8 +68,8 @@ protected:
 	std::map<std::pair<int, std::string>, unsigned> data_sizes;
 
 public:
-	Simulation_BFER(const factory::Simulation_BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
-	virtual ~Simulation_BFER();
+	BFER(const factory::BFER::parameters& simu_params, tools::Codec<B,Q> &codec);
+	virtual ~BFER();
 	void launch();
 
 protected:
@@ -85,8 +85,8 @@ private:
 	void time_reduction(const bool is_snr_done = false  );
 	void time_report   (std::ostream &stream = std::clog);
 
-	static void start_thread_terminal        (Simulation_BFER<B,R,Q> *simu               );
-	static void start_thread_build_comm_chain(Simulation_BFER<B,R,Q> *simu, const int tid);
+	static void start_thread_terminal        (BFER<B,R,Q> *simu               );
+	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
 };
 }
 }

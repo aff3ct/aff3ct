@@ -9,16 +9,16 @@
 #include "Factory/Module/Code/Puncturer.hpp"
 #include "Factory/Module/Coset.hpp"
 
-#include "Simulation_BFER_std.hpp"
+#include "BFER_std.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Simulation_BFER_std<B,R,Q>
-::Simulation_BFER_std(const factory::Simulation_BFER_std::parameters &params, Codec<B,Q> &codec)
-: Simulation_BFER<B,R,Q>(params, codec),
+BFER_std<B,R,Q>
+::BFER_std(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+: BFER<B,R,Q>(params, codec),
   params(params),
 
   source     (params.n_threads, nullptr),
@@ -40,13 +40,13 @@ Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation_BFER_std<B,R,Q>
-::~Simulation_BFER_std()
+BFER_std<B,R,Q>
+::~BFER_std()
 {
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std<B,R,Q>
+void BFER_std<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
 	const auto seed_src = rd_engine_seed[tid]();
@@ -77,7 +77,7 @@ void Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_BFER_std<B,R,Q>
+void BFER_std<B,R,Q>
 ::release_objects()
 {
 	const auto nthr = params.n_threads;
@@ -93,11 +93,11 @@ void Simulation_BFER_std<B,R,Q>
 	for (auto i = 0; i < nthr; i++) if (coset_bit  [i] != nullptr) { delete coset_bit  [i]; coset_bit  [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++) if (interleaver[i] != nullptr) { delete interleaver[i]; interleaver[i] = nullptr; }
 
-	Simulation_BFER<B,R,Q>::release_objects();
+	BFER<B,R,Q>::release_objects();
 }
 
 template <typename B, typename R, typename Q>
-Source<B>* Simulation_BFER_std<B,R,Q>
+Source<B>* BFER_std<B,R,Q>
 ::build_source(const int tid, const int seed)
 {
 	auto src_cpy = *params.src;
@@ -106,14 +106,14 @@ Source<B>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-CRC<B>* Simulation_BFER_std<B,R,Q>
+CRC<B>* BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
 	return factory::CRC::build<B>(*params.crc);
 }
 
 template <typename B, typename R, typename Q>
-Encoder<B>* Simulation_BFER_std<B,R,Q>
+Encoder<B>* BFER_std<B,R,Q>
 ::build_encoder(const int tid, const int seed)
 {
 	try
@@ -129,7 +129,7 @@ Encoder<B>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
+Puncturer<B,Q>* BFER_std<B,R,Q>
 ::build_puncturer(const int tid)
 {
 	try
@@ -143,7 +143,7 @@ Puncturer<B,Q>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Interleaver<int>* Simulation_BFER_std<B,R,Q>
+Interleaver<int>* BFER_std<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	try
@@ -157,7 +157,7 @@ Interleaver<int>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,R>* Simulation_BFER_std<B,R,Q>
+Modem<B,R,R>* BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
 	auto mdm_cpy = *params.mdm;
@@ -167,7 +167,7 @@ Modem<B,R,R>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Channel<R>* Simulation_BFER_std<B,R,Q>
+Channel<R>* BFER_std<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
 	auto chn_cpy = *params.chn;
@@ -179,7 +179,7 @@ Channel<R>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
+Quantizer<R,Q>* BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
 	auto qnt_cpy = *params.qnt;
@@ -190,7 +190,7 @@ Quantizer<R,Q>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Coset<B,Q>* Simulation_BFER_std<B,R,Q>
+Coset<B,Q>* BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
@@ -200,14 +200,14 @@ Coset<B,Q>* Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Decoder<B,Q>* Simulation_BFER_std<B,R,Q>
+Decoder<B,Q>* BFER_std<B,R,Q>
 ::build_decoder(const int tid)
 {
 	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);
 }
 
 template <typename B, typename R, typename Q>
-Coset<B,B>* Simulation_BFER_std<B,R,Q>
+Coset<B,B>* BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
 	factory::Coset::parameters cst_params;
@@ -219,11 +219,11 @@ Coset<B,B>* Simulation_BFER_std<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::Simulation_BFER_std<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_BFER_std<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_BFER_std<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_BFER_std<B_64,R_64,Q_64>;
+template class aff3ct::simulation::BFER_std<B_8,R_8,Q_8>;
+template class aff3ct::simulation::BFER_std<B_16,R_16,Q_16>;
+template class aff3ct::simulation::BFER_std<B_32,R_32,Q_32>;
+template class aff3ct::simulation::BFER_std<B_64,R_64,Q_64>;
 #else
-template class aff3ct::simulation::Simulation_BFER_std<B,R,Q>;
+template class aff3ct::simulation::BFER_std<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

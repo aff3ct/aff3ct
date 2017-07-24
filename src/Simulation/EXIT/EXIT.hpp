@@ -13,7 +13,7 @@
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 #include "Tools/Codec/Codec_SISO.hpp"
 
-#include "Factory/Simulation/EXIT/Simulation_EXIT.hpp"
+#include "Factory/Simulation/EXIT/EXIT.hpp"
 
 #include "../Simulation.hpp"
 
@@ -22,10 +22,10 @@ namespace aff3ct
 namespace simulation
 {
 template <typename B = int, typename R = float>
-class Simulation_EXIT : public Simulation
+class EXIT : public Simulation
 {
 protected:
-	const factory::Simulation_EXIT::parameters &params; // simulation parameters
+	const factory::EXIT::parameters &params; // simulation parameters
 	tools::Codec_SISO<B,R> &codec;
 
 	// channel gains
@@ -65,8 +65,8 @@ protected:
 	tools::Terminal_EXIT *terminal;
 
 public:
-	Simulation_EXIT(const factory::Simulation_EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);
-	virtual ~Simulation_EXIT();
+	EXIT(const factory::EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);
+	virtual ~EXIT();
 	
 	void launch();
 

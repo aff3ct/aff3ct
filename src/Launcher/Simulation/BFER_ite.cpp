@@ -1,8 +1,8 @@
+#include "Simulation/BFER/Iterative/BFER_ite.hpp"
+
 #include <thread>
 #include <string>
 #include <iostream>
-
-#include "Simulation/BFER/Iterative/Simulation_BFER_ite.hpp"
 
 #include "BFER_ite.hpp"
 
@@ -12,7 +12,7 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 BFER_ite<B,R,Q>
 ::BFER_ite(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_BFER_ite::parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new factory::BFER_ite::parameters())
 {
 	Launcher::params = params;
 }
@@ -31,7 +31,7 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::build_args();
 
-	factory::Simulation_BFER_ite::build_args(this->req_args, this->opt_args);
+	factory::BFER_ite::build_args(this->req_args, this->opt_args);
 	factory::Source             ::build_args(this->req_args, this->opt_args);
 	factory::CRC                ::build_args(this->req_args, this->opt_args);
 	factory::Interleaver        ::build_args(this->req_args, this->opt_args);
@@ -75,7 +75,7 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::store_args();
 
-	factory::Simulation_BFER_ite::store_args(this->ar.get_args(), *params);
+	factory::BFER_ite::store_args(this->ar.get_args(), *params);
 
 	factory::Source::store_args(this->ar.get_args(), *params->src);
 
@@ -162,7 +162,7 @@ template <typename B, typename R, typename Q>
 void BFER_ite<B,R,Q>
 ::print_header()
 {
-	factory::Simulation_BFER_ite::header(this->pl_sim, *params);
+	factory::BFER_ite::header(this->pl_sim, *params);
 	factory::Source             ::header(this->pl_src, *params->src);
 	factory::CRC                ::header(this->pl_crc, *params->crc);
 	factory::Interleaver        ::header(this->pl_itl, *params->itl);
@@ -180,7 +180,7 @@ simulation::Simulation* BFER_ite<B,R,Q>
 ::build_simu()
 {
 	this->build_codec();
-	return factory::Simulation_BFER_ite::build<B,R,Q>(*params, *codec);
+	return factory::BFER_ite::build<B,R,Q>(*params, *codec);
 }
 
 // ==================================================================================== explicit template instantiation 

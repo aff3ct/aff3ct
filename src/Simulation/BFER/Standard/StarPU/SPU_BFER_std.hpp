@@ -7,7 +7,7 @@
 #include <starpu.h>
 #include <mipp.h>
 
-#include "../Simulation_BFER_std.hpp"
+#include "../BFER_std.hpp"
 
 namespace aff3ct
 {

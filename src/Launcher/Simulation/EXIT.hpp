@@ -1,9 +1,9 @@
 #ifndef LAUNCHER_EXIT_HPP_
 #define LAUNCHER_EXIT_HPP_
 
-#include "Tools/Codec/Codec_SISO.hpp"
+#include "Factory/Simulation/EXIT/EXIT.hpp"
 
-#include "Factory/Simulation/EXIT/Simulation_EXIT.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 #include "../Launcher.hpp"
 
@@ -16,7 +16,7 @@ class EXIT : public Launcher
 {
 protected:
 	tools::Codec_SISO<B,R> *codec = nullptr;
-	factory::Simulation_EXIT::parameters *params;
+	factory::EXIT::parameters *params;
 
 public:
 	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);

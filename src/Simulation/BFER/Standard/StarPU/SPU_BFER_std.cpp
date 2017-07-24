@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/bash_tools.h"
 
-#include "SPU_Simulation_BFER_std.hpp"
+#include "SPU_BFER_std.hpp"
 
 using namespace aff3ct::module;
 using namespace aff3ct::tools;

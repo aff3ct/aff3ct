@@ -449,18 +449,18 @@
 #include <Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp>
 #include <Launcher/Launcher.hpp>
 #include <Simulation/Simulation.hpp>
-#include <Simulation/EXIT/Simulation_EXIT.hpp>
 #include <Simulation/GEN/Code/Polar/Generation_polar.hpp>
-#include <Simulation/BFER/Standard/Threads/Simulation_BFER_std_threads.hpp>
-#include <Simulation/BFER/Standard/StarPU/SPU_Simulation_BFER_std.hpp>
-#include <Simulation/BFER/Standard/SystemC/SC_Simulation_BFER_std.hpp>
-#include <Simulation/BFER/Standard/Simulation_BFER_std.hpp>
-#include <Simulation/BFER/Iterative/Simulation_BFER_ite.hpp>
-#include <Simulation/BFER/Iterative/Threads/Simulation_BFER_ite_threads.hpp>
-#include <Simulation/BFER/Iterative/SystemC/SC_Simulation_BFER_ite.hpp>
-#include <Simulation/BFER/Simulation_BFER.hpp>
-// #include <aff3ct.hpp>
 #include <Generator/Polar/SC/Generator_polar_SC_sys.hpp>
 #include <Generator/Polar/Generator_polar.hpp>
 #include <Generator/Polar/SCL/Generator_polar_SCL_sys.hpp>
 #include <Generator/Generator.hpp>
+
+#include "Simulation/BFER/BFER.hpp"
+#include "Simulation/BFER/Iterative/BFER_ite.hpp"
+#include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
+#include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
+#include "Simulation/BFER/Standard/BFER_std.hpp"
+#include "Simulation/BFER/Standard/StarPU/SPU_BFER_std.hpp"
+#include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
+#include "Simulation/BFER/Standard/Threads/BFER_std_threads.hpp"
+#include "Simulation/EXIT/EXIT.hpp"

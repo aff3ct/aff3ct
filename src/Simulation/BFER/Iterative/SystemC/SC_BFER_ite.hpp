@@ -9,7 +9,7 @@
 #include "Tools/SystemC/SC_Duplicator.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 
-#include "../Simulation_BFER_ite.hpp"
+#include "../BFER_ite.hpp"
 
 namespace aff3ct
 {

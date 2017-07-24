@@ -1,10 +1,10 @@
+#include "Simulation/BFER/Standard/BFER_std.hpp"
+
 #include <thread>
 #include <string>
 #include <iostream>
 
 #include "Factory/Module/Interleaver.hpp"
-
-#include "Simulation/BFER/Standard/Simulation_BFER_std.hpp"
 
 #include "BFER_std.hpp"
 
@@ -14,7 +14,7 @@ using namespace aff3ct::launcher;
 template <typename B, typename R, typename Q>
 BFER_std<B,R,Q>
 ::BFER_std(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_BFER_std::parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new factory::BFER_std::parameters())
 {
 	Launcher::params = params;
 }
@@ -33,7 +33,7 @@ void BFER_std<B,R,Q>
 {
 	Launcher::build_args();
 
-	factory::Simulation_BFER_std::build_args(this->req_args, this->opt_args);
+	factory::BFER_std::build_args(this->req_args, this->opt_args);
 	factory::Source             ::build_args(this->req_args, this->opt_args);
 	factory::CRC                ::build_args(this->req_args, this->opt_args);
 	factory::Modem              ::build_args(this->req_args, this->opt_args);
@@ -73,7 +73,7 @@ void BFER_std<B,R,Q>
 {
 	Launcher::store_args();
 
-	factory::Simulation_BFER_std::store_args(this->ar.get_args(), *params);
+	factory::BFER_std::store_args(this->ar.get_args(), *params);
 
 	factory::Source::store_args(this->ar.get_args(), *params->src);
 
@@ -154,7 +154,7 @@ template <typename B, typename R, typename Q>
 void BFER_std<B,R,Q>
 ::print_header()
 {
-	factory::Simulation_BFER_std::header(this->pl_sim, *params);
+	factory::BFER_std::header(this->pl_sim, *params);
 	factory::Source             ::header(this->pl_src, *params->src);
 	factory::CRC                ::header(this->pl_crc, *params->crc);
 	factory::Modem              ::header(this->pl_mdm, *params->mdm);
@@ -171,7 +171,7 @@ simulation::Simulation* BFER_std<B,R,Q>
 ::build_simu()
 {
 	this->build_codec();
-	return factory::Simulation_BFER_std::build<B,R,Q>(*params, *codec);
+	return factory::BFER_std::build<B,R,Q>(*params, *codec);
 }
 
 // ==================================================================================== explicit template instantiation 

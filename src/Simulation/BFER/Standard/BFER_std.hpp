@@ -19,19 +19,19 @@
 #include "Module/Decoder/Decoder.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "Factory/Simulation/BFER/Simulation_BFER_std.hpp"
+#include "Factory/Simulation/BFER/BFER_std.hpp"
 
-#include "../Simulation_BFER.hpp"
+#include "../BFER.hpp"
 
 namespace aff3ct
 {
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class Simulation_BFER_std : public Simulation_BFER<B,R,Q>
+class BFER_std : public BFER<B,R,Q>
 {
 protected:
-	const factory::Simulation_BFER_std::parameters &params;
+	const factory::BFER_std::parameters &params;
 
 	// communication chain
 	std::vector<module::Source     <B    >*> source;
@@ -50,8 +50,8 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	Simulation_BFER_std(const factory::Simulation_BFER_std::parameters &params, tools::Codec<B,Q> &codec);
-	virtual ~Simulation_BFER_std();
+	BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec);
+	virtual ~BFER_std();
 
 protected:
 	virtual void _build_communication_chain(const int tid = 0);

@@ -18,19 +18,19 @@
 
 #include "Tools/Codec/Codec_SISO.hpp"
 
-#include "Factory/Simulation/BFER/Simulation_BFER_ite.hpp"
+#include "Factory/Simulation/BFER/BFER_ite.hpp"
 
-#include "../Simulation_BFER.hpp"
+#include "../BFER.hpp"
 
 namespace aff3ct
 {
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class Simulation_BFER_ite : public Simulation_BFER<B,R,Q>
+class BFER_ite : public BFER<B,R,Q>
 {
 protected:
-	const factory::Simulation_BFER_ite::parameters &params;
+	const factory::BFER_ite::parameters &params;
 	tools::Codec_SISO<B,Q> &codec_siso;
 
 	// communication chain
@@ -50,8 +50,8 @@ protected:
 	std::vector<std::mt19937> rd_engine_seed;
 
 public:
-	Simulation_BFER_ite(const factory::Simulation_BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec);
-	virtual ~Simulation_BFER_ite();
+	BFER_ite(const factory::BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec);
+	virtual ~BFER_ite();
 
 protected:
 	virtual void _build_communication_chain(const int tid = 0);

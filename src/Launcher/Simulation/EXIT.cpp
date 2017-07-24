@@ -1,10 +1,10 @@
+#include "Simulation/EXIT/EXIT.hpp"
+
 #include <thread>
 #include <string>
 #include <iostream>
 
 #include "Factory/Module/Interleaver.hpp"
-
-#include "Simulation/EXIT/Simulation_EXIT.hpp"
 
 #include "EXIT.hpp"
 
@@ -14,7 +14,7 @@ using namespace aff3ct::launcher;
 template <typename B, typename R>
 EXIT<B,R>
 ::EXIT(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_EXIT::parameters())
+: Launcher(argc, argv, stream), codec(nullptr), params(new factory::EXIT::parameters())
 {
 	Launcher::params = params;
 }
@@ -33,7 +33,7 @@ void EXIT<B,R>
 {
 	Launcher::build_args();
 
-	factory::Simulation_EXIT::build_args(this->req_args, this->opt_args);
+	factory::EXIT::build_args(this->req_args, this->opt_args);
 	factory::Source         ::build_args(this->req_args, this->opt_args);
 	factory::Modem          ::build_args(this->req_args, this->opt_args);
 	factory::Channel        ::build_args(this->req_args, this->opt_args);
@@ -63,7 +63,7 @@ void EXIT<B,R>
 {
 	Launcher::store_args();
 
-	factory::Simulation_EXIT::store_args(this->ar.get_args(), *params);
+	factory::EXIT::store_args(this->ar.get_args(), *params);
 
 	factory::Source::store_args(this->ar.get_args(), *params->src);
 
@@ -119,7 +119,7 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::print_header()
 {
-	factory::Simulation_EXIT::header(this->pl_sim, *params);
+	factory::EXIT::header(this->pl_sim, *params);
 	factory::Source         ::header(this->pl_src, *params->src);
 	factory::Modem          ::header(this->pl_mdm, *params->mdm);
 	factory::Channel        ::header(this->pl_chn, *params->chn);
@@ -133,7 +133,7 @@ simulation::Simulation* EXIT<B,R>
 ::build_simu()
 {
 	this->build_codec();
-	return factory::Simulation_EXIT::build<B,R>(*params, *codec);
+	return factory::EXIT::build<B,R>(*params, *codec);
 }
 
 // ==================================================================================== explicit template instantiation 
