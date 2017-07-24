@@ -15,7 +15,8 @@ namespace module
 template <typename B = int, typename R = float, tools::proto_i<  R> I = tools::init_LLR,
                                                 tools::proto_f<  R> F = tools::f_LLR,
                                                 tools::proto_v<  R> V = tools::v_LLR,
-                                                tools::proto_h<B,R> H = tools::h_LLR>
+                                                tools::proto_h<B,R> H = tools::h_LLR,
+                                                tools::proto_s<  R> S = tools::sat_val>
 class Decoder_polar_SCAN_naive_sys : public Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 {
 public:

@@ -4,6 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
+#include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "../../Decoder_SISO.hpp"
@@ -15,7 +16,8 @@ namespace module
 template <typename B = int, typename R = float, tools::proto_i<  R> I = tools::init_LLR,
                                                 tools::proto_f<  R> F = tools::f_LLR,
                                                 tools::proto_v<  R> V = tools::v_LLR,
-                                                tools::proto_h<B,R> H = tools::h_LLR>
+                                                tools::proto_h<B,R> H = tools::h_LLR,
+                                                tools::proto_s<  R> S = tools::sat_val>
 class Decoder_polar_SCAN_naive : public Decoder_SISO<B,R>
 {
 protected:
@@ -28,6 +30,7 @@ protected:
 	std::vector<mipp::vector<R>> soft_graph;
 
 	bool is_init;
+
 public:
 	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
 	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");

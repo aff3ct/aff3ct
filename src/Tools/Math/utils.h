@@ -36,14 +36,16 @@ constexpr R init_LLR() { return (R)0; }
 
 // saturate values in function of the domain
 template <typename R>
-constexpr std::pair<R,R> sat_vals() { return std::make_pair(-std::numeric_limits<R>::infinity(), 
-                                                             std::numeric_limits<R>::infinity()); }
+constexpr R sat_val() { return std::numeric_limits<R>::infinity(); }
 
 template <>
-constexpr std::pair<short, short> sat_vals() { return std::make_pair(-16382, 16382); }
+constexpr short sat_val<short>() { return 16382; }
 
 template <>
-constexpr std::pair<signed char, signed char> sat_vals() { return std::make_pair(-63, 63); }
+constexpr signed char sat_val<signed char>() { return 63; }
+
+template <typename R>
+constexpr std::pair<R, R> sat_vals() { return std::make_pair(-sat_val<R>(), sat_val<R>()); }
 
 // return the initial value for a bit
 template <typename B>
