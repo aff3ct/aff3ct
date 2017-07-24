@@ -12,15 +12,15 @@ namespace aff3ct
 namespace launcher
 {
 template <typename B = int, typename R = float, typename Q = R>
-class Launcher_BFER_ite : public Launcher
+class BFER_ite : public Launcher
 {
 protected:
 	tools::Codec_SISO<B,Q> *codec = nullptr;
 	factory::Simulation_BFER_ite::parameters *params;
 
 public:
-	Launcher_BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_BFER_ite();
+	BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);
+	virtual ~BFER_ite();
 
 protected:
 	virtual void build_args();

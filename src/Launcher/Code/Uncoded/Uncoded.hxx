@@ -2,15 +2,15 @@
 
 #include "Tools/Codec/Uncoded/Codec_uncoded.hpp"
 
-#include "Launcher_uncoded.hpp"
+#include "Uncoded.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
 template <class C, typename B, typename R, typename Q>
-Launcher_uncoded<C,B,R,Q>
-::Launcher_uncoded(const int argc, const char **argv, std::ostream &stream)
+Uncoded<C,B,R,Q>
+::Uncoded(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
 	params_enc = new factory::Encoder   ::parameters();
@@ -21,20 +21,20 @@ Launcher_uncoded<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-Launcher_uncoded<C,B,R,Q>
-::~Launcher_uncoded()
+Uncoded<C,B,R,Q>
+::~Uncoded()
 {
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_uncoded<C,B,R,Q>
+void Uncoded<C,B,R,Q>
 ::build_args()
 {
 	C::build_args();
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_uncoded<C,B,R,Q>
+void Uncoded<C,B,R,Q>
 ::store_args()
 {
 	C::store_args();
@@ -58,7 +58,7 @@ void Launcher_uncoded<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_uncoded<C,B,R,Q>
+void Uncoded<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
@@ -69,7 +69,7 @@ void Launcher_uncoded<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_uncoded<C,B,R,Q>
+void Uncoded<C,B,R,Q>
 ::build_codec()
 {
 	this->codec = new tools::Codec_uncoded<B,Q>(*params_enc, *params_dec);

@@ -1,15 +1,16 @@
 #include <iostream>
 
 #include "Tools/Codec/RSC/Codec_RSC.hpp"
-#include "Launcher_RSC.hpp"
+
+#include "RSC.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
 template <class C, typename B, typename R, typename Q, typename QD>
-Launcher_RSC<C,B,R,Q,QD>
-::Launcher_RSC(const int argc, const char **argv, std::ostream &stream)
+RSC<C,B,R,Q,QD>
+::RSC(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
 	params_enc = new factory::Encoder_RSC::parameters();
@@ -20,13 +21,13 @@ Launcher_RSC<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-Launcher_RSC<C,B,R,Q,QD>
-::~Launcher_RSC()
+RSC<C,B,R,Q,QD>
+::~RSC()
 {
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_RSC<C,B,R,Q,QD>
+void RSC<C,B,R,Q,QD>
 ::build_args()
 {
 	factory::Encoder_RSC::build_args(this->req_args, this->opt_args);
@@ -45,7 +46,7 @@ void Launcher_RSC<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_RSC<C,B,R,Q,QD>
+void RSC<C,B,R,Q,QD>
 ::store_args()
 {
 	factory::Encoder_RSC::store_args(this->ar.get_args(), *params_enc);
@@ -73,7 +74,7 @@ void Launcher_RSC<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_RSC<C,B,R,Q,QD>
+void RSC<C,B,R,Q,QD>
 ::print_header()
 {
 	if (params_enc->type != "NO")
@@ -84,7 +85,7 @@ void Launcher_RSC<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_RSC<C,B,R,Q,QD>
+void RSC<C,B,R,Q,QD>
 ::build_codec()
 {
 	this->codec = new tools::Codec_RSC<B,Q,QD>(*params_enc, *params_dec);

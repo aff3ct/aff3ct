@@ -1,15 +1,16 @@
 #include <iostream>
 
 #include "Tools/Codec/Turbo/Codec_turbo.hpp"
-#include "Launcher_turbo.hpp"
+
+#include "Turbo.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
 template <class C, typename B, typename R, typename Q, typename QD>
-Launcher_turbo<C,B,R,Q,QD>
-::Launcher_turbo(const int argc, const char **argv, std::ostream &stream)
+Turbo<C,B,R,Q,QD>
+::Turbo(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
 	params_enc = new factory::Encoder_turbo  ::parameters();
@@ -22,13 +23,13 @@ Launcher_turbo<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-Launcher_turbo<C,B,R,Q,QD>
-::~Launcher_turbo()
+Turbo<C,B,R,Q,QD>
+::~Turbo()
 {
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_turbo<C,B,R,Q,QD>
+void Turbo<C,B,R,Q,QD>
 ::build_args()
 {
 	factory::Encoder_turbo  ::build_args(this->req_args, this->opt_args);
@@ -53,7 +54,7 @@ void Launcher_turbo<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_turbo<C,B,R,Q,QD>
+void Turbo<C,B,R,Q,QD>
 ::store_args()
 {
 	factory::Encoder_turbo::store_args(this->ar.get_args(), *params_enc);
@@ -82,7 +83,7 @@ void Launcher_turbo<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_turbo<C,B,R,Q,QD>
+void Turbo<C,B,R,Q,QD>
 ::print_header()
 {
 	if (params_enc->type != "NO")
@@ -97,7 +98,7 @@ void Launcher_turbo<C,B,R,Q,QD>
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
-void Launcher_turbo<C,B,R,Q,QD>
+void Turbo<C,B,R,Q,QD>
 ::build_codec()
 {
 	this->codec = new tools::Codec_turbo<B,Q,QD>(*params_enc, *params_dec, *params_pct, this->params->n_threads);

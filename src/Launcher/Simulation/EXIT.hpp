@@ -12,15 +12,15 @@ namespace aff3ct
 namespace launcher
 {
 template <typename B = int, typename R = float>
-class Launcher_EXIT : public Launcher
+class EXIT : public Launcher
 {
 protected:
 	tools::Codec_SISO<B,R> *codec = nullptr;
 	factory::Simulation_EXIT::parameters *params;
 
 public:
-	Launcher_EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_EXIT();
+	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);
+	virtual ~EXIT();
 
 protected:
 	virtual void build_args();

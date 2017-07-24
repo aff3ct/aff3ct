@@ -1,15 +1,16 @@
 #include <iostream>
 
 #include "Tools/Codec/Polar/Codec_polar.hpp"
-#include "Launcher_polar.hpp"
+
+#include "Polar.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
 template <class C, typename B, typename R, typename Q>
-Launcher_polar<C,B,R,Q>
-::Launcher_polar(const int argc, const char **argv, std::ostream &stream)
+Polar<C,B,R,Q>
+::Polar(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
 	params_fb  = new factory::Frozenbits_generator::parameters();
@@ -23,8 +24,8 @@ Launcher_polar<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-Launcher_polar<C,B,R,Q>
-::~Launcher_polar()
+Polar<C,B,R,Q>
+::~Polar()
 {
 	if (params_fb != nullptr)
 	{
@@ -34,7 +35,7 @@ Launcher_polar<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_polar<C,B,R,Q>
+void Polar<C,B,R,Q>
 ::build_args()
 {
 	factory::Frozenbits_generator::build_args(this->req_args, this->opt_args, "enc-fb");
@@ -58,7 +59,7 @@ void Launcher_polar<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_polar<C,B,R,Q>
+void Polar<C,B,R,Q>
 ::store_args()
 {
 	factory::Puncturer_polar::store_args(this->ar.get_args(), *params_pct);
@@ -86,7 +87,7 @@ void Launcher_polar<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_polar<C,B,R,Q>
+void Polar<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
@@ -100,7 +101,7 @@ void Launcher_polar<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_polar<C,B,R,Q>
+void Polar<C,B,R,Q>
 ::build_codec()
 {
 	this->codec = new tools::Codec_polar<B,Q>(*params_fb, *params_pct, *params_enc, *params_dec, this->params->n_threads);

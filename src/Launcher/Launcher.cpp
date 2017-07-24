@@ -27,8 +27,7 @@
 
 #include "Launcher.hpp"
 
-using namespace aff3ct::tools;
-using namespace aff3ct::simulation;
+using namespace aff3ct;
 using namespace aff3ct::launcher;
 
 Launcher::Launcher(const int argc, const char **argv, std::ostream &stream)
@@ -84,17 +83,17 @@ int Launcher::read_arguments()
 
 	// print the errors
 	for (unsigned e = 0; e < cmd_error.size(); e++)
-		std::cerr << format_error(cmd_error[e]) << std::endl;
+		std::cerr << tools::format_error(cmd_error[e]) << std::endl;
 
 	if(miss_arg)
-		std::cerr << format_error("At least one required argument is missing.") << std::endl;
+		std::cerr << tools::format_error("At least one required argument is missing.") << std::endl;
 
 	// print the warnings
 #ifdef ENABLE_MPI
 	if (simu_params->mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < cmd_warn.size(); w++)
-			std::clog << format_warning(cmd_warn[w]) << std::endl;
+			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
 
 	// print the help tags
 	if ((miss_arg || error) && !params->display_help)
@@ -102,10 +101,10 @@ int Launcher::read_arguments()
 		std::string message = "For more information please display the help (";
 		std::vector<std::string> help_tag = {"help", "h"};
 		for (unsigned i = 0; i < help_tag.size(); i++)
-			message += Arguments_reader::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
+			message += tools::Arguments_reader::print_tag(help_tag[i]) + ((i < help_tag.size()-1)?", ":"");
 
 		message += ").";
-		std::cerr << format_info(message) << std::endl;
+		std::cerr << tools::format_info(message) << std::endl;
 	}
 
 	return ((miss_arg || error)?EXIT_FAILURE:EXIT_SUCCESS);
@@ -114,10 +113,10 @@ int Launcher::read_arguments()
 void Launcher::print_header()
 {
 	// display configuration and simulation parameters
-	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
-	stream << "# " << style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", Style::BOLD) << std::endl;
-	stream << "# " << style("-------------------------------------------------", Style::BOLD) << std::endl;
-	stream << "# " << style(style("Parameters :", Style::BOLD), Style::UNDERLINED) << std::endl;
+	stream << "# " << tools::style("-------------------------------------------------", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::style("---- A FAST FORWARD ERROR CORRECTION TOOL >> ----", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::style("-------------------------------------------------", tools::Style::BOLD) << std::endl;
+	stream << "# " << tools::style(style("Parameters :", tools::Style::BOLD), tools::Style::UNDERLINED) << std::endl;
 
 	int max_n_chars = 0;
 	factory::Header::compute_max_n_chars(pl_sim, max_n_chars);
@@ -186,7 +185,7 @@ void Launcher::launch()
 	}
 	catch (std::exception const& e)
 	{
-		std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
+		std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 	}
 
 	if (simu != nullptr)
@@ -203,7 +202,7 @@ void Launcher::launch()
 		}
 		catch (std::exception const& e)
 		{
-			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 		}
 	}
 

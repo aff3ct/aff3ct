@@ -11,18 +11,17 @@
 #include "Tools/date.h"
 
 #include "Launcher/Launcher.hpp"
-#include "Launcher/Simulation/Launcher_BFER_std.hpp"
-#include "Launcher/Simulation/Launcher_BFER_ite.hpp"
-#include "Launcher/Simulation/Launcher_EXIT.hpp"
-
-#include "Launcher/Code/BCH/Launcher_BCH.hpp"
-#include "Launcher/Code/LDPC/Launcher_LDPC.hpp"
-#include "Launcher/Code/Polar/Launcher_polar.hpp"
-#include "Launcher/Code/RA/Launcher_RA.hpp"
-#include "Launcher/Code/RSC/Launcher_RSC.hpp"
-#include "Launcher/Code/Turbo/Launcher_turbo.hpp"
-#include "Launcher/Code/Repetition/Launcher_repetition.hpp"
-#include "Launcher/Code/Uncoded/Launcher_uncoded.hpp"
+#include "Launcher/Code/BCH/BCH.hpp"
+#include "Launcher/Code/LDPC/LDPC.hpp"
+#include "Launcher/Code/Polar/Polar.hpp"
+#include "Launcher/Code/RA/RA.hpp"
+#include "Launcher/Code/Repetition/Repetition.hpp"
+#include "Launcher/Code/RSC/RSC.hpp"
+#include "Launcher/Code/Turbo/Turbo.hpp"
+#include "Launcher/Code/Uncoded/Uncoded.hpp"
+#include "Launcher/Simulation/BFER_ite.hpp"
+#include "Launcher/Simulation/BFER_std.hpp"
+#include "Launcher/Simulation/EXIT.hpp"
 
 #include "Launcher.hpp"
 
@@ -50,11 +49,11 @@ launcher::Launcher* Launcher
 {
 	if (params.cde_type == "POLAR")
 		if (params.sim_type == "EXIT")
-			return new launcher::Launcher_polar<launcher::Launcher_EXIT<int32_t,float>,int32_t,float,float>(argc, argv);
+			return new launcher::Polar<launcher::EXIT<int32_t,float>,int32_t,float,float>(argc, argv);
 
 	if (params.cde_type == "RSC")
 		if (params.sim_type == "EXIT")
-			return new launcher::Launcher_RSC<launcher::Launcher_EXIT<int32_t,float>,int32_t,float,float,float>(argc, argv);
+			return new launcher::RSC<launcher::EXIT<int32_t,float>,int32_t,float,float,float>(argc, argv);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
 }
@@ -67,11 +66,11 @@ launcher::Launcher* Launcher
 {
 	if (params.cde_type == "POLAR")
 		if (params.sim_type == "EXIT")
-			return new launcher::Launcher_polar<launcher::Launcher_EXIT<int64_t,double>,int64_t,double,double>(argc, argv);
+			return new launcher::Polar<launcher::EXIT<int64_t,double>,int64_t,double,double>(argc, argv);
 
 	if (params.cde_type == "RSC")
 		if (params.sim_type == "EXIT")
-			return new launcher::Launcher_RSC<launcher::Launcher_EXIT<int64_t,double>,int64_t,double,double,double>(argc, argv);
+			return new launcher::RSC<launcher::EXIT<int64_t,double>,int64_t,double,double,double>(argc, argv);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
 }
@@ -86,57 +85,57 @@ launcher::Launcher* Launcher
 	if (params.cde_type == "POLAR")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_polar<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::Polar<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 		else if (params.sim_type == "BFERI")
-			return new launcher::Launcher_polar<launcher::Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::Polar<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (params.cde_type == "RSC")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_RSC<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
+			return new launcher::RSC<launcher::BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
 		else if (params.sim_type == "BFERI")
-			return new launcher::Launcher_RSC<launcher::Launcher_BFER_ite<B,R,Q>,B,R,Q,QD>(argc, argv);
+			return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q,QD>(argc, argv);
 	}
 
 	if (params.cde_type == "TURBO")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_turbo<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
+			return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
 	}
 
 	if (params.cde_type == "REPETITION")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_repetition<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (params.cde_type == "BCH")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_BCH<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::BCH<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (params.cde_type == "RA")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_RA<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::RA<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (params.cde_type == "LDPC")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_LDPC<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::LDPC<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 		else if (params.sim_type == "BFERI")
-			return new launcher::Launcher_LDPC<launcher::Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::LDPC<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (params.cde_type == "UNCODED")
 	{
 		if (params.sim_type == "BFER")
-			return new launcher::Launcher_uncoded<launcher::Launcher_BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::Uncoded<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 		else if (params.sim_type == "BFERI")
-			return new launcher::Launcher_uncoded<launcher::Launcher_BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+			return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	return build_exit<B,R,Q,QD>(params, argc, argv);

@@ -10,7 +10,7 @@ namespace aff3ct
 namespace launcher
 {
 template <class C, typename B = int, typename R = float, typename Q = R, typename QD = Q>
-class Launcher_turbo : public C
+class Turbo : public C
 {
 protected:
 	factory::Encoder_turbo  ::parameters *params_enc = nullptr;
@@ -18,8 +18,8 @@ protected:
 	factory::Decoder_turbo  ::parameters *params_dec = nullptr;
 
 public:
-	Launcher_turbo(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_turbo();
+	Turbo(const int argc, const char **argv, std::ostream &stream = std::cout);
+	virtual ~Turbo();
 
 protected:
 	virtual void build_args();
@@ -31,6 +31,6 @@ protected:
 }
 }
 
-#include "Launcher_turbo.hxx"
+#include "Turbo.hxx"
 
 #endif /* LAUNCHER_TURBO_HPP_ */

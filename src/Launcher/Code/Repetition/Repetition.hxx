@@ -1,40 +1,40 @@
 #include <iostream>
 
-#include "Tools/Codec/LDPC/Codec_LDPC.hpp"
-#include "Launcher_LDPC.hpp"
+#include "Tools/Codec/Repetition/Codec_repetition.hpp"
+
+#include "Repetition.hpp"
 
 namespace aff3ct
 {
 namespace launcher
 {
 template <class C, typename B, typename R, typename Q>
-Launcher_LDPC<C,B,R,Q>
-::Launcher_LDPC(const int argc, const char **argv, std::ostream &stream)
+Repetition<C,B,R,Q>
+::Repetition(const int argc, const char **argv, std::ostream &stream)
 : C(argc, argv, stream)
 {
-	params_enc = new factory::Encoder_LDPC::parameters();
-	params_dec = new factory::Decoder_LDPC::parameters();
+	params_enc = new factory::Encoder_repetition::parameters();
+	params_dec = new factory::Decoder_repetition::parameters();
 
 	if (this->params->enc != nullptr) { delete this->params->enc; this->params->enc = params_enc; }
 	if (this->params->dec != nullptr) { delete this->params->dec; this->params->dec = params_dec; }
 }
 
 template <class C, typename B, typename R, typename Q>
-Launcher_LDPC<C,B,R,Q>
-::~Launcher_LDPC()
+Repetition<C,B,R,Q>
+::~Repetition()
 {
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_LDPC<C,B,R,Q>
+void Repetition<C,B,R,Q>
 ::build_args()
 {
-	factory::Encoder_LDPC::build_args(this->req_args, this->opt_args);
-	factory::Decoder_LDPC::build_args(this->req_args, this->opt_args);
+	factory::Encoder_repetition::build_args(this->req_args, this->opt_args);
+	factory::Decoder_repetition::build_args(this->req_args, this->opt_args);
 
 	this->opt_args.erase({"enc-fra",       "F"});
 	this->opt_args.erase({"enc-seed",      "S"});
-	this->opt_args.erase({"enc-h-path",       });
 	this->req_args.erase({"dec-cw-size",   "N"});
 	this->req_args.erase({"dec-info-bits", "K"});
 	this->opt_args.erase({"dec-fra",       "F"});
@@ -43,17 +43,15 @@ void Launcher_LDPC<C,B,R,Q>
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_LDPC<C,B,R,Q>
+void Repetition<C,B,R,Q>
 ::store_args()
 {
-	factory::Encoder_LDPC::store_args(this->ar.get_args(), *params_enc);
+	factory::Encoder_repetition::store_args(this->ar.get_args(), *params_enc);
 
 	params_dec->K    = params_enc->K;
 	params_dec->N_cw = params_enc->N_cw;
 
-	factory::Decoder_LDPC::store_args(this->ar.get_args(), *params_dec);
-
-	params_enc->H_alist_path = params_dec->H_alist_path;
+	factory::Decoder_repetition::store_args(this->ar.get_args(), *params_dec);
 
 	this->params->pct->type = "NO";
 	this->params->pct->K    = params_enc->K;
@@ -61,28 +59,25 @@ void Launcher_LDPC<C,B,R,Q>
 	this->params->pct->N_cw = this->params->pct->N;
 	this->params->pct->R    = (float)this->params->pct->K / (float)this->params->pct->N;
 
-	if (params_dec->simd_strategy == "INTER")
-		this->params->src->n_frames = mipp::N<Q>();
-
 	C::store_args();
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_LDPC<C,B,R,Q>
+void Repetition<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_LDPC::header(this->pl_enc, *params_enc);
-	factory::Decoder_LDPC::header(this->pl_dec, *params_dec);
+		factory::Encoder_repetition::header(this->pl_enc, *params_enc);
+	factory::Decoder_repetition::header(this->pl_dec, *params_dec);
 
 	C::print_header();
 }
 
 template <class C, typename B, typename R, typename Q>
-void Launcher_LDPC<C,B,R,Q>
+void Repetition<C,B,R,Q>
 ::build_codec()
 {
-	this->codec = new tools::Codec_LDPC<B,Q>(*params_enc, *params_dec, this->params->n_threads);
+	this->codec = new tools::Codec_repetition<B,Q>(*params_enc, *params_dec);
 }
 }
 }

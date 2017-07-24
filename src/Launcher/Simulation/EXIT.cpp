@@ -6,30 +6,29 @@
 
 #include "Simulation/EXIT/Simulation_EXIT.hpp"
 
-#include "Launcher_EXIT.hpp"
+#include "EXIT.hpp"
 
-using namespace aff3ct::tools;
+using namespace aff3ct;
 using namespace aff3ct::launcher;
-using namespace aff3ct::simulation;
 
 template <typename B, typename R>
-Launcher_EXIT<B,R>
-::Launcher_EXIT(const int argc, const char **argv, std::ostream &stream)
+EXIT<B,R>
+::EXIT(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_EXIT::parameters())
 {
 	Launcher::params = params;
 }
 
 template <typename B, typename R>
-Launcher_EXIT<B,R>
-::~Launcher_EXIT()
+EXIT<B,R>
+::~EXIT()
 {
 	if (codec != nullptr)
 		delete codec;
 }
 
 template <typename B, typename R>
-void Launcher_EXIT<B,R>
+void EXIT<B,R>
 ::build_args()
 {
 	Launcher::build_args();
@@ -59,7 +58,7 @@ void Launcher_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Launcher_EXIT<B,R>
+void EXIT<B,R>
 ::store_args()
 {
 	Launcher::store_args();
@@ -100,7 +99,7 @@ void Launcher_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Launcher_EXIT<B,R>
+void EXIT<B,R>
 ::group_args()
 {
 	Launcher::group_args();
@@ -117,7 +116,7 @@ void Launcher_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Launcher_EXIT<B,R>
+void EXIT<B,R>
 ::print_header()
 {
 	factory::Simulation_EXIT::header(this->pl_sim, *params);
@@ -130,7 +129,7 @@ void Launcher_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Simulation* Launcher_EXIT<B,R>
+simulation::Simulation* EXIT<B,R>
 ::build_simu()
 {
 	this->build_codec();
@@ -140,11 +139,11 @@ Simulation* Launcher_EXIT<B,R>
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::launcher::Launcher_EXIT<B_8,R_8>;
-template class aff3ct::launcher::Launcher_EXIT<B_16,R_16>;
-template class aff3ct::launcher::Launcher_EXIT<B_32,R_32>;
-template class aff3ct::launcher::Launcher_EXIT<B_64,R_64>;
+template class aff3ct::launcher::EXIT<B_8,R_8>;
+template class aff3ct::launcher::EXIT<B_16,R_16>;
+template class aff3ct::launcher::EXIT<B_32,R_32>;
+template class aff3ct::launcher::EXIT<B_64,R_64>;
 #else
-template class aff3ct::launcher::Launcher_EXIT<B,R>;
+template class aff3ct::launcher::EXIT<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

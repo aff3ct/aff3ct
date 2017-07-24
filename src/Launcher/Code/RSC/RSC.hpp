@@ -9,15 +9,15 @@ namespace aff3ct
 namespace launcher
 {
 template <class C, typename B = int, typename R = float, typename Q = R, typename QD = Q>
-class Launcher_RSC : public C
+class RSC : public C
 {
 protected:
 	factory::Encoder_RSC::parameters *params_enc = nullptr;
 	factory::Decoder_RSC::parameters *params_dec = nullptr;
 
 public:
-	Launcher_RSC(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_RSC();
+	RSC(const int argc, const char **argv, std::ostream &stream = std::cout);
+	virtual ~RSC();
 
 protected:
 	virtual void build_args();
@@ -29,6 +29,6 @@ protected:
 }
 }
 
-#include "Launcher_RSC.hxx"
+#include "RSC.hxx"
 
 #endif /* LAUNCHER_RSC_HPP_ */

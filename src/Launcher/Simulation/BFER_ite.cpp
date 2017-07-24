@@ -2,41 +2,39 @@
 #include <string>
 #include <iostream>
 
-#include "Factory/Module/Interleaver.hpp"
+#include "Simulation/BFER/Iterative/Simulation_BFER_ite.hpp"
 
-#include "Simulation/BFER/Standard/Simulation_BFER_std.hpp"
+#include "BFER_ite.hpp"
 
-#include "Launcher_BFER_std.hpp"
-
-using namespace aff3ct::tools;
+using namespace aff3ct;
 using namespace aff3ct::launcher;
-using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Launcher_BFER_std<B,R,Q>
-::Launcher_BFER_std(const int argc, const char **argv, std::ostream &stream)
-: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_BFER_std::parameters())
+BFER_ite<B,R,Q>
+::BFER_ite(const int argc, const char **argv, std::ostream &stream)
+: Launcher(argc, argv, stream), codec(nullptr), params(new factory::Simulation_BFER_ite::parameters())
 {
 	Launcher::params = params;
 }
 
 template <typename B, typename R, typename Q>
-Launcher_BFER_std<B,R,Q>
-::~Launcher_BFER_std()
+BFER_ite<B,R,Q>
+::~BFER_ite()
 {
 	if (codec != nullptr)
 		delete codec;
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void BFER_ite<B,R,Q>
 ::build_args()
 {
 	Launcher::build_args();
 
-	factory::Simulation_BFER_std::build_args(this->req_args, this->opt_args);
+	factory::Simulation_BFER_ite::build_args(this->req_args, this->opt_args);
 	factory::Source             ::build_args(this->req_args, this->opt_args);
 	factory::CRC                ::build_args(this->req_args, this->opt_args);
+	factory::Interleaver        ::build_args(this->req_args, this->opt_args);
 	factory::Modem              ::build_args(this->req_args, this->opt_args);
 	factory::Channel            ::build_args(this->req_args, this->opt_args);
 	if (std::is_integral<Q>())
@@ -50,6 +48,9 @@ void Launcher_BFER_std<B,R,Q>
 	this->opt_args.erase({"src-seed",      "S"});
 	this->req_args.erase({"crc-info-bits", "K"});
 	this->opt_args.erase({"crc-fra",       "F"});
+	this->req_args.erase({"itl-size"          });
+	this->opt_args.erase({"itl-fra",       "F"});
+	this->opt_args.erase({"itl-seed",      "S"});
 	this->req_args.erase({"mdm-fra-size",  "N"});
 	this->opt_args.erase({"mdm-fra",       "F"});
 	this->opt_args.erase({"mdm-sigma"        });
@@ -69,12 +70,12 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void BFER_ite<B,R,Q>
 ::store_args()
 {
 	Launcher::store_args();
 
-	factory::Simulation_BFER_std::store_args(this->ar.get_args(), *params);
+	factory::Simulation_BFER_ite::store_args(this->ar.get_args(), *params);
 
 	factory::Source::store_args(this->ar.get_args(), *params->src);
 
@@ -85,6 +86,11 @@ void Launcher_BFER_std<B,R,Q>
 
 	params->crc->K = K - params->crc->size;
 	params->src->K = params->src->K == 0 ? params->crc->K : params->src->K;
+
+	params->itl->size = N;
+
+	factory::Interleaver::store_args(this->ar.get_args(), *params->itl);
+
 	params->mdm->N = N;
 
 	factory::Modem::store_args(this->ar.get_args(), *params->mdm);
@@ -95,7 +101,7 @@ void Launcher_BFER_std<B,R,Q>
 
 	factory::Channel::store_args(this->ar.get_args(), *params->chn);
 
-	params->qnt->size = params->mdm->N;
+	params->qnt->size = params->mdm->N_fil;
 
 	if (std::is_integral<Q>())
 		factory::Quantizer::store_args(this->ar.get_args(), *params->qnt);
@@ -123,6 +129,7 @@ void Launcher_BFER_std<B,R,Q>
 
 	params->crc->n_frames = params->src->n_frames;
 	params->enc->n_frames = params->src->n_frames;
+	params->itl->n_frames = params->src->n_frames;
 	params->pct->n_frames = params->src->n_frames;
 	params->mdm->n_frames = params->src->n_frames;
 	params->chn->n_frames = params->src->n_frames;
@@ -132,7 +139,7 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void BFER_ite<B,R,Q>
 ::group_args()
 {
 	Launcher::group_args();
@@ -152,12 +159,13 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Launcher_BFER_std<B,R,Q>
+void BFER_ite<B,R,Q>
 ::print_header()
 {
-	factory::Simulation_BFER_std::header(this->pl_sim, *params);
+	factory::Simulation_BFER_ite::header(this->pl_sim, *params);
 	factory::Source             ::header(this->pl_src, *params->src);
 	factory::CRC                ::header(this->pl_crc, *params->crc);
+	factory::Interleaver        ::header(this->pl_itl, *params->itl);
 	factory::Modem              ::header(this->pl_mdm, *params->mdm);
 	factory::Channel            ::header(this->pl_chn, *params->chn);
 	factory::Quantizer          ::header(this->pl_qnt, *params->qnt);
@@ -168,21 +176,21 @@ void Launcher_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Simulation* Launcher_BFER_std<B,R,Q>
+simulation::Simulation* BFER_ite<B,R,Q>
 ::build_simu()
 {
 	this->build_codec();
-	return factory::Simulation_BFER_std::build<B,R,Q>(*params, *codec);
+	return factory::Simulation_BFER_ite::build<B,R,Q>(*params, *codec);
 }
 
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::launcher::Launcher_BFER_std<B_8,R_8,Q_8>;
-template class aff3ct::launcher::Launcher_BFER_std<B_16,R_16,Q_16>;
-template class aff3ct::launcher::Launcher_BFER_std<B_32,R_32,Q_32>;
-template class aff3ct::launcher::Launcher_BFER_std<B_64,R_64,Q_64>;
+template class aff3ct::launcher::BFER_ite<B_8,R_8,Q_8>;
+template class aff3ct::launcher::BFER_ite<B_16,R_16,Q_16>;
+template class aff3ct::launcher::BFER_ite<B_32,R_32,Q_32>;
+template class aff3ct::launcher::BFER_ite<B_64,R_64,Q_64>;
 #else
-template class aff3ct::launcher::Launcher_BFER_std<B,R,Q>;
+template class aff3ct::launcher::BFER_ite<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

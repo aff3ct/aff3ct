@@ -9,15 +9,15 @@ namespace aff3ct
 namespace launcher
 {
 template <class C, typename B = int, typename R = float, typename Q = R>
-class Launcher_repetition : public C
+class Repetition : public C
 {
 protected:
 	factory::Encoder_repetition::parameters *params_enc = nullptr;
 	factory::Decoder_repetition::parameters *params_dec = nullptr;
 
 public:
-	Launcher_repetition(const int argc, const char **argv, std::ostream &stream = std::cout);
-	virtual ~Launcher_repetition();
+	Repetition(const int argc, const char **argv, std::ostream &stream = std::cout);
+	virtual ~Repetition();
 
 protected:
 	virtual void build_args();
@@ -29,6 +29,6 @@ protected:
 }
 }
 
-#include "Launcher_repetition.hxx"
+#include "Repetition.hxx"
 
 #endif /* LAUNCHER_REPETITION_HPP_ */
