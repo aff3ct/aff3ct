@@ -58,6 +58,9 @@ using proto_xo_i = mipp::reg (*)(const mipp::reg& u_a, const mipp::reg& u_b);
 template <typename B, typename R>
 using proto_m = R (*)(const B& u_a, const R& lambda_a);
 
+template <typename R>
+using proto_s = R (*)(); // special proto: return saturate value for a specific domain
+
 // ------------------------------------------------------------------------------------------- special function headers
 
 template <typename R>
