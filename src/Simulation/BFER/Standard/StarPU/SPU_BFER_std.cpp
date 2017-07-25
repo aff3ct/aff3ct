@@ -12,47 +12,47 @@ using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-SPU_Simulation_BFER_std<B,R,Q>
-::SPU_Simulation_BFER_std(const parameters& params, Codec<B,Q> &codec)
-: Simulation_BFER_std<B,R,Q>(params, codec),
+SPU_BFER_std<B,R,Q>
+::SPU_BFER_std(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+: BFER_std<B,R,Q>(params, codec),
 
-  task_names(this->params.simulation.n_threads, std::vector<std::string>(15)),
+  task_names(this->params.n_threads, std::vector<std::string>(15)),
   frame_id(0),
 
-  U_K1(this->params.simulation.n_threads, mipp::vector<B>(params.code.K_info * params.simulation.inter_frame_level)),
-  U_K2(this->params.simulation.n_threads, mipp::vector<B>(params.code.K      * params.simulation.inter_frame_level)),
-  X_N1(this->params.simulation.n_threads, mipp::vector<B>(params.code.N_code * params.simulation.inter_frame_level)),
-  X_N2(this->params.simulation.n_threads, mipp::vector<B>(params.code.N      * params.simulation.inter_frame_level)),
-  X_N3(this->params.simulation.n_threads, mipp::vector<R>(params.code.N_mod  * params.simulation.inter_frame_level)),
-  H_N (this->params.simulation.n_threads, mipp::vector<R>(params.code.N_mod  * params.simulation.inter_frame_level)),
-  Y_N1(this->params.simulation.n_threads, mipp::vector<R>(params.code.N_mod  * params.simulation.inter_frame_level)),
-  Y_N2(this->params.simulation.n_threads, mipp::vector<R>(params.code.N_fil  * params.simulation.inter_frame_level)),
-  Y_N3(this->params.simulation.n_threads, mipp::vector<R>(params.code.N      * params.simulation.inter_frame_level)),
-  Y_N4(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N      * params.simulation.inter_frame_level)),
-  Y_N5(this->params.simulation.n_threads, mipp::vector<Q>(params.code.N_code * params.simulation.inter_frame_level)),
-  V_K1(this->params.simulation.n_threads, mipp::vector<B>(params.code.K      * params.simulation.inter_frame_level)),
-  V_K2(this->params.simulation.n_threads, mipp::vector<B>(params.code.K_info * params.simulation.inter_frame_level)),
+  U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),
+  U_K2(this->params.n_threads, mipp::vector<B>(this->params.enc->K     * this->params.enc->n_frames)),
+  X_N1(this->params.n_threads, mipp::vector<B>(this->params.enc->N_cw  * this->params.enc->n_frames)),
+  X_N2(this->params.n_threads, mipp::vector<B>(this->params.pct->N     * this->params.pct->n_frames)),
+  X_N3(this->params.n_threads, mipp::vector<R>(this->params.mdm->N_mod * this->params.mdm->n_frames)),
+  H_N (this->params.n_threads, mipp::vector<R>(this->params.chn->N     * this->params.chn->n_frames)),
+  Y_N1(this->params.n_threads, mipp::vector<R>(this->params.chn->N     * this->params.chn->n_frames)),
+  Y_N2(this->params.n_threads, mipp::vector<R>(this->params.mdm->N_fil * this->params.mdm->n_frames)),
+  Y_N3(this->params.n_threads, mipp::vector<R>(this->params.mdm->N     * this->params.mdm->n_frames)),
+  Y_N4(this->params.n_threads, mipp::vector<Q>(this->params.qnt->size  * this->params.qnt->n_frames)),
+  Y_N5(this->params.n_threads, mipp::vector<Q>(this->params.pct->N_cw  * this->params.pct->n_frames)),
+  V_K1(this->params.n_threads, mipp::vector<B>(this->params.dec->K     * this->params.dec->n_frames)),
+  V_K2(this->params.n_threads, mipp::vector<B>(this->params.crc->K     * this->params.crc->n_frames)),
 
-  spu_U_K1(this->params.simulation.n_threads),
-  spu_U_K2(this->params.simulation.n_threads),
-  spu_X_N1(this->params.simulation.n_threads),
-  spu_X_N2(this->params.simulation.n_threads),
-  spu_X_N3(this->params.simulation.n_threads),
-  spu_H_N (this->params.simulation.n_threads),
-  spu_Y_N1(this->params.simulation.n_threads),
-  spu_Y_N2(this->params.simulation.n_threads),
-  spu_Y_N3(this->params.simulation.n_threads),
-  spu_Y_N4(this->params.simulation.n_threads),
-  spu_Y_N5(this->params.simulation.n_threads),
-  spu_V_K1(this->params.simulation.n_threads),
-  spu_V_K2(this->params.simulation.n_threads)
+  spu_U_K1(this->params.n_threads),
+  spu_U_K2(this->params.n_threads),
+  spu_X_N1(this->params.n_threads),
+  spu_X_N2(this->params.n_threads),
+  spu_X_N3(this->params.n_threads),
+  spu_H_N (this->params.n_threads),
+  spu_Y_N1(this->params.n_threads),
+  spu_Y_N2(this->params.n_threads),
+  spu_Y_N3(this->params.n_threads),
+  spu_Y_N4(this->params.n_threads),
+  spu_Y_N5(this->params.n_threads),
+  spu_V_K1(this->params.n_threads),
+  spu_V_K2(this->params.n_threads)
 {
-	if (params.simulation.debug)
+	if (params.debug)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the debug mode.");
-	if (params.simulation.benchs)
+	if (params.benchs)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the bench mode.");
 
-	if (params.simulation.time_report)
+	if (params.time_report)
 		std::clog << format_warning("The time report is not available in the StarPU simulation.") << std::endl;
 
 	// initialize StarPU with default configuration
@@ -71,7 +71,7 @@ SPU_Simulation_BFER_std<B,R,Q>
 	//  - the third argument is the adress of the vector in RAM
 	//  - the fourth argument is the number of elements in the vector
 	//  - the fifth argument is the size of each element.
-	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+	for (auto tid = 0; tid < this->params.n_threads; tid++)
 	{
 		starpu_vector_data_register(&spu_U_K1[tid], STARPU_MAIN_RAM, (uintptr_t)U_K1[tid].data(), U_K1[tid].size(), sizeof(B));
 		starpu_vector_data_register(&spu_U_K2[tid], STARPU_MAIN_RAM, (uintptr_t)U_K2[tid].data(), U_K2[tid].size(), sizeof(B));
@@ -104,11 +104,11 @@ SPU_Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-SPU_Simulation_BFER_std<B,R,Q>
-::~SPU_Simulation_BFER_std()
+SPU_BFER_std<B,R,Q>
+::~SPU_BFER_std()
 {
 	// StarPU does not need to manipulate the arrays anymore so we can stop monitoring them
-	for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+	for (auto tid = 0; tid < this->params.n_threads; tid++)
 	{
 		starpu_data_unregister(spu_U_K1[tid]);
 		starpu_data_unregister(spu_U_K2[tid]);
@@ -130,12 +130,12 @@ SPU_Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void SPU_Simulation_BFER_std<B,R,Q>
+void SPU_BFER_std<B,R,Q>
 ::_build_communication_chain(const int tid)
 {
-	Simulation_BFER_std<B,R,Q>::_build_communication_chain(tid);
+	BFER_std<B,R,Q>::_build_communication_chain(tid);
 
-	if (this->params.source.type == "AZCW")
+	if (this->params.src->type == "AZCW")
 	{
 		std::fill(this->U_K1[tid].begin(), this->U_K1[tid].end(), (B)0);
 		std::fill(this->U_K2[tid].begin(), this->U_K2[tid].end(), (B)0);
@@ -144,10 +144,10 @@ void SPU_Simulation_BFER_std<B,R,Q>
 		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
-	if (this->params.monitor.err_track_enable)
+	if (this->params.err_track_enable)
 	{
 		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
-		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.code.K});
+		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
@@ -155,13 +155,13 @@ void SPU_Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void SPU_Simulation_BFER_std<B,R,Q>
+void SPU_BFER_std<B,R,Q>
 ::_launch()
 {
 	// Monte Carlo simulation
 	while (!this->monitor_red->fe_limit_achieved())
 	{
-		for (auto tid = 0; tid < this->params.simulation.n_threads; tid++)
+		for (auto tid = 0; tid < this->params.n_threads; tid++)
 			this->seq_tasks_submission(tid);
 
 		starpu_task_wait_for_all();
@@ -169,12 +169,12 @@ void SPU_Simulation_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void SPU_Simulation_BFER_std<B,R,Q>
+void SPU_BFER_std<B,R,Q>
 ::seq_tasks_submission(const int tid)
 {
 	const std::string str_id = std::to_string(frame_id);
 
-	if (this->params.source.type != "AZCW")
+	if (this->params.src->type != "AZCW")
 	{
 		auto task_gen_source = Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K1[tid]               );
 		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K1[tid], spu_U_K2[tid]);
@@ -202,7 +202,7 @@ void SPU_Simulation_BFER_std<B,R,Q>
 	}
 
 	// Rayleigh channel
-	if (this->params.channel.type.find("RAYLEIGH") != std::string::npos)
+	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		auto task_add_noise_wg  = Channel<  R  >::spu_task_add_noise_wg (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid], spu_H_N [tid]);
 		auto task_filter        = Modem  <B,R,R>::spu_task_filter       (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]               );
@@ -251,7 +251,7 @@ void SPU_Simulation_BFER_std<B,R,Q>
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_quantize  ), "task_submit::qnt::process"   );
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_depuncture), "task_submit::pct::depuncture");
 
-	if (this->params.code.coset)
+	if (this->params.coset)
 	{
 		auto task_coset_real = Coset<B,Q>::spu_task_apply(this->coset_real[tid], spu_X_N1[tid], spu_Y_N5[tid], spu_Y_N5[tid]);
 		task_coset_real->priority = STARPU_MIN_PRIO +10;
@@ -264,7 +264,7 @@ void SPU_Simulation_BFER_std<B,R,Q>
 	task_names[tid][11] = "dec::hard_decode_" + str_id; task_decode->name = task_names[tid][11].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "task_submit::dec::hard_decode");
 
-	if (this->params.code.coset)
+	if (this->params.coset)
 	{
 		auto task_coset_bit = Coset<B,B>::spu_task_apply(this->coset_bit[tid], spu_U_K2[tid], spu_V_K1[tid], spu_V_K1[tid]);
 		task_coset_bit->priority = STARPU_MIN_PRIO +12;
@@ -288,12 +288,12 @@ void SPU_Simulation_BFER_std<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::simulation::SPU_Simulation_BFER_std<B_8,R_8,Q_8>;
-template class aff3ct::simulation::SPU_Simulation_BFER_std<B_16,R_16,Q_16>;
-template class aff3ct::simulation::SPU_Simulation_BFER_std<B_32,R_32,Q_32>;
-template class aff3ct::simulation::SPU_Simulation_BFER_std<B_64,R_64,Q_64>;
+template class aff3ct::simulation::SPU_BFER_std<B_8,R_8,Q_8>;
+template class aff3ct::simulation::SPU_BFER_std<B_16,R_16,Q_16>;
+template class aff3ct::simulation::SPU_BFER_std<B_32,R_32,Q_32>;
+template class aff3ct::simulation::SPU_BFER_std<B_64,R_64,Q_64>;
 #else
-template class aff3ct::simulation::SPU_Simulation_BFER_std<B,R,Q>;
+template class aff3ct::simulation::SPU_BFER_std<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation
 

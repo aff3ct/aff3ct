@@ -14,7 +14,7 @@ namespace aff3ct
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class SPU_Simulation_BFER_std : public Simulation_BFER_std<B,R,Q>
+class SPU_BFER_std : public BFER_std<B,R,Q>
 {
 private:
 	std::condition_variable cond_terminal;
@@ -53,8 +53,8 @@ protected:
 	std::vector<starpu_data_handle_t> spu_V_K2;
 
 public:
-	SPU_Simulation_BFER_std(const tools::parameters& params, tools::Codec<B,Q> &codec);
-	virtual ~SPU_Simulation_BFER_std();
+	SPU_BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec);
+	virtual ~SPU_BFER_std();
 
 protected:
 	virtual void _build_communication_chain(const int tid = 0);
