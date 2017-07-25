@@ -63,12 +63,12 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 
 	Launcher::store_args(vals, params, p);
 
-	if(exist(vals, {p+"-snr-min",  "m"})) params.snr_min =           std::stof(vals.at({p+"-snr-min",  "m"}));
-	if(exist(vals, {p+"-snr-max",  "M"})) params.snr_max =           std::stof(vals.at({p+"-snr-max",  "M"}));
-	if(exist(vals, {p+"-pyber"        })) params.pyber     =                   vals.at({p+"-pyber"        });
-	if(exist(vals, {p+"-snr-step", "s"})) params.snr_step  =         std::stof(vals.at({p+"-snr-step", "s"}));
-	if(exist(vals, {p+"-stop-time"    })) params.stop_time = seconds(std::stoi(vals.at({p+"-stop-time"    })));
-	if(exist(vals, {p+"-seed",     "S"})) params.seed      =         std::stoi(vals.at({p+"-seed",     "S"}));
+	if(exist(vals, {p+"-snr-min",  "m"})) params.snr_min     =         std::stof(vals.at({p+"-snr-min",  "m"}));
+	if(exist(vals, {p+"-snr-max",  "M"})) params.snr_max     =         std::stof(vals.at({p+"-snr-max",  "M"}));
+	if(exist(vals, {p+"-pyber"        })) params.pyber       =                   vals.at({p+"-pyber"        });
+	if(exist(vals, {p+"-snr-step", "s"})) params.snr_step    =         std::stof(vals.at({p+"-snr-step", "s"}));
+	if(exist(vals, {p+"-stop-time"    })) params.stop_time   = seconds(std::stoi(vals.at({p+"-stop-time"    })));
+	if(exist(vals, {p+"-seed",     "S"})) params.global_seed =         std::stoi(vals.at({p+"-seed",     "S"}));
 
 	params.snr_max += 0.0001f; // hack to avoid the miss of the last snr
 
@@ -99,7 +99,7 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 	}
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
-	params.seed += max_n_threads_global * params.mpi_rank;
+	params.local_seed = params.global_seed + max_n_threads_global * params.mpi_rank;
 #endif
 
 #ifdef ENABLE_COOL_BASH
@@ -123,7 +123,7 @@ void Simulation::make_header(params_list& head_sim, const parameters& params)
 	head_sim.push_back(std::make_pair("SNR max (M)",   std::to_string(params.snr_max)  + " dB"));
 	head_sim.push_back(std::make_pair("SNR step (s)",  std::to_string(params.snr_step) + " dB"));
 
-	head_sim.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+	head_sim.push_back(std::make_pair("Seed", std::to_string(params.global_seed)));
 
 #ifdef ENABLE_MPI
 	head_sim.push_back(std::make_pair("MPI comm. freq. (ms)", std::to_string(params.mpi_comm_freq.count())));

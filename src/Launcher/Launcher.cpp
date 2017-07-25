@@ -149,7 +149,7 @@ void Launcher::print_header()
 
 void Launcher::launch()
 {
-	std::srand(this->params->seed);
+	std::srand(this->params->global_seed);
 
 	// in case of the user call launch multiple times
 	if (simu != nullptr)

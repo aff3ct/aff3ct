@@ -38,7 +38,7 @@ BFER_ite<B,R,Q>
   rd_engine_seed(params.n_threads)
 {
 	for (auto tid = 0; tid < params.n_threads; tid++)
-		rd_engine_seed[tid].seed(params.seed + tid);
+		rd_engine_seed[tid].seed(params.local_seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -54,7 +54,6 @@ void BFER_ite<B,R,Q>
 	const auto seed_src = rd_engine_seed[tid]();
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_chn = rd_engine_seed[tid]();
-//	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
 	const auto seed_itl = rd_engine_seed[tid]();
 
 	// build the objects
@@ -140,6 +139,8 @@ Interleaver<int>* BFER_ite<B,R,Q>
 {
 	auto itl_cpy = *params.itl;
 	itl_cpy.seed = seed;
+	if (params.err_track_revert)
+		params.itl->path = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
 	return factory::Interleaver::build<int>(itl_cpy);
 }
 

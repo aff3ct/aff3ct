@@ -96,17 +96,30 @@ void Turbo<C,B,R,Q,QD>
 	}
 
 	C::store_args();
+
+	params_enc->itl.seed     = this->params->global_seed;
+	params_dec->itl.seed     = this->params->global_seed;
+	params_enc->itl.n_frames = this->params->src->n_frames;
+	params_dec->itl.n_frames = this->params->src->n_frames;
+
+	params_enc->sub1.n_frames = params_enc->n_frames;
+	params_enc->sub2.n_frames = params_enc->n_frames;
+	params_dec->sub1.n_frames = params_dec->n_frames;
+	params_dec->sub2.n_frames = params_dec->n_frames;
+
+	if (this->params->err_track_revert)
+	{
+		params_enc->itl.type = "USER";
+		params_dec->itl.type = "USER";
+		params_enc->itl.path = this->params->err_track_path + std::string("_$snr.itl");
+		params_dec->itl.path = this->params->err_track_path + std::string("_$snr.itl");
+	}
 }
 
 template <class C, typename B, typename R, typename Q, typename QD>
 void Turbo<C,B,R,Q,QD>
 ::print_header()
 {
-	params_enc->sub1.n_frames = params_enc->n_frames;
-	params_enc->sub2.n_frames = params_enc->n_frames;
-	params_dec->sub1.n_frames = params_dec->n_frames;
-	params_dec->sub2.n_frames = params_dec->n_frames;
-
 	if (params_enc->type != "NO")
 		factory::Encoder_turbo::make_header(this->pl_enc, this->pl_itl, *params_enc);
 	if (params_pct->type != "NO")

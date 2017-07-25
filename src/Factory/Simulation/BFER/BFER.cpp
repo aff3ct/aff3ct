@@ -39,6 +39,18 @@ void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 	opt_args[{p+"-coset", "c"}] =
 		{"",
 		 "enable the coset approach."};
+
+	opt_args[{p+"-err-trk"}] =
+		{"",
+		 "enable the tracking of the bad frames (by default the frames are stored in the current folder)."};
+
+	opt_args[{p+"-err-trk-rev"}] =
+		{"",
+		 "automatically replay the saved frames."};
+
+	opt_args[{p+"-err-trk-path"}] =
+		{"string",
+		 "base path for the files where the bad frames will be stored or read."};
 }
 
 void BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
@@ -49,11 +61,14 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 
 	Simulation::store_args(vals, params, p);
 
-	if(exist(vals, {p+"-benchs",     "b"})) params.benchs      = std::stoi(vals.at({p+"-benchs",   "b"}));
-	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type    =           vals.at({p+"-snr-type", "E"});
-	if(exist(vals, {p+"-time-report"    })) params.time_report = true;
-	if(exist(vals, {p+"-debug",      "d"})) params.debug       = true;
-	if(exist(vals, {p+"-coset",      "c"})) params.coset       = true;
+	if(exist(vals, {p+"-benchs",     "b"})) params.benchs           = std::stoi(vals.at({p+"-benchs",   "b"}));
+	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type         =           vals.at({p+"-snr-type", "E"});
+	if(exist(vals, {p+"-err-trk-path"   })) params.err_track_path   =           vals.at({p+"-err-trk-path" });
+	if(exist(vals, {p+"-err-trk-rev"    })) params.err_track_revert = true;
+	if(exist(vals, {p+"-err-trk"        })) params.err_track_enable = true;
+	if(exist(vals, {p+"-time-report"    })) params.time_report      = true;
+	if(exist(vals, {p+"-debug",      "d"})) params.debug            = true;
+	if(exist(vals, {p+"-coset",      "c"})) params.coset            = true;
 	if(exist(vals, {p+"-debug-limit"}))
 	{
 		params.debug = true;
@@ -69,6 +84,22 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 		// check if debug is asked and if n_thread kept its default value
 		params.n_threads = 1;
 
+	if (params.err_track_revert)
+	{
+		params.err_track_enable = false;
+		params.n_threads = 1;
+	}
+
+	if(params.err_track_revert)
+	{
+		params.err_track_enable = false;
+		params.src->type = "USER";
+		params.enc->type = "USER";
+		params.chn->type = "USER";
+		params.src->path = params.err_track_path + std::string("_$snr.src");
+		params.enc->path = params.err_track_path + std::string("_$snr.enc");
+		params.chn->path = params.err_track_path + std::string("_$snr.chn");
+	}
 }
 
 void BFER::make_header(params_list& head_sim, const parameters& params)
@@ -87,4 +118,16 @@ void BFER::make_header(params_list& head_sim, const parameters& params)
 			head_sim.push_back(std::make_pair("Debug limit", std::to_string(params.debug_limit)));
 	}
 	head_sim.push_back(std::make_pair("Coset approach (c)", params.coset ? "yes" : "no"));
+
+	std::string enable_track = (params.err_track_enable) ? "on" : "off";
+	head_sim.push_back(std::make_pair("Bad frames tracking", enable_track));
+
+	std::string enable_rev_track = (params.err_track_revert) ? "on" : "off";
+	head_sim.push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	if (params.err_track_enable || params.err_track_revert)
+	{
+		std::string path = params.err_track_path + std::string("_$snr.[src,enc,chn]");
+		head_sim.push_back(std::make_pair("Bad frames base path", path));
+	}
 }

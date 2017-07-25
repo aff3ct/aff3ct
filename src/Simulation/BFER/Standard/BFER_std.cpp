@@ -2,6 +2,7 @@
 
 #include "Factory/Module/Source.hpp"
 #include "Factory/Module/CRC.hpp"
+#include "Factory/Module/Interleaver.hpp"
 #include "Factory/Module/Code/Encoder.hpp"
 #include "Factory/Module/Modem.hpp"
 #include "Factory/Module/Channel.hpp"
@@ -36,7 +37,7 @@ BFER_std<B,R,Q>
   rd_engine_seed(params.n_threads)
 {
 	for (auto tid = 0; tid < params.n_threads; tid++)
-		rd_engine_seed[tid].seed(params.seed + tid);
+		rd_engine_seed[tid].seed(params.local_seed + tid);
 }
 
 template <typename B, typename R, typename Q>
@@ -52,7 +53,6 @@ void BFER_std<B,R,Q>
 	const auto seed_src = rd_engine_seed[tid]();
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_chn = rd_engine_seed[tid]();
-//	const auto seed_itl = this->params.interleaver.uniform ? rd_engine_seed[tid]() : this->params.interleaver.seed;
 	const auto seed_itl = rd_engine_seed[tid]();
 
 	// build the objects
@@ -146,14 +146,37 @@ template <typename B, typename R, typename Q>
 Interleaver<int>* BFER_std<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
+	Interleaver<int>* itl = nullptr;
 	try
 	{
-		return this->codec.build_interleaver(tid, seed);
+		itl = this->codec.build_interleaver(tid, seed);
 	}
 	catch (cannot_allocate const&)
 	{
-		return nullptr;
+		itl = nullptr;
 	}
+	catch (std::exception const&)
+	{
+		if (this->params.err_track_revert)
+		{
+			delete itl;
+			factory::Interleaver::parameters params_itl;
+			params_itl.type     = "USER";
+			params_itl.path     = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
+			params_itl.n_frames = this->params.src->n_frames;
+			std::fstream file(params_itl.path);
+			int size = 0;
+			file >> size;
+			file >> size;
+			file.close();
+
+			params_itl.size = size;
+
+			itl = factory::Interleaver::build(params_itl);
+		}
+	}
+
+	return itl;
 }
 
 template <typename B, typename R, typename Q>

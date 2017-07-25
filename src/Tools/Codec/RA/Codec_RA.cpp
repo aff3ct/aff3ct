@@ -25,7 +25,9 @@ template <typename B, typename Q>
 Interleaver<int>* Codec_RA<B,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	return factory::Interleaver::build<int>(dec_par.itl);
+	auto itl_cpy = dec_par.itl;
+	itl_cpy.seed = dec_par.itl.uniform ? seed : dec_par.itl.seed;
+	return factory::Interleaver::build<int>(itl_cpy);
 }
 
 template <typename B, typename Q>

@@ -57,13 +57,16 @@ struct BFER : Simulation
 			if (this->ter != nullptr) { delete this->ter; this->ter = nullptr; }
 		}
 
-		std::string snr_type        = "EB";
-		bool        time_report     = false;
-		bool        debug           = false;
-		bool        coset           = false;
-		int         debug_limit     = 0;
-		int         debug_precision = 5;
-		int         benchs          = 0;
+		std::string snr_type         = "EB";
+		std::string err_track_path   = "error_tracker";
+		bool        err_track_revert = false;
+		bool        err_track_enable = false;
+		bool        time_report      = false;
+		bool        debug            = false;
+		bool        coset            = false;
+		int         debug_limit      = 0;
+		int         debug_precision  = 5;
+		int         benchs           = 0;
 
 		Source       ::parameters *src;
 		CRC          ::parameters *crc;

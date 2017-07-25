@@ -416,16 +416,7 @@ template <typename B, typename R>
 Encoder<B>* EXIT<B,R>
 ::build_encoder()
 {
-	try
-	{
-		return this->codec.build_encoder();
-	}
-	catch (std::exception const&)
-	{
-		auto enc_cpy = *params.enc;
-		enc_cpy.seed = params.seed;
-		return factory::Encoder::build<B>(enc_cpy);
-	}
+	return this->codec.build_encoder();
 }
 
 template <typename B, typename R>
@@ -455,7 +446,6 @@ Channel<R>* EXIT<B,R>
 	auto chn_cpy = *params.chn;
 	if (params.chn->sigma == -1.f)
 		chn_cpy.sigma = this->sigma;
-	chn_cpy.seed = params.seed;
 	return factory::Channel::build<R>(chn_cpy);
 }
 
@@ -465,7 +455,6 @@ Channel<R>* EXIT<B,R>
 {
 	auto chn_cpy  = *params.chn;
 	chn_cpy.sigma = 2.f / sig_a;
-	chn_cpy.seed  = params.seed;
 	chn_cpy.N     = factory::Modem::get_buffer_size_after_modulation(params.mdm->type,
 	                                                                 params.enc->K,
 	                                                                 params.mdm->bps,

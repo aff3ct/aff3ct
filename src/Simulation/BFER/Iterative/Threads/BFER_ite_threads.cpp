@@ -49,7 +49,7 @@ BFER_ite_threads<B,R,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
-	if (this->params.mnt->err_track_revert)
+	if (this->params.err_track_revert)
 	{
 		if (this->params.n_threads != 1)
 			std::clog << format_warning("Multi-threading detected with error tracking revert feature! "
@@ -79,7 +79,7 @@ void BFER_ite_threads<B,R,Q>
 		this->modem[tid]->modulate(this->X_N2[tid], this->X_N3[tid]);
 	}
 
-	if (this->params.mnt->err_track_enable)
+	if (this->params.err_track_enable)
 	{
 		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
 		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});

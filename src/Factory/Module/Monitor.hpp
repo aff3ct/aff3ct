@@ -18,14 +18,11 @@ struct Monitor : public Factory
 
 	struct parameters
 	{
-		int         size             = 0;
+		int         size           = 0;
 
-		std::string type             = "STD";
-		std::string err_track_path   = "error_tracker";
-		bool        err_track_revert = false;
-		bool        err_track_enable = false;
-		int         n_frame_errors   = 100;
-		int         n_frames         = 1;
+		std::string type           = "STD";
+		int         n_frame_errors = 100;
+		int         n_frames       = 1;
 	};
 
 	template <typename B = int>

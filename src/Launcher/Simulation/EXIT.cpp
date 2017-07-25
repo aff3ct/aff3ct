@@ -65,6 +65,8 @@ void EXIT<B,R>
 
 	factory::EXIT::store_args(this->ar.get_args(), *params);
 
+	params->src->seed = params->local_seed;
+
 	factory::Source::store_args(this->ar.get_args(), *params->src);
 
 	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
@@ -78,6 +80,7 @@ void EXIT<B,R>
 	params->chn->N         = params->mdm->N_mod;
 	params->chn->complex   = params->mdm->complex;
 	params->chn->add_users = params->mdm->type == "SCMA";
+	params->chn->seed      = params->local_seed;
 
 	factory::Channel::store_args(this->ar.get_args(), *params->chn);
 
@@ -90,6 +93,8 @@ void EXIT<B,R>
 		params->src->type = "AZCW";
 		params->enc->type = "AZCW";
 	}
+
+	params->enc->seed = params->local_seed;
 
 	params->enc->n_frames = params->src->n_frames;
 	params->pct->n_frames = params->src->n_frames;

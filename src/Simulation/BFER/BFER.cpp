@@ -55,7 +55,7 @@ BFER<B,R,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (params.mnt->err_track_enable)
+	if (params.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.n_threads; tid++)
 			dumper[tid] = new Dumper(params.src->n_frames);
@@ -116,7 +116,7 @@ void BFER<B,R,Q>
 		for (auto& duration : this->durations[tid])
 			duration.second = std::chrono::nanoseconds(0);
 
-		if (params.mnt->err_track_enable)
+		if (params.err_track_enable)
 			this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
 	}
 	catch (std::exception const& e)
@@ -167,10 +167,10 @@ void BFER<B,R,Q>
 		this->terminal->set_ebn0(snr_b);
 
 		// dirty hack to override simulation params
-		if (params.mnt->err_track_revert)
+		if (params.err_track_revert)
 		{
 			auto *params_writable = const_cast<factory::BFER::parameters*>(&params);
-			const auto base_path = params.mnt->err_track_path;
+			const auto base_path = params.err_track_path;
 			params_writable->src->path = base_path + "_" + std::to_string(snr_b) + ".src";
 			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
 			params_writable->chn->path = base_path + "_" + std::to_string(snr_b) + ".chn";
@@ -245,7 +245,7 @@ void BFER<B,R,Q>
 
 			if (this->dumper_red != nullptr)
 			{
-				this->dumper_red->dump(params.mnt->err_track_path + "_" + std::to_string(snr_b));
+				this->dumper_red->dump(params.err_track_path + "_" + std::to_string(snr_b));
 				this->dumper_red->clear();
 			}
 

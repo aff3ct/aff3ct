@@ -78,9 +78,8 @@ template <typename B, typename Q, typename QD>
 Interleaver<int>* Codec_turbo<B,Q,QD>
 ::build_interleaver(const int tid, const int seed)
 {
-	auto itl_cpy = enc_par.itl;
-	itl_cpy.seed = seed;
-
+	auto itl_cpy = dec_par.itl;
+	itl_cpy.seed = dec_par.itl.uniform ? seed : dec_par.itl.seed;
 	return factory::Interleaver::build<int>(itl_cpy);
 }
 

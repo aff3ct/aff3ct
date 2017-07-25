@@ -34,6 +34,12 @@ void BFER_ite::store_args(const arg_val_map &vals, parameters &params, const std
 	BFER::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-ite", "I"})) params.n_ite = std::stoi(vals.at({p+"-ite", "I"}));
+
+	if(params.err_track_revert)
+	{
+		params.itl->type = "USER";
+		params.itl->path = params.err_track_path + std::string("_$snr.itl");
+	}
 }
 
 void BFER_ite::make_header(params_list& head_sim, const parameters& params)

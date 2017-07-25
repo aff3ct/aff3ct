@@ -37,7 +37,8 @@ struct Simulation : Launcher
 		std::string               pyber         = "";
 		float                     snr_step      = 0.1f;
 		int                       n_threads     = 1;
-		int                       seed          = 0;
+		int                       local_seed    = 0;
+		int                       global_seed   = 0;
 	};
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
