@@ -56,8 +56,8 @@ _aff3ct() {
 		      --mdm-no-sig2 --chn-type --chn-path --chn-blk-fad --qnt-type    \
 		      --qnt-dec --qnt-bits --qnt-range --dec-type --dec-implem        \
 		      --ter-no --ter-freq --sim-seed --sim-mpi-comm --sim-pyber       \
-		      --sim-no-colors --mnt-err-trk --mnt-err-trk-rev                 \
-		      --mnt-err-trk-path --sim-debug-prec"
+		      --sim-no-colors --sim-err-trk --sim-err-trk-rev                 \
+		      --sim-err-trk-path --sim-debug-prec"
 	fi
 
 	# add contents of Launcher_BFER.cpp
@@ -147,7 +147,7 @@ _aff3ct() {
 	# add contents of Launcher_BFER_turbo.cpp
 	if [[ ${codetype} == "TURBO"      && ${simutype} == "BFER" ]]
 	then
-		opts="$opts --sim-json-path --crc-type --crc-poly --crc-rate       \
+		opts="$opts --enc-json-path --crc-type --crc-poly --crc-rate       \
 		      --enc-no-buff --enc-type  --enc-poly --itl-type --itl-path   \
 		      --itl-cols --itl-uni --dec-type -D --dec-implem --dec-ite -i \
 		      --dec-sf-type --dec-simd --dec-max --dec-sc --dec-fnc        \
@@ -207,7 +207,7 @@ _aff3ct() {
 		--mnt-max-fe | -e |                                                    \
 		--sim-siga-min | -a | --sim-siga-max | -A | --sim-siga-step | -I |     \
 		--sim-ite | --enc-fb-sigma | --dec-snr | --dec-ite |-i | --dec-lists | \
-		-L | --sim-json-path | --dec-off | --dec-norm | --ter-freq |           \
+		-L | --enc-json-path | --dec-off | --dec-norm | --ter-freq |           \
 		--sim-seed | --sim-mpi-comm | --sim-pyber | --dec-polar-nodes |        \
 		--itl-cols | --dec-synd-depth | --pct-pattern |                        \
 		--dec-fnc-q | --dec-fnc-ite-m | --dec-fnc-ite-M | --dec-fnc-ite-s      )
@@ -218,7 +218,7 @@ _aff3ct() {
 		-v | --version | -h | --help | --mdm-no-sig2 | --ter-no |          \
 		--sim-debug | -d | --sim-debug-fe | --sim-time-report |            \
 		--sim-coset | -c | enc-no-buff | --enc-no-sys | --dec-no-synd |    \
-		--crc-rate | --mnt-err-trk | --mnt-err-trk-rev | --itl-uni |       \
+		--crc-rate | --sim-err-trk | --sim-err-trk-rev | --itl-uni |       \
 		--dec-partial-adaptive | --dec-fnc | --dec-sc                      )
 			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 			;;
@@ -299,7 +299,7 @@ _aff3ct() {
 
 		--enc-fb-awgn-path | --dec-gen-path | --sim-pb-path | --itl-path | \
 		--mdm-const-path | --src-path | --enc-path | --chn-path |          \
-		--dec-h-path | --mnt-err-trk-path) 
+		--dec-h-path | --sim-err-trk-path) 
 			_filedir
 			;;
 		
