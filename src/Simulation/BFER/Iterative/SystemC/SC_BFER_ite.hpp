@@ -16,7 +16,7 @@ namespace aff3ct
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class SC_Simulation_BFER_ite : public Simulation_BFER_ite<B,R,Q>
+class SC_BFER_ite : public BFER_ite<B,R,Q>
 {
 protected:
 	module::Interleaver<int> *interleaver_e;
@@ -31,8 +31,8 @@ protected:
 	tools::SC_Debug<Q> *dbg_Q[7];
 
 public:
-	SC_Simulation_BFER_ite(const tools::parameters& params, tools::Codec_SISO<B,Q> &codec);
-	virtual ~SC_Simulation_BFER_ite();
+	SC_BFER_ite(const factory::BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec);
+	virtual ~SC_BFER_ite();
 
 protected:
 	virtual void _build_communication_chain(const int tid = 0);

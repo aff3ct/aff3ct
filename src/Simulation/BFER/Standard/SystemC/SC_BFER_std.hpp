@@ -16,7 +16,7 @@ namespace aff3ct
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class SC_Simulation_BFER_std : public Simulation_BFER_std<B,R,Q>
+class SC_BFER_std : public BFER_std<B,R,Q>
 {
 protected:
 	tools::SC_Duplicator *duplicator[3];
@@ -25,8 +25,8 @@ protected:
 	tools::SC_Debug<Q>   *dbg_Q     [3];
 
 public:
-	SC_Simulation_BFER_std(const tools::parameters& params, tools::Codec<B,Q> &codec);
-	virtual ~SC_Simulation_BFER_std();
+	SC_BFER_std(const factory::BFER_std::parameters &chain_params, tools::Codec<B,Q> &codec);
+	virtual ~SC_BFER_std();
 
 protected:
 	virtual void _build_communication_chain(const int tid = 0);

@@ -138,7 +138,7 @@ Interleaver<int>* BFER_ite<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = *params.itl;
-	itl_cpy.seed = seed;
+	itl_cpy.seed = itl_cpy.uniform ? seed : itl_cpy.seed;
 	if (params.err_track_revert)
 		params.itl->path = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
 	return factory::Interleaver::build<int>(itl_cpy);

@@ -15,9 +15,9 @@ simulation::BFER_std<B,R,Q>* BFER_std
 ::build(const parameters &params, tools::Codec<B,Q> &codec)
 {
 #if defined(SYSTEMC)
-	return new simulation::SC_Simulation_BFER_std<B,R,Q>(params, codec);
+	return new simulation::SC_BFER_std<B,R,Q>(params, codec);
 #elif defined(STARPU)
-	return new simulation::SPU_Simulation_BFER_std<B,R,Q>(params, codec);
+	return new simulation::SPU_BFER_std<B,R,Q>(params, codec);
 #else
 	return new simulation::BFER_std_threads<B,R,Q>(params, codec);
 #endif

@@ -14,7 +14,7 @@ simulation::BFER_ite<B,R,Q>* BFER_ite
 ::build(const parameters &params, tools::Codec_SISO<B,Q> &codec)
 {
 #if defined(SYSTEMC)
-	return new simulation::SC_Simulation_BFER_ite     <B,R,Q>(params, codec);
+	return new simulation::SC_BFER_ite     <B,R,Q>(params, codec);
 #else
 	return new simulation::BFER_ite_threads<B,R,Q>(params, codec);
 #endif
