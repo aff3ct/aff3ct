@@ -44,6 +44,7 @@ void Turbo<C,B,R,Q,QD>
 	this->opt_args.erase({"dec-sub-no-buff"   });
 	this->opt_args.erase({"dec-sub-poly"      });
 	this->opt_args.erase({"dec-sub-std"       });
+	this->opt_args.erase({"dec-json"          });
 	this->opt_args.erase({"itl-seed",      "S"});
 	this->req_args.erase({"pct-info-bits", "K"});
 	this->opt_args.erase({"pct-no-buff"       });
@@ -74,6 +75,7 @@ void Turbo<C,B,R,Q,QD>
 	params_dec->sub2.poly     = params_enc->sub2.poly;
 	params_dec->sub1.standard = params_enc->sub1.standard;
 	params_dec->sub2.standard = params_enc->sub2.standard;
+	params_dec->enable_json   = !params_enc->json_path.empty();
 
 	factory::Decoder_turbo::store_args(this->ar.get_args(), *params_dec);
 

@@ -94,14 +94,6 @@ void Decoder_turbo
 	if(exist(vals, {p+"-sc"      })) params.self_corrected = true;
 	if(exist(vals, {p+"-json"    })) params.enable_json    = true;
 
-	if (params.enable_json)
-	{
-		params.sub1.implem        = "GENERIC_JSON";
-		params.sub2.implem        = "GENERIC_JSON";
-		params.sub1.simd_strategy = "";
-		params.sub2.simd_strategy = "";
-	}
-
 	std::string standard = "";
 	if (exist(vals, {p+"-sub-std"}) || exist(vals, {p+"-sub1-std"}))
 		standard = std::is_same<D1,D2>() ? vals.at({p+"-sub-std"}) : vals.at({p+"-sub1-std"});
@@ -126,6 +118,14 @@ void Decoder_turbo
 	{
 		D1::store_args(vals, params.sub1, p+"-sub1");
 		D2::store_args(vals, params.sub2, p+"-sub2");
+	}
+
+	if (params.enable_json)
+	{
+		params.sub1.implem        = "GENERIC_JSON";
+		params.sub2.implem        = "GENERIC_JSON";
+		params.sub1.simd_strategy = "";
+		params.sub2.simd_strategy = "";
 	}
 
 	params.tail_length = params.sub1.tail_length + params.sub2.tail_length;
