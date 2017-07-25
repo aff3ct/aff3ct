@@ -108,7 +108,7 @@ public:
 		if (this->N * this->n_frames != (int)X_N.size())
 		{
 			std::stringstream message;
-			message << "'X_N.size()' has to be equal to 'N' * 'n_frames' ('X_N.size()' = "
+			message << "'X_N.size()' has to be equal to 'N' * 'n_frames' ('X_N.size()' = " << X_N.size()
 			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
