@@ -18,9 +18,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
 Codec_turbo<B,Q,QD>
-::Codec_turbo(const factory::Encoder_turbo  ::parameters &enc_params,
-              const factory::Decoder_turbo  ::parameters &dec_params,
-              const factory::Puncturer_turbo::parameters &pct_params,
+::Codec_turbo(const factory::Encoder_turbo  ::parameters<> &enc_params,
+              const factory::Decoder_turbo  ::parameters<> &dec_params,
+              const factory::Puncturer_turbo::parameters   &pct_params,
               const int n_threads)
 : Codec<B,Q>(enc_params, dec_params), enc_par(enc_params), dec_par(dec_params), pct_par(pct_params),
   sub_enc  (n_threads, nullptr),
@@ -37,26 +37,9 @@ Codec_turbo<B,Q,QD>
 		json_stream << "[" << std::endl;
 	}
 
-	// fill RSC encoder/decoder parameters structures
-	enc_rsc_par.type     = "RSC";
-	enc_rsc_par.K        = enc_par.K;
-	enc_rsc_par.N_cw     = (enc_par.K * 2) + (enc_par.tail_length / 2);
-	enc_rsc_par.buffered = enc_par.buffered;
-	enc_rsc_par.poly     = enc_par.poly;
-	enc_rsc_par.n_frames = enc_par.n_frames;
-
-	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_rsc_par);
+	auto encoder_RSC = factory::Encoder_RSC::build<B>(enc_par.sub1);
 	trellis = encoder_RSC->get_trellis();
 	delete encoder_RSC;
-
-	enc_rsc_par.type = enc_par.json_path.empty() ? "RSC" : "RSC_JSON";
-
-	dec_rsc_par.type          = dec_par.type,
-	dec_rsc_par.max           = dec_par.max,
-	dec_rsc_par.implem        = dec_par.implem,
-	dec_rsc_par.simd_strategy = dec_par.simd_strategy,
-	dec_rsc_par.K             = dec_par.K,
-	dec_rsc_par.n_frames      = dec_par.n_frames;
 }
 
 template <typename B, typename Q, typename QD>
@@ -105,7 +88,7 @@ template <typename B, typename Q, typename QD>
 Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
 ::build_sub_encoder(const int tid)
 {
-	return factory::Encoder_RSC::build<B>(enc_rsc_par, json_stream);
+	return factory::Encoder_RSC::build<B>(enc_par.sub1, json_stream);
 }
 
 template <typename B, typename Q, typename QD>
@@ -140,7 +123,7 @@ template <typename B, typename Q, typename QD>
 SISO<Q>* Codec_turbo<B,Q,QD>
 ::build_sub_siso(const int tid)
 {
-	return factory::Decoder_RSC::build<B,Q,QD>(dec_rsc_par, trellis, json_stream, dec_par.n_ite);
+	return factory::Decoder_RSC::build<B,Q,QD>(dec_par.sub1, trellis, json_stream, dec_par.n_ite);
 }
 
 template <typename B, typename Q, typename QD>
@@ -163,10 +146,7 @@ Decoder<B,Q>* Codec_turbo<B,Q,QD>
 	if (siso[tid] == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'siso' can't be created.");
 
-	auto dec_cpy = dec_par;
-	dec_cpy.type = "TURBO";
-	dec_cpy.implem = typeid(B) == typeid(int64_t) ? "STD" : "FAST";
-	auto decoder = factory::Decoder_turbo::build<B,Q>(dec_cpy, *itl, *siso[tid], *siso[tid]);
+	auto decoder = factory::Decoder_turbo::build<B,Q>(dec_par, *itl, *siso[tid], *siso[tid]);
 
 	// then add post processing modules
 	if (dec_par.sf.enable)

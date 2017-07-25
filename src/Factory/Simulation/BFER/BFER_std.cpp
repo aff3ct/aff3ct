@@ -15,9 +15,9 @@ simulation::BFER_std<B,R,Q>* BFER_std
 ::build(const parameters &params, tools::Codec<B,Q> &codec)
 {
 #if defined(SYSTEMC)
-	return new simulation::SC_Simulation_BFER_std     <B,R,Q>(params, codec);
+	return new simulation::SC_Simulation_BFER_std<B,R,Q>(params, codec);
 #elif defined(STARPU)
-	return new simulation::SPU_Simulation_BFER_std    <B,R,Q>(params, codec);
+	return new simulation::SPU_Simulation_BFER_std<B,R,Q>(params, codec);
 #else
 	return new simulation::BFER_std_threads<B,R,Q>(params, codec);
 #endif
@@ -25,7 +25,7 @@ simulation::BFER_std<B,R,Q>* BFER_std
 
 void BFER_std::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	BFER::build_args(req_args, opt_args);
+	BFER::build_args(req_args, opt_args, p);
 
 #if !defined(STARPU) && !defined(SYSTEMC)
 	opt_args[{p+"-debug-fe"}] =
@@ -45,7 +45,7 @@ void BFER_std::store_args(const arg_val_map &vals, parameters &params, const std
 	}
 #endif
 
-	BFER::store_args(vals, params);
+	BFER::store_args(vals, params, p);
 }
 
 void BFER_std::make_header(params_list& head_sim, const parameters& params)

@@ -59,6 +59,12 @@ void Repetition<C,B,R,Q>
 	this->params->pct->N_cw = this->params->pct->N;
 	this->params->pct->R    = (float)this->params->pct->K / (float)this->params->pct->N;
 
+	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
+	{
+		this->params->qnt->n_bits     = 6;
+		this->params->qnt->n_decimals = 2;
+	}
+
 	C::store_args();
 }
 

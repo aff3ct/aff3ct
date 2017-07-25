@@ -162,20 +162,20 @@ void Modem
 	// --------------------------------------------------------------------------------------------------- demodulator
 	opt_args[{p+"-max"}] =
 		{"string",
-		 "select the type of the max operation to use in the demodulation.",
+		 "select the type of the max operation to use in the demodulator.",
 		 "MAX, MAXL, MAXS, MAXSS"};
 
 	opt_args[{p+"-sigma"}] =
 		{"posive_float",
-		 "noise variance value."};
+		 "noise variance value for the demodulator."};
 
 	opt_args[{p+"-no-sig2"}] =
 		{"",
-		 "turn off the division by sigma square in the demodulation."};
+		 "turn off the division by sigma square in the demodulator."};
 
 	opt_args[{p+"-psi"}] =
 		{"string",
-		 "select the type of the psi function to use in the SCMA demodulation.",
+		 "select the type of the psi function to use in the SCMA demodulator.",
 		 "PSI0, PSI1, PSI2, PSI3"};
 
 	opt_args[{p+"-ite"}] =

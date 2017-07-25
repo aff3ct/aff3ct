@@ -24,7 +24,7 @@ module::Puncturer<B,Q>* Puncturer_turbo
 void Puncturer_turbo
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Puncturer::build_args(req_args, opt_args);
+	Puncturer::build_args(req_args, opt_args, p);
 	req_args.erase({p+"-fra-size", "N"});
 
 	opt_args[{p+"-type"}][2] += ", TURBO";
@@ -116,7 +116,7 @@ void Puncturer_turbo
 {
 	params.type = "TURBO";
 
-	Puncturer::store_args(vals, params);
+	Puncturer::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-pattern"    })) params.pattern     =           vals.at({p+"-pattern"    });
 	if(exist(vals, {p+"-tail-length"})) params.tail_length = std::stoi(vals.at({p+"-tail-length"}));

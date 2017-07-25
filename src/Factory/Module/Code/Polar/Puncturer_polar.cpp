@@ -23,7 +23,7 @@ module::Puncturer<B,Q>* Puncturer_polar
 void Puncturer_polar
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Puncturer::build_args(req_args, opt_args);
+	Puncturer::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type"}][2] += ", WANGLIU";
 }
@@ -33,7 +33,7 @@ void Puncturer_polar
 {
 	params.type = "WANGLIU";
 
-	Puncturer::store_args(vals, params);
+	Puncturer::store_args(vals, params, p);
 	params.N_cw = (int)std::exp2((int)std::ceil(std::log2(params.N)));
 	params.R = (float)params.K / (float)params.N;
 

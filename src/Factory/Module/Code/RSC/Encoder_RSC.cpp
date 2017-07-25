@@ -24,7 +24,7 @@ module::Encoder_RSC_sys<B>* Encoder_RSC
 void Encoder_RSC
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Encoder::build_args(req_args, opt_args);
+	Encoder::build_args(req_args, opt_args, p);
 	req_args.erase({p+"-cw-size", "N"});
 
 	opt_args[{p+"-type"}][2] += ", RSC";
@@ -48,11 +48,11 @@ void Encoder_RSC
 {
 	params.type = "RSC";
 
-	Encoder::store_args(vals, params);
+	Encoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
 
-	if(exist(vals, {p+"-std"})) params.standard = vals.at({"enc-std"});
+	if(exist(vals, {p+"-std"})) params.standard = vals.at({p+"-std"});
 
 	if (params.standard == "LTE")
 		params.poly = {013, 015};

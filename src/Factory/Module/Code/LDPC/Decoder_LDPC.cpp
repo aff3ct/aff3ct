@@ -45,7 +45,7 @@ module::Decoder_SISO<B,R>* Decoder_LDPC
 void Decoder_LDPC
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 
 	req_args[{p+"-h-path"}] =
 		{"string",
@@ -87,7 +87,7 @@ void Decoder_LDPC
 	params.type   = "BP_FLOODING";
 	params.implem = "SPA";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-h-path"    })) params.H_alist_path    =           vals.at({p+"-h-path"    });
 	if(exist(vals, {p+"-ite",   "i"})) params.n_ite           = std::stoi(vals.at({p+"-ite",   "i"}));

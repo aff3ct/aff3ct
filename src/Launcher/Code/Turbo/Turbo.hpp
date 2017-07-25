@@ -13,9 +13,9 @@ template <class C, typename B = int, typename R = float, typename Q = R, typenam
 class Turbo : public C
 {
 protected:
-	factory::Encoder_turbo  ::parameters *params_enc = nullptr;
-	factory::Puncturer_turbo::parameters *params_pct = nullptr;
-	factory::Decoder_turbo  ::parameters *params_dec = nullptr;
+	factory::Encoder_turbo  ::parameters<> *params_enc = nullptr;
+	factory::Puncturer_turbo::parameters   *params_pct = nullptr;
+	factory::Decoder_turbo  ::parameters<> *params_dec = nullptr;
 
 public:
 	Turbo(const int argc, const char **argv, std::ostream &stream = std::cout);

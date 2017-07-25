@@ -22,7 +22,7 @@ module::Encoder_sys<B>* Encoder_repetition
 void Encoder_repetition
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Encoder::build_args(req_args, opt_args);
+	Encoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type"}][2] += ", REPETITION";
 
@@ -36,7 +36,7 @@ void Encoder_repetition
 {
 	params.type = "REPETITION";
 
-	Encoder::store_args(vals, params);
+	Encoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
 }

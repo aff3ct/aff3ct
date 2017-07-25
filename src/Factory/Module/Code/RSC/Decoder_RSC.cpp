@@ -121,10 +121,10 @@ module::Decoder_SISO<B,Q>* Decoder_RSC
 void Decoder_RSC
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 	req_args.erase({p+"-cw-size", "N"});
 
-	opt_args[{p+"-type", "D"}].push_back("BCJR, LTE, CCSDS");
+	opt_args[{p+"-type", "D"}].push_back("BCJR");
 
 	opt_args[{p+"-implem"}].push_back("GENERIC, STD, FAST, VERY_FAST");
 
@@ -158,7 +158,7 @@ void Decoder_RSC
 	params.type   = "BCJR";
 	params.implem = "STD";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-simd"   })) params.simd_strategy = vals.at({p+"-simd"});
 	if(exist(vals, {p+"-max"    })) params.max           = vals.at({p+"-max" });

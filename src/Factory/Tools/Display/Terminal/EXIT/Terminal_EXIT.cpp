@@ -18,7 +18,7 @@ tools::Terminal_EXIT* Terminal_EXIT
 
 void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Terminal::build_args(req_args, opt_args);
+	Terminal::build_args(req_args, opt_args, p);
 
 	req_args[{p+"-cw-size", "N"}] =
 		{"positive_int",
@@ -40,7 +40,7 @@ void Terminal_EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::
 
 void Terminal_EXIT::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Terminal::store_args(vals, params);
+	Terminal::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-cw-size", "N"})) params.N     = std::stoi(vals.at({p+"-cw-size", "N"}));
 	if(exist(vals, {p+"-snr"         })) params.snr   = std::stof(vals.at({p+"-snr"         }));

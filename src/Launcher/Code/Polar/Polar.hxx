@@ -83,6 +83,12 @@ void Polar<C,B,R,Q>
 	if (params_dec->simd_strategy == "INTER")
 		this->params->src->n_frames = mipp::N<Q>();
 
+	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
+	{
+		this->params->qnt->n_bits     = 6;
+		this->params->qnt->n_decimals = 1;
+	}
+
 	C::store_args();
 }
 

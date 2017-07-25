@@ -28,7 +28,7 @@ module::Encoder_LDPC<B>* Encoder_LDPC
 void Encoder_LDPC
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Encoder::build_args(req_args, opt_args);
+	Encoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type"}][2] += ", LDPC, LDPC_H, LDPC_DVBS2";
 
@@ -46,7 +46,7 @@ void Encoder_LDPC
 {
 	params.type = "AZCW";
 
-	Encoder::store_args(vals, params);
+	Encoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-h-path"})) params.H_alist_path = vals.at({p+"-h-path"});
 	if(exist(vals, {p+"-g-path"})) params.G_alist_path = vals.at({p+"-g-path"});

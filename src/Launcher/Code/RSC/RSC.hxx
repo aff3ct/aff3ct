@@ -70,6 +70,12 @@ void RSC<C,B,R,Q,QD>
 	if (params_dec->simd_strategy == "INTRA")
 		this->params->src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
 
+	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
+	{
+		this->params->qnt->n_bits     = 6;
+		this->params->qnt->n_decimals = 3;
+	}
+
 	C::store_args();
 }
 

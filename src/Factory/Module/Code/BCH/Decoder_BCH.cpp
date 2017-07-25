@@ -26,7 +26,7 @@ module::Decoder<B,Q>* Decoder_BCH
 void Decoder_BCH
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-corr-pow", "T"}] =
 		{"positive_int",
@@ -39,7 +39,7 @@ void Decoder_BCH
 	params.type   = "ALGEBRAIC";
 	params.implem = "STD";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 
 	params.m = (int)std::ceil(std::log2(params.N_cw));
 	if (params.m == 0)

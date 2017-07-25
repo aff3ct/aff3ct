@@ -22,7 +22,7 @@ simulation::BFER_ite<B,R,Q>* BFER_ite
 
 void BFER_ite::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	BFER::build_args(req_args, opt_args);
+	BFER::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-ite", "I"}] =
 		{"positive_int",
@@ -31,7 +31,7 @@ void BFER_ite::build_args(arg_map &req_args, arg_map &opt_args, const std::strin
 
 void BFER_ite::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	BFER::store_args(vals, params);
+	BFER::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-ite", "I"})) params.n_ite = std::stoi(vals.at({p+"-ite", "I"}));
 }

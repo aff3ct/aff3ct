@@ -22,7 +22,7 @@ module::Encoder<B>* Encoder_BCH
 void Encoder_BCH
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Encoder::build_args(req_args, opt_args);
+	Encoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type"}][2] += ", BCH";
 }
@@ -32,7 +32,7 @@ void Encoder_BCH
 {
 	params.type = "BCH";
 
-	Encoder::store_args(vals, params);
+	Encoder::store_args(vals, params, p);
 }
 
 void Encoder_BCH

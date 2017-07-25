@@ -76,9 +76,9 @@ void Flip_and_check
 void Flip_and_check
 ::make_header(params_list& head_fnc, const parameters& params)
 {
+	head_fnc.push_back(std::make_pair("Flip aNd Check (FNC)", ((params.enable) ? "on" : "off")));
 	if (params.enable)
 	{
-		head_fnc.push_back(std::make_pair("Flip aNd Check (FNC)", ((params.enable) ? "on" : "off")));
 		head_fnc.push_back(std::make_pair("FNC q", std::to_string(params.q)));
 		head_fnc.push_back(std::make_pair("FNC ite min", std::to_string(params.ite_min)));
 		head_fnc.push_back(std::make_pair("FNC ite max", std::to_string(params.ite_max)));

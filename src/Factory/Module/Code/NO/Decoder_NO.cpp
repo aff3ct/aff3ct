@@ -24,7 +24,7 @@ module::Decoder_SISO<B,Q>* Decoder_NO
 void Decoder_NO
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type", "D"}].push_back("NONE");
 	opt_args[{p+"-implem"   }].push_back("HARD_DECISION");
@@ -36,7 +36,7 @@ void Decoder_NO
 	params.type   = "NONE";
 	params.implem = "HARD_DECISION";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 }
 
 void Decoder_NO

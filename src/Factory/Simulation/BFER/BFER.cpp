@@ -9,7 +9,7 @@ const std::string aff3ct::factory::BFER::prefix = "sim";
 
 void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Simulation::build_args(req_args, opt_args);
+	Simulation::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-benchs", "b"}] =
 		{"positive_int",
@@ -47,7 +47,7 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 	params.n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 
-	Simulation::store_args(vals, params);
+	Simulation::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-benchs",     "b"})) params.benchs      = std::stoi(vals.at({p+"-benchs",   "b"}));
 	if(exist(vals, {p+"-snr-type",   "E"})) params.snr_type    =           vals.at({p+"-snr-type", "E"});

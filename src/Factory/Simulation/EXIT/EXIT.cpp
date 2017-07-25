@@ -17,7 +17,7 @@ simulation::EXIT<B,R>* EXIT
 
 void EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Simulation::build_args(req_args, opt_args);
+	Simulation::build_args(req_args, opt_args, p);
 
 	req_args[{p+"-siga-min", "a"}] =
 		{"positive_float",
@@ -36,7 +36,7 @@ void EXIT::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 
 void EXIT::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Simulation::store_args(vals, params);
+	Simulation::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-siga-min", "a"})) params.sig_a_min  = std::stof(vals.at({p+"-siga-min", "a"}));
 	if(exist(vals, {p+"-siga-max", "A"})) params.sig_a_max  = std::stof(vals.at({p+"-siga-max", "A"}));

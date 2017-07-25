@@ -24,7 +24,7 @@ module::Encoder<B>* Encoder_polar
 void Encoder_polar
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Encoder::build_args(req_args, opt_args);
+	Encoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type"}][2] += ", POLAR";
 
@@ -38,7 +38,7 @@ void Encoder_polar
 {
 	params.type = "POLAR";
 
-	Encoder::store_args(vals, params);
+	Encoder::store_args(vals, params, p);
 }
 
 void Encoder_polar

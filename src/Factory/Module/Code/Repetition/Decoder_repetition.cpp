@@ -27,7 +27,7 @@ module::Decoder<B,R>* Decoder_repetition
 void Decoder_repetition
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type", "D"}].push_back("REPETITION");
 	opt_args[{p+"-implem"   }].push_back("STD, FAST");
@@ -43,7 +43,7 @@ void Decoder_repetition
 	params.type   = "REPETITION";
 	params.implem = "STD";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-no-buff"})) params.buffered = false;
 }

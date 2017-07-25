@@ -23,7 +23,7 @@ module::Decoder<B,R>* Decoder_RA
 void Decoder_RA
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 	Interleaver::build_args(req_args, opt_args, "itl");
 	req_args.erase({"itl-size"    });
 	opt_args.erase({"itl-fra", "F"});
@@ -42,7 +42,7 @@ void Decoder_RA
 	params.type   = "RA";
 	params.implem = "STD";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 
 	params.itl.size     = params.N_cw;
 	params.itl.n_frames = params.n_frames;

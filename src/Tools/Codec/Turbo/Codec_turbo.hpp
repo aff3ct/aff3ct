@@ -26,12 +26,9 @@ template <typename B = int, typename Q = float, typename QD = Q>
 class Codec_turbo : public Codec<B,Q>
 {
 protected:
-	const factory::Encoder_turbo  ::parameters &enc_par;
-	const factory::Decoder_turbo  ::parameters &dec_par;
-	const factory::Puncturer_turbo::parameters &pct_par;
-
-	factory::Encoder_RSC::parameters enc_rsc_par;
-	factory::Decoder_RSC::parameters dec_rsc_par;
+	const factory::Encoder_turbo  ::parameters<> &enc_par;
+	const factory::Decoder_turbo  ::parameters<> &dec_par;
+	const factory::Puncturer_turbo::parameters   &pct_par;
 
 	// the trellis representation
 	std::vector<std::vector<int>>                               trellis;
@@ -41,9 +38,9 @@ protected:
 	std::ofstream                                               json_stream;
 
 public:
-	Codec_turbo(const factory::Encoder_turbo  ::parameters &enc_params,
-	            const factory::Decoder_turbo  ::parameters &dec_params,
-	            const factory::Puncturer_turbo::parameters &pct_params,
+	Codec_turbo(const factory::Encoder_turbo  ::parameters<> &enc_params,
+	            const factory::Decoder_turbo  ::parameters<> &dec_params,
+	            const factory::Puncturer_turbo::parameters   &pct_params,
 	            const int n_threads);
 	virtual ~Codec_turbo();
 

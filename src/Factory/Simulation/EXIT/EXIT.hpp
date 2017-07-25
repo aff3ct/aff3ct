@@ -45,6 +45,7 @@ struct EXIT : Simulation
 		  pct(new Puncturer    ::parameters()),
 		  mdm(new Modem        ::parameters()),
 		  chn(new Channel      ::parameters()),
+		  qnt(new Quantizer    ::parameters()),
 		  dec(new Decoder      ::parameters()),
 		  ter(new Terminal_EXIT::parameters())
 		{
@@ -57,6 +58,7 @@ struct EXIT : Simulation
 			if (this->pct != nullptr) { delete this->pct; this->pct = nullptr; }
 			if (this->mdm != nullptr) { delete this->mdm; this->mdm = nullptr; }
 			if (this->chn != nullptr) { delete this->chn; this->chn = nullptr; }
+			if (this->qnt != nullptr) { delete this->qnt; this->qnt = nullptr; }
 			if (this->dec != nullptr) { delete this->dec; this->dec = nullptr; }
 			if (this->ter != nullptr) { delete this->ter; this->ter = nullptr; }
 		}
@@ -72,6 +74,7 @@ struct EXIT : Simulation
 		Puncturer    ::parameters *pct = nullptr;
 		Modem        ::parameters *mdm = nullptr;
 		Channel      ::parameters *chn = nullptr;
+		Quantizer    ::parameters *qnt = nullptr;
 		Decoder      ::parameters *dec = nullptr;
 		Terminal_EXIT::parameters *ter = nullptr;
 	};

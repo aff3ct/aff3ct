@@ -1122,13 +1122,13 @@ void Decoder_polar_gen
 void Decoder_polar_gen
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder_polar::build_args(req_args, opt_args);
+	Decoder_polar::build_args(req_args, opt_args, p);
 }
 
 void Decoder_polar_gen
 ::store_args(const arg_val_map &vals, parameters &params, const std::string p)
 {
-	Decoder_polar::store_args(vals, params);
+	Decoder_polar::store_args(vals, params, p);
 }
 
 void Decoder_polar_gen

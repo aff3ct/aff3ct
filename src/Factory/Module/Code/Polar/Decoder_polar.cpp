@@ -268,7 +268,7 @@ module::Decoder<B,Q>* Decoder_polar
 void Decoder_polar
 ::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 {
-	Decoder::build_args(req_args, opt_args);
+	Decoder::build_args(req_args, opt_args, p);
 
 	opt_args[{p+"-type", "D"}].push_back("SC, SCL, SCL_MEM, ASCL, ASCL_MEM, SCAN");
 
@@ -304,7 +304,7 @@ void Decoder_polar
 	params.type   = "SC";
 	params.implem = "FAST";
 
-	Decoder::store_args(vals, params);
+	Decoder::store_args(vals, params, p);
 
 	if(exist(vals, {p+"-ite",         "i"})) params.n_ite         = std::stoi(vals.at({p+"-ite",    "i"}));
 	if(exist(vals, {p+"-lists",       "L"})) params.L             = std::stoi(vals.at({p+"-lists",  "L"}));
