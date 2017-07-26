@@ -17,8 +17,8 @@ namespace module
 /** CONSTRUCTOR **/
 /********************************************************************/
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
                            const int n_frames, const std::string name)
 : Decoder_SISO<B,R>(K, N, n_frames, 1, name),
@@ -72,14 +72,14 @@ Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** load **/
 /********************************************************************/
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_load_init()
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
 		if (frozen_bits[i])// if i is a frozen bit		
-			feedback_graph[0][i] = tools::sat_vals<R>().second;
+			feedback_graph[0][i] = S();
 		else		
 			feedback_graph[0][i] = I();
 
@@ -98,8 +98,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_load(const R *Y_N)
 {
 	if (!(this->is_init))
@@ -114,8 +114,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** frame_decode **/
 /********************************************************************/
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_decode()
 {
 	for (auto iter = 0; iter < max_iter; iter++)
@@ -129,8 +129,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 
 			if (frozen_bits[i])// if i is a frozen bit
 			{
-				feedback_graph[0][i] = tools::sat_vals<R>().second;
-				soft_graph    [0][i] = tools::sat_vals<R>().second;
+				feedback_graph[0][i] = S();
+				soft_graph    [0][i] = S();
 			}
 			else
 				feedback_graph[0][i] = I();
@@ -144,8 +144,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -168,8 +168,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -187,14 +187,14 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** frame store **/
 /********************************************************************/
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_store(B *V_K) const
 {
 	auto k = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!frozen_bits[i]) // if i is not a frozen bit
-			V_K[k++] = (H(soft_graph[0][i]) == 0) ? (B)0 : (B)1;
+			V_K[k++] = H(soft_graph[0][i]);
 }
 
 /********************************************************************/
@@ -202,8 +202,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** set the soft information (l,j) to v and propagate the value in feedbackGraph**/
 /********************************************************************/
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::set_soft_val_and_propagate(const int l, const int j, const R v)
 {
 	const auto up_ix = j - (1 << l);
@@ -225,8 +225,8 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 /** compute_soft_output **/
 /********************************************************************/
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::fb_compute_soft_output(const int &i)
 {
 	auto l_start = tools::compute_depth(i, this->m);
@@ -249,33 +249,6 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
 				                     F(feedback_graph[l][  g_up_ix], soft_graph[l + 1][  g_up_ix]));
 		}
 	}
-}
-
-/********************************************************************/
-/** Display_decoder_feedbackgraph **/
-/********************************************************************/
-template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H>
-void Decoder_polar_SCAN_naive<B,R,I,F,V,H>
-::display_decoder_graph()
-{
-	std::cout << "soft_graph:" << std::endl;
-	for (auto i = 0; i < this->N; i++)
-	{
-		for (auto j = 0; j <= m; j++)
-			std::cout << "\t\t" << std::setprecision(4) << std::setw(4) << soft_graph[j][i];
-		std::cout << std::endl;
-	}
-	std::cout << std::endl << std::endl;
-
-	std::cout << "feedback_graph:" << std::endl;
-	for (auto i = 0; i < this->N; i++)
-	{
-		for (auto j = 0; j <= m; j++)
-			std::cout << "\t\t" << std::setprecision(4) << std::setw(4) << feedback_graph[j][i];
-		std::cout << std::endl;
-	}
-	std::cout << std::endl << std::endl;
 }
 }
 }
