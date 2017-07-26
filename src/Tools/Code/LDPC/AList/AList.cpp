@@ -247,37 +247,38 @@ Sparse_matrix AList
 			}
 		}
 
-		for (unsigned i = 0; i < n_cols; i++)
-		{
-			for (unsigned j = 0; j < cols_max_degree; j++)
-			{
-				unsigned row_index = 0;
-				stream >> row_index;
-
-				if ((row_index >  0 && j <  cols_degree[i]) ||
-					(row_index <= 0 && j >= cols_degree[i]))
-				{
-					if (row_index)
-					{
-						try
-						{
-							matrix.add_connection(row_index -1, i);
-							throw runtime_error(__FILE__, __LINE__, __func__, "The input AList is not consistent.");
-						}
-						catch (std::exception const&)
-						{
-							// everything is normal if the code passes through the catch
-						}
-					}
-				}
-				else
-				{
-					std::stringstream message;
-					message << "'row_index' is wrong ('row_index' = " << row_index << ").";
-					runtime_error(__FILE__, __LINE__, __func__, message.str());
-				}
-			}
-		}
+		// TODO: this verif. is time consuming
+//		for (unsigned i = 0; i < n_cols; i++)
+//		{
+//			for (unsigned j = 0; j < cols_max_degree; j++)
+//			{
+//				unsigned row_index = 0;
+//				stream >> row_index;
+//
+//				if ((row_index >  0 && j <  cols_degree[i]) ||
+//					(row_index <= 0 && j >= cols_degree[i]))
+//				{
+//					if (row_index)
+//					{
+//						try
+//						{
+//							matrix.add_connection(row_index -1, i);
+//							throw runtime_error(__FILE__, __LINE__, __func__, "The input AList is not consistent.");
+//						}
+//						catch (std::exception const&)
+//						{
+//							// everything is normal if the code passes through the catch
+//						}
+//					}
+//				}
+//				else
+//				{
+//					std::stringstream message;
+//					message << "'row_index' is wrong ('row_index' = " << row_index << ").";
+//					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+//				}
+//			}
+//		}
 
 		return matrix;
 	}
@@ -422,46 +423,47 @@ Sparse_matrix AList
 		}
 	}
 
-	for (unsigned i = 0; i < n_cols; i++)
-	{
-		getline(stream, line);
-		values = split(line);
-
-		if (values.size() < cols_degree[i])
-		{
-			std::stringstream message;
-			message << "'values.size()' has to be greater or equal to 'cols_degree[i]' ('values.size()' = "
-			        << values.size() << ", 'i' = " << i << ", 'cols_degree[i]' = " << cols_degree[i] << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		for (unsigned j = 0; j < cols_max_degree; j++)
-		{
-			auto row_index = (j < values.size()) ? std::stoi(values[j]) : 0;
-			if ((row_index >  0 && j <  cols_degree[i]) ||
-				(row_index <= 0 && j >= cols_degree[i]))
-			{
-				if (row_index)
-				{
-					try
-					{
-						matrix.add_connection(row_index -1, i);
-						throw runtime_error(__FILE__, __LINE__, __func__, "The input AList file is not consistent.");
-					}
-					catch (std::exception const&)
-					{
-						// everything is normal if the code passes through the catch
-					}
-				}
-			}
-			else
-			{
-				std::stringstream message;
-				message << "'row_index' is wrong ('row_index' = " << row_index << ").";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-		}
-	}
+	// TODO: this verif. is time consuming
+//	for (unsigned i = 0; i < n_cols; i++)
+//	{
+//		getline(stream, line);
+//		values = split(line);
+//
+//		if (values.size() < cols_degree[i])
+//		{
+//			std::stringstream message;
+//			message << "'values.size()' has to be greater or equal to 'cols_degree[i]' ('values.size()' = "
+//			        << values.size() << ", 'i' = " << i << ", 'cols_degree[i]' = " << cols_degree[i] << ").";
+//			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+//		}
+//
+//		for (unsigned j = 0; j < cols_max_degree; j++)
+//		{
+//			auto row_index = (j < values.size()) ? std::stoi(values[j]) : 0;
+//			if ((row_index >  0 && j <  cols_degree[i]) ||
+//				(row_index <= 0 && j >= cols_degree[i]))
+//			{
+//				if (row_index)
+//				{
+//					try
+//					{
+//						matrix.add_connection(row_index -1, i);
+//						throw runtime_error(__FILE__, __LINE__, __func__, "The input AList file is not consistent.");
+//					}
+//					catch (std::exception const&)
+//					{
+//						// everything is normal if the code passes through the catch
+//					}
+//				}
+//			}
+//			else
+//			{
+//				std::stringstream message;
+//				message << "'row_index' is wrong ('row_index' = " << row_index << ").";
+//				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+//			}
+//		}
+//	}
 
 	return matrix;
 }
