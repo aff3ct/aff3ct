@@ -42,9 +42,9 @@ void Encoder_polar
 }
 
 void Encoder_polar
-::make_header(params_list& head_enc, const Encoder::parameters& params)
+::make_header(params_list& head_enc, const Encoder::parameters& params, const bool full)
 {
-	Encoder::make_header(head_enc, params);
+	Encoder::make_header(head_enc, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

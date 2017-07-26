@@ -185,7 +185,7 @@ void Launcher::store_args(const arg_val_map &vals, parameters &params, const std
 #endif
 }
 
-void Launcher::make_header(params_list& head_sim, const parameters& params)
+void Launcher::make_header(params_list& head_sim, const parameters& params, const bool full)
 {
 	std::unordered_map<std::type_index,std::string> type_names;
 	// define type names

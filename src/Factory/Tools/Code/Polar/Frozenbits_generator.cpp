@@ -68,11 +68,11 @@ void Frozenbits_generator
 }
 
 void Frozenbits_generator
-::make_header(params_list& head_fb, const parameters& params)
+::make_header(params_list& head_fb, const parameters& params, const bool full)
 {
 	head_fb.push_back(std::make_pair("Fb gen. method", params.type));
-	head_fb.push_back(std::make_pair("Fb info. bits (K)", std::to_string(params.K)));
-	head_fb.push_back(std::make_pair("Fb codeword size (N)", std::to_string(params.N_cw)));
+	if (full) head_fb.push_back(std::make_pair("Fb info. bits (K)", std::to_string(params.K)));
+	if (full) head_fb.push_back(std::make_pair("Fb codeword size (N)", std::to_string(params.N_cw)));
 	head_fb.push_back(std::make_pair("Fb sigma", params.sigma == -1.0f ? "adaptive" : std::to_string(params.sigma)));
 #ifdef ENABLE_POLAR_BOUNDS
 	if (params.type == "TV")

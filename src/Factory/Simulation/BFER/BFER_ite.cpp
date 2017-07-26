@@ -42,9 +42,9 @@ void BFER_ite::store_args(const arg_val_map &vals, parameters &params, const std
 	}
 }
 
-void BFER_ite::make_header(params_list& head_sim, const parameters& params)
+void BFER_ite::make_header(params_list& head_sim, const parameters& params, const bool full)
 {
-	BFER::make_header(head_sim, params);
+	BFER::make_header(head_sim, params, full);
 
 	head_sim.push_back(std::make_pair("Global iterations (I)", std::to_string(params.n_ite)));
 }

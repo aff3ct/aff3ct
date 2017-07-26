@@ -129,10 +129,10 @@ void Encoder_turbo
 
 template <class E1, class E2>
 void Encoder_turbo
-::make_header(params_list& head_enc, params_list& head_itl, const parameters<E1,E2>& params)
+::make_header(params_list& head_enc, params_list& head_itl, const parameters<E1,E2>& params, const bool full)
 {
-	Encoder    ::make_header(head_enc, params);
-	Interleaver::make_header(head_itl, params.itl);
+	Encoder    ::make_header(head_enc, params,     full);
+	Interleaver::make_header(head_itl, params.itl, full);
 
 	if (params.tail_length)
 		head_enc.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
@@ -143,14 +143,14 @@ void Encoder_turbo
 	if (std::is_same<E1,E2>())
 	{
 		params_list head_enc_sub1;
-		E1::make_header(head_enc_sub1, params.sub1);
+		E1::make_header(head_enc_sub1, params.sub1, full);
 		for (auto p : head_enc_sub1) { p.first.insert(0, E1::name + ": "); head_enc.push_back(p); }
 	}
 	else
 	{
 		params_list head_enc_sub1, head_enc_sub2;
-		E1::make_header(head_enc_sub1, params.sub1);
-		E2::make_header(head_enc_sub2, params.sub2);
+		E1::make_header(head_enc_sub1, params.sub1, full);
+		E2::make_header(head_enc_sub2, params.sub2, full);
 		for (auto p : head_enc_sub1) { p.first.insert(0, E1::name + ": "); head_enc.push_back(p); }
 		for (auto p : head_enc_sub2) { p.first.insert(0, E2::name + ": "); head_enc.push_back(p); }
 	}

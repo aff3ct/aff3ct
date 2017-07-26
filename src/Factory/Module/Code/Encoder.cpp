@@ -69,17 +69,17 @@ void Encoder
 }
 
 void Encoder
-::make_header(params_list& head_enc, const parameters& params)
+::make_header(params_list& head_enc, const parameters& params, const bool full)
 {
 	head_enc.push_back(std::make_pair("Type", params.type));
-	head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-	head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
-	head_enc.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
-	head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_enc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+	if (full) head_enc.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
+	if (full) head_enc.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
+	if (full) head_enc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	head_enc.push_back(std::make_pair("Systematic", ((params.systematic) ? "yes" : "no")));
 	if (params.type == "USER")
 		head_enc.push_back(std::make_pair("Path", params.path));
-	if (params.type == "COSET")
+	if (params.type == "COSET" && full)
 		head_enc.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 
 }

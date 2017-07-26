@@ -63,8 +63,8 @@ void BFER_std<B,R,Q>
 	this->opt_args.erase({"qnt-sigma"         });
 	this->req_args.erase({"mnt-size",      "K"});
 	this->opt_args.erase({"mnt-fra",       "F"});
-	this->req_args.erase({"ter-info-bits","K"});
-	this->opt_args.erase({"ter-cw-size",  "N"});
+	this->req_args.erase({"ter-info-bits", "K"});
+	this->opt_args.erase({"ter-cw-size",   "N"});
 }
 
 template <typename B, typename R, typename Q>
@@ -161,14 +161,21 @@ template <typename B, typename R, typename Q>
 void BFER_std<B,R,Q>
 ::print_header()
 {
-	factory::BFER_std     ::make_header(this->pl_sim, *params);
-	factory::Source       ::make_header(this->pl_src, *params->src);
-	factory::CRC          ::make_header(this->pl_crc, *params->crc);
-	factory::Modem        ::make_header(this->pl_mdm, *params->mdm);
-	factory::Channel      ::make_header(this->pl_chn, *params->chn);
-	factory::Quantizer    ::make_header(this->pl_qnt, *params->qnt);
-	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt);
-	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter);
+	factory::BFER_std     ::make_header(this->pl_sim, *params,      false);
+	factory::Source       ::make_header(this->pl_src, *params->src, false);
+	factory::CRC          ::make_header(this->pl_crc, *params->crc, false);
+	factory::Modem        ::make_header(this->pl_mdm, *params->mdm, false);
+	factory::Channel      ::make_header(this->pl_chn, *params->chn, false);
+	factory::Quantizer    ::make_header(this->pl_qnt, *params->qnt, false);
+	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt, false);
+	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter, false);
+
+	this->pl_sim.push_back(std::make_pair("Inter frame level",     std::to_string(params->src->n_frames)));
+	this->pl_cde.push_back(std::make_pair("Type",                                 params->cde_type      ));
+	this->pl_cde.push_back(std::make_pair("Info. bits (K)",        std::to_string(params->enc->K       )));
+	this->pl_cde.push_back(std::make_pair("Codeword size (N_cw)",  std::to_string(params->enc->N_cw    )));
+	this->pl_cde.push_back(std::make_pair("Frame size (N)",        std::to_string(params->pct->N       )));
+	this->pl_cde.push_back(std::make_pair("Code rate (R = K / N)", std::to_string(params->pct->R       )));
 
 	Launcher::print_header();
 }

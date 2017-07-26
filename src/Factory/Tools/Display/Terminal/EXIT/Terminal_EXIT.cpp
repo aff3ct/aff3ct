@@ -48,10 +48,10 @@ void Terminal_EXIT::store_args(const arg_val_map &vals, parameters &params, cons
 	if(exist(vals, {p+"-type"        })) params.type  =           vals.at({p+"-type"        });
 }
 
-void Terminal_EXIT::make_header(params_list& head_ter, const parameters& params)
+void Terminal_EXIT::make_header(params_list& head_ter, const parameters& params, const bool full)
 {
-	Terminal::make_header(head_ter, params);
-
 	head_ter.push_back(std::make_pair("Type", params.type));
-	head_ter.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
+	if (full) head_ter.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N)));
+
+	Terminal::make_header(head_ter, params, full);
 }

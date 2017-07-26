@@ -42,9 +42,9 @@ void Puncturer_polar
 }
 
 void Puncturer_polar
-::make_header(params_list& head_pct, const Puncturer::parameters& params)
+::make_header(params_list& head_pct, const Puncturer::parameters& params, const bool full)
 {
-	Puncturer::make_header(head_pct, params);
+	Puncturer::make_header(head_pct, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

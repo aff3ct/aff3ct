@@ -97,11 +97,11 @@ void Polar<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_polar::make_header(this->pl_enc, *params_enc);
+		factory::Encoder_polar::make_header(this->pl_enc, *params_enc, false);
 	if (params_pct->type != "NO")
-		factory::Puncturer_polar::make_header(this->pl_pct, *params_pct);
-	factory::Frozenbits_generator::make_header(this->pl_enc, *params_fb);
-	factory::Decoder_polar::make_header(this->pl_dec, *params_dec);
+		factory::Puncturer_polar::make_header(this->pl_pct, *params_pct, false);
+	factory::Frozenbits_generator::make_header(this->pl_enc, *params_fb, false);
+	factory::Decoder_polar::make_header(this->pl_dec, *params_dec, false);
 
 	C::print_header();
 }

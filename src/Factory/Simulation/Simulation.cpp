@@ -115,7 +115,7 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 #endif
 }
 
-void Simulation::make_header(params_list& head_sim, const parameters& params)
+void Simulation::make_header(params_list& head_sim, const parameters& params, const bool full)
 {
 	Launcher::make_header(head_sim, params);
 

@@ -40,14 +40,14 @@ void Decoder::store_args(const arg_val_map &vals, parameters &params, const std:
 	params.R = (float)params.K / (float)params.N_cw;
 }
 
-void Decoder::make_header(params_list& head_dec, const parameters& params)
+void Decoder::make_header(params_list& head_dec, const parameters& params, const bool full)
 {
 	head_dec.push_back(std::make_pair("Type (D)",params.type));
 	if(params.implem.size())
 		head_dec.push_back(std::make_pair("Implementation", params.implem));
-	head_dec.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-	head_dec.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
-	head_dec.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
+	if (full) head_dec.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+	if (full) head_dec.push_back(std::make_pair("Codeword size (N)", std::to_string(params.N_cw)));
+	if (full) head_dec.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
 	head_dec.push_back(std::make_pair("Systematic", ((params.systematic) ? "yes" : "no")));
-	head_dec.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_dec.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }

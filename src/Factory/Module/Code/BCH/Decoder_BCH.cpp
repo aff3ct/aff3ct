@@ -56,9 +56,9 @@ void Decoder_BCH
 }
 
 void Decoder_BCH
-::make_header(params_list& head_dec, const parameters& params)
+::make_header(params_list& head_dec, const parameters& params, const bool full)
 {
-	Decoder::make_header(head_dec, params);
+	Decoder::make_header(head_dec, params, full);
 
 	head_dec.push_back(std::make_pair("Galois field order (m)", std::to_string(params.m)));
 	head_dec.push_back(std::make_pair("Correction power (T)",   std::to_string(params.t)));

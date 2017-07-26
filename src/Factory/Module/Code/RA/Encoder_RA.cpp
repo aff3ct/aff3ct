@@ -43,10 +43,10 @@ void Encoder_RA
 }
 
 void Encoder_RA
-::make_header(params_list& head_enc, params_list& head_itl, const parameters& params)
+::make_header(params_list& head_enc, params_list& head_itl, const parameters& params, const bool full)
 {
-	Encoder::make_header(head_enc, params);
-	Interleaver::make_header(head_itl, params.itl);
+	Encoder    ::make_header(head_enc, params,     full);
+	Interleaver::make_header(head_itl, params.itl, full);
 }
 
 // ==================================================================================== explicit template instantiation

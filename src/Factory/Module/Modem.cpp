@@ -254,12 +254,12 @@ void Modem
 }
 
 void Modem
-::make_header(params_list& head_mdm, const parameters& params)
+::make_header(params_list& head_mdm, const parameters& params, const bool full)
 {
 	// ----------------------------------------------------------------------------------------------------- modulator
 	head_mdm.push_back(std::make_pair("Type", params.type));
-	head_mdm.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
-	head_mdm.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_mdm.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
+	if (full) head_mdm.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "CPM")
 	{
 		if(params.cpm_std.size())
@@ -284,7 +284,7 @@ void Modem
 	std::string demod_ite  = std::to_string(params.n_ite);
 	std::string demod_psi  = params.psi;
 
-	if (params.sigma != -1.f)
+	if (params.sigma != -1.f && full)
 		head_mdm.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
 	head_mdm.push_back(std::make_pair("Sigma square", demod_sig2));
 	head_mdm.push_back(std::make_pair("Max type", demod_max));

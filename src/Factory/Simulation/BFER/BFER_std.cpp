@@ -48,9 +48,9 @@ void BFER_std::store_args(const arg_val_map &vals, parameters &params, const std
 	BFER::store_args(vals, params, p);
 }
 
-void BFER_std::make_header(params_list& head_sim, const parameters& params)
+void BFER_std::make_header(params_list& head_sim, const parameters& params, const bool full)
 {
-	BFER::make_header(head_sim, params);
+	BFER::make_header(head_sim, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

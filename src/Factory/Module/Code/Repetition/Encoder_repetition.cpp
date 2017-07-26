@@ -42,9 +42,9 @@ void Encoder_repetition
 }
 
 void Encoder_repetition
-::make_header(params_list& head_enc, const parameters& params)
+::make_header(params_list& head_enc, const parameters& params, const bool full)
 {
-	Encoder::make_header(head_enc, params);
+	Encoder::make_header(head_enc, params, full);
 
 	head_enc.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 }

@@ -49,11 +49,11 @@ void Decoder_repetition
 }
 
 void Decoder_repetition
-::make_header(params_list& head_dec, const parameters& params)
+::make_header(params_list& head_dec, const parameters& params, const bool full)
 {
-	Decoder::make_header(head_dec, params);
+	Decoder::make_header(head_dec, params, full);
 
-	head_dec.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
+	if (full) head_dec.push_back(std::make_pair("Buffered", (params.buffered ? "on" : "off")));
 }
 
 // ==================================================================================== explicit template instantiation

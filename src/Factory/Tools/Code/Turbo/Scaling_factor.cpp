@@ -57,7 +57,7 @@ void Scaling_factor
 }
 
 void Scaling_factor
-::make_header(params_list& head_sf, const parameters& params)
+::make_header(params_list& head_sf, const parameters& params, const bool full)
 {
 	if (params.enable)
 	{
@@ -65,6 +65,10 @@ void Scaling_factor
 		head_sf.push_back(std::make_pair("SF iterations", std::to_string(params.n_ite)));
 		if (params.type == "CST")
 			head_sf.push_back(std::make_pair("SF constant", std::to_string(params.cst)));
+	}
+	else
+	{
+		head_sf.push_back(std::make_pair("Scaling factor (SF)", "off"));
 	}
 }
 

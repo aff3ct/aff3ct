@@ -317,9 +317,9 @@ void Decoder_polar
 }
 
 void Decoder_polar
-::make_header(params_list& head_dec, const parameters& params)
+::make_header(params_list& head_dec, const parameters& params, const bool full)
 {
-	Decoder::make_header(head_dec, params);
+	Decoder::make_header(head_dec, params, full);
 
 	if (!params.simd_strategy.empty())
 		head_dec.push_back(std::make_pair("SIMD strategy", params.simd_strategy));

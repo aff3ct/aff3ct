@@ -62,8 +62,8 @@ void Uncoded<C,B,R,Q>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder::make_header(this->pl_enc, *params_enc);
-	factory::Decoder_NO::make_header(this->pl_dec, *params_dec);
+		factory::Encoder::make_header(this->pl_enc, *params_enc, false);
+	factory::Decoder_NO::make_header(this->pl_dec, *params_dec, false);
 
 	C::print_header();
 }

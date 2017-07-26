@@ -61,14 +61,14 @@ void Source
 }
 
 void Source
-::make_header(params_list& head_src, const parameters& params)
+::make_header(params_list& head_src, const parameters& params, const bool full)
 {
 	head_src.push_back(std::make_pair("Type", params.type));
-	head_src.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-	head_src.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_src.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+	if (full) head_src.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "USER")
 		head_src.push_back(std::make_pair("Path", params.path));
-	if (params.type == "RAND" || params.type == "RAND_FAST")
+	if ((params.type == "RAND" || params.type == "RAND_FAST") && full)
 		head_src.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 }
 

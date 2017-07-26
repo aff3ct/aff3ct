@@ -53,11 +53,11 @@ void Coset
 }
 
 void Coset
-::make_header(params_list& head_pct, const parameters& params)
+::make_header(params_list& head_pct, const parameters& params, const bool full)
 {
 	head_pct.push_back(std::make_pair("Type", params.type));
-	head_pct.push_back(std::make_pair("Size (N)", std::to_string(params.size)));
-	head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_pct.push_back(std::make_pair("Size (N)", std::to_string(params.size)));
+	if (full) head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 
 // ==================================================================================== explicit template instantiation

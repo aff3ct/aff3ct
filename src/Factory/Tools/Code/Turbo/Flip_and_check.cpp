@@ -74,7 +74,7 @@ void Flip_and_check
 }
 
 void Flip_and_check
-::make_header(params_list& head_fnc, const parameters& params)
+::make_header(params_list& head_fnc, const parameters& params, const bool full)
 {
 	head_fnc.push_back(std::make_pair("Flip aNd Check (FNC)", ((params.enable) ? "on" : "off")));
 	if (params.enable)

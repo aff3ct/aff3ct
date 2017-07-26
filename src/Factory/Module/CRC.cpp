@@ -67,13 +67,13 @@ void CRC
 }
 
 void CRC
-::make_header(params_list& head_crc, const parameters& params)
+::make_header(params_list& head_crc, const parameters& params, const bool full)
 {
 	if (!params.poly.empty())
 	{
 		head_crc.push_back(std::make_pair("Type", params.type));
-		head_crc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
-		head_crc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+		if (full) head_crc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+		if (full) head_crc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 
 		auto poly_name = module::CRC_polynomial<>::name(params.poly);
 		if (!poly_name.empty())

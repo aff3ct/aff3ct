@@ -44,11 +44,11 @@ void Monitor
 }
 
 void Monitor
-::make_header(params_list& head_mon, const parameters& params)
+::make_header(params_list& head_mon, const parameters& params, const bool full)
 {
 	head_mon.push_back(std::make_pair("Frame error count (e)", std::to_string(params.n_frame_errors)));
-	head_mon.push_back(std::make_pair("Size (K)", std::to_string(params.size)));
-	head_mon.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_mon.push_back(std::make_pair("Size (K)", std::to_string(params.size)));
+	if (full) head_mon.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 
 // ==================================================================================== explicit template instantiation

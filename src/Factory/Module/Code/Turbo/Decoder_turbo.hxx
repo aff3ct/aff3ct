@@ -147,31 +147,31 @@ void Decoder_turbo
 
 template <class D1, class D2>
 void Decoder_turbo
-::make_header(params_list& head_dec, params_list& head_itl, const parameters<D1,D2>& params)
+::make_header(params_list& head_dec, params_list& head_itl, const parameters<D1,D2>& params, const bool full)
 {
-	Decoder    ::make_header(head_dec, params);
-	Interleaver::make_header(head_itl, params.itl);
+	Decoder    ::make_header(head_dec, params,     full);
+	Interleaver::make_header(head_itl, params.itl, full);
 
 	head_dec.push_back(std::make_pair("Num. of iterations (i)", std::to_string(params.n_ite)));
-	if (params.tail_length)
+	if (params.tail_length && full)
 		head_dec.push_back(std::make_pair("Tail length", std::to_string(params.tail_length)));
 	head_dec.push_back(std::make_pair("Enable json", ((params.enable_json) ? "on" : "off")));
 	head_dec.push_back(std::make_pair("Self-corrected", ((params.self_corrected) ? "on" : "off")));
 
-	Scaling_factor::make_header(head_dec, params.sf);
-	Flip_and_check::make_header(head_dec, params.fnc);
+	Scaling_factor::make_header(head_dec, params.sf,  full);
+	Flip_and_check::make_header(head_dec, params.fnc, full);
 
 	if (std::is_same<D1,D2>())
 	{
 		params_list head_dec_sub1;
-		D1::make_header(head_dec_sub1, params.sub1);
+		D1::make_header(head_dec_sub1, params.sub1, full);
 		for (auto p : head_dec_sub1) { p.first.insert(0, D1::name + ": "); head_dec.push_back(p); }
 	}
 	else
 	{
 		params_list head_dec_sub1, head_dec_sub2;
-		D1::make_header(head_dec_sub1, params.sub1);
-		D2::make_header(head_dec_sub2, params.sub2);
+		D1::make_header(head_dec_sub1, params.sub1, full);
+		D2::make_header(head_dec_sub2, params.sub2, full);
 		for (auto p : head_dec_sub1) { p.first.insert(0, D1::name + ": "); head_dec.push_back(p); }
 		for (auto p : head_dec_sub2) { p.first.insert(0, D2::name + ": "); head_dec.push_back(p); }
 	}

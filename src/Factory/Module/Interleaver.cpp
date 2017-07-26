@@ -79,18 +79,18 @@ void Interleaver
 }
 
 void Interleaver
-::make_header(params_list& head_itl, const parameters& params)
+::make_header(params_list& head_itl, const parameters& params, const bool full)
 {
 	head_itl.push_back(std::make_pair("Type", params.type));
-	head_itl.push_back(std::make_pair("Size", std::to_string(params.size)));
-	head_itl.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_itl.push_back(std::make_pair("Size", std::to_string(params.size)));
+	if (full) head_itl.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "USER")
 		head_itl.push_back(std::make_pair("Path", params.path));
 	if (params.type == "RAND_COL" || params.type == "ROW_COL")
 		head_itl.push_back(std::make_pair("Number of columns", std::to_string(params.n_cols)));
 	if (params.type == "RANDOM" || params.type == "GOLDEN" || params.type == "RAND_COL")
 	{
-		head_itl.push_back(std::make_pair("Seed", std::to_string(params.seed)));
+		if (full) head_itl.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 		head_itl.push_back(std::make_pair("Uniform", (params.uniform ? "yes" : "no")));
 	}
 }

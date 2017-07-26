@@ -131,15 +131,15 @@ void Puncturer_turbo
 }
 
 void Puncturer_turbo
-::make_header(params_list& head_pct, const parameters& params)
+::make_header(params_list& head_pct, const parameters& params, const bool full)
 {
-	Puncturer::make_header(head_pct, params);
+	Puncturer::make_header(head_pct, params, full);
 
 	if (params.type != "NO")
 	{
 		head_pct.push_back(std::make_pair(std::string("Pattern"), std::string("{" + params.pattern) + "}"));
-		head_pct.push_back(std::make_pair(std::string("Tail length"), std::to_string(params.tail_length)));
-		head_pct.push_back(std::make_pair(std::string("Buffered"), params.buffered ? "on" : "off"));
+		if (full) head_pct.push_back(std::make_pair(std::string("Tail length"), std::to_string(params.tail_length)));
+		if (full) head_pct.push_back(std::make_pair(std::string("Buffered"), params.buffered ? "on" : "off"));
 	}
 }
 

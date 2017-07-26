@@ -73,7 +73,7 @@ void Quantizer
 }
 
 void Quantizer
-::make_header(params_list& head_gnt, const parameters& params)
+::make_header(params_list& head_gnt, const parameters& params, const bool full)
 {
 	std::string quantif = "unused";
 	if (params.type == "TRICKY")
@@ -82,10 +82,10 @@ void Quantizer
 		quantif = "{"+std::to_string(params.n_bits)+", "+std::to_string(params.n_decimals)+"}";
 
 	head_gnt.push_back(std::make_pair("Type", params.type));
-	head_gnt.push_back(std::make_pair("Frame size (N)", std::to_string(params.size)));
-	head_gnt.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_gnt.push_back(std::make_pair("Frame size (N)", std::to_string(params.size)));
+	if (full) head_gnt.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	head_gnt.push_back(std::make_pair("Fixed-point config.", quantif));
-	if (params.sigma != -1.f)
+	if (params.sigma != -1.f && full)
 		head_gnt.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
 }
 

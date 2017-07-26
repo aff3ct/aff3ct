@@ -40,7 +40,7 @@ struct Decoder_RSC : public Decoder
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
-	static void make_header(params_list& head_dec, const parameters& params);
+	static void make_header(params_list& head_dec, const parameters& params, const bool full = true);
 
 private:
 	template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>

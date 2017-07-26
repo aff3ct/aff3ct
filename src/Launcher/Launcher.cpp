@@ -120,6 +120,7 @@ void Launcher::print_header()
 
 	int max_n_chars = 0;
 	factory::Header::compute_max_n_chars(pl_sim, max_n_chars);
+	factory::Header::compute_max_n_chars(pl_cde, max_n_chars);
 	factory::Header::compute_max_n_chars(pl_src, max_n_chars);
 	factory::Header::compute_max_n_chars(pl_crc, max_n_chars);
 	factory::Header::compute_max_n_chars(pl_enc, max_n_chars);
@@ -133,6 +134,7 @@ void Launcher::print_header()
 	factory::Header::compute_max_n_chars(pl_ter, max_n_chars);
 
 	if (pl_sim.size()) factory::Header::print_parameters(factory::Simulation ::name, pl_sim, max_n_chars, this->stream);
+	if (pl_cde.size()) factory::Header::print_parameters("Code"                    , pl_cde, max_n_chars, this->stream);
 	if (pl_src.size()) factory::Header::print_parameters(factory::Source     ::name, pl_src, max_n_chars, this->stream);
 	if (pl_crc.size()) factory::Header::print_parameters(factory::CRC        ::name, pl_crc, max_n_chars, this->stream);
 	if (pl_enc.size()) factory::Header::print_parameters(factory::Encoder    ::name, pl_enc, max_n_chars, this->stream);

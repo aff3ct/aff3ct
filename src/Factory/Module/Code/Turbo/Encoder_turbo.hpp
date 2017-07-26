@@ -44,7 +44,7 @@ struct Encoder_turbo : public Encoder
 	template <class E1 = Encoder_RSC, class E2 = E1>
 	static void store_args(const arg_val_map &vals, parameters<E1,E2> &params, const std::string p = prefix);
 	template <class E1 = Encoder_RSC, class E2 = E1>
-	static void make_header(params_list& head_enc, params_list& head_itl, const parameters<E1,E2>& params);
+	static void make_header(params_list& head_enc, params_list& head_itl, const parameters<E1,E2>& params, const bool full = true);
 };
 }
 }

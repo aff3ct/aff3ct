@@ -40,9 +40,9 @@ void Decoder_NO
 }
 
 void Decoder_NO
-::make_header(params_list& head_dec, const Decoder::parameters& params)
+::make_header(params_list& head_dec, const Decoder::parameters& params, const bool full)
 {
-	Decoder::make_header(head_dec, params);
+	Decoder::make_header(head_dec, params, full);
 }
 
 // ==================================================================================== explicit template instantiation

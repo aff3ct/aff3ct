@@ -109,18 +109,18 @@ void Channel
 }
 
 void Channel
-::make_header(params_list& head_chn, const parameters& params)
+::make_header(params_list& head_chn, const parameters& params, const bool full)
 {
 	head_chn.push_back(std::make_pair("Type", params.type));
-	head_chn.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
-	head_chn.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
+	if (full) head_chn.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
+	if (full) head_chn.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.sigma != -1.f)
 		head_chn.push_back(std::make_pair("Sigma value", std::to_string(params.sigma)));
 	if (params.type == "USER")
 		head_chn.push_back(std::make_pair("Path", params.path));
 	if (params.type.find("RAYLEIGH") != std::string::npos)
 		head_chn.push_back(std::make_pair("Block fading policy", params.block_fading));
-	if (params.type != "NO" && params.type != "USER")
+	if ((params.type != "NO" && params.type != "USER") && full)
 		head_chn.push_back(std::make_pair("Seed", std::to_string(params.seed)));
 	head_chn.push_back(std::make_pair("Complex", params.complex ? "on" : "off"));
 	head_chn.push_back(std::make_pair("Add users", params.add_users ? "on" : "off"));

@@ -53,9 +53,9 @@ void Encoder_LDPC
 }
 
 void Encoder_LDPC
-::make_header(params_list& head_enc, const parameters& params)
+::make_header(params_list& head_enc, const parameters& params, const bool full)
 {
-	Encoder::make_header(head_enc, params);
+	Encoder::make_header(head_enc, params, full);
 
 	if (params.type == "LDPC")
 		head_enc.push_back(std::make_pair("G matrix path", params.G_alist_path));

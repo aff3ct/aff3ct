@@ -121,12 +121,12 @@ void Turbo<C,B,R,Q,QD>
 ::print_header()
 {
 	if (params_enc->type != "NO")
-		factory::Encoder_turbo::make_header(this->pl_enc, this->pl_itl, *params_enc);
+		factory::Encoder_turbo::make_header(this->pl_enc, this->pl_itl, *params_enc, false);
 	if (params_pct->type != "NO")
-		factory::Puncturer_turbo::make_header(this->pl_pct, *params_pct);
+		factory::Puncturer_turbo::make_header(this->pl_pct, *params_pct, false);
 
 	factory::params_list trash;
-	factory::Decoder_turbo::make_header(this->pl_dec, trash, *params_dec);
+	factory::Decoder_turbo::make_header(this->pl_dec, trash, *params_dec, false);
 
 	C::print_header();
 }
