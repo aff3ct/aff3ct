@@ -31,9 +31,9 @@ namespace launcher
 class Launcher
 {
 private:
-	simulation::Simulation *simu;               /*!< A generic simulation pointer to allocate a specific simulation. */
-	std::string             cmd_line;
-
+	simulation::Simulation          *simu;      /*!< A generic simulation pointer to allocate a specific simulation. */
+	std::string                      cmd_line;
+	std::vector<std::string>         cmd_warn;
 protected:
 	tools::Arguments_reader          ar;        /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
 	tools::Arguments_reader::arg_map req_args;  /*!< List of the required arguments, syntax is the following:

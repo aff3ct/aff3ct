@@ -66,7 +66,7 @@ int Launcher::read_arguments()
 {
 	this->build_args();
 
-	std::vector<std::string> cmd_warn, cmd_error;
+	std::vector<std::string> cmd_error;
 
 	bool miss_arg = !ar.parse_arguments(req_args, opt_args, cmd_warn);
 	bool error    = !ar.check_arguments(cmd_error);
@@ -85,15 +85,8 @@ int Launcher::read_arguments()
 	for (unsigned e = 0; e < cmd_error.size(); e++)
 		std::cerr << tools::format_error(cmd_error[e]) << std::endl;
 
-	if(miss_arg)
+	if (miss_arg)
 		std::cerr << tools::format_error("At least one required argument is missing.") << std::endl;
-
-	// print the warnings
-#ifdef ENABLE_MPI
-	if (simu_params->mpi_rank == 0)
-#endif
-		for (unsigned w = 0; w < cmd_warn.size(); w++)
-			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
 
 	// print the help tags
 	if ((miss_arg || error) && !params->display_help)
@@ -107,7 +100,7 @@ int Launcher::read_arguments()
 		std::cerr << tools::format_info(message) << std::endl;
 	}
 
-	return ((miss_arg || error)?EXIT_FAILURE:EXIT_SUCCESS);
+	return ((miss_arg || error) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 void Launcher::print_header()
@@ -161,7 +154,15 @@ void Launcher::launch()
 	}
 
 	if (this->read_arguments() == EXIT_FAILURE)
+	{
+		// print the warnings
+#ifdef ENABLE_MPI
+		if (simu_params->mpi_rank == 0)
+#endif
+			for (unsigned w = 0; w < cmd_warn.size(); w++)
+				std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
 		return;
+	}
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
@@ -180,6 +181,13 @@ void Launcher::launch()
 	if (simu_params->mpi_rank == 0)
 #endif
 		this->print_header();
+
+	// print the warnings
+#ifdef ENABLE_MPI
+	if (simu_params->mpi_rank == 0)
+#endif
+		for (unsigned w = 0; w < cmd_warn.size(); w++)
+			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
 
 	try
 	{
