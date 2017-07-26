@@ -124,11 +124,11 @@ template <typename B, typename R>
 void EXIT<B,R>
 ::print_header()
 {
-	factory::EXIT         ::make_header(this->pl_sim, *params);
-	factory::Source       ::make_header(this->pl_src, *params->src);
-	factory::Modem        ::make_header(this->pl_mdm, *params->mdm);
-	factory::Channel      ::make_header(this->pl_chn, *params->chn);
-	factory::Terminal_EXIT::make_header(this->pl_ter, *params->ter);
+	factory::EXIT         ::make_header(this->pl_sim, *params     , false);
+	factory::Source       ::make_header(this->pl_src, *params->src, false);
+	factory::Modem        ::make_header(this->pl_mdm, *params->mdm, false);
+	factory::Channel      ::make_header(this->pl_chn, *params->chn, false);
+	factory::Terminal_EXIT::make_header(this->pl_ter, *params->ter, false);
 
 	this->pl_sim.push_back(std::make_pair("Inter frame level",     std::to_string(params->src->n_frames)));
 	this->pl_cde.push_back(std::make_pair("Type",                                 params->cde_type      ));
