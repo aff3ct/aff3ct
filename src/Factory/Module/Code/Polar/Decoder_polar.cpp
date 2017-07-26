@@ -287,7 +287,7 @@ void Decoder_polar
 
 	opt_args[{p+"-polar-nodes"}] =
 		{"string",
-		 "the type of nodes you want to detect in the Polar tree (ex: {R0,R1,R0L,REP_2-8,REPL,SPC_4+})."};
+		 "the type of nodes you want to detect in the Polar tree (ex: \"{R0,R1,R0L,REP_2-8,REPL,SPC_4+}\")."};
 
 	opt_args[{p+"-partial-adaptive"}] =
 		{"",
