@@ -1,10 +1,11 @@
 //find ./src/ -type f -follow -print | grep "[.]h$"
-#include <Tools/general_utils.h>
 #include <Tools/git_sha1.h>
+#include <Tools/general_utils.h>
 #include <Tools/types.h>
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/utils.h>
 #include <Tools/Math/max.h>
+// #include <Tools/date.h>
 #include <Tools/Code/Polar/nodes_parser.h>
 #include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
 #include <Tools/Code/Polar/API/functions_polar_intra.h>
@@ -22,48 +23,17 @@
 #include <Tools/Perf/Transpose/transpose_NEON.h>
 #include <Tools/Display/bash_tools.h>
 // #include <Tools/MSVC/dirent.h>
-#include <Tools/params.h>
 
 
 //find ./src/ -type f -follow -print | grep "[.]hpp$"
-#include <Tools/Exception/exception.hpp>
 #include <Tools/Threads/Barrier.hpp>
 #include <Tools/Math/Galois.hpp>
-#include <Tools/Factory/Factory_monitor.hpp>
-#include <Tools/Factory/Polar/Factory_decoder_polar_gen.hpp>
-#include <Tools/Factory/Polar/Factory_decoder_polar.hpp>
-#include <Tools/Factory/Polar/Factory_encoder_polar.hpp>
-#include <Tools/Factory/Polar/Factory_frozenbits_generator.hpp>
-#include <Tools/Factory/Polar/Factory_puncturer_polar.hpp>
-#include <Tools/Factory/Factory_quantizer.hpp>
-#include <Tools/Factory/Factory_channel.hpp>
-#include <Tools/Factory/Factory.hpp>
-#include <Tools/Factory/RSC/Factory_decoder_RSC.hpp>
-#include <Tools/Factory/RSC/Factory_encoder_RSC.hpp>
-#include <Tools/Factory/Factory_interleaver.hpp>
-#include <Tools/Factory/Factory_encoder_common.hpp>
-#include <Tools/Factory/Repetition/Factory_decoder_repetition.hpp>
-#include <Tools/Factory/Repetition/Factory_encoder_repetition.hpp>
-#include <Tools/Factory/LDPC/Factory_encoder_LDPC.hpp>
-#include <Tools/Factory/LDPC/Factory_decoder_LDPC.hpp>
-#include <Tools/Factory/Coset/Factory_coset_real.hpp>
-#include <Tools/Factory/Coset/Factory_coset_bit.hpp>
-#include <Tools/Factory/BCH/Factory_encoder_BCH.hpp>
-#include <Tools/Factory/BCH/Factory_decoder_BCH.hpp>
-#include <Tools/Factory/Factory_CRC.hpp>
-#include <Tools/Factory/Factory_source.hpp>
-#include <Tools/Factory/Factory_modem.hpp>
-#include <Tools/Factory/RA/Factory_encoder_RA.hpp>
-#include <Tools/Factory/RA/Factory_decoder_RA.hpp>
-#include <Tools/Factory/Turbo/Factory_encoder_turbo.hpp>
-#include <Tools/Factory/Turbo/Factory_scaling_factor.hpp>
-#include <Tools/Factory/Turbo/Factory_puncturer_turbo.hpp>
-#include <Tools/Factory/Turbo/Factory_decoder_turbo.hpp>
 #include <Tools/Algo/Sort/LC_sorter.hpp>
 #include <Tools/Algo/Sort/LC_sorter_simd.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937_simd.hpp>
 #include <Tools/Algo/PRNG/PRNG_MT19937.hpp>
 #include <Tools/Algo/Predicate.hpp>
+#include <Tools/Algo/Sparse_matrix/Sparse_matrix.hpp>
 #include <Tools/Algo/Tree/Binary_node.hpp>
 #include <Tools/Algo/Tree/Binary_tree.hpp>
 #include <Tools/Algo/Tree/Binary_tree_metric.hpp>
@@ -147,6 +117,18 @@
 #include <Tools/Codec/BCH/Codec_BCH.hpp>
 #include <Tools/Codec/RA/Codec_RA.hpp>
 #include <Tools/Codec/Turbo/Codec_turbo.hpp>
+#include <Tools/Exception/out_of_range/out_of_range.hpp>
+#include <Tools/Exception/range_error/range_error.hpp>
+#include <Tools/Exception/cannot_allocate/cannot_allocate.hpp>
+#include <Tools/Exception/runtime_error/runtime_error.hpp>
+#include <Tools/Exception/underflow_error/underflow_error.hpp>
+#include <Tools/Exception/unimplemented_error/unimplemented_error.hpp>
+#include <Tools/Exception/invalid_argument/invalid_argument.hpp>
+#include <Tools/Exception/length_error/length_error.hpp>
+#include <Tools/Exception/overflow_error/overflow_error.hpp>
+#include <Tools/Exception/logic_error/logic_error.hpp>
+#include <Tools/Exception/exception.hpp>
+#include <Tools/Exception/domain_error/domain_error.hpp>
 #include <Module/Interleaver/Random/Interleaver_random.hpp>
 #include <Module/Interleaver/Golden/Interleaver_golden.hpp>
 // #include <Module/Interleaver/SPU_Interleaver.hpp>
@@ -158,21 +140,6 @@
 #include <Module/Interleaver/NO/Interleaver_NO.hpp>
 #include <Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp>
 #include <Module/Interleaver/LTE/Interleaver_LTE.hpp>
-// #include <Module/Modem/SC_Modem.hpp>
-#include <Module/Modem/BPSK/Modem_BPSK_fast.hpp>
-#include <Module/Modem/BPSK/Modem_BPSK.hpp>
-#include <Module/Modem/PSK/Modem_PSK.hpp>
-#include <Module/Modem/CPM/CPM_parameters.hpp>
-#include <Module/Modem/CPM/CPE/Encoder_CPE_Rimoldi.hpp>
-#include <Module/Modem/CPM/CPE/Encoder_CPE.hpp>
-#include <Module/Modem/CPM/BCJR/CPM_BCJR.hpp>
-#include <Module/Modem/CPM/Modem_CPM.hpp>
-#include <Module/Modem/User/Modem_user.hpp>
-#include <Module/Modem/QAM/Modem_QAM.hpp>
-#include <Module/Modem/PAM/Modem_PAM.hpp>
-// #include <Module/Modem/SPU_Modem.hpp>
-#include <Module/Modem/SCMA/Modem_SCMA.hpp>
-#include <Module/Modem/Modem.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
 // #include <Module/Puncturer/SPU_Puncturer.hpp>
 #include <Module/Puncturer/Puncturer.hpp>
@@ -215,128 +182,6 @@
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR15.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K54613_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K9830_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29491_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K19661_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K64_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K32_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K27_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K4_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K614_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K3413_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K13107_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K19661_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K7_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K109227_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1229_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K614_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K107_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1638_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K3413_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29491_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K13_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K218453_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K13_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K53_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K436907_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K109227_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K873813_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K427_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K4_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K13653_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K14746_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1638_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K3_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K3277_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K3_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4_K2_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K14746_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K427_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K32_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K6827_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K13107_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K27_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K16_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K205_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1048576_K524288_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K819_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K256_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K22938_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27307_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K22938_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27568_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K128_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1434_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K6554_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27568_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K512_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K262144_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K26214_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K54613_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K6827_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N131072_K65536_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K26214_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K8_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K128_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1843_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K213_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K436907_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N65536_K32768_SNR15.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N256_K213_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N524288_K262144_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K13653_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8_K7_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K6554_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K205_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N64_K53_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K218453_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K16384_SNR18.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1024_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N512_K256_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K64_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1707_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N8192_K4096_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K29492_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1229_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32_K16_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K27307_SNR40.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K410_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1434_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K1707_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K819_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N2048_K410_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N128_K107_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K3277_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16_K8_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N4096_K2048_SNR33.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N32768_K9830_SNR25.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N1024_K853_SNR40.short.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N262144_K131072_SNR25.hpp>
-// #include <Module/Decoder/Polar/SC/Generated/Decoder_polar_SC_fast_sys_N16384_K8192_SNR25.short.hpp>
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp>
@@ -346,9 +191,6 @@
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_fast_CA_sys.hpp>
 #include <Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_naive_CA.hpp>
-// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N4_K2_SNR25.hpp>
-// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N256_K64_SNR30.hpp>
-// #include <Module/Decoder/Polar/SCL/CRC/Generated/Decoder_polar_SCL_fast_CA_sys_N2048_K1755_SNR35.hpp>
 #include <Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hpp>
 // #include <Module/Decoder/SPU_Decoder.hpp>
 #include <Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hpp>
@@ -427,40 +269,84 @@
 #include <Module/CRC/Polynomial/CRC_polynomial_inter.hpp>
 #include <Module/CRC/NO/CRC_NO.hpp>
 #include <Module/CRC/CRC.hpp>
+// #include <Module/Modem/SC_Modem.hpp>
+// #include <Module/Modem/SPU_Modem.hpp>
+#include <Module/Modem/BPSK/Modem_BPSK_fast.hpp>
+#include <Module/Modem/BPSK/Modem_BPSK.hpp>
+#include <Module/Modem/Modem.hpp>
+#include <Module/Modem/PSK/Modem_PSK.hpp>
+#include <Module/Modem/CPM/Modem_CPM.hpp>
+#include <Module/Modem/CPM/CPM_parameters.hpp>
+#include <Module/Modem/CPM/CPE/Encoder_CPE_Rimoldi.hpp>
+#include <Module/Modem/CPM/CPE/Encoder_CPE.hpp>
+#include <Module/Modem/CPM/BCJR/CPM_BCJR.hpp>
+#include <Module/Modem/User/Modem_user.hpp>
+#include <Module/Modem/QAM/Modem_QAM.hpp>
+#include <Module/Modem/PAM/Modem_PAM.hpp>
+#include <Module/Modem/SCMA/Modem_SCMA.hpp>
 #include <Module/Module.hpp>
-#include <Launcher/EXIT/Polar/Launcher_EXIT_polar.hpp>
-#include <Launcher/EXIT/RSC/Launcher_EXIT_RSC.hpp>
-#include <Launcher/EXIT/Launcher_EXIT.hpp>
-#include <Launcher/GEN/Polar/Launcher_GEN_polar.hpp>
-#include <Launcher/GEN/Launcher_GEN.hpp>
-#include <Launcher/BFER/Launcher_BFER.hpp>
-#include <Launcher/BFER/Polar/Launcher_BFER_polar.hpp>
-#include <Launcher/BFER/RSC/Launcher_BFER_RSC.hpp>
-#include <Launcher/BFER/Repetition/Launcher_BFER_repetition.hpp>
-#include <Launcher/BFER/LDPC/Launcher_BFER_LDPC.hpp>
-#include <Launcher/BFER/Uncoded/Launcher_BFER_uncoded.hpp>
-#include <Launcher/BFER/BCH/Launcher_BFER_BCH.hpp>
-#include <Launcher/BFER/RA/Launcher_BFER_RA.hpp>
-#include <Launcher/BFER/Turbo/Launcher_BFER_turbo.hpp>
-#include <Launcher/BFERI/Launcher_BFERI.hpp>
-#include <Launcher/BFERI/Polar/Launcher_BFERI_polar.hpp>
-#include <Launcher/BFERI/RSC/Launcher_BFERI_RSC.hpp>
-#include <Launcher/BFERI/LDPC/Launcher_BFERI_LDPC.hpp>
-#include <Launcher/BFERI/Uncoded/Launcher_BFERI_uncoded.hpp>
+#include <Factory/Tools/Code/Polar/Frozenbits_generator.hpp>
+#include <Factory/Tools/Code/Turbo/Flip_and_check.hpp>
+#include <Factory/Tools/Code/Turbo/Scaling_factor.hpp>
+#include <Factory/Tools/Display/Terminal/Terminal.hpp>
+#include <Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp>
+#include <Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp>
+#include <Factory/Factory.hpp>
+#include <Factory/Module/Channel.hpp>
+#include <Factory/Module/Monitor.hpp>
+#include <Factory/Module/Modem.hpp>
+#include <Factory/Module/Quantizer.hpp>
+#include <Factory/Module/Coset.hpp>
+#include <Factory/Module/Source.hpp>
+#include <Factory/Module/Code/Decoder.hpp>
+#include <Factory/Module/Code/Polar/Decoder_polar.hpp>
+#include <Factory/Module/Code/Polar/Puncturer_polar.hpp>
+#include <Factory/Module/Code/Polar/Encoder_polar.hpp>
+#include <Factory/Module/Code/Polar/Decoder_polar_gen.hpp>
+#include <Factory/Module/Code/RSC/Decoder_RSC.hpp>
+#include <Factory/Module/Code/RSC/Encoder_RSC.hpp>
+#include <Factory/Module/Code/Puncturer.hpp>
+#include <Factory/Module/Code/Repetition/Encoder_repetition.hpp>
+#include <Factory/Module/Code/Repetition/Decoder_repetition.hpp>
+#include <Factory/Module/Code/LDPC/Decoder_LDPC.hpp>
+#include <Factory/Module/Code/LDPC/Encoder_LDPC.hpp>
+#include <Factory/Module/Code/BCH/Encoder_BCH.hpp>
+#include <Factory/Module/Code/BCH/Decoder_BCH.hpp>
+#include <Factory/Module/Code/Encoder.hpp>
+#include <Factory/Module/Code/NO/Decoder_NO.hpp>
+#include <Factory/Module/Code/RA/Encoder_RA.hpp>
+#include <Factory/Module/Code/RA/Decoder_RA.hpp>
+#include <Factory/Module/Code/Turbo/Decoder_turbo.hpp>
+#include <Factory/Module/Code/Turbo/Encoder_turbo.hpp>
+#include <Factory/Module/Code/Turbo/Puncturer_turbo.hpp>
+#include <Factory/Module/Interleaver.hpp>
+#include <Factory/Module/CRC.hpp>
+#include <Factory/Launcher/Launcher.hpp>
+#include <Factory/Simulation/Simulation.hpp>
+#include <Factory/Simulation/EXIT/EXIT.hpp>
+#include <Factory/Simulation/BFER/BFER_std.hpp>
+#include <Factory/Simulation/BFER/BFER.hpp>
+#include <Factory/Simulation/BFER/BFER_ite.hpp>
+#include <Launcher/Code/Polar/Polar.hpp>
+#include <Launcher/Code/RSC/RSC.hpp>
+#include <Launcher/Code/Repetition/Repetition.hpp>
+#include <Launcher/Code/LDPC/LDPC.hpp>
+#include <Launcher/Code/Uncoded/Uncoded.hpp>
+#include <Launcher/Code/BCH/BCH.hpp>
+#include <Launcher/Code/RA/RA.hpp>
+#include <Launcher/Code/Turbo/Turbo.hpp>
+#include <Launcher/Simulation/BFER_std.hpp>
+#include <Launcher/Simulation/EXIT.hpp>
+#include <Launcher/Simulation/BFER_ite.hpp>
 #include <Launcher/Launcher.hpp>
 #include <Simulation/Simulation.hpp>
-#include <Simulation/GEN/Code/Polar/Generation_polar.hpp>
-#include <Generator/Polar/SC/Generator_polar_SC_sys.hpp>
-#include <Generator/Polar/Generator_polar.hpp>
-#include <Generator/Polar/SCL/Generator_polar_SCL_sys.hpp>
-#include <Generator/Generator.hpp>
-
-#include "Simulation/BFER/BFER.hpp"
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
-#include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
-#include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
-#include "Simulation/BFER/Standard/BFER_std.hpp"
-#include "Simulation/BFER/Standard/StarPU/SPU_BFER_std.hpp"
-#include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
-#include "Simulation/BFER/Standard/Threads/BFER_std_threads.hpp"
-#include "Simulation/EXIT/EXIT.hpp"
+#include <Simulation/EXIT/EXIT.hpp>
+#include <Simulation/BFER/Standard/BFER_std.hpp>
+#include <Simulation/BFER/Standard/Threads/BFER_std_threads.hpp>
+#include <Simulation/BFER/Standard/StarPU/SPU_BFER_std.hpp>
+#include <Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp>
+#include <Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp>
+#include <Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp>
+#include <Simulation/BFER/Iterative/BFER_ite.hpp>
+#include <Simulation/BFER/BFER.hpp>
+// #include <aff3ct.hpp>
