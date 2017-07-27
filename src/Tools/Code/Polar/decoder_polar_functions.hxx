@@ -48,7 +48,7 @@ inline R f_LLR_tanh(const R& lambda_a, const R& lambda_b)
 	if(abs_lambda_a > 17 || abs_lambda_b > 17)
 		return Le;
 	else
-		return (R)2 * atanh(tanh(lambda_a / 2) * tanh(lambda_b / 2));
+		return (R)2 * std::atanh(std::tanh(lambda_a / 2) * std::tanh(lambda_b / 2));
 }
 
 template <typename R>
@@ -65,7 +65,8 @@ inline R f_LLR_tanh_safe(const R& lambda_a, const R& lambda_b)
 	{
 		auto abs_lambda_a_plus_lambda_b = (lambda_a + lambda_b >= 0) ? lambda_b + lambda_a : -(lambda_b + lambda_a);
 		auto abs_lambda_a_minus_lambda_b = (lambda_a - lambda_b >= 0) ? lambda_a - lambda_b : -(lambda_a - lambda_b);
-		return le + log(1 + exp(-abs_lambda_a_plus_lambda_b)) - log(1 + exp(-abs_lambda_a_minus_lambda_b));
+		return le + std::log(1 + std::exp(-abs_lambda_a_plus_lambda_b)) -
+		            std::log(1 + std::exp(-abs_lambda_a_minus_lambda_b));
 	}
 }
 
