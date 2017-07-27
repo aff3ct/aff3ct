@@ -84,14 +84,10 @@ void Encoder_turbo
 
 	if(exist(vals, {p+"-json-path"})) params.json_path = vals.at({p+"-json-path"});
 
-	std::string standard = "";
-	if (exist(vals, {p+"-sub-std"}) || exist(vals, {p+"-sub1-std"}))
-		standard = std::is_same<E1,E2>() ? vals.at({p+"-sub-std"}) : vals.at({p+"-sub1-std"});
-
-	if (standard == "LTE" && !exist(vals, {"itl-type"}))
+	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
 		params.itl.type = "LTE";
 
-	if (standard == "CCSDS" && !exist(vals, {"itl-type"}))
+	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
 		params.itl.type = "CCSDS";
 
 	params.sub1.K        = params.K;

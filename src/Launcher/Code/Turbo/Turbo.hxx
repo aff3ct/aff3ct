@@ -32,9 +32,9 @@ template <class C, typename B, typename R, typename Q, typename QD>
 void Turbo<C,B,R,Q,QD>
 ::build_args()
 {
-	factory::Encoder_turbo  ::build_args<>(this->req_args, this->opt_args);
-	factory::Puncturer_turbo::build_args  (this->req_args, this->opt_args);
-	factory::Decoder_turbo  ::build_args  (this->req_args, this->opt_args);
+	factory::Encoder_turbo  ::build_args(this->req_args, this->opt_args);
+	factory::Puncturer_turbo::build_args(this->req_args, this->opt_args);
+	factory::Decoder_turbo  ::build_args(this->req_args, this->opt_args);
 
 	this->opt_args.erase({"enc-fra",       "F"});
 	this->opt_args.erase({"enc-seed",      "S"});

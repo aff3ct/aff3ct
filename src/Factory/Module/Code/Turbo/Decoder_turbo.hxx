@@ -94,14 +94,10 @@ void Decoder_turbo
 	if(exist(vals, {p+"-sc"      })) params.self_corrected = true;
 	if(exist(vals, {p+"-json"    })) params.enable_json    = true;
 
-	std::string standard = "";
-	if (exist(vals, {p+"-sub-std"}) || exist(vals, {p+"-sub1-std"}))
-		standard = std::is_same<D1,D2>() ? vals.at({p+"-sub-std"}) : vals.at({p+"-sub1-std"});
-
-	if (standard == "LTE" && !exist(vals, {"itl-type"}))
+	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
 		params.itl.type = "LTE";
 
-	if (standard == "CCSDS" && !exist(vals, {"itl-type"}))
+	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
 		params.itl.type = "CCSDS";
 
 	params.sub1.K        = params.K;
