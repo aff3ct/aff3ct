@@ -1,4 +1,5 @@
 #include "Tools/Exception/exception.hpp"
+#include "Tools/types.h"
 
 #include "Module/CRC/NO/CRC_NO.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
@@ -60,7 +61,7 @@ void CRC
 	if(exist(vals, {p+"-size"          })) params.size     = std::stoi(vals.at({p+"-size"          }));
 
 	if (!params.poly.empty() && !params.size)
-		params.size = module::CRC_polynomial<>::size(params.poly);
+		params.size = module::CRC_polynomial<B>::size(params.poly);
 
 	if (params.poly.empty())
 		params.type = "NO";
@@ -75,15 +76,15 @@ void CRC
 		if (full) head_crc.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 		if (full) head_crc.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 
-		auto poly_name = module::CRC_polynomial<>::name(params.poly);
+		auto poly_name = module::CRC_polynomial<B>::name(params.poly);
 		if (!poly_name.empty())
 			head_crc.push_back(std::make_pair("Name", poly_name));
 
 		std::stringstream poly_val;
-		poly_val << "0x" << std::hex << module::CRC_polynomial<>::value(params.poly);
+		poly_val << "0x" << std::hex << module::CRC_polynomial<B>::value(params.poly);
 		head_crc.push_back(std::make_pair("Polynomial (hexadecimal)", poly_val.str()));
 
-		auto poly_size = module::CRC_polynomial<>::size (params.poly);
+		auto poly_size = module::CRC_polynomial<B>::size (params.poly);
 		head_crc.push_back(std::make_pair("Size (in bit)", std::to_string(poly_size ? poly_size : params.size)));
 	}
 }
