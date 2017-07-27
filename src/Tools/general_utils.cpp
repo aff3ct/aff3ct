@@ -61,12 +61,12 @@ R aff3ct::tools::esn0_to_sigma(const R esn0, const int upsample_factor)
 }
 
 template <typename R>
-R aff3ct::tools::esn0_to_ebn0(const R esn0, const R code_rate, const int bps)
+R aff3ct::tools::esn0_to_ebn0(const R esn0, const R bit_rate, const int bps)
 {
-	if (code_rate <= (R)0 || code_rate > (R)1)
+	if (bit_rate <= (R)0 || bit_rate > (R)1)
 	{
 		std::stringstream message;
-		message << "'code_rate' has to be positive and smaller or equal to 1 ('code_rate' = " << code_rate << ").";
+		message << "'bit_rate' has to be positive and smaller or equal to 1 ('bit_rate' = " << bit_rate << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -77,17 +77,17 @@ R aff3ct::tools::esn0_to_ebn0(const R esn0, const R code_rate, const int bps)
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	const auto ebn0 = esn0 - (R)10 * std::log10(code_rate * (R)bps);
+	const auto ebn0 = esn0 - (R)10 * std::log10(bit_rate * (R)bps);
 	return ebn0;
 }
 
 template <typename R>
-R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R code_rate, const int bps)
+R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R bit_rate, const int bps)
 {
-	if (code_rate <= (R)0 || code_rate > (R)1)
+	if (bit_rate <= (R)0 || bit_rate > (R)1)
 	{
 		std::stringstream message;
-		message << "'code_rate' has to be positive and smaller or equal to 1 ('code_rate' = " << code_rate << ").";
+		message << "'bit_rate' has to be positive and smaller or equal to 1 ('bit_rate' = " << bit_rate << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -98,7 +98,7 @@ R aff3ct::tools::ebn0_to_esn0(const R ebn0, const R code_rate, const int bps)
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	const auto esn0 = ebn0 + (R)10 * std::log10(code_rate * (R)bps);
+	const auto esn0 = ebn0 + (R)10 * std::log10(bit_rate * (R)bps);
 	return esn0;
 }
 

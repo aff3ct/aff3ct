@@ -124,7 +124,6 @@ void Puncturer_turbo
 
 	params.N_cw = 3 * params.K + params.tail_length;
 	params.N    = compute_N(params.K, params.tail_length, params.pattern);
-	params.R    = (float)params.K / (float)params.N;
 
 	if (params.N == params.N_cw)
 		params.type = "NO";

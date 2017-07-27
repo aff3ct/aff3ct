@@ -63,7 +63,6 @@ void RSC<C,B,R,Q,QD>
 	this->params->pct->K    = params_enc->K;
 	this->params->pct->N    = params_enc->N_cw;
 	this->params->pct->N_cw = this->params->pct->N;
-	this->params->pct->R    = (float)this->params->pct->K / (float)this->params->pct->N;
 
 	if (params_dec->simd_strategy == "INTER")
 		this->params->src->n_frames = mipp::N<Q>();

@@ -64,7 +64,7 @@ void Source
 ::make_header(params_list& head_src, const parameters& params, const bool full)
 {
 	head_src.push_back(std::make_pair("Type", params.type));
-	if (full) head_src.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
+	head_src.push_back(std::make_pair("Info. bits (K_info)", std::to_string(params.K)));
 	if (full) head_src.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 	if (params.type == "USER")
 		head_src.push_back(std::make_pair("Path", params.path));

@@ -121,8 +121,8 @@ void EXIT<B,R>
 	for (snr = params.snr_min; snr <= params.snr_max; snr += params.snr_step)
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
-		const auto code_rate = 1.f;
-		sigma = esn0_to_sigma(ebn0_to_esn0(snr, code_rate, params.mdm->bps), params.mdm->upf);
+		const auto bit_rate = 1.f;
+		sigma = esn0_to_sigma(ebn0_to_esn0(snr, bit_rate, params.mdm->bps), params.mdm->upf);
 
 		codec.snr_precompute(sigma);
 

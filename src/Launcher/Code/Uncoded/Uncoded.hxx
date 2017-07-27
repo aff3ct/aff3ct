@@ -54,7 +54,6 @@ void Uncoded<C,B,R,Q>
 	this->params->pct->K    = params_enc->K;
 	this->params->pct->N    = this->params->pct->K;
 	this->params->pct->N_cw = this->params->pct->N;
-	this->params->pct->R    = 1.f;
 }
 
 template <class C, typename B, typename R, typename Q>

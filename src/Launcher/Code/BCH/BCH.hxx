@@ -60,7 +60,6 @@ void BCH<C,B,R,Q>
 	this->params->pct->K    = params_enc->K;
 	this->params->pct->N    = params_enc->N_cw;
 	this->params->pct->N_cw = this->params->pct->N;
-	this->params->pct->R    = (float)this->params->pct->K / (float)this->params->pct->N;
 
 	C::store_args();
 }

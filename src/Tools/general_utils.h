@@ -17,10 +17,10 @@ template <typename R = float>
 R esn0_to_sigma(const R esn0, const int upsample_factor = 1);
 
 template <typename R = float>
-R esn0_to_ebn0(const R esn0, const R code_rate = 1, const int bps = 1);
+R esn0_to_ebn0(const R esn0, const R bit_rate = 1, const int bps = 1);
 
 template <typename R = float>
-R ebn0_to_esn0(const R ebn0, const R code_rate = 1, const int bps = 1);
+R ebn0_to_esn0(const R ebn0, const R bit_rate = 1, const int bps = 1);
 }
 }
 

@@ -42,6 +42,8 @@ protected:
 	// a barrier to synchronize the threads
 	tools::Barrier barrier;
 
+	const float bit_rate;
+
 	// code specifications
 	float snr;
 	float snr_s;

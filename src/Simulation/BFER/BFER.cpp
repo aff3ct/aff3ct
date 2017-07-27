@@ -35,6 +35,8 @@ BFER<B,R,Q>
 
   barrier(params.n_threads),
 
+  bit_rate((float)params.src->K / (float)params.pct->N),
+
   snr  (0.f),
   snr_s(0.f),
   snr_b(0.f),
@@ -154,12 +156,12 @@ void BFER<B,R,Q>
 		if (params.snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, params.pct->R, params.mdm->bps);
+			snr_s = ebn0_to_esn0(snr_b, bit_rate, params.mdm->bps);
 		}
 		else //if(params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, params.pct->R, params.mdm->bps);
+			snr_b = esn0_to_ebn0(snr_s, bit_rate, params.mdm->bps);
 		}
 		sigma = esn0_to_sigma(snr_s, params.mdm->upf);
 

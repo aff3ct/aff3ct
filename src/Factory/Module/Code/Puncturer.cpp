@@ -47,7 +47,6 @@ void Puncturer
 	if(exist(vals, {p+"-type"          })) params.type     =           vals.at({p+"-type"          });
 
 	params.N_cw = params.N;
-	params.R = (float)params.K / (float)params.N;
 }
 
 void Puncturer
@@ -57,7 +56,6 @@ void Puncturer
 	if (full) head_pct.push_back(std::make_pair("Info. bits (K)", std::to_string(params.K)));
 	if (full) head_pct.push_back(std::make_pair("Frame size (N)", std::to_string(params.N)));
 	if (full) head_pct.push_back(std::make_pair("Codeword size", std::to_string(params.N_cw)));
-	if (full) head_pct.push_back(std::make_pair("Code rate (R)", std::to_string(params.R)));
 	if (full) head_pct.push_back(std::make_pair("Inter frame level", std::to_string(params.n_frames)));
 }
 

@@ -130,11 +130,10 @@ void EXIT<B,R>
 	factory::Channel      ::make_header(this->pl_chn, *params->chn, false);
 	factory::Terminal_EXIT::make_header(this->pl_ter, *params->ter, false);
 
-	this->pl_sim.push_back(std::make_pair("Inter frame level",     std::to_string(params->src->n_frames)));
-	this->pl_cde.push_back(std::make_pair("Type",                                 params->cde_type      ));
-	this->pl_cde.push_back(std::make_pair("Info. bits (K)",        std::to_string(params->enc->K       )));
-	this->pl_cde.push_back(std::make_pair("Codeword size (N)",     std::to_string(params->enc->N_cw    )));
-	this->pl_cde.push_back(std::make_pair("Code rate (R = K / N)", std::to_string(params->pct->R       )));
+	this->pl_cde.push_back(std::make_pair("Type",                             params->cde_type  ));
+	this->pl_cde.push_back(std::make_pair("Info. bits (K)",    std::to_string(params->enc->K   )));
+	this->pl_cde.push_back(std::make_pair("Codeword size (N)", std::to_string(params->enc->N_cw)));
+	this->pl_cde.push_back(std::make_pair("Code rate",         std::to_string(params->enc->R   )));
 
 	Launcher::print_header();
 }

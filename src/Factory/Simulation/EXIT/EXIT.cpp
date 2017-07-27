@@ -50,6 +50,10 @@ void EXIT::make_header(params_list& head_sim, const parameters& params, const bo
 	head_sim.push_back(std::make_pair("Sigma-a min (a)", std::to_string(params.sig_a_min )));
 	head_sim.push_back(std::make_pair("Sigma-a max (A)", std::to_string(params.sig_a_max )));
 	head_sim.push_back(std::make_pair("Sigma-a step",    std::to_string(params.sig_a_step)));
+
+	const auto bit_rate = (float)params.src->K / (float)params.enc->N_cw;
+	head_sim.push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
+	head_sim.push_back(std::make_pair("Inter frame level", std::to_string(params.src->n_frames)));
 }
 
 // ==================================================================================== explicit template instantiation

@@ -35,7 +35,6 @@ void Puncturer_polar
 
 	Puncturer::store_args(vals, params, p);
 	params.N_cw = (int)std::exp2((int)std::ceil(std::log2(params.N)));
-	params.R = (float)params.K / (float)params.N;
 
 	if (params.N == params.N_cw)
 		params.type = "NO";

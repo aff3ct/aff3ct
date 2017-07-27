@@ -170,12 +170,11 @@ void BFER_std<B,R,Q>
 	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt, false);
 	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter, false);
 
-	this->pl_sim.push_back(std::make_pair("Inter frame level",     std::to_string(params->src->n_frames)));
-	this->pl_cde.push_back(std::make_pair("Type",                                 params->cde_type      ));
-	this->pl_cde.push_back(std::make_pair("Info. bits (K)",        std::to_string(params->enc->K       )));
-	this->pl_cde.push_back(std::make_pair("Codeword size (N_cw)",  std::to_string(params->enc->N_cw    )));
-	this->pl_cde.push_back(std::make_pair("Frame size (N)",        std::to_string(params->pct->N       )));
-	this->pl_cde.push_back(std::make_pair("Code rate (R = K / N)", std::to_string(params->pct->R       )));
+	this->pl_cde.push_back(std::make_pair("Type",                                params->cde_type  ));
+	this->pl_cde.push_back(std::make_pair("Info. bits (K)",       std::to_string(params->enc->K   )));
+	this->pl_cde.push_back(std::make_pair("Codeword size (N_cw)", std::to_string(params->enc->N_cw)));
+	this->pl_cde.push_back(std::make_pair("Frame size (N)",       std::to_string(params->pct->N   )));
+	this->pl_cde.push_back(std::make_pair("Code rate",            std::to_string(params->enc->R   )));
 
 	Launcher::print_header();
 }
