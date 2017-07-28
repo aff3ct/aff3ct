@@ -4,32 +4,32 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Decoder_turbo_naive.hpp"
+#include "Decoder_turbo_std.hpp"
 
 using namespace aff3ct::module;
 
 template <typename B, typename R>
-Decoder_turbo_naive<B,R>
-::Decoder_turbo_naive(const int& K,
-                      const int& N,
-                      const int& n_ite,
-                      const Interleaver<int> &pi,
-                      SISO<R> &siso_n,
-                      SISO<R> &siso_i,
-                      const bool buffered_encoding,
-                      const std::string name)
+Decoder_turbo_std<B,R>
+::Decoder_turbo_std(const int& K,
+                    const int& N,
+                    const int& n_ite,
+                    const Interleaver<int> &pi,
+                    SISO<R> &siso_n,
+                    SISO<R> &siso_i,
+                    const bool buffered_encoding,
+                    const std::string name)
 : Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
 {
 }
 
 template <typename B, typename R>
-Decoder_turbo_naive<B,R>
-::~Decoder_turbo_naive()
+Decoder_turbo_std<B,R>
+::~Decoder_turbo_std()
 {
 }
 
 template <typename B, typename R>
-void Decoder_turbo_naive<B,R>
+void Decoder_turbo_std<B,R>
 ::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -117,11 +117,11 @@ void Decoder_turbo_naive<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template class aff3ct::module::Decoder_turbo_naive<B_8,Q_8>;
-template class aff3ct::module::Decoder_turbo_naive<B_16,Q_16>;
-template class aff3ct::module::Decoder_turbo_naive<B_32,Q_32>;
-template class aff3ct::module::Decoder_turbo_naive<B_64,Q_64>;
+template class aff3ct::module::Decoder_turbo_std<B_8,Q_8>;
+template class aff3ct::module::Decoder_turbo_std<B_16,Q_16>;
+template class aff3ct::module::Decoder_turbo_std<B_32,Q_32>;
+template class aff3ct::module::Decoder_turbo_std<B_64,Q_64>;
 #else
-template class aff3ct::module::Decoder_turbo_naive<B,Q>;
+template class aff3ct::module::Decoder_turbo_std<B,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

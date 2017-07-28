@@ -220,7 +220,7 @@
 #include <Module/Decoder/NO/Decoder_NO.hpp>
 #include <Module/Decoder/RA/Decoder_RA.hpp>
 // #include <Module/Decoder/SC_Decoder.hpp>
-#include <Module/Decoder/Turbo/Decoder_turbo_naive.hpp>
+#include <Module/Decoder/Turbo/Decoder_turbo_std.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_fast.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo.hpp>
 // #include <Module/Coset/SPU_Coset.hpp>

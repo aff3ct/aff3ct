@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Decoder/Turbo/Decoder_turbo_naive.hpp"
+#include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
 
 #include "Decoder_turbo.hpp"
@@ -18,8 +18,8 @@ module::Decoder_turbo<B,Q>* Decoder_turbo
 {
 	if (params.type == "TURBO")
 	{
-		     if (params.implem == "STD" ) return new module::Decoder_turbo_naive<B,Q>(params.K, params.N_cw, params.n_ite, itl, siso_n, siso_i, params.sub1.buffered);
-		else if (params.implem == "FAST") return new module::Decoder_turbo_fast <B,Q>(params.K, params.N_cw, params.n_ite, itl, siso_n, siso_i, params.sub1.buffered);
+		     if (params.implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(params.K, params.N_cw, params.n_ite, itl, siso_n, siso_i, params.sub1.buffered);
+		else if (params.implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(params.K, params.N_cw, params.n_ite, itl, siso_n, siso_i, params.sub1.buffered);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
