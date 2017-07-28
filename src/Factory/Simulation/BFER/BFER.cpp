@@ -90,11 +90,12 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 		params.n_threads = 1;
 	}
 
-	if(params.err_track_revert)
+	if (params.err_track_revert)
 	{
 		params.err_track_enable = false;
 		params.src->type = "USER";
-		params.enc->type = "USER";
+		if (params.coset)
+			params.enc->type = "USER";
 		params.chn->type = "USER";
 		params.src->path = params.err_track_path + std::string("_$snr.src");
 		params.enc->path = params.err_track_path + std::string("_$snr.enc");
