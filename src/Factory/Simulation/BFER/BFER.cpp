@@ -93,7 +93,8 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 	if (params.err_track_revert)
 	{
 		params.err_track_enable = false;
-		params.src->type = "USER";
+		if (params.src->type != "AZCW")
+			params.src->type = "USER";
 		if (params.coset)
 			params.enc->type = "USER";
 		params.chn->type = "USER";
