@@ -166,7 +166,8 @@ void BFER_std<B,R,Q>
 	factory::CRC          ::make_header(this->pl_crc, *params->crc, false);
 	factory::Modem        ::make_header(this->pl_mdm, *params->mdm, false);
 	factory::Channel      ::make_header(this->pl_chn, *params->chn, false);
-	factory::Quantizer    ::make_header(this->pl_qnt, *params->qnt, false);
+	if (std::is_integral<Q>())
+		factory::Quantizer::make_header(this->pl_qnt, *params->qnt, false);
 	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt, false);
 	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter, false);
 
