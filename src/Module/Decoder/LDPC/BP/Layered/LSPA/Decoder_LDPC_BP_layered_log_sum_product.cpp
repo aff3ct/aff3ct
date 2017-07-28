@@ -50,8 +50,7 @@ void Decoder_LDPC_BP_layered_log_sum_product<B,R>
 			contributions[j]     = var_nodes[this->H[i][j]] - branches[kr++];
 			const auto v_abs     = (R)std::abs(contributions[j]);
 			const auto tan_v_abs = std::tanh(v_abs * (R)0.5);
-			const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) :
-			                                          std::numeric_limits<R>::min();
+			const auto res       = (tan_v_abs != 0) ? (R)std::log(tan_v_abs) : std::numeric_limits<R>::min();
 			const auto c_sign    = std::signbit((float)contributions[j]) ? -1 : 0;
 
 			sign ^= c_sign;
