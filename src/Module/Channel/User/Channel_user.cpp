@@ -8,6 +8,8 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
+
+
 template <typename R>
 Channel_user<R>
 ::Channel_user(const int N, const std::string filename, const bool add_users, const int n_frames,
@@ -18,6 +20,7 @@ Channel_user<R>
 		throw invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 	std::ifstream file(filename.c_str(), std::ios::binary);
+
 	if (file.is_open())
 	{
 		unsigned n_fra = 0;
@@ -25,6 +28,13 @@ Channel_user<R>
 
 		file.read((char*)&n_fra,    sizeof(n_fra));
 		file.read((char*)&fra_size, sizeof(fra_size));
+
+		file.ignore(std::numeric_limits<std::streamsize>::max());
+		std::streamsize length = file.gcount();
+		file.clear(); // since ignore will have set eof.
+		file.seekg(8, std::ios_base::beg);
+
+		const unsigned sizeof_float = length / (n_fra * fra_size);
 
 		if (n_fra <= 0 || fra_size <= 0)
 		{
@@ -40,8 +50,42 @@ Channel_user<R>
 
 		if (fra_size == this->N)
 		{
-			for (unsigned i = 0; i < (unsigned)n_fra; i++)
-				file.read(reinterpret_cast<char*>(&this->noise_buff[i][0]), fra_size * sizeof(R));
+			if (sizeof_float == sizeof(R))
+			{
+				for (unsigned i = 0; i < n_fra; i++)
+					file.read(reinterpret_cast<char*>(&this->noise_buff[i][0]), fra_size * sizeof(R));
+			}
+			else
+			{
+				if (sizeof_float == sizeof(double))
+				{
+					std::vector<double> tmp(fra_size);
+					for (unsigned i = 0; i < n_fra; i++)
+					{
+						file.read(reinterpret_cast<char*>(tmp.data()), fra_size * sizeof(double));
+						for (auto j = 0; j < fra_size; j++)
+							this->noise_buff[i][j] = (R)tmp[j];
+					}
+				}
+				else if (sizeof_float == sizeof(float))
+				{
+					std::vector<float> tmp(fra_size);
+					for (unsigned i = 0; i < n_fra; i++)
+					{
+						file.read(reinterpret_cast<char*>(tmp.data()), fra_size * sizeof(float));
+						for (auto j = 0; j < fra_size; j++)
+							this->noise_buff[i][j] = (R)tmp[j];
+					}
+				}
+				else
+				{
+					file.close();
+
+					std::stringstream message;
+					message << "Something went wrong ('sizeof_float' = " << sizeof_float << ").";
+					throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+			}
 		}
 		else
 		{
