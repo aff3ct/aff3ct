@@ -14,7 +14,7 @@ using namespace aff3ct::tools;
 template <typename B>
 Encoder_LDPC<B>
 ::Encoder_LDPC(const int K, const int N, const int n_frames, const std::string name)
-: Encoder<B>(K, N, n_frames, name), tG(N * K, 0)
+: Encoder<B>(K, N, n_frames, name)
 {
 }
 
