@@ -50,6 +50,8 @@ protected:
 	float snr_b;
 	float sigma;
 
+	unsigned max_fra;
+
 	// the monitors of the the BFER simulation
 	std::vector<module::Monitor          <B>*> monitor;
 	            module::Monitor_reduction<B>*  monitor_red;

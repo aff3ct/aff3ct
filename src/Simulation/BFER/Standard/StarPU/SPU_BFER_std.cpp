@@ -146,9 +146,14 @@ void SPU_BFER_std<B,R,Q>
 
 	if (this->params.err_track_enable)
 	{
-		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
-		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
+		if (this->params.src->type != "AZCW")
+			this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
+
+		if (this->params.coset)
+			this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
+
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
+
 		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}
@@ -159,7 +164,8 @@ void SPU_BFER_std<B,R,Q>
 ::_launch()
 {
 	// Monte Carlo simulation
-	while (!this->monitor_red->fe_limit_achieved())
+	while (!this->monitor_red->fe_limit_achieved() &&
+	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
 		for (auto tid = 0; tid < this->params.n_threads; tid++)
 			this->seq_tasks_submission(tid);

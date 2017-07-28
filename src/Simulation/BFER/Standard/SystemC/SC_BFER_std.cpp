@@ -80,9 +80,14 @@ void SC_BFER_std<B,R,Q>
 		const auto &U_K = this->source [tid]->sc_module->get_U_K();
 		const auto &X_N = this->encoder[tid]->sc_module->get_X_N();
 
-		this->dumper[tid]->register_data(U_K, "src", false, {});
-		this->dumper[tid]->register_data(X_N, "enc", false, {(unsigned)this->params.enc->K});
+		if (this->params.src->type != "AZCW")
+			this->dumper[tid]->register_data(U_K, "src", false, {});
+
+		if (this->params.coset)
+			this->dumper[tid]->register_data(X_N, "enc", false, {(unsigned)this->params.enc->K});
+
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
+
 		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}

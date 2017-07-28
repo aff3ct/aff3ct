@@ -42,6 +42,8 @@ BFER<B,R,Q>
   snr_b(0.f),
   sigma(0.f),
 
+  max_fra(0),
+
   monitor    (params.n_threads, nullptr),
   monitor_red(                  nullptr),
   dumper     (params.n_threads, nullptr),
@@ -168,16 +170,31 @@ void BFER<B,R,Q>
 		this->terminal->set_esn0(snr_s);
 		this->terminal->set_ebn0(snr_b);
 
-		// dirty hack to override simulation params
 		if (params.err_track_revert)
 		{
+			// dirty hack to override simulation params
 			auto *params_writable = const_cast<factory::BFER::parameters*>(&params);
-			const auto base_path = params.err_track_path;
-			params_writable->src->path = base_path + "_" + std::to_string(snr_b) + ".src";
-			params_writable->enc->path = base_path + "_" + std::to_string(snr_b) + ".enc";
-			params_writable->chn->path = base_path + "_" + std::to_string(snr_b) + ".chn";
-//			if (params.itl.uniform)
-//				params_writable->itl.path = base_path + "_" + std::to_string(snr_b) + ".itl";
+
+			if (this->params.src->type != "AZCW")
+				params_writable->src->path = params.err_track_path + "_" + std::to_string(snr_b) + ".src";
+
+			if (this->params.coset)
+				params_writable->enc->path = params.err_track_path + "_" + std::to_string(snr_b) + ".enc";
+
+			params_writable->chn->path = params.err_track_path + "_" + std::to_string(snr_b) + ".chn";
+
+			std::ifstream file(params_writable->chn->path, std::ios::binary);
+			if (file.is_open())
+			{
+				file.read((char*)&max_fra, sizeof(max_fra));
+				file.close();
+			}
+			else
+			{
+				std::stringstream message;
+				message << "Impossible to read the 'chn' file ('chn' = " << params_writable->chn->path << ").";
+				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 		}
 
 		codec.snr_precompute(this->sigma);

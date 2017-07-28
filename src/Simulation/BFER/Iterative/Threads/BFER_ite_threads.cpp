@@ -81,9 +81,14 @@ void BFER_ite_threads<B,R,Q>
 
 	if (this->params.err_track_enable)
 	{
-		this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
-		this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
+		if (this->params.src->type != "AZCW")
+			this->dumper[tid]->register_data(U_K1[tid], "src", false, {});
+
+		if (this->params.coset)
+			this->dumper[tid]->register_data(X_N1[tid], "enc", false, {(unsigned)this->params.enc->K});
+
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
+
 		if (this->interleaver[tid]->is_uniform())
 			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
 	}
@@ -297,8 +302,8 @@ void BFER_ite_threads<B,R,Q>
 
 	// simulation loop
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
-	       (this->params.stop_time == seconds(0) ||
-	        (steady_clock::now() - t_snr) < this->params.stop_time))
+	       (this->params.stop_time == seconds(0) || (steady_clock::now() - t_snr) < this->params.stop_time) &&
+	       (this->monitor_red->get_n_analyzed_fra() < this->max_fra || this->max_fra == 0))
 	{
 		std::cout << "-------------------------------" << std::endl;
 		std::cout << "New encoding/decoding session !" << std::endl;
