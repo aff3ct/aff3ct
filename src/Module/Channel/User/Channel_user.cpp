@@ -8,8 +8,6 @@
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
-
-
 template <typename R>
 Channel_user<R>
 ::Channel_user(const int N, const std::string filename, const bool add_users, const int n_frames,
