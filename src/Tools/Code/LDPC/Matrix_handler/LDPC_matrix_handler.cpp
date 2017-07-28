@@ -68,7 +68,7 @@ void LDPC_matrix_handler
 		mat[i].erase( mat[i].begin(), mat[i].begin() + n_row );
 
 	// mat dimension is now n_col*n_row (above it was n_row*n_col)
-	mat.resize(n_col, mipp::vector<int8_t>(n_col-n_row,0));
+	mat.resize(n_col, mipp::vector<int8_t>(n_col - n_row,0));
 	for (unsigned i = n_row; i < n_col; i++) // Add identity at the end
 		mat[i][i-n_row] = 1;
 
@@ -77,15 +77,15 @@ void LDPC_matrix_handler
 		std::swap(mat[swapped_cols[l*2-2]], mat[swapped_cols[l*2-1]]);
 
 	// return info bits positions
-	info_bits_pos.resize(n_row);
+	info_bits_pos.resize(n_col - n_row);
 
 	mipp::vector<unsigned> bits_pos(n_col);
-	std::iota(bits_pos.begin(), bits_pos.begin() + n_col, 0);
+	std::iota(bits_pos.begin(), bits_pos.end(), 0);
 
 	for (unsigned l = 1; l <= (swapped_cols.size() / 2); l++)
 		std::swap(bits_pos[swapped_cols[l*2-2]], bits_pos[swapped_cols[l*2-1]]);
 
-	std::copy(bits_pos.begin() + (n_col-n_row), bits_pos.end(), info_bits_pos.begin());
+	std::copy(bits_pos.begin() + n_row, bits_pos.end(), info_bits_pos.begin());
 }
 
 void LDPC_matrix_handler
