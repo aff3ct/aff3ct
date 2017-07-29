@@ -1,3 +1,5 @@
+#include <cctype>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp"

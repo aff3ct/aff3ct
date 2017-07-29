@@ -19,6 +19,7 @@
 
 #include "BFER.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 using namespace aff3ct::simulation;

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"

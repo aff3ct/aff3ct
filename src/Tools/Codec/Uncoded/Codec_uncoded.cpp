@@ -4,6 +4,7 @@
 
 #include "Codec_uncoded.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
