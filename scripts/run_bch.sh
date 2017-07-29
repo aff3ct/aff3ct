@@ -11,4 +11,4 @@ cd ../build
     --sim-snr-min  0    \
     --sim-snr-max  9    \
     --sim-snr-step 0.5  \
-    $*
+    "$@"

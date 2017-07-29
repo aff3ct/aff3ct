@@ -13,4 +13,4 @@ cd ../build
     --mnt-max-fe   100   \
     --dec-type     SC    \
     --dec-implem   NAIVE \
-    $*
+    "$@"

@@ -14,4 +14,4 @@ cd ../build
     --dec-ite      6     \
     --dec-type     BCJR  \
     --dec-implem   FAST  \
-    $*
+    "$@"

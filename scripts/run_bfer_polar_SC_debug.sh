@@ -15,4 +15,4 @@ cd ../build
     --sim-debug          \
     --dec-type     SC    \
     --dec-implem   NAIVE \
-    $*
+    "$@"

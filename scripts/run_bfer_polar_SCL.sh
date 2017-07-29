@@ -15,4 +15,4 @@ cd ../build
     --dec-implem    NAIVE    \
     -L              4        \
     --crc-poly      8-DVB-S2 \
-    $*
+    "$@"

@@ -16,4 +16,4 @@ cd ../build
     --dec-type     SCAN  \
     --dec-implem   NAIVE \
     --enc-fb-sigma 0.8   \
-    $*
+    "$@"
