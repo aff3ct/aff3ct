@@ -181,7 +181,7 @@ void Launcher::store_args(const arg_val_map &vals, parameters &params, const std
 	if(exist(vals, {"version",      "v"})) params.display_version = true;
 
 #ifdef MULTI_PREC
-	if(exist(vals, {"sim-prec", "p"})) params.sim_prec = std::stoi(vals.at({"sim-prec", "p"}));
+	if(exist(vals, {p+"-prec", "p"})) params.sim_prec = std::stoi(vals.at({p+"-prec", "p"}));
 #endif
 }
 
