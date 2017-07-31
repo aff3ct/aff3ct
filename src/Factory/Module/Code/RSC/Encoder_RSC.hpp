@@ -20,9 +20,9 @@ struct Encoder_RSC : public Encoder
 	{
 		virtual ~parameters() {}
 
-		bool             buffered    = true;
-		std::string      standard    = "LTE";
-		std::vector<int> poly        = {013, 015};
+		bool             buffered = true;
+		std::string      standard = "LTE";
+		std::vector<int> poly     = {013, 015};
 	};
 
 	template <typename B = int>
