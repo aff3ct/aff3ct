@@ -41,6 +41,22 @@ Decoder_turbo<B,R>
   l_e2i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
 {
+	if (siso_n.get_K() != K)
+	{
+		std::stringstream message;
+		message << "'siso_n.get_K()' has to be equal to 'K' ('siso_n.get_K()' = " << siso_n.get_K()
+		        << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (siso_i.get_K() != K)
+	{
+		std::stringstream message;
+		message << "'siso_i.get_K()' has to be equal to 'K' ('siso_i.get_K()' = " << siso_i.get_K()
+		        << ", 'K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N - (siso_n.tail_length() + siso_i.tail_length()) != K * 3)
 	{
 		std::stringstream message;

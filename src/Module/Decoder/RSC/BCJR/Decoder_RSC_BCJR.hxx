@@ -36,7 +36,6 @@ Decoder_RSC_BCJR<B,R>
 		message << "'n_states' has to be a power of 2 ('n_states' = " << n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
 }
 
 template <typename B, typename R>
