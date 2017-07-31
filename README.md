@@ -43,62 +43,75 @@ If you use `ctrl+c` twice in a small time-step (500ms), the program will stop.
 
 Open a shell and type (from the `$ROOT_AFF3CT/build/` folder):
 
-    $ ./bin/aff3ct --sim-type BFER --cde-type POLAR -m 1 -M 4 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
+    $ ./bin/aff3ct -C POLAR -m 1 -M 4 -s 0.25 -K 1755 -N 2048 --crc-poly 32-GZIP --dec-type ASCL
 
 Expected output:
 
     # -------------------------------------------------
     # ---- A FAST FORWARD ERROR CORRECTION TOOL >> ----
     # -------------------------------------------------
-    # Parameters:
+    # Parameters :
     # * Simulation ------------------------------------
     #    ** Type                     = BFER
+    #    ** Type of bits             = int32
+    #    ** Type of reals            = float32
+    #    ** Date (UTC)               = 2017-07-31 07:53:48
+    #    ** Code type (C)            = POLAR
     #    ** SNR min (m)              = 1.000000 dB
     #    ** SNR max (M)              = 4.000100 dB
     #    ** SNR step (s)             = 0.250000 dB
-    #    ** Type of bits             = int (32 bits)
-    #    ** Type of reals            = float (32 bits)
-    #    ** Inter frame level        = 1
     #    ** Seed                     = 0
     #    ** Multi-threading (t)      = 4 thread(s)
+    #    ** SNR type                 = EB
+    #    ** Time report              = off
+    #    ** Debug mode               = off
+    #    ** Coset approach (c)       = no
+    #    ** Bad frames tracking      = off
+    #    ** Bad frames replay        = off
+    #    ** Bit rate                 = 0.841309
+    #    ** Inter frame level        = 1
     # * Code ------------------------------------------
     #    ** Type                     = POLAR
-    #    ** Info. bits (K)           = 1723 + 32 (CRC)
-    #    ** Codeword size (N)        = 2048
-    #    ** Coset approach (c)       = off
-    #    ** Sigma for code gen.      = adaptative
-    #    ** Frozen bits gen. method  = GA
+    #    ** Info. bits (K)           = 1755
+    #    ** Codeword size (N_cw)     = 2048
+    #    ** Frame size (N)           = 2048
+    #    ** Code rate                = 0.856934
     # * Source ----------------------------------------
     #    ** Type                     = RAND
+    #    ** Info. bits (K_info)      = 1723
     # * CRC -------------------------------------------
     #    ** Type                     = FAST
     #    ** Name                     = 32-GZIP
     #    ** Polynomial (hexadecimal) = 0x4c11db7
     #    ** Size (in bit)            = 32
-    #    ** Add CRC in the code rate = off
     # * Encoder ---------------------------------------
     #    ** Type                     = POLAR
-    #    ** Systematic encoding      = on
-    # * Modulator -------------------------------------
+    #    ** Systematic               = yes
+    #    ** Fb gen. method           = GA
+    #    ** Fb sigma                 = adaptive
+    # * Modem -----------------------------------------
     #    ** Type                     = BPSK
     #    ** Bits per symbol          = 1
     #    ** Sampling factor          = 1
-    # * Channel ---------------------------------------
-    #    ** Type                     = AWGN
-    #    ** Domain                   = LLR
-    # * Demodulator -----------------------------------
     #    ** Sigma square             = on
     #    ** Max type                 = unused
+    # * Channel ---------------------------------------
+    #    ** Type                     = AWGN
+    #    ** Complex                  = off
+    #    ** Add users                = off
     # * Decoder ---------------------------------------
     #    ** Type (D)                 = ASCL
     #    ** Implementation           = FAST
+    #    ** Systematic               = yes
     #    ** Max num. of lists (L)    = 8
     #    ** Adaptative mode          = full
     #    ** Polar node types         = {R0,R0L,R1,REP,REPL,SPC}
     # * Monitor ---------------------------------------
     #    ** Frame error count (e)    = 100
-    #    ** Bad frames tracking      = off
-    #    ** Bad frames replay        = off
+    # * Terminal --------------------------------------
+    #    ** Type                     = STD
+    #    ** Enabled                  = yes
+    #    ** Frequency (ms)           = 500
     #
     # The simulation is running...
     # ----------------------------------------------------------------------||--------------------------------||---------------------
