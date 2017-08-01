@@ -59,18 +59,18 @@ void Encoder_turbo_DB
 
 	Encoder_RSC_DB::store_args(vals, params.sub, p+"-sub");
 
-	if (params.sub.standard == "DVB-RCS1" && !exist(vals, {"itl-type"}))
-		params.itl.type = "ARP_DVBS1";
-
-	if (params.sub.standard == "DVB-RCS2" && !exist(vals, {"itl-type"}))
-		params.itl.type = "ARP_DVBS2";
-
 	params.N_cw = 2 * params.sub.N_cw - params.K;
 	params.R    = (float)params.K / (float)params.N_cw;
 
 	params.itl.size     = params.K >> 1;
 	params.itl.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
+
+	if (params.sub.standard == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+		params.itl.type = "ARP_DVBS1";
+
+	if (params.sub.standard == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+		params.itl.type = "ARP_DVBS2";
 }
 
 void Encoder_turbo_DB

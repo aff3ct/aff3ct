@@ -67,12 +67,6 @@ void Decoder_turbo_DB
 
 	if(exist(vals, {p+"-ite", "i"})) params.n_ite = std::stoi(vals.at({p+"-ite", "i"}));
 
-	if (params.sub.implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
-		params.itl.type = "ARP_DVBS1";
-
-	if (params.sub.implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
-		params.itl.type = "ARP_DVBS2";
-
 	params.sub.K        = params.K;
 	params.sub.n_frames = params.n_frames;
 
@@ -84,6 +78,12 @@ void Decoder_turbo_DB
 	params.itl.size     = params.K >> 1;
 	params.itl.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
+
+	if (params.sub.implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
+		params.itl.type = "ARP_DVBS1";
+
+	if (params.sub.implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
+		params.itl.type = "ARP_DVBS2";
 
 	params.sf.n_ite = params.n_ite;
 	Scaling_factor::store_args(vals, params.sf, p+"-sf");

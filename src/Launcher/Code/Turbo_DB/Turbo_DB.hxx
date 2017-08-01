@@ -74,7 +74,7 @@ void Turbo_DB<C,B,R,Q>
 
 	factory::Decoder_turbo_DB::store_args(this->ar.get_args(), *params_dec);
 
-	if (!params_enc->sub.standard.empty())
+	if (!params_enc->sub.standard.empty() && !this->ar.exist_arg({"dec-sub-implem"}))
 		params_dec->sub.implem = params_enc->sub.standard;
 
 	if (std::is_same<Q,int8_t>())

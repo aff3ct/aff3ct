@@ -55,7 +55,7 @@ void RSC_DB<C,B,R,Q>
 
 	factory::Decoder_RSC_DB::store_args(this->ar.get_args(), *params_dec);
 
-	if (!params_enc->standard.empty())
+	if (!params_enc->standard.empty() && !this->ar.exist_arg({"dec-implem"}))
 		params_dec->implem = params_enc->standard;
 
 	this->params->pct->type = "NO";
