@@ -82,8 +82,11 @@
 #include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_array.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_seq.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_adaptive.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check_DB.hpp>
+#include <Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker_DB.hpp>
 #include <Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp>
 #include <Tools/Arguments_reader.hpp>
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
@@ -96,12 +99,14 @@
 #include <Tools/Codec/Polar/Codec_polar.hpp>
 #include <Tools/Codec/Codec_SISO.hpp>
 #include <Tools/Codec/RSC/Codec_RSC.hpp>
+#include <Tools/Codec/Turbo_DB/Codec_turbo_DB.hpp>
 #include <Tools/Codec/Codec.hpp>
 #include <Tools/Codec/Repetition/Codec_repetition.hpp>
 #include <Tools/Codec/LDPC/Codec_LDPC.hpp>
 #include <Tools/Codec/Uncoded/Codec_uncoded.hpp>
 #include <Tools/Codec/BCH/Codec_BCH.hpp>
 #include <Tools/Codec/RA/Codec_RA.hpp>
+#include <Tools/Codec/RSC_DB/Codec_RSC_DB.hpp>
 #include <Tools/Codec/Turbo/Codec_turbo.hpp>
 #include <Tools/Exception/out_of_range/out_of_range.hpp>
 #include <Tools/Exception/range_error/range_error.hpp>
@@ -124,11 +129,14 @@
 #include <Module/Interleaver/Random_column/Interleaver_random_column.hpp>
 #include <Module/Interleaver/Interleaver.hpp>
 #include <Module/Interleaver/NO/Interleaver_NO.hpp>
+#include <Module/Interleaver/ARP/Interleaver_ARP_DVB2.hpp>
+#include <Module/Interleaver/ARP/Interleaver_ARP_DVB1.hpp>
 #include <Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp>
 #include <Module/Interleaver/LTE/Interleaver_LTE.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
 // #include <Module/Puncturer/SPU_Puncturer.hpp>
 #include <Module/Puncturer/Puncturer.hpp>
+#include <Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp>
 #include <Module/Puncturer/NO/Puncturer_NO.hpp>
 // #include <Module/Puncturer/SC_Puncturer.hpp>
 #include <Module/Puncturer/Turbo/Puncturer_turbo.hpp>
@@ -142,6 +150,7 @@
 #include <Module/Encoder/RSC/Encoder_RSC3_CPE_sys.hpp>
 // #include <Module/Encoder/SC_Encoder.hpp>
 // #include <Module/Encoder/SPU_Encoder.hpp>
+#include <Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp>
 #include <Module/Encoder/Repetition/Encoder_repetition_sys.hpp>
 #include <Module/Encoder/LDPC/Encoder_LDPC.hpp>
 #include <Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp>
@@ -153,6 +162,7 @@
 #include <Module/Encoder/Encoder.hpp>
 #include <Module/Encoder/NO/Encoder_NO.hpp>
 #include <Module/Encoder/RA/Encoder_RA.hpp>
+#include <Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp>
 #include <Module/Encoder/Turbo/Encoder_turbo.hpp>
 #include <Module/Encoder/Turbo/Encoder_turbo_legacy.hpp>
 #include <Module/Channel/Channel.hpp>
@@ -199,6 +209,7 @@
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_AVX.hpp>
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra_fast_x2_SSE.hpp>
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra.hpp>
+#include <Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp>
 // #include <Module/Decoder/SPU_SISO.hpp>
 #include <Module/Decoder/SISO.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition_fast.hpp>
@@ -220,9 +231,13 @@
 #include <Module/Decoder/NO/Decoder_NO.hpp>
 #include <Module/Decoder/RA/Decoder_RA.hpp>
 // #include <Module/Decoder/SC_Decoder.hpp>
-#include <Module/Decoder/Turbo/Decoder_turbo_std.hpp>
+#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_generic.hpp>
+#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp>
+#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB1.hpp>
+#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB2.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_fast.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo.hpp>
+#include <Module/Decoder/Turbo/Decoder_turbo_std.hpp>
 // #include <Module/Coset/SPU_Coset.hpp>
 #include <Module/Coset/Real/Coset_real.hpp>
 #include <Module/Coset/Coset.hpp>
@@ -274,6 +289,7 @@
 #include <Factory/Tools/Code/Polar/Frozenbits_generator.hpp>
 #include <Factory/Tools/Code/Turbo/Flip_and_check.hpp>
 #include <Factory/Tools/Code/Turbo/Scaling_factor.hpp>
+#include <Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp>
 #include <Factory/Tools/Display/Terminal/Terminal.hpp>
 #include <Factory/Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp>
 #include <Factory/Tools/Display/Terminal/BFER/Terminal_BFER.hpp>
@@ -292,6 +308,9 @@
 #include <Factory/Module/Code/RSC/Decoder_RSC.hpp>
 #include <Factory/Module/Code/RSC/Encoder_RSC.hpp>
 #include <Factory/Module/Code/Puncturer.hpp>
+#include <Factory/Module/Code/Turbo_DB/Decoder_turbo_DB.hpp>
+#include <Factory/Module/Code/Turbo_DB/Encoder_turbo_DB.hpp>
+#include <Factory/Module/Code/Turbo_DB/Puncturer_turbo_DB.hpp>
 #include <Factory/Module/Code/Repetition/Encoder_repetition.hpp>
 #include <Factory/Module/Code/Repetition/Decoder_repetition.hpp>
 #include <Factory/Module/Code/LDPC/Decoder_LDPC.hpp>
@@ -302,6 +321,8 @@
 #include <Factory/Module/Code/NO/Decoder_NO.hpp>
 #include <Factory/Module/Code/RA/Encoder_RA.hpp>
 #include <Factory/Module/Code/RA/Decoder_RA.hpp>
+#include <Factory/Module/Code/RSC_DB/Encoder_RSC_DB.hpp>
+#include <Factory/Module/Code/RSC_DB/Decoder_RSC_DB.hpp>
 #include <Factory/Module/Code/Turbo/Decoder_turbo.hpp>
 #include <Factory/Module/Code/Turbo/Encoder_turbo.hpp>
 #include <Factory/Module/Code/Turbo/Puncturer_turbo.hpp>
@@ -315,11 +336,13 @@
 #include <Factory/Simulation/BFER/BFER_ite.hpp>
 #include <Launcher/Code/Polar/Polar.hpp>
 #include <Launcher/Code/RSC/RSC.hpp>
+#include <Launcher/Code/Turbo_DB/Turbo_DB.hpp>
 #include <Launcher/Code/Repetition/Repetition.hpp>
 #include <Launcher/Code/LDPC/LDPC.hpp>
 #include <Launcher/Code/Uncoded/Uncoded.hpp>
 #include <Launcher/Code/BCH/BCH.hpp>
 #include <Launcher/Code/RA/RA.hpp>
+#include <Launcher/Code/RSC_DB/RSC_DB.hpp>
 #include <Launcher/Code/Turbo/Turbo.hpp>
 #include <Launcher/Simulation/BFER_std.hpp>
 #include <Launcher/Simulation/EXIT.hpp>
