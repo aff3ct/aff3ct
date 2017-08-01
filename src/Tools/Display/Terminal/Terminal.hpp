@@ -8,6 +8,8 @@
 #ifndef TERMINAL_HPP_
 #define TERMINAL_HPP_
 
+#include <iostream>
+
 namespace aff3ct
 {
 namespace tools

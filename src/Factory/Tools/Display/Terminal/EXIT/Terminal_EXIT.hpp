@@ -19,6 +19,8 @@ struct Terminal_EXIT : Terminal
 
 	struct parameters : Terminal::parameters
 	{
+		virtual ~parameters() {}
+
 		int   N           = 0;
 		float snr         = -1.f;
 		float sig_a       = -1.f;

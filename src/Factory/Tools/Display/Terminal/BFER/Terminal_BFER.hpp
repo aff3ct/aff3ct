@@ -20,6 +20,8 @@ struct Terminal_BFER : Terminal
 
 	struct parameters : Terminal::parameters
 	{
+		virtual ~parameters() {}
+
 		int         K     = 0;
 
 		std::string type  = "STD";

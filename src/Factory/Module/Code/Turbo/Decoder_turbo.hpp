@@ -52,7 +52,6 @@ struct Decoder_turbo : public Decoder
 	static void store_args(const arg_val_map &vals, parameters<D1,D2> &params, const std::string p = prefix);
 	template <class D1 = Decoder_RSC, class D2 = D1>
 	static void make_header(params_list& head_dec, params_list& head_itl, const parameters<D1,D2>& params, const bool full = true);
-
 };
 }
 }

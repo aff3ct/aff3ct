@@ -461,7 +461,7 @@ void BFER_std_threads<B,R,Q>
 
 	std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
 	          << "V_K2:" << std::endl;
-	ft.display_real_vector(this->V_K2[tid], this->U_K1[tid]);
+	ft.display_bit_vector(this->V_K2[tid], this->U_K1[tid]);
 	std::cout << std::endl;
 
 	this->mutex_debug.unlock();

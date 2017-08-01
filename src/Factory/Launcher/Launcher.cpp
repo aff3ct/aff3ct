@@ -17,7 +17,9 @@
 #include "Launcher/Code/RA/RA.hpp"
 #include "Launcher/Code/Repetition/Repetition.hpp"
 #include "Launcher/Code/RSC/RSC.hpp"
+#include "Launcher/Code/RSC_DB/RSC_DB.hpp"
 #include "Launcher/Code/Turbo/Turbo.hpp"
+#include "Launcher/Code/Turbo_DB/Turbo_DB.hpp"
 #include "Launcher/Code/Uncoded/Uncoded.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
@@ -98,10 +100,24 @@ launcher::Launcher* Launcher
 			return new launcher::RSC<launcher::BFER_ite<B,R,Q>,B,R,Q,QD>(argc, argv);
 	}
 
+	if (params.cde_type == "RSC_DB")
+	{
+		if (params.sim_type == "BFER")
+			return new launcher::RSC_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
+		else if (params.sim_type == "BFERI")
+			return new launcher::RSC_DB<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
+	}
+
 	if (params.cde_type == "TURBO")
 	{
 		if (params.sim_type == "BFER")
 			return new launcher::Turbo<launcher::BFER_std<B,R,Q>,B,R,Q,QD>(argc, argv);
+	}
+
+	if (params.cde_type == "TURBO_DB")
+	{
+		if (params.sim_type == "BFER")
+			return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
 	if (params.cde_type == "REPETITION")
@@ -146,7 +162,7 @@ void Launcher::build_args(arg_map &req_args, arg_map &opt_args, const std::strin
 	req_args[{p+"-cde-type", "C"}] =
 		{"string",
 		 "select the code type you want to use.",
-		 "POLAR, TURBO, LDPC, REPETITION, RA, RSC, BCH, UNCODED"};
+		 "POLAR, TURBO, TURBO_DB, LDPC, REPETITION, RA, RSC, RSC_DB, BCH, UNCODED"};
 
 	opt_args[{p+"-type"}] =
 		{"string",

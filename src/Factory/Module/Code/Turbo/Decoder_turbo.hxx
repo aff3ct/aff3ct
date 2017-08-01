@@ -94,12 +94,6 @@ void Decoder_turbo
 	if(exist(vals, {p+"-sc"      })) params.self_corrected = true;
 	if(exist(vals, {p+"-json"    })) params.enable_json    = true;
 
-	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
-		params.itl.type = "LTE";
-
-	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
-		params.itl.type = "CCSDS";
-
 	params.sub1.K        = params.K;
 	params.sub2.K        = params.K;
 	params.sub1.n_frames = params.n_frames;
@@ -131,6 +125,12 @@ void Decoder_turbo
 	params.itl.size     = params.K;
 	params.itl.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
+
+	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
+		params.itl.type = "LTE";
+
+	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
+		params.itl.type = "CCSDS";
 
 	params.sf.n_ite = params.n_ite;
 	Scaling_factor::store_args(vals, params.sf, p+"-sf");

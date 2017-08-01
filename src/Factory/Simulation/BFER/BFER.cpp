@@ -133,7 +133,7 @@ void BFER::make_header(params_list& head_sim, const parameters& params, const bo
 		head_sim.push_back(std::make_pair("Bad frames base path", path));
 	}
 
-	const auto bit_rate = (float)params.src->K / (float)params.enc->N_cw;
+	const auto bit_rate = (float)params.src->K / (float)params.pct->N;
 	head_sim.push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
 	head_sim.push_back(std::make_pair("Inter frame level", std::to_string(params.src->n_frames)));
 }
