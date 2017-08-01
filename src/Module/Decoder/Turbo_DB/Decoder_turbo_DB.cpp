@@ -24,8 +24,6 @@ Decoder_turbo_DB<B,R>
   pi          (pi),
   siso_n      (siso_n),
   siso_i      (siso_i),
-  lut         (pi.get_lut()),
-  lut_inv     (pi.get_lut_inv()),
   l_cpy       (2 * K),
   l_sn        (2 * K),
   l_si        (2 * K),
@@ -39,6 +37,13 @@ Decoder_turbo_DB<B,R>
   l_e2i       (2 * K),
   s           (    K)
 {
+	if (K % 2)
+	{
+		std::stringstream message;
+		message << "'K' has to be a divisible by 2 ('K' = " << K << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (siso_n.get_K() != K)
 	{
 		std::stringstream message;
@@ -62,10 +67,10 @@ Decoder_turbo_DB<B,R>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)pi.get_size() != K)
+	if ((int)pi.get_size() * 2 != K)
 	{
 		std::stringstream message;
-		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
+		message << "'pi.get_size()' * 2 has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
 		        << ", 'K' = " << K << ").";
 		throw length_error(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -160,10 +165,11 @@ void Decoder_turbo_DB<B,R>
 	l_cpy = this->l_sn;
 	for (auto i = 0; i < 2 * this->K; i += 8)
 		std::swap(l_cpy[i+1], l_cpy[i+2]);
-	for (auto i = 0; i < 2 * this->K; i += 2)
+	for (auto i = 0; i < this->K; i += 2)
 	{
-		this->l_si[2 * lut[i/2]   ] = l_cpy[i  ];
-		this->l_si[2 * lut[i/2] +1] = l_cpy[i+1];
+		const auto l = pi.get_lut_inv()[i >> 1];
+		for (auto bps = 0; bps < 2; bps++) this->l_si[2 * (i +0) + bps] = l_cpy[(4 * l + 0) + bps];
+		for (auto bps = 0; bps < 2; bps++) this->l_si[2 * (i +1) + bps] = l_cpy[(4 * l + 2) + bps];
 	}
 
 	std::fill(this->l_e1n.begin(), this->l_e1n.end(), (R)0);
@@ -176,14 +182,6 @@ void Decoder_turbo_DB<B,R>
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
-
-//	for (auto i = 0; i < this->K; i += 2)
-//	{
-//		this->s[i  ] = (std::max(this->l_sn[2*i+2], this->l_sn[2*i+3]) -
-//		                std::max(this->l_sn[2*i+0], this->l_sn[2*i+1])) > 0;
-//		this->s[i+1] = (std::max(this->l_sn[2*i+1], this->l_sn[2*i+3]) -
-//		                std::max(this->l_sn[2*i+0], this->l_sn[2*i+2])) > 0;
-//	}
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	const auto n_frames = this->get_simd_inter_frame_level();
@@ -212,10 +210,11 @@ void Decoder_turbo_DB<B,R>
 			l_cpy = this->l_e2n;
 			for (auto i = 0; i < 2 * this->K; i += 8)
 				std::swap(l_cpy[i+1], l_cpy[i+2]);
-			for (auto i = 0; i < 2 * this->K; i += 2)
+			for (auto i = 0; i < this->K; i += 2)
 			{
-				this->l_e1i[2 * lut[i/2]   ] = l_cpy[i  ];
-				this->l_e1i[2 * lut[i/2] +1] = l_cpy[i+1];
+				const auto l = pi.get_lut_inv()[i >> 1];
+				for (auto bps = 0; bps < 2; bps++) this->l_e1i[2 * (i +0) + bps] = l_cpy[(4 * l + 0) + bps];
+				for (auto bps = 0; bps < 2; bps++) this->l_e1i[2 * (i +1) + bps] = l_cpy[(4 * l + 2) + bps];
 			}
 
 			// sys + ext
@@ -237,10 +236,11 @@ void Decoder_turbo_DB<B,R>
 					this->l_e2i[i] += this->l_sei[i];
 
 			// make the deinterleaving
-			for (auto i = 0; i < 2 * this->K; i += 2)
+			for (auto i = 0; i < this->K; i += 2)
 			{
-				this->l_e1n[i  ] = this->l_e2i[2 * lut[i/2]   ];
-				this->l_e1n[i+1] = this->l_e2i[2 * lut[i/2] +1];
+				const auto l = pi.get_lut()[i >> 1];
+				for (auto bps = 0; bps < 2; bps++) this->l_e1n[2 * (i +0) + bps] = l_e2i[(4 * l + 0) + bps];
+				for (auto bps = 0; bps < 2; bps++) this->l_e1n[2 * (i +1) + bps] = l_e2i[(4 * l + 2) + bps];
 			}
 			for (auto i = 0; i < 2 * this->K; i += 8)
 				std::swap(this->l_e1n[i+1], this->l_e1n[i+2]);

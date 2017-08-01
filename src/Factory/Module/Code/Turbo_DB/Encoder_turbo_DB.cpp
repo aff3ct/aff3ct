@@ -68,7 +68,7 @@ void Encoder_turbo_DB
 	params.N_cw = 2 * params.sub.N_cw - params.K;
 	params.R    = (float)params.K / (float)params.N_cw;
 
-	params.itl.size     = params.K;
+	params.itl.size     = params.K >> 1;
 	params.itl.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
 }

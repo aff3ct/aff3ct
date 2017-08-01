@@ -1,5 +1,8 @@
 #include <cmath>
+#include <sstream>
 #include <algorithm>
+
+#include "Tools/Exception/exception.hpp"
 
 #include "Flip_and_check_DB.hpp"
 
@@ -19,6 +22,14 @@ Flip_and_check_DB<B,R>
   tab_flips          ((1 << q) -1, mipp::vector<B>(q, (B)0)           ),
   symb_sorted        (2 * K                                           )
 {
+	if (simd_inter_frame_level != 1)
+	{
+		std::stringstream message;
+		message << "The FNC double binary does not support an inter frame level > 1 "
+		        << "('simd_inter_frame_level' = " << simd_inter_frame_level << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	// generation of the array that will be used to flip the bits
 	// it contains: 1000, 0100, 1100, 0010, ...
 	for (auto i = 1; i <= (int)tab_flips.size(); i++)

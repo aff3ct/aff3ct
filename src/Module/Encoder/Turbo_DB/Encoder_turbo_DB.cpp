@@ -21,6 +21,13 @@ Encoder_turbo_DB<B>
   par_n(K * n_frames),
   par_i(K * n_frames)
 {
+	if (K % 2)
+	{
+		std::stringstream message;
+		message << "'K' has to be a divisible by 2 ('K' = " << K << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != 3 * K)
 	{
 		std::stringstream message;
@@ -28,10 +35,10 @@ Encoder_turbo_DB<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)pi.get_size() != K)
+	if ((int)pi.get_size() * 2 != K)
 	{
 		std::stringstream message;
-		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
+		message << "'pi.get_size()' * 2 has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -42,18 +49,18 @@ template <typename B>
 void Encoder_turbo_DB<B>
 ::encode(const B *U_K, B *X_N)
 {
-	//pi.interleave(U_K, U_K_i.data(), 0, this->n_frames);
-
-	mipp::vector<int> lut = pi.get_lut();
 	mipp::vector<B> U_K_cpy (this->K);
-	//std::copy(U_K, U_K + this->K, U_K_cpy);
 	for (auto i = 0; i < this->K; i++)
 		U_K_cpy[i] = U_K[i];
 
 	for (auto i = 0; i < this->K; i+=4)
 		std::swap(U_K_cpy[i], U_K_cpy[i+1]);
-	for (auto i = 0; i < this->K; i++)
-		U_K_i[ lut[i] ] = U_K_cpy[i];
+	for (auto i = 0; i < this->K; i += 2)
+	{
+		const auto l = pi.get_lut_inv()[i >> 1];
+		U_K_i[i +0] = U_K_cpy[l * 2 +0];
+		U_K_i[i +1] = U_K_cpy[l * 2 +1];
+	}
 
 	enco_n.encode_sys(U_K,          par_n.data());
 	enco_i.encode_sys(U_K_i.data(), par_i.data());

@@ -24,10 +24,7 @@ protected:
 	Decoder_RSC_DB_BCJR<B,R> &siso_n;
 	Decoder_RSC_DB_BCJR<B,R> &siso_i;
 
-	const mipp::vector<int> &lut;
-	const mipp::vector<int> &lut_inv;
-	      mipp::vector<R>    l_cpy;
-
+	mipp::vector<R> l_cpy;
 	mipp::vector<R> l_sn;  // systematic LLRs                  in the natural     domain
 	mipp::vector<R> l_si;  // systematic LLRs                  in the interleaved domain
 	mipp::vector<R> l_sen; // systematic LLRs + extrinsic LLRs in the natural     domain

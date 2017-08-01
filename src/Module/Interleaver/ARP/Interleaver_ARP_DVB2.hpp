@@ -22,7 +22,7 @@ public:
 	Interleaver_ARP_DVB2(const int size, const int n_frames = 1, const std::string name = "Interleaver_ARP_DVB2")
 	: Interleaver<T>(size, false, n_frames, name)
 	{
-		switch (size / 2)
+		switch (size)
 		{
 			case 56:
 				p  = 9;
@@ -163,10 +163,8 @@ protected:
 	void gen_lut(T *lut, const int frame_id)
 	{
 		int q;
-		int size_d2 = this->get_size()/2;
-		std::vector<int> symbols_lut(size_d2);
-		
-		for (auto i = 0; i < size_d2; i++)
+		int size = this->get_size();
+		for (auto i = 0; i < size; i++)
 		{
 			switch(i%4)
 			{
@@ -183,16 +181,7 @@ protected:
 					q = 4*q0*p + 4*q3;
 					break;
 			}
-			symbols_lut[i] = (p*i + q + 3) % size_d2;
-		}
-
-		std::vector<int> io(this->get_size());
-		std::iota(io.begin(), io.end(), 0);
-
-		for (auto i = 0; i < this->get_size(); i+=2)
-		{
-			lut[i  ] = io[2*symbols_lut[i/2]  ];
-			lut[i+1] = io[2*symbols_lut[i/2]+1];
+			lut[i] = (p*i + q + 3) % size;
 		}
 	}
 };
