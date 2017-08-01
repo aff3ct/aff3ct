@@ -181,11 +181,13 @@ void BFER_ite<B,R,Q>
 	factory::Monitor      ::make_header(this->pl_mnt, *params->mnt, false);
 	factory::Terminal_BFER::make_header(this->pl_ter, *params->ter, false);
 
+	const auto code_rate = (float)params->enc->K / (float)params->pct->N;
+
 	this->pl_cde.push_back(std::make_pair("Type",                                params->cde_type  ));
 	this->pl_cde.push_back(std::make_pair("Info. bits (K)",       std::to_string(params->enc->K   )));
 	this->pl_cde.push_back(std::make_pair("Codeword size (N_cw)", std::to_string(params->enc->N_cw)));
 	this->pl_cde.push_back(std::make_pair("Frame size (N)",       std::to_string(params->pct->N   )));
-	this->pl_cde.push_back(std::make_pair("Code rate",            std::to_string(params->enc->R   )));
+	this->pl_cde.push_back(std::make_pair("Code rate",            std::to_string(code_rate        )));
 
 	Launcher::print_header();
 }
