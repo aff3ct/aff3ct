@@ -10,15 +10,10 @@ namespace aff3ct
 {
 namespace module
 {
+
 template <typename B>
 class Encoder_turbo_DB;
-}
-}
 
-namespace aff3ct
-{
-namespace module
-{
 template <typename B = int>
 class Encoder_RSC_DB: public Encoder_sys<B>
 {

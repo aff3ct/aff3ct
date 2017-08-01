@@ -147,7 +147,6 @@ template <typename B>
 int Encoder_RSC_DB<B>
 ::calc_state_trans(const int in_state, const int in, int& par)
 {
-
 	std::vector<int> FF (n_ff, 0);
 
 	for(auto i = 0; i < n_ff; i++)
@@ -177,7 +176,6 @@ int Encoder_RSC_DB<B>
 		next_state = (next_state << 1) | FF[i];
 
 	return next_state;
-
 }
 
 template <typename B>
