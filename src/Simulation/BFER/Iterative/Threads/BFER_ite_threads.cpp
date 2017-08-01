@@ -46,7 +46,7 @@ BFER_ite_threads<B,R,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
 
 #ifdef ENABLE_MPI
-	if (this->simu_params.debug || this->simu_params.benchs)
+	if (this->params.debug || this->params.benchs)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
@@ -596,7 +596,7 @@ Terminal_BFER<B>* BFER_ite_threads<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI
-	return Simulation_BFER<B,R,Q>::build_terminal();
+	return BFER_ite<B,R,Q>::build_terminal();
 #else
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];

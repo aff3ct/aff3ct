@@ -35,7 +35,7 @@ BFER_std_threads<B,R,Q>
   V_K2(this->params.n_threads, mipp::vector<B>(this->params.crc->K     * this->params.crc->n_frames))
 {
 #ifdef ENABLE_MPI
-	if (simu_params.debug || simu_params.benchs)
+	if (this->params.debug || this->params.benchs)
 		throw runtime_error(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
@@ -472,7 +472,7 @@ Terminal_BFER<B>* BFER_std_threads<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI
-	return Simulation_BFER<B,R,Q>::build_terminal();
+	return BFER_std<B,R,Q>::build_terminal();
 #else
 	this->durations_red[std::make_pair(11, "Decoder")] = std::chrono::nanoseconds(0);
 	const auto &d_dec = this->durations_red[std::make_pair(11, "Decoder")];

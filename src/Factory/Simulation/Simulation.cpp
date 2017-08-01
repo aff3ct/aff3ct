@@ -1,3 +1,5 @@
+#include "Tools/Exception/exception.hpp"
+
 #include "Simulation.hpp"
 
 using namespace aff3ct;
@@ -86,7 +88,7 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 	if(exist(vals, {p+"-mpi-comm"})) params.mpi_comm_freq = milliseconds(std::stoi(vals.at({p+"-mpi-comm"})));
 
 	int max_n_threads_global;
-	int max_n_threads_local = params.simulation.n_threads;
+	int max_n_threads_local = params.n_threads;
 
 	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 
@@ -95,7 +97,7 @@ void Simulation::store_args(const arg_val_map &vals, parameters &params, const s
 		std::stringstream message;
 		message << "'max_n_threads_global' has to be greater than 0 ('max_n_threads_global' = "
 		        << max_n_threads_global << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// ensure that all the MPI processes have a different seed (crucial for the Monte-Carlo method)
