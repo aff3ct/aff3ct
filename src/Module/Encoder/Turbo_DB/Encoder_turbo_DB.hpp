@@ -32,7 +32,7 @@ public:
 	                 const std::string name = "Encoder_turbo_DB");
 	virtual ~Encoder_turbo_DB() {}
 
-	virtual void encode(const B *U_K, B *X_N); using Encoder<B>::encode;
+	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }
 }

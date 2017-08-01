@@ -47,7 +47,7 @@ Encoder_turbo_DB<B>
 // [   AB   ][  WnWi  ][  YnYi  ]
 template <typename B>
 void Encoder_turbo_DB<B>
-::encode(const B *U_K, B *X_N)
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	mipp::vector<B> U_K_cpy (this->K);
 	for (auto i = 0; i < this->K; i++)
@@ -62,8 +62,8 @@ void Encoder_turbo_DB<B>
 		U_K_i[i +1] = U_K_cpy[l * 2 +1];
 	}
 
-	enco_n.encode_sys(U_K,          par_n.data());
-	enco_i.encode_sys(U_K_i.data(), par_i.data());
+	enco_n._encode_sys(U_K,          par_n.data(), frame_id);
+	enco_i._encode_sys(U_K_i.data(), par_i.data(), frame_id);
 
 	std::copy(U_K, U_K + this->K, X_N);
 

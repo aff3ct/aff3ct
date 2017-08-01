@@ -10,9 +10,20 @@ namespace aff3ct
 {
 namespace module
 {
+template <typename B>
+class Encoder_turbo_DB;
+}
+}
+
+namespace aff3ct
+{
+namespace module
+{
 template <typename B = int>
 class Encoder_RSC_DB: public Encoder_sys<B>
 {
+	friend Encoder_turbo_DB<B>;
+
 private:
 	const int  n_ff;               // number of D flip-flop
 	const int  n_states;           // number of states in the trellis

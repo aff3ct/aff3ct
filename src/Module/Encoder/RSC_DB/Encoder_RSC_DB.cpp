@@ -243,7 +243,6 @@ template <typename B>
 void Encoder_RSC_DB<B>
 ::_encode_sys(const B *U_K, B *par, const int frame_id)
 {
-
 	int circ_state, end_state;
 	__pre_encode(U_K, circ_state);
 	int init_state = circ_states[( (this->K/2) % (n_states-1) ) -1][circ_state];
