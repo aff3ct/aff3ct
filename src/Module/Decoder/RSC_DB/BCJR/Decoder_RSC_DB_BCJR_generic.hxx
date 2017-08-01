@@ -59,7 +59,12 @@ void Decoder_RSC_DB_BCJR_generic<B,R,MAX>
 			                              this->alpha[k][s1] + this->gamma[k][4*s1 + 1]),
 			                          MAX(this->alpha[k][s2] + this->gamma[k][4*s2 + 2],
 			                              this->alpha[k][s3] + this->gamma[k][4*s3 + 3]));
+
 		}
+
+		R norm = this->alpha[k+1][0];
+		for (auto s = 0; s < this->n_states; s++)
+			this->alpha[k+1][s] -= norm;
 	}
 }
 
