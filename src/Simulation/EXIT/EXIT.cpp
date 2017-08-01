@@ -66,7 +66,7 @@ EXIT<B,R>
 {
 #ifdef ENABLE_MPI
 	std::clog << format_warning("This simulation is not MPI ready, the same computations will be launched "
-	                            + "on each MPI processes.") << std::endl;
+	                            "on each MPI processes.") << std::endl;
 #endif
 }
 

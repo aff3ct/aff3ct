@@ -77,12 +77,12 @@ BFER<B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new Monitor_reduction_mpi<B>(params.sim->K_info,
-	                                                 params.mnt.n_frame_errors,
+	this->monitor_red = new Monitor_reduction_mpi<B>(params.src->K,
+	                                                 params.mnt->n_frame_errors,
 	                                                 this->monitor,
 	                                                 std::this_thread::get_id(),
-	                                                 params.sim->mpi_comm_freq,
-	                                                 params.sim->inter_frame_level);
+	                                                 params.mpi_comm_freq,
+	                                                 params.src->n_frames);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
 	this->monitor_red = new Monitor_reduction<B>(params.src->K,
@@ -215,7 +215,7 @@ void BFER<B,R,Q>
 		{
 			if (!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs
 #ifdef ENABLE_MPI
-			    && simu_params->mpi_rank == 0
+			    && params.mpi_rank == 0
 #endif
 			    )
 				terminal->legend(std::cout);
@@ -250,7 +250,7 @@ void BFER<B,R,Q>
 
 			if (!params.ter->disabled && !params.benchs && terminal != nullptr
 #ifdef ENABLE_MPI
-				 && params.sim->mpi_rank == 0
+				 && params.mpi_rank == 0
 #endif
 			   )
 			{
@@ -280,7 +280,7 @@ void BFER<B,R,Q>
 
 	if (params.time_report && !params.benchs
 #ifdef ENABLE_MPI
-	    && params.sim->mpi_rank == 0
+	    && params.mpi_rank == 0
 #endif
 	   )
 		time_report();

@@ -157,7 +157,7 @@ void Launcher::launch()
 	{
 		// print the warnings
 #ifdef ENABLE_MPI
-		if (simu_params->mpi_rank == 0)
+		if (this->params->mpi_rank == 0)
 #endif
 			for (unsigned w = 0; w < cmd_warn.size(); w++)
 				std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
@@ -166,7 +166,7 @@ void Launcher::launch()
 
 	// write the command and he curve name in the PyBER format
 #ifdef ENABLE_MPI
-	if (!params_sim->pyber.empty() && params_sim->mpi_rank == 0)
+	if (!this->params->pyber.empty() && this->params->mpi_rank == 0)
 #else
 	if (!this->params->pyber.empty())
 #endif
@@ -178,13 +178,13 @@ void Launcher::launch()
 	}
 
 #ifdef ENABLE_MPI
-	if (simu_params->mpi_rank == 0)
+	if (this->params->mpi_rank == 0)
 #endif
 		this->print_header();
 
 	// print the warnings
 #ifdef ENABLE_MPI
-	if (simu_params->mpi_rank == 0)
+	if (this->params->mpi_rank == 0)
 #endif
 		for (unsigned w = 0; w < cmd_warn.size(); w++)
 			std::clog << tools::format_warning(cmd_warn[w]) << std::endl;
@@ -202,7 +202,7 @@ void Launcher::launch()
 	{
 		// launch the simulation
 #ifdef ENABLE_MPI
-	if (simu_params->mpi_rank == 0)
+	if (this->params->mpi_rank == 0)
 #endif
 			stream << "# " << "The simulation is running..." << std::endl;
 
@@ -217,7 +217,7 @@ void Launcher::launch()
 	}
 
 #ifdef ENABLE_MPI
-	if (simu_params->mpi_rank == 0)
+	if (this->params->mpi_rank == 0)
 #endif
 		stream << "# End of the simulation." << std::endl;
 
