@@ -175,6 +175,8 @@ Interleaver<int>* BFER_std<B,R,Q>
 
 			itl = factory::Interleaver::build(params_itl);
 		}
+		else
+			throw;
 	}
 
 	return itl;

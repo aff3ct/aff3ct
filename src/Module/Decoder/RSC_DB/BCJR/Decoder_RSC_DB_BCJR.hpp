@@ -5,15 +5,13 @@
 #include <string>
 #include <mipp.h>
 
-#include "Tools/Math/max.h"
-
 #include "../../Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float, tools::proto_max<R> MAX = tools::max>
+template <typename B = int, typename R = float>
 class Decoder_RSC_DB_BCJR : public Decoder_SISO<B,R>
 {
 protected:
@@ -46,11 +44,10 @@ protected:
 	virtual void _soft_decode     (const R *sys, const R *par, R *ext, const int frame_id);
 	        void __init_alpha_beta(                                                      );
 	        void __save_alpha_beta(                                                      );
-	virtual void __fwd_recursion  (const R *sys, const R *par                            );
-	virtual void __bwd_recursion  (const R *sys, const R *par, R* ext                    );
+	virtual void __fwd_recursion  (const R *sys, const R *par                            ) = 0;
+	virtual void __bwd_recursion  (const R *sys, const R *par, R* ext                    ) = 0;
 };
 }
 }
-#include "Decoder_RSC_DB_BCJR.hxx"
 
 #endif /* DECODER_RSC_DB_BCJR_HPP_ */

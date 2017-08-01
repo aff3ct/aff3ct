@@ -21,7 +21,7 @@ Decoder_RSC_DB_BCJR_DVB1<B,R,MAX>
                            const bool buffered_encoding,
                            const int n_frames,
                            const std::string name)
-: Decoder_RSC_DB_BCJR<B,R, MAX>(K, trellis, buffered_encoding, n_frames, name)
+: Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 	if (this->n_states != 8)
 	{

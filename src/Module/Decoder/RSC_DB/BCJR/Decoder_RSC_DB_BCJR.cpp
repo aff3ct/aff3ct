@@ -8,12 +8,11 @@
 
 #include "Decoder_RSC_DB_BCJR.hpp"
 
-namespace aff3ct
-{
-namespace module
-{
-template <typename B, typename R, tools::proto_max<R> MAX>
-Decoder_RSC_DB_BCJR<B,R,MAX>
+using namespace aff3ct;
+using namespace aff3ct::module;
+
+template <typename B, typename R>
+Decoder_RSC_DB_BCJR<B,R>
 ::Decoder_RSC_DB_BCJR(const int K,
                       const std::vector<std::vector<int>> &trellis,
                       const bool buffered_encoding,
@@ -42,14 +41,14 @@ Decoder_RSC_DB_BCJR<B,R,MAX>
 	}
 }
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+Decoder_RSC_DB_BCJR<B,R>
 ::~Decoder_RSC_DB_BCJR()
 {
 }
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::_load(const R *Y_N)
 {
 	notify_new_frame();
@@ -65,7 +64,7 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 			sys[4*i + 2] = -a + b;
 			sys[4*i + 3] = -a - b;
 		}
-		for(auto i=0; i<this->K; i++)
+		for (auto i = 0; i < this->K; i++)
 			par[i] = tools::div2(Y_N[this->K + i]);
 	}
 	else
@@ -86,8 +85,8 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 }
 
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -114,16 +113,16 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 	this->d_store_total += d_store;
 }
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::_store(B *V_K) const
 {
 	std::copy(s.begin(), s.begin() + this->K, V_K);
 }
 
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	__init_alpha_beta();
@@ -132,8 +131,8 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 	__save_alpha_beta();
 }
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::__init_alpha_beta()
 {
 	for (auto s = 0; s<n_states; s++)
@@ -143,8 +142,8 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 	}
 }
 
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::__save_alpha_beta()
 {
 	for (auto s = 0; s < n_states; s++)
@@ -154,81 +153,8 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 	}
 }
 
-
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
-::__fwd_recursion(const R *sys, const R *par)
-{
-	for (auto k = 0; k < this->K/2; k++)
-	{
-		for (auto s = 0; s < n_states; s++)
-		{
-			int s0 = trellis[1][s*4 + 0];
-			int s1 = trellis[1][s*4 + 1];
-			int s2 = trellis[1][s*4 + 2];
-			int s3 = trellis[1][s*4 + 3];
-
-			R y = par[2*k  ];
-			R w = par[2*k+1];
-
-			R p0 = trellis[2][s0*4+0]*y + trellis[3][s0*4+0]*w;
-			R p1 = trellis[2][s1*4+1]*y + trellis[3][s1*4+1]*w;
-			R p2 = trellis[2][s2*4+2]*y + trellis[3][s2*4+2]*w;
-			R p3 = trellis[2][s3*4+3]*y + trellis[3][s3*4+3]*w;
-
-			gamma[k][4*s0 + 0] = p0 + sys[4*k + 0];
-			gamma[k][4*s1 + 1] = p1 + sys[4*k + 1];
-			gamma[k][4*s2 + 2] = p2 + sys[4*k + 2];
-			gamma[k][4*s3 + 3] = p3 + sys[4*k + 3];
-
-			alpha[k+1][s] = MAX(MAX(alpha[k][s0] + gamma[k][4*s0 + 0],
-			                        alpha[k][s1] + gamma[k][4*s1 + 1]),
-			                    MAX(alpha[k][s2] + gamma[k][4*s2 + 2],
-			                        alpha[k][s3] + gamma[k][4*s3 + 3]));
-		}
-	}
-}
-
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
-::__bwd_recursion(const R *sys, const R *par, R* ext)
-{
-	for (auto k = this->K/2 - 1; k >= 0; k--)
-	{
-		for (auto s = 0; s < n_states; s++)
-		{
-			beta[k][s] = MAX(MAX(beta[k+1][trellis[0][4*s + 0]] + gamma[k][4*s + 0],
-			                     beta[k+1][trellis[0][4*s + 1]] + gamma[k][4*s + 1]),
-			                 MAX(beta[k+1][trellis[0][4*s + 2]] + gamma[k][4*s + 2],
-			                     beta[k+1][trellis[0][4*s + 3]] + gamma[k][4*s + 3]));
-		}
-
-		R norm = beta[k][0];
-		for (auto s = 0; s < n_states; s++)
-			beta[k][s] -= norm;
-
-		R post0 = std::numeric_limits<R>::lowest();
-		R post1 = std::numeric_limits<R>::lowest();
-		R post2 = std::numeric_limits<R>::lowest();
-		R post3 = std::numeric_limits<R>::lowest();
-
-		for (auto s = 0; s < n_states; s++)
-		{
-			post0 = MAX(post0, alpha[k][s] + gamma[k][4*s + 0] + beta[k+1][trellis[0][4*s + 0]]);
-			post1 = MAX(post1, alpha[k][s] + gamma[k][4*s + 1] + beta[k+1][trellis[0][4*s + 1]]);
-			post2 = MAX(post2, alpha[k][s] + gamma[k][4*s + 2] + beta[k+1][trellis[0][4*s + 2]]);
-			post3 = MAX(post3, alpha[k][s] + gamma[k][4*s + 3] + beta[k+1][trellis[0][4*s + 3]]);
-		}
-
-		ext[4*k + 0] = post0 - sys[4*k + 0];
-		ext[4*k + 1] = post1 - sys[4*k + 1];
-		ext[4*k + 2] = post2 - sys[4*k + 2];
-		ext[4*k + 3] = post3 - sys[4*k + 3];
-	}
-}
-
-template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR<B,R,MAX>
+template <typename B, typename R>
+void Decoder_RSC_DB_BCJR<B,R>
 ::notify_new_frame()
 {
 	for (auto s = 0; s < n_states; s++)
@@ -237,5 +163,15 @@ void Decoder_RSC_DB_BCJR<B,R,MAX>
 		beta_mp [s] = (R)0;
 	}
 }
-}
-}
+
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template class aff3ct::module::Decoder_RSC_DB_BCJR<B_8,Q_8>;
+template class aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>;
+template class aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>;
+template class aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>;
+#else
+template class aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>;
+#endif
+// ==================================================================================== explicit template instantiation

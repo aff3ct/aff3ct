@@ -4,6 +4,8 @@
 #include "Module/Interleaver/Row_column/Interleaver_row_column.hpp"
 #include "Module/Interleaver/LTE/Interleaver_LTE.hpp"
 #include "Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp"
+#include "Module/Interleaver/ARP/Interleaver_ARP_DVB1.hpp"
+#include "Module/Interleaver/ARP/Interleaver_ARP_DVB2.hpp"
 #include "Module/Interleaver/NO/Interleaver_NO.hpp"
 #include "Module/Interleaver/Golden/Interleaver_golden.hpp"
 #include "Module/Interleaver/Random/Interleaver_random.hpp"
@@ -21,14 +23,16 @@ template <typename T>
 module::Interleaver<T>* Interleaver
 ::build(const parameters &params)
 {
-	     if (params.type == "LTE"     ) return new module::Interleaver_LTE          <T>(params.size,                                             params.n_frames);
-	else if (params.type == "CCSDS"   ) return new module::Interleaver_CCSDS        <T>(params.size,                                             params.n_frames);
-	else if (params.type == "RANDOM"  ) return new module::Interleaver_random       <T>(params.size,                params.seed, params.uniform, params.n_frames);
-	else if (params.type == "RAND_COL") return new module::Interleaver_random_column<T>(params.size, params.n_cols, params.seed, params.uniform, params.n_frames);
-	else if (params.type == "ROW_COL" ) return new module::Interleaver_row_column   <T>(params.size, params.n_cols,                              params.n_frames);
-	else if (params.type == "GOLDEN"  ) return new module::Interleaver_golden       <T>(params.size,                params.seed, params.uniform, params.n_frames);
-	else if (params.type == "USER"    ) return new module::Interleaver_user         <T>(params.size, params.path,                                params.n_frames);
-	else if (params.type == "NO"      ) return new module::Interleaver_NO           <T>(params.size,                                             params.n_frames);
+	     if (params.type == "LTE"      ) return new module::Interleaver_LTE          <T>(params.size,                                             params.n_frames);
+	else if (params.type == "CCSDS"    ) return new module::Interleaver_CCSDS        <T>(params.size,                                             params.n_frames);
+	else if (params.type == "ARP_DVBS1") return new module::Interleaver_ARP_DVB1     <T>(params.size,                                             params.n_frames);
+	else if (params.type == "ARP_DVBS2") return new module::Interleaver_ARP_DVB2     <T>(params.size,                                             params.n_frames);
+	else if (params.type == "RANDOM"   ) return new module::Interleaver_random       <T>(params.size,                params.seed, params.uniform, params.n_frames);
+	else if (params.type == "RAND_COL" ) return new module::Interleaver_random_column<T>(params.size, params.n_cols, params.seed, params.uniform, params.n_frames);
+	else if (params.type == "ROW_COL"  ) return new module::Interleaver_row_column   <T>(params.size, params.n_cols,                              params.n_frames);
+	else if (params.type == "GOLDEN"   ) return new module::Interleaver_golden       <T>(params.size,                params.seed, params.uniform, params.n_frames);
+	else if (params.type == "USER"     ) return new module::Interleaver_user         <T>(params.size, params.path,                                params.n_frames);
+	else if (params.type == "NO"       ) return new module::Interleaver_NO           <T>(params.size,                                             params.n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -47,7 +51,7 @@ void Interleaver
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "specify the type of the interleaver.",
-		 "LTE, CCSDS, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
+		 "LTE, CCSDS, ARP_DVBS1, ARP_DVBS2, RANDOM, GOLDEN, USER, RAND_COL, ROW_COL, NO"};
 
 	opt_args[{p+"-path"}] =
 		{"string",

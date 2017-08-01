@@ -6,6 +6,7 @@
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_vec.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_array.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_constant.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor_adaptive.hpp"
 
 #include "Scaling_factor.hpp"
 
@@ -19,10 +20,11 @@ template<typename B, typename Q>
 tools::Scaling_factor<B,Q>* Scaling_factor
 ::build(const parameters& params)
 {
-	     if (params.type == "CST"    ) return new tools::Scaling_factor_constant<B,Q>(params.n_ite, params.cst        );
-	else if (params.type == "LTE_VEC") return new tools::Scaling_factor_vec     <B,Q>(params.n_ite                    );
-	else if (params.type == "LTE"    ) return new tools::Scaling_factor_seq     <B,Q>(params.n_ite                    );
-	else if (params.type == "ARRAY"  ) return new tools::Scaling_factor_array   <B,Q>(params.n_ite, params.alpha_array);
+	     if (params.type == "CST"     ) return new tools::Scaling_factor_constant<B,Q>(params.n_ite, params.cst        );
+	else if (params.type == "LTE_VEC" ) return new tools::Scaling_factor_vec     <B,Q>(params.n_ite                    );
+	else if (params.type == "LTE"     ) return new tools::Scaling_factor_seq     <B,Q>(params.n_ite                    );
+	else if (params.type == "ARRAY"   ) return new tools::Scaling_factor_array   <B,Q>(params.n_ite, params.alpha_array);
+	else if (params.type == "ADAPTIVE") return new tools::Scaling_factor_adaptive<B,Q>(params.n_ite                    );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -33,7 +35,7 @@ void Scaling_factor
 	opt_args[{p+"-type"}] =
 		{"string",
 		 "scaling factor type.",
-		 "CST, LTE, LTE_VEC, ARRAY"};
+		 "CST, LTE, LTE_VEC, ARRAY, ADAPTIVE"};
 
 	opt_args[{p+"-ite"}] =
 		{"positive_int",

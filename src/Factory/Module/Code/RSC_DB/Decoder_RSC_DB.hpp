@@ -8,7 +8,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 
 #include "../Decoder.hpp"
 
@@ -30,7 +30,7 @@ struct Decoder_RSC_DB : public Decoder
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO<B,Q>* build(const parameters &dec_par, const std::vector<std::vector<int>> &trellis);
+	static module::Decoder_RSC_DB_BCJR<B,Q>* build(const parameters &dec_par, const std::vector<std::vector<int>> &trellis);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
@@ -38,7 +38,7 @@ struct Decoder_RSC_DB : public Decoder
 
 private:
 	template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
-	static module::Decoder_SISO<B,Q>* _build(const parameters &dec_par, const std::vector<std::vector<int>> &trellis);
+	static module::Decoder_RSC_DB_BCJR<B,Q>* _build(const parameters &dec_par, const std::vector<std::vector<int>> &trellis);
 };
 }
 }

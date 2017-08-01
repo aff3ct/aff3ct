@@ -18,6 +18,8 @@ struct Flip_and_check : public Factory
 
 	struct parameters
 	{
+		virtual ~parameters() {}
+
 		int  size                = -1;
 
 		bool enable              = false;

@@ -17,6 +17,8 @@ struct Terminal : Factory
 
 	struct parameters
 	{
+		virtual ~parameters() {}
+
 		std::chrono::milliseconds frequency = std::chrono::milliseconds(500);
 		bool                      disabled  = false;
 	};

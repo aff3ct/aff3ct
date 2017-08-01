@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_generic.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB1.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB2.hpp"
 
@@ -13,21 +13,21 @@ const std::string aff3ct::factory::Decoder_RSC_DB::name   = "Decoder RSC DB";
 const std::string aff3ct::factory::Decoder_RSC_DB::prefix = "dec";
 
 template <typename B, typename Q, tools::proto_max<Q> MAX>
-module::Decoder_SISO<B,Q>* Decoder_RSC_DB
+module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
 ::_build(const parameters &dec_par, const std::vector<std::vector<int>> &trellis)
 {
 	if (dec_par.type == "BCJR")
 	{
-		if (dec_par.implem == "GENERIC" ) return new module::Decoder_RSC_DB_BCJR     <B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
-		if (dec_par.implem == "DVB-RCS1") return new module::Decoder_RSC_DB_BCJR_DVB1<B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
-		if (dec_par.implem == "DVB-RCS2") return new module::Decoder_RSC_DB_BCJR_DVB2<B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
+		if (dec_par.implem == "GENERIC" ) return new module::Decoder_RSC_DB_BCJR_generic<B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
+		if (dec_par.implem == "DVB-RCS1") return new module::Decoder_RSC_DB_BCJR_DVB1   <B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
+		if (dec_par.implem == "DVB-RCS2") return new module::Decoder_RSC_DB_BCJR_DVB2   <B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
-module::Decoder_SISO<B,Q>* Decoder_RSC_DB
+module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
 ::build(const parameters &dec_par, const std::vector<std::vector<int>> &trellis)
 {
 	     if (dec_par.max == "MAX" ) return _build<B,Q,tools::max       <Q>>(dec_par, trellis);
@@ -88,11 +88,11 @@ void Decoder_RSC_DB
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
-template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
-template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
-template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC_DB::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>* aff3ct::factory::Decoder_RSC_DB::build<B_16,Q_16>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>* aff3ct::factory::Decoder_RSC_DB::build<B_32,Q_32>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>* aff3ct::factory::Decoder_RSC_DB::build<B_64,Q_64>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
 #else
-template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::factory::Decoder_RSC_DB::build<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
+template aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>* aff3ct::factory::Decoder_RSC_DB::build<B,Q>(const aff3ct::factory::Decoder_RSC_DB::parameters&, const std::vector<std::vector<int>>&);
 #endif
 // ==================================================================================== explicit template instantiation

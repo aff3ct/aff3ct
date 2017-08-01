@@ -12,7 +12,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, tools::proto_max<R> MAX = tools::max>
-class Decoder_RSC_DB_BCJR_DVB1 : public Decoder_RSC_DB_BCJR<B,R,MAX>
+class Decoder_RSC_DB_BCJR_DVB1 : public Decoder_RSC_DB_BCJR<B,R>
 {
 public:
 	Decoder_RSC_DB_BCJR_DVB1(const int K,
