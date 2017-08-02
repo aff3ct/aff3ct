@@ -20,15 +20,15 @@ public:
 	                   const int& N,
 	                   const int& n_ite,
 	                   const Interleaver<int> &pi,
-	                   SISO<R> &siso_n,
-	                   SISO<R> &siso_i,
+	                   Decoder_SISO<R> &siso_n,
+	                   Decoder_SISO<R> &siso_i,
 	                   const bool buffered_encoding = true,
 	                   const std::string name = "Decoder_turbo_fast");
 	virtual ~Decoder_turbo_fast();
 
 protected:
 	void _load       (const R *Y_N,         const int frame_id);
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	void _store      (              B *V_K                    ) const;
 };
 }

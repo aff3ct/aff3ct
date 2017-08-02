@@ -28,7 +28,7 @@ Encoder<B>* Codec_BCH<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_BCH<B,Q>
+Decoder_SIHO<B,Q>* Codec_BCH<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return factory::Decoder_BCH::build<B,Q>(dec_par, GF);

@@ -23,9 +23,9 @@ public:
 
 	virtual ~Codec_repetition();
 
-	module::Encoder<B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                             module::CRC        <B  >* crc = nullptr);
+	module::Encoder     <B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);
+	module::Decoder_SIHO<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                  module::CRC        <B  >* crc = nullptr);
 };
 }
 }

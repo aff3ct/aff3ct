@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 #include "../Decoder.hpp"
 
@@ -17,7 +17,7 @@ struct Decoder_NO : public Decoder
 	static const std::string prefix;
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO<B,Q>* build(const parameters &params);
+	static module::Decoder_SISO_SIHO<B,Q>* build(const parameters &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

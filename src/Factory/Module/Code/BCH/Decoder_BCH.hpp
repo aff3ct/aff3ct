@@ -4,8 +4,8 @@
 #include <string>
 #include <cmath>
 
-#include "Module/Decoder/Decoder.hpp"
-#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Tools/Math/Galois.hpp"
 
 #include "../Decoder.hpp"
@@ -28,7 +28,7 @@ struct Decoder_BCH : public Decoder
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder<B,Q>* build(const parameters &params, const tools::Galois &GF);
+	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::Galois &GF);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

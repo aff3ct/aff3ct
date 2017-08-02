@@ -4,7 +4,7 @@
 #include <string>
 #include <mipp.h>
 
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/CRC/CRC.hpp"
 
 #include "Decoder_polar.hpp"
@@ -19,9 +19,9 @@ struct Decoder_polar_gen : public Decoder_polar
 	static const std::string prefix;
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder<B,Q>* build(const parameters      &params,
-	                                   const mipp::vector<B> &frozen_bits,
-	                                         module::CRC<B>  *crc = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters      &params,
+	                                        const mipp::vector<B> &frozen_bits,
+	                                              module::CRC<B>  *crc = nullptr);
 
 	template <typename B>
 	static void get_frozen_bits(const std::string      implem,
@@ -34,9 +34,9 @@ struct Decoder_polar_gen : public Decoder_polar
 
 private:
 	template <typename B = int, typename Q = float, class API_polar>
-	static module::Decoder<B,Q>* _build(const parameters      &params,
-	                                    const mipp::vector<B> &frozen_bits,
-	                                          module::CRC<B>  *crc = nullptr);
+	static module::Decoder_SIHO<B,Q>* _build(const parameters      &params,
+	                                         const mipp::vector<B> &frozen_bits,
+	                                               module::CRC<B>  *crc = nullptr);
 };
 }
 }

@@ -16,16 +16,16 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames, const std::string name)
 
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name ),
-  n_ite            (n_ite                   ),
-  H                (H                       ),
-  enable_syndrome  (enable_syndrome         ),
-  syndrome_depth   (syndrome_depth          ),
-  info_bits_pos    (info_bits_pos           ),
-  HY_N             (N                       ),
-  V_N              (N                       ),
-  C_to_V_messages  (H.get_n_connections(), 0),
-  V_to_C_messages  (H.get_n_connections(), 0)
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name ),
+  n_ite                 (n_ite                   ),
+  H                     (H                       ),
+  enable_syndrome       (enable_syndrome         ),
+  syndrome_depth        (syndrome_depth          ),
+  info_bits_pos         (info_bits_pos           ),
+  HY_N                  (N                       ),
+  V_N                   (N                       ),
+  C_to_V_messages       (H.get_n_connections(), 0),
+  V_to_C_messages       (H.get_n_connections(), 0)
 {
 	if (n_ite <= 0)
 	{
@@ -91,7 +91,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	for (auto i = 0; i < this->N; i++)

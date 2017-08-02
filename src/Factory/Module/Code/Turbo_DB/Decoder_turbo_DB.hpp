@@ -6,7 +6,6 @@
 
 #include "Module/Decoder/RSC_DB/BCJR//Decoder_RSC_DB_BCJR.hpp"
 #include "Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
-#include "Module/Decoder/SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "Factory/Module/Interleaver.hpp"

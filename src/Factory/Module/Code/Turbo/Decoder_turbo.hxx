@@ -13,8 +13,8 @@ template <typename B, typename Q, class D1, class D2>
 module::Decoder_turbo<B,Q>* Decoder_turbo
 ::build(const parameters<D1,D2>        &params,
         const module::Interleaver<int> &itl,
-              module::SISO<Q>          &siso_n,
-              module::SISO<Q>          &siso_i)
+              module::Decoder_SISO<Q>  &siso_n,
+              module::Decoder_SISO<Q>  &siso_i)
 {
 	if (params.type == "TURBO")
 	{

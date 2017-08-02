@@ -226,7 +226,7 @@ Coset<B,Q>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Decoder<B,Q>* BFER_std<B,R,Q>
+Decoder_SIHO<B,Q>* BFER_std<B,R,Q>
 ::build_decoder(const int tid)
 {
 	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);

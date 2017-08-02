@@ -8,7 +8,7 @@
 
 #include "Tools/Math/max.h"
 
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 #include "../Decoder.hpp"
 
@@ -33,10 +33,10 @@ struct Decoder_RSC : public Decoder
 	};
 
 	template <typename B = int, typename Q = float, typename QD = Q>
-	static module::Decoder_SISO<B,Q>* build(const parameters                    &dec_par,
-	                                        const std::vector<std::vector<int>> &trellis,
-	                                              std::ostream                  &stream = std::cout,
-	                                        const int                            n_ite  = 1);
+	static module::Decoder_SISO_SIHO<B,Q>* build(const parameters                    &dec_par,
+	                                             const std::vector<std::vector<int>> &trellis,
+	                                                   std::ostream                  &stream = std::cout,
+	                                             const int                            n_ite  = 1);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
@@ -44,15 +44,15 @@ struct Decoder_RSC : public Decoder
 
 private:
 	template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
-	static module::Decoder_SISO<B,Q>* _build_seq(const parameters                    &dec_par,
-	                                             const std::vector<std::vector<int>> &trellis,
-	                                                   std::ostream                  &stream = std::cout,
-	                                             const int                            n_ite  = 1);
+	static module::Decoder_SISO_SIHO<B,Q>* _build_seq(const parameters                    &dec_par,
+	                                                  const std::vector<std::vector<int>> &trellis,
+	                                                        std::ostream                  &stream = std::cout,
+	                                                  const int                            n_ite  = 1);
 
 
 	template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max_i<Q> MAX>
-	static module::Decoder_SISO<B,Q>* _build_simd(const parameters                    &dec_par,
-	                                              const std::vector<std::vector<int>> &trellis);
+	static module::Decoder_SISO_SIHO<B,Q>* _build_simd(const parameters                    &dec_par,
+	                                                   const std::vector<std::vector<int>> &trellis);
 };
 }
 }

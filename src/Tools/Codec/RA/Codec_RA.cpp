@@ -42,7 +42,7 @@ Encoder<B>* Codec_RA<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_RA<B,Q>
+Decoder_SIHO<B,Q>* Codec_RA<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (itl == nullptr)

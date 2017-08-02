@@ -213,7 +213,7 @@ void EXIT<B,R>
 			sys[k] += La_K2[k];
 
 		// decode
-		siso->soft_decode(sys, par, Le_K);
+		siso->decode_siso(sys, par, Le_K);
 
 		// store B_K, La_K and Le_K in buffers (add current B and L to the buffers)
 		B_buff .insert(B_buff .end(), B_K  .begin(), B_K  .end());
@@ -465,7 +465,7 @@ Channel<R>* EXIT<B,R>
 }
 
 template <typename B, typename R>
-SISO<R>* EXIT<B,R>
+Decoder_SISO<R>* EXIT<B,R>
 ::build_siso()
 {
 	return this->codec.build_siso();

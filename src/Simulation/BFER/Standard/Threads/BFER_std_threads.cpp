@@ -260,7 +260,7 @@ void BFER_std_threads<B,R,Q>
 
 		// launch decoder
 		auto t_decod = steady_clock::now();
-		this->decoder[tid]->hard_decode(this->Y_N5[tid], this->V_K1[tid]);
+		this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
 		this->durations[tid][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
 		this->durations[tid][std::make_pair(12, "- load"  )] += this->decoder[tid]->get_load_duration();
 		this->durations[tid][std::make_pair(13, "- decode")] += this->decoder[tid]->get_decode_duration();
@@ -297,7 +297,7 @@ void BFER_std_threads<B,R,Q>
 
 	this->barrier(tid);
 	for (auto i = 0; i < this->params.benchs; i++)
-		this->decoder[tid]->hard_decode(this->Y_N5[tid], this->V_K1[tid]);
+		this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
 	this->barrier(tid);
 
 	auto t_stop = std::chrono::steady_clock::now(); // stop time

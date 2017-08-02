@@ -25,8 +25,8 @@ public:
 	virtual ~Decoder_RSC_DB_BCJR_generic();
 
 protected:
-	virtual void __fwd_recursion  (const R *sys, const R *par        );
-	virtual void __bwd_recursion  (const R *sys, const R *par, R* ext);
+	virtual void __fwd_recursion(const R *sys, const R *par        );
+	virtual void __bwd_recursion(const R *sys, const R *par, R* ext);
 };
 }
 }

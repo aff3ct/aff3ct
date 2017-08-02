@@ -20,7 +20,7 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits, 
                           const int n_frames, const std::string name)
-: Decoder<B,R>(K, N, n_frames, 1, name),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
   m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits),
@@ -105,7 +105,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);

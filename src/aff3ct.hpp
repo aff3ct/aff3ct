@@ -172,7 +172,7 @@
 #include <Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp>
 // #include <Module/Channel/SC_Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
-#include <Module/Decoder/Decoder.hpp>
+#include <Module/Decoder/Decoder_SIHO.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp>
@@ -211,7 +211,7 @@
 #include <Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra.hpp>
 #include <Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp>
 // #include <Module/Decoder/SPU_SISO.hpp>
-#include <Module/Decoder/SISO.hpp>
+#include <Module/Decoder/Decoder_SISO.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition_fast.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition_std.hpp>
 #include <Module/Decoder/Repetition/Decoder_repetition.hpp>
@@ -227,7 +227,7 @@
 #include <Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_sum_product.hpp>
 #include <Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp>
 #include <Module/Decoder/BCH/Decoder_BCH.hpp>
-#include <Module/Decoder/Decoder_SISO.hpp>
+#include <Module/Decoder/Decoder_SISO_SIHO.hpp>
 #include <Module/Decoder/NO/Decoder_NO.hpp>
 #include <Module/Decoder/RA/Decoder_RA.hpp>
 // #include <Module/Decoder/SC_Decoder.hpp>

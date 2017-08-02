@@ -5,8 +5,8 @@
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
  */
-#ifndef DECODER_HPP_
-#define DECODER_HPP_
+#ifndef DECODER_SIHO_HPP_
+#define DECODER_SIHO_HPP_
 
 #include <chrono>
 #include <string>
@@ -23,7 +23,7 @@ namespace aff3ct
 namespace module
 {
 /*!
- * \class Decoder_i
+ * \class Decoder_SIHO_i
  *
  * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
  *
@@ -31,10 +31,10 @@ namespace module
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_i).
+ * Please use Decoder for inheritance (instead of Decoder_SIHO_i).
  */
 template <typename B = int, typename R = float>
-class Decoder_i : public Module
+class Decoder_SIHO_i : public Module
 {
 private:
 	const int n_inter_frame_rest;
@@ -62,8 +62,8 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
-	Decoder_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	          std::string name = "Decoder_i")
+	Decoder_SIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	          std::string name = "Decoder_SIHO_i")
 	: Module(n_frames, name),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  Y_N(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
@@ -106,7 +106,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_i()
+	virtual ~Decoder_SIHO_i()
 	{
 	}
 
@@ -141,7 +141,7 @@ public:
 	 * \param Y_N: a noisy frame.
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
-	void hard_decode(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
+	void decode_siho(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{
@@ -159,10 +159,10 @@ public:
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->hard_decode(Y_N.data(), V_K.data());
+		this->decode_siho(Y_N.data(), V_K.data());
 	}
 
-	virtual void hard_decode(const R *Y_N, B *V_K)
+	virtual void decode_siho(const R *Y_N, B *V_K)
 	{
 		this->d_load_total  = std::chrono::nanoseconds(0);
 		this->d_decod_total = std::chrono::nanoseconds(0);
@@ -170,12 +170,12 @@ public:
 
 		auto w = 0;
 		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_hard_decode(Y_N + w * this->N * this->simd_inter_frame_level,
+			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * simd_inter_frame_level);
 
 		if (this->n_inter_frame_rest == 0)
-			this->_hard_decode(Y_N + w * this->N * this->simd_inter_frame_level,
+			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * simd_inter_frame_level);
 		else
@@ -185,7 +185,7 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_hard_decode(this->Y_N.data(), this->V_K.data(), w * simd_inter_frame_level);
+			this->_decode_siho(this->Y_N.data(), this->V_K.data(), w * simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
 			std::copy(this->V_K.begin(),
@@ -225,7 +225,7 @@ public:
 	}
 
 protected:
-	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id)
+	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
@@ -233,6 +233,6 @@ protected:
 }
 }
 
-#include "SC_Decoder.hpp"
+#include "SC_Decoder_SIHO.hpp"
 
-#endif /* DECODER_HPP_ */
+#endif /* DECODER_SIHO_HPP_ */

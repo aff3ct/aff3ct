@@ -3,8 +3,7 @@
 
 #include <string>
 
-#include "Module/Decoder/Decoder.hpp"
-#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 #include "../Decoder.hpp"
 
@@ -25,7 +24,7 @@ struct Decoder_repetition : public Decoder
 	};
 
 	template <typename B = int, typename R = float>
-	static module::Decoder<B,R>* build(const parameters &params);
+	static module::Decoder_SIHO<B,R>* build(const parameters &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

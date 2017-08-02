@@ -5,14 +5,14 @@
 #include <string>
 #include <mipp.h>
 
-#include "../../Decoder_SISO.hpp"
+#include "../../Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_RSC_DB_BCJR : public Decoder_SISO<B,R>
+class Decoder_RSC_DB_BCJR : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int  n_states;
@@ -40,8 +40,8 @@ public:
 protected:
 	virtual void _load            (const R *Y_N                                          );
 	virtual void _store           (              B *V_K                                  ) const;
-	virtual void _hard_decode     (const R *Y_N, B *V_K,               const int frame_id);
-	virtual void _soft_decode     (const R *sys, const R *par, R *ext, const int frame_id);
+	virtual void _decode_siho     (const R *Y_N, B *V_K,               const int frame_id);
+	virtual void _decode_siso     (const R *sys, const R *par, R *ext, const int frame_id);
 	        void __init_alpha_beta(                                                      );
 	        void __save_alpha_beta(                                                      );
 	virtual void __fwd_recursion  (const R *sys, const R *par                            ) = 0;

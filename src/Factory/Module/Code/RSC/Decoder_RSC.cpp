@@ -27,7 +27,7 @@ const std::string aff3ct::factory::Decoder_RSC::name   = "Decoder RSC";
 const std::string aff3ct::factory::Decoder_RSC::prefix = "dec";
 
 template <typename B, typename Q, typename QD, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
-module::Decoder_SISO<B,Q>* Decoder_RSC
+module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC
 ::_build_seq(const parameters                    &dec_par,
              const std::vector<std::vector<int>> &trellis,
                    std::ostream                  &stream,
@@ -47,7 +47,7 @@ module::Decoder_SISO<B,Q>* Decoder_RSC
 }
 
 template <typename B, typename Q, typename QD, tools::proto_max_i<Q> MAX>
-module::Decoder_SISO<B,Q>* Decoder_RSC
+module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC
 ::_build_simd(const parameters                    &dec_par,
               const std::vector<std::vector<int>> &trellis)
 {
@@ -96,7 +96,7 @@ module::Decoder_SISO<B,Q>* Decoder_RSC
 }
 
 template <typename B, typename Q, typename QD>
-module::Decoder_SISO<B,Q>* Decoder_RSC
+module::Decoder_SISO_SIHO<B,Q>* Decoder_RSC
 ::build(const parameters                      &dec_par,
         const std::vector<std::vector<int>>   &trellis,
               std::ostream                    &stream,
@@ -216,11 +216,11 @@ void Decoder_RSC
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::build<B_8 ,Q_8 ,QD_8 >(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
-template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::build<B_16,Q_16,QD_16>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
-template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::build<B_32,Q_32,QD_32>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
-template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::build<B_64,Q_64,QD_64>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RSC::build<B_8 ,Q_8 ,QD_8 >(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RSC::build<B_16,Q_16,QD_16>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RSC::build<B_32,Q_32,QD_32>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RSC::build<B_64,Q_64,QD_64>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
 #else
-template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::factory::Decoder_RSC::build<B,Q,QD>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_RSC::build<B,Q,QD>(const aff3ct::factory::Decoder_RSC::parameters&, const std::vector<std::vector<int>>&, std::ostream&, const int);
 #endif
 // ==================================================================================== explicit template instantiation

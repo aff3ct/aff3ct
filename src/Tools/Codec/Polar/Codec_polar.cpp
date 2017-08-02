@@ -113,7 +113,7 @@ Encoder<B>* Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
-SISO<Q>* Codec_polar<B,Q>
+Decoder_SISO<Q>* Codec_polar<B,Q>
 ::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	decoder_siso[tid] = factory::Decoder_polar::build_siso<B,Q>(dec_par, frozen_bits);
@@ -121,7 +121,7 @@ SISO<Q>* Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_polar<B,Q>
+Decoder_SIHO<B,Q>* Codec_polar<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (decoder_siso[tid] != nullptr)

@@ -112,7 +112,7 @@ Decoder_RSC_DB_BCJR<B,Q>* Codec_turbo_DB<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_turbo_DB<B,Q>
+Decoder_SIHO<B,Q>* Codec_turbo_DB<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (itl == nullptr)

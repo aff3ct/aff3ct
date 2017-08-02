@@ -92,7 +92,7 @@ void BFER_ite<B,R,Q>
 		if (siso[i] != nullptr)
 		{
 			// do not delete the siso if the decoder and the siso are the same pointers
-			if (decoder[i] == nullptr || siso[i] != dynamic_cast<SISO<Q>*>(decoder[i]))
+			if (decoder[i] == nullptr || siso[i] != dynamic_cast<Decoder_SISO<Q>*>(decoder[i]))
 				delete siso[i];
 			siso[i] = nullptr;
 		}
@@ -179,7 +179,7 @@ Quantizer<R,Q>* BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-SISO<Q>* BFER_ite<B,R,Q>
+Decoder_SISO<Q>* BFER_ite<B,R,Q>
 ::build_siso(const int tid)
 {
 	return codec_siso.build_siso(tid, interleaver[tid], crc[tid]);
@@ -197,7 +197,7 @@ Coset<B,Q>* BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Decoder<B,Q>* BFER_ite<B,R,Q>
+Decoder_SIHO<B,Q>* BFER_ite<B,R,Q>
 ::build_decoder(const int tid)
 {
 	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);

@@ -6,14 +6,14 @@
 
 #include "Tools/Math/Galois.hpp"
 
-#include "../Decoder.hpp"
+#include "../Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_BCH : public Decoder<B, R>
+class Decoder_BCH : public Decoder_SIHO<B,R>
 {
 private:
 	std::vector<mipp::vector<int>> elp;
@@ -41,7 +41,7 @@ public:
 	virtual ~Decoder_BCH();
 
 protected:
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 };
 }
 }

@@ -26,7 +26,7 @@ Encoder<B>* Codec_repetition<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_repetition<B,Q>
+Decoder_SIHO<B,Q>* Codec_repetition<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return factory::Decoder_repetition::build<B,Q>(dec_par);

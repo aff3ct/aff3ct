@@ -8,7 +8,7 @@
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../../Decoder.hpp"
+#include "../../Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -27,7 +27,7 @@ public:
 };
 
 template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
-class Decoder_polar_SCL_naive : public Decoder<B,R>
+class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>
 {
 protected:
 	const int m;           // graph depth
@@ -48,7 +48,7 @@ public:
 
 protected:
 	        void _load       (const R *Y_N                            );
-	        void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	        void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	virtual void _store      (              B *V_K                    ) const;
 
 private:

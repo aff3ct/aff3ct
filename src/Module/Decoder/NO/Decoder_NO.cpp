@@ -7,7 +7,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int n_frames, const std::string name)
-: Decoder_SISO<B,R>(K, K, n_frames, 1, name)
+: Decoder_SISO_SIHO<B,R>(K, K, n_frames, 1, name)
 {
 }
 
@@ -19,7 +19,21 @@ Decoder_NO<B,R>
 
 template <typename B, typename R>
 void Decoder_NO<B,R>
-::_hard_decode(const R *Y_K, B *V_K, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+{
+	std::copy(sys, sys + this->K, ext);
+}
+
+template <typename B, typename R>
+void Decoder_NO<B,R>
+::_decode_siso(const R *Y_K1, R *Y_K2, const int frame_id)
+{
+	std::copy(Y_K1, Y_K1 + this->K, Y_K2);
+}
+
+template <typename B, typename R>
+void Decoder_NO<B,R>
+::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
 {
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
@@ -35,20 +49,6 @@ void Decoder_NO<B,R>
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_store_total += d_store;
-}
-
-template <typename B, typename R>
-void Decoder_NO<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
-{
-	std::copy(sys, sys + this->K, ext);
-}
-
-template <typename B, typename R>
-void Decoder_NO<B,R>
-::_soft_decode(const R *Y_K1, R *Y_K2, const int frame_id)
-{
-	std::copy(Y_K1, Y_K1 + this->K, Y_K2);
 }
 
 // ==================================================================================== explicit template instantiation 

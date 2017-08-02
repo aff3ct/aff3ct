@@ -7,7 +7,7 @@
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 
 #include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 
 #include "Factory/Module/Code/RSC_DB/Encoder_RSC_DB.hpp"
@@ -49,7 +49,7 @@ public:
 	module::Encoder_RSC_DB     <B  >* build_sub_encoder(const int tid = 0                                               );
 	module::Encoder            <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
 	module::Decoder_RSC_DB_BCJR<B,Q>* build_sub_siso   (const int tid = 0                                               );
-	module::Decoder            <B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	module::Decoder_SIHO       <B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
 	                                                                             module::CRC        <B  >* crc = nullptr);
 
 private:

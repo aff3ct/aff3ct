@@ -25,11 +25,11 @@ protected:
 	virtual ~Decoder_RSC_BCJR_intra();
 
 public:
-	void soft_decode(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
+	void decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
 	                 const int n_frames = -1);
 
 protected:
-	void _soft_decode(const R *sys, const R *par, R *ext, const int frame_id);
+	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

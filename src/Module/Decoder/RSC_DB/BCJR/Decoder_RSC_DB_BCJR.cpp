@@ -18,20 +18,20 @@ Decoder_RSC_DB_BCJR<B,R>
                       const bool buffered_encoding,
                       const int n_frames,
                       const std::string name)
-: Decoder_SISO<B,R>(K, 2 * K, n_frames, 1, name),
-  n_states         ((int)trellis[0].size()/4                 ),
-  n_ff             ((int)std::log2(n_states)                 ),
-  buffered_encoding(buffered_encoding                        ),
-  trellis          (trellis                                  ),
-  sys              (2*K                                      ),
-  par              (  K                                      ),
-  ext              (2*K                                      ),
-  s                (  K                                      ),
-  alpha_mp         (n_states                                 ),
-  beta_mp          (n_states                                 ),
-  alpha            (K/2 + 1, mipp::vector<R>(n_states    , 0)),
-  beta             (K/2 + 1, mipp::vector<R>(n_states    , 0)),
-  gamma            (K/2    , mipp::vector<R>(n_states * 4, 0))
+: Decoder_SISO_SIHO<B,R>(K, 2 * K, n_frames, 1, name              ),
+  n_states              ((int)trellis[0].size()/4                 ),
+  n_ff                  ((int)std::log2(n_states)                 ),
+  buffered_encoding     (buffered_encoding                        ),
+  trellis               (trellis                                  ),
+  sys                   (2*K                                      ),
+  par                   (  K                                      ),
+  ext                   (2*K                                      ),
+  s                     (  K                                      ),
+  alpha_mp              (n_states                                 ),
+  beta_mp               (n_states                                 ),
+  alpha                 (K/2 + 1, mipp::vector<R>(n_states    , 0)),
+  beta                  (K/2 + 1, mipp::vector<R>(n_states    , 0)),
+  gamma                 (K/2    , mipp::vector<R>(n_states * 4, 0))
 {
 	if (!tools::is_power_of_2(n_states))
 	{
@@ -87,14 +87,14 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_DB_BCJR<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_soft_decode(sys.data(), par.data(), ext.data(), frame_id);
+	this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -123,7 +123,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_DB_BCJR<B,R>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	__init_alpha_beta();
 	__fwd_recursion(sys, par);

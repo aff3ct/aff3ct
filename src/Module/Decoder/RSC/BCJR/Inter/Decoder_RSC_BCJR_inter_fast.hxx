@@ -245,7 +245,7 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
-::_soft_decode(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );

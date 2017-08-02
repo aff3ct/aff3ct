@@ -37,14 +37,14 @@ Encoder<B>* Codec_uncoded<B,Q>
 }
 
 template <typename B, typename Q>
-SISO<Q>* Codec_uncoded<B,Q>
+Decoder_SISO<Q>* Codec_uncoded<B,Q>
 ::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }
 
 template <typename B, typename Q>
-Decoder<B,Q>* Codec_uncoded<B,Q>
+Decoder_SIHO<B,Q>* Codec_uncoded<B,Q>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return factory::Decoder_NO::build<B,Q>(this->dec_params);

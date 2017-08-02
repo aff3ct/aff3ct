@@ -19,23 +19,23 @@ Decoder_turbo_DB<B,R>
                    Decoder_RSC_DB_BCJR<B,R> &siso_n,
                    Decoder_RSC_DB_BCJR<B,R> &siso_i,
                    const std::string name)
-: Decoder<B,R>(K, N, siso_n.get_n_frames(), 1, name),
-  n_ite       (n_ite),
-  pi          (pi),
-  siso_n      (siso_n),
-  siso_i      (siso_i),
-  l_cpy       (2 * K),
-  l_sn        (2 * K),
-  l_si        (2 * K),
-  l_sen       (2 * K),
-  l_sei       (2 * K),
-  l_pn        (    K),
-  l_pi        (    K),
-  l_e1n       (2 * K),
-  l_e2n       (2 * K),
-  l_e1i       (2 * K),
-  l_e2i       (2 * K),
-  s           (    K)
+: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1, name),
+  n_ite            (n_ite),
+  pi               (pi),
+  siso_n           (siso_n),
+  siso_i           (siso_i),
+  l_cpy            (2 * K),
+  l_sn             (2 * K),
+  l_si             (2 * K),
+  l_sen            (2 * K),
+  l_sei            (2 * K),
+  l_pn             (    K),
+  l_pi             (    K),
+  l_e1n            (2 * K),
+  l_e2n            (2 * K),
+  l_e1i            (2 * K),
+  l_e2i            (2 * K),
+  s                (    K)
 {
 	if (K % 2)
 	{
@@ -177,7 +177,7 @@ void Decoder_turbo_DB<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -196,7 +196,7 @@ void Decoder_turbo_DB<B,R>
 			this->l_sen[i] = this->l_sn[i] + this->l_e1n[i];
 
 		// SISO in the natural domain
-		this->siso_n.soft_decode(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
 		for (auto cb : this->callbacks_siso_n)
 		{
@@ -222,7 +222,7 @@ void Decoder_turbo_DB<B,R>
 				this->l_sei[i] = this->l_si[i] + this->l_e1i[i];
 
 			// SISO in the interleaved domain
-			this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i.decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
 			for (auto cb : this->callbacks_siso_i)
 			{

@@ -23,22 +23,22 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
                                      const int syndrome_depth,
                                      const int n_frames,
                                      const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                      ),
-  normalize_factor (normalize_factor                                                             ),
-  offset           (offset                                                                       ),
-  contributions    (H.get_cols_max_degree()                                                      ),
-  saturation       ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
-  n_ite            (n_ite                                                                        ),
-  n_C_nodes        ((int)H.get_n_cols()                                                          ),
-  enable_syndrome  (enable_syndrome                                                              ),
-  syndrome_depth   (syndrome_depth                                                               ),
-  init_flag        (true                                                                         ),
-  info_bits_pos    (info_bits_pos                                                                ),
-  H                (H                                                                            ),
-  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
-  branches         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
-  Y_N_reorderered  (N                                                                            ),
-  V_K_reorderered  (K                                                                            )
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::nElReg<R>(), name                                      ),
+  normalize_factor      (normalize_factor                                                             ),
+  offset                (offset                                                                       ),
+  contributions         (H.get_cols_max_degree()                                                      ),
+  saturation            ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(H.get_rows_max_degree()))) -1)),
+  n_ite                 (n_ite                                                                        ),
+  n_C_nodes             ((int)H.get_n_cols()                                                          ),
+  enable_syndrome       (enable_syndrome                                                              ),
+  syndrome_depth        (syndrome_depth                                                               ),
+  init_flag             (true                                                                         ),
+  info_bits_pos         (info_bits_pos                                                                ),
+  H                     (H                                                                            ),
+  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
+  branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
+  Y_N_reorderered       (N                                                                            ),
+  V_K_reorderered       (K                                                                            )
 {
 	if (n_ite <= 0)
 	{
@@ -81,7 +81,31 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
+::_load(const R *Y_N, const int frame_id)
+{
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+
+	// memory zones initialization
+	if (this->init_flag)
+	{
+		const auto zero = mipp::Reg<R>((R)0);
+		std::fill(this->branches [cur_wave].begin(), this->branches [cur_wave].end(), zero);
+		std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
+
+		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
+	}
+
+	std::vector<const R*> frames(mipp::nElReg<R>());
+	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N + f * this->N;
+	Reorderer_static<R,mipp::nElReg<R>()>::apply(frames, (R*)this->Y_N_reorderered.data(), this->N);
+
+	for (auto i = 0; i < (int)var_nodes[cur_wave].size(); i++)
+		this->var_nodes[cur_wave][i] += this->Y_N_reorderered[i]; // var_nodes contain previous extrinsic information
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
@@ -123,31 +147,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_load(const R *Y_N, const int frame_id)
-{
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->branches [cur_wave].begin(), this->branches [cur_wave].end(), zero);
-		std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
-
-		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
-	}
-
-	std::vector<const R*> frames(mipp::nElReg<R>());
-	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N + f * this->N;
-	Reorderer_static<R,mipp::nElReg<R>()>::apply(frames, (R*)this->Y_N_reorderered.data(), this->N);
-
-	for (auto i = 0; i < (int)var_nodes[cur_wave].size(); i++)
-		this->var_nodes[cur_wave][i] += this->Y_N_reorderered[i]; // var_nodes contain previous extrinsic information
-}
-
-template <typename B, typename R>
-void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);

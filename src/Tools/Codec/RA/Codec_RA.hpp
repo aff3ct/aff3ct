@@ -22,10 +22,10 @@ public:
 	         const factory::Decoder_RA::parameters &dec_params);
 	virtual ~Codec_RA();
 
-	module::Interleaver<int>* build_interleaver(const int tid = 0, const int seed = 0);
-	module::Encoder    <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder    <B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                     module::CRC        <B  >* crc = nullptr);
+	module::Interleaver <int>* build_interleaver(const int tid = 0, const int seed = 0);
+	module::Encoder     <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
+	module::Decoder_SIHO<B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                      module::CRC        <B  >* crc = nullptr);
 };
 }
 }

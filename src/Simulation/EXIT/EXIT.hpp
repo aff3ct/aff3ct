@@ -8,7 +8,7 @@
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
-#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 #include "Tools/Display/Terminal/EXIT/Terminal_EXIT.hpp"
 #include "Tools/Codec/Codec_SISO.hpp"
@@ -55,14 +55,14 @@ protected:
 	float snr;
 
 	// communication chain
-	module::Source<B>    *source;
-	module::Encoder<B>   *encoder;
-	module::Modem<B,R,R> *modem;
-	module::Modem<B,R,R> *modem_a;
-	module::Channel<R>   *channel;
-	module::Channel<R>   *channel_a;
-	module::SISO<R>      *siso;
-	tools::Terminal_EXIT *terminal;
+	module::Source<B>       *source;
+	module::Encoder<B>      *encoder;
+	module::Modem<B,R,R>    *modem;
+	module::Modem<B,R,R>    *modem_a;
+	module::Channel<R>      *channel;
+	module::Channel<R>      *channel_a;
+	module::Decoder_SISO<R> *siso;
+	tools::Terminal_EXIT    *terminal;
 
 public:
 	EXIT(const factory::EXIT::parameters& params, tools::Codec_SISO<B,R> &codec);
@@ -80,14 +80,14 @@ private:
 protected:
 	virtual void release_objects  ();
 
-	virtual module::Source<B>*         build_source   (              );
-	virtual module::Encoder<B>*        build_encoder  (              );
-	virtual module::Modem  <B,R,R>*    build_modem    (              );
-	virtual module::Modem  <B,R,R>*    build_modem_a  (              );
-	virtual module::Channel<R>*        build_channel  (const int size);
-	virtual module::Channel<R>*        build_channel_a(const int size);
-	virtual module::SISO<R>*           build_siso     (              );
-	        tools::Terminal_EXIT*      build_terminal (              );
+	virtual module::Source<B>*       build_source   (              );
+	virtual module::Encoder<B>*      build_encoder  (              );
+	virtual module::Modem  <B,R,R>*  build_modem    (              );
+	virtual module::Modem  <B,R,R>*  build_modem_a  (              );
+	virtual module::Channel<R>*      build_channel  (const int size);
+	virtual module::Channel<R>*      build_channel_a(const int size);
+	virtual module::Decoder_SISO<R>* build_siso     (              );
+	        tools::Terminal_EXIT*    build_terminal (              );
 };
 }
 }

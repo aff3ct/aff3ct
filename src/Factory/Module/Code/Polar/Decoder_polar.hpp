@@ -6,8 +6,8 @@
 #include <cmath>
 
 #include "Module/CRC/CRC.hpp"
-#include "Module/Decoder/Decoder_SISO.hpp"
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 #include "../Decoder.hpp"
 
@@ -32,11 +32,11 @@ struct Decoder_polar : public Decoder
 	};
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO<B,Q>* build_siso(const parameters& params, const mipp::vector<B> &frozen_bits);
+	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters& params, const mipp::vector<B> &frozen_bits);
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder<B,Q>* build(const parameters& params, const mipp::vector<B> &frozen_bits,
-	                                   module::CRC<B> *crc = nullptr);
+	static module::Decoder_SIHO<B,Q>* build(const parameters& params, const mipp::vector<B> &frozen_bits,
+	                                        module::CRC<B> *crc = nullptr);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
@@ -44,12 +44,12 @@ struct Decoder_polar : public Decoder
 
 private:
 	template <typename B = int, typename Q = float, class API_polar>
-	static module::Decoder<B,Q>* _build(const parameters& params, const mipp::vector<B> &frozen_bits,
-	                                    module::CRC<B> *crc = nullptr);
+	static module::Decoder_SIHO<B,Q>* _build(const parameters& params, const mipp::vector<B> &frozen_bits,
+	                                         module::CRC<B> *crc = nullptr);
 
 	template <typename B = int, typename Q = float, class API_polar>
-	static module::Decoder<B,Q>* _build_scl_fast(const parameters& params, const mipp::vector<B> &frozen_bits,
-	                                             module::CRC<B> *crc = nullptr);
+	static module::Decoder_SIHO<B,Q>* _build_scl_fast(const parameters& params, const mipp::vector<B> &frozen_bits,
+	                                                  module::CRC<B> *crc = nullptr);
 };
 }
 }

@@ -15,7 +15,7 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, to
 Decoder_polar_SC_naive<B,R,F,G,H>
 ::Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
                          const std::string name)
-: Decoder<B,R>(K, N, n_frames, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
+: Decoder_SIHO<B,R>(K, N, n_frames, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
 	if (!tools::is_power_of_2(this->N))
 	{
@@ -64,7 +64,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);

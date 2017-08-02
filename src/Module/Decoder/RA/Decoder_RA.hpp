@@ -4,7 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "../Decoder.hpp"
+#include "../Decoder_SIHO.hpp"
 #include "../../Interleaver/Interleaver.hpp"
 
 namespace aff3ct
@@ -12,7 +12,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_RA : public Decoder<B, R>
+class Decoder_RA : public Decoder_SIHO<B,R>
 {
 protected:
 	const int rep_count; // number of repetitions
@@ -30,7 +30,7 @@ public:
 	virtual ~Decoder_RA();
 
 protected:
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 
 private:
 	R check_node(R a, R b);

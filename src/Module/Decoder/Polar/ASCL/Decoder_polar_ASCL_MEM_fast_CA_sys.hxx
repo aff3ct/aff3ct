@@ -30,14 +30,14 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	sc_decoder.d_load_total  = std::chrono::nanoseconds(0);
 	sc_decoder.d_decod_total = std::chrono::nanoseconds(0);
 	sc_decoder.d_store_total = std::chrono::nanoseconds(0);
 
 	this->L = 1;
-	sc_decoder._hard_decode(Y_N, V_K, frame_id);
+	sc_decoder._decode_siho(Y_N, V_K, frame_id);
 
 	this->d_load_total  += sc_decoder.d_load_total;
 	this->d_decod_total += sc_decoder.d_decod_total;

@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include "Module/Decoder/Turbo/Decoder_turbo.hpp"
-#include "Module/Decoder/SISO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 
 #include "Factory/Module/Interleaver.hpp"
@@ -43,8 +43,8 @@ struct Decoder_turbo : public Decoder
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
 	static module::Decoder_turbo<B,Q>* build(const parameters<D1,D2>        &params,
 	                                         const module::Interleaver<int> &itl,
-	                                               module::SISO<Q>          &siso_n,
-	                                               module::SISO<Q>          &siso_i);
+	                                               module::Decoder_SISO<Q>  &siso_n,
+	                                               module::Decoder_SISO<Q>  &siso_i);
 
 	template <class D1 = Decoder_RSC, class D2 = D1>
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);

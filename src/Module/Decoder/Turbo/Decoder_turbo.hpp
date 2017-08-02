@@ -7,23 +7,23 @@
 
 #include "Module/Interleaver/Interleaver.hpp"
 
-#include "../Decoder.hpp"
-#include "../SISO.hpp"
+#include "../Decoder_SIHO.hpp"
+#include "../Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_turbo : public Decoder<B,R>
+class Decoder_turbo : public Decoder_SIHO<B,R>
 {
 protected:
 	const int  n_ite; // number of iterations
 	const bool buffered_encoding;
 
 	const Interleaver<int> &pi;
-	SISO<R> &siso_n;
-	SISO<R> &siso_i;
+	Decoder_SISO<R> &siso_n;
+	Decoder_SISO<R> &siso_i;
 
 	mipp::vector<R> l_sn;  // systematic LLRs                  in the natural     domain
 	mipp::vector<R> l_si;  // systematic LLRs                  in the interleaved domain
@@ -50,8 +50,8 @@ protected:
 	              const int& N,
 	              const int& n_ite,
 	              const Interleaver<int> &pi,
-	              SISO<R> &siso_n,
-	              SISO<R> &siso_i,
+	              Decoder_SISO<R> &siso_n,
+	              Decoder_SISO<R> &siso_i,
 	              const bool buffered_encoding = true,
 	              const std::string name = "Decoder_turbo");
 	virtual ~Decoder_turbo();

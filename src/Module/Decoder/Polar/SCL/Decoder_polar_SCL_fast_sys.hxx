@@ -64,37 +64,37 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const mipp::vector<B>& frozen_bits,
                              const int n_frames, const std::string name)
-: Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             ((int)std::log2(N)),
-  L             (L),
-  frozen_bits   (frozen_bits),
-  polar_patterns(N,
-                 frozen_bits,
-                 {new tools::Pattern_polar_std,
-                  new tools::Pattern_polar_r0,
-                  new tools::Pattern_polar_r1,
-                  new tools::Pattern_polar_r0_left,
-                  new tools::Pattern_polar_rep_left,
-                  new tools::Pattern_polar_rep,       // /!\ perf. degradation with REP nodes in fixed-point
-                  new tools::Pattern_polar_spc(2,2)}, // /!\ perf. degradation with SPC nodes length > 4 (when L is big)
-                 1,
-                 2),
-  paths         (L),
-  metrics       (L),
-  l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
-  s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
-  metrics_vec   (3, std::vector<R>()),
-  dup_count     (L, 0),
-  bit_flips     (4 * L),
-  is_even       (L),
-  best_path     (0),
-  n_active_paths(1),
-  n_array_ref   (L, std::vector<int>(m)),
-  path_2_array  (L, std::vector<int>(m)),
-  sorter        (N),
-//sorter_simd   (N),
-  best_idx      (L),
-  l_tmp         (N)
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+  m                ((int)std::log2(N)),
+  L                (L),
+  frozen_bits      (frozen_bits),
+  polar_patterns   (N,
+                    frozen_bits,
+                    {new tools::Pattern_polar_std,
+                     new tools::Pattern_polar_r0,
+                     new tools::Pattern_polar_r1,
+                     new tools::Pattern_polar_r0_left,
+                     new tools::Pattern_polar_rep_left,
+                     new tools::Pattern_polar_rep,       // /!\ perf. degradation with REP nodes in fixed-point
+                     new tools::Pattern_polar_spc(2,2)}, // /!\ perf. degradation with SPC nodes length > 4 (when L is big)
+                    1,
+                    2),
+  paths            (L),
+  metrics          (L),
+  l                (L, mipp::vector<R>(N + mipp::nElReg<R>())),
+  s                (L, mipp::vector<B>(N + mipp::nElReg<B>())),
+  metrics_vec      (3, std::vector<R>()),
+  dup_count        (L, 0),
+  bit_flips        (4 * L),
+  is_even          (L),
+  best_path        (0),
+  n_active_paths   (1),
+  n_array_ref      (L, std::vector<int>(m)),
+  path_2_array     (L, std::vector<int>(m)),
+  sorter           (N),
+//sorter_simd      (N),
+  best_idx         (L),
+  l_tmp            (N)
 {
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
 //	static_assert(API_polar::get_n_frames() == 1, "The inter-frame API_polar is not supported.");
@@ -152,27 +152,27 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                              const std::vector<tools::Pattern_polar_i*> polar_patterns,
                              const int idx_r0, const int idx_r1,
                              const int n_frames, const std::string name)
-: Decoder<B,R>  (K, N, n_frames, API_polar::get_n_frames(), name),
-  m             ((int)std::log2(N)),
-  L             (L),
-  frozen_bits   (frozen_bits),
-  polar_patterns(N, frozen_bits, polar_patterns, idx_r0, idx_r1),
-  paths         (L),
-  metrics       (L),
-  l             (L, mipp::vector<R>(N + mipp::nElReg<R>())),
-  s             (L, mipp::vector<B>(N + mipp::nElReg<B>())),
-  metrics_vec   (3, std::vector<R>()),
-  dup_count     (L, 0),
-  bit_flips     (4 * L),
-  is_even       (L),
-  best_path     (0),
-  n_active_paths(1),
-  n_array_ref   (L, std::vector<int>(m)),
-  path_2_array  (L, std::vector<int>(m)),
-  sorter        (N),
-//sorter_simd   (N),
-  best_idx      (L),
-  l_tmp         (N)
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
+  m                ((int)std::log2(N)),
+  L                (L),
+  frozen_bits      (frozen_bits),
+  polar_patterns   (N, frozen_bits, polar_patterns, idx_r0, idx_r1),
+  paths            (L),
+  metrics          (L),
+  l                (L, mipp::vector<R>(N + mipp::nElReg<R>())),
+  s                (L, mipp::vector<B>(N + mipp::nElReg<B>())),
+  metrics_vec      (3, std::vector<R>()),
+  dup_count        (L, 0),
+  bit_flips        (4 * L),
+  is_even          (L),
+  best_path        (0),
+  n_active_paths   (1),
+  n_array_ref      (L, std::vector<int>(m)),
+  path_2_array     (L, std::vector<int>(m)),
+  sorter           (N),
+//sorter_simd      (N),
+  best_idx         (L),
+  l_tmp            (N)
 {
 
 	static_assert(sizeof(B) == sizeof(R), "Sizes of the bits and reals have to be identical.");
@@ -251,7 +251,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->init_buffers();

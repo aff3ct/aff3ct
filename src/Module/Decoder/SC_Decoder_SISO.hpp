@@ -1,5 +1,5 @@
-#ifndef SC_SISO_HPP_
-#define SC_SISO_HPP_
+#ifndef SC_DECODER_SISO_HPP_
+#define SC_DECODER_SISO_HPP_
 
 #ifdef SYSTEMC_MODULE
 #include <vector>
@@ -18,26 +18,26 @@ namespace aff3ct
 namespace module
 {
 template <typename R>
-class SC_SISO;
+class SC_Decoder_SISO;
 
 template <typename R = float>
-class SC_SISO_module : public sc_core::sc_module
+class SC_Decoder_SISO_module : public sc_core::sc_module
 {
 public:
-	tlm_utils::simple_target_socket   <SC_SISO_module> s_in;
-	tlm_utils::simple_initiator_socket<SC_SISO_module> s_out;
+	tlm_utils::simple_target_socket   <SC_Decoder_SISO_module> s_in;
+	tlm_utils::simple_initiator_socket<SC_Decoder_SISO_module> s_out;
 
 private:
-	SC_SISO<R> &siso;
+	SC_Decoder_SISO<R> &siso;
 	mipp::vector<R> Y_N2;
 
 public:
-	SC_SISO_module(SC_SISO<R> &siso, const sc_core::sc_module_name name = "SC_SISO_module")
+	SC_Decoder_SISO_module(SC_Decoder_SISO<R> &siso, const sc_core::sc_module_name name = "SC_Decoder_SISO_module")
 	: sc_module(name), s_in ("s_in"), s_out("s_out"),
 	  siso(siso),
 	  Y_N2(siso.get_N() * siso.get_n_frames())
 	{
-		s_in.register_b_transport(this, &SC_SISO_module::b_transport);
+		s_in.register_b_transport(this, &SC_Decoder_SISO_module::b_transport);
 	}
 
 	const mipp::vector<R>& get_Y_N()
@@ -61,7 +61,7 @@ private:
 
 		const auto Y_N1 = (R*)trans.get_data_ptr();
 
-		siso.soft_decode(Y_N1, Y_N2.data());
+		siso.decode_siso(Y_N1, Y_N2.data());
 
 		tlm::tlm_generic_payload payload;
 		payload.set_data_ptr((unsigned char*)Y_N2.data());
@@ -73,17 +73,17 @@ private:
 };
 
 template <typename R>
-class SC_SISO : public SISO_i<R>
+class SC_Decoder_SISO : public Decoder_SISO_i<R>
 {
 public:
-	SC_SISO_module<R> *sc_module_siso;
+	SC_Decoder_SISO_module<R> *sc_module_siso;
 
 public:
-	SC_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level = 1,
-	        const std::string name = "SC_SISO")
-	: SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), sc_module_siso(nullptr) {}
+	SC_Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level = 1,
+	                const std::string name = "SC_Decoder_SISO")
+	: Decoder_SISO_i<R>(K, N, n_frames, simd_inter_frame_level, name), sc_module_siso(nullptr) {}
 
-	virtual ~SC_SISO()
+	virtual ~SC_Decoder_SISO()
 	{
 		if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; }
 	}
@@ -91,16 +91,16 @@ public:
 	void create_sc_module_siso()
 	{
 		if (sc_module_siso != nullptr) { delete sc_module_siso; sc_module_siso = nullptr; }
-		this->sc_module_siso = new SC_SISO_module<R>(*this, this->name.c_str());
+		this->sc_module_siso = new SC_Decoder_SISO_module<R>(*this, this->name.c_str());
 	}
 };
 
 template <typename R>
-using SISO = SC_SISO<R>;
+using Decoder_SISO = SC_Decoder_SISO<R>;
 }
 }
 #else
-#include "SPU_SISO.hpp"
+#include "SPU_Decoder_SISO.hpp"
 #endif
 
-#endif /* SC_SISO_HPP_ */
+#endif /* SC_DECODER_SISO_HPP_ */

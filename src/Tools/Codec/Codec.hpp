@@ -9,7 +9,7 @@
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Puncturer/Puncturer.hpp"
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 #include "Factory/Module/Code/Encoder.hpp"
 #include "Factory/Module/Code/Decoder.hpp"
@@ -74,8 +74,8 @@ public:
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
 	}
 
-	virtual module::Decoder<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                     module::CRC        <B  >* crc = nullptr) = 0;
+	virtual module::Decoder_SIHO<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                          module::CRC        <B  >* crc = nullptr) = 0;
 };
 }
 }

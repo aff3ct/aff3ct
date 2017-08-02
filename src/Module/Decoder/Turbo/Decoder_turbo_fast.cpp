@@ -17,8 +17,8 @@ Decoder_turbo_fast<B,R>
                      const int& N,
                      const int& n_ite,
                      const Interleaver<int> &pi,
-                     SISO<R> &siso_n,
-                     SISO<R> &siso_i,
+                     Decoder_SISO<R> &siso_n,
+                     Decoder_SISO<R> &siso_i,
                      const bool buffered_encoding,
                      const std::string name)
 : Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
@@ -126,7 +126,7 @@ void Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -153,7 +153,7 @@ void Decoder_turbo_fast<B,R>
 		          this->l_sen.begin() +  this->K             * n_frames);
 
 		// SISO in the natural domain
-		this->siso_n.soft_decode(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
 		for (auto cb : this->callbacks_siso_n)
 		{
@@ -177,7 +177,7 @@ void Decoder_turbo_fast<B,R>
 			          this->l_sei.begin() +  this->K             * n_frames);
 
 			// SISO in the interleave domain
-			this->siso_i.soft_decode(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i.decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
 			for (auto cb : this->callbacks_siso_i)
 			{

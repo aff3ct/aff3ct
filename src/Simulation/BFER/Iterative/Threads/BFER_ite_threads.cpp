@@ -246,7 +246,7 @@ void BFER_ite_threads<B,R,Q>
 			{
 				// decode
 				auto t_decod = steady_clock::now();
-				this->siso[tid]->soft_decode(this->Y_N5[tid], this->Y_N6[tid]);
+				this->siso[tid]->decode_siso(this->Y_N5[tid], this->Y_N6[tid]);
 				this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
 
 				// apply the coset to recover the extrinsic information
@@ -267,7 +267,7 @@ void BFER_ite_threads<B,R,Q>
 			{
 				// decode
 				auto t_decod = steady_clock::now();
-				this->decoder[tid]->hard_decode(this->Y_N5[tid], this->V_K1[tid]);
+				this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
 				this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
 			}
 		}
@@ -510,7 +510,7 @@ void BFER_ite_threads<B,R,Q>
 				// decode
 				std::cout << "Soft decode from Y_N5 to Y_N6..." << std::endl;
 				auto t_decod = steady_clock::now();
-				this->siso[0]->soft_decode(this->Y_N5[0], this->Y_N6[0]);
+				this->siso[0]->decode_siso(this->Y_N5[0], this->Y_N6[0]);
 				this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
 
 				// display Y_N6
@@ -549,7 +549,7 @@ void BFER_ite_threads<B,R,Q>
 				// decode
 				std::cout << "Hard decode from Y_N5 to V_K1..." << std::endl;
 				auto t_decod = steady_clock::now();
-				this->decoder[0]->hard_decode(this->Y_N5[0], this->V_K1[0]);
+				this->decoder[0]->decode_siho(this->Y_N5[0], this->V_K1[0]);
 				this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
 
 				// display V_K1

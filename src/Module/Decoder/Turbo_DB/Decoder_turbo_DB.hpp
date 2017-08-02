@@ -8,14 +8,14 @@
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_turbo_DB : public Decoder<B,R>
+class Decoder_turbo_DB : public Decoder_SIHO<B,R>
 {
 protected:
 	const int                 n_ite; // number of iterations
@@ -66,7 +66,7 @@ public:
 	void add_handler_end(std::function<void(const int)> callback);
 
 protected:
-	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	virtual void _load       (const R *Y_N                            );
 	virtual void _store      (              B *V_K                    ) const;
 };

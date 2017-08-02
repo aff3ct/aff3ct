@@ -36,21 +36,21 @@ Encoder_RSC_sys<B>* Codec_RSC<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SISO<B,Q>* Codec_RSC<B,Q,QD>
+Decoder_SISO_SIHO<B,Q>* Codec_RSC<B,Q,QD>
 ::build_decoder_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return factory::Decoder_RSC::build<B,Q,QD>(dec_par, trellis, std::cout);
 }
 
 template <typename B, typename Q, typename QD>
-SISO<Q>* Codec_RSC<B,Q,QD>
+Decoder_SISO<Q>* Codec_RSC<B,Q,QD>
 ::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder<B,Q>* Codec_RSC<B,Q,QD>
+Decoder_SIHO<B,Q>* Codec_RSC<B,Q,QD>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);

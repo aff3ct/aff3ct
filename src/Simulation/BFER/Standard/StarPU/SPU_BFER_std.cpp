@@ -265,10 +265,10 @@ void SPU_BFER_std<B,R,Q>
 		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_real), "task_submit::cst::apply");
 	}
 
-	auto task_decode = Decoder<B,Q>::spu_task_hard_decode(this->decoder[tid], spu_Y_N5[tid], spu_V_K1[tid]);
+	auto task_decode = Decoder_SIHO<B,Q>::spu_task_decode_siho(this->decoder[tid], spu_Y_N5[tid], spu_V_K1[tid]);
 	task_decode->priority = STARPU_MIN_PRIO +11;
-	task_names[tid][11] = "dec::hard_decode_" + str_id; task_decode->name = task_names[tid][11].c_str();
-	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "task_submit::dec::hard_decode");
+	task_names[tid][11] = "dec::decode_siho_" + str_id; task_decode->name = task_names[tid][11].c_str();
+	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "task_submit::dec::decode_siho");
 
 	if (this->params.coset)
 	{

@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_LAYERED_HPP_
 #define DECODER_LDPC_BP_LAYERED_HPP_
 
-#include "../../../Decoder_SISO.hpp"
+#include "../../../Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
@@ -9,7 +9,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_layered : public Decoder_SISO<B,R>
+class Decoder_LDPC_BP_layered : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int n_ite;     // number of iterations to perform
@@ -40,13 +40,10 @@ public:
 	virtual ~Decoder_LDPC_BP_layered();
 
 protected:
-	// soft decode
-	void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
-
-	// hard decoder (load -> decode -> store)
-	void _load       (const R *Y_N,         const int frame_id);
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
-	void _store      (              B *V_K, const int frame_id) const;
+	void _load       (const R *Y_N,           const int frame_id);
+	void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
+	void _decode_siho(const R *Y_N,  B *V_K,  const int frame_id);
+	void _store      (               B *V_K,  const int frame_id) const;
 
 	// BP functions for decoding
 	void BP_decode(const int frame_id);

@@ -5,7 +5,7 @@
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 #include "Factory/Module/Code/Polar/Encoder_polar.hpp"
 #include "Factory/Module/Code/Polar/Decoder_polar.hpp"
@@ -31,7 +31,7 @@ protected:
 	const bool is_generated_decoder;
 	Frozenbits_generator<B> *fb_generator;
 
-	std::vector<module::Decoder_SISO<B,Q>*> decoder_siso;
+	std::vector<module::Decoder_SISO_SIHO<B,Q>*> decoder_siso;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator::parameters &fb_par,
@@ -41,14 +41,14 @@ public:
 	            const int n_threads);
 	virtual ~Codec_polar();
 
-	void                    launch_precompute(                                                                );
-	void                    snr_precompute   (const float sigma                                               );
-	module::Puncturer<B,Q>* build_puncturer  (const int tid = 0                                               );
-	module::Encoder  <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::SISO     <  Q>* build_siso       (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                   module::CRC        <B  >* crc = nullptr);
-	module::Decoder  <B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                   module::CRC        <B  >* crc = nullptr);
+	void                       launch_precompute(                                                                );
+	void                       snr_precompute   (const float sigma                                               );
+	module::Puncturer   <B,Q>* build_puncturer  (const int tid = 0                                               );
+	module::Encoder     <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
+	module::Decoder_SISO<  Q>* build_siso       (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                      module::CRC        <B  >* crc = nullptr);
+	module::Decoder_SIHO<B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                      module::CRC        <B  >* crc = nullptr);
 
 	void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par);
 };

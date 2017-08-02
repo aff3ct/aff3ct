@@ -13,7 +13,7 @@ const std::string aff3ct::factory::Decoder_NO::name   = "Decoder NO";
 const std::string aff3ct::factory::Decoder_NO::prefix = "dec";
 
 template <typename B, typename Q>
-module::Decoder_SISO<B,Q>* Decoder_NO
+module::Decoder_SISO_SIHO<B,Q>* Decoder_NO
 ::build(const parameters &params)
 {
 	if (params.type == "NONE" && params.implem == "HARD_DECISION") return new module::Decoder_NO<B,Q>(params.K, params.n_frames);
@@ -48,11 +48,11 @@ void Decoder_NO
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::factory::Decoder_NO::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder::parameters&);
-template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::factory::Decoder_NO::build<B_16,Q_16>(const aff3ct::factory::Decoder::parameters&);
-template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::factory::Decoder_NO::build<B_32,Q_32>(const aff3ct::factory::Decoder::parameters&);
-template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::factory::Decoder_NO::build<B_64,Q_64>(const aff3ct::factory::Decoder::parameters&);
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_NO::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder::parameters&);
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_NO::build<B_16,Q_16>(const aff3ct::factory::Decoder::parameters&);
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_NO::build<B_32,Q_32>(const aff3ct::factory::Decoder::parameters&);
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_NO::build<B_64,Q_64>(const aff3ct::factory::Decoder::parameters&);
 #else
-template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::factory::Decoder_NO::build<B,Q>(const aff3ct::factory::Decoder::parameters&);
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_NO::build<B,Q>(const aff3ct::factory::Decoder::parameters&);
 #endif
 // ==================================================================================== explicit template instantiation

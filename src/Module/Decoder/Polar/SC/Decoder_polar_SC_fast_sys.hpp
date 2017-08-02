@@ -9,7 +9,7 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../../Decoder.hpp"
+#include "../../Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -27,7 +27,7 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SC_fast_sys : public Decoder<B,R>
+class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>
 {
 	friend Decoder_polar_ASCL_fast_CA_sys    <B,R,API_polar>;
 	friend Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>;
@@ -54,7 +54,7 @@ public:
 
 protected:
 	        void _load       (const R *Y_N                            );
-	virtual void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	        void _store      (              B *V_K                    );
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);

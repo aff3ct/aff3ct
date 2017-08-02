@@ -20,7 +20,7 @@ Decoder_RSC_BCJR<B,R>
                    const int n_frames,
                    const int simd_inter_frame_level,
                    const std::string name)
-: Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
+: Decoder_SISO_SIHO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, simd_inter_frame_level, name),
   n_states((int)trellis[0].size()),
   n_ff((int)std::log2(n_states)),
   buffered_encoding(buffered_encoding),
@@ -51,7 +51,7 @@ void Decoder_RSC_BCJR<B,R>
 	if (buffered_encoding)
 	{
 		const auto tail     = this->tail_length();
-		const auto n_frames = Decoder<B,R>::get_simd_inter_frame_level();
+		const auto n_frames = Decoder_SIHO<B,R>::get_simd_inter_frame_level();
 
 		if (n_frames == 1)
 		{
@@ -103,14 +103,14 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_soft_decode(sys.data(), par.data(), ext.data(), frame_id);
+	this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

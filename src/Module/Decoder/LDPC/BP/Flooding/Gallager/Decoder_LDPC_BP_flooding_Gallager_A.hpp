@@ -1,7 +1,7 @@
 #ifndef DECODER_LDPC_BP_FLOODING_GALLAGER_A_HPP_
 #define DECODER_LDPC_BP_FLOODING_GALLAGER_A_HPP_
 
-#include "Module/Decoder/Decoder_SISO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
@@ -9,7 +9,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SISO<B,R>
+class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int                    n_ite;           // number of iterations to perform
@@ -33,7 +33,7 @@ public:
 	virtual ~Decoder_LDPC_BP_flooding_Gallager_A();
 
 protected:
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 };
 
 template <typename B = int, typename R = float>

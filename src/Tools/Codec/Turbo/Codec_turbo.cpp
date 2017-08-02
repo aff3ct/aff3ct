@@ -120,14 +120,14 @@ Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-SISO<Q>* Codec_turbo<B,Q,QD>
+Decoder_SISO<Q>* Codec_turbo<B,Q,QD>
 ::build_sub_siso(const int tid)
 {
 	return factory::Decoder_RSC::build<B,Q,QD>(dec_par.sub1, trellis, json_stream, dec_par.n_ite);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder<B,Q>* Codec_turbo<B,Q,QD>
+Decoder_SIHO<B,Q>* Codec_turbo<B,Q,QD>
 ::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
 {
 	if (itl == nullptr)

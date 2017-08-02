@@ -19,16 +19,16 @@ Decoder_LDPC_BP_layered<B,R>
                           const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
-: Decoder_SISO<B,R>(K, N, n_frames, 1, name                         ),
-  n_ite            (n_ite                                           ),
-  n_C_nodes        ((int)H.get_n_cols()                             ),
-  enable_syndrome  (enable_syndrome                                 ),
-  syndrome_depth   (syndrome_depth                                  ),
-  init_flag        (true                                            ),
-  info_bits_pos    (info_bits_pos                                   ),
-  H                (H                                               ),
-  var_nodes        (n_frames, mipp::vector<R>(N                    )),
-  branches         (n_frames, mipp::vector<R>(H.get_n_connections()))
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                         ),
+  n_ite                 (n_ite                                           ),
+  n_C_nodes             ((int)H.get_n_cols()                             ),
+  enable_syndrome       (enable_syndrome                                 ),
+  syndrome_depth        (syndrome_depth                                  ),
+  init_flag             (true                                            ),
+  info_bits_pos         (info_bits_pos                                   ),
+  H                     (H                                               ),
+  var_nodes             (n_frames, mipp::vector<R>(N                    )),
+  branches              (n_frames, mipp::vector<R>(H.get_n_connections()))
 {
 	if (n_ite <= 0)
 	{
@@ -61,7 +61,25 @@ Decoder_LDPC_BP_layered<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_soft_decode(const R *Y_N1, R *Y_N2, const int frame_id)
+::_load(const R *Y_N, const int frame_id)
+{
+	// memory zones initialization
+	if (this->init_flag)
+	{
+		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
+		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
+
+		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
+			this->init_flag = false;
+	}
+
+	for (auto i = 0; i < (int)var_nodes[frame_id].size(); i++)
+		this->var_nodes[frame_id][i] += Y_N[i]; // var_nodes contain previous extrinsic information
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered<B,R>
+::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
@@ -77,27 +95,10 @@ void Decoder_LDPC_BP_layered<B,R>
 	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[frame_id].begin());
 }
 
-template <typename B, typename R>
-void Decoder_LDPC_BP_layered<B,R>
-::_load(const R *Y_N, const int frame_id)
-{
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->branches [frame_id].begin(), this->branches [frame_id].end(), (R)0);
-		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
-
-	for (auto i = 0; i < (int)var_nodes[frame_id].size(); i++)
-		this->var_nodes[frame_id][i] += Y_N[i]; // var_nodes contain previous extrinsic information
-}
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered<B,R>
-::_hard_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -110,7 +111,7 @@ void Decoder_LDPC_BP_layered<B,R>
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (frame_id == Decoder<B,R>::n_frames -1)
+	if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
 		this->init_flag = true;
 
 	this->_store(V_K, frame_id);

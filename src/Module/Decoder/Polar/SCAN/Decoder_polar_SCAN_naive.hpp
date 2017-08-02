@@ -7,7 +7,7 @@
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../../Decoder_SISO.hpp"
+#include "../../Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -18,7 +18,7 @@ template <typename B = int, typename R = float, tools::proto_i<  R> I = tools::i
                                                 tools::proto_v<  R> V = tools::v_LLR,
                                                 tools::proto_h<B,R> H = tools::h_LLR,
                                                 tools::proto_s<  R> S = tools::sat_val>
-class Decoder_polar_SCAN_naive : public Decoder_SISO<B,R>
+class Decoder_polar_SCAN_naive : public Decoder_SISO_SIHO<B,R>
 {
 protected:
 	const int m;            // coded bits log-length
@@ -38,8 +38,8 @@ public:
 
 protected:
 	        void _load       (const R *Y_N                              );
-	        void _hard_decode(const R *Y_N,  B *V_K , const int frame_id);
-	virtual void _soft_decode(const R *Y_N1, R *Y_N2, const int frame_id);
+	        void _decode_siho(const R *Y_N,  B *V_K , const int frame_id);
+	virtual void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
 	virtual void _store      (               B *V_K                     ) const;
 
 	void _load_init();

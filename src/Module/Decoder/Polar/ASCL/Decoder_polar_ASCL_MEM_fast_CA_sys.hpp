@@ -40,7 +40,7 @@ public:
 	virtual ~Decoder_polar_ASCL_MEM_fast_CA_sys(){};
 
 protected:
-	void _hard_decode(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 };
 }
 }

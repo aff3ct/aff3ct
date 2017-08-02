@@ -9,7 +9,7 @@
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
-#include "../../Decoder.hpp"
+#include "../../Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -21,7 +21,7 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SCL_MEM_fast_sys : public Decoder<B,R>
+class Decoder_polar_SCL_MEM_fast_sys : public Decoder_SIHO<B,R>
 {
 protected:
 	const int                            m;              // graph depth
@@ -66,7 +66,7 @@ public:
 
 	virtual ~Decoder_polar_SCL_MEM_fast_sys();
 
-	virtual void _hard_decode(const R *Y_N, B *V_N, const int frame_id);
+	virtual void _decode_siho(const R *Y_N, B *V_N, const int frame_id);
 	virtual void _store      (              B *V_N                    ) const;
 
 protected:

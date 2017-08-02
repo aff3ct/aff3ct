@@ -3,6 +3,7 @@
 
 #include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 #include "Factory/Module/Code/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Factory/Module/Code/RSC_DB/Decoder_RSC_DB.hpp"
@@ -28,13 +29,13 @@ public:
 	             const factory::Decoder_RSC_DB::parameters &dec_params);
 	virtual ~Codec_RSC_DB();
 
-	module::Encoder_RSC_DB<B  >* build_encoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder_SISO  <B,Q>* build_decoder_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                         module::CRC        <B  >* crc = nullptr);
-	module::SISO          <  Q>* build_siso        (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                         module::CRC        <B  >* crc = nullptr);
-	module::Decoder       <B,Q>* build_decoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                         module::CRC        <B  >* crc = nullptr);
+	module::Encoder_RSC_DB   <B  >* build_encoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
+	module::Decoder_SISO_SIHO<B,Q>* build_decoder_siso(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                            module::CRC        <B  >* crc = nullptr);
+	module::Decoder_SISO     <  Q>* build_siso        (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                            module::CRC        <B  >* crc = nullptr);
+	module::Decoder_SIHO     <B,Q>* build_decoder     (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
+	                                                                            module::CRC        <B  >* crc = nullptr);
 
 	void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par);
 };
