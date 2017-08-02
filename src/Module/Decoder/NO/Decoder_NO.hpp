@@ -7,6 +7,7 @@ namespace aff3ct
 {
 namespace module
 {
+
 template <typename B = int, typename R = float>
 class Decoder_NO : public Decoder_SISO_SIHO<B,R>
 {

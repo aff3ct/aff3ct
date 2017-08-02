@@ -4,7 +4,7 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Module/Interleaver/Interleaver.hpp"
+#include "Module/Decoder/NO/Decoder_NO.hpp"
 
 #include "Decoder_turbo.hpp"
 
@@ -15,6 +15,9 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_turbo_std : public Decoder_turbo<B,R>
 {
+private:
+	Decoder_NO<B,R> hard_decision;
+
 public:
 	Decoder_turbo_std(const int& K,
 	                  const int& N,

@@ -18,7 +18,8 @@ Decoder_turbo_std<B,R>
                     Decoder_SISO<R> &siso_i,
                     const bool buffered_encoding,
                     const std::string name)
-: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name)
+: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding, name),
+  hard_decision(K * siso_n.get_simd_inter_frame_level())
 {
 }
 
@@ -93,8 +94,7 @@ void Decoder_turbo_std<B,R>
 
 			// compute the hard decision only if we are in the last iteration
 			if (ite == this->n_ite || stop)
-				for (auto i = 0; i < this->K * n_frames; i++)
-					this->s[i] = this->l_e1n[i] < 0;
+				hard_decision.decode_siho(this->l_e1n.data(), this->s.data());
 		}
 
 		ite++; // increment the number of iteration

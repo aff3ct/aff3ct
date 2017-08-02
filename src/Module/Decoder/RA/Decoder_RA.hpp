@@ -4,6 +4,8 @@
 #include <vector>
 #include <mipp.h>
 
+#include "Module/Decoder/NO/Decoder_NO.hpp"
+
 #include "../Decoder_SIHO.hpp"
 #include "../../Interleaver/Interleaver.hpp"
 
@@ -14,6 +16,9 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_RA : public Decoder_SIHO<B,R>
 {
+private:
+	Decoder_NO<B,R> hard_decision;
+
 protected:
 	const int rep_count; // number of repetitions
 	int max_iter;        // max number of iterations

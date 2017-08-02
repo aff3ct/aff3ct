@@ -13,7 +13,7 @@ template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const int n_frames,
                      const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name), hard_decision(K),
   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	if (N % K)
@@ -67,17 +67,7 @@ void Decoder_repetition<B,R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// take the hard decision
-	auto vec_loop_size = (this->K / mipp::nElReg<R>()) * mipp::nElReg<R>();
-	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
-	{
-		const auto r_ext = mipp::Reg<R>(&ext[i]);
-		const auto r_s = mipp::cast<R,B>(r_ext) >> (sizeof(B) * 8 - 1);
-
-		r_s.store(&V_K[i]);
-	}
-	for (auto i = vec_loop_size; i < this->K; i++)
-		V_K[i] = ext[i] < 0;
+	hard_decision.decode_siho(ext.data(), V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;

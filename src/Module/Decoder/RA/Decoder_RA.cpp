@@ -14,7 +14,7 @@ template <typename B, typename R>
 Decoder_RA<B, R>
 ::Decoder_RA(const int& K, const int& N, const Interleaver<int>& interleaver, int max_iter, const int n_frames,
              const std::string name)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1, name),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1, name), hard_decision(K),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -121,8 +121,7 @@ void Decoder_RA<B, R>
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	for (auto i = 0; i < this->K; i++)
-		V_K[i] = (U[i] > 0) ? 0 : 1;
+	hard_decision.decode_siho(U.data(), V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_load_total  += d_load;
