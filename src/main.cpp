@@ -68,7 +68,7 @@ void print_version()
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
 #endif
-	std::string affect_version = version() == "GITDIR-NOTFOUND" ? "Unknown version" : version();
+	std::string affect_version = version() == "GIT-NOTFOUND" ? "Unknown version" : version();
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;

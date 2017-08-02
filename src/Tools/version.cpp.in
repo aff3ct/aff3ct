@@ -1,4 +1,5 @@
-#include "Tools/version.h"
+#include "version.h"
+#include "general_utils.h"
 
 #define GIT_SHA1    "@GIT_SHA1@"
 #define GIT_VERSION "@GIT_VERSION@"
@@ -17,15 +18,77 @@ std::string aff3ct::version()
 
 int aff3ct::version_major()
 {
-	return 0; // TODO
+	std::string version(GIT_VERSION);
+
+	if (version == "GIT-NOTFOUND")
+	{
+		return -1;
+	}
+	else
+	{
+		auto vs = tools::string_split(version, '.');
+
+		if (!vs.size())
+			return -2;
+		else
+		{
+			vs[0].erase(0,1);
+			if (!vs[0].size())
+				return -3;
+			else
+				return std::stoi(vs[0]);
+		}
+	}
 }
 
 int aff3ct::version_minor()
 {
-	return 0; // TODO
+	std::string version(GIT_VERSION);
+
+	if (version == "GIT-NOTFOUND")
+	{
+		return -1;
+	}
+	else
+	{
+		auto vs = tools::string_split(version, '.');
+
+		if (vs.size() < 2)
+			return -2;
+		else
+		{
+			auto vs2 = tools::string_split(vs[1], '-');
+
+			if (!vs2[0].size())
+				return -3;
+			else
+				return std::stoi(vs2[0]);
+		}
+	}
 }
 
 int aff3ct::version_release()
 {
-	return 0; // TODO
+	std::string version(GIT_VERSION);
+
+	if (version == "GIT-NOTFOUND")
+	{
+		return -1;
+	}
+	else
+	{
+		auto vs = tools::string_split(version, '.');
+
+		if (vs.size() < 3)
+			return -2;
+		else
+		{
+			auto vs3 = tools::string_split(vs[2], '-');
+
+			if (!vs3[0].size())
+				return -3;
+			else
+				return std::stoi(vs3[0]);
+		}
+	}
 }

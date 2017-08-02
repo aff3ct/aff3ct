@@ -1,6 +1,7 @@
 //find ./src/ -type f -follow -print | grep "[.]h$"
 #include <Tools/general_utils.h>
 #include <Tools/types.h>
+#include "Tools/version.h"
 #include <Tools/Math/matrix.h>
 #include <Tools/Math/utils.h>
 #include <Tools/Math/max.h>
@@ -358,5 +359,4 @@
 #include <Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp>
 #include <Simulation/BFER/Iterative/BFER_ite.hpp>
 #include <Simulation/BFER/BFER.hpp>
-#include "Tools/version.h"
 // #include <aff3ct.hpp>

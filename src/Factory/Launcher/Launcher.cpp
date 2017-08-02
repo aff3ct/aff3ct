@@ -9,6 +9,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/types.h"
 #include "Tools/date.h"
+#include "Tools/version.h"
 
 #include "Launcher/Launcher.hpp"
 #include "Launcher/Code/BCH/BCH.hpp"
@@ -265,6 +266,8 @@ void Launcher::make_header(params_list& head_sim, const parameters& params, cons
 	date << std::chrono::system_clock::now();
 	auto split_date = tools::string_split(date.str(), '.');
 	head_sim.push_back(std::make_pair("Date (UTC)", split_date[0]));
+	if (version() != "GIT-NOTFOUND")
+		head_sim.push_back(std::make_pair("Git version", version()));
 
 	head_sim.push_back(std::make_pair("Code type (C)", params.cde_type));
 }
