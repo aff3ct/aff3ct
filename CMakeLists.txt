@@ -23,8 +23,9 @@ file (GLOB_RECURSE source_files src/*)
 # Auto generate a header containing the last GIT SHA1
 include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/git_sha1.cpp.in" "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/git_sha1.cpp" @ONLY)
-list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/git_sha1.cpp")
+git_describe(GIT_VERSION "--tags")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp.in" "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp" @ONLY)
+list(APPEND source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/Tools/version.cpp")
 
 # Filters creation for IDEs (tested on Visual Studio and based on the "source_group" function)
 function(assign_source_group)

@@ -1,0 +1,31 @@
+#include "Tools/version.h"
+
+#define GIT_SHA1    "@GIT_SHA1@"
+#define GIT_VERSION "@GIT_VERSION@"
+
+std::string aff3ct::sha1()
+{
+	std::string sha1(GIT_SHA1);
+	return sha1;
+}
+
+std::string aff3ct::version()
+{
+	std::string version(GIT_VERSION);
+	return version;
+}
+
+int aff3ct::version_major()
+{
+	return 0; // TODO
+}
+
+int aff3ct::version_minor()
+{
+	return 0; // TODO
+}
+
+int aff3ct::version_release()
+{
+	return 0; // TODO
+}

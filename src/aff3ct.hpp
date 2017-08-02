@@ -1,5 +1,4 @@
 //find ./src/ -type f -follow -print | grep "[.]h$"
-#include <Tools/git_sha1.h>
 #include <Tools/general_utils.h>
 #include <Tools/types.h>
 #include <Tools/Math/matrix.h>
@@ -359,4 +358,5 @@
 #include <Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp>
 #include <Simulation/BFER/Iterative/BFER_ite.hpp>
 #include <Simulation/BFER/BFER.hpp>
+#include "Tools/version.h"
 // #include <aff3ct.hpp>
