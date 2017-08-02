@@ -5,8 +5,8 @@
  * \section LICENSE
  * This file is under MIT license (https://opensource.org/licenses/MIT).
  */
-#ifndef DECODER_SIHO_HPP_
-#define DECODER_SIHO_HPP_
+#ifndef DECODER_HIHO_HPP_
+#define DECODER_HIHO_HPP_
 
 #include <chrono>
 #include <string>
@@ -31,26 +31,22 @@ namespace module
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_SIHO_i).
+ * Please use Decoder for inheritance (instead of Decoder_HIHO_i).
  */
-template <typename B = int, typename R = float>
-class Decoder_SIHO_i : public Module
+template <typename B = int>
+class Decoder_HIHO_i : public Module
 {
 private:
 	const int n_inter_frame_rest;
 
-	mipp::vector<R> Y_N;
+	mipp::vector<B> Y_N;
 	mipp::vector<B> V_K;
 
 protected:
-	const int K; /*!< Number of information bits in one frame */
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int n_dec_waves;
-
-	std::chrono::nanoseconds d_load_total;
-	std::chrono::nanoseconds d_decod_total;
-	std::chrono::nanoseconds d_store_total;
+	const int K_hiho; /*!< Number of information bits in one frame */
+	const int N_hiho; /*!< Size of one frame (= number of bits in one frame) */
+	const int simd_inter_frame_level_hiho; /*!< Number of frames absorbed by the SIMD instructions. */
+	const int n_dec_waves_hiho;
 
 public:
 	/*!
@@ -62,16 +58,16 @@ public:
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
 	 * \param name:                   Decoder's name.
 	 */
-	Decoder_SIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
-	               std::string name = "Decoder_SIHO_i")
+	Decoder_HIHO_i(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1,
+	               std::string name = "Decoder_HIHO_i")
 	: Module(n_frames, name),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  Y_N(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
 	  V_K(n_inter_frame_rest ? simd_inter_frame_level * K : 0),
-	  K(K),
-	  N(N),
-	  simd_inter_frame_level(simd_inter_frame_level),
-	  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
+	  K_hiho(K),
+	  N_hiho(N),
+	  simd_inter_frame_level_hiho(simd_inter_frame_level),
+	  n_dec_waves_hiho((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
 	{
 		if (K <= 0)
 		{
@@ -106,18 +102,18 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Decoder_SIHO_i()
+	virtual ~Decoder_HIHO_i()
 	{
 	}
 
 	int get_K() const
 	{
-		return this->K;
+		return this->K_hiho;
 	}
 
 	int get_N() const
 	{
-		return this->N;
+		return this->N_hiho;
 	}
 
 	/*!
@@ -127,12 +123,12 @@ public:
 	 */
 	int get_simd_inter_frame_level() const
 	{
-		return this->simd_inter_frame_level;
+		return this->simd_inter_frame_level_hiho;
 	}
 
 	int get_n_dec_waves() const
 	{
-		return this->n_dec_waves;
+		return this->n_dec_waves_hiho;
 	}
 
 	/*!
@@ -141,91 +137,57 @@ public:
 	 * \param Y_N: a noisy frame.
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
-	void decode_siho(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
+	void decode_hiho(const mipp::vector<B>& Y_N, mipp::vector<B>& V_K)
 	{
-		if (this->N * this->n_frames != (int)Y_N.size())
+		if (this->N_hiho * this->n_frames != (int)Y_N.size())
 		{
 			std::stringstream message;
 			message << "'Y_N.size()' has to be equal to 'N' * 'n_frames' ('Y_N.size()' = " << Y_N.size()
-			        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+			        << ", 'N' = " << this->N_hiho << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (this->K * this->n_frames != (int)V_K.size())
+		if (this->K_hiho * this->n_frames != (int)V_K.size())
 		{
 			std::stringstream message;
 			message << "'V_K.size()' has to be equal to 'K' * 'n_frames' ('V_K.size()' = " << V_K.size()
-			        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
+			        << ", 'K' = " << this->K_hiho << ", 'n_frames' = " << this->n_frames << ").";
 			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		this->decode_siho(Y_N.data(), V_K.data());
+		this->decode_hiho(Y_N.data(), V_K.data());
 	}
 
-	virtual void decode_siho(const R *Y_N, B *V_K)
+	virtual void decode_hiho(const B *Y_N, B *V_K)
 	{
-		this->d_load_total  = std::chrono::nanoseconds(0);
-		this->d_decod_total = std::chrono::nanoseconds(0);
-		this->d_store_total = std::chrono::nanoseconds(0);
-
 		auto w = 0;
-		for (w = 0; w < this->n_dec_waves -1; w++)
-			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * simd_inter_frame_level);
+		for (w = 0; w < this->n_dec_waves_hiho -1; w++)
+			this->_decode_hiho(Y_N + w * this->N_hiho * this->simd_inter_frame_level_hiho,
+			                   V_K + w * this->K_hiho * this->simd_inter_frame_level_hiho,
+			                   w * simd_inter_frame_level_hiho);
 
 		if (this->n_inter_frame_rest == 0)
-			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * simd_inter_frame_level);
+			this->_decode_hiho(Y_N + w * this->N_hiho * this->simd_inter_frame_level_hiho,
+			                   V_K + w * this->K_hiho * this->simd_inter_frame_level_hiho,
+			                   w * simd_inter_frame_level_hiho);
 		else
 		{
-			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
+			const auto waves_off1 = w * this->simd_inter_frame_level_hiho * this->N_hiho;
 			std::copy(Y_N + waves_off1,
-			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
+			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N_hiho,
 			          this->Y_N.begin());
 
-			this->_decode_siho(this->Y_N.data(), this->V_K.data(), w * simd_inter_frame_level);
+			this->_decode_hiho(this->Y_N.data(), this->V_K.data(), w * simd_inter_frame_level_hiho);
 
-			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
+			const auto waves_off2 = w * this->simd_inter_frame_level_hiho * this->K_hiho;
 			std::copy(this->V_K.begin(),
-			          this->V_K.begin() + this->n_inter_frame_rest * this->K,
+			          this->V_K.begin() + this->n_inter_frame_rest * this->K_hiho,
 			          V_K + waves_off2);
 		}
 	}
 
-	/*!
-	 * \brief Gets the duration of the data loading in the decoding process.
-	 *
-	 * \return the duration of the data loading in the decoding process.
-	 */
-	std::chrono::nanoseconds get_load_duration() const
-	{
-		return this->d_load_total;
-	}
-
-	/*!
-	 * \brief Gets the duration of the decoding process (without loads and stores).
-	 *
-	 * \return the duration of the decoding process (without loads and stores).
-	 */
-	std::chrono::nanoseconds get_decode_duration() const
-	{
-		return this->d_decod_total;
-	}
-
-	/*!
-	 * \brief Gets the duration of the data storing in the decoding process.
-	 *
-	 * \return the duration of the data storing in the decoding process.
-	 */
-	std::chrono::nanoseconds get_store_duration() const
-	{
-		return this->d_store_total;
-	}
-
 protected:
-	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id)
+	virtual void _decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
@@ -233,6 +195,6 @@ protected:
 }
 }
 
-#include "SC_Decoder_SIHO.hpp"
+#include "SC_Decoder_HIHO.hpp"
 
-#endif /* DECODER_SIHO_HPP_ */
+#endif /* DECODER_HIHO_HPP_ */

@@ -8,14 +8,14 @@
 
 #include "Module/Decoder/NO/Decoder_NO.hpp"
 
-#include "../Decoder_SIHO.hpp"
+#include "../Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_BCH : public Decoder_SIHO<B,R>
+class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
 private:
 	Decoder_NO<B,R> hard_decision;
@@ -37,7 +37,6 @@ protected:
 	mipp::vector<int> index_of; // antilog table of GF(2**m)
 
 	mipp::vector<B> YH_N;       // hard decision input vector
-	mipp::vector<B> V_K;
 
 public:
 	Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF,
@@ -45,6 +44,8 @@ public:
 	virtual ~Decoder_BCH();
 
 protected:
+	void _decode     (      B *Y_N, B *V_K                    );
+	void _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
 	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 };
 }
