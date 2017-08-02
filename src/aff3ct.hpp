@@ -173,6 +173,7 @@
 // #include <Module/Channel/SC_Channel.hpp>
 #include <Module/Channel/NO/Channel_NO.hpp>
 #include <Module/Decoder/Decoder_SIHO.hpp>
+#include <Module/Decoder/Decoder_HIHO.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hpp>
 #include <Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp>
