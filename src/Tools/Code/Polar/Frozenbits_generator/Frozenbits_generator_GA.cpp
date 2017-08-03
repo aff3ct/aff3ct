@@ -12,21 +12,18 @@
 
 using namespace aff3ct::tools;
 
-template <typename B>
-Frozenbits_generator_GA<B>
+Frozenbits_generator_GA
 ::Frozenbits_generator_GA(const int K, const int N, const float sigma)
-: Frozenbits_generator<B>(K, N, sigma), m((int)std::log2(N)), z((int)std::exp2(m), 0)
+: Frozenbits_generator(K, N, sigma), m((int)std::log2(N)), z((int)std::exp2(m), 0)
 {
 }
 
-template <typename B>
-Frozenbits_generator_GA<B>
+Frozenbits_generator_GA
 ::~Frozenbits_generator_GA()
 {
 }
 
-template <typename B>
-void Frozenbits_generator_GA<B>
+void Frozenbits_generator_GA
 ::evaluate()
 {
 	for (unsigned i = 0; i != this->best_channels.size(); i++) 
@@ -55,8 +52,7 @@ void Frozenbits_generator_GA<B>
 	std::sort(this->best_channels.begin(), this->best_channels.end(), [this](int i1, int i2) { return z[i1] > z[i2]; });
 }
 
-template <typename B>
-double Frozenbits_generator_GA<B>
+double Frozenbits_generator_GA
 ::phi(double t)
 {
 	if (t < phi_pivot)
@@ -65,8 +61,7 @@ double Frozenbits_generator_GA<B>
 		return std::exp(alpha * std::pow(t, gamma) + beta);
 }
 
-template <typename B>
-double Frozenbits_generator_GA<B>
+double Frozenbits_generator_GA
 ::phi_inv(double t)
 {
 	if (t > phi_inv_pivot)	
@@ -74,18 +69,3 @@ double Frozenbits_generator_GA<B>
 	else
 		return std::pow(a * std::log(t) + b, c);
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::tools::Frozenbits_generator_GA<B_8>;
-template class aff3ct::tools::Frozenbits_generator_GA<B_16>;
-template class aff3ct::tools::Frozenbits_generator_GA<B_32>;
-template class aff3ct::tools::Frozenbits_generator_GA<B_64>;
-#else
-template class aff3ct::tools::Frozenbits_generator_GA<B>;
-#ifndef PREC_32_BIT
-template class aff3ct::tools::Frozenbits_generator_GA<B_32>;
-#endif
-#endif
-// ==================================================================================== explicit template instantiation

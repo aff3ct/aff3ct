@@ -12,10 +12,9 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B>
-Pattern_polar_parser<B>
+Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
-                       const mipp::vector<B>& frozen_bits,
+                       const std::vector<bool> &frozen_bits,
                        const std::vector<Pattern_polar_i*> patterns,
                        const Pattern_polar_i *pattern_rate0,
                        const Pattern_polar_i *pattern_rate1)
@@ -33,10 +32,9 @@ Pattern_polar_parser<B>
 	this->generate_nodes_indexes           (this->polar_tree->get_root());
 }
 
-template <typename B>
-Pattern_polar_parser<B>
+Pattern_polar_parser
 ::Pattern_polar_parser(const int& N,
-                       const mipp::vector<B>& frozen_bits,
+                       const std::vector<bool>& frozen_bits,
                        const std::vector<Pattern_polar_i*> patterns,
                        const int pattern_rate0_id,
                        const int pattern_rate1_id)
@@ -54,16 +52,14 @@ Pattern_polar_parser<B>
 	this->generate_nodes_indexes           (this->polar_tree->get_root());
 }
 
-template <typename B>
-Pattern_polar_parser<B>
+Pattern_polar_parser
 ::~Pattern_polar_parser()
 {
 	this->recursive_deallocate_nodes_patterns(this->polar_tree->get_root());
 	delete polar_tree;
 }
 
-template <typename B>
-void Pattern_polar_parser<B>
+void Pattern_polar_parser
 ::recursive_allocate_nodes_patterns(Binary_node<Pattern_polar_i>* node_curr)
 {
 	if (!node_curr->is_leaf())
@@ -112,8 +108,7 @@ void Pattern_polar_parser<B>
 	}
 }
 
-template <typename B>
-void Pattern_polar_parser<B>
+void Pattern_polar_parser
 ::generate_nodes_indexes(const Binary_node<Pattern_polar_i>* node_curr)
 {
 	node_curr->get_c()->set_id((unsigned int)pattern_types.size());
@@ -129,8 +124,7 @@ void Pattern_polar_parser<B>
 		                                                                  node_curr->get_c()->get_size()));
 }
 
-template <typename B>
-void Pattern_polar_parser<B>
+void Pattern_polar_parser
 ::recursive_deallocate_nodes_patterns(Binary_node<Pattern_polar_i>* node_curr)
 {
 	if (node_curr != nullptr)
@@ -144,29 +138,25 @@ void Pattern_polar_parser<B>
 	}
 }
 
-template <typename B>
-std::vector<unsigned char> Pattern_polar_parser<B>
+std::vector<unsigned char> Pattern_polar_parser
 ::get_pattern_types() const
 {
 	return pattern_types;
 }
 
-template <typename B>
-const std::vector<std::pair<unsigned char, int>>& Pattern_polar_parser<B>
+const std::vector<std::pair<unsigned char, int>>& Pattern_polar_parser
 ::get_leaves_pattern_types() const
 {
 	return leaves_pattern_types;
 }
 
-template <typename B>
-polar_node_t Pattern_polar_parser<B>
+polar_node_t Pattern_polar_parser
 ::get_node_type(const int node_id) const
 {
 	return (polar_node_t)pattern_types[node_id];
 }
 
-template <typename B>
-bool Pattern_polar_parser<B>
+bool Pattern_polar_parser
 ::exist_node_type(const polar_node_t node_type, const int rev_depth) const
 {
 	if (rev_depth <= 0)
@@ -197,8 +187,7 @@ bool Pattern_polar_parser<B>
 	return false;
 }
 
-template <typename B>
-void Pattern_polar_parser<B>
+void Pattern_polar_parser
 ::release_patterns() const
 {
 	for (auto i = 0; i < (int)patterns.size(); i++)
@@ -209,8 +198,7 @@ void Pattern_polar_parser<B>
 	delete pattern_rate1;
 }
 
-template <typename B>
-const Binary_tree<Pattern_polar_i>* Pattern_polar_parser<B>
+const Binary_tree<Pattern_polar_i>* Pattern_polar_parser
 ::get_polar_tree() const
 {
 	return polar_tree;

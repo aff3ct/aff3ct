@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_polar<B>
-::Encoder_polar(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames, 
+::Encoder_polar(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames,
                 const std::string name)
 : Encoder<B>(K, N, n_frames, name), m((int)std::log2(N)), frozen_bits(frozen_bits)
 {

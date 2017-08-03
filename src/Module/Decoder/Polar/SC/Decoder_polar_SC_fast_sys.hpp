@@ -33,19 +33,19 @@ class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>
 	friend Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>;
 
 protected:
-	const int             m;            // graph depth
-	      mipp::vector<R> l;            // lambda, LR or LLR
-	      mipp::vector<B> s;            // bits, partial sums
-	      mipp::vector<B> s_bis;        // bits, partial sums
-	const mipp::vector<B> &frozen_bits; // frozen bits
+	const int                m;            // graph depth
+	      mipp::vector<R   > l;            // lambda, LR or LLR
+	      mipp::vector<B   > s;            // bits, partial sums
+	      mipp::vector<B   > s_bis;        // bits, partial sums
+	const  std::vector<bool> &frozen_bits; // frozen bits
 
-	const tools::Pattern_polar_parser<B> polar_patterns;
+	const tools::Pattern_polar_parser polar_patterns;
 
 public:
-	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");
 
-	Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
 	                          const std::vector<tools::Pattern_polar_i*> polar_patterns,
 	                          const int idx_r0, const int idx_r1,
 	                          const int n_frames = 1, const std::string name = "Decoder_polar_SC_fast_sys");

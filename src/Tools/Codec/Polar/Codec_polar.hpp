@@ -27,9 +27,9 @@ protected:
 	const factory::Encoder_polar       ::parameters &enc_par;
 	const factory::Decoder_polar       ::parameters &dec_par;
 
-	mipp::vector<B> frozen_bits; // known bits (alias frozen bits) are set to true
+	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool is_generated_decoder;
-	Frozenbits_generator<B> *fb_generator;
+	Frozenbits_generator *fb_generator;
 
 	std::vector<module::Decoder_SISO_SIHO<B,Q>*> decoder_siso;
 

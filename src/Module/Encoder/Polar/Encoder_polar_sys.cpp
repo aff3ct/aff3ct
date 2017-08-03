@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_polar_sys<B>
-::Encoder_polar_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int& n_frames,
+::Encoder_polar_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int& n_frames,
                     const std::string name)
 : Encoder_polar<B>(K, N, frozen_bits, n_frames, name)
 {
@@ -24,7 +24,7 @@ void Encoder_polar_sys<B>
 	this->light_encode(X_N);
 
 	for (auto i = 0; i < this->N; i++)
-		X_N[i] = !this->frozen_bits[i] && X_N[i];
+		X_N[i] = (B)(!this->frozen_bits[i]) && X_N[i];
 
 	// second time encode because of systematic encoder
 	this->light_encode(X_N);

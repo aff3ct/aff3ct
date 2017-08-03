@@ -13,17 +13,17 @@ template <typename B = int, typename Q = float>
 class Puncturer_polar_wangliu : public Puncturer<B,Q>
 {
 protected:
-	const tools::Frozenbits_generator<B> &fb_generator;
+	const tools::Frozenbits_generator &fb_generator;
 
 public:
 	Puncturer_polar_wangliu(const int &K,
 	                        const int &N,
-	                        const tools::Frozenbits_generator<B> &fb_generator,
+	                        const tools::Frozenbits_generator &fb_generator,
 	                        const int n_frames = 1,
 	                        const std::string name = "Puncturer_polar_wangliu");
 	virtual ~Puncturer_polar_wangliu();
 
-	void gen_frozen_bits(mipp::vector<B> &frozen_bits);
+	void gen_frozen_bits(std::vector<bool> &frozen_bits);
 
 protected:
 	void   _puncture(const B *X_N1, B *X_N2, const int frame_id) const;

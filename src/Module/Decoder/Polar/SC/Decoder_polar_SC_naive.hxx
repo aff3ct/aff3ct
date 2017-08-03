@@ -13,7 +13,7 @@ namespace module
 {
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SC_naive<B,R,F,G,H>
-::Decoder_polar_SC_naive(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
+::Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames,
                          const std::string name)
 : Decoder_SIHO<B,R>(K, N, n_frames, 1, name), m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
@@ -108,7 +108,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::recursive_initialize_frozen_bits(const tools::Binary_node<Contents_SC<B,R>>* node_curr,
-                                   const mipp::vector<B>& frozen_bits)
+                                   const std::vector<bool>& frozen_bits)
 {
 	auto *contents = node_curr->get_contents();
 

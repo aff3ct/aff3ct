@@ -577,7 +577,7 @@ const std::string aff3ct::factory::Decoder_polar_gen::prefix = "dec";
 
 template <typename B, typename Q, class API_polar>
 module::Decoder_SIHO<B,Q>* Decoder_polar_gen
-::_build(const Decoder_polar::parameters& params, const mipp::vector<B> &frozen_bits, module::CRC<B> *crc)
+::_build(const Decoder_polar::parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc)
 {
 	if (params.type == "SC")
 	{
@@ -792,7 +792,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_polar_gen
-::build(const Decoder_polar::parameters& params, const mipp::vector<B> &frozen_bits, module::CRC<B> *crc)
+::build(const Decoder_polar::parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc)
 {
 	if (params.systematic)
 	{
@@ -891,11 +891,11 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_gen
 
 template <typename B>
 void Decoder_polar_gen
-::get_frozen_bits(const std::string      implem,
-                  const int              N,
-                        mipp::vector<B> &frozen_bits)
+::get_frozen_bits(const std::string        implem,
+                  const int                N,
+                        std::vector<bool> &frozen_bits)
 {
-	const char* fb_ptr = nullptr;
+	const bool* fb_ptr = nullptr;
 
 	// RATE 1/2
 #ifdef ENABLE_DECODER_SC_FAST_N4_K2_SNR25
@@ -1115,8 +1115,7 @@ void Decoder_polar_gen
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	for (auto i = 0; i < N; i++)
-		frozen_bits[i] = (B)fb_ptr[i];
+	std::copy(fb_ptr, fb_ptr + N, frozen_bits.begin());
 }
 
 void Decoder_polar_gen
@@ -1140,20 +1139,20 @@ void Decoder_polar_gen
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar_gen::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar_gen::parameters&, const mipp::vector<B_8 >&, module::CRC<B_8 >*);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar_gen::build<B_16,Q_16>(const aff3ct::factory::Decoder_polar_gen::parameters&, const mipp::vector<B_16>&, module::CRC<B_16>*);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar_gen::build<B_32,Q_32>(const aff3ct::factory::Decoder_polar_gen::parameters&, const mipp::vector<B_32>&, module::CRC<B_32>*);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar_gen::build<B_64,Q_64>(const aff3ct::factory::Decoder_polar_gen::parameters&, const mipp::vector<B_64>&, module::CRC<B_64>*);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar_gen::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar_gen::parameters&, const std::vector<bool>&, module::CRC<B_8 >*);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar_gen::build<B_16,Q_16>(const aff3ct::factory::Decoder_polar_gen::parameters&, const std::vector<bool>&, module::CRC<B_16>*);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar_gen::build<B_32,Q_32>(const aff3ct::factory::Decoder_polar_gen::parameters&, const std::vector<bool>&, module::CRC<B_32>*);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar_gen::build<B_64,Q_64>(const aff3ct::factory::Decoder_polar_gen::parameters&, const std::vector<bool>&, module::CRC<B_64>*);
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar_gen::build<B,Q>(const aff3ct::factory::Decoder_polar_gen::parameters&, const mipp::vector<B>&, module::CRC<B>*);
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar_gen::build<B,Q>(const aff3ct::factory::Decoder_polar_gen::parameters&, const std::vector<bool>&, module::CRC<B>*);
 #endif
 
 #ifdef MULTI_PREC
-template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_8 >(const std::string, const int, mipp::vector<B_8 >&);
-template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_16>(const std::string, const int, mipp::vector<B_16>&);
-template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_32>(const std::string, const int, mipp::vector<B_32>&);
-template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_64>(const std::string, const int, mipp::vector<B_64>&);
+template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_8 >(const std::string, const int, std::vector<bool>&);
+template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_16>(const std::string, const int, std::vector<bool>&);
+template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_32>(const std::string, const int, std::vector<bool>&);
+template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B_64>(const std::string, const int, std::vector<bool>&);
 #else
-template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B>(const std::string, const int, mipp::vector<B>&);
+template void aff3ct::factory::Decoder_polar_gen::get_frozen_bits<B>(const std::string, const int, std::vector<bool>&);
 #endif
 // ==================================================================================== explicit template instantiation

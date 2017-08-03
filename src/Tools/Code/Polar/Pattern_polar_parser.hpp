@@ -27,13 +27,12 @@ namespace tools
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
  *        cuts when possible.
  */
-template <typename B = int>
 class Pattern_polar_parser
 {
 protected:
 	const int                            N;             /*!< Codeword size. */
 	const int                            m;             /*!< Tree depth. */
-	const mipp::vector<B>               &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
+	const std::vector<bool>             &frozen_bits;   /*!< Vector of frozen bits (true if frozen, false otherwise). */
 	const std::vector<Pattern_polar_i*>  patterns;      /*!< Vector of patterns. */
 	const Pattern_polar_i               *pattern_rate0; /*!< Terminal pattern when the bit is frozen. */
 	const Pattern_polar_i               *pattern_rate1; /*!< Terminal pattern when the bit is an information bit. */
@@ -52,7 +51,7 @@ public:
 	 * \param pattern_rate1: terminal pattern when the bit is an information bit.
 	 */
 	Pattern_polar_parser(const int& N,
-	                     const mipp::vector<B>& frozen_bits,
+	                     const std::vector<bool> &frozen_bits,
 	                     const std::vector<Pattern_polar_i*> patterns,
 	                     const Pattern_polar_i *pattern_rate0,
 	                     const Pattern_polar_i *pattern_rate1);
@@ -67,7 +66,7 @@ public:
 	 * \param pattern_rate1_id: id of the terminal pattern when the bit is an info. bit (id in the patterns vector).
 	 */
 	Pattern_polar_parser(const int& N,
-	                     const mipp::vector<B>& frozen_bits,
+	                     const std::vector<bool>& frozen_bits,
 	                     const std::vector<Pattern_polar_i*> patterns,
 	                     const int pattern_rate0_id,
 	                     const int pattern_rate1_id);
@@ -128,6 +127,6 @@ private:
 }
 }
 
-#include "Pattern_polar_parser.hxx"
+#include "Pattern_polar_parser.hxx" // /!\ it is important to keep .hxx for performance considerations (inlining)
 
 #endif /* PATTERN_POLAR_PARSER_HPP */

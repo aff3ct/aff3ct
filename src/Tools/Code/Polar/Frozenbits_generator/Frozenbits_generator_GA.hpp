@@ -11,8 +11,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename B = int>
-class Frozenbits_generator_GA : public Frozenbits_generator<B>
+class Frozenbits_generator_GA : public Frozenbits_generator
 {
 private:
 	const int m;

@@ -17,8 +17,8 @@ struct Puncturer_polar : public Puncturer
 	static const std::string prefix;
 
 	template <typename B = int, typename Q = float>
-	static module::Puncturer<B,Q>* build(const parameters                     &params,
-	                                     const tools::Frozenbits_generator<B> &fb_generator);
+	static module::Puncturer<B,Q>* build(const parameters                  &params,
+	                                     const tools::Frozenbits_generator &fb_generator);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

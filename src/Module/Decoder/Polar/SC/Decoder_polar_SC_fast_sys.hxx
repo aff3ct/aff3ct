@@ -30,7 +30,7 @@ constexpr int static_level = 6; // 2^6 = 64
 template <typename B, typename R, class API_polar, int REV_D>
 struct Decoder_polar_SC_fast_sys_static
 {
-	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s,
+	static void decode(const tools::Pattern_polar_parser &polar_patterns, mipp::vector<B> &s,
 	                   mipp::vector<R> &l, const int off_l, const int off_s, int &node_id)
 	{
 		constexpr int reverse_depth = REV_D;
@@ -101,7 +101,7 @@ struct Decoder_polar_SC_fast_sys_static
 template <typename B, typename R, class API_polar>
 struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 {
-	static void decode(const tools::Pattern_polar_parser<B> &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
+	static void decode(const tools::Pattern_polar_parser &polar_patterns, mipp::vector<B> &s, mipp::vector<R> &l,
 	                   const int off_l, const int off_s, int &node_id)
 	{
 		constexpr int reverse_depth = 0;
@@ -122,7 +122,7 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits, const int n_frames,
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames,
                             const std::string name)
 : Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames(), name),
   m                ((int)std::log2(N)),
@@ -180,7 +180,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& K, const int& N, const mipp::vector<B>& frozen_bits,
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                             const std::vector<tools::Pattern_polar_i*> polar_patterns,
                             const int idx_r0, const int idx_r1,
                             const int n_frames, const std::string name)

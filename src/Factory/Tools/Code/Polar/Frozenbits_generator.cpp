@@ -11,13 +11,12 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Frozenbits_generator::name   = "Frozen bits generator";
 const std::string aff3ct::factory::Frozenbits_generator::prefix = "fbg";
 
-template <typename B>
-tools::Frozenbits_generator<B>* Frozenbits_generator
+tools::Frozenbits_generator* Frozenbits_generator
 ::build(const parameters &params)
 {
-	     if (params.type == "GA"  ) return new tools::Frozenbits_generator_GA  <B>(params.K, params.N_cw,                                 params.sigma);
-	else if (params.type == "TV"  ) return new tools::Frozenbits_generator_TV  <B>(params.K, params.N_cw, params.path_fb, params.path_pb, params.sigma);
-	else if (params.type == "FILE") return new tools::Frozenbits_generator_file<B>(params.K, params.N_cw, params.path_fb                              );
+	     if (params.type == "GA"  ) return new tools::Frozenbits_generator_GA  (params.K, params.N_cw,                                 params.sigma);
+	else if (params.type == "TV"  ) return new tools::Frozenbits_generator_TV  (params.K, params.N_cw, params.path_fb, params.path_pb, params.sigma);
+	else if (params.type == "FILE") return new tools::Frozenbits_generator_file(params.K, params.N_cw, params.path_fb                              );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -81,18 +80,3 @@ void Frozenbits_generator
 	if (params.type == "TV" || params.type == "FILE")
 		head_fb.push_back(std::make_pair("Fb path", params.path_fb));
 }
-
-// ==================================================================================== explicit template instantiation
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template aff3ct::tools::Frozenbits_generator<B_8 >* aff3ct::factory::Frozenbits_generator::build<B_8 >(const aff3ct::factory::Frozenbits_generator::parameters&);
-template aff3ct::tools::Frozenbits_generator<B_16>* aff3ct::factory::Frozenbits_generator::build<B_16>(const aff3ct::factory::Frozenbits_generator::parameters&);
-template aff3ct::tools::Frozenbits_generator<B_32>* aff3ct::factory::Frozenbits_generator::build<B_32>(const aff3ct::factory::Frozenbits_generator::parameters&);
-template aff3ct::tools::Frozenbits_generator<B_64>* aff3ct::factory::Frozenbits_generator::build<B_64>(const aff3ct::factory::Frozenbits_generator::parameters&);
-#else
-template aff3ct::tools::Frozenbits_generator<B>* aff3ct::factory::Frozenbits_generator::build<B>(const aff3ct::factory::Frozenbits_generator::parameters&);
-#ifndef PREC_32_BIT
-template aff3ct::tools::Frozenbits_generator<B_32>* aff3ct::factory::Frozenbits_generator::build<B_32>(const aff3ct::factory::Frozenbits_generator::parameters&);
-#endif
-#endif
-// ==================================================================================== explicit template instantiation

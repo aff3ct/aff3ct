@@ -19,27 +19,23 @@
 
 using namespace aff3ct::tools;
 
-template <typename B>
-const int Frozenbits_generator_TV<B>::Mu = 100;
+const int Frozenbits_generator_TV::Mu = 100;
 
-template <typename B>
-Frozenbits_generator_TV<B>
+Frozenbits_generator_TV
 ::Frozenbits_generator_TV(const int K, const int N,
                           const std::string awgn_codes_dir,
                           const std::string bin_pb_path,
                           const float sigma)
-: Frozenbits_generator_file<B>(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
+: Frozenbits_generator_file(K, N, sigma), m((int)std::log2(N)), awgn_codes_dir(awgn_codes_dir), bin_pb_path(bin_pb_path)
 {
 }
 
-template <typename B>
-Frozenbits_generator_TV<B>
+Frozenbits_generator_TV
 ::~Frozenbits_generator_TV()
 {
 }
 
-template <typename B>
-void Frozenbits_generator_TV<B>
+void Frozenbits_generator_TV
 ::evaluate()
 {
 	std::ostringstream s_stream;
@@ -122,18 +118,3 @@ void Frozenbits_generator_TV<B>
 		}
 	}
 }
-
-// ==================================================================================== explicit template instantiation 
-#include "Tools/types.h"
-#ifdef MULTI_PREC
-template class aff3ct::tools::Frozenbits_generator_TV<B_8>;
-template class aff3ct::tools::Frozenbits_generator_TV<B_16>;
-template class aff3ct::tools::Frozenbits_generator_TV<B_32>;
-template class aff3ct::tools::Frozenbits_generator_TV<B_64>;
-#else
-template class aff3ct::tools::Frozenbits_generator_TV<B>;
-#ifndef PREC_32_BIT
-template class aff3ct::tools::Frozenbits_generator_TV<B_32>;
-#endif
-#endif
-// ==================================================================================== explicit template instantiation

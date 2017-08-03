@@ -25,8 +25,7 @@ struct Frozenbits_generator : public Factory
 		float       sigma   = -1.f;
 	};
 
-	template <typename B = int>
-	static tools::Frozenbits_generator<B>* build(const parameters &params);
+	static tools::Frozenbits_generator* build(const parameters &params);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

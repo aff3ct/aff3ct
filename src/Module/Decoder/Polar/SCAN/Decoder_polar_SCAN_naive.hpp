@@ -25,14 +25,14 @@ protected:
 	const int max_iter;
 	const int layers_count; // number of layers in the graph = m+1
 
-	const mipp::vector<B>&       frozen_bits;
+	const std::vector<bool>&     frozen_bits;
 	std::vector<mipp::vector<R>> feedback_graph;
 	std::vector<mipp::vector<R>> soft_graph;
 
 	bool is_init;
 
 public:
-	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const mipp::vector<B> &frozen_bits,
+	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
 	                         const int n_frames = 1, const std::string name = "Decoder_polar_SCAN_naive");
 	virtual ~Decoder_polar_SCAN_naive() {}
 

@@ -33,7 +33,7 @@ Codec_polar<B,Q>
 	if (!is_generated_decoder)
 	{
 		// build the frozen bits generator
-		fb_generator = factory::Frozenbits_generator::build<B>(fb_par);
+		fb_generator = factory::Frozenbits_generator::build(fb_par);
 
 		if (fb_generator == nullptr)
 			throw runtime_error(__FILE__, __LINE__, __func__, "'fb_generator' can't be null.");
