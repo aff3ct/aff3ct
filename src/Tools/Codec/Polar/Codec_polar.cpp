@@ -74,7 +74,19 @@ void Codec_polar<B,Q>
 		}
 	}
 	else
-		factory::Decoder_polar_gen::get_frozen_bits<B>(dec_par.implem, dec_par.N_cw, frozen_bits);
+	{
+		const auto fb = factory::Decoder_polar_gen::get_frozen_bits(dec_par.implem);
+
+		if (fb.size() != frozen_bits.size())
+		{
+			std::stringstream message;
+			message << "'fb.size()' has to be equal to 'frozen_bits.size()' ('fb.size()' = " << fb.size()
+			        << ", 'frozen_bits.size()' = " << frozen_bits.size() << ").";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		std::copy(fb.begin(), fb.end(), frozen_bits.begin());
+	}
 }
 
 template <typename B, typename Q>
@@ -99,10 +111,17 @@ template <typename B, typename Q>
 Puncturer<B,Q>* Codec_polar<B,Q>
 ::build_puncturer(const int tid)
 {
-	if(fb_generator == nullptr)
-		throw runtime_error(__FILE__, __LINE__, __func__, "Polar puncturer requires a frozen bits generator.");
+	if (is_generated_decoder)
+	{
+		throw cannot_allocate(__FILE__, __LINE__, __func__);
+	}
+	else
+	{
+		if (fb_generator == nullptr)
+			throw runtime_error(__FILE__, __LINE__, __func__, "Polar puncturer requires a frozen bits generator.");
 
-	return factory::Puncturer_polar::build<B,Q>(pct_par, *fb_generator);
+		return factory::Puncturer_polar::build<B,Q>(pct_par, *fb_generator);
+	}
 }
 
 template <typename B, typename Q>
@@ -133,7 +152,7 @@ Decoder_SIHO<B,Q>* Codec_polar<B,Q>
 	else
 	{
 		if (is_generated_decoder)
-			return factory::Decoder_polar_gen::build<B,Q>(dec_par, frozen_bits, crc);
+			return factory::Decoder_polar_gen::build<B,Q>(dec_par,              crc);
 		else
 			return factory::Decoder_polar    ::build<B,Q>(dec_par, frozen_bits, crc);
 	}

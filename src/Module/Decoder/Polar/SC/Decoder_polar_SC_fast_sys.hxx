@@ -167,15 +167,6 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 		        << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	if (m < static_level)
-	{
-		std::stringstream message;
-		message << "'m' has to be equal or greater than 'static_level' ('m' = " << m << ", 'static_level' = "
-		        << static_level << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 }
 
 template <typename B, typename R, class API_polar>
@@ -254,6 +245,14 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	if (m < static_level)
+	{
+		std::stringstream message;
+		message << "'m' has to be equal or greater than 'static_level' ('m' = " << m << ", 'static_level' = "
+		        << static_level << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
