@@ -16,7 +16,8 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames, const std::string name)
 
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name ),
+: Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name ),
+  hard_decision         (N                       ),
   n_ite                 (n_ite                   ),
   H                     (H                       ),
   enable_syndrome       (enable_syndrome         ),
@@ -91,13 +92,8 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
-	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
-	for (auto i = 0; i < this->N; i++)
-		HY_N[i] = Y_N[i] < 0;
-	auto d_load = std::chrono::steady_clock::now() - t_load;
-
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto cur_syndrome_depth = 0;
 	for (auto ite = 0; ite < n_ite; ite++)
@@ -112,7 +108,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 			for (auto j = 0; j < node_degree; j++)
 			{
-				auto cur_state = HY_N[i];
+				auto cur_state = Y_N[i];
 				if (ite > 0)
 				{
 					auto count = 0;
@@ -123,7 +119,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 					cur_state = count == (node_degree -1) ? !cur_state : cur_state;
 				}
 
-				V_to_C_mess_ptr[j] = cur_state;
+				V_to_C_mess_ptr[j] = (int8_t)cur_state;
 			}
 
 			C_to_V_mess_ptr += node_degree; // jump to the next node
@@ -176,7 +172,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 			count += C_to_V_ptr[j] ? 1 : -1;
 
 		if (node_degree % 2 == 0)
-			count += HY_N[i] ? 1 : -1;
+			count += Y_N[i] ? 1 : -1;
 
 		// take the hard decision
 		this->V_N[i] = count > 0 ? 1 : 0;
@@ -185,12 +181,24 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	}
 
 	for (auto i = 0; i < this->K; i++)
-		V_K[i] = this->V_N[this->info_bits_pos[i]];
+		V_K[i] = (B)this->V_N[this->info_bits_pos[i]];
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_load_total  += d_load;
 	this->d_decod_total += d_decod;
 	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
+	hard_decision.decode_siho(Y_N, HY_N.data());
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	this->d_load_total  += d_load;
+
+	this->_decode_hiho(HY_N.data(), V_K, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation 

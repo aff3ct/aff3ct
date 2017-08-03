@@ -19,12 +19,11 @@ const std::string aff3ct::factory::Decoder_LDPC::prefix = "dec";
 
 template <typename B, typename R>
 module::Decoder_SISO_SIHO<B,R>* Decoder_LDPC
-::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos)
+::build_siso(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos)
 {
 	if ((params.type == "BP" || params.type == "BP_FLOODING") && params.simd_strategy.empty())
 	{
 		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_flooding_ONMS     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
 		else if (params.implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
 		else if (params.implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_LSPA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
@@ -38,6 +37,20 @@ module::Decoder_SISO_SIHO<B,R>* Decoder_LDPC
 	{
 		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
+module::Decoder_SIHO<B,R>* Decoder_LDPC
+::build(const parameters& params, const tools::Sparse_matrix &H, const std::vector<unsigned> &info_bits_pos)
+{
+	if ((params.type == "BP" || params.type == "BP_FLOODING") && params.simd_strategy.empty())
+	{
+		if (params.implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+	}
+
+	return build_siso<B,R>(params, H, info_bits_pos);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -126,11 +139,21 @@ void Decoder_LDPC
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::build<B_16,Q_16>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::build<B_32,Q_32>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::build<B_64,Q_64>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
 #else
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::build<B,Q>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::build_siso<B,Q>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+#endif
+
+#include "Tools/types.h"
+#ifdef MULTI_PREC
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_LDPC::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_LDPC::build<B_16,Q_16>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_LDPC::build<B_32,Q_32>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_LDPC::build<B_64,Q_64>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
+#else
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_LDPC::build<B,Q>(const aff3ct::factory::Decoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const std::vector<unsigned>&);
 #endif
 // ==================================================================================== explicit template instantiation

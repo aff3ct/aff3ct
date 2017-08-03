@@ -68,12 +68,10 @@ void print_version()
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
 #endif
-	std::string affect_version = version() == "GIT-NOTFOUND" ? "Unknown version" : version();
+	std::string affect_version = version() == "GIT-NOTFOUND" ? "" : version();
 
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << " " << compiler_version << ", " 
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
-	if (sha1() != "GITDIR-NOTFOUND")
-		std::cout << "GIT SHA1: " << sha1() << std::endl;
 	std::cout << "Copyright (c) 2016-2017 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;

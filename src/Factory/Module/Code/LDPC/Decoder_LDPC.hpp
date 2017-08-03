@@ -34,8 +34,12 @@ struct Decoder_LDPC : public Decoder
 	};
 
 	template <typename B = int, typename R = float>
-	static module::Decoder_SISO_SIHO<B,R>* build(const parameters& params, const tools::Sparse_matrix &H,
-	                                             const std::vector<unsigned> &info_bits_pos);
+	static module::Decoder_SIHO<B,R>* build(const parameters& params, const tools::Sparse_matrix &H,
+	                                        const std::vector<unsigned> &info_bits_pos);
+
+	template <typename B = int, typename R = float>
+	static module::Decoder_SISO_SIHO<B,R>* build_siso(const parameters& params, const tools::Sparse_matrix &H,
+	                                                  const std::vector<unsigned> &info_bits_pos);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
