@@ -255,7 +255,6 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 {
 	int first_node_id = 0, off_l = 0, off_s = 0;
 	recursive_decode(Y_N, off_l, off_s, m, first_node_id);
-	select_best_path();
 }
 
 template <typename B, typename R, class API_polar>
@@ -268,6 +267,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode(Y_N);
+	this->select_best_path();
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -289,6 +289,7 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	this->_decode(Y_N);
+	this->select_best_path();
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
