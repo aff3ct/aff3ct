@@ -6,7 +6,7 @@
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Math/utils.h"
 
-#include "Decoder_RSC_DB_BCJR_DVB2.hpp"
+#include "Decoder_RSC_DB_BCJR_DVB_RCS2.hpp"
 
 using namespace aff3ct::tools;
 
@@ -15,12 +15,12 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename R, tools::proto_max<R> MAX>
-Decoder_RSC_DB_BCJR_DVB2<B,R,MAX>
-::Decoder_RSC_DB_BCJR_DVB2(const int K,
-                           const std::vector<std::vector<int>> &trellis,
-                           const bool buffered_encoding,
-                           const int n_frames,
-                           const std::string name)
+Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
+::Decoder_RSC_DB_BCJR_DVB_RCS2(const int K,
+                               const std::vector<std::vector<int>> &trellis,
+                               const bool buffered_encoding,
+                               const int n_frames,
+                               const std::string name)
 : Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, name)
 {
 	if (this->n_states != 16)
@@ -32,13 +32,13 @@ Decoder_RSC_DB_BCJR_DVB2<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
-Decoder_RSC_DB_BCJR_DVB2<B,R,MAX>
-::~Decoder_RSC_DB_BCJR_DVB2()
+Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
+::~Decoder_RSC_DB_BCJR_DVB_RCS2()
 {
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR_DVB2<B,R,MAX>
+void Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
 ::__fwd_recursion(const R *sys, const R *par)
 {
 	for (auto k = 0; k < this->K/2; k++)
@@ -118,7 +118,7 @@ void Decoder_RSC_DB_BCJR_DVB2<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
-void Decoder_RSC_DB_BCJR_DVB2<B,R,MAX>
+void Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
 ::__bwd_recursion(const R *sys, const R *par, R* ext)
 {
 	for (auto k = this->K/2 - 1; k >= 0; k--)

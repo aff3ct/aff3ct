@@ -13,13 +13,14 @@ namespace aff3ct
 namespace module
 {
 template <typename T = int>
-class Interleaver_ARP_DVB2 : public Interleaver<T>
+class Interleaver_ARP_DVB_RCS2 : public Interleaver<T>
 {
 private:
 	int p, q0, q1, q2, q3;
 
 public:
-	Interleaver_ARP_DVB2(const int size, const int n_frames = 1, const std::string name = "Interleaver_ARP_DVB2")
+	Interleaver_ARP_DVB_RCS2(const int size, const int n_frames = 1,
+	                         const std::string name = "Interleaver_ARP_DVB_RCS2")
 	: Interleaver<T>(size, false, n_frames, name)
 	{
 		switch (size)

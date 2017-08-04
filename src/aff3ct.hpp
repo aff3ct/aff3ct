@@ -129,8 +129,8 @@
 #include <Module/Interleaver/Random_column/Interleaver_random_column.hpp>
 #include <Module/Interleaver/Interleaver.hpp>
 #include <Module/Interleaver/NO/Interleaver_NO.hpp>
-#include <Module/Interleaver/ARP/Interleaver_ARP_DVB2.hpp>
-#include <Module/Interleaver/ARP/Interleaver_ARP_DVB1.hpp>
+#include <Module/Interleaver/ARP/Interleaver_ARP_DVB_RCS1.hpp>
+#include <Module/Interleaver/ARP/Interleaver_ARP_DVB_RCS2.hpp>
 #include <Module/Interleaver/CCSDS/Interleaver_CCSDS.hpp>
 #include <Module/Interleaver/LTE/Interleaver_LTE.hpp>
 #include <Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp>
@@ -234,8 +234,8 @@
 // #include <Module/Decoder/SC_Decoder.hpp>
 #include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_generic.hpp>
 #include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp>
-#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB1.hpp>
-#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB2.hpp>
+#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp>
+#include <Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS2.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_fast.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo.hpp>
 #include <Module/Decoder/Turbo/Decoder_turbo_std.hpp>

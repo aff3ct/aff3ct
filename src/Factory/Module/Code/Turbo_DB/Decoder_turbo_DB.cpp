@@ -80,10 +80,10 @@ void Decoder_turbo_DB
 	Interleaver::store_args(vals, params.itl, "itl");
 
 	if (params.sub.implem == "DVB-RCS1" && !exist(vals, {"itl-type"}))
-		params.itl.type = "ARP_DVBS1";
+		params.itl.type = "DVB-RCS1";
 
 	if (params.sub.implem == "DVB-RCS2" && !exist(vals, {"itl-type"}))
-		params.itl.type = "ARP_DVBS2";
+		params.itl.type = "DVB-RCS2";
 
 	params.sf.n_ite = params.n_ite;
 	Scaling_factor::store_args(vals, params.sf, p+"-sf");

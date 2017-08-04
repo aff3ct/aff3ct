@@ -1,8 +1,8 @@
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_generic.hpp"
-#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB1.hpp"
-#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB2.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS2.hpp"
 
 #include "Decoder_RSC_DB.hpp"
 
@@ -18,9 +18,9 @@ module::Decoder_RSC_DB_BCJR<B,Q>* Decoder_RSC_DB
 {
 	if (dec_par.type == "BCJR")
 	{
-		if (dec_par.implem == "GENERIC" ) return new module::Decoder_RSC_DB_BCJR_generic<B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
-		if (dec_par.implem == "DVB-RCS1") return new module::Decoder_RSC_DB_BCJR_DVB1   <B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
-		if (dec_par.implem == "DVB-RCS2") return new module::Decoder_RSC_DB_BCJR_DVB2   <B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
+		if (dec_par.implem == "GENERIC" ) return new module::Decoder_RSC_DB_BCJR_generic <B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
+		if (dec_par.implem == "DVB-RCS1") return new module::Decoder_RSC_DB_BCJR_DVB_RCS1<B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
+		if (dec_par.implem == "DVB-RCS2") return new module::Decoder_RSC_DB_BCJR_DVB_RCS2<B,Q,MAX>(dec_par.K, trellis, dec_par.buffered, dec_par.n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
