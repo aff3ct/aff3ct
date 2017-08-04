@@ -6,8 +6,6 @@
 
 #include "Tools/Math/Galois.hpp"
 
-#include "Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "../Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct
@@ -17,9 +15,6 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
-private:
-	Decoder_NO<B,R> hard_decision;
-
 	std::vector<mipp::vector<int>> elp;
 	mipp::vector<int> discrepancy;
 	mipp::vector<int> l;
@@ -44,9 +39,11 @@ public:
 	virtual ~Decoder_BCH();
 
 protected:
-	void _decode     (      B *Y_N, B *V_K                    );
-	void _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
-	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	void _decode           (      B *Y_N                            );
+	void _decode_hiho      (const B *Y_N, B *V_K, const int frame_id);
+	void _decode_hiho_coded(const B *Y_N, B *V_N, const int frame_id);
+	void _decode_siho      (const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho_coded(const R *Y_N, B *V_N, const int frame_id);
 };
 }
 }

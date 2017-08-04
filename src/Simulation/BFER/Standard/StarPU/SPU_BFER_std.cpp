@@ -49,8 +49,12 @@ SPU_BFER_std<B,R,Q>
 {
 	if (params.debug)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the debug mode.");
+
 	if (params.benchs)
 		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the bench mode.");
+
+	if (params.coded_monitoring)
+		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the coded monitoring.");
 
 	if (params.time_report)
 		std::clog << format_warning("The time report is not available in the StarPU simulation.") << std::endl;

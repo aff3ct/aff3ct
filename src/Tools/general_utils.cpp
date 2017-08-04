@@ -2,6 +2,7 @@
 #include <limits>
 #include <sstream>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "general_utils.h"

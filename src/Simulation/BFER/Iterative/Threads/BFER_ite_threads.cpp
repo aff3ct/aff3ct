@@ -35,6 +35,7 @@ BFER_ite_threads<B,R,Q>
   Y_N5(this->params.n_threads, mipp::vector<Q>(this->params.itl->size  * this->params.itl->n_frames)),
   Y_N6(this->params.n_threads, mipp::vector<Q>(this->params.dec->N_cw  * this->params.dec->n_frames)),
   Y_N7(this->params.n_threads, mipp::vector<Q>(this->params.itl->size  * this->params.itl->n_frames)),
+  V_N1(this->params.n_threads, mipp::vector<B>(this->params.dec->N_cw  * this->params.crc->n_frames)),
   V_K1(this->params.n_threads, mipp::vector<B>(this->params.dec->K     * this->params.dec->n_frames)),
   V_K2(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames))
 {
@@ -265,30 +266,58 @@ void BFER_ite_threads<B,R,Q>
 			// hard decode
 			else
 			{
-				// decode
-				auto t_decod = steady_clock::now();
-				this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
-				this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
+				if (this->params.coded_monitoring)
+				{
+					// decode
+					auto t_decod = steady_clock::now();
+					this->decoder[tid]->decode_siho_coded(this->Y_N5[tid], this->V_N1[tid]);
+					this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
+				}
+				else
+				{
+					// decode
+					auto t_decod = steady_clock::now();
+					this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
+					this->durations[tid][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
+				}
 			}
 		}
 
-		// apply the coset to recover the real bits
-		if (this->params.coset)
+		if (this->params.coded_monitoring)
 		{
-			auto t_cobit = steady_clock::now();
-			this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
-			this->durations[tid][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
+			// apply the coset to recover the real bits
+			if (this->params.coset)
+			{
+				auto t_cobit = steady_clock::now();
+				this->coset_bit[tid]->apply(this->X_N1[tid], this->V_N1[tid], this->V_N1[tid]);
+				this->durations[tid][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
+			}
+
+			// check errors in the frame
+			auto t_check = steady_clock::now();
+			this->monitor[tid]->check_errors(this->X_N1[tid], this->V_N1[tid]);
+			this->durations[tid][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
 		}
+		else
+		{
+			// apply the coset to recover the real bits
+			if (this->params.coset)
+			{
+				auto t_cobit = steady_clock::now();
+				this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
+				this->durations[tid][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
+			}
 
-		// extract the CRC bits and keep only the information bits
-		auto t_crcex = steady_clock::now();
-		this->crc[tid]->extract(this->V_K1[tid], this->V_K2[tid]);
-		this->durations[tid][std::make_pair(13, "CRC extract")] += steady_clock::now() - t_crcex;
+			// extract the CRC bits and keep only the information bits
+			auto t_crcex = steady_clock::now();
+			this->crc[tid]->extract(this->V_K1[tid], this->V_K2[tid]);
+			this->durations[tid][std::make_pair(13, "CRC extract")] += steady_clock::now() - t_crcex;
 
-		// check errors in the frame
-		auto t_check = steady_clock::now();
-		this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
-		this->durations[tid][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
+			// check errors in the frame
+			auto t_check = steady_clock::now();
+			this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
+			this->durations[tid][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
+		}
 	}
 }
 
@@ -546,48 +575,88 @@ void BFER_ite_threads<B,R,Q>
 			// hard decode
 			else
 			{
-				// decode
-				std::cout << "Hard decode from Y_N5 to V_K1..." << std::endl;
-				auto t_decod = steady_clock::now();
-				this->decoder[0]->decode_siho(this->Y_N5[0], this->V_K1[0]);
-				this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
+				if (this->params.coded_monitoring)
+				{
+					// decode
+					std::cout << "Hard decode from Y_N5 to V_N1..." << std::endl;
+					auto t_decod = steady_clock::now();
+					this->decoder[0]->decode_siho_coded(this->Y_N5[0], this->V_N1[0]);
+					this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
+
+					// display V_K1
+					std::cout << "V_K1:" << std::endl;
+					ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
+					std::cout << std::endl;
+				}
+				else
+				{
+					// decode
+					std::cout << "Hard decode from Y_N5 to V_K1..." << std::endl;
+					auto t_decod = steady_clock::now();
+					this->decoder[0]->decode_siho(this->Y_N5[0], this->V_K1[0]);
+					this->durations[0][std::make_pair(11, "Decoder")] += steady_clock::now() - t_decod;
+
+					// display V_K1
+					std::cout << "V_K1:" << std::endl;
+					ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
+					std::cout << std::endl;
+				}
+			}
+		}
+
+		if (this->params.coded_monitoring)
+		{
+			// apply the coset to recover the real bits
+			if (this->params.coset)
+			{
+				std::cout << "Apply the coset approach on V_N1..." << std::endl;
+				auto t_cobit = steady_clock::now();
+				this->coset_bit[0]->apply(this->X_N1[0], this->V_N1[0], this->V_N1[0]);
+				this->durations[0][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
+
+				// display V_K1
+				std::cout << "V_N1:" << std::endl;
+				ft.display_real_vector(this->V_N1[0], this->X_N1[0]);
+				std::cout << std::endl;
+			}
+
+			// check errors in the frame
+			auto t_check = steady_clock::now();
+			this->monitor[0]->check_errors(this->X_N1[0], this->V_N1[0]);
+			this->durations[0][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
+		}
+		else
+		{
+			// apply the coset to recover the real bits
+			if (this->params.coset)
+			{
+				std::cout << "Apply the coset approach on V_K1..." << std::endl;
+				auto t_cobit = steady_clock::now();
+				this->coset_bit[0]->apply(this->U_K2[0], this->V_K1[0], this->V_K1[0]);
+				this->durations[0][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
 
 				// display V_K1
 				std::cout << "V_K1:" << std::endl;
 				ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
 				std::cout << std::endl;
 			}
-		}
 
-		// apply the coset to recover the real bits
-		if (this->params.coset)
-		{
-			std::cout << "Apply the coset approach on V_K1..." << std::endl;
-			auto t_cobit = steady_clock::now();
-			this->coset_bit[0]->apply(this->U_K2[0], this->V_K1[0], this->V_K1[0]);
-			this->durations[0][std::make_pair(12, "Coset bit")] += steady_clock::now() - t_cobit;
+			// extract the CRC bits and keep only the information bits
+			std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl;
+			auto t_crcex = steady_clock::now();
+			this->crc[0]->extract(this->V_K1[0], this->V_K2[0]);
+			this->durations[0][std::make_pair(13, "CRC extract")] += steady_clock::now() - t_crcex;
 
-			// display V_K1
-			std::cout << "V_K1:" << std::endl;
-			ft.display_real_vector(this->V_K1[0], this->U_K2[0]);
+			// display V_K2
+			std::cout << "V_K2:" << std::endl;
+			ft.display_real_vector(this->V_K2[0], this->U_K1[0]);
 			std::cout << std::endl;
+
+			// check errors in the frame
+			auto t_check = steady_clock::now();
+			this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
+			this->durations[0][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
 		}
-
-		// extract the CRC bits and keep only the information bits
-		std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl;
-		auto t_crcex = steady_clock::now();
-		this->crc[0]->extract(this->V_K1[0], this->V_K2[0]);
-		this->durations[0][std::make_pair(13, "CRC extract")] += steady_clock::now() - t_crcex;
-
-		// display V_K2
-		std::cout << "V_K2:" << std::endl;
-		ft.display_real_vector(this->V_K2[0], this->U_K1[0]);
-		std::cout << std::endl;
-
-		// check errors in the frame
-		auto t_check = steady_clock::now();
-		this->monitor[0]->check_errors(this->U_K1[0], this->V_K2[0]);
-		this->durations[0][std::make_pair(14, "Check errors")] += steady_clock::now() - t_check;
 	}
 }
 

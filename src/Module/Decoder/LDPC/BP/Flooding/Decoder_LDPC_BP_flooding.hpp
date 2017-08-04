@@ -43,11 +43,10 @@ protected:
 	                         const std::string name = "Decoder_LDPC_BP_flooding");
 	virtual ~Decoder_LDPC_BP_flooding();
 
-	// soft decode
-	void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
-
-	// hard decoder
-	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siso      (const R *Y_N1, R *Y_N2, const int frame_id);
+	void __decode_siho     (const R *Y_N,           const int frame_id);
+	void _decode_siho      (const R *Y_N,  B *V_K,  const int frame_id);
+	void _decode_siho_coded(const R *Y_N,  B *V_N,  const int frame_id);
 
 	// BP functions for decoding
 	void BP_decode(const R *Y_N, const int frame_id);

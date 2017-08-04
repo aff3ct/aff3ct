@@ -208,7 +208,7 @@ Coset<B,B>* BFER_ite<B,R,Q>
 ::build_coset_bit(const int tid)
 {
 	factory::Coset::parameters cst_params;
-	cst_params.size = params.dec->K;
+	cst_params.size = this->params.coded_monitoring ? params.dec->N_cw : params.dec->K;
 	cst_params.n_frames = params.src->n_frames;
 	return factory::Coset::build_bit<B>(cst_params);
 }

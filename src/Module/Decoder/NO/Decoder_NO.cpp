@@ -1,7 +1,10 @@
 #include <chrono>
 
+#include "Tools/general_utils.h"
+
 #include "Decoder_NO.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>
@@ -36,16 +39,7 @@ void Decoder_NO<B,R>
 ::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
 {
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	// take the hard decision
-	auto vec_loop_size = (this->K / mipp::nElReg<R>()) * mipp::nElReg<R>();
-	for (auto i = 0; i < vec_loop_size; i += mipp::nElReg<R>())
-	{
-		const auto r_Y_N = mipp::Reg<R>(&Y_K[i]);
-		const auto r_s = mipp::cast<R,B>(r_Y_N) >> (sizeof(B) * 8 - 1); // s[i] = Y_Ki] < 0;
-		r_s.store(&V_K[i]);
-	}
-	for (auto i = vec_loop_size; i < this->K; i++)
-		V_K[i] = Y_K[i] < 0;
+	tools::hard_decide(Y_K, V_K, this->K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_store_total += d_store;

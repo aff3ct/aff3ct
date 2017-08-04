@@ -81,8 +81,9 @@ void BFER_ite<B,R,Q>
 
 	factory::Source::store_args(this->ar.get_args(), *params->src);
 
-	auto K = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
-	auto N = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
+	auto K    = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->enc->K;
+	auto N    = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N;
+	auto N_cw = this->req_args.find({"src-info-bits", "K"}) != this->req_args.end() ? params->src->K : params->pct->N_cw;
 
 	factory::CRC::store_args(this->ar.get_args(), *params->crc);
 
@@ -110,12 +111,12 @@ void BFER_ite<B,R,Q>
 	if (std::is_integral<Q>())
 		factory::Quantizer::store_args(this->ar.get_args(), *params->qnt);
 
-	params->mnt->size = params->src->K;
+	params->mnt->size = params->coded_monitoring ? N_cw : params->src->K;
 
 	factory::Monitor::store_args(this->ar.get_args(), *params->mnt);
 
 	params->ter->K = K;
-	params->ter->N = N;
+	params->ter->N = N_cw;
 
 	factory::Terminal_BFER::store_args(this->ar.get_args(), *params->ter);
 

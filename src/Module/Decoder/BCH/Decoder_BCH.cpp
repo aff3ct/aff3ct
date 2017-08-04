@@ -1,18 +1,19 @@
 #include <chrono>
 #include <sstream>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_BCH.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int& K, const int& N, const int&t, const Galois &GF, const int n_frames,
+::Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF, const int n_frames,
               const std::string name)
-: Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name), hard_decision(N),
+: Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name),
   elp(N+2, mipp::vector<int>(N)), discrepancy(N+2), l(N+2), u_lu(N+2), s(N+1), loc(200), reg(201), m(GF.get_m()),
   t(t), d(2*t+1), alpha_to(N+1), index_of(N+1), YH_N(N)
 {
@@ -20,7 +21,7 @@ Decoder_BCH<B, R>
 	{
 		std::stringstream message;
 		message << "'K' has to be greater than 3 ('K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	alpha_to = GF.alpha_to;
@@ -35,7 +36,7 @@ Decoder_BCH<B, R>
 
 template <typename B, typename R>
 void Decoder_BCH<B, R>
-::_decode(B *Y_N, B *V_K)
+::_decode(B *Y_N)
 {
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	int i, j, u, q, t2, count = 0, syn_error = 0;
@@ -197,13 +198,9 @@ void Decoder_BCH<B, R>
 		}
 	}
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-	
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	std::copy(Y_N + this->N - this->K, Y_N + this->N, V_K);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+
 }
 
 template <typename B, typename R>
@@ -211,7 +208,27 @@ void Decoder_BCH<B, R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	std::copy(Y_N, Y_N + this->N, YH_N.begin());
-	this->_decode(YH_N.data(), V_K);
+	this->_decode(YH_N.data());
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	std::copy(YH_N.data() + this->N - this->K, YH_N.data() + this->N, V_K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_BCH<B, R>
+::_decode_hiho_coded(const B *Y_N, B *V_N, const int frame_id)
+{
+	std::copy(Y_N, Y_N + this->N, YH_N.begin());
+	this->_decode(YH_N.data());
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	std::copy(YH_N.data(), YH_N.data() + this->N, V_N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R>
@@ -219,11 +236,23 @@ void Decoder_BCH<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	hard_decision.decode_siho(Y_N, YH_N.data());
+	tools::hard_decide(Y_N, YH_N.data(), this->N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 	this->d_load_total += d_load;
 
-	this->_decode(YH_N.data(), V_K);
+	this->_decode_hiho(YH_N.data(), V_K, frame_id);
+}
+
+template <typename B, typename R>
+void Decoder_BCH<B, R>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	tools::hard_decide(Y_N, YH_N.data(), this->N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+	this->d_load_total += d_load;
+
+	this->_decode_hiho_coded(YH_N.data(), V_N, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation

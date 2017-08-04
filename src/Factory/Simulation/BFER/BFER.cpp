@@ -51,6 +51,10 @@ void BFER::build_args(arg_map &req_args, arg_map &opt_args, const std::string p)
 	opt_args[{p+"-err-trk-path"}] =
 		{"string",
 		 "base path for the files where the bad frames will be stored or read."};
+
+	opt_args[{p+"-coded"}] =
+		{"",
+		 "enable the coded monitoring (extends the monitored bits to the entire codeword)."};
 }
 
 void BFER::store_args(const arg_val_map &vals, parameters &params, const std::string p)
@@ -69,6 +73,7 @@ void BFER::store_args(const arg_val_map &vals, parameters &params, const std::st
 	if(exist(vals, {p+"-time-report"    })) params.time_report      = true;
 	if(exist(vals, {p+"-debug",      "d"})) params.debug            = true;
 	if(exist(vals, {p+"-coset",      "c"})) params.coset            = true;
+	if(exist(vals, {p+"-coded",         })) params.coded_monitoring = true;
 	if(exist(vals, {p+"-debug-limit"}))
 	{
 		params.debug = true;
@@ -120,6 +125,7 @@ void BFER::make_header(params_list& head_sim, const parameters& params, const bo
 			head_sim.push_back(std::make_pair("Debug limit", std::to_string(params.debug_limit)));
 	}
 	head_sim.push_back(std::make_pair("Coset approach (c)", params.coset ? "yes" : "no"));
+	head_sim.push_back(std::make_pair("Coded monitoring", params.coded_monitoring ? "yes" : "no"));
 
 	std::string enable_track = (params.err_track_enable) ? "on" : "off";
 	head_sim.push_back(std::make_pair("Bad frames tracking", enable_track));

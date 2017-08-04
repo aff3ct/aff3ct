@@ -40,8 +40,11 @@ public:
 	virtual ~Decoder_LDPC_BP_flooding_Gallager_A();
 
 protected:
-	void _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
-	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	void __decode_hiho     (const B *Y_N                            );
+	void _decode_hiho      (const B *Y_N, B *V_K, const int frame_id);
+	void _decode_hiho_coded(const B *Y_N, B *V_K, const int frame_id);
+	void _decode_siho      (const R *Y_N, B *V_K, const int frame_id);
+	void _decode_siho_coded(const R *Y_N, B *V_K, const int frame_id);
 };
 
 template <typename B = int, typename R = float>

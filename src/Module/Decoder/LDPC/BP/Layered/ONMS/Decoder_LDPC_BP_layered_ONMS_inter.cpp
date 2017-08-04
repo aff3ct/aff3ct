@@ -3,19 +3,20 @@
 #include <sstream>
 #include <iostream>
 
+#include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #include "Decoder_LDPC_BP_layered_ONMS_inter.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 ::Decoder_LDPC_BP_layered_ONMS_inter(const int &K, const int &N, const int& n_ite,
-                                     const Sparse_matrix &H,
+                                     const tools::Sparse_matrix &H,
                                      const std::vector<unsigned> &info_bits_pos,
                                      const float normalize_factor,
                                      const R offset,
@@ -38,20 +39,20 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
   var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                             ),
   branches              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(H.get_n_connections())         ),
   Y_N_reorderered       (N                                                                            ),
-  V_K_reorderered       (K                                                                            )
+  V_reorderered         (N                                                                            )
 {
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (syndrome_depth <= 0)
 	{
 		std::stringstream message;
 		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N != (int)H.get_n_rows())
@@ -59,17 +60,17 @@ Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 		std::stringstream message;
 		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
 		        << H.get_n_rows() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (typeid(R) == typeid(signed char))
-		throw runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");
 
 	if (saturation <= 0)
 	{
 		std::stringstream message;
 		message << "'saturation' has to be greater than 0 ('saturation' = " << saturation << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -97,7 +98,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 	std::vector<const R*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N + f * this->N;
-	Reorderer_static<R,mipp::nElReg<R>()>::apply(frames, (R*)this->Y_N_reorderered.data(), this->N);
+	tools::Reorderer_static<R,mipp::nElReg<R>()>::apply(frames, (R*)this->Y_N_reorderered.data(), this->N);
 
 	for (auto i = 0; i < (int)var_nodes[cur_wave].size(); i++)
 		this->var_nodes[cur_wave][i] += this->Y_N_reorderered[i]; // var_nodes contain previous extrinsic information
@@ -126,7 +127,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			std::stringstream message;
 			message << "'normalize_factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f"
 			        << " ('normalize_factor' = " << normalize_factor << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 	else // float or double
@@ -142,12 +143,12 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 	std::vector<R*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = Y_N2 + f * this->N;
-	Reorderer_static<R,mipp::nElReg<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
+	tools::Reorderer_static<R,mipp::nElReg<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::__decode_siho(const R *Y_N, const int frame_id)
 {
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -170,7 +171,7 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 			std::stringstream message;
 			message << "'normalize_factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f"
 			        << " ('normalize_factor' = " << normalize_factor << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 	else // float or double
@@ -181,19 +182,21 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
-	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
-	this->_store(V_K, frame_id);
-	auto d_store = std::chrono::steady_clock::now() - t_store;
-
 	this->d_load_total  += d_load;
 	this->d_decod_total += d_decod;
-	this->d_store_total += d_store;
+
+	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	if (cur_wave == this->n_dec_waves -1) this->init_flag = true;
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
-::_store(B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	this->__decode_siho(Y_N, frame_id);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 
 	// take the hard decision
@@ -201,15 +204,37 @@ void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
 	for (auto i = 0; i < this->K; i++)
 	{
 		const auto k = this->info_bits_pos[i];
-		V_K_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][k]) >> (sizeof(B) * 8 - 1);
+		V_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][k]) >> (sizeof(B) * 8 - 1);
 	}
 
 	std::vector<B*> frames(mipp::nElReg<R>());
 	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_K + f * this->K;
-	Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_K_reorderered.data(), frames, this->K);
+	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->K);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	// set the flag so the branches can be reset to 0 only at the beginning of the loop in iterative decoding
-	if (cur_wave == this->n_dec_waves -1) this->init_flag = true;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_layered_ONMS_inter<B,R>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	this->__decode_siho(Y_N, frame_id);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+
+	// take the hard decision
+	const auto zero = mipp::Reg<R>((R)0);
+	for (auto i = 0; i < this->N; i++)
+		V_reorderered[i] = mipp::cast<R,B>(this->var_nodes[cur_wave][i]) >> (sizeof(B) * 8 - 1);
+
+	std::vector<B*> frames(mipp::nElReg<R>());
+	for (auto f = 0; f < mipp::nElReg<R>(); f++) frames[f] = V_N + f * this->N;
+	tools::Reorderer_static<B,mipp::nElReg<R>()>::apply_rev((B*)V_reorderered.data(), frames, this->N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_store_total += d_store;
 }
 
 // BP algorithm

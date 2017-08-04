@@ -7,15 +7,14 @@
 
 #include "Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const Sparse_matrix &H,
+::Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const tools::Sparse_matrix &H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
                                       const int syndrome_depth, const int n_frames, const std::string name)
-
 : Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1, name ),
   hard_decision         (N                       ),
   n_ite                 (n_ite                   ),
@@ -32,14 +31,14 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (syndrome_depth <= 0)
 	{
 		std::stringstream message;
 		message << "'syndrome_depth' has to be greater than 0 ('syndrome_depth' = " << syndrome_depth << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N != (int)H.get_n_rows())
@@ -47,7 +46,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 		std::stringstream message;
 		message << "'N' is not compatible with the H matrix ('N' = " << N << ", 'H.get_n_rows()' = "
 		        << H.get_n_rows() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	transpose.resize(H.get_n_connections());
@@ -75,7 +74,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 				message << "'connections[id_V]' has to be equal or smaller than 'VN_to_CN[id_V].size()' "
 				        << "('id_V' = " << id_V << ", 'connections[id_V]' = " << connections[id_V]
 				        << ", 'VN_to_CN[id_V].size()' = " << VN_to_CN[id_V].size() << ")'.";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
 			transpose[k] = branch_id;
@@ -92,7 +91,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::__decode_hiho(const B *Y_N)
 {
 	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto cur_syndrome_depth = 0;
@@ -179,12 +178,36 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 
 		C_to_V_ptr += node_degree; // jump to the next node
 	}
+	auto d_store = std::chrono::steady_clock::now() - t_store;
 
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+{
+	this->__decode_hiho(Y_N);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	for (auto i = 0; i < this->K; i++)
 		V_K[i] = (B)this->V_N[this->info_bits_pos[i]];
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
-	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_decode_hiho_coded(const B *Y_N, B *V_N, const int frame_id)
+{
+	this->__decode_hiho(Y_N);
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	std::copy(this->V_N.begin(), this->V_N.begin() + this->N, V_N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
 	this->d_store_total += d_store;
 }
 
@@ -196,9 +219,22 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	hard_decision.decode_siho(Y_N, HY_N.data());
 	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-	this->d_load_total  += d_load;
+	this->d_load_total += d_load;
 
 	this->_decode_hiho(HY_N.data(), V_K, frame_id);
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
+	hard_decision.decode_siho(Y_N, HY_N.data());
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	this->d_load_total += d_load;
+
+	this->_decode_hiho_coded(HY_N.data(), V_N, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -4,8 +4,6 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "../Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
@@ -15,9 +13,6 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_repetition : public Decoder_SISO_SIHO<B,R>
 {
-private:
-	Decoder_NO<B,R> hard_decision;
-
 protected:
 	const int rep_count; // number of repetitions
 

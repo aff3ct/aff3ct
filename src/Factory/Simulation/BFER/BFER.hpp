@@ -64,6 +64,7 @@ struct BFER : Simulation
 		bool        time_report      = false;
 		bool        debug            = false;
 		bool        coset            = false;
+		bool        coded_monitoring = false;
 		int         debug_limit      = 0;
 		int         debug_precision  = 5;
 		int         benchs           = 0;

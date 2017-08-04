@@ -32,6 +32,7 @@ protected:
 	std::vector<mipp::vector<Q>> Y_N5; // noisy codeword (after the deinterleaving process)
 	std::vector<mipp::vector<Q>> Y_N6; // noisy codeword (after the decoding process)
 	std::vector<mipp::vector<Q>> Y_N7; // noisy codeword (after the interleaving process)
+	std::vector<mipp::vector<B>> V_N1; // decoded bits (full codeword)
 	std::vector<mipp::vector<B>> V_K1; // decoded bits + CRC bits
 	std::vector<mipp::vector<B>> V_K2; // decoded bits
 

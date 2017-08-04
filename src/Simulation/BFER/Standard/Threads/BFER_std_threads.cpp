@@ -31,6 +31,7 @@ BFER_std_threads<B,R,Q>
   Y_N3(this->params.n_threads, mipp::vector<R>(this->params.mdm->N     * this->params.mdm->n_frames)),
   Y_N4(this->params.n_threads, mipp::vector<Q>(this->params.qnt->size  * this->params.qnt->n_frames)),
   Y_N5(this->params.n_threads, mipp::vector<Q>(this->params.pct->N_cw  * this->params.pct->n_frames)),
+  V_N1(this->params.n_threads, mipp::vector<B>(this->params.dec->N_cw  * this->params.crc->n_frames)),
   V_K1(this->params.n_threads, mipp::vector<B>(this->params.dec->K     * this->params.dec->n_frames)),
   V_K2(this->params.n_threads, mipp::vector<B>(this->params.crc->K     * this->params.crc->n_frames))
 {
@@ -258,31 +259,57 @@ void BFER_std_threads<B,R,Q>
 			this->durations[tid][std::make_pair(10, "Coset real")] += steady_clock::now() - t_corea;
 		}
 
-		// launch decoder
-		auto t_decod = steady_clock::now();
-		this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
-		this->durations[tid][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
-		this->durations[tid][std::make_pair(12, "- load"  )] += this->decoder[tid]->get_load_duration();
-		this->durations[tid][std::make_pair(13, "- decode")] += this->decoder[tid]->get_decode_duration();
-		this->durations[tid][std::make_pair(14, "- store" )] += this->decoder[tid]->get_store_duration();
-
-		// apply the coset to recover the real bits
-		if (this->params.coset)
+		if (this->params.coded_monitoring)
 		{
-			auto t_cobit = steady_clock::now();
-			this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
-			this->durations[tid][std::make_pair(15, "Coset bit")] += steady_clock::now() - t_cobit;
+			// launch decoder
+			auto t_decod = steady_clock::now();
+			this->decoder[tid]->decode_siho_coded(this->Y_N5[tid], this->V_N1[tid]);
+			this->durations[tid][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
+			this->durations[tid][std::make_pair(12, "- load"  )] += this->decoder[tid]->get_load_duration();
+			this->durations[tid][std::make_pair(13, "- decode")] += this->decoder[tid]->get_decode_duration();
+			this->durations[tid][std::make_pair(14, "- store" )] += this->decoder[tid]->get_store_duration();
+
+			// apply the coset to recover the real bits
+			if (this->params.coset)
+			{
+				auto t_cobit = steady_clock::now();
+				this->coset_bit[tid]->apply(this->X_N1[tid], this->V_N1[tid], this->V_N1[tid]);
+				this->durations[tid][std::make_pair(15, "Coset bit")] += steady_clock::now() - t_cobit;
+			}
+
+			// check errors in the frame
+			auto t_check = steady_clock::now();
+			this->monitor[tid]->check_errors(this->X_N1[tid], this->V_N1[tid]);
+			this->durations[tid][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
 		}
+		else
+		{
+			// launch decoder
+			auto t_decod = steady_clock::now();
+			this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
+			this->durations[tid][std::make_pair(11, "Decoder" )] += steady_clock::now() - t_decod;
+			this->durations[tid][std::make_pair(12, "- load"  )] += this->decoder[tid]->get_load_duration();
+			this->durations[tid][std::make_pair(13, "- decode")] += this->decoder[tid]->get_decode_duration();
+			this->durations[tid][std::make_pair(14, "- store" )] += this->decoder[tid]->get_store_duration();
 
-		// extract the CRC bits and keep only the information bits
-		auto t_crcex = steady_clock::now();
-		this->crc[tid]->extract(this->V_K1[tid], this->V_K2[tid]);
-		this->durations[tid][std::make_pair(16, "CRC extract")] += steady_clock::now() - t_crcex;
+			// apply the coset to recover the real bits
+			if (this->params.coset)
+			{
+				auto t_cobit = steady_clock::now();
+				this->coset_bit[tid]->apply(this->U_K2[tid], this->V_K1[tid], this->V_K1[tid]);
+				this->durations[tid][std::make_pair(15, "Coset bit")] += steady_clock::now() - t_cobit;
+			}
 
-		// check errors in the frame
-		auto t_check = steady_clock::now();
-		this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
-		this->durations[tid][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
+			// extract the CRC bits and keep only the information bits
+			auto t_crcex = steady_clock::now();
+			this->crc[tid]->extract(this->V_K1[tid], this->V_K2[tid]);
+			this->durations[tid][std::make_pair(16, "CRC extract")] += steady_clock::now() - t_crcex;
+
+			// check errors in the frame
+			auto t_check = steady_clock::now();
+			this->monitor[tid]->check_errors(this->U_K1[tid], this->V_K2[tid]);
+			this->durations[tid][std::make_pair(17, "Check errors")] += steady_clock::now() - t_check;
+		}
 	}
 }
 
@@ -296,8 +323,12 @@ void BFER_std_threads<B,R,Q>
 	auto t_start = std::chrono::steady_clock::now(); // start time
 
 	this->barrier(tid);
-	for (auto i = 0; i < this->params.benchs; i++)
-		this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
+	if (this->params.coded_monitoring)
+		for (auto i = 0; i < this->params.benchs; i++)
+			this->decoder[tid]->decode_siho_coded(this->Y_N5[tid], this->V_N1[tid]);
+	else
+		for (auto i = 0; i < this->params.benchs; i++)
+			this->decoder[tid]->decode_siho(this->Y_N5[tid], this->V_K1[tid]);
 	this->barrier(tid);
 
 	auto t_stop = std::chrono::steady_clock::now(); // stop time
@@ -305,7 +336,7 @@ void BFER_std_threads<B,R,Q>
 	auto frames   = (float)this->params.benchs *
 	                (float)this->params.src->n_frames *
 	                (float)this->params.n_threads;
-	auto bits     = (float)frames * (float)this->params.dec->K;
+	auto bits     = (float)frames * (float)this->params.dec->N_cw;
 	auto duration = t_stop - t_start;
 
 	auto  bps = (float)bits / (float)(duration.count() * 0.000000001f);
@@ -316,11 +347,11 @@ void BFER_std_threads<B,R,Q>
 	auto latency_us = latency_ns * 0.001f;
 
 	if (tid == 0)
-		std::cout << "  SNR (Eb/N0) = "          << std::setw(5) << std::fixed << std::setprecision(2) << this->snr
+		std::cout << "  SNR (Eb/N0) = "    << std::setw(5) << std::fixed << std::setprecision(2) << this->snr
 		          << " dB"   << ", "
-		          << "information throughput = " << std::setw(8) << std::fixed << std::setprecision(4) << mbps
+		          << "coded throughput = " << std::setw(8) << std::fixed << std::setprecision(4) << mbps
 		          << " Mbps" << ", " 
-		          << "latency = "                << std::setw(8) << std::fixed << std::setprecision(4) << latency_us 
+		          << "latency = "          << std::setw(8) << std::fixed << std::setprecision(4) << latency_us
 		          << " us."  << std::endl;
 }
 
@@ -443,26 +474,47 @@ void BFER_std_threads<B,R,Q>
 //		std::cout << std::endl;
 //	}
 
-	std::cout << "Decode Y_N5 and generate V_K1..." << std::endl
-	          << "V_K1:" << std::endl;
-	if (this->params.coset)
-		ft.display_bit_vector(this->V_K1[tid]);
+	if (this->params.coded_monitoring)
+	{
+		std::cout << "Decode Y_N5 and generate V_N1..." << std::endl
+		          << "V_N1:" << std::endl;
+		if (this->params.coset)
+			ft.display_bit_vector(this->V_N1[tid]);
+		else
+			ft.display_bit_vector(this->V_N1[tid], this->X_N1[tid]);
+		std::cout << std::endl;
+
+//		if (this->simu_params.coset)
+//		{
+//			std::cout << "Apply the coset approach on V_N1..." << std::endl
+//			          << "V_N1:" << std::endl;
+//			ft.display_bit_vector(this->V_N1[tid], this->X_N1[tid]);
+//			std::cout << std::endl;
+//		}
+	}
 	else
-		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
-	std::cout << std::endl;
+	{
+		std::cout << "Decode Y_N5 and generate V_K1..." << std::endl
+		          << "V_K1:" << std::endl;
+		if (this->params.coset)
+			ft.display_bit_vector(this->V_K1[tid]);
+		else
+			ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
+		std::cout << std::endl;
 
-//	if (this->simu_params.coset)
-//	{
-//		std::cout << "Apply the coset approach on V_K1..." << std::endl
-//		          << "V_K1:" << std::endl;
-//		ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
-//		std::cout << std::endl;
-//	}
+//		if (this->simu_params.coset)
+//		{
+//			std::cout << "Apply the coset approach on V_K1..." << std::endl
+//			          << "V_K1:" << std::endl;
+//			ft.display_bit_vector(this->V_K1[tid], this->U_K2[tid]);
+//			std::cout << std::endl;
+//		}
 
-	std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
-	          << "V_K2:" << std::endl;
-	ft.display_bit_vector(this->V_K2[tid], this->U_K1[tid]);
-	std::cout << std::endl;
+		std::cout << "Extract the CRC bits from V_K1 and keep only the info. bits in V_K2..." << std::endl
+		          << "V_K2:" << std::endl;
+		ft.display_bit_vector(this->V_K2[tid], this->U_K1[tid]);
+		std::cout << std::endl;
+	}
 
 	this->mutex_debug.unlock();
 }

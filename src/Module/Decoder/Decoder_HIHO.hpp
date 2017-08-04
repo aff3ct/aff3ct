@@ -40,7 +40,7 @@ private:
 	const int n_inter_frame_rest;
 
 	mipp::vector<B> Y_N;
-	mipp::vector<B> V_K;
+	mipp::vector<B> V;
 
 protected:
 	const int K_hiho; /*!< Number of information bits in one frame */
@@ -63,7 +63,7 @@ public:
 	: Module(n_frames, name),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
 	  Y_N(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  V_K(n_inter_frame_rest ? simd_inter_frame_level * K : 0),
+	  V  (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
 	  K_hiho(K),
 	  N_hiho(N),
 	  simd_inter_frame_level_hiho(simd_inter_frame_level),
@@ -177,17 +177,71 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N_hiho,
 			          this->Y_N.begin());
 
-			this->_decode_hiho(this->Y_N.data(), this->V_K.data(), w * simd_inter_frame_level_hiho);
+			this->_decode_hiho(this->Y_N.data(), this->V.data(), w * simd_inter_frame_level_hiho);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level_hiho * this->K_hiho;
-			std::copy(this->V_K.begin(),
-			          this->V_K.begin() + this->n_inter_frame_rest * this->K_hiho,
+			std::copy(this->V.begin(),
+			          this->V.begin() + this->n_inter_frame_rest * this->K_hiho,
 			          V_K + waves_off2);
+		}
+	}
+
+	void decode_hiho_coded(const mipp::vector<B>& Y_N, mipp::vector<B>& V_N)
+	{
+		if (this->N_hiho * this->n_frames != (int)Y_N.size())
+		{
+			std::stringstream message;
+			message << "'Y_N.size()' has to be equal to 'N' * 'n_frames' ('Y_N.size()' = " << Y_N.size()
+			        << ", 'N' = " << this->N_hiho << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (this->N_hiho * this->n_frames != (int)V_N.size())
+		{
+			std::stringstream message;
+			message << "'V_N.size()' has to be equal to 'N' * 'n_frames' ('V_N.size()' = " << V_N.size()
+			        << ", 'N' = " << this->N_hiho << ", 'n_frames' = " << this->n_frames << ").";
+			throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		this->decode_hiho_coded(Y_N.data(), V_N.data());
+	}
+
+	virtual void decode_hiho_coded(const B *Y_N, B *V_N)
+	{
+		auto w = 0;
+		for (w = 0; w < this->n_dec_waves_hiho -1; w++)
+			this->_decode_hiho_coded(Y_N + w * this->N_hiho * this->simd_inter_frame_level_hiho,
+			                         V_N + w * this->N_hiho * this->simd_inter_frame_level_hiho,
+			                         w * simd_inter_frame_level_hiho);
+
+		if (this->n_inter_frame_rest == 0)
+			this->_decode_hiho_coded(Y_N + w * this->N_hiho * this->simd_inter_frame_level_hiho,
+			                         V_N + w * this->N_hiho * this->simd_inter_frame_level_hiho,
+			                         w * simd_inter_frame_level_hiho);
+		else
+		{
+			const auto waves_off1 = w * this->simd_inter_frame_level_hiho * this->N_hiho;
+			std::copy(Y_N + waves_off1,
+			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N_hiho,
+			          this->Y_N.begin());
+
+			this->_decode_hiho_coded(this->Y_N.data(), this->V.data(), w * simd_inter_frame_level_hiho);
+
+			const auto waves_off2 = w * this->simd_inter_frame_level_hiho * this->N_hiho;
+			std::copy(this->V.begin(),
+			          this->V.begin() + this->n_inter_frame_rest * this->N_hiho,
+			          V_N + waves_off2);
 		}
 	}
 
 protected:
 	virtual void _decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+	{
+		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	}
+
+	virtual void _decode_hiho_coded(const B *Y_N, B *V_N, const int frame_id)
 	{
 		throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	}
