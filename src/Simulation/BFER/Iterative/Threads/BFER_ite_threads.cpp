@@ -13,13 +13,11 @@
 #include "BFER_ite_threads.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_ite_threads<B,R,Q>
-::BFER_ite_threads(const factory::BFER_ite::parameters &chain_params, Codec_SISO<B,Q> &codec)
+::BFER_ite_threads(const factory::BFER_ite::parameters &chain_params, tools::Codec_SISO<B,Q> &codec)
 : BFER_ite<B,R,Q>(chain_params,codec),
 
   U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),
@@ -40,22 +38,22 @@ BFER_ite_threads<B,R,Q>
   V_K2(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames))
 {
 	if (this->params.n_threads > 1 && this->params.debug)
-		std::clog << format_warning("Debug mode will be disabled because you launched the simulation with more than"
-		             " 1 thread!") << std::endl;
+		std::clog << tools::format_warning("Debug mode will be disabled because you launched the simulation with more"
+		                                   "than 1 thread!") << std::endl;
 
 	if (this->params.benchs)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The bench mode is not supported.");
 
 #ifdef ENABLE_MPI
 	if (this->params.debug || this->params.benchs)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
 	if (this->params.err_track_revert)
 	{
 		if (this->params.n_threads != 1)
-			std::clog << format_warning("Multi-threading detected with error tracking revert feature! "
-			                            "Each thread will play the same frames. Please run one thread.")
+			std::clog << tools::format_warning("Multi-threading detected with error tracking revert feature! "
+			                                   "Each thread will play the same frames. Please run one thread.")
 			          << std::endl;
 	}
 }
@@ -123,12 +121,12 @@ void BFER_ite_threads<B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		Monitor<B>::stop();
+		module::Monitor<B>::stop();
 
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
 		{
-			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 			simu->prev_err_message = e.what();
 		}
 		simu->mutex_exception.unlock();
@@ -328,7 +326,8 @@ void BFER_ite_threads<B,R,Q>
 	using namespace std::chrono;
 	auto t_snr = steady_clock::now();
 
-	Frame_trace<B> ft(this->params.debug_limit, this->params.debug_precision); // frame trace to display the vectors
+	// frame trace to display the vectors
+	tools::Frame_trace<B> ft(this->params.debug_limit, this->params.debug_precision);
 
 	// simulation loop
 	while (!this->monitor_red->fe_limit_achieved() && // while max frame error count has not been reached
@@ -661,7 +660,7 @@ void BFER_ite_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Terminal_BFER<B>* BFER_ite_threads<B,R,Q>
+tools::Terminal_BFER<B>* BFER_ite_threads<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI

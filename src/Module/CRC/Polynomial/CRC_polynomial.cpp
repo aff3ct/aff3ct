@@ -6,8 +6,8 @@
 
 #include "CRC_polynomial.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 CRC_polynomial<B>
@@ -19,14 +19,14 @@ CRC_polynomial<B>
   buff_crc         (0                                 )
 {
 	if (poly_key.empty())
-		throw invalid_argument(__FILE__, __LINE__, __func__, "'poly_key' can't be empty, choose a CRC.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'poly_key' can't be empty, choose a CRC.");
 
 	if (!polynomial_packed)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "CRC '" + poly_key + "' is not supported.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "CRC '" + poly_key + "' is not supported.");
 
 	auto crc_name = CRC_polynomial<B>::name(poly_key);
 	if (size == 0 && crc_name.empty())
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Please specify the CRC 'size'.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Please specify the CRC 'size'.");
 
 	if (size)
 		poly_size = size;
@@ -34,10 +34,10 @@ CRC_polynomial<B>
 		poly_size = CRC_polynomial<B>::size(crc_name);
 
 	if (!crc_name.empty() && CRC_polynomial<B>::size(crc_name) != poly_size)
-		std::clog << format_warning("You specified \"" + std::to_string(poly_size)
-		                            + " bits\" for your CRC size but the database advise you to use \""
-		                            + std::to_string(std::get<1>(known_polynomials.at(crc_name)))
-		                            + " bits\", are you sure?")
+		std::clog << tools::format_warning("You specified \"" + std::to_string(poly_size)
+		                                 + " bits\" for your CRC size but the database advise you to use \""
+		                                 + std::to_string(std::get<1>(known_polynomials.at(crc_name)))
+		                                 + " bits\", are you sure?")
 		          << std::endl;
 
 	polynomial.push_back(1);
@@ -165,7 +165,7 @@ bool CRC_polynomial<B>
 {
 	mipp::vector<B> V_K_unpack(this->K + this->get_size());
 	std::copy(V_K, V_K + this->K + this->get_size(), V_K_unpack.begin());
-	Bit_packer<B>::unpack(V_K_unpack, this->K + this->get_size());
+	tools::Bit_packer<B>::unpack(V_K_unpack, this->K + this->get_size());
 	return _check(V_K_unpack.data(), frame_id);
 }
 

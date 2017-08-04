@@ -1,7 +1,6 @@
 #include "Codec_BCH.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
@@ -21,15 +20,15 @@ Codec_BCH<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_BCH<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_BCH<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	return factory::Encoder_BCH::build<B>(this->enc_params, GF);
 }
 
 template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_BCH<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_BCH<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_BCH::build<B,Q>(dec_par, GF);
 }

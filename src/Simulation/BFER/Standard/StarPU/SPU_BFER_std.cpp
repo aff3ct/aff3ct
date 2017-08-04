@@ -7,13 +7,12 @@
 
 #include "SPU_BFER_std.hpp"
 
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
+using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SPU_BFER_std<B,R,Q>
-::SPU_BFER_std(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+::SPU_BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec)
 : BFER_std<B,R,Q>(params, codec),
 
   task_names(this->params.n_threads, std::vector<std::string>(15)),
@@ -48,16 +47,19 @@ SPU_BFER_std<B,R,Q>
   spu_V_K2(this->params.n_threads)
 {
 	if (params.debug)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the debug mode.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the debug "
+		                                                            "mode.");
 
 	if (params.benchs)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the bench mode.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the bench "
+		                                                            "mode.");
 
 	if (params.coded_monitoring)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the coded monitoring.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "StarPU simulation does not support the coded "
+		                                                            "monitoring.");
 
 	if (params.time_report)
-		std::clog << format_warning("The time report is not available in the StarPU simulation.") << std::endl;
+		std::clog << tools::format_warning("The time report is not available in the StarPU simulation.") << std::endl;
 
 	// initialize StarPU with default configuration
 	auto ret = starpu_init(NULL);
@@ -186,11 +188,11 @@ void SPU_BFER_std<B,R,Q>
 
 	if (this->params.src->type != "AZCW")
 	{
-		auto task_gen_source = Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K1[tid]               );
-		auto task_build_crc  = CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K1[tid], spu_U_K2[tid]);
-		auto task_encode     = Encoder  <B    >::spu_task_encode  (this->encoder  [tid], spu_U_K2[tid], spu_X_N1[tid]);
-		auto task_puncture   = Puncturer<B,  Q>::spu_task_puncture(this->puncturer[tid], spu_X_N1[tid], spu_X_N2[tid]);
-		auto task_modulate   = Modem    <B,R,R>::spu_task_modulate(this->modem    [tid], spu_X_N2[tid], spu_X_N3[tid]);
+		auto task_gen_source = module::Source   <B    >::spu_task_generate(this->source   [tid], spu_U_K1[tid]               );
+		auto task_build_crc  = module::CRC      <B    >::spu_task_build   (this->crc      [tid], spu_U_K1[tid], spu_U_K2[tid]);
+		auto task_encode     = module::Encoder  <B    >::spu_task_encode  (this->encoder  [tid], spu_U_K2[tid], spu_X_N1[tid]);
+		auto task_puncture   = module::Puncturer<B,  Q>::spu_task_puncture(this->puncturer[tid], spu_X_N1[tid], spu_X_N2[tid]);
+		auto task_modulate   = module::Modem    <B,R,R>::spu_task_modulate(this->modem    [tid], spu_X_N2[tid], spu_X_N3[tid]);
 
 		task_gen_source->priority = STARPU_MIN_PRIO +0;
 		task_build_crc ->priority = STARPU_MIN_PRIO +1;
@@ -214,9 +216,9 @@ void SPU_BFER_std<B,R,Q>
 	// Rayleigh channel
 	if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		auto task_add_noise_wg  = Channel<  R  >::spu_task_add_noise_wg (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid], spu_H_N [tid]);
-		auto task_filter        = Modem  <B,R,R>::spu_task_filter       (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]               );
-		auto task_demodulate_wg = Modem  <B,R,R>::spu_task_demodulate_wg(this->modem  [tid], spu_Y_N2[tid], spu_H_N [tid], spu_Y_N3[tid]);
+		auto task_add_noise_wg  = module::Channel<  R  >::spu_task_add_noise_wg (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid], spu_H_N [tid]);
+		auto task_filter        = module::Modem  <B,R,R>::spu_task_filter       (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]               );
+		auto task_demodulate_wg = module::Modem  <B,R,R>::spu_task_demodulate_wg(this->modem  [tid], spu_Y_N2[tid], spu_H_N [tid], spu_Y_N3[tid]);
 
 		task_add_noise_wg ->priority = STARPU_MIN_PRIO +5;
 		task_filter       ->priority = STARPU_MIN_PRIO +6;
@@ -232,9 +234,9 @@ void SPU_BFER_std<B,R,Q>
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		auto task_add_noise  = Channel<  R  >::spu_task_add_noise (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid]);
-		auto task_filter     = Modem  <B,R,R>::spu_task_filter    (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]);
-		auto task_demodulate = Modem  <B,R,R>::spu_task_demodulate(this->modem  [tid], spu_Y_N2[tid], spu_Y_N3[tid]);
+		auto task_add_noise  = module::Channel<  R  >::spu_task_add_noise (this->channel[tid], spu_X_N3[tid], spu_Y_N1[tid]);
+		auto task_filter     = module::Modem  <B,R,R>::spu_task_filter    (this->modem  [tid], spu_Y_N1[tid], spu_Y_N2[tid]);
+		auto task_demodulate = module::Modem  <B,R,R>::spu_task_demodulate(this->modem  [tid], spu_Y_N2[tid], spu_Y_N3[tid]);
 
 		task_add_noise ->priority = STARPU_MIN_PRIO +5;
 		task_filter    ->priority = STARPU_MIN_PRIO +6;
@@ -249,8 +251,8 @@ void SPU_BFER_std<B,R,Q>
 		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_demodulate), "task_submit::mod::demodulate");
 	}
 
-	auto task_quantize   = Quantizer<  R,Q>::spu_task_process   (this->quantizer[tid], spu_Y_N3[tid], spu_Y_N4[tid]);
-	auto task_depuncture = Puncturer<B,  Q>::spu_task_depuncture(this->puncturer[tid], spu_Y_N4[tid], spu_Y_N5[tid]);
+	auto task_quantize   = module::Quantizer<  R,Q>::spu_task_process   (this->quantizer[tid], spu_Y_N3[tid], spu_Y_N4[tid]);
+	auto task_depuncture = module::Puncturer<B,  Q>::spu_task_depuncture(this->puncturer[tid], spu_Y_N4[tid], spu_Y_N5[tid]);
 
 	task_quantize  ->priority = STARPU_MIN_PRIO +8;
 	task_depuncture->priority = STARPU_MIN_PRIO +9;
@@ -263,31 +265,31 @@ void SPU_BFER_std<B,R,Q>
 
 	if (this->params.coset)
 	{
-		auto task_coset_real = Coset<B,Q>::spu_task_apply(this->coset_real[tid], spu_X_N1[tid], spu_Y_N5[tid], spu_Y_N5[tid]);
+		auto task_coset_real = module::Coset<B,Q>::spu_task_apply(this->coset_real[tid], spu_X_N1[tid], spu_Y_N5[tid], spu_Y_N5[tid]);
 		task_coset_real->priority = STARPU_MIN_PRIO +10;
 		task_names[tid][10] = "cst::apply_" + str_id; task_coset_real->name = task_names[tid][10].c_str();
 		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_real), "task_submit::cst::apply");
 	}
 
-	auto task_decode = Decoder_SIHO<B,Q>::spu_task_decode_siho(this->decoder[tid], spu_Y_N5[tid], spu_V_K1[tid]);
+	auto task_decode = module::Decoder_SIHO<B,Q>::spu_task_decode_siho(this->decoder[tid], spu_Y_N5[tid], spu_V_K1[tid]);
 	task_decode->priority = STARPU_MIN_PRIO +11;
 	task_names[tid][11] = "dec::decode_siho_" + str_id; task_decode->name = task_names[tid][11].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_decode), "task_submit::dec::decode_siho");
 
 	if (this->params.coset)
 	{
-		auto task_coset_bit = Coset<B,B>::spu_task_apply(this->coset_bit[tid], spu_U_K2[tid], spu_V_K1[tid], spu_V_K1[tid]);
+		auto task_coset_bit = module::Coset<B,B>::spu_task_apply(this->coset_bit[tid], spu_U_K2[tid], spu_V_K1[tid], spu_V_K1[tid]);
 		task_coset_bit->priority = STARPU_MIN_PRIO +12;
 		task_names[tid][12] = "cst::apply_" + str_id; task_coset_bit->name = task_names[tid][12].c_str();
 		STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_coset_bit), "task_submit::cst::apply");
 	}
 
-	auto task_extract_crc = CRC<B>::spu_task_extract(this->crc[tid], spu_V_K1[tid], spu_V_K2[tid]);
+	auto task_extract_crc = module::CRC<B>::spu_task_extract(this->crc[tid], spu_V_K1[tid], spu_V_K2[tid]);
 	task_extract_crc->priority = STARPU_MIN_PRIO +13;
 	task_names[tid][13] = "crc::extract_" + str_id; task_extract_crc->name = task_names[tid][13].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_extract_crc), "task_submit::crc::extract");
 
-	auto task_check_err = Monitor<B>::spu_task_check_errors(this->monitor[tid], spu_U_K1[tid], spu_V_K2[tid]);
+	auto task_check_err = module::Monitor<B>::spu_task_check_errors(this->monitor[tid], spu_U_K1[tid], spu_V_K2[tid]);
 	task_check_err->priority = STARPU_MIN_PRIO +14;
 	task_names[tid][14] = "mnt::check_errors_" + str_id; task_check_err->name = task_names[tid][14].c_str();
 	STARPU_CHECK_RETURN_VALUE(starpu_task_submit(task_check_err), "task_submit::mnt::check_errors");

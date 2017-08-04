@@ -2,6 +2,7 @@
 
 #include "Decoder_repetition_std.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>

@@ -3,12 +3,12 @@
 
 #include "Encoder_BCH.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_BCH<B>
-::Encoder_BCH(const int& K, const int& N, const Galois &GF, const int n_frames, const std::string name)
+::Encoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames, const std::string name)
  : Encoder<B>(K, N, n_frames, name), m(GF.get_m()), g(N - K + 1), bb(N - K)
 {
 	// set polynomial coefficients

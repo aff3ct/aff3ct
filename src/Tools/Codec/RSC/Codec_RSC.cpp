@@ -5,7 +5,6 @@
 #include "Codec_RSC.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
@@ -29,29 +28,29 @@ Codec_RSC<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Encoder_RSC_sys<B>* Codec_RSC<B,Q,QD>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder_RSC_sys<B>* Codec_RSC<B,Q,QD>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	return factory::Encoder_RSC::build<B>(enc_par, std::cout);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SISO_SIHO<B,Q>* Codec_RSC<B,Q,QD>
-::build_decoder_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO_SIHO<B,Q>* Codec_RSC<B,Q,QD>
+::build_decoder_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_RSC::build<B,Q,QD>(dec_par, trellis, std::cout);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SISO<Q>* Codec_RSC<B,Q,QD>
-::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO<Q>* Codec_RSC<B,Q,QD>
+::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SIHO<B,Q>* Codec_RSC<B,Q,QD>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_RSC<B,Q,QD>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }

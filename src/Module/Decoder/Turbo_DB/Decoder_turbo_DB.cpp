@@ -7,8 +7,8 @@
 #include "Decoder_turbo_DB.hpp"
 #include "Tools/Math/utils.h"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_turbo_DB<B,R>
@@ -41,7 +41,7 @@ Decoder_turbo_DB<B,R>
 	{
 		std::stringstream message;
 		message << "'K' has to be a divisible by 2 ('K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_n.get_K() != K)
@@ -49,7 +49,7 @@ Decoder_turbo_DB<B,R>
 		std::stringstream message;
 		message << "'siso_n.get_K()' has to be equal to 'K' ('siso_n.get_K()' = " << siso_n.get_K()
 		        << ", 'K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_i.get_K() != K)
@@ -57,14 +57,14 @@ Decoder_turbo_DB<B,R>
 		std::stringstream message;
 		message << "'siso_i.get_K()' has to be equal to 'K' ('siso_i.get_K()' = " << siso_i.get_K()
 		        << ", 'K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)pi.get_size() * 2 != K)
@@ -72,7 +72,7 @@ Decoder_turbo_DB<B,R>
 		std::stringstream message;
 		message << "'pi.get_size()' * 2 has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
 		        << ", 'K' = " << K << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_n.get_n_frames() != siso_i.get_n_frames())
@@ -80,7 +80,7 @@ Decoder_turbo_DB<B,R>
 		std::stringstream message;
 		message << "'siso_n.get_n_frames()' has to be equal to 'siso_i.get_n_frames()' ('siso_n.get_n_frames()' = "
 		        << siso_n.get_n_frames() << ", 'siso_i.get_n_frames()' = " << siso_i.get_n_frames() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_n.get_simd_inter_frame_level() != 1)
@@ -88,7 +88,7 @@ Decoder_turbo_DB<B,R>
 		std::stringstream message;
 		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 1 "
 		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
@@ -97,7 +97,7 @@ Decoder_turbo_DB<B,R>
 		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 'siso_i.get_simd_inter_frame_level()' "
 		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level()
 		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -141,8 +141,8 @@ void Decoder_turbo_DB<B,R>
 	auto j = 0;
 	for (auto i = 0; i < this->K/2; i++)
 	{
-		R a = div2(Y_N[j++]);
-		R b = div2(Y_N[j++]);
+		R a = tools::div2(Y_N[j++]);
+		R b = tools::div2(Y_N[j++]);
 		this->l_sn[4*i + 0] =  a + b;
 		this->l_sn[4*i + 1] =  a - b;
 		this->l_sn[4*i + 2] = -a + b;
@@ -151,14 +151,14 @@ void Decoder_turbo_DB<B,R>
 
 	for (auto i = 0; i < this->K; i+=2)
 	{
-		this->l_pn[i] = div2(Y_N[j++]);
-		this->l_pi[i] = div2(Y_N[j++]);
+		this->l_pn[i] = tools::div2(Y_N[j++]);
+		this->l_pi[i] = tools::div2(Y_N[j++]);
 	}
 
 	for (auto i = 1; i < this->K; i+=2)
 	{
-		this->l_pn[i] = div2(Y_N[j++]);
-		this->l_pi[i] = div2(Y_N[j++]);
+		this->l_pn[i] = tools::div2(Y_N[j++]);
+		this->l_pi[i] = tools::div2(Y_N[j++]);
 	}
 
 	// make the interleaving to get l_si (2 steps interleaving)

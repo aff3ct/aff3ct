@@ -7,13 +7,13 @@
 
 #include "Decoder_LDPC_BP_layered_log_sum_product.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_log_sum_product<B,R>
 ::Decoder_LDPC_BP_layered_log_sum_product(const int &K, const int &N, const int& n_ite,
-                                          const Sparse_matrix &H,
+                                          const tools::Sparse_matrix &H,
                                           const std::vector<unsigned> &info_bits_pos,
                                           const bool enable_syndrome,
                                           const int syndrome_depth,
@@ -23,7 +23,7 @@ Decoder_LDPC_BP_layered_log_sum_product<B,R>
   contributions(H.get_cols_max_degree()), values(H.get_cols_max_degree())
 {
 	if (typeid(R) != typeid(float) && typeid(R) != typeid(double))
-		throw runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder only supports floating-point LLRs.");
 }
 
 template <typename B, typename R>

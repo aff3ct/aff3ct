@@ -10,7 +10,6 @@
 #include "Codec_polar.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
@@ -68,7 +67,7 @@ void Codec_polar<B,Q>
 			fb_generator->generate(frozen_bits);
 			if (dec_par.N_cw != pct_par.N)
 			{
-				Puncturer_polar_wangliu<B,Q> punct(pct_par.K, pct_par.N, *fb_generator);
+				module::Puncturer_polar_wangliu<B,Q> punct(pct_par.K, pct_par.N, *fb_generator);
 				punct.gen_frozen_bits(frozen_bits);
 			}
 		}
@@ -101,14 +100,14 @@ void Codec_polar<B,Q>
 
 		if (dec_par.N_cw != pct_par.N)
 		{
-			Puncturer_polar_wangliu<B,Q> punct(pct_par.K, pct_par.N, *fb_generator);
+			module::Puncturer_polar_wangliu<B,Q> punct(pct_par.K, pct_par.N, *fb_generator);
 			punct.gen_frozen_bits(frozen_bits);
 		}
 	}
 }
 
 template <typename B, typename Q>
-Puncturer<B,Q>* Codec_polar<B,Q>
+module::Puncturer<B,Q>* Codec_polar<B,Q>
 ::build_puncturer(const int tid)
 {
 	if (is_generated_decoder)
@@ -125,23 +124,23 @@ Puncturer<B,Q>* Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_polar<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_polar<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	return factory::Encoder_polar::build<B>(this->enc_params, frozen_bits);
 }
 
 template <typename B, typename Q>
-Decoder_SISO<Q>* Codec_polar<B,Q>
-::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO<Q>* Codec_polar<B,Q>
+::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	decoder_siso[tid] = factory::Decoder_polar::build_siso<B,Q>(dec_par, frozen_bits);
 	return decoder_siso[tid];
 }
 
 template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_polar<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_polar<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (decoder_siso[tid] != nullptr)
 	{

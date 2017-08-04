@@ -3,8 +3,8 @@
 
 #include "Puncturer_turbo_DB.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer_turbo_DB<B,Q>
@@ -25,7 +25,7 @@ Puncturer_turbo_DB<B,Q>
 		std::stringstream message;
 		message << "Unsupported code rate 'R' = 'K' / 'N' ('R' = " << rate << ", 'K' = " << K << ", 'N' = "
 		        << N << "), supported code rates are 2/5, 1/2, 2/3 and 4/5.";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

@@ -7,13 +7,12 @@
 
 #include "SC_BFER_std.hpp"
 
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
+using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
-::SC_BFER_std(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+::SC_BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec)
 : BFER_std<B,R,Q>(params, codec),
 
   duplicator{nullptr, nullptr, nullptr},
@@ -22,20 +21,23 @@ SC_BFER_std<B,R,Q>
   dbg_Q     {nullptr, nullptr, nullptr}
 {
 	if (this->params.n_threads > 1)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support multi-threading.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
+		                                                            "multi-threading.");
 
 	if (params.benchs)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench mode.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench "
+		                                                            "mode.");
 
 	if (params.coded_monitoring)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded monitoring.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
+		                                                            "monitoring.");
 
 	if (params.time_report)
-		std::clog << format_warning("The time report is not available in the SystemC simulation.") << std::endl;
+		std::clog << tools::format_warning("The time report is not available in the SystemC simulation.") << std::endl;
 
 #ifdef ENABLE_MPI
-	std::clog << format_warning("(WW) This simulation is not MPI ready, the same computations will be launched "
-	                            "on each MPI processes.") << std::endl;
+	std::clog << tools::format_warning("(WW) This simulation is not MPI ready, the same computations will be launched "
+	                                   "on each MPI processes.") << std::endl;
 #endif
 }
 
@@ -101,37 +103,37 @@ template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::_launch()
 {
-	this->duplicator[0] = new SC_Duplicator("Duplicator0");
+	this->duplicator[0] = new tools::SC_Duplicator("Duplicator0");
 	if (this->params.coset)
 	{
-		this->duplicator[1] = new SC_Duplicator("Duplicator1");
-		this->duplicator[2] = new SC_Duplicator("Duplicator2");
+		this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
+		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
 	}
 
 	if (this->params.n_threads == 1 && this->params.debug)
 	{
 		const auto dl = this->params.debug_limit;
 
-		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K1...              \nU_K1:\n", dl, "Debug_B0");
-		this->dbg_B[1] = new SC_Debug<B>("Build the CRC from U_K1 into U_K2...      \nU_K2:\n", dl, "Debug_B1");
-		this->dbg_B[2] = new SC_Debug<B>("Encode U_K2 in X_N1...                    \nX_N1:\n", dl, "Debug_B2");
-		this->dbg_B[3] = new SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", dl, "Debug_B3");
-		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
-		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
-		this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
-		this->dbg_R[3] = new SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", dl, "Debug_R3");
-		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", dl, "Debug_Q0");
-		this->dbg_Q[1] = new SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", dl, "Debug_Q1");
-		this->dbg_B[4] = new SC_Debug<B>("Decode Y_N5 and generate V_K1...          \nV_K1:\n", dl, "Debug_B4");
-		this->dbg_B[6] = new SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
+		this->dbg_B[0] = new tools::SC_Debug<B>("Generate random bits U_K1...              \nU_K1:\n", dl, "Debug_B0");
+		this->dbg_B[1] = new tools::SC_Debug<B>("Build the CRC from U_K1 into U_K2...      \nU_K2:\n", dl, "Debug_B1");
+		this->dbg_B[2] = new tools::SC_Debug<B>("Encode U_K2 in X_N1...                    \nX_N1:\n", dl, "Debug_B2");
+		this->dbg_B[3] = new tools::SC_Debug<B>("Puncture X_N1 in X_N2...                  \nX_N2:\n", dl, "Debug_B3");
+		this->dbg_R[0] = new tools::SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
+		this->dbg_R[1] = new tools::SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
+		this->dbg_R[2] = new tools::SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
+		this->dbg_R[3] = new tools::SC_Debug<R>("Demodulate from Y_N3 to Y_N3...           \nY_N3:\n", dl, "Debug_R3");
+		this->dbg_Q[0] = new tools::SC_Debug<Q>("Make the quantization from Y_N3 to Y_N4...\nY_N4:\n", dl, "Debug_Q0");
+		this->dbg_Q[1] = new tools::SC_Debug<Q>("Depuncture Y_N4 and generate Y_N5...      \nY_N5:\n", dl, "Debug_Q1");
+		this->dbg_B[4] = new tools::SC_Debug<B>("Decode Y_N5 and generate V_K1...          \nV_K1:\n", dl, "Debug_B4");
+		this->dbg_B[6] = new tools::SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
 
 		if (this->params.coset)
 		{
-			this->dbg_Q[2] = new SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q2");
-			this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
+			this->dbg_Q[2] = new tools::SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q2");
+			this->dbg_B[5] = new tools::SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
 		}
 		if (this->params.chn->type.find("RAYLEIGH") != std::string::npos)
-			this->dbg_R[4] = new SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R4");
+			this->dbg_R[4] = new tools::SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R4");
 
 		this->bind_sockets_debug();
 		sc_core::sc_start(); // start simulation

@@ -11,13 +11,11 @@
 #include "BFER_std_threads.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_std_threads<B,R,Q>
-::BFER_std_threads(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+::BFER_std_threads(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec)
 : BFER_std<B,R,Q>(params, codec),
 
   U_K1(this->params.n_threads, mipp::vector<B>(this->params.src->K     * this->params.src->n_frames)),
@@ -37,14 +35,14 @@ BFER_std_threads<B,R,Q>
 {
 #ifdef ENABLE_MPI
 	if (this->params.debug || this->params.benchs)
-		throw runtime_error(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The debug and bench modes are unavailable in MPI.");
 #endif
 
 	if (this->params.err_track_revert)
 	{
 		if (this->params.n_threads != 1)
-			std::clog << format_warning("Multi-threading detected with error tracking revert feature!"
-			                            " Each thread will play the same frames. Please run with one thread.")
+			std::clog << tools::format_warning("Multi-threading detected with error tracking revert feature!"
+			                                   " Each thread will play the same frames. Please run with one thread.")
 			          << std::endl;
 	}
 
@@ -137,12 +135,12 @@ void BFER_std_threads<B,R,Q>
 	}
 	catch (std::exception const& e)
 	{
-		Monitor<B>::stop();
+		module::Monitor<B>::stop();
 
 		simu->mutex_exception.lock();
 		if (simu->prev_err_message != e.what())
 		{
-			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 			simu->prev_err_message = e.what();
 		}
 		simu->mutex_exception.unlock();
@@ -362,7 +360,7 @@ void BFER_std_threads<B,R,Q>
 	this->mutex_debug.lock();
 
 	const auto tid = this->thread_id[std::this_thread::get_id()];
-	Frame_trace<B> ft(this->params.debug_limit, this->params.debug_precision);
+	tools::Frame_trace<B> ft(this->params.debug_limit, this->params.debug_precision);
 
 	std::cout << "-------------------------------" << std::endl;
 	std::cout << "New encoding/decoding session !" << std::endl;
@@ -520,7 +518,7 @@ void BFER_std_threads<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Terminal_BFER<B>* BFER_std_threads<B,R,Q>
+tools::Terminal_BFER<B>* BFER_std_threads<B,R,Q>
 ::build_terminal()
 {
 #ifdef ENABLE_MPI

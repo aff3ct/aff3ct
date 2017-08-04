@@ -5,8 +5,8 @@
 
 #include "Puncturer_turbo.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer_turbo<B,Q>
@@ -24,17 +24,17 @@ Puncturer_turbo<B,Q>
 	{
 		std::stringstream message;
 		message << "'tail_bits' has to be positive ('tail_bits' = " << tail_bits << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto str_array = string_split(pattern, ',');
+	auto str_array = tools::string_split(pattern, ',');
 
 	if (str_array.size() != 3)
 	{
 		std::stringstream message;
 		message << "'pattern' should give 3 different set delimited by a comma ('pattern' = " << pattern
 		        << ", 'str_array.size()' = " << str_array.size() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (str_array[0].size() != str_array[1].size() || str_array[0].size() != str_array[2].size())
@@ -44,7 +44,7 @@ Puncturer_turbo<B,Q>
 		        << ", 'str_array[0].size()' = " << str_array[0].size()
 		        << ", 'str_array[1].size()' = " << str_array[1].size()
 		        << ", 'str_array[2].size()' = " << str_array[2].size() << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	auto period = (int)str_array[0].size();
@@ -53,7 +53,7 @@ Puncturer_turbo<B,Q>
 	{
 		std::stringstream message;
 		message << "'period' has to be a multiple of 'K' ('period' = " << period << ", 'K' = " << this->K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	pattern_bits[0].resize(period);
@@ -79,7 +79,7 @@ Puncturer_turbo<B,Q>
 		message << "'N' - 'tail_bits' has to be equal to ('K' / 'period') * 'bit_count' ('N' = " << this->N
 		        << ", 'tail_bits' = " << tail_bits << ", 'K' = " << K << ", 'period' = " << period
 		        << ", 'bit_count' = " << bit_count << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

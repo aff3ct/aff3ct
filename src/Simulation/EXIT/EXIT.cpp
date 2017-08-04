@@ -15,13 +15,11 @@
 #include "EXIT.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 EXIT<B,R>
-::EXIT(const factory::EXIT::parameters& params, Codec_SISO<B,R> &codec)
+::EXIT(const factory::EXIT::parameters& params, tools::Codec_SISO<B,R> &codec)
 : Simulation(),
   params(params),
   codec (codec),
@@ -65,8 +63,8 @@ EXIT<B,R>
   terminal (nullptr)
 {
 #ifdef ENABLE_MPI
-	std::clog << format_warning("This simulation is not MPI ready, the same computations will be launched "
-	                            "on each MPI processes.") << std::endl;
+	std::clog << tools::format_warning("This simulation is not MPI ready, the same computations will be launched "
+	                                   "on each MPI processes.") << std::endl;
 #endif
 }
 
@@ -101,7 +99,7 @@ void EXIT<B,R>
 	terminal  = build_terminal (     );
 
 	if (siso->get_n_frames() > 1)
-		throw runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
 
 	if (X_K   .size() != (unsigned)K_mod) X_K   .resize(K_mod);
 	if (X_N2  .size() != (unsigned)N_mod) X_N2  .resize(N_mod);
@@ -123,7 +121,7 @@ void EXIT<B,R>
 	{
 		// For EXIT simulation, SNR is considered as Es/N0
 		const auto bit_rate = 1.f;
-		sigma = esn0_to_sigma(ebn0_to_esn0(snr, bit_rate, params.mdm->bps), params.mdm->upf);
+		sigma = tools::esn0_to_sigma(tools::ebn0_to_esn0(snr, bit_rate, params.mdm->bps), params.mdm->upf);
 
 		codec.snr_precompute(sigma);
 
@@ -138,7 +136,7 @@ void EXIT<B,R>
 
 			// if sig_a = 0, La_K2 = 0
 			if (sig_a == 0)
-				std::fill(La_K2.begin(), La_K2.end(), init_LLR<R>());
+				std::fill(La_K2.begin(), La_K2.end(), tools::init_LLR<R>());
 
 			if (!params.ter->disabled && first_loop)
 			{
@@ -407,21 +405,21 @@ void EXIT<B,R>
 }
 
 template <typename B, typename R>
-Source<B>* EXIT<B,R>
+module::Source<B>* EXIT<B,R>
 ::build_source()
 {
 	return factory::Source::build<B>(*params.src);
 }
 
 template <typename B, typename R>
-Encoder<B>* EXIT<B,R>
+module::Encoder<B>* EXIT<B,R>
 ::build_encoder()
 {
 	return this->codec.build_encoder();
 }
 
 template <typename B, typename R>
-Modem<B,R,R>* EXIT<B,R>
+module::Modem<B,R,R>* EXIT<B,R>
 ::build_modem()
 {
 	auto mdm_cpy = *params.mdm;
@@ -431,7 +429,7 @@ Modem<B,R,R>* EXIT<B,R>
 }
 
 template <typename B, typename R>
-Modem<B,R,R>* EXIT<B,R>
+module::Modem<B,R,R>* EXIT<B,R>
 ::build_modem_a()
 {
 	auto mdm_cpy  = *params.mdm;
@@ -441,7 +439,7 @@ Modem<B,R,R>* EXIT<B,R>
 }
 
 template <typename B, typename R>
-Channel<R>* EXIT<B,R>
+module::Channel<R>* EXIT<B,R>
 ::build_channel(const int size)
 {
 	auto chn_cpy = *params.chn;
@@ -451,7 +449,7 @@ Channel<R>* EXIT<B,R>
 }
 
 template <typename B, typename R>
-Channel<R>* EXIT<B,R>
+module::Channel<R>* EXIT<B,R>
 ::build_channel_a(const int size)
 {
 	auto chn_cpy  = *params.chn;
@@ -465,7 +463,7 @@ Channel<R>* EXIT<B,R>
 }
 
 template <typename B, typename R>
-Decoder_SISO<R>* EXIT<B,R>
+module::Decoder_SISO<R>* EXIT<B,R>
 ::build_siso()
 {
 	return this->codec.build_siso();
@@ -474,7 +472,7 @@ Decoder_SISO<R>* EXIT<B,R>
 // ------------------------------------------------------------------------------------------------- non-virtual method
 
 template <typename B, typename R>
-Terminal_EXIT* EXIT<B,R>
+tools::Terminal_EXIT* EXIT<B,R>
 ::build_terminal()
 {
 	auto term_cpy = *params.ter;

@@ -20,13 +20,11 @@
 #include "BFER.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER<B,R,Q>
-::BFER(const factory::BFER::parameters& params, Codec<B,Q> &codec)
+::BFER(const factory::BFER::parameters& params, tools::Codec<B,Q> &codec)
 : Simulation(),
   params(params),
 
@@ -57,19 +55,19 @@ BFER<B,R,Q>
 	{
 		std::stringstream message;
 		message << "'n_threads' has to be greater than 0 ('n_threads' = " << params.n_threads << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (params.err_track_enable)
 	{
 		for (auto tid = 0; tid < params.n_threads; tid++)
-			dumper[tid] = new Dumper(params.src->n_frames);
+			dumper[tid] = new tools::Dumper(params.src->n_frames);
 
-		std::vector<Dumper*> dumpers;
+		std::vector<tools::Dumper*> dumpers;
 		for (auto tid = 0; tid < params.n_threads; tid++)
 			dumpers.push_back(dumper[tid]);
 
-		dumper_red = new Dumper_reduction(dumpers, params.src->n_frames);
+		dumper_red = new tools::Dumper_reduction(dumpers, params.src->n_frames);
 	}
 
 	for (auto tid = 0; tid < params.n_threads; tid++)
@@ -77,18 +75,18 @@ BFER<B,R,Q>
 
 #ifdef ENABLE_MPI
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new Monitor_reduction_mpi<B>(params.src->K,
-	                                                 params.mnt->n_frame_errors,
-	                                                 this->monitor,
-	                                                 std::this_thread::get_id(),
-	                                                 params.mpi_comm_freq,
-	                                                 params.src->n_frames);
+	this->monitor_red = new module::Monitor_reduction_mpi<B>(params.src->K,
+	                                                         params.mnt->n_frame_errors,
+	                                                         this->monitor,
+	                                                         std::this_thread::get_id(),
+	                                                         params.mpi_comm_freq,
+	                                                         params.src->n_frames);
 #else
 	// build a monitor to compute BER/FER (reduce the other monitors)
-	this->monitor_red = new Monitor_reduction<B>(params.src->K,
-	                                             params.mnt->n_frame_errors,
-	                                             this->monitor,
-	                                             params.src->n_frames);
+	this->monitor_red = new module::Monitor_reduction<B>(params.src->K,
+	                                                     params.mnt->n_frame_errors,
+	                                                     this->monitor,
+	                                                     params.src->n_frames);
 #endif
 }
 
@@ -122,16 +120,16 @@ void BFER<B,R,Q>
 			duration.second = std::chrono::nanoseconds(0);
 
 		if (params.err_track_enable)
-			this->monitor[tid]->add_handler_fe(std::bind(&Dumper::add, this->dumper[tid], std::placeholders::_1));
+			this->monitor[tid]->add_handler_fe(std::bind(&tools::Dumper::add, this->dumper[tid], std::placeholders::_1));
 	}
 	catch (std::exception const& e)
 	{
-		Monitor<B>::stop();
+		module::Monitor<B>::stop();
 
 		mutex_exception.lock();
 		if (prev_err_message != e.what())
 		{
-			std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
+			std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 			prev_err_message = e.what();
 		}
 		mutex_exception.unlock();
@@ -159,14 +157,14 @@ void BFER<B,R,Q>
 		if (params.snr_type == "EB")
 		{
 			snr_b = snr;
-			snr_s = ebn0_to_esn0(snr_b, bit_rate, params.mdm->bps);
+			snr_s = tools::ebn0_to_esn0(snr_b, bit_rate, params.mdm->bps);
 		}
 		else //if(params.sim->snr_type == "ES")
 		{
 			snr_s = snr;
-			snr_b = esn0_to_ebn0(snr_s, bit_rate, params.mdm->bps);
+			snr_b = tools::esn0_to_ebn0(snr_s, bit_rate, params.mdm->bps);
 		}
-		sigma = esn0_to_sigma(snr_s, params.mdm->upf);
+		sigma = tools::esn0_to_sigma(snr_s, params.mdm->upf);
 
 		this->terminal->set_esn0(snr_s);
 		this->terminal->set_ebn0(snr_b);
@@ -194,7 +192,7 @@ void BFER<B,R,Q>
 			{
 				std::stringstream message;
 				message << "Impossible to read the 'chn' file ('chn' = " << params_writable->chn->path << ").";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 		}
 
@@ -211,7 +209,7 @@ void BFER<B,R,Q>
 		for (auto tid = 1; tid < params.n_threads; tid++)
 			threads[tid -1].join();
 
-		if (!Monitor<B>::is_over())
+		if (!module::Monitor<B>::is_over())
 		{
 			if (!params.ter->disabled && snr == params.snr_min && !params.debug && !params.benchs
 #ifdef ENABLE_MPI
@@ -233,8 +231,8 @@ void BFER<B,R,Q>
 			}
 			catch (std::exception const& e)
 			{
-				Monitor<B>::stop();
-				std::cerr << apply_on_each_line(e.what(), &format_error) << std::endl;
+				module::Monitor<B>::stop();
+				std::cerr << tools::apply_on_each_line(e.what(), &tools::format_error) << std::endl;
 			}
 
 			// stop the terminal
@@ -254,12 +252,12 @@ void BFER<B,R,Q>
 #endif
 			   )
 			{
-				if (params.debug && !Monitor<B>::is_over())
+				if (params.debug && !module::Monitor<B>::is_over())
 					terminal->legend(std::cout);
 
 				time_reduction(true);
 
-				if (!Monitor<B>::is_over())
+				if (!module::Monitor<B>::is_over())
 					terminal->final_report(std::cout);
 			}
 
@@ -274,7 +272,7 @@ void BFER<B,R,Q>
 
 		this->release_objects();
 
-		if (Monitor<B>::is_over())
+		if (module::Monitor<B>::is_over())
 			break;
 	}
 
@@ -326,7 +324,8 @@ void BFER<B,R,Q>
 			max_chars = std::max(max_chars, (int)duration.first.second.length());
 
 		stream << "#" << std::endl;
-		stream << "# " << format("Time report", Style::BOLD | Style::UNDERLINED) << " (the time of the threads is cumulated)" << std::endl;
+		stream << "# " << tools::format("Time report", tools::Style::BOLD | tools::Style::UNDERLINED)
+		               << " (the time of the threads is cumulated)" << std::endl;
 
 		auto prev_sec = 0.f;
 		for (auto& duration : durations_sum)
@@ -339,13 +338,13 @@ void BFER<B,R,Q>
 				if (duration.first.second[0] != '-')
 				{
 					cur_pc  = (cur_sec / total_sec) * 100.f;
-					key = format("* " + duration.first.second, Style::BOLD);
+					key = tools::format("* " + duration.first.second, tools::Style::BOLD);
 					prev_sec = cur_sec;
 				}
 				else
 				{
 					cur_pc  = (prev_sec != 0.f) ? (cur_sec / prev_sec) * 100.f : 0.f;
-					key = format("  " + duration.first.second, Style::BOLD | Style::ITALIC);
+					key = tools::format("  " + duration.first.second, tools::Style::BOLD | tools::Style::ITALIC);
 				}
 
 				const auto n_spaces = max_chars - (int)duration.first.second.length();
@@ -377,21 +376,21 @@ void BFER<B,R,Q>
 		const auto n_spaces = max_chars - (int)total_str.length();
 		std::string str_spaces = "";
 		for (auto i = 0; i < n_spaces; i++) str_spaces += " ";
-		stream << "# " << format("* " + total_str, Style::BOLD) << str_spaces << ": "
+		stream << "# " << tools::format("* " + total_str, tools::Style::BOLD) << str_spaces << ": "
 		       << std::setw(9) << std::fixed << std::setprecision(3) << total_sec << " sec" << std::endl;
 		stream << "#" << std::endl;
 	}
 }
 
 template <typename B, typename R, typename Q>
-Monitor<B>* BFER<B,R,Q>
+module::Monitor<B>* BFER<B,R,Q>
 ::build_monitor(const int tid)
 {
 	return factory::Monitor::build<B>(*params.mnt);
 }
 
 template <typename B, typename R, typename Q>
-Terminal_BFER<B>* BFER<B,R,Q>
+tools::Terminal_BFER<B>* BFER<B,R,Q>
 ::build_terminal()
 {
 	return factory::Terminal_BFER::build<B>(*params.ter, *this->monitor_red);
@@ -416,7 +415,8 @@ void BFER<B,R,Q>
 		}
 	}
 	else
-		std::clog << format_warning("Terminal is not allocated: the temporal report can't be called.") << std::endl;
+		std::clog << tools::format_warning("Terminal is not allocated: the temporal report can't be called.")
+		          << std::endl;
 }
 
 template <typename B, typename R, typename Q>

@@ -13,13 +13,11 @@
 #include "BFER_std.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_std<B,R,Q>
-::BFER_std(const factory::BFER_std::parameters &params, Codec<B,Q> &codec)
+::BFER_std(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec)
 : BFER<B,R,Q>(params, codec),
   params(params),
 
@@ -73,7 +71,7 @@ void BFER_std<B,R,Q>
 	{
 		interleaver[tid]->init();
 		if (interleaver[tid]->is_uniform())
-			this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::refresh, this->interleaver[tid]));
+			this->monitor[tid]->add_handler_check(std::bind(&module::Interleaver<int>::refresh, this->interleaver[tid]));
 	}
 }
 
@@ -98,7 +96,7 @@ void BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Source<B>* BFER_std<B,R,Q>
+module::Source<B>* BFER_std<B,R,Q>
 ::build_source(const int tid, const int seed)
 {
 	auto src_cpy = *params.src;
@@ -107,21 +105,21 @@ Source<B>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-CRC<B>* BFER_std<B,R,Q>
+module::CRC<B>* BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
 	return factory::CRC::build<B>(*params.crc);
 }
 
 template <typename B, typename R, typename Q>
-Encoder<B>* BFER_std<B,R,Q>
+module::Encoder<B>* BFER_std<B,R,Q>
 ::build_encoder(const int tid, const int seed)
 {
 	try
 	{
 		return this->codec.build_encoder(tid, interleaver[tid]);
 	}
-	catch (cannot_allocate const&)
+	catch (tools::cannot_allocate const&)
 	{
 		auto enc_cpy = *params.enc;
 		enc_cpy.seed = seed;
@@ -130,29 +128,29 @@ Encoder<B>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Puncturer<B,Q>* BFER_std<B,R,Q>
+module::Puncturer<B,Q>* BFER_std<B,R,Q>
 ::build_puncturer(const int tid)
 {
 	try
 	{
 		return this->codec.build_puncturer(tid);
 	}
-	catch (cannot_allocate const&)
+	catch (tools::cannot_allocate const&)
 	{
 		return factory::Puncturer::build<B,Q>(*params.pct);
 	}
 }
 
 template <typename B, typename R, typename Q>
-Interleaver<int>* BFER_std<B,R,Q>
+module::Interleaver<int>* BFER_std<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	Interleaver<int>* itl = nullptr;
+	module::Interleaver<int>* itl = nullptr;
 	try
 	{
 		itl = this->codec.build_interleaver(tid, seed);
 	}
-	catch (cannot_allocate const&)
+	catch (tools::cannot_allocate const&)
 	{
 		itl = nullptr;
 	}
@@ -183,7 +181,7 @@ Interleaver<int>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,R>* BFER_std<B,R,Q>
+module::Modem<B,R,R>* BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
 	auto mdm_cpy = *params.mdm;
@@ -193,7 +191,7 @@ Modem<B,R,R>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Channel<R>* BFER_std<B,R,Q>
+module::Channel<R>* BFER_std<B,R,Q>
 ::build_channel(const int tid, const int seed)
 {
 	auto chn_cpy = *params.chn;
@@ -205,7 +203,7 @@ Channel<R>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Quantizer<R,Q>* BFER_std<B,R,Q>
+module::Quantizer<R,Q>* BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
 	auto qnt_cpy = *params.qnt;
@@ -216,7 +214,7 @@ Quantizer<R,Q>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Coset<B,Q>* BFER_std<B,R,Q>
+module::Coset<B,Q>* BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	factory::Coset::parameters cst_params;
@@ -226,14 +224,14 @@ Coset<B,Q>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Decoder_SIHO<B,Q>* BFER_std<B,R,Q>
+module::Decoder_SIHO<B,Q>* BFER_std<B,R,Q>
 ::build_decoder(const int tid)
 {
 	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);
 }
 
 template <typename B, typename R, typename Q>
-Coset<B,B>* BFER_std<B,R,Q>
+module::Coset<B,B>* BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
 	factory::Coset::parameters cst_params;

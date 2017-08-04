@@ -14,7 +14,6 @@
 #include "Codec_turbo.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q, typename QD>
@@ -76,7 +75,7 @@ void Codec_turbo<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Interleaver<int>* Codec_turbo<B,Q,QD>
+module::Interleaver<int>* Codec_turbo<B,Q,QD>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = dec_par.itl;
@@ -85,15 +84,15 @@ Interleaver<int>* Codec_turbo<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
+module::Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
 ::build_sub_encoder(const int tid)
 {
 	return factory::Encoder_RSC::build<B>(enc_par.sub1, json_stream);
 }
 
 template <typename B, typename Q, typename QD>
-Encoder<B>* Codec_turbo<B,Q,QD>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_turbo<B,Q,QD>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
@@ -113,22 +112,22 @@ Encoder<B>* Codec_turbo<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-Puncturer<B,Q>* Codec_turbo<B,Q,QD>
+module::Puncturer<B,Q>* Codec_turbo<B,Q,QD>
 ::build_puncturer(const int tid)
 {
 	return factory::Puncturer_turbo::build<B,Q>(pct_par);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SISO<Q>* Codec_turbo<B,Q,QD>
+module::Decoder_SISO<Q>* Codec_turbo<B,Q,QD>
 ::build_sub_siso(const int tid)
 {
 	return factory::Decoder_RSC::build<B,Q,QD>(dec_par.sub1, trellis, json_stream, dec_par.n_ite);
 }
 
 template <typename B, typename Q, typename QD>
-Decoder_SIHO<B,Q>* Codec_turbo<B,Q,QD>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_turbo<B,Q,QD>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__,  "'itl' should not be null.");

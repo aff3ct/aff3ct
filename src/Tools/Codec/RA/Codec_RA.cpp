@@ -5,7 +5,6 @@
 #include "Codec_RA.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
@@ -23,7 +22,7 @@ Codec_RA<B,Q>
 }
 
 template <typename B, typename Q>
-Interleaver<int>* Codec_RA<B,Q>
+module::Interleaver<int>* Codec_RA<B,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = dec_par.itl;
@@ -32,8 +31,8 @@ Interleaver<int>* Codec_RA<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_RA<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_RA<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
@@ -42,8 +41,8 @@ Encoder<B>* Codec_RA<B,Q>
 }
 
 template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_RA<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_RA<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");

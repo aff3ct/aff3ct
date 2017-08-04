@@ -7,8 +7,8 @@
 
 #include "Encoder_RSC_sys.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_RSC_sys<B>
@@ -21,7 +21,7 @@ Encoder_RSC_sys<B>
 	{
 		std::stringstream message;
 		message << "'n_ff' has to be greater than 0 ('n_ff' = " << n_ff << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (N - 2 * n_ff !=  2 * K)
@@ -29,7 +29,7 @@ Encoder_RSC_sys<B>
 		std::stringstream message;
 		message << "'N' - 2 * 'n_ff' has to be equal to 2 * 'K' ('N' = " << N << ", 'n_ff' = " << n_ff
 		        << ", 'K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -145,7 +145,7 @@ void Encoder_RSC_sys<B>
 	{
 		std::stringstream message;
 		message << "'state' should be equal to 0 ('state' = " <<  state << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (!only_parity)
@@ -155,7 +155,7 @@ void Encoder_RSC_sys<B>
 			std::stringstream message;
 			message << "'j' should be equal to 'N' * 'stride' ('j' = " << j << ", 'N' = " << this->N
 			        << ", 'stride' = " << stride << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 	else
@@ -166,7 +166,7 @@ void Encoder_RSC_sys<B>
 			std::stringstream message;
 			message << "'j' should be equal to ('K' + 2 * 'n_ff') * 'stride' ('j' = " << j << ", 'K' = " << this->K
 			        << ", 'n_ff' = " << this->n_ff << ", 'stride' = " << stride << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 }

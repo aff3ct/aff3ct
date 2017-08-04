@@ -4,8 +4,8 @@
 
 #include "Modem_BPSK_fast.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK_fast<B,R,Q>
@@ -34,7 +34,7 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::modulate(const B *X_N1, R *X_N2)
 {
-	throw runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
 
 namespace aff3ct
@@ -158,10 +158,10 @@ void Modem_BPSK_fast<B,R,Q>
 	else
 	{
 		if (typeid(R) != typeid(Q))
-			throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-			throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 		auto size = (unsigned int)(this->N * this->n_frames);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();

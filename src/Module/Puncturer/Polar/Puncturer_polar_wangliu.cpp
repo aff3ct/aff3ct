@@ -6,14 +6,14 @@
 
 #include "Puncturer_polar_wangliu.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename Q>
 Puncturer_polar_wangliu<B,Q>
 ::Puncturer_polar_wangliu(const int &K,
                           const int &N,
-                          const Frozenbits_generator &fb_generator,
+                          const tools::Frozenbits_generator &fb_generator,
                           const int n_frames,
                           const std::string name)
 : Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames, name),
@@ -24,7 +24,7 @@ Puncturer_polar_wangliu<B,Q>
 		std::stringstream message;
 		message << "'fb_generator.get_K()' has to be equal to 'K' ('fb_generator.get_K()' = " << fb_generator.get_K()
 		        << ", 'K' = " << K << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (fb_generator.get_N() != this->N_code)
@@ -32,7 +32,7 @@ Puncturer_polar_wangliu<B,Q>
 		std::stringstream message;
 		message << "'fb_generator.get_N()' has to be equal to 'N_code' ('fb_generator.get_N()' = "
 		        << fb_generator.get_N() << ", 'N_code' = " << this->N_code << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -56,7 +56,7 @@ void Puncturer_polar_wangliu<B,Q>
 	auto i = 0;
 	while (info_bits_placed < this->K)
 	{
- 		if (best_channels[i] < this->N) // choose best channels in interval [0 ; N]
+ 		if (best_channels[i] < (uint32_t)this->N) // choose best channels in interval [0 ; N]
 		{                               // interval [0 ; N] are frozen
 			frozen_bits[best_channels[i]] = false;
 			info_bits_placed++;
@@ -79,7 +79,7 @@ void Puncturer_polar_wangliu<B,Q>
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 
 	// +inf (bit = 0)
-	std::fill(Y_N2 + this->N, Y_N2 + this->N_code, sat_vals<Q>().second);
+	std::fill(Y_N2 + this->N, Y_N2 + this->N_code, tools::sat_vals<Q>().second);
 }
 
 // ==================================================================================== explicit template instantiation 

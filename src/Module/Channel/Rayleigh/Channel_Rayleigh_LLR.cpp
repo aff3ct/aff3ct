@@ -5,12 +5,12 @@
 
 #include "Channel_Rayleigh_LLR.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N, const bool complex, Noise<R> *noise_generator, const bool add_users,
+::Channel_Rayleigh_LLR(const int N, const bool complex, tools::Noise<R> *noise_generator, const bool add_users,
                        const R sigma, const int n_frames, const std::string name)
 : Channel<R>(N, sigma, n_frames, name),
   complex(complex),
@@ -22,11 +22,11 @@ Channel_Rayleigh_LLR<R>
 	{
 		std::stringstream message;
 		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (noise_generator == nullptr)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 }
 
 template <typename R>
@@ -43,7 +43,7 @@ Channel_Rayleigh_LLR<R>
 	{
 		std::stringstream message;
 		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

@@ -4,8 +4,8 @@
 
 #include "Encoder_CPE.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template<typename SIN, typename SOUT>
 Encoder_CPE<SIN, SOUT>
@@ -18,7 +18,7 @@ Encoder_CPE<SIN, SOUT>
 		std::stringstream message;
 		message << "'cpm.m_order' has to be equal or smaller than 'sizeof(SIN)' * 256 ('cpm.m_order' = "
 		        << cpm.m_order << ", 'sizeof(SIN)' = " << sizeof(SIN) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// because V_n can have p values
@@ -27,7 +27,7 @@ Encoder_CPE<SIN, SOUT>
 		std::stringstream message;
 		message << "'cpm.p' has to be equal or smaller than 'sizeof(SIN)' * 256 ('cpm.p' = " << cpm.p
 		        << ", 'sizeof(SIN)' = " << sizeof(SIN) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	// because X_n can have Nb_xa values
@@ -36,7 +36,7 @@ Encoder_CPE<SIN, SOUT>
 		std::stringstream message;
 		message << "'cpm.n_wa' has to be equal or smaller than 'sizeof(SOUT)' * 256 ('cpm.n_wa' = " << cpm.n_wa
 		        << ", 'sizeof(SOUT)' = " << sizeof(SOUT) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -62,7 +62,7 @@ void Encoder_CPE<SIN, SOUT>
 	{
 		std::stringstream message;
 		message << "'U_N.size()' has to be equal to 'N' ('U_N.size()' = " << U_N.size() << ", 'N' = " << N << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)X_N.size() != (N + cpm.tl))
@@ -70,7 +70,7 @@ void Encoder_CPE<SIN, SOUT>
 		std::stringstream message;
 		message << "'X_N.size()' has to be equal to 'N' + 'cpm.tl' ('X_N.size()' = " << X_N.size()
 		        << ", 'N' = " << N << ", 'cpm.tl' = " << cpm.tl << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	auto state = 0; // initial (and final) state 0
@@ -88,7 +88,7 @@ void Encoder_CPE<SIN, SOUT>
 	{
 		std::stringstream message;
 		message << "'state' should be equal to 0 ('state' = " << state << ").";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -103,7 +103,7 @@ void Encoder_CPE<SIN, SOUT>
 		        << "('trellis_next_state.size()' = " << trellis_next_state.size()
 		        << ", 'cpm.max_st_id' = " << cpm.max_st_id
 		        << ", 'cpm.m_order' = " << cpm.m_order << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)trellis_related_wave_form.size() != cpm.max_st_id * cpm.m_order)
@@ -113,7 +113,7 @@ void Encoder_CPE<SIN, SOUT>
 		        << " ('trellis_related_wave_form.size()' = " << trellis_related_wave_form.size()
 		        << ", 'cpm.max_st_id' = " << cpm.max_st_id
 		        << ", 'cpm.m_order' = " << cpm.m_order << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	int state;
@@ -142,7 +142,7 @@ void Encoder_CPE<SIN, SOUT>
 		        << "('anti_trellis_original_state.size()' = " << anti_trellis_original_state.size()
 		        << ", 'cpm.max_st_id' = " << cpm.max_st_id
 		        << ", 'cpm.m_order' = " << cpm.m_order << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if ((int)anti_trellis_input_transition.size() != cpm.max_st_id * cpm.m_order)
@@ -152,7 +152,7 @@ void Encoder_CPE<SIN, SOUT>
 		        << "('anti_trellis_input_transition.size()' = " << anti_trellis_input_transition.size()
 		        << ", 'cpm.max_st_id' = " << cpm.max_st_id
 		        << ", 'cpm.m_order' = " << cpm.m_order << ").";
-		throw length_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	mipp::vector<int> counter(cpm.max_st_id, 0);
@@ -170,7 +170,7 @@ void Encoder_CPE<SIN, SOUT>
 				std::stringstream message;
 				message << "'next_state' should be smaller than 'cpm.max_st_id' ('next_state' = " << next_state
 				        << ", 'cpm.max_st_id' = " << cpm.max_st_id << ").";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
 			if (counter[next_state] >= cpm.m_order)
@@ -179,7 +179,7 @@ void Encoder_CPE<SIN, SOUT>
 				message << "'counter[next_state]' should be smaller than 'cpm.m_order' "
 				        << "('next_state' = " << next_state << ", 'counter[next_state]' = " << counter[next_state]
 				        << ", 'cpm.m_order' = " << cpm.m_order << ").";
-				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
 			anti_trellis_original_state  [next_state*cpm.m_order + counter[next_state]] = cpm.allowed_states[st];

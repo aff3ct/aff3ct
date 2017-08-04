@@ -7,14 +7,14 @@
 
 #include "Terminal_BFER.hpp"
 
-using namespace aff3ct::module;
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B>
 Terminal_BFER<B>
 ::Terminal_BFER(const int K,
                 const int N,
-                const Monitor<B> &monitor,
+                const module::Monitor<B> &monitor,
                 const std::chrono::nanoseconds *d_decod_total)
 : Terminal       (                                ),
   K              (K                               ),
@@ -53,7 +53,7 @@ Terminal_BFER<B>
 template <typename B>
 Terminal_BFER<B>
 ::Terminal_BFER(const int K,
-                const Monitor<B> &monitor,
+                const module::Monitor<B> &monitor,
                 const std::chrono::nanoseconds *d_decod_total)
 : Terminal       (                                ),
   K              (K                               ),
@@ -204,7 +204,7 @@ void Terminal_BFER<B>
 	simu_cthr /= 1000.f; // = kbps
 	simu_cthr /= 1000.f; // = mbps
 
-	if (Monitor<B>::is_interrupt()) stream << "\r";
+	if (module::Monitor<B>::is_interrupt()) stream << "\r";
 
 	std::stringstream esn0_str;
 	if (!is_esn0)
@@ -309,8 +309,8 @@ void Terminal_BFER<B>
 
 	stream << format(" | ", Style::BOLD) << std::setprecision(0) << std::fixed << std::setw(8) << et_format;
 
-	if (Monitor<B>::is_interrupt()) stream << " x" << std::endl;
-	else                            stream << "  " << std::endl;
+	if (module::Monitor<B>::is_interrupt()) stream << " x" << std::endl;
+	else                                    stream << "  " << std::endl;
 
 	t_snr = std::chrono::steady_clock::now();
 }

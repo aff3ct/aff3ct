@@ -8,26 +8,26 @@
 
 #include "Decoder_LDPC_BP_layered_offset_normalize_min_sum.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename R>
 inline R normalize(const R val, const float factor)
 {
-	     if (factor == 0.125f) return div8<R>(val);
-	else if (factor == 0.250f) return div4<R>(val);
-	else if (factor == 0.375f) return div4<R>(val) + div8<R>(val);
-	else if (factor == 0.500f) return div2<R>(val);
-	else if (factor == 0.625f) return div2<R>(val) + div8<R>(val);
-	else if (factor == 0.750f) return div2<R>(val) + div4<R>(val);
-	else if (factor == 0.875f) return div2<R>(val) + div4<R>(val) + div8<R>(val);
+	     if (factor == 0.125f) return tools::div8<R>(val);
+	else if (factor == 0.250f) return tools::div4<R>(val);
+	else if (factor == 0.375f) return tools::div4<R>(val) + tools::div8<R>(val);
+	else if (factor == 0.500f) return tools::div2<R>(val);
+	else if (factor == 0.625f) return tools::div2<R>(val) + tools::div8<R>(val);
+	else if (factor == 0.750f) return tools::div2<R>(val) + tools::div4<R>(val);
+	else if (factor == 0.875f) return tools::div2<R>(val) + tools::div4<R>(val) + tools::div8<R>(val);
 	else if (factor == 1.000f) return val;
 	else
 	{
 		std::stringstream message;
 		message << "'factor' can only be 0.125f, 0.250f, 0.375f, 0.500f, 0.625f, 0.750f, 0.875f or 1.000f ('factor' = "
 		        << factor << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -46,7 +46,7 @@ inline double normalize(const double val, const float factor)
 template <typename B, typename R>
 Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 ::Decoder_LDPC_BP_layered_offset_normalize_min_sum(const int &K, const int &N, const int& n_ite,
-                                                   const Sparse_matrix &H,
+                                                   const tools::Sparse_matrix &H,
                                                    const std::vector<unsigned> &info_bits_pos,
                                                    const float normalize_factor,
                                                    const R offset,
@@ -61,7 +61,7 @@ Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 	{
 		std::stringstream message;
 		message << "This decoder does not work in 8-bit fixed-point (try in 16-bit).";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

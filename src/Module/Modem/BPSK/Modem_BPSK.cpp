@@ -4,8 +4,8 @@
 
 #include "Modem_BPSK.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK<B,R,Q>
@@ -54,10 +54,10 @@ void Modem_BPSK<B,R,Q>
 	else
 	{
 		if (typeid(R) != typeid(Q))
-			throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 		if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-			throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 		auto size = (unsigned int)(this->N_fil * this->n_frames);
 		for (unsigned i = 0; i < size; i++)
@@ -73,10 +73,10 @@ void Modem_BPSK<B,R,Q>
 ::demodulate_with_gains(const Q *Y_N1, const R *H_N, Q *Y_N2)
 {
 	if (typeid(R) != typeid(Q))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
 	if (typeid(Q) != typeid(float) && typeid(Q) != typeid(double))
-		throw invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (disable_sig2)
 	{

@@ -7,8 +7,8 @@
 
 #include "Quantizer_tricky.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename R, typename Q>
 Quantizer_tricky<R,Q>
@@ -57,7 +57,7 @@ Quantizer_tricky<R,Q>
 		std::stringstream message;
 		message << "'saturation_pos' has to be equal or smaller than 'sizeof(Q)' * 8 ('saturation_pos' = "
 		        << saturation_pos << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -133,7 +133,7 @@ Quantizer_tricky<R,Q>
 		std::stringstream message;
 		message << "'saturation_pos' has to be equal or smaller than 'sizeof(Q)' * 8 ('saturation_pos' = "
 		        << saturation_pos << ", 'sizeof(Q)' = " << sizeof(Q) << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
@@ -165,7 +165,7 @@ void Quantizer_tricky<R,Q>
 	}
 
 	for (unsigned i = 0; i < size; i++)
-		Y_N2[i] = (Q)saturate(std::round(Y_N1[i] * delta_inv), (R)val_min, (R)val_max);
+		Y_N2[i] = (Q)tools::saturate(std::round(Y_N1[i] * delta_inv), (R)val_min, (R)val_max);
 }
 
 // ==================================================================================== explicit template instantiation 

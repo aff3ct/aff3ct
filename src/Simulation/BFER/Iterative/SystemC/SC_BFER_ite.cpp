@@ -6,13 +6,12 @@
 
 #include "SC_BFER_ite.hpp"
 
-using namespace aff3ct::module;
-using namespace aff3ct::tools;
+using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
-::SC_BFER_ite(const factory::BFER_ite::parameters &params, Codec_SISO<B,Q> &codec)
+::SC_BFER_ite(const factory::BFER_ite::parameters &params, tools::Codec_SISO<B,Q> &codec)
 : BFER_ite<B,R,Q>(params, codec),
 
   interleaver_e(nullptr),
@@ -26,20 +25,23 @@ SC_BFER_ite<B,R,Q>
   dbg_Q      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}
 {
 	if (params.n_threads > 1)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support multi-threading.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support "
+		                                                            "multi-threading.");
 
 	if (params.benchs)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench mode.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the bench "
+		                                                            "mode.");
 
 	if (params.coded_monitoring)
-		throw invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded monitoring.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
+		                                                            "monitoring.");
 
 	if (params.time_report)
-		std::clog << format_warning("The time report is not available in the SystemC simulation.") << std::endl;
+		std::clog << tools::format_warning("The time report is not available in the SystemC simulation.") << std::endl;
 
 #ifdef ENABLE_MPI
-	std::clog << format_warning("This simulation is not MPI ready, the same computations will be launched ")
-	                            "on each MPI processes.") << std::endl;
+	std::clog << tools::format_warning("This simulation is not MPI ready, the same computations will be launched ")
+	                                   "on each MPI processes.") << std::endl;
 #endif
 }
 
@@ -56,7 +58,8 @@ void SC_BFER_ite<B,R,Q>
 	BFER_ite<B,R,Q>::_build_communication_chain(tid);
 
 	if (*this->interleaver[tid] != *this->interleaver_e)
-		throw runtime_error(__FILE__, __LINE__, __func__, "'interleaver[tid]' and 'interleaver_e' have to be equal.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'interleaver[tid]' and 'interleaver_e' have to be "
+		                                                         "equal.");
 
 	// create the sc_module inside the objects of the communication chain
 	this->source     [tid]->create_sc_module              ();
@@ -119,46 +122,46 @@ template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::_launch()
 {
-	Predicate_ite p(this->params.n_ite);
+	tools::Predicate_ite p(this->params.n_ite);
 
-	this->duplicator[0] = new SC_Duplicator(   "Duplicator0");
-	this->duplicator[1] = new SC_Duplicator(   "Duplicator1");
+	this->duplicator[0] = new tools::SC_Duplicator("Duplicator0");
+	this->duplicator[1] = new tools::SC_Duplicator("Duplicator1");
 	if (this->params.coset)
 	{
-		this->duplicator[2] = new SC_Duplicator("Duplicator2");
-		this->duplicator[3] = new SC_Duplicator("Duplicator3");
-		this->duplicator[4] = new SC_Duplicator("Duplicator4");
+		this->duplicator[2] = new tools::SC_Duplicator("Duplicator2");
+		this->duplicator[3] = new tools::SC_Duplicator("Duplicator3");
+		this->duplicator[4] = new tools::SC_Duplicator("Duplicator4");
 	}
-	this->router        = new SC_Router    (p, "Router"     );
-	this->predicate     = new SC_Predicate (p, "Predicate"  );
+	this->router    = new tools::SC_Router    (p, "Router"     );
+	this->predicate = new tools::SC_Predicate (p, "Predicate"  );
 
 	if (this->params.n_threads == 1 && this->params.debug)
 	{
 		const auto dl = this->params.debug_limit;
 
-		this->dbg_B[0] = new SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
-		this->dbg_B[1] = new SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
-		this->dbg_B[2] = new SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", dl, "Debug_B2");
-		this->dbg_B[3] = new SC_Debug<B>("Interleave X_N1 in X_N2...                \nX_N2:\n", dl, "Debug_B3");
-		this->dbg_R[0] = new SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
-		this->dbg_R[1] = new SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
-		this->dbg_R[2] = new SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
-		this->dbg_Q[0] = new SC_Debug<Q>("Make the quantization from Y_N2 to Y_N3...\nY_N3:\n", dl, "Debug_Q0");
-		this->dbg_Q[1] = new SC_Debug<Q>("Demodulate from Y_N3 and Y_N7 to Y_N4...  \nY_N4:\n", dl, "Debug_Q1");
-		this->dbg_Q[2] = new SC_Debug<Q>("Deinterleave from Y_N4 to Y_N5...         \nY_N5:\n", dl, "Debug_Q2");
-		this->dbg_Q[3] = new SC_Debug<Q>("Soft decode from Y_N5 to Y_N6...          \nY_N6:\n", dl, "Debug_Q3");
-		this->dbg_Q[4] = new SC_Debug<Q>("Interleave from Y_N6 to Y_N7...           \nY_N7:\n", dl, "Debug_Q4");
-		this->dbg_B[4] = new SC_Debug<B>("Hard decode Y_N5 and generate V_K1...     \nV_K1:\n", dl, "Debug_B4");
-		this->dbg_B[6] = new SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
+		this->dbg_B[0] = new tools::SC_Debug<B>("Generate random bits U_K...               \nU_K: \n", dl, "Debug_B0");
+		this->dbg_B[1] = new tools::SC_Debug<B>("Add the CRC to U_K...                     \nU_K: \n", dl, "Debug_B1");
+		this->dbg_B[2] = new tools::SC_Debug<B>("Encode U_K in X_N1...                     \nX_N1:\n", dl, "Debug_B2");
+		this->dbg_B[3] = new tools::SC_Debug<B>("Interleave X_N1 in X_N2...                \nX_N2:\n", dl, "Debug_B3");
+		this->dbg_R[0] = new tools::SC_Debug<R>("Modulate X_N2 in X_N3...                  \nX_N3:\n", dl, "Debug_R0");
+		this->dbg_R[1] = new tools::SC_Debug<R>("Add noise from X_N3 to Y_N1...            \nY_N1:\n", dl, "Debug_R1");
+		this->dbg_R[2] = new tools::SC_Debug<R>("Filter from Y_N1 to Y_N2...               \nY_N2:\n", dl, "Debug_R2");
+		this->dbg_Q[0] = new tools::SC_Debug<Q>("Make the quantization from Y_N2 to Y_N3...\nY_N3:\n", dl, "Debug_Q0");
+		this->dbg_Q[1] = new tools::SC_Debug<Q>("Demodulate from Y_N3 and Y_N7 to Y_N4...  \nY_N4:\n", dl, "Debug_Q1");
+		this->dbg_Q[2] = new tools::SC_Debug<Q>("Deinterleave from Y_N4 to Y_N5...         \nY_N5:\n", dl, "Debug_Q2");
+		this->dbg_Q[3] = new tools::SC_Debug<Q>("Soft decode from Y_N5 to Y_N6...          \nY_N6:\n", dl, "Debug_Q3");
+		this->dbg_Q[4] = new tools::SC_Debug<Q>("Interleave from Y_N6 to Y_N7...           \nY_N7:\n", dl, "Debug_Q4");
+		this->dbg_B[4] = new tools::SC_Debug<B>("Hard decode Y_N5 and generate V_K1...     \nV_K1:\n", dl, "Debug_B4");
+		this->dbg_B[6] = new tools::SC_Debug<B>("Extract CRC bits from V_K1 into V_K2...   \nV_K2:\n", dl, "Debug_B6");
 
 		if (this->params.coset)
 		{
-			this->dbg_Q[5] = new SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q5");
-			this->dbg_Q[6] = new SC_Debug<Q>("Reverse the coset on Y_N6...              \nY_N6:\n", dl, "Debug_Q6");
-			this->dbg_B[5] = new SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
+			this->dbg_Q[5] = new tools::SC_Debug<Q>("Apply the coset approach on Y_N5...       \nY_N5:\n", dl, "Debug_Q5");
+			this->dbg_Q[6] = new tools::SC_Debug<Q>("Reverse the coset on Y_N6...              \nY_N6:\n", dl, "Debug_Q6");
+			this->dbg_B[5] = new tools::SC_Debug<B>("Apply the coset approach on V_K...        \nV_K: \n", dl, "Debug_B5");
 		}
 		if (this->params.chn->type.find("RAYLEIGHApply") != std::string::npos)
-			this->dbg_R[3] = new SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R3");
+			this->dbg_R[3] = new tools::SC_Debug<R>("Channel gains...                          \nH_N: \n", dl, "Debug_R3");
 
 		this->bind_sockets_debug();
 		sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
@@ -384,7 +387,7 @@ void SC_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Interleaver<int>* SC_BFER_ite<B,R,Q>
+module::Interleaver<int>* SC_BFER_ite<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	// build the objects
@@ -392,13 +395,13 @@ Interleaver<int>* SC_BFER_ite<B,R,Q>
 	this->interleaver_e->init();
 	this->interleaver_e->rename("Interleaver_e");
 	if (this->interleaver_e->is_uniform())
-		this->monitor[tid]->add_handler_check(std::bind(&Interleaver<int>::refresh, this->interleaver_e));
+		this->monitor[tid]->add_handler_check(std::bind(&module::Interleaver<int>::refresh, this->interleaver_e));
 
 	return BFER_ite<B,R,Q>::build_interleaver(tid, seed);
 }
 
 template <typename B, typename R, typename Q>
-Coset<B,Q>* SC_BFER_ite<B,R,Q>
+module::Coset<B,Q>* SC_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
 	this->coset_real_i = BFER_ite<B,R,Q>::build_coset_real(tid);

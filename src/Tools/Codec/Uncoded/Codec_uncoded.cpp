@@ -5,7 +5,6 @@
 #include "Codec_uncoded.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
@@ -30,22 +29,22 @@ Codec_uncoded<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_uncoded<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_uncoded<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	return factory::Encoder::build<B>(this->enc_params);
 }
 
 template <typename B, typename Q>
-Decoder_SISO<Q>* Codec_uncoded<B,Q>
-::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO<Q>* Codec_uncoded<B,Q>
+::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }
 
 template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_uncoded<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_uncoded<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }

@@ -9,7 +9,6 @@
 #include "Codec_LDPC.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
@@ -72,30 +71,30 @@ Codec_LDPC<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder_LDPC<B>* Codec_LDPC<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder_LDPC<B>* Codec_LDPC<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	return factory::Encoder_LDPC::build<B>(enc_par, G, H);
 }
 
 template <typename B, typename Q>
-Decoder_SISO_SIHO<B,Q>* Codec_LDPC<B,Q>
-::_build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO_SIHO<B,Q>* Codec_LDPC<B,Q>
+::_build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	decoder_siso[tid] = factory::Decoder_LDPC::build_siso<B,Q>(dec_par, H, info_bits_pos);
 	return decoder_siso[tid];
 }
 
 template <typename B, typename Q>
-Decoder_SISO<Q>* Codec_LDPC<B, Q>
-::build_siso(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SISO<Q>* Codec_LDPC<B, Q>
+::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	return this->_build_siso(tid, itl, crc);
 }
 
 template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_LDPC<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_LDPC<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (decoder_siso[tid] != nullptr)
 	{

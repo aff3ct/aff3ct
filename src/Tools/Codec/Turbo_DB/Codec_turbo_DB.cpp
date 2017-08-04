@@ -13,7 +13,6 @@
 #include "Codec_turbo_DB.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
 using namespace aff3ct::tools;
 
 template <typename B, typename Q>
@@ -61,7 +60,7 @@ void Codec_turbo_DB<B,Q>
 }
 
 template <typename B, typename Q>
-Interleaver<int>* Codec_turbo_DB<B,Q>
+module::Interleaver<int>* Codec_turbo_DB<B,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = enc_par.itl;
@@ -70,15 +69,15 @@ Interleaver<int>* Codec_turbo_DB<B,Q>
 }
 
 template <typename B, typename Q>
-Encoder_RSC_DB<B>* Codec_turbo_DB<B,Q>
+module::Encoder_RSC_DB<B>* Codec_turbo_DB<B,Q>
 ::build_sub_encoder(const int tid)
 {
 	return factory::Encoder_RSC_DB::build<B>(enc_par.sub);
 }
 
 template <typename B, typename Q>
-Encoder<B>* Codec_turbo_DB<B,Q>
-::build_encoder(const int tid, const Interleaver<int>* itl)
+module::Encoder<B>* Codec_turbo_DB<B,Q>
+::build_encoder(const int tid, const module::Interleaver<int>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
@@ -98,22 +97,22 @@ Encoder<B>* Codec_turbo_DB<B,Q>
 }
 
 template <typename B, typename Q>
-Puncturer<B,Q>* Codec_turbo_DB<B,Q>
+module::Puncturer<B,Q>* Codec_turbo_DB<B,Q>
 ::build_puncturer(const int tid)
 {
 	return factory::Puncturer_turbo_DB::build<B,Q>(pct_par);
 }
 
 template <typename B, typename Q>
-Decoder_RSC_DB_BCJR<B,Q>* Codec_turbo_DB<B,Q>
+module::Decoder_RSC_DB_BCJR<B,Q>* Codec_turbo_DB<B,Q>
 ::build_sub_siso(const int tid)
 {
 	return factory::Decoder_RSC_DB::build<B,Q>(dec_par.sub, trellis);
 }
 
 template <typename B, typename Q>
-Decoder_SIHO<B,Q>* Codec_turbo_DB<B,Q>
-::build_decoder(const int tid, const Interleaver<int>* itl, CRC<B>* crc)
+module::Decoder_SIHO<B,Q>* Codec_turbo_DB<B,Q>
+::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__,  "'itl' should not be null.");

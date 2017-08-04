@@ -5,8 +5,8 @@
 
 #include "Encoder_user.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
-using namespace aff3ct::tools;
 
 template <typename B>
 Encoder_user<B>
@@ -14,7 +14,7 @@ Encoder_user<B>
 : Encoder<B>(K, N, n_frames, name), codewords(), cw_counter(0)
 {
 	if (filename.empty())
-		throw invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 	std::ifstream file(filename.c_str(), std::ios::in);
 
@@ -31,7 +31,7 @@ Encoder_user<B>
 			std::stringstream message;
 			message << "'n_cw', 'src_size' and 'cw_size' have to be greater than 0 ('n_cw' = " << n_cw
 			        << ", 'src_size' = " << src_size << ", 'cw_size' = " << cw_size << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		if (cw_size < src_size)
@@ -39,7 +39,7 @@ Encoder_user<B>
 			std::stringstream message;
 			message << "'cw_size' has to be equal or greater than 'src_size' ('cw_size' = " << cw_size
 			        << ", 'src_size' = " << src_size << ").";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		this->codewords.resize(n_cw);
@@ -64,7 +64,7 @@ Encoder_user<B>
 			message << "The number of information bits or the codeword size is wrong "
 			        << "(read: {" << src_size << "," << cw_size << "}, "
 			        << "expected: {" << this->K << "," << this->N << "}).";
-			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
 		file.close();
@@ -73,7 +73,7 @@ Encoder_user<B>
 	{
 		std::stringstream message;
 		message << "Can't open '" + filename + "' file.";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 
