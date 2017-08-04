@@ -35,7 +35,7 @@ _aff3ct() {
 	      ${codetype} == "RSC"        && ${simutype} == "BFER"  || \
 	      ${codetype} == "BCH"        && ${simutype} == "BFER"  || \
 	      ${codetype} == "TURBO"      && ${simutype} == "BFER"  || \
-	      ${codetype} == "REPETITION" && ${simutype} == "BFER"  || \
+	      ${codetype} == "REP"        && ${simutype} == "BFER"  || \
 	      ${codetype} == "RA"         && ${simutype} == "BFER"  || \
 	      ${codetype} == "LDPC"       && ${simutype} == "BFER"  || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFER"  || \
@@ -65,7 +65,7 @@ _aff3ct() {
 	      ${codetype} == "RSC"        && ${simutype} == "BFER" || \
 	      ${codetype} == "BCH"        && ${simutype} == "BFER" || \
 	      ${codetype} == "TURBO"      && ${simutype} == "BFER" || \
-	      ${codetype} == "REPETITION" && ${simutype} == "BFER" || \
+	      ${codetype} == "REP"        && ${simutype} == "BFER" || \
 	      ${codetype} == "RA"         && ${simutype} == "BFER" || \
 	      ${codetype} == "LDPC"       && ${simutype} == "BFER" || \
 	      ${codetype} == "UNCODED"    && ${simutype} == "BFER" ]]
@@ -109,7 +109,7 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFER_BCH.cpp
-	if [[ ${codetype} == "BCH"         && ${simutype} == "BFER" ]]
+	if [[ ${codetype} == "BCH"        && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --dec-corr-pow -T"
 	fi
@@ -139,7 +139,7 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFER_repetition.cpp
-	if [[ ${codetype} == "REPETITION" && ${simutype} == "BFER" ]]
+	if [[ ${codetype} == "REP"        && ${simutype} == "BFER" ]]
 	then
 		opts="$opts --enc-no-buff --dec-type -D --dec-implem"
 	fi
@@ -184,7 +184,7 @@ _aff3ct() {
 	fi
 
 	# add contents of Launcher_BFERI_uncoded.cpp
-	if [[ ${codetype} == "UNCODED"   && ${simutype} == "BFERI" ]]
+	if [[ ${codetype} == "UNCODED"    && ${simutype} == "BFERI" ]]
 	then
 		opts="$opts  "
 	fi
@@ -235,22 +235,22 @@ _aff3ct() {
 			;;
 
 		--sim-cde-type)
-			local params="POLAR TURBO LDPC REPETITION RA RSC BCH UNCODED"
+			local params="POLAR TURBO LDPC REP RA RSC BCH UNCODED"
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
 
 		--sim-type)
 			local params
 			case "${codetype}" in
-				POLAR)      params="BFER EXIT"       ;;
-				TURBO)      params="BFER"            ;;
-				LDPC)       params="BFER BFERI"      ;;
-				REPETITION) params="BFER"            ;;
-				RA)         params="BFER"            ;;
-				BCH)        params="BFER"            ;;
-				RSC)        params="BFER BFERI EXIT" ;;
-				UNCODED)    params="BFER BFERI"      ;;
-				*)          params="BFER BFERI EXIT" ;;
+				POLAR)   params="BFER EXIT"       ;;
+				TURBO)   params="BFER"            ;;
+				LDPC)    params="BFER BFERI"      ;;
+				REP)     params="BFER"            ;;
+				RA)      params="BFER"            ;;
+				BCH)     params="BFER"            ;;
+				RSC)     params="BFER BFERI EXIT" ;;
+				UNCODED) params="BFER BFERI"      ;;
+				*)       params="BFER BFERI EXIT" ;;
 				
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
@@ -259,13 +259,13 @@ _aff3ct() {
 		--enc-type)
 			local params
 			case "${codetype}" in
-				POLAR)      params="AZCW COSET USER POLAR"                  ;;
-				RSC)        params="AZCW COSET USER RSC"                    ;;
-				REPETITION) params="AZCW COSET USER REPETITION"             ;;
-				RA)         params="AZCW COSET USER RA"                     ;;
-				BCH)        params="AZCW COSET USER BCH"                    ;;
-				TURBO)      params="AZCW COSET USER TURBO"                  ;;
-				LDPC)       params="AZCW COSET USER LDPC LDPC_H LDPC_DVBS2" ;;
+				POLAR) params="AZCW COSET USER POLAR"                  ;;
+				RSC)   params="AZCW COSET USER RSC"                    ;;
+				REP)   params="AZCW COSET USER REP"                    ;;
+				RA)    params="AZCW COSET USER RA"                     ;;
+				BCH)   params="AZCW COSET USER BCH"                    ;;
+				TURBO) params="AZCW COSET USER TURBO"                  ;;
+				LDPC)  params="AZCW COSET USER LDPC LDPC_H LDPC_DVBS2" ;;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;
@@ -273,13 +273,13 @@ _aff3ct() {
 		--dec-type | -D)
 			local params
 			case "${codetype}" in
-				POLAR)      params="SC SCL SCAN"              ;;
-				RSC)        params="BCJR BCJR4 LTE CCSDS"     ;;
-				REPETITION) params="STD"                      ;;
-				RA)         params="STD"                      ;;
-                BCH)        params="ALGEBRAIC"                ;;
-				TURBO)      params="LTE CCSDS"                ;;
-				LDPC)       params="BP BP_FLOODING BP_LAYERED";;
+				POLAR) params="SC SCL SCAN"              ;;
+				RSC)   params="BCJR BCJR4 LTE CCSDS"     ;;
+				REP)   params="STD"                      ;;
+				RA)    params="STD"                      ;;
+                BCH)   params="ALGEBRAIC"                ;;
+				TURBO) params="LTE CCSDS"                ;;
+				LDPC)  params="BP BP_FLOODING BP_LAYERED";;
 			esac
 			COMPREPLY=( $(compgen -W "${params}" -- ${cur}) )
 			;;

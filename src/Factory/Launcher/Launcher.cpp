@@ -121,7 +121,7 @@ launcher::Launcher* Launcher
 			return new launcher::Turbo_DB<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
-	if (params.cde_type == "REPETITION")
+	if (params.cde_type == "REP")
 	{
 		if (params.sim_type == "BFER")
 			return new launcher::Repetition<launcher::BFER_std<B,R,Q>,B,R,Q>(argc, argv);
@@ -163,7 +163,7 @@ void Launcher::build_args(arg_map &req_args, arg_map &opt_args, const std::strin
 	req_args[{p+"-cde-type", "C"}] =
 		{"string",
 		 "select the code type you want to use.",
-		 "POLAR, TURBO, TURBO_DB, LDPC, REPETITION, RA, RSC, RSC_DB, BCH, UNCODED"};
+		 "POLAR, TURBO, TURBO_DB, LDPC, REP, RA, RSC, RSC_DB, BCH, UNCODED"};
 
 	opt_args[{p+"-type"}] =
 		{"string",
