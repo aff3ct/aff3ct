@@ -23,7 +23,7 @@ public:
 	virtual ~Decoder_polar_SCL_naive_sys() {}
 
 protected:
-	virtual void _store(B *V_K) const;
+	virtual void _store(B *V, bool coded = false) const;
 };
 }
 }

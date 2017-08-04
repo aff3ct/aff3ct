@@ -54,9 +54,21 @@ template <typename B>
 void Encoder_polar<B>
 ::convert(const B *U_K, B *U_N)
 {
-	auto j = 0;
-	for (unsigned i = 0; i < frozen_bits.size(); i++)
-		U_N[i] = (frozen_bits[i]) ? (B)0 : U_K[j++];
+	if (U_K == U_N)
+	{
+		std::vector<B> U_K_tmp(this->K);
+		std::copy(U_K, U_K + this->K, U_K_tmp.begin());
+
+		auto j = 0;
+		for (unsigned i = 0; i < frozen_bits.size(); i++)
+			U_N[i] = (frozen_bits[i]) ? (B)0 : U_K_tmp[j++];
+	}
+	else
+	{
+		auto j = 0;
+		for (unsigned i = 0; i < frozen_bits.size(); i++)
+			U_N[i] = (frozen_bits[i]) ? (B)0 : U_K[j++];
+	}
 }
 
 // ==================================================================================== explicit template instantiation 

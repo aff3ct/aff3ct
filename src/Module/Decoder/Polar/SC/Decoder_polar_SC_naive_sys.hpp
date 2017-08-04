@@ -24,7 +24,7 @@ public:
 	virtual ~Decoder_polar_SC_naive_sys();
 
 protected:
-	void _store(B *V_K) const;
+	void _store(B *V, bool coded = false) const;
 };
 }
 }

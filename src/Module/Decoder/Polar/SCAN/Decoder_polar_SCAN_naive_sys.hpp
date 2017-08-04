@@ -27,7 +27,7 @@ public:
 protected:
 	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 	void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
-	void _store(B *V_N) const;
+	void _store(B *V_KN, bool coded = false) const;
 };
 }
 }

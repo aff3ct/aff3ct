@@ -231,20 +231,51 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode(const R *Y_N)
 {
-	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->init_buffers();
-
 	int first_node_id = 0, off_l = 0, off_s = 0;
 	recursive_decode(Y_N, off_l, off_s, m, first_node_id);
 	select_best_path();
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->init_buffers();
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode(Y_N);
 	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	this->_store(V_K);
 	auto d_store = std::chrono::steady_clock::now() - t_store;
 
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->init_buffers();
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode(Y_N);
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store_coded(V_N);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
 	this->d_decod_total += d_decod;
 	this->d_store_total += d_store;
 }
@@ -530,6 +561,13 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 ::_store(B *V_K) const
 {
 	tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), this->s[best_path].data(), V_K);
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
+::_store_coded(B *V_N) const
+{
+	std::copy(this->s[best_path].data(), this->s[best_path].data() + this->N, V_N);
 }
 
 template <typename B, typename R, class API_polar>

@@ -170,6 +170,30 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
+{
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->_decode();
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_N, true);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
+
+	this->is_init = false;
+}
+
+template <typename B, typename R,
+          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -179,8 +203,9 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 	Decoder_polar_SCAN_naive<B,R,I,F,V,H>::_decode();
 
 	// ---------------------------------------------------------------------------------------------------------- STORE
-	for (auto i = 0; i < this->N; i++)
-		Y_N2[i] = this->feedback_graph[this->layers_count -1][i];
+	std::copy(this->feedback_graph[this->layers_count -1].begin(),
+	          this->feedback_graph[this->layers_count -1].begin() + this->N,
+	          Y_N2);
 }
 
 /********************************************************************/
@@ -189,12 +214,19 @@ void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>
-::_store(B *V_K) const
+::_store(B *V_KN, bool coded) const
 {
-	auto k = 0;
-	for (auto i = 0; i < this->N; i++)
-		if (!frozen_bits[i]) // if i is not a frozen bit
-			V_K[k++] = H(soft_graph[0][i]);
+	if (!coded)
+	{
+		auto k = 0;
+		for (auto i = 0; i < this->N; i++)
+			if (!frozen_bits[i]) // if i is not a frozen bit
+				V_KN[k++] = H(soft_graph[0][i]);
+	}
+	else
+		for (auto i = 0; i < this->N; i++)
+			V_KN[i] = H(this->feedback_graph[this->layers_count -1][i] +
+			            this->soft_graph    [this->layers_count -1][i]);
 }
 
 /********************************************************************/

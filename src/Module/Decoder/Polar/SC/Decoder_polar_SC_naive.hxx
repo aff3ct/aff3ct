@@ -85,16 +85,44 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::_store(B *V_K) const
+::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
-	auto k = 0;
-	this->recursive_store(this->polar_tree.get_root(), V_K, k);
+	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
+	this->_load(Y_N);
+	auto d_load = std::chrono::steady_clock::now() - t_load;
+
+	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	this->recursive_decode(this->polar_tree.get_root());
+	auto d_decod = std::chrono::steady_clock::now() - t_decod;
+
+	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
+	this->_store(V_N, true);
+	auto d_store = std::chrono::steady_clock::now() - t_store;
+
+	this->d_load_total  += d_load;
+	this->d_decod_total += d_decod;
+	this->d_store_total += d_store;
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::recursive_allocate_nodes_contents(tools::Binary_node<Contents_SC<B,R>>* node_curr,
-                                    const int vector_size)
+::_store(B *V, bool coded) const
+{
+	if (!coded)
+	{
+		auto k = 0;
+		this->recursive_store(this->polar_tree.get_root(), V, k);
+	}
+	else
+	{
+		auto *contents_root = this->polar_tree.get_root()->get_c();
+		std::copy(contents_root->s.begin(), contents_root->s.begin() + this->N, V);
+	}
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+void Decoder_polar_SC_naive<B,R,F,G,H>
+::recursive_allocate_nodes_contents(tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size)
 {
 	if (node_curr != nullptr)
 	{

@@ -58,21 +58,28 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
 	this->_decode();
 
 	// ---------------------------------------------------------------------------------------------------------- STORE
-	for (auto i = 0; i < this->N; i++)
-		Y_N2[i] = this->feedback_graph[this->layers_count -1][i];
+	std::copy(this->feedback_graph[this->layers_count -1].begin(),
+	          this->feedback_graph[this->layers_count -1].begin() + this->N,
+	          Y_N2);
 }
 
 template <typename B, typename R,
           tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
-::_store(B *V_N) const
+::_store(B *V_KN, bool coded) const
 {
-	auto k = 0;
-	for (auto i = 0; i < this->N; i++)
+	if (!coded)
 	{
-		if (!this->frozen_bits[i]) // if i is not a frozen bit
-			V_N[k++] = H(this->feedback_graph[this->layers_count -1][i] + this->soft_graph[this->layers_count -1][i]);
+		auto k = 0;
+		for (auto i = 0; i < this->N; i++)
+			if (!this->frozen_bits[i]) // if i is not a frozen bit
+				V_KN[k++] = H(this->feedback_graph[this->layers_count -1][i] +
+				              this->soft_graph    [this->layers_count -1][i]);
 	}
+	else
+		for (auto i = 0; i < this->N; i++)
+			V_KN[i] = H(this->feedback_graph[this->layers_count -1][i] +
+			            this->soft_graph    [this->layers_count -1][i]);
 }
 }
 }
