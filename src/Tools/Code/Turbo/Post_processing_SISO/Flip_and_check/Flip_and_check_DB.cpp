@@ -6,6 +6,7 @@
 
 #include "Flip_and_check_DB.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename B, typename R>

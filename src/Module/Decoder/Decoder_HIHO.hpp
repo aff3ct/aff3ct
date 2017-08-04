@@ -40,7 +40,7 @@ private:
 	const int n_inter_frame_rest;
 
 	mipp::vector<B> Y_N;
-	mipp::vector<B> V;
+	mipp::vector<B> V_KN;
 
 protected:
 	const int K_hiho; /*!< Number of information bits in one frame */
@@ -62,8 +62,8 @@ public:
 	               std::string name = "Decoder_HIHO_i")
 	: Module(n_frames, name),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  V  (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
+	  Y_N (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
+	  V_KN(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
 	  K_hiho(K),
 	  N_hiho(N),
 	  simd_inter_frame_level_hiho(simd_inter_frame_level),
@@ -177,11 +177,11 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N_hiho,
 			          this->Y_N.begin());
 
-			this->_decode_hiho(this->Y_N.data(), this->V.data(), w * simd_inter_frame_level_hiho);
+			this->_decode_hiho(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level_hiho);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level_hiho * this->K_hiho;
-			std::copy(this->V.begin(),
-			          this->V.begin() + this->n_inter_frame_rest * this->K_hiho,
+			std::copy(this->V_KN.begin(),
+			          this->V_KN.begin() + this->n_inter_frame_rest * this->K_hiho,
 			          V_K + waves_off2);
 		}
 	}
@@ -226,11 +226,11 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N_hiho,
 			          this->Y_N.begin());
 
-			this->_decode_hiho_coded(this->Y_N.data(), this->V.data(), w * simd_inter_frame_level_hiho);
+			this->_decode_hiho_coded(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level_hiho);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level_hiho * this->N_hiho;
-			std::copy(this->V.begin(),
-			          this->V.begin() + this->n_inter_frame_rest * this->N_hiho,
+			std::copy(this->V_KN.begin(),
+			          this->V_KN.begin() + this->n_inter_frame_rest * this->N_hiho,
 			          V_N + waves_off2);
 		}
 	}

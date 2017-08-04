@@ -40,7 +40,7 @@ private:
 	const int n_inter_frame_rest;
 
 	mipp::vector<R> Y_N;
-	mipp::vector<B> V;
+	mipp::vector<B> V_KN;
 
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -66,8 +66,8 @@ public:
 	               std::string name = "Decoder_SIHO_i")
 	: Module(n_frames, name),
 	  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
-	  Y_N(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
-	  V  (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
+	  Y_N (n_inter_frame_rest ? simd_inter_frame_level * N : 0),
+	  V_KN(n_inter_frame_rest ? simd_inter_frame_level * N : 0),
 	  K(K),
 	  N(N),
 	  simd_inter_frame_level(simd_inter_frame_level),
@@ -185,11 +185,11 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_decode_siho(this->Y_N.data(), this->V.data(), w * simd_inter_frame_level);
+			this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
-			std::copy(this->V.begin(),
-			          this->V.begin() + this->n_inter_frame_rest * this->K,
+			std::copy(this->V_KN.begin(),
+			          this->V_KN.begin() + this->n_inter_frame_rest * this->K,
 			          V_K + waves_off2);
 		}
 	}
@@ -238,11 +238,11 @@ public:
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_decode_siho_coded(this->Y_N.data(), this->V.data(), w * simd_inter_frame_level);
+			this->_decode_siho_coded(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
-			std::copy(this->V.begin(),
-			          this->V.begin() + this->n_inter_frame_rest * this->N,
+			std::copy(this->V_KN.begin(),
+			          this->V_KN.begin() + this->n_inter_frame_rest * this->N,
 			          V_N + waves_off2);
 		}
 	}
