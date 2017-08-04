@@ -45,6 +45,13 @@ void Decoder_NO<B,R>
 	this->d_store_total += d_store;
 }
 
+template <typename B, typename R>
+void Decoder_NO<B,R>
+::_decode_siho_coded(const R *Y_K, B *V_K, const int frame_id)
+{
+	this->_decode_siho(Y_K, V_K, frame_id);
+}
+
 // ==================================================================================== explicit template instantiation 
 #include "Tools/types.h"
 #ifdef MULTI_PREC
