@@ -49,11 +49,11 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_polar
 {
 	if (params.type == "SCAN" && params.systematic)
 	{
-		if (params.implem == "NAIVE") return new module::Decoder_polar_SCAN_naive_sys<B, Q, tools::init_LLR<Q>, tools::f_LLR<Q>, tools::v_LLR<Q>, tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits, params.n_frames);
+		if (params.implem == "NAIVE") return new module::Decoder_polar_SCAN_naive_sys<B, Q, tools::f_LLR<Q>, tools::v_LLR<Q>, tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits, params.n_frames);
 	}
 	else if (params.type == "SCAN" && !params.systematic)
 	{
-		if (params.implem == "NAIVE") return new module::Decoder_polar_SCAN_naive    <B, Q, tools::init_LLR<Q>, tools::f_LLR<Q>, tools::v_LLR<Q>, tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits, params.n_frames);
+		if (params.implem == "NAIVE") return new module::Decoder_polar_SCAN_naive    <B, Q, tools::f_LLR<Q>, tools::v_LLR<Q>, tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits, params.n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -72,12 +72,12 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 			{
-				     if (params.type == "SC"  ) return new module::Decoder_polar_SC_naive        <B,Q,                   tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw,               frozen_bits,       params.n_frames);
-				else if (params.type == "SCAN") return new module::Decoder_polar_SCAN_naive      <B,Q,tools::init_LLR<Q>,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits,       params.n_frames);
-				else if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive       <B,Q,                   tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits,       params.n_frames);
+				     if (params.type == "SC"  ) return new module::Decoder_polar_SC_naive        <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw,               frozen_bits,       params.n_frames);
+				else if (params.type == "SCAN") return new module::Decoder_polar_SCAN_naive      <B,Q,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits,       params.n_frames);
+				else if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive       <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits,       params.n_frames);
 			}
 			else
-				     if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA    <B,Q,                   tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits, *crc, params.n_frames);
+				     if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA    <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits, *crc, params.n_frames);
 		}
 	}
 	else // systematic encoding
@@ -86,12 +86,12 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 			{
-				     if (params.type == "SC"  ) return new module::Decoder_polar_SC_naive_sys    <B,Q,                   tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw,               frozen_bits,       params.n_frames);
-				else if (params.type == "SCAN") return new module::Decoder_polar_SCAN_naive_sys  <B,Q,tools::init_LLR<Q>,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits,       params.n_frames);
-				else if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive_sys   <B,Q,                   tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits,       params.n_frames);
+				     if (params.type == "SC"  ) return new module::Decoder_polar_SC_naive_sys    <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw,               frozen_bits,       params.n_frames);
+				else if (params.type == "SCAN") return new module::Decoder_polar_SCAN_naive_sys  <B,Q,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(params.K, params.N_cw, params.n_ite, frozen_bits,       params.n_frames);
+				else if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive_sys   <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits,       params.n_frames);
 			}
 			else
-				     if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA_sys<B,Q,                   tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits, *crc, params.n_frames);
+				     if (params.type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA_sys<B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(params.K, params.N_cw, params.L,     frozen_bits, *crc, params.n_frames);
 		}
 		else if (params.implem == "FAST")
 		{

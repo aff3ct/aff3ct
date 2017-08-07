@@ -5,24 +5,24 @@ namespace aff3ct
 namespace module
 {
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
-Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive_sys(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
                                const int n_frames, const std::string name)
-: Decoder_polar_SCAN_naive<B,R,I,F,V,H,S>(K, N, max_iter, frozen_bits, n_frames, name)
+: Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames, name)
 {
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
-Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::~Decoder_polar_SCAN_naive_sys()
 {
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -47,8 +47,8 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -64,8 +64,8 @@ void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
 }
 
 template <typename B, typename R,
-          tools::proto_i<R> I, tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive_sys<B,R,I,F,V,H,S>
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_store(B *V_KN, bool coded) const
 {
 	if (!coded)
