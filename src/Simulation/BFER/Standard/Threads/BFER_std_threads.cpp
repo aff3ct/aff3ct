@@ -46,21 +46,21 @@ BFER_std_threads<B,R,Q>
 			          << std::endl;
 	}
 
-	this->data_sizes[std::make_pair( 0, "Source"      )] = this->U_K1[0].size();
-	this->data_sizes[std::make_pair( 1, "CRC build"   )] = this->U_K2[0].size();
-	this->data_sizes[std::make_pair( 2, "Encoder"     )] = this->X_N1[0].size();
-	this->data_sizes[std::make_pair( 3, "Puncturer"   )] = this->X_N2[0].size();
-	this->data_sizes[std::make_pair( 4, "Modulator"   )] = this->X_N3[0].size();
-	this->data_sizes[std::make_pair( 5, "Channel"     )] = this->Y_N1[0].size();
-	this->data_sizes[std::make_pair( 6, "Filter"      )] = this->Y_N2[0].size();
-	this->data_sizes[std::make_pair( 7, "Demodulator" )] = this->Y_N3[0].size();
-	this->data_sizes[std::make_pair( 8, "Quantizer"   )] = this->Y_N4[0].size();
-	this->data_sizes[std::make_pair( 9, "Depuncturer" )] = this->Y_N5[0].size();
-	this->data_sizes[std::make_pair(10, "Coset real"  )] = this->Y_N5[0].size();
-	this->data_sizes[std::make_pair(11, "Decoder"     )] = this->V_K1[0].size();
-	this->data_sizes[std::make_pair(15, "Coset bit"   )] = this->V_K1[0].size();
-	this->data_sizes[std::make_pair(16, "CRC extract" )] = this->V_K2[0].size();
-	this->data_sizes[std::make_pair(17, "Check errors")] = this->V_K2[0].size();
+	this->data_sizes[std::make_pair( 0, "Source"      )] = (unsigned)this->U_K1[0].size();
+	this->data_sizes[std::make_pair( 1, "CRC build"   )] = (unsigned)this->U_K2[0].size();
+	this->data_sizes[std::make_pair( 2, "Encoder"     )] = (unsigned)this->X_N1[0].size();
+	this->data_sizes[std::make_pair( 3, "Puncturer"   )] = (unsigned)this->X_N2[0].size();
+	this->data_sizes[std::make_pair( 4, "Modulator"   )] = (unsigned)this->X_N3[0].size();
+	this->data_sizes[std::make_pair( 5, "Channel"     )] = (unsigned)this->Y_N1[0].size();
+	this->data_sizes[std::make_pair( 6, "Filter"      )] = (unsigned)this->Y_N2[0].size();
+	this->data_sizes[std::make_pair( 7, "Demodulator" )] = (unsigned)this->Y_N3[0].size();
+	this->data_sizes[std::make_pair( 8, "Quantizer"   )] = (unsigned)this->Y_N4[0].size();
+	this->data_sizes[std::make_pair( 9, "Depuncturer" )] = (unsigned)this->Y_N5[0].size();
+	this->data_sizes[std::make_pair(10, "Coset real"  )] = (unsigned)this->Y_N5[0].size();
+	this->data_sizes[std::make_pair(11, "Decoder"     )] = (unsigned)this->V_K1[0].size();
+	this->data_sizes[std::make_pair(15, "Coset bit"   )] = (unsigned)this->V_K1[0].size();
+	this->data_sizes[std::make_pair(16, "CRC extract" )] = (unsigned)this->V_K2[0].size();
+	this->data_sizes[std::make_pair(17, "Check errors")] = (unsigned)this->V_K2[0].size();
 }
 
 template <typename B, typename R, typename Q>

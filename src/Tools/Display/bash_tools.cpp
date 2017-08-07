@@ -25,6 +25,10 @@ std::vector<std::vector<std::string>> Color_table_bg = {
 	{    "0",    "0",  "21",  "51",  "251",  "10",  "13",  "214",  "196",  "256",  "226"}  // INTENSE
 	};
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4129 )
+#endif
+
 std::string reset_command = "\e[0m";
 
 std::string style_command_head  = "\e[";
@@ -37,6 +41,10 @@ std::string fg_color_reset_command = "\e[39m";
 std::string bg_color_command_head  = "\e[48;5;";
 std::string bg_color_command_queue = "m";
 std::string bg_color_reset_command = "\e[49m";
+
+#ifdef _MSC_VER
+#pragma warning( default : 4129 )
+#endif
 
 std::string aff3ct::tools::format(std::string str, Format f)
 {

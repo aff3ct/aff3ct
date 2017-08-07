@@ -21,7 +21,7 @@ void LDPC_matrix_handler
 Sparse_matrix LDPC_matrix_handler
 ::full_to_sparse(const Full_matrix& full)
 {
-	Sparse_matrix sparse(full.size(), full.front().size());
+	Sparse_matrix sparse((unsigned)full.size(), (unsigned)full.front().size());
 
 	for (unsigned i = 0; i < full.size(); i++)
 		for (unsigned j = 0; j < full[i].size(); j++)
@@ -177,8 +177,8 @@ void LDPC_matrix_handler
 float LDPC_matrix_handler
 ::compute_density(Full_matrix& mat)
 {
-	unsigned n_rows = mat.size();
-	unsigned n_cols = mat.front().size();
+	unsigned n_rows = (unsigned)mat.size();
+	unsigned n_cols = (unsigned)mat.front().size();
 
 	unsigned nb_ones = 0;
 
@@ -234,7 +234,7 @@ std::vector<unsigned> LDPC_matrix_handler
 
 		if (it != old_cols_pos.end())
 		{
-			itl_vec[i] = std::distance(old_cols_pos.begin(), it);
+			itl_vec[i] = (unsigned)std::distance(old_cols_pos.begin(), it);
 			cnt++;
 		}
 	}

@@ -102,5 +102,5 @@ void Interleaver
 // ==================================================================================== explicit template instantiation 
 template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::build<int16_t>(const aff3ct::factory::Interleaver::parameters&);
 template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::build<int32_t>(const aff3ct::factory::Interleaver::parameters&);
-template aff3ct::module::Interleaver<int64_t>* aff3ct::factory::Interleaver::build<int64_t>(const aff3ct::factory::Interleaver::parameters&);
+//template aff3ct::module::Interleaver<int64_t>* aff3ct::factory::Interleaver::build<int64_t>(const aff3ct::factory::Interleaver::parameters&);
 // ==================================================================================== explicit template instantiation

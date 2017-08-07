@@ -46,8 +46,8 @@ protected:
 	std::vector<std::vector<int>>     n_array_ref;    // number of times an array is used
 	std::vector<std::vector<int>>     path_2_array;   // give array used by a path
 
-	LC_sorter<R>                      sorter;
-//	LC_sorter_simd<R>                 sorter_simd;
+	tools::LC_sorter<R>               sorter;
+//	tools::LC_sorter_simd<R>          sorter_simd;
 	std::vector<int>                  best_idx;
 	mipp::vector<R>                   l_tmp;
 

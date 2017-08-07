@@ -21,7 +21,7 @@ public:
 
 	void generate(mipp::vector<R> &noise, const R sigma)
 	{
-		this->generate(noise.data(), noise.size(), sigma);
+		this->generate(noise.data(), (unsigned)noise.size(), sigma);
 	}
 
 	virtual void set_seed(const int seed) = 0;

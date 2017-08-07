@@ -27,7 +27,7 @@ bool Scaling_factor_adaptive<B,R>
 	{}*/
 	else // sf = 0.875 instead of 0.85?!
 		for (auto i = 0; i < loop_size; i++)
-			ext[i] *= 0.85; //div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div2<R>(ext[i]);
+			ext[i] *= (R)0.85; //div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div2<R>(ext[i]);
 
 	return false;
 }
@@ -47,7 +47,7 @@ bool Scaling_factor_adaptive<B,R>
 	{}*/
 	else // sf = 0.875 instead of 0.85?!
 		for (auto i = 0; i < loop_size; i++)
-			ext[i] *= 0.85; //div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div2<R>(ext[i]);
+			ext[i] *= (R)0.85; //div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div4<R>(div2<R>(ext[i])) + div2<R>(ext[i]);
 
 	return false;
 }

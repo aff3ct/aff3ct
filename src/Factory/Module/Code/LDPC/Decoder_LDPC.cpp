@@ -23,19 +23,19 @@ module::Decoder_SISO_SIHO<B,R>* Decoder_LDPC
 {
 	if ((params.type == "BP" || params.type == "BP_FLOODING") && params.simd_strategy.empty())
 	{
-		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_flooding_ONMS     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_LSPA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_flooding_ONMS     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, (R)params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                       params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_LSPA     <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                       params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
 	else if (params.type == "BP_LAYERED" && params.simd_strategy.empty())
 	{
-		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "SPA" ) return new module::Decoder_LDPC_BP_layered_SPA       <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
-		else if (params.implem == "LSPA") return new module::Decoder_LDPC_BP_layered_LSPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                    params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, (R)params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "SPA" ) return new module::Decoder_LDPC_BP_layered_SPA       <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                       params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		else if (params.implem == "LSPA") return new module::Decoder_LDPC_BP_layered_LSPA      <B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos,                                       params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
 	else if (params.type == "BP_LAYERED" && params.simd_strategy == "INTER")
 	{
-		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
+		     if (params.implem == "ONMS") return new module::Decoder_LDPC_BP_layered_ONMS_inter<B,R>(params.K, params.N_cw, params.n_ite, H, info_bits_pos, params.norm_factor, (R)params.offset, params.enable_syndrome, params.syndrome_depth, params.n_frames);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

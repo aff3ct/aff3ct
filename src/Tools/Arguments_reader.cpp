@@ -172,7 +172,7 @@ int Arguments_reader
 	{
 		return std::stoi(get_argument(tags));
 	}
-	catch (std::exception &e)
+	catch (std::exception&)
 	{
 		return 0;
 	}
@@ -185,7 +185,7 @@ float Arguments_reader
 	{
 		return std::stof(get_argument(tags));
 	}
-	catch (std::exception &e)
+	catch (std::exception&)
 	{
 		return 0.0f;
 	}
@@ -372,9 +372,9 @@ bool Arguments_reader
 		std::string arg_error;
 
 		if (this->m_required_args.find(it->first) != this->m_required_args.end())
-			try{ arg_error = this->check_argument(it->first, this->m_required_args); } catch(std::exception &e) {}
+			try{ arg_error = this->check_argument(it->first, this->m_required_args); } catch(std::exception&) {}
 		else if (this->m_optional_args.find(it->first) != this->m_optional_args.end())
-			try{ arg_error = this->check_argument(it->first, this->m_optional_args); } catch(std::exception &e) {}
+			try{ arg_error = this->check_argument(it->first, this->m_optional_args); } catch(std::exception&) {}
 		else
 			for (auto i = 0; i < (int)it->first.size(); i++)
 				arg_error += print_tag(it->first[i]) + ((i < (int)it->first.size()-1)?", ":"");

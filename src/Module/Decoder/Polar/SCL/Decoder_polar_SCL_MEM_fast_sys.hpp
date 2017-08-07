@@ -50,8 +50,8 @@ protected:
 	std::vector<std::vector<int>>     n_array_ref_s;   // give array used by a path
 	std::vector<std::vector<int>>     path_2_array_s;   // give array used by a path
 
-	LC_sorter<R>                      sorter;
-//	LC_sorter_simd<R>                 sorter_simd;
+	tools::LC_sorter<R>               sorter;
+//	tools::LC_sorter_simd<R>          sorter_simd;
 	std::vector<int>                  best_idx;
 	mipp::vector<R>                   l_tmp;
 

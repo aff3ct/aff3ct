@@ -10,6 +10,10 @@
 
 #include "LC_sorter.hpp"
 
+namespace aff3ct
+{
+namespace tools
+{
 template <typename T>
 class LC_sorter_simd
 {
@@ -218,5 +222,7 @@ private:
 		}
 	}
 };
+}
+}
 
 #endif /* LC_SORTER_SIMD_HPP */

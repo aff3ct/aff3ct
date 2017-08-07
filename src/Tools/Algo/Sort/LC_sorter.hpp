@@ -9,6 +9,11 @@
 
 #include "Tools/Math/utils.h"
 
+namespace aff3ct
+{
+namespace tools
+{
+
 template <typename T>
 class LC_sorter_simd;
 
@@ -188,5 +193,7 @@ protected:
 		pos[1] = tree_idx[offset];
 	}
 };
+}
+}
 
 #endif /* LC_SORTER_HPP */

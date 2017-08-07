@@ -32,7 +32,7 @@ Channel_user<R>
 		file.clear(); // since ignore will have set eof.
 		file.seekg(8, std::ios_base::beg);
 
-		const unsigned sizeof_float = length / (n_fra * fra_size);
+		const unsigned sizeof_float = (unsigned)length / (n_fra * fra_size);
 
 		if (n_fra <= 0 || fra_size <= 0)
 		{

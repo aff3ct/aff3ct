@@ -142,9 +142,9 @@ void Dumper_reduction
 
 	for (auto i = 0; i < (int)this->registered_data_ptr.size(); i++)
 	{
-		unsigned n_data = this->buffer[i].size();
+		unsigned n_data = (unsigned)this->buffer[i].size();
 		for (auto d : this->dumpers)
-			n_data += d->buffer[i].size();
+			n_data += (unsigned)d->buffer[i].size();
 
 		const auto size    = this->registered_data_size  [i];
 		const auto size_of = this->registered_data_sizeof[i];

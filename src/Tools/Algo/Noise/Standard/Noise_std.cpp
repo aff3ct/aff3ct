@@ -30,7 +30,7 @@ template <typename R>
 void Noise_std<R>
 ::generate(R *noise, const unsigned length, const R sigma)
 {
-	normal_dist = std::normal_distribution<R>(0, sigma);
+	normal_dist = std::normal_distribution<R>((R)0, sigma);
 
 	for (unsigned i = 0; i < length; i++)
 		noise[i] = this->normal_dist(this->rd_engine);

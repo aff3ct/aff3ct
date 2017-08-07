@@ -37,7 +37,7 @@ Codec_turbo_DB<B,Q>
 ::~Codec_turbo_DB()
 {
 	int tid = 0;
-	const int nthr = sub_enc.size();
+	const int nthr = (unsigned)sub_enc.size();
 	for (tid = 0; tid < nthr; tid++) if (sub_enc[tid] != nullptr) { delete sub_enc[tid]; sub_enc[tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (siso_n [tid] != nullptr) { delete siso_n [tid]; siso_n [tid] = nullptr; }
 	for (tid = 0; tid < nthr; tid++) if (siso_i [tid] != nullptr) { delete siso_i [tid]; siso_i [tid] = nullptr; }

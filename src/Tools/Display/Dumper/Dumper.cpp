@@ -74,7 +74,7 @@ void Dumper
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	};
 
-	this->register_data(data.data(), data.size() / this->n_frames, file_ext, binary_mode, headers);
+	this->register_data(data.data(), (unsigned)(data.size() / this->n_frames), file_ext, binary_mode, headers);
 }
 
 void Dumper
@@ -123,14 +123,14 @@ void Dumper
 		{
 			file.open(path, std::ofstream::out | std::ios_base::binary);
 
-			this->write_header_binary(file, this->buffer[i].size(), size, head);
+			this->write_header_binary(file, (unsigned)this->buffer[i].size(), size, head);
 			this->write_body_binary  (file, this->buffer[i], size * size_of);
 		}
 		else
 		{
 			file.open(path, std::ofstream::out);
 
-			this->write_header_text(file, this->buffer[i].size(), size, head);
+			this->write_header_text(file, (unsigned)this->buffer[i].size(), size, head);
 			this->write_body_text  (file, this->buffer[i], size, type);
 		}
 
