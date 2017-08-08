@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <mipp.h>
 
 #include "../../Decoder_SISO_SIHO.hpp"
 
@@ -21,11 +20,11 @@ protected:
 
 	const std::vector<std::vector<int>> &trellis;
 
-	mipp::vector<R> sys, par;          // input LLR from the channel
-	mipp::vector<R> ext;               // extrinsic LLRs
-	mipp::vector<B> s;                 // hard decision
-	mipp::vector<R> alpha_mp, beta_mp; // message passing
-	mipp::vector<mipp::vector<R>> alpha, beta, gamma;
+	std::vector<R> sys, par;          // input LLR from the channel
+	std::vector<R> ext;               // extrinsic LLRs
+	std::vector<B> s;                 // hard decision
+	std::vector<R> alpha_mp, beta_mp; // message passing
+	std::vector<std::vector<R>> alpha, beta, gamma;
 
 public:
 	Decoder_RSC_DB_BCJR(const int K,

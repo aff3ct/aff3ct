@@ -9,7 +9,6 @@
 #define REORDERER_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 namespace aff3ct
 {

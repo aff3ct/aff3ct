@@ -2,7 +2,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "Tools/general_utils.h"
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_repetition.hpp"

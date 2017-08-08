@@ -2,7 +2,6 @@
 #define ENCODER_RSC_GENERIC_SYS_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "Encoder_RSC_sys.hpp"
 

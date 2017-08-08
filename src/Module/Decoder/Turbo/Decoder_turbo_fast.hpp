@@ -1,9 +1,6 @@
 #ifndef DECODER_TURBO_FAST_SYS_
 #define DECODER_TURBO_FAST_SYS_
 
-#include <vector>
-#include <mipp.h>
-
 #include "Decoder_turbo.hpp"
 
 namespace aff3ct

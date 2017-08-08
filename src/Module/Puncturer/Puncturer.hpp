@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -115,7 +114,8 @@ public:
 	 * \param X_N1: a complete/valid codeword..
 	 * \param X_N2: a punctured codeword (corresponding to the frame size).
 	 */
-	void puncture(const mipp::vector<B>& X_N1, mipp::vector<B>& X_N2) const
+	template <class A = std::allocator<B>>
+	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2) const
 	{
 		if (this->N_code * this->n_frames != (int)X_N1.size())
 		{
@@ -150,7 +150,8 @@ public:
 	 * \param Y_N1: a noised and punctured codeword (corresponding to the frame size).
 	 * \param Y_N2: a noised and complete/valid codeword.
 	 */
-	void depuncture(const mipp::vector<Q>& Y_N1, mipp::vector<Q>& Y_N2) const
+	template <class A = std::allocator<Q>>
+	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2) const
 	{
 		if (this->N * this->n_frames != (int)Y_N1.size())
 		{

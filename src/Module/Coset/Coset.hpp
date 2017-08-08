@@ -11,7 +11,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -77,7 +76,8 @@ public:
 	 * \param in_data:  the input data to apply the coset on.
 	 * \param out_data: the output data after the coset application.
 	 */
-	void apply(const mipp::vector<B>& ref, const mipp::vector<D> &in_data, mipp::vector<D> &out_data)
+	template <class AB = std::allocator<B>, class AD = std::allocator<D>>
+	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in_data, std::vector<D,AD> &out_data)
 	{
 		if (ref.size() != in_data.size() || in_data.size() != out_data.size())
 		{

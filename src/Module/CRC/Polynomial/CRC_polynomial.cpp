@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
@@ -163,7 +164,7 @@ template <typename B>
 bool CRC_polynomial<B>
 ::_check_packed(const B *V_K, const int frame_id)
 {
-	mipp::vector<B> V_K_unpack(this->K + this->get_size());
+	std::vector<B> V_K_unpack(this->K + this->get_size());
 	std::copy(V_K, V_K + this->K + this->get_size(), V_K_unpack.begin());
 	tools::Bit_packer<B>::unpack(V_K_unpack, this->K + this->get_size());
 	return _check(V_K_unpack.data(), frame_id);

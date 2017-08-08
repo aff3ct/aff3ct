@@ -2,8 +2,6 @@
 #define SOURCE_RANDOM_HPP_
 
 #include <random>
-#include <vector>
-#include <mipp.h>
 
 #include "../Source.hpp"
 

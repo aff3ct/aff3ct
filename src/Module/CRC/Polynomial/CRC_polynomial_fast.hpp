@@ -13,7 +13,7 @@ template <typename B = int>
 class CRC_polynomial_fast : public CRC_polynomial<B>
 {
 protected:
-	mipp::vector<unsigned> lut_crc32;
+	std::vector<unsigned> lut_crc32;
 	unsigned polynomial_packed_rev;
 
 public:

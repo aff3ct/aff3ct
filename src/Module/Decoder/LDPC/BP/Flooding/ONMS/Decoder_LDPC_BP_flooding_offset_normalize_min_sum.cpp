@@ -1,5 +1,6 @@
 #include <limits>
 #include <sstream>
+#include <typeinfo>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
@@ -72,7 +73,7 @@ Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
 // normalized offest min-sum implementation
 template <typename B, typename R>
 bool Decoder_LDPC_BP_flooding_offset_normalize_min_sum<B,R>
-::BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V)
+::BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {
 	// beginning of the iteration upon all the matrix lines
 	R *C_to_V_ptr = C_to_V.data();

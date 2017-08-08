@@ -5,7 +5,6 @@
 #include <sstream>
 #include <cstdint>
 #include <limits>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -57,8 +56,8 @@ template <typename T>
 inline T saturate(const T val, const T min, const T max) { return std::min(std::max(val, min), max); }
 
 // make a saturation on a full vector
-template <typename T>
-inline void saturate(mipp::vector<T> &array, const T min, const T max) 
+template <typename T, class A = std::allocator<T>>
+inline void saturate(std::vector<T,A> &array, const T min, const T max)
 {
 	const auto loop_size = (int)array.size();
 	for (auto i = 0; i < loop_size; i++)

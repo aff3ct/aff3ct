@@ -3,7 +3,6 @@
 
 #include <set>
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
@@ -18,9 +17,9 @@ template <typename B = int, typename R = float>
 class Contents_SCL
 {
 public:
-	mipp::vector<R> lambda;
-	mipp::vector<B> s;
-	bool            is_frozen_bit;
+	std::vector<R> lambda;
+	std::vector<B> s;
+	bool           is_frozen_bit;
 
 	Contents_SCL(int size) : lambda(size), s(size), is_frozen_bit(0) {}
 	virtual ~Contents_SCL() {}

@@ -2,7 +2,6 @@
 #define DECODER_RA
 
 #include <vector>
-#include <mipp.h>
 
 #include "../Decoder_SIHO.hpp"
 #include "../../Interleaver/Interleaver.hpp"
@@ -18,8 +17,8 @@ protected:
 	const int rep_count; // number of repetitions
 	int max_iter;        // max number of iterations
 
-	mipp::vector<R> Fw, Bw;
-	mipp::vector<R> Tu, Td, Wu, Wd, U;
+	std::vector<R> Fw, Bw;
+	std::vector<R> Tu, Td, Wu, Wd, U;
 	std::vector<mipp::vector<R>> Xd, Xu;
 
 	const Interleaver<int>& interleaver;

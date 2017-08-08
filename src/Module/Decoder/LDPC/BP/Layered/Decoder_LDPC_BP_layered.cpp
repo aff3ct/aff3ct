@@ -3,7 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Tools/general_utils.h"
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Math/utils.h"
 
 #include "Decoder_LDPC_BP_layered.hpp"
@@ -20,16 +20,16 @@ Decoder_LDPC_BP_layered<B,R>
                           const int syndrome_depth,
                           const int n_frames,
                           const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                         ),
-  n_ite                 (n_ite                                           ),
-  n_C_nodes             ((int)H.get_n_cols()                             ),
-  enable_syndrome       (enable_syndrome                                 ),
-  syndrome_depth        (syndrome_depth                                  ),
-  init_flag             (true                                            ),
-  info_bits_pos         (info_bits_pos                                   ),
-  H                     (H                                               ),
-  var_nodes             (n_frames, mipp::vector<R>(N                    )),
-  branches              (n_frames, mipp::vector<R>(H.get_n_connections()))
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                        ),
+  n_ite                 (n_ite                                          ),
+  n_C_nodes             ((int)H.get_n_cols()                            ),
+  enable_syndrome       (enable_syndrome                                ),
+  syndrome_depth        (syndrome_depth                                 ),
+  init_flag             (true                                           ),
+  info_bits_pos         (info_bits_pos                                  ),
+  H                     (H                                              ),
+  var_nodes             (n_frames, std::vector<R>(N                    )),
+  branches              (n_frames, std::vector<R>(H.get_n_connections()))
 {
 	if (n_ite <= 0)
 	{

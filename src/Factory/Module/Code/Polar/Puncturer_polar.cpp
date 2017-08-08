@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Tools/Exception/exception.hpp"
 
 #include "Module/Puncturer/Polar/Puncturer_polar_wangliu.hpp"

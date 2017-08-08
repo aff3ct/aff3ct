@@ -81,7 +81,7 @@ CPM_BCJR<SIN,SOUT,Q,MAX>
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
-::decode(const mipp::vector<Q> &Lch_N, mipp::vector<Q> &Le_N)
+::decode(const std::vector<Q> &Lch_N, std::vector<Q> &Le_N)
 {
 	if (Lch_N.size() != chn_size)
 	{
@@ -116,7 +116,7 @@ void CPM_BCJR<SIN,SOUT,Q,MAX>
 
 template <typename SIN, typename SOUT,  typename Q, tools::proto_max<Q> MAX>
 void CPM_BCJR<SIN,SOUT,Q,MAX>
-::decode(const mipp::vector<Q> &Lch_N, const mipp::vector<Q> &Ldec_N, mipp::vector<Q> &Le_N)
+::decode(const std::vector<Q> &Lch_N, const std::vector<Q> &Ldec_N, std::vector<Q> &Le_N)
 {
 	if (Lch_N.size() != chn_size)
 	{

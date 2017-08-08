@@ -2,7 +2,6 @@
 #define ENCODER_BCH_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "../Encoder.hpp"
 #include "Tools/Math/Galois.hpp"
@@ -18,8 +17,8 @@ class Encoder_BCH : public Encoder<B>
 protected:
 	const int m; // order of the Galois Field
 
-	mipp::vector<int> g;  // coefficients of the generator polynomial, g(x)
-	mipp::vector<B  > bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
+	std::vector<int> g;  // coefficients of the generator polynomial, g(x)
+	std::vector<B  > bb; // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
 public:
 	Encoder_BCH(const int& K, const int& N, const tools::Galois &GF, const int n_frames = 1,

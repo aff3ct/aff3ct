@@ -47,7 +47,7 @@ public:
 protected:
 	void gen_lut(T *lut, const int frame_id)
 	{
-		mipp::vector<T> pi_temp(col_size); // interleaver lookup table for a column
+		std::vector<T> pi_temp(col_size); // interleaver lookup table for a column
 
 		for (auto column = 0; column < n_cols; column++)
 		{

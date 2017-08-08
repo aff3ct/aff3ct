@@ -1,11 +1,9 @@
-
 #ifndef LDPC_MATRIX_HANDLER_HPP_
 #define LDPC_MATRIX_HANDLER_HPP_
 
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#include <mipp.h>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 
@@ -16,8 +14,7 @@ namespace tools
 struct LDPC_matrix_handler
 {
 public:
-
-	using Full_matrix   = std::vector<mipp::vector<int8_t>>;
+	using Full_matrix = std::vector<std::vector<bool>>;
 
 	/*
 	 * convert a binary sparse matrix to a binary full matrix

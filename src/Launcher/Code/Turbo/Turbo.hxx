@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mipp.h>
 
 #include "Tools/Codec/Turbo/Codec_turbo.hpp"
 

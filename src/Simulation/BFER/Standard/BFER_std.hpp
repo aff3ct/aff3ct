@@ -6,7 +6,6 @@
 #include <chrono>
 #include <vector>
 #include <utility>
-#include <mipp.h>
 
 #include "Module/Source/Source.hpp"
 #include "Module/CRC/CRC.hpp"

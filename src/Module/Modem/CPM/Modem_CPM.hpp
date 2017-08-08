@@ -4,7 +4,7 @@
 #include <cmath>
 #include <fstream>
 #include <string>
-#include <mipp.h>
+#include <vector>
 
 #include "Tools/Math/max.h"
 
@@ -33,8 +33,8 @@ protected:
 	CPM_parameters<SIN,SOUT>      cpm;        // all CPM parameters
 	R                             cpm_h;      // modulation index = k/p
 	R                             T_samp;     // sample duration  = 1/s_factor
-	mipp::vector<R>               baseband;   // translation of base band vectors
-	mipp::vector<R>               projection; // translation of filtering generator family
+	std::vector<R>                baseband;   // translation of base band vectors
+	std::vector<R>                projection; // translation of filtering generator family
 	const int                     n_sy;       // number of symbols for one frame after encoding without tail symbols
 	const int                     n_sy_tl;    // number of symbols to send for one frame after encoding with tail symbols
 	Encoder_CPE_Rimoldi<SIN,SOUT> cpe;        // the continuous phase encoder

@@ -8,10 +8,10 @@
 #ifndef DECODER_SISO_HPP_
 #define DECODER_SISO_HPP_
 
+#include <cmath>
 #include <string>
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -36,8 +36,8 @@ class Decoder_SISO_i : public Module
 private:
 	const int n_inter_frame_rest_siso;
 
-	mipp::vector<R> Y_N1;
-	mipp::vector<R> Y_N2;
+	std::vector<R> Y_N1;
+	std::vector<R> Y_N2;
 
 protected:
 	const int K_siso; /*!< Number of information bits in one frame */
@@ -134,8 +134,9 @@ public:
 	 * \param par: parity LLRs from the channel.
 	 * \param ext: extrinsic information about the systematic bits.
 	 */
-	virtual void decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
-	                         const int n_frames = -1)
+	template <class A = std::allocator<R>>
+	void decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
+	                 const int n_frames = -1)
 	{
 		if (n_frames != -1 && n_frames <= 0)
 		{
@@ -198,7 +199,8 @@ public:
 	 * \param Y_N1: a completely noisy codeword from the channel.
 	 * \param Y_N2: an extrinsic information about all the bits in the frame.
 	 */
-	void decode_siso(const mipp::vector<R> &Y_N1, mipp::vector<R> &Y_N2)
+	template <class A = std::allocator<R>>
+	void decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2)
 	{
 		if (this->N_siso * this->n_frames != (int)Y_N1.size())
 		{

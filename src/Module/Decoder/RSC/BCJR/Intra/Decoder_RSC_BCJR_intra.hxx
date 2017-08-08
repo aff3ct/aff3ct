@@ -85,58 +85,6 @@ Decoder_RSC_BCJR_intra<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR_intra<B,R>
-::decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
-{
-	if (n_frames != -1 && n_frames <= 0)
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	const int real_n_frames = (n_frames != -1) ? n_frames : this->get_n_frames();
-
-	if (real_n_frames != this->simd_inter_frame_level_siso)
-	{
-		std::stringstream message;
-		message << "'real_n_frames' has to be equal to 'simd_inter_frame_level_siso' ('real_n_frames' = "
-		        << real_n_frames << ", 'simd_inter_frame_level_siso' = " << this->simd_inter_frame_level_siso << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	const auto limit_size1 = (this->K + this->n_ff) * this->simd_inter_frame_level + mipp::nElReg<R>();
-
-	if ((int)sys.size() < limit_size1)
-	{
-		std::stringstream message;
-		message << "'sys.size()' has to be equal or greater than 'limit_size1' ('sys.size()' = " << sys.size()
-		        << ", 'limit_size1' = " << limit_size1 << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if ((int)par.size() < limit_size1)
-	{
-		std::stringstream message;
-		message << "'par.size()' has to be equal or greater than 'limit_size1' ('par.size()' = " << par.size()
-		        << ", 'limit_size1' = " << limit_size1 << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	const auto limit_size2 = this->K * this->simd_inter_frame_level + mipp::nElReg<R>();
-
-	if ((int)ext.size() < limit_size2)
-	{
-		std::stringstream message;
-		message << "'ext.size()' has to be equal or greater than 'limit_size2' * 'real_n_frames' ('ext.size()' = "
-		        << ext.size() << ", 'limit_size2' = " << limit_size2 << ", 'real_n_frames' = " << real_n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	Decoder_SISO<R>::decode_siso(sys.data(), par.data(), ext.data(), real_n_frames);
-}
-
-template <typename B, typename R>
-void Decoder_RSC_BCJR_intra<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	this->compute_gamma   (sys, par);

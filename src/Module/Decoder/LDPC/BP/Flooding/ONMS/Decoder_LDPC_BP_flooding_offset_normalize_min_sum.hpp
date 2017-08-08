@@ -28,7 +28,7 @@ public:
 
 protected:
 	// BP functions for decoding
-	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V);
+	virtual bool BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V);
 };
 
 template <typename B = int, typename R = float>

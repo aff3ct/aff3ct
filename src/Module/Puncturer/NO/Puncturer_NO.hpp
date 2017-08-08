@@ -1,9 +1,6 @@
 #ifndef PUNCTURER_NO_HPP_
 #define PUNCTURER_NO_HPP_
 
-#include <vector>
-#include <mipp.h>
-
 #include "../Puncturer.hpp"
 
 namespace aff3ct

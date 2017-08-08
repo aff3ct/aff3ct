@@ -16,7 +16,7 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
 ::select_best_path() 
 {
-	mipp::vector<B> U_test;
+	std::vector<B> U_test;
 	std::set<int> active_paths_before_crc = this->active_paths;
 	for (auto path : active_paths_before_crc)
 	{

@@ -1,9 +1,6 @@
 #ifndef ENCODER_RA_HPP_
 #define ENCODER_RA_HPP_
 
-#include <vector>
-#include <mipp.h>
-
 #include "../Encoder.hpp"
 #include "../../Interleaver/Interleaver.hpp"
 
@@ -16,7 +13,7 @@ class Encoder_RA : public Encoder<B>
 {
 protected:
 	const int rep_count; // number of repetitions
-	mipp::vector<B> U, tmp_X_N;
+	std::vector<B> U, tmp_X_N;
 
 	const Interleaver<int>& interleaver;
 

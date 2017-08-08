@@ -90,6 +90,7 @@
 #include <Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp>
 #include <Tools/Arguments_reader.hpp>
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
+#include <Tools/Perf/hard_decision.h>
 #include <Tools/Display/Frame_trace/Frame_trace.hpp>
 #include <Tools/Display/Dumper/Dumper.hpp>
 #include <Tools/Display/Dumper/Dumper_reduction.hpp>

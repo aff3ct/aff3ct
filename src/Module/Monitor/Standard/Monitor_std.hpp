@@ -4,7 +4,6 @@
 #include <chrono>
 #include <vector>
 #include <functional>
-#include <mipp.h>
 
 #include "../Monitor.hpp"
 

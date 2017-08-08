@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -94,7 +93,8 @@ public:
 	 * \param U_K: a vector of information bits (a message).
 	 * \param X_N: an encoded frame with redundancy added (parity bits).
 	 */
-	void encode(const mipp::vector<B>& U_K, mipp::vector<B>& X_N)
+	template <class A = std::allocator<B>>
+	void encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
 		{

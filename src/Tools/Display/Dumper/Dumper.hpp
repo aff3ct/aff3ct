@@ -6,7 +6,6 @@
 #include <vector>
 #include <fstream>
 #include <typeindex>
-#include <mipp.h>
 
 namespace aff3ct
 {
@@ -37,8 +36,8 @@ public:
 	template <typename T>
 	void register_data(const T *ptr, const unsigned size, const std::string file_ext = "dump",
 	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>());
-	template <typename T>
-	void register_data(const mipp::vector<T> &data, const std::string file_ext = "dump",
+	template <typename T, class A = std::allocator<T>>
+	void register_data(const std::vector<T,A> &data, const std::string file_ext = "dump",
 	                   const bool binary_mode = false, std::vector<unsigned> headers = std::vector<unsigned>());
 
 	virtual void dump (const std::string& base_path);

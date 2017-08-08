@@ -8,7 +8,8 @@
 #ifndef FRAME_TRACE_HPP
 #define FRAME_TRACE_HPP
 
-#include <mipp.h>
+#include <vector>
+#include <iostream>
 
 namespace aff3ct
 {
@@ -58,8 +59,8 @@ public:
 	 * \param vec: a vector to display.
 	 * \param ref: a reference vector to compare with the other one (do not perform the comparison if ref is unset).
 	 */
-	template <typename D>
-	void display_bit_vector (mipp::vector<D> vec, mipp::vector<B> ref = {});
+	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>
+	void display_bit_vector(std::vector<D,AD> vec, std::vector<B,AB> ref = {});
 
 	/*!
 	 * \brief Display a vector (= a frame) of reals.
@@ -69,8 +70,8 @@ public:
 	 * \param vec: a vector to display.
 	 * \param ref: a reference vector to compare with the other one (do not perform the comparison if ref is unset).
 	 */
-	template <typename D>
-	void display_real_vector(mipp::vector<D> vec, mipp::vector<B> ref = {});
+	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>
+	void display_real_vector(std::vector<D,AD> vec, std::vector<B,AB> ref = {});
 
 	/*!
 	 * \brief Display a vector (= a frame) of bits in 2D.
@@ -81,8 +82,8 @@ public:
 	 * \param row_width: number of bits in a row (size of the x dimension).
 	 * \param ref:       a reference vector to compare with the other one (do not perform the comparison if ref is unset).
 	 */
-	template <typename D>
-	void display_bit_vector(mipp::vector<D> vec, unsigned int row_width, mipp::vector<B> ref = {});
+	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>
+	void display_bit_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref = {});
 
 	/*!
 	 * \brief Display a vector (= a frame) of reals in 2D.
@@ -93,18 +94,18 @@ public:
 	 * \param row_width: number of bits in a row (size of the x dimension).
 	 * \param ref:       a reference vector to compare with the other one (do not perform the comparison if ref is unset).
 	 */
-	template <typename D>
-	void display_real_vector(mipp::vector<D> vec, unsigned int row_width, mipp::vector<B> ref = {});
+	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>
+	void display_real_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref = {});
 
 private:
-	template <typename D>
-	void display_vector(mipp::vector<D> vec, unsigned int row_width, mipp::vector<B> ref, debug_version version);
+	template <typename D, class AD = std::allocator<D>, class AB = std::allocator<B>>
+	void display_vector(std::vector<D,AD> vec, unsigned int row_width, std::vector<B,AB> ref, debug_version version);
 
 	template <typename D>
-	void display_value (D value, debug_version version                                                         );
+	void display_value (D value, debug_version version);
 
 	template <typename D>
-	void display_value (D value, debug_version version, B ref                                                  );
+	void display_value (D value, debug_version version, B ref);
 };
 }
 }

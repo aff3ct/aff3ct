@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <mipp.h>
 
 #include "Source_random_fast.hpp"
 

@@ -8,11 +8,11 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename T> 
+template <typename T, class AT = std::allocator<T>>
 inline void rgemm(const int M, const int N, const int K,
-                  const mipp::vector<T> &A,
-                  const mipp::vector<T> &tB,
-                        mipp::vector<T> &tC)
+                  const std::vector<T,AT> &A,
+                  const std::vector<T,AT> &tB,
+                        std::vector<T,AT> &tC)
 {
 	if (A.size() != unsigned(M * K))
 	{
@@ -58,11 +58,11 @@ inline void rgemm(const int M, const int N, const int K,
 		}
 }
 
-template <typename T>
+template <typename T, class AT = std::allocator<T>>
 inline void cgemm(const int M, const int N, const int K, 
-                  const mipp::vector<T> &A, 
-                  const mipp::vector<T> &tB, 
-                        mipp::vector<T> &tC)
+                  const std::vector<T,AT> &A,
+                  const std::vector<T,AT> &tB,
+                        std::vector<T,AT> &tC)
 {
 	if (A.size() != unsigned(M * K * 2))
 	{
@@ -121,11 +121,11 @@ inline void cgemm(const int M, const int N, const int K,
 	}
 }
 
-template <typename T> 
+template <typename T, class AT = std::allocator<T>>
 inline void cgemm_r(const int M, const int N, const int K, 
-                    const mipp::vector<T> &A, 
-                    const mipp::vector<T> &tB, 
-                          mipp::vector<T> &tC)
+                    const std::vector<T,AT> &A,
+                    const std::vector<T,AT> &tB,
+                          std::vector<T,AT> &tC)
 {
 	if (A.size() != unsigned(M * K * 2))
 	{
@@ -179,10 +179,10 @@ inline void cgemm_r(const int M, const int N, const int K,
 	}
 }
 
-template <typename T>
+template <typename T, class AT = std::allocator<T>>
 inline void real_transpose(const int M, const int N,
-                           const mipp::vector<T> &A,
-                                 mipp::vector<T> &B)
+                           const std::vector<T,AT> &A,
+                                 std::vector<T,AT> &B)
 {
 	if (A.size() != unsigned(M * N))
 	{
@@ -213,10 +213,10 @@ inline void real_transpose(const int M, const int N,
 			B[j*M+i] =  A[i*N+j];
 }
 
-template <typename T>
+template <typename T, class AT = std::allocator<T>>
 inline void complex_transpose(const int M, const int N,
-                              const mipp::vector<T> &A,
-                                    mipp::vector<T> &B)
+                              const std::vector<T,AT> &A,
+                                    std::vector<T,AT> &B)
 {
 	if (A.size() != unsigned(M * N * 2))
 	{

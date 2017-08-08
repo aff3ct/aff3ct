@@ -151,7 +151,7 @@ void Quantizer_tricky<R,Q>
 
 	if (delta_inv == (R)0)
 	{
-		mipp::vector<R> tmp(size);
+		std::vector<R> tmp(size);
 		R avg = 0;
 		for (unsigned i = 0; i < size; i++)
 		{

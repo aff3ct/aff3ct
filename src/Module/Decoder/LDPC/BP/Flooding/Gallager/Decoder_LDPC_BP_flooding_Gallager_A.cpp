@@ -50,7 +50,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	}
 
 	transpose.resize(H.get_n_connections());
-	mipp::vector<unsigned char> connections(H.get_n_rows(), 0);
+	std::vector<unsigned char> connections(H.get_n_rows(), 0);
 
 	const auto &CN_to_VN = H.get_col_to_rows();
 	const auto &VN_to_CN = H.get_row_to_cols();

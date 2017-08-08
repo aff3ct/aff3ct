@@ -1,7 +1,7 @@
 #ifndef ENCODER_CPE_HPP_
 #define ENCODER_CPE_HPP_
 
-#include <mipp.h>
+#include <vector>
 
 #include "../CPM_parameters.hpp"
 
@@ -21,20 +21,20 @@ public:
 
 	int get_n_ff   () const;
 	int tail_length() const;
-	void encode    (const mipp::vector<SIN>& U_N, mipp::vector<SOUT>& X_N);
+	void encode    (const std::vector<SIN>& U_N, std::vector<SOUT>& X_N);
 
-	void generate_trellis     (mipp::vector<int>& trellis_next_state,
-	                           mipp::vector<SOUT>& trellis_related_wave_form);
-	void generate_anti_trellis(mipp::vector<int>& anti_trellis_original_state,
-	                           mipp::vector<SIN>& anti_trellis_input_transition);
+	void generate_trellis     (std::vector<int>& trellis_next_state,
+	                           std::vector<SOUT>& trellis_related_wave_form);
+	void generate_anti_trellis(std::vector<int>& anti_trellis_original_state,
+	                           std::vector<SIN>& anti_trellis_input_transition);
 
 	// transition_to_binary :  value = 0 or 1 ; bit 0 is lsb, bit cpm.n_b_per_s-1 is msb
-	virtual void generate_mapper(mipp::vector<SIN>& transition_to_binary,
-	                             mipp::vector<SIN>& binary_to_transition,
+	virtual void generate_mapper(std::vector<SIN>& transition_to_binary,
+	                             std::vector<SIN>& binary_to_transition,
 	                             const std::string& mapping_layout) = 0;
 
-	virtual void generate_allowed_states    (mipp::vector<int>& allowed_states     ) = 0;
-	virtual void generate_allowed_wave_forms(mipp::vector<SOUT>& allowed_wave_forms) = 0;
+	virtual void generate_allowed_states    (std::vector<int>& allowed_states     ) = 0;
+	virtual void generate_allowed_wave_forms(std::vector<SOUT>& allowed_wave_forms) = 0;
 
 	// merge given bit on separate memory addresses to one variable
 	// takes number_of_bits from the in_bits array by increasing the memory address

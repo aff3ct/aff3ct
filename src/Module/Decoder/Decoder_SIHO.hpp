@@ -8,11 +8,11 @@
 #ifndef DECODER_SIHO_HPP_
 #define DECODER_SIHO_HPP_
 
+#include <cmath>
 #include <chrono>
 #include <string>
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -39,8 +39,8 @@ class Decoder_SIHO_i : public Module
 private:
 	const int n_inter_frame_rest;
 
-	mipp::vector<R> Y_N;
-	mipp::vector<B> V_KN;
+	std::vector<R> Y_N;
+	std::vector<B> V_KN;
 
 protected:
 	const int K; /*!< Number of information bits in one frame */
@@ -141,7 +141,8 @@ public:
 	 * \param Y_N: a noisy frame.
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
-	void decode_siho(const mipp::vector<R>& Y_N, mipp::vector<B>& V_K)
+	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
+	void decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{
@@ -194,7 +195,8 @@ public:
 		}
 	}
 
-	void decode_siho_coded(const mipp::vector<R>& Y_N, mipp::vector<B>& V_N)
+	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
+	void decode_siho_coded(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N)
 	{
 		if (this->N * this->n_frames != (int)Y_N.size())
 		{

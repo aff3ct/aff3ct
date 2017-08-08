@@ -25,14 +25,14 @@ protected:
 
 	const std::vector<unsigned> &info_bits_pos;
 
-	mipp::vector<unsigned char> n_variables_per_parity;
-	mipp::vector<unsigned char> n_parities_per_variable;
-	mipp::vector<unsigned int > transpose;
+	std::vector<unsigned char> n_variables_per_parity;
+	std::vector<unsigned char> n_parities_per_variable;
+	std::vector<unsigned int > transpose;
 
 	// data structures for iterative decoding
-	            mipp::vector<R>  Lp_N;   // a posteriori information
-	std::vector<mipp::vector<R>> C_to_V; // check    nodes to variable nodes messages
-	std::vector<mipp::vector<R>> V_to_C; // variable nodes to check    nodes messages
+	            std::vector<R>  Lp_N;   // a posteriori information
+	std::vector<std::vector<R>> C_to_V; // check    nodes to variable nodes messages
+	std::vector<std::vector<R>> V_to_C; // variable nodes to check    nodes messages
 
 	Decoder_LDPC_BP_flooding(const int &K, const int &N, const int& n_ite, 
 	                         const tools::Sparse_matrix &H,
@@ -51,7 +51,7 @@ protected:
 	// BP functions for decoding
 	void BP_decode(const R *Y_N, const int frame_id);
 
-	virtual bool BP_process(const R *Y_N, mipp::vector<R> &V_to_C, mipp::vector<R> &C_to_V) = 0;
+	virtual bool BP_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
 };
 }
 }

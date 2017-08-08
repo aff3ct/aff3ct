@@ -56,7 +56,7 @@ int Encoder_CPE<SIN, SOUT>
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE<SIN, SOUT>
-::encode(const mipp::vector<SIN>& U_N, mipp::vector<SOUT>& X_N)
+::encode(const std::vector<SIN>& U_N, std::vector<SOUT>& X_N)
 {
 	if ((int)U_N.size() != N)
 	{
@@ -94,7 +94,7 @@ void Encoder_CPE<SIN, SOUT>
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE<SIN, SOUT>
-::generate_trellis(mipp::vector<int>& trellis_next_state, mipp::vector<SOUT>& trellis_related_wave_form)
+::generate_trellis(std::vector<int>& trellis_next_state, std::vector<SOUT>& trellis_related_wave_form)
 {
 	if ((int)trellis_next_state.size() != cpm.max_st_id * cpm.m_order)
 	{
@@ -132,8 +132,8 @@ void Encoder_CPE<SIN, SOUT>
 
 template<typename SIN, typename SOUT>
 void Encoder_CPE<SIN, SOUT>
-::generate_anti_trellis(mipp::vector<int>& anti_trellis_original_state,
-                        mipp::vector<SIN>& anti_trellis_input_transition)
+::generate_anti_trellis(std::vector<int>& anti_trellis_original_state,
+                        std::vector<SIN>& anti_trellis_input_transition)
 {
 	if ((int)anti_trellis_original_state.size() != cpm.max_st_id * cpm.m_order)
 	{
@@ -155,7 +155,7 @@ void Encoder_CPE<SIN, SOUT>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	mipp::vector<int> counter(cpm.max_st_id, 0);
+	std::vector<int> counter(cpm.max_st_id, 0);
 
 	int next_state;
 

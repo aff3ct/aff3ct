@@ -2,7 +2,7 @@
 #define FACTORY_ENCODER_POLAR_HPP
 
 #include <string>
-#include <mipp.h>
+#include <vector>
 
 #include "Module/Encoder/Encoder.hpp"
 

@@ -2,7 +2,6 @@
 #define ENCODER_RSC_DB_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "../Encoder_sys.hpp"
 
@@ -24,11 +23,11 @@ private:
 	const int  n_states;           // number of states in the trellis
 	const bool buffered_encoding;
 
-	std::vector<std::vector <int>> next_state;
-	std::vector<std::vector <int>> out_parity;
+	std::vector<std::vector<int>> next_state;
+	std::vector<std::vector<int>> out_parity;
 
-	std::vector<std::vector <int>> poly;
-	std::vector<std::vector <int>> circ_states;
+	std::vector<std::vector<int>> poly;
+	std::vector<std::vector<int>> circ_states;
 
 public:
 	Encoder_RSC_DB(const int& K, const int& N,

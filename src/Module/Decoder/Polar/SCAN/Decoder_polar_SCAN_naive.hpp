@@ -2,7 +2,6 @@
 #define	DECODER_POLAR_SCAN_NAIVE_H_
 
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
@@ -25,9 +24,9 @@ protected:
 	const int max_iter;
 	const int layers_count; // number of layers in the graph = m+1
 
-	const std::vector<bool>&     frozen_bits;
-	std::vector<mipp::vector<R>> feedback_graph;
-	std::vector<mipp::vector<R>> soft_graph;
+	const std::vector<bool>&    frozen_bits;
+	std::vector<std::vector<R>> feedback_graph;
+	std::vector<std::vector<R>> soft_graph;
 
 	bool is_init;
 

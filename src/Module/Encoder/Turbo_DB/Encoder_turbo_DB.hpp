@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <mipp.h>
 
 #include "Module/Interleaver/Interleaver.hpp"
 
@@ -22,9 +21,9 @@ protected:
 	Encoder_RSC_DB<B> &enco_n;  // encoder natural order
 	Encoder_RSC_DB<B> &enco_i;  // encoder interleaved order
 
-	mipp::vector<B> U_K_i;      // internal buffer for the systematic bits in the interleaved domain
-	mipp::vector<B> par_n;      // internal buffer for the encoded    bits in the natural     domain
-	mipp::vector<B> par_i;      // internal buffer for the encoded    bits in the interleaved domain
+	std::vector<B> U_K_i;       // internal buffer for the systematic bits in the interleaved domain
+	std::vector<B> par_n;       // internal buffer for the encoded    bits in the natural     domain
+	std::vector<B> par_i;       // internal buffer for the encoded    bits in the interleaved domain
 
 public:
 	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<int> &pi,

@@ -2,7 +2,7 @@
 #define FACTORY_DECODER_POLAR_GEN_HPP
 
 #include <string>
-#include <mipp.h>
+#include <vector>
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/CRC/CRC.hpp"

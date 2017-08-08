@@ -2,7 +2,6 @@
 #define ENCODER_POLAR_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "../Encoder.hpp"
 

@@ -1,9 +1,6 @@
 #ifndef DECODER_TURBO_NAIVE_HPP
 #define DECODER_TURBO_NAIVE_HPP
 
-#include <vector>
-#include <mipp.h>
-
 #include "Decoder_turbo.hpp"
 
 namespace aff3ct

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Tools/general_utils.h"
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Exception/exception.hpp"
 
 #include "Decoder_RA.hpp"

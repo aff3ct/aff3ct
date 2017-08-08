@@ -1,9 +1,6 @@
 #ifndef QUANTIZER_NO_HPP_
 #define QUANTIZER_NO_HPP_
 
-#include <vector>
-#include <mipp.h>
-
 #include "../Quantizer.hpp"
 
 namespace aff3ct

@@ -42,7 +42,7 @@ Encoder_LDPC<B>
 
 	auto CN_to_VN = G.get_col_to_rows();
 
-	mipp::vector<B> full_G(K * N,0);
+	std::vector<B> full_G(K * N,0);
 	for (auto i = 0; i < K; i++)
 		for (size_t j = 0; j < CN_to_VN[i].size(); ++j)
 			full_G[i * N + CN_to_VN[i][j]] = 1;

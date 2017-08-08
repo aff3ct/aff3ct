@@ -2,7 +2,6 @@
 #define FACTORY_DECODER_LDPC_HPP
 
 #include <string>
-#include <mipp.h>
 
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 

@@ -2,7 +2,6 @@
 #define DECODER_POLAR_SC_NAIVE_
 
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
@@ -17,9 +16,9 @@ template <typename B = int, typename R = float>
 class Contents_SC
 {
 public:
-	mipp::vector<R> lambda;
-	mipp::vector<B> s;
-	bool            is_frozen_bit;
+	std::vector<R> lambda;
+	std::vector<B> s;
+	bool           is_frozen_bit;
 
 	Contents_SC(int size) : lambda(size), s(size), is_frozen_bit(false) {}
 	virtual ~Contents_SC() {}

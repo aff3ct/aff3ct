@@ -2,7 +2,7 @@
 #define FACTORY_DECODER_POLAR_HPP
 
 #include <string>
-#include <mipp.h>
+#include <vector>
 #include <cmath>
 
 #include "Module/CRC/CRC.hpp"

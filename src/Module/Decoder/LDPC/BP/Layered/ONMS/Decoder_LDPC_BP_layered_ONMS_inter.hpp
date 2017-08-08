@@ -1,6 +1,8 @@
 #ifndef DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
 #define DECODER_LDPC_BP_LAYERED_ONMS_INTER_HPP_
 
+#include <mipp.h>
+
 #include "../../../../Decoder_SISO_SIHO.hpp"
 #include "Tools/Algo/Sparse_matrix/Sparse_matrix.hpp"
 

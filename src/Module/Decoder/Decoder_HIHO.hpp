@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -39,8 +38,8 @@ class Decoder_HIHO_i : public Module
 private:
 	const int n_inter_frame_rest;
 
-	mipp::vector<B> Y_N;
-	mipp::vector<B> V_KN;
+	std::vector<B> Y_N;
+	std::vector<B> V_KN;
 
 protected:
 	const int K_hiho; /*!< Number of information bits in one frame */
@@ -137,7 +136,8 @@ public:
 	 * \param Y_N: a noisy frame.
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
-	void decode_hiho(const mipp::vector<B>& Y_N, mipp::vector<B>& V_K)
+	template <class A = std::allocator<B>>
+	void decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K)
 	{
 		if (this->N_hiho * this->n_frames != (int)Y_N.size())
 		{
@@ -186,7 +186,8 @@ public:
 		}
 	}
 
-	void decode_hiho_coded(const mipp::vector<B>& Y_N, mipp::vector<B>& V_N)
+	template <class A = std::allocator<B>>
+	void decode_hiho_coded(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N)
 	{
 		if (this->N_hiho * this->n_frames != (int)Y_N.size())
 		{

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"

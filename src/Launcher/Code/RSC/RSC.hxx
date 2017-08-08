@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mipp.h>
 
 #include "Tools/Codec/RSC/Codec_RSC.hpp"
 

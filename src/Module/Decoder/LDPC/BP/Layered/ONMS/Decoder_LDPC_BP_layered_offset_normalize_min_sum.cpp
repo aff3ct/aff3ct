@@ -74,7 +74,7 @@ Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
 // BP algorithm
 template <typename B, typename R>
 void Decoder_LDPC_BP_layered_offset_normalize_min_sum<B,R>
-::BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches)
+::BP_process(std::vector<R> &var_nodes, std::vector<R> &branches)
 {
 	auto kr = 0;
 	auto kw = 0;

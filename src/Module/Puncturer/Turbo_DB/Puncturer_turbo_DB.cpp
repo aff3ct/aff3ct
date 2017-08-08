@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
 

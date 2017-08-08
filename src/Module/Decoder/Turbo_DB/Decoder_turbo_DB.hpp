@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <vector>
-#include <mipp.h>
 
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"

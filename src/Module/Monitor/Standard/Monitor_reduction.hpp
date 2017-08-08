@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <mipp.h>
 
 #include "Monitor_std.hpp"
 

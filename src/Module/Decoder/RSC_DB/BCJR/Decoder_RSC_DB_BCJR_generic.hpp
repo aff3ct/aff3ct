@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <mipp.h>
 
 #include "Tools/Math/max.h"
 

@@ -3,7 +3,6 @@
 
 #include <limits>
 #include <vector>
-#include <mipp.h>
 
 #include "Frozenbits_generator.hpp"
 
@@ -15,7 +14,7 @@ class Frozenbits_generator_GA : public Frozenbits_generator
 {
 private:
 	const int m;
-	mipp::vector<double> z;
+	std::vector<double> z;
 
 	const double alpha = -0.4527;
 	const double beta  =  0.0218;

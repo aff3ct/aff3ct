@@ -24,11 +24,11 @@ protected:
 	const bool                   enable_syndrome; // stop criterion
 	const int                    syndrome_depth;
 	const std::vector<unsigned> &info_bits_pos;
-	mipp::vector<B>              HY_N;            // input LLRs (transformed in bit)
-	mipp::vector<int8_t>         V_N;             // decoded bits
-	mipp::vector<int8_t>         C_to_V_messages; // check    nodes to variable nodes messages
-	mipp::vector<int8_t>         V_to_C_messages; // variable nodes to check    nodes messages
-	mipp::vector<unsigned>       transpose;
+	std::vector<B>               HY_N;            // input LLRs (transformed in bit)
+	std::vector<int8_t>          V_N;             // decoded bits
+	std::vector<int8_t>          C_to_V_messages; // check    nodes to variable nodes messages
+	std::vector<int8_t>          V_to_C_messages; // variable nodes to check    nodes messages
+	std::vector<unsigned>        transpose;
 
 public:
 	Decoder_LDPC_BP_flooding_Gallager_A(const int &K, const int &N, const int& n_ite, const tools::Sparse_matrix &H,

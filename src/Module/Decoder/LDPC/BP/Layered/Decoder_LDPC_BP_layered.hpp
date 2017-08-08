@@ -26,8 +26,8 @@ protected:
 	const tools::Sparse_matrix &H;
 
 	// data structures for iterative decoding
-	std::vector<mipp::vector<R>> var_nodes;
-	std::vector<mipp::vector<R>> branches;
+	std::vector<std::vector<R>> var_nodes;
+	std::vector<std::vector<R>> branches;
 
 public:
 	Decoder_LDPC_BP_layered(const int &K, const int &N, const int& n_ite,
@@ -51,7 +51,7 @@ protected:
 
 	bool check_syndrome(const int frame_id);
 
-	virtual void BP_process(mipp::vector<R> &var_nodes, mipp::vector<R> &branches) = 0;
+	virtual void BP_process(std::vector<R> &var_nodes, std::vector<R> &branches) = 0;
 };
 }
 }

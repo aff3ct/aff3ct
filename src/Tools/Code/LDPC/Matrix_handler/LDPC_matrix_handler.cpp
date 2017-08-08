@@ -11,7 +11,7 @@ void LDPC_matrix_handler
 ::sparse_to_full(const Sparse_matrix& sparse, Full_matrix& full)
 {
 	full.clear();
-	full.resize(sparse.get_n_rows(), mipp::vector<int8_t>(sparse.get_n_cols(), 0));
+	full.resize(sparse.get_n_rows(), std::vector<bool>(sparse.get_n_cols(), 0));
 
 	for (unsigned i = 0; i < sparse.get_n_rows(); i++)
 		for (unsigned j = 0; j < sparse.get_cols_from_row(i).size(); j++)
@@ -68,7 +68,7 @@ void LDPC_matrix_handler
 		mat[i].erase( mat[i].begin(), mat[i].begin() + n_row );
 
 	// mat dimension is now n_col*n_row (above it was n_row*n_col)
-	mat.resize(n_col, mipp::vector<int8_t>(n_col - n_row,0));
+	mat.resize(n_col, std::vector<bool>(n_col - n_row, 0));
 	for (unsigned i = n_row; i < n_col; i++) // Add identity at the end
 		mat[i][i-n_row] = 1;
 
@@ -79,7 +79,7 @@ void LDPC_matrix_handler
 	// return info bits positions
 	info_bits_pos.resize(n_col - n_row);
 
-	mipp::vector<unsigned> bits_pos(n_col);
+	std::vector<unsigned> bits_pos(n_col);
 	std::iota(bits_pos.begin(), bits_pos.end(), 0);
 
 	for (unsigned l = 1; l <= (swapped_cols.size() / 2); l++)
@@ -132,7 +132,7 @@ void LDPC_matrix_handler
 						swapped_cols.push_back(j);
 
 						// swap the columns
-						mipp::vector<int8_t> column_save(n_row);
+						std::vector<int8_t> column_save(n_row);
 						for (unsigned l = 0; l < n_row; l++) column_save[l] = (mat[l][i]);
 						for (unsigned l = 0; l < n_row; l++) mat[l][i] = mat[l][j];
 						for (unsigned l = 0; l < n_row; l++) mat[l][j] = column_save[l];

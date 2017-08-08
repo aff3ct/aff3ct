@@ -2,7 +2,7 @@
 #include <limits>
 #include <sstream>
 
-#include "Tools/general_utils.h"
+#include "Tools/Perf/hard_decision.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 
@@ -22,18 +22,18 @@ Decoder_LDPC_BP_flooding<B,R>
                            const int syndrome_depth,
                            const int n_frames,
                            const std::string name)
-: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                   ),
-  n_ite                 (n_ite                                     ),
-  n_V_nodes             (N                                         ), // same as N but more explicit
-  n_C_nodes             ((int)H.get_n_cols()                       ),
-  n_branches            ((int)H.get_n_connections()                ),
-  enable_syndrome       (enable_syndrome                           ),
-  syndrome_depth        (syndrome_depth                            ),
-  init_flag             (true                                      ),
-  info_bits_pos         (info_bits_pos                             ),
-  Lp_N                  (N,                                       -1), // -1 in order to fail when AZCW
-  C_to_V                (n_frames, mipp::vector<R>(this->n_branches)),
-  V_to_C                (n_frames, mipp::vector<R>(this->n_branches))
+: Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1, name                  ),
+  n_ite                 (n_ite                                    ),
+  n_V_nodes             (N                                        ), // same as N but more explicit
+  n_C_nodes             ((int)H.get_n_cols()                      ),
+  n_branches            ((int)H.get_n_connections()               ),
+  enable_syndrome       (enable_syndrome                          ),
+  syndrome_depth        (syndrome_depth                           ),
+  init_flag             (true                                     ),
+  info_bits_pos         (info_bits_pos                            ),
+  Lp_N                  (N,                                      -1), // -1 in order to fail when AZCW
+  C_to_V                (n_frames, std::vector<R>(this->n_branches)),
+  V_to_C                (n_frames, std::vector<R>(this->n_branches))
 {
 	if (n_ite <= 0)
 	{

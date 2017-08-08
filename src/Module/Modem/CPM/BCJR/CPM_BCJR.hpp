@@ -1,7 +1,7 @@
 #ifndef CPM_BCJR_HPP_
 #define CPM_BCJR_HPP_
 
-#include <mipp.h>
+#include <vector>
 
 #include "Tools/Math/max.h"
 
@@ -21,20 +21,20 @@ protected:
 	const int dec_size;                  // size of a frame (bits proba) from the decoder
 	const int ext_size;                  // size of a frame (bits proba) from the bcjr
 
-	mipp::vector<Q> symb_apriori_prob;
-	mipp::vector<Q> gamma;
-	mipp::vector<Q> alpha;
-	mipp::vector<Q> beta;
-	mipp::vector<Q> proba_msg_symb;
-	mipp::vector<Q> proba_msg_bits;
+	std::vector<Q> symb_apriori_prob;
+	std::vector<Q> gamma;
+	std::vector<Q> alpha;
+	std::vector<Q> beta;
+	std::vector<Q> proba_msg_symb;
+	std::vector<Q> proba_msg_bits;
 
 public:
 	CPM_BCJR(const CPM_parameters<SIN,SOUT>& _cpm, const int _frame_size);
 	virtual ~CPM_BCJR();
 
 	// CPM_BCJR for the demodulation
-	void decode(const mipp::vector<Q> &Lch_N,                                mipp::vector<Q> &Le_N);
-	void decode(const mipp::vector<Q> &Lch_N, const mipp::vector<Q> &Ldec_N, mipp::vector<Q> &Le_N);
+	void decode(const std::vector<Q> &Lch_N,                               std::vector<Q> &Le_N);
+	void decode(const std::vector<Q> &Lch_N, const std::vector<Q> &Ldec_N, std::vector<Q> &Le_N);
 	void decode(const Q *Lch_N,                  Q *Le_N);
 	void decode(const Q *Lch_N, const Q *Ldec_N, Q *Le_N);
 

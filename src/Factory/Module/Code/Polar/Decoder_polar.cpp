@@ -1,5 +1,4 @@
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Code/Polar/decoder_polar_functions.h"
 
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp"
@@ -141,35 +140,20 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 		{
 			if (typeid(B) == typeid(signed char))
 			{
-				using API_polar = tools::API_polar_dynamic_intra
-				                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-				                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
-
-				return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, crc);
+				return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(params, frozen_bits, crc);
 			}
 			else if (typeid(B) == typeid(short))
 			{
-				using API_polar = tools::API_polar_dynamic_intra
-				                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-				                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
-
-				return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, crc);
+				return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(params, frozen_bits, crc);
 			}
 			else if (typeid(B) == typeid(int))
 			{
-				using API_polar = tools::API_polar_dynamic_intra
-				                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-				                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
-
-				return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, crc);
+				return _build_scl_fast<B,Q,tools::API_polar_dynamic_intra<B,Q>>(params, frozen_bits, crc);
 			}
 		}
 		else if (params.simd_strategy.empty())
 		{
-			using API_polar = tools::API_polar_dynamic_seq
-			                  <B, Q, tools::f_LLR<Q>, tools::g_LLR<B,Q>, tools::g0_LLR<Q>, tools::h_LLR<B,Q>, tools::xo_STD<B>>;
-
-			return _build_scl_fast<B,Q,API_polar>(params, frozen_bits, crc);
+			return _build_scl_fast<B,Q,tools::API_polar_dynamic_seq<B,Q>>(params, frozen_bits, crc);
 		}
 	}
 
@@ -179,19 +163,15 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 		{
 #ifdef ENABLE_BIT_PACKING
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_inter_8bit_bitpacking
-			                  <B, Q, tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_dynamic_inter_8bit_bitpacking<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_inter_8bit_bitpacking
-			                  <B, Q, tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_static_inter_8bit_bitpacking<B,Q>;
 #endif
 #else
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_inter
-			                  <B, Q, tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_dynamic_inter<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_inter
-			                  <B, Q, tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_static_inter<B,Q>;
 #endif
 #endif
 			return _build<B,Q,API_polar>(params, frozen_bits, crc);
@@ -199,11 +179,9 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 		else
 		{
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_inter
-			                  <B, Q, tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_dynamic_inter<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_inter
-			                  <B, Q, tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_static_inter<B,Q>;
 #endif
 			return _build<B,Q,API_polar>(params, frozen_bits, crc);
 		}
@@ -213,39 +191,27 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 		if (typeid(B) == typeid(signed char))
 		{
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_intra
-			                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-			                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_dynamic_intra<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_intra_8bit
-			                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-			                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_static_intra_8bit<B,Q>;
 #endif
 			return _build<B,Q,API_polar>(params, frozen_bits, crc);
 		}
 		else if (typeid(B) == typeid(short))
 		{
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_intra
-			                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-			                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_dynamic_intra<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_intra_16bit
-			                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-			                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_static_intra_16bit<B,Q>;
 #endif
 			return _build<B,Q,API_polar>(params, frozen_bits, crc);
 		}
 		else if (typeid(B) == typeid(int))
 		{
 #ifdef API_POLAR_DYNAMIC
-			using API_polar = tools::API_polar_dynamic_intra
-			                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-			                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_dynamic_intra<B,Q>;
 #else
-			using API_polar = tools::API_polar_static_intra_32bit
-			                  <B, Q, tools::f_LLR  <Q>, tools::g_LLR  <B,Q>, tools::g0_LLR  <Q>, tools::h_LLR  <B,Q>, tools::xo_STD  <B>,
-			                         tools::f_LLR_i<Q>, tools::g_LLR_i<B,Q>, tools::g0_LLR_i<Q>, tools::h_LLR_i<B,Q>, tools::xo_STD_i<B>>;
+			using API_polar = tools::API_polar_static_intra_32bit<B,Q>;
 #endif
 			return _build<B,Q,API_polar>(params, frozen_bits, crc);
 		}
@@ -253,11 +219,9 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 	else if (params.simd_strategy.empty())
 	{
 #ifdef API_POLAR_DYNAMIC
-		using API_polar = tools::API_polar_dynamic_seq
-		                  <B, Q, tools::f_LLR<Q>, tools::g_LLR<B,Q>, tools::g0_LLR<Q>, tools::h_LLR<B,Q>, tools::xo_STD<B>>;
+		using API_polar = tools::API_polar_dynamic_seq<B,Q>;
 #else
-		using API_polar = tools::API_polar_static_seq
-		                  <B, Q, tools::f_LLR<Q>, tools::g_LLR<B,Q>, tools::g0_LLR<Q>, tools::h_LLR<B,Q>, tools::xo_STD<B>>;
+		using API_polar = tools::API_polar_static_seq<B,Q>;
 #endif
 		return _build<B,Q,API_polar>(params, frozen_bits, crc);
 	}

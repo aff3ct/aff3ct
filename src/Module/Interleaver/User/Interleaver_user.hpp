@@ -16,7 +16,7 @@ template <typename T = int>
 class Interleaver_user : public Interleaver<T>
 {
 private:
-	std::vector<mipp::vector<T>> pi_buffer;
+	std::vector<std::vector<T>> pi_buffer;
 	int cur_itl_id;
 
 public:

@@ -2,7 +2,6 @@
 #define DECODER_BCH
 
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Math/Galois.hpp"
 
@@ -15,23 +14,23 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
 {
-	std::vector<mipp::vector<int>> elp;
-	mipp::vector<int> discrepancy;
-	mipp::vector<int> l;
-	mipp::vector<int> u_lu;
-	mipp::vector<int> s;
-	mipp::vector<int> loc;
-	mipp::vector<int> reg;
+	std::vector<std::vector<int>> elp;
+	std::vector<int> discrepancy;
+	std::vector<int> l;
+	std::vector<int> u_lu;
+	std::vector<int> s;
+	std::vector<int> loc;
+	std::vector<int> reg;
 
 protected:
-	const int m;                // order of the Galois Field
-	const int t;                // correction power
-	const int d;                // minimum distance of the code (d=2t+1))
+	const int m;               // order of the Galois Field
+	const int t;               // correction power
+	const int d;               // minimum distance of the code (d=2t+1))
 
-	mipp::vector<int> alpha_to; // log table of GF(2**m)
-	mipp::vector<int> index_of; // antilog table of GF(2**m)
+	std::vector<int> alpha_to; // log table of GF(2**m)
+	std::vector<int> index_of; // antilog table of GF(2**m)
 
-	mipp::vector<B> YH_N;       // hard decision input vector
+	std::vector<B> YH_N;       // hard decision input vector
 
 public:
 	Decoder_BCH(const int& K, const int& N, const int&t, const tools::Galois &GF,

@@ -1,4 +1,5 @@
 #include <typeinfo>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 

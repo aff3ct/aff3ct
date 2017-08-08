@@ -37,8 +37,8 @@ class Interleaver_i : public Module
 protected:
 	const int size;
 	bool uniform;
-	mipp::vector<T> pi;     /*!< Lookup table for the interleaving process */
-	mipp::vector<T> pi_inv; /*!< Lookup table for the deinterleaving process */
+	std::vector<T> pi;     /*!< Lookup table for the interleaving process */
+	std::vector<T> pi_inv; /*!< Lookup table for the deinterleaving process */
 
 	bool init_called;
 
@@ -86,7 +86,7 @@ public:
 	 *
 	 * \return a vector of indirections.
 	 */
-	const mipp::vector<T>& get_lut() const
+	const std::vector<T>& get_lut() const
 	{
 		return pi;
 	}
@@ -96,7 +96,7 @@ public:
 	 *
 	 * \return a vector of indirections.
 	 */
-	const mipp::vector<T>& get_lut_inv() const
+	const std::vector<T>& get_lut_inv() const
 	{
 		return pi_inv;
 	}
@@ -119,8 +119,8 @@ public:
 	 * \param n_frames:         you should not use this parameter unless you know what you are doing, this parameter
 	 *                          redefine the number of frames to interleave specifically in this method.
 	 */
-	template <typename D>
-	inline void interleave(const mipp::vector<D> &natural_vec, mipp::vector<D> &interleaved_vec) const
+	template <typename D, class A = std::allocator<D>>
+	inline void interleave(const std::vector<D,A> &natural_vec, std::vector<D,A> &interleaved_vec) const
 	{
 		if (natural_vec.size() != interleaved_vec.size())
 		{
@@ -173,8 +173,8 @@ public:
 	 * \param n_frames:         you should not use this parameter unless you know what you are doing, this parameter
 	 *                          redefine the number of frames to deinterleave specifically in this method.
 	 */
-	template <typename D>
-	inline void deinterleave(const mipp::vector<D> &interleaved_vec, mipp::vector<D> &natural_vec) const
+	template <typename D, class A = std::allocator<D>>
+	inline void deinterleave(const std::vector<D,A> &interleaved_vec, std::vector<D,A> &natural_vec) const
 	{
 		if (natural_vec.size() != interleaved_vec.size())
 		{
@@ -289,7 +289,7 @@ protected:
 private:
 	template <typename D>
 	inline void _interleave(const D *in_vec, D *out_vec,
-	                        const mipp::vector<T> &lookup_table,
+	                        const std::vector<T> &lookup_table,
 	                        const bool frame_reordering,
 	                        const int  n_frames,
 	                        const int  frame_id) const

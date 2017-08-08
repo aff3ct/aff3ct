@@ -57,7 +57,8 @@ public:
 	 * \param par: a vector of the parity bits only (without the systematic bits), may contain the tail bits.
 	 *             par = [par | tail bit sys | tail bits par]
 	 */
-	void encode_sys(const mipp::vector<B>& U_K, mipp::vector<B>& par)
+	template <class A = std::allocator<B>>
+	void encode_sys(const std::vector<B,A>& U_K, std::vector<B,A>& par)
 	{
 		if (this->K * this->n_frames != (int)U_K.size())
 		{

@@ -24,10 +24,6 @@ protected:
 	                       const std::string name = "Decoder_RSC_BCJR_intra");
 	virtual ~Decoder_RSC_BCJR_intra();
 
-public:
-	void decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
-	                 const int n_frames = -1);
-
 protected:
 	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 

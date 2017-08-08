@@ -8,8 +8,6 @@
 
 #include "Decoder_RSC_DB_BCJR_DVB_RCS2.hpp"
 
-using namespace aff3ct::tools;
-
 namespace aff3ct
 {
 namespace module
