@@ -61,17 +61,17 @@ void CRC_polynomial_inter<B>
 	const auto crc_size = this->get_size();
 	for (auto i = 0; i < loop_size; i += n_frames)
 	{
-		auto r_buff_crc = mipp::load <B>(&this->buff_crc[i]);
+		auto r_buff_crc = mipp::loadu<B>(&this->buff_crc[i]);
 		auto r_mask     = mipp::cvt_reg<mipp::N<B>()>(mipp::cmpeq<B>(r_buff_crc, r_zero));
 
 		for (auto j = 0; j <= crc_size; j++)
 		{
-			r_buff_crc = mipp::load <B>(&this->buff_crc[i + n_frames * j]);
+			r_buff_crc = mipp::loadu<B>(&this->buff_crc[i + n_frames * j]);
 			auto r_sav = mipp::andb <B>(r_mask, r_buff_crc);
 			r_buff_crc = mipp::xorb <B>(r_buff_crc, mipp::set1<B>(this->polynomial[j]));
 			r_buff_crc = mipp::andnb<B>(r_mask, r_buff_crc);
 			r_buff_crc = mipp::orb  <B>(r_sav, r_buff_crc);
-			mipp::store<B>(&this->buff_crc[i + n_frames * j], r_buff_crc);
+			mipp::storeu<B>(&this->buff_crc[i + n_frames * j], r_buff_crc);
 		}
 	}
 

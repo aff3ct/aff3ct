@@ -30,6 +30,12 @@ private:
 public:
 	static constexpr int get_n_frames() { return mipp::nElReg<R>(); }
 
+	template <typename T>
+	static bool isAligned(const T *ptr)
+	{
+		return mipp::isAligned(ptr);
+	}
+
 	// -------------------------------------------------------------------------------------------------------------- f
 
 	template <int N_ELMTS = 0>

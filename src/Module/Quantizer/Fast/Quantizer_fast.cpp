@@ -153,6 +153,12 @@ template<>
 void Quantizer_fast<float,short>
 ::process(const float *Y_N1, short *Y_N2)
 {
+	if (!mipp::isAligned(Y_N1))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
+
+	if (!mipp::isAligned(Y_N2))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N2' is misaligned memory.");
+
 	auto size = (unsigned)(this->N * this->n_frames);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<short>()) * mipp::nElmtsPerRegister<short>();
 	vectorized_size = (vectorized_size / 2) * 2;
@@ -185,6 +191,12 @@ template<>
 void Quantizer_fast<float,signed char>
 ::process(const float *Y_N1, signed char *Y_N2)
 {
+	if (!mipp::isAligned(Y_N1))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
+
+	if (!mipp::isAligned(Y_N2))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N2' is misaligned memory.");
+
 	auto size = (unsigned)(this->N * this->n_frames);
 	auto vectorized_size = (size / mipp::nElmtsPerRegister<signed char>()) * mipp::nElmtsPerRegister<signed char>();
 	vectorized_size = (vectorized_size / 4) * 4;

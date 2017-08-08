@@ -32,6 +32,12 @@ class API_polar_dynamic_intra : public API_polar
 public:
 	static constexpr int get_n_frames() { return 1; }
 
+	template <typename T>
+	static bool isAligned(const T *ptr)
+	{
+		return mipp::isAligned(ptr);
+	}
+
 	// -------------------------------------------------------------------------------------------------------------- f
 	
 	template <int N_ELMTS = 0>

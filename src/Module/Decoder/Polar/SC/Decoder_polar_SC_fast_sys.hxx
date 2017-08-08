@@ -261,6 +261,12 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	if (!API_polar::isAligned(Y_N))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
+
+	if (!API_polar::isAligned(V_K))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_K' is misaligned memory.");
+
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;
@@ -282,6 +288,12 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_decode_siho_coded(const R *Y_N, B *V_N, const int frame_id)
 {
+	if (!API_polar::isAligned(Y_N))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
+
+	if (!API_polar::isAligned(V_N))
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'V_N' is misaligned memory.");
+
 	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 	auto d_load = std::chrono::steady_clock::now() - t_load;

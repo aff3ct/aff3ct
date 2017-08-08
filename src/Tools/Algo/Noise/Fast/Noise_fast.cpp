@@ -79,6 +79,9 @@ template <typename R>
 void Noise_fast<R>
 ::generate(R *noise, const unsigned length, const R sigma)
 {
+	if (!mipp::isAligned(noise))
+		throw runtime_error(__FILE__, __LINE__, __func__, "'noise' is misaligned memory.");
+
 	const auto twopi = (R)(2.0 * 3.14159265358979323846);
 
 	// SIMD version of the Box Muller method in the polar form
