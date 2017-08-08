@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <vector>
 #include <cstdint>
 #include <limits>
 
