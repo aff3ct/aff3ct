@@ -8,7 +8,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename T, class AT = std::allocator<T>>
+template <typename T, class AT>
 inline void rgemm(const int M, const int N, const int K,
                   const std::vector<T,AT> &A,
                   const std::vector<T,AT> &tB,
@@ -58,7 +58,7 @@ inline void rgemm(const int M, const int N, const int K,
 		}
 }
 
-template <typename T, class AT = std::allocator<T>>
+template <typename T, class AT>
 inline void cgemm(const int M, const int N, const int K, 
                   const std::vector<T,AT> &A,
                   const std::vector<T,AT> &tB,
@@ -121,7 +121,7 @@ inline void cgemm(const int M, const int N, const int K,
 	}
 }
 
-template <typename T, class AT = std::allocator<T>>
+template <typename T, class AT>
 inline void cgemm_r(const int M, const int N, const int K, 
                     const std::vector<T,AT> &A,
                     const std::vector<T,AT> &tB,
@@ -179,7 +179,7 @@ inline void cgemm_r(const int M, const int N, const int K,
 	}
 }
 
-template <typename T, class AT = std::allocator<T>>
+template <typename T, class AT>
 inline void real_transpose(const int M, const int N,
                            const std::vector<T,AT> &A,
                                  std::vector<T,AT> &B)
@@ -213,7 +213,7 @@ inline void real_transpose(const int M, const int N,
 			B[j*M+i] =  A[i*N+j];
 }
 
-template <typename T, class AT = std::allocator<T>>
+template <typename T, class AT>
 inline void complex_transpose(const int M, const int N,
                               const std::vector<T,AT> &A,
                                     std::vector<T,AT> &B)
