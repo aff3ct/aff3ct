@@ -53,6 +53,15 @@ public:
 			message << "'N' has to be greater than 0 ('N' = " << N << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p = this->create_process("process");
+		this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
+		this->template create_socket_out<Q>(p, "Y_N2", this->N * this->n_frames);
+		this->create_codelet(p, [&]()
+		{
+			this->process(static_cast<R*>(p["Y_N1"].get_dataptr()),
+			              static_cast<Q*>(p["Y_N2"].get_dataptr()));
+		});
 	}
 
 	/*!

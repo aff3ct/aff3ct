@@ -20,22 +20,6 @@ protected:
 
 	std::mutex mutex_debug;
 
-	// data vector
-	std::vector<mipp::vector<B>> U_K1; // information bit vector
-	std::vector<mipp::vector<B>> U_K2; // information bit vector + CRC bits
-	std::vector<mipp::vector<B>> X_N1; // encoded codeword
-	std::vector<mipp::vector<B>> X_N2; // encoded and punctured codeword
-	std::vector<mipp::vector<R>> X_N3; // modulate codeword
-	std::vector<mipp::vector<R>> H_N;  // code gain for Rayleigh channels
-	std::vector<mipp::vector<R>> Y_N1; // noisy codeword (after the channel noise)
-	std::vector<mipp::vector<R>> Y_N2; // noisy codeword (after the filtering)
-	std::vector<mipp::vector<R>> Y_N3; // noisy codeword (after quantization)
-	std::vector<mipp::vector<Q>> Y_N4; // noisy codeword (after the demodulation)
-	std::vector<mipp::vector<Q>> Y_N5; // noisy and depunctured codeword
-	std::vector<mipp::vector<B>> V_N1; // decoded bits (full codeword)
-	std::vector<mipp::vector<B>> V_K1; // decoded bits + CRC bits
-	std::vector<mipp::vector<B>> V_K2; // decoded bits
-
 public:
 	BFER_std_threads(const factory::BFER_std::parameters &params, tools::Codec<B,Q> &codec);
 	virtual ~BFER_std_threads();

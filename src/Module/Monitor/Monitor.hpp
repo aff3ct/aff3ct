@@ -68,6 +68,15 @@ public:
 		// Install a signal handler
 		std::signal(SIGINT, Monitor_i<B>::signal_interrupt_handler);
 #endif
+
+		auto &p = this->create_process("check_errors");
+		this->template create_socket_in<B>(p, "U", this->size * this->n_frames);
+		this->template create_socket_in<B>(p, "V", this->size * this->n_frames);
+		this->create_codelet(p, [&]()
+		{
+			this->check_errors(static_cast<B*>(p["U"].get_dataptr()),
+			                   static_cast<B*>(p["V"].get_dataptr()));
+		});
 	}
 
 	/*!

@@ -34,6 +34,7 @@ class CRC_i : public Module
 {
 protected:
 	const int K; /*!< Number of information bits (the CRC bits are not included in K) */
+	const int size;
 
 public:
 	/*!
@@ -43,8 +44,8 @@ public:
 	 * \param n_frames: number of frames to process in the CRC.
 	 * \param name:     CRC's name.
 	 */
-	CRC_i(const int K, const int n_frames = 1, const std::string name = "CRC_i")
-	: Module(n_frames, name), K(K)
+	CRC_i(const int K, const int size, const int n_frames = 1, const std::string name = "CRC_i")
+	: Module(n_frames, name), K(K), size(size)
 	{
 		if (K <= 0)
 		{
@@ -52,6 +53,24 @@ public:
 			message << "'K' has to be greater than 0 ('K' = " << K << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_process("build");
+		this->template create_socket_in <B>(p1, "U_K1",  this->K               * this->n_frames);
+		this->template create_socket_out<B>(p1, "U_K2", (this->K + this->size) * this->n_frames);
+		this->create_codelet(p1, [&]()
+		{
+			this->build(static_cast<B*>(p1["U_K1"].get_dataptr()),
+			            static_cast<B*>(p1["U_K2"].get_dataptr()));
+		});
+
+		auto &p2 = this->create_process("extract");
+		this->template create_socket_in <B>(p2, "V_K1", (this->K + this->size) * this->n_frames);
+		this->template create_socket_out<B>(p2, "V_K2",  this->K               * this->n_frames);
+		this->create_codelet(p2, [&]()
+		{
+			this->extract(static_cast<B*>(p2["V_K1"].get_dataptr()),
+			              static_cast<B*>(p2["V_K2"].get_dataptr()));
+		});
 	}
 
 	/*!
@@ -71,7 +90,10 @@ public:
 	 *
 	 * \return the size of the CRC.
 	 */
-	virtual int get_size() const = 0;
+	virtual int get_size()
+	{
+		return size;
+	}
 
 	/*!
 	 * \brief Computes and adds the CRC in the vector of information bits (the CRC bits are often put at the end of the

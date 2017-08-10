@@ -101,6 +101,24 @@ public:
 			message << "'K' has to be smaller or equal to 'N' ('K' = " << K << ", 'N' = " << N << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_process("decode_siho");
+		this->template create_socket_in <R>(p1, "Y_N", this->N * this->n_frames);
+		this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
+		this->create_codelet(p1, [&]()
+		{
+			this->decode_siho(static_cast<R*>(p1["Y_N"].get_dataptr()),
+			                  static_cast<B*>(p1["V_K"].get_dataptr()));
+		});
+
+		auto &p2 = this->create_process("decode_siho_coded");
+		this->template create_socket_in <R>(p2, "Y_N", this->N * this->n_frames);
+		this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
+		this->create_codelet(p2, [&]()
+		{
+			this->decode_siho_coded(static_cast<R*>(p2["Y_N"].get_dataptr()),
+			                        static_cast<B*>(p2["V_N"].get_dataptr()));
+		});
 	}
 
 	/*!

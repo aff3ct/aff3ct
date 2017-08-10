@@ -83,6 +83,8 @@ public:
 			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		this->init_processes();
 	}
 
 	/*!
@@ -117,6 +119,8 @@ public:
 			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		this->init_processes();
 	}
 
 	/*!
@@ -142,6 +146,73 @@ public:
 			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		this->init_processes();
+	}
+
+	void init_processes()
+	{
+		auto &p1 = this->create_process("modulate");
+		this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
+		this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
+		this->create_codelet(p1, [&]()
+		{
+			this->modulate(static_cast<B*>(p1["X_N1"].get_dataptr()),
+			               static_cast<R*>(p1["X_N2"].get_dataptr()));
+		});
+
+		auto &p2 = this->create_process("filter");
+		this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
+		this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
+		this->create_codelet(p2, [&]()
+		{
+			this->filter(static_cast<R*>(p2["Y_N1"].get_dataptr()),
+			             static_cast<R*>(p2["Y_N2"].get_dataptr()));
+		});
+
+		auto &p3 = this->create_process("demodulate");
+		this->template create_socket_in <Q>(p3, "Y_N1", this->N_mod * this->n_frames);
+		this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
+		this->create_codelet(p3, [&]()
+		{
+			this->demodulate(static_cast<Q*>(p3["Y_N1"].get_dataptr()),
+			                 static_cast<Q*>(p3["Y_N2"].get_dataptr()));
+		});
+
+		auto &p4 = this->create_process("tdemodulate");
+		this->template create_socket_in <Q>(p4, "Y_N1", this->N_mod * this->n_frames);
+		this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
+		this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
+		this->create_codelet(p4, [&]()
+		{
+			this->demodulate(static_cast<Q*>(p4["Y_N1"].get_dataptr()),
+			                 static_cast<Q*>(p4["Y_N2"].get_dataptr()),
+			                 static_cast<Q*>(p4["Y_N3"].get_dataptr()));
+		});
+
+		auto &p5 = this->create_process("demodulate_with_gains");
+		this->template create_socket_in <Q>(p5, "Y_N1", this->N_mod * this->n_frames);
+		this->template create_socket_in <R>(p5, "H_N",  this->N_mod * this->n_frames);
+		this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
+		this->create_codelet(p5, [&]()
+		{
+			this->demodulate_with_gains(static_cast<Q*>(p5["Y_N1"].get_dataptr()),
+			                            static_cast<R*>(p5["H_N" ].get_dataptr()),
+			                            static_cast<Q*>(p5["Y_N2"].get_dataptr()));
+		});
+
+		auto &p6 = this->create_process("tdemodulate_with_gains");
+		this->template create_socket_in <Q>(p6, "Y_N1", this->N_mod * this->n_frames);
+		this->template create_socket_in <R>(p6, "H_N",  this->N_mod * this->n_frames);
+		this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
+		this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
+		this->create_codelet(p6, [&]()
+		{
+			this->demodulate_with_gains(static_cast<Q*>(p6["Y_N1"].get_dataptr()),
+			                            static_cast<R*>(p6["H_N" ].get_dataptr()),
+			                            static_cast<Q*>(p6["Y_N2"].get_dataptr()),
+			                            static_cast<Q*>(p6["Y_N3"].get_dataptr()));
+		});
 	}
 
 	/*!

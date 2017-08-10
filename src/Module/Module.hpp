@@ -11,7 +11,15 @@
 #include <string>
 #include <sstream>
 
+#include <typeinfo>
+#include <typeindex>
+#include <unordered_map>
+#include <map>
+#include <functional>
+
 #include "Tools/Exception/exception.hpp"
+
+#include "Process.hpp"
 
 namespace aff3ct
 {
@@ -27,6 +35,8 @@ class Module
 protected:
 	int         n_frames; /*!< Number of frames to process in this Module */
 	std::string name;     /*!< Name of the Module. */
+
+	std::map<std::string, Process*> processes;
 
 public:
 	/*!
@@ -48,7 +58,10 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Module() {}
+	virtual ~Module()
+	{
+		for (auto p : processes) delete p.second;
+	}
 
 	/*!
 	 * \brief Get the number of frames.
@@ -68,6 +81,44 @@ public:
 	void rename(const std::string name)
 	{
 		this->name = name;
+	}
+
+	Process& operator[](const std::string name)
+	{
+		if (processes.find(name) != processes.end())
+		{
+			return *processes[name];
+		}
+		else
+		{
+			std::stringstream message;
+			message << "'name' does not exist ('name' = " << name << ", 'module.name' = " << this->name << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
+protected:
+	Process& create_process(const std::string name, const bool autostart = true)
+	{
+		processes[name] = new Process(name, autostart);
+		return *processes[name];
+	}
+
+	template <typename T>
+	void create_socket_in(Process& process, const std::string name, const size_t n_elmts)
+	{
+		process.template create_socket_in<T>(name, n_elmts);
+	}
+
+	template <typename T>
+	void create_socket_out(Process& process, const std::string name, const size_t n_elmts)
+	{
+		process.template create_socket_out<T>(name, n_elmts);
+	}
+
+	void create_codelet(Process& process, std::function<void(void)> codelet)
+	{
+		process.create_codelet(codelet);
 	}
 };
 }

@@ -63,6 +63,26 @@ public:
 			message << "'sigma' has to be greater than 0 ('sigma' = " << sigma << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_process("add_noise");
+		this->template create_socket_in <R>(p1, "X_N", this->N * this->n_frames);
+		this->template create_socket_out<R>(p1, "Y_N", this->N * this->n_frames);
+		this->create_codelet(p1, [&]()
+		{
+			this->add_noise(static_cast<R*>(p1["X_N"].get_dataptr()),
+			                static_cast<R*>(p1["Y_N"].get_dataptr()));
+		});
+
+		auto &p2 = this->create_process("add_noise_with_gains");
+		this->template create_socket_in <R>(p2, "X_N", this->N * this->n_frames);
+		this->template create_socket_out<R>(p2, "Y_N", this->N * this->n_frames);
+		this->template create_socket_out<R>(p2, "H_N", this->N * this->n_frames);
+		this->create_codelet(p2, [&]()
+		{
+			this->add_noise(static_cast<R*>(p2["X_N"].get_dataptr()),
+			                static_cast<R*>(p2["Y_N"].get_dataptr()),
+			                static_cast<R*>(p2["H_N"].get_dataptr()));
+		});
 	}
 
 	/*!

@@ -14,10 +14,10 @@ CRC_polynomial_fast<B>
 ::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
 : CRC_polynomial<B>(K, poly_key, size, n_frames, name), lut_crc32(256), polynomial_packed_rev(0)
 {
-	if (this->get_size() > 32)
+	if (this->size > 32)
 	{
 		std::stringstream message;
-		message << "'get_size()' has to be equal or smaller than 32 ('get_size()' = " << this->get_size() << ").";
+		message << "'size' has to be equal or smaller than 32 ('size' = " << this->size << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -27,7 +27,7 @@ CRC_polynomial_fast<B>
 		polynomial_packed_rev <<= 1;
 		polynomial_packed_rev |= (this->polynomial_packed >> i) & 1;
 	}
-	polynomial_packed_rev >>= (sizeof(this->polynomial_packed) * 8) - (this->get_size());
+	polynomial_packed_rev >>= (sizeof(this->polynomial_packed) * 8) - (this->size);
 
 	// precompute a lookup table pour the v3 implem. of the CRC
 	for (auto i = 0; i < 256; i++)
@@ -53,7 +53,7 @@ void CRC_polynomial_fast<B>
 	const auto crc  = this->compute_crc_v3((void*)data, this->K);
 
 	std::copy(U_K1, U_K1 + this->K, U_K2);
-	for (auto i = 0; i < this->get_size(); i++)
+	for (auto i = 0; i < this->size; i++)
 		U_K2[this->K +i] = (crc >> i) & 1;
 }
 
@@ -61,7 +61,7 @@ template <typename B>
 bool CRC_polynomial_fast<B>
 ::_check(const B *V_K, const int frame_id)
 {
-	tools::Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K + this->get_size());
+	tools::Bit_packer<B>::pack(V_K, this->buff_crc.data(), this->K + this->size);
 	return this->_check_packed(this->buff_crc.data(), frame_id);
 }
 
@@ -73,7 +73,7 @@ bool CRC_polynomial_fast<B>
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
 #endif
 
-	const auto crc_size = this->get_size();
+	const auto crc_size = this->size;
 	const auto rest     = this->K % 8;
 
 	unsigned char* bytes = (unsigned char*)V_K;

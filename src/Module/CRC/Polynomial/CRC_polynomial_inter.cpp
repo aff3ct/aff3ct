@@ -13,7 +13,7 @@ CRC_polynomial_inter<B>
 ::CRC_polynomial_inter(const int K, std::string poly_key, const int size, const int n_frames, const std::string name)
 : CRC_polynomial<B>(K, poly_key, size, n_frames, name)
 {
-	this->buff_crc.resize((this->K + this->get_size()) * mipp::nElReg<B>());
+	this->buff_crc.resize((this->K + this->size) * mipp::nElReg<B>());
 }
 
 template <typename B>
@@ -38,7 +38,7 @@ bool CRC_polynomial_inter<B>
 
 	auto i = 0;
 	const auto off = this->K * real_n_frames;
-	const auto total_crc_size = real_n_frames * this->get_size();
+	const auto total_crc_size = real_n_frames * this->size;
 	while ((i < total_crc_size) && (this->buff_crc[off +i] == V_K[off +i]))
 		i++;
 
@@ -55,10 +55,10 @@ void CRC_polynomial_inter<B>
                   const int n_frames)
 {
 	std::copy(U_in + off_in, U_in + off_in + loop_size, this->buff_crc.begin());
-	std::fill(this->buff_crc.end() - (n_frames * this->get_size()), this->buff_crc.end(), (B)0);
+	std::fill(this->buff_crc.end() - (n_frames * this->size), this->buff_crc.end(), (B)0);
 
 	const auto r_zero = mipp::set0<B>();
-	const auto crc_size = this->get_size();
+	const auto crc_size = this->size;
 	for (auto i = 0; i < loop_size; i += n_frames)
 	{
 		auto r_buff_crc = mipp::loadu<B>(&this->buff_crc[i]);
@@ -75,7 +75,7 @@ void CRC_polynomial_inter<B>
 		}
 	}
 
-	std::copy(this->buff_crc.end() - n_frames * this->get_size(), this->buff_crc.end(), U_out + off_out);
+	std::copy(this->buff_crc.end() - n_frames * this->size, this->buff_crc.end(), U_out + off_out);
 }
 
 // ==================================================================================== explicit template instantiation 

@@ -86,6 +86,24 @@ public:
 			message << "'N' has to be smaller or equal to 'N_code' ('N' = " << N << ", 'N_code' = " << N_code << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p1 = this->create_process("puncture");
+		this->template create_socket_in <B>(p1, "X_N1", this->N_code * this->n_frames);
+		this->template create_socket_out<B>(p1, "X_N2", this->N      * this->n_frames);
+		this->create_codelet(p1, [&]()
+		{
+			this->puncture(static_cast<B*>(p1["X_N1"].get_dataptr()),
+			               static_cast<B*>(p1["X_N2"].get_dataptr()));
+		});
+
+		auto &p2 = this->create_process("depuncture");
+		this->template create_socket_in <Q>(p2, "Y_N1", this->N      * this->n_frames);
+		this->template create_socket_out<Q>(p2, "Y_N2", this->N_code * this->n_frames);
+		this->create_codelet(p2, [&]()
+		{
+			this->depuncture(static_cast<Q*>(p2["Y_N1"].get_dataptr()),
+			                 static_cast<Q*>(p2["Y_N2"].get_dataptr()));
+		});
 	}
 
 	/*!

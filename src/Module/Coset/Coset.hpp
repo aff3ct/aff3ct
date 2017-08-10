@@ -53,6 +53,17 @@ public:
 			message << "'size' has to be greater than 0. ('size' = " << size << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
+
+		auto &p = this->create_process("apply");
+		this->template create_socket_in <B>(p, "ref",      this->size * this->n_frames);
+		this->template create_socket_in <D>(p, "in_data",  this->size * this->n_frames);
+		this->template create_socket_out<D>(p, "out_data", this->size * this->n_frames);
+		this->create_codelet(p, [&]()
+		{
+			this->apply(static_cast<B*>(p["ref"     ].get_dataptr()),
+			            static_cast<D*>(p["in_data" ].get_dataptr()),
+			            static_cast<D*>(p["out_data"].get_dataptr()));
+		});
 	}
 
 	/*!
