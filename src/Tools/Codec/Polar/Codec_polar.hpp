@@ -41,14 +41,14 @@ public:
 	            const int n_threads);
 	virtual ~Codec_polar();
 
-	void                       launch_precompute(                                                                );
-	void                       snr_precompute   (const float sigma                                               );
-	module::Puncturer   <B,Q>* build_puncturer  (const int tid = 0                                               );
-	module::Encoder     <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder_SISO<  Q>* build_siso       (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                      module::CRC        <B  >* crc = nullptr);
-	module::Decoder_SIHO<B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                      module::CRC        <B  >* crc = nullptr);
+	void                       launch_precompute(                                                              );
+	void                       snr_precompute   (const float sigma                                             );
+	module::Puncturer   <B,Q>* build_puncturer  (const int tid = 0                                             );
+	module::Encoder     <B  >* build_encoder    (const int tid = 0, const module::Interleaver<B>* itl = nullptr);
+	module::Decoder_SISO<  Q>* build_siso       (const int tid = 0, const module::Interleaver<Q>* itl = nullptr,
+	                                                                      module::CRC        <B>* crc = nullptr);
+	module::Decoder_SIHO<B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<Q>* itl = nullptr,
+	                                                                      module::CRC        <B>* crc = nullptr);
 
 	void extract_sys_par(const mipp::vector<Q> &Y_N, mipp::vector<Q> &sys, mipp::vector<Q> &par);
 };

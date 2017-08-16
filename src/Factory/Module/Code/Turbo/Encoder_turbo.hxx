@@ -11,10 +11,10 @@ namespace factory
 {
 template <typename B, class E1, class E2>
 module::Encoder<B>* Encoder_turbo
-::build(const parameters<E1,E2>        &params,
-        const module::Interleaver<int> &itl,
-              module::Encoder_sys<B>   *enc_n,
-              module::Encoder_sys<B>   *enc_i)
+::build(const parameters<E1,E2>      &params,
+        const module::Interleaver<B> &itl,
+              module::Encoder_sys<B> *enc_n,
+              module::Encoder_sys<B> *enc_i)
 {
 	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
 
@@ -112,15 +112,15 @@ void Encoder_turbo
 	params.N_cw        = params.sub1.N_cw + params.sub2.N_cw - params.K;
 	params.R           = (float)params.K / (float)params.N_cw;
 
-	params.itl.size     = params.K;
-	params.itl.n_frames = params.n_frames;
+	params.itl.core.size     = params.K;
+	params.itl.core.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
 
 	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
-		params.itl.type = "LTE";
+		params.itl.core.type = "LTE";
 
 	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
-		params.itl.type = "CCSDS";
+		params.itl.core.type = "CCSDS";
 }
 
 template <class E1, class E2>

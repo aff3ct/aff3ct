@@ -83,8 +83,8 @@ void BFER_std_threads<B,R,Q>
 
 		this->dumper[tid]->register_data(this->channel[tid]->get_noise(), "chn", true, {});
 
-		if (this->interleaver[tid] != nullptr && this->interleaver[tid]->is_uniform())
-			this->dumper[tid]->register_data(this->interleaver[tid]->get_lut(), "itl", false, {});
+		if (this->interleaver_core[tid] != nullptr && this->interleaver_core[tid]->is_uniform())
+			this->dumper[tid]->register_data(this->interleaver_core[tid]->get_lut(), "itl", false, {});
 	}
 }
 

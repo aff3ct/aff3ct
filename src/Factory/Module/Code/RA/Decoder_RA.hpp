@@ -28,7 +28,7 @@ struct Decoder_RA : public Decoder
 	};
 
 	template <typename B = int, typename R = float>
-	static module::Decoder_SIHO<B,R>* build(const parameters &params, const module::Interleaver<int> &itl);
+	static module::Decoder_SIHO<B,R>* build(const parameters &params, const module::Interleaver<R> &itl);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

@@ -82,7 +82,7 @@ protected:
 
 private:
 	void build_communication_chain(const int tid = 0);
-	void display_stats(std::ostream &stream = std::clog);
+	void display_stats(std::ostream &stream = std::cout);
 
 	static void start_thread_terminal        (BFER<B,R,Q> *simu               );
 	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);

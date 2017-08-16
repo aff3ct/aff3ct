@@ -29,28 +29,28 @@ Codec_RSC_DB<B,Q>
 
 template <typename B, typename Q>
 module::Encoder_RSC_DB<B>* Codec_RSC_DB<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const module::Interleaver<B>* itl)
 {
 	return factory::Encoder_RSC_DB::build<B>(enc_par);
 }
 
 template <typename B, typename Q>
 module::Decoder_SISO_SIHO<B,Q>* Codec_RSC_DB<B,Q>
-::build_decoder_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder_siso(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_RSC_DB::build<B,Q>(dec_par, trellis);
 }
 
 template <typename B, typename Q>
 module::Decoder_SISO<Q>* Codec_RSC_DB<B,Q>
-::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_siso(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Codec_RSC_DB<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	return this->build_decoder_siso(tid, itl, crc);
 }

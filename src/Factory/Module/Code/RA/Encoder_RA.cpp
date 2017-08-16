@@ -12,7 +12,7 @@ const std::string aff3ct::factory::Encoder_RA::prefix = "enc";
 
 template <typename B>
 module::Encoder<B>* Encoder_RA
-::build(const parameters& params, const module::Interleaver<int> &itl)
+::build(const parameters& params, const module::Interleaver<B> &itl)
 {
 	if (params.type == "RA") return new module::Encoder_RA<B>(params.K, params.N_cw, itl, params.n_frames);
 
@@ -37,8 +37,8 @@ void Encoder_RA
 
 	Encoder::store_args(vals, params, p);
 
-	params.itl.size     = params.N_cw;
-	params.itl.n_frames = params.n_frames;
+	params.itl.core.size     = params.N_cw;
+	params.itl.core.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
 }
 
@@ -52,11 +52,11 @@ void Encoder_RA
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef MULTI_PREC
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<int>&);
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<int>&);
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<int>&);
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<int>&);
+template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_8 >&);
+template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_16>&);
+template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_32>&);
+template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B_64>&);
 #else
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_RA::build<B>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<int>&);
+template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder_RA::build<B>(const aff3ct::factory::Encoder_RA::parameters&, const aff3ct::module::Interleaver<B>&);
 #endif
 // ==================================================================================== explicit template instantiation

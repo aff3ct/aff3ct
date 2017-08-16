@@ -16,7 +16,7 @@ template <typename B = int>
 class Encoder_turbo_DB : public Encoder<B>
 {
 protected:
-	const Interleaver<int> &pi; // the interleaver
+	const Interleaver<B> &pi; // the interleaver
 
 	Encoder_RSC_DB<B> &enco_n;  // encoder natural order
 	Encoder_RSC_DB<B> &enco_i;  // encoder interleaved order
@@ -26,7 +26,7 @@ protected:
 	std::vector<B> par_i;       // internal buffer for the encoded    bits in the interleaved domain
 
 public:
-	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<int> &pi,
+	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
 	                 Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames = 1,
 	                 const std::string name = "Encoder_turbo_DB");
 	virtual ~Encoder_turbo_DB() {}

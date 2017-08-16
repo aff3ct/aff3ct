@@ -44,13 +44,13 @@ public:
 	               const int n_threads);
 	virtual ~Codec_turbo_DB();
 
-	module::Interleaver        <int>* build_interleaver(const int tid = 0, const int seed = 0                           );
-	module::Puncturer          <B,Q>* build_puncturer  (const int tid = 0                                               );
-	module::Encoder_RSC_DB     <B  >* build_sub_encoder(const int tid = 0                                               );
-	module::Encoder            <B  >* build_encoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder_RSC_DB_BCJR<B,Q>* build_sub_siso   (const int tid = 0                                               );
-	module::Decoder_SIHO       <B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                             module::CRC        <B  >* crc = nullptr);
+	tools ::Interleaver_core   <   >* build_interleaver(const int tid = 0, const int seed = 0                         );
+	module::Puncturer          <B,Q>* build_puncturer  (const int tid = 0                                             );
+	module::Encoder_RSC_DB     <B  >* build_sub_encoder(const int tid = 0                                             );
+	module::Encoder            <B  >* build_encoder    (const int tid = 0, const module::Interleaver<B>* itl = nullptr);
+	module::Decoder_RSC_DB_BCJR<B,Q>* build_sub_siso   (const int tid = 0                                             );
+	module::Decoder_SIHO       <B,Q>* build_decoder    (const int tid = 0, const module::Interleaver<Q>* itl = nullptr,
+	                                                                             module::CRC        <B>* crc = nullptr);
 
 private:
 	void clear_post_processing(const int tid = 0);

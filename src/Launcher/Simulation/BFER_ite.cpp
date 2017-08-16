@@ -90,8 +90,8 @@ void BFER_ite<B,R,Q>
 	params->crc->K = K - params->crc->size;
 	params->src->K = params->src->K == 0 ? params->crc->K : params->src->K;
 
-	params->itl->size = N;
-	params->itl->seed = params->local_seed;
+	params->itl->core.size = N;
+	params->itl->core.seed = params->local_seed;
 
 	factory::Interleaver::store_args(this->ar.get_args(), *params->itl);
 
@@ -133,15 +133,15 @@ void BFER_ite<B,R,Q>
 
 	params->enc->seed = params->local_seed;
 
-	params->crc->n_frames = params->src->n_frames;
-	params->enc->n_frames = params->src->n_frames;
-	params->itl->n_frames = params->src->n_frames;
-	params->pct->n_frames = params->src->n_frames;
-	params->mdm->n_frames = params->src->n_frames;
-	params->chn->n_frames = params->src->n_frames;
-	params->qnt->n_frames = params->src->n_frames;
-	params->dec->n_frames = params->src->n_frames;
-	params->mnt->n_frames = params->src->n_frames;
+	params->crc->     n_frames = params->src->n_frames;
+	params->enc->     n_frames = params->src->n_frames;
+	params->itl->core.n_frames = params->src->n_frames;
+	params->pct->     n_frames = params->src->n_frames;
+	params->mdm->     n_frames = params->src->n_frames;
+	params->chn->     n_frames = params->src->n_frames;
+	params->qnt->     n_frames = params->src->n_frames;
+	params->dec->     n_frames = params->src->n_frames;
+	params->mnt->     n_frames = params->src->n_frames;
 }
 
 template <typename B, typename R, typename Q>

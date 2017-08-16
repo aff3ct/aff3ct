@@ -1,5 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Factory/Module/Source.hpp"
 #include "Factory/Module/CRC.hpp"
 #include "Factory/Module/Interleaver.hpp"
@@ -21,17 +22,19 @@ BFER_std<B,R,Q>
 : BFER<B,R,Q>(params, codec),
   params(params),
 
-  source     (params.n_threads, nullptr),
-  crc        (params.n_threads, nullptr),
-  encoder    (params.n_threads, nullptr),
-  puncturer  (params.n_threads, nullptr),
-  modem      (params.n_threads, nullptr),
-  channel    (params.n_threads, nullptr),
-  quantizer  (params.n_threads, nullptr),
-  coset_real (params.n_threads, nullptr),
-  decoder    (params.n_threads, nullptr),
-  coset_bit  (params.n_threads, nullptr),
-  interleaver(params.n_threads, nullptr),
+  source          (params.n_threads, nullptr),
+  crc             (params.n_threads, nullptr),
+  encoder         (params.n_threads, nullptr),
+  puncturer       (params.n_threads, nullptr),
+  modem           (params.n_threads, nullptr),
+  channel         (params.n_threads, nullptr),
+  quantizer       (params.n_threads, nullptr),
+  coset_real      (params.n_threads, nullptr),
+  decoder         (params.n_threads, nullptr),
+  coset_bit       (params.n_threads, nullptr),
+  interleaver_core(params.n_threads, nullptr),
+  interleaver_bit (params.n_threads, nullptr),
+  interleaver_llr (params.n_threads, nullptr),
 
   rd_engine_seed(params.n_threads)
 {
@@ -67,9 +70,16 @@ void BFER_std<B,R,Q>
 	const auto seed_itl = rd_engine_seed[tid]();
 
 	// build the objects
-	source     [tid] = build_source     (tid, seed_src); this->modules["source"     ][tid] = source     [tid];
-	crc        [tid] = build_crc        (tid          ); this->modules["crc"        ][tid] = crc        [tid];
-	interleaver[tid] = build_interleaver(tid, seed_itl); this->modules["interleaver"][tid] = interleaver[tid];
+	source          [tid] = build_source     (tid, seed_src); this->modules["source"][tid] = source[tid];
+	crc             [tid] = build_crc        (tid          ); this->modules["crc"   ][tid] = crc   [tid];
+	interleaver_core[tid] = build_interleaver(tid, seed_itl);
+
+	if (interleaver_core[tid] != nullptr)
+	{
+		interleaver_bit[tid] = factory::Interleaver::build<B>(*interleaver_core[tid]);
+		interleaver_llr[tid] = factory::Interleaver::build<Q>(*interleaver_core[tid]);
+	}
+
 	encoder    [tid] = build_encoder    (tid, seed_enc); this->modules["encoder"    ][tid] = encoder    [tid];
 	puncturer  [tid] = build_puncturer  (tid          ); this->modules["puncturer"  ][tid] = puncturer  [tid];
 	modem      [tid] = build_modem      (tid          ); this->modules["modem"      ][tid] = modem      [tid];
@@ -79,11 +89,12 @@ void BFER_std<B,R,Q>
 	decoder    [tid] = build_decoder    (tid          ); this->modules["decoder"    ][tid] = decoder    [tid];
 	coset_bit  [tid] = build_coset_bit  (tid          ); this->modules["coset_bit"  ][tid] = coset_bit  [tid];
 
-	if (interleaver[tid] != nullptr)
+	if (interleaver_core[tid] != nullptr)
 	{
-		interleaver[tid]->init();
-		if (interleaver[tid]->is_uniform())
-			this->monitor[tid]->add_handler_check(std::bind(&module::Interleaver<int>::refresh, this->interleaver[tid]));
+		interleaver_core[tid]->init();
+		if (interleaver_core[tid]->is_uniform())
+			this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,
+			                                                this->interleaver_core[tid]));
 	}
 }
 
@@ -92,17 +103,19 @@ void BFER_std<B,R,Q>
 ::release_objects()
 {
 	const auto nthr = params.n_threads;
-	for (auto i = 0; i < nthr; i++) if (source     [i] != nullptr) { delete source     [i]; source     [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (puncturer  [i] != nullptr) { delete puncturer  [i]; puncturer  [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (modem      [i] != nullptr) { delete modem      [i]; modem      [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (channel    [i] != nullptr) { delete channel    [i]; channel    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (quantizer  [i] != nullptr) { delete quantizer  [i]; quantizer  [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_real [i] != nullptr) { delete coset_real [i]; coset_real [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (decoder    [i] != nullptr) { delete decoder    [i]; decoder    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_bit  [i] != nullptr) { delete coset_bit  [i]; coset_bit  [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (interleaver[i] != nullptr) { delete interleaver[i]; interleaver[i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (source          [i] != nullptr) { delete source          [i]; source          [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (crc             [i] != nullptr) { delete crc             [i]; crc             [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (encoder         [i] != nullptr) { delete encoder         [i]; encoder         [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (puncturer       [i] != nullptr) { delete puncturer       [i]; puncturer       [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (modem           [i] != nullptr) { delete modem           [i]; modem           [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (channel         [i] != nullptr) { delete channel         [i]; channel         [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (quantizer       [i] != nullptr) { delete quantizer       [i]; quantizer       [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_real      [i] != nullptr) { delete coset_real      [i]; coset_real      [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (decoder         [i] != nullptr) { delete decoder         [i]; decoder         [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_bit       [i] != nullptr) { delete coset_bit       [i]; coset_bit       [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_bit [i] != nullptr) { delete interleaver_bit [i]; interleaver_bit [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_llr [i] != nullptr) { delete interleaver_llr [i]; interleaver_llr [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_core[i] != nullptr) { delete interleaver_core[i]; interleaver_core[i] = nullptr; }
 
 	BFER<B,R,Q>::release_objects();
 }
@@ -129,7 +142,7 @@ module::Encoder<B>* BFER_std<B,R,Q>
 {
 	try
 	{
-		return this->codec.build_encoder(tid, interleaver[tid]);
+		return this->codec.build_encoder(tid, interleaver_bit[tid]);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -154,42 +167,42 @@ module::Puncturer<B,Q>* BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Interleaver<int>* BFER_std<B,R,Q>
+tools::Interleaver_core<>* BFER_std<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
-	module::Interleaver<int>* itl = nullptr;
+	tools::Interleaver_core<>* itl_core = nullptr;
 	try
 	{
-		itl = this->codec.build_interleaver(tid, seed);
+		itl_core = this->codec.build_interleaver(tid, seed);
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		itl = nullptr;
+		itl_core = nullptr;
 	}
 	catch (std::exception const&)
 	{
 		if (this->params.err_track_revert)
 		{
-			delete itl;
+			delete itl_core;
 			factory::Interleaver::parameters params_itl;
-			params_itl.type     = "USER";
-			params_itl.path     = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
-			params_itl.n_frames = this->params.src->n_frames;
-			std::fstream file(params_itl.path);
+			params_itl.core.type     = "USER";
+			params_itl.core.path     = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
+			params_itl.core.n_frames = this->params.src->n_frames;
+			std::fstream file(params_itl.core.path);
 			int size = 0;
 			file >> size;
 			file >> size;
 			file.close();
 
-			params_itl.size = size;
+			params_itl.core.size = size;
 
-			itl = factory::Interleaver::build(params_itl);
+			itl_core = factory::Interleaver_core::build(params_itl.core);
 		}
 		else
 			throw;
 	}
 
-	return itl;
+	return itl_core;
 }
 
 template <typename B, typename R, typename Q>
@@ -239,7 +252,7 @@ template <typename B, typename R, typename Q>
 module::Decoder_SIHO<B,Q>* BFER_std<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);
+	return this->codec.build_decoder(tid, interleaver_llr[tid], crc[tid]);
 }
 
 template <typename B, typename R, typename Q>

@@ -1,5 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Factory/Module/Source.hpp"
 #include "Factory/Module/CRC.hpp"
 #include "Factory/Module/Code/Encoder.hpp"
@@ -22,17 +23,19 @@ BFER_ite<B,R,Q>
 
   codec_siso(codec),
 
-  source     (params.n_threads, nullptr),
-  crc        (params.n_threads, nullptr),
-  encoder    (params.n_threads, nullptr),
-  modem      (params.n_threads, nullptr),
-  channel    (params.n_threads, nullptr),
-  quantizer  (params.n_threads, nullptr),
-  interleaver(params.n_threads, nullptr),
-  coset_real (params.n_threads, nullptr),
-  siso       (params.n_threads, nullptr),
-  decoder    (params.n_threads, nullptr),
-  coset_bit  (params.n_threads, nullptr),
+  source          (params.n_threads, nullptr),
+  crc             (params.n_threads, nullptr),
+  encoder         (params.n_threads, nullptr),
+  modem           (params.n_threads, nullptr),
+  channel         (params.n_threads, nullptr),
+  quantizer       (params.n_threads, nullptr),
+  interleaver_core(params.n_threads, nullptr),
+  interleaver_bit (params.n_threads, nullptr),
+  interleaver_llr (params.n_threads, nullptr),
+  coset_real      (params.n_threads, nullptr),
+  siso            (params.n_threads, nullptr),
+  decoder         (params.n_threads, nullptr),
+  coset_bit       (params.n_threads, nullptr),
 
   rd_engine_seed(params.n_threads)
 {
@@ -56,21 +59,24 @@ void BFER_ite<B,R,Q>
 	const auto seed_itl = rd_engine_seed[tid]();
 
 	// build the objects
-	source     [tid] = build_source     (tid, seed_src);
-	crc        [tid] = build_crc        (tid          );
-	encoder    [tid] = build_encoder    (tid, seed_enc);
-	modem      [tid] = build_modem      (tid          );
-	channel    [tid] = build_channel    (tid, seed_chn);
-	quantizer  [tid] = build_quantizer  (tid          );
-	coset_real [tid] = build_coset_real (tid          );
-	siso       [tid] = build_siso       (tid          );
-	decoder    [tid] = build_decoder    (tid          );
-	coset_bit  [tid] = build_coset_bit  (tid          );
-	interleaver[tid] = build_interleaver(tid, seed_itl);
+	source          [tid] = build_source     (tid, seed_src);
+	crc             [tid] = build_crc        (tid          );
+	encoder         [tid] = build_encoder    (tid, seed_enc);
+	modem           [tid] = build_modem      (tid          );
+	channel         [tid] = build_channel    (tid, seed_chn);
+	quantizer       [tid] = build_quantizer  (tid          );
+	coset_real      [tid] = build_coset_real (tid          );
+	siso            [tid] = build_siso       (tid          );
+	decoder         [tid] = build_decoder    (tid          );
+	coset_bit       [tid] = build_coset_bit  (tid          );
+	interleaver_core[tid] = build_interleaver(tid, seed_itl);
+	interleaver_bit [tid] = factory::Interleaver::build<B>(*interleaver_core[tid]);
+	interleaver_llr [tid] = factory::Interleaver::build<Q>(*interleaver_core[tid]);
 
-	interleaver[tid]->init();
-	if (interleaver[tid]->is_uniform())
-		this->monitor[tid]->add_handler_check(std::bind(&module::Interleaver<int>::refresh, this->interleaver[tid]));
+	interleaver_core[tid]->init();
+	if (interleaver_core[tid]->is_uniform())
+		this->monitor[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,
+		                                                this->interleaver_core[tid]));
 }
 
 template <typename B, typename R, typename Q>
@@ -78,14 +84,16 @@ void BFER_ite<B,R,Q>
 ::release_objects()
 {
 	const auto nthr = params.n_threads;
-	for (auto i = 0; i < nthr; i++) if (source     [i] != nullptr) { delete source     [i]; source     [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (crc        [i] != nullptr) { delete crc        [i]; crc        [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (encoder    [i] != nullptr) { delete encoder    [i]; encoder    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (interleaver[i] != nullptr) { delete interleaver[i]; interleaver[i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (modem      [i] != nullptr) { delete modem      [i]; modem      [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (channel    [i] != nullptr) { delete channel    [i]; channel    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (quantizer  [i] != nullptr) { delete quantizer  [i]; quantizer  [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_real [i] != nullptr) { delete coset_real [i]; coset_real [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (source          [i] != nullptr) { delete source          [i]; source          [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (crc             [i] != nullptr) { delete crc             [i]; crc             [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (encoder         [i] != nullptr) { delete encoder         [i]; encoder         [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_bit [i] != nullptr) { delete interleaver_bit [i]; interleaver_bit [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_llr [i] != nullptr) { delete interleaver_llr [i]; interleaver_llr [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (interleaver_core[i] != nullptr) { delete interleaver_core[i]; interleaver_core[i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (modem           [i] != nullptr) { delete modem           [i]; modem           [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (channel         [i] != nullptr) { delete channel         [i]; channel         [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (quantizer       [i] != nullptr) { delete quantizer       [i]; quantizer       [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_real      [i] != nullptr) { delete coset_real      [i]; coset_real      [i] = nullptr; }
 	for (auto i = 0; i < nthr; i++)
 		if (siso[i] != nullptr)
 		{
@@ -94,8 +102,8 @@ void BFER_ite<B,R,Q>
 				delete siso[i];
 			siso[i] = nullptr;
 		}
-	for (auto i = 0; i < nthr; i++) if (decoder    [i] != nullptr) { delete decoder    [i]; decoder    [i] = nullptr; }
-	for (auto i = 0; i < nthr; i++) if (coset_bit  [i] != nullptr) { delete coset_bit  [i]; coset_bit  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (decoder  [i] != nullptr) { delete decoder  [i]; decoder  [i] = nullptr; }
+	for (auto i = 0; i < nthr; i++) if (coset_bit[i] != nullptr) { delete coset_bit[i]; coset_bit[i] = nullptr; }
 
 	BFER<B,R,Q>::release_objects();
 }
@@ -122,7 +130,7 @@ module::Encoder<B>* BFER_ite<B,R,Q>
 {
 	try
 	{
-		return this->codec.build_encoder(tid, interleaver[tid]);
+		return this->codec.build_encoder(tid, nullptr);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -133,14 +141,14 @@ module::Encoder<B>* BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-module::Interleaver<int>* BFER_ite<B,R,Q>
+tools ::Interleaver_core<>* BFER_ite<B,R,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = *params.itl;
-	itl_cpy.seed = itl_cpy.uniform ? seed : itl_cpy.seed;
+	itl_cpy.core.seed = itl_cpy.core.uniform ? seed : itl_cpy.core.seed;
 	if (params.err_track_revert)
-		params.itl->path = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
-	return factory::Interleaver::build<int>(itl_cpy);
+		params.itl->core.path = this->params.err_track_path + "_" + std::to_string(this->snr_b) + ".itl";
+	return factory::Interleaver_core::build<>(itl_cpy.core);
 }
 
 template <typename B, typename R, typename Q>
@@ -180,7 +188,7 @@ template <typename B, typename R, typename Q>
 module::Decoder_SISO<Q>* BFER_ite<B,R,Q>
 ::build_siso(const int tid)
 {
-	return codec_siso.build_siso(tid, interleaver[tid], crc[tid]);
+	return codec_siso.build_siso(tid, nullptr, crc[tid]);
 }
 
 
@@ -198,7 +206,7 @@ template <typename B, typename R, typename Q>
 module::Decoder_SIHO<B,Q>* BFER_ite<B,R,Q>
 ::build_decoder(const int tid)
 {
-	return this->codec.build_decoder(tid, interleaver[tid], crc[tid]);
+	return this->codec.build_decoder(tid, nullptr, crc[tid]);
 }
 
 template <typename B, typename R, typename Q>

@@ -37,8 +37,8 @@ void BFER_ite::store_args(const arg_val_map &vals, parameters &params, const std
 
 	if(params.err_track_revert)
 	{
-		params.itl->type = "USER";
-		params.itl->path = params.err_track_path + std::string("_$snr.itl");
+		params.itl->core.type = "USER";
+		params.itl->core.path = params.err_track_path + std::string("_$snr.itl");
 	}
 }
 

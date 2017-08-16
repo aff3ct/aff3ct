@@ -11,10 +11,10 @@ namespace factory
 {
 template <typename B, typename Q, class D1, class D2>
 module::Decoder_turbo<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2>        &params,
-        const module::Interleaver<int> &itl,
-              module::Decoder_SISO<Q>  &siso_n,
-              module::Decoder_SISO<Q>  &siso_i)
+::build(const parameters<D1,D2>       &params,
+        const module::Interleaver<Q>  &itl,
+              module::Decoder_SISO<Q> &siso_n,
+              module::Decoder_SISO<Q> &siso_i)
 {
 	if (params.type == "TURBO")
 	{
@@ -122,15 +122,15 @@ void Decoder_turbo
 	params.N_cw        = params.sub1.N_cw + params.sub2.N_cw - params.K;
 	params.R           = (float)params.K / (float)params.N_cw;
 
-	params.itl.size     = params.K;
-	params.itl.n_frames = params.n_frames;
+	params.itl.core.size     = params.K;
+	params.itl.core.n_frames = params.n_frames;
 	Interleaver::store_args(vals, params.itl, "itl");
 
 	if (params.sub1.standard == "LTE" && !exist(vals, {"itl-type"}))
-		params.itl.type = "LTE";
+		params.itl.core.type = "LTE";
 
 	if (params.sub1.standard == "CCSDS" && !exist(vals, {"itl-type"}))
-		params.itl.type = "CCSDS";
+		params.itl.core.type = "CCSDS";
 
 	params.sf.n_ite = params.n_ite;
 	Scaling_factor::store_args(vals, params.sf, p+"-sf");

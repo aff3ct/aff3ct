@@ -19,14 +19,14 @@ Codec_repetition<B,Q>
 
 template <typename B, typename Q>
 module::Encoder<B>* Codec_repetition<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const module::Interleaver<B>* itl)
 {
 	return factory::Encoder_repetition::build<B>(enc_par);
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Codec_repetition<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_repetition::build<B,Q>(dec_par);
 }

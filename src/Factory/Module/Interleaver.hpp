@@ -1,7 +1,12 @@
 #ifndef FACTORY_INTERLEAVER_HPP
 #define FACTORY_INTERLEAVER_HPP
 
+#include <cstdint>
 #include <string>
+
+#include "Tools/Interleaver/Interleaver_core.hpp"
+
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 
 #include "Module/Interleaver/Interleaver.hpp"
 
@@ -18,18 +23,11 @@ struct Interleaver : public Factory
 
 	struct parameters
 	{
-		int         size       = 0;
-
-		std::string type       = "RANDOM";
-		std::string path       = "";
-		int         n_cols     = 4; // number of columns of the columns interleaver
-		int         n_frames   = 1;
-		int         seed       = 0;
-		bool        uniform    = false; // set at true to regenerate the interleaver at each new frame
+		factory::Interleaver_core::parameters core;
 	};
 
-	template <typename T = int>
-	static module::Interleaver<T>* build(const parameters &params);
+	template <typename D = int32_t>
+	static module::Interleaver<D>* build(const tools::Interleaver_core<>& itl_core);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);

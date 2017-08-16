@@ -30,21 +30,21 @@ Codec_uncoded<B,Q>
 
 template <typename B, typename Q>
 module::Encoder<B>* Codec_uncoded<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const module::Interleaver<B>* itl)
 {
 	return factory::Encoder::build<B>(this->enc_params);
 }
 
 template <typename B, typename Q>
 module::Decoder_SISO<Q>* Codec_uncoded<B,Q>
-::build_siso(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_siso(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Codec_uncoded<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	return factory::Decoder_NO::build<B,Q>(this->dec_params);
 }

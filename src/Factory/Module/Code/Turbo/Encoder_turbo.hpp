@@ -34,10 +34,10 @@ struct Encoder_turbo : public Encoder
 	};
 
 	template <typename B = int, class E1 = Encoder_RSC, class E2 = E1>
-	static module::Encoder<B>* build(const parameters<E1,E2>        &params,
-	                                 const module::Interleaver<int> &itl,
-	                                       module::Encoder_sys<B>   *enc_n,
-	                                       module::Encoder_sys<B>   *enc_i = nullptr);
+	static module::Encoder<B>* build(const parameters<E1,E2>      &params,
+	                                 const module::Interleaver<B> &itl,
+	                                       module::Encoder_sys<B> *enc_n,
+	                                       module::Encoder_sys<B> *enc_i = nullptr);
 
 	template <class E1 = Encoder_RSC, class E2 = E1>
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);

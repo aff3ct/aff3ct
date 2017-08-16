@@ -25,9 +25,9 @@ public:
 	          const factory::Decoder_BCH::parameters &dec_params);
 	virtual ~Codec_BCH();
 
-	module::Encoder     <B  >* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr);
-	module::Decoder_SIHO<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                  module::CRC        <B  >* crc = nullptr);
+	module::Encoder     <B  >* build_encoder(const int tid = 0, const module::Interleaver<B>* itl = nullptr);
+	module::Decoder_SIHO<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<Q>* itl = nullptr,
+	                                                                  module::CRC        <B>* crc = nullptr);
 };
 }
 }

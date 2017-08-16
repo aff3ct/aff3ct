@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Interleaver/Interleaver_core.hpp"
 
 #include "Module/CRC/CRC.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
@@ -59,7 +60,7 @@ public:
 	{
 	}
 
-	virtual module::Interleaver<int>* build_interleaver(const int tid = 0, const int seed = 0)
+	virtual tools::Interleaver_core<>* build_interleaver(const int tid = 0, const int seed = 0)
 	{
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
 	}
@@ -69,13 +70,13 @@ public:
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
 	}
 
-	virtual module::Encoder<B>* build_encoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr)
+	virtual module::Encoder<B>* build_encoder(const int tid = 0, const module::Interleaver<B>* itl = nullptr)
 	{
 		throw cannot_allocate(__FILE__, __LINE__, __func__);
 	}
 
-	virtual module::Decoder_SIHO<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<int>* itl = nullptr,
-	                                                                          module::CRC        <B  >* crc = nullptr) = 0;
+	virtual module::Decoder_SIHO<B,Q>* build_decoder(const int tid = 0, const module::Interleaver<Q>* itl = nullptr,
+	                                                                          module::CRC        <B>* crc = nullptr) = 0;
 };
 }
 }

@@ -21,7 +21,7 @@ protected:
 	const int  n_ite; // number of iterations
 	const bool buffered_encoding;
 
-	const Interleaver<int> &pi;
+	const Interleaver<R> &pi;
 	Decoder_SISO<R> &siso_n;
 	Decoder_SISO<R> &siso_i;
 
@@ -49,7 +49,7 @@ protected:
 	Decoder_turbo(const int& K,
 	              const int& N,
 	              const int& n_ite,
-	              const Interleaver<int> &pi,
+	              const Interleaver<R> &pi,
 	              Decoder_SISO<R> &siso_n,
 	              Decoder_SISO<R> &siso_i,
 	              const bool buffered_encoding = true,

@@ -16,7 +16,7 @@ Decoder_turbo_std<B,R>
 ::Decoder_turbo_std(const int& K,
                     const int& N,
                     const int& n_ite,
-                    const Interleaver<int> &pi,
+                    const Interleaver<R> &pi,
                     Decoder_SISO<R> &siso_n,
                     Decoder_SISO<R> &siso_i,
                     const bool buffered_encoding,

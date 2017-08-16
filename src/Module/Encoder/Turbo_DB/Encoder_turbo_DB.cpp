@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_DB<B>
-::Encoder_turbo_DB(const int& K, const int& N, const Interleaver<int> &pi,
+::Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
                    Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i, const int n_frames,
                    const std::string name)
 : Encoder<B>(K, N, n_frames, name),
@@ -35,11 +35,11 @@ Encoder_turbo_DB<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)pi.get_size() * 2 != K)
+	if ((int)pi.get_core().get_size() * 2 != K)
 	{
 		std::stringstream message;
-		message << "'pi.get_size()' * 2 has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
-		        << ", 'K' = " << K << ").";
+		message << "'pi.get_core().get_size()' * 2 has to be equal to 'K' ('pi.get_core().get_size()' = "
+		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
@@ -57,7 +57,7 @@ void Encoder_turbo_DB<B>
 		std::swap(U_K_cpy[i], U_K_cpy[i+1]);
 	for (auto i = 0; i < this->K; i += 2)
 	{
-		const auto l = pi.get_lut_inv()[i >> 1];
+		const auto l = pi.get_core().get_lut_inv()[i >> 1];
 		U_K_i[i +0] = U_K_cpy[l * 2 +0];
 		U_K_i[i +1] = U_K_cpy[l * 2 +1];
 	}

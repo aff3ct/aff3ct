@@ -41,10 +41,10 @@ struct Decoder_turbo : public Decoder
 	};
 
 	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
-	static module::Decoder_turbo<B,Q>* build(const parameters<D1,D2>        &params,
-	                                         const module::Interleaver<int> &itl,
-	                                               module::Decoder_SISO<Q>  &siso_n,
-	                                               module::Decoder_SISO<Q>  &siso_i);
+	static module::Decoder_turbo<B,Q>* build(const parameters<D1,D2>       &params,
+	                                         const module::Interleaver<Q>  &itl,
+	                                               module::Decoder_SISO<Q> &siso_n,
+	                                               module::Decoder_SISO<Q> &siso_i);
 
 	template <class D1 = Decoder_RSC, class D2 = D1>
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);

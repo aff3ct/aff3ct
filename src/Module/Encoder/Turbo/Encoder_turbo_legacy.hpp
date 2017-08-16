@@ -16,7 +16,7 @@ template <typename B = int>
 class Encoder_turbo_legacy : public Encoder<B>
 {
 protected:
-	const Interleaver<int> &pi; // the interleaver
+	const Interleaver<B> &pi; // the interleaver
 
 	Encoder_sys<B> &sub_enc; // sub encoder
 	std::vector<B>  U_K_i;   // internal buffer for the systematic bits in the interleaved domain
@@ -24,7 +24,7 @@ protected:
 	std::vector<B>  X_N_i;   // internal buffer for the encoded    bits in the interleaved domain
 
 public:
-	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<int> &pi, Encoder_sys<B> &sub_enc,
+	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder_sys<B> &sub_enc,
 	                     const int n_frames = 1, const std::string name = "Encoder_turbo_legacy");
 	virtual ~Encoder_turbo_legacy() {}
 

@@ -75,12 +75,12 @@ void Codec_turbo<B,Q,QD>
 }
 
 template <typename B, typename Q, typename QD>
-module::Interleaver<int>* Codec_turbo<B,Q,QD>
+tools::Interleaver_core<>* Codec_turbo<B,Q,QD>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = dec_par.itl;
-	itl_cpy.seed = dec_par.itl.uniform ? seed : dec_par.itl.seed;
-	return factory::Interleaver::build<int>(itl_cpy);
+	itl_cpy.core.seed = dec_par.itl.core.uniform ? seed : dec_par.itl.core.seed;
+	return factory::Interleaver_core::build(itl_cpy.core);
 }
 
 template <typename B, typename Q, typename QD>
@@ -92,7 +92,7 @@ module::Encoder_RSC_sys<B>* Codec_turbo<B,Q,QD>
 
 template <typename B, typename Q, typename QD>
 module::Encoder<B>* Codec_turbo<B,Q,QD>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const module::Interleaver<B>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
@@ -127,7 +127,7 @@ module::Decoder_SISO<Q>* Codec_turbo<B,Q,QD>
 
 template <typename B, typename Q, typename QD>
 module::Decoder_SIHO<B,Q>* Codec_turbo<B,Q,QD>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__,  "'itl' should not be null.");

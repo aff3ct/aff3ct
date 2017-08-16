@@ -98,10 +98,10 @@ void Turbo<C,B,R,Q,QD>
 
 	C::store_args();
 
-	params_enc->itl.seed     = this->params->global_seed;
-	params_dec->itl.seed     = this->params->global_seed;
-	params_enc->itl.n_frames = this->params->src->n_frames;
-	params_dec->itl.n_frames = this->params->src->n_frames;
+	params_enc->itl.core.seed     = this->params->global_seed;
+	params_dec->itl.core.seed     = this->params->global_seed;
+	params_enc->itl.core.n_frames = this->params->src->n_frames;
+	params_dec->itl.core.n_frames = this->params->src->n_frames;
 
 	params_enc->sub1.n_frames = params_enc->n_frames;
 	params_enc->sub2.n_frames = params_enc->n_frames;
@@ -110,10 +110,10 @@ void Turbo<C,B,R,Q,QD>
 
 	if (this->params->err_track_revert)
 	{
-		params_enc->itl.type = "USER";
-		params_dec->itl.type = "USER";
-		params_enc->itl.path = this->params->err_track_path + std::string("_$snr.itl");
-		params_dec->itl.path = this->params->err_track_path + std::string("_$snr.itl");
+		params_enc->itl.core.type = "USER";
+		params_dec->itl.core.type = "USER";
+		params_enc->itl.core.path = this->params->err_track_path + std::string("_$snr.itl");
+		params_dec->itl.core.path = this->params->err_track_path + std::string("_$snr.itl");
 	}
 }
 

@@ -165,8 +165,8 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename T = int>
-using Interleaver = Interleaver_i<T>;
+template <typename D = int32_t, typename T = uint32_t>
+using Interleaver = Interleaver_i<D,T>;
 }
 }
 #endif

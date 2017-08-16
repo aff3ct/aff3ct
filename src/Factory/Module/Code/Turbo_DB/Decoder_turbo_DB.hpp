@@ -38,7 +38,7 @@ struct Decoder_turbo_DB : public Decoder
 
 	template <typename B = int, typename Q = float>
 	static module::Decoder_turbo_DB<B,Q>* build(const parameters                       &params,
-	                                            const module::Interleaver<int>         &itl,
+	                                            const module::Interleaver<Q>           &itl,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                                  module::Decoder_RSC_DB_BCJR<B,Q> &siso_i);
 

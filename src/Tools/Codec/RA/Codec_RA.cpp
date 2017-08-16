@@ -1,6 +1,6 @@
 #include "Tools/Exception/exception.hpp"
 
-#include "Factory/Module/Interleaver.hpp"
+#include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 
 #include "Codec_RA.hpp"
 
@@ -22,17 +22,17 @@ Codec_RA<B,Q>
 }
 
 template <typename B, typename Q>
-module::Interleaver<int>* Codec_RA<B,Q>
+tools::Interleaver_core<>* Codec_RA<B,Q>
 ::build_interleaver(const int tid, const int seed)
 {
 	auto itl_cpy = dec_par.itl;
-	itl_cpy.seed = dec_par.itl.uniform ? seed : dec_par.itl.seed;
-	return factory::Interleaver::build<int>(itl_cpy);
+	itl_cpy.core.seed = dec_par.itl.core.uniform ? seed : dec_par.itl.core.seed;
+	return factory::Interleaver_core::build(itl_cpy.core);
 }
 
 template <typename B, typename Q>
 module::Encoder<B>* Codec_RA<B,Q>
-::build_encoder(const int tid, const module::Interleaver<int>* itl)
+::build_encoder(const int tid, const module::Interleaver<B>* itl)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");
@@ -42,7 +42,7 @@ module::Encoder<B>* Codec_RA<B,Q>
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Codec_RA<B,Q>
-::build_decoder(const int tid, const module::Interleaver<int>* itl, module::CRC<B>* crc)
+::build_decoder(const int tid, const module::Interleaver<Q>* itl, module::CRC<B>* crc)
 {
 	if (itl == nullptr)
 		throw runtime_error(__FILE__, __LINE__, __func__, "'itl' should not be null.");

@@ -18,7 +18,7 @@ Decoder_turbo<B,R>
 ::Decoder_turbo(const int& K,
                 const int& N,
                 const int& n_ite,
-                const Interleaver<int> &pi,
+                const Interleaver<R> &pi,
                 Decoder_SISO<R> &siso_n,
                 Decoder_SISO<R> &siso_i,
                 const bool buffered_encoding,
@@ -73,11 +73,11 @@ Decoder_turbo<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((int)pi.get_size() != K)
+	if ((int)pi.get_core().get_size() != K)
 	{
 		std::stringstream message;
-		message << "'pi.get_size()' has to be equal to 'K' ('pi.get_size()' = " << pi.get_size()
-		        << ", 'K' = " << K << ").";
+		message << "'pi.get_core().get_size()' has to be equal to 'K' ('pi.get_core().get_size()' = "
+		        << pi.get_core().get_size() << ", 'K' = " << K << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 

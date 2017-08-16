@@ -33,7 +33,7 @@ struct Encoder_turbo_DB : public Encoder
 
 	template <typename B = int>
 	static module::Encoder<B>* build(const parameters                &params,
-	                                 const module::Interleaver<int>  &itl,
+	                                 const module::Interleaver<B>    &itl,
 	                                       module::Encoder_RSC_DB<B> &sub_enc);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);

@@ -28,7 +28,7 @@ struct Encoder_RA : public Encoder
 
 	template <typename B = int>
 	static module::Encoder<B>* build(const parameters& params,
-	                                 const module::Interleaver<int> &itl);
+	                                 const module::Interleaver<B> &itl);
 
 	static void build_args(arg_map &req_args, arg_map &opt_args, const std::string p = prefix);
 	static void store_args(const arg_val_map &vals, parameters &params, const std::string p = prefix);
